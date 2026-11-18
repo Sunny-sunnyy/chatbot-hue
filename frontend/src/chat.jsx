@@ -145,7 +145,7 @@ export function useChat() {
             stopFrame();
             update({ text: bufferRef.current, sources: data, numbers: displayNumbers(bufferRef.current, data) });
           } else if (name === "notice") {
-            update({ notice: data.text });
+            update({ notice: data.text, noticeAnToan: !!data.an_toan });  // an_toan: ghi chú có câu bản tin chính thức + 112 ⇒ vẽ nổi hơn
           } else if (name === "sua_the") {
             update({ suaThe: data });  // sửa lịch: thẻ chọn điểm thay — nút chỉ chứa id code đưa
           } else if (name === "clarify") {
@@ -388,7 +388,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
       )}
       {turn.phase === "error" && (
         <div className="bubble bubble-error" role="alert">
-          <p className="text-error">{turn.error}</p>
+          <p className="text-error whitespace-pre-line">{turn.error}</p>
           <button type="button" onClick={onRetry} className="retry">Thử lại</button>
         </div>
       )}
@@ -410,7 +410,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
           <TheKhachSan turn={turn} />
           {turn.sources?.length > 0 && <SourceLine turn={turn} />}
           {turn.notice && (
-            <p className="notice">
+            <p className={turn.noticeAnToan ? "notice notice-an-toan" : "notice"}>
               <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                 <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeWidth="1.5" />
                 <path d="M8 4v5M8 11v1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -426,6 +426,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
       )}
       {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
       {turn.phase === "done" && turn.suaThe && <SuaTheCard the={turn.suaThe} onAsk={onAsk} />}
+      {turn.phase === "done" && turn.suaThe && turn.notice && <p className={turn.noticeAnToan ? "notice notice-an-toan" : "notice"}>{turn.notice}</p>}
       {turn.phase === "done" && turn.lich && !turn.lichV2 && (
         <LichExtras lich={turn.lich} truong={turn.truong} onAsk={onAsk} onEditPlan={turn.bieuMau ? onEditPlan : null}
                     getText={() => vanBanLich(turn, answerRef.current?.innerText ?? "", turn.lich.ban_do || [])} />

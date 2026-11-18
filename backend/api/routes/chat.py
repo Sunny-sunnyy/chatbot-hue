@@ -36,7 +36,7 @@ from llm import ngay_lich as nl
 from llm import thoi_tiet as tt
 from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_moi, ghep_cau, ghep_cau_v2, loi_v2
 from api.conversations import TTL_SECONDS
-from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, elapsed_ms, lich_cho_giao_dien, turn_usd
+from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, loi_bao_luoi_cuoi, luoi_cuoi_bao, elapsed_ms, lich_cho_giao_dien, turn_usd
 
 logger = logging.getLogger("chat")
 router = APIRouter()
@@ -302,14 +302,16 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
     conversation_id = _start_conversation(request, trace, metrics)
     query = _model_query(body, query, trace, metrics, state)
     vet.update(trace=trace, query=query)
+    sua_loi = lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history)  # noqa: E731
     try:
         await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder,
                           _tim_web(state))
     except (RetrievalDependencyError, ContextBudgetError, GeneratorNotReadyError, GenerationError) as exc:
         trace.vet["loi"] = repr(exc)[:500]
-        return _error_response_for(exc, recorder, metrics), conversation_id
+        return _error_response_for(exc, recorder, metrics, sua_loi), conversation_id
     finally:
         _copy_trace_metrics(trace, metrics)  # cả khi lỗi: bước nào đã chạy thì có số đo của bước đó
+    luoi_cuoi_bao(body.query, trace, _flags(state))  # lưới cuối câu bão: như đường stream
 
     if trace.fixed_outcome is not None:
         metrics["outcome"] = trace.fixed_outcome  # câu cố định / từ chối trước model: không qua kiểm citation
@@ -318,7 +320,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
         if trace.clarify is not None:  # B4: lượt hỏi lại — không chữ, không mã đánh giá
             return ChatResponse(answer="", sources=[], clarify=trace.clarify), conversation_id
         return ChatResponse(answer=trace.answer, sources=[], turn_id=_new_turn_id(request, trace, trace.fixed_outcome),
-                            web=_web_payload(trace)), conversation_id
+                            web=_web_payload(trace), notice=trace.notice), conversation_id
 
     if trace.citation_error is not None:
         logger.error("Citation integrity failed")
@@ -327,7 +329,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
         return error_response(
             500,
             "citation_integrity_error",
-            _loi_trich_dan(trace),
+            sua_loi(_loi_trich_dan(trace)),
         ), conversation_id
 
     if recorder:
@@ -371,26 +373,28 @@ def _retrieval_not_ready(state, recorder) -> JSONResponse | None:
     )
 
 
-def _error_response_for(exc: Exception, recorder, metrics: dict) -> JSONResponse:
-    """Lỗi có kiểu của lõi ⇒ phản hồi JSON (route stream chỉ gặp 3 lớp đầu: lỗi sinh của nó xảy ra sau khi luồng đã mở)."""
+def _error_response_for(exc: Exception, recorder, metrics: dict, sua_loi=None) -> JSONResponse:
+    """Lỗi có kiểu của lõi ⇒ phản hồi JSON (route stream chỉ gặp 3 lớp đầu: lỗi sinh của nó xảy ra sau khi luồng đã mở). `sua_loi`: lưới cuối câu bão
+    (`loi_bao_luoi_cuoi`) — lượt bão / lũ thì lời báo mang thêm câu bản tin chính thức + 112."""
+    sua_loi = sua_loi or (lambda message: message)
     if isinstance(exc, RetrievalDependencyError):
         logger.error("Retrieval dependency error")
         if recorder:
             recorder.record_error("retrieval_unavailable")
-        return error_response(503, "retrieval_unavailable", RETRIEVAL_UNAVAILABLE_MESSAGE)
+        return error_response(503, "retrieval_unavailable", sua_loi(RETRIEVAL_UNAVAILABLE_MESSAGE))
     if isinstance(exc, ContextBudgetError):
         if recorder:
             recorder.record_error("context_budget_error")
-        return error_response(500, "context_budget_error", CONTEXT_BUDGET_MESSAGE)
+        return error_response(500, "context_budget_error", sua_loi(CONTEXT_BUDGET_MESSAGE))
     if isinstance(exc, GeneratorNotReadyError):
         if recorder:
             recorder.record_error("generation_unavailable")
-        return error_response(502, "generation_unavailable", GENERATION_FAILURE_MESSAGE)
+        return error_response(502, "generation_unavailable", sua_loi(GENERATION_FAILURE_MESSAGE))
     metrics["outcome"] = "generation_failed"  # GenerationError: cùng mã 502 với "chưa sẵn sàng", nhưng đã gọi model rồi lỗi
     logger.error("Answer generation failed")
     if recorder:
         recorder.record_error("generation_failed")
-    return error_response(502, "generation_unavailable", GENERATION_FAILURE_MESSAGE)
+    return error_response(502, "generation_unavailable", sua_loi(GENERATION_FAILURE_MESSAGE))
 
 
 def _bai_ids(state):
@@ -511,7 +515,9 @@ async def chat_stream(body: ChatRequest, request: Request):
         response = StreamingResponse(
             _answer_events(turn, trace, metrics, started, remember, lambda: _new_turn_id(request, trace, metrics["outcome"]),
                            lambda: lich_cho_giao_dien(trace, _flags(state), cau_goc), _bai_ids(state),
-                           ghi_vet=lambda: _ghi_vet(state, "chat_stream", metrics, trace, body.query, query)),
+                           ghi_vet=lambda: _ghi_vet(state, "chat_stream", metrics, trace, body.query, query),
+                           luoi_cuoi=lambda: luoi_cuoi_bao(body.query, trace, _flags(state)),
+                           sua_loi=lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history)),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
@@ -525,6 +531,11 @@ async def chat_stream(body: ChatRequest, request: Request):
         if not stream_opened:
             metrics["total_ms"] = elapsed_ms(started)
             logger.info("chat_metrics %s", json.dumps(metrics))
+
+
+def _notice_event(trace: AnswerTrace) -> bytes:
+    """Sự kiện `notice`. Ghi chú có câu bản tin chính thức + 112 mang cờ `an_toan` ⇒ giao diện vẽ nổi hơn dòng ghi chú thường."""
+    return sse_event("notice", {"text": trace.notice, **({"an_toan": True} if tt.CAU_BAO_LU in trace.notice else {})})
 
 
 def _loi_trich_dan(trace: AnswerTrace) -> str:
@@ -542,8 +553,9 @@ class StreamEvents:
     """Dựng sự kiện SSE của một lượt stream và điền `outcome` / mốc thời gian vào `metrics` (spec §4.4, §4.6). Không gọi model ⇒ test
     được bằng chữ có sẵn; `_answer_events` chỉ nối nó với luồng model."""
 
-    def __init__(self, metrics: dict, started: float, new_turn_id=None, lich=None, bai_ids=()) -> None:
+    def __init__(self, metrics: dict, started: float, new_turn_id=None, lich=None, bai_ids=(), sua_loi=None) -> None:
         self.metrics = metrics
+        self.sua_loi = sua_loi or (lambda message: message)  # lưới cuối câu bão: lời báo lỗi của lượt bão / lũ mang thêm câu 112
         self.bai_ids = bai_ids  # cổng D7: `bai_id` của nguồn
         self.started = started
         self.new_turn_id = new_turn_id  # B142: cấp mã lượt (đánh giá 👍 / 👎) ở `done` của lượt có câu trả lời cuối; None ⇒ `done` như cũ
@@ -584,7 +596,8 @@ class StreamEvents:
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == trace.answer.strip()
         if trace.clarify is not None:  # B4 D8: lượt hỏi lại ⇒ thẻ nút, không chữ, không mã đánh giá
             return [sse_event("clarify", trace.clarify), self.done()]
-        return [sse_event("sources", []), *self._web(trace), self.done(answered=True)]
+        notice = [] if trace.notice is None else [_notice_event(trace)]  # câu cố định chỉ có dòng ghi chú khi lưới cuối câu bão đặt
+        return [sse_event("sources", []), *self._web(trace), *notice, self.done(answered=True)]
 
     @staticmethod
     def _web(trace: AnswerTrace) -> list[bytes]:
@@ -601,12 +614,12 @@ class StreamEvents:
             logger.error("Citation integrity failed")
             self.metrics["outcome"] = "retracted"
             events = [sse_event("error", {"code": "citation_integrity_error",
-                                          "message": _loi_trich_dan(trace), "after_text": bool(self.shown)})]
+                                          "message": self.sua_loi(_loi_trich_dan(trace)), "after_text": bool(self.shown)})]
         else:
             self.metrics["outcome"] = "success"
             events = [sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited, self.bai_ids)])]
             if trace.notice is not None:
-                events.append(sse_event("notice", {"text": trace.notice}))
+                events.append(_notice_event(trace))
             lich = None if self.lich is None else self.lich()
             if lich is not None:  # B5 D11 / D12: dữ liệu có cấu trúc, sau `sources` (chỉ khi lịch qua kiểm)
                 events.append(sse_event("lich_trinh", lich))
@@ -629,20 +642,22 @@ class StreamEvents:
             self.metrics["outcome"] = "stream_error_after_text"
         else:
             self.metrics["outcome"] = {"generation_unavailable": "generation_failed"}.get(code, code)
-        return [sse_event("error", {"code": code, "message": message, "after_text": bool(self.shown)}), self.done()]
+        return [sse_event("error", {"code": code, "message": self.sua_loi(message), "after_text": bool(self.shown)}), self.done()]
 
 
 async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None, new_turn_id=None, lich=None, bai_ids=(),
-                         ghi_vet=None):
+                         ghi_vet=None, luoi_cuoi=None, sua_loi=None):
     """Chuỗi sự kiện SSE của một lượt: đổi sự kiện của lõi (`answer_turn_stream`) ra `status … delta … sources | error [notice] … done`
     (spec streaming §4.1, §4.4). Tự bắt mọi `Exception` rồi phát `error` + `done`. Người dùng ngắt ⇒ không gửi gì thêm, raise lại.
     `finally`: đóng lõi **trong vùng che** (lõi ghi `llm_calls`, tự huỷ + đọc nốt có hạn giờ) rồi mới ghi dòng log — chỉ có `await` được che
     trước dòng log, nên ý spec streaming §4.5 (anyio không huỷ mất dòng log) giữ nguyên (C132 m-1)."""
     metrics["status_code"] = 200
-    stream = StreamEvents(metrics, started, new_turn_id, lich, bai_ids)
+    stream = StreamEvents(metrics, started, new_turn_id, lich, bai_ids, sua_loi)
     try:
         async for kind, data in turn:
             yield stream.status(data) if kind == "status" else stream.delta(data) if kind == "delta" else stream.lich_v2(kind, data)
+        if luoi_cuoi is not None:
+            luoi_cuoi()  # lưới cuối câu bão: sau khi lõi xong, trước `sources` / `notice` / `done`
         for event in (stream.fixed(trace) if trace.fixed_outcome is not None else stream.finish(trace)):
             yield event
     except (asyncio.CancelledError, GeneratorExit):
