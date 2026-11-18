@@ -386,6 +386,8 @@ def test_plain_slash_text_is_not_a_link():  # bất biến: "a/b" thường (kh�
     # soát khác hãng 18/11: lưới bão / lũ của công cụ thời tiết có bốn từ này mà lưới của mục web thì không ⇒ mục web tóm tắt được tin giông / lốc
     ("Bây giờ Huế có giông không, và vùng nào có nguy cơ?", True), ("Huế có lốc không?", True), ("Có mưa đá ở Huế không?", True),
     ("Nước dâng ở phá Tam Giang thế nào?", True), ("Bánh lọc Huế ăn ở đâu?", False),
+    # soát tích hợp đợt 2 (18/11): "dông" = cách viết khác của "giông" — lưới cuối đã có, lưới mục web thiếu ⇒ mục web tóm tắt tin dông cạnh câu 112
+    ("Huế dạo này hay có dông không?", True), ("Dông lốc ở Huế mùa nào nhiều?", True), ("Mùa đông Huế có lạnh không?", False),
 ])
 def test_disaster_words_after_review(cau, thien_tai):  # M-2
     assert tw.la_cau_thien_tai(cau) is thien_tai
