@@ -151,6 +151,24 @@ def test_unknown_citation_number_is_retracted():
     assert parse_sse(chunks)[-2][1]["code"] == "citation_integrity_error"
 
 
+def test_luot_bao_bi_rut_lai_van_giu_cau_112_trong_loi_bao():
+    """Soát khác hãng 18/11: lượt bão / lũ có chữ model bị rút lại vì lỗi trích dẫn ⇒ giao diện xoá hết chữ, kể cả câu chỉ bản tin chính thức + 112 do
+    code nối. Lời báo lỗi phải mang câu đó (giao diện hiện nguyên `message`); lượt thường bị rút lại thì lời báo như cũ."""
+    from llm import thoi_tiet as tt
+    from core.schema import CitationIntegrityError
+
+    def loi_bao(noi):
+        answer = "Có thể ngập ở vùng trũng [999]." + (f"\n\n{noi}" if noi else "")
+        trace = AnswerTrace(answer=answer, cited=(), thoi_tiet_noi=noi, citation_error=CitationIntegrityError("unknown citation"))
+        events = parse_sse(StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter()).finish(trace))
+        assert events[0][0] == "error" and events[0][1]["code"] == "citation_integrity_error"
+        return events[0][1]["message"]
+
+    assert "112" in loi_bao(tt.CAU_BAO_LU) and tt.CAU_BAO_LU in loi_bao(tt.CAU_BAO_LU)
+    assert loi_bao(None) == "Câu trả lời không đáp ứng yêu cầu trích dẫn."
+    assert "112" not in loi_bao(tt.CAU_NGOAI_7_NGAY)  # phần nối khác (câu "ngoài 7 ngày") không kéo theo câu bão
+
+
 def test_model_refusal_streams_with_empty_sources():
     stream, chunks, _ = stream_with_text(INSUFFICIENT_ANSWER)
     events = parse_sse(chunks)

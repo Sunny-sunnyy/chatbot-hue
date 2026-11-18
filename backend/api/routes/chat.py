@@ -33,6 +33,7 @@ from llm.evidence_recorder import get_current_recorder
 from llm.full_corpus_prompt import REFUSAL_ANSWERS
 from llm import lich_trinh_v2 as lt2
 from llm import ngay_lich as nl
+from llm import thoi_tiet as tt
 from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_moi, ghep_cau, ghep_cau_v2, loi_v2
 from api.conversations import TTL_SECONDS
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, elapsed_ms, lich_cho_giao_dien, turn_usd
@@ -326,7 +327,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
         return error_response(
             500,
             "citation_integrity_error",
-            "Câu trả lời không đáp ứng yêu cầu trích dẫn.",
+            _loi_trich_dan(trace),
         ), conversation_id
 
     if recorder:
@@ -526,6 +527,13 @@ async def chat_stream(body: ChatRequest, request: Request):
             logger.info("chat_metrics %s", json.dumps(metrics))
 
 
+def _loi_trich_dan(trace: AnswerTrace) -> str:
+    """Lời báo khi câu trả lời bị rút lại vì lỗi trích dẫn. Lượt bão / lũ: giao diện xoá hết chữ đã hiện, kể cả câu chỉ bản tin chính thức + 112 do code
+    nối ⇒ lời báo mang câu đó đi cùng (soát khác hãng 18/11)."""
+    loi = "Câu trả lời không đáp ứng yêu cầu trích dẫn."
+    return f"{loi}\n\n{tt.CAU_BAO_LU}" if tt.CAU_BAO_LU in (trace.thoi_tiet_noi or "") else loi
+
+
 def sse_event(event: str, data: dict | list) -> bytes:
     return format_sse_event(event=event, data_str=json.dumps(data, ensure_ascii=False))
 
@@ -593,7 +601,7 @@ class StreamEvents:
             logger.error("Citation integrity failed")
             self.metrics["outcome"] = "retracted"
             events = [sse_event("error", {"code": "citation_integrity_error",
-                                          "message": "Câu trả lời không đáp ứng yêu cầu trích dẫn.", "after_text": bool(self.shown)})]
+                                          "message": _loi_trich_dan(trace), "after_text": bool(self.shown)})]
         else:
             self.metrics["outcome"] = "success"
             events = [sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited, self.bai_ids)])]
