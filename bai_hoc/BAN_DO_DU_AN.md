@@ -1,6 +1,6 @@
 # Bản đồ dự án hue_rag — đọc trang này trước
 
-*Cập nhật lần cuối: 10:16, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
+*Cập nhật lần cuối: 10:18, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
 
 Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm những khối nào, khối nào đang bật, và muốn hiểu sâu một khối thì mở bài nào. Mọi con số ở đây là
 **số của hệ thống hôm nay**; các bài viết trước ngày 14/11 (bài 0–18) viết lúc kho còn 204 bài, nên anh sẽ gặp số nhỏ hơn ở đó, không phải lỗi.
@@ -19,6 +19,14 @@ Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm
 | câu thường | — | câu trả lời được ngay sau lần tìm đầu, không phải tìm thêm, không tra web |
 | sổ bàn giao | *runbook* | sổ hướng dẫn từng lệnh cho người (hoặc agent) làm tiếp |
 | lượt đo cuối | — | lần chấm toàn bộ trợ lý trên bản code đã đứng yên, trước khi đóng giai đoạn trợ lý |
+| sàn (mức tối thiểu) | — | ngưỡng ghi trước khi đo; kết quả dưới ngưỡng thì thay đổi không được bật |
+| luật ghi trước | — | tiêu chí đạt / trượt viết ra **trước** khi chạy đo, để không sửa tiêu chí theo kết quả |
+| nghiệm thu | — | lượt kiểm cuối của một tính năng theo luật ghi trước, trước khi bật cho người dùng |
+| sổ số đo | *log* | file ghi mỗi câu hỏi một dòng số (thời gian, tiền, đi đường nào) — không ghi nội dung câu |
+| bộ câu kín | *held-out set* | bộ câu hỏi cất riêng, người làm không được xem, chỉ mở để chấm ở mốc cuối |
+| chấm mù, so theo cặp | — | người chấm không biết câu trả lời nào của bản nào; hai bản trả lời cùng một câu được so trực tiếp |
+| trung vị | *median* | giá trị đứng giữa khi xếp các số theo thứ tự (chính là p50) |
+| bản đồ mở | OpenStreetMap | bản đồ do cộng đồng góp, dùng tự do — dữ liệu quán lấy từ đây chưa ai kiểm ngoài đời |
 
 ## Dự án trong 5 câu
 
@@ -47,14 +55,14 @@ Ngoài hình: **khối đo / chấm** đứng cạnh để kiểm mọi thay đ�
 | Khối | Nó làm gì | Đang chạy thế nào (số hôm nay) | Bài nên đọc |
 |---|---|---|---|
 | **Sổ tay** | Tất cả những gì trợ lý được nói: món ăn, di tích, lễ hội, nghệ thuật, đi lại / vé / chỗ ở | **265 bài** Markdown, 5 chủ đề (mốc: 204 bài tới 13/11; thêm 61 bài 14–16/11; mỗi lần ghi đều kiểm câu cũ không tụt — hai lần đầu chấm điểm, các lần sau đọc tay từng câu chạm bài mới) | 1, 22 |
-| **Chia đoạn + chỉ mục** (*chunking*, *embedding*) | Cắt bài thành đoạn nhỏ, biến mỗi đoạn thành vector nghĩa (dãy số đại diện ý) và bảng từ khoá, cất vào Qdrant | **9.436 đoạn**; vector 384 số từ model nhỏ **e5-small** chạy trên máy, 0 đồng; từ khoá **BM25** (chấm theo chữ trùng); lúc khởi động thấy kho lệch chỉ mục thì từ chối chạy | 2, 3, 4, 5 |
+| **Chia đoạn + chỉ mục** (*chunking*, *embedding*) | Cắt bài thành đoạn nhỏ, biến mỗi đoạn thành vector nghĩa (dãy số đại diện ý) và bảng từ khoá, cất vào Qdrant | **9.436 đoạn**; mỗi đoạn thành một dãy 384 con số (vector) từ model nhỏ **e5-small** chạy trên máy, 0 đồng; từ khoá **BM25** (chấm theo chữ trùng); lúc khởi động thấy kho lệch chỉ mục thì từ chối chạy | 2, 3, 4, 5 |
 | **Tìm** (*retrieval*) | Chọn đoạn hợp câu hỏi | Theo nghĩa lấy 30 ứng viên ⇒ chấm lại theo từ khoá ⇒ trộn hai bảng xếp hạng (RRF) ⇒ giữ **10 đoạn**; **không xếp lại bằng model** | 6, 7 |
 | **Trợ lý trả lời** | Xếp loại câu (chào hỏi / về Huế / ngoài chủ đề / khẩn cấp — loại cuối đi chung đường câu về Huế), viết bằng **gpt-6-luna**, kiểm số nguồn | Bật: xếp loại; chạy song song xếp loại với trả lời; **tìm thêm ≤ 2 lần** — đã tìm thêm đủ 2 lần thì trợ lý không được tìm nữa, phải trả lời hoặc nói không có; **nhớ 3 câu hỏi gần nhất** (không nhớ câu trả lời); câu nhiều ý | 8, 12, 13, 25 |
 | **Công cụ của trợ lý** | Việc phải đúng thì code làm | Bật cả sáu: **ngày + âm lịch** (code tính) · **thời tiết** 7 ngày (Open-Meteo) · **câu bão / lũ** (model không nhận con số nào, code nối khối chỉ dẫn cố định) · **khoảng cách** hai điểm (bảng dựng sẵn, lúc chạy không gọi mạng) · **tra web** (Serper, một lần, 5 giây, mục "Từ web (chưa kiểm)") · **hỏi bằng ảnh** (model đoán tên trong danh sách 42 nơi / món, câu trả lời vẫn từ kho) | 14, 15 |
 | **Lên kế hoạch** (lịch trình bản 2) + sửa lịch bằng lời | Biểu mẫu nút ⇒ code xếp lịch theo buổi; người dùng nhắn "đổi…" ⇒ model hiểu ý, code áp và kiểm | Bảng **41 điểm**; chỗ ở **136 cơ sở** (67 có ảnh); **468 quán** cho bữa ăn (phần lớn từ bản đồ mở, chưa kiểm ngoài đời); bản đồ ghim; file lịch .ics (mở được bằng Google Calendar / lịch điện thoại); lịch từ **câu gõ tự do** vẫn TẮT | 14, 23, 25 |
-| **Giao diện 5 trang** | Trang chủ · Khám phá · Lên kế hoạch · Trợ lý · Giới thiệu (thêm trang Chỗ ở, chỉ mở từ ô Nơi ở của lịch) | React dựng sẵn thành file tĩnh, server phục vụ; chữ hiện dần; câu thường: chữ đầu tiên **p50 2,10 / p95 4,32 giây** (đếm lại từ sổ số đo ngày 15/11 trên 55 câu, chủ yếu là câu thử của nhóm — chưa có người dùng thật; sàn anh đặt 3 / 5 giây ⇒ đạt) | 17, 24 |
+| **Giao diện 5 trang** | Trang chủ · Khám phá · Lên kế hoạch · Trợ lý · Giới thiệu (thêm trang Chỗ ở, chỉ mở từ ô Nơi ở của lịch) | Giao diện viết bằng React (thư viện làm trang web), dựng sẵn thành file tĩnh rồi server gửi cho trình duyệt; chữ hiện dần; câu thường: chữ đầu tiên **p50 2,10 / p95 4,32 giây** (đếm lại từ sổ số đo ngày 15/11 trên 55 câu, chủ yếu là câu thử của nhóm — chưa có người dùng thật; sàn anh đặt 3 / 5 giây ⇒ đạt) | 17, 24 |
 | **Đo / chấm** | Kiểm mọi thay đổi trước khi bật | Bộ **176 câu mẫu** + bộ câu kín + bộ an toàn; Claude chấm mù, so theo cặp; sổ số đo ghi mỗi câu một dòng, không ghi nội dung | 9, 10, 11, 19 |
-| **Đóng gói / deploy** | Mang hệ thống sang máy chủ thật | Gói Docker ba hộp (cửa HTTPS · app · Qdrant) đã chạy thử trên máy anh; **chưa deploy** | 18, 21 |
+| **Đóng gói / deploy** | Mang hệ thống sang máy chủ thật | Gói Docker (cách đóng phần mềm vào hộp để chạy giống nhau ở mọi máy) gồm ba hộp: cửa HTTPS (nhận kết nối mã hoá từ trình duyệt) · app · Qdrant; đã chạy thử trên máy anh; **chưa deploy** | 18, 21 |
 
 ## Cái gì ĐANG chạy, cái gì TẮT hoặc đã bỏ
 
@@ -148,7 +156,8 @@ Nhóm là bốn phiên Claude Code chạy song song: A điều phối và nói c
 **Đang làm:**
 - **A:** trò chuyện với anh về cách làm việc với coding agent (mỗi lần một chủ đề); gộp ba bản đề xuất của B, C, E thành một.
 - **B:** trang bản đồ này; kế hoạch deploy bản 3 đã viết xong, **chờ** tới khi giai đoạn trợ lý đóng mới bàn.
-- **C, E:** phản biện chéo các đề xuất cách làm việc; E viết bản gộp.
+- **C:** soát xem các test có thật sự bắt được lỗi không (39 test đã xem, 1 test thay hẳn phần lõi bằng đồ giả — bốn hành vi nó giữ đã được chạy thật); viết trang hiện trạng ngắn cho agent.
+- **E:** viết bản gộp "cách làm việc với coding agent" dùng cho mọi công cụ.
 - **Chờ anh:** gói "giám khảo khác hãng" đầu tiên — một file nhóm đã soạn để anh tự gửi cho Codex / Antigravity đọc và đánh giá độc lập.
 
 ## Chỗ còn yếu đã biết
@@ -168,7 +177,7 @@ Nhóm là bốn phiên Claude Code chạy song song: A điều phối và nói c
 8. **Chỗ các tính năng gặp nhau** (soát sáng 18/11, sau khi từng tính năng đều đã được kiểm riêng và đạt): ra **11 điểm**. Nặng nhất: câu hỏi về bão / lũ mà trợ lý
    đã dùng hết lượt tìm thì chỉ còn câu từ chối, **mất câu chỉ dẫn xem bản tin chính thức và số 112** — đã sửa; trong sổ số đo chưa lần nào thấy xảy ra (0 / 11 lượt hỏi
    về bão). Đã sửa thêm 2 điểm nhỏ; **8 điểm còn lại ghi vào sổ bàn giao như giới hạn**, trong đó hai điểm (một câu về thời tiết bị nối nhầm vào câu hỏi tiếp không về
-   thời tiết, làm mất mục web) sẽ sửa chung sau lượt đo cuối. Ba điểm đã sửa có test; riêng điểm câu bão chưa đo trên hệ thống thật.
+   thời tiết, làm mất mục web) sẽ sửa chung sau lượt đo cuối. Ba điểm đã sửa đều có test; hai điểm nhỏ đã có thêm một lượt chạy thật trên server sáng 18/11 (mỗi ý mới một lượt), riêng điểm câu bão chưa đo trên hệ thống thật.
 
 ---
 
