@@ -125,7 +125,7 @@ Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì ch�
 | Lên kế hoạch, sửa lịch bằng lời, câu nhiều ý, chỗ ở, quán ăn, ảnh dưới câu trả lời | 23, 25 |
 | Giao diện và tốc độ | 17, 24 |
 | Đóng gói Docker · dữ liệu người dùng và bảo mật | 18 · 21 |
-| Đồ án được làm thế nào (nhiều agent, rào bằng máy, tiền) | 20 |
+| Đồ án được làm thế nào (nhiều agent, rào bằng máy, tiền) · cách làm việc với coding agent chốt 18/11 (bảng quyền, báo cáo bốn ý, giám khảo khác hãng) | 20 · 26 |
 
 Lưu ý khi đọc bài 0–18: số kho trong đó (204 bài, 8.435 đoạn) là số lúc viết; số hôm nay ở trang này.
 
