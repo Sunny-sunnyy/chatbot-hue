@@ -1,6 +1,6 @@
 # STATUS C — PHIÊN CHIỀU 18/11 (C `hue-rag-70` · A `hue-rag-36` · B `hue-rag-40` · E `hue-rag-5c`)
 
-## Ba dòng đọc trước (C viết 14:15 18/11/2026, giờ `date`; THAY mỗi lần kết / mở lại)
+## Ba dòng đọc trước (C viết 14:53 18/11/2026, giờ `date`; THAY mỗi lần kết / mở lại)
 - **Việc dở:** không có việc đang làm dở. Còn giữ: (a) sửa ý J5 của thang chấm skill mới trước tối thứ Ba 24/11 (`data/cham_skill_2026-11-18/VIEC_THU_4_skill_moi.md` — ý đó mâu thuẫn với đề); (b) SAU lượt đo cuối: script kiểm đường dẫn trong file `.md` CÓ luật `cd <thư mục> &&`, lần chạy đầu phải thấy ĐỎ trên đúng dòng sai của E (bản nháp [chưa chạy]: `data/cach_lam_2026-11-18/kiem_duong_dan_md.sh.nhap`); gọn `Project_Status.md` một lần; (c) đợt 3 chấm skill chưa có người chấm thứ hai; 4 skill cũ chưa chấm (24/11).
 - **Đang chạy / file tạm:** 0 server · 0 agent con · 0 worktree của C · không còn `/tmp/hr_c_*`. Bản sao `src/` của hai lượt chấm (5 MB) ở `data/cham_skill_2026-11-18/chay3/` — giữ tới sau 24/11. Nhánh máy `p9-c-kiem-duong-dan` (0 commit riêng, chưa push) còn tên — xoá khi User dọn nhánh.
 - **Bẫy phiên này:** thêm chữ vào trang hiện trạng rồi mới đo ⇒ 7 lượt gọt byte · LẦN HAI: chạy phép chấm khi chưa thử thang trên bản mẫu (ý J5) · đề nghị "dời bảng mốc sang runbook" rồi tự rút khi làm · sửa sổ này trên cây chung lúc mở (phải hoàn lại) · đề nghị một script không bắt đúng ca lỗi đã thấy (E chỉ ra).
@@ -10,6 +10,7 @@
 - Review: nhánh skill của E (`changes_requested` ⇒ đạt sau `c73289a`; file `data/cham_skill_2026-11-18/REVIEW_C_nhanh_skill.md`) · nhánh tài liệu của E `a43b108` · hai chỗ nhỏ trên `0d92b7b` · bốn dòng B thêm vào runbook lượt đo cuối (số A/A khớp).
 - Chấm 2 skill mới, một lượt mỗi bên (`KET_QUA.md` mục "Đợt 3"): `soat-tich-hop` 3 / 12 ↔ 10 / 12 (ba ý thực chất 1 / 6 ↔ 4 / 6) · `giao-viec-agent-con` 10 ↔ 11. Lượt chấm tìm ra hai chỗ sai ở `guides/KHI_CHI_CO_MOT_AGENT.md` (E đã sửa).
 - Soạn: bản rà ba mảng `data/cach_lam_2026-11-18/RA_C.md` · phiếu chấm buổi tự tay `data/tu_tay_2026-11-21/PHIEU_CHAM.md` (B đã bổ sung) · phần của C ở vòng cuối ngày lần đầu.
+- Phép thử đọc lạnh trang hiện trạng chạy lại chiều 18/11: 7 / 8 đủ, câu 2 thiếu một phần (câu hỏi lỗi thời ⇒ sửa câu hỏi trong mẫu; 5 dòng sửa trang) — ghi từng câu ở `data/cach_lam_2026-11-18/DOC_LANH_HIEN_TRANG.md`; chưa chạy lượt hai; lượt sạch thật là 24/11. Đã gửi phiên điều phối một dự án khác của User cách làm phép thử này (không nội dung riêng).
 - Phép thử "mở phiên đọc ngắn": lần mở kế C đọc ngắn và đếm số lần vấp luật vì chưa đọc.
 
 # (cũ) STATUS C — KẾT PHIÊN SÁNG 18/11 (C `hue-rag-8c` · A `hue-rag-55` · B `hue-rag-98` · E `hue-rag-95`); dưới là kết phiên tối 17/11
