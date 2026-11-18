@@ -146,7 +146,7 @@ bằng hai con số ở mục 7.
 | "đã đẩy lên" lấy từ máy | `scripts/commit_push.sh "<lời commit>" <file>…` in `ĐÃ PUSH <sha> origin/<nhánh>` [đã chạy] |
 | rào bằng máy mọi agent đều qua | `.githooks/pre-commit`, `pre-push`; kiểm đã bật: `git config --get core.hooksPath` ⇒ `.githooks` [đã chạy] |
 | sổ giới hạn · quyết định đã chốt | runbook mục 10 · `session_prompt/Project_Status.md` mục 5 |
-| tài liệu viết cho người | `bai_hoc/` |
+| tài liệu viết cho người · báo cáo bốn ý của việc vừa xong | `bai_hoc/` · `bai_hoc/VIEC_MOI_XONG.md` |
 | sao lưu thứ ngoài git trước khi sửa | runbook mục 5 [đã chạy ở mỗi lần sửa dữ liệu gốc] |
 | làm một mình | `guides/KHI_CHI_CO_MOT_AGENT.md` |
 | mở phiên đọc ngắn · kết phiên nhẹ | `session_prompt/START_SESSION.md` · `session_prompt/WORKFLOW.md` §8 |
@@ -180,5 +180,5 @@ Người giữ ghi chép từng khoá đã đối chiếu mã với ghi chép c�
 - **Chưa thử với Codex hay Antigravity** — buổi thử: tối thứ Ba 24/11/2026; bước đầu là hỏi công cụ đã nạp file nào (mục 5). Kiểu điều phối khi đổi công cụ chưa chọn (mục 8).
 - **Vòng cuối ngày** (mục 5, 7) chưa chạy lần nào; hai con số mới ghi MỘT lần, chưa ai soát; hai số về giá chưa ghi lần nào.
 - **Mở lại phiên cho nhẹ** (mục 5): đã vào luật mở phiên, chưa có lần mở nào đọc ngắn.
-- Hai skill mới (`soat-tich-hop`, `giao-viec-agent-con`) đã vào nhánh chính 18/11, chưa được chấm, chưa dùng lần nào.
-- Chưa thành nếp: báo cáo bốn ý + nhãn độ tin (mục 4), ảnh trước–sau (mục 6), năm dòng đề bài và "chọn một dòng xong để chứng minh lại" (mục 1).
+- Hai skill mới (`soat-tich-hop`, `giao-viec-agent-con`) mới được chấm MỘT lượt mỗi bên, chưa có người chấm thứ hai.
+- Chưa thành nếp: ảnh trước–sau (mục 6), năm dòng đề bài và "chọn một dòng xong để chứng minh lại" (mục 1).
