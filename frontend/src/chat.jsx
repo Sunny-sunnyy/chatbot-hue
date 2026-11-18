@@ -174,14 +174,14 @@ export function useChat() {
         // Server thấy ngắt ⇒ huỷ lần gọi model, không nhớ lượt này (`client_disconnected` ∉ REMEMBERED_OUTCOMES). Rời trang ⇒ không còn ai xem.
         if (stoppedRef.current === controller) {
           stopFrame();
-          update({ phase: "stopped", text: "", sources: null, numbers: null, notice: "", web: null, clarify: null, lich: null, progress: [],
+          update({ phase: "stopped", text: "", sources: null, numbers: null, notice: "", noticeAnToan: "", web: null, clarify: null, lich: null, progress: [],
                    lichV2: null, cauV2: null });
         }
         return true;
       }
       // D3: kiểm cuối hỏng (rút lại) hoặc lỗi / đứt giữa chừng (xoá hết) — xoá chữ + nguồn đã hiện, hiện lời báo + "Thử lại" (yêu cầu 10, 11).
       stopFrame();
-      update({ phase: "error", text: "", sources: null, numbers: null, notice: "", web: null, error: failure.message, lichV2: null, cauV2: null });
+      update({ phase: "error", text: "", sources: null, numbers: null, notice: "", noticeAnToan: "", web: null, error: failure.message, lichV2: null, cauV2: null });
     }
     return true;
   }
@@ -367,6 +367,13 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
   );
 }
 
+const ICON_GHI_CHU = (  // chữ "i" trong vòng tròn, đứng trước ghi chú trong bong bóng trả lời
+  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
+    <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    <path d="M8 4v5M8 11v1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+  </svg>
+);
+
 function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
   const html = useMemo(() => renderAnswerHtml(moDauWeb(turn.text, turn.web)), [turn.text, turn.web]);  // câu mở đầu khi mục web có nội dung
   const pending = PENDING.has(turn.phase);
@@ -409,13 +416,10 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
           <AnhTraLoi turn={turn} />
           <TheKhachSan turn={turn} />
           {turn.sources?.length > 0 && <SourceLine turn={turn} />}
-          {turn.noticeAnToan && <p className="notice notice-an-toan" role="note">{turn.noticeAnToan}</p>}
+          {turn.noticeAnToan && <p className="notice notice-an-toan" role="note">{ICON_GHI_CHU}{turn.noticeAnToan}</p>}
           {turn.notice && (
             <p className="notice">
-              <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-                <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M8 4v5M8 11v1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-              </svg>
+              {ICON_GHI_CHU}
               {turn.notice}
             </p>
           )}
