@@ -1,6 +1,6 @@
 # Bản đồ dự án hue_rag — đọc trang này trước
 
-*Cập nhật lần cuối: 10:18, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
+*Cập nhật lần cuối: 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
 
 Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm những khối nào, khối nào đang bật, và muốn hiểu sâu một khối thì mở bài nào. Mọi con số ở đây là
 **số của hệ thống hôm nay**; các bài viết trước ngày 14/11 (bài 0–18) viết lúc kho còn 204 bài, nên anh sẽ gặp số nhỏ hơn ở đó, không phải lỗi.
@@ -134,16 +134,19 @@ Lưu ý khi đọc bài 0–18: số kho trong đó (204 bài, 8.435 đoạn) l�
 *Mục này cập nhật mỗi lần kết phiên (anh đã duyệt giữ mục này để biết ai đang làm gì — nó là ngoại lệ của luật "bài học chỉ viết việc đã xong").*
 Nhóm là bốn phiên Claude Code chạy song song: A điều phối và nói chuyện với anh; B, C, E làm và kiểm chéo nhau (người viết không tự kiểm).
 
-**Mốc sắp tới** (anh chốt theo thứ trong tuần, sáng 18/11):
+**Thứ tự việc — không gắn ngày** (anh chốt chiều 18/11). Nhóm không làm theo lịch nữa: bước trước đạt điều kiện và máy rảnh là làm bước sau ngay, chất lượng giữ nguyên.
+Những phần cần anh — buổi anh tự tay bật và hỏi thử, gửi gói cho model hãng khác soát, các lệnh chạy bộ câu giữ kín, đóng giai đoạn trợ lý, buổi anh lái Codex / Antigravity —
+dời hết về **một buổi anh test toàn bộ ở cuối** (bước 7); trước đó nhóm không nhắc anh các việc này.
 
-| Ngày | Việc | Xong chưa |
-|---|---|---|
-| Sáng thứ Bảy 21/11 | **Buổi tự tay của anh** (45–60 phút): tự bật hệ thống theo sổ bàn giao mục 1–3 (bật Qdrant · dựng giao diện + chạy server · chạy test), hỏi mươi câu của chính anh, xem sổ vết debug; A ngồi cạnh, chỗ anh vấp thì sửa sổ bàn giao | chưa — trang này là bước chuẩn bị |
-| Tối thứ Bảy 21/11 | **Code đứng yên**; trước đó chạy toàn bộ test một lượt trên bản chính | chưa |
-| Chủ nhật 22/11 | **Lượt đo cuối** cả trợ lý (bộ câu mẫu + an toàn + ngoài chủ đề + web; trần 0,45 USD); bộ câu đã từng đo phải chạy lại vì lời dặn và nhiều cờ đã đổi sau lượt giữa kỳ | chưa |
-| Khoảng thứ Hai 23/11 | Kiểm kết quả lượt cuối ⇒ **anh đóng giai đoạn trợ lý** (Phase 9) | chưa |
-| Tối thứ Ba 24/11 | **Codex rồi Antigravity chạy thử thay Claude**, anh lái: đọc tài liệu từ đầu ⇒ làm theo sổ bàn giao mục 1–3 ⇒ một việc thật nhỏ ⇒ đọc kế hoạch deploy. Mục đích: thử xem cách làm việc và tài liệu có dùng được với công cụ khác không | chưa |
-| Trước cuối tháng 11 | **Kế hoạch deploy** + **sổ bàn giao** đủ mục (đã có mục 0–7 và nháp mục 10 "giới hạn đã biết"; mục 8 "deploy" và mục 9 "quyết định không hỏi lại" chưa viết). Deploy chỉ bàn khi dự án xong | đang làm |
+| Bước | Việc | Đạt khi | Xong chưa |
+|---|---|---|---|
+| 1 | Chạy toàn bộ bộ test của phần máy chủ một lượt trên bản chính; test nào hỏng mà tái hiện được thì sửa | không còn test nào hỏng do code (test hỏng vì thiếu khoá API hay thiếu bản dựng giao diện thì ghi riêng) | chưa |
+| 2 | Một agent con ngữ cảnh mới soát chỗ các tính năng gặp nhau (thay cho gói gửi model hãng khác); nhóm tự chạy năm mục "cách thử" đã viết cho anh ở trang "Việc mới xong" | mỗi điểm tìm ra đã tái hiện được rồi sửa, hoặc ghi vào danh sách giới hạn đã biết | chưa |
+| 3 | **Code đứng yên**: ghi lại mã của bản code đó vào sổ đo; chép lại bản sao lưu các thứ nằm ngoài git | có mã bản code đứng yên | chưa |
+| 4 | **Lượt đo cuối** cả trợ lý trên các bộ câu đã từng đo (bộ câu mẫu + an toàn + ngoài chủ đề + web; trần 0,45 USD). Các bộ câu giữ kín **không chạy** ở bước này — agent không được mở, chờ anh ở bước 7 | mọi sàn chất lượng đã ghi trước đều đạt ⇒ "giai đoạn trợ lý xong phần của nhóm" | chưa |
+| 5 | **Đợt hoàn thiện trên máy**: thử cho hệ thống tự dò cấu hình tốt hơn ở bước tìm · sửa các lỗi đã hoãn ở mục "Chỗ còn yếu" · một lệnh kiểm nhanh dùng lại · kế hoạch deploy trên giấy | từng sửa đổi có đo, đạt tiêu chí ghi trước, và có người khác người viết kiểm | chưa |
+| 6 | Deploy lên AWS — cần anh một lần: tài khoản, khoá, ngân sách | kiểm được trên bản đã lên mạng (hỏi một câu thật, không chỉ xem trang báo "sống") | chưa |
+| 7 | **Anh test toàn bộ một lần**, theo một danh sách nhóm gom dần từ bây giờ (mỗi việc xong thêm một dòng "cách thử"), có phiếu chấm sẵn ⇒ anh đóng giai đoạn trợ lý | — | chưa |
 
 **Sáng 18/11 đã xong:**
 - Sổ số đo ghi được mỗi câu chạy bằng **bản code nào**, cả khi chạy trong Docker (trước đó Docker ghi "không rõ") — một chỗ đổi nhỏ, không đổi cách trả lời.
@@ -153,12 +156,25 @@ Nhóm là bốn phiên Claude Code chạy song song: A điều phối và nói c
   đã duyệt, từ nay không hỏi quyền mỗi lần mở phiên.
 - Ghi chép bốn khoá học + một buổi chia sẻ: B, C, E báo xong (A chưa kiểm lại).
 
-**Đang làm:**
-- **A:** trò chuyện với anh về cách làm việc với coding agent (mỗi lần một chủ đề); gộp ba bản đề xuất của B, C, E thành một.
-- **B:** trang bản đồ này; kế hoạch deploy bản 3 đã viết xong, **chờ** tới khi giai đoạn trợ lý đóng mới bàn.
-- **C:** soát xem các test có thật sự bắt được lỗi không (39 test đã xem, 1 test thay hẳn phần lõi bằng đồ giả — bốn hành vi nó giữ đã được chạy thật); viết trang hiện trạng ngắn cho agent.
-- **E:** viết bản gộp "cách làm việc với coding agent" dùng cho mọi công cụ.
-- **Chờ anh:** gói "giám khảo khác hãng" đầu tiên — một file nhóm đã soạn để anh tự gửi cho Codex / Antigravity đọc và đánh giá độc lập.
+**Chiều 18/11 đã xong** (cả buổi chiều **không đổi dòng code nào** của trợ lý — chỉ tài liệu và cách làm việc):
+- Có file **"Việc mới xong"** trong thư mục bài học: mỗi việc vừa xong viết đúng bốn ý cho anh (anh thấy gì khác · bằng chứng · chưa làm · cách thử trong 2 phút). Hiện có 5 mục của ngày 18/11.
+- **10 skill** (bản hướng dẫn cho agent theo từng loại việc): sửa 8 cái cũ, viết 2 cái mới. Nói thẳng: nhóm đã chấm 6 trong 10 bằng cách cho agent làm cùng một đề có và không có skill —
+  chỉ **1 skill** (soát chỗ các tính năng gặp nhau) cho thấy giúp rõ: 3 / 12 điểm khi không có ↔ 10 / 12 khi có, mới chạy một lượt; 5 cái còn lại không thấy giúp rõ (riêng skill review, điểm trung bình khi CÓ skill còn thấp hơn: 5,7 ↔ 7,3 trên 10, ba lượt mỗi bên); 4 cái chưa chấm.
+- **Mở phiên nhẹ hơn**: lúc mở, mỗi phiên chỉ đọc luật cứng + trang hiện trạng + sổ riêng của mình; luật dài đọc đúng mục khi nhận việc. Lý do: lần mở 13:20 mỗi phiên đọc 880–1.400 dòng
+  mà chỉ dùng khoảng 185 dòng. **Chưa thử lần nào** — ba lần mở kế là phép thử, đếm số lần vấp luật vì chưa đọc.
+- **Vòng tự cải thiện cách làm cuối ngày chạy lần đầu.** Hai con số của tuần: **5** việc đã báo "xong" rồi bị lật lại (đếm việc đã gộp hoặc đã báo anh) và **6** lần anh phải nhắc lại
+  một điều đã nói — chưa có mốc tuần trước để so, tuần sau mới biết tăng hay giảm. Kết quả vòng: gỡ 5 đoạn luật cũ, không thêm luật chữ nào; một lỗi lặp lần hai (để sót file tạm
+  qua phiên) được đổi thành bước dán đầu ra của lệnh.
+- **Phiếu chấm sẵn cho buổi anh test** (ba ô có / không cho mỗi câu, kèm danh sách những điều đã biết để anh không chấm oan) và thang chấm cho buổi anh lái công cụ hãng khác. Cả hai chưa được dùng thử lần nào.
+- Đã thử bản sao lưu: toàn bộ 496 file của kho bài viết ở bản sao trùng từng byte với bản gốc (so mã băm). Bản sao nằm trên ổ khác của **cùng máy**.
+
+**Chưa làm** (nói thẳng để anh không tưởng đã xong):
+- **Bộ test đầy đủ chưa chạy** trên bản code hiện tại — lần chạy đủ gần nhất là 17/11 (1.345 test đạt, 0 hỏng), sau đó sáng 18/11 có 10 commit sửa code, mỗi cái chỉ được chạy test của các file bị chạm. Đây là bước 1.
+- **Năm mục "cách thử"** trong file "Việc mới xong" chưa ai chạy lại trên hệ thống thật theo đúng lời hướng dẫn viết cho anh. Đây là bước 2.
+- **Bản dựng giao diện phải dựng lại**: bản đang nằm trên máy dựng từ trưa 17/11, cũ hơn mã nguồn giao diện (sửa trưa 18/11) ⇒ mở trang bây giờ chưa thấy dòng an toàn in đậm của câu hỏi về bão.
+- Kế hoạch cho việc "hệ thống tự dò cấu hình" (bước 5) chưa viết; kế hoạch deploy bản 3 đã viết xong nhưng chưa ai duyệt, để tới bước 5–6.
+
+**Ai giữ việc gì:** A điều phối, gom danh sách cho buổi anh test · B chạy bộ test và lượt đo cuối, giữ trang này · C giữ trang hiện trạng và danh sách giới hạn đã biết, lo bước 2 · E giữ trang cách làm việc và 10 skill.
 
 ## Chỗ còn yếu đã biết
 
