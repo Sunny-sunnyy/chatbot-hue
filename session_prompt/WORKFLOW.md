@@ -35,8 +35,8 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
    (B/C). Agent khác (Codex, AGY): ghi "qua User" (§7).
 4. Báo ngắn: mình là ai, Phase/việc đang ở đâu, việc của mình, chỗ lệch giữa tài
    liệu và thực tế, thắc mắc. A báo User; B/C báo User trong terminal **và** báo A theo kênh ở §7.
-5. Chỉ bắt đầu làm khi: A — User nói "làm đi" hoặc giao việc; **User cấp quyền phiên "A tự điều phối" ⇒ A giao ngay
-   cho B/C/E mọi việc đã có trong handoff, cùng lượt đó** (chỉ việc mới ngoài handoff mới chờ User); B/C — A giao việc
+5. Chỉ bắt đầu làm khi: A — User nói "làm đi" hoặc giao việc; **theo bảng "Quyền thường trực" (`AGENTS.md`) A giao ngay
+   cho B/C/E mọi việc đã có trong handoff, không hỏi quyền phiên** (chỉ việc thuộc hàng "hỏi User trước" mới chờ User); B/C — A giao việc
    (mục việc trong `CURRENT_HANDOFF.md` + tin nhắn của A = "làm đi").
 
 ## 3. Nhận và làm việc
@@ -221,9 +221,9 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
 7. **A tự thử kỹ thuật** (sửa prompt, đo nhanh) trong `git worktree` riêng (`/tmp/hr_a_…`), không trong
    working tree chung đang có B/C làm; việc A tự làm vẫn để B/C kiểm.
 7b. **Vòng tự soi mỗi phiên** (`Session_Prompt.md` §7): A mở vòng 1 khi mỗi session đã có kết quả đầu tiên, vòng 2 ngắn trước kết phiên; ghi chốt vào `CURRENT_HANDOFF.md`. Phiên không có vòng ⇒ ghi lý do ở `STATUS_A.md`.
-8. **Quyền theo phiên:** quyền đặc biệt User cấp trong phiên (tự điều phối rộng, trần tiền, xóa dữ liệu)
-   ghi vào `CURRENT_HANDOFF.md` kèm ngày và **hết hạn cuối phiên**; phiên sau A hỏi lại trong báo cáo
-   mở phiên. Quyền thường trực (A commit/push; duyệt cho A = duyệt cho B/C) giữ nguyên.
+8. **Quyền thường trực** (User duyệt 10:11 18/11/2026; thay "quyền theo phiên"): bảng trong `AGENTS.md` — không hết hạn theo phiên, áp cho mọi agent;
+   A không hỏi quyền lúc mở phiên. Quyền RIÊNG cho một việc thuộc hàng "hỏi User trước" (xoá dữ liệu, việc > 1 USD, sửa kho…) User cấp lúc được hỏi,
+   A ghi `CURRENT_HANDOFF.md` kèm giờ, chỉ dùng cho đúng việc đó. Duyệt cho A = duyệt cho B/C/E.
 9. **Đọc tài liệu dài bằng sub-agent** (khóa học, báo cáo dài, nhiều file): đọc bản tóm 1 trang trước để nắm
    khung; mỗi sub-agent ≤ 3 file, chạy song song; brief gồm đường dẫn nguồn, **file dự án để đối chiếu** (để
    không đề xuất lại cái đã có), khuôn trả về cố định, nhãn thống nhất, tách "nguồn nói" ↔ "suy ra", yêu cầu

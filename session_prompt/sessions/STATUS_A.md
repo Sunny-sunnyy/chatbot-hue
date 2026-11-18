@@ -1,3 +1,11 @@
+# STATUS A — PHIÊN SÁNG 18/11 (thứ Tư; mở; cập nhật 08:33 18/11/2026 `date`)
+
+- Terminal: A `hue-rag-55` · B `hue-rag-98` · C `hue-rag-8c` · E `hue-rag-95` (Claude Code, trực tiếp; cả ba đã tự báo).
+- Kiểm nhanh: `main` `5cfc308` = origin; chỉ `.wslconfig`, `lauran_tan/` untracked; hooksPath `.githooks`; Qdrant tắt; 0 server, 0 worktree; RAM khả dụng 12 GB; 9 phiên của hai dự án khác đang mở.
+- Quyền: "như tối 17/11 + xin lượt máy" (A ghi 08:33 18/11/2026); User: làm xong toàn bộ việc tối qua + hỏi hết các chủ đề.
+- Giao: xem `CURRENT_HANDOFF.md` "PHIÊN SÁNG 18/11". Agent con của A: soạn trang bản đồ; review tích hợp Phase 9 (chỉ đọc).
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`, `bai_hoc/` (trang bản đồ + README), `data/khoa_hoc_2026-11-17/TONG_HOP.md` + `CAU_HOI_CAN_BAN_VOI_USER.md` (private).
+
 # STATUS A — CUỐI PHIÊN TỐI 17/11 (viết 22:10 17/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` khối đầu "PHIÊN SAU ĐỌC TRƯỚC (… cuối PHIÊN TỐI 17/11)" — mục A (8 điểm cách làm việc User duyệt), mục B (việc theo thứ tự: trang bản đồ `bai_hoc/` ⇒ trò chuyện tiếp với User ⇒ giao việc N1–N9 ⇒ `TONG_HOP.md`).

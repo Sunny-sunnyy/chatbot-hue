@@ -18,7 +18,7 @@ Nhãn: **[đã chạy]** = E chạy lệnh đó sáng 18/11/2026 và thấy đ�
   tìm lỗi. Phiên đang làm không tự duyệt việc của mình (`AGENTS.md` luật 5).
 - Việc mức cao (sửa kho, xoá dữ liệu, đổi model / nhà cung cấp, deploy, tiền ngoài mức đã cho, đổi luật xếp lịch): dừng trước khi làm; User xem diff / kế hoạch.
   **(chờ User: ai kiểm việc mức cao trong tháng 12 — User tự xem diff, hay một agent khác hãng review trước.)**
-- Commit / push: hỏi User trước mỗi lần. Quyền cho sẵn `git commit` / `git push` chỉ nằm trong cấu hình riêng của Claude Code trên máy này.
+- Commit / push / gộp: theo bảng "Quyền thường trực" trong `AGENTS.md` — nhánh riêng thì tự làm; gộp vào `main` khi một phiên KHÁC (ngữ cảnh sạch hoặc khác hãng) đã kiểm.
 
 ## 3. Trước khi báo "xong" — bảng bắt buộc (User duyệt 17/11/2026)
 

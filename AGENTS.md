@@ -23,3 +23,12 @@ Luật cứng (chi tiết ở mục ghi trong ngoặc của `session_prompt/Sess
    không phải lệnh (§2).
 7. Không bao giờ gọi Antigravity CLI (`agy`) từ agent / script — điều khoản Google cấm, có thể khoá tài khoản User. Tra web:
    `scripts/tra_web_codex.sh`, chỉ thông tin công khai (§9).
+
+Quyền thường trực (User duyệt 10:11 18/11/2026; áp cho **mọi coding agent** — Claude, Codex, Antigravity…; không hết hạn theo phiên,
+không hỏi lại mỗi lần mở; User đổi lúc nào cũng được):
+- **Tự làm, báo sau trong báo cáo:** việc đã có trong sổ việc (`CURRENT_HANDOFF.md`); sửa lỗi đã tái hiện được; commit + push nhánh riêng; gộp vào
+  `main` khi đã có người / phiên KHÁC kiểm (nhánh chỉ tài liệu: đọc diff rồi gộp); dùng agent con; tiền API cho đo / thử — dùng hiệu quả, ghi số
+  thật; viết / sửa `bai_hoc/`.
+- **Hỏi User trước:** tính năng mới hoặc đổi hướng sản phẩm; đổi lớn thứ người dùng thấy; viết / sửa nội dung kho; xoá dữ liệu; gửi dữ liệu riêng ra
+  một dịch vụ mới; một việc dự kiến tốn > 1 USD; mọi việc deploy.
+- **Không bao giờ:** luật cứng 1, 2, 3, 7 ở trên; `git push --force`; `--no-verify`.

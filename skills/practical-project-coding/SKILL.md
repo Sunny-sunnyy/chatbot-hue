@@ -171,7 +171,7 @@ thể do skill chuyên biệt quyết định.
   hợp lệ để kiểm tra output, invariant hoặc error contract.
 - Input nhỏ như vậy không phải evidence cho database, provider, model, network
   hoặc production integration.
-- Không dùng mock, fake hoặc stub dependency trong implementation hay test.
+- Không dùng mock, fake hoặc stub dependency trong implementation. Trong test, đồ giả chỉ để DỰNG ĐIỀU KIỆN (biến môi trường, "hôm nay", ép lỗi mạng, phản hồi dựng sẵn của model); test thay hẳn phần lõi không phải bằng chứng cho hệ thống thật — hành vi người dùng thấy / chạm tiền / an toàn mà chỉ có test như vậy thì phải có một lượt thật, hoặc report ghi "chưa đo trên đường thật".
 - Không dùng replay, response cũ hoặc artifact cũ làm fresh PASS evidence.
 - Khi behavior phụ thuộc integration, phải chạy dependency và production path
   thật trong exact target an toàn được phép.

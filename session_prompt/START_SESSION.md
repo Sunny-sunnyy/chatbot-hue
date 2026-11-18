@@ -29,8 +29,8 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
    hai là Claude Code, nếu không thì viết khối "Tin cho A" để User chuyển
    (WORKFLOW.md §7).
    Mọi session (cả A): trong phiên tham gia **vòng tự soi bắt buộc** (Session_Prompt.md §7 — bỏ test không bảo vệ sàn; bàn với cả nhóm xem có over-engineer không).
-   Rồi chờ: A hỏi User quyền phiên — User cấp "A tự điều phối" ⇒ **cùng lượt đó** A giao B/C/E mọi việc đã có trong
-   handoff (không chờ "làm đi"; việc mới ngoài handoff mới chờ User); B/C/E chờ A giao việc (việc A giao = User nói "làm đi"); D chờ User nói muốn hiểu việc gì. Trước đó không sửa file (trừ tạo
+   Rồi: A KHÔNG hỏi quyền phiên — theo bảng "Quyền thường trực" trong `AGENTS.md`, báo xong là A giao ngay B/C/E mọi việc đã có trong
+   handoff; chỉ việc thuộc hàng "hỏi User trước" mới chờ User; B/C/E chờ A giao việc (việc A giao = User nói "làm đi"); D chờ User nói muốn hiểu việc gì. Trước đó không sửa file (trừ tạo
    `sessions/STATUS_<X>.md` của mình), không chạy việc nặng, không gọi API trả phí.
 ```
 
@@ -43,7 +43,7 @@ Ghi chú:
   session báo lệch.
 - Việc mới trong ngày: A ghi vào `CURRENT_HANDOFF.md` rồi nhắn session đó.
 - Đọc mục "Phiên sau đọc trước" ở đầu `CURRENT_HANDOFF.md` trước các mục khác.
-- Quyền đặc biệt của phiên trước (tự điều phối rộng, trần tiền) hết hạn khi kết phiên; A hỏi lại
-  User trong báo cáo mở phiên (`WORKFLOW.md` §9.8).
+- Quyền: bảng "Quyền thường trực" trong `AGENTS.md` (User duyệt 10:11 18/11/2026) — không hết hạn theo phiên, A không hỏi lại mỗi lần mở;
+  User đổi lúc nào cũng được (`WORKFLOW.md` §9.8).
 - Báo cáo cho User nằm ở `bao_cao_he_thong/` (mục lục `README.md`); report agent ở
   `report_agent/<YYYY-MM-DD>_<chủ_đề>/` (`WORKFLOW.md` §6).
