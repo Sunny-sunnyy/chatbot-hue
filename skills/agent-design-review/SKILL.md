@@ -5,11 +5,9 @@ description: Dùng khi thiết kế, sửa hoặc rà một agent / trợ lý LL
 
 # Rà thiết kế agent — hue_rag (dùng từ Phase 9)
 
-Theo khung_fde v1.2 (khung làm dự án theo khoá AI FDE — bản cá nhân của User, private, ngoài repo), đã chỉnh cho hue_rag: điền
-đường dẫn; bỏ mọi ví dụ / sự cố của dự án khác (`Session_Prompt.md` §5). W41, User 31/10: chép sẵn cho Phase 9 (agentic RAG / gợi ý).
-hue_rag hiện là RAG hỏi đáp, **chưa có agent / công cụ**: chỉ dùng khi thiết kế hoặc rà một agent / trợ lý có công cụ.
+hue_rag từ Phase 9 là trợ lý **có công cụ** (thời tiết, khoảng cách, tìm thêm, tra web… — cờ nào đang bật: `session_prompt/HIEN_TRANG.md` mục 1): dùng skill này mỗi khi thêm / sửa một công cụ, một bước của vòng lặp, hoặc rà lại thiết kế.
 
-Nguồn: khung_fde, nguyên tắc mục 2 (mã bài `W1D2·17` = tuần 1, ngày 2, bài 17 — summary khoá ver4 của User, private). Luật dự án (`session_prompt/Session_Prompt.md`, `AGENTS.md`) thắng skill này khi khác nhau.
+Nguồn: khoá AI FDE (mã bài `W1D2·17` = tuần 1, ngày 2, bài 17 — ghi chép riêng của User, ngoài repo). Luật dự án (`AGENTS.md`, `session_prompt/Session_Prompt.md`) thắng skill này khi khác nhau.
 
 ## 1. Có cần agent không
 - Vấn đề đo được + mốc không agent (luật, script, một lời gọi, quy trình cố định) — skill `propose-options` mục 4b.
@@ -29,16 +27,18 @@ Nguồn: khung_fde, nguyên tắc mục 2 (mã bài `W1D2·17` = tuần 1, ngày
 - "Không thấy" ≠ "không tồn tại"; lỗi hạ tầng ≠ kết quả rỗng; kết quả tra cứu kèm nguồn (W3D3·106).
 - Công cụ tự viết ⇒ `@tool`; MCP chỉ cho công cụ người khác viết; vài file hướng dẫn ⇒ skill (W2D2·58).
 - Không đưa hành động duyệt (ký vượt hạn mức, hoàn tiền) vào danh sách công cụ của mô hình (W1D3·25, W3D2·96).
+- Thêm công cụ / cơ chế ⇒ liệt kê những cơ chế đang có **có thể cùng kích hoạt trong một lượt** với nó và xét từng cặp (skill `soat-tich-hop`).
 
 ## 4. Vòng lặp và phục hồi
-- Trần lượt gọi mô hình + thời hạn mỗi lời gọi; hết trần ⇒ đường có thật (chuyển người / để lại cho người), không chỉ câu chữ (W1D5·41, 43).
+- Trần lượt gọi mô hình + thời hạn mỗi lời gọi; hết trần ⇒ đường có thật (chuyển người / để lại cho người), không chỉ câu chữ (W1D5·41, 43). Lượt **chạm trần** phải tách được trong số đo (không tính chung với "từ chối đúng") và vẫn đi qua lớp an toàn như lượt thường.
+- **Quan sát:** công cụ / bước mới ghi vết cho mỗi lần gọi: vào gì · ra gì · tiền · thời gian · kết thúc kiểu gì (bình thường / chạm trần / lỗi) — không có vết thì không tái hiện được lỗi.
 - Tách rõ: xong / để lại cho người / hỏng. Bước có tác dụng thật (ghi đơn, trả tiền) chống chạy lặp — kiểm bản ghi gốc, khoá chống trùng (W2D3·64–65, 68).
 
 ## 5. Agent con, trí nhớ, lời dặn
 - Một agent trước; agent con chỉ với 1 trong 5 lý do (cô lập ngữ cảnh, kiểm độc lập, rẻ hơn, nhanh hơn, khoanh quyền) + đo thấy hơn (W2D1·46–47).
 - Trí nhớ: một loại trước, thêm khi đo thấy lợi; tắt khi đánh giá; namespace do code; không lưu chữ tự do của người dùng (W2D2·61, W3D3·104–106).
 - Lời dặn: mục tiêu · có gì để dựa · xong trông thế nào; input gọn; viết lại cả lời dặn thì đo lại (W1D4·33–34, W1D5·42).
-- Việc mới cho trợ lý ⇒ một lần gọi hẹp riêng, hoặc công cụ có luật nằm **trong kết quả công cụ** — không gộp thêm vào lời dặn vai chính (hue_rag: 4 lần gộp ⇒ 4 lần tụt sàn).
+- Việc mới cho trợ lý ⇒ một lần gọi hẹp riêng, hoặc công cụ có luật nằm **trong kết quả công cụ** — không gộp thêm vào lời dặn vai chính.
 - Luật kiểm được bằng máy (số, thứ tự, trường bắt buộc) ⇒ code; sửa một câu dặn = một bậc đo, có bộ an toàn + câu ngoài phạm vi.
 - Trước khi ước lợi / tiền của một mô tả công cụ ⇒ đọc **điều kiện đưa công cụ** cho model (có thể chỉ đưa khi câu có từ khoá, không phải mọi lượt).
 

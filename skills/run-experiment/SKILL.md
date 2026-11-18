@@ -5,7 +5,7 @@ description: Dùng trước khi thử bất kỳ thay đổi nào ở discovery 
 
 # Thí nghiệm có kỷ luật — hue_rag (A, B, C)
 
-User (2026-10-24): **luôn thử, đánh giá, so với baseline rồi mới chọn**, kể cả khi quay lại Phase trước. User (2026-10-26):
+Hai quyết định nền của chủ dự án: **luôn thử, đánh giá, so với baseline rồi mới chọn**, kể cả khi quay lại Phase trước;
 **chất lượng cần thiết trước, tối ưu hiệu suất sau** (`Session_Prompt.md` §7) — biến thể nâng chất lượng chạy / chọn trước biến thể
 chỉ làm rẻ / nhanh hơn; biến thể tối ưu luôn có mức tụt chất lượng ghi trước. Luật
 gốc thắng skill này: `session_prompt/Session_Prompt.md` §5 (dữ liệu, câu kín), §6, §8; `WORKFLOW.md` §3.5, §5.
@@ -13,10 +13,9 @@ Code theo `practical-project-coding` ("Ranh giới theo khâu pipeline": gọi c
 
 ## 1. Trước khi đo — ghi vào report của đợt (giờ lấy bằng `date`)
 
-Kế hoạch có mục **"Căn cứ để review"** và được một session khác review trước khi A duyệt sha (`WORKFLOW.md` §9 mục 1).
+Kế hoạch có mục **"Căn cứ để review"** và được một phiên khác review trước khi duyệt (`WORKFLOW.md` §9 mục 1; làm một mình: phiên mới ngữ cảnh sạch).
 
-
-0. **So hai bên / chọn nhà cung cấp** (W67, User duyệt 13/11): tiêu chí kiểu "mới so với mốc" / "0 câu đổi" ghi trước mốc A/A và kiểm hai bên **cùng mẫu số**; chọn nhà cung cấp / tham số ⇒ lượt đầu đo trên **đường người dùng thật** (qua server), không chỉ một bước tách riêng; ước tiền lượt qua server = số câu × USD / câu thật của lượt gần nhất.
+0. **So hai bên / chọn nhà cung cấp:** tiêu chí kiểu "mới so với mốc" / "0 câu đổi" ghi trước mốc A/A và kiểm hai bên **cùng mẫu số**; chọn nhà cung cấp / tham số ⇒ lượt đầu đo trên **đường người dùng thật** (qua server), không chỉ một bước tách riêng; ước tiền lượt qua server = số câu × USD / câu thật của lượt gần nhất.
 1. **Lớp bài toán**, không phải một câu: "dòng bảng giá bị tách nên tìm không ra", không phải "câu số 81 sai".
 2. **Một thay đổi mỗi biến thể** (H1, H1b…); ghi giả định của nó và **kiểm giả định bằng máy trước khi code**
    (ví dụ đếm xem đúng là có bao nhiêu bảng bị tách vì tokenizer cũ).
@@ -27,17 +26,12 @@ Kế hoạch có mục **"Căn cứ để review"** và được một session k
      latency p95, USD/câu tính đầu–cuối gồm cả rerank + sinh);
    - **1–2 chỉ số quyết** (phải tốt lên vượt nhiễu) tách khỏi **chỉ số theo dõi** (chỉ báo, không quyết).
    Mỗi chỉ số định nghĩa chính xác: hàm nào tính, đếm gì, không đếm gì, trên tập nào, n bao nhiêu. Sàn / mức tụt đo
-   một hành vi production thì trỏ `file:dòng` hành vi đó (ví dụ API 500: `backend/api/routes/chat.py:182-190` (30/10) bắt **mọi**
-   `CitationIntegrityError`), và kiểm hai dòng tiêu chí không đếm cùng một lỗi (27/10: mức tụt citation chồng sàn 500
-   qua 3 plan). Không đổi tiêu chí sau khi thấy số.
+   một hành vi production thì trỏ `file:dòng` hành vi đó, và kiểm hai dòng tiêu chí không đếm cùng một lỗi. Không đổi tiêu chí sau khi thấy số.
 4. **Hợp đồng kiểm:** ai review chéo; người làm nộp bằng chứng gì; người kiểm tự chạy lại phần nào.
-5. **Trần:** tiền API ghi trong việc (ước USD trước, User nhạy chi phí), thời gian, một việc nặng GPU một lúc
-   (GTX 1650 4 GB: một model rerank/embedding một lúc).
+5. **Trần:** tiền API ghi trong việc (ước USD trước, ghi số thật sau), thời gian, một việc nặng một lúc trên máy dùng chung.
 6. **Cỡ mẫu trước khi chạy:** đếm số câu thật sự có thể đổi kết quả (ví dụ câu có đoạn đúng ngoài top-5) và
    số câu phải thắng để CI 95% > 0 (kể cả Holm khi nhiều biến thể). Không đủ câu ⇒ ghi trước "kết quả có thể
-   chỉ là chưa rõ", mở rộng bộ hoặc đổi câu hỏi thí nghiệm, đừng chạy rồi mới thấy (2026-10-25: G4 chỉ có
-   khoảng 6–8 câu có thể đổi). Đếm **trên đúng mốc của thí nghiệm**, không dùng số của mốc / tầng khác (26/10: R3
-   9 → 6 câu trên mốc B1).
+   chỉ là chưa rõ", mở rộng bộ hoặc đổi câu hỏi thí nghiệm, đừng chạy rồi mới thấy. Đếm **trên đúng mốc của thí nghiệm**, không dùng số của mốc / tầng khác.
 
 ```yaml
 experiment_id: <gate>_<tên ngắn>
@@ -58,12 +52,12 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 
 - **Chọn trên nhóm thử `dev` (120), xác nhận trên nhóm kiểm `test` (56)**, file chia
   `knowledge-base-hue/evaluation/phase_8_1/split.json`. Câu kín: `Session_Prompt.md` §5.
-- Nhóm đã dùng để quyết thì từ đó chỉ là bộ hồi quy. Ghi rõ trong report bộ nào **đã thấy**, bộ nào **kín**.
+- Nhóm đã dùng để quyết thì từ đó chỉ là bộ hồi quy. Ghi rõ trong report bộ nào **đã thấy**, bộ nào **kín**, và **số lần mỗi bộ đã được dùng để chọn**
+  (bộ dùng nhiều lần thì mòn — số trên bộ đó đẹp hơn thật).
 - Có **đoạn đúng** (vị trí trong file nguồn) thì đo theo đoạn đúng; keyword chỉ là metric phụ, vì đoạn to tự
   làm keyword coverage tăng. So các cách chia đoạn với **cùng ngân sách token context**.
 - Nhãn đoạn đúng có thể chỉ đánh dấu **một chỗ** cho mỗi thông tin (kho nói lại ở chỗ khác) ⇒ `*_gold_frac` = 0 không có
-  nghĩa context không có thông tin. Đưa **câu cụ thể** lên sàn ⇒ đọc trước các đoạn có thông tin của câu đó, trong context và trong kho (27/10: sàn câu 120
-  dừng oan một lượt).
+  nghĩa context không có thông tin. Đưa **câu cụ thể** lên sàn ⇒ đọc trước các đoạn có thông tin của câu đó, trong context và trong kho.
 - Thử nhanh/pilot: ≤ 20 câu chọn bằng máy, seed ghi trước; chạy đủ nhóm khi đáng. Số pilot không gộp vào số
   của cả bộ.
 - **Kiểm người chấm** trước khi chấm hàng loạt bằng judge / rubric / model id mới (kể cả khi Claude Code tự
@@ -72,7 +66,10 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 - Câu có **số** (giá, giờ, năm, khoảng cách) chấm bằng code khi được: giá trị + đơn vị + dung sai ghi trước;
   Claude chỉ chấm phần lời. Judge hiện tại không chấm citation và không trừ chi tiết thêm
   (`backend/evaluation/full_corpus_judge_prompt.md`) ⇒ độ bám nguồn phải đo bằng code riêng.
-- Bảng số trong report do script in ra, không gõ lại tay; n = 0 cho một lớp câu ⇒ `NOT RUN`, không ghi "đạt".
+- Bảng số trong report do script in ra, không gõ lại tay; n = 0 cho một lớp câu ⇒ `NOT RUN`, không ghi "đạt". Bảng kết quả từng câu có cột
+  **"kết thúc kiểu gì"** (bình thường / chạm trần / lỗi): lượt chạm trần hay lỗi giữa chừng **không** được tính vào "từ chối đúng" hay "đúng".
+- **Sản phẩm có agent / công cụ:** ngoài câu trả lời cuối, đo thêm: đoạn đúng có nằm trong kết quả của **mọi** lần tìm trong lượt không · số lần gọi công cụ
+  mỗi lượt · tiền mỗi lượt.
 
 ## 3. Đo
 
@@ -80,8 +77,9 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
    từng byte mốc đã lưu. Khác thì dừng: chạy lại baseline 2 lần bằng HEAD. Nếu hai lượt giống nhau mà vẫn
    khác mốc cũ thì tìm nguyên nhân (skill debugging). Nếu chính nó dao động giữa các lượt thì ghi mức dao
    động, và chỉ dùng lượt mới làm mốc sau khi A duyệt. Không so biến thể với một mốc không tái lập được.
+   Đặt cạnh mốc đang chạy một **mốc ngây thơ** (cách làm ngu nhất: "từ chối hết", "luôn trả đoạn đầu"…) — chỉ số nào mốc ngây thơ cũng đạt thì không đo được gì.
    **Khâu có LLM** (sinh, judge, rerank `gpt-6-luna`): **nhiễu** = chênh theo từng câu giữa hai lượt baseline
-   không đổi gì — dùng lại A/A sẵn có khi đầu vào không đổi (7B Run 1↔2: 16/176 câu đổi điểm, lỗi citation 4→6),
+   không đổi gì — dùng lại A/A sẵn có khi đầu vào không đổi,
    chưa có thì chạy 2 lượt (ước USD trước); ghi **trước** khi đo biến thể. Khâu tất định không cần A/A.
 2. **Đổi một thứ**, đo lại đúng đầu vào đó. Mỗi biến thể index có collection `hue_81_*` (hoặc tiền tố của
    đợt) **và build record + sparse state riêng**; không bao giờ ghi vào collection runtime.
@@ -96,11 +94,11 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
    chấm lại baseline.
 7. Lỗi provider, mạng hay GPU là kết quả quan sát được. Ghi lại, không che bằng fallback.
 8. Harness ghi kết quả **từ chối ghi đè** file đã có (`raise SystemExit('exists')`) — đặt nhầm tên lượt không được đè
-   mốc cũ (26/10: hai harness thiếu chặn). Harness **ghi từng dòng ngay** (append) và luôn ghi meta kể cả khi lỗi; mỗi lần
+   mốc cũ. Harness **ghi từng dòng ngay** (append) và luôn ghi meta kể cả khi lỗi; mỗi lần
    gọi trả phí bắt mọi lỗi của lần đó thành dòng lỗi kèm usage — SDK có thể ném lỗi khi parse (ví dụ `responses.parse`) ⇒ gọi bản
    không parse (`responses.create`), ghi usage trước rồi tự parse; không lấy được thì ghi `usage: null`. Bắt lỗi xong thì theo điều kiện dừng của
    plan, không retry / fallback. Tiền phải ước thì dùng token thật của **đúng** các câu bị ảnh
-   hưởng, ghi cả cận trên (27/10: một exception làm mất usage cả lượt; ước theo pilot bị thấp).
+   hưởng, ghi cả cận trên.
 
 ## 4. Kết luận
 
@@ -111,13 +109,12 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
   một lượt không tính. Đây là ngưỡng thực dụng, không viết "đã chứng minh". Chỉ số theo dõi tụt mạnh ⇒ báo
   dù luật nói giữ.
 - **Báo kết quả bộ an toàn (hue_rag: 32 câu) luôn đủ 4 số**, kể cả số đạt: đảo cảnh báo · sai điều kiện (mới / hết) · thiếu cảnh báo (mới / hết)
-  · câu ngoài kho bị trả lời — người quyết phải thấy đủ trước khi chọn (03/11: báo B2b thiếu số "thiếu cảnh báo", User quyết giữ khi chưa thấy;
-  C bắt ở review plan sau — S84, W51).
+  · câu ngoài kho bị trả lời — người quyết phải thấy đủ trước khi chọn.
 - **Sinh lại câu an toàn để so "thiếu cảnh báo"** (hue_rag: thủ tục S-AT — mỗi câu 3 lần bản mới + 3 lần bản mốc, judge mù): chênh 0 hoặc bản mới ít hơn ⇒ đạt;
   chênh **đúng 1** ⇒ sinh thêm 3 + 3 lần, âm khi tổng chênh ≥ 2 / 6; chênh ≥ 2 ngay từ đầu ⇒ âm. Lý do: chênh ±1 trên 3 lần là nhiễu hai chiều (luật cũ "nhiều hơn 1 lần ⇒ âm"
-  báo nhầm ~7 / 10 lượt); độ nhạy với lỗi thật giữ gần như cũ (User duyệt 05/11 tối, phân tích `data/phase_9/s_at_nhieu/c200_phan_tich.md`). Áp từ lượt đo sau; kết quả cũ không chấm lại.
+  báo nhầm ~7 / 10 lượt); độ nhạy với lỗi thật giữ gần như cũ (phân tích `data/phase_9/s_at_nhieu/c200_phan_tich.md`).
 - **Câu an toàn / khẩn cấp / ca rủi ro mới viết** (bất kỳ bậc nào) ⇒ thêm ngay vào bộ hồi quy của khâu nó kiểm (hue_rag: bộ tuyến, bộ an toàn 32 + phần thêm) ở
-  lượt đo kế tiếp; ghi trong mục việc (03/11 tối: câu khẩn cấp mới viết không nằm trong bộ đo ⇒ lỗ định tuyến lọt tới B1 — S88, W54).
+  lượt đo kế tiếp; ghi trong mục việc.
 - "Tốt hơn" chỉ đề xuất vào chatbot khi **đã xác nhận trên nhóm kiểm**; đưa vào runtime là việc riêng, User duyệt.
 - **3 vòng sửa cùng một biến thể không đạt ⇒ dừng**, ghi giới hạn, báo A/User; không vá cơ chế bảo vệ cơ chế.
   Hết trần tiền / thời gian ⇒ dừng, báo A.
@@ -127,6 +124,6 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 - Phương án không dùng vẫn ghi đủ số đo, điều kiện, chi phí, latency; mục chưa đo ghi `NOT RUN` + lý do.
   Ghi vào report của đợt (`report_agent/<đợt>/`) và `BAO_CAO_<KHÂU>.md` (checklist thang 5 mức: "Đã thử,
   chưa áp dụng"), để không đề xuất lại mà không có lý do mới. Cập nhật `BAO_CAO_<KHÂU>.md` + bảng `bao_cao_he_thong/README.md`
-  **ngay trong đợt**, kể cả khi không áp dụng; chỗ cũ không còn đúng thì xoá (`WORKFLOW.md` §6, User 31/10).
+  **ngay trong đợt**, kể cả khi không áp dụng; chỗ cũ không còn đúng thì xoá (`WORKFLOW.md` §6).
 - Kết mỗi thí nghiệm bằng **3–5 dòng lời thường cho User**: thử gì, vì sao, kết quả (số kèm ý nghĩa), quyết
   định, giới hạn. Report tracked theo `Session_Prompt.md` §5 (repo public).
