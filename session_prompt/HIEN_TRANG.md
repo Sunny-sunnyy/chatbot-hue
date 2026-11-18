@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 14:52 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
+Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 15:10 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án, cho BẤT KỲ coding agent nào (Claude Code, Codex, Antigravity) vừa mở phiên. Nó được **viết lại tại chỗ**
 mỗi lần kết phiên — không nối thêm. Thứ tự mở phiên (bạn là phiên nào, báo gì, chờ gì) ở `session_prompt/START_SESSION.md`; trang này là phần "dự án đang
@@ -44,11 +44,10 @@ Mốc (User chốt theo THỨ, 18/11/2026):
 Đã vào `main` 18/11: xem `git log --merges --oneline -25`.
 
 Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc (mục 7):
-- **A:** trò chuyện với User về cách làm việc; runbook mục 9; gói soát mù thứ Bảy; gộp nhánh.
-- **B:** lượt đo cuối Chủ nhật 22/11; giữ trang bản đồ.
-- **C:** giữ trang này; runbook mục 10; 2 skill mới đã chấm MỘT lượt (chưa có người chấm thứ hai); 4 skill cũ chưa chấm để tối thứ Ba 24/11.
-- **E:** 8 skill sửa + 2 skill mới (`soat-tich-hop`, `giao-viec-agent-con`) ĐÃ vào `main`; hai skill mới đã chấm một lượt.
-  E giữ `guides/CACH_LAM_VIEC.md`.
+- **A:** gói soát mù + buổi tự tay của User thứ Bảy (phiếu chấm: `data/tu_tay_2026-11-21/`); trả lời hai dự án khác về cách làm; gộp nhánh.
+- **B:** test rộng thứ Sáu / sáng thứ Bảy; lượt đo cuối Chủ nhật 22/11; sau đó plan vòng tự tối ưu + thử `ruff` (chỉ `backend/`, `scripts/`); giữ trang bản đồ.
+- **C:** giữ trang này; runbook mục 10; 4 skill cũ chấm tối thứ Ba 24/11; sau 22/11 script kiểm đường dẫn.
+- **E:** giữ `guides/CACH_LAM_VIEC.md`; 10 skill đã vào `main` — KHÔNG sửa chữ skill trước 24/11.
 - **Chưa ai nhận, để sau lượt đo cuối:** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
   quần thể (10.2) · runbook mục 8 (deploy) — chỉ viết khi User mở lại chuyện deploy.
 

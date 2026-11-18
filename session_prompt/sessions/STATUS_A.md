@@ -1,10 +1,8 @@
-# STATUS A — PHIÊN CHIỀU 18/11 (thứ Tư; mở; cập nhật 13:21 18/11/2026 `date`)
+# STATUS A — KẾT PHIÊN NHẸ CHIỀU 18/11 (viết 15:10 18/11/2026 `date`; terminal chiều: A `hue-rag-36` · B `hue-rag-40` · C `hue-rag-70` · E `hue-rag-5c`)
 
-- Terminal: A `hue-rag-36` · B `hue-rag-40` · C `hue-rag-70` · E `hue-rag-5c` (Claude Code, trực tiếp; cả ba đã tự báo).
-- Kiểm nhanh: `main` `c9e8711` = origin; chỉ `.wslconfig`, `lauran_tan/` untracked; hooksPath `.githooks`; Qdrant tắt (khớp handoff); 0 server; worktree còn `/tmp/hr_e_skill` (E, sạch) + `/tmp/hr_b_spec3` (B, nhánh spec deploy giữ); RAM khả dụng 8 GB; 9 phiên của hai dự án khác đang mở.
-- Không hỏi quyền (bảng quyền thường trực). Giao ngay lúc mở: E sửa 8 skill + 2 skill mới (soạn sẵn dòng cho A áp vào file luật) · C review nhánh E khi xong + dời phần cũ `STATUS_C.md` sang archive · B rảnh tới lượt đo cuối.
-- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`; khi E xong: `AGENTS.md`, `START_SESSION.md`, `.claude/skills/` (hai symlink).
-- Tiếp: hỏi User hai câu còn lại (mỗi lần một câu) ⇒ trao đổi tiếp cách làm việc ⇒ vòng tự soi 1 khi mỗi phiên có kết quả đầu ⇒ vòng tự cải thiện cuối ngày (lần đầu).
+- **Việc dở:** không có nhánh nào chờ gộp. Việc kế + câu chờ User: khối đầu `CURRENT_HANDOFF.md`. Hai phiên điều phối dự án khác có thể hỏi thêm về cách làm (gói `data/chia_se_cach_lam_2026-11-18/`).
+- **Thứ đang chạy / file tạm (đầu ra lệnh):** /tmp/hr_b_spec3         95a3733 [p12-deploy-spec-3] · /tmp/hr_a_c_arch.md · /tmp/hr_a_c_new.md — A: 0 worktree, 0 server, 0 agent con. Tiền A 0 USD.
+- **Bẫy phiên này:** báo User số "7,9 % byte" chưa phải bản cuối (đúng ~10 %) · đếm "nhắc lại" thiếu vì chỉ nhìn hội thoại của mình (B, E bổ sung) · đưa User con số "≥ 13 quyết định" đếm sơ rồi phải rút · hỏi User câu "người thật chấm" khi chưa ai chỉ cách chấm · 7 hộp hỏi trong một buổi chiều · viết "≥ 20 câu" vào trang hiện trạng không có căn cứ (C bắt) · rút gọn file mở phiên làm rơi luật máy dùng chung (B bắt trước gộp) · lệnh ghép `A=$(… | grep …) && …` dừng im lặng khi grep không ra dòng nào ⇒ tưởng đã ghi file, thật ra chưa (bắt nhờ đọc dòng CHƯA PUSH).
 
 # STATUS A — KẾT PHIÊN SÁNG 18/11 (viết 13:11 18/11/2026 `date`)
 
