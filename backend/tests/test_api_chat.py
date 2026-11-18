@@ -209,6 +209,49 @@ def test_chat_returns_bracket_citations_when_model_writes_nguon_label():
     assert [source["id"] for source in response.json()["sources"]] == [1]
 
 
+def test_model_chon_loai_bao_lu_roi_loi_thi_loi_bao_cua_route_co_cau_112():
+    """Soát tích hợp đợt 2 (18/11), đi qua ROUTE thật `/api/chat`: câu gõ không khớp lưới bão / lũ, model gọi công cụ `thoi_tiet(loai="bao_lu")` rồi lỗi
+    ⇒ lời báo 502 phải kèm câu bản tin chính thức + 112 (route truyền `trace.thoi_tiet_ctx` cho `loi_bao_luoi_cuoi`). Tìm kho + ngữ cảnh thật (Qdrant chỉ
+    đọc); model và dự báo là đồ thay thế — không mạng, không cần khoá. Đối chứng: cùng câu, model lỗi mà CHƯA gọi công cụ ⇒ lời báo nguyên."""
+    from dataclasses import replace
+
+    from api.routes.chat import GENERATION_FAILURE_MESSAGE
+    from core.schema import GenerationError
+    from llm import thoi_tiet as tt
+
+    cau = "Mai đi biển Thuận An thời tiết có nguy hiểm gì không?"
+    assert not tt.la_luot_bao_lu(cau, ())
+
+    class ModelLoi:
+        assistant_instructions = ""
+        goi_bao_lu = True
+
+        async def route(self, query, call_log):
+            return "tro_ly_hue"
+
+        async def generate_with_tools(self, prompt, tool_fn, call_log, **cong_cu):
+            if self.goi_bao_lu:
+                await cong_cu["thoi_tiet_fn"]("bao_lu", 1, 1)
+            raise GenerationError("x")
+
+    async def du_bao_loi():
+        return tt.DuBao(trang_thai="loi", loi="test")
+
+    app = create_app(load_settings())
+    with TestClient(app) as client:
+        goc = app.state.generator, app.state.generator_ready, app.state.assistant_flags
+        assert goc[2].thoi_tiet and goc[2].bao_lu_cong_cu  # cấu hình đang chạy: hai cờ này bật
+        app.state.generator, app.state.generator_ready = ModelLoi(), True
+        app.state.assistant_flags = replace(goc[2], du_bao=du_bao_loi)
+        co_goi = client.post("/api/chat", json={"query": cau})
+        ModelLoi.goi_bao_lu = False
+        khong_goi = client.post("/api/chat", json={"query": cau})
+        app.state.generator, app.state.generator_ready, app.state.assistant_flags = goc
+    assert co_goi.status_code == khong_goi.status_code == 502
+    assert co_goi.json()["error"]["message"] == f"{GENERATION_FAILURE_MESSAGE}\n\n{tt.CAU_BAO_LU}"
+    assert khong_goi.json()["error"]["message"] == GENERATION_FAILURE_MESSAGE
+
+
 def test_api_catches_the_same_error_classes_that_retrieval_raises():
     """Gói 1b (B-01 / C-01): lệnh production `uvicorn api.app:app` chạy từ backend/ — mỗi module chỉ nạp một lần và lớp lỗi API bắt
     là đúng đối tượng lớp mà module ném ra (trước đây `core.schema` và `backend.core.schema` cùng nạp ⇒ bắt hụt)."""
