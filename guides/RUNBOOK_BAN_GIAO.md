@@ -6,6 +6,7 @@ session đó điền trước 30/11. Luật cứng của dự án vẫn ở `AGE
 
 ## 0. Trước mọi việc
 
+- **Cách làm việc** (áp cho mọi agent: "xong" ghi trước, mức kiểm, báo cáo cho User, test thật): `guides/CACH_LAM_VIEC.md`.
 - Làm **một mình** (không còn nhóm A / B / C / E): đọc `guides/KHI_CHI_CO_MOT_AGENT.md` trước — ai kiểm việc, bảng báo "xong", lệnh không chạy, thứ
   chỉ Claude Code có.
 - Đọc `AGENTS.md` (7 luật cứng: không đọc `.env`, không commit `data/` / `knowledge-base-hue/`, câu kín, `uv run`, bằng chứng thật,
