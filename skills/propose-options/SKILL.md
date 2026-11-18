@@ -3,9 +3,9 @@ name: propose-options
 description: Dùng mỗi khi cần User quyết định hoặc chọn hướng trong hue_rag — đưa phương án A/B/C, đề xuất cách làm, mở Phase mới, đổi kiến trúc/quy trình, chọn model/provider/dữ liệu/chi phí. Cũng dùng khi vấn đề còn mở cần bàn nhiều bước trước khi chốt (brainstorm Phase, thiết kế việc mới) — hỏi mỗi lần một câu có đáp án để chọn. Mỗi phương án bằng lời thường kèm đổi gì, tốn gì, khi nào sai, chọn khác mất gì, và một câu tự kiểm để User biết mình đã hiểu.
 ---
 
-# Đề xuất để User chọn — A, B, C
+# Đề xuất để User chọn
 
-Nguồn: skill cùng tên của một dự án khác của User (User 2026-10-24), chỉnh cho hue_rag.
+Nguồn: skill cùng tên của một dự án khác của User, chỉnh cho hue_rag.
 
 ## Vì sao
 
@@ -71,8 +71,8 @@ Thêm phương án "không làm / giữ như cũ" khi đó là lựa chọn th�
 ## 4b. Đề xuất dựng thứ mới — khám phá 5 dòng trước (khoá AI FDE W2D1·46, W3D1·85–86)
 
 **Việc LỚN bắt đầu bằng năm dòng đề bài do AGENT soạn** (User nói ý bằng lời thường ⇒ agent hỏi lại tối đa ba câu có sẵn đáp án ⇒ năm dòng: vấn đề · ai dùng ·
-"xong khi" · **không làm gì** · **điều tệ nhất chấp nhận được** ⇒ User sửa / tick rồi nói "làm đi" — `guides/CACH_LAM_VIEC.md` mục 1). Sau đó, đề xuất dựng tính
-năng / Phase / agent / công cụ mới ⇒ viết 5 dòng khám phá; thiếu dòng nào thì nói là
+"xong khi" · **không làm gì** · **điều tệ nhất chấp nhận được** ⇒ User sửa / tick rồi nói "làm đi" — `guides/CACH_LAM_VIEC.md` mục 1). Hai bộ năm dòng khác nhau: bộ trên chốt **đề bài** (làm gì, cho ai); bộ dưới — viết SAU khi đề bài đã tick — kiểm **có đáng
+dựng không**. Đề xuất dựng tính năng / Phase / agent / công cụ mới ⇒ viết 5 dòng khám phá; thiếu dòng nào thì nói là
 thiếu và chưa đề xuất dựng: (1) **vấn đề + đo bằng gì** ("để …, đo bằng …"; "cần agent cho X" là giải pháp, chưa phải vấn đề);
 (2) **ba ô**: đo được không · có dữ liệu / cách đánh giá chưa · giá trị là rẻ hơn, nhanh hơn hay làm khác đi; (3) **mốc đơn giản
 nhất** cách mới phải hơn (pipeline đang chạy — `Project_Status.md`); (4) **tiêu chí thành công bằng số**, ghi lúc mở (đổi khâu

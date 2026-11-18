@@ -3,7 +3,7 @@ name: teach-and-quiz
 description: Session giảng (D) — dùng khi User hỏi "X là gì", "giải thích…", "vì sao chọn…", "khi nào nó hỏng", "các session đã làm gì ở…", "hỏi tôi về…", "chuẩn bị trình bày việc đã làm". Giải thích khái niệm, giảng lại việc đã làm theo lớp (bài toán → cơ chế → vì sao chọn → khi nào hỏng → code ở đâu), rồi hỏi lại User theo 5 câu tự kiểm và ghi sổ học. Chỉ đọc — không sửa code, không chạy việc nặng, không gọi API trả phí.
 ---
 
-# Giảng và hỏi lại — Session D của hue_rag
+# Giảng và hỏi lại — phiên giảng (D) của hue_rag
 
 Giới hạn của phiên giảng lấy từ `session_prompt/WORKFLOW.md` §10 — mục đó thắng skill này khi khác nhau. Dự án khác: đổi đường dẫn sổ học, phần còn lại dùng nguyên.
 
@@ -27,7 +27,7 @@ Thứ cần có là **năng lực của User**, không phải năng lực của 
 | Mức | Đọc gì | Khi nào |
 |---|---|---|
 | 0 | câu hỏi của User; sổ học (đã giảng gì, User đã hiểu gì) | luôn |
-| 1 | `bai_hoc/` — thứ User đọc (`README.md` = dàn bài, `BAN_DO_DU_AN.md` = cái gì đang chạy) + báo cáo bốn ý của việc vừa xong | giảng việc đã làm, vì sao chọn — bám đúng chữ User đã đọc |
+| 1 | `bai_hoc/` — thứ User đọc (`README.md` = dàn bài, `BAN_DO_DU_AN.md` = cái gì đang chạy) + báo cáo bốn ý của việc vừa xong (phần viết cho User trong tin báo / report của việc đó; khuôn `guides/khung/BAO_CAO_4_Y.mau.md`) | giảng việc đã làm, vì sao chọn — bám đúng chữ User đã đọc |
 | 2 | đúng hàm / file code liên quan; số đo gốc ở `report_agent/<đợt>/`; sổ ghi việc của agent `bao_cao_he_thong/` | cơ chế, "code ở đâu", số liệu, chi tiết bài học chưa có |
 | 3 | lệnh đọc nhỏ trên repo / dịch vụ (chỉ GET) | chỉ khi tài liệu mâu thuẫn code |
 

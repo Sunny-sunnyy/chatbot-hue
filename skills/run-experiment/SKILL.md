@@ -3,7 +3,7 @@ name: run-experiment
 description: Dùng trước khi thử bất kỳ thay đổi nào ở discovery / chia đoạn / embedding / BM25 / Qdrant / tìm kiếm / rerank / context / prompt / model sinh / bộ chấm của hue_rag, hoặc khi so sánh phương án, đo chất lượng, quyết một thay đổi có vào chatbot hay không — kể cả khi quay lại Phase cũ. Các bước — tiêu chí ghi trước (sàn / mức tụt cho phép / chỉ số quyết), cỡ mẫu trước khi chạy, mốc (baseline; khâu có LLM đo nhiễu A/A), kiểm người chấm, đổi một thứ, đo theo cặp và theo tầng, luật giữ/gỡ vượt nhiễu, xác nhận trên nhóm kiểm, giữ hồ sơ cả phương án bị bỏ, trần tiền/thời gian. Không dùng cho sửa lỗi nhỏ đã rõ nguyên nhân (dùng practical-project-coding).
 ---
 
-# Thí nghiệm có kỷ luật — hue_rag (A, B, C)
+# Thí nghiệm có kỷ luật — hue_rag
 
 Hai quyết định nền của chủ dự án: **luôn thử, đánh giá, so với baseline rồi mới chọn**, kể cả khi quay lại Phase trước;
 **chất lượng cần thiết trước, tối ưu hiệu suất sau** (`Session_Prompt.md` §7) — biến thể nâng chất lượng chạy / chọn trước biến thể
@@ -76,7 +76,7 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 1. **Mốc trước:** chạy lại baseline bằng code HEAD, cùng bộ, cùng cách đo. Retrieval baseline phải giống
    từng byte mốc đã lưu. Khác thì dừng: chạy lại baseline 2 lần bằng HEAD. Nếu hai lượt giống nhau mà vẫn
    khác mốc cũ thì tìm nguyên nhân (skill debugging). Nếu chính nó dao động giữa các lượt thì ghi mức dao
-   động, và chỉ dùng lượt mới làm mốc sau khi A duyệt. Không so biến thể với một mốc không tái lập được.
+   động, và chỉ dùng lượt mới làm mốc sau khi phiên điều phối duyệt. Không so biến thể với một mốc không tái lập được.
    Đặt cạnh mốc đang chạy một **mốc ngây thơ** (cách làm ngu nhất: "từ chối hết", "luôn trả đoạn đầu"…) — chỉ số nào mốc ngây thơ cũng đạt thì không đo được gì.
    **Khâu có LLM** (sinh, judge, rerank `gpt-6-luna`): **nhiễu** = chênh theo từng câu giữa hai lượt baseline
    không đổi gì — dùng lại A/A sẵn có khi đầu vào không đổi,
@@ -116,8 +116,8 @@ conclusion: null   # tốt hơn / không đổi / kém hơn / chưa rõ
 - **Câu an toàn / khẩn cấp / ca rủi ro mới viết** (bất kỳ bậc nào) ⇒ thêm ngay vào bộ hồi quy của khâu nó kiểm (hue_rag: bộ tuyến, bộ an toàn 32 + phần thêm) ở
   lượt đo kế tiếp; ghi trong mục việc.
 - "Tốt hơn" chỉ đề xuất vào chatbot khi **đã xác nhận trên nhóm kiểm**; đưa vào runtime là việc riêng, User duyệt.
-- **3 vòng sửa cùng một biến thể không đạt ⇒ dừng**, ghi giới hạn, báo A/User; không vá cơ chế bảo vệ cơ chế.
-  Hết trần tiền / thời gian ⇒ dừng, báo A.
+- **3 vòng sửa cùng một biến thể không đạt ⇒ dừng**, ghi giới hạn, báo phiên điều phối / User; không vá cơ chế bảo vệ cơ chế.
+  Hết trần tiền / thời gian ⇒ dừng, báo phiên điều phối.
 
 ## 5. Hồ sơ — kể cả phương án bị bỏ
 

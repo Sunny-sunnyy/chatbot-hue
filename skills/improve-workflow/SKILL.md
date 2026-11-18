@@ -3,7 +3,7 @@ name: improve-workflow
 description: Session A (điều phối) của hue_rag — dùng cuối mỗi ngày làm việc, lúc kết phiên / đóng đợt, khi User phải nhắc agent cùng một điều lần thứ hai, khi một sự cố quy trình làm mất giờ / tiền / dữ liệu (lỡ chạy paid, commit lẫn file, sửa đè file của session khác, báo cáo không cập nhật, brief sub-agent sai…), hoặc khi User xin "rút kinh nghiệm", "cải tiến cách làm", "tự cải thiện". Biến sự cố có bằng chứng thành ≤ 3 đề xuất sửa luật / skill / rào bằng máy cho User duyệt, gỡ luật cũ, sửa memory sai, ghi sổ cải tiến. Không dùng để đổi mục tiêu, tiêu chí đo, quyền, trần tiền hay code chatbot.
 ---
 
-# Tự cải tiến cách làm — Session A
+# Tự cải tiến cách làm — phiên điều phối
 
 Làm một mình thì bạn là người chạy vòng này; "User duyệt" giữ nguyên. Luật gốc (`AGENTS.md`, `session_prompt/Session_Prompt.md`, `WORKFLOW.md`) thắng skill này;
 file luật chỉ phiên điều phối sửa. **Harness** = mọi thứ định hình cách agent làm: `AGENTS.md`, `session_prompt/`, `skills/`, `guides/CACH_LAM_VIEC.md`, `.githooks/`,
@@ -12,7 +12,7 @@ chỉ sửa một lần; bên đề xuất không tự chấm; mỗi vòng ít t
 
 ## 0. Nhịp — cuối MỖI ngày làm việc, ba bước (≤ 15 phút); kết phiên / đóng đợt chạy đủ mục 1–5
 
-1. **Đọc hai con số** của tuần (ghi ở trang hiện trạng): (a) số việc đã báo "xong" bị lật lại · (b) số lần User phải nhắc lại một điều đã nói. Người đếm ghi tên;
+1. **Đọc hai con số** của tuần (ghi ở trang hiện trạng — hue_rag: `session_prompt/HIEN_TRANG.md` mục 2): (a) số việc đã báo "xong" bị lật lại · (b) số lần User phải nhắc lại một điều đã nói. Người đếm ghi tên;
    số chưa ai soát gắn "chưa soát". Hai số này — không phải cảm giác — trả lời "cách làm đang tốt lên hay xấu đi".
 2. **Lỗi nào lặp lần HAI** hôm nay ⇒ xử theo thứ tự nấc ở mục 2 (máy trước, chữ sau). Lỗi gặp lần đầu: sửa việc đó, ghi một dòng bẫy, **không** thêm luật.
 3. **Thêm bao nhiêu gỡ bấy nhiêu:** mỗi luật / bước / rào thêm hôm nay kèm một thứ gỡ (luật thừa, bước không bắt lỗi thật, chữ trùng) — trừ luật an toàn / dữ liệu.
@@ -44,7 +44,7 @@ thường (`WORKFLOW.md` §3, §9).
 
 ## 3. Duyệt → thử → giữ / gỡ — người xét KHÁC người đề xuất
 
-- User duyệt từng đề xuất; duyệt = **cho thử**, chưa phải "đúng". Áp xong ghi sổ `đang thử`: ngày, file đổi, theo dõi gì, **ai sẽ xét**. Người đề xuất không tự
+- User duyệt từng đề xuất; duyệt = **cho thử**, chưa phải "đúng". Áp xong ghi sổ `đang thử`: ngày, file đổi, theo dõi gì, **ai sẽ xét**. Thay đổi file luật do phiên điều phối làm vẫn cần một phiên khác đọc diff trước khi gộp. Người đề xuất không tự
   kết luận luật của mình có hiệu quả: người xét là một phiên / người khác (làm một mình: phiên mới ngữ cảnh sạch), kết luận theo hai con số + sự cố có lặp không.
 - **Mỗi vòng, trước khi thêm đề xuất mới,** xét lại **mọi** mục `đang thử`: không lặp và luật được dùng ⇒ `đang dùng`; lặp ⇒ lên một nấc ở mục 2; qua 2 phiên
   làm việc thật không ai cần, gây vướng, hoặc **đang chặn việc đáng làm** ⇒ đề xuất `gỡ`; chưa có dịp dùng ⇒ giữ, ghi lý do. Ghi kết quả xét **thêm vào trước**
@@ -53,7 +53,7 @@ thường (`WORKFLOW.md` §3, §9).
 
 ## 4. Giữ harness gọn và đúng (mỗi vòng kết phiên)
 
-- `wc -lc` các file bắt đọc lúc mở phiên; ghi số vào sổ. File agent luôn đọc giữ **dưới 24.000 byte**. Dài thêm đáng kể ⇒ dời lịch sử ra, để link —
+- `wc -lc` các file bắt đọc lúc mở phiên; ghi số vào sổ. File agent luôn đọc giữ **dưới 24.000 byte** (có công cụ cắt file luật ở cỡ đó mà không báo — `guides/CACH_LAM_VIEC.md` mục 5). Dài thêm đáng kể ⇒ dời lịch sử ra, để link —
   **không cắt nội dung còn hiệu lực**.
 - Trí nhớ riêng của một công cụ: mục sai / cũ (đối chiếu trang hiện trạng) ⇒ sửa hoặc xoá; điều mọi agent cần ⇒ đưa vào tài liệu chung, không để ở đó.
 - Một luật ở hai chỗ ⇒ giữ một, chỗ kia trỏ tới.
