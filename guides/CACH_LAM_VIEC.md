@@ -1,6 +1,6 @@
 # Cách làm việc với coding agent — dùng cho mọi agent, mọi dự án
 
-Bản 3 (10:38 18/11/2026; đã qua hai lượt review chéo giữa các phiên; chưa thử với công cụ khác hãng).
+Bản 3 (10:38 18/11/2026; đã qua hai lượt review chéo giữa các phiên; chưa thử với công cụ khác hãng). Thêm 13:43 18/11/2026: đoạn "Mở lại phiên cho nhẹ" ở mục 5 + mục "Chưa làm / chưa thử".
 Người đọc: **bất kỳ coding agent nào** (Claude Code, Codex, Antigravity…), làm một mình hay trong nhóm nhiều phiên; và chủ dự án (gọi là User).
 Trang này nói **cách làm** và **chép sang dự án khác được**: mục 1–8 không phụ thuộc dự án; mục 9 ("Ở repo này") là phần viết lại khi chép; mục 10 là nguồn.
 Luật cứng + bảng quyền của từng dự án nằm ở `AGENTS.md` của dự án đó — khi trang này khác `AGENTS.md` thì `AGENTS.md` thắng. Bộ file mẫu cho dự án mới: `guides/khung/`.
@@ -95,6 +95,12 @@ kèm chuyện sự cố. Rào mới thử một lần bằng ca cố ý hỏng t
 File agent luôn đọc (`AGENTS.md`) giữ ngắn, **dưới 24.000 byte** (có công cụ cắt file luật ở cỡ đó mà không báo); chi tiết để file khác, mở khi cần.
 Tài liệu bắt buộc đọc lúc mở phiên chỉ gồm luật + trang hiện trạng; nhật ký nối đuôi để tra, không bắt đọc.
 
+**Mở lại phiên cho nhẹ** [đang thử, chưa kiểm] — đo một lần ở repo gốc: mỗi phiên đọc 880–1.400 dòng lúc mở, dùng khoảng 185; ~9 tin chỉ để tìm phiên điều phối.
+Cách biết có ích: ba lần mở kế đếm số lần vấp luật vì chưa đọc — lớn hơn 0 ⇒ xét lại.
+- **Mở phiên đọc ngắn:** file luật ngắn (công cụ tự nạp) + trang hiện trạng + mục đầu sổ riêng của phiên + khối đầu sổ việc. Luật chi tiết đọc **đúng mục khi NHẬN việc** chạm mục đó (lời giao ghi "đọc mục nào"); vài luật hay vấp nhất đưa lên file luật ngắn. Phiên giữ luật (điều phối) vẫn đọc đủ.
+- **Kết phiên nhẹ** (tắt / mở lại chỉ để làm mới ngữ cảnh): THAY — không nối — mục đầu sổ riêng bằng ba dòng: việc dở · thứ đang chạy / file tạm · bẫy phiên này. Nhật ký và vòng cải tiến để cuối ngày.
+- **Chỉ mở lại phiên đã đầy.** Phiên thực thi không rải tin đi tìm phiên điều phối: đợi tin mở phiên của nó rồi trả lời MỘT tin (vai + báo cáo mở phiên).
+
 **Kiểm bằng gì** — `wc -c AGENTS.md`; công cụ mới: hỏi nó "bạn đã nạp file hướng dẫn và skill nào, trích dòng đầu mỗi file" — không trích được là chưa nạp.
 
 ## 6. Test thật, lấy mốc, agent tự test, soát tích hợp, soát độ thật của test
@@ -139,6 +145,7 @@ bằng hai con số ở mục 7.
 | tài liệu viết cho người | `bai_hoc/` |
 | sao lưu thứ ngoài git trước khi sửa | runbook mục 5 [đã chạy ở mỗi lần sửa dữ liệu gốc] |
 | làm một mình | `guides/KHI_CHI_CO_MOT_AGENT.md` |
+| mở phiên đọc ngắn · kết phiên nhẹ | `session_prompt/START_SESSION.md` · `session_prompt/WORKFLOW.md` §8 |
 
 **Sở thích đã chốt của chủ dự án (agent nào cũng theo):**
 - Tiếng Việt, lời thường, thuật ngữ kèm nghĩa; **đủ quan trọng hơn ngắn**; không dùng mã nội bộ khi chưa giải nghĩa.
@@ -164,8 +171,11 @@ Người giữ ghi chép từng khoá đã đối chiếu mã với ghi chép c�
 | 7 | đo chất lượng cùng tốc độ, không đếm dòng code hay token (SDLC tuần 2 — chưa kiểm mã bài) · một lần chạy chỉ là một mẫu (FDE W2D5·78–83) |
 | 8 | Coding W3D4·87–88, W3D5·89–93 · SDLC W1D5·31–35, W2D2·45–46 |
 
-## Chưa làm / chưa thử
+## Chưa làm / chưa thử (đúng lúc 13:43 18/11/2026)
 
 - Trang này **chưa được thử với Codex hay Antigravity** — buổi thử: tối thứ Ba 24/11/2026; bước đầu của buổi là hỏi công cụ đã nạp file nào (mục 5).
 - Kiểu điều phối khi đổi công cụ **chưa chọn** (mục 8); kiểu một phiên + agent con chưa thử có đo ở repo này.
-- Chưa thành nếp: báo cáo bốn ý + nhãn độ tin (mục 4), ảnh trước–sau khi đổi giao diện (mục 6), hai con số (mục 7), năm dòng đề bài trước việc lớn (mục 1).
+- **Vòng cuối ngày** (mục 5, 7) chưa chạy lần nào; hai con số mới được ghi MỘT lần (do phiên điều phối đếm, chưa ai soát) — chưa đủ để so trước ↔ sau.
+- **Mở lại phiên cho nhẹ** (mục 5): đã vào luật mở phiên, chưa có lần mở nào đọc ngắn — đang thử ở ba lần mở kế.
+- Skill: 8 skill cũ đã sửa theo trang này và 2 skill mới (`soat-tich-hop`, `giao-viec-agent-con`) đã vào nhánh chính 18/11; hai skill mới **chưa được chấm** có / không skill, chưa dùng lần nào.
+- Chưa thành nếp: báo cáo bốn ý + nhãn độ tin (mục 4), ảnh trước–sau khi đổi giao diện (mục 6), năm dòng đề bài trước việc lớn và User chọn một dòng "xong" để agent chứng minh lại (mục 1).
