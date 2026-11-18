@@ -11,8 +11,9 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
    session_prompt/START_SESSION.md
    session_prompt/Session_Prompt.md
    session_prompt/WORKFLOW.md
-   session_prompt/Project_Status.md
-   session_prompt/CURRENT_HANDOFF.md
+   session_prompt/HIEN_TRANG.md (hiện trạng — đọc đủ)
+   session_prompt/CURRENT_HANDOFF.md — chỉ khối trên cùng + mục việc của mình; Project_Status.md và phần còn lại của handoff = nhật ký,
+   mở khi cần trả lời một câu cụ thể (A: hai phiên đầu vẫn đọc cả khối đầu handoff để bắt chỗ HIEN_TRANG chép sót)
    session_prompt/sessions/STATUS_<X>.md (chưa có thì tạo từ mẫu trong sessions/README.md)
    B, C, E (rút gọn 05/11): đọc đủ Session_Prompt.md + START_SESSION.md; WORKFLOW.md §1–§7 và Project_Status.md §1, §4, §8;
    CURRENT_HANDOFF.md chỉ mục "PHIÊN SAU ĐỌC TRƯỚC" + mục việc của mình; phần khác reference-only. A đọc đủ.

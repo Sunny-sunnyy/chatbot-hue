@@ -3,13 +3,16 @@
 Chatbot RAG về văn hóa / du lịch Huế. File này dành cho **mọi agent** (Claude Code, Codex, AGY, sub-agent):
 chỉ trỏ đường và nêu luật cứng; luật đầy đủ ở `session_prompt/`.
 
-- **Mở phiên:** làm theo `session_prompt/START_SESSION.md` (thứ tự đọc, kiểm nhanh, báo rồi chờ). Luật chung:
+- **Mở phiên:** làm theo `session_prompt/START_SESSION.md` (thứ tự đọc, kiểm nhanh, báo; rồi làm ngay việc thuộc hàng "tự làm" của bảng quyền bên dưới — phiên thực thi trong nhóm nhiều phiên thì chờ phiên điều phối giao). Luật chung:
   `session_prompt/Session_Prompt.md`; cách làm A/B/C/D: `session_prompt/WORKFLOW.md`.
 - **Skill** là file Markdown thường ở `skills/<tên>/SKILL.md` (Claude Code thấy qua `.claude/skills/`; agent
   khác mở file khi việc cần): `practical-project-coding`, `run-experiment`, `risk-gated-agent-review`,
   `propose-options`, `improve-workflow`, `teach-and-quiz` (D), `agent-design-review` + `agent-security-review` (agent, từ Phase 9).
 - **Sub-agent** chỉ biết những gì được brief: kế thừa đúng phạm vi và quyền của việc giao; báo chỗ đề bài lệch
   tài liệu; không tự mở rộng.
+
+- **Cách làm việc chung cho mọi agent** ("xong" ghi trước, mức kiểm, báo cáo cho User, review khác hãng): `guides/CACH_LAM_VIEC.md`.
+  **Hiện trạng** (đang chạy gì, việc đang mở, quyết định còn hiệu lực): `session_prompt/HIEN_TRANG.md`. Bộ khung chép sang dự án khác: `guides/khung/`.
 
 Luật cứng (chi tiết ở mục ghi trong ngoặc của `session_prompt/Session_Prompt.md`):
 1. Không đọc / in / log `.env` hay secret; nạp env bằng `uv run --env-file .env …` (§5).
@@ -27,8 +30,8 @@ Luật cứng (chi tiết ở mục ghi trong ngoặc của `session_prompt/Sess
 Quyền thường trực (User duyệt 10:11 18/11/2026; áp cho **mọi coding agent** — Claude, Codex, Antigravity…; không hết hạn theo phiên,
 không hỏi lại mỗi lần mở; User đổi lúc nào cũng được):
 - **Tự làm, báo sau trong báo cáo:** việc đã có trong sổ việc (`CURRENT_HANDOFF.md`); sửa lỗi đã tái hiện được; commit + push nhánh riêng; gộp vào
-  `main` khi đã có người / phiên KHÁC kiểm (nhánh chỉ tài liệu: đọc diff rồi gộp); dùng agent con; tiền API cho đo / thử — dùng hiệu quả, ghi số
+  `main` khi đã có người / phiên KHÁC kiểm (nhánh chỉ tài liệu: một phiên KHÁC người viết đọc diff rồi gộp); dùng agent con; tiền API cho đo / thử — dùng hiệu quả, ghi số
   thật; viết / sửa `bai_hoc/`.
 - **Hỏi User trước:** tính năng mới hoặc đổi hướng sản phẩm; đổi lớn thứ người dùng thấy; viết / sửa nội dung kho; xoá dữ liệu; gửi dữ liệu riêng ra
-  một dịch vụ mới; một việc dự kiến tốn > 1 USD; mọi việc deploy.
+  một dịch vụ mới; MỘT việc dự kiến tốn > 1 USD (tính theo từng việc, không cộng dồn cả phiên); mọi việc deploy.
 - **Không bao giờ:** luật cứng 1, 2, 3, 7 ở trên; `git push --force`; `--no-verify`.
