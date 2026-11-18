@@ -326,10 +326,11 @@ Về ba chỗ ĐÃ sửa (#1, #5, #8) — tách "test bằng đồ giả" ↔ "l
   trước đây có ghi chú 112 nhưng mục web vẫn do model viết (một câu trấn an có mã nguồn hợp lệ qua được bộ kiểm) ⇒ nay mục web dùng chung phép xét với lưới cuối (câu đang hỏi + câu liền trước), ra câu cố định, model không được gọi.
   (2) Mục web câu cố định thiên tai trước đây có 112 nhưng không có địa chỉ chính thức nào ⇒ nay code đặt hai link chính thức lên đầu danh sách link; 112 vẫn một lần.
   [đã chạy]: hàm `answer_turn` thật + tìm kho thật ở test, model và dịch vụ tìm web dựng sẵn; bộ dò 20 cặp lượt. Lượt đo cuối chạy trên `b27ef45`, TRƯỚC hai bản sửa này.
-  **Lượt THẬT (tối 18/11, bản `b158568`, qua giao diện, model + dịch vụ tìm thật, 8 lượt do người không viết code soạn, kỳ vọng ghi trước, 0,012 USD; mỗi ý một vài lượt — không phải số tần suất):** 7 / 7 lượt bão / lũ có 112 đúng một lần +
-  đủ hai địa chỉ chính thức + không câu trấn an (hai người đọc); 2 lượt tới cổng web đều ra câu cố định với hai link chính thức đứng đầu; đối chứng câu thường: model vẫn viết mục web. **CHƯA đo được trên hệ thật: ca HỎI TIẾP không từ khoá đi
-  tới cổng web** (2 / 2 chuỗi của vòng đầu rẽ đường khác: kho trả lời được, hoặc model tự gọi công cụ thời tiết loại bão / lũ) — bằng chứng cho ca này là test + bộ dò với model dựng sẵn; vòng bù ghi ở file kết quả private
-  `data/phase_9/b7_cuoi/cau_that_bao_web_ket_qua.md`.
+  **Lượt THẬT (tối 18/11, bản `b158568`, qua giao diện, model + dịch vụ tìm thật; hai vòng, 14 lượt do người không viết code soạn, kỳ vọng và luật đọc ghi trước, 0,024 USD; mỗi ý vài lượt — không phải số tần suất):**
+  13 / 13 lượt bão / lũ có 112 đúng một lần + đủ hai địa chỉ chính thức + không câu trấn an (hai người đọc nguyên văn); 7 lượt tới cổng web đều ra câu cố định với hai link chính thức đứng đầu, model không viết mục web;
+  đối chứng câu thường: model vẫn viết mục web. **Ca HỎI TIẾP không từ khoá sau câu "dông" tới cổng web: ĐÃ ĐO 2 / 3 chuỗi của vòng bù** (vòng đầu 0 / 2: một chuỗi kho trả lời được, một chuỗi model tự gọi công cụ thời tiết loại
+  bão / lũ; chuỗi thứ ba của vòng bù cũng rẽ sang công cụ thời tiết vì câu có chữ "ngoài trời"). Thấy đúng giới hạn đã ghi: dịch vụ tìm tự trả trang chính thức ⇒ tên miền đó hiện hai lần (1 / 7 lượt).
+  File private `data/phase_9/b7_cuoi/cau_that_bao_web_ket_qua.md`.
 - **Chỉ có test mức hàm:** bản sửa "dự báo trước, bão sau" (`09c4fd7`) — test gọi thẳng hàm công cụ với ngữ cảnh dựng tay, chưa đi trọn một lượt (kiểm trích dẫn, khối nối cuối); các ca bão khác trong cùng file thì đi trọn lượt.
 - **Chỉ có test, CHƯA đo trên đường thật:** #1 (không ép được model thật hết lượt tìm — có test luồng thật với model dựng sẵn) · nửa "bấm thẻ chọn" của #5.
 
