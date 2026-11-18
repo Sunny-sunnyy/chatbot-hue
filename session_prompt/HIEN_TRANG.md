@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa mục 1, 2, 4 lúc 13:37 18/11/2026 (giờ `date`). Người giữ: phiên điều phối.
+Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa mục 1, 2, 4, 6 lúc 13:55 18/11/2026 (giờ `date`). Người giữ: phiên điều phối.
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án, cho BẤT KỲ coding agent nào (Claude Code, Codex, Antigravity) vừa mở phiên. Nó được **viết lại tại chỗ**
 mỗi lần kết phiên — không nối thêm. Thứ tự mở phiên (bạn là phiên nào, báo gì, chờ gì) ở `session_prompt/START_SESSION.md`; trang này là phần "dự án đang
@@ -17,7 +17,7 @@ trợ lý trên bản code đã đứng yên.
 
 - **Là gì:** trợ lý hỏi đáp du lịch – văn hoá Huế cho du khách và người dân (đồ án tốt nghiệp của User; hiện chỉ User và nhóm dùng thử), trả lời CHỈ từ kho, có ghi nguồn; kho không có thì từ chối, rồi tra web một lần ở mục riêng "chưa kiểm".
   Web: FastAPI (`backend/`) + giao diện React dựng sẵn (`frontend/`). Chạy trên máy User; **chưa deploy**.
-- **Số hôm nay** (lệnh kiểm ở mục 6): kho **265 bài ⇒ 9.436 đoạn**, một collection Qdrant `hue_full_corpus_7a2_e5_small_384` (cổng 6335);
+- **Số hôm nay** (lệnh kiểm: runbook mục 0): kho **265 bài ⇒ 9.436 đoạn**, một collection Qdrant `hue_full_corpus_7a2_e5_small_384` (cổng 6335);
   tìm = vector `e5-small` + từ khoá BM25 trộn RRF, **10 đoạn** vào ngữ cảnh, không xếp lại; model viết `gpt-6-luna` (OpenAI); tra web qua Serper.
 - **Cờ:** **23 BẬT** (22 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat`). **TẮT (đủ 4 cờ còn lại):** `lich_trinh`
   (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (mặc định
@@ -46,8 +46,8 @@ Mốc (User chốt theo THỨ, 18/11/2026):
 Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc (mục 7):
 - **A:** trò chuyện với User về cách làm việc; runbook mục 9; gói soát mù thứ Bảy; gộp nhánh.
 - **B:** lượt đo cuối Chủ nhật 22/11; giữ trang bản đồ.
-- **C:** giữ trang này; runbook mục 10; chấm 2 skill mới (đang làm); 4 skill cũ chưa chấm để tối thứ Ba 24/11.
-- **E:** 8 skill sửa + 2 skill mới (`soat-tich-hop`, `giao-viec-agent-con`) ĐÃ vào `main`; hai skill mới chưa chạy thử; A áp file luật + liên kết `.claude/skills/`.
+- **C:** giữ trang này; runbook mục 10; 2 skill mới đã chấm MỘT lượt (chưa có người chấm thứ hai); 4 skill cũ chưa chấm để tối thứ Ba 24/11.
+- **E:** 8 skill sửa + 2 skill mới (`soat-tich-hop`, `giao-viec-agent-con`) ĐÃ vào `main`; hai skill mới đã chấm một lượt; A áp file luật + liên kết `.claude/skills/`.
   E giữ `guides/CACH_LAM_VIEC.md`.
 - **Chưa ai nhận, để sau lượt đo cuối:** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
   quần thể (10.2) · runbook mục 8 (deploy) — chỉ viết khi User mở lại chuyện deploy.
@@ -104,11 +104,7 @@ phối trước và dừng khi RAM khả dụng < 4 GB; bật hook git một l�
 
 ## 6. Lệnh kiểm các con số của trang này
 
-| Kiểm gì | Lệnh (từ gốc repo) | Phải ra |
-|---|---|---|
-| Số bài / số đoạn của kho | `uv run python -c "import json;d=json.load(open('data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json'))['corpus'];print(d['file_count'],d['chunk_count'])"` | `265 9436` [đã chạy 18/11] |
-| Qdrant khớp | `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 \| grep -o '"points_count":[0-9]*'` | `"points_count":9436` [đã chạy 18/11; cần Qdrant bật] |
-| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `23` [đã chạy 18/11] |
+Ba lệnh (số bài / số đoạn của kho · Qdrant khớp · số cờ bật) kèm kết quả phải ra: `guides/RUNBOOK_BAN_GIAO.md` mục 0, bảng "Kiểm số của trang hiện trạng".
 
 ## 7. Nhật ký ở đâu (KHÔNG bắt đọc lúc mở phiên — mở khi cần trả lời một câu cụ thể)
 
