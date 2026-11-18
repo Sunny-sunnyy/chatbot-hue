@@ -658,3 +658,27 @@ def test_disaster_turn_with_ordinary_web_links_still_gives_112_once_and_both_off
     thay = _nguoi_dung_nhan(trace)
     assert trace.web["outcome"] == "thien_tai" and thay.count("112") == 1 and tt.NCHMF_URL in thay and tt.LU_QUET_URL in thay
     assert [s["id"] for s in trace.web["nguon"]][-3:] == [1, 2, 3]  # link Serper vẫn còn, sau hai địa chỉ chính thức
+
+
+# ---------- 18/11 tối (soát khác hãng lần hai, #2): lưới mục web phải nhận MỌI lượt mà lưới cuối coi là lượt bão / lũ ----------
+CAU_CANH_BAO = "Thuận An có cảnh báo gió mạnh không?"  # "cảnh báo" + từ thời tiết: lưới cuối nhận, danh sách đóng của mục web thì không
+
+
+@pytest.mark.parametrize("query, history", [
+    (CAU_CANH_BAO, ()),                                   # chính câu đang gõ
+    ("Vậy ra biển được không?", [(CAU_CANH_BAO, "…")]),   # câu hỏi tiếp sau nó
+    ("Vậy ra biển được không?", [("Chiều nay có dông không?", "…")]),
+    ("Mai có áp thấp không?", ()),
+])
+def test_every_turn_the_last_net_calls_a_storm_turn_gets_the_fixed_web_sentence(query, history):
+    assert luoi_cuoi_bao(query, refused(history=tuple(history)), BAO_WEB)  # điều kiện của ca: lưới cuối coi đây là lượt bão / lũ
+    _, sent, trace = _web_noi_tiep(BAO_WEB, history, [], query=query, text=TRAN_AN)
+    assert sent == "" and trace.web["outcome"] == "thien_tai"
+
+
+@pytest.mark.parametrize("query", ["Lăng Tự Đức có cảnh báo bậc thang không?", "Thuận An gió có mạnh không?"])
+def test_warning_without_weather_word_or_weather_word_without_warning_still_gets_web_section(query):
+    """Đối chứng: không phải lượt bão / lũ theo lưới cuối ⇒ model vẫn viết mục web như cũ."""
+    assert luoi_cuoi_bao(query, refused(), BAO_WEB) is False
+    _, sent, trace = _web_noi_tiep(BAO_WEB, (), [], query=query, text=TRAN_AN)
+    assert sent != "" and trace.web["outcome"] == "co_muc"

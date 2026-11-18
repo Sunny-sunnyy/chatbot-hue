@@ -706,6 +706,12 @@ def _khop_luoi_cuoi(query: str, flags: "AssistantFlags | None", history=()) -> b
     sau một câu bão vẫn là lượt bão; thừa hơn sót)."""
     if flags is None or not (flags.thoi_tiet and flags.bao_lu_cong_cu):
         return False
+    return _luot_bao_lu(query, history)
+
+
+def _luot_bao_lu(query: str, history=()) -> bool:
+    """Câu này HOẶC câu hỏi liền trước là câu bão / lũ: danh sách rộng của `tt`, "cảnh báo" + một từ thời tiết, hoặc "dông". MỘT chỗ xét cho lưới cuối
+    (`_khop_luoi_cuoi`) và cho mục web (`cong_web`) — hai nơi lệch nhau thì mục web để model viết ngay cạnh câu 112 (soát khác hãng 18/11, hai lần)."""
     cau = [query] + ([history[-1][0]] if history else [])
     return tt.la_luot_bao_lu(query, history) or any(_DONG.search(unicodedata.normalize("NFC", c)) for c in cau)
 
@@ -1252,10 +1258,10 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web, flags: As
     if kq.trang_thai != "ok":
         return
     # vòng chỉnh 1: câu thiên tai ⇒ không gọi model; câu cố định (NCHMF / chính quyền / 112) + link nguồn do code.
-    # 18/11 (soát khác hãng #1): xét cả câu hỏi LIỀN TRƯỚC như lưới cuối `_khop_luoi_cuoi` — "vậy có nên ra biển không" sau một câu bão là lượt bão; thừa hơn sót.
-    # (#2): hai địa chỉ chính thức do code đặt lên đầu danh sách link — câu cố định chỉ có tên cơ quan + 112, link Serper có thể toàn báo thường.
-    truoc = trace.history[-1][0] if trace.history else ""
-    if tw.la_cau_thien_tai(f"{xet} {truoc}"):
+    # 18/11 (soát khác hãng): thêm MỌI lượt mà lưới cuối coi là lượt bão / lũ — cùng hàm `_luot_bao_lu` (câu này hoặc câu hỏi LIỀN TRƯỚC; cả "cảnh báo" +
+    # từ thời tiết) — "vậy có nên ra biển không" sau một câu bão là lượt bão; thừa hơn sót. Luật này của mục web không theo cờ (như trước).
+    # Hai địa chỉ chính thức do code đặt lên đầu danh sách link — câu cố định chỉ có tên cơ quan + 112, link Serper có thể toàn báo thường.
+    if tw.la_cau_thien_tai(xet) or _luot_bao_lu(xet, trace.history):
         web.update(outcome="thien_tai", text=tw.THIEN_TAI_TEXT, nguon=NGUON_CHINH_THUC + list(kq.so_web))
         return
     call_log = CallLog()
