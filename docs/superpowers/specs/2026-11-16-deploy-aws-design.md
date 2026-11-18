@@ -1,7 +1,10 @@
-# Spec bản 2: deploy chatbot Huế lên AWS (một máy Lightsail, Docker Compose)
+# Spec bản 3: deploy chatbot Huế lên AWS (một máy Lightsail, Docker Compose)
 
 E viết bản 1, xong lúc 14:36 16/11/2026, theo việc A giao (User 16/11: mọi việc local và kế hoạch deploy phải xong trước 30/11; từ tháng 12 Codex / Gemini làm tiếp).
-**Chỉ là tài liệu.** Viết spec này không tạo tài nguyên AWS nào và không gọi AWS. Reviewer: C. Trạng thái: **bản 2 sau review C vòng 1 — chờ C vòng 2, chưa duyệt.**
+**Chỉ là tài liệu.** Viết spec này không tạo tài nguyên AWS nào và không gọi AWS.
+**Trạng thái:** bản 2 đã được A duyệt 14:53 16/11/2026 (mã `e847b47ad995`, sau review C hai vòng). **Bản 3 (B viết 08:46 18/11/2026) = bản 2 + một lượt sửa** theo đối chiếu với
+bốn khoá học của User và bàn nhóm 17/11 (danh sách chỗ đổi ở "Lịch sử bản") — **chờ E đọc lại + A duyệt mã mới.** Ba câu ở §3 ghi **"chờ User"** (A đang hỏi lại): Q3, Q8, Q12.
+**Chưa có lệnh AWS nào trong tài liệu này từng được chạy** (chưa có tài khoản) — xem nhãn [Chạy] / [chưa chạy] ở §0.
 
 ## 0. Cách dùng tài liệu này (đọc trước khi chạy bất kỳ lệnh nào)
 
@@ -19,6 +22,20 @@ E viết bản 1, xong lúc 14:36 16/11/2026, theo việc A giao (User 16/11: m�
 
 Nhãn bằng chứng trong tài liệu: **[Đo]** = đã chạy hoặc đo thật (ghi ngày) · **[Đọc]** = đọc code / cấu hình · **[Nguồn]** = trang công khai (có URL,
 ngày tra) · **[Suy]** = suy luận, chưa kiểm.
+
+**Lệnh nào đã chạy thật, lệnh nào chưa** (bản 3 — người chạy đọc bảng này trước; lệnh [chưa chạy] có thể sai cú pháp / sai tên, gặp lỗi thì dừng theo "Dừng khi", không sửa đoán):
+
+| Phần | Nhãn | Ghi chú |
+|---|---|---|
+| A2–A6 (trừ `SHA256SUMS` bản đủ) | **[Chạy]** 16/11 trên máy User, ảnh `a9d1674` (§13) | từ đó compose thêm một dòng `HUE_GIT_SHA` — [Chạy] 18/11 chỉ ở mức `docker compose config` (biến vào đúng container app) |
+| A1, A7 | [chưa chạy] | lệnh git / soạn file thường |
+| B1–B3 (tài khoản, ngân sách, người dùng IAM) | **[chưa chạy]** | làm trên trang web AWS; B3 đổi cách cấp quyền ở bản 3 — chưa thử trên tài khoản thật |
+| C1–C4 (mọi lệnh `aws lightsail …`) | **[chưa chạy]** | tên gói / ảnh hệ điều hành lấy từ đầu ra C1, không tin tên ghi sẵn |
+| D1–D4 (cài Docker, chuyển file, chạy trên máy AWS) | **[chưa chạy]** trên máy AWS | phần nạp bản chụp Qdrant + chạy cả bộ giống A5 đã [Chạy] ở máy User |
+| §9 (kiểm sau khi lên) | **[chưa chạy]** qua https | các dòng hết lượt, `/docs` 404, log không nội dung đã [Chạy] ở máy User qua http (§13) |
+| 10.2–10.5 (cập nhật, quay lại, dừng khẩn, kết thúc) | **[chưa chạy]** | 10.5 là bước phá huỷ — User tự gõ |
+
+Muốn biến [chưa chạy] thành [Chạy] trước ngày cần demo: một buổi diễn tập "tạo ⇒ kiểm ⇒ xoá" (~0,03 USD / giờ máy, Q10) — User quyết có làm không và làm mức nào.
 
 ## 1. Mục tiêu và phạm vi
 
@@ -59,23 +76,27 @@ liên tục nhiều năm với cập nhật thường xuyên (lúc đó nên có
 
 ## 3. Câu cần User quyết (gom một chỗ — A hỏi từng câu bằng hộp chọn)
 
+**User đã nhận cả 11 mặc định Q1–Q11 làm quyết định hiện tại (14:55 16/11/2026).** Bản 3 thêm Q12 và ghi "chờ User" ở ba câu A đang hỏi lại.
+
 **Tổng tiền cả đợt** (để chọn Q1, Q2, Q3, Q10 cho có cơ sở; trước credit tài khoản mới). Một tháng = 24 USD máy + ~1 USD sao lưu + ≤ 5 USD OpenAI = ~30 USD.
 Ba tháng (12/2026–02/2027) = máy 72 + sao lưu ~3 + OpenAI ≤ 15 + tên miền 10–15 (nếu Q2 = riêng) ⇒ **~90–105 USD**. Tạo máy từ 01/12 thay vì 15/12 ⇒ +~12 USD.
 Tài khoản AWS mới được 100 USD credit (thêm tối đa 100 USD qua hoạt động) ⇒ phần máy có thể gần như 0 USD nếu credit trừ được vào Lightsail (nguồn nói được, chưa thử) [Nguồn] tra 16/11.
+**Hệ quả của credit với cảnh báo ngân sách:** tiền thật = 0 trong lúc credit còn ⇒ cảnh báo tính theo "tiền sau khi trừ credit" sẽ im lặng dù máy đang chạy ⇒ B2 phải loại credit khỏi phép tính (Q12).
 Số OpenAI là trần (Q3), không phải ước: demo thật thường ~0,0005 USD / câu [Đo] 16/11 ⇒ vài chục lượt chấm < 1 USD.
 
 | # | Câu | Mặc định đề xuất | Hệ quả nếu chọn khác · khi nào mặc định sai |
 |---|---|---|---|
-| Q1 | Có tạo tài khoản AWS (hoặc dùng tài khoản có sẵn) và chấp nhận ~24 USD / tháng cho máy (thêm ~1 USD sao lưu) trong 2–3 tháng không | Có, gói 4 GB | Gói 2 GB rẻ hơn 12 USD nhưng dễ hết RAM; không có AWS ⇒ demo chạy trên máy User. Tài khoản mới: Free plan hết sau 6 tháng hoặc hết credit — chưa nâng lên Paid thì tài khoản bị đóng, dữ liệu giữ 90 ngày ⇒ **nâng lên Paid plan trước buổi chấm**; chưa có nguồn xác nhận gói 4 GB tạo được trên Free plan [Nguồn] docs.aws.amazon.com free-tier-plans, tra 16/11 |
+| Q1 | Có tạo tài khoản AWS (hoặc dùng tài khoản có sẵn) và chấp nhận ~24 USD / tháng cho máy (thêm ~1 USD sao lưu) trong 2–3 tháng không | Có, gói 4 GB | Gói 2 GB rẻ hơn 12 USD nhưng dễ hết RAM; không có AWS ⇒ demo chạy trên máy User. Tài khoản mới: Free plan hết sau 6 tháng hoặc hết credit — chưa nâng lên Paid thì tài khoản bị đóng, dữ liệu giữ 90 ngày ⇒ **nâng lên Paid plan trước buổi chấm**; chưa có nguồn xác nhận gói 4 GB tạo được trên Free plan [Nguồn] docs.aws.amazon.com free-tier-plans, tra 16/11. **Bản 3:** hướng dẫn hiện hành của khoá AI Production (tuần 1 ngày 5, phần tạo tài khoản) bảo **không chọn gói miễn phí lúc đăng ký** ⇒ hai cách: (a) chọn Paid ngay lúc đăng ký (credit 100 USD vẫn có hay không: **chưa tra lại**); (b) giữ mặc định này. C1 là phép kiểm thật: tài khoản không thấy gói 4 GB ⇒ dừng, nâng Paid |
 | Q2 | Tên miền: mua tên miền riêng (~10–15 USD / năm, User tự mua) hay dùng `<IP>.sslip.io` miễn phí | `sslip.io` để thử; **tên miền riêng cho buổi chấm** | sslip.io miễn phí nhưng mọi người dùng chung một hạn mức chứng chỉ Let's Encrypt (50 chứng chỉ / tên miền / 7 ngày; sslip.io không nằm trong Public Suffix List — một báo lỗi 09/02/2026 cho thấy từng hết hạn mức) ⇒ ngày chấm có thể không xin được chứng chỉ [Nguồn] letsencrypt.org/docs/rate-limits + issue sslip.io #108, tra 16/11. Tên miền riêng thêm một bước trỏ DNS (bản ghi A ⇒ `<IP>`) |
-| Q3 | Khoá OpenAI riêng cho bản công khai, có đặt giới hạn chi tiêu (User tạo ở trang OpenAI) | Có: project riêng ở OpenAI ⇒ Limits ⇒ Monthly spend limit ~5 USD + **bật "Enforce a hard limit"** (không bật thì chỉ cảnh báo, request vẫn chạy; áp không tức thời, có thể vượt nhẹ) [Nguồn] help.openai.com "Managing projects", tra 16/11 | Dùng chung khoá máy User ⇒ người ngoài dùng hết hạn mức của mọi việc khác |
+| Q3 **(chờ User — A hỏi lại 18/11; mặc định đang giữ)** | Khoá OpenAI riêng cho bản công khai, có đặt giới hạn chi tiêu (User tạo ở trang OpenAI) | Có: project riêng ở OpenAI ⇒ Limits ⇒ Monthly spend limit ~5 USD + **bật "Enforce a hard limit"** (không bật thì chỉ cảnh báo, request vẫn chạy; áp không tức thời, có thể vượt nhẹ) [Nguồn] help.openai.com "Managing projects", tra 16/11 | Dùng chung khoá máy User ⇒ người ngoài dùng hết hạn mức của mọi việc khác; và khi cần dừng khẩn (10.4) phải thu hồi khoá đang dùng cho mọi việc. Thêm ở bản 3: tắt tự nạp tiền (Auto recharge) ở trang Billing của OpenAI nếu đang bật — hard limit của project không chặn việc thẻ bị nạp thêm [Suy, chưa mở trang] |
 | Q4 | Tra web (Serper) trên bản công khai: bật hay tắt | **Tắt** (`HUE_TRA_WEB=false`, như Docker nháp) | Bật ⇒ câu kho không có sẽ gửi câu hỏi (và câu model viết lại ở lượt hỏi tiếp — cờ `web_cau_noi_tiep`) ra Serper, tốn 0,001 USD / lượt, cần khoá Serper trả trước không tự nạp; tắt ⇒ câu ngoài kho chỉ nhận câu từ chối |
 | Q5 | Số lượt gọi model / IP / ngày | 50 (`HUE_LUOT_MOI_NGAY=50`) | Cao hơn ⇒ một người có thể tốn nhiều tiền; thấp hơn ⇒ hội đồng thử nhiều có thể bị chặn. Sai khi cả hội đồng dùng chung một mạng (chung IP) ⇒ nâng lên ~200 trong ngày chấm |
 | Q6 | Hỏi bằng ảnh trên bản công khai: bật (ảnh người dùng gửi sang OpenAI) hay tắt | Bật, kèm dòng báo cạnh nút ảnh (checklist cũ: bản công khai cần dòng báo) | Tắt ⇒ bớt một đường dữ liệu ra ngoài |
 | Q7 | Ảnh lễ hội thật #5 (không giấy phép mở) | Không lên bản công khai (đã loại trong `.dockerignore`) | Muốn có ⇒ cần quyền dùng ảnh |
-| Q8 | Sau demo: xoá máy (hết tiền) hay giữ | Xoá máy sau khi có bản chụp thủ công `available` (§10.5) | Giữ ⇒ 24 USD / tháng tiếp |
+| Q8 **(chờ User — A hỏi lại 18/11; mặc định đang giữ)** | Sau demo: xoá máy (hết tiền) hay giữ | Xoá máy sau khi có bản chụp thủ công `available` (§10.5) | Giữ ⇒ 24 USD / tháng tiếp. Lưu ý: **tắt máy (stop) Lightsail vẫn tính tiền** như đang chạy ⇒ muốn hết tiền phải xoá [Nguồn] đoạn trích trang hỏi đáp Lightsail, B tra 17/11, chưa mở cả trang. Bản chụp `hue-cuoi` giữ lại có chứa file khoá `.env.deploy` ⇒ 10.5 bắt buộc thu hồi khoá OpenAI |
 | Q9 | Agent (Codex / Gemini) có được chạy lệnh `aws …` bằng access key của User không | **Chỉ lệnh chỉ đọc** (`get-*`, `sts get-caller-identity`); mọi lệnh có nhãn [Tiền] hoặc xoá (C3, C4, 10.5) **User tự gõ** sau khi agent đưa lệnh | Cho agent chạy hết ⇒ nhanh hơn, nhưng một lệnh sai có thể tạo / xoá tài nguyên tính tiền hoặc mất dữ liệu; User tự gõ hết ⇒ chậm, User phải ngồi cùng. Sai khi User vắng cả tuần deploy ⇒ khi đó cho agent chạy C3 một lần, ghi lại |
 | Q10 | Ngày tạo máy (= ngày bắt đầu tính tiền máy) | **Khoảng 1 tuần trước buổi chấm** (đủ thời gian sửa lỗi); thử tạo-xoá một lần sớm hơn chỉ tốn vài giờ máy (~0,03 USD / giờ) | Tạo từ 30/11 ⇒ +~24 USD mỗi tháng sớm hơn. User đã dặn không deploy sớm (12/11) — tài liệu xong trước 30/11, máy tạo theo ngày User chọn |
+| Q12 **(mới ở bản 3 — chờ User)** | Cảnh báo ngân sách AWS: mấy ngưỡng, số tiền bao nhiêu | Ngân sách 30 USD / tháng, **loại credit và tiền hoàn** khỏi phép tính, **ba ngưỡng**: tiền thật 50 % (15 USD — về sớm, để biết cảnh báo còn sống) · tiền thật 100 % · dự báo 100 % | Bản 2 chỉ có một ngưỡng 80 % = 24 USD = đúng tiền máy một tháng ⇒ email chỉ về cuối tháng; và không loại credit ⇒ có thể không bao giờ kêu. Ít ngưỡng hơn ⇒ biết muộn; nhiều hơn ⇒ thêm email. Sai khi User muốn trần thấp hơn (đổi số 30) |
 | Q11 | Giữ bản sao các file deploy (Dockerfile, compose, Caddyfile, `dung_dockerignore.py`) ở đâu — hiện chỉ trong `data/phase_12/deploy_nhap/` (không Git) | Đưa 4 file đó (không bí mật) vào repo `deploy/` qua một nhánh; **không** đưa `Dockerfile.dockerignore` (liệt kê tên 263 bài kho — sinh lại bằng script) | Giữ trong `data/` ⇒ máy User hỏng là mất; md5 ở §0 giúp phát hiện file bị sửa, không giúp khôi phục |
 
 ## 4. Biến dùng trong tài liệu
@@ -86,13 +107,15 @@ Số OpenAI là trần (Q3), không phải ước: demo thật thường ~0,0005
 | `TAG` | biến shell: nhãn ảnh Docker = 7 ký tự đầu sha của `main` lúc build. **Trên máy User** đặt bằng `TAG=$(git -C <REPO> rev-parse --short=7 HEAD)`; **trên máy AWS** đặt tay `TAG=<7 ký tự đó>` ở dòng đầu D3 | `a9d1674` |
 | `<IP>` | IP tĩnh của máy Lightsail | in ra ở bước C3 |
 | `<SITE>` | tên miền dùng cho HTTPS | `<IP với dấu chấm thay bằng gạch>.sslip.io` (vd `13-250-1-2.sslip.io`) hoặc tên miền riêng |
+| `HUE_GIT_SHA` | biến môi trường của app: mã bản code ghi vào mỗi dòng log `chat_metrics` (ảnh Docker không có git; không đặt ⇒ log ghi `khong_ro`). Đặt **bằng đúng `$TAG`** trong `hue.env` ở D3 — script đếm log `scripts/dem_chat_metrics.py --sha` so đúng chuỗi, mã dài 40 ký tự sẽ không khớp mã ngắn | `HUE_GIT_SHA=a9d1674` |
 | `<KEY>` | đường dẫn khoá SSH riêng trên máy User | `~/.ssh/hue-lightsail.pem` (bước C2) |
 | `COL` | biến shell: tên collection Qdrant | `COL=hue_full_corpus_7a2_e5_small_384` |
 
 Mọi lệnh trên máy AWS chạy với user `ubuntu`, thư mục làm việc `/srv/hue`. Mỗi cửa sổ shell mới phải đặt lại `TAG` và `COL`.
 
-**File deploy và md5** (16/11, `md5sum` 12 ký tự đầu — lệch ⇒ file đã bị sửa sau bản spec này, đọc diff với bản sao lưu `data/phase_12/deploy_nhap/sao_luu_*` trước khi chạy):
-`Dockerfile` `bd887103b463` · `compose.yml` `942d3527c413` · `Caddyfile` `da85ebea1915` · `dung_dockerignore.py` `98e0edaecfee` · `Dockerfile.dockerignore` `0c18e40a4fe6` (sinh lại ở A2; đổi khi kho đổi).
+**File deploy và md5** ([Chạy] 08:46 18/11/2026, `md5sum` 12 ký tự đầu — lệch ⇒ file đã bị sửa sau bản spec này, đọc diff với bản sao lưu `data/phase_12/deploy_nhap/sao_luu_*` trước khi chạy):
+`Dockerfile` `68a871655df2` · `compose.yml` `d85c24900f4b` · `Caddyfile` `da85ebea1915` · `dung_dockerignore.py` `27bbd5183a77` · `Dockerfile.dockerignore` `d49694790ca3` (sinh lại ở A2; đổi khi kho đổi).
+(Bản 2 ghi md5 ngày 16/11; từ đó các file đổi theo bảng dữ liệu mới + 18/11 `compose.yml` thêm dòng `HUE_GIT_SHA` và sửa ghi chú đầu file cho khớp D3–D4.)
 Kiểm: `cd <REPO>/data/phase_12/deploy_nhap && md5sum Dockerfile compose.yml Caddyfile dung_dockerignore.py | cut -c1-12`.
 
 ## 5. Giai đoạn A — chuẩn bị trên máy User (0 USD AWS)
@@ -199,24 +222,37 @@ Kiểm: `cd <REPO>/data/phase_12/deploy_nhap && md5sum Dockerfile compose.yml Ca
 
 ## 6. Giai đoạn B — tài khoản AWS [User]
 
-**B1.** [User] Tạo / đăng nhập tài khoản AWS, bật MFA cho tài khoản gốc. Không dùng tài khoản gốc để chạy lệnh. Tài khoản mới đang ở Free plan ⇒ nâng lên Paid plan trước buổi chấm (Q1).
+**B1.** [User] [chưa chạy] Tạo / đăng nhập tài khoản AWS, bật MFA (xác thực hai lớp) cho tài khoản gốc. Không dùng tài khoản gốc để chạy lệnh. Gói tài khoản: theo Q1.
+- Điểm kiểm (User tự nhìn, không dán gì vào hội thoại): (1) lúc gắn ứng dụng xác thực, AWS đòi **hai mã liên tiếp** — nhập đủ hai mã mới xong; (2) trang Security credentials của tài khoản gốc
+  hiện một thiết bị MFA và **không có access key nào** của tài khoản gốc; (3) **đăng xuất** tài khoản gốc, các bước sau đăng nhập bằng người dùng IAM (B3).
+- Dừng khi: trang Security credentials của tài khoản gốc có access key ⇒ User xoá trước khi đi tiếp.
 
-**B2.** [User] Tạo **cảnh báo ngân sách** 30 USD / tháng, email khi chi phí thật vượt 80 % (AWS Budgets: cảnh báo miễn phí [Nguồn] trang giá Budgets, tra 16/11).
-Cảnh báo, **không phải trần cứng** — AWS không tự dừng máy. Cách dễ nhất: bảng điều khiển Billing ⇒ Budgets ⇒ Create budget. CLI (bằng người dùng có quyền Billing — người dùng IAM ở B3 chỉ có Lightsail):
-  ```bash
-  aws budgets create-budget --account-id <số tài khoản 12 chữ số> \
-    --budget '{"BudgetName":"hue-demo","BudgetLimit":{"Amount":"30","Unit":"USD"},"TimeUnit":"MONTHLY","BudgetType":"COST"}' \
-    --notifications-with-subscribers '[{"Notification":{"NotificationType":"ACTUAL","ComparisonOperator":"GREATER_THAN","Threshold":80,"ThresholdType":"PERCENTAGE"},"Subscribers":[{"SubscriptionType":"EMAIL","Address":"<email User>"}]}]'
-  ```
-- Kiểm: `aws budgets describe-budgets --account-id <số tài khoản> --query "Budgets[].BudgetName"` (hoặc nhìn trang Budgets).
-- Mong đợi: có `hue-demo`; email xác nhận đăng ký cảnh báo về hộp thư User.
-- Dừng khi: lệnh báo lỗi quyền — làm trên bảng điều khiển thay vì CLI.
+**B2.** [User] [chưa chạy] Tạo **cảnh báo ngân sách** (AWS Budgets — cảnh báo miễn phí [Nguồn] trang giá Budgets, tra 16/11). Đây là cảnh báo qua email, **không phải trần cứng** —
+AWS không tự dừng máy; số liệu chi phí của AWS cập nhật chậm (cỡ nửa ngày [Suy, chưa mở lại trang]) ⇒ email về trễ so với lúc tiền thật phát sinh.
+- Làm **trên trang web** (đăng nhập bằng tài khoản có quyền Billing): Billing and Cost Management ⇒ Budgets ⇒ Create budget ⇒ **Customize (advanced)** ⇒ Cost budget ⇒ Monthly,
+  số tiền theo Q12 (mặc định 30 USD) ⇒ ở phần chọn loại chi phí tính vào ngân sách: **bỏ chọn Credits và Refunds** (tên mục có thể khác chút tuỳ giao diện — tìm chỗ liệt kê
+  "Credits", "Refunds", "Discounts"…) ⇒ thêm **ba cảnh báo** gửi email User: chi phí **thật (Actual) > 50 %** · **thật > 100 %** · **dự báo (Forecasted) > 100 %**.
+- Vì sao không ghi lệnh CLI: bản 2 có lệnh `aws budgets create-budget …` nhưng (a) lệnh đó chưa từng chạy, (b) nó không loại credit, (c) trường cấu hình cũ để loại credit (`CostTypes`)
+  đã bị AWS ghi là lỗi thời [Nguồn] trang tham chiếu API Budgets, B mở 17/11 ⇒ không chép một lệnh chưa chạy cho việc liên quan tới tiền.
+- Kiểm: trang Budgets hiện ngân sách `hue-demo` với 3 cảnh báo; mở ngân sách ra thấy Credits và Refunds **không** được tính; email xác nhận đăng ký cảnh báo về hộp thư User.
+  Phép kiểm "cảnh báo còn sống": sau khi máy chạy vài ngày (hoặc đặt tạm ngưỡng đầu thật thấp), email ngưỡng 50 % phải về — không về ⇒ cảnh báo đang không hoạt động, báo User.
+- Dừng khi: không tìm thấy chỗ bỏ Credits / Refunds ⇒ chụp màn hình cho User, **không** tạo ngân sách thiếu bước này rồi coi như xong.
 
-**B3.** [User] Tạo một người dùng IAM riêng cho việc deploy, chỉ quyền Lightsail (`AmazonLightsailFullAccess`), tạo access key, cài AWS CLI v2 trên máy User,
+**B3.** [User] [chưa chạy] Tạo một người dùng IAM riêng cho việc deploy, **chỉ quyền Lightsail**, tạo access key, cài AWS CLI v2 trên máy User,
 chạy `aws configure` (vùng `ap-southeast-1`, khuôn ra `json`). Không dán access key vào hội thoại. Agent chạy lệnh `aws` theo đúng Q9.
+- Cấp quyền (đổi ở bản 3): bản 2 ghi gắn chính sách có sẵn tên `AmazonLightsailFullAccess` — tên này **rất có thể không tồn tại** (E mở trang danh sách chính sách AWS quản lý sẵn
+  17/11: không thấy mục nào chứa "Lightsail" trong phần đã đọc, còn ~20 % cuối trang chưa đọc). Làm theo trang AWS "Grant Lightsail access for an IAM user"
+  (docs.aws.amazon.com/lightsail/latest/userguide/amazon-lightsail-managing-access-for-an-iam-user.html, E đọc trọn 17/11): IAM ⇒ Policies ⇒ Create policy ⇒ JSON, dán:
+  ```json
+  {"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Action": ["lightsail:*"], "Resource": "*"}]}
+  ```
+  đặt tên `hue-lightsail`, gắn cho người dùng IAM deploy (trực tiếp hoặc qua một nhóm). Nếu trang IAM **có** sẵn chính sách tên chứa "Lightsail" thì dùng cái nào cũng được — ghi lại đã dùng cái nào.
+- Nơi để khoá: access key chỉ nằm trong `~/.aws/credentials` trên máy User (do `aws configure` ghi); file `.csv` tải về lúc tạo khoá ⇒ xoá hoặc để ngoài mọi thư mục repo / thư mục đồng bộ.
+  Kiểm không lọt vào repo: `cd <REPO> && git status --short | grep -ci -e credential -e accessKey` ⇒ mong đợi `0`.
 - Kiểm: `aws sts get-caller-identity --query Arn --output text`
 - Mong đợi: `arn:aws:iam::<số tài khoản>:user/<tên người dùng IAM vừa tạo>`.
-- Dừng khi: ARN kết thúc bằng `:root` (đang dùng tài khoản gốc) hoặc tên khác — sửa `aws configure` trước khi đi tiếp.
+- Kiểm quyền hẹp (hai chiều): `aws lightsail get-regions --query "regions[0].name" --output text` ⇒ in một tên vùng (được phép); `aws s3 ls` ⇒ **phải báo lỗi AccessDenied** (không được phép ngoài Lightsail).
+- Dừng khi: ARN kết thúc bằng `:root` (đang dùng tài khoản gốc) hoặc tên khác — sửa `aws configure` trước khi đi tiếp; hoặc `aws s3 ls` **không** báo lỗi quyền (người dùng đang rộng quyền hơn dự định).
 
 ## 7. Giai đoạn C — tạo máy [Tiền]
 
@@ -314,6 +350,7 @@ Mọi lệnh có `--region ap-southeast-1`. Tên gói / ảnh hệ điều hành
   HUE_ENV_FILE=/srv/hue/.env.deploy
   HUE_SITE=<SITE>
   HUE_LUOT_MOI_NGAY=50
+  HUE_GIT_SHA=$TAG
   EOF
   docker compose -p hue -f compose.yml --env-file hue.env up -d qdrant
   for i in $(seq 30); do [ "$(docker inspect -f '{{.State.Health.Status}}' hue-qdrant-1)" = healthy ] && break; sleep 2; done
@@ -325,7 +362,7 @@ Mọi lệnh có `--region ap-southeast-1`. Tên gói / ảnh hệ điều hành
   print(u.urlopen(r, timeout=300).read().decode())
   print(json.load(u.urlopen('http://qdrant:6333/collections/$COL'))['result']['points_count'])"
   ```
-- Kiểm: `docker images hue-rag-app --format '{{.Tag}}'` có `$TAG`; `cat hue.env` (file không có khoá — in được).
+- Kiểm: `docker images hue-rag-app --format '{{.Tag}}'` có `$TAG`; `cat hue.env` (file không có khoá — in được) có dòng `HUE_GIT_SHA=<TAG>`.
 - Mong đợi: `docker load` in `Loaded image: hue-rag-app:<TAG>`; lệnh `run` in `{"result":true,…}` rồi số điểm = số ở máy User (16/11: 9425).
 - Dừng khi: `docker load` lỗi, Qdrant không `healthy` sau 60 s, `result` khác `true`, hoặc số điểm khác.
 - `hue.env` chỉ chứa biến không bí mật. Khoá nằm riêng ở `.env.deploy` (quyền 600), compose nạp vào container app qua `env_file`, không nằm trong ảnh.
@@ -350,6 +387,9 @@ Mọi lệnh có `--region ap-southeast-1`. Tên gói / ảnh hệ điều hành
 | Hết lượt (rào hai chiều) | trên máy AWS: `sed -i 's/^HUE_LUOT_MOI_NGAY=.*/HUE_LUOT_MOI_NGAY=3/' hue.env && docker compose -p hue -f compose.yml --env-file hue.env up -d app`; trình duyệt hỏi đủ 4 lượt; rồi `sed -i 's/^HUE_LUOT_MOI_NGAY=.*/HUE_LUOT_MOI_NGAY=50/' hue.env && docker compose … up -d app` | lượt 1–3 trả lời bình thường, lượt 4 báo "đã dùng hết số lượt"; sau khi trả về 50: `grep LUOT hue.env` in `=50` |
 | RAM | `ssh … 'docker stats --no-stream'` | app < 2 GiB (16/11 máy User: 1.021 MiB), `free -m` cột available > 500 MB |
 | Log không ghi câu hỏi / IP | `ssh … 'grep -c "chat_metrics" /srv/hue/logs/application.log'` | số dòng = số lượt đã hỏi; người chạy không in nội dung log ra hội thoại |
+| **Một câu hỏi thật đi hết đường** (phép kiểm chính — bản 3) | `curl -sN -m 90 -X POST https://<SITE>/api/chat/stream -H 'Content-Type: application/json' -d '{"query":"Chùa Thiên Mụ ở đâu?"}' > /tmp/hue_kiem.txt; grep -c '^event: delta' /tmp/hue_kiem.txt; grep -c '^event: done' /tmp/hue_kiem.txt` [chưa chạy] | dòng 1 > 0 (có chữ trả lời từ model), dòng 2 = `1`. **`/health` không thay được phép kiểm này**: nó chỉ đọc trạng thái lúc khởi động, không gọi OpenAI [Đọc] `backend/api/health.py` — khoá sai / hết hạn mức thì `/health` vẫn `ok`. Dùng lại lệnh này mỗi sáng ngày demo và sau mọi lần 10.2 / 10.3 (tốn ~0,0005 USD / lần; tính 1 lượt của IP máy User). Khi có script kiểm nhanh một lệnh (việc nhóm đã chốt, làm sau lượt đo cuối) thì dùng script thay dòng này |
+| Log ghi đúng bản đang chạy | `ssh … 'grep "chat_metrics" /srv/hue/logs/application.log \| tail -1 \| grep -o "\"git_sha\": \"[^\"]*\""'` [chưa chạy] | `"git_sha": "<TAG>"` — ra `khong_ro` ⇒ `hue.env` thiếu dòng `HUE_GIT_SHA` (D3) |
+| Tiền đi đúng project OpenAI | [User] mở trang Usage của **project riêng** (Q3) sau câu hỏi thật ở trên | số request của hôm nay tăng ở project đó, không tăng ở project máy User — sai ⇒ `.env.deploy` đang chứa khoá của project khác, dừng |
 | Sổ vết tắt | `ssh … 'docker compose -p hue -f /srv/hue/compose.yml --env-file /srv/hue/hue.env exec -T app env \| grep -c HUE_SO_VET'` | `0` |
 
 Ghi kết quả từng dòng (đạt / không) vào report deploy. Có dòng "không" ⇒ dừng, không gửi link cho ai.
@@ -377,7 +417,17 @@ là bản sao lưu đủ (giữ thư mục này tới khi xoá máy). Log: `/srv
 - Dọn đĩa: giữ tối đa 2 ảnh cũ (`docker image rm hue-rag-app:<nhãn quá cũ>`; đĩa 80 GB).
 
 **10.4 Khi có sự cố.** App 503 / không trả lời: `docker compose -p hue -f compose.yml --env-file hue.env logs app | tail -50` (không chép vào chỗ công khai). Hết hạn mức OpenAI
-(hard limit Q3): người dùng thấy lỗi ⇒ User nâng hạn mức ở trang OpenAI. Máy hết RAM: `docker stats --no-stream`, `sudo dmesg | grep -i oom`. Mọi trường hợp: báo User, không tự đổi cấu hình.
+(hard limit Q3): người dùng thấy lỗi, `/health` vẫn `ok` ⇒ phát hiện bằng dòng "Một câu hỏi thật" của §9 ⇒ User nâng hạn mức ở trang OpenAI. Máy hết RAM: `docker stats --no-stream`,
+`sudo dmesg | grep -i oom`. Các trường hợp này: báo User, không tự đổi cấu hình.
+
+**Dừng khẩn** (nghi bị lạm dụng: tiền OpenAI tăng lạ, số dòng log tăng vọt, link lọt ra ngoài) — người chạy **được làm ngay bước 1 không cần hỏi**, rồi báo User:
+1. Tắt app, giữ nguyên dữ liệu và log [chưa chạy trên máy AWS]: `ssh -i <KEY> ubuntu@<IP> 'cd /srv/hue && docker compose -p hue -f compose.yml --env-file hue.env stop app'`
+   - Kiểm: `curl -s -o /dev/null -w '%{http_code}\n' -m 10 https://<SITE>/api/tinh_nang` ⇒ mong đợi `502` (Caddy còn, app tắt) — không còn `200`.
+   - Lệnh này chỉ chặn **tiền OpenAI và việc lạm dụng**; **máy vẫn tính tiền AWS** (tắt cả máy Lightsail cũng vẫn tính — Q8).
+2. [User] Thu hồi khoá OpenAI của project công khai ở trang OpenAI (API keys ⇒ revoke) nếu nghi khoá lộ; tạo khoá mới, sửa `.env.deploy` trên máy AWS bằng `nano` (không dán vào hội thoại).
+3. Xem lưu lượng lạ mà không in nội dung: `ssh … 'grep -c "chat_metrics" /srv/hue/logs/application.log; grep -c "Rate limited" /srv/hue/logs/application.log'` (chỉ số đếm); log Caddy có địa chỉ IP —
+   chỉ User xem (`docker compose … logs caddy | tail -50`), không chép ra ngoài.
+4. Chạy lại: `docker compose -p hue -f compose.yml --env-file hue.env up -d app` rồi làm dòng "Một câu hỏi thật" của §9.
 
 **10.5 Kết thúc demo.** [User] (theo Q8; bước phá huỷ — User tự gõ, agent chỉ đưa lệnh)
 - Lệnh:
@@ -390,11 +440,27 @@ là bản sao lưu đủ (giữ thư mục này tới khi xoá máy). Log: `/srv
   aws lightsail delete-instance --region ap-southeast-1 --instance-name hue-app
   aws lightsail release-static-ip --region ap-southeast-1 --static-ip-name hue-ip
   ```
-- Kiểm: `aws lightsail get-instances --region ap-southeast-1 --query "instances[].name" --output text` · `aws lightsail get-static-ips --region ap-southeast-1 --query "staticIps[].name" --output text` · `aws lightsail get-instance-snapshots --region ap-southeast-1 --query "instanceSnapshots[].[name,state]" --output text`
-- Mong đợi: không còn `hue-app`; không còn `hue-ip`; còn `hue-cuoi available`.
-- Dừng khi: vòng chờ in trạng thái khác `available` (sau ~20 phút) ⇒ **không xoá máy**, báo User.
-- Sau đó: IP tĩnh gắn máy thì miễn phí; không gắn quá một giờ ⇒ 0,005 USD / giờ [Nguồn] tài liệu static IP Lightsail, tra 16/11 ⇒ `release-static-ip` ngay sau khi xoá máy. Bản chụp thủ công ~0,05 USD / GB-tháng ⇒ khi không cần nữa:
-  `aws lightsail delete-instance-snapshot --region ap-southeast-1 --instance-snapshot-name hue-cuoi`. Xoá luôn người dùng IAM / access key ở B3 nếu không dùng nữa.
+- Kiểm (sau khi xoá) — **mong đợi danh sách RỖNG, không phải "không còn tên `hue-app`"** (máy dựng lại từ bản chụp ở 10.3 mang tên khác):
+  ```bash
+  aws lightsail get-instances --region ap-southeast-1 --query "instances[].name" --output text          # mong đợi: không in gì
+  aws lightsail get-static-ips --region ap-southeast-1 --query "staticIps[].name" --output text         # mong đợi: không in gì
+  aws lightsail get-instance-snapshots --region ap-southeast-1 --query "instanceSnapshots[].[name,state]" --output text   # mong đợi: đúng một dòng `hue-cuoi available`
+  ```
+- Dừng khi: vòng chờ in trạng thái khác `available` (sau ~20 phút) ⇒ **không xoá máy**, báo User. Danh sách máy / IP còn dòng nào ⇒ chưa sạch, báo User (không đoán tên để xoá).
+- IP tĩnh gắn máy thì miễn phí; không gắn quá một giờ ⇒ 0,005 USD / giờ [Nguồn] tài liệu static IP Lightsail, tra 16/11 ⇒ `release-static-ip` ngay sau khi xoá máy.
+
+**Dọn nốt — theo đúng thứ tự** [User] [chưa chạy] (bản 3; khoá AWS xoá SAU CÙNG vì các lệnh trên cần nó):
+1. **Thu hồi khoá OpenAI của project công khai** (trang OpenAI ⇒ API keys ⇒ revoke) — **bắt buộc**: file `.env.deploy` nằm trong bản chụp `hue-cuoi`, ai dựng lại máy từ bản chụp là có khoá.
+   Kiểm: trang API keys của project không còn khoá đang hoạt động.
+2. Nếu Q2 = tên miền riêng: xoá bản ghi A trỏ `<IP>` ở nơi mua tên miền (IP đã trả có thể được cấp cho người khác). Kiểm: `getent hosts <tên miền>` không còn in `<IP>`.
+3. Xoá cặp khoá SSH trên AWS và trên máy: `aws lightsail delete-key-pair --region ap-southeast-1 --key-pair-name hue-key` rồi `rm ~/.ssh/hue-lightsail.pem`.
+   Kiểm: `aws lightsail get-key-pairs --region ap-southeast-1 --query "keyPairs[].name" --output text` không in gì.
+4. Bản chụp `hue-cuoi` (~0,05 USD / GB-tháng): khi chắc không dựng lại nữa ⇒ `aws lightsail delete-instance-snapshot --region ap-southeast-1 --instance-snapshot-name hue-cuoi`;
+   kiểm bằng lệnh `get-instance-snapshots` ở trên ⇒ không in gì.
+5. **Kiểm bằng tài khoản gốc / tài khoản có quyền Billing** (người dùng IAM deploy chỉ thấy Lightsail ở một vùng): trang Billing ⇒ Bills ⇒ xem **chi phí theo dịch vụ** của tháng —
+   chỉ có Lightsail (và thuế); xem vào **ngày hôm sau** và **2–3 ngày sau** khi xoá: không còn dòng nào tăng. Có dịch vụ lạ / vùng lạ ⇒ báo User ngay.
+6. Sau cùng: xoá access key rồi người dùng IAM deploy (IAM ⇒ Users); giữ ngân sách `hue-demo` thêm một tháng để còn email nếu sót tài nguyên.
+   Kiểm: `aws sts get-caller-identity` trên máy User **báo lỗi** (khoá đã bị xoá).
 
 ## 11. Bảng rà khung AI FDE (agent-security-review) cho bản công khai
 
@@ -409,6 +475,13 @@ là bản sao lưu đủ (giữ thư mục này tới khi xoá máy). Log: `/srv
 | Kho private trong ảnh | ảnh không lên registry công khai; chỉ `scp` | major nếu ai đẩy ảnh lên Docker Hub | Luật ở §0; không tạo ECR công khai |
 | Rào đo hai chiều | [Đo] 16/11 trên máy User: 1 câu thường đi qua + 3 ca xấu bị chặn (lượt 4, `/api/chat` không stream, giả `X-Forwarded-For`) | — | §9 dòng "Hết lượt" làm lại trên máy thật |
 
+| Kiểm sức khoẻ không gọi ra ngoài | `/health` chỉ đọc trạng thái lúc khởi động [Đọc] `backend/api/health.py` ⇒ khoá OpenAI hỏng / hết hạn mức không hiện ở `/health` | minor | Phép kiểm sau deploy và hằng ngày = một câu hỏi thật (§9) |
+| Biết bản nào đang chạy | ảnh không có git ⇒ log ghi `khong_ro` nếu không đặt biến; nhánh `p9-git-sha-env` cho đọc `HUE_GIT_SHA` [Đo] 18/11: test hàm đọc biến đạt; `docker compose config` đưa biến vào app | minor | D3 ghi `HUE_GIT_SHA=$TAG`; §9 có dòng kiểm |
+
+**Mỗi câu "đã chặn / đã an toàn" ở bảng trên kiểm lại bằng:** giới hạn lượt ⇒ §9 dòng "Hết lượt" · khoá / dữ liệu cấm không vào ảnh ⇒ A4 · log không nội dung ⇒ §9 dòng "Log không ghi câu hỏi / IP" ·
+sổ vết tắt ⇒ §9 dòng "Sổ vết tắt" · trang API tắt ⇒ §9 dòng "Trang API tắt" · quyền IAM hẹp ⇒ B3 "Kiểm quyền hẹp" · hạn mức OpenAI đúng project ⇒ §9 dòng "Tiền đi đúng project OpenAI" ·
+ngân sách loại credit ⇒ B2 "Kiểm". Dòng nào chưa có nhãn [Đo] trên máy AWS thì **chưa được coi là đã chặn ở bản công khai** cho tới khi §9 chạy xong.
+
 **Giả định an toàn:** chạy trên một máy Lightsail do User sở hữu; ai có link đều gọi được; giới hạn chi tiêu = giới hạn lượt / IP / ngày + hard limit
 OpenAI; chưa rào: một người dùng nhiều IP vẫn dùng được nhiều lượt (chặn bằng hạn mức OpenAI), lượt bị Dừng vẫn tính tiền phần đã chạy.
 
@@ -420,6 +493,13 @@ OpenAI; chưa rào: một người dùng nhiều IP vẫn dùng được nhiều
 - Còn chưa chắc: tên `medium_3_0` / `ubuntu_24_04` (C1 lấy từ đầu ra thật); gói 4 GB có tạo được trên Free plan không; credit có trừ vào Lightsail không; lệnh cài Docker chưa chạy trên máy thật.
 - Tra cũ 07/11 (EC2, Secrets Manager 0,40 USD / khoá / tháng, Parameter Store bản thường miễn phí): `data/tra_cuu_cli/2026-11-07_e-dep-aws/`. Spec chọn `.env.deploy` quyền 600 trên máy
   (đơn giản nhất, đủ cho một máy demo); Secrets Manager / Parameter Store chỉ đáng khi nhiều máy hoặc cần xoay khoá.
+
+**Bổ sung 17–18/11/2026 (bản 3):**
+- B mở trang tham chiếu AWS Budgets 17/11: ngân sách mặc định **có tính** credit; trường `CostTypes` ghi lỗi thời ⇒ B2 làm trên trang web. E mở 2 trang AWS 17/11 về quyền Lightsail ⇒ B3.
+- **Còn chưa chắc (thêm):** tắt máy Lightsail vẫn tính tiền (mới đọc đoạn trích) · Lightsail 4 GB là 2 nhân (trang giá 16/11 ghi 2 vCPU; chưa thấy đầu ra C1) · chọn Paid ngay lúc đăng ký có
+  còn credit 100 USD không · tên mục "Credits / Refunds" trên giao diện Budgets hiện hành.
+- **Chưa đo: nhiều người hỏi cùng lúc.** Lần đo đồng thời duy nhất là 27/10 (trước khi có định tuyến, công cụ, hiện chữ dần); bản công khai là một tiến trình trên máy 2 nhân ⇒
+  hội đồng 5–10 người hỏi cùng lúc chậm tới đâu là **chưa biết**. Đo được ngay trên máy AWS sau §9 (5 rồi 10 câu đồng thời, ước ~0,006 USD) — chưa có lệnh, chưa ai duyệt; ghi ở đây như giới hạn đã biết.
 
 ## 13. Chạy thử trên máy User — 16/11/2026 (E, ảnh `hue-rag-app:a9d1674` = `main` có nút Huỷ ảnh)
 
@@ -447,3 +527,10 @@ OpenAI; chưa rào: một người dùng nhiều IP vẫn dùng được nhiều
   M-3: §3 thêm tổng tiền cả đợt + Q9 (agent chạy `aws`) + Q10 (ngày tạo máy) + Q11 (giữ file deploy). m-1: xoá bản chụp khỏi 6335 ngay sau khi tải (A5, A6). m-2: A2 `THIEU` ghi lại, phán quyết ở A5.
   m-3: `TAG` / `COL` là biến shell, đặt lại trên máy AWS ở D3. m-4: vòng chờ C3 có trần 10 phút. m-5: §9 thêm dòng hết lượt + dòng ảnh qua https. m-6: §4 md5 file deploy + Q11.
   Thêm từ chạy thử: A4 bỏ qua `backend/`; lệnh dọn thư mục root; A1 chỉ xét phần code đi vào ảnh.
+- Bản 3 (B, 08:46 18/11/2026; bản 2 đã duyệt mã `e847b47ad995`): sửa một lượt theo đối chiếu bốn khoá học + bàn nhóm 17/11. Không đổi phương án (một máy Lightsail 4 GB + Compose), không đổi giai đoạn A.
+  (1) §0 bảng [Chạy] / [chưa chạy] cho từng phần; dòng trạng thái sai "chưa duyệt" sửa. (2) B2 ngân sách: làm trên trang web, loại credit + tiền hoàn, ba ngưỡng; bỏ lệnh CLI chưa chạy; Q12 mới.
+  (3) B3: tự tạo chính sách `lightsail:*` thay tên chính sách có thể không tồn tại; kiểm quyền hai chiều; nơi để khoá. (4) B1: điểm kiểm MFA hai mã, không access key gốc, đăng xuất gốc.
+  (5) `HUE_GIT_SHA=$TAG` ở D3 + §4 + dòng kiểm §9. (6) §9: phép kiểm chính là một câu hỏi thật (không phải `/health`) + bằng chứng trang Usage đúng project. (7) 10.4: lệnh dừng khẩn + đổi khoá + xem lưu lượng.
+  (8) 10.5: mong đợi danh sách rỗng; thứ tự dọn (thu hồi khoá OpenAI bắt buộc, DNS, cặp khoá SSH, bản chụp, kiểm hoá đơn bằng tài khoản gốc hôm sau + 2–3 ngày, access key sau cùng).
+  (9) Q1 ghi lời khuyên "không chọn gói miễn phí" của khoá; Q3 / Q8 ghi chờ User + tự nạp tiền OpenAI + tắt máy vẫn tính tiền. (10) §4 md5 file deploy tính lại; ghi chú đầu `compose.yml` sửa khớp D3–D4.
+  (11) §11 thêm hai dòng + bảng "câu đã chặn ⇒ lệnh kiểm". (12) §12 giới hạn chưa đo nhiều người cùng lúc. **Chưa làm ở bản 3:** chưa chạy lệnh AWS nào; runbook bàn giao mục 8 (trỏ vào spec này) viết riêng.
