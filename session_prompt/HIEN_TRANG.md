@@ -36,7 +36,7 @@ Mốc (User chốt theo THỨ, 18/11/2026):
 | Khi nào | Việc |
 |---|---|
 | Cuối MỖI ngày | Vòng tự cải thiện cách làm: đọc hai con số · lỗi lặp lần hai ⇒ máy trước chữ sau · thêm bao nhiêu gỡ bấy nhiêu (CHƯA chạy lần nào) |
-| Sáng thứ Bảy 21/11 | User tự bật hệ thống theo runbook mục 1–3, hỏi mươi câu, xem sổ vết; phiên điều phối ngồi cạnh |
+| Sáng thứ Bảy 21/11 | User tự bật hệ thống theo runbook mục 1–3, gõ ~10 câu tự chấm, xem sổ vết, đọc trang bản đồ + bài 26 (45–60 phút, User chốt 18/11); phiên điều phối ngồi cạnh, không làm hộ |
 | Thứ Bảy 21/11, trước tối | Chạy cả `backend/tests` một lượt trên `main` · gói soát mù cho model hãng khác (file riêng tư `data/review_khac_hang/2026-11-21_truoc_dung_code/DE_BAI.md` — A xem phạm vi trước) |
 | Tối thứ Bảy 21/11 | **Code đứng yên**; ghi mã commit đứng yên vào sổ đo |
 | Chủ nhật 22/11 | **Lượt đo cuối** (lệnh: file riêng tư `data/phase_9/b7/tools/RUNBOOK_CUOI.md`; trần 0,45 USD; phiên B chạy) |
@@ -59,9 +59,8 @@ Hai con số đo cách làm (tuần 16–22/11, đếm từ 18/11 — A đếm, 
 
 ## 3. Đang chờ User (gom một chỗ — đừng hỏi lại thứ không có ở đây)
 
-1. Nội dung buổi tự tay sáng thứ Bảy 21/11.
-2. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
-3. Ba lệnh đếm bộ câu kín trước lượt đo cuối (ở `RUNBOOK_CUOI.md`) — *chưa kiểm đã chạy chưa*. Deploy / AWS: chỉ hỏi lại SAU khi Phase 9 đóng.
+1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
+2. Ba lệnh đếm bộ câu kín trước lượt đo cuối (ở `RUNBOOK_CUOI.md`) — *chưa kiểm đã chạy chưa*. Deploy / AWS: chỉ hỏi lại SAU khi Phase 9 đóng.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
 
