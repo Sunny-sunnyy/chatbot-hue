@@ -274,7 +274,7 @@ lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 
 ### 10.3b Chỗ giao nhau giữa các tính năng (review tích hợp chỉ đọc chuỗi Phase 9, 18/11)
 
 Nguồn chung: file private `data/review_tich_hop_2026-11-18/ket_qua.md` (số # là số finding ở đó; [đã chạy] = probe hàm thuần 0 USD, [chỉ đọc code] =
-suy từ code, chưa chạy). Ba finding #1, #5, #8 đã sửa trên nhánh `p9-tich-hop-sua`; các dòng dưới KHÔNG sửa. Các dòng ghi G… là điểm do một model KHÁC HÃNG tìm thêm khi soát mù cùng chuỗi tính năng (nó thấy 3 điểm lượt đầu sót; G4 đã sửa ở `c6cc42d`). Các dòng ghi S… / T… là điểm của lượt soát mù thứ ba (một hãng khác nữa, hai lần chạy — file private `data/review_khac_hang/2026-11-18_tich_hop_phase_9/DOI_CHIEU.md` phần 2): năm dòng dưới KHÔNG sửa trước lượt đo cuối; hai điểm nhóm an toàn của lượt đó (S1: lượt bão / lũ bị rút lại mất câu 112 · S2: mục web tóm tắt tin giông / lốc) sửa ở nhánh `p9-gpt-an-toan`. Các dòng ghi P… là điểm của lượt soát tích hợp đợt 2 (tối 18/11; MỘT agent con cùng hãng, chỉ đọc — yếu hơn gói khác hãng; file private `data/review_tich_hop_2026-11-18/dot_2/ket_qua_dot_2.md`): P1, P2 ĐÃ SỬA ở nhánh `p9-p1p2-an-toan` (`b1f4dc8`, xem cuối mục); P3–P5 KHÔNG sửa, ghi ở các dòng dưới.
+suy từ code, chưa chạy). Ba finding #1, #5, #8 đã sửa trên nhánh `p9-tich-hop-sua`; các dòng dưới KHÔNG sửa. Các dòng ghi G… là điểm do một model KHÁC HÃNG tìm thêm khi soát mù cùng chuỗi tính năng (nó thấy 3 điểm lượt đầu sót; G4 đã sửa ở `c6cc42d`). Các dòng ghi S… / T… là điểm của lượt soát mù thứ ba (một hãng khác nữa, hai lần chạy — file private `data/review_khac_hang/2026-11-18_tich_hop_phase_9/DOI_CHIEU.md` phần 2): năm dòng dưới KHÔNG sửa trước lượt đo cuối; hai điểm nhóm an toàn của lượt đó (S1: lượt bão / lũ bị rút lại mất câu 112 · S2: mục web tóm tắt tin giông / lốc) sửa ở nhánh `p9-gpt-an-toan`. Các dòng ghi P… là điểm của lượt soát tích hợp đợt 2 (tối 18/11; MỘT agent con cùng hãng, chỉ đọc — yếu hơn gói khác hãng; file private `data/review_tich_hop_2026-11-18/dot_2/ket_qua_dot_2.md`): P1, P2 ĐÃ SỬA ở nhánh `p9-p1p2-an-toan` (`b1f4dc8`, gộp vào main ở `af173fb`; xem cuối mục); P3–P5 KHÔNG sửa, ghi ở các dòng dưới.
 
 | Tình huống | Hệ quả | Vì sao để nguyên | Nguồn |
 |---|---|---|---|
@@ -313,7 +313,7 @@ Về ba chỗ ĐÃ sửa (#1, #5, #8) — tách "test bằng đồ giả" ↔ "l
   bộ dò 20 câu do người không viết code soạn [đã chạy, hàm thuần]: phải bắt 11 — sót 0 (trước sửa sót 9); 9 câu "giống mà không phải" — bắt thừa 2 ("nói dông dài", tên riêng "Dông"), chấp nhận.
   P2 — lượt model tự chọn loại bão / lũ rồi lỗi: [đã chạy] gọi thẳng hai hàm route với tìm kho thật + model dựng sẵn (lần 1 gọi công cụ loại bão / lũ, lần 2 lỗi): luồng lỗi sinh, luồng hết giờ,
   `/api/chat` 502 đều có câu 112 (trước sửa: không); model gọi dự báo THƯỜNG rồi lỗi ⇒ không thêm. Script private `data/review_tich_hop_2026-11-18/dot_2/thu/t5_do_dong.py`, `t6_route_that.py`.
-  CHƯA có lượt với model thật; chưa biết model tự chọn loại bão cho câu không từ khoá thường tới đâu.
+  Đường stream qua route chỉ có script này (không nằm trong bộ test). CHƯA có lượt với model thật; chưa biết model tự chọn loại bão cho câu không từ khoá thường tới đâu.
 - **Chỉ có test, CHƯA đo trên đường thật:** #1 (không ép được model thật hết lượt tìm — có test luồng thật với model dựng sẵn) · nửa "bấm thẻ chọn" của #5.
 
 **Test thay hẳn phần lõi (soát 18/11, 3 file, 39 test — bảng đủ ở file private `data/review_tich_hop_2026-11-18/do_gia_trong_test.md`):** chỉ một test thay lõi
