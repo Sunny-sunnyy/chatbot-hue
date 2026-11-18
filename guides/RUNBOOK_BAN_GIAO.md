@@ -252,11 +252,28 @@ lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 
 | Mọi lỗi nhà cung cấp model | Người dùng thấy cùng một câu "Không thể tạo câu trả lời vào lúc này." | Chưa tách câu theo loại lỗi; thấy lỗi sinh tăng ⇒ mở trang Usage của nhà cung cấp trước | `backend/api/routes/chat.py` `GENERATION_FAILURE_MESSAGE` **[C kiểm 18/11]** |
 | `HUE_LUOT_MOI_NGAY` không đặt, rỗng, `0` hoặc không phải số | Giới hạn lượt / IP / ngày TẮT (0 ≠ "chặn hết") | Mặc định cho máy local; bản công khai phải đặt số dương | `backend/api/gioi_han.py` `tran_tu_moi_truong` **[C kiểm 18/11]** |
 | Lỗi gọi model ở bước hiểu câu sửa lịch | Ghi log giống "không phải câu sửa" ⇒ lượt đó đi đường hỏi đáp thường | Không che lỗi với người dùng, nhưng đếm log không tách được | `backend/llm/len_ke_hoach.py` (khối `except GenerationError`) **[C kiểm 18/11]** |
-| `git_sha` trong log khi chạy Docker | `khong_ro` nếu không truyền biến | Từ nhánh `p9-git-sha-env` (chờ merge): truyền `HUE_GIT_SHA=$(git rev-parse --short HEAD)` — mã NGẮN, vì `scripts/dem_chat_metrics.py --sha` so bằng đúng chuỗi | review của C 18/11 |
+| `git_sha` trong log khi chạy Docker | `khong_ro` nếu không truyền biến | Truyền biến lúc chạy (có từ `2da0426`, 18/11): `HUE_GIT_SHA=$(git rev-parse --short HEAD)` — mã NGẮN, vì `scripts/dem_chat_metrics.py --sha` so bằng đúng chuỗi | review của C 18/11 |
 | Chạy riêng một test bằng `-k` trong `tests/test_api_chat.py` | Vài test (vd `test_git_sha_co_o_ca_hai_route`) hỏng dù chạy cả file thì qua | Test phụ thuộc thứ tự (logger do test trước dựng) ⇒ chạy CẢ FILE | **[C + B chạy 18/11]** |
 | USD của lượt bị người dùng bấm Dừng | Là cận dưới | Không có số token cuối | `R/b_ra_no_cu.md` |
 | Sổ vết debug `data/debug_trace/` | Không tự xoá (~13 KB / lượt); chỉ bật ở máy local (`HUE_SO_VET=true`) | Bản công khai KHÔNG đặt biến này | PS §4, §8 |
 | Trình duyệt cũ (Safari < 15.4) | Trắng trang (`findLast` / `findLastIndex` không được hạ cấp) | Checklist bản công khai | HO tối 16/11 |
+
+### 10.3b Chỗ giao nhau giữa các tính năng (review tích hợp chỉ đọc chuỗi Phase 9, 18/11)
+
+Nguồn chung: file private `data/review_tich_hop_2026-11-18/ket_qua.md` (số # là số finding ở đó; [đã chạy] = probe hàm thuần 0 USD, [chỉ đọc code] =
+suy từ code, chưa chạy). Ba finding #1, #5, #8 đã sửa trên nhánh `p9-tich-hop-sua`; các dòng dưới KHÔNG sửa.
+
+| Tình huống | Hệ quả | Vì sao để nguyên | Nguồn |
+|---|---|---|---|
+| Hỏi thời tiết ("Mai Huế có mưa không?"), rồi hỏi tiếp một câu KHÔNG về thời tiết nhưng có từ chỉ ngày xa ("Tháng 12 Huế có lễ hội gì?") | Câu trả lời bị nối thêm câu "Mình chỉ có dự báo 7 ngày tới…"; nếu kho từ chối thì cổng web đóng theo | Cùng gốc với dòng dưới: lưới xét cả câu liền trước. Sửa bằng "chỉ xét chính câu đang hỏi" sẽ làm mất ca hỏi tiếp HỢP LỆ "Còn tuần sau thì sao?" (hôm nay ra đúng câu 7 ngày) — code không tách được hai ca, chưa có số tần suất ⇒ sửa chung sau B7 khi đo được (A chốt 18/11, B + C cùng ý) | #2 [đã chạy] |
+| Hỏi một câu bão / lũ, rồi hỏi tiếp một câu không liên quan mà kho từ chối | Câu từ chối kèm khối bản tin chính thức (thừa — đã nhận 17/11) VÀ cổng web đóng ⇒ mất mục "Từ web" | Lưới bão xét cả câu liền trước ("thừa hơn sót"); sửa chung (cổng web so trên chữ model) đổi hành vi câu bão thật bị từ chối ⇒ phải đo, sau B7 | #3 [đã chạy] |
+| Câu hỏi khoảng cách có giờ đồng hồ do người dùng tự nêu ("…mình định đi lúc 8 giờ sáng") | Model nhắc lại "8 giờ" ⇒ bước kiểm số coi là thời gian đi không có nguồn ⇒ rút cả câu trả lời ("Thử lại") | Cho phép số của câu người dùng là nới rào kiểm số ⇒ phải đo | #4 [đã chạy] |
+| Cuộc đã có lịch, người dùng nhắn "mai có bão, dời ngày đi…" | NGHI: nếu lần hiểu ý coi là câu sửa lịch thì lịch đổi ngày mà không có câu bản tin chính thức + 112 | Chưa chứng minh model hiểu là câu sửa; muốn chắc: một ca qua `/api/chat/stream` có lịch đã lưu (~0,001 USD) | #6 [chỉ đọc code] |
+| Đếm tiền bằng `scripts/dem_chat_metrics.py` | Trường `usd` hai nghĩa: lượt sửa lịch GỒM tiền phần đường thường bị huỷ; lượt thường bị định tuyến sang tuyến khác thì KHÔNG (phần bỏ chỉ ở `usd_bo`, script không cộng) ⇒ đếm thiếu ~0,0002 USD / câu không về Huế. Lượt sửa: `routing_ms` trống, `n_tra_loi_bo` = 0 dù định tuyến đã chạy | Lệch nhỏ ở log, không tới người dùng; cần số chính xác thì cộng thêm `usd_bo` | #7 [chỉ đọc code] |
+| Một câu hỏi bằng ảnh | Tốn 2 lượt của `HUE_LUOT_MOI_NGAY` (nhận ảnh + trả lời); tiền lần nhận ảnh nằm ở dòng log `anh_metrics`, không vào `chat_metrics` | Trần N lượt ≈ N / 2 câu ảnh — tính khi đặt trần cho bản công khai; tiền ảnh đếm riêng | #9 [chỉ đọc code] |
+| Bật lại cờ `lich_trinh` (lịch câu tự do — đang TẮT) cùng lượt có "Lịch hệ thống" / khoảng cách tính sẵn | Số trích dẫn [n] của điểm dùng lại đoạn đã có lệch một | Chỉ lộ khi bật cờ đang tắt; bật lại thì sửa chỗ lấy số nguồn trong `_lay_nguon_lich` (lấy id từ sổ nguồn) trước | #10 [chỉ đọc code] |
+| Tắt cờ `nho_hoi_thoai` mà để `sua_lich_v2` bật | Sửa lịch bằng lời lặng lẽ không chạy (không có cuộc ⇒ không lưu lịch), giao diện vẫn mời "nhắn trợ lý…" | Không kiểm lúc khởi động. **Tắt `nho_hoi_thoai` ⇒ tắt luôn `sua_lich_v2`**; `web_cau_noi_tiep` cần `tra_web` + `nho_hoi_thoai`, `het_luot_bo_cong_cu` cần `tim_them` (hai cờ này thiếu cờ kia thì chỉ không chạy) | #11 [chỉ đọc code] |
+| Tạo lịch qua `POST /api/chat` (không stream) | Lịch đó KHÔNG được lưu ⇒ không sửa bằng lời về sau; cũng không có: trả lời song song định tuyến, thẻ chọn, `usd_bo` | Các phần này chỉ có ở `/api/chat/stream` (giao diện chỉ dùng đường stream) | mục 4 của file nguồn [chỉ đọc code] |
 
 ### 10.4 Giới hạn của chính các số đo
 

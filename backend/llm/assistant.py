@@ -899,6 +899,11 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
         return
     if getattr(trace.generated, "hit_max_turns", False):  # getattr: generator thay thế trong test chỉ có `text` (như route, B68 m-4)
         _set_fixed(trace, INSUFFICIENT_ANSWER, "max_turns")
+        if flags is not None and flags.thoi_tiet and (trace.thoi_tiet_ctx or {}).get("bao_lu"):
+            # review tích hợp 18/11 #1: lượt bão / lũ chạm trần lượt (hoặc hết lượt tìm) trả về TRƯỚC `_thoi_tiet_cuoi`, cổng web cũng đóng ⇒ mất cả
+            # hai lớp an toàn. Câu chỉ bản tin chính thức + 112 phải đi cùng câu từ chối như ở lượt bão thường (đường stream phát `trace.answer`)
+            trace.thoi_tiet_noi = tt.CAU_BAO_LU
+            trace.answer = f"{trace.answer}\n\n{tt.CAU_BAO_LU}"
         return
     text = trace.generated.text
     if trace.nhieu_y and chi_y_thieu(text):  # chốt (a) vòng 2: không ý nào có Bằng chứng ⇒ đúng câu từ chối cũ (đi đường từ chối + cổng web cũ)
@@ -1475,6 +1480,7 @@ async def _sua_song_song(query: str, retrieval_service, context_builder, generat
         yield "status", {"stage": "sua_lich"}
         async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
             yield event
+        set_notice(trace, flags)  # như lượt biểu mẫu bản 2: lịch sau khi sửa vẫn trích bài điểm đến ⇒ giữ dòng "có thể đã thay đổi"
         return
     phu = AnswerTrace(**{k: getattr(trace, k) for k in ROUTE_INPUTS})
     hang: asyncio.Queue = asyncio.Queue()
@@ -1523,6 +1529,7 @@ async def _sua_song_song(query: str, retrieval_service, context_builder, generat
         yield "status", {"stage": "sua_lich"}  # review E m-1: chỉ hiện khi đúng là lượt sửa
         async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
             yield event
+        set_notice(trace, flags)
         return
     da_quyet.set()  # không phải lượt sửa ⇒ đường thường được tra web (nếu cổng mở)
     sua, goi_truoc = trace.sua, list(trace.llm_calls)
@@ -1537,8 +1544,9 @@ async def _sua_song_song(query: str, retrieval_service, context_builder, generat
     finally:
         await huy()
         for item in dataclasses.fields(AnswerTrace):  # trace chính nhận mọi thứ đường thường đã làm; giữ phần của lượt sửa
-            if item.name not in ("llm_calls", "sua", "lich_luu", "sua_chon"):
+            if item.name not in ("llm_calls", "sua", "lich_luu", "sua_chon", "vet"):
                 setattr(trace, item.name, getattr(phu, item.name))
+        trace.vet = {**phu.vet, **trace.vet}  # sổ vết: giữ `vet["sua"]` của lần hiểu ý (ghi trên trace chính) — đúng lượt "câu sửa bị coi là câu thường"
         trace.llm_calls = goi_truoc + phu.llm_calls
         trace.sua = {**(sua or {}), "khan_cap": khan_cap} if sua is not None or khan_cap else None
 

@@ -22,7 +22,7 @@ from llm.assistant import (AnswerTrace, AssistantFlags, _dong_thoi_tiet_lich, _t
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, THOI_TIET_BAO_LU_MO_TA, THOI_TIET_MO_TA
 from llm.do_so import do_ngay_di
 from retrieval.full_corpus_context import PackedSource
-from test_b2_tool_loop import _ids, answer, deps, generator  # noqa: F401  (fixture `deps`: Qdrant thật, chỉ đọc)
+from test_b2_tool_loop import _ids, answer, deps, generator, tool_call  # noqa: F401  (fixture `deps`: Qdrant thật, chỉ đọc)
 from test_b5_lich_trinh import BANG, ON, lich_call, tool_names, viet_theo_khung
 
 NGAY0 = date(2026, 11, 6)  # thứ Sáu
@@ -523,6 +523,20 @@ def test_unrelated_follow_up_after_storm_question_gets_no_lead_sentence(deps, st
     assert trace.thoi_tiet_dau is None and trace.answer == f"Bún bò là món nổi tiếng [1].\n\n{tt.CAU_BAO_LU}"
     if stream:
         assert "".join(d for k, d in events if k == "delta") == trace.answer
+
+
+@pytest.mark.parametrize("stream", [False, True])
+def test_storm_turn_hitting_turn_limit_still_gets_official_bulletin_line(deps, stream):
+    # review tích hợp 18/11 #1: lượt bão / lũ mà model xin `tim_kho` đã ẩn (hết lượt tìm) ⇒ câu từ chối cố định trả về trước bước nối, cổng web
+    # cũng đóng ⇒ từng mất câu NCHMF / 112. Chỉ nối câu đó — không bảng số (lượt chạm trần không có kết quả công cụ nào để tin)
+    flags = dataclasses.replace(BAO, het_luot_bo_cong_cu=True)
+    luon_tim = lambda n, kw: [tool_call(f"câu tìm {n}")]  # noqa: E731
+    trace, events = run(deps, "Sắp có bão vào Huế không?", generator(luon_tim), flags, stream=stream)
+    assert trace.fixed_outcome == "max_turns" and trace.answer == f"{INSUFFICIENT_ANSWER}\n\n{tt.CAU_BAO_LU}" and trace.thoi_tiet is None
+    if stream:
+        assert [d for k, d in events if k == "delta"] == [trace.answer]
+    trace, _ = run(deps, "Ở Huế nên ăn món gì?", generator(luon_tim), flags, stream=stream)  # đối chứng: lượt không bão ⇒ đúng câu từ chối trần
+    assert trace.fixed_outcome == "max_turns" and trace.answer == INSUFFICIENT_ANSWER
 
 
 def test_lead_sentence_never_on_turn_without_storm_or_with_flag_off(deps):
