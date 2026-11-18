@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 19:48 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
+Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 20:07 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án, cho BẤT KỲ coding agent nào (Claude Code, Codex, Antigravity) vừa mở phiên. Nó được **viết lại tại chỗ**
 mỗi lần kết phiên — không nối thêm. Thứ tự mở phiên (bạn là phiên nào, báo gì, chờ gì) ở `session_prompt/START_SESSION.md`; trang này là phần "dự án đang
@@ -24,7 +24,7 @@ trợ lý trên bản code đã đứng yên.
   tắt; bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
 - **Lần chạy cả bộ test gần nhất:** 18/11, 1.375 đạt + 1 hỏng do mã commit đổi giữa lượt (chạy lại file đó: 13 đạt) — số của B.
-- **Máy:** mở lại máy thì `/tmp` MẤT (worktree, bản mốc đo); Qdrant: kiểm `curl -s http://127.0.0.1:6335/collections`; không lên: `docker compose up -d qdrant`. Server không chạy sẵn.
+- **Máy:** mở lại máy ⇒ `/tmp` MẤT (worktree, bản mốc đo) và Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1). Server không chạy sẵn.
 - **Giới hạn đã biết + đường cũ đừng chép:** `guides/RUNBOOK_BAN_GIAO.md` mục 10. Gặp hành vi trông như lỗi ⇒ tra ở đó TRƯỚC khi sửa hay báo.
 
 ## 2. Mốc và việc đang mở
@@ -43,12 +43,12 @@ Thứ tự việc — KHÔNG gắn ngày (User 18/11: không cố định thời
 
 Mỗi ngày: vòng tự cải thiện cách làm.
 
-**Tới 19:48 18/11:** bước 0, 1 ĐẠT. Bước 2: soát xong, 5 điểm (`data/review_tich_hop_2026-11-18/dot_2/`) — P1 / P2 B sửa ở `origin/p9-p1p2-an-toan`, C review; P3–P5 ghi runbook 10.3b sau.
+**Tới 20:07 18/11:** bước 0, 1 ĐẠT. Bước 2: 5 điểm (`data/review_tich_hop_2026-11-18/dot_2/`) — P1 / P2 đã sửa (`b1f4dc8`, C review đạt), P3–P5 ở runbook 10.3b. Kế: B chạy cả bộ test ⇒ bước 3.
 
 Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc (mục 7):
 - **A:** danh sách User test cuối (phiếu chấm: `data/tu_tay_2026-11-21/`); gộp nhánh.
-- **B:** sửa P1 / P2; lượt đo cuối; sau đó plan vòng tự tối ưu + thử `ruff` (chỉ `backend/`, `scripts/`); giữ trang bản đồ.
-- **C:** giữ trang này; runbook mục 10; review nhánh P1 / P2; sau bước 4: script kiểm đường dẫn, chấm 4 skill cũ.
+- **B:** cả bộ test sau gộp P1 / P2; lượt đo cuối; sau đó plan vòng tự tối ưu + thử `ruff` (chỉ `backend/`, `scripts/`); giữ trang bản đồ.
+- **C:** giữ trang này; runbook mục 10; sau bước 4: script kiểm đường dẫn, chấm 4 skill cũ.
 - **E:** giữ `guides/CACH_LAM_VIEC.md`; 10 skill đã vào `main` — KHÔNG sửa chữ skill khi chưa có số chấm mới.
 - **Chưa ai nhận, để sau lượt đo cuối:** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
   quần thể (10.2) · runbook mục 8 (deploy) — viết ở bước 5.
