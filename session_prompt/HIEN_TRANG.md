@@ -54,7 +54,7 @@ Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc
 
 Từ nay tới tối thứ Bảy 21/11: chỉ sửa lỗi đã tái hiện được; không thêm tính năng; đổi chuỗi gửi model ⇒ hỏi phiên điều phối trước.
 
-Hai con số đo cách làm (tuần 16–22/11, tới chiều 18/11; B soát): việc đã báo "xong" bị lật lại **5** · User phải nhắc lại điều đã nói **6**. Giá 18/11: 74 commit, 10 chạm code (tuần code đứng yên); hỏi User ≥ 20 câu (> 8 ⇒ gom câu).
+Hai con số đo cách làm (tuần 16–22/11, tới chiều 18/11; B soát): việc đã báo "xong" bị lật lại **5** · User phải nhắc lại điều đã nói **6**. Giá 18/11: 74 commit, 10 chạm code (tuần code đứng yên); hỏi User: chiều 7 hộp hỏi, sáng không đếm lại được (> 8 ⇒ gom câu; từ 19/11 A đếm ngay lúc hỏi).
 
 ## 3. Đang chờ User (gom một chỗ — đừng hỏi lại thứ không có ở đây)
 
