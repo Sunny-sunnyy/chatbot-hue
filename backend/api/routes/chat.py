@@ -69,7 +69,14 @@ METRIC_FIELDS = (
 
 
 def _doc_git_sha() -> str:
-    """Mã commit ngắn của thư mục code này (worktree / server tạm tự mang mã của nhánh). Không có git (vd trong Docker) ⇒ "khong_ro"."""
+    """Mã commit ngắn của thư mục code này (worktree / server tạm tự mang mã của nhánh).
+
+    Ảnh Docker không có git ⇒ người build truyền mã qua biến `HUE_GIT_SHA` (có giá trị thì dùng luôn, không hỏi git);
+    không biến, không git ⇒ "khong_ro".
+    """
+    tu_bien = os.environ.get("HUE_GIT_SHA", "").strip()
+    if tu_bien:
+        return tu_bien
     try:
         out = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=Path(__file__).parent, capture_output=True, text=True, timeout=5)
     except (OSError, subprocess.SubprocessError):

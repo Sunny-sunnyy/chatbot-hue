@@ -109,8 +109,23 @@ def test_git_sha_khong_co_git_thi_khong_chet(monkeypatch):
     def khong_git(*args, **kwargs):
         raise FileNotFoundError("git")
 
+    monkeypatch.delenv("HUE_GIT_SHA", raising=False)
     monkeypatch.setattr(chat.subprocess, "run", khong_git)
     assert chat._doc_git_sha() == "khong_ro"
+    # Ảnh Docker (không git): mã do người build truyền qua biến môi trường; biến rỗng / toàn dấu cách coi như không đặt.
+    monkeypatch.setenv("HUE_GIT_SHA", " abc1234\n")
+    assert chat._doc_git_sha() == "abc1234"
+    monkeypatch.setenv("HUE_GIT_SHA", "  ")
+    assert chat._doc_git_sha() == "khong_ro"
+
+
+def test_git_sha_bien_moi_truong_thang_git(monkeypatch):
+    from api.routes import chat
+
+    monkeypatch.setenv("HUE_GIT_SHA", "abc1234")
+    assert chat._doc_git_sha() == "abc1234"  # có biến ⇒ không hỏi git (thư mục này có git, mã thật khác "abc1234")
+    monkeypatch.delenv("HUE_GIT_SHA")
+    assert chat._doc_git_sha() not in ("abc1234", "khong_ro")  # không biến ⇒ đường git như cũ
 
 
 def test_chat_metrics_logged_when_retrieval_not_ready(caplog):
