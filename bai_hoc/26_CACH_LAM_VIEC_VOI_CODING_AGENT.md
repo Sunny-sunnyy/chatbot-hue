@@ -145,12 +145,12 @@ một điểm giám khảo nói đúng hệ quả nhưng sai một nửa nguyên
 **Vì sao phải tách.** Một test "đạt" có thể đạt vì nó chỉ kiểm cái bản giả do chính nó dựng. Một khoá học nhóm đọc kể đúng chuyện này: agent viết test vô ích chỉ để
 đạt mức 80 % dòng code được test chạm tới, và dùng dữ liệu giả dù đã bị cấm.
 
-**Đã làm gì sáng 18/11.** Một phiên soát **ba file test dùng đồ giả nhiều nhất** (39 test, trong 49 file test của đồ án) để tìm chỗ "thay hẳn phần lõi bằng
+**Đã làm gì sáng 18/11.** Một phiên soát **ba file test bị nghi thay hẳn phần lõi** (39 test, trong 49 file test của đồ án) để tìm chỗ "thay hẳn phần lõi bằng
 đồ giả". Kết quả: 24 / 39 test không giả gì; vài test giả để *ép lỗi* (dịch vụ trả lỗi, lỗi bất ngờ) — việc đó ổn. Chỉ **một** test thay hẳn phần lõi, và nó
 đang giữ bốn hành vi của tính năng sửa lịch bằng lời. Nhóm cho chạy **bốn lượt thật** (một lượt thử rồi ba lượt), qua hệ thống thật và model thật, phủ đủ
 bốn hành vi: cả bốn đều đúng. *Tốn bao nhiêu:* 0,00375 USD (chưa tới 100 đồng) cho
 cả bốn lượt. *Ý nghĩa:* bốn hành vi đó nay có bằng chứng thật, không chỉ có bằng chứng "bản giả chạy đúng". Mẫu rất nhỏ — mỗi hành vi mới thấy một lần — nên đây là "đã
-thấy chạy đúng một lần", chưa phải "luôn đúng". 46 file test còn lại chưa được soát theo cách này.
+thấy chạy đúng một lần", chưa phải "luôn đúng". 46 file test còn lại chưa được soát theo cách này, và phần "bấm thẻ chọn" của một trong bốn hành vi chưa có lượt thật.
 
 **Hai thói quen anh chọn cho mọi dự án:** (a) **soát tích hợp sau mỗi đợt gộp** (chuyện ở mục 5); (b) **soát độ thật của test** định kỳ. Anh cũng nhắc lại:
 khuyến khích test thật, dữ liệu thật, và được dùng tiền API để test.
@@ -162,13 +162,13 @@ Thêm một điều dành cho việc đổi thứ người dùng thấy: agent t
 
 Đồ án có 8 skill (file hướng dẫn quy trình). Chưa skill nào từng được chấm. Anh chọn: **chấm rồi mới gọt**.
 
-**Cách chấm.** Mỗi skill một việc thử nhỏ; hai agent con ngữ cảnh mới cùng làm, một bên được bảo đọc skill, một bên không; thang điểm viết TRƯỚC khi chạy, lấy
+**Cách chấm.** Mỗi skill một việc thử nhỏ (tới trưa 18/11 mới chạy 4 trong 8 skill; 4 skill còn lại mới có đề); hai agent con ngữ cảnh mới cùng làm, một bên được bảo đọc skill, một bên không; thang điểm viết TRƯỚC khi chạy, lấy
 từ lỗi đã gặp thật. Một phiên chấm theo thang (phiên này biết bản nào có skill); ở đợt đầu có thêm một phiên thứ hai chấm mà không được cho biết — phiên đó
 tự khai là độ "mù" không trọn vì nhận ra dấu skill trong vài bản. Luật ghi trước: chỉ tin khi chênh từ 3 điểm trở lên trên thang 10.
 
 **Kết quả tới trưa 18/11.** Ba skill đầu, hai bên chênh nhau **0 đến 2 điểm** (10 ↔ 8 · 8 ↔ 8 · 8 ↔ 9 theo người chấm chính; ở skill review bản KHÔNG
-skill còn cao hơn) ⇒ không cặp nào tới ngưỡng 3 điểm, **chưa kết luận được gì**. Đợt hai (đề khó hơn, mỗi bên ba lượt, mới một người chấm) cũng không cặp nào
-chênh đủ ngưỡng. *Vì sao chưa ổn:* một lượt mỗi bên thì chênh 1–2 điểm nằm trong mức model tự dao động.
+skill còn cao hơn) ⇒ không cặp nào tới ngưỡng 3 điểm, **chưa kết luận được gì**. Đợt hai (đề khó hơn, mỗi bên ba lượt, mới một người chấm; ngưỡng ghi trước của đợt này: chênh từ 2
+điểm trung bình, hoặc một ý mà bên này cả ba lượt có còn bên kia cả ba lượt không) cũng không cặp nào đủ ngưỡng. *Vì sao chưa ổn:* một lượt mỗi bên thì chênh 1–2 điểm nằm trong mức model tự dao động.
 
 **Một quan sát (chưa phải kết luận).** Cái lỗi mà lượt review thật buổi sáng đã bỏ sót (chuyện ở mục 5) thì cả hai agent con — có skill lẫn không skill — đều
 tự tìm ra. Khác nhau ở chỗ: hai agent con này có **ngữ cảnh sạch và chỉ làm một việc**, còn người review buổi sáng đang làm nhiều việc cùng lúc. Có vẻ thứ
@@ -218,7 +218,7 @@ Trước đây việc "rút kinh nghiệm" là kể lại sự cố rồi thêm 
 
 - Mọi quyết định của anh sáng 18/11 kèm giờ ghi nhận (lịch theo thứ, buổi thử tối thứ Ba 24/11: 09:14; báo cáo bốn ý + nhãn độ tin + phần của anh: 09:41; quyền thường trực 10:11; hai thói quen kiểm thử + giám khảo khác hãng 10:11; giữ chế độ bỏ hỏi quyền + câu kín 10:57; chấm skill 10:57; vòng tự cải thiện cuối mỗi ngày 11:09; năm dòng đề bài + đồ án tốt nghiệp chấm một lần + mốc dùng giám khảo 11:30): `session_prompt/CURRENT_HANDOFF.md` mục "PHIÊN SÁNG 18/11" [quyết định của anh]
 - Bảng quyền: `AGENTS.md` mục "Quyền thường trực" [tài liệu]; trang cách làm chung: `guides/CACH_LAM_VIEC.md`; bộ file mẫu: `guides/khung/` [tài liệu]
-- Bốn phiên báo "đọc đủ" đều có lỗ (17/11): `session_prompt/CURRENT_HANDOFF.md` khối tối 17/11 mục C [tài liệu]. "3 test đạt" thật ra 2 đạt / 1 hỏng: `data/khoa_hoc_2026-11-17/de_xuat_cach_lam/B.md` mục 1 (riêng tư) [lời phiên B, chưa ai kiểm lại]. Bảng 45 dòng sai 4 dòng: `data/khoa_hoc_2026-11-17/AI_FDE_E_phan_9.md` mục 2d (riêng tư) [đã chạy — phiên E mở nguồn]
+- Bốn phiên báo "đọc đủ" đều có lỗ (17/11): `session_prompt/CURRENT_HANDOFF.md` khối tối 17/11 mục C [tài liệu]. "3 test đạt" thật ra 2 đạt / 1 hỏng: `data/khoa_hoc_2026-11-17/de_xuat_cach_lam/B.md` mục 1 (riêng tư) [đã chạy — phiên C chạy lại lệnh đó sáng 18/11]. Bảng 45 dòng sai 4 dòng: `data/khoa_hoc_2026-11-17/AI_FDE_E_phan_9.md` mục 2d (riêng tư) [đã chạy — phiên E mở nguồn]
 - Tính năng ảnh làm bốn bản một tối (15/11): `session_prompt/CURRENT_HANDOFF.md` khối kết phiên tối 15/11, mục vòng tự soi [tài liệu]
 - Ba hãng soát mù: `data/review_khac_hang/2026-11-18_tich_hop_phase_9/DOI_CHIEU.md` (riêng tư) — mục 1 "trùng 2 (+ 1 trùng giới hạn cũ) · chỉ Gemini 3 · chỉ Claude 8", mục 2.1 "GPT thêm 6 điểm chưa ai thấy … 5 / 5 điểm B chạy lại đều tái hiện", mục 2.3 [đã chạy — phiên B tái hiện]; lượt Claude 11 điểm: `data/review_tich_hop_2026-11-18/ket_qua.md` (riêng tư). GPT = hai lượt chạy bằng hai bản model, 7 điểm + 1 nghi vấn [theo sổ việc 11:09]
 - Lỗi do bản sửa trong ngày (điểm G4 của Gemini): `DOI_CHIEU.md` mục 2 "G4 — ĐÚNG [đã chạy]"; câu "giữ đúng" là của phiên E trong tin review nhánh sửa sáng 18/11, E đã nhận lỗi (`session_prompt/sessions/STATUS_E.md`) [đã chạy]; "khoảng mười phút" theo `DOI_CHIEU.md` mục 1
