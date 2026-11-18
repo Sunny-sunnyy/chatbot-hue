@@ -51,7 +51,7 @@ Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc
 - **C:** giữ trang này; runbook mục 10; soát tích hợp bước 2; sau bước 4: script kiểm đường dẫn, chấm 4 skill cũ.
 - **E:** giữ `guides/CACH_LAM_VIEC.md`; 10 skill đã vào `main` — KHÔNG sửa chữ skill khi chưa có số chấm mới.
 - **Chưa ai nhận, để sau lượt đo cuối:** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
-  quần thể (10.2) · runbook mục 8 (deploy) — chỉ viết khi User mở lại chuyện deploy.
+  quần thể (10.2) · runbook mục 8 (deploy) — viết ở bước 5.
 
 Tới khi xong bước 4: chỉ sửa lỗi đã tái hiện được; không thêm tính năng; đổi chuỗi gửi model ⇒ hỏi phiên điều phối trước.
 
