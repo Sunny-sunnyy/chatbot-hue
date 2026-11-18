@@ -284,7 +284,7 @@ Về ba chỗ ĐÃ sửa (#1, #5, #8) — tách "test bằng đồ giả" ↔ "l
 
 **Test thay hẳn phần lõi (soát 18/11, 3 file, 39 test — bảng đủ ở file private `data/review_tich_hop_2026-11-18/do_gia_trong_test.md`):** chỉ một test thay lõi
 là `tests/test_sua_lich_v2.py::test_parallel_normal_path_waits_for_intent_before_web_and_emergency_wins` (thay `_answer_core`, `hieu_va_ap`, `stream_sua`) —
-bốn hành vi nó giữ đã có lượt thật ở trên, trừ ca "khẩn cấp thắng lượt sửa" (chưa có lượt thật). Sửa vùng `_sua_song_song` ⇒ chạy lại script trên, đừng chỉ tin
+bốn hành vi nó giữ đã có lượt thật ở trên; ca "câu trộn khẩn cấp không thành lượt sửa" đo ở bộ câu trộn khẩn cấp 14–15/11 (`Project_Status.md` §2: 0 / 16, định tuyến nhận 16 / 16 — số cũ, C không chạy lại 18/11). Sửa vùng `_sua_song_song` ⇒ chạy lại script trên, đừng chỉ tin
 test này. Các test còn lại dùng đồ giả để dựng điều kiện (biến môi trường, ngày, ép lỗi) hoặc lấy nguồn từ Qdrant thật với model dựng sẵn.
 
 ### 10.4 Giới hạn của chính các số đo
