@@ -706,6 +706,12 @@ def _khop_luoi_cuoi(query: str, flags: "AssistantFlags | None", history=()) -> b
     sau một câu bão vẫn là lượt bão; thừa hơn sót)."""
     if flags is None or not (flags.thoi_tiet and flags.bao_lu_cong_cu):
         return False
+    return _luot_bao_lu(query, history)
+
+
+def _luot_bao_lu(query: str, history=()) -> bool:
+    """Câu này HOẶC câu hỏi liền trước là câu bão / lũ: danh sách rộng của `tt`, "cảnh báo" + một từ thời tiết, hoặc "dông". MỘT chỗ xét cho lưới cuối
+    (`_khop_luoi_cuoi`) và cho mục web (`cong_web`) — hai nơi lệch nhau thì mục web để model viết ngay cạnh câu 112 (soát khác hãng 18/11, hai lần)."""
     cau = [query] + ([history[-1][0]] if history else [])
     return tt.la_luot_bao_lu(query, history) or any(_DONG.search(unicodedata.normalize("NFC", c)) for c in cau)
 
@@ -1224,6 +1230,13 @@ def cau_cho_web(query: str, trace: AnswerTrace, flags: AssistantFlags | None) ->
     return query
 
 
+# Link chính thức của mục web câu cố định thiên tai (cùng hai địa chỉ với `tt.CAU_BAO_LU`); `id` chữ để không trùng số w n của sổ web
+NGUON_CHINH_THUC = [
+    {"id": "nchmf", "title": "Trung tâm Dự báo khí tượng thủy văn quốc gia — bản tin chính thức", "link": tt.NCHMF_URL, "domain": "nchmf.gov.vn", "ngay": None},
+    {"id": "lu_quet", "title": "Cổng cảnh báo lũ quét, sạt lở", "link": tt.LU_QUET_URL, "domain": "luquetsatlo.nchmf.gov.vn", "ngay": None},
+]
+
+
 async def cong_web(query: str, generator, trace: AnswerTrace, tim_web, flags: AssistantFlags | None = None) -> None:
     """Sau khi cổng mở: truy vấn do code dựng từ câu hỏi lượt này (D2; cờ `web_cau_noi_tiep` + lượt có lịch sử ⇒ từ câu tìm kho cuối model viết —
     `cau_cho_web`, chữ model có chi tiết của lượt trước đi ra ngoài) ⇒ một lần tra (D3) ⇒ một lần gọi model riêng viết mục web (D4) ⇒ kiểm
@@ -1244,8 +1257,12 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web, flags: As
         web.update(outcome="web_rong", text=tw.WEB_RONG_TEXT)
     if kq.trang_thai != "ok":
         return
-    if tw.la_cau_thien_tai(xet):  # vòng chỉnh 1: câu thiên tai ⇒ không gọi model; câu cố định (NCHMF / chính quyền / 112) + link nguồn do code
-        web.update(outcome="thien_tai", text=tw.THIEN_TAI_TEXT, nguon=list(kq.so_web))
+    # vòng chỉnh 1: câu thiên tai ⇒ không gọi model; câu cố định (NCHMF / chính quyền / 112) + link nguồn do code.
+    # 18/11 (soát khác hãng): thêm MỌI lượt mà lưới cuối coi là lượt bão / lũ — cùng hàm `_luot_bao_lu` (câu này hoặc câu hỏi LIỀN TRƯỚC; cả "cảnh báo" +
+    # từ thời tiết) — "vậy có nên ra biển không" sau một câu bão là lượt bão; thừa hơn sót. Luật này của mục web không theo cờ (như trước).
+    # Hai địa chỉ chính thức do code đặt lên đầu danh sách link — câu cố định chỉ có tên cơ quan + 112, link Serper có thể toàn báo thường.
+    if tw.la_cau_thien_tai(xet) or _luot_bao_lu(xet, trace.history):
+        web.update(outcome="thien_tai", text=tw.THIEN_TAI_TEXT, nguon=NGUON_CHINH_THUC + list(kq.so_web))
         return
     call_log = CallLog()
     # câu nhiều ý: model viết mục web cho đúng vế ý thiếu (không viết lại ý kho đã trả lời — 14/11: số giờ web khác kho); Serper vẫn nhận cả câu

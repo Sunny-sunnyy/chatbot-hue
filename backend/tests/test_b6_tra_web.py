@@ -12,9 +12,11 @@ import httpx
 import pytest
 from openai import APIConnectionError
 
+from api.routes.chat import _web_payload
+from llm import thoi_tiet as tt
 from llm import tra_web as tw
-from llm.assistant import (AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, answer_turn_stream_parallel, cong_web, turn_usd,
-                           web_gate_open)
+from llm.assistant import (AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream, answer_turn_stream_parallel, cong_web, luoi_cuoi_bao,
+                           turn_usd, web_gate_open)
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, OUT_OF_SCOPE_ANSWER, TU_WEB_LUAT
 from test_b2_tool_loop import answer, deps, generator  # noqa: F401  (fixture `deps`: Qdrant thật, chỉ đọc)
 
@@ -347,7 +349,7 @@ def test_disaster_question_never_gets_model_text_only_fixed_sentence_and_sources
     trace, calls = run_web("Năm nay nước lên 4,4 m [w1].", query="Mùa lũ năm nay nước sông Hương lên bao nhiêu mét?")
     assert calls == [] and trace.llm_calls == []
     assert (trace.web["outcome"], trace.web["text"]) == ("thien_tai", tw.THIEN_TAI_TEXT) and "112" in tw.THIEN_TAI_TEXT
-    assert [s["id"] for s in trace.web["nguon"]] == [1, 2, 3]  # link nguồn do code (sổ web), không chữ model
+    assert [s["id"] for s in trace.web["nguon"]] == ["nchmf", "lu_quet", 1, 2, 3]  # link do code: hai địa chỉ chính thức + sổ web, không chữ model
 
 
 @pytest.mark.parametrize("text, outcome", [
@@ -596,3 +598,87 @@ def test_dong_symbol_and_prefix_are_money(text, gia_tri):
 def test_lodging_web_section_with_dong_symbol_is_blocked():
     so = tw.doc_ket_qua({"organic": [{"title": "Nhà nghỉ Huế", "link": "https://n.example.vn/x", "snippet": "Nhà nghỉ ở Huế có giá từ 230.000 ₫/đêm."}]})
     assert tw.kiem_muc_web("Nhà nghỉ ở Huế có giá từ 230.000 ₫/đêm [w1].", so, luu_tru=True) == ["gia_luu_tru"]
+
+
+# ---------- 18/11 (soát khác hãng, hai điểm an toàn): lượt bão / lũ ở mục web ----------
+# #1 lưới cuối coi câu hỏi tiếp sau một câu thiên tai là lượt bão (thêm 112) nhưng mục web vẫn để model viết ⇒ lời trấn an chưa kiểm cạnh câu 112.
+# #2 mục web câu cố định thiên tai có 112 nhưng không có địa chỉ chính thức, và lưới cuối thấy câu đó thì không thêm ghi chú có hai địa chỉ.
+
+BAO_WEB = dataclasses.replace(NOI_TIEP, thoi_tiet=True, bao_lu_cong_cu=True, du_bao=tt.lay_du_bao)  # hàm dự báo không được gọi (model kịch bản không gọi công cụ)
+CAU_TIEP = "Vậy có nên ra biển không?"
+TRAN_AN = "Biển Thuận An chiều nay khá êm, bạn cứ yên tâm ra biển tắm [w1]."  # qua được bộ kiểm mục web: mã hợp lệ, không số, không link
+
+
+def _nguoi_dung_nhan(trace) -> str:
+    """Mọi chữ + link của lượt tới trình duyệt: câu trả lời, mục web (chữ + link nguồn), dòng ghi chú."""
+    web = _web_payload(trace) or {"text": "", "sources": []}
+    return " ".join([trace.answer or "", web["text"], trace.notice or "", *[s["link"] for s in web["sources"]]])
+
+
+@pytest.mark.parametrize("truoc", ["Chiều nay ở Thuận An có dông không?", "Chiều nay ở Thuận An có bão không?", "Huế có lũ không?"])
+@pytest.mark.parametrize("model_queries", [[], ["tắm biển Thuận An"]])  # lần tìm đầu rỗng · model tự từ chối sau khi tìm (câu tìm không có từ thiên tai)
+def test_follow_up_after_disaster_question_never_gets_model_web_text(truoc, model_queries):
+    _, sent, trace = _web_noi_tiep(BAO_WEB, [(truoc, "…")], model_queries, query=CAU_TIEP, text=TRAN_AN)
+    assert sent == "" and trace.llm_calls == [] and trace.web["outcome"] == "thien_tai"  # model không được gọi viết mục web
+
+
+@pytest.mark.parametrize("history", [(), [("Bún bò ăn ở đâu?", "…")], [("Huế có lũ không?", "…"), ("Bún bò ăn ở đâu?", "…")]])
+def test_follow_up_without_disaster_in_previous_question_still_gets_web_section(history):
+    """Đối chứng: câu độc lập / câu trước là câu thường / từ thiên tai ở câu trước NỮA ⇒ model vẫn viết mục web như cũ (chỉ xét câu LIỀN trước)."""
+    _, sent, trace = _web_noi_tiep(BAO_WEB, history, [], query=CAU_TIEP, text=TRAN_AN)
+    assert sent != "" and trace.web["outcome"] == "co_muc"
+
+
+def test_follow_up_after_disaster_question_through_whole_turn(deps):
+    """Cả lượt (đường thường gặp: model tự từ chối ⇒ cổng web): câu trấn an của model không tới người dùng; có 112 đúng một lần + hai địa chỉ chính thức."""
+    trace = AnswerTrace(history=(("Chiều nay ở Thuận An có dông không?", "…"),))
+    asyncio.run(answer_turn(CAU_TIEP, *deps, generator(_script_refuse(web_text=TRAN_AN)), trace, BAO_WEB, None, serper()))
+    luoi_cuoi_bao(CAU_TIEP, trace, BAO_WEB)
+    thay = _nguoi_dung_nhan(trace)
+    assert trace.web["outcome"] == "thien_tai" and "yên tâm" not in thay
+    assert thay.count("112") == 1 and tt.NCHMF_URL in thay and tt.LU_QUET_URL in thay
+
+
+@pytest.mark.parametrize("cau", ["Chiều nay ở Huế có bão không?", "Chiều nay ở Huế có giông không?", "Chiều nay ở Huế có dông không?"])
+def test_disaster_web_section_plus_last_net_gives_112_once_and_both_official_links(cau):
+    """#2 ở mức `cong_web` + lưới cuối (lần tìm đầu rỗng): mọi từ thiên tai, Serper chỉ có link thường."""
+    trace = refused(fixed_outcome="refusal_no_sources")
+    asyncio.run(cong_web(cau, generator(lambda n, kw: [answer("x [w1].")]), trace, serper(), BAO_WEB))
+    luoi_cuoi_bao(cau, trace, BAO_WEB)
+    thay = _nguoi_dung_nhan(trace)
+    assert trace.web["outcome"] == "thien_tai" and thay.count("112") == 1 and tt.NCHMF_URL in thay and tt.LU_QUET_URL in thay
+
+
+def test_disaster_turn_with_ordinary_web_links_still_gives_112_once_and_both_official_links(deps, cau="Chiều nay ở Huế có dông không?"):
+    """#2 qua cả lượt — đúng ca test cũ bỏ sót: Serper trả link thường (SNIPPETS không có địa chỉ chính thức nào) ⇒ người dùng vẫn nhận hai địa chỉ
+    chính thức. Chỉ chữ "dông": với bão / giông và model từ chối, code đã nối sẵn câu 112 vào câu trả lời nên cổng web không mở (đường khác)."""
+    trace = AnswerTrace()
+    asyncio.run(answer_turn(cau, *deps, generator(_script_refuse()), trace, BAO_WEB, None, serper()))
+    luoi_cuoi_bao(cau, trace, BAO_WEB)
+    thay = _nguoi_dung_nhan(trace)
+    assert trace.web["outcome"] == "thien_tai" and thay.count("112") == 1 and tt.NCHMF_URL in thay and tt.LU_QUET_URL in thay
+    assert [s["id"] for s in trace.web["nguon"]][-3:] == [1, 2, 3]  # link Serper vẫn còn, sau hai địa chỉ chính thức
+
+
+# ---------- 18/11 tối (soát khác hãng lần hai, #2): lưới mục web phải nhận MỌI lượt mà lưới cuối coi là lượt bão / lũ ----------
+CAU_CANH_BAO = "Thuận An có cảnh báo gió mạnh không?"  # "cảnh báo" + từ thời tiết: lưới cuối nhận, danh sách đóng của mục web thì không
+
+
+@pytest.mark.parametrize("query, history", [
+    (CAU_CANH_BAO, ()),                                   # chính câu đang gõ
+    ("Vậy ra biển được không?", [(CAU_CANH_BAO, "…")]),   # câu hỏi tiếp sau nó
+    ("Vậy ra biển được không?", [("Chiều nay có dông không?", "…")]),
+    ("Mai có áp thấp không?", ()),
+])
+def test_every_turn_the_last_net_calls_a_storm_turn_gets_the_fixed_web_sentence(query, history):
+    assert luoi_cuoi_bao(query, refused(history=tuple(history)), BAO_WEB)  # điều kiện của ca: lưới cuối coi đây là lượt bão / lũ
+    _, sent, trace = _web_noi_tiep(BAO_WEB, history, [], query=query, text=TRAN_AN)
+    assert sent == "" and trace.web["outcome"] == "thien_tai"
+
+
+@pytest.mark.parametrize("query", ["Lăng Tự Đức có cảnh báo bậc thang không?", "Thuận An gió có mạnh không?"])
+def test_warning_without_weather_word_or_weather_word_without_warning_still_gets_web_section(query):
+    """Đối chứng: không phải lượt bão / lũ theo lưới cuối ⇒ model vẫn viết mục web như cũ."""
+    assert luoi_cuoi_bao(query, refused(), BAO_WEB) is False
+    _, sent, trace = _web_noi_tiep(BAO_WEB, (), [], query=query, text=TRAN_AN)
+    assert sent != "" and trace.web["outcome"] == "co_muc"
