@@ -24,7 +24,7 @@ def test_duong_11_xep_ngoai_pham_vi_van_co_cau_112_va_su_kien_notice():
     metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
     stream = StreamEvents(metrics, time.perf_counter())
     events = parse_sse([stream.delta(trace.answer), *stream.fixed(trace)])
-    assert ("notice", {"text": tt.CAU_BAO_LU, "an_toan": True}) in events and events[-1][0] == "done" and metrics["refusal"] is True  # `an_toan`: giao diện vẽ nổi hơn
+    assert ("notice", {"text": "", "an_toan": tt.CAU_BAO_LU}) in events and events[-1][0] == "done" and metrics["refusal"] is True  # câu an toàn tách riêng
 
 
 def test_duong_13_tro_chuyen_va_duong_14_lan_tim_dau_rong():
@@ -94,3 +94,11 @@ def test_cau_hoi_tiep_sau_cau_bao_cung_la_luot_bao_va_ghi_chu_thuong_khong_mang_
     thuong = AnswerTrace(answer="Vé vào cổng 200.000 đồng [1].", cited=(), notice=MAY_HAVE_CHANGED_NOTICE)
     events = parse_sse(StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter()).fixed(thuong))
     assert ("notice", {"text": MAY_HAVE_CHANGED_NOTICE}) in events
+
+
+def test_su_kien_notice_tach_cau_an_toan_khoi_ghi_chu_thuong():
+    """Giao diện vẽ câu an toàn đậm, ở lượt có lịch thì trên đầu khung; ghi chú thường ("có thể đã thay đổi") không đậm theo ⇒ hai phần đi hai trường."""
+    trace = AnswerTrace(answer="", cited=(), notice=MAY_HAVE_CHANGED_NOTICE)
+    assert luoi_cuoi_bao("Mai có bão, bỏ giúp mình lăng Tự Đức khỏi lịch", trace, BAT)
+    events = parse_sse(StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter()).finish(trace))
+    assert ("notice", {"text": MAY_HAVE_CHANGED_NOTICE, "an_toan": tt.CAU_BAO_LU}) in events
