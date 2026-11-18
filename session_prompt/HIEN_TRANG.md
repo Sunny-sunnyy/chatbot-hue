@@ -34,11 +34,11 @@ Mốc (User chốt theo THỨ, 18/11/2026):
 | Khi nào | Việc |
 |---|---|
 | Cuối MỖI ngày | Vòng tự cải thiện cách làm: đọc hai con số · lỗi lặp lần hai ⇒ máy trước chữ sau · thêm bao nhiêu gỡ bấy nhiêu (lần đầu: 18/11) |
-| Thứ Sáu 20/11 – thứ Bảy 21/11 | Chạy cả `backend/tests` một lượt trên `main` · agent con ngữ cảnh sạch soát tích hợp (thay gói khác hãng — gói dời về buổi test cuối) · A tự chạy 5 mục "cách thử" của `bai_hoc/VIEC_MOI_XONG.md` |
+| Thứ Sáu 20/11 – thứ Bảy 21/11 | Cả `backend/tests` một lượt trên `main` · agent con soát tích hợp (thay gói khác hãng) · A tự chạy 5 mục "cách thử" của `bai_hoc/VIEC_MOI_XONG.md` |
 | Tối thứ Bảy 21/11 | **Code đứng yên**; ghi mã commit đứng yên vào sổ đo |
 | Chủ nhật 22/11 | **Lượt đo cuối** phần đã thấy (lệnh: file riêng tư `data/phase_9/b7/tools/RUNBOOK_CUOI.md`; trần 0,45 USD; B chạy); phần bộ kín ghi NOT RUN chờ User |
-| Từ thứ Hai 23/11 | Sàn đạt ⇒ ghi "Phase 9 xong phần nhóm" ⇒ **đợt hoàn thiện local** (không cần User): vòng tự tối ưu bước tìm · sửa lỗi hoãn (runbook mục 10) · công cụ kiểm · kế hoạch deploy trên giấy. Xong sớm ⇒ deploy AWS (User cho trước; cần User: tài khoản, khoá, ngân sách) |
-| Cuối cùng | **User test TOÀN BỘ một lần** theo `data/test_cuoi/DANH_SACH.md` (gồm buổi tự tay + phiếu chấm, gói khác hãng, lệnh bộ kín) ⇒ User đóng Phase 9 |
+| Từ thứ Hai 23/11 | Sàn đạt ⇒ ghi "Phase 9 xong phần nhóm" ⇒ **đợt hoàn thiện local**: tự tối ưu bước tìm · sửa lỗi hoãn (runbook mục 10) · công cụ kiểm · kế hoạch deploy. Xong sớm ⇒ deploy AWS (cần User: tài khoản, khoá, ngân sách) |
+| Cuối cùng | **User test TOÀN BỘ một lần** (`data/test_cuoi/DANH_SACH.md`) ⇒ User đóng Phase 9 |
 | Tối thứ Ba 24/11 | User lái Codex rồi Antigravity làm thử thay Claude; chạy lại 7 đề chấm skill (file riêng tư `data/cham_skill_2026-11-18/de/`) |
 
 Đã vào `main` 18/11: xem `git log --merges --oneline -25`.
