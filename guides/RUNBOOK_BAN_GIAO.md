@@ -275,8 +275,17 @@ suy từ code, chưa chạy). Ba finding #1, #5, #8 đã sửa trên nhánh `p9-
 | Tắt cờ `nho_hoi_thoai` mà để `sua_lich_v2` bật | Sửa lịch bằng lời lặng lẽ không chạy (không có cuộc ⇒ không lưu lịch), giao diện vẫn mời "nhắn trợ lý…" | Không kiểm lúc khởi động. **Tắt `nho_hoi_thoai` ⇒ tắt luôn `sua_lich_v2`**; `web_cau_noi_tiep` cần `tra_web` + `nho_hoi_thoai`, `het_luot_bo_cong_cu` cần `tim_them` (hai cờ này thiếu cờ kia thì chỉ không chạy) | #11 [chỉ đọc code] |
 | Tạo lịch qua `POST /api/chat` (không stream) | Lịch đó KHÔNG được lưu ⇒ không sửa bằng lời về sau; cũng không có: trả lời song song định tuyến, thẻ chọn, `usd_bo` | Các phần này chỉ có ở `/api/chat/stream` (giao diện chỉ dùng đường stream) | mục 4 của file nguồn [chỉ đọc code] |
 
-Về ba chỗ ĐÃ sửa (#1, #5, #8): #1 có test đi qua luồng trả lời thật với model dựng sẵn; #5 và #8 mới có test thay hàm (`monkeypatch`) + probe hàm thuần —
-**chưa đo trên đường thật** (muốn chắc: một lượt sửa lịch thật trên server có `HUE_SO_VET=true`, nhìn sự kiện `notice` và khoá `sua` trong sổ vết).
+Về ba chỗ ĐÃ sửa (#1, #5, #8) — tách "test bằng đồ giả" ↔ "lượt thật":
+- **Lượt thật (18/11, main `51b6317`, một cuộc 3 lượt qua `/api/chat/stream`, server có `HUE_SO_VET=true`, ~0,004 USD; mỗi ý mới MỘT lượt — không phải số tần suất):**
+  lượt sửa bằng lời có sự kiện `notice` (#5) · sổ vết của câu thường trong cuộc có lịch có phần hiểu ý sửa lịch (#8) · lượt sửa KHÔNG gửi chữ người dùng ra
+  dịch vụ tìm kiếm (sổ vết không có phần web; log chỉ 1 dòng `tra_web`, của lượt khác) · câu thường kho thiếu trong cuộc có lịch vẫn tra web. Chạy lại:
+  script private `data/review_tich_hop_2026-11-18/c_tools/do_that_5_8.py` (lệnh ở đầu file).
+- **Chỉ có test, CHƯA đo trên đường thật:** #1 (không ép được model thật hết lượt tìm — có test luồng thật với model dựng sẵn) · nửa "bấm thẻ chọn" của #5.
+
+**Test thay hẳn phần lõi (soát 18/11, 3 file, 39 test — bảng đủ ở file private `data/review_tich_hop_2026-11-18/do_gia_trong_test.md`):** chỉ một test thay lõi
+là `tests/test_sua_lich_v2.py::test_parallel_normal_path_waits_for_intent_before_web_and_emergency_wins` (thay `_answer_core`, `hieu_va_ap`, `stream_sua`) —
+bốn hành vi nó giữ đã có lượt thật ở trên, trừ ca "khẩn cấp thắng lượt sửa" (chưa có lượt thật). Sửa vùng `_sua_song_song` ⇒ chạy lại script trên, đừng chỉ tin
+test này. Các test còn lại dùng đồ giả để dựng điều kiện (biến môi trường, ngày, ép lỗi) hoặc lấy nguồn từ Qdrant thật với model dựng sẵn.
 
 ### 10.4 Giới hạn của chính các số đo
 
