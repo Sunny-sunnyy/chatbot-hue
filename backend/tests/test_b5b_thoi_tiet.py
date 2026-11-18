@@ -578,3 +578,40 @@ def test_parallel_route_path_offers_weather_tool_with_loai(deps):
 def test_flag_needs_weather():
     with pytest.raises(ValueError, match="bao_lu_cong_cu"):
         AssistantFlags(tim_them=True, bao_lu_cong_cu=True)
+
+
+def test_du_bao_roi_bao_lu_trong_mot_luot_thi_khoi_van_co_nhan_khong_phai_tin_bao():
+    """Soát 18/11: lưới code KHÔNG khớp, model gọi `du_bao` trước (đã nhận số) rồi mới gọi `bao_lu` ⇒ trước đây lần hai chỉ trả câu "đã lấy": lượt thành lượt
+    bão mà khối nối dưới câu trả lời là khối thường, model không nhận lời dặn "không nhận định bão". Số đã gửi model thì không lấy lại được; phần còn lại phải
+    như một lượt bão: khối có nhãn "không phải tin bão", nguồn lần hai là lời dặn không có số."""
+    import asyncio
+    import re
+    from datetime import date, timedelta
+
+    from llm.assistant import thoi_tiet_for_turn
+
+    hom = date.today()
+    kq = tt.doc_phan_hoi({"current": {"time": f"{hom.isoformat()}T09:15", "temperature_2m": 26.1},
+                          "daily": {"time": [(hom + timedelta(days=i)).isoformat() for i in range(7)],
+                                    "temperature_2m_max": [29.6, 27.4, 30.0, 31.2, 26.5, 28.0, 29.0], "temperature_2m_min": [23.2, 22.6, 24.0, 24.4, 21.9, 22.0, 23.0],
+                                    "precipitation_probability_max": [20, 80, 10, 0, 65, 30, 5], "precipitation_sum": [0.4, 12.25, 0.0, 0.0, 8.0, 1.0, 0.0]}})
+
+    async def du_bao():
+        return kq
+
+    async def goi(thu_tu):
+        trace = AnswerTrace()
+        trace.thoi_tiet_ctx = {"bao_lu": False, "ngoai_7": False, "buoi": False, "tu_khoa": True, "co_cong_cu": True, "bao_lu_cau": False,
+                               "bao_lu_cong_cu": True, "bao_lu_model": False}
+        fn = thoi_tiet_for_turn(trace, du_bao)
+        return trace, [await fn(loai, 0, 1) for loai in thu_tu]
+
+    co_so = re.compile(r"\d+\s*(?:°|%|mm)")
+    trace, ra = asyncio.run(goi(("du_bao", "bao_lu")))
+    assert co_so.search(ra[0]) and not co_so.search(ra[1]) and tt.KET_QUA_BAO_LU in ra[1]  # lần hai: lời dặn, không số
+    assert trace.thoi_tiet_ctx["bao_lu"] and trace.thoi_tiet.get("bao_lu") is True
+    assert trace.thoi_tiet["khoi"].startswith(tt.CAU_KHONG_PHAI_TIN_BAO) and trace.thoi_tiet["khoi"].count(tt.CAU_KHONG_PHAI_TIN_BAO) == 1
+    doi_chung, ra = asyncio.run(goi(("du_bao", "du_bao")))  # hai lần `du_bao`: như cũ — lần hai là câu "đã lấy", khối thường
+    assert "Đã lấy dự báo" in ra[1] and not doi_chung.thoi_tiet["khoi"].startswith(tt.CAU_KHONG_PHAI_TIN_BAO)
+    bao_truoc, ra = asyncio.run(goi(("bao_lu", "du_bao")))  # bão trước: như cũ
+    assert not co_so.search(ra[0]) and bao_truoc.thoi_tiet["khoi"].count(tt.CAU_KHONG_PHAI_TIN_BAO) == 1
