@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 20:07 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
+Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 21:41 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án, cho BẤT KỲ coding agent nào (Claude Code, Codex, Antigravity) vừa mở phiên. Nó được **viết lại tại chỗ**
 mỗi lần kết phiên — không nối thêm. Thứ tự mở phiên (bạn là phiên nào, báo gì, chờ gì) ở `session_prompt/START_SESSION.md`; trang này là phần "dự án đang
@@ -23,7 +23,7 @@ trợ lý trên bản code đã đứng yên.
   (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (mặc định
   tắt; bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
-- **Lần chạy cả bộ test gần nhất:** 18/11, 1.375 đạt + 1 hỏng do mã commit đổi giữa lượt (chạy lại file đó: 13 đạt) — số của B.
+- **Lần chạy cả bộ test gần nhất:** 18/11 trên `3abb076`: 1.401 đạt, 0 hỏng (B).
 - **Máy:** mở lại máy ⇒ `/tmp` MẤT (worktree, bản mốc đo) và Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1). Server không chạy sẵn.
 - **Giới hạn đã biết + đường cũ đừng chép:** `guides/RUNBOOK_BAN_GIAO.md` mục 10. Gặp hành vi trông như lỗi ⇒ tra ở đó TRƯỚC khi sửa hay báo.
 
@@ -43,11 +43,11 @@ Thứ tự việc — KHÔNG gắn ngày (User 18/11: không cố định thời
 
 Mỗi ngày: vòng tự cải thiện cách làm.
 
-**Tới 20:07 18/11:** bước 0, 1 ĐẠT. Bước 2: 5 điểm (`data/review_tich_hop_2026-11-18/dot_2/`) — P1 / P2 đã sửa (`b1f4dc8`, C review đạt), P3–P5 ở runbook 10.3b. Kế: B chạy cả bộ test ⇒ bước 3.
+**Tới 21:41 18/11:** bước 0–3 xong; bước 4 đo trên `b27ef45`, CÓ sàn không đạt (`data/phase_9/b7_cuoi/KET_QUA_BANG.md`); code nay `b158568` (+ sửa mục web lượt bão, xuất lịch).
 
 Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc (mục 7):
 - **A:** danh sách User test cuối (phiếu chấm: `data/tu_tay_2026-11-21/`); gộp nhánh.
-- **B:** cả bộ test sau gộp P1 / P2; lượt đo cuối; sau đó plan vòng tự tối ưu + thử `ruff` (chỉ `backend/`, `scripts/`); giữ trang bản đồ.
+- **B:** plan vòng tự tối ưu + thử `ruff` (chỉ `backend/`, `scripts/`); giữ trang bản đồ.
 - **C:** giữ trang này; runbook mục 10; sau bước 4: script kiểm đường dẫn, chấm 4 skill cũ.
 - **E:** giữ `guides/CACH_LAM_VIEC.md`; 10 skill đã vào `main` — KHÔNG sửa chữ skill khi chưa có số chấm mới.
 - **Chưa ai nhận, để sau lượt đo cuối:** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
@@ -67,6 +67,7 @@ Hai con số đo cách làm (tuần 16–22/11; B soát): việc đã báo "xong
 Sản phẩm:
 - Trả lời chỉ từ kho, có nguồn; câu ngoài kho phải bị từ chối (sàn: 0 câu ngoài kho được trả lời bằng kho). Người dùng gõ tiếng Việt CÓ DẤU; không làm tiếng Anh.
 - Câu khẩn cấp (bị cướp, mất ví, mất giấy tờ, số khẩn cấp) là NGOÀI PHẠM VI — User chốt ba lần; không sửa, không báo lại.
+- Hỏi tiếp sau câu bão / lũ: chỉ xét câu liền trước, từ lượt thứ ba hết câu 112 — User nhận 21:40 18/11; mở rộng: bước 5.
 - Không nói giá phòng ở phần gợi ý chỗ ở (câu hỏi chi phí chung vẫn nêu khoảng giá có nguồn từ kho). Khối "Nơi ở" chỉ hiện khi người dùng
   đã chọn hạng chỗ ở — ở biểu mẫu hoặc nói bằng lời.
 - Việc phải luôn đúng (phép tính, ngày, tiền, thứ tự bắt buộc) do CODE làm; model chỉ diễn đạt. Giữ model `gpt-6-luna`, giữ `e5-small`, giữ 10 đoạn.
