@@ -6,6 +6,12 @@
 
 ---
 
+# Phiên tối 18/11 lần hai (mở 19:59 18/11/2026, sau khi bật lại máy; A là `hue-rag-31`) — mới nhất ở trên
+
+- 20:01 18/11/2026 — Mở phiên đọc ngắn (lần thử thứ hai), kiểm nhanh khớp A; đính chính mục đầu: Qdrant KHÔNG tự lên sau `wsl --shutdown` — A bật 20:00 (9.436 điểm, số của A). **Việc 1 (A giao) XONG, chờ A đọc diff — A gộp sau lượt cả bộ test của B:** nhánh `p9-clv-bang-nguon` (worktree `/tmp/hr_e_clv`, gỡ sau gộp; sha ở tin báo A) — bảng nguồn mục 10 của `guides/CACH_LAM_VIEC.md` dời nguyên văn sang `guides/CACH_LAM_VIEC_NGUON.md` (mới), mục 10 còn tiêu đề + một dòng trỏ; trang chính 23.930 ⇒ ~21.200 byte; sửa hai chỗ trỏ: `bai_hoc/26` dòng nguồn, `guides/khung/README.md` hàng 2. **Việc 2 chờ:** rảnh — chờ gộp P1/P2 rồi chạy lại 2 script tái hiện trên main mới (cần server ⇒ báo A trước). Bẫy: dùng `python3` hệ thống thay `uv run` cho đoạn script sửa chữ (không đổi kết quả; đã báo A). 0 USD.
+
+---
+
 # Chi tiết phiên tối 18/11 (mở 19:32 18/11/2026) — nhật ký theo giờ, mới nhất ở trên; chỉ tra khi cần
 
 - 19:46 18/11/2026 — **Việc (a) XONG, chờ một phiên khác đọc diff rồi A gộp:** nhánh `p9-viec-moi-xong-da-thu` (sha ở tin báo A; worktree `/tmp/hr_e_vmx2`, gỡ sau gộp) — 1 file `bai_hoc/VIEC_MOI_XONG.md` (137 ⇒ 155 dòng): 5 / 5 mục "cách thử" chạy trên hệ thống thật (server 8010 bản `fc897ed`, E bật 19:43 và đã tắt; 4 lượt thật, 0,0036 USD theo `dem_chat_metrics.py`: 2 lượt · 0.0002 ⇒ 6 lượt · 0.0038), cả 5 ra ĐÚNG, mỗi mục một dòng "Đã thử" + sửa 4 chỗ cũ / gắn ngày. Kết quả + 8 ảnh + script: `data/thu_viec_moi_xong_2026-11-18/`. `data/test_cuoi/DANH_SACH.md` phần B: 4 hàng ghi kết quả thật. CHƯA: người thứ hai chạy lại; điện thoại thật; khung trợ lý nổi ở màn hẹp; Docker. Lưu ý đã báo A: dòng số đo in "chữ đầu p50 5.53 s" (n = 6, không phải lượt đo). Tiền E tối 18/11: 0,0036 USD.

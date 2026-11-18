@@ -236,7 +236,7 @@ Trước đây việc "rút kinh nghiệm" là kể lại sự cố rồi thêm 
 - Kiểm chốt chặn ở chế độ bỏ hỏi quyền (thử bằng file giả): `data/bao_mat_agent_2026-11-18/chot_chan.md` (riêng tư) [đã chạy — phiên B]
 - Hai agent con đọc một hình ra hai kết luận ngược nhau: `data/khoa_hoc_2026-11-17/AI_FDE_E_phan_9.md` mục 2d dòng 34 (riêng tư) [đã chạy]
 - Ví dụ công ty du lịch thuê bốn hướng dẫn viên là ví dụ tự đặt.
-- "Ba khoá học nói cùng ý" (mức tin theo từng hành động): bảng nguồn ở cuối `guides/CACH_LAM_VIEC.md` (mục 10) [tài liệu — mã bài do người giữ ghi chép từng khoá đối chiếu, không ai mở lại bài giảng gốc]
+- "Ba khoá học nói cùng ý" (mức tin theo từng hành động): bảng nguồn ở `guides/CACH_LAM_VIEC_NGUON.md` (mục 10 của `guides/CACH_LAM_VIEC.md` trỏ sang) [tài liệu — mã bài do người giữ ghi chép từng khoá đối chiếu, không ai mở lại bài giảng gốc]
 
 - **Kiểm độc lập trước khi đưa vào (11:43, ngày 18/11/2026)** (`data/kiem_bai_hoc_2026-11-18/kiem_bai_26.md`, riêng tư): một agent con ngữ cảnh mới đối chiếu 100 khẳng định — 75 đúng, 4 sai, 19 dễ hiểu nhầm, 2 không kiểm được; đã sửa cả 4 chỗ sai ("mỗi điểm đều được chạy lại" · "soát toàn bộ thư mục test" · "chênh không quá 1 điểm" · câu dẫn sai bài 20) và 19 chỗ dễ hiểu nhầm; hai chỗ không kiểm được: một ghi rõ là nhận định của nhóm, một đã bỏ. Người viết tự mở lại nguồn cho ba chỗ sai có số (bảng điểm chấm skill 10 ↔ 8 · 8 ↔ 8 · 8 ↔ 9; "ba file test", 39 test; 49 file test; 1 / 6 lượt ở đợt hai). Số "hơn 130 nghìn ký tự" của sổ việc: `wc -c session_prompt/CURRENT_HANDOFF.md` [đã chạy 18/11].
 - Sổ việc 11:09 ghi "chênh ≤ 1 điểm" cho chấm skill là chép nhầm (đó là độ lệch giữa hai người chấm); số đúng ở bảng tổng của `data/cham_skill_2026-11-18/KET_QUA.md`.
