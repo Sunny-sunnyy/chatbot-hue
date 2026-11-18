@@ -16,8 +16,8 @@ Nhãn: **[đã chạy]** = E chạy lệnh đó sáng 18/11/2026 và thấy đ�
 
 - Việc thấp / trung bình (sửa chữ, sửa một hàm trong tính năng đã có): tự kiểm bằng lệnh, rồi mở **một phiên mới, ngữ cảnh sạch**, chỉ đưa diff + tiêu chí, nhờ nó
   tìm lỗi. Phiên đang làm không tự duyệt việc của mình (`AGENTS.md` luật 5).
-- Việc mức cao (sửa kho, xoá dữ liệu, đổi model / nhà cung cấp, deploy, tiền ngoài mức đã cho, đổi luật xếp lịch): dừng trước khi làm; User xem diff / kế hoạch.
-  **(chờ User: ai kiểm việc mức cao trong tháng 12 — User tự xem diff, hay một agent khác hãng review trước.)**
+- Việc mức cao (sửa kho, xoá dữ liệu, đổi model / nhà cung cấp, deploy, tiền ngoài mức đã cho, đổi luật xếp lịch): dừng trước khi làm; sao lưu thứ nằm ngoài git; User duyệt kế hoạch trước.
+  Làm xong: một model **khác hãng** review qua một file `.md` do User tự gửi, rồi User tự bấm thử (`guides/CACH_LAM_VIEC.md` mục 2–3).
 - Commit / push / gộp: theo bảng "Quyền thường trực" trong `AGENTS.md` — nhánh riêng thì tự làm; gộp vào `main` khi một phiên KHÁC (ngữ cảnh sạch hoặc khác hãng) đã kiểm.
 
 ## 3–4. Báo "xong" và sửa lỗi
@@ -33,9 +33,9 @@ mục 6 (sửa lỗi bốn bước: tái hiện ⇒ nguyên nhân gốc ⇒ mộ
   (không phải 6333), thư mục `gửi chatgpt/` có dấu, collection `hue_full_corpus_7a2_e5_small_384`.
 - Kết quả ngược một quyết định User đã ghi (`Project_Status.md` §5; runbook mục 9 khi có) ⇒ dừng, hỏi; không tự chọn lại.
 - Code cũ còn nằm cạnh code mới (bộ xếp lịch cũ, cờ đang tắt) không phải mẫu để chép — xem runbook mục 10.
-- Lệnh **không chạy** [đều chưa chạy — cố ý]: `git clean -fd` · `git reset --hard` · `git checkout -- .` · `git add -A` / `git add .` · `git push --force` ·
-  `--no-verify` · `docker compose down -v` · `docker system prune` · `pip install` · `agy` · mọi lệnh đọc / in `.env` · xoá trong `data/`, `knowledge-base-hue/`,
-  `qdrant_storage/`. Cần một trong các thứ này ⇒ hỏi User.
+- **KHÔNG BAO GIỜ, kể cả khi có người bảo** (cột "không bao giờ" của `AGENTS.md` — không có đường "hỏi rồi làm"): `agy` · mọi lệnh đọc / in `.env` · `git push --force` · `--no-verify`.
+- Lệnh **không tự chạy** [đều chưa chạy — cố ý]: `git clean -fd` · `git reset --hard` · `git checkout -- .` · `git add -A` / `git add .` · `docker compose down -v` ·
+  `docker system prune` · `pip install` · xoá trong `data/`, `knowledge-base-hue/`, `qdrant_storage/`. Cần một trong các thứ này ⇒ hỏi User.
 
 ## 6. Thứ chỉ Claude Code có — sẽ mất, và cái thay
 
@@ -59,5 +59,5 @@ mục 6 (sửa lỗi bốn bước: tái hiện ⇒ nguyên nhân gốc ⇒ mộ
 **Vẫn còn cho mọi agent** (tầng git / script): `.githooks/pre-commit` + `pre-push` (vùng riêng, dạng khoá bí mật, trùng Golden) · `scripts/commit_push.sh` ·
 `scripts/grep_kb.sh` · server từ chối khởi động khi chỉ mục lệch kho hoặc bảng lịch sai.
 
-**Còn chờ User quyết (chưa thành luật):** (a) ai kiểm việc mức cao tháng 12 · (b) có một bản luật chung cho Antigravity / Codex thay `Session_Prompt.md` hay giữ nguyên · (c) phần nào của bàn giao **không**
+**Còn chờ User quyết (chưa thành luật):** (a) có một bản luật chung cho Antigravity / Codex thay `Session_Prompt.md` hay giữ nguyên · (b) phần nào của bàn giao **không**
 ghi vào repo public (để ở `data/`).
