@@ -32,7 +32,8 @@ Luật cứng (chi tiết ở mục ghi trong ngoặc của `session_prompt/Sess
 Hay vấp (mở phiên chỉ đọc ngắn — luật đủ ở `session_prompt/WORKFLOW.md` mục ghi trong ngoặc): commit + push bằng
 `scripts/commit_push.sh "<lời>" <file…>`, báo sha bằng dòng `ĐÃ PUSH` nó in, không `git add -A` / thư mục (§5, §9.6) · worktree:
 `git worktree add -b <nhánh mới> /tmp/hr_<x>_<việc> origin/main && cd /tmp/hr_<x>_<việc> || exit 1` (§3.2) · giờ ghi vào file lấy
-bằng `date` (§6) · việc nặng (server, cả bộ test, Qdrant, đo) báo phiên điều phối trước; RAM khả dụng < 4 GB ⇒ không bật (§3.2).
+bằng `date` (§6) · việc nặng (server, cả bộ test, Qdrant, đo) báo phiên điều phối trước; RAM khả dụng < 4 GB ⇒ không bật; máy dùng chung
+với dự án khác: chỉ bật / tắt / xoá container, tiến trình, thư mục tạm do CHÍNH MÌNH tạo — không `down -v`, `prune`, `git clean` (§3.2).
 
 Quyền thường trực (User duyệt 10:11 18/11/2026; áp cho **mọi coding agent** — Claude, Codex, Antigravity…; không hết hạn theo phiên,
 không hỏi lại mỗi lần mở; User đổi lúc nào cũng được):
