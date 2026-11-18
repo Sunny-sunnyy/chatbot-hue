@@ -1,3 +1,10 @@
+# STATUS A — KẾT PHIÊN SÁNG 18/11 (viết 13:11 18/11/2026 `date`)
+
+**A mới đọc trước:** `CURRENT_HANDOFF.md` khối đầu "PHIÊN SAU ĐỌC TRƯỚC (… KẾT PHIÊN SÁNG 18/11)" + `HIEN_TRANG.md`. Không hỏi quyền. Giao E làm tiếp skill ngay; hỏi User hai câu còn lại (mỗi lần một câu); rồi tiếp tục đào các chủ đề cách làm việc — User chủ động muốn trao đổi, đừng dừng chờ.
+- **Xong sáng 18/11 (A):** điều phối ~25 lần gộp (đọc diff / chạy lại test file chạm sau các lần gộp code); 3 agent con (nháp trang bản đồ, soát tích hợp Phase 9 — 11 điểm, đối chiếu nháp bản đồ); soạn gói soát mù cho model khác hãng; bảng quyền thường trực vào `AGENTS.md` + sửa `START_SESSION` / `WORKFLOW` / `Session_Prompt` §5; sao lưu ổ D; 4 memory mới / sửa (cách làm việc là trọng tâm · 30/11 chỉ là mốc · đồ án chấm một lần · quyền thường trực).
+- **Chưa làm:** vòng tự cải thiện cuối ngày; A chưa đọc trọn `CACH_LAM_VIEC.md` bản 3, bài 26, `TONG_HOP.md`; test rộng.
+- **Máy:** 0 server, 0 worktree của A; Qdrant tắt lúc đóng. Tiền A 0 USD.
+
 # STATUS A — PHIÊN SÁNG 18/11 (thứ Tư; mở; cập nhật 08:33 18/11/2026 `date`)
 
 - Terminal: A `hue-rag-55` · B `hue-rag-98` · C `hue-rag-8c` · E `hue-rag-95` (Claude Code, trực tiếp; cả ba đã tự báo).
