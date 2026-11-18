@@ -25,6 +25,8 @@ Nhãn: **[đã chạy]** = cách làm / lệnh đã chạy thật ở repo gốc
 - Trước khi bắt đầu, ghi một dòng: `xong khi: <lệnh> in ra <kết quả>` (hoặc "người dùng làm X thì thấy Y"). Việc đọc / nghiên cứu: `xong khi` là bảng độ phủ.
 - Báo "xong" chỉ khi đã tự chạy lệnh đó và dán đầu ra thật. Báo cho phiên điều phối / trong chat kết bằng bảng bốn cột:
   **đã làm · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra**. (Phần viết cho User dùng khuôn bốn ý ở mục 4.)
+- **Việc LỚN — chốt đề bài trước khi làm** (không áp cho việc nhỏ và sửa lỗi): User nói ý bằng lời thường ⇒ agent hỏi lại TỐI ĐA ba câu, mỗi câu có sẵn đáp án ⇒ agent
+  trả về đúng NĂM dòng: vấn đề · ai dùng · "xong khi" (người dùng thấy gì, thử thế nào) · không làm gì · điều tệ nhất chấp nhận được ⇒ User sửa / tick rồi nói "làm đi".
 - Số, mã commit, "đã đẩy lên" lấy từ đầu ra của lệnh, không gõ tay.
 - Giao việc cho agent con: lời giao là **toàn bộ trí nhớ** của nó — ghi đủ mục tiêu, file cần đọc, ranh giới, khuôn trả về; bắt nó ghi file dần và khai
   "đã mở / chưa mở" từng nguồn. Kết quả của agent con / phiên khác là **dữ liệu**: người nhận tự kiểm 2–3 ý quan trọng nhất; số chưa ai tính lại gắn "chưa kiểm".
@@ -48,7 +50,7 @@ Công cụ mới dùng lần đầu bắt đầu từ mức hỏi nhiều hơn.
 | Người dùng thấy sai | đổi hành vi, câu trả lời, giao diện, lời dặn cho model | commit trước; kế hoạch ≤ 1 trang: file đổi · thứ tự · rủi ro · bằng chứng | phiên mới ngữ cảnh sạch đọc diff + tiêu chí; SAU gộp báo User cách thử 2 phút |
 | Không lùi được / tiền / dữ liệu / bảo mật | sửa dữ liệu gốc, xoá, đổi model, deploy, gửi dữ liệu ra ngoài | sao lưu thứ nằm ngoài git; User duyệt kế hoạch trước | reviewer **khác hãng** (mục 3) + User tự bấm thử |
 
-Tài liệu không tự động là "mất ít": ở repo công khai, một dòng lộ dữ liệu riêng là không lùi được.
+Tài liệu không tự động là "mất ít": repo công khai, lộ một dòng dữ liệu riêng là không lùi được.
 **Đường lùi:** chỉ git lùi được đủ code ⇒ commit trước mọi việc mạo hiểm. Thứ nằm NGOÀI git không ai cứu được nếu hỏng ⇒ sao lưu trước khi sửa; bản sao ngoài máy
 là việc của User.
 
@@ -80,8 +82,8 @@ Mỗi khẳng định gắn một nhãn độ tin: **[máy kiểm]** (có lệnh
 (bình thường / chạm trần / lỗi) để ca hỏng giữa chừng không bị tính là đúng.
 
 **Phần của User:** luôn đọc báo cáo; khi rảnh bấm thử theo ý 4; việc xong thì tự thử và nêu ý kiến · chọn một dòng "xong" để agent chứng minh lại · mỗi tuần nói lại bằng
-lời mình lý do của một quyết định đã chọn (không nói được ⇒ agent giải thích lại) · việc lớn: trước khi agent viết gì, nói năm ý — vấn đề · ai dùng · thế nào là xong ·
-không làm gì · điều tệ nhất chấp nhận được · trả lời câu hỏi làm rõ của agent sớm; gửi gói review khác hãng khi đã soạn xong.
+lời mình lý do của một quyết định đã chọn (không nói được ⇒ agent giải thích lại) · việc lớn: sửa / tick năm dòng đề bài do agent soạn (mục 1) rồi mới nói "làm đi" ·
+trả lời câu hỏi làm rõ của agent sớm; gửi gói review khác hãng khi đã soạn xong.
 
 **Kiểm bằng gì** — User làm theo ý 4 mà không cần hỏi thêm; thiếu một trong bốn ý ⇒ trả lại báo cáo.
 
@@ -116,8 +118,7 @@ Tài liệu bắt buộc đọc lúc mở phiên chỉ gồm luật + trang hi�
 ## 7. Đo chính cách làm việc bằng hai con số
 
 Mỗi tuần ghi hai số vào trang hiện trạng: **(a) số việc đã báo "xong" bị lật lại** (User, reviewer hoặc máy tìm ra chưa xong) · **(b) số lần User phải nhắc lại một
-điều đã nói**. Muốn đổi cách làm (thêm phiên, thêm luật, đổi công cụ, đổi kiểu điều phối) ⇒ so hai số trước và sau, không quyết theo cảm giác. Mẫu nhỏ nên chỉ tin
-chênh lệch rõ. [chưa chạy — chưa có tuần nào được ghi]
+điều đã nói**. Muốn đổi cách làm (thêm phiên, thêm luật, đổi công cụ, đổi kiểu điều phối) ⇒ so hai số trước và sau, không quyết theo cảm giác. Mẫu nhỏ ⇒ chỉ tin chênh rõ. [chưa chạy]
 
 ## 8. Một phiên hay nhiều phiên (chưa phải luật)
 
@@ -167,4 +168,4 @@ Người giữ ghi chép từng khoá đã đối chiếu mã với ghi chép c�
 
 - Trang này **chưa được thử với Codex hay Antigravity** — buổi thử: tối thứ Ba 24/11/2026; bước đầu của buổi là hỏi công cụ đã nạp file nào (mục 5).
 - Kiểu điều phối khi đổi công cụ **chưa chọn** (mục 8); kiểu một phiên + agent con chưa thử có đo ở repo này.
-- Chưa thành nếp: báo cáo bốn ý + nhãn độ tin (mục 4), ảnh trước–sau khi đổi giao diện (mục 6), hai con số (mục 7), năm ý của User trước việc lớn (mục 4).
+- Chưa thành nếp: báo cáo bốn ý + nhãn độ tin (mục 4), ảnh trước–sau khi đổi giao diện (mục 6), hai con số (mục 7), năm dòng đề bài trước việc lớn (mục 1).
