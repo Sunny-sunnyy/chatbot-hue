@@ -20,14 +20,10 @@ Nhãn: **[đã chạy]** = E chạy lệnh đó sáng 18/11/2026 và thấy đ�
   **(chờ User: ai kiểm việc mức cao trong tháng 12 — User tự xem diff, hay một agent khác hãng review trước.)**
 - Commit / push / gộp: theo bảng "Quyền thường trực" trong `AGENTS.md` — nhánh riêng thì tự làm; gộp vào `main` khi một phiên KHÁC (ngữ cảnh sạch hoặc khác hãng) đã kiểm.
 
-## 3. Trước khi báo "xong" — bảng bắt buộc (User duyệt 17/11/2026)
+## 3–4. Báo "xong" và sửa lỗi
 
-Mọi báo cáo "xong" kết bằng bảng bốn cột: **đã làm · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra thật**. Không có cột lệnh kiểm thì chưa xong. Ghi `PASS / PARTIAL / FAIL / NOT RUN` đúng như đã thấy. User sẽ chọn một dòng bất kỳ và bảo bạn chạy lại trước mặt.
-
-## 4. Khi gặp lỗi — bốn bước, không nhảy bước
-
-Tái hiện (đúng cấu hình đang chạy, thử MỘT lượt trước) ⇒ chứng minh nguyên nhân gốc (dòng log, sổ vết — runbook mục 7) ⇒ một sửa tập trung ⇒ chứng minh đã sửa
-bằng chính lệnh tái hiện. Không thêm fallback / guard để che lỗi. Hai giả thuyết ⇒ thử từng cái.
+Theo `guides/CACH_LAM_VIEC.md`: mục 1 (ghi "xong khi" trước, bảng bốn cột + lệnh kiểm; ghi `PASS / PARTIAL / FAIL / NOT RUN` đúng như đã thấy) và
+mục 6 (sửa lỗi bốn bước: tái hiện ⇒ nguyên nhân gốc ⇒ một sửa ⇒ chứng minh đã sửa). Làm một mình thì tự hỏi ba câu kiểm của mục 1 trước khi báo.
 
 ## 5. Luật ngắn cho người làm một mình
 
