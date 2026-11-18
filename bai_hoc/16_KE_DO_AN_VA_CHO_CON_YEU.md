@@ -80,8 +80,8 @@ lời: hôm nay trợ lý đã hơn bản RAG Phase 1–8 chưa, và hơn ở đ
 
 **Đo thế nào.** Chạy hai bản cạnh nhau: bản RAG Phase 1–8 (đóng lại 01/11) và trợ lý như ngày 12/11, **cùng bộ câu, cùng kho đã chuẩn bị** (8.435 đoạn), chỉ khác
 code. Trên bộ câu mẫu, trợ lý chỉ tìm trong kho, không tra web, để so công bằng; các bộ an toàn, ngoài chủ đề và web thì chạy cả hệ, có web thật. Claude chấm mù
-(bài 11), luật ghi trước. Một agent khác **tính lại độc lập** từ dữ liệu thô, khớp. Gọi là "giữa kỳ" vì anh chốt: lượt cuối chạy lại khi đóng code (cuối tháng
-12); chỗ phạm sàn lúc này được ghi nguyên, rồi trước lượt cuối anh quyết sửa hay nhận là giới hạn.
+(bài 11), luật ghi trước. Một agent khác **tính lại độc lập** từ dữ liệu thô, khớp. Gọi là "giữa kỳ" vì anh chốt: lượt cuối chạy lại khi code đứng yên (anh chốt 18/11: Chủ nhật
+22/11); chỗ phạm sàn lúc này được ghi nguyên, rồi trước lượt cuối anh quyết sửa hay nhận là giới hạn.
 
 **Kết quả 1: tốt hơn ở cả ba nhóm câu khó.** So theo cặp; vì so ba nhóm cùng lúc nên ngưỡng được nâng lên (Holm, bài 11). Cả ba khoảng tin cậy đều không chứa 0:
 
