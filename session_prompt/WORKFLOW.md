@@ -162,6 +162,11 @@ lạc" trong bảng Session của `CURRENT_HANDOFF.md` ghi kênh của từng se
 
 ## 8. Kết phiên
 
+**Kết phiên nhẹ** (User duyệt 13:34 18/11/2026) — khi User tắt / mở lại một phiên chỉ để làm mới ngữ cảnh: phiên đó THAY (không nối) mục đầu
+`STATUS_<X>.md` bằng ba dòng — việc dở (tới đâu, file / nhánh nào) · thứ đang chạy + file tạm (server, worktree, agent con, `/tmp/hr_*`) · bẫy phiên
+này; A thêm: khối đầu `CURRENT_HANDOFF.md` + `HIEN_TRANG.md` mục 2–3. Phần còn lại của mục này (nhật ký, `Project_Status.md`, vòng cải tiến) làm ở
+lần kết phiên cuối ngày. Phiên thấy công cụ báo đang nén ngữ cảnh ⇒ báo A một dòng. Sổ `STATUS_<X>.md` quá ~200 KB ⇒ dời phần cũ sang `archive/` (chép nguyên văn).
+
 Mỗi session: cập nhật `STATUS_<X>.md` (đang làm, dở gì, bẫy đã gặp, câu hỏi, tiền paid đã dùng).
 A: `TONG_HOP.md` của đợt nếu đóng; `nhat_ky/` + bảng `bao_cao_he_thong/README.md`;
 `CURRENT_HANDOFF.md` (mục đầu ghi "Phiên sau đọc trước": việc tiếp, câu hỏi cho User; **không giới hạn số
