@@ -33,7 +33,7 @@ Mốc (User chốt theo THỨ, 18/11/2026):
 
 | Khi nào | Việc |
 |---|---|
-| Cuối MỖI ngày | Vòng tự cải thiện cách làm: đọc hai con số · lỗi lặp lần hai ⇒ máy trước chữ sau · thêm bao nhiêu gỡ bấy nhiêu (CHƯA chạy lần nào) |
+| Cuối MỖI ngày | Vòng tự cải thiện cách làm: đọc hai con số · lỗi lặp lần hai ⇒ máy trước chữ sau · thêm bao nhiêu gỡ bấy nhiêu (lần đầu: 18/11) |
 | Sáng thứ Bảy 21/11 | User tự bật hệ thống theo runbook mục 1–3, gõ ~10 câu tự chấm, xem sổ vết, đọc trang bản đồ + bài 26 (45–60 phút, User chốt 18/11); phiên điều phối ngồi cạnh, không làm hộ |
 | Thứ Bảy 21/11, trước tối | Chạy cả `backend/tests` một lượt trên `main` · gói soát mù cho model hãng khác (file riêng tư `data/review_khac_hang/2026-11-21_truoc_dung_code/DE_BAI.md` — A xem phạm vi trước) |
 | Tối thứ Bảy 21/11 | **Code đứng yên**; ghi mã commit đứng yên vào sổ đo |
@@ -54,7 +54,7 @@ Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc
 
 Từ nay tới tối thứ Bảy 21/11: chỉ sửa lỗi đã tái hiện được; không thêm tính năng; đổi chuỗi gửi model ⇒ hỏi phiên điều phối trước.
 
-Hai con số đo cách làm (tuần 16–22/11, đếm từ 18/11 — A đếm, chưa ai soát): việc đã báo "xong" bị lật lại **4** · User phải nhắc lại một điều đã nói **5**.
+Hai con số đo cách làm (tuần 16–22/11, tới chiều 18/11; B soát): việc đã báo "xong" bị lật lại **5** · User phải nhắc lại điều đã nói **6**. Giá 18/11: 74 commit, 10 chạm code (tuần code đứng yên); hỏi User ≥ 20 câu (> 8 ⇒ gom câu).
 
 ## 3. Đang chờ User (gom một chỗ — đừng hỏi lại thứ không có ở đây)
 
