@@ -18,6 +18,9 @@ Gợi ý chỗ soi (không giới hạn): <3–6 gợi ý>. File chính: <danh s
 - **Không mở, không in:** file khoá; <các thư mục dữ liệu riêng>.
 - Không gọi API trả phí, không bật server. Được chạy lệnh đọc (`git log`, `git show`, tìm chữ). **Cách chạy thử một hàm:** <ghi đúng lệnh của dự án, chép–dán chạy được> —
   hoặc nói thẳng: "chỉ đọc code là đủ; mọi điểm ghi nhãn [chỉ đọc code]". (Không ghi cách chạy thì reviewer sẽ không chạy gì.)
+  Ví dụ ở repo gốc (theo lần dùng thật 18/11, do phiên soạn gói ghi lại — người soạn gói sau tự thử lại trước khi chép): công cụ có sẵn `uv` trong hộp cát (Codex)
+  chạy được hàm thật từ thư mục `backend/` bằng `HF_HUB_OFFLINE=1 UV_OFFLINE=1 uv run --no-sync --no-cache python - <<'PY' … PY`; công cụ không có `uv`
+  (Antigravity) thì chỉ đọc code ⇒ mọi điểm gắn nhãn [chỉ đọc code], người nhận sẽ tái hiện.
 - Không chép dữ liệu riêng vào kết quả.
 
 ## 4. Kết quả — ghi vào `<đường dẫn>/KET_QUA_<tên model>.md`
