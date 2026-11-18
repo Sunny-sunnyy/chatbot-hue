@@ -7,28 +7,25 @@ User copy khối dưới, thay `<X>` bằng A, B, C, E (hoặc D — học cùng
 Bạn là Session <X> của dự án /home/minhhieu/hue_rag. A là điều phối (làm việc với
 User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọc, giúp User tự học — WORKFLOW.md §10.
 
-1. Đọc toàn bộ, theo thứ tự:
-   session_prompt/START_SESSION.md
-   session_prompt/Session_Prompt.md
-   session_prompt/WORKFLOW.md
+1. Đọc NGẮN (User duyệt 13:34 18/11/2026 — đang thử ba lần mở; AGENTS.md công cụ tự nạp, agent khác đọc nó trước):
+   session_prompt/START_SESSION.md (file này)
    session_prompt/HIEN_TRANG.md (hiện trạng — đọc đủ)
-   session_prompt/CURRENT_HANDOFF.md — chỉ khối trên cùng + mục việc của mình; Project_Status.md và phần còn lại của handoff = nhật ký,
-   mở khi cần trả lời một câu cụ thể (A: hai phiên đầu vẫn đọc cả khối đầu handoff để bắt chỗ HIEN_TRANG chép sót)
-   session_prompt/sessions/STATUS_<X>.md (chưa có thì tạo từ mẫu trong sessions/README.md)
-   B, C, E (rút gọn 05/11): đọc đủ Session_Prompt.md + START_SESSION.md; WORKFLOW.md §1–§7 và Project_Status.md §1, §4, §8;
-   CURRENT_HANDOFF.md chỉ mục "PHIÊN SAU ĐỌC TRƯỚC" + mục việc của mình; phần khác reference-only. A đọc đủ.
-   Sau đó chỉ đọc những gì mục việc của <X> trong CURRENT_HANDOFF chỉ định.
-   PROJECT_HISTORY.md và report cũ chỉ mở khi cần trả lời một câu cụ thể.
+   session_prompt/sessions/STATUS_<X>.md — mục đầu (chưa có thì tạo từ mẫu trong sessions/README.md)
+   session_prompt/CURRENT_HANDOFF.md — chỉ khối trên cùng + mục việc của mình
+   session_prompt/Session_Prompt.md (luật) và WORKFLOW.md (cách làm): B, C, E KHÔNG đọc trọn lúc mở — khi NHẬN việc thì đọc
+   đúng mục việc đó chạm (tin giao việc ghi "đọc mục nào"; không ghi ⇒ xem tiêu đề mục hai file rồi đọc mục liên quan).
+   A (giữ luật, giao việc) vẫn đọc đủ hai file. Vấp một luật vì chưa đọc ⇒ ghi vào STATUS_<X>.md + báo A (số đếm của lần thử).
+   Project_Status.md, phần còn lại của handoff, PROJECT_HISTORY.md, report cũ = nhật ký — mở khi cần trả lời một câu cụ thể.
    Skill dự án nằm ở .claude/skills/ (Claude Code tự thấy; agent khác đọc
    skills/<tên>/SKILL.md): practical-project-coding khi sửa code/test,
    risk-gated-agent-review khi review chéo, propose-options khi đưa lựa chọn cho User,
-   run-experiment khi thử/so sánh phương án, improve-workflow (A) khi kết phiên / rút kinh nghiệm, teach-and-quiz (D) khi giảng + hỏi lại; agent-design-review / agent-security-review khi thiết kế / rà agent có công cụ (Phase 9).
+   run-experiment khi thử/so sánh phương án, improve-workflow (A) cuối mỗi ngày / kết phiên / rút kinh nghiệm, teach-and-quiz (D) khi giảng + hỏi lại; agent-design-review / agent-security-review khi thiết kế / rà agent có công cụ (Phase 9); soat-tich-hop sau một đợt gộp nhiều nhánh / trước mốc chốt; giao-viec-agent-con mỗi khi giao việc cho agent con.
    Khi code/test/chạy script: luôn `uv run …` trong .venv của dự án (Session_Prompt.md §10).
 2. Kiểm nhanh, chỉ đọc, theo WORKFLOW.md mục 2.
 3. Báo ngắn: bạn là ai, Phase/việc đang ở đâu, việc của bạn, chỗ lệch giữa tài liệu
-   và thực tế, thắc mắc. Nếu <X> là B, C hoặc E: báo cả A — bằng SendMessage nếu cả
-   hai là Claude Code, nếu không thì viết khối "Tin cho A" để User chuyển
-   (WORKFLOW.md §7).
+   và thực tế, thắc mắc. Nếu <X> là B, C hoặc E: báo cả A — KHÔNG rải tin cho mọi terminal để tìm A: đợi tin mở
+   phiên của A (A gửi tên terminal mình cho cả nhóm) rồi trả lời MỘT tin bằng SendMessage; agent không phải
+   Claude Code thì viết khối "Tin cho A" để User chuyển (WORKFLOW.md §7).
    Mọi session (cả A): trong phiên tham gia **vòng tự soi bắt buộc** (Session_Prompt.md §7 — bỏ test không bảo vệ sàn; bàn với cả nhóm xem có over-engineer không).
    Rồi: A KHÔNG hỏi quyền phiên — theo bảng "Quyền thường trực" trong `AGENTS.md`, báo xong là A giao ngay B/C/E mọi việc đã có trong
    handoff; chỉ việc thuộc hàng "hỏi User trước" mới chờ User; B/C/E chờ A giao việc (việc A giao = User nói "làm đi"); D chờ User nói muốn hiểu việc gì. Trước đó không sửa file (trừ tạo
@@ -37,7 +34,8 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
 
 Ghi chú:
 
-- Tên terminal đổi mỗi lần mở: dùng `ListAgents`, hỏi "là B hay C" nếu chưa rõ.
+- Tên terminal đổi mỗi lần mở: A dùng `ListAgents` rồi nhắn tên mình cho các terminal cùng dự án; B / C / E trả lời một tin "tôi là <X>".
+- Làm mới ngữ cảnh giữa chừng: chỉ cần mở lại phiên đã đầy (thường là A); trước khi tắt làm "kết phiên nhẹ" (`WORKFLOW.md` §8).
 - Agent nào không phải Claude Code: User nói rõ khi mở (ví dụ "B là Codex"); các
   session liên lạc với nó qua User (khối "Tin cho <X>").
 - Prompt mở session là chỉ thị mới nhất của User; nếu khác `CURRENT_HANDOFF.md`,

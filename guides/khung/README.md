@@ -7,7 +7,7 @@ Tất cả [chưa chạy] ở một dự án thứ hai — sửa bộ khung này
 
 | # | Chép | Thành | Phải sửa chỗ nào |
 |---|---|---|---|
-| 1 | `AGENTS.mau.md` | `AGENTS.md` ở gốc repo (và `CLAUDE.md` một dòng `@AGENTS.md`) | điền luật cứng, lệnh chạy + lệnh kiểm, bảng quyền; giữ < 4 KB |
+| 1 | `AGENTS.mau.md` | `AGENTS.md` ở gốc repo (và `CLAUDE.md` một dòng `@AGENTS.md`) | điền luật cứng, lệnh chạy + lệnh kiểm, bảng quyền; giữ < 5 KB |
 | 2 | `../CACH_LAM_VIEC.md` | `guides/CACH_LAM_VIEC.md` | chỉ viết lại mục 9 "Ở repo này" (bảng đường dẫn + sở thích của chủ dự án); mục 1–8 và 10 giữ nguyên |
 | 3 | `HIEN_TRANG.mau.md` | trang hiện trạng (một trang, viết lại tại chỗ) | toàn bộ nội dung; giữ khuôn mục |
 | 4 | `BAO_CAO_4_Y.mau.md` | khuôn báo cáo mỗi việc xong | không cần sửa |

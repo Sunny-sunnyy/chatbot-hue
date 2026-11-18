@@ -130,7 +130,7 @@ bằng hai con số ở mục 7.
 
 | Trang nói | Ở repo này là |
 |---|---|
-| luật cứng + bảng quyền | `AGENTS.md` (`wc -c AGENTS.md` [đã chạy 18/11]: dưới 4 KB) |
+| luật cứng + bảng quyền | `AGENTS.md` (`wc -c AGENTS.md` [đã chạy 18/11]: dưới 5 KB) |
 | trang hiện trạng · nhật ký | `session_prompt/HIEN_TRANG.md` · `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/Project_Status.md` (nhật ký dài — chỉ tra) |
 | lệnh bật hệ thống, chạy test, lấy mốc | `guides/RUNBOOK_BAN_GIAO.md` mục 1–3 |
 | "đã đẩy lên" lấy từ máy | `scripts/commit_push.sh "<lời commit>" <file>…` in `ĐÃ PUSH <sha> origin/<nhánh>` [đã chạy] |
