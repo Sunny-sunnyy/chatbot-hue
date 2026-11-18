@@ -36,7 +36,7 @@ bằng chính lệnh tái hiện. Không thêm fallback / guard để che lỗi.
 - **Tên trông sai có thể đúng** — kiểm trước khi "sửa": model `gpt-6-luna` (`grep -n "model:" backend/config/settings.yaml` [đã chạy]), cổng Qdrant 6335 / 6336
   (không phải 6333), thư mục `gửi chatgpt/` có dấu, collection `hue_full_corpus_7a2_e5_small_384`.
 - Kết quả ngược một quyết định User đã ghi (`Project_Status.md` §5; runbook mục 9 khi có) ⇒ dừng, hỏi; không tự chọn lại.
-- Code cũ còn nằm cạnh code mới (bộ xếp lịch cũ, cờ đang tắt) không phải mẫu để chép — xem runbook mục 10 "đường cũ" khi có.
+- Code cũ còn nằm cạnh code mới (bộ xếp lịch cũ, cờ đang tắt) không phải mẫu để chép — xem runbook mục 10.
 - Lệnh **không chạy** [đều chưa chạy — cố ý]: `git clean -fd` · `git reset --hard` · `git checkout -- .` · `git add -A` / `git add .` · `git push --force` ·
   `--no-verify` · `docker compose down -v` · `docker system prune` · `pip install` · `agy` · mọi lệnh đọc / in `.env` · xoá trong `data/`, `knowledge-base-hue/`,
   `qdrant_storage/`. Cần một trong các thứ này ⇒ hỏi User.
@@ -52,6 +52,13 @@ bằng chính lệnh tái hiện. Không thêm fallback / guard để che lỗi.
 | Trí nhớ giữa các phiên (~20 ghi chú) | thư mục riêng của Claude, ngoài repo | runbook mục 9 (CHƯA VIẾT) |
 | Nhắn tin giữa phiên, agent con, review chéo | công cụ của Claude Code | mục 2 của file này |
 | Chặn mở file `*sealed*` | chế độ quyền của Claude Code | không còn rào máy ⇒ tự giữ luật 3 |
+
+**Công cụ tháng 12 tự nạp gì** (theo tài liệu công khai của hai hãng, B đọc trọn 18/11/2026 — tất cả [chưa chạy] trên hue_rag; thử ở buổi diễn tập):
+- **Antigravity** nạp `AGENTS.md` / `GEMINI.md` ở thư mục làm việc và mọi thư mục cha tới gốc repo, cộng `.agents/rules/*.md`. File trong `.agents/rules/` thiếu khối
+  `trigger:` ở đầu thì **bị bỏ qua không báo**; mỗi file luật bị **cắt ở 24.000 byte**; tổng luật luôn-bật > 20.000 token thì file lớn nhất bị hạ thành con trỏ ⇒
+  `AGENTS.md` chỉ trỏ đường (đang 2,2 KB); **không** chép `Session_Prompt.md` (28 KB) hay `WORKFLOW.md` (33 KB) vào đó hoặc vào `.agents/rules/` — sẽ mất phần đuôi.
+- **Codex** chỉ tự quét skill ở `.agents/skills` (từ thư mục chạy lên gốc repo; theo được liên kết thư mục), không quét `.claude/skills` ⇒ khi chưa có thư mục đó,
+  bảo Codex mở thẳng `skills/<tên>/SKILL.md`.
 
 **Vẫn còn cho mọi agent** (tầng git / script): `.githooks/pre-commit` + `pre-push` (vùng riêng, dạng khoá bí mật, trùng Golden) · `scripts/commit_push.sh` ·
 `scripts/grep_kb.sh` · server từ chối khởi động khi chỉ mục lệch kho hoặc bảng lịch sai.
