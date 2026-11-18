@@ -44,7 +44,7 @@ Mở một agent ngữ cảnh MỚI (tốt nhất khác hãng), chỉ cho đọc
 thiếu chỗ đó, sửa trang rồi hỏi lại đúng câu ấy.
 
 1. Dự án này là gì, cho ai dùng, đang chạy ở đâu?
-2. Kể ba tính năng đang bật và một tính năng đang tắt (kèm lý do tắt nếu trang có ghi).
+2. Kể ba việc hệ thống đang làm được và một tính năng đang tắt (kèm lý do tắt); danh sách đủ các tính năng bật / tắt nằm ở file nào?
 3. Mốc gần nhất là gì, vào thứ mấy ngày nào, và trước mốc đó không được làm gì?
 4. Ai đang làm việc gì? Việc nào chưa ai nhận?
 5. Bạn được tự làm những gì mà không cần hỏi, việc gì phải hỏi trước, việc gì không bao giờ làm?

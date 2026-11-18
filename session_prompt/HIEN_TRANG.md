@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa mục 1, 2, 4, 6 lúc 13:55 18/11/2026 (giờ `date`). Người giữ: phiên điều phối.
+Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 14:52 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án, cho BẤT KỲ coding agent nào (Claude Code, Codex, Antigravity) vừa mở phiên. Nó được **viết lại tại chỗ**
 mỗi lần kết phiên — không nối thêm. Thứ tự mở phiên (bạn là phiên nào, báo gì, chờ gì) ở `session_prompt/START_SESSION.md`; trang này là phần "dự án đang
@@ -19,7 +19,7 @@ trợ lý trên bản code đã đứng yên.
   Web: FastAPI (`backend/`) + giao diện React dựng sẵn (`frontend/`). Chạy trên máy User; **chưa deploy**.
 - **Số hôm nay** (lệnh kiểm: runbook mục 0): kho **265 bài ⇒ 9.436 đoạn**, một collection Qdrant `hue_full_corpus_7a2_e5_small_384` (cổng 6335);
   tìm = vector `e5-small` + từ khoá BM25 trộn RRF, **10 đoạn** vào ngữ cảnh, không xếp lại; model viết `gpt-6-luna` (OpenAI); tra web qua Serper.
-- **Cờ:** **23 BẬT** (22 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat`). **TẮT (đủ 4 cờ còn lại):** `lich_trinh`
+- **Cờ:** **23 BẬT** (22 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh). **TẮT (đủ 4 cờ còn lại):** `lich_trinh`
   (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (mặc định
   tắt; bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
@@ -47,7 +47,7 @@ Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc
 - **A:** trò chuyện với User về cách làm việc; runbook mục 9; gói soát mù thứ Bảy; gộp nhánh.
 - **B:** lượt đo cuối Chủ nhật 22/11; giữ trang bản đồ.
 - **C:** giữ trang này; runbook mục 10; 2 skill mới đã chấm MỘT lượt (chưa có người chấm thứ hai); 4 skill cũ chưa chấm để tối thứ Ba 24/11.
-- **E:** 8 skill sửa + 2 skill mới (`soat-tich-hop`, `giao-viec-agent-con`) ĐÃ vào `main`; hai skill mới đã chấm một lượt; A áp file luật + liên kết `.claude/skills/`.
+- **E:** 8 skill sửa + 2 skill mới (`soat-tich-hop`, `giao-viec-agent-con`) ĐÃ vào `main`; hai skill mới đã chấm một lượt.
   E giữ `guides/CACH_LAM_VIEC.md`.
 - **Chưa ai nhận, để sau lượt đo cuối:** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
   quần thể (10.2) · runbook mục 8 (deploy) — chỉ viết khi User mở lại chuyện deploy.
@@ -56,10 +56,10 @@ Từ nay tới tối thứ Bảy 21/11: chỉ sửa lỗi đã tái hiện đư�
 
 Hai con số đo cách làm (tuần 16–22/11, tới chiều 18/11; B soát): việc đã báo "xong" bị lật lại **5** · User phải nhắc lại điều đã nói **6**. Giá 18/11: 74 commit, 10 chạm code (tuần code đứng yên); hỏi User: chiều 7 hộp hỏi, sáng không đếm lại được (> 8 ⇒ gom câu; từ 19/11 A đếm ngay lúc hỏi).
 
-## 3. Đang chờ User (gom một chỗ — đừng hỏi lại thứ không có ở đây)
+## 3. Đang chờ User (chỉ những việc ghi ở đây đang chờ User; việc đã chốt hoặc đã hỏi rồi thì đừng hỏi lại)
 
 1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
-2. Ba lệnh đếm bộ câu kín trước lượt đo cuối (ở `RUNBOOK_CUOI.md`) — *chưa kiểm đã chạy chưa*. Deploy / AWS: chỉ hỏi lại SAU khi Phase 9 đóng.
+2. User tự chạy ba lệnh đếm bộ câu kín trước lượt đo cuối (ở `RUNBOOK_CUOI.md`) — *chưa kiểm đã chạy chưa*. Deploy / AWS: chỉ hỏi lại SAU khi Phase 9 đóng.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
 
