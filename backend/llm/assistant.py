@@ -578,6 +578,12 @@ def _thoi_tiet_bao_lu(trace: AnswerTrace, du_bao, cu):
         ctx = trace.thoi_tiet_ctx
         if loai == "bao_lu":
             ctx["bao_lu"] = ctx["bao_lu_model"] = True  # một lần bao_lu thì cả lượt là bao_lu (plan m-4)
+        if ctx["bao_lu"] and trace.thoi_tiet is not None and not trace.thoi_tiet.get("bao_lu") and trace.thoi_tiet.get("khoi"):
+            # soát 18/11: lưới không khớp, model gọi `du_bao` TRƯỚC (đã nhận số) rồi mới gọi `bao_lu`. Số đã gửi thì không lấy lại được; từ đây vẫn phải
+            # là lượt bão: khối nối dưới câu trả lời có nhãn "không phải tin bão", lần gọi này trả lời dặn không số thay cho câu "đã lấy"
+            trace.thoi_tiet.update(bao_lu=True, khoi=f"{tt.CAU_KHONG_PHAI_TIN_BAO}\n\n{trace.thoi_tiet['khoi']}")
+            trace.tools.append({"name": "thoi_tiet", "loai": "bao_lu", "ms": 0.0, "sau_du_bao": True})
+            return _nguon_thoi_tiet(trace, tt.TIEU_DE_NGUON_BAO_LU, (tt.KET_QUA_BAO_LU,))
         if not ctx["bao_lu"] or trace.thoi_tiet is not None:
             return await cu(tu_ngay, den_ngay)  # lần gọi thứ hai ⇒ câu "đã lấy" của bản cũ
         entry = {"name": "thoi_tiet", "loai": "bao_lu"}
