@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 21:41 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
+Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 21:45 18/11/2026 (giờ `date`, kết phiên tối). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án, cho BẤT KỲ coding agent nào (Claude Code, Codex, Antigravity) vừa mở phiên. Nó được **viết lại tại chỗ**
 mỗi lần kết phiên — không nối thêm. Thứ tự mở phiên (bạn là phiên nào, báo gì, chờ gì) ở `session_prompt/START_SESSION.md`; trang này là phần "dự án đang
@@ -29,38 +29,37 @@ trợ lý trên bản code đã đứng yên.
 
 ## 2. Mốc và việc đang mở
 
-Thứ tự việc — KHÔNG gắn ngày (User 18/11: không cố định thời gian; bước trước đạt và máy rảnh là làm bước sau ngay; chất lượng giữ nguyên):
+Thứ tự việc — KHÔNG gắn ngày (User 18/11): bước trước đạt và máy rảnh là làm bước sau ngay; chất lượng giữ nguyên:
 
 | Bước | Việc | Đạt khi |
 |---|---|---|
-| 1 | Cả `backend/tests` một lượt trên `main`; sửa lỗi tái hiện được | 0 test hỏng do code |
-| 2 | Agent con soát tích hợp (thay gói khác hãng) · tự chạy 5 mục "cách thử" của `bai_hoc/VIEC_MOI_XONG.md` | mỗi điểm đã tái hiện rồi sửa hoặc ghi runbook mục 10 |
-| 3 | **Code đứng yên**: ghi mã commit vào sổ đo, chép sao lưu | có mã commit |
-| 4 | **Lượt đo cuối** phần đã thấy (`data/phase_9/b7/tools/RUNBOOK_CUOI.md`; trần 0,45 USD; B chạy); bộ kín NOT RUN chờ User | mọi sàn đạt ⇒ "Phase 9 xong phần nhóm" |
+| 1–3 | Cả bộ test · soát tích hợp + soát mù khác hãng · code đứng yên | XONG 18/11 |
+| 4 | **Lượt đo cuối** phần đã thấy — ĐÃ ĐO (dưới); bộ kín NOT RUN chờ User | mọi sàn đạt ⇒ "Phase 9 xong phần nhóm" |
 | 5 | **Đợt hoàn thiện local**: tự tối ưu bước tìm · sửa lỗi hoãn (runbook mục 10) · công cụ kiểm · kế hoạch deploy | từng sửa đổi đo đạt, có người khác kiểm |
 | 6 | Deploy AWS (cần User một lần: tài khoản, khoá, ngân sách) | kiểm trên bản đã lên mạng |
 | 7 | **User test TOÀN BỘ một lần** (`data/test_cuoi/DANH_SACH.md`; bộ kín đo trên bản LÚC ĐÓ, báo cáo tách khỏi số bước 4) ⇒ User đóng Phase 9 | — |
 
 Mỗi ngày: vòng tự cải thiện cách làm.
 
-**Tới 21:41 18/11:** bước 0–3 xong; bước 4 đo trên `b27ef45`, CÓ sàn không đạt (`data/phase_9/b7_cuoi/KET_QUA_BANG.md`); code nay `b158568` (+ sửa mục web lượt bão, xuất lịch).
+**Kết phiên tối 18/11:** bước 0–3 xong. Bước 4 ĐO XONG trên `b27ef45`, CÓ sàn KHÔNG đạt (`data/phase_9/b7_cuoi/KET_QUA_BANG.md`): an toàn thiếu cảnh báo 2 câu · câu ngoài kho bị trả lời 1 / 18 · tụt "Đủ ý" 6 câu (ngưỡng 4) · sửa lịch bằng lời 7 / 10 · tốc độ chưa đo. Chẩn đoán: file `*_C.md` cùng thư mục. Mốc code mới `3abb076`.
 
 Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc (mục 7):
 - **A:** danh sách User test cuối (phiếu chấm: `data/tu_tay_2026-11-21/`); gộp nhánh.
 - **B:** plan vòng tự tối ưu + thử `ruff` (chỉ `backend/`, `scripts/`); giữ trang bản đồ.
 - **C:** giữ trang này; runbook mục 10; sau bước 4: script kiểm đường dẫn, chấm 4 skill cũ.
 - **E:** giữ `guides/CACH_LAM_VIEC.md`; 10 skill đã vào `main` — KHÔNG sửa chữ skill khi chưa có số chấm mới.
-- **Chưa ai nhận, để sau lượt đo cuối:** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
-  quần thể (10.2) · runbook mục 8 (deploy) — viết ở bước 5.
+- **Chưa ai nhận (bước 5):** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
+  quần thể (10.2) · runbook mục 8 (deploy).
 
-Tới khi xong bước 4: chỉ sửa lỗi đã tái hiện được; không thêm tính năng; đổi chuỗi gửi model ⇒ hỏi phiên điều phối trước.
+Chưa chốt "Phase 9 xong phần nhóm": chỉ sửa lỗi đã tái hiện được; không thêm tính năng; đổi chuỗi gửi model ⇒ hỏi phiên điều phối trước.
 
-Hai con số đo cách làm (tuần 16–22/11; B soát): việc đã báo "xong" bị lật lại **5** · User phải nhắc lại điều đã nói **6**. Hỏi User chiều 18/11: 8 hộp (> 8 ⇒ gom câu; A đếm ngay lúc hỏi).
+Hai con số đo cách làm (tuần 16–22/11; B soát): việc đã báo "xong" bị lật lại **5** · User phải nhắc lại điều đã nói **6**. Hỏi User > 8 hộp / ngày ⇒ gom câu.
 
 ## 3. Đang chờ User (chỉ những việc ghi ở đây đang chờ User; việc đã chốt hoặc đã hỏi rồi thì đừng hỏi lại)
 
 1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
 2. Dời về buổi test toàn bộ cuối (User chốt 18/11, KHÔNG nhắc trước đó): buổi tự tay, gói khác hãng, lệnh bộ kín, đóng Phase 9.
+3. Quyết các mục KHÔNG đạt của lượt đo cuối (sửa trước khi chốt / nhận làm giới hạn / sang bước 5) — phiên điều phối hỏi đầu phiên sau, mỗi lần một câu.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
 
@@ -85,7 +84,7 @@ Cách làm:
 - Test thật, dữ liệu thật, kết quả thật; được dùng tiền API để đo / thử (ghi số thật). Báo cáo tách "test bằng đồ giả" ↔ "lượt thật".
 - Người viết không tự kiểm. Hai thói quen kiểm thử (User chọn 18/11): sau mỗi đợt gộp lớn soát chỗ các tính năng gặp nhau · định kỳ soát
   độ thật của test (test nào thay hẳn phần cần kiểm). Giám khảo khác hãng: dùng ở MỐC CHỐT, qua một file `.md`;
-  User chỉ gửi khi nhóm YÊU CẦU rõ; mặc định GPT sol + Gemini 4 Hydrogen (bỏ Carbon — quá lâu).
+  User chỉ gửi khi nhóm YÊU CẦU rõ; mặc định GPT sol + Gemini 4 Hydrogen (bỏ Carbon — hai lần quá lâu).
 - Mọi báo cáo "xong" kết bằng bảng: đã làm · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra. Báo cáo cho User có 4 ý: người dùng thấy gì khác · bằng chứng ·
   chưa làm / giới hạn · cách thử trong 2 phút; mỗi khẳng định gắn nhãn [máy kiểm] / [người thứ hai kiểm] / [chưa kiểm].
 - Hỏi User: mỗi lần MỘT câu, có sẵn đáp án, mỗi đáp án kèm hệ quả. Tiếng Việt, lời thường, đủ quan trọng hơn ngắn. Giờ ghi vào tài liệu lấy bằng `date`.
