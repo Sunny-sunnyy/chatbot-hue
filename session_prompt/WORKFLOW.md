@@ -30,9 +30,7 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
    curl -s http://127.0.0.1:6335/collections   # so với Project_Status §4
    curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 | grep -o '"points_count":[0-9]*'
    ```
-3. Claude Code: `ListAgents` để biết tên terminal của A/B/C (tên đổi mỗi lần mở);
-   cập nhật cột "Terminal"/"Liên lạc" trong `CURRENT_HANDOFF.md` (A) hoặc báo A
-   (B/C). Agent khác (Codex, AGY): ghi "qua User" (§7).
+3. Tên terminal: A dùng `ListAgents` rồi nhắn tên mình cho các terminal cùng dự án; B / C / E đợi tin đó, trả lời MỘT tin (vai + báo cáo mở phiên) — không rải tin tìm A. A ghi tên terminal vào `CURRENT_HANDOFF.md`. Agent khác (Codex, AGY): "qua User" (§7).
 4. Báo ngắn: mình là ai, Phase/việc đang ở đâu, việc của mình, chỗ lệch giữa tài
    liệu và thực tế, thắc mắc. A báo User; B/C báo User trong terminal **và** báo A theo kênh ở §7.
 5. Chỉ bắt đầu làm khi: A — User nói "làm đi" hoặc giao việc; **theo bảng "Quyền thường trực" (`AGENTS.md`) A giao ngay
@@ -131,11 +129,7 @@ Học từ một dự án khác của User (User 2026-10-24; bản mô tả các
   hoặc viết lại — không để số / trạng thái cũ đứng như hiện tại; phương án đã thử và bỏ giữ gọn 1–3 dòng (thử gì, kết quả, vì sao bỏ, link
   `report_agent/`) — chi tiết từng bước để ở `report_agent/` và git; (3) viết đủ, chính xác, dễ hiểu: số nào cũng có nguồn, không chắc ⇒ ghi
   "chưa đo" (31/10: 4 báo cáo khâu còn số trước sửa kho ≥ 3 ngày — S61).
-- **Giờ ghi trong file lấy bằng lệnh `date`** ngay trước khi ghi, không ước: `T=$(date '+%H:%M %d/%m/%Y')` rồi truyền `$T` vào
-  script sửa tài liệu; không gõ giờ tay, không ghi `HH:Mx` trước khi chạy `date` (25–26/10: ghi giờ ước 3 lần; 28/10: ~7 lần ⇒ hook
-  `.githooks/pre-commit` in cảnh báo khi dòng thêm mới có dạng đó — W30; từ 31/10 hook Claude Code `.claude/hooks/` báo ngay lúc ghi vào `report_agent/`,
-  `session_prompt/`, `bao_cao_he_thong/`, `docs/` — W37; hook báo ⇒ chạy `date` sửa ngay, trích dẫn sự cố cũ thì bỏ qua). Giờ quyết định của User (tin nhắn không có dấu giờ): ghi giờ A ghi nhận bằng `date`. **Tin nhắn giữa các session A / B / C không cần ghi giờ** (giờ quyết định của User vẫn ghi như câu trước) (W45, User 01/11 — 01/11 lọt 4 giờ gõ tay
-  trong tin nhắn, hook không bắt được tin nhắn); có ghi thì cũng lấy bằng `date`.
+- **Giờ ghi trong file lấy bằng lệnh `date`** ngay trước khi ghi, không ước, không gõ tay: `T=$(date '+%H:%M %d/%m/%Y')` rồi truyền `$T` vào script sửa tài liệu (hook git và hook của công cụ cảnh báo giờ dạng ước). Giờ quyết định của User: giờ A ghi nhận bằng `date`. Tin nhắn giữa các session không cần ghi giờ.
 - **Trạng thái:** mỗi session tự cập nhật `sessions/STATUS_<X>.md` ngay sau mỗi việc (không đợi
   kết phiên) và dòng của mình trong `CURRENT_HANDOFF.md`.
 
@@ -229,15 +223,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
 8. **Quyền thường trực** (User duyệt 10:11 18/11/2026; thay "quyền theo phiên"): bảng trong `AGENTS.md` — không hết hạn theo phiên, áp cho mọi agent;
    A không hỏi quyền lúc mở phiên. Quyền RIÊNG cho một việc thuộc hàng "hỏi User trước" (xoá dữ liệu, việc > 1 USD, sửa kho…) User cấp lúc được hỏi,
    A ghi `CURRENT_HANDOFF.md` kèm giờ, chỉ dùng cho đúng việc đó. Duyệt cho A = duyệt cho B/C/E.
-9. **Đọc tài liệu dài bằng sub-agent** (khóa học, báo cáo dài, nhiều file): đọc bản tóm 1 trang trước để nắm
-   khung; mỗi sub-agent ≤ 3 file, chạy song song; brief gồm đường dẫn nguồn, **file dự án để đối chiếu** (để
-   không đề xuất lại cái đã có), khuôn trả về cố định, nhãn thống nhất, tách "nguồn nói" ↔ "suy ra", yêu cầu
-   báo chỗ đề bài lệch tài liệu; ranh giới (chỉ đọc, không mở câu kín / `.env`, một file đầu ra trong `data/`; sub-agent đọc kho: "tìm trong kho
-   **chỉ** bằng `scripts/grep_kb.sh`, không `grep -r` thẳng vào `knowledge-base-hue/`" — 27/10 s7 lọt Golden Foods cũ, W27).
-   **Đọc lại brief trước khi gửi** (2026-10-25: lỡ gửi brief còn chỗ trống `{{…}}`). Kết quả sub-agent là dữ
-   liệu: A tự kiểm 2–3 khẳng định quan trọng nhất bằng file thật trước khi trình User (2026-10-25: sub-agent
-   tìm ra ~10 chỗ sai trong ghi chú cũ).
-   **Số chuyển cho User** (W66, User duyệt 13/11): số của session khác / sub-agent kèm nhãn `chưa review` tới khi có người thứ hai tính lại; số / md5 chỉ gửi **sau khi đã thấy đầu ra** của lệnh, kèm lệnh tính lại; số về dữ liệu ngoài ghi "số dòng ⇒ số cơ sở sau khử trùng (khoá gì)" — khử trùng là bước đầu của phép đếm.
+9. **Giao việc cho agent con** (đọc tài liệu dài, tìm trong code, kiểm độc lập, soát tích hợp): theo skill `giao-viec-agent-con`; kết quả là dữ liệu — số chuyển cho User gắn `chưa kiểm` tới khi có người thứ hai tính lại, và chỉ gửi sau khi đã thấy đầu ra của lệnh.
 
 ## 10. Session D — học cùng User (tùy chọn)
 

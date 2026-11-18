@@ -53,7 +53,7 @@ Có link không có nghĩa phải đọc. Lịch sử, report đã đóng, `hand
 
 | Tự làm được | Cần quyền ghi trong việc (User duyệt qua A) |
 |---|---|
-| Đọc file, source, log; `git status/diff/log` | Commit/push (A có quyền thường trực; B/C khi việc ghi rõ) |
+| Đọc file, source, log; `git status/diff/log` | (commit / push / gộp: theo bảng "Quyền thường trực" trong `AGENTS.md` — bảng đó thắng bảng này) |
 | Chạy test không gọi API trả phí | Gọi API trả phí ngoài giới hạn đã ghi |
 | Đọc Qdrant/API bằng GET | Tạo/ghi/xóa collection, xóa file dữ liệu |
 | Script phân tích không ghi dữ liệu dùng chung | Sửa curated corpus, Golden |
