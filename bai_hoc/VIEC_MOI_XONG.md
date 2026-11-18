@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 14:06, ngày 18/11/2026 · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào.*
+*Cập nhật lần cuối: 19:45, ngày 18/11/2026 · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -34,7 +34,7 @@ Ai kiểm: phiên E review cả ba lượt sửa (chạy test, tìm mọi nơi �
 tìm ra khi soát mù — trong đó một lỗi do chính bản sửa đầu buổi sáng gây ra và đã lọt review của phiên E.
 
 **3. Chưa làm / giới hạn.**
-- Chưa chạy lại cả bộ test (để một lượt chung trước tối thứ Bảy 21/11).
+- Cả bộ test đã chạy lại một lượt tối 18/11: 1.375 đạt, 1 hỏng vì mã phiên bản đổi giữa lượt chạy (có nhánh tài liệu được gộp lúc đang chạy); chạy lại riêng file đó: 13 đạt — số của phiên chạy test và phiên điều phối [chưa kiểm bởi người viết file này].
 - Câu về thời tiết nguy hiểm **không** dùng từ nào trong danh sách (hỏi vòng kiểu "nước sông có lên cao không", hoặc gõ không dấu) ⇒ không có câu an toàn, trừ khi model tự gọi công cụ thời tiết loại bão / lũ.
 - Bắt thừa: câu dùng "bão", "lũ" theo nghĩa bóng cũng được kèm câu an toàn — chấp nhận.
 - Câu vừa sửa lịch vừa **hỏi** "hiện có cảnh báo gì không": lịch được sửa, có câu an toàn, nhưng ý hỏi cảnh báo không được trả lời (một lượt chỉ đi một đường).
@@ -47,6 +47,9 @@ chính thức và số 112 (đường này đã đúng từ trước 18/11). (b)
 *"Bỏ điểm đầu tiên khỏi lịch vì đang có bão"* ⇒ đúng: lịch đổi, và câu an toàn hiện in đậm ở **đầu** khung lịch. Không thấy câu an toàn ở một trong hai ⇒ báo nhóm
 kèm nguyên câu anh gõ.
 
+**Đã thử (tối 18/11, hệ thống thật, mỗi câu một lượt)** [máy kiểm]: (a) đúng — câu trả lời có câu chỉ tới bản tin chính thức và số 112. (b) đúng — lịch đổi (điểm đầu
+ngày 1 được bỏ, trợ lý thêm một điểm khác vào chỗ trống) và câu an toàn hiện in đậm ở đầu khung lịch, cả trong khung trợ lý nổi. Chưa có người thứ hai chạy lại.
+
 ## 18/11 — 2. Câu an toàn nằm ở đầu khung lịch, in đậm
 
 **1. Người dùng thấy gì khác.** Trước: ở lượt có lịch, mọi ghi chú nằm chung một dòng xám nhạt **dưới** lịch, bản đồ và danh sách nguồn — câu về bão / 112 nếu có thì
@@ -55,13 +58,17 @@ thường để nguyên chữ thường. (Ở lượt trả lời thường, kh�
 
 **2. Bằng chứng.** Test bằng đồ giả: hai file test bị chạm, 30 đạt — phiên review tự chạy [máy kiểm]. Ảnh chụp giao diện sau khi build lại: phiên review và phiên
 điều phối đã nhìn [người thứ hai kiểm] — nhưng **mọi** ảnh đều là phát lại một luồng đã ghi sẵn hoặc do code dựng, không ảnh nào là một lượt hỏi thật mới sau khi
-sửa giao diện [chưa kiểm].
+sửa giao diện. Tối 18/11 đã có **một** lượt hỏi thật trên bản giao diện dựng lại, chụp ở hai cỡ màn (xem dòng Đã thử) [máy kiểm].
 
-**3. Chưa làm / giới hạn.** Chưa chụp ở màn hình hẹp và ở khung trợ lý nổi (cột lịch của trang Lên kế hoạch đã chụp bằng luồng phát lại: câu an toàn ở đầu cột). Ở lượt trả lời **thường** (không có lịch) mà câu trả
+**3. Chưa làm / giới hạn.** Khung trợ lý nổi chưa chụp ở màn hình hẹp (cột lịch đã chụp ở cả màn rộng và màn hẹp, khung trợ lý nổi mới chụp ở màn rộng). Ở lượt trả lời **thường** (không có lịch) mà câu trả
 lời dài, câu an toàn vẫn nằm cuối bong bóng, dưới dòng Nguồn. Ở lượt có lịch do model viết lời, câu an toàn hiện lúc kết lượt nên đẩy khung lịch xuống một đoạn.
 
 **4. Cách thử trong 2 phút.** Làm bước (b) của mục 1 và nhìn vị trí: câu đậm phải ở **trên** lịch, không lẫn với dòng "thông tin có thể đã thay đổi". Thu hẹp cửa sổ
-trình duyệt xem chữ có vỡ không — chỗ này nhóm chưa kiểm, anh thấy xấu thì chụp lại.
+trình duyệt xem chữ có vỡ không — anh thấy xấu thì chụp lại.
+
+**Đã thử (tối 18/11, một lượt thật)** [máy kiểm]: câu an toàn là phần tử **đầu tiên** của khung lịch, độ đậm 600 (chữ thường là 400); dòng "có thể đã thay đổi" nằm
+riêng, chữ thường. Màn rộng 1.440 điểm ảnh và màn hẹp 390 điểm ảnh (cỡ điện thoại): chữ xuống dòng gọn, trang không bị tràn ngang (đo bằng máy: 0 điểm ảnh tràn) —
+người chạy đã nhìn cả hai ảnh. Chưa thử trên điện thoại thật; chưa có người thứ hai chạy lại.
 
 ## 18/11 — 3. Mục "Từ web" không tự tóm tắt tin giông, lốc, mưa đá, nước dâng
 
@@ -71,7 +78,7 @@ luật bằng code: model **không** được viết tóm tắt, chỉ hiện m�
 sách bên công cụ thời tiết.
 
 **2. Bằng chứng.** Test bằng đồ giả: 314 test của các file chạm đạt (số của phiên viết code) [chưa kiểm]; phiên review chạy hai file chính: 153 đạt, 7 lỗi do thư
-mục thử của phiên review thiếu dữ liệu riêng, không phải do code [máy kiểm]. Lượt thật: **chưa có** [chưa kiểm] — mục web
+mục thử của phiên review thiếu dữ liệu riêng, không phải do code [máy kiểm]. Lượt thật: **một** lượt, tối 18/11, đúng câu ví dụ ở ý 4 [máy kiểm] — mục web
 chỉ được tra cho câu thiên tai ở hai ca hiếm (lần tìm đầu không ra gì, hoặc câu hai ý có một ý kho thiếu), và chưa bộ đo nào có câu giông / lốc.
 
 **3. Chưa làm / giới hạn.** Bốn từ mới bắt nhầm vài câu không phải thiên tai (hướng chặt hơn — chấp nhận). Cách viết "dông" chưa có trong danh sách của mục web. Câu
@@ -80,7 +87,11 @@ hai ý mà một vế có từ thiên tai: vế còn lại cũng không được
 **4. Cách thử trong 2 phút.** Gõ một câu **hai ý** tự đặt, trong đó ý kho khó có là chuyện mưa đá, ví dụ *"Lăng Minh Mạng mở cửa mấy giờ, và tuần này Huế có mưa
 đá không?"* (câu một ý về mưa đá thì trợ lý trả câu an toàn và không mở mục web, nên không chạm phần vừa sửa). Đúng: có câu chỉ tới bản tin chính thức + 112; nếu
 hiện mục "Từ web" thì đó là một câu cố định kèm đường dẫn, **không** có đoạn tóm tắt hay con số. Thấy mục web kể chi tiết thiệt hại / số liệu ⇒ báo nhóm.
-[chưa ai chạy thử đúng câu ví dụ này]
+
+**Đã thử (tối 18/11, đúng câu ví dụ, một lượt thật)** [máy kiểm]: đúng — ý giờ mở cửa được trả lời từ kho kèm nguồn; ý mưa đá: "tư liệu chưa có thông tin", kèm bảng
+dự báo nhiệt độ – mưa và câu chỉ tới bản tin chính thức + 112; mục "Từ web" hiện đúng **một câu cố định** ("…mình không tóm tắt từ web…"), không có đoạn tóm tắt hay
+con số về thiên tai. Dưới câu đó có năm đường dẫn, đều là trang về tham quan (lăng Minh Mạng, giờ mở cửa di tích), không phải tin thời tiết. Một lượt không phải số tần suất; chưa có người
+thứ hai chạy lại.
 
 ## 18/11 — 4. Bản đang chạy tự khai mã phiên bản, kể cả khi chạy trong Docker
 
@@ -100,6 +111,9 @@ lệnh đếm so đúng chuỗi. Cả hai đã ghi vào sổ giới hạn của 
 đúng, không phải lỗi (dạng dòng in: người viết file đã chạy lệnh này 18/11, lúc chưa có lượt thật). Phép thử này chỉ cho thấy mã có trong sổ số đo; phần mới
 (chạy trong Docker) chưa thử được trên máy anh.
 
+**Đã thử (tối 18/11)** [máy kiểm]: sau bốn lượt thật của các mục 1–3, lệnh in `git_sha fc897ed: 6 lượt · 0.0038 USD` — mã trùng `git rev-parse --short HEAD`
+(`fc897ed`). Trước bốn lượt đó dòng này ghi 2 lượt · 0.0002 USD, tức bốn lượt thử tốn khoảng 0,0036 USD (chừng 90 đồng). Phần Docker vẫn chưa chạy.
+
 ## 18/11 — 5. Làm việc với nhóm: không hỏi quyền mỗi phiên, 10 skill, mở lại phiên nhẹ hơn
 
 **1. Anh thấy gì khác.** (a) Mở phiên, phiên điều phối **không** hỏi "quyền phiên này thế nào" nữa mà giao việc ngay theo bảng quyền anh duyệt sáng 18/11. (b) Bộ
@@ -114,14 +128,17 @@ rải tin đi tìm phiên điều phối. (d) Việc xong có file này để an
 | Skill có giúp agent làm tốt hơn không: cùng một việc thử, chạy không skill ↔ có skill, ba lượt mỗi bên, chấm theo thang viết trước | skill review: **7,3** điểm khi không có skill ↔ **5,7** khi có (thang 10) — chênh chưa tới ngưỡng 2 điểm ghi trước; các skill cũ khác chênh còn ít hơn | mốc là "không skill" — không sạch hẳn: agent vẫn nạp hướng dẫn chung của dự án | [chưa kiểm] — phiên C chấm, đợt này chưa có người chấm thứ hai (đợt đầu, một lượt mỗi bên, có một phiên khác chấm mù: cũng không chênh đủ); **chưa skill cũ nào chứng minh được là giúp** |
 | Độ dài tám skill cũ sau khi sửa | ít dòng hơn hoặc bằng (769 ⇒ 757 dòng), nhưng nặng hơn khoảng 10 % theo số byte (64.924 ⇒ 71.393 ở bản có file này; bản phiên review đếm lúc giữa chừng là 70.056, +7,9 %) | bản trước khi sửa | [máy kiểm] |
 | Hai skill mới, chấm **một** lượt mỗi bên chiều 18/11 | soát tích hợp: 3 / 12 không skill ↔ 10 / 12 có skill — skill đầu tiên thấy khác rõ, nhưng nửa thang chấm đúng hình thức mà skill dạy (ba ý thực chất: 1 / 6 ↔ 4 / 6) · giao việc agent con: 10 ↔ 11 — không khác | "không skill" | [chưa kiểm] — phiên C chấm, chưa có người chấm thứ hai; thang do chính người viết skill soạn |
-| Mở phiên phải đọc bao nhiêu | lần mở 13:20 ngày 18/11: mỗi phiên đọc 880–1.400 dòng, dùng tới khoảng 185; khoảng 9 tin chỉ để tìm phiên điều phối | đây là mốc "trước"; cách mới **chưa có lần mở nào** | [chưa kiểm] — số của hai phiên B, C; đang thử ở ba lần mở kế |
+| Mở phiên phải đọc bao nhiêu | lần mở 13:20 ngày 18/11: mỗi phiên đọc 880–1.400 dòng, dùng tới khoảng 185; khoảng 9 tin chỉ để tìm phiên điều phối | đây là mốc "trước"; cách mới có **một** lần mở (tối 18/11): phiên điều phối không hỏi quyền, phiên E đợi tin rồi trả lời đúng một tin — số dòng đọc lần này chưa đếm | [chưa kiểm] — số của hai phiên B, C; đang thử ở ba lần mở kế |
 
-**3. Chưa làm / giới hạn.** Vòng tự cải thiện cách làm cuối mỗi ngày chưa chạy lần nào. Hai con số đo cách làm (việc báo xong bị lật lại · số lần anh phải nhắc lại)
-mới ghi một lần, chưa ai soát. Nói thẳng: việc sửa tám skill cũ làm **sau** khi chấm, nên điểm của chúng ở bảng trên là của bản cũ; nhóm không sửa thêm chữ skill nào
-trước buổi thử Codex / Antigravity tối thứ Ba 24/11, và chấm lại ở buổi đó.
+**3. Chưa làm / giới hạn.** Vòng tự cải thiện cách làm cuối mỗi ngày mới chạy **một** lần (chiều 18/11). Hai con số đo cách làm của tuần 16–22/11, tính tới chiều 18/11: việc báo
+xong bị lật lại **5** · số lần anh phải nhắc lại **6** — mới ghi một lần, một phiên khác người đếm đã soát; chưa có tuần trước để so. Nói thẳng: việc sửa tám skill cũ làm **sau** khi chấm, nên điểm của chúng ở bảng trên là của bản cũ; nhóm không sửa thêm chữ skill nào
+khi chưa có số chấm mới; buổi thử Codex / Antigravity (nơi chấm lại) nằm trong buổi anh test toàn bộ ở cuối.
 
 **4. Cách thử trong 2 phút.** Ở cửa sổ lệnh: `ls /home/minhhieu/hue_rag/.claude/skills` ⇒ 10 tên, có `soat-tich-hop` và `giao-viec-agent-con`. Lần tới mở một
 phiên: nếu nó hỏi anh "quyền phiên" hoặc anh nhận nhiều tin "ai là A?" thì cách mới chưa chạy đúng ⇒ nói với phiên điều phối.
+
+**Đã thử (tối 18/11)** [máy kiểm]: lệnh `ls` in đúng 10 tên, có `soat-tich-hop` và `giao-viec-agent-con`. Lần mở phiên tối 18/11: không ai hỏi quyền phiên; phiên E không
+rải tin (phần của các phiên khác người viết dòng này không chứng kiến).
 
 ---
 
@@ -133,5 +150,6 @@ phiên: nếu nó hỏi anh "quyền phiên" hoặc anh nhận nhiều tin "ai l
 - Mục 4: `backend/api/routes/chat.py` hàm `_doc_git_sha`, test `backend/tests/test_api_chat.py` [code]; sổ tay bàn giao mục 7 và 10.3 [tài liệu].
 - Mục 5: `AGENTS.md` bảng "Quyền thường trực"; `skills/`; `session_prompt/START_SESSION.md`; kết quả chấm skill `data/cham_skill_2026-11-18/KET_QUA.md` (riêng tư) [đã chạy — phiên C].
 - Các câu ví dụ trong file là câu tự đặt, không lấy từ bộ đo hay sổ ghi debug.
+- Các dòng "Đã thử" tối 18/11: phiên E chạy trên server local cổng 8010, bản `fc897ed`, model thật, không phát lại luồng nào; kết quả + 8 ảnh ở `data/thu_viec_moi_xong_2026-11-18/` (riêng tư: `ket_qua.json`, `anh/`, `tools/thu.py`) [đã chạy — phiên E].
 - Biên bản kiểm độc lập bản đầu: `data/kiem_bai_hoc_2026-11-18/kiem_viec_moi_xong.md` (riêng tư).
 </details>
