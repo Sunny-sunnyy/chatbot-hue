@@ -225,6 +225,7 @@ picture { display: contents; }
 .retry:hover { background: var(--color-accent-soft); }
 .notice { display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; font-size: 14px; color: var(--color-muted); }
 .notice svg { flex: none; margin-top: 3px; }
+.notice-an-toan { font-size: 15px; font-weight: 600; color: var(--color-ink); }  /* ghi chú an toàn (bão / lũ, 112): không để chữ xám nhỏ */
 .searching { display: flex; gap: 14px; align-items: center; max-width: 68ch; padding: 14px 16px; border: 1px dashed #8FB5AE; border-radius: 14px;
              background: var(--color-surface); }
 .wave { flex: none; width: 46px; height: 24px; }

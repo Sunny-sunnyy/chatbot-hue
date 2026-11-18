@@ -198,7 +198,7 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
         <p className="lkh-o-them"><a href="#/cho-o">Cần chỗ ở? Xem gợi ý theo khu</a>, hoặc nhắn trợ lý hạng sao bạn muốn (ví dụ “ở khách sạn 3 sao”).</p>
       )}
       {turn.sources?.length > 0 && <SourceLine turn={turn} />}
-      {turn.notice && <p className="notice">{turn.notice}</p>}
+      {turn.notice && <p className={turn.noticeAnToan ? "notice notice-an-toan" : "notice"}>{turn.notice}</p>}
       {xong && (
         <div className="lich">
           <LuuLich getText={() => vanBanLich(turn, boMaTrichDan(turn.text || ""), [])} />

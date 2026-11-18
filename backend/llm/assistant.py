@@ -695,17 +695,21 @@ def chu_cua_model(trace: AnswerTrace) -> str:
 _DONG = re.compile(r"\bdông\b", re.IGNORECASE)  # "dông" = cách viết khác của "giông"; chỉ lưới cuối dùng (không đổi việc đưa công cụ cho model)
 
 
-def _khop_luoi_cuoi(query: str, flags: "AssistantFlags | None") -> bool:
-    return (flags is not None and flags.thoi_tiet and flags.bao_lu_cong_cu
-            and (tt.la_cau_bao_lu_rong(query) or bool(_DONG.search(unicodedata.normalize("NFC", query)))))
+def _khop_luoi_cuoi(query: str, flags: "AssistantFlags | None", history=()) -> bool:
+    """Chính câu người dùng HOẶC câu hỏi liền trước khớp lưới bão / lũ (như `tt.la_luot_bao_lu` của đường thường — câu hỏi tiếp "thế có nên đi không"
+    sau một câu bão vẫn là lượt bão; thừa hơn sót)."""
+    if flags is None or not (flags.thoi_tiet and flags.bao_lu_cong_cu):
+        return False
+    cau = [query] + ([history[-1][0]] if history else [])
+    return tt.la_luot_bao_lu(query, history) or any(_DONG.search(unicodedata.normalize("NFC", c)) for c in cau)
 
 
 def luoi_cuoi_bao(query: str, trace: AnswerTrace, flags: "AssistantFlags | None") -> bool:
-    """Lưới cuối (18/11, gọi ở route ngay trước khi gửi kết quả): CHÍNH câu người dùng gõ khớp lưới bão / lũ mà câu trả lời, mục web và dòng ghi chú
+    """Lưới cuối (18/11, gọi ở route ngay trước khi gửi kết quả): câu người dùng gõ (hoặc câu hỏi liền trước) khớp lưới bão / lũ mà câu trả lời, mục web và dòng ghi chú
     đều chưa có câu bản tin chính thức + 112 ⇒ đặt câu đó vào dòng ghi chú (`notice`). Vì sao ở đây: câu 112 chỉ được nối trong `_thoi_tiet_cuoi`;
     lượt kết thúc sớm / đi đường khác (xếp ngoài phạm vi, trò chuyện, ngữ cảnh rỗng, sửa lịch) không tới đó. Dùng `notice` chứ không nối vào chữ:
     lượt có lịch giao diện không vẽ chữ trả lời, và chữ không đổi thì cờ từ chối / bộ đếm / lịch sử giữ nguyên. Trả True khi đã thêm."""
-    if not _khop_luoi_cuoi(query, flags) or trace.clarify is not None:
+    if not _khop_luoi_cuoi(query, flags, trace.history) or trace.clarify is not None:
         return False
     da_co = (trace.answer or "") + ((trace.web or {}).get("text") or "") + (trace.notice or "")
     if tt.CAU_BAO_LU in da_co or tw.THIEN_TAI_TEXT in da_co:
@@ -714,9 +718,9 @@ def luoi_cuoi_bao(query: str, trace: AnswerTrace, flags: "AssistantFlags | None"
     return True
 
 
-def loi_bao_luoi_cuoi(query: str, message: str, flags: "AssistantFlags | None") -> str:
+def loi_bao_luoi_cuoi(query: str, message: str, flags: "AssistantFlags | None", history=()) -> str:
     """Cùng lưới cho LỜI BÁO LỖI (model / tìm kho lỗi, câu trả lời bị rút lại): lượt bão / lũ mà không trả lời được vẫn phải chỉ bản tin chính thức + 112."""
-    if not _khop_luoi_cuoi(query, flags) or tt.CAU_BAO_LU in message:
+    if not _khop_luoi_cuoi(query, flags, history) or tt.CAU_BAO_LU in message:
         return message
     return f"{message}\n\n{tt.CAU_BAO_LU}"
 

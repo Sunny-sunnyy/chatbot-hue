@@ -302,7 +302,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
     conversation_id = _start_conversation(request, trace, metrics)
     query = _model_query(body, query, trace, metrics, state)
     vet.update(trace=trace, query=query)
-    sua_loi = lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state))  # noqa: E731
+    sua_loi = lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history)  # noqa: E731
     try:
         await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder,
                           _tim_web(state))
@@ -517,7 +517,7 @@ async def chat_stream(body: ChatRequest, request: Request):
                            lambda: lich_cho_giao_dien(trace, _flags(state), cau_goc), _bai_ids(state),
                            ghi_vet=lambda: _ghi_vet(state, "chat_stream", metrics, trace, body.query, query),
                            luoi_cuoi=lambda: luoi_cuoi_bao(body.query, trace, _flags(state)),
-                           sua_loi=lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state))),
+                           sua_loi=lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history)),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
@@ -531,6 +531,11 @@ async def chat_stream(body: ChatRequest, request: Request):
         if not stream_opened:
             metrics["total_ms"] = elapsed_ms(started)
             logger.info("chat_metrics %s", json.dumps(metrics))
+
+
+def _notice_event(trace: AnswerTrace) -> bytes:
+    """Sự kiện `notice`. Ghi chú có câu bản tin chính thức + 112 mang cờ `an_toan` ⇒ giao diện vẽ nổi hơn dòng ghi chú thường."""
+    return sse_event("notice", {"text": trace.notice, **({"an_toan": True} if tt.CAU_BAO_LU in trace.notice else {})})
 
 
 def _loi_trich_dan(trace: AnswerTrace) -> str:
@@ -591,7 +596,7 @@ class StreamEvents:
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == trace.answer.strip()
         if trace.clarify is not None:  # B4 D8: lượt hỏi lại ⇒ thẻ nút, không chữ, không mã đánh giá
             return [sse_event("clarify", trace.clarify), self.done()]
-        notice = [] if trace.notice is None else [sse_event("notice", {"text": trace.notice})]  # câu cố định chỉ có dòng ghi chú khi lưới cuối câu bão đặt
+        notice = [] if trace.notice is None else [_notice_event(trace)]  # câu cố định chỉ có dòng ghi chú khi lưới cuối câu bão đặt
         return [sse_event("sources", []), *self._web(trace), *notice, self.done(answered=True)]
 
     @staticmethod
@@ -614,7 +619,7 @@ class StreamEvents:
             self.metrics["outcome"] = "success"
             events = [sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited, self.bai_ids)])]
             if trace.notice is not None:
-                events.append(sse_event("notice", {"text": trace.notice}))
+                events.append(_notice_event(trace))
             lich = None if self.lich is None else self.lich()
             if lich is not None:  # B5 D11 / D12: dữ liệu có cấu trúc, sau `sources` (chỉ khi lịch qua kiểm)
                 events.append(sse_event("lich_trinh", lich))

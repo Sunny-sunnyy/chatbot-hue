@@ -24,7 +24,7 @@ def test_duong_11_xep_ngoai_pham_vi_van_co_cau_112_va_su_kien_notice():
     metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
     stream = StreamEvents(metrics, time.perf_counter())
     events = parse_sse([stream.delta(trace.answer), *stream.fixed(trace)])
-    assert ("notice", {"text": tt.CAU_BAO_LU}) in events and events[-1][0] == "done" and metrics["refusal"] is True
+    assert ("notice", {"text": tt.CAU_BAO_LU, "an_toan": True}) in events and events[-1][0] == "done" and metrics["refusal"] is True  # `an_toan`: giao diện vẽ nổi hơn
 
 
 def test_duong_13_tro_chuyen_va_duong_14_lan_tim_dau_rong():
@@ -81,3 +81,16 @@ def test_cau_khong_khop_luoi_thi_su_kien_gui_ra_giong_het_khi_khong_co_luoi():
 def test_chu_dong_la_cach_viet_khac_cua_giong():
     trace = AnswerTrace(answer=OUT_OF_SCOPE_ANSWER, cited=(), fixed_outcome="out_of_scope")
     assert luoi_cuoi_bao("Chiều nay Huế có dông không?", trace, BAT) and trace.notice == tt.CAU_BAO_LU
+
+
+def test_cau_hoi_tiep_sau_cau_bao_cung_la_luot_bao_va_ghi_chu_thuong_khong_mang_co_an_toan():
+    """A chốt 18/11: xét cả câu hỏi LIỀN TRƯỚC (như đường trả lời thường) — "thế có nên đi không" sau một câu bão mà rơi vào đường kết thúc sớm vẫn có
+    câu 112; câu trước nữa thì không. Ghi chú thường ("có thể đã thay đổi") không mang cờ `an_toan`."""
+    tiep = AnswerTrace(answer=OUT_OF_SCOPE_ANSWER, cited=(), fixed_outcome="out_of_scope", history=[("Huế có lũ không?", "…")])
+    assert luoi_cuoi_bao("Thế có nên đi không?", tiep, BAT) and tiep.notice == tt.CAU_BAO_LU
+    xa = AnswerTrace(answer=OUT_OF_SCOPE_ANSWER, cited=(), fixed_outcome="out_of_scope", history=[("Huế có lũ không?", "…"), ("Bún bò ăn ở đâu?", "…")])
+    assert luoi_cuoi_bao("Thế có nên đi không?", xa, BAT) is False
+    assert loi_bao_luoi_cuoi("Thế có nên đi không?", "Lỗi.", BAT, [("Chiều nay có dông không?", "…")]).endswith(tt.CAU_BAO_LU)
+    thuong = AnswerTrace(answer="Vé vào cổng 200.000 đồng [1].", cited=(), notice=MAY_HAVE_CHANGED_NOTICE)
+    events = parse_sse(StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter()).fixed(thuong))
+    assert ("notice", {"text": MAY_HAVE_CHANGED_NOTICE}) in events
