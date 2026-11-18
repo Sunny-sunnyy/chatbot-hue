@@ -66,6 +66,24 @@ def test_khong_them_khi_da_co_khi_cau_khong_khop_luoi_khi_co_tat_khi_luot_hoi_la
     assert luoi_cuoi_bao(CAU_BAO, hoi_lai, BAT) is False  # lượt chỉ có thẻ nút: không có chỗ vẽ dòng ghi chú
 
 
+def test_luot_model_tu_chon_loai_bao_lu_roi_loi_thi_loi_bao_van_co_cau_112():
+    """Soát tích hợp đợt 2 (18/11): câu gõ không có từ nào của lưới nhưng MODEL đã gọi công cụ thời tiết loại bão / lũ (`thoi_tiet_ctx["bao_lu_model"]`),
+    rồi model lỗi / hết giờ giữa lượt ⇒ lời báo lỗi của cả đường luồng lẫn `/api/chat` phải có câu 112 (trước: chỉ lượt bị rút lại / chạm trần mới có)."""
+    cau, goc = "Mai đi biển Thuận An thời tiết có nguy hiểm gì không?", "Không thể tạo câu trả lời lúc này."
+    assert not tt.la_luot_bao_lu(cau, ())  # đúng ca: lưới từ khoá không khớp
+    trace = AnswerTrace()
+    sua = lambda m: loi_bao_luoi_cuoi(cau, m, BAT, trace.history, trace.thoi_tiet_ctx)  # noqa: E731 — như hai chỗ dựng `sua_loi` ở route
+    assert sua(goc) == goc  # model chưa chọn loại bão / lũ (kể cả lượt chưa có ngữ cảnh thời tiết): lời báo nguyên
+    trace.thoi_tiet_ctx = {"bao_lu": False}
+    assert sua(goc) == goc
+    trace.thoi_tiet_ctx = {"bao_lu": True, "bao_lu_model": True}  # `thoi_tiet(loai="bao_lu")` đặt hai khoá này
+    for exc in (TimeoutError(), GenerationError("x")):
+        stream = StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter(), sua_loi=sua)
+        assert tt.CAU_BAO_LU in parse_sse(stream.failure(exc))[0][1]["message"]
+    response = _error_response_for(GenerationError("x"), None, dict.fromkeys(STREAM_METRIC_FIELDS), sua)
+    assert "112" in response.body.decode("utf-8")
+
+
 def test_cau_khong_khop_luoi_thi_su_kien_gui_ra_giong_het_khi_khong_co_luoi():
     """Giống byte: lượt không khớp lưới ⇒ chuỗi sự kiện y như trước khi có lưới cuối (không thêm `notice`, lời báo lỗi nguyên)."""
     def su_kien(sua_loi):

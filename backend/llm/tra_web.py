@@ -48,7 +48,8 @@ LUU_TRU_TU = ("khách sạn", "homestay", "resort", "nhà nghỉ", "phòng ngh�
 # Vòng chỉnh 1 (A quyết 05/11 tối, sau đã thấy ×2: 2 câu không xác minh bị khẳng định — mức lũ có số mét, lịch cúp điện có ngày giờ) — luật an toàn ⇒ code:
 # câu thiên tai ⇒ KHÔNG có chữ web do model viết (câu cố định + link nguồn); câu thời gian thực ⇒ mục web 0 chữ số / thứ trong tuần.
 # 18/11 (soát khác hãng): + giông / lốc / mưa đá / nước dâng — bằng đúng lưới `thoi_tiet._BAO_LU_RONG`; thiếu bốn từ này thì mục web tóm tắt được tin nguy hiểm
-_THIEN_TAI = re.compile(r"\b(?:lũ|lụt|bão|ngập|sạt\s+lở|triều\s+cường|áp\s+thấp|giông|lốc|mưa\s+đá|nước\s+dâng)\b", re.IGNORECASE)  # E13 M-2: + "lụt", "áp thấp"
+# 18/11 (soát tích hợp đợt 2): + "dông" (cách viết khác của "giông") — lưới cuối `assistant._DONG` đã thêm câu 112 cho chữ này, mục web phải cùng chặt
+_THIEN_TAI = re.compile(r"\b(?:lũ|lụt|bão|ngập|sạt\s+lở|triều\s+cường|áp\s+thấp|giông|dông|lốc|mưa\s+đá|nước\s+dâng)\b", re.IGNORECASE)  # E13 M-2: + "lụt", "áp thấp"
 _THOI_GIAN_THUC = re.compile(r"\b(?:cúp\s+điện|mất\s+điện|cắt\s+điện|tuần\s+này|tuần\s+sau|năm\s+nay|hôm\s+nay|tối\s+nay|sáng\s+nay|chiều\s+nay|"
                              r"ngày\s+mai|hiện\s+giờ|hiện\s+tại|bây\s+giờ|lúc\s+này)\b", re.IGNORECASE)
 _SO_HOAC_THU = re.compile(r"\d|\bthứ\s+(?:hai|ba|tư|năm|sáu|bảy)\b|\bchủ\s+nhật\b", re.IGNORECASE)  # con số / ngày giờ / thứ trong tuần

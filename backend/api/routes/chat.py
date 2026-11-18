@@ -302,7 +302,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
     conversation_id = _start_conversation(request, trace, metrics)
     query = _model_query(body, query, trace, metrics, state)
     vet.update(trace=trace, query=query)
-    sua_loi = lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history)  # noqa: E731
+    sua_loi = lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history, trace.thoi_tiet_ctx)  # noqa: E731
     try:
         await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder,
                           _tim_web(state))
@@ -517,7 +517,7 @@ async def chat_stream(body: ChatRequest, request: Request):
                            lambda: lich_cho_giao_dien(trace, _flags(state), cau_goc), _bai_ids(state),
                            ghi_vet=lambda: _ghi_vet(state, "chat_stream", metrics, trace, body.query, query),
                            luoi_cuoi=lambda: luoi_cuoi_bao(body.query, trace, _flags(state)),
-                           sua_loi=lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history)),
+                           sua_loi=lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history, trace.thoi_tiet_ctx)),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )

@@ -724,9 +724,11 @@ def luoi_cuoi_bao(query: str, trace: AnswerTrace, flags: "AssistantFlags | None"
     return True
 
 
-def loi_bao_luoi_cuoi(query: str, message: str, flags: "AssistantFlags | None", history=()) -> str:
-    """Cùng lưới cho LỜI BÁO LỖI (model / tìm kho lỗi, câu trả lời bị rút lại): lượt bão / lũ mà không trả lời được vẫn phải chỉ bản tin chính thức + 112."""
-    if not _khop_luoi_cuoi(query, flags, history) or tt.CAU_BAO_LU in message:
+def loi_bao_luoi_cuoi(query: str, message: str, flags: "AssistantFlags | None", history=(), thoi_tiet_ctx: dict | None = None) -> str:
+    """Cùng lưới cho LỜI BÁO LỖI (model / tìm kho lỗi, câu trả lời bị rút lại): lượt bão / lũ mà không trả lời được vẫn phải chỉ bản tin chính thức + 112.
+    Lượt bão / lũ = câu khớp lưới HOẶC model đã tự gọi công cụ thời tiết loại bão / lũ trong lượt này (`thoi_tiet_ctx["bao_lu_model"]`) rồi mới lỗi."""
+    luot_bao_lu = _khop_luoi_cuoi(query, flags, history) or bool((thoi_tiet_ctx or {}).get("bao_lu_model"))
+    if not luot_bao_lu or tt.CAU_BAO_LU in message:
         return message
     return f"{message}\n\n{tt.CAU_BAO_LU}"
 
