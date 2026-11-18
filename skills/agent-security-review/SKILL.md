@@ -1,6 +1,6 @@
 ---
 name: agent-security-review
-description: Dùng khi một agent / trợ lý LLM / chatbot RAG thêm nguồn dữ liệu (kể cả kho lấy từ web), công cụ hay kênh ra ngoài (bảng tính, mạng xã hội, webhook, email…), trước khi mở cho người thật dùng, hoặc khi rà bảo mật công cụ của agent — bộ ba chết người, chữ người dùng là dữ liệu, giới hạn ở API, quyền hẹp, dữ liệu cá nhân, rào đo hai chiều; áp cả cho chính coding agent. Danh sách kiểm theo khoá AI FDE; đầu ra là bảng rủi ro · mức · đề xuất. Thiết kế chung ⇒ agent-design-review. Không dùng khi chỉ sửa / bổ sung nội dung kho thường. hue_rag: một lần lúc đóng gói Phase 1–8, đầy đủ từ Phase 9.
+description: Dùng khi một agent / trợ lý LLM / chatbot RAG thêm nguồn dữ liệu (kể cả kho lấy từ web), công cụ hay kênh ra ngoài (bảng tính, mạng xã hội, webhook, email…), trước khi mở cho người thật dùng, hoặc khi rà bảo mật công cụ của agent — bộ ba chết người, chữ người dùng là dữ liệu, giới hạn ở API, quyền hẹp, dữ liệu cá nhân, rào đo hai chiều; áp cả cho chính coding agent. Danh sách kiểm theo khoá AI FDE; đầu ra là bảng rủi ro · mức · đề xuất. Thiết kế chung ⇒ agent-design-review. Không dùng khi chỉ sửa / bổ sung nội dung kho thường. Ở hue_rag chạy đủ từ Phase 9.
 ---
 
 # Kiểm bảo mật agent — hue_rag

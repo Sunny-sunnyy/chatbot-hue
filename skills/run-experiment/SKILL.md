@@ -1,6 +1,6 @@
 ---
 name: run-experiment
-description: Dùng trước khi thử bất kỳ thay đổi nào ở discovery / chia đoạn / embedding / BM25 / Qdrant / tìm kiếm / rerank / context / prompt / model sinh / bộ chấm của hue_rag, hoặc khi so sánh phương án, đo chất lượng, quyết một thay đổi có vào chatbot hay không — kể cả khi quay lại Phase cũ. Các bước: tiêu chí ghi trước (sàn / mức tụt cho phép / chỉ số quyết), cỡ mẫu trước khi chạy, mốc (baseline; khâu có LLM đo nhiễu A/A), kiểm người chấm, đổi một thứ, đo theo cặp và theo tầng, luật giữ/gỡ vượt nhiễu, xác nhận trên nhóm kiểm, giữ hồ sơ cả phương án bị bỏ, trần tiền/thời gian. Không dùng cho sửa lỗi nhỏ đã rõ nguyên nhân (dùng practical-project-coding).
+description: Dùng trước khi thử bất kỳ thay đổi nào ở discovery / chia đoạn / embedding / BM25 / Qdrant / tìm kiếm / rerank / context / prompt / model sinh / bộ chấm của hue_rag, hoặc khi so sánh phương án, đo chất lượng, quyết một thay đổi có vào chatbot hay không — kể cả khi quay lại Phase cũ. Các bước — tiêu chí ghi trước (sàn / mức tụt cho phép / chỉ số quyết), cỡ mẫu trước khi chạy, mốc (baseline; khâu có LLM đo nhiễu A/A), kiểm người chấm, đổi một thứ, đo theo cặp và theo tầng, luật giữ/gỡ vượt nhiễu, xác nhận trên nhóm kiểm, giữ hồ sơ cả phương án bị bỏ, trần tiền/thời gian. Không dùng cho sửa lỗi nhỏ đã rõ nguyên nhân (dùng practical-project-coding).
 ---
 
 # Thí nghiệm có kỷ luật — hue_rag (A, B, C)
