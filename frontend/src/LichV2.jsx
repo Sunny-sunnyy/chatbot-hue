@@ -204,7 +204,7 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
       {xong && (
         <div className="lich">
           <LuuLich getText={() => vanBanLich(turn, boMaTrichDan(turn.text || ""), [])} />
-          <NutIcs lich={lich} cau={cau} />
+          <NutIcs lich={lich} cau={cau} anToan={turn.noticeAnToan} />
           {onEditPlan && <button type="button" className="retry" onClick={() => onEditPlan(null, turn.truong)}>Sửa — điền lại biểu mẫu</button>}
         </div>
       )}
@@ -280,13 +280,13 @@ function NoiO({ o }) {
 
 // Việc agent (4) 14/11: thêm lịch vào lịch điện thoại / máy tính — tệp .ics do code dựng từ khung (lich_ics.js), tải về bằng Blob (không gửi đi).
 // Lịch không có ngày đi ⇒ không đoán ngày: thay nút bằng dòng nhắc.
-function NutIcs({ lich, cau }) {
+function NutIcs({ lich, cau, anToan }) {
   const [bao, setBao] = useState("");
   const coNgay = lich.ngay.every(ng => ng.ngay_thang);
   if (!coNgay) return <p className="lkh-ics-nhac">Chọn ngày đi ở biểu mẫu để thêm lịch vào lịch điện thoại.</p>;
   function taiIcs() {
     const sach = Object.fromEntries(Object.entries(cau || {}).map(([k, v]) => [k, boMaTrichDan(v)]));
-    const kq = dungIcs(lich, sach);
+    const kq = dungIcs(lich, sach, new Date(), anToan);
     if (!kq) return;
     const url = URL.createObjectURL(new Blob([kq.ics], { type: "text/calendar;charset=utf-8" }));
     const a = document.createElement("a");
@@ -312,7 +312,10 @@ export function vanBanLich(turn, answerText, items) {
   const links = items.filter(item => typeof item.map_url === "string" && item.map_url.startsWith(MAP_PREFIX));
   const diem = links.map(i => (i.ngay ? `Ngày ${i.ngay} · ${i.thu_tu}. ${i.ten}: ${i.map_url}` : `- ${i.ten}: ${i.map_url}`));
   // chữ thường (dán vào tin nhắn / ghi chú): bỏ dấu đậm Markdown "**" của câu trả lời ("**Ngày 1**", "bấm **Sửa**") — tự thử 16/11
-  return [turn.question + (turn.summary ? ` · ${turn.summary}` : ""), "", answerText.replaceAll("**", "").trim(),
+  // soát khác hãng 18/11: câu an toàn (bản tin chính thức + 112) chỉ được VẼ trên màn hình ⇒ bản sao chép / tải về gửi cho người đi cùng bị mất câu đó.
+  // Có `noticeAnToan` ⇒ đặt ngay dưới dòng đầu, trước lịch (như trên màn hình); không có ⇒ văn bản y như trước.
+  const anToan = turn.noticeAnToan ? ["", turn.noticeAnToan] : [];
+  return [turn.question + (turn.summary ? ` · ${turn.summary}` : ""), ...anToan, "", answerText.replaceAll("**", "").trim(),
           ...(diem.length ? ["", "Bản đồ từng điểm:", ...diem] : []), "", DONG_CUOI_LICH, ""].join("\n");
 }
 

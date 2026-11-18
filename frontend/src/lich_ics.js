@@ -43,7 +43,8 @@ export function gap(dong) {
 }
 
 // lich = `lichV2` (khung), cau = {id_muc: câu đã qua kiểm} (mã [n] đã bỏ), dauThoiGian = Date (DTSTAMP) ⇒ { ics, soSuKien, soBo } hoặc null khi không có ngày đi
-export function dungIcs(lich, cau, dauThoiGian = new Date()) {
+// anToan = câu an toàn của lượt (bão / lũ: bản tin chính thức + 112) nếu có ⇒ đứng ĐẦU phần mô tả của mọi sự kiện; không có ⇒ tệp y như trước
+export function dungIcs(lich, cau, dauThoiGian = new Date(), anToan = null) {
   if (!lich?.ngay?.length || !lich.ngay.every(ng => ng.ngay_thang)) return null;
   const stamp = dauThoiGian.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
   const dong = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Tro ly Hue//Len ke hoach//VI", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
@@ -55,7 +56,7 @@ export function dungIcs(lich, cau, dauThoiGian = new Date()) {
       const g = docGio(m.gio);
       if (!g) { soBo += 1; continue; }
       const [bd, kt, suat] = g;
-      const moTa = [m.ghi_chu, cau?.[m.id_muc], NHAC, suat ? "Có nhiều suất — chọn suất khác nếu cần." : null, m.map_url].filter(Boolean).join("\n");
+      const moTa = [anToan, m.ghi_chu, cau?.[m.id_muc], NHAC, suat ? "Có nhiều suất — chọn suất khác nếu cần." : null, m.map_url].filter(Boolean).join("\n");
       dong.push("BEGIN:VEVENT", `UID:${lich.ngay[0].ngay_thang}-${m.id_muc}@tro-ly-hue`, `DTSTAMP:${stamp}`,
         `DTSTART:${utc(ng.ngay_thang, bd)}`, `DTEND:${utc(ng.ngay_thang, kt)}`, `SUMMARY:${thoat(m.ten)}`,
         `LOCATION:${thoat(`${m.ten}, Huế`)}`, `DESCRIPTION:${thoat(moTa.replaceAll("**", ""))}`, "END:VEVENT");
