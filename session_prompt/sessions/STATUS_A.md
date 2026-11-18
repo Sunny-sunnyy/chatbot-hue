@@ -1,3 +1,11 @@
+# STATUS A — PHIÊN TỐI 18/11 (thứ Tư; mở; cập nhật 19:34 18/11/2026 `date`)
+
+- Terminal: A `hue-rag-64` · B `hue-rag-87` · C `hue-rag-f7` · E `hue-rag-08` (Claude Code, trực tiếp; cả ba trả lời đúng MỘT tin sau tin của A — 0 tin rải tìm A). Lần thử "đọc ngắn" thứ nhất: 0 lần vấp luật tính tới lúc giao việc.
+- Kiểm nhanh: `main` `1d6fb64` = origin; chỉ `.wslconfig` untracked; hooksPath `.githooks`; máy khởi động lại 19:25 ⇒ Qdrant tự bật (9.436 điểm — lệch trang hiện trạng ghi "tắt"), `/tmp` mất ⇒ `/tmp/hr_b_spec3` thành bản ghi "prunable" (nhánh còn trên origin; B dọn bản ghi); 0 server; RAM tổng 19 GB, khả dụng 16; `ListAgents` không thấy phiên dự án khác ⇒ lượt máy coi như có.
+- Không hỏi quyền (bảng quyền thường trực). Giao: E bước 0 dựng giao diện (ĐẠT, A kiểm lại) rồi sửa `guides/CACH_LAM_VIEC.md` · B cả `backend/tests` một lượt + sửa `RUNBOOK_CUOI.md` · C soát tích hợp đợt 2 trên `1d6fb64`. A: tạo `data/test_cuoi/DANH_SACH.md` (bản đầu, riêng tư).
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`, `data/test_cuoi/DANH_SACH.md`.
+- Hộp hỏi User tối nay: 0.
+
 # STATUS A — KẾT PHIÊN CHIỀU 18/11 (viết 16:09 18/11/2026 `date`; terminal chiều: A `hue-rag-36` · B `hue-rag-40` · C `hue-rag-70` · E `hue-rag-5c`)
 
 - **Việc dở:** không nhánh nào chờ gộp ngoài nhánh trang bản đồ của B (nếu còn — xem `git branch -r --no-merged origin/main`). Việc kế + ba quyết định cuối chiều của User: khối đầu `CURRENT_HANDOFF.md`. Đầu phiên kế A tạo `data/test_cuoi/DANH_SACH.md`, xin lượt máy, giao bước 0–2.
