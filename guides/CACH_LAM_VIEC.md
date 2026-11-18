@@ -119,6 +119,8 @@ dẫn đều tốn ngữ cảnh (Coding W1D2·12).
   báo điểm có `file:dòng` và một đầu vào tái hiện; cuối báo cáo ghi phần CHƯA đọc." Mỗi điểm phải tái hiện được rồi mới sửa [đã chạy 18/11: lần đầu, ra 11 điểm].
 - **Soát độ thật của test:** định kỳ hỏi "test này bắt được lỗi gì thật?" — test chỉ khẳng định lại điều code vừa viết, hoặc giả luôn phần cần kiểm, thì sửa hoặc bỏ;
   test mới phải ĐỎ trên code cũ rồi mới xanh trên code sửa; phép kiểm mới phải thấy một ca "biết chắc hỏng" ra hỏng trước khi số 0 của nó được tin [chưa chạy].
+- **Sửa lỗi bốn bước, không nhảy bước:** tái hiện (đúng cấu hình đang chạy, thử MỘT lượt trước) ⇒ chứng minh nguyên nhân gốc (log, vết) ⇒ một sửa tập trung ⇒
+  chứng minh đã sửa bằng chính lệnh tái hiện. Không thêm lớp che lỗi; hai giả thuyết ⇒ thử từng cái.
 - Rào chặn / từ chối người dùng: đo cả hai chiều — bắt được bao nhiêu và chặn nhầm bao nhiêu ca thường.
 
 **Vì sao** — từng phần đều "test qua" mà ghép lại vẫn lệch (Coding W3D4·85; SDLC W2D3·52); agent viết test vô ích cho đủ số và dùng dữ liệu giả dù đã dặn

@@ -262,7 +262,7 @@ lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 
 ### 10.3b Chỗ giao nhau giữa các tính năng (review tích hợp chỉ đọc chuỗi Phase 9, 18/11)
 
 Nguồn chung: file private `data/review_tich_hop_2026-11-18/ket_qua.md` (số # là số finding ở đó; [đã chạy] = probe hàm thuần 0 USD, [chỉ đọc code] =
-suy từ code, chưa chạy). Ba finding #1, #5, #8 đã sửa trên nhánh `p9-tich-hop-sua`; các dòng dưới KHÔNG sửa.
+suy từ code, chưa chạy). Ba finding #1, #5, #8 đã sửa trên nhánh `p9-tich-hop-sua`; các dòng dưới KHÔNG sửa. Các dòng ghi G… là điểm do một model KHÁC HÃNG tìm thêm khi soát mù cùng chuỗi tính năng (nó thấy 3 điểm lượt đầu sót; G4 đã sửa ở `c6cc42d`).
 
 | Tình huống | Hệ quả | Vì sao để nguyên | Nguồn |
 |---|---|---|---|
@@ -271,6 +271,8 @@ suy từ code, chưa chạy). Ba finding #1, #5, #8 đã sửa trên nhánh `p9-
 | Câu hỏi khoảng cách có giờ đồng hồ do người dùng tự nêu ("…mình định đi lúc 8 giờ sáng") | Model nhắc lại "8 giờ" ⇒ bước kiểm số coi là thời gian đi không có nguồn ⇒ rút cả câu trả lời ("Thử lại") | Cho phép số của câu người dùng là nới rào kiểm số ⇒ phải đo | #4 [đã chạy] |
 | Cuộc đã có lịch, người dùng nhắn "mai có bão, dời ngày đi…" | NGHI: nếu lần hiểu ý coi là câu sửa lịch thì lịch đổi ngày mà không có câu bản tin chính thức + 112 | Chưa chứng minh model hiểu là câu sửa; muốn chắc: một ca qua `/api/chat/stream` có lịch đã lưu (~0,001 USD) | #6 [chỉ đọc code] |
 | Đếm tiền bằng `scripts/dem_chat_metrics.py` | Trường `usd` hai nghĩa: lượt sửa lịch GỒM tiền phần đường thường bị huỷ; lượt thường bị định tuyến sang tuyến khác thì KHÔNG (phần bỏ chỉ ở `usd_bo`, script không cộng) ⇒ đếm thiếu ~0,0002 USD / câu không về Huế. Lượt sửa: `routing_ms` trống, `n_tra_loi_bo` = 0 dù định tuyến đã chạy | Lệch nhỏ ở log, không tới người dùng; cần số chính xác thì cộng thêm `usd_bo` | #7 [chỉ đọc code] |
+| Người dùng đóng trang / ngắt kết nối trong 1–2 giây đầu của một lượt ở cuộc ĐÃ CÓ lịch | Các lần gọi model của đường chạy song song rơi khỏi sổ số đo (`llm_calls` rỗng, `usd_bo` trống) ⇒ đếm tiền thiếu | Chỉ lệch sổ tiền, không tới câu trả lời; lượt đo cuối không có ca ngắt. Sửa chung với dòng trên (cùng vùng "tiền của phần chạy song song") SAU lượt đo cuối — cần cả che phần huỷ LẪN gộp `llm_calls` trước khi ném lỗi | G6 — giám khảo khác hãng 18/11, file private `data/review_khac_hang/2026-11-18_tich_hop_phase_9/DOI_CHIEU.md` [đã chạy: probe của B] |
+| Câu hỏi HAI Ý mà vế kho đã trả lời có từ thiên tai ("ngập lụt") hoặc từ thời gian thực ("tối nay"), vế thiếu là chuyện khác (vd giá vé) | Vế thiếu không được tra web: mục web thành câu cố định về thiên tai / bị gắn mã "số thời gian thực" — vì ba bộ phân loại của phần web xét CẢ câu, không chỉ vế thiếu | Hướng CHẶT hơn, không lọt gì nguy hiểm. Xét riêng vế thiếu là NỚI một rào an toàn (chọn nhầm vế thì vế thiên tai thật sẽ được tóm tắt từ web) ⇒ phải đo câu chạm + bộ an toàn; sửa SAU lượt đo cuối. Nhánh lưu trú chưa thử | G2 — cùng file `DOI_CHIEU.md` [đã chạy: probe của B, nhánh thiên tai + thời gian thực] |
 | Một câu hỏi bằng ảnh | Tốn 2 lượt của `HUE_LUOT_MOI_NGAY` (nhận ảnh + trả lời); tiền lần nhận ảnh nằm ở dòng log `anh_metrics`, không vào `chat_metrics` | Trần N lượt ≈ N / 2 câu ảnh — tính khi đặt trần cho bản công khai; tiền ảnh đếm riêng | #9 [chỉ đọc code] |
 | Bật lại cờ `lich_trinh` (lịch câu tự do — đang TẮT) cùng lượt có "Lịch hệ thống" / khoảng cách tính sẵn | Số trích dẫn [n] của điểm dùng lại đoạn đã có lệch một | Chỉ lộ khi bật cờ đang tắt; bật lại thì sửa chỗ lấy số nguồn trong `_lay_nguon_lich` (lấy id từ sổ nguồn) trước | #10 [chỉ đọc code] |
 | Tắt cờ `nho_hoi_thoai` mà để `sua_lich_v2` bật | Sửa lịch bằng lời lặng lẽ không chạy (không có cuộc ⇒ không lưu lịch), giao diện vẫn mời "nhắn trợ lý…" | Không kiểm lúc khởi động. **Tắt `nho_hoi_thoai` ⇒ tắt luôn `sua_lich_v2`**; `web_cau_noi_tiep` cần `tra_web` + `nho_hoi_thoai`, `het_luot_bo_cong_cu` cần `tim_them` (hai cờ này thiếu cờ kia thì chỉ không chạy) | #11 [chỉ đọc code] |
@@ -281,6 +283,8 @@ Về ba chỗ ĐÃ sửa (#1, #5, #8) — tách "test bằng đồ giả" ↔ "l
   lượt sửa bằng lời có sự kiện `notice` (#5) · sổ vết của câu thường trong cuộc có lịch có phần hiểu ý sửa lịch (#8) · lượt sửa KHÔNG gửi chữ người dùng ra
   dịch vụ tìm kiếm (sổ vết không có phần web; log chỉ 1 dòng `tra_web`, của lượt khác) · câu thường kho thiếu trong cuộc có lịch vẫn tra web. Chạy lại:
   script private `data/review_tich_hop_2026-11-18/c_tools/do_that_5_8.py` (lệnh ở đầu file).
+- **Sau bản sửa #1 + G4 (đúng thiết kế, không phải lỗi):** lượt bão / lũ chạm trần lượt hiện câu từ chối + câu bản tin chính thức / 112, và vì sổ số đo nay tính "từ chối"
+  trên chữ trước phần code nối nên giao diện hiện THÊM khối gợi ý cách hỏi bên dưới — giống mọi lượt kho từ chối khác.
 - **Chỉ có test, CHƯA đo trên đường thật:** #1 (không ép được model thật hết lượt tìm — có test luồng thật với model dựng sẵn) · nửa "bấm thẻ chọn" của #5.
 
 **Test thay hẳn phần lõi (soát 18/11, 3 file, 39 test — bảng đủ ở file private `data/review_tich_hop_2026-11-18/do_gia_trong_test.md`):** chỉ một test thay lõi

@@ -27,7 +27,7 @@ Sau khi chép: bật hook git nếu có (`git config core.hooksPath <thư mục 
 
 - **Nhỏ** (≤ một hàm, lùi được ngay): làm, test file chạm, một dòng nhật ký.
 - **Vừa** (người dùng thấy khác): kế hoạch một trang (file đổi · thứ tự · rủi ro · bằng chứng) ⇒ làm ⇒ một lượt kiểm bởi phiên khác.
-- **Lớn** (không lùi được, tiền, dữ liệu, bảo mật): năm ý của chủ dự án ⇒ agent hỏi lại ⇒ kế hoạch ⇒ làm ⇒ review (khác hãng nếu được) ⇒ chủ dự án tự thử.
+- **Lớn** (không lùi được, tiền, dữ liệu, bảo mật — hoặc việc nhiều ngày, nhiều file): năm ý của chủ dự án ⇒ agent hỏi lại ⇒ kế hoạch ⇒ làm ⇒ review (khác hãng nếu được) ⇒ chủ dự án tự thử.
 Chi tiết mức kiểm: `../CACH_LAM_VIEC.md` mục 2.
 
 ## Skill nào mang đi được (8 skill của repo gốc, thư mục `skills/`)
