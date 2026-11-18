@@ -21,6 +21,7 @@ from pathlib import Path
 import json
 import logging
 import re
+import unicodedata
 from typing import Literal
 
 import anyio
@@ -689,6 +690,35 @@ def chu_cua_model(trace: AnswerTrace) -> str:
     answer, noi, dau = trace.answer or "", trace.thoi_tiet_noi, trace.thoi_tiet_dau
     answer = answer[: -len(noi) - 2] if noi and answer.endswith(f"\n\n{noi}") else answer
     return answer[len(dau) + 2:] if dau and answer.startswith(f"{dau}\n\n") else answer
+
+
+_DONG = re.compile(r"\bdông\b", re.IGNORECASE)  # "dông" = cách viết khác của "giông"; chỉ lưới cuối dùng (không đổi việc đưa công cụ cho model)
+
+
+def _khop_luoi_cuoi(query: str, flags: "AssistantFlags | None") -> bool:
+    return (flags is not None and flags.thoi_tiet and flags.bao_lu_cong_cu
+            and (tt.la_cau_bao_lu_rong(query) or bool(_DONG.search(unicodedata.normalize("NFC", query)))))
+
+
+def luoi_cuoi_bao(query: str, trace: AnswerTrace, flags: "AssistantFlags | None") -> bool:
+    """Lưới cuối (18/11, gọi ở route ngay trước khi gửi kết quả): CHÍNH câu người dùng gõ khớp lưới bão / lũ mà câu trả lời, mục web và dòng ghi chú
+    đều chưa có câu bản tin chính thức + 112 ⇒ đặt câu đó vào dòng ghi chú (`notice`). Vì sao ở đây: câu 112 chỉ được nối trong `_thoi_tiet_cuoi`;
+    lượt kết thúc sớm / đi đường khác (xếp ngoài phạm vi, trò chuyện, ngữ cảnh rỗng, sửa lịch) không tới đó. Dùng `notice` chứ không nối vào chữ:
+    lượt có lịch giao diện không vẽ chữ trả lời, và chữ không đổi thì cờ từ chối / bộ đếm / lịch sử giữ nguyên. Trả True khi đã thêm."""
+    if not _khop_luoi_cuoi(query, flags) or trace.clarify is not None:
+        return False
+    da_co = (trace.answer or "") + ((trace.web or {}).get("text") or "") + (trace.notice or "")
+    if tt.CAU_BAO_LU in da_co or tw.THIEN_TAI_TEXT in da_co:
+        return False
+    trace.notice = f"{tt.CAU_BAO_LU} {trace.notice}" if trace.notice else tt.CAU_BAO_LU
+    return True
+
+
+def loi_bao_luoi_cuoi(query: str, message: str, flags: "AssistantFlags | None") -> str:
+    """Cùng lưới cho LỜI BÁO LỖI (model / tìm kho lỗi, câu trả lời bị rút lại): lượt bão / lũ mà không trả lời được vẫn phải chỉ bản tin chính thức + 112."""
+    if not _khop_luoi_cuoi(query, flags) or tt.CAU_BAO_LU in message:
+        return message
+    return f"{message}\n\n{tt.CAU_BAO_LU}"
 
 
 def _can_dau_bao_lu(trace: AnswerTrace) -> bool:

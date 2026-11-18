@@ -388,7 +388,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
       )}
       {turn.phase === "error" && (
         <div className="bubble bubble-error" role="alert">
-          <p className="text-error">{turn.error}</p>
+          <p className="text-error whitespace-pre-line">{turn.error}</p>
           <button type="button" onClick={onRetry} className="retry">Thử lại</button>
         </div>
       )}
