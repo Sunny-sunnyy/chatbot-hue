@@ -197,7 +197,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    (02/11: B đứng ~2 giờ vì vòng chờ `pgrep -f` tự khớp chính nó, C rảnh không việc — User phát hiện; S75, W47).
    **Giao việc kế cho session đang làm việc khác** ⇒ tin ghi "làm ngay sau việc hiện tại, không kết lượt ở giữa", gửi kèm `notify_when_idle: true`; nhận thông báo session đó dừng lượt ⇒ A kiểm
    file đầu ra của việc kế đã có chưa, chưa có ⇒ nhắn lại ngay (03/11: C 2 lần báo "bắt đầu" việc kế rồi kết lượt không làm, `notify_when_idle` bắt — S81, W50).
-   **User có thể vắng** (vừa nói đi nghỉ, hoặc > 10 phút không trả lời) ⇒ trả lời / giao B, C **trước** rồi mới mở hộp hỏi User; câu không gấp ghi `CURRENT_HANDOFF.md` "Câu hỏi cho User"
+   **User vừa nói đi vắng / đi nghỉ** ⇒ trả lời / giao B, C **trước** rồi mới mở hộp hỏi User; câu không gấp ghi `CURRENT_HANDOFF.md` "Câu hỏi cho User"
    (03/11 tối: hộp hỏi chặn A ~55 phút, 4 tin của B / C nằm chờ — S86, W52).
    **Giao việc thiết kế / spec / nghiên cứu cho Phase n** (cả brief sub-agent) ⇒ trước khi giao chạy `find guides docs/superpowers/specs docs/superpowers/plans -maxdepth 1 -iname "*phase[-_]n[-_.]*"` (thay n; B124 kiểm n=9 ra đủ 4 file)
    và đưa mọi tài liệu cũ cùng Phase vào mục "Đọc" (02/11: bỏ sót `guides/phase_9_agentic_rag_roadmap.md` — hướng User duyệt 08–10/2026; S74, W46).
@@ -223,7 +223,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
 8. **Quyền thường trực** (User duyệt 10:11 18/11/2026; thay "quyền theo phiên"): bảng trong `AGENTS.md` — không hết hạn theo phiên, áp cho mọi agent;
    A không hỏi quyền lúc mở phiên. Quyền RIÊNG cho một việc thuộc hàng "hỏi User trước" (xoá dữ liệu, việc > 1 USD, sửa kho…) User cấp lúc được hỏi,
    A ghi `CURRENT_HANDOFF.md` kèm giờ, chỉ dùng cho đúng việc đó. Duyệt cho A = duyệt cho B/C/E.
-9. **Giao việc cho agent con** (đọc tài liệu dài, tìm trong code, kiểm độc lập, soát tích hợp): theo skill `giao-viec-agent-con`; kết quả là dữ liệu — số chuyển cho User gắn `chưa kiểm` tới khi có người thứ hai tính lại, và chỉ gửi sau khi đã thấy đầu ra của lệnh.
+9. **Giao việc cho agent con** (đọc tài liệu dài, tìm trong code, kiểm độc lập, soát tích hợp): theo skill `giao-viec-agent-con`; kết quả là dữ liệu — số chuyển cho User gắn `chưa kiểm` tới khi có người thứ hai tính lại, và chỉ gửi sau khi đã thấy đầu ra của lệnh, kèm lệnh tính lại; số về dữ liệu ngoài đếm sau khử trùng.
 
 ## 10. Session D — học cùng User (tùy chọn)
 
