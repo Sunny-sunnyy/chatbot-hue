@@ -1,3 +1,11 @@
+# STATUS A — PHIÊN CHIỀU 18/11 (thứ Tư; mở; cập nhật 13:21 18/11/2026 `date`)
+
+- Terminal: A `hue-rag-36` · B `hue-rag-40` · C `hue-rag-70` · E `hue-rag-5c` (Claude Code, trực tiếp; cả ba đã tự báo).
+- Kiểm nhanh: `main` `c9e8711` = origin; chỉ `.wslconfig`, `lauran_tan/` untracked; hooksPath `.githooks`; Qdrant tắt (khớp handoff); 0 server; worktree còn `/tmp/hr_e_skill` (E, sạch) + `/tmp/hr_b_spec3` (B, nhánh spec deploy giữ); RAM khả dụng 8 GB; 9 phiên của hai dự án khác đang mở.
+- Không hỏi quyền (bảng quyền thường trực). Giao ngay lúc mở: E sửa 8 skill + 2 skill mới (soạn sẵn dòng cho A áp vào file luật) · C review nhánh E khi xong + dời phần cũ `STATUS_C.md` sang archive · B rảnh tới lượt đo cuối.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`; khi E xong: `AGENTS.md`, `START_SESSION.md`, `.claude/skills/` (hai symlink).
+- Tiếp: hỏi User hai câu còn lại (mỗi lần một câu) ⇒ trao đổi tiếp cách làm việc ⇒ vòng tự soi 1 khi mỗi phiên có kết quả đầu ⇒ vòng tự cải thiện cuối ngày (lần đầu).
+
 # STATUS A — KẾT PHIÊN SÁNG 18/11 (viết 13:11 18/11/2026 `date`)
 
 **A mới đọc trước:** `CURRENT_HANDOFF.md` khối đầu "PHIÊN SAU ĐỌC TRƯỚC (… KẾT PHIÊN SÁNG 18/11)" + `HIEN_TRANG.md`. Không hỏi quyền. Giao E làm tiếp skill ngay; hỏi User hai câu còn lại (mỗi lần một câu); rồi tiếp tục đào các chủ đề cách làm việc — User chủ động muốn trao đổi, đừng dừng chờ.

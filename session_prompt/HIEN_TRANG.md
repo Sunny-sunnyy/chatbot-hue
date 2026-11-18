@@ -59,10 +59,9 @@ Hai con số đo cách làm (tuần 16–22/11, đếm từ 18/11 — A đếm, 
 
 ## 3. Đang chờ User (gom một chỗ — đừng hỏi lại thứ không có ở đây)
 
-1. Thư mục `lauran_tan/` ở gốc repo (chưa vào git, KHÔNG `git add`): có dời vào `data/` không.
-2. Nội dung buổi tự tay sáng thứ Bảy 21/11.
-3. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
-4. Ba lệnh đếm bộ câu kín trước lượt đo cuối (ở `RUNBOOK_CUOI.md`) — *chưa kiểm đã chạy chưa*. Deploy / AWS: chỉ hỏi lại SAU khi Phase 9 đóng.
+1. Nội dung buổi tự tay sáng thứ Bảy 21/11.
+2. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
+3. Ba lệnh đếm bộ câu kín trước lượt đo cuối (ở `RUNBOOK_CUOI.md`) — *chưa kiểm đã chạy chưa*. Deploy / AWS: chỉ hỏi lại SAU khi Phase 9 đóng.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
 

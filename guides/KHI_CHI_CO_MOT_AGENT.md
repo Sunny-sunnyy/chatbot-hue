@@ -8,7 +8,7 @@ Nhãn: **[đã chạy]** = E chạy lệnh đó sáng 18/11/2026 và thấy đ�
 ## 1. Ngày đầu nhận repo — lấy mốc trước khi sửa gì
 
 1. `git config --get core.hooksPath` ⇒ phải in `.githooks` [đã chạy]; khác ⇒ `git config core.hooksPath .githooks` [chưa chạy].
-2. `git status --short | grep -v '^??'` ⇒ rỗng [đã chạy]. Thư mục chưa theo dõi (`data/`, `knowledge-base-hue/`, `lauran_tan/`…) là dữ liệu riêng: không `git add`.
+2. `git status --short | grep -v '^??'` ⇒ rỗng [đã chạy]. Thư mục chưa theo dõi (`data/`, `knowledge-base-hue/`…) là dữ liệu riêng: không `git add`.
 3. Runbook mục 1 → 3: bật Qdrant, chạy server, **test rộng một lượt** và ghi lại số đạt / hỏng làm mốc [chưa chạy 18/11 — máy đang dùng chung; các lệnh đó
    runbook ghi đã chạy 17/11]. Test hỏng sẵn từ mốc không phải lỗi của bạn; test hỏng thêm sau khi bạn sửa là của bạn.
 
