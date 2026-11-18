@@ -275,10 +275,14 @@ suy từ code, chưa chạy). Ba finding #1, #5, #8 đã sửa trên nhánh `p9-
 | Tắt cờ `nho_hoi_thoai` mà để `sua_lich_v2` bật | Sửa lịch bằng lời lặng lẽ không chạy (không có cuộc ⇒ không lưu lịch), giao diện vẫn mời "nhắn trợ lý…" | Không kiểm lúc khởi động. **Tắt `nho_hoi_thoai` ⇒ tắt luôn `sua_lich_v2`**; `web_cau_noi_tiep` cần `tra_web` + `nho_hoi_thoai`, `het_luot_bo_cong_cu` cần `tim_them` (hai cờ này thiếu cờ kia thì chỉ không chạy) | #11 [chỉ đọc code] |
 | Tạo lịch qua `POST /api/chat` (không stream) | Lịch đó KHÔNG được lưu ⇒ không sửa bằng lời về sau; cũng không có: trả lời song song định tuyến, thẻ chọn, `usd_bo` | Các phần này chỉ có ở `/api/chat/stream` (giao diện chỉ dùng đường stream) | mục 4 của file nguồn [chỉ đọc code] |
 
+Về ba chỗ ĐÃ sửa (#1, #5, #8): #1 có test đi qua luồng trả lời thật với model dựng sẵn; #5 và #8 mới có test thay hàm (`monkeypatch`) + probe hàm thuần —
+**chưa đo trên đường thật** (muốn chắc: một lượt sửa lịch thật trên server có `HUE_SO_VET=true`, nhìn sự kiện `notice` và khoá `sua` trong sổ vết).
+
 ### 10.4 Giới hạn của chính các số đo
 
 - Bộ chấm là judge model, chưa có mốc người chấm điểm; lần người đọc cặp mù (01/11) chỉ là tham khảo. (PS §2, §3)
 - Bộ đo chỉ chấm "bằng chứng có trong ngữ cảnh" ở lần tìm kho ĐẦU, không chấm các lần model tìm thêm; lượt chạm trần số vòng bị tính "từ chối đúng". (HO chiều 17/11 mục (k) — chưa kiểm lại)
+- Bộ đo (`backend/evaluation/full_corpus_eval.py` `is_refusal`) tính "từ chối" trên chữ trả lời ĐẦY ĐỦ ⇒ lượt bão / lũ bị từ chối (kể cả lượt chạm trần lượt, từ 18/11) có câu bản tin chính thức nối sau nên được tính "KHÔNG từ chối" trong bộ đo; log `chat_metrics` thì tính trên chữ model nên vẫn là từ chối. Đọc sàn "ngoài kho" của B7 nhớ điều này. **[C kiểm 18/11]**
 - Nhiều người hỏi cùng lúc chỉ đo một lần (27/10); chữ đầu trên trình duyệt đo ít lượt. (PS §3 dòng Phase 8)
 - Nhiều số tiền trong handoff là "theo tin báo, chưa ai tính lại" — tính lại bằng `scripts/dem_chat_metrics.py --sha <mã>`.
 - Model trả lời dao động giữa các lượt: một lỗi chỉ thấy một lần là "chưa xác nhận" — chạy lại ở cuộc mới trước khi ghi là lỗi.
