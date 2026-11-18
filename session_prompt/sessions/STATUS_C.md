@@ -1,6 +1,44 @@
-# STATUS C — PHIÊN SÁNG 18/11 (C `hue-rag-8c` · A `hue-rag-55` · B `hue-rag-98` · E `hue-rag-95`); dưới là kết phiên tối 17/11
+# STATUS C — KẾT PHIÊN SÁNG 18/11 (C `hue-rag-8c` · A `hue-rag-55` · B `hue-rag-98` · E `hue-rag-95`); dưới là kết phiên tối 17/11
 
-## PHIÊN SÁNG 18/11 (C ghi 08:33 18/11/2026)
+## PHIÊN SAU ĐỌC TRƯỚC (KẾT PHIÊN SÁNG 18/11 — C viết 13:13 18/11/2026, cho người chưa biết gì về phiên sáng)
+
+Đọc trước: `AGENTS.md` (có bảng QUYỀN THƯỜNG TRỰC — không còn hỏi "quyền phiên") ⇒ `session_prompt/HIEN_TRANG.md` (trang hiện trạng C giữ; mốc, việc mở, đang chờ User,
+quyết định còn hiệu lực) ⇒ mục này. Sổ việc dài (`CURRENT_HANDOFF.md`) chỉ mở khối trên cùng khi cần.
+
+### (0) Việc DỞ của C lúc kết phiên
+1. **Nhánh `origin/p9-hien-trang-ket-sang` `25c60ed`** (viết lại `session_prompt/HIEN_TRANG.md` cho kết phiên, 13.952 byte): ĐÃ nhờ B đọc diff, CHƯA biết đã gộp chưa ⇒
+   đầu phiên sau `git log --oneline -5 origin/main -- session_prompt/HIEN_TRANG.md`; chưa gộp thì nhắc A. C không kịp đối chiếu từng dòng với khối đầu handoff.
+2. **Chấm skill** (`data/cham_skill_2026-11-18/`, riêng tư): đợt 1 + đợt 2 XONG, đã báo A (`KET_QUA.md`). Còn: đợt 2 chưa có người chấm thứ hai; 4 skill còn lại
+   (`improve-workflow`, `teach-and-quiz`, `agent-design-review`, `agent-security-review`) mới có đề + thang (`VIEC_THU_3.md`), CHƯA chạy; 7 lời giao tách sẵn ở `de/*.md`
+   để User dán cho Codex / Antigravity tối thứ Ba 24/11. Thư mục `chay*/` còn bản sao `src/` (42 MB) — giữ tới sau 24/11.
+3. `HIEN_TRANG.md` còn hai ghi chú không chặn của B chưa xử lý: mục 7 mất con trỏ `PROJECT_HISTORY.md` / `archive/`; phép thử đọc lạnh chưa chạy lại sau các lần sửa.
+
+### (1) C đã làm sáng 18/11 (đều đã báo A; chi tiết theo giờ ở nhật ký bên dưới)
+- Bộ ghi chép AI SDLC vòng 3 xong (`data/khoa_hoc_2026-11-17/AI_SDLC_C.md`) · `TONG_HOP.md` chéo 4 khoá + Lauren Tan (E đã đọc, 6 chỗ sửa) · đề xuất cách làm việc
+  `de_xuat_cach_lam/C.md` (+ mục kiểm thử, mục tự cải tiến + bảo mật).
+- Code đã vào main: ba sửa từ lượt soát tích hợp (câu bão chạm trần lượt vẫn có câu 112 · lượt sửa lịch giữ dòng "có thể đã thay đổi" · sổ vết giữ phần hiểu ý sửa).
+  Lượt THẬT trên server 8011 cho hai sửa sau + hai hành vi kề: đạt, 0,00375 USD. Chưa đo thật: câu bão chạm trần; nửa "bấm thẻ chọn".
+- Tài liệu đã vào main: runbook mục 10 (10.1–10.5 + 10.3b gồm G2, G6) · `session_prompt/HIEN_TRANG.md` + mẫu `guides/khung/HIEN_TRANG.mau.md`.
+- Review / đọc diff cho B, E: `p9-git-sha-env`, `p9-cach-lam-viec` (bản 1 + bản 2), `p9-ban-do`, `p9-du-bao-roi-bao-lu`, `p9-bai-hoc-cach-lam`, `p9-bai-26-sao-luu` — đều gộp được.
+- Soát đồ giả trong 3 file test (39 test, một test thay lõi) · bộ dò 45 câu cho lưới cuối câu bão (`data/review_khac_hang/2026-11-18_tich_hop_phase_9/bo_do_luoi_cuoi.jsonl`).
+
+### (2) Điều rút ra từ việc chấm skill (một quan sát, mẫu nhỏ, mốc KHÔNG sạch — agent con vẫn nạp hướng dẫn chung)
+Không skill nào nâng điểm rõ. Skill review cho khuôn chứ không giúp tìm thêm lỗi (1 / 6 lượt tìm ra lỗi thật, lượt không skill). Skill viết code: 3 / 3 lượt sửa nhỏ +
+nêu cái giá; không skill 2 / 3 lượt tự chế luật và bị ca phá làm sai. Chưa gọt skill nào — chờ chạy lại trên Codex / Antigravity.
+
+### (3) Bẫy sáng 18/11 (đầu vào vòng tự cải thiện cuối ngày — vòng này CHƯA chạy lần nào)
+- Ghép lệnh "đo cỡ" và lệnh "đẩy" bằng `;` ⇒ đẩy một bản vượt giới hạn; cùng họ với bẫy `git worktree add … ; cd …` 14/11 (LẶP LẦN HAI) ⇒ dùng `[ điều kiện ] && lệnh đẩy`.
+- Ghi con số vào tin báo TRƯỚC khi đếm ("14 file", thật 15) · gõ giờ tay hai lần (hook bắt một lần) · ghi "ca khẩn cấp chưa có lượt thật" khi đã có số 14–15/11.
+- Đề bài C giao agent con lệch thực tế ("ba file thay hẳn lõi" — chỉ 1 / 11 test của một file) ⇒ agent con báo, đúng kiểu cần.
+- Một agent con chấm skill đọc thư mục bị cấm (tự khai); mã bài C chép từ ghi chép người khác sai 4 chỗ (E bắt) ⇒ mã chép lại phải ghi "chưa mở bài gốc".
+- Thang chấm đợt 1 chạm trần + hai ý kéo ngược nhau (E nêu) ⇒ viết thang phải thử trên một bản mẫu trước.
+
+### (4) Tiền · máy lúc kết
+- Tiền API của C sáng 18/11: **0,00375 USD** (lượt thật 8011). Agent con (khoảng 40 lượt, chỉ đọc / hàm thuần): 0 USD.
+- 0 worktree C · 0 server (8011 đã tắt) · 0 agent con đang chạy · không còn `/tmp/hr_c_*` (trừ một file log `/tmp/hr_c_8011.log` đã xoá). Qdrant do A bật — C không tắt.
+- `lauran_tan/` và `.wslconfig` ở gốc repo vẫn chưa vào git — KHÔNG `git add`.
+
+## (nhật ký) PHIÊN SÁNG 18/11 (C ghi 08:33 18/11/2026)
 - Mở phiên: main `5cfc308` = origin, hooksPath `.githooks`, Qdrant tắt (khớp handoff), 0 worktree / server / `/tmp/hr_c_*`.
 - A giao (User cấp quyền "như tối 17/11 + xin lượt máy"; việc A giao = "làm đi"): (1) hoàn vòng 3 bộ AI SDLC; (2) review ≤ 5 dòng nhánh `HUE_GIT_SHA` của B khi B nhắn — ưu tiên hơn (1); (3) còn giờ: nháp runbook §10 "giới hạn đã biết" trên nhánh riêng.
 - **Khai báo sửa (việc 1, chỉ `data/khoa_hoc_2026-11-17/`, private):** `AI_SDLC_C.md`, `AI_SDLC_C_phan_1..4.md`, `nhap/C_SDLC_CUOI/BRIEF_SUA.md`, `nhap/C_SDLC_CUOI/SUA_phan_1..4.md` (4 agent con, mỗi agent một phần: sửa câu sai tại chỗ + kiểm lần hai đính chính 6–16 bằng nguồn gốc). File này.

@@ -49,7 +49,7 @@ Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc
 - **A:** trò chuyện với User về cách làm việc; runbook mục 9; gói soát mù thứ Bảy; gộp nhánh.
 - **B:** lượt đo cuối Chủ nhật 22/11; giữ trang bản đồ.
 - **C:** giữ trang này; runbook mục 10; chấm skill (đề cho 7 skill đã có, đợt 2 chưa có người chấm thứ hai).
-- **E:** sửa 8 skill + viết 2 skill mới (nhánh `p9-skill-sua-va-moi`, DỞ); giữ `guides/CACH_LAM_VIEC.md`.
+- **E:** sửa 8 skill + viết 2 skill mới (CHƯA bắt đầu; A áp phần file luật); giữ `guides/CACH_LAM_VIEC.md`.
 - **Chưa ai nhận, để sau lượt đo cuối:** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
   quần thể (10.2) · runbook mục 8 (deploy) — chỉ viết khi User mở lại chuyện deploy.
 
