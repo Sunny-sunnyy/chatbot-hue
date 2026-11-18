@@ -1,9 +1,8 @@
-# STATUS A — PHIÊN TỐI 18/11 SAU KHI BẬT LẠI MÁY (mở; cập nhật 20:01 18/11/2026 `date`)
+# STATUS A — KẾT PHIÊN TỐI 18/11, CUỐI NGÀY (viết 21:49 18/11/2026 `date`; terminal: A `hue-rag-31` · B `hue-rag-75` · C `hue-rag-b9` · E `hue-rag-51`)
 
-- Terminal: A `hue-rag-31` · B `hue-rag-75` · C `hue-rag-b9` · E `hue-rag-51` (Claude Code, trực tiếp; cả ba trả lời một tin).
-- Kiểm nhanh: `main` `93b4268` = origin; chỉ `.wslconfig` untracked; hooksPath `.githooks`; Qdrant không tự lên ⇒ A bật (9.436 điểm); 0 server; RAM khả dụng 14,7 GB; không phiên dự án khác.
-- Giao: xem `CURRENT_HANDOFF.md` khối "PHIÊN TỐI 18/11, SAU KHI BẬT LẠI MÁY". Cả ba có `notify_when_idle`.
-- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`. Tiền A 0 USD. Hộp hỏi User: 0.
+- **Việc dở:** bước 4 đã đo trên `b27ef45`, KHÔNG đạt mọi sàn; mốc code mới `3abb076`. Việc kế + câu hỏi cho User (mỗi lần một câu, có ví dụ thật, nói mục đích ở dòng đầu): khối đầu `CURRENT_HANDOFF.md`. B nợ báo cáo tracked lượt đo cuối; `bai_hoc/` chưa viết việc tối nay.
+- **Thứ đang chạy / file tạm:** A: 0 worktree, 0 server, 0 agent con; Qdrant A tắt lúc đóng (`docker compose stop qdrant`). B giữ `/tmp/b7_moc`. Sao lưu ổ D: `2026-11-18_buoc3_b27ef45/` (đủ) + `2026-11-18_ket_phien_3abb076/` (data + kho). Tiền A 0 USD; cả nhóm tối nay ≈ 0,36 USD (B). Hộp hỏi User: 1.
+- **Bẫy phiên này (A):** chuyển cho User giả thuyết "nhãn cũ" của B (câu ngoài kho của bộ câu mẫu) trước khi C kiểm ⇒ phải đính chính · gộp nhánh của C khi C còn đẩy thêm commit (sót commit hai; C bắt) ⇒ đọc `git log origin/main..nhánh` ngay trước khi gộp · nói với nhóm "gộp tài liệu SAU lượt cả bộ test" rồi tự gộp trước (vô hại, nhưng lời giao lệch việc làm) · hộp hỏi "lượt thứ ba" dùng ví dụ không thực tế, không nói mục đích ⇒ User không hiểu, phải hỏi lại bằng chữ · nghiêng "vá thêm" rồi đổi sang "giữ" sau phản ứng của User — lẽ ra bàn nhóm xong mới khuyến nghị · chép giờ của B vào báo cáo cho User trong khi ≥ 8 giờ đó là ước · cho vòng bù ≤ 0,01 USD theo ước của B, thật 0,0124. Lần thử "đọc ngắn" thứ hai (B, E) / thứ ba (C): 0 lần vấp luật do chưa đọc; vấp luật thường: E 2 lần `python3` hệ thống + 1 lần `uv` tự dựng `.venv` trong worktree, B giờ ước.
 
 # STATUS A — KẾT PHIÊN NHẸ TỐI 18/11 (viết 19:48 18/11/2026 `date`; User tắt / bật lại WSL để đổi cấu hình RAM; terminal tối: A `hue-rag-64` · B `hue-rag-87` · C `hue-rag-f7` · E `hue-rag-08`)
 
