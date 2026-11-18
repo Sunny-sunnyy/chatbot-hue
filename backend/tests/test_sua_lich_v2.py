@@ -96,11 +96,14 @@ def test_parallel_normal_path_waits_for_intent_before_web_and_emergency_wins(mon
     import asyncio
     import dataclasses
     from llm import assistant as a, len_ke_hoach as lkh
-    goi_web = []
+    from llm.full_corpus_prompt import MAY_HAVE_CHANGED_NOTICE
+    from retrieval.full_corpus_context import PackedSource
+    goi_web, luot = [], []
 
-    def lam(hieu_ra, khan_cap=False):
+    def lam(hieu_ra, khan_cap=False, the_chon=False):
         async def core(query, rs, cb, gen, tr, flags, recorder, tim_web):
             tr.routing_ms, tr.emergency_by = 1.0, ("router" if khan_cap else None)
+            tr.vet["tim"] = [1]  # đường thường (trace phụ) ghi phần sổ vết của nó
             yield "status", {"stage": "routing"}
             if tim_web is not None:
                 await tim_web(query)
@@ -108,9 +111,11 @@ def test_parallel_normal_path_waits_for_intent_before_web_and_emergency_wins(mon
 
         async def hieu(query, gen, tr, flags):
             await asyncio.sleep(0.05)
+            tr.vet["sua"] = {"model_ra": []}  # lần hiểu ý ghi sổ vết trên trace CHÍNH
             return hieu_ra
 
         async def sua(query, rs, cb, gen, tr, flags, kq):
+            tr.cited = (PackedSource(1, "t", (), ("e",), "travel/places/x.md"),)  # lịch sau sửa vẫn trích bài điểm đến
             yield "lich_khung", {"sua": True}
 
         async def web(cau):
@@ -120,7 +125,9 @@ def test_parallel_normal_path_waits_for_intent_before_web_and_emergency_wins(mon
         monkeypatch.setattr(lkh, "hieu_va_ap", hieu)
         monkeypatch.setattr(lkh, "stream_sua", sua)
         tr = a.AnswerTrace(); tr.lich_luu = {"x": 1}
-        fl = dataclasses.replace(V2, router=True)
+        tr.sua_chon = {"cu": "a", "moi": "b"} if the_chon else None
+        luot.append(tr)
+        fl = dataclasses.replace(V2, router=True, may_have_changed_notice=True)
 
         async def chay():
             return [e async for e in a._sua_song_song("q", None, None, object(), tr, fl, None, web)]
@@ -128,8 +135,12 @@ def test_parallel_normal_path_waits_for_intent_before_web_and_emergency_wins(mon
 
     ev = lam({"the": None})  # lượt sửa
     assert ev[-1][0] == "lich_khung" and goi_web == []
+    assert luot[-1].notice == MAY_HAVE_CHANGED_NOTICE  # review tích hợp 18/11 #5: lượt sửa giữ dòng "có thể đã thay đổi" như lượt biểu mẫu
+    lam({"the": None}, the_chon=True)  # lượt bấm nút thẻ chọn: cùng dòng đó
+    assert luot[-1].notice == MAY_HAVE_CHANGED_NOTICE
     ev = lam(None)  # câu thường
     assert ("delta", "trả lời thường") in ev and goi_web == ["q"]
+    assert set(luot[-1].vet) == {"sua", "tim"}  # review tích hợp 18/11 #8: sổ vết của câu thường trong cuộc có lịch không mất phần hiểu ý
     goi_web.clear()
     ev = lam({"the": None}, khan_cap=True)  # câu trộn khẩn cấp
     assert ("delta", "trả lời thường") in ev and not any(e[0] == "lich_khung" for e in ev)
