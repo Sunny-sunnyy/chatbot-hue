@@ -126,9 +126,9 @@ Cách biết có ích: ba lần mở kế đếm số lần vấp luật vì ch�
 ## 7. Đo chính cách làm việc bằng hai con số
 
 Mỗi tuần ghi hai số vào trang hiện trạng: **(a) số việc đã báo "xong" bị lật lại** (User, reviewer hoặc máy tìm ra chưa xong) · **(b) số lần User phải nhắc lại một
-điều đã nói**. Muốn đổi cách làm (thêm phiên, thêm luật, đổi công cụ, đổi kiểu điều phối) ⇒ so hai số trước và sau, không quyết theo cảm giác. Mẫu nhỏ ⇒ chỉ tin chênh rõ. [chưa chạy]
+điều đã nói**. Muốn đổi cách làm (thêm phiên, thêm luật, đổi công cụ, đổi kiểu điều phối) ⇒ so hai số trước và sau, không quyết theo cảm giác. Mẫu nhỏ ⇒ chỉ tin chênh rõ. [ghi một lần]
 **Cách đếm (a):** chỉ đếm việc đã báo User hoặc đã gộp vào nhánh chính; lỗi người kiểm bắt TRƯỚC khi gộp đếm riêng — đó là quy trình chạy đúng. **Hai số về giá**, ghi cùng chỗ:
-tỉ lệ commit chạm code ↔ không chạm code · số câu đã hỏi User trong ngày (trên 8 ⇒ hôm sau gom câu). Không thêm số nào khác. [chưa chạy]
+tỉ lệ commit chạm code ↔ không chạm code · số câu đã hỏi User trong ngày (trên 8 ⇒ hôm sau gom câu). Không thêm số nào khác. [ghi một lần]
 
 ## 8. Một phiên hay nhiều phiên (chưa phải luật)
 
@@ -158,6 +158,7 @@ bằng hai con số ở mục 7.
 - Không làm quá tay: cách nhỏ nhất đủ nhu cầu thật; không thêm rào, lớp, bước kiểm "phòng xa"; công sức tương xứng với tuổi thọ của phần đang làm.
 - Việc đã chốt thì không hỏi lại, không trình lại như lỗi. Số của người khác / agent con gắn "chưa kiểm" tới khi có người thứ hai tính lại. Giờ ghi vào tài liệu
   lấy bằng lệnh `date`, không ước.
+- Kế hoạch viết theo **thứ tự + điều kiện đạt**, không gắn ngày: bước trước đạt là làm bước sau ngay; ngày chỉ là ghi chép.
 
 ## 10. Nguồn của từng mục (vì sao)
 
@@ -175,10 +176,10 @@ Người giữ ghi chép từng khoá đã đối chiếu mã với ghi chép c�
 | 7 | đo chất lượng cùng tốc độ, không đếm dòng code hay token (SDLC tuần 2 — chưa kiểm mã bài) · một lần chạy chỉ là một mẫu (FDE W2D5·78–83) |
 | 8 | Coding W3D4·87–88, W3D5·89–93 · SDLC W1D5·31–35, W2D2·45–46 |
 
-## Chưa làm / chưa thử (đúng lúc 13:46 18/11/2026)
+## Chưa làm / chưa thử (đúng lúc 19:34 18/11/2026)
 
-- **Chưa thử với Codex hay Antigravity** — buổi thử: tối thứ Ba 24/11/2026; bước đầu là hỏi công cụ đã nạp file nào (mục 5). Kiểu điều phối khi đổi công cụ chưa chọn (mục 8).
-- **Vòng cuối ngày** (mục 5, 7) chưa chạy lần nào; hai con số mới ghi MỘT lần, chưa ai soát; hai số về giá chưa ghi lần nào.
-- **Mở lại phiên cho nhẹ** (mục 5): đã vào luật mở phiên, chưa có lần mở nào đọc ngắn.
+- **Chưa thử với Codex hay Antigravity** — thử ở buổi chủ dự án test toàn bộ; bước đầu: hỏi công cụ đã nạp file nào (mục 5). Kiểu điều phối khi đổi công cụ chưa chọn (mục 8).
+- **Vòng cuối ngày** (mục 5, 7) đã chạy lần đầu 18/11; hai con số và hai số về giá mới ghi MỘT lần (hai con số đã có phiên khác soát).
+- **Mở lại phiên cho nhẹ** (mục 5): mới MỘT lần mở đọc ngắn, chưa đếm lần vấp luật.
 - Hai skill mới (`soat-tich-hop`, `giao-viec-agent-con`) mới được chấm MỘT lượt mỗi bên, chưa có người chấm thứ hai.
 - Chưa thành nếp: ảnh trước–sau (mục 6), năm dòng đề bài và "chọn một dòng xong để chứng minh lại" (mục 1).
