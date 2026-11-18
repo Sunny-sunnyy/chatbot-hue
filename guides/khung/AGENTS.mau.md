@@ -20,7 +20,7 @@
 ## Quyền thường trực (chủ dự án duyệt <ngày>; áp cho mọi agent; không hỏi lại mỗi phiên)
 
 - **Tự làm, báo sau:** việc đã có trong sổ việc; sửa lỗi đã tái hiện được; commit + đẩy nhánh riêng; gộp vào nhánh chính khi đã có người / phiên KHÁC kiểm
-  (nhánh chỉ tài liệu: đọc diff rồi gộp); tiền API cho đo / thử dưới `<mức>`; viết tài liệu cho người.
+  (nhánh chỉ tài liệu: một phiên KHÁC người viết đọc diff rồi gộp); tiền API cho đo / thử dưới `<mức>`; viết tài liệu cho người.
 - **Hỏi chủ dự án trước:** tính năng mới / đổi hướng; đổi lớn thứ người dùng thấy; sửa dữ liệu gốc; xoá dữ liệu; gửi dữ liệu riêng ra dịch vụ mới; việc tốn
   trên `<mức>`; mọi việc deploy.
 - **Không bao giờ:** luật cứng 1, 2 ở trên; `git push --force`; bỏ qua hook (`--no-verify`).
