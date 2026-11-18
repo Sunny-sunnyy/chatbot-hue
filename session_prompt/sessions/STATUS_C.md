@@ -6,8 +6,8 @@
 quyết định còn hiệu lực) ⇒ mục này. Sổ việc dài (`CURRENT_HANDOFF.md`) chỉ mở khối trên cùng khi cần.
 
 ### (0) Việc DỞ của C lúc kết phiên
-1. **Nhánh `origin/p9-hien-trang-ket-sang` `25c60ed`** (viết lại `session_prompt/HIEN_TRANG.md` cho kết phiên, 13.952 byte): ĐÃ nhờ B đọc diff, CHƯA biết đã gộp chưa ⇒
-   đầu phiên sau `git log --oneline -5 origin/main -- session_prompt/HIEN_TRANG.md`; chưa gộp thì nhắc A. C không kịp đối chiếu từng dòng với khối đầu handoff.
+1. Nhánh `p9-hien-trang-ket-sang` (viết lại `session_prompt/HIEN_TRANG.md` cho kết phiên): ĐÃ GỘP vào main (`b4f51c2`, B đọc diff; A sửa thêm một dòng ở `0013835`,
+   C kiểm bằng `git log` 13:15 18/11/2026). Không còn dở. C không đối chiếu từng dòng của trang với khối đầu sổ việc.
 2. **Chấm skill** (`data/cham_skill_2026-11-18/`, riêng tư): đợt 1 + đợt 2 XONG, đã báo A (`KET_QUA.md`). Còn: đợt 2 chưa có người chấm thứ hai; 4 skill còn lại
    (`improve-workflow`, `teach-and-quiz`, `agent-design-review`, `agent-security-review`) mới có đề + thang (`VIEC_THU_3.md`), CHƯA chạy; 7 lời giao tách sẵn ở `de/*.md`
    để User dán cho Codex / Antigravity tối thứ Ba 24/11. Thư mục `chay*/` còn bản sao `src/` (42 MB) — giữ tới sau 24/11.
