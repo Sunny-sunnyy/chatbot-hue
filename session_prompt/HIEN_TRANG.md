@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 13:12 18/11/2026 (giờ `date`; kết phiên sáng 18/11). Người giữ: phiên điều phối. Mục 4: phiên B đã soát 13 ý với nguồn.
+Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa mục 1, 2, 4 lúc 13:37 18/11/2026 (giờ `date`). Người giữ: phiên điều phối.
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án, cho BẤT KỲ coding agent nào (Claude Code, Codex, Antigravity) vừa mở phiên. Nó được **viết lại tại chỗ**
 mỗi lần kết phiên — không nối thêm. Thứ tự mở phiên (bạn là phiên nào, báo gì, chờ gì) ở `session_prompt/START_SESSION.md`; trang này là phần "dự án đang
@@ -19,14 +19,12 @@ trợ lý trên bản code đã đứng yên.
   Web: FastAPI (`backend/`) + giao diện React dựng sẵn (`frontend/`). Chạy trên máy User; **chưa deploy**.
 - **Số hôm nay** (lệnh kiểm ở mục 6): kho **265 bài ⇒ 9.436 đoạn**, một collection Qdrant `hue_full_corpus_7a2_e5_small_384` (cổng 6335);
   tìm = vector `e5-small` + từ khoá BM25 trộn RRF, **10 đoạn** vào ngữ cảnh, không xếp lại; model viết `gpt-6-luna` (OpenAI); tra web qua Serper.
-- **Cờ đang BẬT** (23 = 22 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat`): `router`, `song_song_tra_loi`, `tim_them`, `het_luot_bo_cong_cu`,
-  `nho_hoi_thoai`, `cau_nhieu_y`, `may_have_changed_notice`, `tra_web`, `web_cau_noi_tiep`, `thoi_tiet`, `bao_lu_cong_cu`, `ngay_lich`, `khoang_cach`,
-  `khoang_cach_tinh_san`, `lich_trinh_bieu_mau`, `len_ke_hoach_v2`, `anh_lich`, `ban_do_lich`, `luu_tru_lich`, `quan_lich`, `sua_lich_v2`,
-  `sua_lich_chua_ho_tro`, `anh.bat`. **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt; lịch nay qua biểu mẫu),
-  `today_line` (không giúp gì), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (mặc định tắt; muốn xem sổ vết thì mở server kèm biến
-  `HUE_SO_VET=true` — chỉ ở máy local, bản công khai không đặt).
+- **Cờ:** **23 BẬT** (22 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat`). **TẮT (đủ 4 cờ còn lại):** `lich_trinh`
+  (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (mặc định
+  tắt; bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
-- **Lần chạy cả bộ test gần nhất:** 17/11, 1.345 đạt (theo sổ việc; CHƯA chạy lại trên bản hiện tại — lượt kế trước tối thứ Bảy 21/11).
+- **Lần chạy cả bộ test gần nhất:** 17/11, 1.345 đạt (theo sổ việc; CHƯA chạy lại — lượt kế trước tối thứ Bảy 21/11).
+- **Máy lúc 13:37 18/11/2026:** Qdrant TẮT, server không chạy. Bật (báo điều phối trước): `docker compose up -d qdrant`.
 - **Giới hạn đã biết + đường cũ đừng chép:** `guides/RUNBOOK_BAN_GIAO.md` mục 10. Gặp hành vi trông như lỗi ⇒ tra ở đó TRƯỚC khi sửa hay báo.
 
 ## 2. Mốc và việc đang mở
@@ -43,13 +41,14 @@ Mốc (User chốt theo THỨ, 18/11/2026):
 | Khoảng thứ Hai 23/11 | Đọc kết quả ⇒ User đóng Phase 9; sau đó vòng tự tối ưu bản hẹp ở bước tìm (đã duyệt, CHƯA có kế hoạch) |
 | Tối thứ Ba 24/11 | User lái Codex rồi Antigravity làm thử thay Claude; chạy lại 7 đề chấm skill (file riêng tư `data/cham_skill_2026-11-18/de/`) |
 
-Đã vào `main` sáng 18/11: xem `git log --merges --oneline -25`.
+Đã vào `main` 18/11: xem `git log --merges --oneline -25`.
 
 Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc (mục 7):
 - **A:** trò chuyện với User về cách làm việc; runbook mục 9; gói soát mù thứ Bảy; gộp nhánh.
 - **B:** lượt đo cuối Chủ nhật 22/11; giữ trang bản đồ.
-- **C:** giữ trang này; runbook mục 10; chấm skill (đề cho 7 skill đã có, đợt 2 chưa có người chấm thứ hai).
-- **E:** sửa 8 skill + viết 2 skill mới (CHƯA bắt đầu; A áp phần file luật); giữ `guides/CACH_LAM_VIEC.md`.
+- **C:** giữ trang này; runbook mục 10; chấm 2 skill mới (đang làm); 4 skill cũ chưa chấm để tối thứ Ba 24/11.
+- **E:** 8 skill sửa + 2 skill mới (`soat-tich-hop`, `giao-viec-agent-con`) ĐÃ vào `main`; hai skill mới chưa chạy thử; A áp file luật + liên kết `.claude/skills/`.
+  E giữ `guides/CACH_LAM_VIEC.md`.
 - **Chưa ai nhận, để sau lượt đo cuối:** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
   quần thể (10.2) · runbook mục 8 (deploy) — chỉ viết khi User mở lại chuyện deploy.
 
@@ -91,6 +90,8 @@ Cách làm:
 - Lỗi cách làm lặp lần hai mới thành luật; máy kiểm được thì làm phép kiểm thay chữ. Không thêm công cụ / rào riêng tư mới (User 14/11) — giữ rào đang có.
 - User không vắng trừ khi tự nói "đi vắng" (User 15/11). Không bao giờ gọi `agy` từ agent. Repo PUBLIC: `data/`, kho, câu của bộ đo không vào file được git theo dõi.
 - Thứ ngoài git (`data/`, kho, chỉ mục) đã sao lưu sang ổ khác cùng máy 11:45 18/11 — chép lại ở mỗi mốc chốt. Câu kín chỉ còn luật chữ giữ (User chọn).
+- "Gói mở lại nhẹ" khi tắt / mở lại phiên (User duyệt 18/11; đang thử ba lần mở kế): kết phiên nhẹ · mở phiên đọc ngắn · chỉ mở lại phiên đã đầy ·
+  phiên mới đợi tin của phiên điều phối. Chi tiết: sổ việc, khối PHIÊN CHIỀU 18/11.
 - User chỉ đọc `bai_hoc/`: việc xong mới viết vào đó, mỗi con số kèm đo gì / so với mốc nào.
 
 Danh sách đủ, có ngày và nguồn: `session_prompt/Project_Status.md` mục 5 (nhật ký — chỉ mở khi cần tra một quyết định cụ thể).
