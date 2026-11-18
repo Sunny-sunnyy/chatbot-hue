@@ -42,7 +42,7 @@ Mốc (User chốt theo THỨ trong tuần, 18/11/2026 — chỗ nào tài liệ
 | Khoảng thứ Hai 23/11 | Đọc kết quả ⇒ User đóng giai đoạn trợ lý (Phase 9) |
 | Tối thứ Ba 24/11 | User lái Codex rồi Antigravity làm thử thay Claude (đọc tài liệu từ đầu ⇒ runbook mục 1–3 ⇒ một việc nhỏ) |
 
-Việc đang mở (ai · việc · trạng thái) — nhận một việc thì mở mục việc đó trong sổ việc (mục 7) để lấy chi tiết:
+Việc đang mở (ai · việc · trạng thái) — chi tiết từng việc ở sổ việc (mục 7):
 - **A:** trò chuyện với User về cách làm việc với coding agent; viết runbook mục 9; gộp nhánh.
 - **B:** chạy lượt đo cuối Chủ nhật 22/11; giữ trang bản đồ `bai_hoc/BAN_DO_DU_AN.md` (đã gộp).
 - **C:** giữ nháp trang này + mẫu `guides/khung/HIEN_TRANG.mau.md`; runbook mục 10 (giới hạn đã biết).
@@ -52,6 +52,9 @@ Việc đang mở (ai · việc · trạng thái) — nhận một việc thì m
 - Nhánh đang chờ gộp lúc viết: `p9-runbook-g2-g6`, `p9-hien-trang-2` (đều chỉ tài liệu) — gộp sau khi một phiên KHÁC người viết đã đọc; đừng sửa nhánh của người khác.
 
 Trước khi sửa code từ nay tới tối thứ Bảy 21/11: chỉ sửa lỗi đã tái hiện được; không thêm tính năng; đổi chuỗi gửi model ⇒ hỏi phiên điều phối trước.
+
+Hai con số đo cách làm (ghi mỗi tuần; tuần 16–22/11, đếm từ 18/11 — A đếm, chưa ai soát): việc đã báo "xong" bị lật lại **2** · User phải nhắc lại một điều
+đã nói **3**.
 
 ## 3. Đang chờ User (gom một chỗ — đừng hỏi lại thứ không có ở đây)
 
@@ -84,7 +87,7 @@ Cách làm:
   chưa làm / giới hạn · cách thử trong 2 phút; mỗi khẳng định gắn nhãn [máy kiểm] / [người thứ hai kiểm] / [chưa kiểm].
 - Hỏi User: mỗi lần MỘT câu, có sẵn đáp án, mỗi đáp án kèm hệ quả. Tiếng Việt, lời thường, đủ quan trọng hơn ngắn. Giờ ghi vào tài liệu lấy bằng `date`.
 - Lỗi cách làm lặp lần hai mới thành luật; máy kiểm được thì làm phép kiểm thay chữ. Không thêm công cụ / rào riêng tư mới (User 14/11) — giữ rào đang có.
-- User không vắng trừ khi tự nói "đi vắng". Không bao giờ gọi `agy` từ agent. Repo PUBLIC: `data/`, kho, câu của bộ đo không vào file được git theo dõi.
+- User không vắng trừ khi tự nói "đi vắng" (User 15/11). Không bao giờ gọi `agy` từ agent. Repo PUBLIC: `data/`, kho, câu của bộ đo không vào file được git theo dõi.
 - User chỉ đọc `bai_hoc/`: việc xong mới viết vào đó, mỗi con số kèm đo gì / so với mốc nào.
 
 Danh sách đủ, có ngày và nguồn: `session_prompt/Project_Status.md` mục 5 (nhật ký — chỉ mở khi cần tra một quyết định cụ thể).
@@ -103,13 +106,11 @@ phối trước và dừng khi RAM khả dụng < 4 GB; bật hook git một l�
 | Qdrant khớp | `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 \| grep -o '"points_count":[0-9]*'` | `"points_count":9436` [đã chạy 18/11; cần Qdrant bật] |
 | Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `23` [đã chạy 18/11] |
 | Cách tìm, không xếp lại | `grep -nE 'retrieval_treatment\|reranker:' backend/config/settings.yaml` | `dense_bm25_rrf`, `none` [đã chạy 18/11] |
-| Hook git đã bật | `git config --get core.hooksPath` | `.githooks` [đã chạy 18/11] |
 
 ## 7. Nhật ký ở đâu (KHÔNG bắt đọc lúc mở phiên — mở khi cần trả lời một câu cụ thể)
 
 - `session_prompt/CURRENT_HANDOFF.md` — sổ việc theo giờ (dài; khối trên cùng mới nhất) · `session_prompt/sessions/STATUS_<X>.md` — sổ riêng từng phiên (đọc mục đầu của mình).
 - `session_prompt/Project_Status.md` — mục 4 chi tiết từng tính năng + mã commit · mục 5 mọi quyết định theo ngày · mục 8 bẫy kỹ thuật.
-- `session_prompt/archive/`, `report_agent/` — hồ sơ đã đóng.
 - Luật đầy đủ: `session_prompt/Session_Prompt.md`, `session_prompt/WORKFLOW.md` · cách làm việc: `guides/CACH_LAM_VIEC.md`.
 
 ## 8. Cách giữ trang này
