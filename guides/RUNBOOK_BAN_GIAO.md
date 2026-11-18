@@ -190,4 +190,97 @@ mục "Câu hỏi A còn nợ".
 
 ## 10. Giới hạn đã biết
 
-(CHƯA VIẾT — mỗi session phần mình) — mỗi dòng: hiện tượng · đã đo bao nhiêu · vì sao chưa sửa · file report.
+(NHÁP — C soạn 18/11/2026 từ `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/Project_Status.md` và các report; A gộp thêm kết quả review
+tích hợp Phase 9. Chưa có người thứ hai kiểm từng dòng.)
+
+**Cách dùng.** Gặp một hành vi trông như lỗi ⇒ tìm ở đây TRƯỚC khi sửa hay báo. Có trong bảng ⇒ đó là giới hạn đã biết, đã đo, đã có người
+quyết để nguyên: không sửa, không báo lại như lỗi mới; chỉ mở lại khi User yêu cầu hoặc khi số đo mới khác hẳn số ghi ở đây. Không có trong
+bảng ⇒ tái hiện trên đúng cấu hình đang chạy (thử một lượt trước), rồi mới báo. Quyết định của User (vd câu khẩn cấp ngoài phạm vi) ở mục 9.
+
+Viết tắt nguồn: `R/` = `report_agent/2026-11-12_ra_khoang_cach/` · `HO <ngày>` = `session_prompt/CURRENT_HANDOFF.md` mục của phiên ngày đó
+(khi handoff được dọn thì tìm ở `session_prompt/archive/`) · `PS §n` = `session_prompt/Project_Status.md` mục n. Số đo là số của người làm
+lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 18/11/2026, dòng không có nhãn = chép từ nguồn, chưa kiểm lại.
+
+### 10.1 Trợ lý hỏi đáp (kho + mục "Từ web")
+
+| Tình huống | Hệ quả người dùng thấy | Vì sao để nguyên | Nguồn |
+|---|---|---|---|
+| Kho không có thông tin, mục "Từ web" có trả lời | Câu mở đầu vẫn là câu từ chối chuẩn ("Tôi không tìm thấy đủ thông tin…"), mục web nằm ngay dưới | Câu từ chối chuẩn là thứ bộ chấm dựa vào để giữ sàn "0 câu ngoài kho bị trả lời"; mục web tách riêng, gắn nhãn chưa kiểm | PS §4 (tra web sau câu từ chối); HO tối 16/11 |
+| Câu hai ý mà vế sau không có từ hỏi (vd "…bao xa, rồi ghé … nữa") | Có lượt từ chối cả câu (đo 1 / 2 lần) | Bộ tách câu nhiều ý chỉ nhận dạng đóng; model tự viết câu từ chối; mở rộng dạng câu dễ bắt nhầm | HO tối 16/11; `R/c_kc_tinh_san_implementation.md` |
+| Hỏi A ⇒ hỏi tiếp B (kho thiếu) ⇒ hỏi lại A trong cùng cuộc | Đôi khi lượt 3 bị từ chối theo | Đo trên đúng cấu hình đang chạy: 0 / 3; không ổn định ⇒ không xây | `R/c_dem_hoi_lai_cau_cu.md` |
+| Câu hỏi tiếp có NHIỀU Ý | Phần tra web dùng câu người dùng gõ, không dùng câu model viết lại | Cờ `web_cau_noi_tiep` chỉ áp lượt một ý; ghép câu bằng code đã thử và bỏ | HO chiều 15/11 mục "Giới hạn đã nhận"; `R/b_web_noi_tiep_implementation.md` |
+| Lượt hỏi tiếp có tra web | Chi tiết của lượt trước (tên nơi) đi ra dịch vụ tìm kiếm; không có bộ lọc tên người | User đã nghe và chọn bật; trang Giới thiệu có nói. **Xét lại cờ trước bản công khai** | HO chiều 15/11; PS §5 dòng 15/11 chiều |
+| Nguồn web không có ngày đăng (đo 4 / 5 kết quả) | Mục nguồn hiện không kèm ngày ⇒ tin cũ có thể trông như mới | Dịch vụ tìm kiếm không trả ngày; code chỉ hiện ngày khi có | `R/b_ngay_nguon_web_implementation.md` |
+| Số trong mục web viết dạng "H:00" | Bước kiểm số coi là số trần ⇒ có thể khớp một số không phải giờ trong đoạn trích | Siết lại sẽ gạt nhầm câu về thời lượng | `R/c_gio_web_implementation.md` (m-1) |
+| Luật số mục web: "1:23" trùng "123" | Hiếm khi cho qua một số lệch | Lỏng nhưng hiếm; đã rà nợ 15/11 | `R/b_ra_no_cu.md` |
+| Câu bão / lũ nói vòng, hoặc "đợt hiện tại" | 1 / 22 câu dò không có khối cố định (bản tin chính thức + 112); vài câu model vẫn tự viết thêm | User chọn bật và ghi giới hạn (ca 7, 9, 18, 23); "luôn đưa công cụ thời tiết" đã thử và lùi (mục 10.5) | `R/b_cau_bao_implementation.md`; HO sáng 17/11 |
+| Câu "tốt cho sức khoẻ" về món ăn | Đôi khi gắn thừa câu "nên hỏi dược sĩ / bác sĩ" (đo 3 / 9 câu không cần) | Gắn thừa vô hại; gắn thiếu mới là lỗi (12 / 12 câu cần đều có) | `R/b_suc_khoe_web_implementation.md` |
+| Hỏi khoảng cách có nơi thứ ba đứng SAU từ hỏi | Trả khoảng cách của hai nơi đầu | Hàm chỉ nhận dạng đóng "A <từ nối> B <từ hỏi>"; nới ra thì sai cặp | `R/c_kc_tinh_san_implementation.md` |
+| Từ "bao lâu" + từ di chuyển chung | Công cụ khoảng cách được đưa thừa; model làm tròn giờ thì bước kiểm số rút câu | Không ra số sai tới người dùng | `R/c_khoang_cach_implementation.md` |
+| Đường "tìm thêm + web" | Chữ đầu ~6 s, cả câu có web ~15 s (vượt sàn 3 / 5 s); câu thường đạt sàn | Hai thử nghiệm tốc độ đều âm; User bỏ "tra web sớm", gác "gộp câu tìm" | `R/b_dem_toc_do.md`; PS §2 (15/11) |
+| Câu ngoài phạm vi bị định tuyến xếp là khẩn cấp (vd y tế) | Trợ lý từ chối, cổng web mở | User nhận từ 09/11 khi gỡ câu soạn sẵn | PS §4 (định tuyến phương án B) |
+| Câu ngoài kho về giá vé đi lại | Có lượt trả lời "nguồn không nêu…" thay vì câu từ chối chuẩn (đo 3 / 5) | User nhận 15/11 | PS §5 dòng 15/11 |
+| Hỏi "ăn gì gần <một chùa lớn>" | Trợ lý nói kho không có quán dù kho CÓ bài quán ghi gần đó | LỖI TÌM thật, chưa tái hiện trên server; để sau lượt đo cuối B7 | HO chiều 17/11 (#29) |
+| Nhận ảnh: model lỗi vì chạm trần token | "Không nhận ra ảnh", không có gợi ý thử lại (đo 2 / 149) | Hiếm; chưa có nút huỷ lúc "Đang xem ảnh…" | HO tối 15/11 |
+
+### 10.2 Lịch "Lên kế hoạch" và sửa lịch bằng lời
+
+| Tình huống | Hệ quả người dùng thấy | Vì sao để nguyên | Nguồn |
+|---|---|---|---|
+| Ngày mưa to, người dùng CÓ chọn sở thích | Lịch vẫn nhiều điểm ngoài trời; chỉ có dòng "Nếu mưa…" | Bảng chỉ 12 / 41 điểm trong nhà — thiếu dữ liệu, không phải thiếu luật; "điểm ưu tiên nhường chỗ ngày mưa" làm lịch 1 ngày mất Đại Nội ⇒ chờ User chọn, sau B7 | `R/c_dem_mua.md`; `R/b_mua_bo_thien_nhien_implementation.md`; HO chiều 17/11 |
+| Lịch mặc định 1 ngày | Có một điểm đầm phá buổi chiều, không có chùa Thiên Mụ; giờ xếp 13:30–16:00 trong khi bảng ghi đẹp nhất lúc hoàng hôn | Chủ ý của luật xếp 12/11 (User chọn giữ 17/11); giờ xem lại sau B7 | HO chiều 17/11 mục (e) |
+| Trong ngày: Đại Nội → điểm khác → quay lại Kinh thành | Đi lại vòng (đo 8 / 960 khung ca hẹp; 104 / 960 ca rộng) | Bản sửa hẹp làm hỏng nhãn một chuỗi đo + test mưa; dừng ở trần giờ ⇒ sau B7 | HO sáng 17/11; nhánh hồ sơ `origin/p9-khong-quay-lai-cum` |
+| Phút đi ra phá Tam Giang | Ghi 15 phút dù gồm cả bữa trưa | Phút đi cố định theo cụm | HO chiều 17/11 (#17) |
+| Lịch không dời theo giờ tới / giờ về | Ngày đầu / cuối vẫn xếp đủ buổi | Chưa làm; đã rà nợ 15/11 | `R/b_ra_no_cu.md` |
+| "Đổi chỗ ngày 1 với ngày 2" | Trả lời "chưa hỗ trợ" (câu cố định), lịch không đổi | User chọn chặn lịch giả trước, hành động đổi chỗ hai ngày sau B7 | `R/c_chua_ho_tro_implementation.md` |
+| "Chỉ đi buổi sáng" / "bớt một chỗ" / dời điểm sang buổi khác | Có lượt bị trả "chưa hỗ trợ" dù làm được (bộ chuỗi 8 / 10, mốc 9 / 10) | Vòng chỉnh lời dặn thứ hai làm tệ hơn (7 / 10) ⇒ giữ vòng 1 | `R/c_chua_ho_tro_implementation.md` |
+| Một lượt ba ý có đổi hạng chỗ ở | "Chưa làm: đổi hạng chỗ ở" | Code áp tối đa 2 hành động / lượt | HO chiều 15/11 mục "Giới hạn đã nhận" |
+| Sửa bằng lời: số người lớn | Không sửa được bằng lời (7 / 8 trường sửa được); nút biểu mẫu không tự đổi theo lời | Chưa có nhu cầu đo được | `R/c_dem_sua_lich_truong.md` |
+| Hàm đọc ngày từ chữ người dùng | Ngày tương đối ("dời 2 hôm"), ngày âm, "dịp Tết" không đọc; có câu bị từ chối nhầm; "tuần sau" tính theo tuần lịch | Danh sách dạng được nhận là đóng — từ chối nhầm chấp nhận được, đọc SAI thì không | HO chiều 15/11; bộ dò private `data/review_sua_ngay_di_2026-11-15/` |
+| Biểu mẫu mới bị lỗi sau một bản đã sửa bằng lời | Cột lịch chỉ còn dòng lỗi; nhãn "Đã sửa theo lời bạn" chỉ kể lượt gần nhất | Ca hiếm | HO tối 16/11 |
+| Bỏ một điểm ⇒ bộ xếp lấp điểm khác | Có dòng báo "Đã bỏ X, thêm Y" (đúng thiết kế, không phải lỗi) | Giữ lấp chỗ trống, chỉ thêm câu báo | HO sáng 17/11 |
+| Bữa tối đổi quán sau bản sửa bữa trưa | 101 / 960 khung đổi quán tối | Do luật không lặp quán trong ngày | `R/c_bua_trua_implementation.md` |
+| "Nếu mưa… <nhà vườn> (trong nhà)" | Câu dễ hiểu nhầm; giờ một di tích mùa đông ở câu trả lời lệch bảng 30 phút | Ba điểm nhỏ ghi sau lượt thử 17/11, xếp sau B7 | HO chiều 17/11 mục 1 |
+
+### 10.3 Vận hành, log, đo
+
+| Tình huống | Hệ quả | Vì sao để nguyên / phải nhớ | Nguồn |
+|---|---|---|---|
+| `/health` | Không gọi ra ngoài ⇒ khoá OpenAI hết hạn mức vẫn trả `ok` | Thiết kế: chỉ đọc trạng thái đã nạp. Muốn biết model còn chạy ⇒ hỏi một câu thật | `backend/api/health.py` **[C kiểm 18/11]** |
+| Mọi lỗi nhà cung cấp model | Người dùng thấy cùng một câu "Không thể tạo câu trả lời vào lúc này." | Chưa tách câu theo loại lỗi; thấy lỗi sinh tăng ⇒ mở trang Usage của nhà cung cấp trước | `backend/api/routes/chat.py` `GENERATION_FAILURE_MESSAGE` **[C kiểm 18/11]** |
+| `HUE_LUOT_MOI_NGAY` không đặt, rỗng, `0` hoặc không phải số | Giới hạn lượt / IP / ngày TẮT (0 ≠ "chặn hết") | Mặc định cho máy local; bản công khai phải đặt số dương | `backend/api/gioi_han.py` `tran_tu_moi_truong` **[C kiểm 18/11]** |
+| Lỗi gọi model ở bước hiểu câu sửa lịch | Ghi log giống "không phải câu sửa" ⇒ lượt đó đi đường hỏi đáp thường | Không che lỗi với người dùng, nhưng đếm log không tách được | `backend/llm/len_ke_hoach.py` (khối `except GenerationError`) **[C kiểm 18/11]** |
+| `git_sha` trong log khi chạy Docker | `khong_ro` nếu không truyền biến | Từ nhánh `p9-git-sha-env` (chờ merge): truyền `HUE_GIT_SHA=$(git rev-parse --short HEAD)` — mã NGẮN, vì `scripts/dem_chat_metrics.py --sha` so bằng đúng chuỗi | review của C 18/11 |
+| Chạy riêng một test bằng `-k` trong `tests/test_api_chat.py` | Vài test (vd `test_git_sha_co_o_ca_hai_route`) hỏng dù chạy cả file thì qua | Test phụ thuộc thứ tự (logger do test trước dựng) ⇒ chạy CẢ FILE | **[C + B chạy 18/11]** |
+| USD của lượt bị người dùng bấm Dừng | Là cận dưới | Không có số token cuối | `R/b_ra_no_cu.md` |
+| Sổ vết debug `data/debug_trace/` | Không tự xoá (~13 KB / lượt); chỉ bật ở máy local (`HUE_SO_VET=true`) | Bản công khai KHÔNG đặt biến này | PS §4, §8 |
+| Trình duyệt cũ (Safari < 15.4) | Trắng trang (`findLast` / `findLastIndex` không được hạ cấp) | Checklist bản công khai | HO tối 16/11 |
+
+### 10.4 Giới hạn của chính các số đo
+
+- Bộ chấm là judge model, chưa có mốc người chấm điểm; lần người đọc cặp mù (01/11) chỉ là tham khảo. (PS §2, §3)
+- Bộ đo chỉ chấm "bằng chứng có trong ngữ cảnh" ở lần tìm kho ĐẦU, không chấm các lần model tìm thêm; lượt chạm trần số vòng bị tính "từ chối đúng". (HO chiều 17/11 mục (k) — chưa kiểm lại)
+- Nhiều người hỏi cùng lúc chỉ đo một lần (27/10); chữ đầu trên trình duyệt đo ít lượt. (PS §3 dòng Phase 8)
+- Nhiều số tiền trong handoff là "theo tin báo, chưa ai tính lại" — tính lại bằng `scripts/dem_chat_metrics.py --sha <mã>`.
+- Model trả lời dao động giữa các lượt: một lỗi chỉ thấy một lần là "chưa xác nhận" — chạy lại ở cuộc mới trước khi ghi là lỗi.
+
+### 10.5 Đường cũ — ĐỪNG CHÉP, đừng bật lại khi chưa đo
+
+Những thứ còn nằm trong code, nhánh hoặc tài liệu cũ, trông dùng được nhưng đã bị thay hoặc đã đo ra âm:
+
+| Thứ còn đó | Vì sao không dùng | Dùng gì thay | Nguồn |
+|---|---|---|---|
+| Cờ `lich_trinh` + bảng `diem_v3.json` (lịch câu tự do bản đầu) | Tắt từ đầu, không đạt luật ghi trước | Lịch bản 2: cờ `len_ke_hoach_v2`, bảng `lich_trinh_bang_v2` (đang là `diem_v10.json`) | `backend/config/settings.yaml` **[C kiểm 18/11]** |
+| `POST /api/chat` (không stream) để thử sửa lịch | Đường này KHÔNG vào luồng sửa lịch ⇒ ra lời văn tự do, lịch không đổi — dễ báo lỗi sai | `POST /api/chat/stream` hoặc Playwright | PS §8 |
+| Rào bằng danh sách dạng câu cho chữ người dùng ở đường "model trả rỗng" | Bộ câu kề bên phá ngay (chặn nhầm 8 / 9 câu thường) | Để model nhận ý (`chua_ho_tro`), code chỉ áp | HO sáng 17/11 |
+| "Luôn đưa công cụ thời tiết" ở mọi câu | Câu ngoài kho không hỏi thời tiết nhận bảng mưa ⇒ phạm sàn | Cổng từ khoá đã nới + câu liền trước | `R/b_cau_bao_implementation.md` |
+| Ghép câu hỏi tiếp với câu trước bằng code | Phá câu đổi chủ đề | Câu tìm kho cuối do model viết (`web_cau_noi_tiep`) | HO chiều 15/11 |
+| Chuẩn hoá giờ ngược ở mục web (commit `a935c58` trên `p9-gio-web`) | Không merge, chỉ là hồ sơ | Bản đã merge `05ec2f5` | HO sáng 17/11 |
+| Mục web bản gọn (`hoso/p9-web-gon`, `hoso/p9-web-gon-2`) | Ngắn hơn nhưng chắc hơn nguồn (đọc tay: 2 rõ + 4 ranh giới) | Bản dài đang chạy | HO chiều 16/11 |
+| Tag `hoso/p9-tim-song-song`, `hoso/p9-tran-tim-1`, `hoso/p9-toc-do-1`, `hoso/p9-web-suy-luan`, `hoso/p9-xa-giao-song-song`, `hoso/p9-tra-web-exa`, `hoso/b92-qwen3-harness` | Thử nghiệm đã đo: âm hoặc không hơn | Giữ để tra, không merge | PS §2, §4, §5; `git tag -l 'hoso/*'` **[C kiểm 18/11]** |
+| Câu soạn sẵn + luật từ khoá khẩn cấp (`emergency.py`) | Đã gỡ 09/11; câu khẩn cấp là NGOÀI PHẠM VI theo User | Không xây lại | PS §4; mục 9 |
+| Lệnh chạy từ gốc repo, import `backend.…` | Báo `ModuleNotFoundError: core` | Mọi lệnh từ `backend/`, import trần | PS §8 |
+| `pytest --deselect tests/…` để bỏ test có phí | Không khớp node id ⇒ test vẫn chạy | Liệt kê file cần chạy | PS §8 |
+| `data/phase_8_1/tools/validate_gold.py` | Chạy là GHI ĐÈ file nhãn đã khoá | `build_gold_v2.py` (chỉ đọc); nhãn đang dùng `gold_v5.jsonl` | PS §8 |
+| Ảnh tĩnh ở `/anh/…` | 404 | `/static/anh/<nhóm>/<file>` | PS §8 |
+| Script Playwright cũ chờ lớp `.feedback` | Khối đánh giá đã gỡ khỏi giao diện | `.turn[data-phase="done"]` | PS §8 |
