@@ -17,6 +17,8 @@ Từ dùng trong trang: <5–8 từ riêng của dự án mà một agent mới 
 ## 2. Mốc và việc đang mở
 <Bảng mốc: khi nào (ghi cả THỨ lẫn ngày) · việc. Danh sách việc đang mở: ai · việc · trạng thái · nhánh. Việc chưa ai nhận. Một câu "trước mốc X thì không được làm gì".>
 
+<Hai con số đo cách làm, ghi mỗi tuần (trang cách làm việc mục 7): việc đã báo "xong" bị lật lại · số lần chủ dự án phải nhắc lại một điều đã nói.>
+
 ## 3. Đang chờ chủ dự án
 <Gom MỘT chỗ mọi thứ đang chờ người quyết / người làm. Mục nào chưa chắc còn hiệu lực thì ghi "chưa kiểm". Thứ không có ở đây thì agent không hỏi lại.>
 
