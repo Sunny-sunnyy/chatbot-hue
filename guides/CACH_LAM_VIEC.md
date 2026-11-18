@@ -1,6 +1,6 @@
 # Cách làm việc với coding agent — dùng cho mọi agent, mọi dự án
 
-Bản 3 (10:38 18/11/2026; đã qua hai lượt review chéo giữa các phiên; chưa thử với công cụ khác hãng).
+Bản 3 (10:38 18/11/2026; đã qua hai lượt review chéo giữa các phiên; chưa thử với công cụ khác hãng). Sửa gần nhất: 13:46 18/11/2026.
 Người đọc: **bất kỳ coding agent nào** (Claude Code, Codex, Antigravity…), làm một mình hay trong nhóm nhiều phiên; và chủ dự án (gọi là User).
 Trang này nói **cách làm** và **chép sang dự án khác được**: mục 1–8 không phụ thuộc dự án; mục 9 ("Ở repo này") là phần viết lại khi chép; mục 10 là nguồn.
 Luật cứng + bảng quyền của từng dự án nằm ở `AGENTS.md` của dự án đó — khi trang này khác `AGENTS.md` thì `AGENTS.md` thắng. Bộ file mẫu cho dự án mới: `guides/khung/`.
@@ -39,7 +39,7 @@ kết luận nào chưa kiểm bằng lệnh*; mỗi lần báo cáo User có th
 
 **Quyền:** mỗi dự án có một bảng ba cột trong `AGENTS.md` — tự làm · hỏi trước · không bao giờ. Xếp một hành động vào cột nào thì xét ba điều: hậu quả nếu sai ·
 kiểm chứng được không · **đảo ngược được không**. Thứ "không bao giờ" phải có rào bằng máy mà mọi agent đều đi qua (hook git, không cấp khoá, tài khoản riêng) —
-cấm bằng chữ thì agent tìm đường khác. File "cho phép sẵn" của công cụ tự dài ra mỗi lần bấm "luôn cho phép" ⇒ User đọc và xoá bớt mỗi tháng.
+cấm bằng chữ thì agent tìm đường khác. File "cho phép sẵn" của công cụ tự dài ra mỗi lần bấm "luôn cho phép" ⇒ User đọc lại và xoá bớt mỗi khi đổi chế độ quyền hoặc đổi công cụ.
 Công cụ mới dùng lần đầu bắt đầu từ mức hỏi nhiều hơn.
 
 **Mức kiểm** — tự hỏi trước khi giao / nhận việc: *nếu làm sai thì mất gì?*
@@ -83,7 +83,8 @@ Mỗi khẳng định gắn một nhãn độ tin: **[máy kiểm]** (có lệnh
 
 **Phần của User:** luôn đọc báo cáo; khi rảnh bấm thử theo ý 4; việc xong thì tự thử và nêu ý kiến · chọn một dòng "xong" để agent chứng minh lại · mỗi tuần nói lại bằng
 lời mình lý do của một quyết định đã chọn (không nói được ⇒ agent giải thích lại) · việc lớn: sửa / tick năm dòng đề bài do agent soạn (mục 1) rồi mới nói "làm đi" ·
-trả lời câu hỏi làm rõ của agent sớm; gửi gói review khác hãng khi đã soạn xong.
+trả lời câu hỏi làm rõ của agent sớm; gửi gói review khác hãng khi đã soạn xong · hai câu tự hỏi: trước khi tin một so sánh, hỏi agent *"chạy lại y nguyên thì lệch bao
+nhiêu?"*; sau mỗi buổi, *"mình đang là điểm nghẽn của agent ở chỗ nào?"*
 
 **Kiểm bằng gì** — User làm theo ý 4 mà không cần hỏi thêm; thiếu một trong bốn ý ⇒ trả lại báo cáo.
 
@@ -94,6 +95,12 @@ kế, để script làm thay) → (b) máy kiểm được không (test, hook gi
 kèm chuyện sự cố. Rào mới thử một lần bằng ca cố ý hỏng trước khi tin. Hậu quả không lùi được ⇒ rào ngay lần đầu. Luật lâu không ai vi phạm lại và không còn lý do ⇒ gỡ.
 File agent luôn đọc (`AGENTS.md`) giữ ngắn, **dưới 24.000 byte** (có công cụ cắt file luật ở cỡ đó mà không báo); chi tiết để file khác, mở khi cần.
 Tài liệu bắt buộc đọc lúc mở phiên chỉ gồm luật + trang hiện trạng; nhật ký nối đuôi để tra, không bắt đọc.
+
+**Mở lại phiên cho nhẹ** [đang thử, chưa kiểm] — đo một lần ở repo gốc: mỗi phiên đọc 880–1.400 dòng lúc mở, dùng khoảng 185; ~9 tin chỉ để tìm phiên điều phối.
+Cách biết có ích: ba lần mở kế đếm số lần vấp luật vì chưa đọc — lớn hơn 0 ⇒ xét lại.
+- **Mở phiên đọc ngắn:** file luật ngắn (công cụ tự nạp) + trang hiện trạng + mục đầu sổ riêng của phiên + khối đầu sổ việc. Luật chi tiết đọc **đúng mục khi NHẬN việc** chạm mục đó (lời giao ghi "đọc mục nào"); vài luật hay vấp nhất đưa lên file luật ngắn. Phiên giữ luật (điều phối) vẫn đọc đủ.
+- **Kết phiên nhẹ** (tắt / mở lại chỉ để làm mới ngữ cảnh): THAY — không nối — mục đầu sổ riêng bằng ba dòng: việc dở · thứ đang chạy / file tạm · bẫy phiên này. Nhật ký và vòng cải tiến để cuối ngày.
+- **Chỉ mở lại phiên đã đầy.** Phiên thực thi không rải tin đi tìm phiên điều phối: đợi tin mở phiên của nó rồi trả lời MỘT tin (vai + báo cáo mở phiên).
 
 **Kiểm bằng gì** — `wc -c AGENTS.md`; công cụ mới: hỏi nó "bạn đã nạp file hướng dẫn và skill nào, trích dòng đầu mỗi file" — không trích được là chưa nạp.
 
@@ -112,6 +119,7 @@ Tài liệu bắt buộc đọc lúc mở phiên chỉ gồm luật + trang hi�
 - **Soát độ thật của test:** định kỳ hỏi "test này bắt được lỗi gì thật?" — test chỉ khẳng định lại điều code vừa viết, hoặc giả luôn phần cần kiểm, thì sửa hoặc bỏ;
   phép kiểm mới phải thấy một ca "biết chắc hỏng" ra hỏng trước khi số 0 của nó được tin [đã chạy một lượt 18/11].
 - Rào chặn / từ chối người dùng: đo cả hai chiều — bắt được bao nhiêu và chặn nhầm bao nhiêu ca thường.
+- **Chất lượng code:** file quá dài, hoặc đường cũ còn nằm song song đường mới ⇒ không tự dọn ngoài phạm vi việc; ghi đường cũ vào sổ giới hạn dưới nhãn "đường cũ — đừng chép".
 
 **Kiểm bằng gì** — báo cáo mục 4 ý 2 có đủ hai dòng "đồ giả" ↔ "lượt thật"; sau đợt gộp có file kết quả soát tích hợp.
 
@@ -119,6 +127,8 @@ Tài liệu bắt buộc đọc lúc mở phiên chỉ gồm luật + trang hi�
 
 Mỗi tuần ghi hai số vào trang hiện trạng: **(a) số việc đã báo "xong" bị lật lại** (User, reviewer hoặc máy tìm ra chưa xong) · **(b) số lần User phải nhắc lại một
 điều đã nói**. Muốn đổi cách làm (thêm phiên, thêm luật, đổi công cụ, đổi kiểu điều phối) ⇒ so hai số trước và sau, không quyết theo cảm giác. Mẫu nhỏ ⇒ chỉ tin chênh rõ. [chưa chạy]
+**Cách đếm (a):** chỉ đếm việc đã báo User hoặc đã gộp vào nhánh chính; lỗi người kiểm bắt TRƯỚC khi gộp đếm riêng — đó là quy trình chạy đúng. **Hai số về giá**, ghi cùng chỗ:
+tỉ lệ commit chạm code ↔ không chạm code · số câu đã hỏi User trong ngày (trên 8 ⇒ hôm sau gom câu). Không thêm số nào khác. [chưa chạy]
 
 ## 8. Một phiên hay nhiều phiên (chưa phải luật)
 
@@ -139,6 +149,7 @@ bằng hai con số ở mục 7.
 | tài liệu viết cho người | `bai_hoc/` |
 | sao lưu thứ ngoài git trước khi sửa | runbook mục 5 [đã chạy ở mỗi lần sửa dữ liệu gốc] |
 | làm một mình | `guides/KHI_CHI_CO_MOT_AGENT.md` |
+| mở phiên đọc ngắn · kết phiên nhẹ | `session_prompt/START_SESSION.md` · `session_prompt/WORKFLOW.md` §8 |
 
 **Sở thích đã chốt của chủ dự án (agent nào cũng theo):**
 - Tiếng Việt, lời thường, thuật ngữ kèm nghĩa; **đủ quan trọng hơn ngắn**; không dùng mã nội bộ khi chưa giải nghĩa.
@@ -164,8 +175,10 @@ Người giữ ghi chép từng khoá đã đối chiếu mã với ghi chép c�
 | 7 | đo chất lượng cùng tốc độ, không đếm dòng code hay token (SDLC tuần 2 — chưa kiểm mã bài) · một lần chạy chỉ là một mẫu (FDE W2D5·78–83) |
 | 8 | Coding W3D4·87–88, W3D5·89–93 · SDLC W1D5·31–35, W2D2·45–46 |
 
-## Chưa làm / chưa thử
+## Chưa làm / chưa thử (đúng lúc 13:46 18/11/2026)
 
-- Trang này **chưa được thử với Codex hay Antigravity** — buổi thử: tối thứ Ba 24/11/2026; bước đầu của buổi là hỏi công cụ đã nạp file nào (mục 5).
-- Kiểu điều phối khi đổi công cụ **chưa chọn** (mục 8); kiểu một phiên + agent con chưa thử có đo ở repo này.
-- Chưa thành nếp: báo cáo bốn ý + nhãn độ tin (mục 4), ảnh trước–sau khi đổi giao diện (mục 6), hai con số (mục 7), năm dòng đề bài trước việc lớn (mục 1).
+- **Chưa thử với Codex hay Antigravity** — buổi thử: tối thứ Ba 24/11/2026; bước đầu là hỏi công cụ đã nạp file nào (mục 5). Kiểu điều phối khi đổi công cụ chưa chọn (mục 8).
+- **Vòng cuối ngày** (mục 5, 7) chưa chạy lần nào; hai con số mới ghi MỘT lần, chưa ai soát; hai số về giá chưa ghi lần nào.
+- **Mở lại phiên cho nhẹ** (mục 5): đã vào luật mở phiên, chưa có lần mở nào đọc ngắn.
+- Hai skill mới (`soat-tich-hop`, `giao-viec-agent-con`) đã vào nhánh chính 18/11, chưa được chấm, chưa dùng lần nào.
+- Chưa thành nếp: báo cáo bốn ý + nhãn độ tin (mục 4), ảnh trước–sau (mục 6), năm dòng đề bài và "chọn một dòng xong để chứng minh lại" (mục 1).

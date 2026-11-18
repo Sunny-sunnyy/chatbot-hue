@@ -1,6 +1,6 @@
 # Bài 26 — Làm việc với coding agent: tin tới đâu, kiểm bằng gì, phần của anh là gì
 
-*Cập nhật lần cuối: 11:47, ngày 18/11/2026 · bài mới: gom mọi điều anh chốt và nhóm đã làm trong sáng 18/11 về cách làm việc; đã sửa theo một lượt kiểm độc lập trước khi đưa vào.*
+*Cập nhật lần cuối: 13:46, ngày 18/11/2026 · thêm hai dòng "vì sao cột hỏi-trước phải ngắn" ở mục 3. Trước: 11:47, ngày 18/11/2026 · bài mới: gom mọi điều anh chốt và nhóm đã làm trong sáng 18/11 về cách làm việc; đã sửa theo một lượt kiểm độc lập trước khi đưa vào.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -86,6 +86,9 @@ một đồ án tốt nghiệp: người chấm chỉ chấm một lần, và h�
 | **Tự làm, báo sau** | việc đã có trong sổ việc; sửa lỗi đã tái hiện được; lưu và đẩy code lên nhánh riêng; gộp vào bản chính **khi đã có phiên khác kiểm**; dùng agent con; tiền API cho đo / thử (ghi số thật); viết bài học |
 | **Hỏi anh trước** | tính năng mới, đổi hướng sản phẩm; đổi lớn thứ người dùng thấy; viết / sửa nội dung kho; xoá dữ liệu; gửi dữ liệu riêng ra một dịch vụ mới; một việc dự kiến tốn trên 1 USD; mọi việc đưa hệ thống lên mạng |
 | **Không bao giờ** | đọc / in file khoá; đưa dữ liệu riêng lên kho code công khai; mở bộ câu chấm cất riêng khi không được giao; để agent tự gọi Antigravity (điều khoản của Google cấm); ép đẩy đè lịch sử; bỏ qua rào kiểm của git |
+
+**Vì sao cột "hỏi anh trước" phải ngắn:** người duyệt bị hỏi quá nhiều thì đến một lúc sẽ bấm "đồng ý" theo quán tính — và bỏ sót đúng câu cần dừng lại. Khi
+đó việc hỏi không còn bảo vệ gì nữa. Vì vậy cột này chỉ giữ những việc không lùi được hoặc tốn tiền: ít câu hỏi, thì mỗi lần được hỏi anh mới thật sự đọc.
 
 Anh cũng sửa một chỗ nhóm hiểu lệch: cách làm này **không gắn với mốc 30/11**. Mốc đó chỉ là ngày anh tạm đặt cho việc đổi công cụ; cách làm phải đúng với
 bất kỳ agent nào, bất kỳ lúc nào.
@@ -221,6 +224,7 @@ Trước đây việc "rút kinh nghiệm" là kể lại sự cố rồi thêm 
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
 - Mọi quyết định của anh sáng 18/11 kèm giờ ghi nhận (lịch theo thứ, buổi thử tối thứ Ba 24/11: 09:14; báo cáo bốn ý + nhãn độ tin + phần của anh: 09:41; quyền thường trực 10:11; hai thói quen kiểm thử + giám khảo khác hãng 10:11; giữ chế độ bỏ hỏi quyền + câu kín 10:57; chấm skill 10:57; vòng tự cải thiện cuối mỗi ngày 11:09; năm dòng đề bài + đồ án tốt nghiệp chấm một lần + mốc dùng giám khảo 11:30): `session_prompt/CURRENT_HANDOFF.md` mục "PHIÊN SÁNG 18/11" [quyết định của anh]
+- "Hỏi nhiều quá thì người duyệt bấm đồng ý theo quán tính": khoá AI FDE, bài `W2D3·65` và `W1D3·21` (ghi chép riêng tư `data/khoa_hoc_2026-11-17/AI_FDE_E.md` dòng 143, `AI_FDE_E_phan_1.md` dòng 144) [ghi chép — không mở lại bài giảng gốc]
 - Bảng quyền: `AGENTS.md` mục "Quyền thường trực" [tài liệu]; trang cách làm chung: `guides/CACH_LAM_VIEC.md`; bộ file mẫu: `guides/khung/` [tài liệu]
 - Bốn phiên báo "đọc đủ" đều có lỗ (17/11): `session_prompt/CURRENT_HANDOFF.md` khối tối 17/11 mục C [tài liệu]. "3 test đạt" thật ra 2 đạt / 1 hỏng: `data/khoa_hoc_2026-11-17/de_xuat_cach_lam/B.md` mục 1 (riêng tư) [đã chạy — phiên C chạy lại lệnh đó sáng 18/11]. Bảng 45 dòng sai 4 dòng: `data/khoa_hoc_2026-11-17/AI_FDE_E_phan_9.md` mục 2d (riêng tư) [đã chạy — phiên E mở nguồn]
 - Tính năng ảnh làm bốn bản một tối (15/11): `session_prompt/CURRENT_HANDOFF.md` khối kết phiên tối 15/11, mục vòng tự soi [tài liệu]

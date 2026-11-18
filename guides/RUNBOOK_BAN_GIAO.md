@@ -186,6 +186,10 @@ mà không giải thích được; ảnh có người rõ mặt / trẻ em (`WOR
 `docs/superpowers/specs/2026-11-16-deploy-aws-design.md` (sha `e847b47ad995`); checklist trước deploy: `session_prompt/CURRENT_HANDOFF.md`
 mục "Câu hỏi A còn nợ".
 
+**Ghi chờ — làm TRƯỚC khi deploy** (chưa làm; ghi 18/11/2026 để không quên, không làm khi chưa mở lại chuyện deploy):
+- Chạy đủ skill `agent-security-review` MỘT lượt trên bản đã gộp mọi công cụ + tra web (tới 18/11 mới có bảng theo từng kế hoạch và lần đóng gói 31/10).
+- Mọi lệnh deploy / sửa dữ liệu bị ngắt giữa chừng **có thể đã chạy một nửa** ⇒ kiểm trạng thái thật trước khi cho chạy lại, không chạy lại mù.
+
 ## 9. Quyết định của User không hỏi lại
 
 (CHƯA VIẾT — A, kết phiên) rút từ `Project_Status.md` §5 thành danh sách ngắn (vd câu khẩn cấp: ngoài phạm vi; không nói giá phòng
