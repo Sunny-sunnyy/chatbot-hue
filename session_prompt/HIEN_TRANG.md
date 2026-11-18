@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 15:10 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
+Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 15:20 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án, cho BẤT KỲ coding agent nào (Claude Code, Codex, Antigravity) vừa mở phiên. Nó được **viết lại tại chỗ**
 mỗi lần kết phiên — không nối thêm. Thứ tự mở phiên (bạn là phiên nào, báo gì, chờ gì) ở `session_prompt/START_SESSION.md`; trang này là phần "dự án đang
@@ -34,11 +34,11 @@ Mốc (User chốt theo THỨ, 18/11/2026):
 | Khi nào | Việc |
 |---|---|
 | Cuối MỖI ngày | Vòng tự cải thiện cách làm: đọc hai con số · lỗi lặp lần hai ⇒ máy trước chữ sau · thêm bao nhiêu gỡ bấy nhiêu (lần đầu: 18/11) |
-| Sáng thứ Bảy 21/11 | User tự bật hệ thống theo runbook mục 1–3, gõ ~10 câu tự chấm, xem sổ vết, đọc trang bản đồ + bài 26 (45–60 phút, User chốt 18/11); phiên điều phối ngồi cạnh, không làm hộ |
-| Thứ Bảy 21/11, trước tối | Chạy cả `backend/tests` một lượt trên `main` · gói soát mù cho model hãng khác (file riêng tư `data/review_khac_hang/2026-11-21_truoc_dung_code/DE_BAI.md` — A xem phạm vi trước) |
+| Thứ Sáu 20/11 – thứ Bảy 21/11 | Chạy cả `backend/tests` một lượt trên `main` · agent con ngữ cảnh sạch soát tích hợp (thay gói khác hãng — gói dời về buổi test cuối) · A tự chạy 5 mục "cách thử" của `bai_hoc/VIEC_MOI_XONG.md` |
 | Tối thứ Bảy 21/11 | **Code đứng yên**; ghi mã commit đứng yên vào sổ đo |
-| Chủ nhật 22/11 | **Lượt đo cuối** (lệnh: file riêng tư `data/phase_9/b7/tools/RUNBOOK_CUOI.md`; trần 0,45 USD; phiên B chạy) |
-| Khoảng thứ Hai 23/11 | Đọc kết quả ⇒ User đóng Phase 9; sau đó vòng tự tối ưu bản hẹp ở bước tìm (đã duyệt, CHƯA có kế hoạch) |
+| Chủ nhật 22/11 | **Lượt đo cuối** phần đã thấy (lệnh: file riêng tư `data/phase_9/b7/tools/RUNBOOK_CUOI.md`; trần 0,45 USD; B chạy); phần bộ kín ghi NOT RUN chờ User |
+| Từ thứ Hai 23/11 | Sàn đạt ⇒ ghi "Phase 9 xong phần nhóm" ⇒ **đợt hoàn thiện local** (không cần User): vòng tự tối ưu bước tìm · sửa lỗi hoãn (runbook mục 10) · công cụ kiểm · kế hoạch deploy trên giấy. Xong sớm ⇒ deploy AWS (User cho trước; cần User: tài khoản, khoá, ngân sách) |
+| Cuối cùng | **User test TOÀN BỘ một lần** theo `data/test_cuoi/DANH_SACH.md` (gồm buổi tự tay + phiếu chấm, gói khác hãng, lệnh bộ kín) ⇒ User đóng Phase 9 |
 | Tối thứ Ba 24/11 | User lái Codex rồi Antigravity làm thử thay Claude; chạy lại 7 đề chấm skill (file riêng tư `data/cham_skill_2026-11-18/de/`) |
 
 Đã vào `main` 18/11: xem `git log --merges --oneline -25`.
@@ -58,7 +58,7 @@ Hai con số đo cách làm (tuần 16–22/11, tới chiều 18/11; B soát): v
 ## 3. Đang chờ User (chỉ những việc ghi ở đây đang chờ User; việc đã chốt hoặc đã hỏi rồi thì đừng hỏi lại)
 
 1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
-2. User tự chạy ba lệnh đếm bộ câu kín trước lượt đo cuối (ở `RUNBOOK_CUOI.md`) — *chưa kiểm đã chạy chưa*. Deploy / AWS: chỉ hỏi lại SAU khi Phase 9 đóng.
+2. Dời về buổi test toàn bộ cuối (User chốt 18/11, KHÔNG nhắc trước đó): buổi tự tay, gói khác hãng, lệnh bộ kín, đóng Phase 9.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
 
@@ -72,7 +72,7 @@ Sản phẩm:
   trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
 - Không mở lại khi User chưa nêu: giọng nói (dẹp) · so ảnh bằng embedding (hoãn, chưa có ngày; ảnh mẫu còn giữ) · nhớ sở thích người dùng (không làm) ·
   "tra web sớm" (bỏ) · "gộp câu tìm" (gác) · mục web giữ bản dài (bản gọn đã thử, không dùng).
-- Deploy / AWS chỉ bàn khi dự án xong ở máy local.
+- User 18/11: bỏ qua phần cần User, làm hết phần không cần; cuối cùng User test toàn bộ một lần. Deploy AWS: sau đợt hoàn thiện local, xong sớm thì làm luôn.
 - Đây là ĐỒ ÁN TỐT NGHIỆP, chấm một lần, User trình bày với giảng viên — tài liệu không dùng chữ "sếp" / "công ty"; gói "giảng viên hỏi vặn" làm sau khi
   hệ thống hoàn tất và User đã đọc bài học.
 
