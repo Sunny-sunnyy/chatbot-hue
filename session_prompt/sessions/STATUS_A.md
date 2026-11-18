@@ -1,10 +1,8 @@
-# STATUS A — PHIÊN TỐI 18/11 (thứ Tư; mở; cập nhật 19:34 18/11/2026 `date`)
+# STATUS A — KẾT PHIÊN NHẸ TỐI 18/11 (viết 19:48 18/11/2026 `date`; User tắt / bật lại WSL để đổi cấu hình RAM; terminal tối: A `hue-rag-64` · B `hue-rag-87` · C `hue-rag-f7` · E `hue-rag-08`)
 
-- Terminal: A `hue-rag-64` · B `hue-rag-87` · C `hue-rag-f7` · E `hue-rag-08` (Claude Code, trực tiếp; cả ba trả lời đúng MỘT tin sau tin của A — 0 tin rải tìm A). Lần thử "đọc ngắn" thứ nhất: 0 lần vấp luật tính tới lúc giao việc.
-- Kiểm nhanh: `main` `1d6fb64` = origin; chỉ `.wslconfig` untracked; hooksPath `.githooks`; máy khởi động lại 19:25 ⇒ Qdrant tự bật (9.436 điểm — lệch trang hiện trạng ghi "tắt"), `/tmp` mất ⇒ `/tmp/hr_b_spec3` thành bản ghi "prunable" (nhánh còn trên origin; B dọn bản ghi); 0 server; RAM tổng 19 GB, khả dụng 16; `ListAgents` không thấy phiên dự án khác ⇒ lượt máy coi như có.
-- Không hỏi quyền (bảng quyền thường trực). Giao: E bước 0 dựng giao diện (ĐẠT, A kiểm lại) rồi sửa `guides/CACH_LAM_VIEC.md` · B cả `backend/tests` một lượt + sửa `RUNBOOK_CUOI.md` · C soát tích hợp đợt 2 trên `1d6fb64`. A: tạo `data/test_cuoi/DANH_SACH.md` (bản đầu, riêng tư).
-- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`, `data/test_cuoi/DANH_SACH.md`.
-- Hộp hỏi User tối nay: 0.
+- **Việc dở:** bước 0, 1 ĐẠT; bước 2 xong phần soát (5 điểm, `data/review_tich_hop_2026-11-18/dot_2/ket_qua_dot_2.md`). Đang giữa chừng: B sửa P1 ("dông" ở mục web) + P2 (lời báo lỗi thiếu 112 khi model tự chọn loại bão) trên `origin/p9-p1p2-an-toan` ⇒ C review (chạy `dot_2/thu/t1…t5`, t5 = bộ dò 20 câu, sót phải = 0) ⇒ A gộp ⇒ B chạy lại cả `backend/tests` MỘT lượt ⇒ bước 3 (mã commit đứng yên + sao lưu ổ D) ⇒ bước 4. C viết nhánh runbook 10.3b cho P3–P5 sau khi nhánh B gộp. Việc kế + các chốt: khối "PHIÊN TỐI 18/11" đầu `CURRENT_HANDOFF.md`.
+- **Thứ đang chạy / file tạm:** A: 0 worktree, 0 server, 0 agent con; tiền A 0 USD. `/tmp` MẤT khi WSL tắt (worktree `/tmp/hr_b_p1p2` của B, `/tmp/b7_moc` phải dựng lại trước bước 4). Sau khi bật lại: `docker compose up -d qdrant` nếu Qdrant không tự lên (kiểm 9.436 điểm).
+- **Bẫy phiên này:** gộp nhánh tài liệu vào `main` GIỮA lượt cả bộ test của B ⇒ 1 test so mã commit hỏng (chạy lại 13 đạt) — có lượt test rộng / đo ở cây chính thì không commit / gộp · chỉ nhìn RAM khả dụng TRONG WSL trước khi cho chạy việc nặng, không thấy Windows của User ở 98 % (bộ nhớ đệm WSL 12 GB; User phải hỏi) · nói với User về `autoMemoryReclaim` theo trí nhớ trước khi tra tài liệu (tra xong: mặc định đã là `dropCache`, thứ quyết định là dòng `memory=`). Hộp hỏi User tối nay: 0. Lần thử "đọc ngắn" thứ nhất: 0 lần vấp luật do chưa đọc.
 
 # STATUS A — KẾT PHIÊN CHIỀU 18/11 (viết 16:09 18/11/2026 `date`; terminal chiều: A `hue-rag-36` · B `hue-rag-40` · C `hue-rag-70` · E `hue-rag-5c`)
 
