@@ -193,8 +193,9 @@ Trước đây việc "rút kinh nghiệm" là kể lại sự cố rồi thêm 
   xấu sai khiến. Rào đáng tin nhất vẫn là rào của git (bài 20): nó chặn việc đưa dữ liệu riêng lên GitHub. Nó **không** chặn việc đọc, và
   cũng không chặn một lệnh gửi file ra mạng theo đường khác.
 - **Thứ nằm ngoài git không lùi lại được — nhưng nay đã có bản sao.** Kho bài viết, dữ liệu đo và chỉ mục tìm kiếm không nằm trong git, hỏng là mất. Anh nói
-  "làm đi" và từ 11:45 ngày 18/11 đã có một bản sao trên ổ đĩa khác của máy (kho bài: đủ 496 / 496 file, một file được so mã kiểm thấy khớp). Bản sao chỉ
-  đúng tới lúc chép ⇒ chép lại ở mỗi mốc chốt.
+  "làm đi" và từ 11:45 ngày 18/11 đã có một bản sao trên ổ đĩa khác của máy (kho bài: đủ 496 / 496 file, một file được so mã kiểm thấy khớp). Đây là bản sao
+  **cùng một máy**: nó cứu khi ổ làm việc hỏng hoặc lỡ tay xoá, không cứu khi mất cả máy. Chỉ mục tìm kiếm trong bản sao được chép lúc dịch vụ đang chạy;
+  nếu nó hỏng thì dựng lại được từ kho. Bản sao chỉ đúng tới lúc chép ⇒ chép lại ở mỗi mốc chốt.
 - **Bộ câu chấm cất riêng chỉ còn được giữ bằng luật chữ.** Ở chế độ trên không có rào máy nào chặn agent mở nó. Anh chọn giữ luật chữ và ghi rõ giới hạn
   này trong báo cáo lượt đo cuối.
 - **Chưa thử với Codex và Antigravity.** Trang cách làm việc và bộ file mẫu mang sang dự án khác mới được các phiên Claude đọc. Buổi thử: tối thứ Ba 24/11.
@@ -236,6 +237,6 @@ Trước đây việc "rút kinh nghiệm" là kể lại sự cố rồi thêm 
 - **Kiểm độc lập trước khi đưa vào (11:43, ngày 18/11/2026)** (`data/kiem_bai_hoc_2026-11-18/kiem_bai_26.md`, riêng tư): một agent con ngữ cảnh mới đối chiếu 100 khẳng định — 75 đúng, 4 sai, 19 dễ hiểu nhầm, 2 không kiểm được; đã sửa cả 4 chỗ sai ("mỗi điểm đều được chạy lại" · "soát toàn bộ thư mục test" · "chênh không quá 1 điểm" · câu dẫn sai bài 20) và 19 chỗ dễ hiểu nhầm; hai chỗ không kiểm được: một ghi rõ là nhận định của nhóm, một đã bỏ. Người viết tự mở lại nguồn cho ba chỗ sai có số (bảng điểm chấm skill 10 ↔ 8 · 8 ↔ 8 · 8 ↔ 9; "ba file test", 39 test; 49 file test; 1 / 6 lượt ở đợt hai). Số "hơn 130 nghìn ký tự" của sổ việc: `wc -c session_prompt/CURRENT_HANDOFF.md` [đã chạy 18/11].
 - Sổ việc 11:09 ghi "chênh ≤ 1 điểm" cho chấm skill là chép nhầm (đó là độ lệch giữa hai người chấm); số đúng ở bảng tổng của `data/cham_skill_2026-11-18/KET_QUA.md`.
 
-- Bản sao dữ liệu ngoài git trên ổ D (11:45 18/11; 496 / 496 file kho, một file khớp md5): theo tin của phiên điều phối 11:47, ngày 18/11/2026 [số của phiên điều phối — người viết bài chưa tự kiểm].
+- Bản sao dữ liệu ngoài git trên ổ D (11:45 18/11): số file kho 496 ở bản gốc và 496 ở bản sao — phiên C và người viết bài cùng đếm lại bằng `find … -type f | wc -l` [đã chạy]; "một file khớp mã kiểm" là số của phiên điều phối, chưa ai so lại; "chỉ mục chép lúc dịch vụ đang chạy" theo sổ việc 11:45 [tài liệu].
 
 </details>
