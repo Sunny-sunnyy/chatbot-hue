@@ -1,69 +1,67 @@
 ---
 name: improve-workflow
-description: Session A (điều phối) của hue_rag — dùng lúc kết phiên / đóng đợt, khi User phải nhắc agent cùng một điều lần thứ hai, khi một sự cố quy trình làm mất giờ / tiền / dữ liệu (lỡ chạy paid, commit lẫn file, sửa đè file của session khác, báo cáo không cập nhật, brief sub-agent sai…), hoặc khi User xin "rút kinh nghiệm", "cải tiến cách làm", "tự cải thiện". Biến sự cố có bằng chứng thành ≤ 3 đề xuất sửa luật / skill / rào bằng máy cho User duyệt, gỡ luật cũ, sửa memory sai, ghi sổ cải tiến. Không dùng để đổi mục tiêu, tiêu chí đo, quyền, trần tiền hay code chatbot.
+description: Session A (điều phối) của hue_rag — dùng cuối mỗi ngày làm việc, lúc kết phiên / đóng đợt, khi User phải nhắc agent cùng một điều lần thứ hai, khi một sự cố quy trình làm mất giờ / tiền / dữ liệu (lỡ chạy paid, commit lẫn file, sửa đè file của session khác, báo cáo không cập nhật, brief sub-agent sai…), hoặc khi User xin "rút kinh nghiệm", "cải tiến cách làm", "tự cải thiện". Biến sự cố có bằng chứng thành ≤ 3 đề xuất sửa luật / skill / rào bằng máy cho User duyệt, gỡ luật cũ, sửa memory sai, ghi sổ cải tiến. Không dùng để đổi mục tiêu, tiêu chí đo, quyền, trần tiền hay code chatbot.
 ---
 
-# Tự cải tiến cách làm — Session A
+# Tự cải tiến cách làm — phiên điều phối
 
-**Mỗi vòng xét gỡ trước khi thêm** (User 05/11): đầu vòng liệt kê luật / bước nào đã thành thừa hoặc làm chậm mà không bắt lỗi thật (dùng thước "tự soi over-engineering" ở `Session_Prompt.md` §7) và đề xuất gỡ; số luật thêm ≤ số luật gỡ, trừ luật an toàn / dữ liệu.
+Làm một mình thì bạn là người chạy vòng này; "User duyệt" giữ nguyên. Luật gốc (`AGENTS.md`, `session_prompt/Session_Prompt.md`, `WORKFLOW.md`) thắng skill này;
+file luật chỉ phiên điều phối sửa. **Harness** = mọi thứ định hình cách agent làm: `AGENTS.md`, `session_prompt/`, `skills/`, `guides/CACH_LAM_VIEC.md`, `.githooks/`,
+cấu hình + hook của từng công cụ, trí nhớ riêng của agent. Sổ: `session_prompt/SO_CAI_TIEN_CACH_LAM.md`. Nguồn ý: khoá AI FDE (agent sai thì sửa vào harness, không
+chỉ sửa một lần; bên đề xuất không tự chấm; mỗi vòng ít thay đổi).
 
-Nguồn ý: khóa AI FDE (agent sai thì sửa vào harness, không chỉ sửa một lần; bên đề xuất không tự quyết —
-người duyệt cho **thử**, bằng chứng quyết **giữ / gỡ**, mỗi vòng ít thay đổi) và cách làm của một dự án khác
-của User (ghi chú private `data/external_project_notes/`). **Harness** của hue_rag = `AGENTS.md`, `session_prompt/`,
-`skills/`, memory của agent, `.githooks/`, `.claude/settings.json`, `.claude/hooks/`. Luật gốc (`session_prompt/Session_Prompt.md`,
-`WORKFLOW.md`) thắng skill này; governance chỉ A sửa, User duyệt qua skill này. Sổ:
-`session_prompt/SO_CAI_TIEN_CACH_LAM.md`.
+## 0. Nhịp — cuối MỖI ngày làm việc, ba bước (≤ 15 phút); kết phiên / đóng đợt chạy đủ mục 1–5
+
+1. **Đọc hai con số** của tuần (ghi ở trang hiện trạng — hue_rag: `session_prompt/HIEN_TRANG.md` mục 2): (a) số việc đã báo "xong" bị lật lại · (b) số lần User phải nhắc lại một điều đã nói. Người đếm ghi tên;
+   số chưa ai soát gắn "chưa soát". Hai số này — không phải cảm giác — trả lời "cách làm đang tốt lên hay xấu đi".
+2. **Lỗi nào lặp lần HAI** hôm nay ⇒ xử theo thứ tự nấc ở mục 2 (máy trước, chữ sau). Lỗi gặp lần đầu: sửa việc đó, ghi một dòng bẫy, **không** thêm luật.
+3. **Thêm bao nhiêu gỡ bấy nhiêu:** mỗi luật / bước / rào thêm hôm nay kèm một thứ gỡ (luật thừa, bước không bắt lỗi thật, chữ trùng) — trừ luật an toàn / dữ liệu.
 
 ## 1. Đầu vào — chỉ sự cố có bằng chứng
 
-Đọc: mục "Đã học / bẫy gặp" của `sessions/STATUS_*.md`; review có `changes_requested` / finding lặp; lời User
-sửa agent trong phiên; memory loại `feedback`; `git log` (commit sửa commit trước); sổ (mục `đang thử`).
-Mỗi sự cố ghi: ngày, session, chuyện gì, **mất gì** (giờ / USD / dữ liệu / User phải nhắc), bằng chứng
-(file:dòng, commit), **lần thứ mấy**, **phát hiện bằng gì** (tự kiểm / review chéo / User / công cụ chặn) — loại lỗi
-hay bị bắt muộn thì đề xuất bước kiểm sớm hơn. Ý hay chưa có sự cố (khóa học, bài viết) ⇒ "ý chờ", chưa thành luật.
+Đọc: mục "Đã học / bẫy gặp" của `sessions/STATUS_*.md`; review có `changes_requested` / điểm lặp; lời User sửa agent trong phiên; `git log` (commit sửa commit
+trước); sổ (mục `đang thử`). Mỗi sự cố ghi: ngày, ai, chuyện gì, **mất gì** (giờ / USD / dữ liệu / User phải nhắc), bằng chứng (`file:dòng`, commit),
+**lần thứ mấy**, **phát hiện bằng gì** (tự kiểm / người khác kiểm / User / máy chặn) — loại lỗi hay bị bắt muộn thì đề xuất bước kiểm sớm hơn.
+Ý hay chưa có sự cố (khoá học, bài viết) ⇒ "ý chờ", chưa thành luật.
 
-## 2. Đề xuất — tối đa 3 mỗi vòng, nấc rẻ trước
+## 2. Đề xuất — tối đa 3 mỗi vòng; gỡ trước, rồi máy trước chữ sau
 
-1. **Gỡ / gộp / dời**: luật trùng, hết hiệu lực, bài học nằm sai chỗ (trong STATUS / handoff / memory của
-   một agent ⇒ về skill của khâu, `WORKFLOW.md` hoặc `Project_Status.md` §8 để mọi agent đọc được).
-2. **Sửa câu** của luật có sẵn mà vẫn bị làm sai.
-3. **Thêm luật** 1–3 dòng vào đúng một chỗ, kèm "vì sao" (sự cố, ngày); viết thành việc làm được ngay (lệnh, đường
-   dẫn, mẫu cụ thể), không viết lời khuyên chung chung.
-4. **Rào bằng máy** khi luật bằng chữ bị vi phạm ≥ 2 lần, **hoặc ngay lần đầu nếu hậu quả không đảo ngược
-   được** (lộ dữ liệu lên repo public, xóa dữ liệu, mở câu kín). Ưu tiên rào mọi agent đều chịu (hook git
-   `.githooks/`, kiểm trong script); quyền + hook Claude Code (`.claude/settings.json`, `.claude/hooks/` — W37) là lớp thêm. Luôn giữ dòng chữ
-   tương ứng cho agent không chịu rào đó.
+0. **Gỡ / gộp / dời** trước khi thêm: luật trùng, hết hiệu lực, bài học nằm sai chỗ (trong sổ riêng / trí nhớ của một agent ⇒ về skill của khâu hoặc tài liệu
+   chung để mọi agent đọc được).
+1. **Bỏ hẳn khả năng sai:** đổi thiết kế, để script làm thay bước người / agent hay làm sai (ví dụ script in dòng "đã đẩy lên" thay vì agent gõ tay).
+2. **Máy kiểm:** test, hook git, phép kiểm trong script — ưu tiên tầng **mọi agent đều đi qua** (hook git); cấu hình riêng của một công cụ chỉ là lớp thêm.
+   Rào mới phải **thử một lần bằng ca cố ý hỏng** (thấy nó chặn) trước khi tin; chưa thử ⇒ ghi "chưa thử".
+3. **Cuối cùng mới chữ:** sửa câu của luật có sẵn mà vẫn bị làm sai, hoặc thêm 1–3 dòng vào đúng MỘT chỗ — viết thành việc làm được ngay (lệnh, đường dẫn, mẫu),
+   không kèm chuyện sự cố / mã trong câu luật (chuyện để ở sổ).
 
-Mỗi đề xuất viết theo `propose-options` (lời thường): sự cố + lần; sửa ở đâu (file, mục, nguyên văn dòng
-thêm / gỡ); cái giá (thêm bao nhiêu chữ phải đọc, chặn nhầm gì); **cách biết có ích** (sự cố có lặp không,
-agent có làm đúng không); khi nào gỡ.
-**Không đề xuất qua skill này:** mục tiêu / phạm vi, tiêu chí đo hay bộ thử của thí nghiệm đang chạy, quyền,
-trần tiền, code chatbot — các việc đó đi đường thường (`WORKFLOW.md` §3, §9).
+Hậu quả **không đảo ngược được** (lộ dữ liệu lên repo công khai, xoá dữ liệu, mở bộ câu cất riêng) ⇒ rào bằng máy ngay lần đầu, không chờ lặp. Rào chỉ một công cụ
+chịu ⇒ luôn giữ dòng chữ tương ứng cho agent khác.
 
-## 3. Duyệt → thử → giữ / gỡ
+Mỗi đề xuất viết theo `propose-options` (lời thường): sự cố + lần thứ mấy; sửa ở đâu (file, mục, nguyên văn dòng thêm / gỡ); cái giá (thêm bao nhiêu chữ phải
+đọc, chặn nhầm gì); **cách biết có ích = hai con số ở mục 0 + sự cố đó có lặp không**; khi nào gỡ.
+**Không đề xuất qua skill này:** mục tiêu / phạm vi, tiêu chí đo hay bộ thử của thí nghiệm đang chạy, quyền, trần tiền, code sản phẩm — các việc đó đi đường
+thường (`WORKFLOW.md` §3, §9).
 
-- User duyệt từng đề xuất; duyệt = **cho thử**, chưa phải "đúng". Áp xong ghi sổ `đang thử`, ngày, file đổi,
-  theo dõi gì. Thay đổi governance do A làm vẫn cần người khác kiểm (B/C hoặc sub-agent ngữ cảnh mới).
-- **Mỗi vòng, trước khi thêm đề xuất mới,** xét lại **mọi** mục `đang thử` (không chỉ mục mới): không lặp và luật được
-  dùng ⇒ `đang dùng`; lặp ⇒ lên một nấc; qua 2 phiên làm việc thật không ai cần, gây vướng, hoặc **đang chặn việc đáng làm**
-  ⇒ đề xuất `gỡ`; chưa có dịp dùng ⇒ giữ, ghi lý do. Ghi kết quả xét **thêm vào trước** ghi chú cũ ở cột "Xem lại", không
-  ghi đè (W38, theo khung_fde v1 — 31/10: 39 mục `đang thử`, W1–W13 chưa vòng nào xét; khoá AI FDE W2D5·83: luật tự viết có
-  thể tự trói tay).
-- Bằng chứng ở đây chỉ là quan sát (sự cố lặp hay không). Nói thẳng với User; không viết "đã chứng minh".
+## 3. Duyệt → thử → giữ / gỡ — người xét KHÁC người đề xuất
 
-## 4. Giữ harness gọn và đúng (mỗi vòng)
+- User duyệt từng đề xuất; duyệt = **cho thử**, chưa phải "đúng". Áp xong ghi sổ `đang thử`: ngày, file đổi, theo dõi gì, **ai sẽ xét**. Thay đổi file luật do phiên điều phối làm vẫn cần một phiên khác đọc diff trước khi gộp. Người đề xuất không tự
+  kết luận luật của mình có hiệu quả: người xét là một phiên / người khác (làm một mình: phiên mới ngữ cảnh sạch), kết luận theo hai con số + sự cố có lặp không.
+- **Mỗi vòng, trước khi thêm đề xuất mới,** xét lại **mọi** mục `đang thử`: không lặp và luật được dùng ⇒ `đang dùng`; lặp ⇒ lên một nấc ở mục 2; qua 2 phiên
+  làm việc thật không ai cần, gây vướng, hoặc **đang chặn việc đáng làm** ⇒ đề xuất `gỡ`; chưa có dịp dùng ⇒ giữ, ghi lý do. Ghi kết quả xét **thêm vào trước**
+  ghi chú cũ ở cột "Xem lại", không ghi đè.
+- Bằng chứng ở đây chỉ là quan sát trên mẫu nhỏ (chỉ tin chênh rõ). Nói thẳng với User; không viết "đã chứng minh".
 
-- `wc -l` các file `START_SESSION.md` bắt đọc; ghi số vào sổ. Dài thêm đáng kể ⇒ đề xuất dời lịch sử ra, để
-  link — **không cắt nội dung còn hiệu lực** (User 2026-10-25: sợ agent mất ngữ cảnh).
-- **Memory dùng chung cho mọi session Claude** (A/B/C/D cùng thư mục): mục sai / cũ (đối chiếu
-  `Project_Status.md`, `CURRENT_HANDOFF.md`) ⇒ sửa hoặc xóa; luật mọi agent cần ⇒ đưa vào tài liệu chung.
+## 4. Giữ harness gọn và đúng (mỗi vòng kết phiên)
+
+- `wc -lc` các file bắt đọc lúc mở phiên; ghi số vào sổ. File agent luôn đọc giữ **dưới 24.000 byte** (có công cụ cắt file luật ở cỡ đó mà không báo — `guides/CACH_LAM_VIEC.md` mục 5). Dài thêm đáng kể ⇒ dời lịch sử ra, để link —
+  **không cắt nội dung còn hiệu lực**.
+- Trí nhớ riêng của một công cụ: mục sai / cũ (đối chiếu trang hiện trạng) ⇒ sửa hoặc xoá; điều mọi agent cần ⇒ đưa vào tài liệu chung, không để ở đó.
 - Một luật ở hai chỗ ⇒ giữ một, chỗ kia trỏ tới.
 
 ## 5. Kết vòng
 
-Vòng nào sửa file mà `START_SESSION.md` bắt đọc: giao một sub-agent ngữ cảnh mới đóng vai B, chỉ đọc theo
-`START_SESSION.md`, báo lại vai / việc / luật cứng nó nắm được và chỗ khó hiểu — sửa chỗ thiếu trước khi kết vòng
-(2026-10-25: cách này tìm ra 6 chỗ chưa rõ).
+Vòng nào sửa file bắt đọc lúc mở phiên: giao một agent con ngữ cảnh mới chỉ đọc đúng các file đó, báo lại vai / việc / luật cứng nó nắm được và chỗ khó hiểu —
+sửa chỗ thiếu trước khi kết vòng (lời giao theo skill `giao-viec-agent-con`).
 
-3–5 dòng lời thường cho User: sự cố nào, đã đổi gì, đã gỡ gì, phiên sau theo dõi gì. Một dòng vào
-`CURRENT_HANDOFF.md` và `TONG_HOP.md` của đợt. Commit khi được phép (`WORKFLOW.md` §9.6).
+3–5 dòng lời thường cho User: hai con số, sự cố nào, đã đổi gì, **đã gỡ gì**, phiên sau theo dõi gì. Một dòng vào `CURRENT_HANDOFF.md` và `TONG_HOP.md` của đợt.
+Commit / đẩy theo bảng quyền (`AGENTS.md`).

@@ -3,9 +3,9 @@ name: propose-options
 description: Dùng mỗi khi cần User quyết định hoặc chọn hướng trong hue_rag — đưa phương án A/B/C, đề xuất cách làm, mở Phase mới, đổi kiến trúc/quy trình, chọn model/provider/dữ liệu/chi phí. Cũng dùng khi vấn đề còn mở cần bàn nhiều bước trước khi chốt (brainstorm Phase, thiết kế việc mới) — hỏi mỗi lần một câu có đáp án để chọn. Mỗi phương án bằng lời thường kèm đổi gì, tốn gì, khi nào sai, chọn khác mất gì, và một câu tự kiểm để User biết mình đã hiểu.
 ---
 
-# Đề xuất để User chọn — A, B, C
+# Đề xuất để User chọn
 
-Nguồn: skill cùng tên của một dự án khác của User (User 2026-10-24), chỉnh cho hue_rag.
+Nguồn: skill cùng tên của một dự án khác của User, chỉnh cho hue_rag.
 
 ## Vì sao
 
@@ -22,15 +22,13 @@ vi đã duyệt: A tự quyết, nói ra lý do. Không hỏi lại điều đã
 (`Project_Status.md` §5).
 
 - **Câu User hiểu được nhiều cách** (dữ liệu / code / quyết định / tài liệu; "đồng ý" áp cho một hay nhiều câu): nhắc lại
-  một câu "ý bạn là … đúng không?" trước khi giao việc (25/10: hiểu "kiểm tra lại các phase" là rà dữ liệu, User muốn rà code).
-- **Đề xuất có thứ tự việc** (merge trước, sửa trước…): đối chiếu spec / plan đã duyệt trước khi trình, ghi một dòng
-  "khớp spec … §…" hoặc nói rõ là lệch (25/10: đề xuất merge B1 trước, trái spec 8.2 — B1 sau B0).
-- **Khuyên bỏ / đóng một hướng chưa từng đo:** đối chiếu nguyên tắc "thử + so mốc trước khi chọn" (`Project_Status.md` §5, User 24/10 20:49);
-  không có số chất lượng ⇒ đề xuất phép đo rẻ trước, hoặc ghi rõ "chưa đo, lý do bỏ chỉ là vận hành" (27/10: A khuyên đóng Qwen3-8B chưa đo, User hỏi lại — W28).
-- **Mọi phương án người đề xuất tự trả lời trước, ngay trong hộp chọn** (User 21:11 09/11/2026): "lỗi / nhu cầu này đã thấy ở người dùng thật (hoặc lượt đo thật) chưa — dẫn số / file · không làm thì mất gì". Trả lời không có bằng chứng ⇒ đề xuất **phép đo rẻ trước**, không đưa phương án xây. User chỉ kiểm câu trả lời đó có thuyết phục không.
+  một câu "ý bạn là … đúng không?" trước khi giao việc.
+- **Đề xuất có thứ tự việc** (gộp trước, sửa trước…): đối chiếu spec / plan đã duyệt trước khi trình, ghi một dòng "khớp spec … §…" hoặc nói rõ là lệch.
+- **Khuyên bỏ / đóng một hướng chưa từng đo:** đối chiếu nguyên tắc "thử + so mốc trước khi chọn" (`Project_Status.md` §5);
+  không có số chất lượng ⇒ đề xuất phép đo rẻ trước, hoặc ghi rõ "chưa đo, lý do bỏ chỉ là vận hành".
+- **Mọi phương án người đề xuất tự trả lời trước, ngay trong hộp chọn:** "lỗi / nhu cầu này đã thấy ở người dùng thật (hoặc lượt đo thật) chưa — dẫn số / file · không làm thì mất gì". Trả lời không có bằng chứng ⇒ đề xuất **phép đo rẻ trước**, không đưa phương án xây. User chỉ kiểm câu trả lời đó có thuyết phục không.
 - **Đề xuất thêm cơ chế phòng xa (rào bảo mật mới, bộ đo mới, lượt review thêm) — không áp cho sàn an toàn / ngoài kho đã có:** ghi trước một dòng "lỗi này đã quan sát chưa · ai dùng thật · bao giờ deploy". Chưa quan sát + một người dùng
-  + chưa deploy ⇒ ghi vào mục "trước khi deploy" của spec, **không hỏi User, không đưa vào Phase** — trừ hậu quả không đảo ngược (lộ dữ liệu lên repo public, xoá dữ liệu, mở câu kín)
-  (01–02/11: User nhắc làm quá tay 3 lần — S64, S68, S76 bộ web xấu cố định; W48).
+  + chưa deploy ⇒ ghi vào mục "trước khi deploy" của spec, **không hỏi User, không đưa vào Phase** — trừ hậu quả không đảo ngược (lộ dữ liệu lên repo công khai, xoá dữ liệu, mở bộ câu cất riêng).
 
 ## 2. Mỗi phương án
 
@@ -46,13 +44,13 @@ Thêm phương án "không làm / giữ như cũ" khi đó là lựa chọn th�
 
 ## 3. Khuyến nghị
 
-- **Bàn với cả nhóm trước khi khuyến nghị** (User 22:23 13/11/2026, áp mọi phiên): User thường chọn đúng phương án khuyến nghị ⇒ khuyến nghị gần như là quyết định. Với lựa chọn thật (dữ liệu để đâu, kiến trúc, phạm vi, tiền, hướng sản phẩm) A gửi câu + các phương án cho các session đang mở (B, C, E — agent khác qua User), mỗi người ≤ 10 dòng gửi cả nhóm: chọn gì, phản biện, rủi ro chưa ai nêu; A chốt sau tối đa 2 vòng (tin đi chéo ⇒ A chốt theo nội dung, không theo người nói sau cùng) rồi trình User **một** khuyến nghị, ghi chỗ nhóm không đồng ý. Không áp cho núm nhỏ / chênh người dùng không cảm nhận được (A tự quyết, ghi report).
+- **Khuyến nghị phải qua phản biện trước khi tới User:** User thường chọn đúng phương án khuyến nghị ⇒ khuyến nghị gần như là quyết định. Với lựa chọn thật (dữ liệu để đâu, kiến trúc, phạm vi, tiền, hướng sản phẩm): **nhóm nhiều phiên** — phiên điều phối gửi câu + các phương án cho các phiên đang mở, mỗi phiên ≤ 10 dòng (chọn gì, phản biện, rủi ro chưa ai nêu), chốt sau tối đa 2 vòng theo nội dung rồi trình **một** khuyến nghị, ghi chỗ nhóm không đồng ý; **làm một mình** — nêu luôn **phương án NGƯỢC mạnh nhất** cạnh khuyến nghị (lập luận tốt nhất để KHÔNG chọn khuyến nghị). Không áp cho núm nhỏ / chênh người dùng không cảm nhận được (tự quyết, ghi report).
 - Nói **lý do**, và **thông tin nào nếu có sẽ làm đảo khuyến nghị**.
 - Tách rõ: **đã đo / có trong code** ↔ **ước lượng** ↔ **giả thuyết**.
 - Phản biện cả phương án mình khuyến nghị: khi nào nó thất bại.
 - Kết bằng **một câu tự kiểm**: "nếu hiểu đúng thì trả lời được: …".
-- Sau khi User chọn: nhắc lại ngắn lựa chọn đó nghĩa là gì, cái giá là gì. Câu trả
-  lời cho thấy chưa hiểu thì giải thích lại bằng ví dụ đúng bài toán.
+- Sau khi User chọn: nhắc lại ngắn lựa chọn đó nghĩa là gì, cái giá là gì. Quyết định lớn: mời User **nói lại lý do bằng lời mình** (phần User đã nhận: mỗi
+  tuần nói lại lý do một quyết định); câu trả lời cho thấy chưa hiểu thì giải thích lại bằng ví dụ đúng bài toán.
 
 ## 4. Brainstorm — vấn đề còn mở, nhiều quyết định nối nhau
 
@@ -70,9 +68,11 @@ Thêm phương án "không làm / giữ như cũ" khi đó là lựa chọn th�
   cho User duyệt một lần (`session_prompt/WORKFLOW.md` §9). Không tự chuyển sang
   làm khi User chưa duyệt.
 
-## 4b. Đề xuất dựng thứ mới — khám phá 5 dòng trước (theo khung_fde v1, W40; khoá AI FDE W2D1·46, W3D1·85–86)
+## 4b. Đề xuất dựng thứ mới — khám phá 5 dòng trước (khoá AI FDE W2D1·46, W3D1·85–86)
 
-Đề xuất dựng tính năng / Phase / agent / công cụ mới (Phase 9, giao diện mới…) ⇒ viết trước 5 dòng; thiếu dòng nào thì nói là
+**Việc LỚN bắt đầu bằng năm dòng đề bài do AGENT soạn** (User nói ý bằng lời thường ⇒ agent hỏi lại tối đa ba câu có sẵn đáp án ⇒ năm dòng: vấn đề · ai dùng ·
+"xong khi" · **không làm gì** · **điều tệ nhất chấp nhận được** ⇒ User sửa / tick rồi nói "làm đi" — `guides/CACH_LAM_VIEC.md` mục 1). Hai bộ năm dòng khác nhau: bộ trên chốt **đề bài** (làm gì, cho ai); bộ dưới — viết SAU khi đề bài đã tick — kiểm **có đáng
+dựng không**. Đề xuất dựng tính năng / Phase / agent / công cụ mới ⇒ viết 5 dòng khám phá; thiếu dòng nào thì nói là
 thiếu và chưa đề xuất dựng: (1) **vấn đề + đo bằng gì** ("để …, đo bằng …"; "cần agent cho X" là giải pháp, chưa phải vấn đề);
 (2) **ba ô**: đo được không · có dữ liệu / cách đánh giá chưa · giá trị là rẻ hơn, nhanh hơn hay làm khác đi; (3) **mốc đơn giản
 nhất** cách mới phải hơn (pipeline đang chạy — `Project_Status.md`); (4) **tiêu chí thành công bằng số**, ghi lúc mở (đổi khâu
@@ -81,12 +81,12 @@ nghiệm thu của **một** spec (§4, `WORKFLOW.md` §9.1), không thành tài
 (đếm, xem mẫu, một lời gọi — không trả phí hoặc trong trần đã duyệt, `Session_Prompt.md` §9) và báo phát hiện. Không áp cho
 sửa lỗi nhỏ đã rõ nguyên nhân.
 
-## 4c. Việc lớn — giúp User tự nói lại được (theo khung_fde v1, W40)
+## 4c. Việc lớn — giúp User tự nói lại được
 
 Mở hướng mới, đổi kiến trúc, đóng Phase ⇒ cuối đề xuất thêm vài ý để User **nói được** bằng lời thường: hiểu vấn đề thế này (và
 cái chưa chắc) → đã xem những hướng nào, vì sao chọn hướng này → định làm gì, kiểm bằng cách nào → cần xác nhận điểm nào. Lý do:
-User được đánh giá ở chỗ tự giải thích lại được việc agent làm (đồ án tốt nghiệp; User 31/10). Muốn luyện ⇒ gợi ý buổi
-Session D (`teach-and-quiz`).
+User được đánh giá ở chỗ tự giải thích lại được việc agent làm (đồ án tốt nghiệp). Muốn luyện ⇒ gợi ý buổi giảng + hỏi lại
+(`teach-and-quiz`).
 
 ## 5. Cách nói
 

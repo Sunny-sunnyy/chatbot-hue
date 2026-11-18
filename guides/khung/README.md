@@ -30,18 +30,20 @@ Sau khi chép: bật hook git nếu có (`git config core.hooksPath <thư mục 
 - **Lớn** (không lùi được, tiền, dữ liệu, bảo mật — hoặc việc nhiều ngày, nhiều file): chủ dự án nói ý bằng lời thường ⇒ agent hỏi lại tối đa ba câu ⇒ năm dòng đề bài do AGENT soạn, chủ dự án sửa / tick ⇒ kế hoạch ⇒ làm ⇒ review (khác hãng nếu được) ⇒ chủ dự án tự thử.
 Chi tiết mức kiểm: `../CACH_LAM_VIEC.md` mục 2.
 
-## Skill nào mang đi được (8 skill của repo gốc, thư mục `skills/`)
+## Skill nào mang đi được (10 skill của repo gốc, thư mục `skills/`)
 
 | Skill | Mang đi | Lý do một dòng |
 |---|---|---|
-| `practical-project-coding` | nguyên | luật viết code / test chung, không gắn dự án |
+| `practical-project-coding` | nguyên, bỏ mục "Ranh giới theo khâu pipeline" | luật viết code / test chung: "xong khi" ghi trước, test phải thấy đỏ, sửa lỗi bốn bước |
+| `giao-viec-agent-con` | nguyên | khuôn lời giao + cách nhận kết quả — cần ở mọi dự án, mọi công cụ có agent con |
+| `soat-tich-hop` | nguyên, đổi hai đường dẫn ví dụ | soát chỗ các tính năng gặp nhau sau đợt gộp + gói review khác hãng + bảng đối chiếu |
 | `agent-design-review` | nguyên, sửa dòng hiện trạng | danh sách kiểm khi thiết kế agent có công cụ — chung cho mọi sản phẩm có agent |
-| `agent-security-review` | nguyên, sửa dòng hiện trạng | danh sách kiểm bảo mật agent — chung |
-| `propose-options` | sửa nhẹ | khuôn đưa lựa chọn cho chủ dự án là chung; đổi tên dự án + ví dụ |
-| `teach-and-quiz` | sửa nhẹ | cách giảng + hỏi lại là chung; đổi đường dẫn sổ học |
-| `run-experiment` | phải sửa | khung "tiêu chí ghi trước, mốc, đổi một thứ" là chung; danh sách khâu + bộ đo là của một hệ RAG |
-| `risk-gated-agent-review` | phải sửa | viết cho mô hình nhiều phiên có phiên điều phối; làm một mình thì rút còn phần đối chiếu diff ↔ tiêu chí |
-| `improve-workflow` | chỉ repo gốc | gắn chặt sổ cải tiến + vai điều phối của repo gốc; dự án mới dùng mục 5 + 7 của trang cách làm việc |
+| `agent-security-review` | nguyên, sửa dòng hiện trạng | danh sách kiểm bảo mật agent + mục 7b thử chốt chặn của chính coding agent bằng file giả |
+| `propose-options` | sửa nhẹ | khuôn đưa lựa chọn cho chủ dự án là chung; đổi tên dự án + đường dẫn tài liệu thiết kế |
+| `teach-and-quiz` | sửa nhẹ | cách giảng + hỏi lại là chung; đổi đường dẫn sổ học và thư mục tài liệu cho người |
+| `risk-gated-agent-review` | sửa nhẹ | cổng tối thiểu + bảng kiểm theo tác động là chung; đổi đường dẫn mẫu report; làm một mình: người kiểm = phiên mới ngữ cảnh sạch |
+| `run-experiment` | phải sửa | khung "tiêu chí ghi trước, mốc, đổi một thứ, luật giữ / gỡ" là chung; bộ câu, thủ tục bộ an toàn, tên báo cáo khâu là của một hệ RAG |
+| `improve-workflow` | sửa nhẹ | nhịp cuối ngày ba bước + nấc "máy trước chữ sau" là chung; đổi tên sổ cải tiến và các file luật |
 
-Bảng này lập từ phần đầu + số dòng nhắc tên dự án của mỗi skill, **chưa đọc trọn từng skill**. Công cụ khác Claude Code tìm skill ở thư mục `.agents/skills` (theo tài liệu
-công khai, chưa thử) ⇒ ở dự án mới đặt skill vào đó hoặc tạo liên kết.
+Bảng này lập sau khi **đọc trọn 8 skill cũ (đã sửa) và viết 2 skill mới** (18/11/2026); chưa skill nào được chép thử sang một dự án thứ hai [chưa chạy]. Công cụ khác Claude Code tìm skill ở thư mục
+`.agents/skills` (theo tài liệu công khai, chưa thử) ⇒ ở dự án mới đặt skill vào đó hoặc tạo liên kết.

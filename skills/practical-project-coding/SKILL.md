@@ -56,10 +56,9 @@ xin đổi requirement hay xin duyệt lại từng focused fix.
 - Đọc instruction áp dụng cho exact path và giữ nguyên thay đổi không liên quan.
 - Xác định behavior hiện tại, behavior mong muốn, affected data flow và scope.
 - Nêu assumption hoặc điểm chưa rõ chỉ khi chúng có thể thay đổi kết quả.
-- Xác định success criteria có thể quan sát và cách verification phù hợp.
+- Ghi MỘT dòng `xong khi: <lệnh> in ra <kết quả>` (hoặc "người dùng làm X thì thấy Y") **trước khi sửa**; báo "xong" chỉ khi đã tự chạy đúng lệnh đó và dán đầu ra thật.
 - Tìm production path hoặc module đang dùng trước khi tạo đường đi thứ hai.
-- Đổi hàm / module dùng chung (ví dụ gom lõi trả lời dùng chung cho route API và bộ đánh giá) ⇒ `git grep` mọi nơi gọi
-  **trước khi sửa**; verification phải gồm mọi bên gọi (theo khung_fde v1, W40).
+- Đổi hàm / module / hằng dùng chung ⇒ `git grep` mọi nơi gọi **trước khi sửa**; verification phải gồm mọi bên gọi.
 - Chọn giải pháp nhỏ nhất đáp ứng đầy đủ requirement, không phải giải pháp có ít
   dòng nhất.
 
@@ -116,10 +115,8 @@ lệnh cấm class/helper máy móc để thay việc đánh giá tác động.
 
 ### Ranh giới theo khâu pipeline — dùng lại được, kiểm bằng cách dùng thật
 
-User 2026-10-24: các khâu RAG phải đóng gói được và dùng lại được, gồm loader/discovery, chunking,
-embedding/sparse, vectorstore, retrieval, rerank, context, generator và evaluator. Lý do: API, script,
-notebook và harness thí nghiệm đều gọi cùng một code production. Thí nghiệm không được dựng đường đi
-thứ hai.
+Quyết định của chủ dự án hue_rag (dự án khác: bỏ mục này): mỗi khâu RAG (đọc kho, chia đoạn, embedding / sparse, kho vector, tìm, xếp lại, ngữ cảnh,
+sinh, chấm) đóng gói được và dùng lại được — API, script, notebook và harness thí nghiệm gọi cùng một code production; thí nghiệm không dựng đường đi thứ hai.
 
 - **Dùng lại được** nghĩa là gọi một hàm của khâu với đầu vào và tham số rõ ràng, nhận đầu ra rõ ràng.
   Khâu không đọc ngầm cấu hình toàn cục ở sâu bên trong và không gắn cứng đường dẫn hay tên collection.
@@ -161,9 +158,11 @@ hoặc rủi ro thực tế có chi phí tái diễn đáng kể. Không đặt 
 coverage hoặc số file test. Không test implementation detail, abstraction phòng
 xa hoặc cơ chế đang bị loại bỏ.
 
-Skill này không bắt buộc TDD. Dùng TDD khi project/task yêu cầu hoặc khi vòng
-RED-GREEN-REFACTOR giúp làm rõ pure logic hay tái tạo bug. Methodology cụ thể có
-thể do skill chuyên biệt quyết định.
+Skill này không bắt buộc TDD. Nhưng test viết cho một lỗi / hành vi mới chỉ được tin khi đã thấy **ĐỎ một lần** (chạy trên code cũ, hoặc cố ý làm
+hỏng code mới) — test chưa từng đỏ có thể không kiểm gì.
+
+**Sửa lỗi bốn bước, không nhảy bước:** tái hiện (đúng cấu hình đang chạy, thử MỘT lượt trước) ⇒ chứng minh nguyên nhân gốc (log, vết) ⇒ một sửa tập trung ⇒
+chứng minh đã sửa bằng **chính lệnh tái hiện**. Hai giả thuyết ⇒ thử từng cái; không thêm lớp che lỗi.
 
 ### Phân biệt input unit-level và evidence hệ thống
 
@@ -206,9 +205,6 @@ Trước khi bàn giao, đọc exact diff và kiểm tra:
 - test và verification thực sự bảo vệ behavior đã nêu;
 - observed result không bị trộn với expected hoặc prior result.
 
-Bàn giao ngắn: thay đổi gì, đã chạy gì, kết quả quan sát, phần failed/skipped/
-partial/not verified và giới hạn còn lại. Kết bằng một dòng **"Giải thích ngắn"**
-bằng lời thường (làm gì, vì sao, ảnh hưởng gì tới người dùng / hệ thống) để User
-tự trả lời được "vì sao làm thế này" (theo khung_fde v1, W40; thí nghiệm: 3–5 dòng
-của `run-experiment` §5 thay dòng này). Không áp report format hoặc checklist
-mới nếu project đã có workflow riêng.
+Bàn giao: bảng **đã làm · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra**. Phần viết cho chủ dự án theo khuôn bốn ý (người dùng thấy gì khác · bằng chứng,
+tách dòng "test bằng đồ giả" ↔ "lượt thật" · chưa làm / giới hạn · cách thử trong 2 phút) và mỗi khẳng định gắn nhãn [máy kiểm] / [người thứ hai kiểm] /
+[chưa kiểm] — mẫu `guides/khung/BAO_CAO_4_Y.mau.md`. Đổi thứ người dùng thấy ⇒ kèm ảnh trước–sau hoặc đầu ra thật. Thí nghiệm: 3–5 dòng của `run-experiment` §5.
