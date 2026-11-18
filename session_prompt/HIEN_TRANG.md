@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 15:20 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
+Viết lại lần cuối: 13:12 18/11/2026 (kết phiên sáng); sửa gần nhất 15:25 18/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án, cho BẤT KỲ coding agent nào (Claude Code, Codex, Antigravity) vừa mở phiên. Nó được **viết lại tại chỗ**
 mỗi lần kết phiên — không nối thêm. Thứ tự mở phiên (bạn là phiên nào, báo gì, chờ gì) ở `session_prompt/START_SESSION.md`; trang này là phần "dự án đang
@@ -23,35 +23,37 @@ trợ lý trên bản code đã đứng yên.
   (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (mặc định
   tắt; bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
-- **Lần chạy cả bộ test gần nhất:** 17/11, 1.345 đạt (theo sổ việc; CHƯA chạy lại — lượt kế trước tối thứ Bảy 21/11).
+- **Lần chạy cả bộ test gần nhất:** 17/11, 1.345 đạt (theo sổ việc; CHƯA chạy lại — là bước 1 ở mục 2).
 - **Máy lúc 13:37 18/11/2026:** Qdrant TẮT, server không chạy. Bật (báo điều phối trước): `docker compose up -d qdrant`.
 - **Giới hạn đã biết + đường cũ đừng chép:** `guides/RUNBOOK_BAN_GIAO.md` mục 10. Gặp hành vi trông như lỗi ⇒ tra ở đó TRƯỚC khi sửa hay báo.
 
 ## 2. Mốc và việc đang mở
 
-Mốc (User chốt theo THỨ, 18/11/2026):
+Thứ tự việc — KHÔNG gắn ngày (User 18/11: không cố định thời gian; bước trước đạt và máy rảnh là làm bước sau ngay; chất lượng giữ nguyên):
 
-| Khi nào | Việc |
-|---|---|
-| Cuối MỖI ngày | Vòng tự cải thiện cách làm: đọc hai con số · lỗi lặp lần hai ⇒ máy trước chữ sau · thêm bao nhiêu gỡ bấy nhiêu (lần đầu: 18/11) |
-| Thứ Sáu 20/11 – thứ Bảy 21/11 | Cả `backend/tests` một lượt trên `main` · agent con soát tích hợp (thay gói khác hãng) · A tự chạy 5 mục "cách thử" của `bai_hoc/VIEC_MOI_XONG.md` |
-| Tối thứ Bảy 21/11 | **Code đứng yên**; ghi mã commit đứng yên vào sổ đo |
-| Chủ nhật 22/11 | **Lượt đo cuối** phần đã thấy (lệnh: file riêng tư `data/phase_9/b7/tools/RUNBOOK_CUOI.md`; trần 0,45 USD; B chạy); phần bộ kín ghi NOT RUN chờ User |
-| Từ thứ Hai 23/11 | Sàn đạt ⇒ ghi "Phase 9 xong phần nhóm" ⇒ **đợt hoàn thiện local**: tự tối ưu bước tìm · sửa lỗi hoãn (runbook mục 10) · công cụ kiểm · kế hoạch deploy. Xong sớm ⇒ deploy AWS (cần User: tài khoản, khoá, ngân sách) |
-| Cuối cùng | **User test TOÀN BỘ một lần** (`data/test_cuoi/DANH_SACH.md`) ⇒ User đóng Phase 9 |
-| Tối thứ Ba 24/11 | User lái Codex rồi Antigravity làm thử thay Claude; chạy lại 7 đề chấm skill (file riêng tư `data/cham_skill_2026-11-18/de/`) |
+| Bước | Việc | Đạt khi |
+|---|---|---|
+| 1 | Cả `backend/tests` một lượt trên `main`; sửa lỗi tái hiện được | 0 test hỏng do code |
+| 2 | Agent con soát tích hợp (thay gói khác hãng) · tự chạy 5 mục "cách thử" của `bai_hoc/VIEC_MOI_XONG.md` | mỗi điểm đã tái hiện rồi sửa hoặc ghi runbook mục 10 |
+| 3 | **Code đứng yên**: ghi mã commit vào sổ đo, chép sao lưu | có mã commit |
+| 4 | **Lượt đo cuối** phần đã thấy (`data/phase_9/b7/tools/RUNBOOK_CUOI.md`; trần 0,45 USD; B chạy); bộ kín NOT RUN chờ User | mọi sàn đạt ⇒ "Phase 9 xong phần nhóm" |
+| 5 | **Đợt hoàn thiện local**: tự tối ưu bước tìm · sửa lỗi hoãn (runbook mục 10) · công cụ kiểm · kế hoạch deploy | từng sửa đổi đo đạt, có người khác kiểm |
+| 6 | Deploy AWS (cần User một lần: tài khoản, khoá, ngân sách) | kiểm trên bản đã lên mạng |
+| 7 | **User test TOÀN BỘ một lần** (`data/test_cuoi/DANH_SACH.md`) ⇒ User đóng Phase 9 | — |
+
+Mỗi ngày: vòng tự cải thiện cách làm (lần đầu 18/11).
 
 Đã vào `main` 18/11: xem `git log --merges --oneline -25`.
 
 Việc đang mở (ai · việc · trạng thái) — chi tiết ở sổ việc (mục 7):
-- **A:** gói soát mù + buổi tự tay của User thứ Bảy (phiếu chấm: `data/tu_tay_2026-11-21/`); trả lời hai dự án khác về cách làm; gộp nhánh.
-- **B:** test rộng thứ Sáu / sáng thứ Bảy; lượt đo cuối Chủ nhật 22/11; sau đó plan vòng tự tối ưu + thử `ruff` (chỉ `backend/`, `scripts/`); giữ trang bản đồ.
-- **C:** giữ trang này; runbook mục 10; 4 skill cũ chấm tối thứ Ba 24/11; sau 22/11 script kiểm đường dẫn.
-- **E:** giữ `guides/CACH_LAM_VIEC.md`; 10 skill đã vào `main` — KHÔNG sửa chữ skill trước 24/11.
+- **A:** danh sách User test cuối (phiếu chấm: `data/tu_tay_2026-11-21/`); trả lời hai dự án khác về cách làm; gộp nhánh.
+- **B:** test rộng; lượt đo cuối; sau đó plan vòng tự tối ưu + thử `ruff` (chỉ `backend/`, `scripts/`); giữ trang bản đồ.
+- **C:** giữ trang này; runbook mục 10; soát tích hợp bước 2; sau bước 4: script kiểm đường dẫn, chấm 4 skill cũ.
+- **E:** giữ `guides/CACH_LAM_VIEC.md`; 10 skill đã vào `main` — KHÔNG sửa chữ skill khi chưa có số chấm mới.
 - **Chưa ai nhận, để sau lượt đo cuối:** các hàng "sửa sau lượt đo cuối" của runbook 10.3b · lỗi tìm "quán gần một chùa lớn" (10.1) · lịch đi vòng trong cùng
   quần thể (10.2) · runbook mục 8 (deploy) — chỉ viết khi User mở lại chuyện deploy.
 
-Từ nay tới tối thứ Bảy 21/11: chỉ sửa lỗi đã tái hiện được; không thêm tính năng; đổi chuỗi gửi model ⇒ hỏi phiên điều phối trước.
+Tới khi xong bước 4: chỉ sửa lỗi đã tái hiện được; không thêm tính năng; đổi chuỗi gửi model ⇒ hỏi phiên điều phối trước.
 
 Hai con số đo cách làm (tuần 16–22/11, tới chiều 18/11; B soát): việc đã báo "xong" bị lật lại **5** · User phải nhắc lại điều đã nói **6**. Giá 18/11: 74 commit, 10 chạm code (tuần code đứng yên); hỏi User: chiều 7 hộp hỏi, sáng không đếm lại được (> 8 ⇒ gom câu; từ 19/11 A đếm ngay lúc hỏi).
 
