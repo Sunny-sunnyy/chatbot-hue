@@ -16,12 +16,13 @@ Gợi ý chỗ soi (không giới hạn): <3–6 gợi ý>. File chính: <danh s
 ## 3. Ranh giới (bắt buộc)
 - **Chỉ đọc.** Không sửa file nào của repo, không commit, không đẩy, không cài gói. File DUY NHẤT bạn được ghi là file kết quả ở mục 4.
 - **Không mở, không in:** file khoá; <các thư mục dữ liệu riêng>.
-- Không gọi API trả phí, không bật server. Được chạy lệnh đọc (`git log`, `git show`, tìm chữ) và <lệnh chạy hàm thuần của dự án, nếu có>. Không chạy được thì ghi "[chỉ đọc code]".
+- Không gọi API trả phí, không bật server. Được chạy lệnh đọc (`git log`, `git show`, tìm chữ). **Cách chạy thử một hàm:** <ghi đúng lệnh của dự án, chép–dán chạy được> —
+  hoặc nói thẳng: "chỉ đọc code là đủ; mọi điểm ghi nhãn [chỉ đọc code]". (Không ghi cách chạy thì reviewer sẽ không chạy gì.)
 - Không chép dữ liệu riêng vào kết quả.
 
 ## 4. Kết quả — ghi vào `<đường dẫn>/KET_QUA_<tên model>.md`
 1. Dòng đầu: tên model + mức suy luận + giờ bắt đầu / kết thúc (lấy bằng lệnh `date`).
-2. Bảng phát hiện, nặng → nhẹ: # · chỗ nào (`file:dòng`) · đầu vào nào ⇒ ra gì (cụ thể) · bằng chứng gắn nhãn **[đã chạy]** (kèm lệnh + đầu ra) hoặc
+2. Bảng phát hiện, nặng → nhẹ: # · chỗ nào (`file:dòng`) · đầu vào nào ⇒ ra gì (cụ thể) · **ca đối chứng nào KHÔNG bị** (đầu vào gần giống mà kết quả đúng) · bằng chứng gắn nhãn **[đã chạy]** (kèm lệnh + đầu ra) hoặc
    **[chỉ đọc code]** · vì sao test hiện có không bắt · mức (người dùng thấy / lệch log-tiền / chỉ lý thuyết) · đề nghị (ghi giới hạn / sửa nhỏ / cần đo).
 3. Mục "Đã soi, thấy ổn" — mỗi dòng trỏ test đang khoá.
 4. Mục "**CHƯA đọc gì / chưa kiểm gì**" — khai thật; file nào chỉ lướt thì ghi là lướt.
@@ -30,7 +31,9 @@ Gợi ý chỗ soi (không giới hạn): <3–6 gợi ý>. File chính: <danh s
 ## 5. Cách dùng kết quả (để bạn biết mình được chấm thế nào)
 Danh sách của bạn sẽ được so với danh sách của một reviewer cùng hãng với người viết: điểm nào trùng, điểm nào chỉ bạn thấy; mỗi điểm chỉ bạn thấy sẽ được chạy lại
 để xác nhận. Phát hiện ít mà đúng có giá hơn nhiều mà đoán.
+Người nhận sẽ **tái hiện từng điểm trước khi sửa** — cả hệ quả lẫn nguyên nhân bạn nêu (hệ quả đúng mà nguyên nhân sai vẫn dẫn tới sửa sai chỗ).
 
 ---
 *Ghi chú cho người soạn (xoá trước khi gửi):* file phải tự đủ — người review không có lịch sử trò chuyện. Chủ dự án tự mở công cụ hãng khác và gửi file; agent không tự gọi
-công cụ đó. Lưu cả đề bài lẫn file kết quả cạnh nhau (ngoài git nếu chứa chi tiết riêng). Mẫu này rút từ một lần dùng thật ngày 18/11/2026.
+công cụ đó. Lưu cả đề bài lẫn file kết quả cạnh nhau (ngoài git nếu chứa chi tiết riêng). Mẫu này rút từ một lần dùng thật ngày 18/11/2026: reviewer khác hãng chỉ đọc code ~10 phút, thêm được 3 điểm thật mà lượt cùng hãng bỏ sót, và sót 8 điểm lượt
+cùng hãng thấy — hai lượt bổ sung nhau, không thay nhau; một trong ba điểm đúng hệ quả nhưng sai một nửa nguyên nhân.
