@@ -13,7 +13,7 @@ Không làm: sửa lời dặn nào · thêm lời gọi model · đặt phòng 
 
 | File | Đổi gì |
 |---|---|
-| `backend/llm/lam_thay.py` (mới, 53 dòng) | Hàm thuần `nho_lam_thay(câu) → None / dat_cho / gui / tinh_trang`. Danh sách cho phép hẹp: phải có dấu nhờ trợ lý tự làm; câu hỏi thông tin (ở đâu, cách nào, số điện thoại…) và câu nhờ soạn / tóm / chép ⇒ None. |
+| `backend/llm/lam_thay.py` (mới, 47 dòng) | Hàm thuần `nho_lam_thay(câu) → None / dat_cho / gui / tinh_trang`. Danh sách cho phép hẹp: phải có dấu nhờ trợ lý tự làm; câu hỏi thông tin (ở đâu, cách nào, số điện thoại…) và câu nhờ soạn / tóm / chép ⇒ None. |
 | `backend/llm/full_corpus_prompt.py` | Ba câu `CAU_LAM_THAY` (hằng số, dễ đổi chữ); cả ba vào `REFUSAL_ANSWERS` ⇒ log và bộ đánh giá đếm chúng là TỪ CHỐI. |
 | `backend/llm/assistant.py` | Cờ + trường `trace.lam_thay` (đặt ở `_before_model` khi cờ bật) · hàm `_noi_that_lam_thay` gọi ở HAI nơi câu từ chối khuôn hình thành: sau `prepare_answer` (ngữ cảnh rỗng) và đầu `_finish_generated` (model tự từ chối) — mọi đường (không stream, stream, stream song song) đều qua hai nơi này · đường stream: lượt hàm bắt được thì bật cơ chế giữ chữ sẵn có, thêm một nhánh giữ cả khi câu khuôn kèm khoảng trắng cuối. |
 | `backend/api/routes/chat.py` | `lam_thay` vào danh sách lượt được nhớ; sự kiện `done` của lượt này không mang `tu_choi_kho` (giao diện không hiện khối "gợi ý cách hỏi"). |
