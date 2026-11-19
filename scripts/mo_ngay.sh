@@ -90,7 +90,7 @@ if [ ! -e "$D/TONG_HOP.md" ]; then
 
 Người giữ: phiên điều phối. Report của từng phiên nằm cùng thư mục (tiền tố \`b_\` / \`c_\` / \`e_\`). Lời User nguyên văn: \`data/loi_user/$hom_nay.md\` (riêng tư).
 
-## PHIÊN SAU ĐỌC TRƯỚC (GHI ĐÈ lúc kết phiên; ≤ ~60 dòng)
+## PHIÊN SAU ĐỌC TRƯỚC (GHI ĐÈ lúc kết phiên; ≤ 20 dòng: thoả thuận máy liên dự án · thứ tự việc mở đầu phiên, trỏ mục lục việc · câu đang chờ User · thứ đang chạy / phải bật lại · bẫy của ngày)
 
 (chưa viết)
 
