@@ -224,7 +224,9 @@
   /* không in: nút, bản đồ nền + chú giải, link sang trang Chỗ ở, dòng "sai thì bấm Sửa", ảnh điểm không giấy phép, ảnh quán (chưa xét giấy phép) */
   html.in-lich .lkh-dang-in .lich, html.in-lich .lkh-dang-in .bd, html.in-lich .lkh-dang-in .lkh-o-them, html.in-lich .lkh-dang-in .lich-hieu,
   html.in-lich .lkh-dang-in [data-phep="khong"], html.in-lich .lkh-dang-in .lkh-an-anh { display: none !important; }
-  html.in-lich .lkh-dang-in .lkh-chi-in { display: block; margin-top: 8mm; font-size: 10pt; }
+  /* dòng cuối + nguồn ảnh: không tự đứng một trang riêng (lần chụp 19/11 ra trang 3 chỉ có hai dòng này) */
+  html.in-lich .lkh-dang-in .lkh-chi-in { display: block; margin-top: 4mm; font-size: 9pt; break-before: avoid-page; break-inside: avoid; }
+  html.in-lich .lkh-dang-in .lich-ghi-chu, html.in-lich .lkh-dang-in .notice { break-after: avoid-page; }
   html.in-lich .lkh-dang-in .lkh-in-tieu-de { margin: 0 0 5mm; font: 700 24pt Georgia, serif; color: #49634D; border-bottom: 2pt solid #B28739; padding-bottom: 3mm; }
   html.in-lich .lkh-dang-in .lkh-thanh { background: #49634D !important; color: #F8F4E9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   html.in-lich .lkh-dang-in h3, html.in-lich .lkh-dang-in .lkh-tong-h { font-family: Georgia, serif; color: #49634D; }
