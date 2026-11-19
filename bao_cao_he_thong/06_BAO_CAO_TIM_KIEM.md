@@ -1,6 +1,6 @@
 # Báo cáo cho bạn: Tìm kiếm — tìm đoạn liên quan (Phase 5)
 
-**Cập nhật lần cuối: 12:03 15/11/2026 — bản 15: hai lần thử làm tìm thêm nhanh hơn (tìm song song; trần 1 lần) — đều không đưa vào.** Bản 14 (14:05 14/11/2026): dựng lại sau lần ghi kho 2 (5 bài lưu trú); mốc tìm mới `356a742f09a1`. Bản 13 (10:30 14/11): lần ghi kho 1, mốc `a105229f1902`, nhãn đoạn đúng bản 6. Bản 12 (19:28 10/11/2026): thêm một câu về trợ lý Phase 9 (định tuyến 4 tuyến + tìm thêm ≤ 2 lần, từ 03/11); câu nhiều nguồn không còn "để Phase 9"; mốc tìm mới `64656a87c109`. Các bản trước: xem lịch sử git.**
+**Cập nhật lần cuối: 08:40 19/11/2026 — bản 16: vòng máy tự dò 15 cấu hình bước tìm trên kho 9.436 đoạn (19/11) — không cấu hình nào vượt nhiễu, không đổi gì.** Bản 15 (12:03 15/11/2026): hai lần thử làm tìm thêm nhanh hơn (tìm song song; trần 1 lần) — đều không đưa vào.** Bản 14 (14:05 14/11/2026): dựng lại sau lần ghi kho 2 (5 bài lưu trú); mốc tìm mới `356a742f09a1`. Bản 13 (10:30 14/11): lần ghi kho 1, mốc `a105229f1902`, nhãn đoạn đúng bản 6. Bản 12 (19:28 10/11/2026): thêm một câu về trợ lý Phase 9 (định tuyến 4 tuyến + tìm thêm ≤ 2 lần, từ 03/11); câu nhiều nguồn không còn "để Phase 9"; mốc tìm mới `64656a87c109`. Các bản trước: xem lịch sử git.**
 Người viết: A (bản 9–11; bản 11 qua sub-agent), B (bản 5, 8), C (bản 1–4) · Review: C (bản 8: A review); bản 11 chưa review. Bản 10/11: agent con của A, chưa review. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (sửa lại mỗi bản — luôn đúng hiện trạng)
@@ -59,6 +59,7 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `10_BA
 | Tìm độc lập theo nghĩa và từ khóa rồi trộn (`native_hybrid_rrf`) | **Đã thử, chưa áp dụng** | 24/10: MRR 0,726 so với 0,721 (chênh rất nhỏ); 8.1 trên 40 câu có đoạn đúng: không khác (+3 / −1 câu). `full_corpus.py:521` |
 | Lấy rộng 100 ứng viên | **Đã thử, chưa áp dụng** | 26/10 (kho cũ, nhãn bản 1): đủ đoạn đúng trong ứng viên 31 → 37 / 40 nhưng trong 10 đoạn đầu chỉ 22 → 23, mất 1 câu ⇒ **kém hơn**. Chỗ nghẽn là xếp hạng |
 | Đổi hệ số trộn RRF k (2, 10, 30) / trộn kiểu DBSF | **Đã thử, chưa áp dụng** | 8.1: không cách nào qua luật; MRR đổi ≤ 0,01 |
+| Vòng máy tự dò 15 cấu hình lúc hỏi (số ứng viên 20 / 50 · k 20 / 100 · tìm độc lập · DBSF 0,3 / 0,5 / 0,7 · RRF có trọng số 2:1, 1:2 · 4 tổ hợp) | **Đã thử, chưa áp dụng** | 19/11, kho 9.436 đoạn, nhãn bản 5 (38 câu nhóm thử còn nhãn dùng được): bản đang chạy 22 / 38 câu đủ đoạn đúng; tốt nhất DBSF 0,5: 25 / 38 (3 thắng / 0 thua) — **không vượt nhiễu** (cần ≥ 4, ≥ 6 sau Holm); 0 cấu hình qua ⇒ nhóm kiểm không mở. Thước phân biệt yếu: "chỉ vector" cũng 22 / 38. 0 USD. `report_agent/2026-11-12_ra_khoang_cach/b_tu_toi_uu_buoc_tim_implementation.md` |
 | Tìm gần đúng (HNSW) so với tìm chính xác | **Đã xử lý, đóng gói** | 8.1: giống hệt 108 / 108 câu ⇒ giữ HNSW |
 | Báo lỗi rõ khi Qdrant / model lỗi, không tự đổi cách | **Đã xử lý** | `backend/retrieval/full_corpus.py` |
 | Câu so sánh | **Xử lý một phần** | MRR 0,527 (01/11, kho hiện tại); chỉ 2 / 20 câu yếu ⇒ không mở thí nghiệm |
@@ -77,6 +78,14 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
 **Xử lý một phần** · **Đã thử, chưa áp dụng** (kèm vì sao) · **Chưa thực hiện**.
 
 ## 4. Thử nghiệm và lịch sử (thêm mục mới ở trên)
+
+### 19/11/2026 — Vòng máy tự dò cấu hình bước tìm trên kho hôm nay (không đưa vào)
+- **Thử gì:** agent tự chạy một lưới ghi trước gồm 14 cấu hình lúc hỏi + mốc (không dựng lại chỉ mục, không gọi model sinh, 0 USD), chọn trên nhóm thử, chỉ mở nhóm kiểm cho cấu hình thắng. Điều kiện do bạn chốt 18/11.
+- **Kết quả:** bản đang chạy **22 / 38** câu khó đủ đoạn đúng trong 10 đoạn (38 = 40 câu nhóm thử có nhãn trừ 2 câu nhãn lệch vị trí sau các lần ghi kho; nhãn bản 5 còn khớp 96,6 % trích dẫn). Cấu hình tốt nhất (trộn theo điểm
+  chuẩn hoá DBSF, trọng số từ khoá 0,5) **25 / 38**, 3 câu thắng / 0 thua — chưa đủ để vượt nhiễu (cần ≥ 4; ≥ 6 khi so 14 cấu hình cùng lúc). Mọi cấu hình: "không khác". Nhóm kiểm không mở.
+- **Giữ / bỏ:** không đổi gì. Ghi nhận: các cấu hình có ≥ 2 câu thắng / 0 thua đều cho nhánh từ khoá nhìn rộng hơn 30 ứng viên của nhánh vector — cùng họ đã thử ở 8.1 trên kho cũ, cũng không qua.
+- **Giới hạn:** thước chỉ đo lần tìm đầu (trợ lý còn tìm thêm); thước kém nhạy — "chỉ vector" cũng được 22 / 38; thời gian tìm chưa đo đáng tin; 6 trích dẫn của nhãn cần dời vị trí (bản nhãn 6 — chưa làm).
+  Hồ sơ: `report_agent/2026-11-12_ra_khoang_cach/b_tu_toi_uu_buoc_tim_implementation.md`.
 
 ### 15/11/2026 — tốc độ: tìm thêm song song; trần tìm thêm 1 lần (cả hai không đưa vào)
 - Đếm trước (0 USD): câu có tìm thêm chiếm ~20 % lượt gọi model thật từ 10/11, chữ đầu p50 8,6 s (sàn 3 s) — **đính chính:** số này trộn lượt trước "hết lượt tìm thì dừng" (13/11); sau mốc đó 7,8 % lượt, p50 5,78 s (n = 5); chậm vì 2–4 lần gọi model nối tiếp, mỗi lần tìm chỉ 0,03 s (`report_agent/2026-11-12_ra_khoang_cach/b_dem_toc_do.md`).
