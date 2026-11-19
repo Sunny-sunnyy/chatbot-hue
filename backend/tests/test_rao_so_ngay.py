@@ -200,3 +200,112 @@ def test_trace_keeps_what_the_model_returned_before_filtering():  # review E: s�
             return [sl.HanhDongCHT(loai="chua_ho_tro")]
     asyncio.run(lkh.hieu_va_ap("Dời cả lịch sớm lên 2 tiếng", Gen(), tr, f))
     assert tr.vet["sua"]["hanh_dong"] == [] and tr.vet["sua"]["model_ra"] == [{"loai": "chua_ho_tro"}]
+
+
+# ---------- cờ `sua_lich_doi_cho_code`: model trả "chưa hỗ trợ" cho câu DỜI HAI ĐIỂM (mỗi vế một điểm đang có + một buổi) ⇒ code đọc câu ----------
+# Lượt đo cuối 18/11: lớp câu này bị model gắn "chưa hỗ trợ" ổn định dù bước áp làm được. Câu trong test dựng từ TÊN của bảng điểm lúc chạy
+# (không chép câu của bộ đo vào file được git theo dõi).
+
+def _lich_3_ngay():
+    from test_cong_dot_1 import flags_from
+    from llm import lich_trinh_v2 as v2
+    f = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=True, sua_lich_chua_ho_tro=True, sua_lich_doi_cho_code=True)
+    k = v2.xep_v2(f.bang_lich_v2, v2.ThamSoV2(3, so_thich=("di_tich",)))
+    return f, k, sl.luu_tu_lich(k, None, None)
+
+
+def _hai_diem(bang, khung):
+    """Hai điểm ban ngày của lịch ở hai NGÀY khác nhau, cùng buổi sáng, mỗi điểm đứng một mình trong buổi của nó ⇒ đổi chỗ được cho nhau."""
+    mot_minh = [(ng["ngay"], ng["buoi"]["sang"][0]) for ng in khung["ngay"] if len(ng["buoi"]["sang"]) == 1]
+    (na, a), (nb, b) = mot_minh[0], mot_minh[-1]
+    assert na != nb
+    return (a, na, bang.theo_id[a]["ten"]), (b, nb, bang.theo_id[b]["ten"])
+
+
+def test_doi_buoi_tu_cau_doc_dung_hai_ve_va_tu_choi_moi_cau_mo_ho():
+    f, k, luu = _lich_3_ngay()
+    bang = f.bang_lich_v2
+    (a, na, ten_a), (b, nb, ten_b) = _hai_diem(bang, k)
+    doc = lambda cau: [(h.loai, h.ten, h.ngay, h.buoi) for h in sl.doi_buoi_tu_cau(bang, luu, cau)]  # noqa: E731
+    dung = [("doi_buoi", a, nb, "sang"), ("doi_buoi", b, na, "sang")]
+    assert doc(f"Cho {ten_a} lên sáng ngày {nb}, còn {ten_b} để sáng ngày {na} nhé.") == dung
+    assert doc(f"{ten_a.upper()} sang buổi sáng ngày {nb}; {ten_b} về buổi sáng ngày {na}") == dung  # hoa / thường, "buổi sáng", dấu chấm phẩy
+    # vế sau không nêu ngày ⇒ lấy ngày của vế trước; không vế nào nêu ngày ⇒ để trống (bước áp dùng ngày hiện tại của điểm)
+    assert doc(f"Ngày {nb} cho {ten_a} lên buổi sáng, {ten_b} để buổi chiều nhé") == [("doi_buoi", a, nb, "sang"), ("doi_buoi", b, nb, "chieu")]
+    assert doc(f"{ten_a} lên buổi chiều, {ten_b} để buổi sáng") == [("doi_buoi", a, None, "chieu"), ("doi_buoi", b, None, "sang")]
+    ngoai = next(d["ten"] for d in bang.diem if d["id"] not in sl._vi_tri(k))
+    for cau in (
+        f"Cho {ten_a} lên sáng ngày {nb}",  # một vế
+        f"{ten_a} lên sáng ngày {nb}, {ten_b} để sáng ngày {na}, {ten_a} về chiều",  # ba vế
+        f"{ten_a} lên sáng ngày {nb}, {ten_a} để chiều ngày {na}",  # hai vế cùng một điểm
+        f"{ten_a} với {ten_b} lên sáng ngày {nb}, còn lại để chiều",  # một vế hai điểm, một vế không điểm
+        f"{ten_a} lên sáng ngày {nb}, {ngoai} để sáng ngày {na}",  # điểm không có trong lịch
+        f"{ten_a} lên ngày {nb}, {ten_b} để sáng ngày {na}",  # vế thiếu buổi
+        f"{ten_a} lên sáng hoặc chiều ngày {nb}, {ten_b} để sáng ngày {na}",  # hai buổi trong một vế
+        f"{ten_a} lên tối ngày {nb}, {ten_b} để sáng ngày {na}",  # buổi tối: hành động dời không có
+        f"{ten_a} lên sáng ngày 9, {ten_b} để sáng ngày {na}",  # ngày ngoài lịch
+        f"Đừng cho {ten_a} lên sáng ngày {nb}, {ten_b} để sáng ngày {na}",  # phủ định
+        f"{ten_a} lên sáng ngày {nb}, {ten_b} để sáng ngày {na} được không?",  # câu hỏi, không phải yêu cầu
+        f"Bỏ {ten_a} sáng ngày {nb}, {ten_b} để sáng ngày {na}",  # có việc khác (bỏ)
+        f"Thay {ten_a} sáng ngày {nb}, thêm {ten_b} sáng ngày {na}",
+        # bộ dò của C + review E (19/11) — bản đầu ÁP SAI các họ câu dưới; nay đọc theo danh sách cho phép
+        f"Giá vé {ten_a} buổi sáng thế nào, {ten_b} buổi chiều thế nào",  # câu hỏi thông tin, không phải yêu cầu dời
+        f"Kể giúp mình về {ten_a} để đi buổi sáng, còn {ten_b} để đi buổi chiều",  # nhờ viết / kể
+        f"{ten_a} đang ở sáng ngày {na}, còn {ten_b} đang ở sáng ngày {nb}",  # tả chỗ đang đứng
+        f"Sao {ten_a} lại lên sáng ngày {na}, {ten_b} để sáng ngày {nb} vậy",  # hỏi vì sao
+        f"Đổi chỗ {ten_a} lên buổi sáng và {ten_b} để buổi chiều cho nhau",  # hoán đổi: buổi nêu ra là chỗ ĐANG đứng
+        f"{ten_a} lên trước buổi chiều ngày {nb}, {ten_b} để sau buổi sáng ngày {na}",  # trước / sau
+        f"{ten_a} lên sáng ngày đầu, còn {ten_b} để sáng ngày cuối",  # ngày bằng chữ ⇒ không được bỏ lặng thành "cùng ngày"
+        f"{ten_a} sang sáng hôm sau, còn {ten_b} để chiều hôm đầu",
+        f"{ten_a} lên sáng mai, {ten_b} để chiều mai",
+        f"{ten_a} lên sáng ngày thứ hai, {ten_b} để sáng ngày thứ ba",
+        f"{ten_a} lên sáng {nb}, {ten_b} để sáng {na}",  # số đứng trần
+        f"Ngày {nb} {ten_a} sáng, ngày {na} {ten_b} sáng",  # không có từ dời: tả hay yêu cầu không rõ ⇒ không áp
+        f"{ngoai} lên sáng ngày {nb}, {ten_b} để sáng ngày {na}",  # điểm ngoài lịch đứng vế đầu
+        f"{ten_a} lên sáng ngày {nb}, còn {ten_b} để sáng ngày {na} ạ?",  # kết bằng dấu hỏi (mọi chữ đều trong danh sách cho phép) ⇒ vẫn không áp
+    ):
+        assert doc(cau) == [], cau
+
+
+def _hieu_doi_cho(cau, ra, **co):
+    import asyncio
+    from dataclasses import replace
+    from llm import len_ke_hoach as lkh
+    from llm.assistant import AnswerTrace
+    f, k, luu = _lich_3_ngay()
+    f = replace(f, **co)
+    tr = AnswerTrace(); tr.lich_luu = luu; tr.sua_chon = None
+
+    class Gen:
+        async def hieu_sua(self, prompt, call_log, **kw):
+            return list(ra)
+    return f, k, asyncio.run(lkh.hieu_va_ap(cau, Gen(), tr, f)), tr
+
+
+def test_model_tra_chua_ho_tro_cho_cau_doi_hai_diem_thi_code_ap_hai_lan_doi_buoi_khi_co_bat():
+    f, k, _ = _lich_3_ngay()
+    (a, na, ten_a), (b, nb, ten_b) = _hai_diem(f.bang_lich_v2, k)
+    cau = f"Cho {ten_a} lên sáng ngày {nb}, còn {ten_b} để sáng ngày {na} nhé."
+    cht = [sl.HanhDongCHT(loai="chua_ho_tro")]
+    # cờ BẬT: lịch đổi đúng hai điểm, không còn câu "chưa làm"
+    f, k, kq, tr = _hieu_doi_cho(cau, cht)
+    vt = sl._vi_tri(kq["khung"])
+    assert vt[a] == (nb, "sang") and vt[b] == (na, "sang") and kq["chua_lam"] == [] and kq["khong_doi"] == []
+    assert {x: v for x, v in vt.items() if x not in (a, b)} == {x: v for x, v in sl._vi_tri(k).items() if x not in (a, b)}  # điểm khác giữ chỗ
+    assert tr.vet["sua"]["doc_cau"] is True and tr.vet["sua"]["chua_ho_tro"] == 1
+    # cờ TẮT: y như hôm nay — lịch giữ nguyên + câu cố định
+    f, k, kq, tr = _hieu_doi_cho(cau, cht, sua_lich_doi_cho_code=False)
+    assert kq["khung"] == k and [d["cau"] for d in sl.thay_doi(f.bang_lich_v2, kq)] == [sl.CAU_CHUA_HO_TRO] and tr.vet["sua"]["doc_cau"] is False
+    # cờ BẬT nhưng câu không thuộc lớp này ⇒ vẫn câu cố định
+    f, k, kq, tr = _hieu_doi_cho("Dời cả lịch sớm lên 2 tiếng", cht)
+    assert kq["khung"] == k and [d["cau"] for d in sl.thay_doi(f.bang_lich_v2, kq)] == [sl.CAU_CHUA_HO_TRO]
+    # cờ BẬT, model trả "chưa hỗ trợ" KÈM một hành động khác ⇒ code không đọc câu (chỉ áp hành động của model, giữ dòng "chưa làm")
+    f, k, kq, tr = _hieu_doi_cho(cau, [sl.HanhDong(loai="bo_diem", ten=a), *cht])
+    assert a not in sl._vi_tri(kq["khung"]) and sl._vi_tri(kq["khung"])[b] == sl._vi_tri(k)[b] and kq["chua_lam"] == [sl.CHUA_HO_TRO]
+    assert tr.vet["sua"]["doc_cau"] is False
+
+
+def test_co_doi_cho_code_can_co_chua_ho_tro():
+    from test_cong_dot_1 import flags_from
+    with pytest.raises(ValueError, match="sua_lich_doi_cho_code"):
+        flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=True, sua_lich_chua_ho_tro=False, sua_lich_doi_cho_code=True)
