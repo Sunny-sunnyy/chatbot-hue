@@ -21,7 +21,9 @@ THU = ("Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ 
 MAP_PREFIX = "https://www.google.com/maps/search/"   # chỉ link bản đồ do code dựng mới được gắn vào file
 _MA_NGUON = re.compile(r"\s*\[(?:Nguồn\s*)?\d+\]")
 MUC_MOI_TRANG = 5            # số điểm tối đa trên một trang "ngày"
-DONG_LUU_Y_MOI_TRANG = 6
+DONG_LUU_Y_MOI_TRANG = 8
+DONG_BAN_DO = "Bấm tên điểm để mở bản đồ."
+DONG_SUA_FILE = "File này sửa được: đổi chữ, thêm ảnh của bạn trước khi gửi cho người đi cùng."
 CAU_TOI_DA = 170             # trần ký tự câu tả một điểm (câu thật dài nhất đã thấy: 109)
 DIEM_CHINH_TREN_BIA = 4
 
@@ -185,6 +187,9 @@ def dung_pptx(trang: list[dict], thu_muc_anh: Path) -> bytes:
                 hop(s, 3.7, y + 0.06, 0.95, 0.34, m["ma_buoi"], MSO_SHAPE.ROUNDED_RECTANGLE, 0.5)
                 chu(s, 3.7, y + 0.06, 0.95, 0.34, m["buoi"], 12, "trang", True, can=PP_ALIGN.CENTER, giua=True)
                 chu(s, 3.66, y + 0.45, 1.75, 0.5, m["gio"] or "", 14 if to else 13, "chu", True)
+                if m["nghi"]:   # "tối nghỉ" là một câu do code viết, không phải điểm tham quan ⇒ không ô ảnh, chữ thường, chạy hết bề ngang
+                    chu(s, 5.5, y + 0.02, RONG - 6.0, cao_hang - 0.1, m["ten"], 14 if to else 13, "chu")
+                    continue
                 anh(s, m["anh"], 5.5, y, rong_anh, cao_hang - 0.2, m["ten"])
                 dong = [(m["ten"], 21 if to else 17, "chinh", True)] + ([(m["cau"], 14 if to else 12, "chu", False)] if m["cau"] else []) \
                     + ([(m["ghi_chu"], 12 if to else 11, "phu", False)] if m["ghi_chu"] else [])
@@ -203,12 +208,18 @@ def dung_pptx(trang: list[dict], thu_muc_anh: Path) -> bytes:
                 PHONG_TD, giua=True)
             ban_do = t.get("ban_do") or []
             rong_trai = 7.4 if ban_do else RONG - 1.6
-            chu(s, 0.8, 1.55, rong_trai, 5.2, [("•  " + d, 15 if la_luu_y else 13, "chu", False) for d in t["dong"]], cach=9)
+            co = (15 if len(t["dong"]) <= 6 else 13) if la_luu_y else 13
+            chu(s, 0.8, 1.55, rong_trai, 5.2, [("•  " + d, co, "chu", False) for d in t["dong"]], cach=9 if len(t["dong"]) <= 6 else 6)
             if ban_do:
                 hop(s, 8.6, 1.55, 4.15, 5.2, "nhat", MSO_SHAPE.ROUNDED_RECTANGLE, 0.05)
-                chu(s, 8.8, 1.65, 3.8, 0.5, "Mở bản đồ từng điểm", 15, "phu", True, PHONG_TD)
-                co = 12 if len(ban_do) <= 12 else 10
-                chu(s, 8.8, 2.2, 3.8, 4.4, [(d["ten"], co, "chinh", False, d["url"]) for d in ban_do], cach=3)
+                chu(s, 8.8, 1.65, 3.8, 0.5, "Mở bản đồ từng điểm", 16, "phu", True, PHONG_TD)
+                # mỗi tên một ô chữ riêng, link gắn vào Ô (không vào chữ) ⇒ chữ giữ màu của kiểu thay vì màu xanh mặc định của link
+                cao_dong = min(0.42, 3.55 / len(ban_do))
+                for i, d in enumerate(ban_do):
+                    o = chu(s, 8.8, 2.2 + i * cao_dong, 3.8, cao_dong, d["ten"], 14 if cao_dong >= 0.36 else 11, "phu", giua=True)
+                    o.text_frame.paragraphs[0].runs[0].font.underline = True
+                    o.click_action.hyperlink.address = d["url"]
+                chu(s, 8.8, 5.85, 3.8, 0.85, [(DONG_BAN_DO, 11, "chu", False), (DONG_SUA_FILE, 11, "chu", False)], cach=2)
         chu(s, 0.6, CAO - 0.42, RONG - 1.2, 0.3, f"Lịch trình Huế · trang {so}", 10, "phu", can=PP_ALIGN.RIGHT)
     out = io.BytesIO()
     prs.save(out)

@@ -95,14 +95,14 @@ def test_file_text_is_a_subset_of_plan_text_plus_template_constants(tmp_path):
                                                         + [x for a in t.get("an") or [] for x in (a["bua"], a["gan"], *a["quan"])] + [d["ten"] for d in t.get("ban_do") or []]
                                                         + [x for m in t.get("muc") or [] for x in (m["buoi"], m["gio"], m["ten"], m["cau"], m["ghi_chu"])]) if v)
     co_dinh = ("Lịch trình Huế · trang", "điểm tham quan", "Tạo ngày 19/11/2026", "Ngày ", "Lưu ý trước khi đi", "Nguồn ảnh", "Ăn gần đó", "Mở bản đồ từng điểm",
-               " gần ", "•  ")
+               " gần ", "•  ", "Bấm tên điểm để mở bản đồ.", "File này sửa được: đổi chữ, thêm ảnh của bạn trước khi gửi cho người đi cùng.")
     for doan in chu:
         con = doan
         for c in co_dinh:
             con = con.replace(c, " ")
         assert all(tu.strip(",:") in cho_phep or tu in ("(tiếp)", "·", "—") or tu.isdigit() for tu in con.split()), doan
-    link = {r.text: r.hyperlink.address for s in prs.slides for sh in s.shapes if sh.has_text_frame for p in sh.text_frame.paragraphs for r in p.runs
-            if r.hyperlink.address}
+    link = {sh.text_frame.text: sh.click_action.hyperlink.address for s in prs.slides for sh in s.shapes
+            if sh.has_text_frame and sh.click_action.hyperlink.address}
     assert len(link) == 10 and all(u.startswith(MAP_PREFIX) for u in link.values())          # chỉ link bản đồ do code dựng; chữ hiện ra là TÊN điểm
     trang_ngay_2 = [i for i, t in enumerate(trang) if t["kieu"] == "ngay" and t["so"] == 2]
     ten = [p.text for i in trang_ngay_2 for sh in prs.slides[i].shapes if sh.has_text_frame for p in sh.text_frame.paragraphs if p.text.startswith("Điểm ")]

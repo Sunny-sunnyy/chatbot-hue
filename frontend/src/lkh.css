@@ -214,13 +214,22 @@
 .lkh-xuat { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .lkh-xuat .retry { margin-top: 0; }
 @media print {
+  /* Bảng màu + phông của kiểu "Di sản" (như file PowerPoint): xanh rêu 49634D · đất nung A75B43 · nền trắng để in; tiêu đề Georgia, chữ Arial */
   @page { size: A4; margin: 14mm; }
+  html.in-lich, html.in-lich body { background: #fff !important; }
   html.in-lich body * { visibility: hidden; }
   html.in-lich .lkh-dang-in, html.in-lich .lkh-dang-in * { visibility: visible; }
-  html.in-lich .lkh-dang-in { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; border: 0; box-shadow: none; background: #fff; color: #000; }
-  html.in-lich .lkh-dang-in .lich, html.in-lich .lkh-dang-in .leaflet-container, html.in-lich .lkh-dang-in .lkh-ban-do,
-  html.in-lich .lkh-dang-in .lkh-o-them, html.in-lich .lkh-dang-in [data-phep="khong"] { display: none !important; }
+  html.in-lich .lkh-dang-in { position: absolute; left: 0; top: 0; width: 100% !important; max-width: none !important; margin: 0; padding: 0; border: 0;
+    box-shadow: none; background: #fff; color: #282923; font-family: Arial, sans-serif; }
+  /* không in: nút, bản đồ nền + chú giải, link sang trang Chỗ ở, dòng "sai thì bấm Sửa", ảnh điểm không giấy phép, ảnh quán (chưa xét giấy phép) */
+  html.in-lich .lkh-dang-in .lich, html.in-lich .lkh-dang-in .bd, html.in-lich .lkh-dang-in .lkh-o-them, html.in-lich .lkh-dang-in .lich-hieu,
+  html.in-lich .lkh-dang-in [data-phep="khong"], html.in-lich .lkh-dang-in .lkh-an-anh { display: none !important; }
   html.in-lich .lkh-dang-in .lkh-chi-in { display: block; margin-top: 8mm; font-size: 10pt; }
+  html.in-lich .lkh-dang-in .lkh-in-tieu-de { margin: 0 0 5mm; font: 700 24pt Georgia, serif; color: #49634D; border-bottom: 2pt solid #B28739; padding-bottom: 3mm; }
+  html.in-lich .lkh-dang-in .lkh-thanh { background: #49634D !important; color: #F8F4E9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html.in-lich .lkh-dang-in h3, html.in-lich .lkh-dang-in .lkh-tong-h { font-family: Georgia, serif; color: #49634D; }
+  html.in-lich .lkh-dang-in .lich-ten { color: #49634D; }
+  html.in-lich .lkh-dang-in .lich-buoi { color: #A75B43; }
   html.in-lich .lkh-dang-in .lich-ngay { break-inside: avoid-page; opacity: 1 !important; transform: none !important; animation: none !important; }
   html.in-lich .lkh-dang-in .lich-ngay + .lich-ngay { break-before: page; }
   html.in-lich .lkh-dang-in .lkh-muc { break-inside: avoid; opacity: 1 !important; transform: none !important; animation: none !important; }

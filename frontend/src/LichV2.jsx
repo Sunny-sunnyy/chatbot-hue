@@ -168,6 +168,7 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
   return (
     <div className="bubble lich-v2">
       {turn.noticeAnToan && <p className="notice notice-an-toan" role="note">{turn.noticeAnToan}</p>}
+      <p className="lkh-chi-in lkh-in-tieu-de">Lịch trình Huế {lich.ngay.length} ngày</p>
       <div className="lkh-thanh">
         {ngayDau?.ngay_thang && <div><small>Bắt đầu</small><b>{THU_V2[ngayDau.thu]} {ngayDau.ngay_thang.split("-").reverse().join("/")}</b></div>}
         {diCung && <div><small>Đi cùng</small><b>{diCung}</b></div>}
