@@ -45,7 +45,7 @@ lịch giữ nguyên + câu cố định "Chưa làm…" · **dời buổi** = �
 | Hai chuỗi đích | đạt 2 / 2 mỗi chuỗi | đạt 2 / 2 và 2 / 2 (+ 2 / 2 ở lượt thử); khối thay đổi ghi đúng hai dòng "Đã dời…", 0 điểm khác xê dịch |
 | Cả bộ, đạt cả hai lần | — | **9 / 10** (18/11: 7 / 10; mốc trước cờ "chưa hỗ trợ": 9 / 10) |
 | Câu sửa chưa làm được / câu không phải sửa (bộ chặn 17/11) | 0 áp nhầm | 0 / 45 câu × 20 lịch thật — chạy THẲNG hàm (0 USD) thay cho lượt có phí 14 câu của plan: hàm trả rỗng thì dù model trả gì code cũng không áp (lệch plan, A nhận) |
-Chuỗi còn trượt: lượt "chỉ đi buổi sáng" — "Chưa làm", lịch giữ nguyên, 2 / 2 lần (ngoài phạm vi). Tiền thật: **0,0297 USD** (72 lượt, đọc log).
+Chuỗi còn trượt: lượt "chỉ đi buổi sáng" — "Chưa làm", lịch giữ nguyên, 2 / 2 lần (ngoài phạm vi). Tiền thật: **0,0297 USD** (70 lượt, đọc log).
 
 ## 5. Lỗi và giới hạn
 - **Mẫu hẹp, cố ý:** câu ba vế, câu không có từ dời ("ngày 3 A sáng, ngày 1 B sáng"), buổi tối, ngày nói bằng chữ ("ngày đầu", "hôm sau"), câu kết bằng dấu hỏi ("… ạ?"), câu có lời chào ngăn bằng dấu phẩy ⇒ vẫn "chưa hỗ trợ". Từ chối nhầm được chấp nhận để không áp sai.
