@@ -2,6 +2,15 @@
 
 Viết: 10:56 19/11/2026 (giờ `date`), phiên điều phối. Thư mục này gom mọi báo cáo viết trong ngày — từ 19/11 mỗi ngày làm việc một thư mục `report_agent/<năm-tháng-ngày>/` (chủ dự án yêu cầu). Phần riêng tư (kết quả đo có câu của bộ đo, kế hoạch, câu dò) không vào repo công khai; file này chỉ trỏ tên thư mục trong `data/`.
 
+## PHIÊN SAU ĐỌC TRƯỚC (GHI ĐÈ lúc kết phiên; ≤ 20 dòng) — viết 11:16 19/11/2026, kết phiên nhẹ của phiên điều phối giữa ngày
+
+- **Máy (thoả thuận ba dự án hôm nay):** một việc nạp model một lúc; RAM khả dụng < 4 GB thì không bật; dự án khác thứ nhất đang trong KHUNG ĐO GIÂY (bắt đầu 11:01, ước xong ~12:30) ⇒ hue_rag không chạy gì tốn CPU / nạp model tới dòng "xong" của họ. Qdrant hue_rag đang bật, 9.436 điểm; 0 server.
+- **Thứ tự mở đầu:** đọc `session_prompt/VIEC_DANG_MO.md` (bước kế của từng việc CHỈ ghi ở đó) ⇒ `session_prompt/sessions/STATUS_A.md` mục 3. Ba phiên B, C, E KHÔNG tắt: nhắn tên terminal mới cho họ, không giao lại việc đang chạy.
+- **Đã chốt với User hôm nay (đủ ở `session_prompt/HIEN_TRANG.md` mục 4 + sổ việc khối 19/11):** chất lượng trước — đã gỡ trần token đầu ra, ngân sách ngữ cảnh, trần lịch sử, sàn tiền và sàn tốc độ · hai cờ mới BẬT (`sua_lich_doi_cho_code`, `noi_dong_tam_ngung`) · mốc "Phase 9 xong phần nhóm kèm mục chưa đạt" = code `55d01a8`, cả bộ test 1.437 đạt · KHÔNG đầu tư thêm cho bão / lũ / khẩn cấp · hướng mới "việc phổ thông của người dùng thật", thứ tự sáu bước User đã đồng ý (mục lục việc, việc 2) · báo cáo theo thư mục ngày [thử 3 ngày, đã đóng băng — không thêm file / phép kiểm] · tự nhắc nhau không over-engineer.
+- **Đang chờ User:** điền ~20 câu thật vào `data/kich_ban_pho_thong_2026-11-19/CAU_CUA_USER.md` (không gấp). Các câu A sẽ hỏi khi tới lượt: `STATUS_A.md` mục 5. Hộp hỏi hôm nay: 7 / ngưỡng 8.
+- **Chưa làm cho ngày này:** `bai_hoc/VIEC_MOI_XONG.md` mới có mục lượt đo cuối · sao lưu ổ D cho mốc · cắt `CURRENT_HANDOFF.md` · vòng cải tiến cuối ngày · trang hiện trạng mục 2 trỏ sang mục lục việc (C).
+- **Bẫy của ngày:** `STATUS_A.md` mục 7; nhật ký của B: `b_nhat_ky.md`.
+
 ## 1. Việc trong ngày và kết quả
 
 | Việc | Kết quả | Báo cáo trong thư mục này | Phần riêng tư |
