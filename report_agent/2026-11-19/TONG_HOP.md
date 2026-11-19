@@ -2,16 +2,17 @@
 
 Viết: 10:56 19/11/2026 (giờ `date`), phiên điều phối. Thư mục này gom mọi báo cáo viết trong ngày — từ 19/11 mỗi ngày làm việc một thư mục `report_agent/<năm-tháng-ngày>/` (chủ dự án yêu cầu). Phần riêng tư (kết quả đo có câu của bộ đo, kế hoạch, câu dò) không vào repo công khai; file này chỉ trỏ tên thư mục trong `data/`.
 
-## PHIÊN SAU ĐỌC TRƯỚC (GHI ĐÈ lúc kết phiên; ≤ 20 dòng) — viết 13:42 19/11/2026, kết phiên nhẹ đầu chiều, chủ dự án mở lại cả bốn phiên
+## PHIÊN SAU ĐỌC TRƯỚC (GHI ĐÈ lúc kết phiên; ≤ 20 dòng) — viết 16:35 19/11/2026, kết phiên nhẹ chiều 19/11
 
-- **Thứ tự mở đầu:** `session_prompt/HIEN_TRANG.md` ⇒ `session_prompt/VIEC_DANG_MO.md` (6 việc; bước kế CHỈ ghi ở đó) ⇒ `session_prompt/sessions/STATUS_A.md` mục 1, 3, 5.
-- **Máy:** dùng chung ba dự án; trưa nay chạm sàn 4 GB RAM một lần (một tiến trình pytest 20 file của nhóm lên 2,8 GB — đã dừng). Từ giờ: test dựng cả app chạy từng file ở cây chính, không chạy cùng lúc với server; trước việc nạp model nhìn `free -m`. Qdrant bật, 9.436 điểm.
-- **Đã có số buổi trưa:** thí nghiệm mức suy luận bậc 1 (ba mức gần bằng nhau về tiền / giây; cổng đạt) · bộ 80 kịch bản phổ thông (xong việc 51 / 80 chấm nới, 40 sát chữ; nguyên nhân gốc đã xếp hạng) · bước đếm 0 USD của việc "ngữ cảnh lớn hơn". Đã vào main: bản sửa "lượt báo thành công nhưng câu trả lời rỗng" (`76ef380`; chưa chạy cả bộ test, chưa có lượt thật) · các mục 7–11 của `bai_hoc/VIEC_MOI_XONG.md` kèm kết quả thử tay.
-- **Chủ dự án chọn buổi trưa:** bậc 2 mức suy luận chỉ medium + low · thứ tự sửa: lịch đã lưu vào lượt hỏi thường ⇒ nói thật giới hạn thay câu từ chối khuôn ⇒ các bước cũ · việc "ngữ cảnh lớn hơn" vượt 1 USD vẫn duyệt.
-- **Đang chờ chủ dự án:** cách có giá vé cho "tổng tiền vé của lịch" (ba phương án, đã nêu) · câu chữ "nói thật giới hạn". Hộp hỏi hôm nay: 9 ⇒ gom câu.
-- **Không còn gì chạy nền:** phần sinh bậc 2 mức suy luận đã xong (176 / 176 câu mỗi mức, 0 lỗi); còn phần an toàn, chấm, đọc tay.
-- **Chưa làm cho ngày này:** cả bộ test trên bản mới · sao lưu ổ D cho mốc · cắt `CURRENT_HANDOFF.md` · vòng cải tiến cuối ngày · `bai_hoc/` cho việc buổi chiều.
-- **Bẫy của ngày:** `STATUS_A.md` mục 7; nhật ký `b_nhat_ky.md`, `c_nhat_ky.md`, `e_nhat_ky.md`.
+- **Thứ tự mở đầu:** `session_prompt/HIEN_TRANG.md` ⇒ `session_prompt/VIEC_DANG_MO.md` (6 việc; bước kế CHỈ ghi ở đó) ⇒ `session_prompt/sessions/STATUS_A.md` mục 2–5.
+- **Việc đầu tiên:** chạy phần test còn nợ của nhánh bật cờ "lịch vào lượt hỏi thường" (chủ dự án đã chọn bật riêng phần lịch + số giờ) rồi gộp; sau đó chuỗi gộp nhánh xuất lịch; rồi chấm bước 2 của việc "ngữ cảnh lớn hơn".
+- **Đã vào main buổi chiều (hai cờ mới đều TẮT):** câu nói thật giới hạn cho yêu cầu "làm thay" · lịch đã lưu tới lượt hỏi thường kèm số giờ do code tính · báo cáo + bài học thí nghiệm mức suy luận (kết luận: giữ mức mặc định). Chưa có lượt cả bộ test sau ba lần gộp code.
+- **Thử rồi chưa bật:** tổng tiền vé do code cộng — phép tính đúng nhưng khoảng một nửa số lần hỏi tổng trợ lý từ chối cả câu (nguyên nhân đã xác nhận bằng sổ vết); giữ trên nhánh hồ sơ.
+- **Chủ dự án chọn buổi chiều:** chép giá vé kho đã có vào bảng điểm · ba câu nói thật do code chọn, không mục web · không làm gửi email, không giả lập đặt phòng · xuất lịch: bản in PDF từ trình duyệt + PowerPoint do code vẽ, giữ kiểu thiết kế của nhóm sau khi cho bốn agent khác hãng thi · không in chữ ghi công ảnh (nhắc lại quyết định 14/11) · bật riêng phần lịch + số giờ.
+- **Đang chờ chủ dự án:** bật cờ câu nói thật · bật hai nút xuất lịch · gật xoá hai image dựng thử. Hộp hỏi hôm nay: 18.
+- **Máy:** dùng chung ba dự án; một lần RAM xuống ~4,6 GB do hai tiến trình nạp model của nhóm chồng nhau ⇒ mỗi lúc một tiến trình nặng, mỗi lần nạp là một lần xin. Dự án khác đã xoá năm model Hugging Face cũ (nhóm đồng ý), sẽ dọn bộ đệm dựng image và nén ổ ảo — tắt WSL là mất `/tmp`.
+- **Chưa làm cho ngày này:** cả bộ test trên bản mới · sao lưu ổ D cho mốc · cắt `CURRENT_HANDOFF.md` · vòng cải tiến cuối ngày · mục lục `bao_cao_he_thong/README.md` + nhật ký ngày.
+- **Bẫy của ngày:** `STATUS_A.md` mục 7; sổ + nhật ký của từng phiên làm việc trong thư mục này.
 
 ## 1. Việc trong ngày và kết quả
 
