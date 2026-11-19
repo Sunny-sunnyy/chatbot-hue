@@ -1,3 +1,12 @@
+# STATUS A — PHIÊN SÁNG 19/11 (thứ Năm; mở; cập nhật 08:08 19/11/2026 `date`)
+
+- Terminal: A `hue-rag-cb` · B `hue-rag-d2` · C `hue-rag-f5` · E `hue-rag-34` (Claude Code, trực tiếp; cả ba đã tự báo, mỗi phiên một tin).
+- Kiểm nhanh: `main` `d0d3c25` = origin; chỉ `.wslconfig` untracked; hooksPath `.githooks`; Qdrant tắt, 0 container, 0 server, 0 worktree của A; RAM khả dụng 11,4 GB; 10 phiên của hai dự án khác đang mở. Code không đổi từ `3abb076`.
+- User 08:08 19/11/2026: sửa lỗi an toàn (câu thiếu cảnh báo "tạm ngừng mùa lũ") TRƯỚC, rồi mới ghi mốc "Phase 9 xong phần nhóm". Hộp hỏi User: 1.
+- Giao: B báo cáo lượt đo cuối · C plan + code một câu lời dặn sau cờ tắt · E người kiểm cả hai. Chi tiết: khối đầu `CURRENT_HANDOFF.md`.
+- Khai báo sửa (A): `CURRENT_HANDOFF.md`, `STATUS_A.md`.
+- Tiếp: hỏi User câu (c) cách đo rồi (b) lượt tốc độ; C xong phần 0 USD ⇒ xin lượt máy hai dự án kia ⇒ cho đo; vòng tự soi 1 khi mỗi phiên có kết quả đầu.
+
 # STATUS A — KẾT PHIÊN TỐI 18/11, CUỐI NGÀY (viết 21:49 18/11/2026 `date`; terminal: A `hue-rag-31` · B `hue-rag-75` · C `hue-rag-b9` · E `hue-rag-51`)
 
 - **Việc dở:** bước 4 đã đo trên `b27ef45`, KHÔNG đạt mọi sàn; mốc code mới `3abb076`. Việc kế + câu hỏi cho User (mỗi lần một câu, có ví dụ thật, nói mục đích ở dòng đầu): khối đầu `CURRENT_HANDOFF.md`. B nợ báo cáo tracked lượt đo cuối; `bai_hoc/` chưa viết việc tối nay.
