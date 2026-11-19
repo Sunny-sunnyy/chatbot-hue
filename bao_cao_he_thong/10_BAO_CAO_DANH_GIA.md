@@ -1,7 +1,7 @@
 # Báo cáo cho bạn: Đánh giá — thước đo chất lượng và điểm mốc (Phase 7B, 8.1, 8.2, đợt sửa kho 1–2, lượt đo cuối Phase 1–8, lượt đo cuối Phase 9)
 
-**Cập nhật lần cuối: 08:11 19/11/2026 — bản 9: lượt đo cuối Phase 9 phần đã thấy (18/11) — bản đang chạy ĐÃ đo trên cả bộ câu mẫu 176 + bộ an toàn, so với RAG 1–8; CÓ sàn không đạt, chưa chốt Phase 9; tốc độ chưa đo; bộ kín chưa chạy.** Bản 8 (10:30 14/11/2026): mốc kho / mốc tìm sau lần ghi kho 14/11; một câu bộ an toàn đổi nhãn "ngoài kho" ⇒ "trong kho".** Bản 7 (19:28 10/11/2026): nói rõ chatbot đang chạy (Phase 9) chưa đo lại cả bộ Golden 176 (dự kiến đo ở bước so sánh cuối B7); thêm số tốc độ / tiền mới nhất (S5 09/11); câu theo ngày: công cụ bật 09/11; mốc kho / mốc tìm theo 05/11. Các bản trước: xem lịch sử git.**
-Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh mới (31/10). Bản 10/11: agent con của A, chưa review. Bản 9 (19/11): phiên B viết phần lượt đo cuối Phase 9; các phần khác giữ nguyên, chưa soát lại. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
+**Cập nhật lần cuối: 08:11 19/11/2026 — bản 9: lượt đo cuối Phase 9 phần đã thấy (18/11) — bản đang chạy ĐÃ đo trên cả bộ câu mẫu 176 + bộ an toàn, so với RAG 1–8; CÓ sàn không đạt, chưa chốt Phase 9; tốc độ chưa đo; bộ kín chưa chạy.** Bản 8 (10:30 14/11/2026): mốc kho / mốc tìm sau lần ghi kho 14/11; một câu bộ an toàn đổi nhãn "ngoài kho" ⇒ "trong kho". Bản 7 (19:28 10/11/2026): nói rõ chatbot đang chạy (Phase 9) chưa đo lại cả bộ Golden 176 (dự kiến đo ở bước so sánh cuối B7); thêm số tốc độ / tiền mới nhất (S5 09/11); câu theo ngày: công cụ bật 09/11; mốc kho / mốc tìm theo 05/11. Các bản trước: xem lịch sử git.
+Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh mới (31/10). Bản 10/11: agent con của A, chưa review. Bản 9 (19/11): phiên B viết phần lượt đo cuối Phase 9, phiên E review; các phần khác giữ nguyên, chưa soát lại. Tỉ giá ước: 1 USD ≈ 25.000 đồng.
 
 ## 1. Tóm tắt (phần lượt đo cuối Phase 9: đúng hiện trạng 19/11/2026; phần còn lại: 10/11/2026)
 
@@ -11,7 +11,7 @@ Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh m
   **Bản này ĐÃ được đo trên cả bộ câu mẫu 176 (tên cũ "Golden") + bộ an toàn 32, so theo cặp với RAG 1–8** — hai lần: giữa kỳ 12/11 và **lượt đo cuối phần đã thấy 18/11** (mục 4, mục đầu).
 - **Kết quả lượt đo cuối 18/11 — CÓ sàn KHÔNG ĐẠT ⇒ CHƯA chốt "Phase 9 xong phần nhóm"** (bảng đủ + chẩn đoán: `report_agent/2026-11-12_ra_khoang_cach/b_do_cuoi_b7_implementation.md`):
   - **Không đạt:** bộ an toàn còn **2 câu "thiếu cảnh báo mới"** sau thủ tục sinh lại (một câu thiếu thật, ổn định 7 / 7 lần; một câu lệch do hai bên có ngữ cảnh khác nhau) và 1 câu "sai điều kiện mới" ở lượt 2
-    (thận trọng hơn nguồn; sinh lại 0 / 3) · bộ câu mẫu: **1 / 18 câu ngoài kho bị trả lời** (từ chối sai khuôn kèm lời khuyên có nguồn, 0 con số bịa) · "Đủ ý": **6 câu tụt** (ngưỡng 4) dù trung bình
+    (thận trọng hơn nguồn; sinh lại 0 / 3) và **câu ngoài kho bị trả lời 1 / 4 theo nhãn gốc** (nhãn cũ từ 14/11; theo nhãn đã sửa: 0 / 3) · bộ câu mẫu: **1 / 18 câu ngoài kho bị trả lời** (từ chối sai khuôn kèm lời khuyên có nguồn, 0 con số bịa) · "Đủ ý": **6 câu tụt** (ngưỡng 4) dù trung bình
     **tăng +0,186** · sửa lịch bằng lời **7 / 10** chuỗi (ngưỡng của plan tính năng 8 / 10; lỗi là "báo chưa hỗ trợ việc làm được", không có lượt nào sửa sai lịch).
   - **Đạt:** 0 nói chắc sai mới · 0 lỗi kỹ thuật · 0 lỗi trích dẫn · "Đúng" +0,248, 0 câu tụt · từ chối nhầm câu trong kho 3 ↔ mốc 12 · 0 đảo cảnh báo · 0 / 44 câu ngoài phạm vi bị trả lời bằng kho ·
     16 / 17 câu kho thiếu có mục web · biểu mẫu lịch 12 / 12 ×2 · tiền 0,00044 USD / câu (bộ câu mẫu, không có câu web).
@@ -71,7 +71,8 @@ Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh m
   lượt đo cuối 01/11 (giá đủ) **0,139 / trần 0,20**;
   lượt đo cuối Phase 9 18/11 **≈ 0,357 / trần 0,45** (gồm 0,024 cho 14 lượt thật bão × mục web).
   Chấm bằng Claude dùng quota Claude Code (không USD).
-- **Bạn cần quyết** (phiên điều phối hỏi từng câu): cho chạy lượt đo tốc độ 60 câu (ước ≤ 0,04 USD; tỉ lệ loại câu là giả định) · cách đo "thiếu cảnh báo mới" khi hai bên có ngữ cảnh khác nhau — quyết trước lần đo an toàn kế.
+- **Bạn cần quyết:** không có việc gấp. Bạn đã chốt 08:11 19/11/2026 cách đếm "thiếu cảnh báo mới" từ lần đo kế: so với mốc chỉ tính ý nằm trong phần ngữ cảnh CHUNG của hai bên; ý chỉ có ở nguồn trợ lý tìm thêm ghi cột riêng, đọc tay từng ca
+  (bỏ cảnh báo an toàn của chính hoạt động được hỏi ⇒ tính phạm). Lượt đo tốc độ 60 câu: phiên điều phối đã quyết chạy (ước 0,04 USD, vẫn dưới trần), chờ khung giờ máy yên; tỉ lệ loại câu là giả định.
 
 ## 2. Hoạt động thế nào (bản đang chạy)
 
@@ -120,7 +121,7 @@ Mốc / biến thể:  176 câu Golden → đường của API (tìm → đóng 
 | Câu hỏi theo ngày tương đối | **Đã xử lý** (đo, 30/10) | 15 câu: 0 câu đoán ngày rồi nói sai; 6 / 14 câu trong kho bị từ chối nhầm ⇒ Phase 9: công cụ ngày + âm lịch **bật 09/11** (14 câu mới: bớt 9 từ chối nhầm, 0 sai ngày) |
 | Tốc độ / tiền theo yêu cầu bạn chốt | **Xử lý một phần** (S5 09/11: 2 loại câu vượt sàn; bản 18/11 chưa đo tốc độ theo sàn) | **Bản 18/11:** tiền 0,00044 USD / câu trên bộ câu mẫu ⇒ đạt; tốc độ chỉ có quan sát (27 câu theo ngày: p50 2,5 s · p95 11,8 s), lượt đo 60 câu đã soạn, chưa chạy. **Lượt đo gần nhất có số theo sàn (S5 09/11, 65 câu):** câu về Huế 2,16 / 4,32 s, 0,00047 USD ⇒ đạt; câu xã giao p95 7,73 s và câu có từ chỉ ngày p50 5,19 s / 0,00063 USD ⇒ vượt sàn (bạn: giữ bật, tối ưu sau). Cuối Phase 8 (01/11): tới chữ đầu trên trình duyệt 1,23 / 2,61 s ⇒ đạt sàn 3 / 5 s + mục tiêu 1,5 / 3 s (sát); cả câu qua API 2,34 / 3,80 s (theo dõi); một lần đo. Tiền ≈ 0,00025 USD / câu ⇒ đạt; `cost_usd` tính giá đủ (`full_corpus_eval.py:169`, `row_cost_usd` :176) |
 | Thời gian "tới chữ đầu tiên" trên trình duyệt (streaming) | **Đã xử lý, đóng gói** (01/11, merge `a80e12d`; đo S4) | trình duyệt tự động trên 38 câu thử có trả lời + 21 câu từ chối báo riêng; chữ stream = chữ cuối 0 / 59 lệch; `report_agent/2026-10-31_streaming_spec/s4_do_d2_implementation.md` |
-| Lượt đo cuối Phase 9 — trợ lý ↔ RAG 1–8 | **Xử lý một phần** (18/11) | phần đã thấy đã đo: có sàn không đạt (an toàn thiếu cảnh báo mới 2 câu, sai điều kiện mới 1 câu lượt 2; câu ngoài kho bị trả lời 1 / 18; "Đủ ý" tụt 6 câu > 4; sửa lịch bằng lời 7 / 10); tốt hơn ở 3 / 3 nhóm ghi trước; tốc độ chưa đo; bộ kín NOT RUN — `report_agent/2026-11-12_ra_khoang_cach/b_do_cuoi_b7_implementation.md` |
+| Lượt đo cuối Phase 9 — trợ lý ↔ RAG 1–8 | **Xử lý một phần** (18/11) | phần đã thấy đã đo: có sàn không đạt (an toàn thiếu cảnh báo mới 2 câu, sai điều kiện mới 1 câu lượt 2, câu ngoài kho bị trả lời 1 / 4 theo nhãn gốc — nhãn đã sửa 0 / 3; bộ câu mẫu: câu ngoài kho bị trả lời 1 / 18; "Đủ ý" tụt 6 câu > 4; sửa lịch bằng lời 7 / 10); tốt hơn ở 3 / 3 nhóm ghi trước; tốc độ chưa đo; bộ kín NOT RUN — `report_agent/2026-11-12_ra_khoang_cach/b_do_cuoi_b7_implementation.md` |
 | Lượt đo cuối Phase 1–8 | **Đã xử lý** (01/11) | không làm hỏng (Golden + bộ an toàn + câu theo ngày); bộ kín mới: sàn đạt, số Golden lạc quan (mục 4) |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
@@ -144,14 +145,14 @@ Hồ sơ đủ (bảng từng sàn, đọc tay, chẩn đoán, tiền, giới h�
   | An toàn — sai điều kiện mới | 0 | lượt 1: 0 · lượt 2: **1** | câu dặn thêm thận trọng hơn nguồn; sinh lại 0 / 3 |
   | An toàn — câu ngoài kho bị trả lời | 0 | nhãn gốc **1 / 4** ⇒ nhãn đã sửa **0 / 3** | nhãn cũ từ 14/11 (kho đã có bài; quyết định đổi nhãn ở mục 5) — file nhãn sửa 18/11, người khác kiểm; ba câu trả lời của câu này chưa được chấm như câu trong kho |
   | Bộ câu mẫu — câu ngoài kho bị trả lời | 0 / 18 | **1 / 18** | nhãn còn đúng; trợ lý nói "nguồn không nêu" rồi thêm lời khuyên có nguồn — 0 con số bịa, sai khuôn từ chối |
-  | Bộ câu mẫu — "Đủ ý": số câu tụt | ≤ 4 | **6** (TB +0,186 [+0,031; +0,357]) | trùng 0 / 6 với giữa kỳ; 3 / 6 do bên mốc lên điểm; 1 câu thiếu thật vì lần này model không tìm thêm; mức dao động của chỉ số này chưa đo |
+  | Bộ câu mẫu — "Đủ ý": số câu tụt | ≤ 4 | **6** (TB +0,186 [+0,031; +0,357]) | trùng 0 / 6 với giữa kỳ; 1 câu thiếu ở BƯỚC TÌM (lần này model không tìm thêm); 5 câu chi tiết có trong 10 đoạn mà không nêu — "trả lời đúng điều được hỏi rồi dừng", có ở cả hai bên từ giữa kỳ, không mới; 3 / 6 do bên mốc lên điểm; mức dao động của chỉ số này chưa đo |
   | Sửa lịch bằng lời, 10 chuỗi, cả hai lần chạy đều đạt | plan cuối không ghi số; plan tính năng ≥ 8 / 10 | **7 / 10** | không do các bản sửa 18/11; có từ khi bật cờ "chưa hỗ trợ" 17/11 (đánh đổi đã chọn); lịch giữ nguyên + câu nói rõ chưa làm, không sửa sai |
 
 - **Đạt:** nói chắc sai mới 0 · lỗi kỹ thuật 0 · lỗi trích dẫn 0 · "Đúng" +0,248 [+0,101; +0,411], 0 câu tụt · từ chối nhầm trong kho 3 ↔ mốc 12 · đảo cảnh báo mới 0 · câu ngoài phạm vi bị trả lời bằng kho 0 / 44 ·
   kho thiếu có mục web 16 / 17 · chuỗi: 0 câu hỏi tiếp ngoài kho bị trả lời, 0 sai tuyến (56 lượt) · biểu mẫu lịch 12 / 12 ×2 · tiền 0,00044 USD / câu (158 câu mẫu trong kho). Giới hạn đã nhận từ 13/11: 2 / 44 câu ngoài phạm vi có mục web (câu cố định).
 - **Tốt hơn RAG 1–8** (Holm 3 nhóm): câu theo ngày +0,536 [+0,321; +0,750] · câu nhiều nguồn "Đủ ý" +1,222 [+0,333; +2,222] · câu hỏi tiếp +1,889 [+0,556; +3,111]. Việc mới: nhớ tên 6 / 6, web 8 / 10, trò chuyện 8 / 8 (phần đã thấy).
 - **Đặt cạnh để đọc đúng số an toàn:** từ chối nhầm câu an toàn thật 0 / 28; thiếu cảnh báo tổng 10 / 27 ↔ mốc 8 / 27 (một hệ thống từ chối hết sẽ đạt sàn "ngoài kho" nhưng thiếu 27 / 27).
-- **Chưa đo / chưa chạy:** tốc độ theo sàn (chỉ quan sát: 27 câu theo ngày, chữ đầu p50 2,5 s · p95 11,8 s; lượt chậm đều gọi model ≥ 3 lần) · mọi bộ kín (NOT RUN).
+- **Chưa đo / chưa chạy:** tốc độ theo sàn (đã có quyết định chạy lượt 60 câu, chờ máy yên; hiện chỉ có quan sát: 27 câu theo ngày, chữ đầu p50 2,5 s · p95 11,8 s; lượt chậm đều gọi model ≥ 3 lần) · mọi bộ kín (NOT RUN).
 - **Sau lượt đo:** hai lỗi an toàn ở mục web của lượt bão / lũ (model khác hãng tìm ra — bộ đo có 0 câu loại này) đã sửa; mốc code `3abb076`; 14 lượt thật qua giao diện: 13 / 13 lượt bão đúng, ca "hỏi tiếp tới cổng web" đo được 2 / 3 chuỗi, đều đúng.
 - **Giới hạn:** bộ đã thấy ⇒ chỉ nói "có làm hỏng không"; người chấm + người kiểm đều là Claude; hai câu thiếu cảnh báo phụ thuộc luật "một trong hai người chấm gắn là tính" (áp như các lượt trước, không đổi sau khi thấy số).
 - **Tiền:** lượt đo 0,3324 USD + lượt thật bão × mục web 0,0244 ⇒ ≈ 0,357 / trần 0,45 (≈ 8.900 đồng).

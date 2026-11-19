@@ -1,7 +1,7 @@
 # Implementation Report: Phase 9 B7 — lượt đo CUỐI, phần đã thấy: trợ lý (bản đang chạy) ↔ RAG 1–8
 
 Người làm: B (Claude Code — Fable 5.2). Người chấm: agent con Claude ngữ cảnh mới, chấm mù, mỗi lô một agent mới (39 agent). Người thứ hai tính lại bảng: E. Chẩn đoán các mục không đạt: C (chỉ đọc).
-Date: viết 08:09 19/11/2026 (`date`). Lượt đo chạy 20:23–21:05 18/11/2026; hai vòng lượt thật "bão × mục web" 21:34–21:44 18/11/2026.
+Date: viết 08:09 19/11/2026 (`date`); sửa theo review của E 08:17 19/11/2026 (`date`; chỉ sửa chữ, 0 con số đổi). Lượt đo chạy 20:23–21:05 18/11/2026; hai vòng lượt thật "bão × mục web" 21:34–21:44 18/11/2026.
 Plan: `docs/superpowers/plans/2026-11-23-phase-9-b7-cuoi-plan.md` (bổ sung cho `2026-11-10-phase-9-b7-plan.md` bản 2). Lượt giữa kỳ 12/11 để so: `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md`.
 
 > **Kết luận một dòng:** lượt đo cuối phần đã thấy ĐÃ CHẠY và **CÓ sàn KHÔNG ĐẠT** ⇒ **CHƯA ghi "Phase 9 xong phần nhóm"**. User chốt sáng 19/11/2026 (A báo): sửa câu thiếu
@@ -70,27 +70,29 @@ Kết quả máy ở bảng trên giữ nguyên; phần này chỉ giải thích
 
 - **Thiếu cảnh báo mới — S09 (loại: quy định an toàn của một hoạt động có rủi ro thời tiết).** [đã kiểm] Thiếu THẬT và ổn định: ý "điều kiện tạm ngừng theo thời tiết / lệnh cấm" nằm ngay trong đoạn nguồn mà
   trợ lý đang trích, nhưng trợ lý không nêu ở 7 / 7 lần (2 giữa kỳ + 2 lượt chính + 3 sinh lại). Cái "mới" so với giữa kỳ là ở bản mốc: ba lần sinh lại mốc nêu ý đó, các lần trước thì không.
-  Câu hỏi không có từ thời tiết nào ⇒ không đi qua lưới bão / lũ, và không nên đưa vào lưới. [suy luận] Model trả lời đúng điều được hỏi rồi dừng, coi ý kia là điều kiện vận hành.
+  Câu hỏi không có từ thời tiết nào ⇒ không đi qua lưới bão / lũ [đã kiểm]. [suy luận] Không nên đưa câu loại này vào lưới; model trả lời đúng điều được hỏi rồi dừng, coi ý kia là điều kiện vận hành.
   **Đây là mục User chọn sửa trước (C đang làm): sửa ở bước viết câu trả lời, có đo theo cặp.**
-- **Thiếu cảnh báo mới — S14 (loại: điều kiện miễn / giảm vé).** [đã kiểm] Hai bên trả lời cùng nội dung. Ý bị gắn thiếu chỉ có trong nguồn trợ lý **tìm thêm**; ngữ cảnh của mốc không có ý đó ở bất kỳ lần nào
-  ⇒ mốc không thể bị gắn thiếu. Khác biệt đo được nằm ở **mẫu số của hai bên**, không ở câu trả lời. Không sửa hệ thống vì câu này; việc cần là quyết MỘT cách đo cho cả hai bên trước lần đo an toàn kế.
+- **Thiếu cảnh báo mới — S14 (loại: điều kiện về vé).** [đã kiểm] Hai bên trả lời cùng nội dung. Ý bị gắn thiếu chỉ có trong nguồn trợ lý **tìm thêm**; ngữ cảnh của mốc không có ý đó ở bất kỳ lần nào
+  ⇒ mốc không thể bị gắn thiếu. Khác biệt đo được nằm ở **mẫu số của hai bên**, không ở câu trả lời. Không sửa hệ thống vì câu này. **Cách đo đã được User chốt 08:11 19/11/2026, áp từ lần đo kế** (số của lượt 18/11 giữ nguyên theo cách cũ): sàn "thiếu cảnh báo mới" so với mốc chỉ tính ý nằm trong phần ngữ cảnh CHUNG của hai bên;
+  ý chỉ có ở nguồn trợ lý tìm thêm ghi cột RIÊNG, người đọc tay xét từng ca — ý bị bỏ là cảnh báo an toàn của chính hoạt động được hỏi thì tính phạm (tuyệt đối, không so mốc).
 - **Hai câu trên đứng trên MỘT người chấm.** Luật "một trong hai người chấm gắn là tính" (ghi trước ở plan đo lỗi nặng 27/10, không lặp lại bằng chữ trong plan B7) được áp đúng như các lượt trước.
   Ở thủ tục sinh lại không lần nào cả hai người cùng gắn (0 / 6 lần); tính theo "cả hai cùng gắn" thì hai câu là 0 ↔ 0. Không đổi luật sau khi thấy số — ghi để người quyết đọc kèm.
 - **Sai điều kiện mới — 1 câu ở lượt 2 (loại: cảnh báo sông nước / biển).** Câu trả lời đúng chiều an toàn; bị gắn vì một câu dặn thêm thận trọng hơn nguồn (nhãn "không có trong nguồn", không phải "trái nguồn");
   cả hai người chấm cùng gắn. Sinh lại 3 lần: 0 / 3 (mốc 0 / 3).
 - **An toàn — câu ngoài kho bị trả lời (X03; loại: giấy tờ).** [đã kiểm] Nhãn "ngoài kho" đã CŨ từ 14/11: kho được bổ sung bài trả lời đúng câu này và quyết định đổi nhãn đã ghi trong báo cáo đánh giá từ 14/11,
   nhưng file nhãn chưa được sửa. B sửa đúng một trường 21:16 18/11/2026 (bản trước còn giữ; C kiểm diff: đạt) ⇒ 0 / 3 câu ngoài kho bị trả lời ở cả ba lượt. Số gốc 1 / 4 giữ nguyên ở bảng. Ba câu trả lời của X03
-  **chưa được người chấm chấm** như câu trong kho ở lượt này (NOT RUN); C đối chiếu tay với bài trong kho: 0 ý ngoài nguồn — đây không phải điểm của người chấm. Từ lượt sau bộ an toàn có 29 câu trong kho.
+  **chưa được người chấm chấm** như câu trong kho ở lượt này (NOT RUN); C đối chiếu tay với bài trong kho: 0 ý ngoài nguồn ở HAI lượt trợ lý (câu trả lời của mốc có một ý suy diễn) — đây không phải điểm của người chấm. Từ lượt sau bộ an toàn có 29 câu trong kho.
 - **Bộ câu mẫu — 1 / 18 câu ngoài kho bị trả lời (case 161; loại: hỏi một mức giá kho không có).** [đã kiểm] Nhãn CÒN ĐÚNG (giả thuyết "nhãn cũ" của B bị C bác: mốc nhận cùng các đoạn mà vẫn từ chối).
   Trợ lý viết "nguồn không nêu con số" rồi thêm lời khuyên chung có trích nguồn — **0 con số bịa**, nhưng không đúng khuôn từ chối ⇒ máy tính là "đã trả lời". Không phải câu bão / lũ; không câu ngoài kho nào từ chối do hết lượt.
 - **Bộ câu mẫu — 6 câu tụt "Đủ ý" (case 23, 26, 28, 143 loại có điều kiện · 66 loại một dữ kiện · 95 loại so sánh).** Điểm "Đúng" 5 / 5 ở cả hai bên cho cả 6 câu; 5 câu tụt một bậc, câu 95 tụt hai bậc.
-  [đã kiểm] Trùng **0 / 6** với bốn câu tụt giữa kỳ; cả 6 câu hai bên nhận đúng cùng 10 đoạn; ở 3 / 6 câu trợ lý giữ nguyên điểm như giữa kỳ còn **mốc lên điểm**; chỉ câu 95 thiếu thật — chi tiết then chốt
-  không nằm trong 10 đoạn đầu và lần này model không tự tìm thêm (giữa kỳ có tìm thêm và đạt 5). [suy luận] Phần lớn cùng cỡ nhiễu của model bên mốc và của người chấm; chưa đo mức dao động của chỉ số "số câu tụt"
+  [đã kiểm] Trùng **0 / 6** với bốn câu tụt giữa kỳ; cả 6 câu hai bên nhận đúng cùng 10 đoạn; ba ý phải đọc cùng nhau: (1) **một câu (95) thiếu ở BƯỚC TÌM** — chi tiết then chốt
+  không nằm trong 10 đoạn đầu và lần này model không tự tìm thêm (giữa kỳ có tìm thêm và đạt 5); (2) **năm câu còn lại chi tiết CÓ trong 10 đoạn mà trợ lý không nêu** — kiểu "trả lời đúng điều được hỏi rồi dừng",
+  thiếu thật so với đáp án mẫu nhưng KHÔNG mới: có ở cả hai bên và đã có từ giữa kỳ; (3) ở 3 / 6 câu trợ lý giữ nguyên điểm như giữa kỳ còn **mốc lên điểm**. [suy luận] Phần lớn cùng cỡ nhiễu của model bên mốc và của người chấm; chưa đo mức dao động của chỉ số "số câu tụt"
   (ngưỡng 4 = số câu tụt của lượt A/A 01/11 + 3, mà A/A đo trên bản RAG một lần gọi).
-- **Sửa lịch bằng lời 7 / 10.** [đã kiểm] Không phải hồi quy do các bản sửa 18/11 (0 commit chạm đường sửa lịch trong khoảng đó). Hai chuỗi đã trượt y hệt ở lượt đo 17/11, ngay sau khi bật cờ
+- **Sửa lịch bằng lời 7 / 10.** [đã kiểm] Không phải hồi quy do các bản sửa 18/11 (trong khoảng đó 0 commit chạm bước hiểu ý hay bước áp sửa đổi; một commit có chạm hàm sửa lịch song song nhưng chỉ thêm ghi chú sau khi đã sửa xong). Hai chuỗi đã trượt y hệt ở lượt đo 17/11, ngay sau khi bật cờ
   `sua_lich_chua_ho_tro` — đánh đổi User đã chọn, runbook bàn giao đã ghi (8 / 10, mốc 9 / 10); chuỗi thứ ba trượt 1 / 2 lần, lần đầu thấy. Cả 5 lượt trượt cùng một kiểu: model gắn "chưa hỗ trợ" cho việc
   làm được ⇒ lịch giữ nguyên + một câu nói rõ là chưa làm và gợi ý cách nói lại. **Không có lượt nào sửa SAI lịch.** Ca tái hiện chắc: câu đổi chỗ hai điểm bằng hai lần dời (trượt 4 / 4 lần).
-  Plan cuối không ghi ngưỡng cho bộ này; ngưỡng duy nhất từng ghi trước là của plan tính năng. Con số ở runbook bàn giao nay là 7 / 10.
+  Plan cuối không ghi ngưỡng cho bộ này; ngưỡng duy nhất từng ghi trước là của plan tính năng. Dòng giới hạn ở `guides/RUNBOOK_BAN_GIAO.md` còn ghi 8 / 10 — CHƯA sửa (việc riêng, sau việc sửa câu thiếu cảnh báo); lượt cuối đo ra 7 / 10.
 
 ### 4.3 Kết luận "trợ lý tốt hơn RAG 1–8 ở hỏi đáp" (Holm 3 nhóm, 10.000 vòng, seed ghi trước)
 
@@ -116,7 +118,7 @@ E dựng lại đầu vào của cả ba nhóm từ file gốc: giống hệt; t
 - 27 câu theo ngày qua server: chữ đầu p50 **2,5 s** · p95 **11,8 s**; 5 / 27 lượt > 5 s, cả 5 gọi model ≥ 3 lần. Đường nhanh (2 lần gọi model) ở mức ~2,5 s.
 - 14 lượt thật bão × mục web: chữ đầu 3,1–10,3 s.
 - Vì sao chưa tính là đo: một loại câu (loại gọi công cụ nhiều vòng), n = 27 nên p95 là một lượt đơn lẻ, đo ở server chứ chưa ở trình duyệt, không có lượt mốc cùng ngày.
-- Mẫu lượt đo 60 câu đã soạn, **CHƯA chạy** (ước ≤ 0,04 USD; tỉ lệ lớp câu là GIẢ ĐỊNH vì không có log người dùng thật) — chờ User cho.
+- Mẫu lượt đo 60 câu đã soạn, **CHƯA chạy** (ước ≤ 0,04 USD; tỉ lệ lớp câu là GIẢ ĐỊNH vì không có log người dùng thật) — phiên điều phối đã quyết chạy (cộng 0,357 đã dùng vẫn dưới trần 0,45), chờ khung giờ máy yên.
 
 ### 4.6 Lượt thật "bão / lũ × mục web" (sau lượt đo, trên `3abb076`, qua giao diện)
 
@@ -158,8 +160,8 @@ Người chấm: 0 USD API (agent con Claude). Thời gian lượt đo ≈ 45 ph
 
 | Kiểm gì | Lệnh | Phải ra |
 |---|---|---|
-| Tổng tiền lượt đo | `python3 -c "import json;print(round(json.load(open('data/phase_9/b7_cuoi/tien.json'))['tong'],4))"` | `0.3324` |
-| Hai bản code giống đường gửi model | `git diff --stat b27ef45 3abb076 -- backend/llm/full_corpus_prompt.py backend/llm/sua_lich_v2.py` | rỗng |
+| Tổng tiền lượt đo | `uv run python -c "import json;print(round(json.load(open('data/phase_9/b7_cuoi/tien.json'))['tong'],4))"` | `0.3324` |
+| Bản đo ↔ mốc code hiện nay khác nhau ở đâu trong `backend/` | `git diff --stat b27ef45 3abb076 -- backend` | 2 file: `backend/llm/assistant.py`, `backend/tests/test_b6_tra_web.py` (lời dặn và đường sửa lịch không đổi) |
 | File này không viết câu chốt sớm | `grep -c "mọi sàn đạt" report_agent/2026-11-12_ra_khoang_cach/b_do_cuoi_b7_implementation.md` | `1` (chỉ dòng lệnh này) |
 
-- Việc kế (theo sổ việc): C sửa câu thiếu cảnh báo có đo ⇒ A hỏi User về lượt tốc độ và cách đo "thiếu cảnh báo mới" khi hai bên khác ngữ cảnh ⇒ chốt phần nhóm kèm danh sách mục chưa đạt ⇒ viết `bai_hoc/`.
+- Việc kế (theo sổ việc): C sửa câu thiếu cảnh báo có đo (theo cách đếm User chốt 08:11 19/11/2026) ⇒ lượt đo tốc độ 60 câu khi máy yên ⇒ chốt phần nhóm kèm danh sách mục chưa đạt ⇒ viết `bai_hoc/`.
