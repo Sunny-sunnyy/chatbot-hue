@@ -18,8 +18,8 @@ Viết 11:19 19/11/2026 (`date`) lúc kết phiên nhẹ. Vai hôm nay: người
 12. **Bài `bai_hoc/VIEC_MOI_XONG.md` mục 7–11** (việc xong sáng 19/11) — đã ở main (`7a42599`, sửa 70 lượt `fa74846`). Agent con đối chiếu 110 khẳng định: 4 sai · 14 dễ hiểu nhầm · 1 không nguồn, sửa hết trước commit. 0 USD.
 13. **Thử ba "cách thử 2 phút" trên giao diện** — cả ba không ra như bài viết; sửa bài + dòng Đã thử (`9a1f91a`, đã ở main); runbook 10.2 thêm hai giới hạn (`cf4bf4b`, CHƯA gộp). Thấy: dời hai điểm trên lịch mặc định bị luật xếp chặn (B: 1 / 13 cặp được); câu dời kèm dấu hỏi được đáp "Được, có thể đổi…" mà lịch không đổi; câu kể dài bị rút vì trích dẫn. ≤ 0,004 USD.
 14. **Phân xử hai phiếu chấm bộ 80 kịch bản** — xong nới 51 · sát chữ 40 · mục web 4 · chưa xong 25 · sai 5; ba lỗi đầu: trả lời theo lịch khác (3), trả lời rỗng báo thành công (2 lượt), từ chối khuôn thay vì nói thật. E chỉ mở 21 / 80 kịch bản. 0 USD.
-15. **Khối "sửa sau duyệt" plan mức suy luận** (bậc 2 chỉ medium + low, một phép so, S19 sinh lại 3 + 3, trần bậc 2 hạ còn 0,35 USD) — sha `de90b6bde2da`, chờ A ghi duyệt.
-16. **Bước 0b plan "ngữ cảnh lớn hơn": đọc 26 câu yếu** — chạm: 15 đoạn 7 câu · cả mục 6 câu; tổng cổng 12 / 10 (theo chữ plan) hoặc 8 / 7 (chỉ trong 26 câu) — A chọn. Dò theo từ khoá rồi mới mở dòng. 0 USD.
+15. **Khối "sửa sau duyệt" plan mức suy luận** (bậc 2 chỉ medium + low, một phép so, S19 sinh lại 3 + 3, trần bậc 2 hạ còn 0,35 USD) — sha `de90b6bde2da`, A đã duyệt; B chạy bậc 2 theo bản đó.
+16. **Bước 0b plan "ngữ cảnh lớn hơn": đọc 26 câu yếu** — chạm: 15 đoạn 7 câu · cả mục 6 câu; tổng cổng 12 / 10 (theo chữ plan) hoặc 8 / 7 (chỉ trong 26 câu) — A chốt: chạy bước 1 mẫu nhỏ, ghi trước "dự báo: chưa rõ". Dò theo từ khoá rồi mới mở dòng. 0 USD.
 17. **Plan "nói thật giới hạn thay câu từ chối khuôn"** — sha `78de38324834`, B đang review. Đếm trước: 18 lượt từ chối khuôn đều do model viết; chỉ 4 lượt là "làm thay". Thiết kế: một trường thêm ở lần gọi định tuyến + code thay câu, không sửa lời dặn trả lời.
 
 **File riêng tư E viết hôm nay (ngoài git — chỉ ghi đường dẫn):**
