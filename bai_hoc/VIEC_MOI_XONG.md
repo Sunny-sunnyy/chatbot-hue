@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 11:43, ngày 19/11/2026 · thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 13:16, ngày 19/11/2026 · thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 · thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -92,8 +92,13 @@ Sau khi gỡ, nhóm hỏi thử qua model thật 12 câu (sau khi bỏ trần đ
   đường cho các phép thử sau (cho model suy luận nhiều hơn, đưa nhiều tài liệu hơn) — các phép thử đó chưa xong nên chưa viết ở đây.
 - Một việc tốn trên 1 USD vẫn phải báo anh trước.
 
-**4. Cách thử trong 2 phút.** Hỏi trợ lý một câu cần trả lời dài (ví dụ nhờ kể đủ các công trình trong một khu di tích lớn kèm đặc điểm từng nơi): câu trả lời phải kết
-thúc trọn câu, không đứt giữa chừng. (Trước 19/11 câu thường cũng không đứt — phép thử này chỉ để anh thấy không có gì hỏng sau khi gỡ.)
+**4. Cách thử trong 2 phút.** Hỏi trợ lý một câu cần trả lời dài (ví dụ nhờ kể đủ các công trình trong một khu di tích lớn kèm đặc điểm từng nơi). Nếu có câu trả lời thì
+nó phải kết thúc trọn câu, không đứt giữa chừng. Anh cũng có thể gặp dòng "Câu trả lời không đáp ứng yêu cầu trích dẫn" kèm nút "Thử lại" — đó không phải do việc gỡ
+giới hạn mà là bước kiểm trích dẫn rút câu trả lời (xem dòng Đã thử); bấm "Thử lại". (Trước 19/11 câu thường cũng không đứt — phép thử này chỉ để anh thấy không có gì hỏng sau khi gỡ.)
+
+**Đã thử (trưa 19/11, một lượt thật trên giao diện)** [máy kiểm, chưa có người thứ hai]: hỏi kể các công trình chính trong Đại Nội, mỗi nơi một hai câu ⇒ **không** nhận được
+câu trả lời: màn hình hiện "Câu trả lời không đáp ứng yêu cầu trích dẫn. Thử lại" (bước kiểm trích dẫn rút cả câu). Chữ không bị đứt giữa chừng, nhưng lần đó người dùng
+tay trắng. Mới một lượt, chưa bấm thử lại, nên chưa biết kiểu câu xin kể dài này bị rút thường xuyên tới đâu — nhóm đã ghi vào danh sách lỗi của đợt "việc phổ thông".
 
 ## 19/11 — 8. Sửa lịch bằng lời: câu "dời hai điểm trong một câu" nay do code đọc
 
@@ -121,9 +126,21 @@ ngày 2" (A, B là hai điểm đang có trong lịch). Trước: trợ lý đá
 - Không đếm trực tiếp được hai chuỗi đích đạt là nhờ code hay do lần này model tự trả đúng; suy ra gián tiếp: một trong hai chuỗi trước thay đổi trượt 4 / 4 lần, sau thay đổi đạt 4 / 4 lần (chuỗi kia trước chỉ trượt 1 / 2 lần).
 - 10 chuỗi này đã dùng hơn mười lượt đo ⇒ chỉ nói được "ca này hết trượt trên bộ đã thấy", không phải tỉ lệ trên câu người dùng mới.
 
-**4. Cách thử trong 2 phút.** Bấm "Lên kế hoạch", để mặc định (2 ngày, 2 người lớn), gửi. Khi có lịch, chọn hai điểm ở hai buổi khác nhau rồi gõ đúng mẫu: "cho <điểm
-thứ nhất> lên sáng ngày 1, còn <điểm thứ hai> để chiều ngày 2" (gõ tên điểm như lịch ghi). Phải thấy hai điểm đổi buổi và khối "Đã đổi" có hai dòng. Thêm dấu hỏi vào cuối
-câu rồi gửi lại ⇒ thường ra "Chưa làm…" (giới hạn ở ý 3: phần code không đọc câu có dấu hỏi; nếu lần đó model tự hiểu đúng thì lịch vẫn đổi).
+- **Thêm sau khi thử tay trưa 19/11 — trên lịch mặc định, hầu hết cặp điểm KHÔNG dời được.** Code đọc được câu, nhưng bước xếp lịch từ chối vì chỗ mới phạm luật xếp (giờ
+  mở cửa / cụm điểm xa nhau / buổi quá dày); khi đó khối thay đổi ghi hai dòng "Không đổi được: … nên mình chưa đổi" và lịch giữ nguyên. Người viết code đã chạy thẳng hàm
+  trên lịch mặc định 2 ngày · 2 người lớn (không gọi model, 0 đồng): trong 13 cặp đổi chỗ hai điểm ban ngày khác buổi, chỉ **1 / 13** cặp dời được — Đại Nội ⇄ Đầm Chuồn,
+  cùng ngày 1; mọi cặp chạm tới ngày 2 đều bị chặn vì ngày 2 đã có bốn điểm ban ngày. [máy kiểm; chưa có người thứ hai chạy lại; chưa biết luật nào trong ba luật chặn từng cặp]
+- Câu dời kèm **dấu hỏi** ở cuối không ra "Chưa làm…" như bài viết lúc đầu: ở lần thử, trợ lý coi đó là câu hỏi thường và đáp "Được, có thể đổi lịch như sau: …" kèm
+  nguồn, trong khi lịch **không** đổi — người dùng dễ tưởng đã đổi. Một lượt, [máy kiểm]; đã ghi vào danh sách lỗi của đợt "việc phổ thông".
+
+**4. Cách thử trong 2 phút.** Bấm "Lên kế hoạch", để mặc định (2 ngày, 2 người lớn), gửi. Khi có lịch (ngày 1: sáng Đại Nội, chiều Đầm Chuồn), sang trang trợ lý gõ: "Cho Đầm
+Chuồn lên sáng ngày 1, còn Đại Nội để chiều" — không có dấu hỏi. Phải thấy hai dòng "Đã dời…" và hai điểm đổi buổi. Thử một cặp khác (ví dụ hai điểm của ngày 2) ⇒ sẽ thấy
+hai dòng "Không đổi được…" và lịch giữ nguyên: đó là giới hạn vừa ghi ở ý 3, không phải hỏng.
+
+**Đã thử (trưa 19/11, trên giao diện thật, hai lịch mới)** [máy kiểm, chưa có người thứ hai]: cặp 1 — một điểm buổi chiều ngày 2 lên sáng ngày 1 và Đại Nội xuống chiều ngày 2;
+cặp 2 — đổi chỗ hai lăng sáng ↔ chiều trong ngày 2. Cả hai lần: khối thay đổi có đúng hai dòng (tức câu đã được đọc, không còn "Chưa làm…"), nhưng cả hai dòng đều là "Không
+đổi được: … phạm luật xếp", lịch giữ nguyên. Cặp Đại Nội ⇄ Đầm Chuồn ở cách thử trên **chưa** được thử trên giao diện (server đã tắt để nhường máy) — mới có kết quả chạy
+thẳng hàm của người viết code. Có ảnh màn hình trong thư mục dữ liệu riêng của nhóm.
 
 ## 19/11 — 7. Câu an toàn bị bỏ sót "tạm ngừng khi mưa lũ": code tự nối nguyên câu của nguồn
 
@@ -153,8 +170,13 @@ của lượt đo cuối (mục 6): trợ lý kể các quy định cho người
 - Từ lần đo bộ an toàn kế, người chấm phải đọc cả câu trả lời lẫn ghi chú (dòng này nằm ở ghi chú) — phần công cụ đo cho việc đó chưa làm.
 - Anh đã đóng việc đầu tư thêm cho mảng bão / lũ, nên nhóm dừng ở mức này.
 
-**4. Cách thử trong 2 phút.** Hỏi trợ lý quy định khi đi thuyền nghe ca Huế trên sông. Dưới dòng Nguồn phải có một dòng đậm bắt đầu bằng "Lưu ý trong nguồn". Không thấy
-⇒ nhìn dòng Nguồn: nếu thiếu bài về vé biểu diễn thì đó đúng là ca giới hạn ở ý 3 (lượt thật: 2 / 3 lần hỏi có dòng này).
+**4. Cách thử trong 2 phút.** Hỏi trợ lý quy định khi đi thuyền nghe ca Huế trên sông. Phải thấy **một trong hai**: (a) chính câu trả lời có nêu chuyện tạm ngừng khi nước
+dâng cao / có lệnh cấm — khi đó không có dòng đậm, vì code chỉ nối khi câu trả lời chưa nêu; hoặc (b) dưới dòng Nguồn có một dòng đậm bắt đầu bằng "Lưu ý trong nguồn".
+Không thấy cả hai ⇒ nhìn dòng Nguồn: nếu thiếu bài về vé biểu diễn thì đó đúng là ca giới hạn ở ý 3 (lượt thật sáng 19/11: 2 / 3 lần hỏi có dòng đậm).
+
+**Đã thử (trưa 19/11, một lượt thật trên giao diện)** [máy kiểm, chưa có người thứ hai]: ra trường hợp (a) — câu trả lời tự viết "nếu mực nước sông dâng cao hoặc có lệnh cấm
+xuất bến do thời tiết xấu, hoạt động thuyền rồng sẽ tạm ngừng", có trích bài về vé biểu diễn; **không** có dòng đậm (đúng thiết kế). Vậy ở lần này người dùng vẫn được
+cảnh báo, nhưng dòng đậm do code nối thì trưa 19/11 chưa được thấy lại trên giao diện.
 
 ## 18/11 (tối) — 6. Lượt đo cuối của Phase 9 trên các bộ câu đã dùng: phần lớn sàn đạt, còn năm mục chưa đạt và một mục chưa đo
 
