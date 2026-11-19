@@ -207,3 +207,38 @@
 .lkh-da-sua span { display: block; margin-top: 2px; font-size: 13px; opacity: .85; }
 .lkh-da-sua ~ .lich-v2 .lkh-doi-duoc { display: none; }
 .lkh-chi-dan { max-width: 68ch; margin: 0; font-size: 14px; color: var(--color-muted); }
+
+/* Xuất lịch (19/11): bố cục IN của MỘT thẻ lịch — nút "In / Lưu PDF" gắn lớp `in-lich` lên <html> và `lkh-dang-in` lên thẻ đang in rồi gọi
+   window.print(). Chỉ thẻ đó hiện; mỗi ngày bắt đầu một trang; nút, bản đồ nền ẩn; tiêu đề + dòng cuối chỉ hiện khi in. */
+.lkh-chi-in { display: none; }
+.lkh-xuat { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.lkh-xuat .retry { margin-top: 0; }
+@media print {
+  /* Bảng màu + phông của kiểu "Di sản" (như file PowerPoint): xanh rêu 49634D · đất nung A75B43 · nền trắng để in; tiêu đề Georgia, chữ Arial */
+  @page { size: A4; margin: 14mm; }
+  html.in-lich, html.in-lich body { background: #fff !important; }
+  html.in-lich body * { visibility: hidden; }
+  html.in-lich .lkh-dang-in, html.in-lich .lkh-dang-in * { visibility: visible; }
+  html.in-lich .lkh-dang-in { position: absolute; left: 0; top: 0; width: 100% !important; max-width: none !important; margin: 0; padding: 0; border: 0;
+    box-shadow: none; background: #fff; color: #282923; font-family: Arial, sans-serif; }
+  /* không in: nút, bản đồ nền + chú giải, link sang trang Chỗ ở, dòng "sai thì bấm Sửa". Ảnh điểm + ảnh quán in như trên màn hình. */
+  html.in-lich .lkh-dang-in .lich, html.in-lich .lkh-dang-in .bd, html.in-lich .lkh-dang-in .lkh-o-them, html.in-lich .lkh-dang-in .lich-hieu { display: none !important; }
+  /* dòng cuối: không tự đứng một trang riêng (lần chụp 19/11 ra trang 3 chỉ có hai dòng này) */
+  html.in-lich .lkh-dang-in .lkh-chi-in { display: block; margin-top: 4mm; font-size: 9pt; break-before: avoid-page; break-inside: avoid; }
+  html.in-lich .lkh-dang-in .lich-ghi-chu, html.in-lich .lkh-dang-in .notice { break-after: avoid-page; }
+  /* khối ghi chú ngắn: đi nguyên khối (lần in 19/11 tối: tiêu đề nằm cuối trang, thân sang trang sau) */
+  html.in-lich .lkh-dang-in .lich-ghi-chu { break-inside: avoid; }
+  /* ảnh điểm lộ dần theo cuộn (`lkh-lo`, clip-path): khi in không có cuộn ⇒ ảnh ngoài màn hình đầu bị che hết — gỡ hiệu ứng lúc in */
+  html.in-lich .lkh-dang-in img { animation: none !important; clip-path: none !important; }
+  html.in-lich .lkh-dang-in .lkh-in-tieu-de { margin: 0 0 5mm; font: 700 24pt Georgia, serif; color: #49634D; border-bottom: 2pt solid #B28739; padding-bottom: 3mm; }
+  html.in-lich .lkh-dang-in .lkh-thanh { background: #49634D !important; color: #F8F4E9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html.in-lich .lkh-dang-in h3, html.in-lich .lkh-dang-in .lkh-tong-h { font-family: Georgia, serif; color: #49634D; }
+  html.in-lich .lkh-dang-in .lich-ten { color: #49634D; }
+  html.in-lich .lkh-dang-in .lich-buoi { color: #A75B43; }
+  html.in-lich .lkh-dang-in .lich-ngay { break-inside: avoid-page; opacity: 1 !important; transform: none !important; animation: none !important; }
+  html.in-lich .lkh-dang-in .lich-ngay + .lich-ngay { break-before: page; }
+  /* ngày CUỐI được ngắt giữa các điểm: không thì khối ngày chiếm trọn trang và hai dòng ghi chú cuối rơi riêng sang một trang (thấy lại 19/11 tối) */
+  html.in-lich .lkh-dang-in .lich-ngay:not(:has(~ .lich-ngay)) { break-inside: auto; }
+  html.in-lich .lkh-dang-in .lkh-muc { break-inside: avoid; opacity: 1 !important; transform: none !important; animation: none !important; }
+  html.in-lich .lkh-dang-in a { color: inherit; text-decoration: none; }
+}

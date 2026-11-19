@@ -80,8 +80,9 @@ class ConversationStore:
         self._items.move_to_end(conversation_id)
 
     def lay_lich(self, conversation_id: str | None) -> dict | None:
+        """Lịch đã lưu của cuộc CÒN HẠN (cuộc đã quá hạn mà chưa bị dọn ⇒ None — đường tải file không gọi `ensure`, phải tự xét hạn)."""
         conversation = self._items.get(conversation_id)
-        return None if conversation is None else conversation.lich
+        return None if conversation is None or conversation.expires_at <= self._clock() else conversation.lich
 
     def luu_lich(self, conversation_id: str | None, lich: dict) -> None:
         """Ghi lịch mới nhất của cuộc (thay lịch cũ); cuộc hết hạn ⇒ không ghi. Cùng hạn với lịch sử (30 phút từ lượt cuối)."""

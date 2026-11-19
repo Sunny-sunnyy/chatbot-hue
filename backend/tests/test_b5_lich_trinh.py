@@ -34,7 +34,8 @@ SETTINGS = load_settings(validate_private_paths=False)
 # MỘT chỗ duy nhất liệt kê các cờ phụ thuộc "sửa lịch bản 2" / nơi ở mà test phải tự tắt (test không đọc cờ thật của settings.yaml).
 # Thêm một cờ mới cần `sua_lich_v2` ⇒ thêm vào ĐÂY; `test_cong_dot_1.flags_from` nhập hằng này từ đây (chiều ngược lại là nhập vòng) (19/11: chép tay ở hai file ⇒ vấp hai lần khi bật cờ).
 CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lich_doi_cho_code": False, "luu_tru_lich": False, "quan_lich": False, "ban_do_lich": False,
-                   "lich_vao_hoi_thuong": False}
+                   "lich_vao_hoi_thuong": False,
+                   "xuat_pptx": False}  # xuất PowerPoint cần `sua_lich_v2` ⇒ tắt theo (không thì lúc bật cờ trong settings hai file test ném lỗi)
 BANG = nap_bang_lich(SETTINGS)
 ON = AssistantFlags(tim_them=True, lich_trinh=True, bang_lich=BANG)
 OFF = AssistantFlags(tim_them=True)

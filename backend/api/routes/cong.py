@@ -131,6 +131,8 @@ async def tinh_nang(request: Request):
           "tra_web": flags.tra_web, "ban_do_lich": flags.ban_do_lich}
     if flags.ban_do_lich:  # như `len_ke_hoach_v2`: khoá chỉ có khi cờ bật ⇒ cờ tắt phản hồi giống hôm nay
         co["ban_do"] = BAN_DO
+    if flags.xuat_pptx:  # khoá chỉ có khi cờ bật ⇒ cờ tắt phản hồi giống hôm nay
+        co["xuat_pptx"] = True
     if flags.len_ke_hoach_v2:
         co["len_ke_hoach_v2"] = {"o_hien": list(flags.len_ke_hoach_o_hien), "so_ngay_toi_da": SO_NGAY_TOI_DA, "so_thich_toi_da": SO_THICH_TOI_DA,
                                  "so_thich_hien": list(flags.so_thich_hien)}  # loại < 4 điểm hoặc dưới sàn mô phỏng ⇒ không hiện

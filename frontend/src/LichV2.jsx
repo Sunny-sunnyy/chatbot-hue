@@ -167,6 +167,7 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
   return (
     <div className="bubble lich-v2">
       {turn.noticeAnToan && <p className="notice notice-an-toan" role="note">{turn.noticeAnToan}</p>}
+      <p className="lkh-chi-in lkh-in-tieu-de">Lịch trình Huế {lich.ngay.length} ngày</p>
       <div className="lkh-thanh">
         {ngayDau?.ngay_thang && <div><small>Bắt đầu</small><b>{THU_V2[ngayDau.thu]} {ngayDau.ngay_thang.split("-").reverse().join("/")}</b></div>}
         {diCung && <div><small>Đi cùng</small><b>{diCung}</b></div>}
@@ -201,10 +202,15 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
       )}
       {turn.sources?.length > 0 && <SourceLine turn={turn} />}
       {turn.notice && <p className="notice">{turn.notice}</p>}
+      {/* chỉ hiện khi IN: dòng cuối — file rời khỏi trang thì không còn ghi chú nào của giao diện đi theo. Không in ghi công ảnh (User 14/11). */}
+      <div className="lkh-chi-in">
+        <p>{DONG_CUOI_LICH}</p>
+      </div>
       {xong && (
         <div className="lich">
           <LuuLich getText={() => vanBanLich(turn, boMaTrichDan(turn.text || ""), [])} />
           <NutIcs lich={lich} cau={cau} anToan={turn.noticeAnToan} />
+          {XUAT_LICH && turn.key !== "mau" && <XuatLich />}
           {onEditPlan && <button type="button" className="retry" onClick={() => onEditPlan(null, turn.truong)}>Sửa — điền lại biểu mẫu</button>}
         </div>
       )}
@@ -299,6 +305,57 @@ function NutIcs({ lich, cau, anToan }) {
   return (
     <span className="lkh-ics">
       <button type="button" className="retry" onClick={taiIcs}>Thêm vào lịch (.ics)</button>
+      <span className="text-sm text-muted" role="status">{bao}</span>
+    </span>
+  );
+}
+
+// Xuất lịch (19/11, cờ server `xuat_pptx` ⇒ khoá `xuat_pptx` của `/api/tinh_nang`; App gọi `batXuatLich` một lần khi cờ về):
+// - "In / Lưu PDF": khung in của trình duyệt trên chính thẻ lịch này (CSS in ở `lkh.css`); không gửi gì đi đâu.
+// - "Tải PowerPoint": `GET /api/lich/pptx` — server dựng từ lịch ĐÃ LƯU của cuộc (lịch MỚI NHẤT, hết hạn sau 30 phút); trình duyệt không gửi lịch lên.
+let XUAT_LICH = false;
+export function batXuatLich(co) { XUAT_LICH = co === true; }
+
+function XuatLich() {
+  const [bao, setBao] = useState("");
+  const ref = useRef(null);
+  function inLich() {
+    const the = ref.current?.closest(".lich-v2");
+    if (!the) return;
+    the.classList.add("lkh-dang-in");
+    document.documentElement.classList.add("in-lich");
+    const xong = () => { the.classList.remove("lkh-dang-in"); document.documentElement.classList.remove("in-lich"); window.removeEventListener("afterprint", xong); };
+    window.addEventListener("afterprint", xong);
+    // ảnh `loading="lazy"` dưới màn hình đầu chưa tải ⇒ bản in thiếu ảnh: tải hết ảnh của thẻ rồi mới mở khung in (chờ tối đa 4 giây)
+    const anh = [...the.querySelectorAll("img")];
+    anh.forEach(i => { i.loading = "eager"; });
+    const cho = Promise.all(anh.map(i => (i.complete ? Promise.resolve() : i.decode().catch(() => {}))));
+    Promise.race([cho, new Promise(r => setTimeout(r, 4000))]).then(() => window.print());
+  }
+  async function taiPptx() {
+    setBao("Đang tạo file…");
+    try {
+      const r = await fetch("/api/lich/pptx", { credentials: "same-origin" });
+      if (!r.ok) {
+        const loi = await r.json().catch(() => null);
+        setBao(loi?.error?.message || "Chưa tải được file — thử lại sau.");
+        return;
+      }
+      const url = URL.createObjectURL(await r.blob());
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "lich-trinh-hue.pptx";
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setBao("Đã tải lich-trinh-hue.pptx (lịch mới nhất của cuộc trò chuyện).");
+    } catch {
+      setBao("Chưa tải được file — kiểm tra mạng rồi thử lại.");
+    }
+  }
+  return (
+    <span className="lkh-xuat" ref={ref}>
+      <button type="button" className="retry" onClick={inLich}>In / Lưu PDF</button>
+      <button type="button" className="retry" onClick={taiPptx}>Tải PowerPoint</button>
       <span className="text-sm text-muted" role="status">{bao}</span>
     </span>
   );
