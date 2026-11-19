@@ -50,7 +50,7 @@ Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / n
 
 1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
 2. Buổi User tự tay test toàn bộ (bước 7) — User chưa có giờ; KHÔNG nhắc.
-3. ĐANG HỎI User: mức "làm thay" cho gửi thư / đặt phòng / hỏi còn phòng (User hỏi lại 14:09 19/11/2026 — A đang giải thích, chưa chốt).
+3. Sắp trình User: cách làm file PDF + PowerPoint lịch trình đẹp (`VIEC_DANG_MO.md` việc 7).
 4. Hỏi khi tới lượt: giá phòng, bổ sung kho, vị trí người dùng.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
@@ -61,7 +61,7 @@ Sản phẩm:
 - Bão / lũ / khẩn cấp: hành vi đang có giữ nguyên, không đầu tư thêm (giới hạn đã nhận: runbook mục 10).
 - **19/11 — User TỰ NÊU:** chất lượng trước, tiền / tốc độ sau (dòng 10:04 dưới) · thử mức suy luận (duyệt chi phí thử) · làm việc phổ thông, không dồn công vào bão / lũ / khẩn cấp · báo cáo theo thư mục ngày · tự nhắc nhau không over-engineer.
 - **19/11 — User CHỌN Ô theo đề xuất của nhóm:** "Sửa lỗi an toàn trước" · "Chung tính sàn, riêng đọc tay" · "Làm bản code rồi ghi mốc" · "Bật khi E đọc đạt" · "Bật ngay, ghi giới hạn" · cả bốn nhóm việc phổ thông · "Chạy medium + low" (bậc 2 mức suy luận) · "Chèn hai lỗi nặng lên trước" (thứ tự ở mục 2).
-- **19/11 — User CHỌN Ô (14:09 19/11/2026):** giá vé cho "tổng tiền vé của lịch" = chép giá kho ĐÃ CÓ vào bảng điểm (kèm bài nguồn + ngày; điểm thiếu ⇒ "chưa có giá trong bảng"; bản đầu chỉ vé lẻ) · lượt nhờ "làm thay": ba câu nói thật riêng theo loại do code chọn, KHÔNG hiện mục web ở các lượt đó.
+- **19/11 — User CHỌN Ô (14:09 19/11/2026):** giá vé cho "tổng tiền vé của lịch" = chép giá kho ĐÃ CÓ vào bảng điểm (kèm bài nguồn + ngày; điểm thiếu ⇒ "chưa có giá trong bảng"; bản đầu chỉ vé lẻ) · lượt nhờ "làm thay": ba câu nói thật riêng theo loại do code chọn, KHÔNG hiện mục web ở các lượt đó. Xuất lịch: PDF + PowerPoint đẹp (đang nghiên cứu); không làm gửi email; đặt / hỏi phòng không giả lập.
 - **19/11 — User TỰ NÊU (11:32):** việc thử "ngữ cảnh lớn hơn" vượt 1 USD vẫn duyệt (trần trong plan 1,40 USD; hiểu là riêng việc đó).
 - Không nói giá phòng ở phần gợi ý chỗ ở (câu hỏi chi phí chung vẫn nêu khoảng giá có nguồn từ kho). Khối "Nơi ở" chỉ hiện khi người dùng
   đã chọn hạng chỗ ở — ở biểu mẫu hoặc nói bằng lời.
