@@ -29,9 +29,12 @@ from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusCo
 from test_api_chat import chat_log_records, metric_lines
 from test_b2_tool_loop import _ids, answer, deps, generator, tool_call  # noqa: F401  (fixture `deps` dùng chung)
 from test_chat_stream import parse_sse
-from test_cong_dot_1 import CO_SUA_LICH_TAT
 
 SETTINGS = load_settings(validate_private_paths=False)
+# MỘT chỗ duy nhất liệt kê các cờ phụ thuộc "sửa lịch bản 2" / nơi ở mà test phải tự tắt (test không đọc cờ thật của settings.yaml).
+# Thêm một cờ mới cần `sua_lich_v2` ⇒ thêm vào ĐÂY; `test_cong_dot_1.flags_from` nhập hằng này từ đây (chiều ngược lại là nhập vòng) (19/11: chép tay ở hai file ⇒ vấp hai lần khi bật cờ).
+CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lich_doi_cho_code": False, "luu_tru_lich": False, "quan_lich": False, "ban_do_lich": False,
+                   "lich_vao_hoi_thuong": False}
 BANG = nap_bang_lich(SETTINGS)
 ON = AssistantFlags(tim_them=True, lich_trinh=True, bang_lich=BANG)
 OFF = AssistantFlags(tim_them=True)

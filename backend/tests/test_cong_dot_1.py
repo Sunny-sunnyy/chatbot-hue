@@ -28,18 +28,13 @@ from llm.full_corpus_prompt import ANSWER_SYSTEM_INSTRUCTIONS, INSUFFICIENT_ANSW
 from llm.hoi_lai import GIA_TRI, TruongInput, ghep_cau
 from retrieval.full_corpus_context import PackedSource
 from test_api_chat import chat_log_records, metric_lines
+from test_b5_lich_trinh import CO_SUA_LICH_TAT
 from test_b2_tool_loop import answer, deps, generator  # noqa: F401  (fixture `deps` dùng chung)
 from test_b5b_thoi_tiet import nguon
 from test_chat_stream import parse_sse
 
 SETTINGS = load_settings(validate_private_paths=False)
 BUILD_RECORD = Path(__file__).resolve().parents[2] / "data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json"
-
-
-# MỘT chỗ duy nhất liệt kê các cờ phụ thuộc "sửa lịch bản 2" / nơi ở mà test phải tự tắt (test không đọc cờ thật của settings.yaml).
-# Thêm một cờ mới cần `sua_lich_v2` ⇒ thêm vào ĐÂY; `test_b5_lich_trinh` dùng chung hằng này (19/11: chép tay ở hai file ⇒ vấp hai lần khi bật cờ).
-CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lich_doi_cho_code": False, "luu_tru_lich": False, "quan_lich": False, "ban_do_lich": False,
-                   "lich_vao_hoi_thuong": False}
 
 
 def flags_from(**assistant) -> AssistantFlags:
