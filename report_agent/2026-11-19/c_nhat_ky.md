@@ -33,7 +33,14 @@ Tạo 11:20 19/11/2026 (giờ `date`) lúc kết phiên nhẹ. Sổ cũ nguyên 
 24. **Review nhánh xuất lịch của E** (đọc code, không chạy): 1 điểm lớn — câu an toàn của LƯỢT không theo vào file PowerPoint; rà bảo mật đường tải: không thấy lỗ; 4 điểm nhỏ.
 25. **Soát công cụ chấm an toàn bốn bên của B** (đọc code): 2 điểm nên sửa, B đã sửa trước khi chạy.
 
+### Tối 19/11 (mở phiên 18:42 sau khi máy bật lại; ghi 19:20 19/11/2026)
+26. **Trả nợ nhánh bật cờ `lich_vao_hoi_thuong`:** dựng lại worktree, chạy file chạm có / không `--env-file`, cả bộ 53 file từng tiến trình (559 giây): lượt đầu 1.508 đạt · 4 hỏng ⇒ sau xử lý 1.512 đạt · 0 hỏng; chụp chuỗi gửi model 228 / 228 giống byte với `main` cùng buổi. Phiên điều phối gộp, cờ bật trên `main` (commit gộp `62a2762`). Bẫy: worktree thiếu `frontend/dist` làm 3 test đỏ giả.
+27. **Lỗi thật do C gây, bắt được khi chạy các file dùng hàm dựng cờ chung (trước lượt cả bộ):** hai biến mức module cùng tên `_GIO` trong `backend/llm/lich_trinh_v2.py` (C thêm cái thứ hai chiều nay) ⇒ phép kiểm giờ trong câu tả điểm dùng nhầm mẫu; sống trên `main` 15:47–18:55. Sửa hai dòng `5be59b9`, E review, gộp `38b4434`. Bẫy: gộp code chỉ chạy file chạm; không `grep` tên trước khi thêm.
+28. **Bẫy danh sách cờ tắt chép tay — lần hai trong ngày:** `test_b5_lich_trinh` (sửa `f2245c9`). Phiên điều phối cho gom thành một hàm chung (việc kế).
+29. **Lượt thật ngắn trên `main` sau bật** (0,0024 USD): lập lịch ⇒ số giờ ngày 1 ⇒ tóm lịch, 3 / 3 đạt, C tự đọc. Model tự cộng thêm buổi tối thành "10 tiếng" (đúng, nhưng là số model tính).
+30. **Nhận định bước 2 "ngữ cảnh lớn hơn"** ghi vào file kết quả riêng tư: không đề nghị nhánh nào, giữ 10 đoạn; tự nhận plan thiếu thứ tự chấm và sàn "0 ô mới" trên một lượt. Phiên điều phối đóng việc.
+
 ## Tiền thật của C trong ngày
-Sáng: 0,21179 (lượt đo bản lời dặn) + 0,00213 (lượt thật bản code) = 0,2139 USD. Buổi trưa: 0 USD. Chiều: 0,073 (lượt thật giai đoạn 1 lịch đã lưu) + 0,034 (giai đoạn 2 tiền vé, gồm cuộc chẩn đoán và lượt bù) = 0,107 USD. **Cả ngày ≈ 0,321 USD.** Hai con số cả ngày: báo xong bị lật lại 3 (nhãn bằng chứng, mục 12 · nhận định "mức suy luận áp cho bước chọn tuyến", mục 21 · phiếu đọc tay in sai dòng nguồn, mục 20) · User phải nhắc lại 0.
+Sáng: 0,21179 (lượt đo bản lời dặn) + 0,00213 (lượt thật bản code) = 0,2139 USD. Buổi trưa: 0 USD. Chiều: 0,073 (lượt thật giai đoạn 1 lịch đã lưu) + 0,034 (giai đoạn 2 tiền vé, gồm cuộc chẩn đoán và lượt bù) = 0,107 USD. **Cả ngày ≈ 0,321 USD.** Hai con số cả ngày: báo xong bị lật lại 3 (nhãn bằng chứng, mục 12 · nhận định "mức suy luận áp cho bước chọn tuyến", mục 21 · phiếu đọc tay in sai dòng nguồn, mục 20) · User phải nhắc lại 0. Tối: 0,0024 (lượt thật sau bật) + phần gọi model thật của lượt cả bộ test có `--env-file` (chưa có số riêng — [chưa kiểm]).
 
 ## Việc ĐANG DỞ — xem `session_prompt/sessions/STATUS_C.md`
