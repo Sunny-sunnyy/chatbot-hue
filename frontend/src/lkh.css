@@ -226,6 +226,8 @@
   /* dòng cuối: không tự đứng một trang riêng (lần chụp 19/11 ra trang 3 chỉ có hai dòng này) */
   html.in-lich .lkh-dang-in .lkh-chi-in { display: block; margin-top: 4mm; font-size: 9pt; break-before: avoid-page; break-inside: avoid; }
   html.in-lich .lkh-dang-in .lich-ghi-chu, html.in-lich .lkh-dang-in .notice { break-after: avoid-page; }
+  /* cả cụm cuối (ghi chú · dòng Nguồn · hai dòng lưu ý) đi CÙNG nhau: mọi thứ đứng sau khối ghi chú không được mở đầu một trang (lần in 19/11 tối: tuỳ độ dài mô tả, hai dòng lưu ý lại rơi riêng một trang) */
+  html.in-lich .lkh-dang-in .lich-ghi-chu ~ *, html.in-lich .lkh-dang-in .notice { break-before: avoid-page; }
   /* khối ghi chú ngắn: đi nguyên khối (lần in 19/11 tối: tiêu đề nằm cuối trang, thân sang trang sau) */
   html.in-lich .lkh-dang-in .lich-ghi-chu { break-inside: avoid; }
   /* ảnh điểm lộ dần theo cuộn (`lkh-lo`, clip-path): khi in không có cuộn ⇒ ảnh ngoài màn hình đầu bị che hết — gỡ hiệu ứng lúc in */
