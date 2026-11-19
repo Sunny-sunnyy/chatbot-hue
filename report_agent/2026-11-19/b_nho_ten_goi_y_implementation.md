@@ -57,5 +57,13 @@ Nhờ trợ lý gợi ý một quán hoặc một điểm đến bất kỳ có 
 | Đọc tay 100 % (phiên E) + cột bộ đích (phiên C) | XONG | hồ sơ riêng tư |
 | Cả bộ test trên nhánh đã gộp nhánh chính (`9b13a80`, chứa main `4dbbaca`) | XONG — 55 file, mỗi file một tiến trình, có file khoá: **1.542 đạt · 0 hỏng**; tổng thời gian pytest in 567 giây (theo đồng hồ khoảng 12 phút) (mốc trước: 1.512 trên bản bật cờ lịch) [máy kiểm] | log riêng của lượt chạy; chạy lại: từ `backend/`, từng file `HF_HUB_OFFLINE=1 uv run --env-file ../.env pytest tests/<file> -q` |
 | Bật cờ | Chủ dự án chọn BẬT tối 19/11 — commit bật ở nhánh bật chung ba cờ | `grep -c "nho_ten_goi_y: true" backend/config/settings.yaml` ⇒ `1` |
-| Đo lại hai kịch bản đích qua server thật (có mục web) | CHƯA — làm khi bật | |
+| Đo lại hai kịch bản đích qua server thật (có mục web) | XONG sau khi bật — mục 7 | hồ sơ riêng tư `data/hoi_tiep_goi_y_2026-11-19/do/server/ket_qua.json` |
 | Mục `bai_hoc/` | XONG — `bai_hoc/VIEC_MOI_XONG.md` mục 15 | |
+
+## 7. Sau khi bật cờ — hai kịch bản đích qua server thật, có mục "Từ web" (ghi 22:00 19/11/2026, giờ `date`)
+Bản chính `b71e1e9`, cờ bật từ file cấu hình; server riêng của lượt đo (log tách khỏi lượt đo lại bộ 80 đang chạy song song); 2 kịch bản, 4 lượt, 0 lỗi kỹ thuật, **0,0044 USD**. [máy chạy; người viết code đọc — chưa có người thứ hai; mỗi kịch bản MỘT lượt]
+| Kịch bản | Buổi trưa 19/11 (cờ tắt) | Sau khi bật | Kết quả |
+|---|---|---|---|
+| Thứ nhất: được gợi ý một quán rồi xin địa chỉ | đưa địa chỉ hai quán KHÁC | trả đúng địa chỉ của quán vừa được nhắc, trích bài của chính quán đó | **xong** |
+| Thứ hai: được gợi ý một nhà hàng rồi xin địa chỉ kèm số điện thoại | phần kho từ chối; mục "Từ web" đưa địa chỉ và số của một nhà hàng KHÁC | phần kho vẫn là câu từ chối khuôn; mục "Từ web" nay nói về ĐÚNG nhà hàng vừa nhắc và tự khai chỗ đoạn trích không xác nhận | **chưa xong theo chữ kịch bản** (địa chỉ không được nêu lại) — còn kẹt ở giới hạn "kho có một phần thì bỏ cả câu", chủ dự án đã chọn ghi giới hạn; lỗi "mục web lạc sang nơi khác" hết ở lượt này |
+Số điện thoại mà mục web nêu là thông tin từ web, chưa ai kiểm; mục đó vẫn mang nhãn "chưa kiểm" như mọi lượt tra web.
