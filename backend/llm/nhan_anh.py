@@ -17,8 +17,7 @@ from PIL import Image, ImageOps, UnidentifiedImageError
 from pydantic import BaseModel, ConfigDict, Field, create_model
 
 DINH_DANG = ["JPEG", "PNG", "WEBP"]  # OpenAI nhận PNG / JPEG / WEBP / GIF; GIF bỏ (không cần cho ảnh chụp)
-# Trần gồm cả token suy luận. A2 vòng 0 (512): 4 / 66 lần ảnh khó dùng hết 512 cho suy luận ⇒ đầu ra bị cắt ⇒ `khong_doan_duoc` ⇒ 1024.
-MAX_OUTPUT_TOKENS = 1024
+# Không đặt trần token đầu ra (User 19/11/2026). Lịch sử: A2 vòng 0 trần 512 ⇒ 4 / 66 lần ảnh khó dùng hết 512 cho suy luận, đầu ra bị cắt ⇒ `khong_doan_duoc`.
 
 # D5: mục tiêu · dựa vào gì · xong trông thế nào; không ví dụ địa danh thật (ý #12 Phase 9).
 # A2 vòng 1: vòng 0 model luôn trả đúng 1 id (top-3 vô dụng — người dùng còn bấm chọn) và làm theo bảng chữ dán trên ảnh (L2) ⇒ thêm 2 ý.
@@ -96,7 +95,7 @@ def kieu_dau_ra(danh_sach: list[dict]) -> type[BaseModel]:
 def tao_agent(generator, danh_sach: list[dict]) -> Agent:
     """Agent một lần gọi, dùng chung model / client của generator đang chạy (D3) — không công cụ, `store=False`."""
     return Agent(name="hue_nhan_anh", instructions=NHAN_ANH_INSTRUCTIONS, model=generator.responses_model,
-                 model_settings=ModelSettings(max_tokens=MAX_OUTPUT_TOKENS, include_usage=True, store=False),
+                 model_settings=ModelSettings(include_usage=True, store=False),
                  output_type=kieu_dau_ra(danh_sach))
 
 

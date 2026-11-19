@@ -72,14 +72,14 @@ class LunaRanking(BaseModel):
     order: list[int]
 
 
-def luna_rank(client: OpenAI, model: str, max_output_tokens: int, query: str, docs: list) -> dict:
+def luna_rank(client: OpenAI, model: str, query: str, docs: list) -> dict:
     """Rerank listwise bằng gpt-6-luna (D12). Đầu ra sai (thiếu / lặp / id lạ / bị cắt / lỗi API) là lỗi kỹ thuật:
     trả `error`, không thay bằng thứ tự gốc, không gọi lại (plan §1.4 luna_output_rule)."""
     passages = "\n\n".join(f"[{n}] {d.text}" for n, d in enumerate(docs, 1))
     try:
         response = client.responses.parse(
             model=model, instructions=LUNA_INSTRUCTIONS, text_format=LunaRanking, store=False,
-            max_output_tokens=max_output_tokens, input=f"Câu hỏi: {query}\n\nCác đoạn:\n{passages}")
+            input=f"Câu hỏi: {query}\n\nCác đoạn:\n{passages}")
     except OpenAIError as exc:
         return {"error": f"api: {type(exc).__name__}: {exc}"[:500]}
     usage = response.usage
@@ -186,7 +186,7 @@ def run_config(args) -> tuple[list[dict], dict]:
     if args.reranker == "luna":
         generation = settings["full_corpus_generation"]
         luna = OpenAI(api_key=os.environ[generation["api_key_env"]], timeout=generation["timeout_seconds"], max_retries=0)
-        meta.update({"model_id": generation["model"], "max_output_tokens": generation["answer_max_output_tokens"]})
+        meta.update({"model_id": generation["model"]})
     elif args.reranker != "none":
         reranker = CrossEncoderReranker(MODELS[args.reranker], device=args.device, max_length=MAX_PAIR_TOKENS)
         load_start = time.perf_counter()
@@ -211,7 +211,7 @@ def run_config(args) -> tuple[list[dict], dict]:
             if args.reranker == "none":
                 top = top_plain
             elif luna is not None:
-                luna_out = luna_rank(luna, meta["model_id"], meta["max_output_tokens"], query, pool_docs)
+                luna_out = luna_rank(luna, meta["model_id"], query, pool_docs)
                 if "error" in luna_out:
                     return {"case_index": case["case_index"], "category": case["category"], "config": args.name,
                             "luna": luna_out, "rerank_ms": (time.perf_counter() - t1) * 1000}
