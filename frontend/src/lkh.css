@@ -233,6 +233,8 @@
   html.in-lich .lkh-dang-in .lich-buoi { color: #A75B43; }
   html.in-lich .lkh-dang-in .lich-ngay { break-inside: avoid-page; opacity: 1 !important; transform: none !important; animation: none !important; }
   html.in-lich .lkh-dang-in .lich-ngay + .lich-ngay { break-before: page; }
+  /* ngày CUỐI được ngắt giữa các điểm: không thì khối ngày chiếm trọn trang và hai dòng ghi chú cuối rơi riêng sang một trang (thấy lại 19/11 tối) */
+  html.in-lich .lkh-dang-in .lich-ngay:not(:has(~ .lich-ngay)) { break-inside: auto; }
   html.in-lich .lkh-dang-in .lkh-muc { break-inside: avoid; opacity: 1 !important; transform: none !important; animation: none !important; }
   html.in-lich .lkh-dang-in a { color: inherit; text-decoration: none; }
 }
