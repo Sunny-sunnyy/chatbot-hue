@@ -4,6 +4,10 @@
 - Máy mở lại 18:40 ⇒ `/tmp` mất. 18:45: đã gỡ hai dòng worktree cũ của E, dựng lại `/tmp/hr_e_xuat_lich` ở `353eaaf` + ba symlink + `npm run build` (đạt); CHƯA gộp main vào nhánh (chờ A báo nhánh bật cờ của C vào main). `/tmp/hr_e_kp`, `/tmp/hr_e_xuat_anh/` không còn (mục 6 bên dưới cũ ở hai chỗ này).
 - 18:46: đọc xong hai bản bọc chấm của B cho bước 2 "ngữ cảnh lớn hơn" (`data/ngu_canh_lon_2026-11-19/tools_B/`): không tốn tiền API, giữ mù + một lô; CHƯA đạt nguyên trạng — bốn điểm đã nhắn B (không ép chỉ số quyết · sàn "nói chắc sai mới" chỉ tính cho một nhánh · vòng sinh lại ghi trùng thư mục · file an toàn không lưu ghi chú an toàn nên sàn "dòng tạm ngừng của hoạt động khác" chỉ đọc được trên bộ câu mẫu).
 - Đang làm: đọc tay bước 2 (A giao; file ghi cạnh kết quả của B trong `data/`, riêng tư) — phần cần điểm chấm chờ B. File tracked sẽ sửa trong phiên: chỉ file này (nhánh `p9-e-status-toi-1911`, worktree `/tmp/hr_e_st`).
+- 19:03 19/11/2026: ĐỌC TAY bước 2 XONG (file riêng tư `data/ngu_canh_lon_2026-11-19/chay/doc_tay_E.md`, bảy mục; đã báo phiên điều phối + B): nhánh cả mục phạm sàn (một câu ngoài kho được trả lời; bộ an toàn thiếu cảnh báo ở hai câu), nhánh 15 đoạn phạm sàn lỗi trích dẫn (một câu), an toàn sạch; "Đủ ý" không khác ở cả hai; 37 cặp lệch điểm: khoảng hai phần ba cùng nội dung. Chưa đọc: câu không lệch điểm, nhãn vòng sinh lại (số của B).
+- Review nhánh sửa trùng tên biến giờ của C (`5be59b9`): ready, đã báo phiên điều phối; worktree review đã gỡ.
+- CÒN NỢ: ba việc của nhánh xuất lịch (mục 3 bên dưới) — chờ nhánh bật cờ của C vào main + lượt máy.
+- Bẫy tối nay: ghi giờ ước (hai tiêu đề mục) và một phép trừ sai vào file đọc tay — đã sửa; giờ lấy bằng biến \`date\` trong chính lệnh ghi.
 - Lượt máy cho việc xuất lịch: xin A từng lần (C giữ lượt nặng trước). Vấp luật do đọc ngắn: 0.
 
 Bản cũ nguyên văn tới 11:16 19/11: `session_prompt/archive/STATUS_E_LICH_SU_2026-11-18_19.md`. Nhật ký cả ngày: `report_agent/2026-11-19/e_nhat_ky.md`.
