@@ -38,11 +38,12 @@ from llm import quan_lich as ql
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
+from llm.lam_thay import nho_lam_thay
 from llm import khoang_cach as kc
 from llm.luu_y_nguon import dong_tam_ngung, nhan_nguon
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
-from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
+from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_LAM_THAY, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
                                    TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
@@ -111,6 +112,10 @@ class AssistantFlags:
     # 19/11 (plan private `data/phase_9/s09_code/PLAN.md`): CODE nối vào dòng ghi chú một câu "tạm ngừng khi lũ / lệnh cấm / thời tiết xấu" chép
     # nguyên văn từ nguồn câu trả lời ĐÃ TRÍCH khi câu trả lời chưa nêu (`llm/luu_y_nguon.py`). Không model, không đổi chuỗi gửi model. TẮT tới khi đạt.
     noi_dong_tam_ngung: bool = False
+    # 19/11 (plan private `data/tu_choi_khuon_2026-11-19/PLAN.md`): câu NHỜ TRỢ LÝ TỰ LÀM việc hệ thống không có (`llm/lam_thay.py`, hàm thuần đọc
+    # câu người dùng) mà câu trả lời đã là câu từ chối khuôn ⇒ code thay bằng câu nói thật giới hạn (`CAU_LAM_THAY`), kết thúc `lam_thay`, không mở
+    # mục web. Không model, không đổi chuỗi gửi model. TẮT tới khi đạt tiêu chí ghi trước.
+    noi_that_lam_thay: bool = False
     # 15/11 (plan `2026-11-15-cau-noi-tiep-web-plan.md`): lượt CÓ lịch sử mà model đã tự tìm kho ⇒ phần web dùng câu tìm kho cuối model viết (có tên
     # nơi lấy từ lượt trước) thay câu người dùng gõ — câu hỏi tiếp "mở cửa mấy giờ" không còn ra web trần. TẮT tới khi đo đạt; cần `tra_web`
     web_cau_noi_tiep: bool = False
@@ -317,6 +322,7 @@ class AnswerTrace:
     # câu nhiều ý vòng 2 (plan 2026-11-14-cau-nhieu-y-v2): cờ bật VÀ câu người dùng có ≥ 2 vế hỏi (`so_y`) ⇒ luật theo ý; khác ⇒ y như cờ tắt
     nhieu_y: bool = False
     chi_y_thieu: bool = False  # chốt (a): câu trả lời chỉ còn dòng CAU_Y_THIEU ⇒ code đã đổi thành INSUFFICIENT_ANSWER
+    lam_thay: str | None = None  # cờ `noi_that_lam_thay`: loại việc "làm thay" code đọc từ câu người dùng (`lam_thay.nho_lam_thay`); None ⇒ lượt như cũ
     # B5b: ngữ cảnh code dò ở câu này (bão / lũ, ngoài 7 ngày, có buổi, có đưa công cụ) · kết quả công cụ `thoi_tiet` (trạng thái, khối số liệu code
     # in) · phần code nối sau chữ model · số thời tiết ngoài tập cho phép (D8). KHÔNG log chữ.
     thoi_tiet_ctx: dict | None = None
@@ -934,6 +940,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     """Phần trước lần gọi model của tuyến `tro_ly_hue`. Trả tin nhắn user cho trợ lý có công cụ (None = đường sinh một lần như B1).
     V2: không tìm trước (chỉ cần generator). Còn lại: `prepare_answer` (có thể đặt câu từ chối khi ngữ cảnh rỗng ⇒ `fixed_outcome`)."""
     trace.nhieu_y = flags.cau_nhieu_y and so_y(query) >= 2
+    trace.lam_thay = nho_lam_thay(query) if flags.noi_that_lam_thay else None
     if flags.lan_tim_dau == "v2":
         if generator is None:
             raise GeneratorNotReadyError("generator is not ready")
@@ -941,6 +948,10 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
     instructions = _assistant_instructions(generator, trace, trace.nhieu_y) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
+    # ngữ cảnh rỗng ⇒ câu từ chối do code đặt; câu nhờ làm thay vẫn nhận câu nói thật. `thoi_tiet_ctx` chưa có ở bước này (đặt sau, trong
+    # `_lich_extra`) ⇒ xét thẳng lưới bão / lũ trên câu người dùng (review B m1): lượt bão – lũ giữ câu từ chối cũ + các lớp an toàn của nó
+    if trace.fixed_outcome == "refusal_no_sources" and not _khop_luoi_cuoi(query, flags, trace.history):
+        _noi_that_lam_thay(trace, trace.answer)
     if not flags.tim_them:
         return None
     context = trace.packed.text
@@ -950,6 +961,19 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     if cap:
         context = f"{context}\n\n{_nguon_khoang_cach_san(trace, flags.khoang_cach_bang, cap)}"
     return build_assistant_input(query, context, today)
+
+
+def _noi_that_lam_thay(trace: AnswerTrace, text: str) -> bool:
+    """Cờ `noi_that_lam_thay`: câu người dùng là câu nhờ làm thay (`trace.lam_thay`, đặt ở `_before_model` khi cờ bật) VÀ câu trả lời đúng bằng câu
+    từ chối khuôn ⇒ câu nói thật của loại đó, kết thúc cố định `lam_thay` (không kiểm citation; `web_gate_open` đóng vì không phải kết thúc thường).
+    Câu trả lời khác câu khuôn ⇒ không đụng. Lượt có lịch / có dự báo / khớp lưới bão – lũ ⇒ không thay: các lớp code nối ở đó giữ nguyên."""
+    ctx = trace.thoi_tiet_ctx or {}
+    if (trace.lam_thay is None or (text or "").strip() != INSUFFICIENT_ANSWER or trace.lich is not None or trace.thoi_tiet is not None
+            or ctx.get("bao_lu") or ctx.get("bao_lu_cau")):
+        return False
+    _set_fixed(trace, CAU_LAM_THAY[trace.lam_thay], "lam_thay")
+    trace.tools.append({"name": "lam_thay", "ms": 0.0, "loai": trace.lam_thay})  # log: mã loại, không chữ
+    return True
 
 
 def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -> None:
@@ -972,6 +996,8 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
     text = trace.generated.text
     if trace.nhieu_y and chi_y_thieu(text):  # chốt (a) vòng 2: không ý nào có Bằng chứng ⇒ đúng câu từ chối cũ (đi đường từ chối + cổng web cũ)
         text, trace.chi_y_thieu = INSUFFICIENT_ANSWER, True
+    if _noi_that_lam_thay(trace, text):
+        return
     if trace.lich is not None:
         bang, khung, nguon = flags.bang_lich, trace.lich["khung"], trace.lich["nguon"]
         if text.strip() == INSUFFICIENT_ANSWER:  # B171 T3 (b): có khung mà model từ chối ⇒ code dựng lời lịch tối thiểu (stream: `_chu_giu_lai`)
@@ -1436,11 +1462,13 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                             yield "status", {"stage": "generating"}
                         if giu_chu is None:  # review C M-1: đã có dự báo / khung lịch (B171 T3) ⇒ giữ chữ chừng nào còn có thể là câu từ chối
                             giu_chu = "" if ((flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"]) or trace.lich is not None
-                                             or trace.nhieu_y or _can_dau_bao_lu(trace)) else False
+                                             or trace.nhieu_y or _can_dau_bao_lu(trace) or trace.lam_thay is not None) else False
                             dau_bao_lu = _can_dau_bao_lu(trace)  # giữ chữ tới khi biết không phải câu từ chối rồi mới đặt câu đầu
                         if giu_chu is not False:
                             giu_chu += text
-                            if INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()) or (trace.nhieu_y and _con_la_y_thieu(giu_chu)):
+                            if (INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()) or (trace.nhieu_y and _con_la_y_thieu(giu_chu))
+                                    # câu nhờ làm thay: câu khuôn kèm khoảng trắng cuối vẫn phải giữ — bước sau so bằng `strip()` rồi thay cả câu
+                                    or (trace.lam_thay is not None and INSUFFICIENT_ANSWER.startswith(giu_chu.strip()))):
                                 continue
                             text, giu_chu = giu_chu, False
                             if dau_bao_lu:
@@ -1703,5 +1731,6 @@ def _merge_spec(trace: AnswerTrace, spec: AnswerTrace, recorder) -> None:
     trace.llm_calls = trace.llm_calls + spec.llm_calls
     if recorder and trace.packed is not None:  # như `prepare_answer` của đường cũ (recorder chỉ route truyền)
         recorder.record_packed_context(trace.packed)
-        if trace.fixed_outcome == "refusal_no_sources":
+        # câu nói thật thay cho câu từ chối do ngữ cảnh rỗng vẫn là "từ chối trước model" — đếm như đường không song song (review B m2)
+        if trace.fixed_outcome == "refusal_no_sources" or (trace.fixed_outcome == "lam_thay" and not trace.packed.sources):
             recorder.record_fallback()
