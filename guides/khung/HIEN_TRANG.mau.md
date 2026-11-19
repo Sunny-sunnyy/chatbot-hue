@@ -15,9 +15,10 @@ Từ dùng trong trang: <5–8 từ riêng của dự án mà một agent mới 
  Trỏ sang: trang lời thường cho chủ dự án; danh sách giới hạn đã biết.>
 
 ## 2. Mốc và việc đang mở
-<Bảng mốc: khi nào (ghi cả THỨ lẫn ngày) · việc. Danh sách việc đang mở: ai · việc · trạng thái · nhánh. Việc chưa ai nhận. Một câu "trước mốc X thì không được làm gì".>
+<Bảng bước theo thứ tự + điều kiện đạt (ngày chỉ là ghi chép). Một câu "trước mốc X thì không được làm gì". Việc đang mở KHÔNG chép ở đây: một dòng trỏ sang mục lục việc
+ (`VIEC_DANG_MO.mau.md`) — hai nơi cùng ghi thì sẽ lệch nhau. Dự án nhỏ chưa có mục lục việc: ghi thẳng ai · việc · trạng thái · nhánh ở đây.>
 
-<Hai con số đo cách làm, ghi mỗi tuần (trang cách làm việc mục 7): việc đã báo "xong" bị lật lại · số lần chủ dự án phải nhắc lại một điều đã nói.>
+<Hai con số đo cách làm (trang cách làm việc mục 7) ghi ở tổng hợp ngày / sổ cải tiến, không ghi ở trang này.>
 
 ## 3. Đang chờ chủ dự án
 <Gom MỘT chỗ mọi thứ đang chờ người quyết / người làm. Mục nào chưa chắc còn hiệu lực thì ghi "chưa kiểm". Thứ không có ở đây thì agent không hỏi lại.>
@@ -33,7 +34,7 @@ Từ dùng trong trang: <5–8 từ riêng của dự án mà một agent mới 
 <Bảng: kiểm gì · lệnh · phải ra gì · nhãn [đã chạy <ngày>] / [chưa chạy]. Mọi con số ở mục 1 phải có một dòng ở đây.>
 
 ## 7. Nhật ký ở đâu (không bắt đọc)
-<Đường dẫn các file nối đuôi: sổ việc, lịch sử quyết định, sổ riêng từng phiên, report. Một vế cho biết mở file đó khi cần trả lời loại câu nào.>
+<Đường dẫn: thư mục báo cáo theo NGÀY (tổng hợp ngày, nhật ký từng phiên), lịch sử quyết định, sổ riêng từng phiên, mục lục việc. Một vế cho biết mở chỗ đó khi cần trả lời loại câu nào.>
 
 ## 8. Cách giữ trang này
 <Ai viết lại, lúc nào; giới hạn cỡ (gợi ý ≤ 150 dòng và ≤ 12.000 byte — có công cụ cắt file hướng dẫn dài mà không báo); quyết định mới thêm ngay trong phiên.>

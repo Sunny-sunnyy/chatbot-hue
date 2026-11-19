@@ -1,6 +1,6 @@
 # Cách làm việc với coding agent — dùng cho mọi agent, mọi dự án
 
-Bản 3 (10:38 18/11/2026; đã qua hai lượt review chéo giữa các phiên; chưa thử với công cụ khác hãng). Sửa gần nhất: 20:01 18/11/2026 (bảng nguồn mục 10 dời sang file riêng).
+Bản 3 (10:38 18/11/2026; đã qua hai lượt review chéo giữa các phiên; chưa thử với công cụ khác hãng). Sửa gần nhất: 19/11/2026 (mục 5: thư mục ngày — đang thử).
 Người đọc: **bất kỳ coding agent nào** (Claude Code, Codex, Antigravity…), làm một mình hay trong nhóm nhiều phiên; và chủ dự án (gọi là User).
 Trang này nói **cách làm** và **chép sang dự án khác được**: mục 1–8 không phụ thuộc dự án; mục 9 ("Ở repo này") là phần viết lại khi chép; mục 10 trỏ sang bảng nguồn (file riêng).
 Luật cứng + bảng quyền của từng dự án nằm ở `AGENTS.md` của dự án đó — khi trang này khác `AGENTS.md` thì `AGENTS.md` thắng. Bộ file mẫu cho dự án mới: `guides/khung/`.
@@ -12,7 +12,9 @@ Nhãn: **[đã chạy]** = cách làm / lệnh đã chạy thật ở repo gốc
 | nhóm / phiên điều phối | khi chạy nhiều phiên cùng lúc: một phiên chia việc và nói chuyện với User, các phiên khác thực thi. Làm một mình thì bạn là cả hai |
 | agent con | agent do một phiên tạo ra để làm một phần việc; nó chỉ biết đúng những gì ghi trong lời giao |
 | dữ liệu riêng | mọi thứ không được vào git (dữ liệu gốc của sản phẩm, bộ câu chấm, khoá) — danh sách cụ thể ở `AGENTS.md` |
-| trang hiện trạng | MỘT trang viết lại tại chỗ: đang chạy gì, việc đang mở, quyết định còn hiệu lực — đọc mỗi lần mở phiên |
+| trang hiện trạng | MỘT trang viết lại tại chỗ: đang chạy gì, mốc, quyết định còn hiệu lực — đọc mỗi lần mở phiên |
+| thư mục ngày | thư mục báo cáo của MỘT ngày làm việc, đặt tên bằng ngày |
+| mục lục việc | MỘT trang ghi đè: mỗi việc kéo quá một ngày một khối trỏ hồ sơ của nó (mục 5) |
 | sổ giới hạn | danh sách "tình huống → hệ quả → vì sao chấp nhận" của những thứ biết là chưa tốt mà chưa sửa |
 | lời dặn cho model | chữ hướng dẫn gửi kèm mỗi lần sản phẩm gọi model (system prompt) |
 | mốc | con số của bản / cách làm cũ dùng để so (baseline) |
@@ -94,12 +96,21 @@ Lỗi cách làm gặp lần đầu: sửa việc đó, ghi một dòng vào s�
 kế, để script làm thay) → (b) máy kiểm được không (test, hook git — tầng mọi agent đều đi qua) → (c) cuối cùng mới một dòng luật, viết thành việc làm được ngay, không
 kèm chuyện sự cố. Rào mới thử một lần bằng ca cố ý hỏng trước khi tin. Hậu quả không lùi được ⇒ rào ngay lần đầu. Luật lâu không ai vi phạm lại và không còn lý do ⇒ gỡ.
 File agent luôn đọc (`AGENTS.md`) giữ ngắn, **dưới 24.000 byte** (có công cụ cắt file luật ở cỡ đó mà không báo); chi tiết để file khác, mở khi cần.
-Tài liệu bắt buộc đọc lúc mở phiên chỉ gồm luật + trang hiện trạng; nhật ký nối đuôi để tra, không bắt đọc.
 
-**Mở lại phiên cho nhẹ** [đang thử, chưa kiểm] — đo một lần ở repo gốc: mỗi phiên đọc 880–1.400 dòng lúc mở, dùng khoảng 185; ~9 tin chỉ để tìm phiên điều phối.
-Cách biết có ích: ba lần mở kế đếm số lần vấp luật vì chưa đọc — lớn hơn 0 ⇒ xét lại.
-- **Mở phiên đọc ngắn:** file luật ngắn (công cụ tự nạp) + trang hiện trạng + mục đầu sổ riêng của phiên + khối đầu sổ việc. Luật chi tiết đọc **đúng mục khi NHẬN việc** chạm mục đó (lời giao ghi "đọc mục nào"); vài luật hay vấp nhất đưa lên file luật ngắn. Phiên giữ luật (điều phối) vẫn đọc đủ.
-- **Kết phiên nhẹ** (tắt / mở lại chỉ để làm mới ngữ cảnh): THAY — không nối — mục đầu sổ riêng bằng ba dòng: việc dở · thứ đang chạy / file tạm · bẫy phiên này. Nhật ký và vòng cải tiến để cuối ngày.
+**Làm việc theo thư mục từng ngày** [đang thử từ 19/11/2026, xét lại sau 3 ngày làm việc] — trí nhớ qua đêm KHÔNG nằm ở thư mục ngày mà ở ba trang ghi đè:
+- **Thư mục ngày** (tên = `date +%F`): báo cáo từng phiên (tên file mở đầu bằng vai) · **tổng hợp ngày** do phiên điều phối viết, PHẦN ĐẦU là khối "phiên sau"
+  (≤ 20 dòng: thoả thuận dùng máy chung · thứ tự việc, trỏ mục lục việc · câu chờ User · thứ đang chạy · bẫy) · **nhật ký mỗi phiên** (nối, mỗi việc ≤ 3 dòng: việc · kết quả + mã commit · tiền · bẫy). Thư mục ngày để tra, không bắt đọc.
+- **Ba trang ghi đè, sống xuyên ngày:** trang hiện trạng · **mục lục việc** (nguồn DUY NHẤT của "việc đang mở" và "bước kế" — trang khác chỉ trỏ; mẫu ở
+  `guides/khung/`; việc xong ⇒ dời MỘT dòng sang danh sách việc đã xong) · **sổ riêng của phiên** theo khuôn bảy mục (≤ 15 dòng / 4 KB): đang dở + nhánh / mã commit ·
+  đã soạn / đã review chưa gộp · việc kế + "xong khi" · ai chờ mình ↔ mình chờ ai · câu treo · thứ đang chạy / rác · bẫy của phiên.
+- Báo cáo đã đặt vào ngày nào thì KHÔNG dời (gãy chỗ trỏ); bản cập nhật là file MỚI ở ngày mới. Dữ liệu riêng, bản nháp (theo TÊN VIỆC)
+  và lời User nguyên văn để ngoài git.
+- Máy thay chữ: script mở ngày tạo thư mục + khung, in việc mang sang + trạng thái máy; lệnh `kiem` của nó soát đường dẫn, nhánh, cỡ các trang ghi đè (phình = đang NỐI) [đã chạy 19/11].
+  Cách biết có ích: so hai con số ở mục 7 + số dòng đọc lúc mở, trước ↔ sau ba ngày.
+
+**Mở lại phiên cho nhẹ** [đang thử] — cách biết có ích: đếm số lần vấp luật vì chưa đọc — lớn hơn 0 ⇒ xét lại.
+- **Mở phiên đọc ngắn:** file luật ngắn (công cụ tự nạp) + trang hiện trạng + mục lục việc + sổ riêng của phiên + khối "phiên sau" của tổng hợp ngày gần nhất. Luật chi tiết đọc **đúng mục khi NHẬN việc** chạm mục đó (lời giao ghi "đọc mục nào"); vài luật hay vấp nhất đưa lên file luật ngắn. Phiên giữ luật (điều phối) vẫn đọc đủ.
+- **Kết phiên nhẹ** (tắt / mở lại chỉ để làm mới ngữ cảnh): THAY — không nối — sổ riêng bằng khuôn bảy mục ở trên; bẫy ghi cả vào nhật ký ngày. Vòng cải tiến để cuối ngày.
 - **Chỉ mở lại phiên đã đầy.** Phiên thực thi không rải tin đi tìm phiên điều phối: đợi tin mở phiên của nó rồi trả lời MỘT tin (vai + báo cáo mở phiên).
 
 **Kiểm bằng gì** — `wc -c AGENTS.md`; công cụ mới: hỏi nó "bạn đã nạp file hướng dẫn và skill nào, trích dòng đầu mỗi file" — không trích được là chưa nạp.
@@ -125,7 +136,7 @@ Cách biết có ích: ba lần mở kế đếm số lần vấp luật vì ch�
 
 ## 7. Đo chính cách làm việc bằng hai con số
 
-Mỗi tuần ghi hai số vào trang hiện trạng: **(a) số việc đã báo "xong" bị lật lại** (User, reviewer hoặc máy tìm ra chưa xong) · **(b) số lần User phải nhắc lại một
+Mỗi ngày ghi hai số vào tổng hợp ngày (cộng theo tuần ở sổ cải tiến cách làm): **(a) số việc đã báo "xong" bị lật lại** (User, reviewer hoặc máy tìm ra chưa xong) · **(b) số lần User phải nhắc lại một
 điều đã nói**. Muốn đổi cách làm (thêm phiên, thêm luật, đổi công cụ, đổi kiểu điều phối) ⇒ so hai số trước và sau, không quyết theo cảm giác. Mẫu nhỏ ⇒ chỉ tin chênh rõ. [ghi một lần]
 **Cách đếm (a):** chỉ đếm việc đã báo User hoặc đã gộp vào nhánh chính; lỗi người kiểm bắt TRƯỚC khi gộp đếm riêng — đó là quy trình chạy đúng. **Hai số về giá**, ghi cùng chỗ:
 tỉ lệ commit chạm code ↔ không chạm code · số câu đã hỏi User trong ngày (trên 8 ⇒ hôm sau gom câu). Không thêm số nào khác. [ghi một lần]
@@ -141,7 +152,10 @@ bằng hai con số ở mục 7.
 | Trang nói | Ở repo này là |
 |---|---|
 | luật cứng + bảng quyền | `AGENTS.md` (`wc -c AGENTS.md` [đã chạy 18/11]: dưới 5 KB) |
-| trang hiện trạng · nhật ký | `session_prompt/HIEN_TRANG.md` · `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/Project_Status.md` (nhật ký dài — chỉ tra) |
+| trang hiện trạng · mục lục việc · sổ riêng của phiên | `session_prompt/HIEN_TRANG.md` · `session_prompt/VIEC_DANG_MO.md` (xong ⇒ `VIEC_DA_XONG.md`) · `session_prompt/sessions/STATUS_<X>.md` |
+| thư mục ngày (tổng hợp ngày · nhật ký phiên) | `report_agent/<YYYY-MM-DD>/` (`TONG_HOP.md` · `<x>_nhat_ky.md`) |
+| lời User nguyên văn · sổ cải tiến cách làm | `data/loi_user/<ngày>.md` (ngoài git) · `session_prompt/SO_CAI_TIEN_CACH_LAM.md` |
+| nhật ký dài (chỉ tra) | `session_prompt/CURRENT_HANDOFF.md`, `session_prompt/Project_Status.md` |
 | lệnh bật hệ thống, chạy test, lấy mốc | `guides/RUNBOOK_BAN_GIAO.md` mục 1–3 |
 | "đã đẩy lên" lấy từ máy | `scripts/commit_push.sh "<lời commit>" <file>…` in `ĐÃ PUSH <sha> origin/<nhánh>` [đã chạy] |
 | rào bằng máy mọi agent đều qua | `.githooks/pre-commit`, `pre-push`; kiểm đã bật: `git config --get core.hooksPath` ⇒ `.githooks` [đã chạy] |
@@ -149,7 +163,7 @@ bằng hai con số ở mục 7.
 | tài liệu viết cho người · báo cáo bốn ý của việc vừa xong | `bai_hoc/` · `bai_hoc/VIEC_MOI_XONG.md` |
 | sao lưu thứ ngoài git trước khi sửa | runbook mục 5 [đã chạy ở mỗi lần sửa dữ liệu gốc] |
 | làm một mình | `guides/KHI_CHI_CO_MOT_AGENT.md` |
-| mở phiên đọc ngắn · kết phiên nhẹ | `session_prompt/START_SESSION.md` · `session_prompt/WORKFLOW.md` §8 |
+| mở phiên đọc ngắn · kết phiên nhẹ · script mở ngày | `session_prompt/START_SESSION.md` · `session_prompt/WORKFLOW.md` §8 · `scripts/mo_ngay.sh` [đã chạy 19/11] |
 
 **Sở thích đã chốt của chủ dự án (agent nào cũng theo):**
 - Tiếng Việt, lời thường, thuật ngữ kèm nghĩa; **đủ quan trọng hơn ngắn**; không dùng mã nội bộ khi chưa giải nghĩa.
@@ -164,10 +178,13 @@ bằng hai con số ở mục 7.
 
 Bảng "mục nào dựa vào bài nào của các khoá học" nằm ở file riêng cùng thư mục: `guides/CACH_LAM_VIEC_NGUON.md` (dời ra để trang này nhẹ; chỉ mở khi cần tra vì sao).
 
-## Chưa làm / chưa thử (đúng lúc 19:34 18/11/2026)
+## Chưa làm / chưa thử (đúng lúc 19/11/2026)
 
+- **Làm việc theo thư mục từng ngày** (mục 5): CHƯA qua lần kết / mở phiên nào theo cách mới. Số gốc để so sau ba ngày (số trước phép thử đọc ngắn: sổ việc 18/11)
+  [tự đếm]: mở phiên sáng 19/11 ba phiên thực thi đọc 378 · 389 · 389 dòng (mục đầu một sổ riêng đã ≈ 52 KB); hai con số tuần này tới chiều 18/11:
+  bị lật lại 5 · User phải nhắc lại 6 [phiên khác đã soát], tối 18/11 thêm 2 · 0 [tự khai].
 - **Chưa thử với Codex hay Antigravity** — thử ở buổi chủ dự án test toàn bộ; bước đầu: hỏi công cụ đã nạp file nào (mục 5). Kiểu điều phối khi đổi công cụ chưa chọn (mục 8).
-- **Vòng cuối ngày** (mục 5, 7) đã chạy lần đầu 18/11; hai con số và hai số về giá mới ghi MỘT lần (hai con số đã có phiên khác soát).
-- **Mở lại phiên cho nhẹ** (mục 5): mới MỘT lần mở đọc ngắn, chưa đếm lần vấp luật.
+- **Vòng cuối ngày** (mục 5, 7) mới chạy MỘT lần (18/11); hai số về giá mới ghi một lần.
+- **Mở lại phiên cho nhẹ** (mục 5): bốn lần mở đọc ngắn (18–19/11): 0 lần vấp vì CHƯA ĐỌC, 1 lần vấp luật đã đọc [các phiên tự khai].
 - Hai skill mới (`soat-tich-hop`, `giao-viec-agent-con`) mới được chấm MỘT lượt mỗi bên, chưa có người chấm thứ hai.
 - Chưa thành nếp: ảnh trước–sau (mục 6), năm dòng đề bài và "chọn một dòng xong để chứng minh lại" (mục 1).
