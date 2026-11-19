@@ -1,6 +1,6 @@
 # Implementation Report: Phase 9 bước 5 — vòng hệ thống TỰ TỐI ƯU, bản hẹp ở bước tìm: dò 15 cấu hình, 0 cấu hình được đề nghị
 
-Người làm: B (Claude Code — Fable 5.2). Người duyệt plan + đọc hàm trộn có trọng số: A. Review kết quả: chưa có lúc viết.
+Người làm: B (Claude Code — Fable 5.2). Người duyệt plan + đọc hàm trộn có trọng số: A. Review: E đọc diff bản đầu (`c8dcdd4`) — đạt về chữ + số, 2 chỗ sửa đã áp ở bản này; chưa ai chạy lại lượt đo.
 Date: 08:40 19/11/2026 (`date`). Chạy 08:35–08:38 19/11/2026.
 Plan: `data/cach_lam_2026-11-18/PLAN_TU_TOI_UU_BUOC_TIM.md` (private; A duyệt bản sha `09bb74c5c4d0` lúc 08:18 19/11/2026; file sau khi ghi thêm kết quả bước 0 + lệnh bọc: `44e9a0df3dd0`). Điều kiện do User chốt 13:56 18/11/2026.
 
@@ -39,11 +39,12 @@ Hai câu nhóm dò (case 67, 167) có ý không còn trích dẫn nào đúng v�
 - Bản đang chạy (vector + từ khoá trộn RRF, 30 ứng viên, k = 60): **22 / 38 câu đủ đoạn đúng** trong 10 đoạn; tỉ lệ ý có trong 10 đoạn 0,764; MRR theo từ khoá 0,7325 (108 câu trong kho của nhóm dò).
 - Số câu CÓ THỂ tốt lên: 16. Để khoảng tin cậy theo cặp nằm trên 0 cần ≥ 4 câu thắng / 0 câu thua cho một cấu hình, ≥ 6 ở bậc chặt nhất của Holm ⇒ thí nghiệm đủ chỗ để thấy một cải thiện cỡ đó.
 - **Mốc ngây thơ — thước này phân biệt YẾU:** "chỉ vector" 22 / 38 (bằng đúng bản đang chạy), "chỉ từ khoá, tìm trong cả kho" 23 / 38. Tức theo thước "đủ đoạn đúng trong 10 đoạn", việc trộn hai nhánh không tạo khác biệt đo được
-  trên 38 câu này (thước từ khoá thì có: MRR 0,7325 so với 0,7007 và 0,7206). Mọi kết luận dưới đây phải đọc kèm giới hạn này.
+  trên 38 câu này (thước từ khoá thì có: MRR 0,7325 so với 0,7007 và 0,7206). [E đếm khi đọc diff; B đếm lại từ file kết quả: khớp] "Chỉ vector" trả về tập 10 đoạn KHÁC bản đang chạy ở **103 / 108** câu nhóm dò
+  mà chỉ số quyết vẫn 22 / 38 ⇒ thước gần như không thấy sự khác nhau đó. Mọi kết luận dưới đây phải đọc kèm giới hạn này.
 
 ### 4.3 Bảng lưới — nhóm dò 38 câu, so theo cặp với mốc (bảng do lệnh `bang` in, B chỉ đổi tên cột và làm tròn)
 
-| Cấu hình | Đủ đoạn đúng | Thắng / thua | Khoảng tin cậy 95 % của chênh | Sau Holm | Câu mất đủ-đoạn-đúng | Câu ngoài kho đổi 10 đoạn (/ 18, chỉ báo) |
+| Cấu hình | Đủ đoạn đúng | Thắng / thua | Khoảng tin cậy 95 % của chênh | Sau Holm | Câu mất đủ-đoạn-đúng | Câu ngoài kho đổi TẬP 10 đoạn (/ 18, chỉ báo) |
 |---|---:|---|---|---|---:|---:|
 | **Mốc — bản đang chạy** | **22 / 38** | — | — | — | — | — |
 | 20 ứng viên | 22 | 1 / 1 | [−0,079; +0,079] | không khác | 1 | 12 |
@@ -61,14 +62,14 @@ Hai câu nhóm dò (case 67, 167) có ý không còn trích dẫn nào đúng v�
 | Tổ hợp trọng số 1:2 + 50 ứng viên | 24 | 2 / 0 | [0; +0,132] | không khác | 0 | 18 |
 | Tổ hợp k = 20 + trọng số 1:2 + 50 ứng viên | 24 | 2 / 0 | [0; +0,132] | không khác | 0 | 18 |
 
-Bốn tổ hợp do code tự ghép theo luật ghi trước (giá trị tốt nhất của mỗi trục ứng viên / k / trọng số, chỉ khi thắng ≥ thua và 0 câu mất đủ-đoạn-đúng). Chỉ số quyết thứ hai (tỉ lệ ý có trong 10 đoạn): cả 14 cấu hình "không khác" sau Holm
+Cột cuối đếm theo TẬP 10 đoạn (không tính đổi thứ tự; tính cả thứ tự thì số cao hơn). Bốn tổ hợp do code tự ghép theo luật ghi trước (giá trị tốt nhất của mỗi trục ứng viên / k / trọng số, chỉ khi thắng ≥ thua và 0 câu mất đủ-đoạn-đúng). Chỉ số quyết thứ hai (tỉ lệ ý có trong 10 đoạn): cả 14 cấu hình "không khác" sau Holm
 (tốt nhất 0,811 so với mốc 0,764). MRR theo từ khoá đổi trong khoảng −0,018 … +0,013.
 
 ### 4.4 Đọc kết quả
 - **Theo luật ghi trước: 0 cấu hình qua** (cần 0 câu mất đủ-đoạn-đúng VÀ một chỉ số quyết "tốt hơn" sau Holm) ⇒ không mở nhóm giữ riêng, không đề nghị gì.
 - Cấu hình gần nhất: DBSF trọng số 0,5 — thêm 3 câu đủ đoạn đúng, 0 câu mất; **thiếu đúng 1 câu thắng** để khoảng tin cậy của một phép so đơn lẻ rời khỏi 0, và còn xa bậc Holm (≥ 6). Nó đổi 10 đoạn của cả 18 / 18 câu ngoài kho
   ⇒ nếu sau này muốn thử lại thì lượt xác nhận có phí (câu ngoài kho + bộ an toàn) là bắt buộc.
-- [quan sát] Ba cấu hình có ≥ 2 câu thắng / 0 thua đều thuộc họ "để nhánh từ khoá nhìn rộng hơn 30 ứng viên của nhánh vector" (tìm độc lập, DBSF, trọng số nghiêng từ khoá + 50 ứng viên). Căn cứ code:
+- [quan sát] Bốn cấu hình có ≥ 2 câu thắng / 0 thua (tìm độc lập · DBSF 0,5 · hai tổ hợp có 50 ứng viên + trọng số nghiêng từ khoá) thuộc ba họ, cả ba đều "để nhánh từ khoá nhìn rộng hơn 30 ứng viên của nhánh vector". Căn cứ code:
   ở bản chạy nhánh từ khoá chỉ CHẤM LẠI các ứng viên của nhánh vector (`backend/retrieval/full_corpus.py:482–519`). [suy luận, chưa đo] Hướng có dư địa — nếu có — nằm ở đó chứ không ở k hay số ứng viên; nhưng cỡ lợi hôm nay
   (2–3 câu / 38) không vượt nhiễu, và Phase 8.1 đã thử cùng họ này trên kho cũ với kết quả cũng "không khác".
 - So với lần dò trước (Phase 8.1 / 8.2, kho cũ): cùng kết luận. Số "đủ đoạn đúng" của mốc trên kho hôm nay 22 / 38; số cũ 24 / 40 (kho 30/10) — không so trực tiếp được vì mẫu số khác (bỏ 2 câu nhãn lệch).
