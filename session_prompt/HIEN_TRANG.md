@@ -21,7 +21,7 @@ Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** =
   **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn
   nhầm đoạn của nơi khác), `so_vet` (bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
-- **Lần chạy cả bộ test gần nhất:** 19/11 trên nhánh `0ceaafc` (trước ba lần gộp cuối buổi sáng): 1.429 đạt, 0 hỏng (C); lượt trên `main` sau gộp: xem khối đầu sổ việc.
+- **Lần chạy cả bộ test gần nhất:** 19/11 trên `main` `55d01a8` (hai cờ mới bật, đã gỡ ngân sách ngữ cảnh): 1.437 đạt, 0 hỏng (B).
 - **Máy:** mở lại máy ⇒ `/tmp` MẤT (worktree) và Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1). Server không chạy sẵn.
 - **Giới hạn đã biết:** `guides/RUNBOOK_BAN_GIAO.md` mục 10 — gặp hành vi trông như lỗi thì tra ở đó TRƯỚC khi sửa hay báo.
 
@@ -39,7 +39,7 @@ Thứ tự việc — KHÔNG gắn ngày: bước trước đạt và máy rản
 
 **Hướng của User từ 19/11:** KHÔNG mở thêm việc nào về bão / lũ / khẩn cấp (hành vi an toàn đang có giữ nguyên). Ưu tiên việc 100 người dùng thật sẽ thử: hỏi đáp +
 xác nhận thông tin · gợi ý quán / chỗ ở / địa chỉ · lịch trình + ngân sách · làm thay (đặt phòng, gửi thư) · việc phổ thông khác. Ba phiên đã nộp danh sách việc;
-phiên điều phối gom, hỏi User từng câu. Ghi "Phase 9 xong phần nhóm": sau lượt cả bộ test trên `main`.
+phiên điều phối gom, hỏi User từng câu. Mốc "Phase 9 xong phần nhóm" = code `55d01a8`, kèm danh sách mục chưa đạt (sổ việc).
 
 Việc đang mở (ai · việc) — chi tiết ở sổ việc (mục 7):
 - **A:** gom ba danh sách "việc phổ thông", tra cứu + xin tư vấn model khác hãng, hỏi User; gộp nhánh; ghi mốc.
