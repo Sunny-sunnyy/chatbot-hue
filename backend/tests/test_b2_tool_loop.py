@@ -143,6 +143,24 @@ def test_max_turns_gives_fixed_refusal_and_one_delta_on_stream(deps):
     assert stages.count("searching") == 4 and "searched" in stages and "generating" not in stages
 
 
+def test_khong_yeu_cau_nao_cua_vong_cong_cu_gui_tran_token_dau_ra(deps):
+    """User 19/11/2026: bỏ trần token đầu ra. Kiểm ở mức YÊU CẦU GỬI ĐI (review E: agent của vòng công cụ được `clone` lúc chạy nên test duyệt
+    agent dựng sẵn không thấy): một lượt có gọi công cụ rồi trả lời, cả không stream lẫn stream ⇒ mọi lời gọi đều không mang `max_output_tokens`
+    (SDK để `Omit` — giá trị "không gửi", không phải None)."""
+    script = lambda n, kw: [tool_call("câu tìm")] if n == 1 else [answer(INSUFFICIENT_ANSWER)]  # noqa: E731
+    gen = generator(script)
+    run_turn(deps, "Huế có món gì ngon?", gen)
+
+    async def stream():
+        g = generator(script)
+        [e async for e in answer_turn_stream("Huế có món gì ngon?", *deps, g, AnswerTrace(), V2)]
+        return g
+
+    calls = gen.client.responses.calls + asyncio.run(stream()).client.responses.calls
+    assert len(calls) == 4 and [kw.get("stream", False) for kw in calls].count(True) == 2
+    assert [kw["max_output_tokens"] for kw in calls if kw.get("max_output_tokens")] == []
+
+
 def test_concurrent_turns_do_not_share_max_turns_flag(deps):
     """Review C135 m-6: handler + cờ dựng mỗi lượt ⇒ hai câu chạy cùng lúc trên một generator không lẫn cờ."""
     def script(n, kw):

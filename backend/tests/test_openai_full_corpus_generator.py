@@ -159,4 +159,3 @@ def test_khong_loi_goi_model_nao_dat_tran_token_dau_ra():
     agents.append(nhan_anh.tao_agent(g, [{"id": "a", "ten": "A"}]))
     assert len(agents) >= 7, [a.name for a in agents]
     assert [a.name for a in agents if a.model_settings.max_tokens is not None] == []
-
