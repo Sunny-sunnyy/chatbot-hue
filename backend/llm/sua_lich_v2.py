@@ -158,6 +158,43 @@ def loc_hanh_dong(hanh_dong: list, cau: str, luu: dict) -> tuple[list, int]:
     return giu, len(hanh_dong) - len(giu)
 
 
+# Cờ `sua_lich_doi_cho_code` (lượt đo cuối 18/11: sửa lịch bằng lời 7 / 10 — câu "cho A lên sáng ngày 1, còn B để sáng ngày 3" bị model gắn
+# `chua_ho_tro` ổn định dù `ap` làm được, kể cả đổi chỗ hai điểm). Code chỉ đọc câu SAU khi model đã trả `chua_ho_tro` và không hành động nào khác,
+# và chỉ nhận lớp câu hẹp này; mọi chỗ mơ hồ ⇒ rỗng ⇒ giữ câu "chưa hỗ trợ" (từ chối nhầm được phép, áp sai thì không).
+_VE = re.compile(r"[,;]|\b(?:còn|và)\b", re.I)
+_BUOI_TRONG_CAU = re.compile(r"\b(sáng|chiều|trưa|tối|đêm)\b", re.I)
+_BUOI_DOI = {"sáng": "sang", "chiều": "chieu"}  # hành động `doi_buoi` chỉ có hai buổi ban ngày
+_NGAY_TRONG_CAU = re.compile(r"\bngày\s+(\d+)\b", re.I)
+_KHONG_PHAI_DOI = re.compile(r"\b(?:không|đừng|chớ|khỏi|hay|hoặc|nếu|bỏ|bớt|thêm|thay|xoá|xóa|huỷ|hủy)\b", re.I)
+
+
+def doi_buoi_tu_cau(bang: v2.BangV2, luu: dict, cau: str) -> list[HanhDong]:
+    """Câu có ĐÚNG hai vế, mỗi vế nêu đúng MỘT điểm đang có trong lịch + đúng MỘT buổi (sáng / chiều) + nhiều nhất một "ngày N" trong lịch
+    ⇒ hai hành động `doi_buoi` (vế sau không nêu ngày ⇒ ngày của vế trước). Còn lại ⇒ []. Tên điểm = cụm tên / tên khác của bảng nằm trong câu;
+    tên được đánh dấu TRƯỚC khi tách vế (tên dài trước) — tên có chữ "và" / dấu phẩy không bị cắt đôi."""
+    trong_lich, so_ngay = _vi_tri(luu["khung"]), luu["khung"]["tham_so"]["so_ngay"]
+    chu = f" {chuan_ten(re.sub(r'[^\w\s,;]', ' ', unicodedata.normalize('NFC', cau)))} "
+    ten = sorted(((chuan_ten(x), i) for i in trong_lich for x in v2.ten_cua(bang.theo_id[i])), key=lambda t: -len(t[0]))
+    thu_tu = list(trong_lich)
+    for t, i in ten:
+        chu = re.sub(rf"(?<![\w]){re.escape(t)}(?![\w])", f" \x00{thu_tu.index(i)}\x00 ", chu)
+    if _KHONG_PHAI_DOI.search(chu):
+        return []
+    ve = [v for v in (x.strip() for x in _VE.split(chu)) if v]
+    if len(ve) != 2:
+        return []
+    ra, ngay_truoc = [], None
+    for v in ve:
+        diem, buoi, ngay = re.findall(r"\x00(\d+)\x00", v), _BUOI_TRONG_CAU.findall(v), _NGAY_TRONG_CAU.findall(v)
+        if len(diem) != 1 or len(buoi) != 1 or buoi[0] not in _BUOI_DOI or len(ngay) > 1:
+            return []
+        ngay_truoc = int(ngay[0]) if ngay else ngay_truoc
+        if ngay_truoc is not None and not 1 <= ngay_truoc <= so_ngay:
+            return []
+        ra.append(HanhDong(loai="doi_buoi", ten=thu_tu[int(diem[0])], ngay=ngay_truoc, buoi=_BUOI_DOI[buoi[0]]))
+    return ra if ra[0].ten != ra[1].ten else []
+
+
 def luu_tu_lich(khung: dict, ngay_di: str | None, mua: dict | None) -> dict:
     """Trạng thái lưu sau một lượt lịch đạt (bản sao sâu). `mua` {ngày ISO: %} của dự báo đã dùng để xếp."""
     return {"tham_so": copy.deepcopy(khung["tham_so"]), "ngay_di": ngay_di,
