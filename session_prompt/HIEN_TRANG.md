@@ -33,7 +33,7 @@ Thứ tự việc, KHÔNG gắn ngày — bước trước đạt và máy rản
 | Bước | Việc | Trạng thái |
 |---|---|---|
 | 1–4 | Cả bộ test · soát tích hợp · code đứng yên · lượt đo cuối phần đã thấy (18/11) · sửa câu thiếu cảnh báo bằng code (19/11) | XONG; bộ kín NOT RUN |
-| 5 | **Đợt hoàn thiện local — theo hướng mới: việc PHỔ THÔNG của người dùng thật** (dưới) | đo hiện trạng xong (51 / 80 kịch bản xong việc); đang viết plan sửa |
+| 5 | **Đợt hoàn thiện local — theo hướng mới: việc PHỔ THÔNG của người dùng thật** (dưới) | đang làm; **điểm dừng = danh sách đóng 5 việc** (mục 4) + một lượt đo lại bộ 80 kịch bản |
 | 6 | Deploy AWS (cần User một lần: tài khoản, khoá, ngân sách) | chưa |
 | 7 | **User test TOÀN BỘ một lần** (`data/test_cuoi/DANH_SACH.md`) ⇒ User đóng Phase 9 | chưa |
 
@@ -59,6 +59,7 @@ Sản phẩm:
 - **19/11 — User TỰ NÊU:** chất lượng trước, tiền / tốc độ sau · làm việc phổ thông, không dồn công vào bão / lũ / khẩn cấp · báo cáo theo thư mục ngày · tự nhắc nhau không over-engineer.
 - **19/11 — User CHỌN Ô (sáng – trưa):** "Sửa lỗi an toàn trước" · "Chung tính sàn, riêng đọc tay" · "Làm bản code rồi ghi mốc" · "Bật ngay, ghi giới hạn" · cả bốn nhóm việc phổ thông · "Chèn hai lỗi nặng lên trước" (thứ tự ở mục 2).
 - **19/11 — User CHỌN (chiều):** giữ mức suy luận mặc định (đo xong) · giá vé = chép giá kho ĐÃ CÓ vào bảng điểm · lượt nhờ "làm thay": ba câu nói thật do code chọn, không mục web; KHÔNG làm gửi email; đặt / hỏi phòng không giả lập · xuất lịch: PDF in từ trình duyệt + PowerPoint do code vẽ, GIỮ kiểu "Di sản" của nhóm (đã cho bốn agent khác hãng thi, User vẫn chọn bản nhóm) · agent được gọi PowerPoint của Windows để dựng slide thử ra ảnh (chỉ file thử, một file một lần, thấy PowerPoint đang mở thì không gọi) · **"lịch vào lượt hỏi thường": BẬT RIÊNG phần lịch + số giờ** (tổng tiền vé model tự cộng — giới hạn đã nhận; phần tiền vé bằng code chưa bật).
+- **19:13 19/11/2026 — User CHỌN điểm dừng bước 5 = "danh sách vừa":** lịch đã lưu vào lượt hỏi thường · nói thật giới hạn · xuất lịch · hỏi tiếp về thứ vừa gợi ý · câu xin danh sách trả thiếu mục; rồi MỘT lượt đo lại bộ 80 kịch bản (chỉ báo trước → sau; không ngưỡng số vì hai người chấm lệch 8 / 80). "Gần X", ngày của nguồn giá vé, ngân sách do code tính = giới hạn đã biết, KHÔNG làm trước khi đóng Phase 9.
 - Không nói giá phòng ở phần gợi ý chỗ ở (câu hỏi chi phí chung vẫn nêu khoảng giá có nguồn từ kho). Khối "Nơi ở" chỉ hiện khi người dùng
   đã chọn hạng chỗ ở — ở biểu mẫu hoặc nói bằng lời.
 - Việc phải luôn đúng (phép tính, ngày, tiền, thứ tự bắt buộc) do CODE làm; model chỉ diễn đạt. Giữ model `gpt-6-luna`, giữ `e5-small`; số đoạn / cách đưa ngữ cảnh: đang thử (plan đã duyệt; bật gì do User quyết).
