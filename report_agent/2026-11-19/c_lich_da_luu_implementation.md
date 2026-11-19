@@ -6,9 +6,9 @@ Viết: 15:52 19/11/2026 (giờ `date`). Việc đứng đầu thứ tự sửa 
 
 ## 1. Người dùng thấy gì khác
 
-- **Trước:** người dùng lập lịch bằng biểu mẫu rồi hỏi tiếp bằng lời về chính lịch đó ("ngày 1 đi hết mấy tiếng", "tóm gọn lịch này để chép", "tổng tiền vé của lịch này"). Trợ lý không nhìn thấy lịch vừa lập nên trả lời trên một lịch mẫu lấy từ kho — nói chắc mà sai, 3 / 3 kịch bản ở lượt đo trưa 19/11.
+- **Trước:** người dùng lập lịch bằng biểu mẫu rồi hỏi tiếp bằng lời về chính lịch đó (hỏi số giờ tham quan của một ngày, nhờ viết gọn lại lịch, hỏi tổng tiền vé). Trợ lý không nhìn thấy lịch vừa lập nên trả lời trên một lịch mẫu lấy từ kho — nói chắc mà sai, 3 / 3 kịch bản ở lượt đo trưa 19/11.
 - **Sau, khi cờ `lich_vao_hoi_thuong` bật (chủ dự án chọn bật 19/11; ĐÃ BẬT trên bản chính tối 19/11, commit gộp `62a2762` — xem mục "Cập nhật tối 19/11" cuối file):** trong cuộc trò chuyện đã có lịch, mỗi lượt hỏi thường nhận thêm một nguồn "Lịch bạn đang có" do code in: tham số lịch, từng ngày (buổi, giờ, tên điểm), và các con số code tính sẵn — số điểm mỗi ngày, giờ bắt đầu, giờ kết thúc mục ban ngày cuối, khoảng từ đầu tới cuối, tổng thời lượng tham quan, ngày dài nhất. Model chỉ diễn đạt.
-- Ví dụ ở lượt thật: hỏi ngày 1 mất mấy tiếng và có kịp về trước 5 giờ chiều không ⇒ trả lời "5 giờ tham quan, chưa tính đi lại ăn nghỉ; phần ban ngày từ 8:00 đến 16:00; chưa tính đường về nên không xác nhận chắc" — đúng các số code in cho lịch đang có.
+- Ví dụ ở lượt thật: hỏi số giờ tham quan của ngày 1 kèm một mốc giờ phải về ⇒ trả lời "5 giờ tham quan, chưa tính đi lại ăn nghỉ; phần ban ngày từ 8:00 đến 16:00; chưa tính đường về nên không xác nhận chắc" — đúng các số code in cho lịch đang có.
 
 ## 2. Bằng chứng
 
@@ -22,7 +22,7 @@ Viết: 15:52 19/11/2026 (giờ `date`). Việc đứng đầu thứ tự sửa 
 | Lượt thật giai đoạn 1 (lịch + số giờ): 8 kịch bản quyết + 29 cuộc dò bên bật, 15 cuộc bên tắt cùng buổi | 0 lỗi hạ tầng · 0 câu trả lời bị rút · nguồn lịch có ở 32 / 32 lượt hỏi thường; không có ở lượt sửa (6), trò chuyện (1), ngoài phạm vi (3) | — | [máy kiểm] |
 | Người đọc 100 % lượt thật (phiên E — người soạn bộ dò, không viết code) | 0 con số về lịch sai / 32 lượt · 0 điểm ngoài lịch bị nói như trong lịch · 0 lượt nói "đã sửa" khi lịch không đổi · 0 câu ngoài kho được trả lời · kéo lịch vào không cần thiết 0 / 12 (ngưỡng ≤ 2) | bên cờ tắt cùng buổi | [người thứ hai kiểm] |
 | Hai kịch bản từng sai (hỏi số giờ · tóm lịch để chép), mỗi cái 2 lần | xong 4 / 4, trên đúng lịch | trưa 19/11: sai 2 / 2 | [người thứ hai kiểm] |
-| Kịch bản "tổng tiền vé của lịch", 2 lần | trả lời trên đúng lịch, nhưng tổng 700.000 đồng do MODEL tự cộng giá kho (đúng) ⇒ KHÔNG đạt dòng quyết ghi trước "phép tính tiền phải do code" | trưa 19/11: tính trên lịch khác | [người thứ hai kiểm] |
+| Kịch bản hỏi tổng tiền vé, 2 lần | trả lời trên đúng lịch, nhưng tổng 700.000 đồng do MODEL tự cộng giá kho (đúng) ⇒ KHÔNG đạt dòng quyết ghi trước "phép tính tiền phải do code" | trưa 19/11: tính trên lịch khác | [người thứ hai kiểm] |
 | Hỏi ngay sau một lượt sửa lịch (2 chuỗi) | trả lời theo lịch ĐÃ sửa | — | [người thứ hai kiểm] |
 | Tiền lượt thật giai đoạn 1 | 0,073 USD (cộng cả phần câu trả lời chạy song song bị bỏ: khoảng 0,075) | trần ghi trước 0,15 | [máy kiểm] |
 
@@ -42,8 +42,8 @@ Ai kiểm: phiên E review kế hoạch hai vòng (vòng 1: 4 điểm lớn — 
 
 1. Bật hệ thống theo `guides/RUNBOOK_BAN_GIAO.md` mục 1–2, mở giao diện.
 2. Vào "Lên kế hoạch", để mặc định (2 ngày, 2 người lớn), bấm tạo lịch.
-3. Gõ: "ngày 1 đi hết mấy tiếng, có kịp về trước 5 giờ chiều không" ⇒ đúng là: nêu 5 giờ tham quan và khung 8:00 – 16:00 của CHÍNH lịch vừa hiện. Sai là: nhắc tới điểm không có trong lịch trên màn hình.
-4. Gõ: "tóm gọn lịch này để mình chép" ⇒ đúng là: đủ các mục của lịch trên màn hình, đúng giờ.
+3. Gõ: "ngày đầu mình tham quan tổng cộng bao lâu, mấy giờ thì xong điểm cuối" ⇒ đúng là: nêu 5 giờ tham quan và khung 8:00 – 16:00 của CHÍNH lịch vừa hiện. Sai là: nhắc tới điểm không có trong lịch trên màn hình.
+4. Gõ: "viết lại lịch này thật ngắn, mỗi ngày một dòng" ⇒ đúng là: đủ các mục của lịch trên màn hình, đúng giờ.
 
 ## 5. Bảng bàn giao
 
