@@ -162,6 +162,6 @@ Người chấm: 0 USD API (agent con Claude). Thời gian lượt đo ≈ 45 ph
 |---|---|---|
 | Tổng tiền lượt đo | `uv run python -c "import json;print(round(json.load(open('data/phase_9/b7_cuoi/tien.json'))['tong'],4))"` | `0.3324` |
 | Bản đo ↔ mốc code hiện nay khác nhau ở đâu trong `backend/` | `git diff --stat b27ef45 3abb076 -- backend` | 2 file: `backend/llm/assistant.py`, `backend/tests/test_b6_tra_web.py` (lời dặn và đường sửa lịch không đổi) |
-| File này không viết câu chốt sớm | `grep -c "mọi sàn đạt" report_agent/2026-11-12_ra_khoang_cach/b_do_cuoi_b7_implementation.md` | `1` (chỉ dòng lệnh này) |
+| File này không viết câu chốt sớm | `grep -c "mọi sàn đạt" report_agent/2026-11-19/b_do_cuoi_b7_implementation.md` | `1` (chỉ dòng lệnh này) |
 
 - Việc kế (theo sổ việc): C sửa câu thiếu cảnh báo có đo (theo cách đếm User chốt 08:11 19/11/2026) ⇒ lượt đo tốc độ 60 câu khi máy yên ⇒ chốt phần nhóm kèm danh sách mục chưa đạt ⇒ viết `bai_hoc/`.
