@@ -14,7 +14,7 @@
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
 
-## 19/11 — 13. Hỏi tiếp về lịch vừa lập: trợ lý nay nhìn thấy đúng lịch đó và số giờ do chương trình tính
+## 19/11 — 13. Hỏi tiếp về lịch vừa lập: trợ lý nhìn thấy đúng lịch đó và số giờ do chương trình tính (đã đo xong, anh chọn bật; chờ bật trên bản chính)
 
 **Từ dùng ở mục này:** **lịch đã lưu** = lịch anh vừa lập bằng biểu mẫu "Lên kế hoạch"; hệ thống giữ nó trong bộ nhớ của cuộc trò chuyện 30 phút kể từ lượt cuối ·
 **lượt hỏi thường** = một câu anh gõ để hỏi (không phải bấm biểu mẫu, không phải câu nhờ sửa lịch) · **nguồn** = một đoạn tư liệu hệ thống đưa cho model đọc trước khi viết;
@@ -24,7 +24,7 @@ tính — có thể sai · **sổ vết** = bản ghi từng bước của một
 
 **1. Anh thấy gì khác.** Sau khi lập lịch, anh hỏi tiếp bằng lời về chính lịch đó — "ngày 1 đi hết mấy tiếng, có kịp về trước 5 giờ chiều không", "tóm gọn lịch này để mình
 chép gửi nhóm" — thì trợ lý trả lời **trên đúng lịch đang hiện trên màn hình**, với số giờ do chương trình tính sẵn. Trước hôm nay trợ lý không nhìn thấy lịch vừa lập: nó đi tìm
-trong kho, gặp một bài lịch mẫu và trả lời trên lịch mẫu đó — nói rất chắc mà sai. Anh đã chọn bật phần này chiều 19/11 (cờ `lich_vao_hoi_thuong`).
+trong kho, gặp một bài lịch mẫu và trả lời trên lịch mẫu đó — nói rất chắc mà sai. Anh đã chọn bật phần này chiều 19/11 (cờ `lich_vao_hoi_thuong`). **Lưu ý: lúc kết phiên 19/11 cờ CHƯA bật trên bản chính — nhánh bật cờ `origin/p9-c-bat-lich-vao-hoi-thuong` còn nợ lượt chạy cả bộ test; tới khi nhánh đó được gộp, hệ thống vẫn chạy như trước.** Mọi chữ "khi bật" dưới đây nói về bản đã đo, chưa phải bản anh đang mở.
 
 Vì sao trước đây sai (theo đường đi của một câu hỏi): câu hỏi ⇒ chọn tuyến ⇒ tìm trong kho ⇒ gom nguồn ⇒ model viết. Lịch vừa lập nằm ở bộ nhớ của cuộc trò chuyện nhưng chỉ
 được đưa cho bước "hiểu câu nhờ sửa lịch", không được đưa vào bước gom nguồn. Việc này thêm đúng một thứ ở bước gom nguồn: chương trình in lịch đang có thành một nguồn — từng
@@ -52,25 +52,26 @@ ngày nào dài nhất. Model chỉ việc diễn đạt lại.
 - **Test bằng đồ giả:** 14 test (model thay bằng bản trả lời dựng sẵn; bộ tìm thật), gồm hai test được chứng minh là "biết đỏ": cố ý chỉ đưa lịch tới một nửa đường đi ⇒ test
   báo hỏng. Một phiên khác chạy lại: 14 đạt. [người thứ hai kiểm] Lỗi do chính người viết gây ra ở bản đầu và được người review bắt trước khi đo: một phép kiểm số có sẵn sẽ
   rút oan câu trả lời nêu đúng số giờ của lịch — đã sửa, có test.
-- **Tiền:** lượt thật của phần đang bật 0,073 USD — khoảng 0,075 nếu cộng cả các câu trả lời chạy song song rồi bị bỏ (trần ghi trước 0,15); phần thử tổng tiền vé ở ý 3 thêm 0,034 USD.
+- **Tiền:** lượt thật của phần anh chọn bật 0,073 USD — khoảng 0,075 nếu cộng cả các câu trả lời chạy song song rồi bị bỏ (trần ghi trước 0,15); phần thử tổng tiền vé ở ý 3 thêm 0,034 USD.
 
 **3. Chưa làm / giới hạn.**
 - **Tổng tiền vé do chương trình tính: đã làm thử, CHƯA bật.** Anh chọn "chép giá kho đã có"; một phiên chép giá vé từ kho vào bảng điểm của lịch (26 / 41 điểm có giá hoặc
   được kho ghi rõ miễn phí; 25 dòng đã được soát độc lập, 1 dòng thêm sau), chương trình cộng "giá × số người" và in sẵn tổng, tổng theo từng ngày, điểm miễn phí, điểm chưa có giá (không coi là 0 đồng).
   Phép tính đúng: 5 / 5 ca đối chiếu của người review khớp (3 ca có phép cộng). Nhưng khi đo qua hệ thống thật, **6 / 12 lượt hỏi về tổng tiền hoặc giá vé ra câu từ chối khuôn** (lần đầu 4 / 6;
-  sau đúng một lần sửa câu chữ 2 / 6) — tệ hơn bản đang bật, nơi cùng câu hỏi được trả lời 3 / 3. Nguyên nhân đã xác nhận bằng sổ vết: thấy dòng "còn điểm chưa có giá",
+  sau đúng một lần sửa câu chữ 2 / 6) — tệ hơn bản anh chọn bật (chỉ lịch + số giờ), nơi cùng câu hỏi được trả lời 3 / 3. Nguyên nhân đã xác nhận bằng sổ vết: thấy dòng "còn điểm chưa có giá",
   model tự đi tìm giá các điểm đó trong kho, không thấy, rồi kết luận "không đủ thông tin" cho CẢ câu hỏi — dù tổng do chương trình tính nằm ngay trước mắt nó. Lượt nào model
   không tự tìm thêm thì luôn có câu trả lời (11 / 11 lượt; 9 lượt dùng đúng số chương trình in, 2 lượt model tự tính và đúng). Kế hoạch ghi trước "chỉ một lần sửa, không sửa mò lần hai" ⇒ nhóm dừng, giữ bản thử làm hồ sơ; chữa tận gốc chỗ
   "model tự tìm thêm rồi từ chối" là một việc riêng chưa giao.
-- **Hệ quả với bản đang bật:** hỏi tổng tiền vé thì **model tự cộng** giá vé của kho trên đúng lịch. Ba lần đo đều đúng, nhưng đó chưa phải số chương trình tính — có thể cộng
+- **Hệ quả khi bật bản anh chọn:** hỏi tổng tiền vé thì **model tự cộng** giá vé của kho trên đúng lịch. Ba lần đo đều đúng, nhưng đó chưa phải số chương trình tính — có thể cộng
   sai. Câu giả định ("nếu thêm một người lớn thì hết bao nhiêu") cũng là số model tự tính.
 - **Một lỗi có sẵn thấy lại, không do việc này:** một câu giả định "nếu bỏ điểm X thì ngày 1 còn mấy tiếng" có lần bị hiểu thành lệnh sửa — điểm X bị bỏ thật khỏi lịch
   (1 lượt). Đã ghi vào sổ tay bàn giao mục 10.2.
 - Lịch chỉ được nhớ 30 phút kể từ lượt cuối; quá hạn thì trợ lý lại không thấy lịch.
 - Mới đo trên lịch mặc định (2 ngày, 2 người lớn) và một lịch gia đình có trẻ em; câu hỏi do nhóm viết, chưa phải câu người dùng thật gõ; mỗi câu chạy 1–2 lần.
-- Chưa chạy lại cả bộ test trên bản bật cờ lúc viết mục này (đang chờ lượt máy).
+- **Chưa chạy lại cả bộ test trên bản bật cờ** ⇒ cờ chưa vào bản chính; đây là việc đầu tiên của phiên sau.
 
 **4. Cách anh thử trong 2 phút.**
+0. Chỉ thử được SAU khi nhóm báo cờ đã bật trên bản chính (xem lưu ý ở ý 1).
 1. Bật hệ thống, mở giao diện, vào "Lên kế hoạch", để nguyên mặc định (2 ngày, 2 người lớn), bấm tạo lịch.
 2. Gõ: *ngày 1 đi hết mấy tiếng, có kịp về trước 5 giờ chiều không* ⇒ **đúng** là câu trả lời nêu 5 giờ tham quan và khung 8:00 – 16:00 của lịch đang hiện; **sai** là nhắc tới
    một điểm không có trên màn hình.
