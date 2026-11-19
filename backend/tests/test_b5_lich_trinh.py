@@ -31,6 +31,10 @@ from test_b2_tool_loop import _ids, answer, deps, generator, tool_call  # noqa: 
 from test_chat_stream import parse_sse
 
 SETTINGS = load_settings(validate_private_paths=False)
+# MỘT chỗ duy nhất liệt kê các cờ phụ thuộc "sửa lịch bản 2" / nơi ở mà test phải tự tắt (test không đọc cờ thật của settings.yaml).
+# Thêm một cờ mới cần `sua_lich_v2` ⇒ thêm vào ĐÂY; `test_cong_dot_1.flags_from` nhập hằng này từ đây (chiều ngược lại là nhập vòng) (19/11: chép tay ở hai file ⇒ vấp hai lần khi bật cờ).
+CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lich_doi_cho_code": False, "luu_tru_lich": False, "quan_lich": False, "ban_do_lich": False,
+                   "lich_vao_hoi_thuong": False}
 BANG = nap_bang_lich(SETTINGS)
 ON = AssistantFlags(tim_them=True, lich_trinh=True, bang_lich=BANG)
 OFF = AssistantFlags(tim_them=True)
@@ -552,7 +556,7 @@ def test_flags_need_table_and_tool_loop():
     with pytest.raises(ValueError):
         AssistantFlags(lich_trinh=True, bang_lich=BANG)
     s = copy.deepcopy(SETTINGS)
-    s["assistant"].update(lich_trinh=True, lich_trinh_bieu_mau=False, len_ke_hoach_v2=False, anh_lich=False, sua_lich_v2=False, sua_lich_chua_ho_tro=False, sua_lich_doi_cho_code=False, luu_tru_lich=False, quan_lich=False, ban_do_lich=False, lich_vao_hoi_thuong=False)
+    s["assistant"].update(lich_trinh=True, lich_trinh_bieu_mau=False, len_ke_hoach_v2=False, anh_lich=False, **CO_SUA_LICH_TAT)
     tat = copy.deepcopy(SETTINGS)
-    tat["assistant"].update(lich_trinh=False, lich_trinh_bieu_mau=False, len_ke_hoach_v2=False, anh_lich=False, sua_lich_v2=False, sua_lich_chua_ho_tro=False, sua_lich_doi_cho_code=False, luu_tru_lich=False, quan_lich=False, ban_do_lich=False, lich_vao_hoi_thuong=False)  # cờ tắt đặt rõ: không theo settings.yaml
+    tat["assistant"].update(lich_trinh=False, lich_trinh_bieu_mau=False, len_ke_hoach_v2=False, anh_lich=False, **CO_SUA_LICH_TAT)  # cờ tắt đặt rõ: không theo settings.yaml
     assert AssistantFlags.from_settings(s).bang_lich is not None and AssistantFlags.from_settings(tat).bang_lich is None
