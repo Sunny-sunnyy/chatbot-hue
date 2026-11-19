@@ -69,6 +69,7 @@ Sản phẩm:
 - **User 10:04 19/11/2026 — GỠ các rào tối ưu sớm:** bỏ sàn tiền "TB ≤ 0,0005 USD / câu" và sàn tốc độ "chữ đầu p50 ≤ 3 s, p95 ≤ 5 s" (tiền / giây chỉ ĐO và BÁO cạnh chất
   lượng, không dùng để loại phương án; đặt lại sau khi chất lượng đạt, User quyết); bỏ trần token đầu ra, ngân sách ngữ cảnh 16.384 token / lượt, trần lịch sử 1.500 token (đã gỡ);
   được dùng tiền API để thử (một việc > 1 USD vẫn báo trước). Thứ tự lỗi tệ nhất: sai cảnh báo an toàn > nói chắc mà sai > trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
+- KHÔNG in chữ ghi công / tác giả / giấy phép ảnh ở bất kỳ đâu người dùng thấy (màn hình, bản in, file tải về) và không lọc ảnh theo giấy phép — User 14/11, nhắc lại 15:58 19/11/2026; dữ liệu đó chỉ giữ trong bảng ảnh.
 - Không mở lại khi User chưa nêu: giọng nói (dẹp) · so ảnh bằng embedding (hoãn, chưa có ngày; ảnh mẫu còn giữ) · nhớ sở thích người dùng (không làm) ·
   "tra web sớm" (bỏ) · "gộp câu tìm" (gác) · mục web giữ bản dài (bản gọn đã thử, không dùng).
 - User chỉ chưa có giờ TỰ TAY TEST (test toàn bộ một lần ở cuối); vẫn duyệt, trao đổi bình thường ⇒ việc "hỏi User trước" hỏi ngay, không dồn; nhóm không chờ User đóng Phase 9 mới làm tiếp. Deploy AWS: sau đợt hoàn thiện local.
