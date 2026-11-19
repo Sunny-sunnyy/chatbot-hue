@@ -36,6 +36,7 @@ from llm.assistant import (BOOL_FIELDS as ASSISTANT_BOOL_FIELDS, ROUTE_TRO_LY_HU
                            search_into_trace, tim_kho, tool_for_turn,
                            turn_usd)
 from core.schema import GenerationError
+from llm.ten_goi_y import ghi_chu_goi_y
 from llm.pricing import cost_usd  # giá dời sang `llm.pricing` (Phase 9 B0); `from evaluation.full_corpus_eval import cost_usd` cũ vẫn chạy
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
@@ -506,6 +507,8 @@ async def run_chains(chains: list[dict], side: str) -> list[dict]:
                 "answer": trace.answer, "refusal": None if trace.answer is None else is_refusal(trace.answer), "error": error,
                 "citation_error": None if trace.citation_error is None else str(trace.citation_error), "route": trace.route,
                 "fixed_outcome": trace.fixed_outcome, "n_history_turns": len(history), "cau_tim_model": trace.model_queries,
+                # cờ `nho_ten_goi_y`: dòng tên nơi do code dựng — `one_chain` đưa vào lịch sử của lượt sau (như route)
+                "ghi_chu_goi_y": ghi_chu_goi_y(trace) if flags.nho_ten_goi_y and error is None else "",
                 "n_tim_kho_model": trace.model_searches, "usd": turn_usd(trace), "n_llm_calls": len(trace.llm_calls),
                 "viet_input_tokens": writer[-1]["input_tokens"] if writer else None, "builder_tokens": builder,
                 "usage_tru_builder": None if (not writer or builder is None) else writer[-1]["input_tokens"] - builder}
@@ -522,7 +525,7 @@ async def run_chains(chains: list[dict], side: str) -> list[dict]:
                 row = await one_turn(chain, idx, turn, history)
                 rows.append(row)
                 if side == "nho" and row["error"] is None and row["answer"] and (row["fixed_outcome"] or not row["citation_error"]):
-                    store.append(conversation_id, turn["cau"].strip(), row["answer"])
+                    store.append(conversation_id, turn["cau"].strip(), row["answer"], row["ghi_chu_goi_y"])
         return rows
 
     try:

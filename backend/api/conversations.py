@@ -29,7 +29,7 @@ def stored_answer(answer: str) -> str:
 
 @dataclass
 class Conversation:
-    turns: list[tuple[str, str]] = field(default_factory=list)  # (câu hỏi, câu trả lời đã cắt) — câu trả lời "" khi chỉ nhớ câu hỏi
+    turns: list[tuple[str, str]] = field(default_factory=list)  # (câu hỏi, câu trả lời đã cắt) — chỉ nhớ câu hỏi ⇒ "" hoặc dòng ghi chú tên nơi do code dựng
     expires_at: float = 0.0
     lich: dict | None = None  # sửa lịch bản 2: lịch đã lưu của cuộc (chỉ dữ liệu code dựng — khung, ngày đi, điểm đã bỏ, câu đã kiểm)
 
@@ -69,12 +69,13 @@ class ConversationStore:
         """Số token lịch sử của cuộc (chỉ số đếm cho log — không chữ)."""
         return sum(self._count(q) + self._count(a) for q, a in self.history(conversation_id))
 
-    def append(self, conversation_id: str, question: str, answer: str) -> None:
-        """Ghi một lượt đã xong rồi cắt theo trần SỐ LƯỢT (bỏ lượt cũ nhất trước). Không còn trần token của lịch sử (User 19/11/2026)."""
+    def append(self, conversation_id: str, question: str, answer: str, ghi_chu: str = "") -> None:
+        """Ghi một lượt đã xong rồi cắt theo trần SỐ LƯỢT (bỏ lượt cũ nhất trước). Không còn trần token của lịch sử (User 19/11/2026).
+        `ghi_chu` (cờ `nho_ten_goi_y`): dòng do CODE dựng — tên nơi lượt này đã gợi ý — đứng ở chỗ câu trả lời khi chỉ nhớ câu hỏi."""
         conversation = self._items.get(conversation_id)
         if conversation is None:  # hết hạn trong lúc trả lời ⇒ không ghi
             return
-        conversation.turns.append((question, stored_answer(answer) if self._keep_answers else ""))
+        conversation.turns.append((question, stored_answer(answer) if self._keep_answers else ghi_chu))
         del conversation.turns[:-self._max_turns]
         conversation.expires_at = self._clock() + self._ttl
         self._items.move_to_end(conversation_id)

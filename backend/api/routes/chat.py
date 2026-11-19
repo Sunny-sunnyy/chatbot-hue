@@ -33,6 +33,7 @@ from llm.full_corpus_prompt import REFUSAL_ANSWERS
 from llm import lich_trinh_v2 as lt2
 from llm import ngay_lich as nl
 from llm import thoi_tiet as tt
+from llm.ten_goi_y import ghi_chu_goi_y
 from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_moi, ghep_cau, ghep_cau_v2, loi_v2
 from api.conversations import TTL_SECONDS
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, loi_bao_luoi_cuoi, luoi_cuoi_bao, elapsed_ms, lich_cho_giao_dien, turn_usd
@@ -178,7 +179,8 @@ def _remember(request: Request, conversation_id: str | None, query: str, trace: 
     """Ghi lượt đã xong vào cuộc (D2): chỉ lượt có câu trả lời cuối — lỗi / ngắt / rút lại không ghi."""
     # B4 D5: lượt hỏi lại không có chữ trả lời nhưng vẫn lưu câu hỏi ⇒ người dùng gõ giá trị bằng chữ ở lượt sau vẫn có câu gốc
     if conversation_id is not None and outcome in REMEMBERED_OUTCOMES and (trace.answer or outcome == "hoi_lai"):
-        request.app.state.conversations.append(conversation_id, query, trace.answer)
+        ghi_chu = ghi_chu_goi_y(trace) if _flags(request.app.state).nho_ten_goi_y and outcome == "success" else ""
+        request.app.state.conversations.append(conversation_id, query, trace.answer, ghi_chu)
 
 
 def _kiem_truong_v2(body: "ChatRequest", state) -> None:
