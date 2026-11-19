@@ -196,6 +196,8 @@ def doi_buoi_tu_cau(bang: v2.BangV2, luu: dict, cau: str) -> list[HanhDong]:
     """Câu có ĐÚNG hai vế, mỗi vế: tên MỘT điểm đang có trong lịch + từ dời + buổi sáng / chiều (+ "ngày N" trong lịch) ⇒ hai hành động `doi_buoi`
     (vế sau không nêu ngày ⇒ ngày của vế trước). Còn lại ⇒ []. Tên điểm = cụm tên / tên khác của bảng; đánh dấu tên của CẢ bảng trước khi tách vế
     (tên dài trước — tên có chữ "và" không bị cắt đôi); điểm ngoài lịch ⇒ []."""
+    if "?" in cau or "？" in cau:  # câu hỏi ("… được không?", "… ạ?") không phải yêu cầu dời — bộ bù của C 19/11; hỏi lịch sự bị từ chối nhầm: chấp nhận
+        return []
     trong_lich, so_ngay = _vi_tri(luu["khung"]), luu["khung"]["tham_so"]["so_ngay"]
     chu = f" {chuan_ten(re.sub(r'[^\w\s,;]', ' ', unicodedata.normalize('NFC', cau)))} "
     thu_tu = [d["id"] for d in bang.diem]

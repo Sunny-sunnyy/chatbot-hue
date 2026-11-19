@@ -262,6 +262,7 @@ def test_doi_buoi_tu_cau_doc_dung_hai_ve_va_tu_choi_moi_cau_mo_ho():
         f"{ten_a} lên sáng {nb}, {ten_b} để sáng {na}",  # số đứng trần
         f"Ngày {nb} {ten_a} sáng, ngày {na} {ten_b} sáng",  # không có từ dời: tả hay yêu cầu không rõ ⇒ không áp
         f"{ngoai} lên sáng ngày {nb}, {ten_b} để sáng ngày {na}",  # điểm ngoài lịch đứng vế đầu
+        f"{ten_a} lên sáng ngày {nb}, còn {ten_b} để sáng ngày {na} ạ?",  # kết bằng dấu hỏi (mọi chữ đều trong danh sách cho phép) ⇒ vẫn không áp
     ):
         assert doc(cau) == [], cau
 
