@@ -1,6 +1,6 @@
 # VIỆC ĐANG MỞ — mục lục theo việc (sống xuyên ngày; GHI ĐÈ tại chỗ)
 
-Cập nhật: 14:20 19/11/2026 (giờ `date`). Người giữ: phiên điều phối. **[đang thử từ 19/11, xét lại sau 3 ngày làm việc]**
+Cập nhật: 14:30 19/11/2026 (giờ `date`). Người giữ: phiên điều phối. **[đang thử từ 19/11, xét lại sau 3 ngày làm việc]**
 
 Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đây, để phiên mở sáng hôm sau tìm lại đủ hồ sơ mà không lục từng thư mục ngày. Việc xong ⇒ dời MỘT dòng sang `session_prompt/VIEC_DA_XONG.md` (tên · ngày xong · sha gộp · các thư mục ngày có hồ sơ) rồi xoá khối. Trần: 8 việc / 60 dòng. **"Bước kế" của một việc CHỈ ghi ở trang này** — trang hiện trạng, `TONG_HOP.md` của ngày và `STATUS_<X>.md` chỉ trỏ tới đây, không chép lại. Dòng "plan" luôn là bản HIỆN HÀNH + sha đã duyệt; bản plan cũ có dòng đầu "đã thay bởi …". Report đã nằm ở thư mục ngày nào thì KHÔNG dời; bản cập nhật ngày sau là file MỚI ở thư mục ngày mới, dòng "report" liệt kê đủ theo ngày. Dữ liệu riêng tư ở `data/<tên việc>/` (không vào git) — ở đây chỉ ghi đường dẫn.
 
@@ -39,6 +39,7 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 - **User CHỌN Ô 14:09 19/11/2026:** ba câu riêng theo loại, KHÔNG hiện mục web ở các lượt đó; User hỏi lại có làm THẬT gửi email / đặt phòng không — A đang trả lời, chữ loại "gửi" có thể đổi. Bước kế: E code sau cờ mặc định tắt (`/tmp/hr_e_noi_that`; đổi phân công vì B đang đo) ⇒ B hoặc C soạn bộ dò 20 + 20 ⇒ lượt qua server 4 kịch bản đích × 3 + 5 lượt từ chối đúng ⇒ B review cả nhánh.
 - Đếm lượt chia sai tuyến (C, 0 USD): ĐÓNG — 0 lượt sai có hệ quả / 106 lượt qua định tuyến (ngưỡng 3) ⇒ không sửa bước định tuyến; giới hạn: bộ này chỉ đo một chiều; `data/kich_ban_pho_thong_2026-11-19/luot_1/dem_chia_sai_tuyen_C.md` [một người đọc tay].
 
-## 7. Xuất lịch trình ra PDF + PowerPoint đẹp (User nêu 14:20 19/11/2026)
-- Trạng thái: User chọn "Tải PDF" + "Xuất PowerPoint", muốn file "đẹp mắt, thu hút, sinh động"; KHÔNG chọn nút mở thư, KHÔNG chọn server gửi email; đặt phòng / hỏi phòng: chỉ nói thật + link tìm phòng (không giả lập). Đang nghiên cứu, CHƯA giao code: tra cứu công khai `data/tra_cuu_cli/2026-11-19_xuat-lich-pdf-pptx-dep/` (đang chạy) + hỏi phiên điều phối một dự án khác của User (User bảo hỏi).
-- Bước kế: A gom kết quả ⇒ đề xuất MỘT cách làm cho User (propose-options) ⇒ plan nhỏ ⇒ giao. Thứ tự so với việc 5, 6: sau hai việc đó trừ khi User nói khác.
+## 7. Xuất lịch trình ra PDF + PowerPoint đẹp (User nêu 19/11)
+- Trạng thái: **User CHỌN Ô 14:30 19/11/2026: PDF bản đầu = in từ trình duyệt** (trang in riêng + CSS in; nâng lên server dựng file khi dùng thật thấy bất tiện); PowerPoint = code điền khuôn `.pptx`. Không gọi model lúc tải; số do code. A chốt sau phản biện của E: bản đầu 3 kiểu trang (bìa · một ngày · chi phí + lưu ý + nguồn); chỉ dùng ảnh có giấy phép rõ (26 / 41 theo E đếm, chưa ai đếm lại) + trang "Nguồn ảnh"; file mang dòng "giá / giờ có thể đã thay đổi" + ngày nguồn; tiêu chí nhìn được ghi trước, thử trên 3 lịch thật; User chọn 1 trong 2 kiểu bằng ảnh chụp. Không làm: gửi email, giả lập đặt phòng, bản đồ nền.
+- Hồ sơ: `data/tra_cuu_cli/2026-11-19_xuat-lich-pdf-pptx-dep/` (tra cứu công khai; A kiểm 2 ý) · `data/xuat_lich_dep_2026-11-19/` (trả lời của một dự án khác của User).
+- Bước kế: E viết plan 1 trang SAU khi nhánh việc 6 được review ⇒ A đọc, duyệt ⇒ code ⇒ ảnh chụp 2 kiểu cho User chọn. Phụ thuộc: cột giá vé + giai đoạn 2 của việc 5.
