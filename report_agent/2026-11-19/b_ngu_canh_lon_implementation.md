@@ -23,7 +23,7 @@ Không có gì đổi: **không nhánh nào được đề nghị đưa vào b�
 | Thời gian cả câu, giữa / chậm nhất 5 % (giây; máy dùng chung, không phải lượt đo tốc độ) | 5,4 / 9,9 | 5,6 / 10,8 | 5,5 / 11,1 | [máy kiểm] |
 
 **Bộ an toàn (32 câu × 2 lượt mỗi nhánh; hai người chấm độc lập, không biết bản nào thuộc nhánh nào; cả hai người chấm bắt 10 / 10 câu sai cài sẵn và báo nhầm 0 / 5 câu đúng cài sẵn):**
-- Nhánh 15 đoạn: **sạch về cảnh báo an toàn** [người thứ hai kiểm]. Còn một ô về điều kiện vé bị gắn "thiếu", nằm trong mức dao động của chính mốc.
+- Nhánh 15 đoạn: **sạch về cảnh báo an toàn** [người thứ hai kiểm]. Điểm ĐƯỢC: ở một câu về đi thuyền, nhánh này nêu thêm một cảnh báo đúng ("mùa mưa bão hoạt động thường tạm dừng") ở cả hai lượt — ý nằm ở đoạn hạng 11–15 nên mốc không có [người thứ hai kiểm]. Còn một ô về điều kiện vé bị gắn "thiếu", nằm trong mức dao động của chính mốc.
 - Nhánh cả mục, dòng 1 — **phạm thật:** ở một lượt, một câu mất cảnh báo "tạm ngừng mùa lũ" mà mốc có ở cả hai lượt. Lý do: ngữ cảnh to hơn nên lượt đó model không trích đúng mục chứa câu cảnh báo, và code chỉ nối dòng cảnh báo từ nguồn ĐÃ được trích [người thứ hai kiểm].
 - Nhánh cả mục, dòng 2 — **phạm theo luật "cột riêng":** một câu bỏ hai cảnh báo chỉ có ở phần ngữ cảnh thêm, cả hai lượt. Bản mốc cũng không cho người dùng hai ý này; luật này luôn bất lợi cho nhánh ngữ cảnh to [người thứ hai kiểm].
 - Đảo cảnh báo: 0 ở cả hai nhánh [người thứ hai đọc; người chấm có gắn "trái nguồn" cho một câu ở lượt 2 của cả hai nhánh — chính mốc lượt 1 cũng bị gắn đúng câu đó nên người đọc xếp vào dao động của mốc]. Câu ngoài kho bị trả lời: 0 / 3 ở mọi lượt. Câu an toàn bắt buộc sinh lại 3 + 3 lần: thiếu cảnh báo 3 / 3 ở cả nhánh lẫn mốc ⇒ không phải lỗi mới.
@@ -35,6 +35,7 @@ Không có gì đổi: **không nhánh nào được đề nghị đưa vào b�
 - Bộ an toàn chạy trên ba bản code vì nhánh chính nhận hai nhánh code (cờ tắt) giữa lượt đo; đã chụp lại 228 yêu cầu gửi model sau khi gộp: giống từng byte bản đầu buổi. Bộ câu mẫu ba nhánh cùng một bản.
 - File kết quả bộ an toàn không lưu dòng cảnh báo do code nối ⇒ đã DỰNG LẠI bằng chính hàm đang chạy thật (thử trước trên dữ liệu cũ biết chắc có dòng nối: ra đúng danh sách đã ghi); không phải bản ghi của lượt thật. Con số "0 dòng" B ghi buổi chiều là sai và đã được sửa.
 - Mỗi nhánh một lượt trên bộ câu mẫu; hai ô phạm sàn ở bảng đứng trên một lượt, chưa biết lặp lại hay ngẫu nhiên (lượt sinh lại riêng hai câu đó KHÔNG chạy: kết luận không còn phụ thuộc nó). Bộ câu mẫu đã dùng nhiều lượt, không có bộ kín cho việc này.
+- Người đọc tay (phiên E) KHÔNG mù — biết bản nào thuộc nhánh nào — và ở bộ câu mẫu chỉ đọc các cặp lệch điểm, không đọc các câu điểm bằng nhau.
 - Người chấm là 57 agent con cùng hãng; B tự kiểm mẫu 3 mục điểm thấp với nguồn (khớp). Công cụ chấm do B viết, phiên E đọc hai vòng, sáu điểm đã sửa trước khi chấm, có ca thử bằng điểm cài sẵn.
 - Hai dòng đếm máy của plan về "phép kiểm số tự nới theo cỡ ngữ cảnh": chưa đo (NOT RUN) vì không nhánh nào đi tiếp.
 - Nhánh "cả bài" đã dừng từ bước 1 (nối nhầm cảnh báo của hoạt động khác, giá ×5,5).
