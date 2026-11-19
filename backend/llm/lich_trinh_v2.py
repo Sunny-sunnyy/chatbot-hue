@@ -712,7 +712,15 @@ def dong_tien_ve(bang: BangV2, luu: dict) -> list[str]:
         return [DONG_TIEN_VE_CHUA_CO]
     ts = luu["tham_so"]
     lon, tre = ts.get("nguoi_lon") or 0, ts.get("tre_em") or 0
-    ids = list(dict.fromkeys(j for ng in luu["khung"]["ngay"] for b in BUOI for j in ng["buoi"].get(b) or [] if j in bang.theo_id))
+    ngay_cua = {}  # điểm ⇒ ngày ĐẦU TIÊN lịch ghé (điểm ghé hai ngày tính tiền một lần, ở ngày đầu)
+    for ng in luu["khung"]["ngay"]:
+        for b in BUOI:
+            for j in ng["buoi"].get(b) or []:
+                if j in bang.theo_id:
+                    ngay_cua.setdefault(j, ng["ngay"])
+    ids = list(ngay_cua)
+    lap = [j for j in ids if sum(j in (ng["buoi"].get(b) or []) for ng in luu["khung"]["ngay"] for b in BUOI) > 1]
+    theo_ngay = {ng["ngay"]: [0, 0, 0] for ng in luu["khung"]["ngay"]}  # ngày ⇒ [từ, đến, số điểm có giá]
     co_gia, mien_phi, chua_co, thieu_tre = [], [], [], []
     tong_tu = tong_den = n_quan_the = 0
     for j in ids:
@@ -725,6 +733,7 @@ def dong_tien_ve(bang: BangV2, luu: dict) -> list[str]:
             mien_phi.append(d["ten"])
             continue
         tu, den = gia["nguoi_lon"]["tu"], gia["nguoi_lon"]["den"]
+        truoc = (tong_tu, tong_den)
         phan = [f"{_khoang_dong(tu, den)}/người lớn" + (f" × {lon} = {_khoang_dong(tu * lon, den * lon)}" if lon else "")]
         tong_tu, tong_den = tong_tu + tu * lon, tong_den + den * lon
         if tre:
@@ -737,26 +746,32 @@ def dong_tien_ve(bang: BangV2, luu: dict) -> list[str]:
                 phan.append(f"{_khoang_dong(gia_tre['tu'], gia_tre['den'])}/trẻ em × {tre} = {_khoang_dong(gia_tre['tu'] * tre, gia_tre['den'] * tre)}")
                 tong_tu, tong_den = tong_tu + gia_tre["tu"] * tre, tong_den + gia_tre["den"] * tre
         co_gia.append(f"{d['ten']}: " + "; ".join(phan))
+        o = theo_ngay[ngay_cua[j]]
+        o[0], o[1], o[2] = o[0] + tong_tu - truoc[0], o[1] + tong_den - truoc[1], o[2] + 1
         if gia.get("luu_y_in"):  # câu ngắn VIẾT CHO NGƯỜI DÙNG của bảng giá (vd "chưa gồm vé vào Đại Nội"); `ghi_chu` là ghi chú nội bộ, không in
             co_gia.append(f"Lưu ý về giá — {d['ten']}: {gia['luu_y_in']}")
         n_quan_the += bool(d["quan_the"])  # vé gộp chỉ có cho điểm thuộc Quần thể di tích ⇒ chỉ nhắc khi lịch có ≥ 2 điểm như vậy
     nguoi = (f"{lon} người lớn" + (f", {tre} trẻ em tính mức 7–12 tuổi" if tre else "")) if lon else "chưa biết số người lớn"
-    dong = [f"Tiền vé lẻ của lịch — số do hệ thống tính từ bảng giá ({nguoi}):"] + [f"- {x.rstrip('.')}." for x in co_gia]
+    ve_gop = "chưa tính vé gộp, miễn giảm" + (" — các điểm thuộc Quần thể di tích có vé gộp rẻ hơn, xem bài vé" if n_quan_the >= 2 else "")
+    # Thứ tự dòng (lượt đo 19/11): câu TỔNG trọn đứng đầu — bản đầu để tổng ở cuối kèm "chưa gồm N điểm chưa có giá" làm model đi tìm giá các điểm
+    # đó trong kho rồi từ chối cả câu hỏi tổng tiền vé (2 / 2). Điểm chưa có giá vẫn được nêu, ở một dòng ghi chú SAU, và không bao giờ tính là 0.
+    if lon and co_gia:
+        dong = [f"Tổng tiền vé lẻ của lịch theo bảng giá: {_khoang_dong(tong_tu, tong_den)} cho {nguoi} (số do hệ thống tính; {ve_gop})."]
+    elif co_gia:
+        dong = [f"Tiền vé lẻ của lịch theo bảng giá: chưa biết số người lớn nên chưa nhân ra tổng ({ve_gop})."]
+    else:
+        dong = ["Tiền vé lẻ của lịch: không điểm nào của lịch có giá vé trong bảng giá nên chưa có tổng."]
+    if lon and co_gia and len(theo_ngay) > 1:  # tổng theo ngày do code cộng (lượt đo 19/11: hỏi "ngày 2 hết bao nhiêu tiền vé" model phải tự cộng)
+        dong.append("Tiền vé lẻ theo từng ngày: " + "; ".join(
+            f"Ngày {n}: " + (_khoang_dong(o[0], o[1]) if o[2] else "không có điểm nào có giá trong bảng") for n, o in theo_ngay.items())
+            + (" (" + ", ".join(bang.theo_id[j]["ten"] for j in lap) + " ghé hai lần, tính một lần ở ngày ghé đầu)" if lap else "") + ".")
+    dong += [f"- {x.rstrip('.')}." for x in co_gia]
     if mien_phi:
         dong.append("Miễn phí: " + ", ".join(mien_phi) + ".")
     if chua_co:
-        dong.append("Chưa có giá trong bảng (KHÔNG tính là 0 đồng): " + ", ".join(chua_co) + ".")
+        dong.append("Ghi chú: bảng giá chưa có mức vé cho " + ", ".join(chua_co) + " nên các điểm này không nằm trong tổng trên (không phải xác nhận miễn phí).")
     if thieu_tre:
-        dong.append("Chưa có mức vé trẻ em 7–12 tuổi trong bảng (phần trẻ em chưa vào tổng): " + ", ".join(thieu_tre) + ".")
-    ngoai = ([f"chưa gồm {len(chua_co)} điểm chưa có giá"] if chua_co else []) + \
-        ([f"chưa gồm vé trẻ em ở {len(thieu_tre)} điểm"] if thieu_tre else []) + \
-        ["chưa tính vé gộp, miễn giảm" + (" — các điểm thuộc Quần thể di tích có vé gộp rẻ hơn, xem bài vé" if n_quan_the >= 2 else "")]
-    if lon and co_gia:
-        dong.append(f"Tổng vé lẻ của các điểm có giá: {_khoang_dong(tong_tu, tong_den)} (" + "; ".join(ngoai) + ").")
-    elif not co_gia:
-        dong.append("Không điểm nào của lịch có giá vé trong bảng nên chưa có tổng.")
-    else:
-        dong.append("Chưa biết số người lớn nên chưa nhân ra tổng (" + "; ".join(ngoai) + ").")
+        dong.append("Ghi chú: bảng giá chưa có mức vé trẻ em 7–12 tuổi cho " + ", ".join(thieu_tre) + " nên phần trẻ em ở các điểm này không nằm trong tổng trên.")
     return dong
 
 

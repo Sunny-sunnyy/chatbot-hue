@@ -265,15 +265,16 @@ def test_tong_ve_le_lich_mac_dinh_khop_dap_so_tinh_tay():
     """Đáp số tính tay (người chép bảng giá ghi trước, độc lập với code): lịch mặc định 2 ngày, 2 người lớn — Đại Nội 200.000 + Lăng Đồng Khánh
     100.000 + Lăng Thiệu Trị 50.000, × 2 = 700.000 đồng; miễn phí: Chùa Thiên Mụ, Đồi Vọng Cảnh; 3 điểm chưa có giá không tính là 0."""
     dong = v2.dong_tien_ve(BANG_GIA, _luu(BANG_GIA, so_ngay=2, kieu_di="can_bang", so_thich=(), nguoi_lon=2))
-    assert dong == [
-        "Tiền vé lẻ của lịch — số do hệ thống tính từ bảng giá (2 người lớn):",
+    assert dong == [  # câu TỔNG trọn đứng đầu (lượt đo 19/11: tổng để cuối kèm "chưa gồm N điểm" ⇒ model đi tìm giá các điểm đó rồi từ chối)
+        "Tổng tiền vé lẻ của lịch theo bảng giá: 700.000 đồng cho 2 người lớn (số do hệ thống tính; chưa tính vé gộp, miễn giảm — các điểm thuộc "
+        "Quần thể di tích có vé gộp rẻ hơn, xem bài vé).",
+        "Tiền vé lẻ theo từng ngày: Ngày 1: 400.000 đồng; Ngày 2: 300.000 đồng.",  # tính tay: ngày 1 = Đại Nội; ngày 2 = Đồng Khánh + Thiệu Trị
         "- Đại Nội Huế: 200.000 đồng/người lớn × 2 = 400.000 đồng.",
         "- Lăng Đồng Khánh: 100.000 đồng/người lớn × 2 = 200.000 đồng.",
         "- Lăng Thiệu Trị: 50.000 đồng/người lớn × 2 = 100.000 đồng.",
         "Miễn phí: Chùa Thiên Mụ, Đồi Vọng Cảnh.",
-        "Chưa có giá trong bảng (KHÔNG tính là 0 đồng): Đầm Chuồn, Chợ Đông Ba, Phố đi bộ Nguyễn Đình Chiểu.",
-        "Tổng vé lẻ của các điểm có giá: 700.000 đồng (chưa gồm 3 điểm chưa có giá; chưa tính vé gộp, miễn giảm — các điểm thuộc Quần thể di tích có "
-        "vé gộp rẻ hơn, xem bài vé).",
+        "Ghi chú: bảng giá chưa có mức vé cho Đầm Chuồn, Chợ Đông Ba, Phố đi bộ Nguyễn Đình Chiểu nên các điểm này không nằm trong tổng trên "
+        "(không phải xác nhận miễn phí).",
     ]
     assert v2.dong_lich_dang_co(BANG_GIA, _luu(BANG_GIA, so_ngay=2, kieu_di="can_bang", so_thich=(), nguoi_lon=2))[-7:] == dong  # nằm cuối nguồn lịch
 
@@ -282,20 +283,20 @@ def test_khoang_gia_tre_em_va_diem_thieu_muc_tre_em():
     """Tính tay: 2 người lớn + 1 trẻ em — Đèo Hải Vân 70.000 × 2 = 140.000 (trẻ em miễn phí) · Bạch Mã 60.000 – 65.000 × 2 = 120.000 – 130.000 + trẻ
     em 20.000 – 25.000 · Thác Nhị Hồ 10.000 – 15.000 × 2 = 20.000 – 30.000 (bảng không có mức trẻ em) ⇒ tổng 300.000 – 325.000, là KHOẢNG."""
     dong = v2.dong_tien_ve(BANG_GIA, _luu(BANG_GIA, so_ngay=3, kieu_di="kham_pha", so_thich=("thien_nhien",), nguoi_lon=2, tre_em=1))
-    assert dong[0].endswith("(2 người lớn, 1 trẻ em tính mức 7–12 tuổi):")
+    assert dong[0] == ("Tổng tiền vé lẻ của lịch theo bảng giá: 300.000 – 325.000 đồng cho 2 người lớn, 1 trẻ em tính mức 7–12 tuổi "
+                       "(số do hệ thống tính; chưa tính vé gộp, miễn giảm).")  # không điểm nào thuộc Quần thể di tích ⇒ không nhắc vé gộp
     assert "- Vườn quốc gia Bạch Mã: 60.000 – 65.000 đồng/người lớn × 2 = 120.000 – 130.000 đồng; 20.000 – 25.000 đồng/trẻ em × 1 = 20.000 – 25.000 đồng." in dong
     assert "- Đèo Hải Vân: 70.000 đồng/người lớn × 2 = 140.000 đồng; trẻ em 7–12 tuổi miễn phí." in dong
-    assert "Chưa có mức vé trẻ em 7–12 tuổi trong bảng (phần trẻ em chưa vào tổng): Thác Nhị Hồ." in dong
-    assert dong[-1] == ("Tổng vé lẻ của các điểm có giá: 300.000 – 325.000 đồng (chưa gồm 3 điểm chưa có giá; chưa gồm vé trẻ em ở 1 điểm; "
-                        "chưa tính vé gộp, miễn giảm).")  # không điểm nào thuộc Quần thể di tích ⇒ không nhắc vé gộp
+    assert dong[-1] == "Ghi chú: bảng giá chưa có mức vé trẻ em 7–12 tuổi cho Thác Nhị Hồ nên phần trẻ em ở các điểm này không nằm trong tổng trên."
+    assert dong[-2].startswith("Ghi chú: bảng giá chưa có mức vé cho ") and dong[-2].endswith("không nằm trong tổng trên (không phải xác nhận miễn phí).")
 
 
 def test_khong_biet_so_nguoi_lon_thi_khong_nhan_ra_tong():
     luu = _luu(BANG_GIA, so_ngay=2, kieu_di="can_bang", so_thich=(), nguoi_lon=2)
     luu["tham_so"]["nguoi_lon"] = None
     dong = v2.dong_tien_ve(BANG_GIA, luu)
-    assert "- Đại Nội Huế: 200.000 đồng/người lớn." in dong and dong[-1].startswith("Chưa biết số người lớn nên chưa nhân ra tổng")
-    assert not any("Tổng vé lẻ" in x for x in dong)
+    assert "- Đại Nội Huế: 200.000 đồng/người lớn." in dong and dong[0].startswith("Tiền vé lẻ của lịch theo bảng giá: chưa biết số người lớn")
+    assert not any("Tổng tiền vé lẻ" in x for x in dong)
 
 
 def test_luu_y_cho_nguoi_dung_cua_bang_gia_duoc_in_duoi_dong_gia_cua_diem(monkeypatch):
@@ -305,5 +306,18 @@ def test_luu_y_cho_nguoi_dung_cua_bang_gia_duoc_in_duoi_dong_gia_cua_diem(monkey
     monkeypatch.setitem(BANG_GIA.theo_id["dai_noi"]["gia_ve"], "ghi_chu", "GHI CHÚ NỘI BỘ ⇒ không in")
     monkeypatch.setitem(BANG_GIA.theo_id["bach_ma"]["gia_ve"], "luu_y_in", "Chưa gồm xe trung chuyển.")  # Bạch Mã không có trong lịch mặc định
     dong = v2.dong_tien_ve(BANG_GIA, _luu(BANG_GIA, so_ngay=2, kieu_di="can_bang", so_thich=(), nguoi_lon=2))
-    assert dong[1:3] == ["- Đại Nội Huế: 200.000 đồng/người lớn × 2 = 400.000 đồng.", "- Lưu ý về giá — Đại Nội Huế: Chưa gồm xe điện nội bộ."]
-    assert "NỘI BỘ" not in " ".join(dong) and "trung chuyển" not in " ".join(dong) and dong[-1].startswith("Tổng vé lẻ của các điểm có giá: 700.000 đồng")
+    assert dong[2:4] == ["- Đại Nội Huế: 200.000 đồng/người lớn × 2 = 400.000 đồng.", "- Lưu ý về giá — Đại Nội Huế: Chưa gồm xe điện nội bộ."]
+    assert "NỘI BỘ" not in " ".join(dong) and "trung chuyển" not in " ".join(dong) and dong[0].startswith("Tổng tiền vé lẻ của lịch theo bảng giá: 700.000 đồng")
+
+
+def test_tong_theo_ngay_gia_dinh_co_tre_em_va_diem_ghe_hai_ngay():
+    """Tính tay (đáp số người soạn câu dò ghi trước cho lịch gia đình 2 người lớn + 1 trẻ em): Đại Nội 200.000 × 2 + 40.000 = 440.000 (ngày 1) ·
+    Lăng Đồng Khánh 100.000 × 2, trẻ em miễn phí = 200.000 (ngày 2) ⇒ 640.000. Điểm ghé hai ngày: tiền tính MỘT lần, ở ngày ghé đầu, và nói rõ."""
+    luu = _luu(BANG_GIA, so_ngay=2, kieu_di="can_bang", so_thich=(), nguoi_lon=2, tre_em=1)
+    dong = v2.dong_tien_ve(BANG_GIA, luu)
+    assert dong[0].startswith("Tổng tiền vé lẻ của lịch theo bảng giá: 640.000 đồng cho 2 người lớn, 1 trẻ em tính mức 7–12 tuổi")
+    assert dong[1] == "Tiền vé lẻ theo từng ngày: Ngày 1: 440.000 đồng; Ngày 2: 200.000 đồng."
+    luu["khung"]["ngay"][1]["buoi"]["chieu"].append("dai_noi")  # dựng điều kiện: Đại Nội ghé lại ở ngày 2
+    dong = v2.dong_tien_ve(BANG_GIA, luu)
+    assert dong[0].startswith("Tổng tiền vé lẻ của lịch theo bảng giá: 640.000 đồng")
+    assert dong[1] == "Tiền vé lẻ theo từng ngày: Ngày 1: 440.000 đồng; Ngày 2: 200.000 đồng (Đại Nội Huế ghé hai lần, tính một lần ở ngày ghé đầu)."
