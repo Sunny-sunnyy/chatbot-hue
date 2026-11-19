@@ -15,7 +15,7 @@ Việc A giao sáng 19/11/2026 sau khi User chọn "sửa lỗi an toàn trướ
    - Bản thứ hai — CODE (cờ `noi_dong_tam_ngung`, `backend/llm/luu_y_nguon.py`, đang BẬT): không gọi model, yêu cầu gửi model giống từng byte cả khi cờ tắt lẫn bật
      (228 / 228). Chạy lại bước nối trên mọi câu trả lời đã có: câu lỗi được nối đúng 7 / 7 lần; 0 / 8 lần nối trùng khi câu trả lời đã nêu; 0 lần nối cho ba câu có
      cảnh báo của nơi KHÁC trong ngữ cảnh; 0 câu của bốn lượt bộ câu mẫu bị nối. Cả kho chỉ có 10 câu ở 7 bài mà luật có thể chép — người thứ hai đã đọc hết, đều
-     đứng một mình được. [máy kiểm + người thứ hai kiểm — phần chạy lại bước nối và danh sách câu của kho]
+     đứng một mình được. [máy kiểm: phép so yêu cầu gửi model 228 / 228 và phần chạy lại bước nối do người viết chạy, CHƯA ai chạy lại độc lập · người thứ hai ĐỌC đầu ra: bảng kết quả bước nối và danh sách câu của kho — không chạy lại]
    - Lượt thật qua server × 3 (0,002 USD): 2 / 3 lần có dòng đậm. [máy kiểm, chưa có người thứ hai]
    - Test: 31 test của file mới, đã thấy đỏ khi phá code; cả bộ test trên nhánh trước lần gộp cuối: 1.429 đạt, 0 hỏng. [máy kiểm]
    - Số dùng lại được: hai lượt bộ câu mẫu KHÔNG đổi gì, cách một ngày, lệch nhau 1 câu "Đúng" · 2 câu "Đủ ý" · 7 câu "Trọng tâm" (129 câu số chính, chấm cùng một
