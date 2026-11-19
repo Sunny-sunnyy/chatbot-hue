@@ -12,11 +12,10 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 - Việc lẻ đã rời trang hiện trạng, CHƯA ai nhận (xét khi tới bước tương ứng, không mở riêng): câu ngoài kho trả lời sai khuôn từ chối · lỗi tìm "quán gần một nơi" (thuộc bước 3) · câu tụt "Đủ ý" (thuộc bước 2) · runbook mục 8 (deploy).
 - Không được: mở thêm việc bão / lũ / khẩn cấp; sửa nội dung kho, đổi quyết định "không nói giá phòng", nhận vị trí người dùng, gửi thư từ server khi User chưa chọn; đặt sàn "0 câu" cho bộ phổ thông.
 
-## 3. Đưa ngữ cảnh lớn hơn vào model (User hỏi 19/11)
-- Plan + sha duyệt: `data/ngu_canh_lon_2026-11-19/PLAN.md` bản `689f192dc249` (C viết, B review + chạy; trần cứng 1,40 USD — User duyệt riêng việc này vượt 1 USD).
-- Trạng thái (16:34 19/11/2026): bước 1 (mẫu 22 câu + 8 câu an toàn × 4 nhánh) XONG, 0,144 USD; B đọc tay (mù một phần): 15 đoạn và cả mục hơn mốc 5 / 4 câu trên 11 câu yếu, 0 chỗ sai; nhánh CẢ BÀI "đã thử, không đi tiếp" (nối nhầm cảnh báo của hoạt động khác 2 / 2, giá ×5,5). **A quyết chạy bước 2** cho 15 đoạn + cả mục so với mốc cùng buổi (176 câu × 1 + an toàn 32 × 2 + S19 sinh lại 3 + 3; trần bước 2 0,80): phần SINH XONG (16:47 19/11/2026): 176 × 3 dòng, an toàn 6 / 6 lượt + S19 3 × 3, 0 lỗi; bước 2 0,442 USD, cả việc 0,586. Số máy thô CHƯA chấm (mốc · 15 đoạn · cả mục): trong kho bị từ chối 4 · 2 · 2; ngoài kho bị trả lời 0 · 0 · 1; lỗi trích dẫn 0 · 1 · 0 — hai ô khác 0 là ứng viên phạm sàn, người chấm / đọc xét. Phải biết: main nhận hai nhánh code cờ tắt GIỮA lượt đo (an toàn chạy trên ba bản `backend/`; bộ câu mẫu ba nhánh cùng một bản); phép chụp sau gộp 228 / 228 giống byte bản 14:19 (câu không có lịch). Lệnh tiếp: `report_agent/2026-11-19/b_nhat_ky.md` mục "Việc ĐANG DỞ"; hai bản bọc chấm `data/ngu_canh_lon_2026-11-19/tools_B/` chưa ai đọc.
-- Bước kế: chấm mù một lô ba bên (agent con) ⇒ đọc tay (KHÔNG phải C) ⇒ C ghi nhận định ⇒ A báo User; bật gì do User quyết.
-- Ghi nhận từ đọc tay bước 1, có sẵn ở mốc, chưa ai nhận: câu ca Huế trên thuyền thiếu ý "tạm ngừng mùa lũ" ở mọi nhánh · câu "có mất tiền vé không" mở đầu bằng "Có." trong khi nội dung là miễn phí.
+## 8. Hỏi tiếp về thứ vừa gợi ý (danh sách đóng; B)
+- Plan + sha duyệt: `data/hoi_tiep_goi_y_2026-11-19/PLAN.md` bản `794384caf568` — **A DUYỆT 19:19 19/11/2026** (mức nhẹ, A đọc đủ; ước 0,17 USD, trần cứng 0,30). Lỗi đã thấy thật ở lượt 1 bộ 80 kịch bản: trợ lý chỉ nhớ câu hỏi nên lượt hỏi tiếp tìm lại ra nơi khác. Cách: CODE ghi tên bài riêng của nơi đã trích (≤ 5) vào lịch sử, cờ mới `nho_ten_goi_y` mặc định TẮT; KHÔNG bật lại `nho_cau_tra_loi`.
+- Phân vai: B code · C soạn bộ chuỗi đích ≥ 12 (B không xem) · E review nhánh + đọc tay 100 % lượt hỏi tiếp. Giới hạn A nhận cho bản đầu: nơi chỉ nêu qua bài tổng hợp không được nhớ; "gần X nhất" không giải.
+- Bước kế: B code + test (0 USD) ⇒ E review ⇒ C khoá bộ đích (một lượt cờ tắt) ⇒ một lượt đo hai bên ⇒ E đọc tay ⇒ đạt thì A hỏi User bật cờ. Lượt máy xin A.
 
 ## 4. Cách làm việc theo thư mục từng ngày (User giao 19/11) [đang thử]
 - Trạng thái: đã có `report_agent/2026-11-19/` + trang này. Ai: A; C viết script kiểm; E sửa `guides/CACH_LAM_VIEC.md` + `guides/khung/`.
