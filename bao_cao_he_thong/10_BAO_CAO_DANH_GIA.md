@@ -9,7 +9,7 @@ Người viết: sub-agent của A (bản 6) · Review: agent con ngữ cảnh m
   rồi mới quyết giữ hay bỏ.
 - **Chatbot đang chạy là bản Phase 9** (trợ lý: định tuyến, tìm thêm, nhớ câu hỏi, tra web sau câu từ chối, thời tiết, hỏi bằng ảnh, công cụ ngày + âm lịch, lịch trình qua biểu mẫu…).
   **Bản này ĐÃ được đo trên cả bộ câu mẫu 176 (tên cũ "Golden") + bộ an toàn 32, so theo cặp với RAG 1–8** — hai lần: giữa kỳ 12/11 và **lượt đo cuối phần đã thấy 18/11** (mục 4, mục đầu).
-- **Kết quả lượt đo cuối 18/11 — CÓ sàn KHÔNG ĐẠT ⇒ CHƯA chốt "Phase 9 xong phần nhóm"** (bảng đủ + chẩn đoán: `report_agent/2026-11-12_ra_khoang_cach/b_do_cuoi_b7_implementation.md`):
+- **Kết quả lượt đo cuối 18/11 — CÓ sàn KHÔNG ĐẠT ⇒ CHƯA chốt "Phase 9 xong phần nhóm"** (bảng đủ + chẩn đoán: `report_agent/2026-11-19/b_do_cuoi_b7_implementation.md`):
   - **Không đạt:** bộ an toàn còn **2 câu "thiếu cảnh báo mới"** sau thủ tục sinh lại (một câu thiếu thật, ổn định 7 / 7 lần; một câu lệch do hai bên có ngữ cảnh khác nhau) và 1 câu "sai điều kiện mới" ở lượt 2
     (thận trọng hơn nguồn; sinh lại 0 / 3) và **câu ngoài kho bị trả lời 1 / 4 theo nhãn gốc** (nhãn cũ từ 14/11; theo nhãn đã sửa: 0 / 3) · bộ câu mẫu: **1 / 18 câu ngoài kho bị trả lời** (từ chối sai khuôn kèm lời khuyên có nguồn, 0 con số bịa) · "Đủ ý": **6 câu tụt** (ngưỡng 4) dù trung bình
     **tăng +0,186** · sửa lịch bằng lời **7 / 10** chuỗi (ngưỡng của plan tính năng 8 / 10; lỗi là "báo chưa hỗ trợ việc làm được", không có lượt nào sửa sai lịch).
@@ -121,7 +121,7 @@ Mốc / biến thể:  176 câu Golden → đường của API (tìm → đóng 
 | Câu hỏi theo ngày tương đối | **Đã xử lý** (đo, 30/10) | 15 câu: 0 câu đoán ngày rồi nói sai; 6 / 14 câu trong kho bị từ chối nhầm ⇒ Phase 9: công cụ ngày + âm lịch **bật 09/11** (14 câu mới: bớt 9 từ chối nhầm, 0 sai ngày) |
 | Tốc độ / tiền theo yêu cầu bạn chốt | **Xử lý một phần** (S5 09/11: 2 loại câu vượt sàn; bản 18/11 chưa đo tốc độ theo sàn) | **Bản 18/11:** tiền 0,00044 USD / câu trên bộ câu mẫu ⇒ đạt; tốc độ chỉ có quan sát (27 câu theo ngày: p50 2,5 s · p95 11,8 s), lượt đo 60 câu đã soạn, chưa chạy. **Lượt đo gần nhất có số theo sàn (S5 09/11, 65 câu):** câu về Huế 2,16 / 4,32 s, 0,00047 USD ⇒ đạt; câu xã giao p95 7,73 s và câu có từ chỉ ngày p50 5,19 s / 0,00063 USD ⇒ vượt sàn (bạn: giữ bật, tối ưu sau). Cuối Phase 8 (01/11): tới chữ đầu trên trình duyệt 1,23 / 2,61 s ⇒ đạt sàn 3 / 5 s + mục tiêu 1,5 / 3 s (sát); cả câu qua API 2,34 / 3,80 s (theo dõi); một lần đo. Tiền ≈ 0,00025 USD / câu ⇒ đạt; `cost_usd` tính giá đủ (`full_corpus_eval.py:169`, `row_cost_usd` :176) |
 | Thời gian "tới chữ đầu tiên" trên trình duyệt (streaming) | **Đã xử lý, đóng gói** (01/11, merge `a80e12d`; đo S4) | trình duyệt tự động trên 38 câu thử có trả lời + 21 câu từ chối báo riêng; chữ stream = chữ cuối 0 / 59 lệch; `report_agent/2026-10-31_streaming_spec/s4_do_d2_implementation.md` |
-| Lượt đo cuối Phase 9 — trợ lý ↔ RAG 1–8 | **Xử lý một phần** (18/11) | phần đã thấy đã đo: có sàn không đạt (an toàn thiếu cảnh báo mới 2 câu, sai điều kiện mới 1 câu lượt 2, câu ngoài kho bị trả lời 1 / 4 theo nhãn gốc — nhãn đã sửa 0 / 3; bộ câu mẫu: câu ngoài kho bị trả lời 1 / 18; "Đủ ý" tụt 6 câu > 4; sửa lịch bằng lời 7 / 10); tốt hơn ở 3 / 3 nhóm ghi trước; tốc độ chưa đo; bộ kín NOT RUN — `report_agent/2026-11-12_ra_khoang_cach/b_do_cuoi_b7_implementation.md` |
+| Lượt đo cuối Phase 9 — trợ lý ↔ RAG 1–8 | **Xử lý một phần** (18/11) | phần đã thấy đã đo: có sàn không đạt (an toàn thiếu cảnh báo mới 2 câu, sai điều kiện mới 1 câu lượt 2, câu ngoài kho bị trả lời 1 / 4 theo nhãn gốc — nhãn đã sửa 0 / 3; bộ câu mẫu: câu ngoài kho bị trả lời 1 / 18; "Đủ ý" tụt 6 câu > 4; sửa lịch bằng lời 7 / 10); tốt hơn ở 3 / 3 nhóm ghi trước; tốc độ chưa đo; bộ kín NOT RUN — `report_agent/2026-11-19/b_do_cuoi_b7_implementation.md` |
 | Lượt đo cuối Phase 1–8 | **Đã xử lý** (01/11) | không làm hỏng (Golden + bộ an toàn + câu theo ngày); bộ kín mới: sàn đạt, số Golden lạc quan (mục 4) |
 
 Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **Đã xử lý** (có code, chưa đóng gói hết) ·
@@ -133,7 +133,7 @@ Mỗi mục: thước / phép đo gì · kết quả · giữ / bỏ · hồ sơ
 
 ### 18/11/2026 — Lượt đo cuối Phase 9, phần đã thấy: tốt hơn RAG 1–8 ở ba nhóm ghi trước, nhưng CÓ sàn không đạt
 
-Hồ sơ đủ (bảng từng sàn, đọc tay, chẩn đoán, tiền, giới hạn): `report_agent/2026-11-12_ra_khoang_cach/b_do_cuoi_b7_implementation.md`. Plan: `docs/superpowers/plans/2026-11-23-phase-9-b7-cuoi-plan.md`. Giữa kỳ 12/11: `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md`.
+Hồ sơ đủ (bảng từng sàn, đọc tay, chẩn đoán, tiền, giới hạn): `report_agent/2026-11-19/b_do_cuoi_b7_implementation.md`. Plan: `docs/superpowers/plans/2026-11-23-phase-9-b7-cuoi-plan.md`. Giữa kỳ 12/11: `report_agent/2026-11-08_phase_9_ban_13/b7_implementation.md`.
 
 - **Đo gì:** trợ lý (bản đang chạy, commit `b27ef45`) ↔ RAG 1–8 (tag `p9-moc`) chạy lại cùng buổi trên cùng chỉ mục 9.436 đoạn; chấm mù bằng 39 agent con Claude; luật ghi trước, sàn phạm ⇒ ghi âm, không chỉnh rồi đo lại.
   Người thứ hai (phiên E) tính lại bảng từ file gốc bằng script riêng: 0 dòng lệch về số.
@@ -295,7 +295,7 @@ Kiểm với code `main` (`1985a81`) lúc 17:12 31/10/2026; cập nhật 13:39 0
 | Mốc kết quả tìm 158 câu | **còn dùng**: `356a742f09a1` (từ 12:50 14/11; `a105229f1902` 10:24 14/11; 05/11 `64656a87c109`; 30/10 `4d5bbe9e0edc`) |
 | Nhãn câu bộ an toàn X03 | **đổi từ 14/11**: "ngoài kho" ⇒ "trong kho" — kho nay có bài trả lời đúng câu này; người khác kiểm câu trả lời: mọi ý / số nằm trong đoạn được trích. **File nhãn mới được sửa 18/11** (lượt đo cuối chạy với nhãn cũ ⇒ số gốc 1 / 4, tính lại 0 / 3); từ lượt sau bộ an toàn có 29 câu trong kho, 3 ngoài kho | `report_agent/2026-11-12_ra_khoang_cach/e_ghi_kho_diem_mong_di_lai_implementation.md` | `Project_Status.md` §4 |
 | Nhãn đoạn đúng | **bản 5 mặc định** (30/10); bản 1–4 chỉ để tái lập số cũ | `backend/experiments/phase_8_1/g1_retrieval.py:48` |
-| Số của bản đang chạy so với RAG 1–8 | **lượt đo cuối 18/11** (bản `b27ef45`, kho 9.436 đoạn; mốc code đứng yên nay `3abb076`); có sàn không đạt, chưa chốt | `report_agent/2026-11-12_ra_khoang_cach/b_do_cuoi_b7_implementation.md` |
+| Số của bản đang chạy so với RAG 1–8 | **lượt đo cuối 18/11** (bản `b27ef45`, kho 9.436 đoạn; mốc code đứng yên nay `3abb076`); có sàn không đạt, chưa chốt | `report_agent/2026-11-19/b_do_cuoi_b7_implementation.md` |
 | Golden | **còn dùng**: md5 `6331e88fb171` (30/10) | `09_BAO_CAO_BO_CAU_HOI_GOLDEN.md` |
 | Bộ 32 câu an toàn, thước lỗi nặng | **còn dùng**, bắt buộc | `do_loi_nang_implementation.md`; `sua_kho_dot2_implementation.md` |
 | `cost_usd` của công cụ đo | **đã sửa** (01/11): giá đủ (ghi đệm / đọc đệm); số USD cũ giữ, ghi "giá phẳng" | `full_corpus_eval.py:169,176`; `Project_Status.md` §5 (30/10 15:07) |

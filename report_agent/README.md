@@ -10,6 +10,8 @@ Quy tắc chung: `session_prompt/WORKFLOW.md` §6. `reports/` là lịch sử t�
 
 Report không chép corpus, câu hỏi Golden, vector, payload hay secret.
 
+Từ 19/11/2026: mỗi NGÀY làm việc một thư mục `<YYYY-MM-DD>/` (có `TONG_HOP.md` của ngày); các thư mục đợt `<YYYY-MM-DD>_<chủ_đề>/` trước đó giữ nguyên.
+
 ## Các đợt
 
 | Folder | Nội dung | Trạng thái |
@@ -30,6 +32,7 @@ Report không chép corpus, câu hỏi Golden, vector, payload hay secret.
 | [2026-10-31_khung_fde/](2026-10-31_khung_fde/) | Áp khung làm dự án theo khoá AI FDE (khung cá nhân của User) vào cách làm: W37–W41, vòng cải tiến 12 (40 ⇒ 7 mục đang thử); sửa 4 báo cáo khâu bị cũ — **ĐÓNG** 31/10 chiều |
 | `2026-10-25_ra_soat_code/` | Rà code Phase 0–7 (chỉ đọc): code thừa, độ phức tạp, khâu dính, test, guide lệch code, hiệu năng, cơ hội phát triển. User 16:5x 25/10 dừng 8.2 để rà trước | **ĐÓNG** 16:4x 26/10 — rà + kiểm chéo + sửa cả 5 gói (1a, 1b, 3, 4, đợt 3 `421c302`); [TONG_HOP.md](2026-10-25_ra_soat_code/TONG_HOP.md) |
 | [2026-11-12_ra_khoang_cach/](2026-11-12_ra_khoang_cach/) | Rà khoảng cách sau B7 giữa kỳ (User 12/11): agentic RAG + repo / paper (E), phần chưa ổn + đếm 0 USD (C), Huế TRIPO vòng 5 / 6 (B), lịch trình so với TRIPO (C), nguồn lưu trú + Serper ↔ Exa (E), rà lời dặn (C), "hết lượt tìm thì dừng" (B, merge cờ tắt), bộ đo lịch trình (E) | **MỞ** — lịch trình đợt 1 chưa code; kho 3 chưa chạm kho; TRIPO vòng 6 dở |
+| [2026-11-19/](2026-11-19/) | Ngày 19/11: báo cáo lượt đo cuối, vòng tự dò bước tìm, sửa lịch "dời hai điểm", bản code cho câu thiếu cảnh báo, gỡ các trần theo yêu cầu chủ dự án — xem `TONG_HOP.md` | Trong ngày |
 | [2026-11-07_tu_soi_lo_trinh/](2026-11-07_tu_soi_lo_trinh/) | Vòng tự soi over-engineering + lộ trình tới đóng code (User 07/11 trước khi nghỉ: A / B / C / E xét lại, đề xuất lẫn nhau); chuẩn bị deploy lát mỏng (E-dep) | mở 07/11 |
 | [2026-11-06_b5_cau_tu_nhien/](2026-11-06_b5_cau_tu_nhien/) | Lịch trình B5: bộ câu đo theo cách người thật hỏi (E19 — TRIPO vòng 4 + diễn đàn), sửa 2 loại lỗi code lịch trình (B171) + review; kín v2 3 / 5 không đạt ⇒ biểu mẫu trước | **đóng** 06/11 tối — `TONG_HOP.md` |
 | [2026-11-06_giao_dien_cong/](2026-11-06_giao_dien_cong/) | Giao diện kiểu cổng du lịch (User chọn mức 2, hai đợt): nghiên cứu giao diện Huế TRIPO + trang cùng đề tài (B172), nguồn dữ liệu bản đồ / lưu trú / ăn uống / sự kiện (C209), spec đợt 1 | mở 06/11 tối |

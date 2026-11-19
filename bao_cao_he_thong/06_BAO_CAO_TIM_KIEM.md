@@ -59,7 +59,7 @@ Muốn xem điểm tìm đoạn từng loại câu (không bắt buộc): `10_BA
 | Tìm độc lập theo nghĩa và từ khóa rồi trộn (`native_hybrid_rrf`) | **Đã thử, chưa áp dụng** | 24/10: MRR 0,726 so với 0,721 (chênh rất nhỏ); 8.1 trên 40 câu có đoạn đúng: không khác (+3 / −1 câu). `full_corpus.py:521` |
 | Lấy rộng 100 ứng viên | **Đã thử, chưa áp dụng** | 26/10 (kho cũ, nhãn bản 1): đủ đoạn đúng trong ứng viên 31 → 37 / 40 nhưng trong 10 đoạn đầu chỉ 22 → 23, mất 1 câu ⇒ **kém hơn**. Chỗ nghẽn là xếp hạng |
 | Đổi hệ số trộn RRF k (2, 10, 30) / trộn kiểu DBSF | **Đã thử, chưa áp dụng** | 8.1: không cách nào qua luật; MRR đổi ≤ 0,01 |
-| Vòng máy tự dò 15 cấu hình lúc hỏi (số ứng viên 20 / 50 · k 20 / 100 · tìm độc lập · DBSF 0,3 / 0,5 / 0,7 · RRF có trọng số 2:1, 1:2 · 4 tổ hợp) | **Đã thử, chưa áp dụng** | 19/11, kho 9.436 đoạn, nhãn bản 5 (38 câu nhóm thử còn nhãn dùng được): bản đang chạy 22 / 38 câu đủ đoạn đúng; tốt nhất DBSF 0,5: 25 / 38 (3 thắng / 0 thua) — **không vượt nhiễu** (cần ≥ 4, ≥ 6 sau Holm); 0 cấu hình qua ⇒ nhóm kiểm không mở. Thước phân biệt yếu: "chỉ vector" cũng 22 / 38. 0 USD. `report_agent/2026-11-12_ra_khoang_cach/b_tu_toi_uu_buoc_tim_implementation.md` |
+| Vòng máy tự dò 15 cấu hình lúc hỏi (số ứng viên 20 / 50 · k 20 / 100 · tìm độc lập · DBSF 0,3 / 0,5 / 0,7 · RRF có trọng số 2:1, 1:2 · 4 tổ hợp) | **Đã thử, chưa áp dụng** | 19/11, kho 9.436 đoạn, nhãn bản 5 (38 câu nhóm thử còn nhãn dùng được): bản đang chạy 22 / 38 câu đủ đoạn đúng; tốt nhất DBSF 0,5: 25 / 38 (3 thắng / 0 thua) — **không vượt nhiễu** (cần ≥ 4, ≥ 6 sau Holm); 0 cấu hình qua ⇒ nhóm kiểm không mở. Thước phân biệt yếu: "chỉ vector" cũng 22 / 38. 0 USD. `report_agent/2026-11-19/b_tu_toi_uu_buoc_tim_implementation.md` |
 | Tìm gần đúng (HNSW) so với tìm chính xác | **Đã xử lý, đóng gói** | 8.1: giống hệt 108 / 108 câu ⇒ giữ HNSW |
 | Báo lỗi rõ khi Qdrant / model lỗi, không tự đổi cách | **Đã xử lý** | `backend/retrieval/full_corpus.py` |
 | Câu so sánh | **Xử lý một phần** | MRR 0,527 (01/11, kho hiện tại); chỉ 2 / 20 câu yếu ⇒ không mở thí nghiệm |
@@ -85,7 +85,7 @@ Thang 5 mức: **Đã xử lý, đóng gói** (đang chạy, đã kiểm) · **�
   chuẩn hoá DBSF, trọng số từ khoá 0,5) **25 / 38**, 3 câu thắng / 0 thua — chưa đủ để vượt nhiễu (cần ≥ 4; ≥ 6 khi so 14 cấu hình cùng lúc). Mọi cấu hình: "không khác". Nhóm kiểm không mở.
 - **Giữ / bỏ:** không đổi gì. Ghi nhận: các cấu hình có ≥ 2 câu thắng / 0 thua đều cho nhánh từ khoá nhìn rộng hơn 30 ứng viên của nhánh vector — cùng họ đã thử ở 8.1 trên kho cũ, cũng không qua.
 - **Giới hạn:** thước chỉ đo lần tìm đầu (trợ lý còn tìm thêm); thước kém nhạy — "chỉ vector" cũng được 22 / 38; thời gian tìm chưa đo đáng tin; 6 trích dẫn của nhãn cần dời vị trí (bản nhãn 6 — chưa làm).
-  Hồ sơ: `report_agent/2026-11-12_ra_khoang_cach/b_tu_toi_uu_buoc_tim_implementation.md`.
+  Hồ sơ: `report_agent/2026-11-19/b_tu_toi_uu_buoc_tim_implementation.md`.
 
 ### 15/11/2026 — tốc độ: tìm thêm song song; trần tìm thêm 1 lần (cả hai không đưa vào)
 - Đếm trước (0 USD): câu có tìm thêm chiếm ~20 % lượt gọi model thật từ 10/11, chữ đầu p50 8,6 s (sàn 3 s) — **đính chính:** số này trộn lượt trước "hết lượt tìm thì dừng" (13/11); sau mốc đó 7,8 % lượt, p50 5,78 s (n = 5); chậm vì 2–4 lần gọi model nối tiếp, mỗi lần tìm chỉ 0,03 s (`report_agent/2026-11-12_ra_khoang_cach/b_dem_toc_do.md`).
