@@ -5,9 +5,9 @@ Viết 20:05 19/11/2026 (giờ `date`). Phiên B viết plan + code + chạy đo
 Từ dùng: **lượt hỏi tiếp** = câu thứ hai trở đi trong một cuộc trò chuyện, nói "quán đó", "chỗ đầu tiên"… · **lịch sử** = thứ của các lượt trước được gửi kèm cho model · **bài riêng của một nơi** = bài kho nói về đúng một quán / quán cà phê / điểm đến / di tích · **bài tổng hợp** = bài cẩm nang nhắc nhiều nơi · **cờ** = một dòng bật / tắt trong `backend/config/settings.yaml` · **bộ bẫy** = 12 chuỗi soạn 03/11 để bắt lỗi "hỏi tiếp về ý kho không có thì mượn đoạn của nơi khác".
 
 ## 1. Người dùng thấy gì khác
-**Chưa thấy gì khác — cờ đang TẮT.** Nếu bật: sau khi trợ lý nhắc tới một nơi có bài riêng trong kho, người dùng hỏi tiếp "cho địa chỉ quán đó" thì trợ lý trả đúng nơi vừa nhắc, thay vì tự tìm lại kho và có lúc trả địa chỉ một nơi khác.
+**Từ khi cờ bật:** sau khi trợ lý nhắc tới một nơi có bài riêng trong kho, người dùng hỏi tiếp "cho địa chỉ quán đó" thì trợ lý trả đúng nơi vừa nhắc, thay vì tự tìm lại kho và có lúc trả địa chỉ một nơi khác.
 
-**Bật hay không: chờ chủ dự án — dòng quyết đạt, nhưng một sàn không đạt theo chữ plan (mục 3).** Quyết định: ……………………
+**Quyết định (chủ dự án, tối 19/11/2026): BẬT.** Sàn bộ bẫy 5 / 6 không đạt theo chữ plan; chủ dự án chọn bật, hiểu sàn là "không trả lời bằng thông tin của nơi khác" — diễn giải sau khi thấy số, do chủ dự án quyết. Cờ được bật bằng một commit riêng (nhánh bật chung ba cờ, phiên E giữ); giới hạn ở sổ tay bàn giao mục 10.1.
 
 ## 2. Lỗi và cách sửa
 - **Lỗi đã thấy thật** (lượt đo 80 kịch bản trưa 19/11): lịch sử chỉ có CÂU HỎI của các lượt trước, không có trợ lý đã trả lời gì. Lượt hỏi tiếp, model viết câu tìm kho từ câu hỏi cũ nên có lúc ra nơi khác. Trong lượt đo tối 19/11 bên cờ tắt: 10 lượt hỏi tiếp trả lời chắc chắn về SAI nơi.
@@ -45,7 +45,7 @@ Từ dùng: **lượt hỏi tiếp** = câu thứ hai trở đi trong một cu�
 - Hai bài tổng hợp trong thư mục di tích không mang chữ "guide" vẫn được nhớ như một nơi; tên bài đi thẳng vào dòng ghi chú, không lọc ký tự (kho hôm nay không có tên chứa ký tự phá khuôn).
 - Tên nơi vào câu tìm kho ⇒ có thể vào câu tra web khi cờ câu-nối-tiếp-web bật (tên bài kho là thông tin công khai).
 
-## 5. Cách thử 2 phút (chỉ khi cờ đã bật)
+## 5. Cách thử 2 phút
 Nhờ trợ lý gợi ý một quán hoặc một điểm đến bất kỳ có bài riêng trong kho, rồi hỏi tiếp "cho địa chỉ quán đó": địa chỉ phải là của đúng nơi vừa được nhắc ở câu trên.
 
 ## 6. Bảng "xong"
@@ -55,7 +55,7 @@ Nhờ trợ lý gợi ý một quán hoặc một điểm đến bất kỳ có 
 | Review nhánh (phiên E) | XONG — ready, 2 điểm nhỏ ghi thành giới hạn | |
 | Lượt đo cặp tắt / bật trên ba bộ | XONG | `grep -c '' data/hoi_tiep_goi_y_2026-11-19/do/dich/BAT.jsonl` ⇒ `46` |
 | Đọc tay 100 % (phiên E) + cột bộ đích (phiên C) | XONG | hồ sơ riêng tư |
-| Cả bộ test trên nhánh đã gộp nhánh chính (`9b13a80`, chứa main `4dbbaca`) | XONG — 55 file, mỗi file một tiến trình, có file khoá: **1.542 đạt · 0 hỏng** trong 567 giây (mốc trước: 1.512 trên bản bật cờ lịch) [máy kiểm] | log riêng của lượt chạy; chạy lại: từ `backend/`, từng file `HF_HUB_OFFLINE=1 uv run --env-file ../.env pytest tests/<file> -q` |
-| Bật cờ | CHƯA — chờ chủ dự án (mục 1) | |
+| Cả bộ test trên nhánh đã gộp nhánh chính (`9b13a80`, chứa main `4dbbaca`) | XONG — 55 file, mỗi file một tiến trình, có file khoá: **1.542 đạt · 0 hỏng**; tổng thời gian pytest in 567 giây (theo đồng hồ khoảng 12 phút) (mốc trước: 1.512 trên bản bật cờ lịch) [máy kiểm] | log riêng của lượt chạy; chạy lại: từ `backend/`, từng file `HF_HUB_OFFLINE=1 uv run --env-file ../.env pytest tests/<file> -q` |
+| Bật cờ | Chủ dự án chọn BẬT tối 19/11 — commit bật ở nhánh bật chung ba cờ | `grep -c "nho_ten_goi_y: true" backend/config/settings.yaml` ⇒ `1` |
 | Đo lại hai kịch bản đích qua server thật (có mục web) | CHƯA — làm khi bật | |
-| Mục `bai_hoc/` | CHƯA — viết sau khi chủ dự án chọn | |
+| Mục `bai_hoc/` | XONG — `bai_hoc/VIEC_MOI_XONG.md` mục 15 | |

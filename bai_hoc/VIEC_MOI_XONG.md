@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 19:20, ngày 19/11/2026 · thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 21:29, ngày 19/11/2026 · thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -13,6 +13,50 @@
 **Từ dùng chung cho các mục 19/11:** **cờ** = một dòng bật / tắt trong file cấu hình, tắt là hệ thống chạy như trước khi có tính năng · **lời dặn** = đoạn chữ cố định gửi kèm mọi
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
+
+## 19/11 — 15. Hỏi tiếp "cho địa chỉ quán đó": trợ lý nay biết mình vừa nhắc tới nơi nào (đã đo, anh chọn bật)
+
+**Từ dùng ở mục này:** **lượt hỏi tiếp** = câu thứ hai trở đi trong một cuộc trò chuyện, hỏi về một nơi vừa được nhắc mà không gọi lại tên nơi đó (ví dụ "quán đó ở đâu") · **lịch sử** = thứ của các lượt trước được
+gửi kèm cho model ở lượt sau · **bài riêng của một nơi** = bài trong kho nói về đúng một quán, một quán cà phê, một điểm đến hay một di tích · **bài tổng hợp** = bài cẩm nang nhắc
+nhiều nơi · **mốc** = bản cờ tắt chạy CÙNG buổi, cùng bộ câu, với bản cờ bật · **bộ bẫy** = 12 chuỗi nhiều lượt (25 lượt) soạn 03/11, trong đó 6 lượt hỏi tiếp về một ý kho không có — trợ lý
+phải không mượn thông tin của nơi khác để trả lời · **sàn** = loại lỗi không được phép có thêm.
+
+**1. Anh thấy gì khác.** Sau khi trợ lý nhắc tới một quán hay một điểm đến có bài riêng trong kho, anh hỏi tiếp "cho địa chỉ quán đó" thì trợ lý trả đúng nơi vừa nhắc. Trước đây
+trợ lý chỉ nhớ CÂU HỎI của các lượt trước, không nhớ mình đã trả lời gì, nên lượt hỏi tiếp nó tự tìm lại kho và có lúc đưa địa chỉ của một quán khác — nói rất chắc mà sai nơi.
+Cách sửa: sau mỗi lượt trả lời, CHƯƠNG TRÌNH (không phải model) ghi lại tên các bài riêng mà câu trả lời đã trích; lượt sau model nhận một dòng do chương trình viết: "câu trả lời lượt này có trích bài kho
+của các nơi: …; danh sách có thể thiếu nơi đã được nêu và không theo thứ tự trong câu trả lời". Chương trình không ghi lại chữ model viết (cách đó đã thử 03/11 và làm trợ lý mượn thông tin của nơi khác). Cờ `nho_ten_goi_y`; anh chọn bật tối 19/11.
+
+**2. Bằng chứng.**
+- **Lượt thật, cờ tắt so với cờ bật cùng buổi** (model thật, mỗi chuỗi một lượt mỗi bên, 0 lỗi kỹ thuật):
+  - **17 chuỗi hai lượt "gợi ý nơi rồi hỏi tiếp về nơi đó"** — do một phiên khác người viết code soạn, người viết code không được xem câu: lượt 2 nói đúng nơi vừa nhắc ở **15 / 17**
+    chuỗi khi bật, so với **2 / 17** khi tắt. Ngưỡng ghi trước khi đo: ít nhất 13 / 17 và hơn bên tắt ít nhất 4 chuỗi ⇒ đạt. Hai người đọc độc lập, khớp nhau từng chuỗi.
+    [người thứ hai kiểm] Hai chuỗi còn trượt khi bật đều là trợ lý trả câu từ chối [người thứ hai kiểm]; theo người soạn bộ, vì kho thiếu MỘT phần của điều được hỏi — một lỗi
+    khác, chưa sửa [mới là nhận định của người soạn bộ].
+  - **Nói chắc mà sai nơi ở lượt hỏi tiếp:** khi bật **0 lượt**; khi tắt 10 lượt (8 trong 17 chuỗi trên, 2 trong sáu kịch bản phổ thông chạy kèm). [người thứ hai đọc đủ mọi lượt]
+  - **Bộ bẫy — một sàn KHÔNG đạt theo chữ:** luật ghi trước là 6 / 6 lượt bẫy phải ra câu từ chối. Bên bật ra 5 / 6 (bên tắt 6 / 6). Ở lượt lệch, trợ lý không dùng câu từ chối
+    quen thuộc mà nói: tìm được địa chỉ của nơi đó, nhưng không tìm thấy thông tin cho ý được hỏi — kèm nguồn là bài của chính nơi đó. Nó không mượn thông tin của nơi khác, không
+    bịa. [người thứ hai kiểm] **Anh đã chọn bật và hiểu sàn này là "không trả lời bằng thông tin của nơi khác" — đây là cách hiểu chọn SAU khi đã thấy số, nhóm ghi rõ như vậy.**
+  - **Hỏi tiếp sang một nơi KHÁC** (6 chuỗi "giống mà không phải"): bên bật trả lời đúng nơi mới 5 / 6, bên tắt 6 / 6; không chuỗi nào kéo tên nơi cũ vào. Một chuỗi bên bật bị từ
+    chối dù ngữ cảnh có câu trả lời — mất thật một lượt; mới thấy một lần, chưa biết có lặp lại. [người thứ hai kiểm]
+  - **Dòng ghi chú không lọt ra ngoài:** 0 câu trả lời và 0 câu tìm kho có chữ của dòng đó, ở cả 84 lượt bên bật. [máy kiểm; người thứ hai đọc khớp]
+- **Test (model và bộ tìm là đồ giả hoặc không dùng — chỉ chứng minh phần code quanh model):** 15 test riêng của phần này đạt, người viết code có thử phá bốn kiểu và đều thấy test đỏ [chưa kiểm — không lưu log]; cả bộ test của máy chủ
+  1.542 đạt, 0 hỏng. Khi cờ tắt, 228 yêu cầu gửi model giống từng byte so với bản chính cùng buổi. [máy kiểm]
+- Tiền thật của lượt đo: **0,0966 USD** (ước ban đầu khoảng 0,25; trần 0,30), chưa gồm lượt chạy thử để khoá bộ câu của phiên soạn bộ.
+
+**3. Chưa làm / giới hạn.**
+- **Nơi chỉ được nhắc qua bài tổng hợp thì KHÔNG được nhớ.** Ở lượt đo 80 kịch bản buổi trưa, 11 trong 34 lượt đứng trước một lượt hỏi tiếp chỉ trích bài tổng hợp. Bộ 17 chuỗi được
+  soạn để lượt đầu trích bài riêng, nên con số 15 / 17 KHÔNG nói về các lượt đó — đừng đọc nó như tỉ lệ ngoài đời.
+- **Hỏi theo thứ tự ("chỗ đầu tiên", "quán thứ hai") không được bảo đảm.** Lượt đo đúng 8 / 8 chuỗi loại này, nhưng vì cả 8 chuỗi mọi nơi đều có bài riêng. Bản đầu của dòng ghi chú
+  có đánh số thứ tự; phiên soạn bộ câu thấy trên dữ liệu thật rằng số đó có lúc lệch với thứ tự anh nhìn thấy, nên đã bỏ đánh số TRƯỚC khi đo.
+- Hỏi tiếp cần hai thứ mà kho chỉ có một (ví dụ địa chỉ kèm số điện thoại): vẫn bị từ chối cả câu, dù trợ lý đã tìm đúng tên nơi.
+- "Nơi nào gần X nhất trong các nơi vừa nêu": chưa làm.
+- Phép đo: mỗi chuỗi một lượt mỗi bên; chạy qua đường chạy chuỗi của bộ đo, chưa qua máy chủ thật nên CHƯA đo cùng mục "Từ web" — hai kịch bản phổ thông đích sẽ được đo lại qua
+  máy chủ sau khi cờ bật. Người đọc tay biết bên nào bật cờ. Chỉ 4 con số trong các câu trả lời bên bật được đối chiếu với chữ kho.
+- Lỗi của người làm trong việc này, đã sửa: bản báo cáo kỹ thuật đầu tiên chép một câu hỏi của bộ đo vào phần "cách thử" (kho mã là công khai) — người thứ hai bắt được, câu đã
+  thay; nhánh được gộp dồn thành một commit để bản cũ không vào lịch sử bản chính.
+
+**4. Cách thử trong 2 phút.** Nhờ trợ lý gợi ý một quán ăn hay một điểm tham quan bất kỳ. Khi câu trả lời nhắc một nơi cụ thể, hỏi tiếp "cho địa chỉ chỗ đó": địa chỉ phải là của
+đúng nơi vừa được nhắc. Báo cáo kỹ thuật: `report_agent/2026-11-19/b_nho_ten_goi_y_implementation.md`.
 
 ## 19/11 — 14. Thử đưa NHIỀU chữ nguồn hơn cho model viết câu trả lời: không khác về chất lượng, giữ nguyên 10 đoạn
 
