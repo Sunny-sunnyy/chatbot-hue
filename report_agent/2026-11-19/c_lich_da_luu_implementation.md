@@ -7,7 +7,7 @@ Viết: 15:52 19/11/2026 (giờ `date`). Việc đứng đầu thứ tự sửa 
 ## 1. Người dùng thấy gì khác
 
 - **Trước:** người dùng lập lịch bằng biểu mẫu rồi hỏi tiếp bằng lời về chính lịch đó ("ngày 1 đi hết mấy tiếng", "tóm gọn lịch này để chép", "tổng tiền vé của lịch này"). Trợ lý không nhìn thấy lịch vừa lập nên trả lời trên một lịch mẫu lấy từ kho — nói chắc mà sai, 3 / 3 kịch bản ở lượt đo trưa 19/11.
-- **Sau, khi cờ `lich_vao_hoi_thuong` bật (chủ dự án chọn bật 19/11; ĐÃ BẬT trên bản chính tối 19/11, `79b0154` — xem mục "Cập nhật tối 19/11" cuối file):** trong cuộc trò chuyện đã có lịch, mỗi lượt hỏi thường nhận thêm một nguồn "Lịch bạn đang có" do code in: tham số lịch, từng ngày (buổi, giờ, tên điểm), và các con số code tính sẵn — số điểm mỗi ngày, giờ bắt đầu, giờ kết thúc mục ban ngày cuối, khoảng từ đầu tới cuối, tổng thời lượng tham quan, ngày dài nhất. Model chỉ diễn đạt.
+- **Sau, khi cờ `lich_vao_hoi_thuong` bật (chủ dự án chọn bật 19/11; ĐÃ BẬT trên bản chính tối 19/11, commit gộp `62a2762` — xem mục "Cập nhật tối 19/11" cuối file):** trong cuộc trò chuyện đã có lịch, mỗi lượt hỏi thường nhận thêm một nguồn "Lịch bạn đang có" do code in: tham số lịch, từng ngày (buổi, giờ, tên điểm), và các con số code tính sẵn — số điểm mỗi ngày, giờ bắt đầu, giờ kết thúc mục ban ngày cuối, khoảng từ đầu tới cuối, tổng thời lượng tham quan, ngày dài nhất. Model chỉ diễn đạt.
 - Ví dụ ở lượt thật: hỏi ngày 1 mất mấy tiếng và có kịp về trước 5 giờ chiều không ⇒ trả lời "5 giờ tham quan, chưa tính đi lại ăn nghỉ; phần ban ngày từ 8:00 đến 16:00; chưa tính đường về nên không xác nhận chắc" — đúng các số code in cho lịch đang có.
 
 ## 2. Bằng chứng
@@ -54,29 +54,31 @@ Ai kiểm: phiên E review kế hoạch hai vòng (vòng 1: 4 điểm lớn — 
 | Tự hoãn + lý do | test mức route cho "sau lượt sửa" — dựng cả app tốn RAM, đã có hai chuỗi lượt thật thay thế · chữa gốc "model tự tìm thêm rồi từ chối" — phiên điều phối mở thành việc riêng |
 | Lệnh kiểm | từ `backend/`: `uv run pytest tests/test_lich_vao_hoi_thuong.py -q` ⇒ `14 passed` (cần Qdrant bật + dữ liệu riêng tư) |
 
-## Cập nhật tối 19/11 — cờ `lich_vao_hoi_thuong` ĐÃ BẬT trên bản chính (`79b0154`; viết 19:19 19/11/2026, giờ `date`)
+## Cập nhật tối 19/11 — cờ `lich_vao_hoi_thuong` ĐÃ BẬT trên bản chính (commit gộp `62a2762`; viết 19:19 19/11/2026, giờ `date`)
 
 Phần nợ của nhánh bật cờ `p9-c-bat-lich-vao-hoi-thuong` (cuối cùng `f2245c9`), chạy từ `backend/` của worktree, `HF_HUB_OFFLINE=1`, mỗi file test một tiến trình; thời gian là số pytest in.
 
 | Phép kiểm | Kết quả | Nhãn |
 |---|---|---|
 | `tests/test_lich_vao_hoi_thuong.py`, có và không `--env-file` | 14 / 14 đạt (≈ 12 giây) | [máy kiểm] |
-| 7 file dùng hàm dựng cờ chung `flags_from`, có và không `--env-file` | đều đạt (22 · 68 · 11 · 19 · 44 · 17 · 92) | [máy kiểm] |
+| 7 file dùng hàm dựng cờ chung `flags_from`, có và không `--env-file` | lần đầu `test_len_ke_hoach_v2` 91 đạt · 1 hỏng (lỗi trùng tên, dưới bảng) ⇒ sau bản sửa đều đạt (22 · 68 · 11 · 19 · 44 · 17 · 92) | [máy kiểm] |
 | `tests/test_api_chat.py` | có `--env-file` 15 đạt; không có: 14 đạt + 1 lỗi "thiếu khoá" (test cần khoá — sổ tay bàn giao mục 3 ghi là đúng) | [máy kiểm] |
 | Cả bộ 53 file, có `--env-file` (tổng 559 giây) | lượt đầu 1.508 đạt · 4 hỏng ⇒ sau xử lý **1.512 đạt · 0 hỏng** (mốc 1.437 trên `55d01a8`) | [máy kiểm] |
 | Chuỗi gửi model, cuộc KHÔNG lịch: nhánh bật cờ `f2245c9` ↔ `main` `ed6f250` chụp cùng buổi | 228 / 228 dòng giống từng byte | [máy kiểm] |
 | Một cuộc thật trên `main` sau khi bật (server thật, đường stream): lập lịch mặc định ⇒ hỏi số giờ ngày 1 ⇒ tóm lịch | 3 / 3 lượt thành công; hai lượt hỏi có nguồn "Lịch bạn đang có"; số giờ và bản tóm khớp lịch; 0,0024 USD | [máy chạy; người viết code tự đọc — chưa có người thứ hai] |
 
-Bốn test hỏng ở lượt đầu:
+Một test hỏng ở bước chạy các file dùng `flags_from` (TRƯỚC lượt cả bộ; không nằm trong 4 test hỏng của lượt cả bộ):
 - **Lỗi thật trên `main`, do code của việc này (gộp `1a9a0f8` lúc 15:47):** `backend/llm/lich_trinh_v2.py` có hai biến mức module cùng tên `_GIO` (dòng 528 từ 13/11 — mẫu bắt giờ trong câu model viết; dòng 642 mới — mẫu khoảng giờ cho `doc_gio`). Định nghĩa sau đè định nghĩa trước ⇒ `kiem_cau` dùng mẫu hẹp ⇒ câu tả điểm có giờ lẻ không còn bị thay bằng câu dự phòng ở lịch lập qua biểu mẫu; không phụ thuộc cờ. Test bắt: `test_len_ke_hoach_v2::test_v2_sentence_checks` (đỏ 2 / 2 lần trên cả `main` lẫn nhánh). Sửa: đổi tên thành `_KHOANG_GIO` (hai dòng), nhánh `p9-c-sua-trung-ten-gio` `5be59b9`, phiên E đọc diff + tự chạy test, gộp `38b4434` lúc 18:55. Lỗi sống trên `main` khoảng 3 giờ; chưa đếm có lượt thật nào bị ảnh hưởng.
-- **Lỗi của nhánh bật cờ:** `test_b5_lich_trinh::test_flags_need_table_and_tool_loop` tự tắt `sua_lich_v2` bằng danh sách chép tay nhưng không tắt cờ mới ⇒ luật phụ thuộc cờ ném lỗi. Sửa hai dòng test (`f2245c9`) ⇒ 245 đạt. Đây là lần thứ hai cùng một bẫy trong ngày (lần đầu ở `test_cong_dot_1.flags_from`).
-- **Ba lỗi môi trường:** worktree không có `frontend/dist` ⇒ nối tới bản dựng của cây chính (không vào git) ⇒ `test_ban_do_lich` 13 đạt, `test_static_ui` 4 đạt.
+
+Bốn test hỏng ở lượt đầu của cả bộ (chạy trên `af86332`, đã chứa bản sửa trùng tên; `test_len_ke_hoach_v2` trong lượt này 92 đạt):
+- **Lỗi của nhánh bật cờ (1 test):** `test_b5_lich_trinh::test_flags_need_table_and_tool_loop` tự tắt `sua_lich_v2` bằng danh sách chép tay nhưng không tắt cờ mới ⇒ luật phụ thuộc cờ ném lỗi. Sửa hai dòng test (`f2245c9`) ⇒ 245 đạt. Đây là lần thứ hai cùng một bẫy trong ngày (lần đầu ở `test_cong_dot_1.flags_from`).
+- **Ba lỗi môi trường (3 test):** worktree không có `frontend/dist` ⇒ nối tới bản dựng của cây chính (không vào git) ⇒ `test_ban_do_lich` 13 đạt, `test_static_ui` 4 đạt.
 
 Bài học cách làm (ghi ở sổ riêng của phiên): gộp code chiều 19/11 chỉ chạy file chạm vì máy bận ⇒ lượt cả bộ phải là việc đầu tiên khi máy rảnh, trước mọi gộp code kế; trước khi thêm một tên mức module vào file lớn thì `grep` tên đó.
 
 | | |
 |---|---|
-| Đã làm | sáu phép kiểm ở bảng trên · sửa lỗi trùng tên · sửa test · bật cờ trên `main` (phiên điều phối đọc diff 5 file rồi gộp) · lượt thật sau bật |
+| Đã làm | sáu phép kiểm ở bảng trên · sửa lỗi trùng tên · sửa test · bật cờ trên `main` (phiên điều phối đọc diff 5 file rồi gộp, `62a2762`) · lượt thật sau bật |
 | Chưa làm | người thứ hai đọc 3 lượt thật sau bật · đếm lượt bị ảnh hưởng trong 3 giờ lỗi trùng tên còn trên `main` |
 | Tự hoãn + lý do | gom hai danh sách cờ tắt chép tay thành một hàm chung — việc riêng, phiên điều phối đã cho làm sau nhánh này |
 | Lệnh kiểm | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` ⇒ `26` · từ `backend/`: `HF_HUB_OFFLINE=1 uv run pytest tests/test_len_ke_hoach_v2.py::test_v2_sentence_checks -q` ⇒ `1 passed` |
