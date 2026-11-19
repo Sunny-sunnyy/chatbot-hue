@@ -22,8 +22,9 @@ Trước: thỉnh thoảng một câu hỏi được ghi là trả lời thành 
 | `… tests/test_feedback.py -q` (không có khoá API) | 3 đạt · **1 đỏ** (`test_chat_turn_id_feedback_logs_counts_only`) | 1.159 MB |
 - Hai test mới: (a) khối đầu là chữ thường / là `{"answer":""}` ⇒ đúng một `delta` mang cả câu, đứng trước `sources`, kể cả khi câu cuối là câu từ chối của model; (b) câu cuối thiếu trích dẫn ⇒ vẫn `error`, không phát bù.
 - Một test cũ sửa một dòng (`test_notice_event_follows_sources_when_set`): nó gọi `finish` trên một stream MỚI chưa phát chữ — trạng thái mà nay là điều kiện của lưới cuối — đổi sang dùng lại stream đã phát chữ; điều test bảo vệ (thứ tự `sources · notice · done`) giữ nguyên.
-- Ca đỏ ở `test_feedback.py`: test đó đi đường `/api/chat` KHÔNG stream qua `create_app` + lifespan, không chạm `finish`; ba test còn lại của file (có test gọi `finish`) đạt. [chưa kiểm] B CHƯA chạy lại ca này trên `origin/main` hay có khoá API
-  (file nạp cả dịch vụ tìm, ≈ 1,2 GB — chờ phiên điều phối xếp lượt máy) ⇒ chưa khẳng định được nó đỏ sẵn.
+- Ca đỏ ở `test_feedback.py` KHÔNG do nhánh này, cũng không phải lỗi của `main` [máy kiểm, chạy lại sau khi viết bản đầu của report]: đúng ca đó trên cây chính `main` `e72a312` — **đạt** cả không lẫn có
+  `--env-file` (31,8 s và 38,0 s; RSS ≈ 1,5 GB). Ở worktree tạm của nhánh nó đỏ vì `FileNotFoundError` — worktree trong `/tmp` không có thư mục `data/` (dữ liệu riêng tư, không nằm trong git) mà `create_app` cần.
+  Ca đó đi đường `/api/chat` không stream, không chạm `finish`. ⇒ test nào dựng cả app (`create_app` + lifespan) phải chạy ở cây chính, không chạy ở worktree tạm.
 **Lượt thật:** [chưa đo trên đường thật] — lỗi chỉ xuất hiện ở khoảng 3 / 1.093 lượt nên không tái hiện ổn định qua model; chưa có lượt nào chạy qua server với bản sửa. Cả bộ `backend/tests`: CHƯA chạy (phiên điều phối xếp sau).
 
 ## 4. Số đếm từ log (0 USD) — ca "đã phát một phần nhưng khác bản cuối"
@@ -41,4 +42,4 @@ Lỗi không phải do bỏ trần token đầu ra hôm 19/11: đã có một l�
 
 | Đã làm | Chưa làm | Tự hoãn + lý do | Lệnh kiểm + đầu ra |
 |---|---|---|---|
-| Test đỏ trước, sửa 3 dòng, 2 test mới + 1 test cũ sửa một dòng | Lượt thật qua server; cả bộ test | Chạy lại ca đỏ của `test_feedback.py` (≈ 1,2 GB RAM, máy vừa chạm sàn) — chờ lượt máy | `pytest tests/test_chat_stream.py -q` ⇒ `23 passed in 6.38s` |
+| Test đỏ trước, sửa 3 dòng, 2 test mới + 1 test cũ sửa một dòng | Lượt thật qua server; cả bộ test | — | `pytest tests/test_chat_stream.py -q` ⇒ `23 passed in 6.38s` |
