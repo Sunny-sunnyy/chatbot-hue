@@ -54,6 +54,13 @@ Mọi lệnh từ `backend/` của worktree, `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 u
 - Sót theo thiết kế: câu không dấu, cách nói lạ, câu nhiều ý có dòng "Tư liệu chưa có thông tin về:" ⇒ như hôm nay. Người dùng vẫn chờ đủ thời gian trợ lý tìm kho.
 - Câu "đặt chỗ" nhắc mục Chỗ ở; câu "gửi" nhắc nút "Sao chép lịch" / "Tải về" — đổi tên trên giao diện thì phải sửa hằng số.
 
+## 5b. Sửa sau review nhánh (B) và bộ dò lượt 1 (C) — một bản sửa, 19/11/2026
+
+- **Review của B: 1 major + 3 minor, nhận hết.** Major — hai mẫu "đặt … giúp" và "bạn đặt …" quá rộng: 22 câu dò "nghe giống mà không phải" của B ra SAI 6. Sửa: thứ được đặt phải đứng gần động từ (≤ 3 từ, không vắt qua dấu phẩy); dấu nhờ đứng sau chỉ nhận ở cuối câu; câu kể việc đã đặt / hỏi kinh nghiệm / "đặt câu hỏi, đặt tên, đặt lịch" ⇒ không bắt. Sau sửa: SAI 1 / 22 (đúng câu B ghi là lành, không cần sửa), 10 / 10 câu nhờ thật bắt đúng loại.
+  Minor 1 — ở nơi thay thứ nhất (ngữ cảnh rỗng) điều kiện "lượt bão – lũ không thay" chưa có hiệu lực vì ngữ cảnh thời tiết được đặt SAU bước đó ⇒ nay xét thẳng lưới bão / lũ trên câu người dùng; có test, đã thấy đỏ khi bỏ điều kiện. Minor 2 — phần chạy song song nay vẫn ghi dấu "từ chối trước model" khi câu từ chối do ngữ cảnh rỗng bị thay (một điều kiện). Minor 3 — ghi rõ ở đây: **lượt bị thay KHÔNG còn mục web và KHÔNG còn khối gợi ý cách hỏi** trên giao diện.
+- **Bộ dò lượt 1 của C** (C chạy, người viết không xem trước; trên bản `ca6223e`): đúng loại 14 / 20 (ngưỡng ≥ 15) · ra SAI LOẠI 1 (sàn 0) · đối chứng bắt nhầm 0 / 20 ⇒ CHƯA đạt. Họ lỗi: loại "gửi". Sửa đúng một lần theo plan: xét "gửi" TRƯỚC "đặt chỗ" (câu nhờ gửi thư xác nhận đặt phòng từng ra "đặt chỗ"); thêm "gửi tin nhắn / thư … giúp", "nhắn … cho <nơi> … giúp", "email cho mình …"; bỏ luật coi "số điện thoại của …" là câu hỏi thông tin; câu gửi ĐỒ VẬT (bưu thiếp, hành lý, quà…) không bắt. Trên sáu câu trượt C gửi: 5 / 6 nay đúng loại; câu còn lại ("còn bàn trống không") là cách nói ngoài danh sách của plan — để sót có chủ ý vì câu nói thật loại "tình trạng" chỉ nói về phòng.
+- Chạy lại sau sửa [máy kiểm]: phần test không nạp bộ tìm 70 đạt (gồm file test stream cũ) · quét hàm trên 252 câu đối chứng bắt 0, 4 / 4 lượt đích đúng loại. **CHƯA chạy lại 9 test nạp bộ tìm thật sau bản sửa** (máy đang có lượt đo; phần sửa không chạm đường stream, trừ một điều kiện ở bước gộp) và CHƯA có kết quả bộ dò chạy lại + bộ bù của C.
+
 ## 6. Bàn giao cho người kiểm
 
 - Đọc diff: `git diff origin/main...origin/p9-e-noi-that-gioi-han -- backend` (4 file sửa + 2 file mới).

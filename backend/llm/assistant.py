@@ -948,8 +948,10 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
     instructions = _assistant_instructions(generator, trace, trace.nhieu_y) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
-    if trace.fixed_outcome == "refusal_no_sources":
-        _noi_that_lam_thay(trace, trace.answer)  # ngữ cảnh rỗng ⇒ câu từ chối do code đặt; câu nhờ làm thay vẫn nhận câu nói thật
+    # ngữ cảnh rỗng ⇒ câu từ chối do code đặt; câu nhờ làm thay vẫn nhận câu nói thật. `thoi_tiet_ctx` chưa có ở bước này (đặt sau, trong
+    # `_lich_extra`) ⇒ xét thẳng lưới bão / lũ trên câu người dùng (review B m1): lượt bão – lũ giữ câu từ chối cũ + các lớp an toàn của nó
+    if trace.fixed_outcome == "refusal_no_sources" and not _khop_luoi_cuoi(query, flags, trace.history):
+        _noi_that_lam_thay(trace, trace.answer)
     if not flags.tim_them:
         return None
     context = trace.packed.text
@@ -1729,5 +1731,6 @@ def _merge_spec(trace: AnswerTrace, spec: AnswerTrace, recorder) -> None:
     trace.llm_calls = trace.llm_calls + spec.llm_calls
     if recorder and trace.packed is not None:  # như `prepare_answer` của đường cũ (recorder chỉ route truyền)
         recorder.record_packed_context(trace.packed)
-        if trace.fixed_outcome == "refusal_no_sources":
+        # câu nói thật thay cho câu từ chối do ngữ cảnh rỗng vẫn là "từ chối trước model" — đếm như đường không song song (review B m2)
+        if trace.fixed_outcome == "refusal_no_sources" or (trace.fixed_outcome == "lam_thay" and not trace.packed.sources):
             recorder.record_fallback()

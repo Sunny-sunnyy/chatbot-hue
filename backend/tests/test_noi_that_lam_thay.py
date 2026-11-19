@@ -33,6 +33,15 @@ CAU_DAT = "đặt giúp mình một phòng đôi cho tối thứ bảy gần sô
     ("Gửi giúp mình lịch qua Zalo", GUI),
     ("mình vừa gửi yêu cầu rồi, có phòng chưa vậy", TINH_TRANG),   # có chữ "gửi" nhưng là hỏi tình trạng
     ("đơn đặt phòng của mình xác nhận chưa", TINH_TRANG),
+    # sau bộ dò của người khác (19/11): nhờ GỬI có chữ "đặt phòng" · gửi tin nhắn cho bên thứ ba · tới số điện thoại · "nhắn", "email" làm động từ
+    ("Gửi giấy xác nhận đặt phòng vào email của mình giúp với", GUI),
+    ("Gửi tin nhắn cho homestay báo giúp mình là 9 giờ tối mới đến", GUI),
+    ("gửi lịch 3 ngày này tới số điện thoại của em mình nhé", GUI),
+    ("nhắn tin cho nhà xe giúp mình là mình ra trễ", GUI),
+    ("Nhắn giúp mình cho nhà hàng là nhóm mình tới muộn 20 phút", GUI),   # "nhà hàng" không phải "gửi hàng"
+    ("Email cho mình bản kế hoạch này được không", GUI),
+    ("nhờ bạn đặt bàn 5 người tối nay ở quán đó", DAT_CHO),
+    ("đặt vé này giúp mình nhé", DAT_CHO),
 ])
 def test_requests_to_act_are_recognised_by_kind(cau, loai):
     assert nho_lam_thay(cau) == loai
@@ -49,6 +58,14 @@ def test_requests_to_act_are_recognised_by_kind(cau, loai):
     "gửi hành lý ở đâu gần ga Huế",
     "mình muốn gửi bưu thiếp qua thư về Hà Nội thì ra bưu điện nào",
     "khách sạn nào còn phòng view sông",
+    # review nhánh (19/11): có "đặt" + "giúp" / "bạn đặt" nhưng không nhờ đặt chỗ
+    "mình đã đặt phòng ở Kim Long rồi, gợi ý giúp mình quán cà phê gần đó",
+    "đặt vé xe khách đi Đà Nẵng giúp rẻ hơn đi tàu không",
+    "bạn đặt lịch ngày 1 sao cho xe đỡ phải quay đầu nhé",
+    "đặt giúp mình một câu hỏi về phòng trưng bày cổ vật",
+    "bạn đặt phòng hộ ai bao giờ chưa",
+    "gửi bưu thiếp qua thư về Sài Gòn mất mấy ngày",               # gửi đồ vật: việc của người dùng
+    "nhắn giúp mình tên quán bún bò ngon",                         # nhờ trợ lý nói, không nhờ nhắn cho bên thứ ba
     "Chia đều thì mỗi người bao nhiêu, phòng tính chung",
     "Đại Nội mở cửa mấy giờ",
     "",
@@ -99,6 +116,26 @@ def test_guard_conditions_leave_the_answer_alone(kw):
     text = kw.pop("text", INSUFFICIENT_ANSWER)
     trace = _trace(DAT_CHO, text, **kw)
     assert _noi_that_lam_thay(trace, text) is False and trace.fixed_outcome is None and trace.tools == []
+
+
+@pytest.mark.parametrize("cau, ket_thuc", [
+    (CAU_DAT, "lam_thay"),
+    ("bão sắp vào Huế, " + CAU_DAT, "refusal_no_sources"),   # câu khớp lưới bão / lũ: giữ câu từ chối cũ + các lớp an toàn của lượt bão
+])
+def test_empty_context_refusal_is_replaced_except_on_storm_turns(monkeypatch, cau, ket_thuc):
+    """Nơi thay thứ nhất (ngữ cảnh rỗng ⇒ câu từ chối do code đặt, trước khi gọi model). Ở bước này `thoi_tiet_ctx` chưa có ⇒ lưới bão / lũ
+    phải xét thẳng trên câu người dùng (review nhánh m1). Bộ tìm được thay bằng hàm giả trả ngữ cảnh rỗng — chỉ khoá nhánh điều kiện."""
+    from llm import assistant
+
+    async def rong(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions):
+        trace.packed = SimpleNamespace(text="", sources=())
+        trace.answer, trace.fixed_outcome = INSUFFICIENT_ANSWER, "refusal_no_sources"
+    monkeypatch.setattr(assistant, "prepare_answer", rong)
+    flags = AssistantFlags(router=True, tim_them=True, thoi_tiet=True, bao_lu_cong_cu=True, noi_that_lam_thay=True, du_bao=lambda *a, **k: None)
+    trace = AnswerTrace(route=ROUTE_TRO_LY_HUE)
+    asyncio.run(assistant._before_model(cau, None, None, None, trace, None, None, flags))
+    assert trace.lam_thay == DAT_CHO and trace.fixed_outcome == ket_thuc
+    assert trace.answer == (CAU_LAM_THAY[DAT_CHO] if ket_thuc == "lam_thay" else INSUFFICIENT_ANSWER)
 
 
 def test_done_event_has_no_ask_tips_for_honest_limit_turn():
