@@ -16,13 +16,13 @@ session đó điền trước 30/11. Luật cứng của dự án vẫn ở `AGE
 - **Dừng và hỏi User** khi: việc tốn tiền API ngoài mức User đã cho, xoá dữ liệu / collection, đổi model / provider, deploy, sửa kho
   hay Golden, hoặc kết quả ngược với quyết định đã ghi ở `session_prompt/Project_Status.md` §5.
 
-**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 265 bài ⇒ 9.436 đoạn, 26 cờ bật; kho hoặc cờ đổi thì sửa cả hai nơi):
+**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 265 bài ⇒ 9.436 đoạn, 27 cờ bật; kho hoặc cờ đổi thì sửa cả hai nơi):
 
 | Kiểm gì | Lệnh (từ gốc repo) | Phải ra |
 |---|---|---|
 | Số bài / số đoạn của kho | `uv run python -c "import json;d=json.load(open('data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json'))['corpus'];print(d['file_count'],d['chunk_count'])"` | `265 9436` [đã chạy 18/11] |
 | Qdrant khớp | `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 \| grep -o '"points_count":[0-9]*'` | `"points_count":9436` [đã chạy 18/11; cần Qdrant bật] |
-| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `26` [đã chạy 19/11 trên nhánh bật cờ `lich_vao_hoi_thuong`; trước đó 25 trên `55d01a8`] |
+| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `27` [đã chạy tối 19/11 trên nhánh bật cờ `noi_that_lam_thay`; trước đó 26 khi bật `lich_vao_hoi_thuong`, 25 trên `55d01a8`] |
 
 ## 1. Bật Qdrant
 
@@ -236,6 +236,10 @@ lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 
 | Câu ngoài phạm vi bị định tuyến xếp là khẩn cấp (vd y tế) | Trợ lý từ chối, cổng web mở | User nhận từ 09/11 khi gỡ câu soạn sẵn | PS §4 (định tuyến phương án B) |
 | Câu ngoài kho về giá vé đi lại | Có lượt trả lời "nguồn không nêu…" thay vì câu từ chối chuẩn (đo 3 / 5) | User nhận 15/11 | PS §5 dòng 15/11 |
 | Hỏi quy định / cách tham gia một hoạt động mà bài kho có câu "tạm ngừng khi mưa lũ / có lệnh cấm / thời tiết xấu" | Dưới câu trả lời có dòng ĐẬM "Lưu ý trong nguồn «tên bài — tên mục»: <nguyên câu của bài>" — CHỈ khi câu trả lời đã trích đúng bài có câu đó và chưa tự nêu ý. Lượt model trích bài khác thì KHÔNG có dòng (lượt thật 19/11: 2 / 3 có; dữ liệu cũ 7 / 7). Tối đa một dòng; lượt có lịch không có dòng này | User chọn 19/11 "bật ngay, ghi giới hạn"; xét cả đoạn CHƯA trích sẽ gán nhầm cảnh báo của nơi khác (đếm thử: 1 câu / 4 lượt đều nhầm); User không đầu tư thêm mảng bão / lũ. Cờ `noi_dong_tam_ngung`; cả kho có 10 câu ở 7 bài luật chép được; không chữa các câu thiếu cảnh báo kiểu khác | `backend/llm/luu_y_nguon.py`; `report_agent/2026-11-19/c_s09_noi_dong_tam_ngung_implementation.md` |
+| Nhờ trợ lý TỰ LÀM việc hệ thống không có — đặt chỗ, gửi thư / tin, xem phòng còn trống (cờ `noi_that_lam_thay`, BẬT 19/11) | Thay cho câu từ chối khuôn là MỘT trong ba câu nói thật do code chọn (không làm được việc đó + chỉ chỗ / cách tự làm; có link sang trang Chỗ ở); lượt này không có mục "Từ web" | Loại "gửi" CHỈ bắt câu nhờ gửi cho CHÍNH người dùng ("gửi lịch cho mình"); nhờ gửi cho người khác vẫn ra câu từ chối khuôn — bộ dò thu hẹp có chủ ý: sót thì như cờ tắt, bắt nhầm thì mất câu trả lời | `report_agent/2026-11-19/e_noi_that_gioi_han_implementation.md` |
+| Nhờ "đặt giúp phòng / đặt bàn" | Có lượt trợ lý trả lời bằng thông tin kho (gợi ý nơi, địa chỉ) chứ không ra câu nói thật | Đúng thiết kế: code chỉ thay khi model ĐÃ trả câu từ chối khuôn; model trả lời được từ kho thì giữ câu đó | `report_agent/2026-11-19/e_noi_that_gioi_han_implementation.md` |
+| "Gửi lịch qua mail cho mình" | Có lượt ra câu "ngoài phạm vi" thay vì câu nói thật (đo 1 / 3 lần) | Bộ định tuyến xếp lượt đó sang tuyến ngoài phạm vi trước khi tới chỗ code thay câu; chưa sửa định tuyến | `report_agent/2026-11-19/e_noi_that_gioi_han_implementation.md` |
+| Chép câu nói thật ra dạng chữ thô (nút sao chép, tệp .txt) | Thấy link ở dạng ký hiệu `[trang Chỗ ở](#/cho-o)` thay vì chữ thường | Câu lưu ở dạng có ký hiệu link để ô chat hiện thành link bấm được; bản chữ thô chưa đổi lại | `report_agent/2026-11-19/e_noi_that_gioi_han_implementation.md` |
 | Hỏi "ăn gì gần <một chùa lớn>" | Trợ lý nói kho không có quán dù kho CÓ bài quán ghi gần đó | LỖI TÌM thật, chưa tái hiện trên server; để sau lượt đo cuối B7 | HO chiều 17/11 (#29) |
 | Nhận ảnh: model lỗi vì chạm trần token | "Không nhận ra ảnh", không có gợi ý thử lại (đo 2 / 149) | Hiếm; chưa có nút huỷ lúc "Đang xem ảnh…" | HO tối 15/11 |
 

@@ -16,9 +16,9 @@ Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** =
   Web: FastAPI (`backend/`) + giao diện React dựng sẵn (`frontend/`). Chạy trên máy User; **chưa deploy**.
 - **Số hôm nay** (lệnh kiểm: runbook mục 0): kho **265 bài ⇒ 9.436 đoạn**, một collection Qdrant `hue_full_corpus_7a2_e5_small_384` (cổng 6335);
   tìm = vector `e5-small` + từ khoá BM25 trộn RRF, **10 đoạn** vào ngữ cảnh, không xếp lại; model viết `gpt-6-luna` (OpenAI), từ 19/11 không còn trần token đầu ra và ngân sách ngữ cảnh mỗi lượt; tra web qua Serper.
-- **Cờ:** **26 BẬT** (25 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh); bật 19/11: `lich_vao_hoi_thuong` (hỏi tiếp trên lịch đã lập; giới hạn: runbook 10.2), `sua_lich_doi_cho_code`
+- **Cờ:** **27 BẬT** (26 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh); bật 19/11: `noi_that_lam_thay` (nhờ "làm thay" ⇒ câu nói thật thay câu từ chối khuôn; giới hạn: runbook 10.1), `lich_vao_hoi_thuong` (hỏi tiếp trên lịch đã lập; giới hạn: runbook 10.2), `sua_lich_doi_cho_code`
   (code đọc câu "dời hai điểm"), `noi_dong_tam_ngung` (code nối dòng "tạm ngừng khi lũ / lệnh cấm" của nguồn đã trích vào ghi chú an toàn).
-  **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn
+  **TẮT (đủ 6 cờ còn lại):** `nho_ten_goi_y` và `xuat_pptx` (code đã ở main, chờ chủ dự án chọn bật), `lich_trinh` (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn
   nhầm đoạn của nơi khác), `so_vet` (bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
 - **Lần chạy cả bộ test gần nhất:** tối 19/11 trên nhánh bật cờ đã gồm main `38b4434` (từng file, 53 file): 1.512 đạt, 0 hỏng; main sau đó chỉ thêm đúng nhánh đó + tài liệu. Lỗi lọt chiều 19/11 (hai biến cùng tên trong file lập lịch) đã sửa `38b4434`.
@@ -48,7 +48,7 @@ Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / n
 
 1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
 2. Buổi User tự tay test toàn bộ (bước 7) — User chưa có giờ; KHÔNG nhắc.
-3. Hỏi khi tới lượt (sau khi đủ điều kiện ở `VIEC_DANG_MO.md`): bật cờ `noi_that_lam_thay` · bật hai nút xuất lịch (`xuat_pptx`) · giá phòng, bổ sung kho, vị trí người dùng.
+3. Hỏi khi tới lượt (sau khi đủ điều kiện ở `VIEC_DANG_MO.md`): bật hai nút xuất lịch (`xuat_pptx`) · bật `nho_ten_goi_y` · giá phòng, bổ sung kho, vị trí người dùng.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
 
