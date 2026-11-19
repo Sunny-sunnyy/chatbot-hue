@@ -20,4 +20,4 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 
 ## 4. Nhánh hồ sơ không gộp + việc dọn cần User (lệnh `!`, không gấp)
 - Hồ sơ: `origin/p9-c-lich-tien-ve` `10aadc2` (tổng tiền vé do code — không đạt) · `origin/p9-c-s09-luu-y-an-toan` `2d613ce` (bản lời dặn — không đạt) · `origin/p9-e-chi-sang-len-ke-hoach` `d0249b1` (câu cố định khi gõ "lên lịch" — lỗi không còn tái hiện).
-- Nhánh `p9-b-nho-ten-goi-y` (có một câu của bộ 80 kịch bản trong một commit cũ): User ĐÃ xoá cả trên origin lẫn cục bộ (22:36 19/11/2026). Còn `origin/p9-b-ket-phien-toi-1911` (đã gộp squash, một commit giữa chừng diễn đạt gần một câu kịch bản) — đề nghị User xoá khi dọn nhánh; danh sách nhánh đã gộp trên origin: A đưa kèm lệnh khi User muốn dọn.
+- Nhánh `p9-b-nho-ten-goi-y` (có một câu của bộ 80 kịch bản trong một commit cũ): User ĐÃ xoá cả trên origin lẫn cục bộ (22:36 19/11/2026). `origin/p9-b-ket-phien-toi-1911` (đã gộp squash) User cũng ĐÃ xoá (22:36 19/11/2026); danh sách nhánh đã gộp trên origin: A đưa kèm lệnh khi User muốn dọn.
