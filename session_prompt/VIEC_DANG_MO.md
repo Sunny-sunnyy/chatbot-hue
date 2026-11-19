@@ -12,6 +12,11 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 - Việc lẻ đã rời trang hiện trạng, CHƯA ai nhận (xét khi tới bước tương ứng, không mở riêng): câu ngoài kho trả lời sai khuôn từ chối · lỗi tìm "quán gần một nơi" (thuộc bước 3) · câu tụt "Đủ ý" (thuộc bước 2) · runbook mục 8 (deploy).
 - Không được: mở thêm việc bão / lũ / khẩn cấp; sửa nội dung kho, đổi quyết định "không nói giá phòng", nhận vị trí người dùng, gửi thư từ server khi User chưa chọn; đặt sàn "0 câu" cho bộ phổ thông.
 
+## 8. Hỏi tiếp về thứ vừa gợi ý (danh sách đóng; B)
+- Plan + sha duyệt: `data/hoi_tiep_goi_y_2026-11-19/PLAN.md` bản `794384caf568` — **A DUYỆT 19:19 19/11/2026** (mức nhẹ, A đọc đủ; ước 0,17 USD, trần cứng 0,30). Lỗi đã thấy thật ở lượt 1 bộ 80 kịch bản: trợ lý chỉ nhớ câu hỏi nên lượt hỏi tiếp tìm lại ra nơi khác. Cách: CODE ghi tên bài riêng của nơi đã trích (≤ 5) vào lịch sử, cờ mới `nho_ten_goi_y` mặc định TẮT; KHÔNG bật lại `nho_cau_tra_loi`.
+- Phân vai: B code · C soạn bộ chuỗi đích ≥ 12 (B không xem) · E review nhánh + đọc tay 100 % lượt hỏi tiếp. Giới hạn A nhận cho bản đầu: nơi chỉ nêu qua bài tổng hợp không được nhớ; "gần X nhất" không giải.
+- Bước kế: B code + test (0 USD) ⇒ E review ⇒ C khoá bộ đích (một lượt cờ tắt) ⇒ một lượt đo hai bên ⇒ E đọc tay ⇒ đạt thì A hỏi User bật cờ. Lượt máy xin A.
+
 ## 4. Cách làm việc theo thư mục từng ngày (User giao 19/11) [đang thử]
 - Trạng thái: đã có `report_agent/2026-11-19/` + trang này. Ai: A; C viết script kiểm; E sửa `guides/CACH_LAM_VIEC.md` + `guides/khung/`.
 - Hồ sơ: câu trả lời của hai dự án khác `data/cach_lam_theo_ngay_2026-11-19/`; chốt của A ở `session_prompt/CURRENT_HANDOFF.md` khối 19/11.
