@@ -27,6 +27,7 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 - Bước kế: B tra đích + plan (0 USD, làm ngay) ⇒ E review ⇒ A duyệt sha ⇒ code + đo SAU lượt đo lại bộ 80 ⇒ bật là câu của User.
 
 ## 10. Gõ "lên lịch giúp mình" trong ô chat (User chọn làm 21:40 19/11/2026; E)
+- **Plan `data/len_lich_chat_2026-11-19/PLAN.md` bản `8fc7676280a8` — A DUYỆT 21:43 19/11/2026** (mức nhẹ, A đọc đủ; ≈ 0,02 USD). Đếm trước cho thấy việc nhỏ hơn tên: 2 lượt đích (ra câu từ chối khuôn) trong 6 lượt gõ lời nhờ xếp lịch. Cách: thêm một loại `xep_lich` vào đường `noi_that_lam_thay` (chỉ thay khi model đã trả câu khuôn); cờ mới `chi_sang_len_ke_hoach` mặc định TẮT. Bộ dò (≥ 20 "giống mà không phải" + ≥ 15 nhờ thật) do B soạn, E không xem; sàn 0 bắt nhầm. Bật ⇒ hỏi User.
 - 4 / 80 kịch bản bị từ chối vì lịch gõ tự do tắt. Cách: câu cố định do code chọn chỉ sang trang Lên kế hoạch kèm link, đúng khuôn `noi_that_lam_thay` (hàm thuần đọc câu + bộ dò ≥ 20 câu do người khác soạn). Plan nửa trang (mức nhẹ, A đọc rồi duyệt); làm SAU việc 9 hoặc khi E rảnh; gộp sau lượt đo lại bộ 80.
 
 ## 4. Cách làm việc theo thư mục từng ngày (User giao 19/11) [đang thử]
