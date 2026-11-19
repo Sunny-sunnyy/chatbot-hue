@@ -112,7 +112,7 @@ ngày 2" (A, B là hai điểm đang có trong lịch). Trước: trợ lý đá
   Bản đầu của hàm từng áp **sai 4 / 43** câu dò (câu hỏi thông tin, câu nhờ viết bị đọc thành lệnh dời; ngày nói bằng chữ bị hiểu là cùng ngày) — nhờ người khác đặt câu
   dò mới lộ; 13 câu người viết tự đặt không bắt được lỗi nào. [người thứ hai kiểm]
 - 45 câu xin sửa kiểu chưa làm được hoặc không phải câu sửa lịch × 20 lịch thật: 0 lần áp nhầm (chạy thẳng hàm, 0 đồng). [máy kiểm]
-- Tiền lượt thật: 0,0297 USD (khoảng 740 đồng) cho 72 lượt hỏi, đọc từ log. [máy kiểm]
+- Tiền lượt thật: 0,0297 USD (khoảng 740 đồng) cho 70 lượt hỏi, đọc từ log. [máy kiểm]
 
 **3. Chưa làm / giới hạn.**
 - Mẫu câu **hẹp, cố ý**. Vẫn "Chưa làm…": câu dời ba điểm · câu không có từ dời · buổi tối · ngày nói bằng chữ ("ngày đầu", "hôm sau") · câu kết bằng dấu hỏi · câu có
