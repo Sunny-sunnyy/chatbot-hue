@@ -18,6 +18,7 @@ DONG_NGUON = "Thông tin lấy từ kho tư liệu của trợ lý du lịch Hu�
 TEN_BUOI = {"sang": "Sáng", "chieu": "Chiều", "toi": "Tối"}
 THU = ("Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy", "Chủ Nhật")
 _MA_NGUON = re.compile(r"\s*\[(?:Nguồn\s*)?\d+\]")
+KIEU_MAC_DINH = "di_san"   # kiểu dùng khi tải; chủ dự án chọn một trong các kiểu của `KIEU` bằng ảnh mẫu ⇒ đổi ở đây
 MUC_MOI_TRANG = {"di_san": 5, "song_huong": 5}   # số điểm tối đa trên một trang "ngày" của từng kiểu
 DONG_LUU_Y_MOI_TRANG = 7
 

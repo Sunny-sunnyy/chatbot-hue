@@ -91,3 +91,63 @@ def test_file_text_is_a_subset_of_plan_text_plus_template_constants(kieu, tmp_pa
         assert all(tu in cho_phep or tu in ("(tiếp)", "·", "—") or tu.isdigit() for tu in con.split()), doan
     ten = [d for d in chu if d.startswith("Điểm ")]
     assert ten == [f"Điểm {i + 1}" for i in range(7)]   # thứ tự điểm ngày 2 giữ nguyên qua các trang
+
+
+# ---------- đường tải `GET /api/lich/pptx` (bảng điểm thật — private; không model, không bộ tìm) ----------
+@pytest.fixture(scope="module")
+def may_chu():
+    """App tối thiểu chỉ có route tải + kho hội thoại thật + cờ nạp từ settings (bật `xuat_pptx`). Đồng hồ giả để thử hết hạn."""
+    pytest.importorskip("pptx")
+    import copy
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    from api.conversations import ConversationStore
+    from api.routes.xuat import router
+    from core.settings_loader import load_settings
+    from llm import lich_trinh_v2 as lt2
+    from llm import sua_lich_v2 as sl
+    from llm.assistant import AssistantFlags
+    s = copy.deepcopy(load_settings(validate_private_paths=False))
+    s["assistant"]["xuat_pptx"] = True
+    flags = AssistantFlags.from_settings(s)
+    gio = [1000.0]
+    app = FastAPI()
+    app.include_router(router)
+    app.state.assistant_flags, app.state.conversations = flags, ConversationStore(len, clock=lambda: gio[0])
+    khung = lt2.xep_v2(flags.bang_lich_v2, lt2.tu_truong({"so_ngay": 2, "nguoi_lon": 2}))
+    luu = sl.luu_tu_lich(khung, None, None)
+    diem = lt2.diem_v2(khung)
+    luu["cau"] = {diem[0]: "Câu tả đã kiểm của điểm đầu [1]."}
+    return TestClient(app), app, gio, luu, [flags.bang_lich_v2.theo_id[j]["ten"] for j in diem]
+
+
+def test_download_is_404_when_flag_off_or_no_saved_plan(may_chu):
+    client, app, gio, luu, _ = may_chu
+    assert client.get("/api/lich/pptx").json()["error"]["code"] == "khong_co_lich"            # không cookie ⇒ không có lịch, không file rỗng
+    cid = app.state.conversations.ensure(None)
+    assert client.get("/api/lich/pptx", cookies={"conversation_id": cid}).status_code == 404   # cuộc có thật nhưng chưa có lịch
+    bat = app.state.assistant_flags
+    app.state.assistant_flags = __import__("dataclasses").replace(bat, xuat_pptx=False)
+    try:
+        r = client.get("/api/lich/pptx", cookies={"conversation_id": cid})
+        assert (r.status_code, r.json()["error"]["code"]) == (404, "not_found")
+    finally:
+        app.state.assistant_flags = bat
+
+
+def test_download_rebuilds_the_saved_plan_and_expires_with_it(may_chu):
+    import pptx
+    client, app, gio, luu, ten_diem = may_chu
+    store = app.state.conversations
+    cid = store.ensure(None)
+    store.luu_lich(cid, luu)
+    r = client.get("/api/lich/pptx?ten=../../x", cookies={"conversation_id": cid})   # tham số lạ bị bỏ qua: route không đọc tham số nào
+    assert r.status_code == 200 and r.headers["content-type"].startswith("application/vnd.openxmlformats")
+    assert "lich-trinh-hue.pptx" in r.headers["content-disposition"] and r.headers["cache-control"] == "no-store"
+    chu = [p.text for s in pptx.Presentation(io.BytesIO(r.content)).slides for sh in s.shapes if sh.has_text_frame for p in sh.text_frame.paragraphs]
+    assert [c for c in chu if c in ten_diem] == ten_diem                              # mọi điểm của lịch lưu, đúng thứ tự đi
+    assert "Câu tả đã kiểm của điểm đầu." in chu and DONG_THAY_DOI in " ".join(chu)    # câu tả đã bỏ mã nguồn; dòng "có thể đã thay đổi" theo vào file
+    assert not any("api=1" in c or "http" in c for c in chu)                           # không link / đường dẫn nào trong chữ
+    gio[0] += 31 * 60                                                                  # quá hạn 30 phút, cuộc chưa bị dọn
+    het = client.get("/api/lich/pptx", cookies={"conversation_id": cid})
+    assert (het.status_code, het.json()["error"]["code"]) == (404, "khong_co_lich")

@@ -152,8 +152,15 @@ class AssistantFlags:
     # 17/11 (plan `2026-11-17-khoang-cach-tinh-san-plan.md`): câu đang gõ có từ khoá + đúng hai tên điểm của bảng ⇒ code tra bảng và nối nguồn khoảng
     # cách TRƯỚC lần gọi model đầu, lượt đó không đưa công cụ `khoang_cach` (bớt một lần gọi model ≈ 1,8 s trên đường chữ đầu). TẮT tới khi đo đạt
     khoang_cach_tinh_san: bool = False
+    # 19/11 (plan private `data/xuat_lich_dep_2026-11-19/PLAN.md`): `GET /api/lich/pptx` — tải lịch đã lưu của cuộc thành PowerPoint (code điền
+    # khuôn, không model). TẮT tới khi đạt; cần `sua_lich_v2` (chỉ cờ đó mới lưu lịch của cuộc) và thư viện `python-pptx`.
+    xuat_pptx: bool = False
 
     def __post_init__(self) -> None:
+        if self.xuat_pptx:
+            import importlib.util
+            if not self.sua_lich_v2 or importlib.util.find_spec("pptx") is None:
+                raise ValueError("assistant.xuat_pptx needs assistant.sua_lich_v2: true and the python-pptx package (uv sync)")
         if self.lan_tim_dau not in SEARCH_VARIANTS:
             raise ValueError(f"assistant.lan_tim_dau must be one of {SEARCH_VARIANTS}")
         if self.lan_tim_dau in ("v1", "v3") and not self.router:

@@ -20,6 +20,7 @@ from api.routes.anh import router as anh_router
 from api.routes.chat import router as chat_router
 from api.routes.cong import BAN_DO, nap_kham_pha
 from api.routes.cong import router as cong_router
+from api.routes.xuat import router as xuat_router
 from core.logging_setup import setup_logging
 from core.schema import (
     ComponentNotReadyError,
@@ -231,6 +232,7 @@ def create_app(settings=None):
     app.include_router(anh_router)  # luôn đăng ký: `settings` chỉ có trong lifespan (Phase 10 A1 D2, review C m-1); cờ tắt ⇒ 404
     app.include_router(feedback_router)
     app.include_router(cong_router)  # cổng đợt 1 D6: 4 route chỉ đọc
+    app.include_router(xuat_router)  # tải lịch .pptx: luôn đăng ký, cờ `xuat_pptx` tắt ⇒ 404
     app.state.feedback_turns = FeedbackTurns()  # B142: mã lượt cho 👍 / 👎 (RAM, không cần lifespan)
 
     tran = tran_tu_moi_truong()
