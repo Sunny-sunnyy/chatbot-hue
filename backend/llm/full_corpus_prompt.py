@@ -34,6 +34,26 @@ Nếu không ý nào có Bằng chứng, trả đúng duy nhất câu sau, khôn
 assert ANSWER_SYSTEM_INSTRUCTIONS.count(_LUAT_TU_CHOI) == 1  # đổi lời dặn gốc mà quên đoạn này ⇒ lỗi ngay lúc import, không lặng lẽ gửi lời dặn sai
 ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y = ANSWER_SYSTEM_INSTRUCTIONS.replace(_LUAT_TU_CHOI, _LUAT_NHIEU_Y)
 
+# Cờ `luu_y_an_toan` (19/11, mặc định TẮT; plan private `data/phase_9/s09_luu_y/PLAN.md`): lượt đo cuối 18/11 — câu hỏi quy định của một hoạt động trên
+# sông, model trích đúng đoạn có dòng "mùa mưa lũ / có lệnh cấm thì tạm ngừng" nhưng bỏ dòng đó 7 / 7 lần (coi là việc của nơi tổ chức, không phải
+# điều người hỏi cần). Thêm ĐÚNG MỘT câu ngay sau dòng lưu ý an toàn của lời dặn trả lời, chỉ ở lượt trợ lý có công cụ; cờ tắt ⇒ không gọi hàm dưới
+# (chuỗi gửi model giống byte). Không ví dụ có địa danh thật (model hay chép ví dụ).
+_DONG_LUU_Y = "Không tự thêm lời khuyên hay lưu ý an toàn mà Bằng chứng không nêu; lời khuyên, lưu ý có trong Bằng chứng thì giữ lại."
+LUU_Y_AN_TOAN = (
+    "Khi Bằng chứng bạn dùng để trả lời có nêu cảnh báo an toàn, hoặc điều kiện khiến chính hoạt động hay dịch vụ được hỏi bị tạm ngừng, bị cấm "
+    "(thời tiết xấu, mùa mưa lũ, lệnh cấm…), thì nêu điều đó trong một câu có citation, kể cả khi câu hỏi không hỏi tới."
+)
+assert ANSWER_SYSTEM_INSTRUCTIONS.count(_DONG_LUU_Y) == 1  # đổi dòng lưu ý của lời dặn gốc mà quên đoạn này ⇒ lỗi ngay lúc import
+
+
+def them_luu_y_an_toan(instructions: str) -> str:
+    """Lời dặn trợ lý (bản nào cũng được: thường / có lịch sử / theo ý) + câu `LUU_Y_AN_TOAN` ngay sau dòng lưu ý an toàn. Lời dặn không có đúng
+    một dòng đó (harness truyền lời dặn lạ) ⇒ lỗi, không lặng lẽ gửi bản thiếu."""
+    if instructions.count(_DONG_LUU_Y) != 1:
+        raise ValueError("answer instructions do not contain the safety-note line exactly once")
+    return instructions.replace(_DONG_LUU_Y, f"{_DONG_LUU_Y}\n{LUU_Y_AN_TOAN}")
+
+
 def build_answer_input(query: str, context: str, today: str | None = None) -> str:
     """Nội dung tin nhắn user gửi model trả lời — một nơi dựng duy nhất, để chuỗi đếm token context đúng là chuỗi gửi đi (C-03).
     `today` (dòng ngày do code dựng, Phase 9 B1 D7) đứng đầu tin nhắn; None ⇒ đúng chuỗi như B0."""

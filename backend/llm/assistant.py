@@ -42,7 +42,7 @@ from llm import khoang_cach as kc
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
-                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
+                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, them_luu_y_an_toan, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
 from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusContextBuilder, PackedContext, PackedSource
@@ -107,6 +107,9 @@ class AssistantFlags:
     so_vet: bool = False  # sổ vết debug có nội dung, chỉ máy local (`core/so_vet.py`); bật bằng `HUE_SO_VET=true`
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
+    # 19/11 (plan private `data/phase_9/s09_luu_y/PLAN.md`): thêm một câu vào lời dặn trợ lý có công cụ — Bằng chứng đang dùng có cảnh báo an toàn /
+    # điều kiện tạm ngừng của chính hoạt động được hỏi ⇒ nêu kèm một câu có trích. TẮT tới khi đo đạt; cần `tim_them`. Tắt ⇒ chuỗi gửi model giống byte.
+    luu_y_an_toan: bool = False
     # 15/11 (plan `2026-11-15-cau-noi-tiep-web-plan.md`): lượt CÓ lịch sử mà model đã tự tìm kho ⇒ phần web dùng câu tìm kho cuối model viết (có tên
     # nơi lấy từ lượt trước) thay câu người dùng gõ — câu hỏi tiếp "mở cửa mấy giờ" không còn ra web trần. TẮT tới khi đo đạt; cần `tra_web`
     web_cau_noi_tiep: bool = False
@@ -416,13 +419,15 @@ def _history_kwargs(trace: AnswerTrace) -> dict:
     return {"history": trace.history} if trace.history else {}
 
 
-def _assistant_instructions(generator, trace: AnswerTrace, nhieu_y: bool = False) -> str:
+def _assistant_instructions(generator, trace: AnswerTrace, nhieu_y: bool = False, luu_y_an_toan: bool = False) -> str:
     """Lời dặn trợ lý thật sự gửi ở lượt này (có câu dặn lịch sử khi có lịch sử — B3 D3) — để đếm ngân sách đúng chuỗi gửi (D5).
     B5: công cụ `lich_trinh` không đổi lời dặn (D7). Không lịch sử ⇒ đọc thẳng thuộc tính (generator thay thế trong test không cần hàm).
-    Cờ `cau_nhieu_y` (việc agent (3) 14/11): lời dặn theo ý của đúng bản agent sẽ gửi."""
+    Cờ `cau_nhieu_y` (việc agent (3) 14/11): lời dặn theo ý của đúng bản agent sẽ gửi. Cờ `luu_y_an_toan`: thêm đúng câu generator sẽ thêm."""
     if nhieu_y:
-        return (generator.assistant_history_agent_nhieu_y if trace.history else generator.assistant_agent_nhieu_y).instructions
-    return generator.assistant_instructions_for(trace.history) if trace.history else generator.assistant_instructions
+        instructions = (generator.assistant_history_agent_nhieu_y if trace.history else generator.assistant_agent_nhieu_y).instructions
+    else:
+        instructions = generator.assistant_instructions_for(trace.history) if trace.history else generator.assistant_instructions
+    return them_luu_y_an_toan(instructions) if luu_y_an_toan else instructions
 
 
 def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str, bang,
@@ -923,7 +928,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
             raise GeneratorNotReadyError("generator is not ready")
         return build_assistant_input(query, None, today)
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
-    instructions = _assistant_instructions(generator, trace, trace.nhieu_y) if (flags.tim_them and generator is not None) else None
+    instructions = _assistant_instructions(generator, trace, trace.nhieu_y, flags.luu_y_an_toan) if (flags.tim_them and generator is not None) else None
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions)
     if not flags.tim_them:
         return None
@@ -1013,7 +1018,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     call_log = CallLog()
     try:
         if flags.uses_tools:
-            instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
+            instructions = _assistant_instructions(generator, trace, trace.nhieu_y, flags.luu_y_an_toan)
             tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions)
             extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
             try:
@@ -1065,6 +1070,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         extra["con_luot_fn"] = lambda: trace.model_searches < MODEL_SEARCH_LIMIT
     if trace.nhieu_y:  # lời dặn theo ý (cờ tắt / câu một ý ⇒ không truyền, gọi y như trước)
         extra["nhieu_y"] = True
+    if flags.luu_y_an_toan:  # thêm câu lưu ý an toàn vào lời dặn của lượt (cờ tắt ⇒ không truyền, gọi y như trước)
+        extra["luu_y_an_toan"] = True
     return extra
 
 
@@ -1386,7 +1393,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             if flags.uses_tools:
                 # B3 D9 (b): vòng công cụ ⇒ "đang viết" phát ngay trước chữ đầu (không trước các lượt `tim_kho`)
                 pending_generating = True
-                instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
+                instructions = _assistant_instructions(generator, trace, trace.nhieu_y, flags.luu_y_an_toan)
                 tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions)
                 extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
                 result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace), **extra)
