@@ -248,6 +248,20 @@ def test_doi_buoi_tu_cau_doc_dung_hai_ve_va_tu_choi_moi_cau_mo_ho():
         f"{ten_a} lên sáng ngày {nb}, {ten_b} để sáng ngày {na} được không?",  # câu hỏi, không phải yêu cầu
         f"Bỏ {ten_a} sáng ngày {nb}, {ten_b} để sáng ngày {na}",  # có việc khác (bỏ)
         f"Thay {ten_a} sáng ngày {nb}, thêm {ten_b} sáng ngày {na}",
+        # bộ dò của C + review E (19/11) — bản đầu ÁP SAI các họ câu dưới; nay đọc theo danh sách cho phép
+        f"Giá vé {ten_a} buổi sáng thế nào, {ten_b} buổi chiều thế nào",  # câu hỏi thông tin, không phải yêu cầu dời
+        f"Kể giúp mình về {ten_a} để đi buổi sáng, còn {ten_b} để đi buổi chiều",  # nhờ viết / kể
+        f"{ten_a} đang ở sáng ngày {na}, còn {ten_b} đang ở sáng ngày {nb}",  # tả chỗ đang đứng
+        f"Sao {ten_a} lại lên sáng ngày {na}, {ten_b} để sáng ngày {nb} vậy",  # hỏi vì sao
+        f"Đổi chỗ {ten_a} lên buổi sáng và {ten_b} để buổi chiều cho nhau",  # hoán đổi: buổi nêu ra là chỗ ĐANG đứng
+        f"{ten_a} lên trước buổi chiều ngày {nb}, {ten_b} để sau buổi sáng ngày {na}",  # trước / sau
+        f"{ten_a} lên sáng ngày đầu, còn {ten_b} để sáng ngày cuối",  # ngày bằng chữ ⇒ không được bỏ lặng thành "cùng ngày"
+        f"{ten_a} sang sáng hôm sau, còn {ten_b} để chiều hôm đầu",
+        f"{ten_a} lên sáng mai, {ten_b} để chiều mai",
+        f"{ten_a} lên sáng ngày thứ hai, {ten_b} để sáng ngày thứ ba",
+        f"{ten_a} lên sáng {nb}, {ten_b} để sáng {na}",  # số đứng trần
+        f"Ngày {nb} {ten_a} sáng, ngày {na} {ten_b} sáng",  # không có từ dời: tả hay yêu cầu không rõ ⇒ không áp
+        f"{ngoai} lên sáng ngày {nb}, {ten_b} để sáng ngày {na}",  # điểm ngoài lịch đứng vế đầu
     ):
         assert doc(cau) == [], cau
 
@@ -294,4 +308,3 @@ def test_co_doi_cho_code_can_co_chua_ho_tro():
     from test_cong_dot_1 import flags_from
     with pytest.raises(ValueError, match="sua_lich_doi_cho_code"):
         flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=True, sua_lich_chua_ho_tro=False, sua_lich_doi_cho_code=True)
-
