@@ -14,6 +14,7 @@ DONG_NGUON = "- Khi nước lên to hoặc cảng vụ ra lệnh cấm, mọi ch
 CAU_NGUON = "Khi nước lên to hoặc cảng vụ ra lệnh cấm, mọi chuyến đò đều tạm ngừng cho tới lúc an toàn."
 NGUON = [("Thuyền trên sông", (f"- Khán giả mặc áo phao khi lên thuyền.\n{DONG_NGUON}",))]
 MONG = f"Lưu ý trong nguồn «Thuyền trên sông»: {CAU_NGUON}"
+MONG_CO_MUC = f"Lưu ý trong nguồn «Thuyền trên sông — An toàn»: {CAU_NGUON}"  # `set_notice` kèm tên mục cuối của đoạn
 
 
 def test_appends_exactly_one_source_sentence_when_answer_omits_it():
@@ -47,6 +48,12 @@ def test_takes_first_cited_source_in_given_order_and_strips_list_markup():
     assert dong_tam_ngung("Vé 100.000 đồng [1].", nguon) == "Lưu ý trong nguồn «Bài B»: An toàn: buổi diễn bị hoãn nếu thời tiết xấu."
 
 
+def test_source_label_adds_last_section_name_when_present():
+    from llm.luu_y_nguon import nhan_nguon
+    assert nhan_nguon("Vé các điểm", ("Vé các điểm", "Khu suối khoáng")) == "Vé các điểm — Khu suối khoáng"
+    assert nhan_nguon("Bài", ()) == "Bài" and nhan_nguon("Bài", ("Bài",)) == "Bài"
+
+
 @pytest.mark.parametrize("dong, mong", [
     # đúng khuôn dòng thật: hai câu, câu sau mở bằng "Khi đó" ⇒ chỉ chép câu đầu
     (DONG_NGUON, CAU_NGUON),
@@ -58,6 +65,15 @@ def test_takes_first_cited_source_in_given_order_and_strips_list_markup():
     ("- Tại đây thuyền tạm ngừng khi có bão.", None),
     # dòng bảng ⇒ không chép
     ("| Mùa lũ | thuyền tạm ngừng khi có lệnh cấm |", None),
+    # bài kho ngắt dòng cứng GIỮA câu ⇒ phải chép CẢ câu, không chép mẩu dòng sau (ca thật E tìm ra)
+    ("Vào mùa mưa, đò ngang có thể phải dừng chạy\nkhi nước lên cao hoặc có lệnh cấm xuất bến.",
+     "Vào mùa mưa, đò ngang có thể phải dừng chạy khi nước lên cao hoặc có lệnh cấm xuất bến."),
+    ("- Đò ngang chạy cả ngày.\n- Giá 5.000 đồng\n  mỗi lượt.\nkhi nước lên cao hoặc có lệnh cấm xuất bến.", None),   # mẩu câu chữ thường đứng riêng ⇒ không chép
+    ("Tuân thủ lệnh cấm xuất bến.", "Tuân thủ lệnh cấm xuất bến."),   # câu ngắn nhưng đủ nghĩa, mở bằng chữ hoa ⇒ được
+    # điều khoản hoàn vé có nhắc bão lũ ⇒ KHÔNG chép (không phải cảnh báo an toàn của hoạt động — A quyết)
+    ("- Vé không được hoàn trả, trừ khi bão lũ khiến điểm tham quan phải tạm dừng đón khách.", None),
+    # ký hiệu trình bày: chữ nghiêng + ngoặc bọc cả câu + "Lưu ý:" lặp ⇒ bỏ, chữ của câu giữ nguyên
+    ("*(Lưu ý: Ngày mưa bão lớn, suất diễn ngoài trời có thể tạm dừng).*", "Ngày mưa bão lớn, suất diễn ngoài trời có thể tạm dừng."),
     # chữ thường sau dấu chấm không phải ranh câu (tách thừa sẽ ra câu cụt)
     ("- Thuyền tạm ngừng khi có lệnh cấm (theo quy định số 12. ban hành năm 2020) của cảng vụ.",
      "Thuyền tạm ngừng khi có lệnh cấm (theo quy định số 12. ban hành năm 2020) của cảng vụ."),
@@ -85,7 +101,7 @@ def test_set_notice_flag_off_is_unchanged_and_on_adds_the_line_before_other_note
         set_notice(t_tat, tat)
         set_notice(t_bat, bat)
         assert t_tat.notice == cu and t_tat.luu_y_nguon is None
-        assert t_bat.notice == (MONG if cu is None else f"{MONG} {cu}") and t_bat.luu_y_nguon == MONG   # dòng an toàn đứng TRƯỚC, không mất dòng cũ
+        assert t_bat.notice == (MONG_CO_MUC if cu is None else f"{MONG_CO_MUC} {cu}") and t_bat.luu_y_nguon == MONG_CO_MUC   # dòng an toàn đứng TRƯỚC, không mất dòng cũ
         assert t_bat.answer == t_tat.answer                                                             # chữ câu trả lời không đổi
 
 
@@ -98,7 +114,7 @@ def test_storm_final_net_and_source_line_meet_in_one_turn_without_losing_either(
     trace = _trace("Khán giả phải mặc áo phao [2].", "travel/tickets/ve thuyen.md")
     set_notice(trace, flags)
     assert luoi_cuoi_bao("Sắp có bão, đi thuyền nghe ca Huế cần biết gì?", trace, flags) is True
-    assert trace.notice == f"{tt.CAU_BAO_LU} {MONG} {MAY_HAVE_CHANGED_NOTICE}"
+    assert trace.notice == f"{tt.CAU_BAO_LU} {MONG_CO_MUC} {MAY_HAVE_CHANGED_NOTICE}"
 
 
 @pytest.mark.parametrize("them", [{"bieu_mau": True}, {"lich": {"khung": {}}}, {"lich_v2": {"lich": {}}}])

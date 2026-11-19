@@ -39,7 +39,7 @@ from llm import tra_web as tw
 from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
 from llm import khoang_cach as kc
-from llm.luu_y_nguon import dong_tam_ngung
+from llm.luu_y_nguon import dong_tam_ngung, nhan_nguon
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
@@ -918,7 +918,7 @@ def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
     # câu an toàn của nguồn đã trích đứng TRƯỚC các ghi chú thường; cờ tắt ⇒ `notice` y như trước. Lượt có lịch (biểu mẫu, sửa lịch, công cụ lịch) KHÔNG
     # nhận: chưa có dữ liệu đo, và "một dòng mỗi câu trả lời" là tuỳ tiện với lịch nhiều điểm (review E 19/11)
     if flags.noi_dong_tam_ngung and trace.cited and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None:
-        trace.luu_y_nguon = dong_tam_ngung(trace.answer or "", [(src.title, src.excerpts) for src in trace.cited])
+        trace.luu_y_nguon = dong_tam_ngung(trace.answer or "", [(nhan_nguon(src.title, src.heading_path), src.excerpts) for src in trace.cited])
         if trace.luu_y_nguon:
             dong.append(trace.luu_y_nguon)
     if trace.cited and any(src.source == kc.NGUON_SOURCE for src in trace.cited) and "kẹt xe" not in (trace.answer or "").casefold():
