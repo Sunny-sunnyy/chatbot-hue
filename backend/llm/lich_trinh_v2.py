@@ -639,12 +639,12 @@ NGUON_LICH_SOURCE = "lich-dang-co"  # `source` của nguồn — không phải b
 TIEU_DE_NGUON_LICH = "Lịch bạn đang có"
 MUC_NGUON_LICH = "Lịch tham quan đã lưu của cuộc trò chuyện này (hệ thống tính)"
 DONG_TIEN_VE_CHUA_CO = "Tiền vé của lịch: chưa có bảng giá theo từng điểm nên chưa tính được tổng; giá từng điểm xem bài vé."
-_GIO = re.compile(r"(\d{1,2}):(\d{2}) – (\d{1,2}):(\d{2})")
+_KHOANG_GIO = re.compile(r"(\d{1,2}):(\d{2}) – (\d{1,2}):(\d{2})")
 
 
 def doc_gio(chuoi: str | None) -> tuple[int, int] | None:
     """Ngược của `in_gio`: "8:00 – 10:30" ⇒ (480, 630) phút. Chuỗi không đúng khuôn / kết thúc không sau bắt đầu ⇒ None (không đoán)."""
-    m = _GIO.fullmatch(chuoi or "")
+    m = _KHOANG_GIO.fullmatch(chuoi or "")
     if m is None:
         return None
     a, b = int(m[1]) * 60 + int(m[2]), int(m[3]) * 60 + int(m[4])
