@@ -69,8 +69,8 @@ Sản phẩm:
 - Hỏi tiếp sau câu bão / lũ: chỉ xét câu liền trước, từ lượt thứ ba hết câu 112 — User nhận 21:40 18/11; mở rộng: bước 5.
 - Không nói giá phòng ở phần gợi ý chỗ ở (câu hỏi chi phí chung vẫn nêu khoảng giá có nguồn từ kho). Khối "Nơi ở" chỉ hiện khi người dùng
   đã chọn hạng chỗ ở — ở biểu mẫu hoặc nói bằng lời.
-- Việc phải luôn đúng (phép tính, ngày, tiền, thứ tự bắt buộc) do CODE làm; model chỉ diễn đạt. Giữ model `gpt-6-luna`, giữ `e5-small`, giữ 10 đoạn.
-- Sàn tốc độ: chữ đầu tiên trên trình duyệt p50 ≤ 3 s, p95 ≤ 5 s; tiền TRUNG BÌNH ≤ 0,0005 USD / câu (câu có tìm thêm / web được vượt). Thứ tự lỗi tệ nhất: sai cảnh báo an toàn > nói chắc mà sai >
+- Việc phải luôn đúng (phép tính, ngày, tiền, thứ tự bắt buộc) do CODE làm; model chỉ diễn đạt. Giữ model `gpt-6-luna`, giữ `e5-small`; số đoạn / cách đưa ngữ cảnh: đang mở lại để thử (19/11).
+- **User 10:04 19/11/2026: chất lượng TRƯỚC, tiền / tốc độ sau — GỠ các rào tối ưu sớm:** bỏ sàn tiền "TB ≤ 0,0005 USD / câu" và sàn tốc độ "chữ đầu p50 ≤ 3 s, p95 ≤ 5 s" (từ nay tiền / giây chỉ ĐO và BÁO cạnh chất lượng, không dùng để loại phương án; đặt lại sau khi chất lượng đã đạt, User quyết); bỏ trần token đầu ra (đã gỡ); bỏ ngân sách ngữ cảnh 16.384 token / lượt; bỏ trần lịch sử 1.500 token; thử mức suy luận low / medium / high; User cho dùng tiền API để thử (một việc > 1 USD vẫn báo trước). Thứ tự lỗi tệ nhất giữ nguyên: sai cảnh báo an toàn > nói chắc mà sai >
   trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
 - Không mở lại khi User chưa nêu: giọng nói (dẹp) · so ảnh bằng embedding (hoãn, chưa có ngày; ảnh mẫu còn giữ) · nhớ sở thích người dùng (không làm) ·
   "tra web sớm" (bỏ) · "gộp câu tìm" (gác) · mục web giữ bản dài (bản gọn đã thử, không dùng).
