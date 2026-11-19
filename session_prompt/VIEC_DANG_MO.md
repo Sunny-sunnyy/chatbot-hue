@@ -21,6 +21,14 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 - Phân vai: B code · C soạn bộ chuỗi đích ≥ 12 (B không xem) · E review nhánh + đọc tay 100 % lượt hỏi tiếp. Giới hạn A nhận cho bản đầu: nơi chỉ nêu qua bài tổng hợp không được nhớ; "gần X nhất" không giải.
 - Bước kế: B code + test (0 USD) ⇒ E review ⇒ C khoá bộ đích (một lượt cờ tắt) ⇒ một lượt đo hai bên ⇒ E đọc tay ⇒ đạt thì A hỏi User bật cờ. Lượt máy xin A.
 
+## 9. "Kho có một phần thì bỏ cả câu / tìm thêm rồi từ chối" (User chọn làm 21:40 19/11/2026; B viết plan)
+- Lỗi đã thấy thật 19/11 ở ≥ 7 chỗ / ba phép đo: bốn kịch bản bộ 80 · hai chuỗi hỏi tiếp bị từ chối dù tìm đúng nơi · một chuỗi hỏi sang nơi khác · tổng tiền vé do code in bị từ chối 6 / 12. Rủi ro cao nhất trong việc còn lại: sát sàn "0 câu ngoài kho được trả lời".
+- Khung đã chốt: việc riêng, KHÔNG gộp vào ba cờ vừa bật · code quyết khi nào được trả lời một phần (đã có nguồn trích đúng đối tượng), model chỉ diễn đạt · sàn định nghĩa TRƯỚC khi đo ("không khẳng định ý kho không có; không mượn nơi khác") · bộ bẫy do người KHÁC B soạn · cặp tắt / bật cùng buổi · MỘT lần thử, trượt ⇒ ghi giới hạn · một lượt tra đích qua `scripts/tra_web_codex.sh` trước khi viết plan.
+- Bước kế: B tra đích + plan (0 USD, làm ngay) ⇒ E review ⇒ A duyệt sha ⇒ code + đo SAU lượt đo lại bộ 80 ⇒ bật là câu của User.
+
+## 10. Gõ "lên lịch giúp mình" trong ô chat (User chọn làm 21:40 19/11/2026; E)
+- 4 / 80 kịch bản bị từ chối vì lịch gõ tự do tắt. Cách: câu cố định do code chọn chỉ sang trang Lên kế hoạch kèm link, đúng khuôn `noi_that_lam_thay` (hàm thuần đọc câu + bộ dò ≥ 20 câu do người khác soạn). Plan nửa trang (mức nhẹ, A đọc rồi duyệt); làm SAU việc 9 hoặc khi E rảnh; gộp sau lượt đo lại bộ 80.
+
 ## 4. Cách làm việc theo thư mục từng ngày (User giao 19/11) [đang thử]
 - Trạng thái: đã có `report_agent/2026-11-19/` + trang này. Ai: A; C viết script kiểm; E sửa `guides/CACH_LAM_VIEC.md` + `guides/khung/`.
 - Hồ sơ: câu trả lời của hai dự án khác `data/cach_lam_theo_ngay_2026-11-19/`; chốt của A ở `session_prompt/CURRENT_HANDOFF.md` khối 19/11.
