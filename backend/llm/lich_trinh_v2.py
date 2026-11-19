@@ -737,9 +737,11 @@ def dong_tien_ve(bang: BangV2, luu: dict) -> list[str]:
                 phan.append(f"{_khoang_dong(gia_tre['tu'], gia_tre['den'])}/trẻ em × {tre} = {_khoang_dong(gia_tre['tu'] * tre, gia_tre['den'] * tre)}")
                 tong_tu, tong_den = tong_tu + gia_tre["tu"] * tre, tong_den + gia_tre["den"] * tre
         co_gia.append(f"{d['ten']}: " + "; ".join(phan))
+        if gia.get("luu_y_in"):  # câu ngắn VIẾT CHO NGƯỜI DÙNG của bảng giá (vd "chưa gồm vé vào Đại Nội"); `ghi_chu` là ghi chú nội bộ, không in
+            co_gia.append(f"Lưu ý về giá — {d['ten']}: {gia['luu_y_in']}")
         n_quan_the += bool(d["quan_the"])  # vé gộp chỉ có cho điểm thuộc Quần thể di tích ⇒ chỉ nhắc khi lịch có ≥ 2 điểm như vậy
     nguoi = (f"{lon} người lớn" + (f", {tre} trẻ em tính mức 7–12 tuổi" if tre else "")) if lon else "chưa biết số người lớn"
-    dong = [f"Tiền vé lẻ của lịch — số do hệ thống tính từ bảng giá ({nguoi}):"] + [f"- {x}." for x in co_gia]
+    dong = [f"Tiền vé lẻ của lịch — số do hệ thống tính từ bảng giá ({nguoi}):"] + [f"- {x.rstrip('.')}." for x in co_gia]
     if mien_phi:
         dong.append("Miễn phí: " + ", ".join(mien_phi) + ".")
     if chua_co:

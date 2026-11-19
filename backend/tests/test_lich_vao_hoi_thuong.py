@@ -296,3 +296,14 @@ def test_khong_biet_so_nguoi_lon_thi_khong_nhan_ra_tong():
     dong = v2.dong_tien_ve(BANG_GIA, luu)
     assert "- Đại Nội Huế: 200.000 đồng/người lớn." in dong and dong[-1].startswith("Chưa biết số người lớn nên chưa nhân ra tổng")
     assert not any("Tổng vé lẻ" in x for x in dong)
+
+
+def test_luu_y_cho_nguoi_dung_cua_bang_gia_duoc_in_duoi_dong_gia_cua_diem(monkeypatch):
+    """Review B m1: lưu ý riêng của một mức giá (vd suất diễn chưa gồm vé vào cổng) phải tới người dùng. Chỉ in trường `luu_y_in` (câu viết cho
+    du khách), không in `ghi_chu` (ghi chú nội bộ của người chép bảng); điểm không có trong lịch thì không in."""
+    monkeypatch.setitem(BANG_GIA.theo_id["dai_noi"]["gia_ve"], "luu_y_in", "Chưa gồm xe điện nội bộ.")
+    monkeypatch.setitem(BANG_GIA.theo_id["dai_noi"]["gia_ve"], "ghi_chu", "GHI CHÚ NỘI BỘ ⇒ không in")
+    monkeypatch.setitem(BANG_GIA.theo_id["bach_ma"]["gia_ve"], "luu_y_in", "Chưa gồm xe trung chuyển.")  # Bạch Mã không có trong lịch mặc định
+    dong = v2.dong_tien_ve(BANG_GIA, _luu(BANG_GIA, so_ngay=2, kieu_di="can_bang", so_thich=(), nguoi_lon=2))
+    assert dong[1:3] == ["- Đại Nội Huế: 200.000 đồng/người lớn × 2 = 400.000 đồng.", "- Lưu ý về giá — Đại Nội Huế: Chưa gồm xe điện nội bộ."]
+    assert "NỘI BỘ" not in " ".join(dong) and "trung chuyển" not in " ".join(dong) and dong[-1].startswith("Tổng vé lẻ của các điểm có giá: 700.000 đồng")
