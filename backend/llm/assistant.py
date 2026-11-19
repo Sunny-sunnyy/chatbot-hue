@@ -27,7 +27,7 @@ from typing import Literal
 import anyio
 
 from core import so_vet
-from core.schema import (ContextBudgetError, CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievalDependencyError,
+from core.schema import (CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievalDependencyError,
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
 from llm.citations import select_cited_sources
@@ -336,7 +336,7 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
     """Một lần tìm của lượt: tìm `queries` (1 câu ⇒ `search`; nhiều ⇒ `search_many`, B2 V3) → dựng ngữ cảnh → nối sổ nguồn.
     Ngân sách token đếm bằng `cau_hoi` (câu thật gửi model — B2 D3) + ngữ cảnh các lần trước (`trace.context_parts`) + `instructions` của
     đường trợ lý (B2 D5); lần sau đánh số tiếp, bỏ đoạn đã có. Lần đầu điền `trace.documents` / `trace.packed` (như B1); thời gian cộng dồn.
-    Lỗi đi ra nguyên kiểu: `RetrievalDependencyError` (tìm), `ContextBudgetError` (ngữ cảnh)."""
+    Lỗi đi ra nguyên kiểu: `RetrievalDependencyError` (tìm)."""
     tool_started = time.perf_counter()
     first = trace.packed is None
     packed = result = None
@@ -409,7 +409,7 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
         try:
             packed = await search_into_trace([cau_tim], cau_hoi=query, retrieval_service=retrieval_service, context_builder=context_builder,
                                              trace=trace, today=today, instructions=instructions, by="model")
-        except (RetrievalDependencyError, ContextBudgetError) as exc:
+        except RetrievalDependencyError as exc:
             trace.tool_error = exc
             raise
         return packed.text or TOOL_NO_NEW_TEXT
@@ -843,7 +843,7 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
                                        skip_ids=frozenset(trace.seen_ids), instructions=instructions, history=trace.history,
                                        n_tool_items=2 * (trace.model_searches + 1), extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD,
                                        max_documents=max_doan)
-    except (RetrievalDependencyError, ContextBudgetError) as exc:
+    except RetrievalDependencyError as exc:
         trace.tool_error = exc
         raise
     so = dict(zip(packed.document_ids, (src.id for src in packed.sources)))
@@ -851,7 +851,7 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
         for id_ in ids:
             if doc_id in so:
                 nguon[id_] = so[doc_id]
-    while khung["ngay"] and any(i not in nguon for i in lt.diem_trong_khung(khung)):  # đoạn không vừa ngân sách ⇒ bớt từ ngày cuối
+    while khung["ngay"] and any(i not in nguon for i in lt.diem_trong_khung(khung)):  # điểm có đoạn không vào được ngữ cảnh (vượt trần SỐ ĐOẠN của lượt, hoặc đoạn rỗng) ⇒ bớt từ ngày cuối
         lt.cat_ngay_cuoi(khung)
     nguon = {i: nguon[i] for i in lt.diem_trong_khung(khung)}
     nguon_ve = None if ve is None else (da_co.get(ve.id) or so.get(ve.id))
@@ -882,7 +882,7 @@ async def prepare_answer(query: str, retrieval_service, context_builder, generat
     Ngữ cảnh không có nguồn ⇒ `trace.answer` = câu từ chối chuẩn (không gọi model). Còn lại cần model: `generator=None` nghĩa là
     chưa sẵn sàng ⇒ `GeneratorNotReadyError`. `recorder` chỉ route truyền (spec §4.8 khác biệt 4).
 
-    Lỗi đi ra nguyên kiểu: `RetrievalDependencyError` (tìm), `ContextBudgetError` (ngữ cảnh), `GeneratorNotReadyError`."""
+    Lỗi đi ra nguyên kiểu: `RetrievalDependencyError` (tìm), `GeneratorNotReadyError`."""
     await search_into_trace(trace.cau_tim or [trace.search_query or query], cau_hoi=query, retrieval_service=retrieval_service, context_builder=context_builder,
                             trace=trace, today=today, instructions=instructions)
     if recorder:

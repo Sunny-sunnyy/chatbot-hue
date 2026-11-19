@@ -17,9 +17,6 @@ def test_phase6_settings_are_exact():
         "api_key_env": "OPENAI_API_KEY",
         "token_encoding": "o200k_base",
         "timeout_seconds": 45,
-        "context_limit": 16384,
-        "reserved_output_tokens": 2048,
-        "safety_margin": 512,
         "max_context_documents": 10,
     }
     forbidden_keys = {
@@ -36,9 +33,8 @@ def test_phase6_settings_are_exact():
 
 
 def test_phase6_errors_are_typed():
-    from core.schema import CitationIntegrityError, ContextBudgetError
+    from core.schema import CitationIntegrityError
 
-    assert issubclass(ContextBudgetError, RuntimeError)
     assert issubclass(CitationIntegrityError, RuntimeError)
 
 

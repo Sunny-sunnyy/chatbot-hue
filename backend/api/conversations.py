@@ -17,7 +17,6 @@ from llm.citations import CITATION_PATTERN
 TTL_SECONDS = 30 * 60
 MAX_CONVERSATIONS = 500
 MAX_TURNS = 3
-MAX_HISTORY_TOKENS = 1500
 _SPACE_BEFORE_PUNCT = re.compile(r"\s+([.,;:!?])")
 
 
@@ -37,11 +36,11 @@ class Conversation:
 
 class ConversationStore:
     def __init__(self, count_tokens: Callable[[str], int], *, ttl: float = TTL_SECONDS, max_conversations: int = MAX_CONVERSATIONS,
-                 max_turns: int = MAX_TURNS, max_history_tokens: int = MAX_HISTORY_TOKENS, keep_answers: bool = True,
+                 max_turns: int = MAX_TURNS, keep_answers: bool = True,
                  clock: Callable[[], float] = time.monotonic) -> None:
         self._count = count_tokens
         self._ttl, self._max_conversations = ttl, max_conversations
-        self._max_turns, self._max_tokens = max_turns, max_history_tokens
+        self._max_turns = max_turns
         self._keep_answers = keep_answers
         self._clock = clock
         self._items: OrderedDict[str, Conversation] = OrderedDict()
@@ -71,14 +70,12 @@ class ConversationStore:
         return sum(self._count(q) + self._count(a) for q, a in self.history(conversation_id))
 
     def append(self, conversation_id: str, question: str, answer: str) -> None:
-        """Ghi một lượt đã xong rồi cắt theo trần lượt / token (bỏ lượt cũ nhất trước)."""
+        """Ghi một lượt đã xong rồi cắt theo trần SỐ LƯỢT (bỏ lượt cũ nhất trước). Không còn trần token của lịch sử (User 19/11/2026)."""
         conversation = self._items.get(conversation_id)
         if conversation is None:  # hết hạn trong lúc trả lời ⇒ không ghi
             return
         conversation.turns.append((question, stored_answer(answer) if self._keep_answers else ""))
         del conversation.turns[:-self._max_turns]
-        while len(conversation.turns) > 1 and sum(self._count(q) + self._count(a) for q, a in conversation.turns) > self._max_tokens:
-            conversation.turns.pop(0)
         conversation.expires_at = self._clock() + self._ttl
         self._items.move_to_end(conversation_id)
 

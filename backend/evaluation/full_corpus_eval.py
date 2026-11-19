@@ -275,9 +275,6 @@ def build_context_builder(settings: dict, max_documents: int | None = None) -> F
     generation = settings["full_corpus_generation"]
     return FullCorpusContextBuilder(
         load_openai_tokenizer(),
-        context_limit=generation["context_limit"],
-        reserved_output_tokens=generation["reserved_output_tokens"],
-        safety_margin=generation["safety_margin"],
         max_documents=max_documents or generation["max_context_documents"],
     )
 

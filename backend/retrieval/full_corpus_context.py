@@ -2,7 +2,7 @@
 from dataclasses import dataclass
 from typing import Any, Sequence
 
-from core.schema import ContextBudgetError, RetrievedDocument
+from core.schema import RetrievedDocument
 from llm.full_corpus_prompt import build_answer_messages
 
 
@@ -39,15 +39,9 @@ class FullCorpusContextBuilder:
         self,
         tokenizer: Any,
         *,
-        context_limit: int = 16384,
-        reserved_output_tokens: int = 2048,
-        safety_margin: int = 512,
         max_documents: int = 5,
     ) -> None:
         self._tokenizer = tokenizer
-        self._context_limit = context_limit
-        self._reserved = reserved_output_tokens
-        self._margin = safety_margin
         self._max_documents = max_documents
 
     def _token_count(self, query: str, context: str, today: str | None = None, instructions: str | None = None,
@@ -107,9 +101,10 @@ class FullCorpusContextBuilder:
         history=(), n_tool_items: int = 0, extra_tool_tokens: int = 0, max_documents: int | None = None,
     ) -> PackedContext:
         """`today`: dòng ngày sẽ đứng đầu tin nhắn gửi model (B1 D7) — đếm cùng một chuỗi với chuỗi gửi đi.
-        Lần tìm thêm trong một lượt (Phase 9 B2 D5): đánh số từ `first_id`, bỏ đoạn `skip_ids` đã có, và đếm ngân sách **chung** —
-        `prior_context` (ngữ cảnh các lần trước) + khối mới, bằng `instructions` của trợ lý. Hết ngân sách ở lần tìm thêm ⇒ ít / 0 đoạn,
-        không lỗi (chỉ lần đầu mới `ContextBudgetError`). Mặc định = một lần tìm như B1 (giống byte). `max_documents`: trần số đoạn của RIÊNG lần
+        Lần tìm thêm trong một lượt (Phase 9 B2 D5): đánh số từ `first_id`, bỏ đoạn `skip_ids` đã có; `prior_context` (ngữ cảnh các lần trước),
+        `instructions`, `history`… chỉ để ĐẾM `input_tokens` (số báo trong log). KHÔNG còn ngân sách token (User 19/11/2026: bỏ rào 16.384 —
+        chưa lần nào chạm, đầu vào lớn nhất từng ghi 6.233 token): mọi đoạn tìm được, tới trần SỐ ĐOẠN, đều vào ngữ cảnh nguyên vẹn; vượt cửa sổ
+        thật của model thì lời gọi model lỗi như mọi lỗi sinh. `max_documents`: trần số đoạn của RIÊNG lần
         dựng này (lịch "Lên kế hoạch" bản 2: một đoạn mỗi điểm); None ⇒ trần của settings."""
         blocks: list[str] = []
         sources: list[PackedSource] = []
@@ -130,11 +125,6 @@ class FullCorpusContextBuilder:
                 continue
             candidate_text = "\n\n".join([*blocks, self._block(source)])
             candidate_tokens = counted(candidate_text)
-            fits = candidate_tokens + self._reserved + self._margin <= self._context_limit
-            if not fits:
-                if not sources and not prior_context:
-                    raise ContextBudgetError("Highest-ranked evidence block exceeds budget")
-                break
             blocks.append(self._block(source))
             sources.append(source)
             ids.append(document.id)
