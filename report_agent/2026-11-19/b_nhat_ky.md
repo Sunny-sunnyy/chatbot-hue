@@ -14,6 +14,7 @@ Tạo 11:03 19/11/2026 (giờ `date`) từ khối sáng 19/11 của sổ riêng 
    **Sự cố:** sau phép thử "phá code cho test đỏ", B trả file về bằng `git checkout --` khi phần sửa CHƯA commit ⇒ mất phần sửa của một file; phát hiện bằng grep, áp lại, commit, chạy lại mọi kiểm trên đúng commit đã đẩy. Từ nay: commit TRƯỚC khi thử phá.
 9. **Cả bộ `backend/tests` trên mốc code `55d01a8`** — 1.437 đạt / 0 hỏng, 8 phút 16 giây, RAM đỉnh 4,5 GB; log `data/test_rong_2026-11-19/`.
 10. **Việc đọc / phản biện (0 USD):** kết quả câu lời dặn an toàn của C (thước "số câu tụt + 3" không tách được khỏi nhiễu ở cỡ này — không nới luật) · plan mức suy luận của E (4 chỗ sửa về tiền + thước) · bảng kiểm kê giới hạn · vòng tự soi · cách làm việc theo thư mục ngày · góc "việc phổ thông của người dùng thật" (hỏi đáp + xác thực + gợi ý).
+11. **Đọc diff nhánh script "mở ngày" của C** (`scripts/mo_ngay.sh` + cảnh báo trong `scripts/commit_push.sh`) — gộp được, 0 major, 4 minor (đường dẫn đầu ra "sẽ tạo" và tên file viết tắt bị báo thiếu; ngưỡng cỡ sổ chưa khớp khuôn mới; chạy trong worktree nhánh việc tạo file chưa theo dõi). Chạy lệnh `kiem` ở hai cây: không ghi gì. 0 USD.
 
 ## Tiền thật của B trong ngày (đọc từ log; cập nhật khi có lượt mới)
 0,0297 (sửa lịch) + 0,0048 (12 câu sau khi bỏ trần) + 0,0046 (10 câu sau khi bỏ ngân sách) = **0,0391 USD**; các lượt chạy test chưa tách (lượt trước ≈ 0,0002–0,0008 USD mỗi lượt theo log).
