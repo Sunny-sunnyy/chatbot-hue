@@ -38,7 +38,7 @@ from llm import quan_lich as ql
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
-from llm.lam_thay import nho_lam_thay
+from llm.lam_thay import XEP_LICH, nho_lam_thay, nho_xep_lich
 from llm import khoang_cach as kc
 from llm.luu_y_nguon import dong_tam_ngung, nhan_nguon
 from llm.do_so import do_ngay_di
@@ -116,6 +116,11 @@ class AssistantFlags:
     # câu người dùng) mà câu trả lời đã là câu từ chối khuôn ⇒ code thay bằng câu nói thật giới hạn (`CAU_LAM_THAY`), kết thúc `lam_thay`, không mở
     # mục web. Không model, không đổi chuỗi gửi model. TẮT tới khi đạt tiêu chí ghi trước.
     noi_that_lam_thay: bool = False
+    # 19/11 (plan private `data/len_lich_chat_2026-11-19/PLAN.md`): lời NHỜ XẾP LỊCH gõ tự do (`lam_thay.nho_xep_lich`) mà câu trả lời là câu từ chối
+    # khuôn ⇒ câu cố định chỉ sang trang Lên kế hoạch (cùng đường `_noi_that_lam_thay`, loại `xep_lich`). Chỉ có tác dụng khi `noi_that_lam_thay` VÀ
+    # biểu mẫu `lich_trinh_bieu_mau` cùng bật (trang đích phải có) — thiếu một trong hai thì cờ này im lặng không làm gì, KHÔNG ném lỗi (test tự
+    # tắt biểu mẫu vẫn chạy được khi cờ bật trong settings). Cuộc đã có lịch lưu ⇒ không thay. TẮT tới khi đạt tiêu chí ghi trước.
+    chi_sang_len_ke_hoach: bool = False
     # 15/11 (plan `2026-11-15-cau-noi-tiep-web-plan.md`): lượt CÓ lịch sử mà model đã tự tìm kho ⇒ phần web dùng câu tìm kho cuối model viết (có tên
     # nơi lấy từ lượt trước) thay câu người dùng gõ — câu hỏi tiếp "mở cửa mấy giờ" không còn ra web trần. TẮT tới khi đo đạt; cần `tra_web`
     web_cau_noi_tiep: bool = False
@@ -970,7 +975,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     """Phần trước lần gọi model của tuyến `tro_ly_hue`. Trả tin nhắn user cho trợ lý có công cụ (None = đường sinh một lần như B1).
     V2: không tìm trước (chỉ cần generator). Còn lại: `prepare_answer` (có thể đặt câu từ chối khi ngữ cảnh rỗng ⇒ `fixed_outcome`)."""
     trace.nhieu_y = flags.cau_nhieu_y and so_y(query) >= 2
-    trace.lam_thay = nho_lam_thay(query) if flags.noi_that_lam_thay else None
+    trace.lam_thay = _loai_lam_thay(query, flags, trace)
     if flags.lan_tim_dau == "v2":
         if generator is None:
             raise GeneratorNotReadyError("generator is not ready")
@@ -993,6 +998,18 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     if flags.lich_vao_hoi_thuong and trace.lich_luu is not None and trace.fixed_outcome is None:  # lượt biểu mẫu không qua hàm này
         context = f"{context}\n\n{_nguon_lich_dang_co(trace, flags.bang_lich_v2)}"
     return build_assistant_input(query, context, today)
+
+
+def _loai_lam_thay(query: str, flags: AssistantFlags, trace: AnswerTrace) -> str | None:
+    """Loại câu "nói thật giới hạn" của lượt (None = lượt thường). Cờ `noi_that_lam_thay` tắt ⇒ luôn None. Lời nhờ XẾP LỊCH gõ tự do chỉ được nhận khi
+    `chi_sang_len_ke_hoach` + biểu mẫu Lên kế hoạch cùng bật, cuộc CHƯA có lịch lưu (có rồi thì là đường sửa / hỏi trên lịch) và không phải lượt biểu mẫu."""
+    if not flags.noi_that_lam_thay:
+        return None
+    loai = nho_lam_thay(query)
+    if (loai is None and flags.chi_sang_len_ke_hoach and flags.lich_trinh_bieu_mau and trace.lich_luu is None and not trace.bieu_mau
+            and nho_xep_lich(query)):
+        return XEP_LICH
+    return loai
 
 
 def _noi_that_lam_thay(trace: AnswerTrace, text: str) -> bool:

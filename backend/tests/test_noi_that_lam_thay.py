@@ -18,7 +18,7 @@ from llm.assistant import (AnswerTrace, AssistantFlags, ROUTE_TRO_LY_HUE, _finis
                            answer_turn_stream_parallel, web_gate_open)
 from llm.full_corpus_prompt import CAU_LAM_THAY, INSUFFICIENT_ANSWER, REFUSAL_ANSWERS
 from llm.citations import CITATION_PATTERN
-from llm.lam_thay import DAT_CHO, GUI, TINH_TRANG, nho_lam_thay
+from llm.lam_thay import DAT_CHO, GUI, TINH_TRANG, XEP_LICH, nho_lam_thay
 from test_chat_stream import parse_sse
 
 CAU_DAT = "đặt giúp mình một phòng đôi cho tối thứ bảy gần sông Hương"
@@ -84,7 +84,7 @@ def test_information_questions_and_text_tasks_are_not_caught(cau):
 def test_every_honest_sentence_counts_as_a_refusal_everywhere():
     """Khoá: câu nói thật ∈ tập câu từ chối của log (`REFUSAL_ANSWERS`) và của bộ đánh giá (`is_refusal`) — thiếu thì một câu ngoài kho bị thay
     nhầm sẽ bị đếm là "được trả lời"."""
-    assert set(CAU_LAM_THAY) == {DAT_CHO, GUI, TINH_TRANG} and "lam_thay" in REMEMBERED_OUTCOMES
+    assert set(CAU_LAM_THAY) == {DAT_CHO, GUI, TINH_TRANG, XEP_LICH} and "lam_thay" in REMEMBERED_OUTCOMES
     for cau in CAU_LAM_THAY.values():
         assert cau in REFUSAL_ANSWERS and is_refusal(cau) and not CITATION_PATTERN.search(cau)   # không mã trích dẫn [n]
     assert "(#/cho-o)" in CAU_LAM_THAY[DAT_CHO] and "http" not in "".join(CAU_LAM_THAY.values())   # chỉ link NỘI BỘ tới trang Chỗ ở

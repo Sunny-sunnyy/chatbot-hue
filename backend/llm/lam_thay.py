@@ -8,6 +8,7 @@ Chỉ nhận tiếng Việt CÓ DẤU (quyết định sản phẩm sẵn có).
 import re
 
 DAT_CHO, GUI, TINH_TRANG = "dat_cho", "gui", "tinh_trang"
+XEP_LICH = "xep_lich"  # cờ `chi_sang_len_ke_hoach`: lời nhờ XẾP LỊCH gõ tự do (`nho_xep_lich`) — câu cố định chỉ sang trang Lên kế hoạch
 
 _TOI = r"(?:mình|tôi|tui|tớ|em|anh|chị|bọn mình|tụi mình|chúng tôi|nhà mình|gia đình mình)"
 _GIUP = r"(?:giúp|hộ|dùm|giùm)"
@@ -60,3 +61,43 @@ def nho_lam_thay(cau: str) -> str | None:
     if _LINK_DAT.search(chu) or (_DAT_NHO.search(chu) and not _DA_DAT.search(chu)):
         return DAT_CHO
     return None
+
+
+# ---------- cờ `chi_sang_len_ke_hoach` (19/11/2026, plan private `data/len_lich_chat_2026-11-19/PLAN.md`) ----------
+# Lịch gõ tự do đang TẮT (đo không đạt) ⇒ người gõ "lên lịch 2 ngày giúp mình" trong ô chat có lượt nhận câu từ chối khuôn. Hàm thuần dưới chỉ
+# nhận lời NHỜ XẾP LỊCH đi Huế; câu HỎI VỀ lịch (lịch lễ hội, lịch diễn, giờ mở cửa, lịch tàu xe), câu hỏi chi phí / "nên đi mấy điểm", câu sửa
+# một lịch đã có ⇒ False. Chỉ dùng để thay câu từ chối khuôn (`assistant._noi_that_lam_thay`) ⇒ sót một cách nói lạ thì lượt đó y như cờ tắt.
+_SO_NGAY = r"(?:(?:\d+|một|hai|ba|bốn|năm|nửa)\s*ngày|\d\s*n\s*\d\s*đ\b)"
+_LICH = r"(?:lịch trình|lịch(?!\s*(?:sử|thiệp|vạn niên))|kế hoạch|hành trình)"
+_LAP = r"(?:lên|xếp|sắp xếp|lập|làm|tạo|thiết kế|vạch)"
+# "lên lịch …", "xếp giúp mình lịch trình …", "lập cho mình kế hoạch …"
+_NHO_LICH = re.compile(rf"\b{_LAP}\s+(?:(?:{_GIUP}|cho)\s+(?:{_TOI}\s+)?)?(?:một\s+|1\s+|cái\s+)?{_LICH}\b")
+# câu mở đầu bằng chính cụm lịch + số ngày: "lịch 1 ngày chỉ đi các lăng, xuất phát 8h"
+_LICH_N_NGAY = re.compile(rf"^(?:(?:cho\s+)?{_TOI}\s+(?:cần|muốn|xin)?\s*|xin\s+)?(?:một\s+|1\s+)?{_LICH}\s+(?:đi\s+|tham quan\s+|du lịch\s+|chơi\s+)?(?:huế\s+)?{_SO_NGAY}")
+# câu kể chuyến đi, không hỏi gì: "mình đi Huế 2 ngày 1 đêm"
+_DI_N_NGAY = re.compile(rf"\b(?:đi|tới|đến|ra|vào|ở|chơi|thăm|du lịch|tham quan)\s+(?:chơi\s+)?huế\s+{_SO_NGAY}")
+# "…, xếp giúp" ở cuối câu
+_XEP_GIUP_CUOI = re.compile(rf"\b(?:xếp|sắp xếp)\s+{_GIUP}(?:\s+{_TOI})?(?:\s+(?:với|nhé|nha|đi|luôn))*\s*[.!]*$")
+# "lịch" của thứ khác (không phải lịch đi chơi) · lịch đã có · câu hỏi thông tin quanh việc lập lịch
+_LICH_THU_KHAC = re.compile(r"lịch(?:\s+trình)?\s+(?:của\s+)?(?:lễ hội|festival|diễn|biểu diễn|trình diễn|mở cửa|đóng cửa|hoạt động|tàu|xe|bay|chuyến|chạy|khởi hành|"
+                            r"chiếu|làm việc|nghỉ|thi|học|tết|sự kiện|ca huế|nhã nhạc)|âm lịch|dương lịch")
+_LICH_DA_CO = re.compile(r"lịch(?:\s+trình)?\s+(?:này|đó|kia|vừa|trên|cũ|đang|hiện|hôm nay|của mình|của tôi|của em)|(?:trong|khỏi|vào|ra khỏi)\s+lịch")
+_HOI_QUANH_LICH = re.compile(r"bao nhiêu|\bhết\b|\btốn\b|chi phí|ngân sách|\btiền\b|\bgiá\b|\bmấy\b|\bcách\b|làm sao|thế nào|ra sao|kinh nghiệm|"
+                             r"\bnên\b|\bcó nên\b|ở đâu|chỗ nào|khi nào|bao giờ|tại sao|vì sao")
+_CO_HOI = re.compile(r"\?|bao nhiêu|\bmấy\b|\bgì\b|\bnào\b|\bkhông\b|\bko\b|\bk\b|\bchưa\b|\bsao\b|\bđâu\b|bao giờ|\bnên\b|\bđủ\b|\bhết\b|\btốn\b|"
+                     r"\bgiá\b|\btiền\b|chi phí|ngân sách")
+
+
+def nho_xep_lich(cau: str) -> bool:
+    """Câu người dùng là lời NHỜ XẾP / LÊN LỊCH đi Huế gõ tự do. Danh sách cho phép hẹp, theo ba dạng: (1) động từ lập + "lịch / kế hoạch / hành
+    trình" (kể cả "… được không"); (2) câu KHÔNG có từ hỏi mở đầu bằng "lịch N ngày …" hoặc kể "đi Huế N ngày …"; (3) câu không có từ hỏi kết bằng
+    "xếp giúp". Việc bằng chữ (tóm, chép, viết), lịch của thứ khác, lịch đã có, câu hỏi chi phí / cách làm ⇒ False."""
+    chu = " ".join((cau or "").casefold().split())
+    if not chu or _VIEC_BANG_CHU.search(chu) or _LICH_THU_KHAC.search(chu) or _LICH_DA_CO.search(chu):
+        return False
+    if _NHO_LICH.search(chu):
+        return not _HOI_QUANH_LICH.search(chu)
+    if _CO_HOI.search(chu):
+        return False
+    return bool(_LICH_N_NGAY.search(chu) or _DI_N_NGAY.search(chu) or _XEP_GIUP_CUOI.search(chu))
+

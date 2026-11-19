@@ -70,6 +70,9 @@ CAU_LAM_THAY = {
                "Bạn xem gợi ý chỗ ở theo khu ở [trang Chỗ ở](#/cho-o) rồi liên hệ trực tiếp nơi bạn chọn.",
     "gui": "Mình không gửi thư hay tin nhắn được. Nếu bạn đã có lịch, dưới lịch có nút Sao chép lịch và Tải về để bạn tự gửi.",
     "tinh_trang": "Mình không gửi yêu cầu đặt chỗ và không xem được tình trạng phòng; bạn cần hỏi trực tiếp nơi lưu trú.",
+    # cờ `chi_sang_len_ke_hoach` (plan private data/len_lich_chat_2026-11-19/PLAN.md): lời nhờ xếp lịch gõ tự do — lịch gõ tự do đang tắt, chỉ sang biểu mẫu
+    "xep_lich": "Mình chưa xếp lịch theo câu gõ tự do được. Bạn mở [trang Lên kế hoạch](#/len-ke-hoach), chọn số ngày, số người và sở thích — "
+                "mình xếp lịch theo giờ kèm bản đồ ở đó, rồi bạn nhắn mình để sửa.",
 }
 # Mọi câu được tính là TỪ CHỐI (cờ `refusal` của log, `evaluation.is_refusal`): câu nói thật giới hạn cũng là một loại từ chối — thiếu ở đây thì
 # một câu ngoài kho bị thay nhầm sẽ bị đếm là "được trả lời".
