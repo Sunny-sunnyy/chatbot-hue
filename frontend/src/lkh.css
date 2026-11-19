@@ -222,8 +222,7 @@
   html.in-lich .lkh-dang-in { position: absolute; left: 0; top: 0; width: 100% !important; max-width: none !important; margin: 0; padding: 0; border: 0;
     box-shadow: none; background: #fff; color: #282923; font-family: Arial, sans-serif; }
   /* không in: nút, bản đồ nền + chú giải, link sang trang Chỗ ở, dòng "sai thì bấm Sửa". Ảnh điểm + ảnh quán in như trên màn hình. */
-  html.in-lich .lkh-dang-in .lich, html.in-lich .lkh-dang-in .bd, html.in-lich .lkh-dang-in .lkh-o-them, html.in-lich .lkh-dang-in .lich-hieu,
-  html.in-lich .lkh-dang-in .lkh-khong-in { display: none !important; }
+  html.in-lich .lkh-dang-in .lich, html.in-lich .lkh-dang-in .bd, html.in-lich .lkh-dang-in .lkh-o-them, html.in-lich .lkh-dang-in .lich-hieu { display: none !important; }
   /* dòng cuối: không tự đứng một trang riêng (lần chụp 19/11 ra trang 3 chỉ có hai dòng này) */
   html.in-lich .lkh-dang-in .lkh-chi-in { display: block; margin-top: 4mm; font-size: 9pt; break-before: avoid-page; break-inside: avoid; }
   html.in-lich .lkh-dang-in .lich-ghi-chu, html.in-lich .lkh-dang-in .notice { break-after: avoid-page; }
