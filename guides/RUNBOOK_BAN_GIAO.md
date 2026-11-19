@@ -16,13 +16,13 @@ session đó điền trước 30/11. Luật cứng của dự án vẫn ở `AGE
 - **Dừng và hỏi User** khi: việc tốn tiền API ngoài mức User đã cho, xoá dữ liệu / collection, đổi model / provider, deploy, sửa kho
   hay Golden, hoặc kết quả ngược với quyết định đã ghi ở `session_prompt/Project_Status.md` §5.
 
-**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 265 bài ⇒ 9.436 đoạn, 23 cờ bật; kho hoặc cờ đổi thì sửa cả hai nơi):
+**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 265 bài ⇒ 9.436 đoạn, 25 cờ bật; kho hoặc cờ đổi thì sửa cả hai nơi):
 
 | Kiểm gì | Lệnh (từ gốc repo) | Phải ra |
 |---|---|---|
 | Số bài / số đoạn của kho | `uv run python -c "import json;d=json.load(open('data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json'))['corpus'];print(d['file_count'],d['chunk_count'])"` | `265 9436` [đã chạy 18/11] |
 | Qdrant khớp | `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 \| grep -o '"points_count":[0-9]*'` | `"points_count":9436` [đã chạy 18/11; cần Qdrant bật] |
-| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `23` [đã chạy 18/11] |
+| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `25` [đã chạy 19/11 trên `55d01a8`] |
 
 ## 1. Bật Qdrant
 
@@ -235,6 +235,7 @@ lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 
 | Đường "tìm thêm + web" | Chữ đầu ~6 s, cả câu có web ~15 s (vượt sàn 3 / 5 s); câu thường đạt sàn | Hai thử nghiệm tốc độ đều âm; User bỏ "tra web sớm", gác "gộp câu tìm" | `R/b_dem_toc_do.md`; PS §2 (15/11) |
 | Câu ngoài phạm vi bị định tuyến xếp là khẩn cấp (vd y tế) | Trợ lý từ chối, cổng web mở | User nhận từ 09/11 khi gỡ câu soạn sẵn | PS §4 (định tuyến phương án B) |
 | Câu ngoài kho về giá vé đi lại | Có lượt trả lời "nguồn không nêu…" thay vì câu từ chối chuẩn (đo 3 / 5) | User nhận 15/11 | PS §5 dòng 15/11 |
+| Hỏi quy định / cách tham gia một hoạt động mà bài kho có câu "tạm ngừng khi mưa lũ / có lệnh cấm / thời tiết xấu" | Dưới câu trả lời có dòng ĐẬM "Lưu ý trong nguồn «tên bài — tên mục»: <nguyên câu của bài>" — CHỈ khi câu trả lời đã trích đúng bài có câu đó và chưa tự nêu ý. Lượt model trích bài khác thì KHÔNG có dòng (lượt thật 19/11: 2 / 3 có; dữ liệu cũ 7 / 7). Tối đa một dòng; lượt có lịch không có dòng này | User chọn 19/11 "bật ngay, ghi giới hạn"; xét cả đoạn CHƯA trích sẽ gán nhầm cảnh báo của nơi khác (đếm thử: 1 câu / 4 lượt đều nhầm); User không đầu tư thêm mảng bão / lũ. Cờ `noi_dong_tam_ngung`; cả kho có 10 câu ở 7 bài luật chép được; không chữa các câu thiếu cảnh báo kiểu khác | `backend/llm/luu_y_nguon.py`; `R/c_s09_noi_dong_tam_ngung_implementation.md` |
 | Hỏi "ăn gì gần <một chùa lớn>" | Trợ lý nói kho không có quán dù kho CÓ bài quán ghi gần đó | LỖI TÌM thật, chưa tái hiện trên server; để sau lượt đo cuối B7 | HO chiều 17/11 (#29) |
 | Nhận ảnh: model lỗi vì chạm trần token | "Không nhận ra ảnh", không có gợi ý thử lại (đo 2 / 149) | Hiếm; chưa có nút huỷ lúc "Đang xem ảnh…" | HO tối 15/11 |
 
