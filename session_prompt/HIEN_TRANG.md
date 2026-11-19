@@ -6,7 +6,7 @@ Viết lại lần cuối: 10:49 19/11/2026 (giờ `date`; sau khi bật hai c�
 phiên ở `session_prompt/START_SESSION.md`; sổ việc dài chỉ mở khi cần. `AGENTS.md`, code và file cấu hình thắng trang này — thấy lệch thì báo để sửa trang.
 
 Từ dùng: **phiên** = một cửa sổ agent · **phiên điều phối (A)** = phiên nói chuyện với User và giao việc; **B, C, E** = phiên làm việc; **D** = phiên giảng (tuỳ chọn).
-Làm MỘT MÌNH ⇒ "báo phiên điều phối" = hỏi User (`guides/KHI_CHI_CO_MOT_AGENT.md`) · **User** = chủ dự án (không đọc code; đọc `bai_hoc/`) · **kho** = bộ bài
+Làm MỘT MÌNH ⇒ "báo phiên điều phối" = hỏi User (`guides/KHI_CHI_CO_MOT_AGENT.md`) · **User** = chủ dự án (đọc `bai_hoc/`, không đọc code) · **kho** = bộ bài
 Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** = một dòng bật / tắt trong `backend/config/settings.yaml` · **bộ câu mẫu** ("Golden") = 176 câu hỏi kèm
 đáp án, riêng tư · **câu kín** (`*sealed*`) = bộ câu agent không được mở · **sổ vết** = bản ghi debug từng lượt · **lượt đo cuối** = lần chấm toàn bộ trên bản code đứng yên.
 
@@ -31,15 +31,15 @@ Thứ tự việc — KHÔNG gắn ngày: bước trước đạt và máy rản
 
 | Bước | Việc | Trạng thái |
 |---|---|---|
-| 1–4 | Cả bộ test · soát tích hợp · code đứng yên · lượt đo cuối phần đã thấy (18/11, có mục không đạt) | XONG; bộ kín NOT RUN chờ User |
-| 4b | Sửa lỗi an toàn trước khi ghi mốc (User 19/11): câu thiếu cảnh báo "tạm ngừng mùa lũ" | bản lời dặn KHÔNG đạt (cờ `luu_y_an_toan` không vào main); bản CODE đã bật, giới hạn ở runbook 10.1 |
+| 1–4 | Cả bộ test · soát tích hợp · code đứng yên · lượt đo cuối phần đã thấy (18/11, có mục không đạt) | XONG; bộ kín NOT RUN |
+| 4b | Sửa lỗi an toàn trước khi ghi mốc (User 19/11): câu thiếu cảnh báo "tạm ngừng mùa lũ" | bản lời dặn KHÔNG đạt (không vào main); bản CODE đã bật, giới hạn ở runbook 10.1 |
 | 5 | **Đợt hoàn thiện local — theo hướng mới: việc PHỔ THÔNG của người dùng thật** (dưới) | đang bàn với User |
 | 6 | Deploy AWS (cần User một lần: tài khoản, khoá, ngân sách) | chưa |
 | 7 | **User test TOÀN BỘ một lần** (`data/test_cuoi/DANH_SACH.md`) ⇒ User đóng Phase 9 | chưa |
 
 **Hướng của User từ 19/11:** KHÔNG mở thêm việc nào về bão / lũ / khẩn cấp (hành vi an toàn đang có giữ nguyên). Ưu tiên việc 100 người dùng thật sẽ thử: hỏi đáp +
 xác nhận thông tin · gợi ý quán / chỗ ở / địa chỉ · lịch trình + ngân sách · làm thay (đặt phòng, gửi thư) · việc phổ thông khác. Ba phiên đã nộp danh sách việc;
-phiên điều phối gom, hỏi User từng câu. Ghi "Phase 9 xong phần nhóm": phiên điều phối làm sau lượt cả bộ test trên `main`.
+phiên điều phối gom, hỏi User từng câu. Ghi "Phase 9 xong phần nhóm": sau lượt cả bộ test trên `main`.
 
 Việc đang mở (ai · việc) — chi tiết ở sổ việc (mục 7):
 - **A:** gom ba danh sách "việc phổ thông", tra cứu + xin tư vấn model khác hãng, hỏi User; gộp nhánh; ghi mốc.
@@ -49,7 +49,7 @@ Việc đang mở (ai · việc) — chi tiết ở sổ việc (mục 7):
 - **Chưa ai nhận:** mục không đạt còn lại của lượt đo cuối (câu ngoài kho trả lời sai khuôn · câu tụt "Đủ ý") · lỗi tìm "quán gần một chùa lớn" (10.1) · runbook mục 8.
 
 Số nhiễu (19/11): hai lượt bộ câu mẫu không đổi gì lệch 1 câu "Đúng" · 2 "Đủ ý" · 7 "Trọng tâm" ⇒ phép thử đổi lời dặn phải có bên tắt CÙNG BUỔI, chấm cùng lô.
-Hỏi User > 8 hộp / ngày ⇒ gom câu.
+Hai con số đo cách làm (bị lật lại · User nhắc lại): `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / ngày ⇒ gom câu.
 
 ## 3. Đang chờ User (chỉ những việc ghi ở đây đang chờ User; việc đã chốt hoặc đã hỏi rồi thì đừng hỏi lại)
 
@@ -65,14 +65,13 @@ Sản phẩm:
 - Bão / lũ / khẩn cấp: KHÔNG đầu tư thêm (User 19/11); hỏi tiếp sau câu bão chỉ xét câu liền trước; dòng "tạm ngừng" chỉ hiện khi câu trả lời trích bài có cảnh báo — giới hạn đã nhận.
 - Không nói giá phòng ở phần gợi ý chỗ ở (câu hỏi chi phí chung vẫn nêu khoảng giá có nguồn từ kho). Khối "Nơi ở" chỉ hiện khi người dùng
   đã chọn hạng chỗ ở — ở biểu mẫu hoặc nói bằng lời.
-- Việc phải luôn đúng (phép tính, ngày, tiền, thứ tự bắt buộc) do CODE làm; model chỉ diễn đạt. Giữ model `gpt-6-luna`, giữ `e5-small`; số đoạn / cách đưa ngữ cảnh: đang mở lại để thử (19/11).
+- Việc phải luôn đúng (phép tính, ngày, tiền, thứ tự bắt buộc) do CODE làm; model chỉ diễn đạt. Giữ model `gpt-6-luna`, giữ `e5-small`; số đoạn / cách đưa ngữ cảnh: đang mở lại để thử (A hiểu từ lời User 10:04 19/11 về cách đưa ngữ cảnh; đã báo, User chưa phản đối; bật gì do User quyết).
 - **User 10:04 19/11/2026: chất lượng TRƯỚC, tiền / tốc độ sau — GỠ các rào tối ưu sớm:** bỏ sàn tiền "TB ≤ 0,0005 USD / câu" và sàn tốc độ "chữ đầu p50 ≤ 3 s, p95 ≤ 5 s" (từ nay tiền / giây chỉ ĐO và BÁO cạnh chất lượng, không dùng để loại phương án; đặt lại sau khi chất lượng đã đạt, User quyết); bỏ trần token đầu ra (đã gỡ); bỏ ngân sách ngữ cảnh 16.384 token / lượt; bỏ trần lịch sử 1.500 token; thử mức suy luận low / medium / high; User cho dùng tiền API để thử (một việc > 1 USD vẫn báo trước). Thứ tự lỗi tệ nhất giữ nguyên: sai cảnh báo an toàn > nói chắc mà sai >
   trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
 - Không mở lại khi User chưa nêu: giọng nói (dẹp) · so ảnh bằng embedding (hoãn, chưa có ngày; ảnh mẫu còn giữ) · nhớ sở thích người dùng (không làm) ·
   "tra web sớm" (bỏ) · "gộp câu tìm" (gác) · mục web giữ bản dài (bản gọn đã thử, không dùng).
 - User chỉ chưa có giờ TỰ TAY TEST (test toàn bộ một lần ở cuối); vẫn duyệt, trao đổi bình thường ⇒ việc "hỏi User trước" hỏi ngay, không dồn; nhóm không chờ User đóng Phase 9 mới làm tiếp. Deploy AWS: sau đợt hoàn thiện local.
-- Đây là ĐỒ ÁN TỐT NGHIỆP, chấm một lần, User trình bày với giảng viên — tài liệu không dùng chữ "sếp" / "công ty"; gói "giảng viên hỏi vặn" làm sau khi
-  hệ thống hoàn tất và User đã đọc bài học.
+- Đây là ĐỒ ÁN TỐT NGHIỆP, chấm một lần — tài liệu không dùng chữ "sếp" / "công ty"; gói "giảng viên hỏi vặn" làm sau khi hệ thống hoàn tất.
 
 Cách làm:
 - Quyền theo bảng "Quyền thường trực" trong `AGENTS.md` — KHÔNG hỏi "quyền phiên" mỗi lần mở. Cách làm việc áp cho mọi coding agent, không gắn mốc ngày nào.
@@ -98,13 +97,13 @@ Lệnh từng bước + kết quả mong đợi: `guides/RUNBOOK_BAN_GIAO.md` m�
 
 ## 6. Lệnh kiểm các con số của trang này
 
-Ba lệnh (số bài / số đoạn của kho · Qdrant khớp · số cờ bật) kèm kết quả phải ra: `guides/RUNBOOK_BAN_GIAO.md` mục 0, bảng "Kiểm số của trang hiện trạng".
+Ba lệnh (số bài / đoạn của kho · Qdrant khớp · số cờ bật) kèm kết quả phải ra: `guides/RUNBOOK_BAN_GIAO.md` mục 0.
 
 ## 7. Nhật ký ở đâu (KHÔNG bắt đọc lúc mở phiên — mở khi cần trả lời một câu cụ thể)
 
 - `session_prompt/CURRENT_HANDOFF.md` — sổ việc theo giờ (khối đầu mới nhất) · `session_prompt/sessions/STATUS_<X>.md` — sổ riêng từng phiên.
 - `session_prompt/Project_Status.md` — mục 4 từng tính năng + mã commit · mục 5 quyết định theo ngày · mục 8 bẫy kỹ thuật · việc đã đóng: `PROJECT_HISTORY.md`, `archive/`.
-- Luật đầy đủ: `session_prompt/Session_Prompt.md`, `session_prompt/WORKFLOW.md` · cách làm việc: `guides/CACH_LAM_VIEC.md`.
+- Luật đủ: `session_prompt/Session_Prompt.md`, `WORKFLOW.md` · cách làm việc: `guides/CACH_LAM_VIEC.md`.
 
 ## 8. Cách giữ trang này
 

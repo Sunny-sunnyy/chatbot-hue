@@ -16,13 +16,13 @@ session đó điền trước 30/11. Luật cứng của dự án vẫn ở `AGE
 - **Dừng và hỏi User** khi: việc tốn tiền API ngoài mức User đã cho, xoá dữ liệu / collection, đổi model / provider, deploy, sửa kho
   hay Golden, hoặc kết quả ngược với quyết định đã ghi ở `session_prompt/Project_Status.md` §5.
 
-**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 265 bài ⇒ 9.436 đoạn, 23 cờ bật; kho hoặc cờ đổi thì sửa cả hai nơi):
+**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 265 bài ⇒ 9.436 đoạn, 25 cờ bật; kho hoặc cờ đổi thì sửa cả hai nơi):
 
 | Kiểm gì | Lệnh (từ gốc repo) | Phải ra |
 |---|---|---|
 | Số bài / số đoạn của kho | `uv run python -c "import json;d=json.load(open('data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json'))['corpus'];print(d['file_count'],d['chunk_count'])"` | `265 9436` [đã chạy 18/11] |
 | Qdrant khớp | `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 \| grep -o '"points_count":[0-9]*'` | `"points_count":9436` [đã chạy 18/11; cần Qdrant bật] |
-| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `23` [đã chạy 18/11] |
+| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `25` [đã chạy 19/11 trên `55d01a8`] |
 
 ## 1. Bật Qdrant
 

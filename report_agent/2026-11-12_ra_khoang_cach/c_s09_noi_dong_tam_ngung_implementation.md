@@ -5,7 +5,7 @@ Việc A giao sáng 19/11/2026 sau khi User chọn "sửa lỗi an toàn trướ
 
 ## Cho User — bốn ý
 1. **Người dùng thấy gì khác:** hỏi về quy định / cách tham gia một hoạt động mà bài kho có câu "tạm ngừng khi mưa lũ, có lệnh cấm hay thời tiết xấu" ⇒ dưới câu
-   trả lời có thêm một dòng in ĐẬM "Lưu ý trong nguồn «tên bài — tên mục»: …" chép nguyên câu đó của bài. Chữ câu trả lời không đổi. [máy kiểm + người thứ hai kiểm]
+   trả lời có thêm một dòng in ĐẬM "Lưu ý trong nguồn «tên bài — tên mục»: …" chép nguyên câu đó của bài. Chữ câu trả lời không đổi. [máy kiểm: đo độ đậm trên trình duyệt + ảnh màn hình; chưa có người thứ hai xem ảnh]
 2. **Bằng chứng:**
    - Lỗi gốc (lượt đo cuối 18/11): câu thuộc bộ an toàn bỏ ý này 7 / 7 lần dù đoạn đang trích có ghi. [máy kiểm]
    - Bản thứ nhất — thêm MỘT câu vào lời dặn của model (cờ `luu_y_an_toan`, nhánh `p9-c-s09-luu-y-an-toan`, không vào `main`): ở đúng câu đó ý được nêu 8 / 8 lần
@@ -15,7 +15,8 @@ Việc A giao sáng 19/11/2026 sau khi User chọn "sửa lỗi an toàn trướ
    - Bản thứ hai — CODE (cờ `noi_dong_tam_ngung`, `backend/llm/luu_y_nguon.py`, đang BẬT): không gọi model, yêu cầu gửi model giống từng byte cả khi cờ tắt lẫn bật
      (228 / 228). Chạy lại bước nối trên mọi câu trả lời đã có: câu lỗi được nối đúng 7 / 7 lần; 0 / 8 lần nối trùng khi câu trả lời đã nêu; 0 lần nối cho ba câu có
      cảnh báo của nơi KHÁC trong ngữ cảnh; 0 câu của bốn lượt bộ câu mẫu bị nối. Cả kho chỉ có 10 câu ở 7 bài mà luật có thể chép — người thứ hai đã đọc hết, đều
-     đứng một mình được. Lượt thật qua server × 3 (0,002 USD): 2 / 3 lần có dòng đậm. [máy kiểm + người thứ hai kiểm]
+     đứng một mình được. [máy kiểm + người thứ hai kiểm — phần chạy lại bước nối và danh sách câu của kho]
+   - Lượt thật qua server × 3 (0,002 USD): 2 / 3 lần có dòng đậm. [máy kiểm, chưa có người thứ hai]
    - Test: 31 test của file mới, đã thấy đỏ khi phá code; cả bộ test trên nhánh trước lần gộp cuối: 1.429 đạt, 0 hỏng. [máy kiểm]
    - Số dùng lại được: hai lượt bộ câu mẫu KHÔNG đổi gì, cách một ngày, lệch nhau 1 câu "Đúng" · 2 câu "Đủ ý" · 7 câu "Trọng tâm" (129 câu số chính, chấm cùng một
      lô mù) ⇒ ngưỡng "≤ 4 câu tụt" của lượt đo cuối nằm sát mức dao động này. [máy kiểm; một cặp, hai ngày khác nhau]
