@@ -20,7 +20,7 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 - Không được: mở thêm việc bão / lũ / khẩn cấp; sửa nội dung kho, đổi quyết định "không nói giá phòng", nhận vị trí người dùng, gửi thư từ server khi User chưa chọn; đặt sàn "0 câu" cho bộ phổ thông.
 
 ## 3. Đưa ngữ cảnh lớn hơn vào model (User hỏi 19/11)
-- Trạng thái: chưa bắt đầu; xếp SAU việc 1 (mỗi lần đổi một thứ). Ai: chưa giao.
+- Trạng thái: C viết plan `data/ngu_canh_lon_2026-11-19/PLAN.md` (bản `fa026b763ca1`, CHƯA duyệt — B đang review một vòng); bước đếm cỡ mục / bài xong (mục trung vị 3 đoạn ⇒ đơn vị mở rộng là MỤC). Chạy SAU việc 1. **User 11:32 19/11/2026: việc này vượt 1 USD vẫn duyệt** (phiên điều phối hiểu: chỉ cho việc này; trần mới vẫn ghi vào plan TRƯỚC khi chạy, ghi tiền thật). Ai: C viết · B review + chạy.
 - Hồ sơ: cách một dự án khác của User làm `data/ngu_canh_nho_lon_2026-11-19/` · lần thử cũ 25/10 ở `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` mục N2-02 (kém hơn vì ngân sách chặt + mở rộng theo thứ hạng) · bảng giới hạn `data/kiem_ke_gioi_han_2026-11-19/BANG_GIOI_HAN.md`.
 - Bước kế: plan 1 trang — tìm đoạn nhỏ ⇒ gom theo mục / bài ⇒ khử trùng ⇒ đưa N đơn vị khác nhau, so với 10 đoạn; và biến thể 15 đoạn (đếm 0 USD trước).
 
