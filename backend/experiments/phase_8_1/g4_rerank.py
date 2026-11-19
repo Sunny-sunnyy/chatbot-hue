@@ -186,7 +186,7 @@ def run_config(args) -> tuple[list[dict], dict]:
     if args.reranker == "luna":
         generation = settings["full_corpus_generation"]
         luna = OpenAI(api_key=os.environ[generation["api_key_env"]], timeout=generation["timeout_seconds"], max_retries=0)
-        meta.update({"model_id": generation["model"], "max_output_tokens": generation["answer_max_output_tokens"]})
+        meta.update({"model_id": generation["model"]})
     elif args.reranker != "none":
         reranker = CrossEncoderReranker(MODELS[args.reranker], device=args.device, max_length=MAX_PAIR_TOKENS)
         load_start = time.perf_counter()

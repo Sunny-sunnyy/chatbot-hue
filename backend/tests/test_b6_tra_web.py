@@ -181,7 +181,7 @@ def test_web_section_separate_call_no_tools_no_history_and_only_cited_sources():
     assert (web["outcome"], web["n_ket_qua"], web["n_ma"], [s["id"] for s in web["nguon"]]) == ("co_muc", 3, 1, [1])
     assert trace.answer == INSUFFICIENT_ANSWER  # câu kho giữ nguyên; chữ web chỉ ở `trace.web`
     kw = calls[0]
-    assert kw["instructions"] == TU_WEB_LUAT and kw["tools"] == [] and kw["max_output_tokens"] == 1024
+    assert kw["instructions"] == TU_WEB_LUAT and kw["tools"] == [] and not kw.get("max_output_tokens")  # không trần token đầu ra (User 19/11/2026)
     assert [item["role"] for item in kw["input"]] == ["user"]  # một tin nhắn: không lịch sử, không ngữ cảnh kho
     sent = json.dumps(kw["input"], ensure_ascii=False)
     assert "[w3]" in sent and "https://" not in sent  # đoạn trích có mã, link không gửi model

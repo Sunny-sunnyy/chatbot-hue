@@ -178,7 +178,6 @@ def build_live_smoke_artifact(
             "provider": gen_cfg.get("provider"),
             "model": gen_cfg.get("model"),
             "token_encoding": gen_cfg.get("token_encoding"),
-            "answer_max_output_tokens": gen_cfg.get("answer_max_output_tokens"),
             "timeout_seconds": gen_cfg.get("timeout_seconds"),
             "context_limit": gen_cfg.get("context_limit"),
             "reserved_output_tokens": gen_cfg.get("reserved_output_tokens"),

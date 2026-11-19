@@ -177,7 +177,7 @@ def test_flag_off_agent_and_schema_unchanged_flag_on_only_adds_two_lines():
     assert "chua_ho_tro" not in str(SuaLichOutput.model_json_schema()) and "chua_ho_tro" in str(SuaLichOutputCHT.model_json_schema())
     them = [d for d in difflib.ndiff(SUA_LICH_LOI_DAN.splitlines(), SUA_LICH_LOI_DAN_CHT.splitlines()) if d[:1] in "+-"]
     assert len([d for d in them if d[0] == "+"]) == 2 and len([d for d in them if d[0] == "-"]) == 1
-    assert g.sua_lich_cht_agent.model_settings.max_tokens == g.sua_lich_agent.model_settings.max_tokens
+    assert g.sua_lich_cht_agent.model_settings.max_tokens is None and g.sua_lich_agent.model_settings.max_tokens is None
 
 
 def test_flag_needs_edit_flag():
