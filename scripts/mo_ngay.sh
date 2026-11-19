@@ -9,6 +9,8 @@
 #                                tồn tại (nhánh: có trên origin hoặc đã gộp vào origin/main); `HIEN_TRANG.md` ≤ 14.000 byte; `VIEC_DANG_MO.md` ≤ 60 dòng.
 #                                Thoát 1 khi có chỗ lệch (để ghép `scripts/mo_ngay.sh kiem && …`), 0 khi sạch.
 #
+# Quy ước: đường dẫn CHƯA có vì việc chưa chạy ⇒ viết chữ "(sẽ tạo)" trên cùng dòng, `kiem` bỏ qua cả dòng đó. Tiền tố tên file (`bai_hoc/26`) được coi là có
+# khi có file bắt đầu bằng tiền tố ấy. Số dòng in ra khi báo thiếu là số dòng SAU khi bỏ các dòng "(sẽ tạo)".
 # `kiem` KHÔNG thấy: số, tên hàm, lệnh, mẫu có < > * … $ { }, URL, đường dẫn ngoài repo, tên file trần không có "/", và chuỗi mà thư mục đầu không có
 # ở gốc repo (gõ sai ngay tên thư mục đầu thì lọt). Thư mục riêng tư (`data/`, kho, `gửi chatgpt/`) vắng ở cây này ⇒ đếm "bỏ qua", không báo thiếu.
 set -uo pipefail
@@ -34,9 +36,10 @@ kiem_duong_dan() {  # $1 = nhãn file · stdin = nội dung cần quét ⇒ in c
     case "$p" in frontend/dist|frontend/dist/*|frontend/node_modules*) [ -e "$p" ] || { rieng=$((rieng + 1)); continue; } ;; esac  # bản dựng, không vào git
     [ -e "$dau" ] || [ -e "$SP/$dau" ] || continue          # thư mục đầu không có ở gốc repo / session_prompt ⇒ không phải đường dẫn của repo
     [ -e "$p" ] || [ -e "$SP/$p" ] || [ -e "$SP/sessions/$p" ] && continue
+    compgen -G "$p*" >/dev/null && continue                  # tiền tố tên file (vd `bai_hoc/26` cho `bai_hoc/26_….md`) ⇒ coi là có
     echo "  THIẾU $nhan:$n: \`$s\`"
     thieu=$((thieu + 1))
-  done < <(grep -n -o '`[^`]*`')
+  done < <(grep -v '(sẽ tạo)' | grep -n -o '`[^`]*`')  # dòng có chữ "(sẽ tạo)" = đường dẫn đầu ra của việc chưa chạy ⇒ không kiểm cả dòng
 }
 
 kiem_nhanh() {  # $1 = nhãn file · stdin = nội dung ⇒ tên nhánh dạng p<số>-… trong dấu ` phải có trên origin hoặc đã gộp vào origin/main
@@ -76,6 +79,7 @@ if [ "${1:-}" = "kiem" ]; then lenh_kiem; exit $?; fi
 [ $# -eq 0 ] || { echo "Dùng: scripts/mo_ngay.sh [kiem]" >&2; exit 2; }
 
 # ---------- 1. thư mục ngày + khung ----------
+[ "$(git branch --show-current)" = main ] || echo "CẢNH BÁO — đang ở nhánh '$(git branch --show-current)', không phải main: khung TONG_HOP tạo ở đây là file chưa theo dõi của cây NÀY (đừng commit theo nhánh việc); mở ngày thì chạy ở cây chính."
 thu=(x "thứ Hai" "thứ Ba" "thứ Tư" "thứ Năm" "thứ Sáu" "thứ Bảy" "Chủ nhật")
 ngay_vn=$(date +%d/%m/%Y); ten_thu=${thu[$(date +%u)]}
 D="report_agent/$hom_nay"
