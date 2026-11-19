@@ -11,7 +11,15 @@ Tạo 11:20 19/11/2026 (giờ `date`) lúc kết phiên nhẹ. Sổ cũ nguyên 
 6. **Script cách làm theo ngày** `scripts/mo_ngay.sh` (mở ngày + lệnh `kiem`) + một dòng cảnh báo trong `scripts/commit_push.sh` — đã ở main. Bẫy: vòng đếm sau dấu ống mất bộ đếm; hai lần commit / push bằng git thường thay `scripts/commit_push.sh` (vấp luật đã đọc: 1).
 7. **Đọc / phản biện (0 USD)**: nhánh nhật ký của B (ready) · nhánh trang cách làm việc của E (4 chỗ sửa chữ) · bảng kiểm kê giới hạn · vòng tự soi · cách làm theo thư mục ngày · góc lịch trình + ngân sách của hướng việc phổ thông (kho có giá vé 6 / 6 bài, món ăn 83 / 111 bài; đi lại + chỗ ở gần như không có giá; ba bảng lịch không có cột giá).
 
+### Buổi trưa (phiên mở 11:25 19/11/2026; C ghi 13:21 19/11/2026, giờ `date`) — 0 USD
+8. **Plan "đưa ngữ cảnh lớn hơn vào model"** (việc 3 của mục lục việc; riêng tư): bản duyệt `689f192dc249` sau hai vòng review của B. Bước đếm 0a + 0b xong: 15 đoạn (N chọn theo luật ghi trước) thêm đủ đoạn đúng ở 7 câu, "cả mục" 6 câu, trên 55 câu có nhãn ⇒ cổng đang ở vùng "6–9, phiên điều phối quyết", chờ người đọc 26 câu yếu. Công cụ bọc bước tìm + chạy có phí đã viết, chưa chạy lượt có phí nào. Bẫy: phép đối chứng "10 đoạn giống bản đang chạy" lúc đầu RỖNG (B bắt) — đã thay bằng so từng đoạn, đã thấy đỏ.
+9. **Đọc tay bậc 1 thí nghiệm mức suy luận** (37 câu × 3 mức + 8 câu an toàn × 3): 0 nói chắc sai mới ở low / high; một dấu hiệu thiếu cảnh báo ở low (một câu an toàn, một lần chạy); không thấy khác biệt nhất quán về đủ ý. Cổng sang bậc 2 đạt cho cả hai.
+10. **Chấm 80 kịch bản phổ thông** (độc lập với B): xong việc 53 / 80 · có điều sai 4 · hỏi lại / quá dài 2. Lỗi nặng nhất: lượt hỏi thường không thấy lịch đã lưu nên trả lời trên một lịch khác (3 ca).
+11. **Review** nhánh sửa "trả lời rỗng" của B (ready; test mới đỏ khi bỏ bản sửa — C tự chạy; một ca còn sót ghi vào report) · liếc diff công cụ chấm hai bên của B (đạt).
+12. **Sửa nhãn bằng chứng** ở report bản code câu thiếu cảnh báo: C đã ghi "người thứ hai kiểm" cho việc người khác chỉ ĐỌC — báo xong bị lật lại: 1.
+13. **Test đổi cờ `noi_dong_tam_ngung`**: 31 đạt / 0 hỏng, cả có lẫn không `--env-file` (RSS 130 MB). SỰ CỐ trước đó: C chạy 20 file test trong một tiến trình (hiểu "file chạm cờ" quá rộng), xâu sẵn lượt hai ⇒ RAM cả máy chạm sàn, phiên điều phối phải dừng tiến trình. Bẫy: việc nặng chạy TỪNG lệnh, đo RSS trước, không xâu hai lượt trong một lệnh nền.
+
 ## Tiền thật của C trong ngày
-0,21179 (lượt đo bản lời dặn) + 0,00213 (lượt thật bản code) = **0,2139 USD**. Hai con số: báo xong bị lật lại 0 · User phải nhắc lại 0.
+0,21179 (lượt đo bản lời dặn) + 0,00213 (lượt thật bản code) = **0,2139 USD**. Buổi trưa: 0 USD. Hai con số cả ngày: báo xong bị lật lại 1 (nhãn bằng chứng, mục 12) · User phải nhắc lại 0.
 
 ## Việc ĐANG DỞ — xem `session_prompt/sessions/STATUS_C.md`
