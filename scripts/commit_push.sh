@@ -19,6 +19,16 @@ for f in "$@"; do
   [ -e "$f" ] || git ls-files --error-unmatch -- "$f" >/dev/null 2>&1 || chua "không thấy file '$f'"
 done
 
+# Cách làm theo thư mục từng ngày (19/11/2026): report mới viết vào thư mục HÔM NAY; cập nhật ngày sau = file mới ⇒ CẢNH BÁO (không chặn) khi
+# file thuộc `report_agent/<ngày>/` của một ngày khác hôm nay (bẫy hay gặp: ghi nhầm thư mục hôm qua).
+hom_nay=$(date +%F)
+for f in "$@"; do
+  case "$f" in report_agent/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/*)
+    d=${f#report_agent/}; d=${d%%/*}
+    [ "$d" = "$hom_nay" ] || echo "CẢNH BÁO — '$f' nằm ở thư mục ngày $d, hôm nay là $hom_nay (không chặn; report mới thuộc thư mục hôm nay)" >&2 ;;
+  esac
+done
+
 git add -- "$@" || chua "git add lỗi"
 git diff --cached --stat
 if ! git commit -m "$msg"; then
