@@ -7,7 +7,7 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 ## 1. Thí nghiệm mức suy luận low · medium · high (User giao 19/11)
 - Trạng thái: plan đã duyệt, công cụ sẵn + chạy khô, CHƯA chạy lượt có phí nào. Ai: E đặt tiêu chí · B chạy · C đọc tay.
 - Plan + sha duyệt: `data/phase_9/muc_suy_luan/PLAN.md` bản `eb0a43776125` (A duyệt 19/11; danh sách 45 câu bậc 1 ở plan dòng 35–36). "medium" = KHÔNG gửi tham số (nhánh gửi tường minh chỉ để kiểm 10 câu).
-- Không có nhánh code — chỉ công cụ riêng tư `data/phase_9/muc_suy_luan/tools/`, chạy theo thứ tự: `chup_muc.py` ⇒ `chay_xen_ke.py` ⇒ `an_toan_muc.py` ⇒ `in_gia.py`; `ba_muc.py` cho bậc 2. Kết quả ra `data/phase_9/muc_suy_luan/bac_1/`.
+- Không có nhánh code — chỉ công cụ riêng tư `data/phase_9/muc_suy_luan/tools/`, chạy theo thứ tự: `chup_muc.py` ⇒ `chay_xen_ke.py` ⇒ `an_toan_muc.py` ⇒ `in_gia.py`; `ba_muc.py` cho bậc 2. Kết quả ra `data/phase_9/muc_suy_luan/bac_1/` (sẽ tạo).
 - Bước kế: B chạy bậc 1 trên `main` ≥ `55d01a8` (trần bậc 1 = 0,25 USD; trần cứng cả việc 1,2 USD); lệnh từng bước + điều kiện dừng: `report_agent/2026-11-19/b_nhat_ky.md` mục "Việc ĐANG DỞ". Xong DỪNG, báo A số thật ⇒ A báo User ⇒ bậc 2.
 - Không được: chạy khi máy đang trong khung đo giây của dự án khác; so với điểm sáng 19/11 (chỉ so với medium chạy lại cùng buổi); nới hạn giờ 45 s.
 - Report: chưa có. Review / đọc tay: chưa có.
