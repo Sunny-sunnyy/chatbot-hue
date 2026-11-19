@@ -194,9 +194,9 @@ def test_retrieval_error_inside_tool_surfaces_as_original_error(deps):
         asyncio.run(answer_turn("Đại Nội có gì?", BrokenRetrieval(), deps[1], gen, AnswerTrace(), V2))
 
 
-def test_budget_count_for_tool_path_is_within_safety_margin_of_sent_request(deps):
+def test_token_count_for_tool_path_is_close_to_the_sent_request(deps):
     """D5 (4): số đếm của bộ dựng ngữ cảnh (lời dặn trợ lý + câu hỏi + kết quả công cụ đã nối) lệch số token của thân yêu cầu thật
-    gửi ở lượt viết < `safety_margin` (512). Đếm thân yêu cầu bằng cùng tokenizer — số token thật của API kiểm ở pilot (review C135 m-7)."""
+    gửi ở lượt viết dưới 128 token (số này nay chỉ để báo trong log — ngân sách ngữ cảnh đã bỏ 19/11/2026). Đếm thân yêu cầu bằng cùng tokenizer — số token thật của API kiểm ở pilot (review C135 m-7)."""
     gen = generator(lambda n, kw: [tool_call("Giá vé Đại Nội"), ] if n <= 2 else [answer(INSUFFICIENT_ANSWER)])
     trace = run_turn(deps, "Giá vé Đại Nội và lăng Tự Đức?", gen)
     builder = deps[1]

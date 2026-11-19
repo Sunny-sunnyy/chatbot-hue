@@ -293,7 +293,7 @@ def bo_diem(khung: dict, id_: str, ten: str, ma_luat: str) -> None:
 
 
 def cat_ngay_cuoi(khung: dict) -> list[str]:
-    """D6 (iii): vượt ngân sách ngữ cảnh ⇒ bớt ngày cuối (khung ghi "ngày … chưa xếp"); trả id các điểm đã bớt."""
+    """D6 (iii): điểm có đoạn không vào được ngữ cảnh (vượt trần số đoạn của lượt; trước 19/11/2026 còn do ngân sách token, nay đã bỏ) ⇒ bớt ngày cuối (khung ghi "ngày … chưa xếp"); trả id các điểm đã bớt."""
     ng = khung["ngay"].pop()
     khung["khong_xep"].append({"diem": str(ng["ngay"]), "ma_luat": "vuot_ngan_sach"})
     return [id_ for b in BUOI for id_ in ng["buoi"][b]]

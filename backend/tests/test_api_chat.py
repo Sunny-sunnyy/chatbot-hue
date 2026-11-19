@@ -67,23 +67,34 @@ def test_health_is_cached_and_ready_after_real_lifespan(require_openai_key):
     }
 
 
-def test_real_first_chunk_budget_error_has_no_partial_answer(caplog):
-    settings = load_settings()
-    settings["full_corpus_generation"] = dict(settings["full_corpus_generation"])
-    settings["full_corpus_generation"]["context_limit"] = 2561
-    app = create_app(settings)
+class _ModelLoi:
+    """Model thay thế: định tuyến về trợ lý Huế rồi lỗi ngay ở lần gọi trả lời — ép một lỗi SAU bước tìm + dựng ngữ cảnh mà không cần khoá / mạng.
+    (Trước 19/11/2026 các test dưới ép lỗi bằng ngân sách ngữ cảnh — rào đó đã bỏ theo yêu cầu của User.)"""
+    assistant_instructions = ""
+
+    async def route(self, query, call_log, **_):
+        return "tro_ly_hue"
+
+    async def generate_with_tools(self, prompt, tool_fn, call_log, **_cong_cu):
+        from core.schema import GenerationError
+        raise GenerationError("x")
+
+
+def test_real_error_after_search_has_no_partial_answer(caplog):
+    app = create_app(load_settings())
     query = "Giá vé Đại Nội?"
     log_file = LOGS_DIR / LOG_FILE_NAME
     with TestClient(app) as client, chat_log_records(caplog) as records:
+        app.state.generator, app.state.generator_ready = _ModelLoi(), True
         moc = len(log_file.read_text(encoding="utf-8", errors="replace").splitlines())  # sau lifespan: file log đã có
         response = client.post("/api/chat", json={"query": query})
         chat_messages = [r.getMessage() for r in records if r.name == "chat"]
         lines = metric_lines(records)
-    assert response.status_code == 500
+    assert response.status_code == 502
     assert response.json() == {
         "error": {
-            "code": "context_budget_error",
-            "message": "Không thể đóng gói ngữ cảnh trong giới hạn cho phép.",
+            "code": "generation_unavailable",
+            "message": "Không thể tạo câu trả lời vào lúc này.",
         }
     }
     assert "answer" not in response.text
@@ -91,7 +102,7 @@ def test_real_first_chunk_budget_error_has_no_partial_answer(caplog):
     # Câu hỏi đã đi qua tìm kiếm + dựng context: log số đo có đúng một dòng, đúng danh sách trắng, không lọt câu hỏi (plan C59 §4).
     assert len(lines) == 1
     assert set(lines[0]) == set(METRIC_FIELDS)
-    assert lines[0]["outcome"] == "context_budget_error" and lines[0]["status_code"] == 500
+    assert lines[0]["outcome"] == "generation_failed" and lines[0]["status_code"] == 502
     assert isinstance(lines[0]["search_ms"], float) and isinstance(lines[0]["dense_ms"], float)
     assert lines[0]["dense_ms"] == round(lines[0]["dense_ms"], 1)  # làm tròn 1 chữ số như các trường *_ms (B70 m-2)
     assert lines[0]["input_tokens"] is None and lines[0]["output_tokens"] is None
@@ -173,11 +184,9 @@ def test_clean_subprocess_import_production_command():
 
 
 def test_production_app_state_has_no_last_chat_trace_after_chat():
-    settings = load_settings()
-    settings["full_corpus_generation"] = dict(settings["full_corpus_generation"])
-    settings["full_corpus_generation"]["context_limit"] = 2561
-    app = create_app(settings)
+    app = create_app(load_settings())
     with TestClient(app) as client:
+        app.state.generator, app.state.generator_ready = _ModelLoi(), True
         client.post("/api/chat", json={"query": "Giá vé Đại Nội?"})
     assert not hasattr(app.state, "last_chat_trace")
 
@@ -331,7 +340,6 @@ pairs = [
 ] + [
     ("api.routes.chat", "RetrievalDependencyError", "retrieval.full_corpus"),
     ("api.routes.chat", "RetrievalDependencyError", "reranking.cross_encoder"),
-    ("api.routes.chat", "ContextBudgetError", "retrieval.full_corpus_context"),
     ("api.routes.chat", "GenerationError", "llm.generator_openai_full_corpus"),
     ("api.routes.chat", "GeneratorNotReadyError", "llm.assistant"),
     # từ S1 streaming lõi chung bắt lỗi citation thay route (route đọc `trace.citation_error`)

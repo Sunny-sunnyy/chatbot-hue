@@ -1,17 +1,9 @@
-import pytest
-
-from core.schema import ContextBudgetError
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus_context import FullCorpusContextBuilder
 
 
 def make_builder(**overrides):
-    values = {
-        "context_limit": 16384,
-        "reserved_output_tokens": 2048,
-        "safety_margin": 512,
-        "max_documents": 5,
-    }
+    values = {"max_documents": 5}
     values.update(overrides)
     return FullCorpusContextBuilder(load_openai_tokenizer(), **values)
 
@@ -42,24 +34,17 @@ def test_real_context_uses_only_evidence_parts(full_corpus_documents):
             assert generated_only not in packed.text
 
 
-def test_real_context_stops_at_whole_chunk_boundary(full_corpus_documents):
-    normal = make_builder().build("Giá vé Đại Nội thế nào?", full_corpus_documents)
-    assert normal.input_tokens + 2048 + 512 <= 16384
-    first_only = make_builder(max_documents=1).build(
-        "Giá vé Đại Nội thế nào?", full_corpus_documents
-    )
-    tight = make_builder(context_limit=first_only.input_tokens + 2048 + 512).build(
-        "Giá vé Đại Nội thế nào?", full_corpus_documents
-    )
-    assert len(tight.sources) == 1
-    assert tight.text == first_only.text
-
-
-def test_real_first_chunk_over_budget_is_typed_error(full_corpus_documents):
-    with pytest.raises(ContextBudgetError):
-        make_builder(context_limit=2048 + 512 + 1).build(
-            "Giá vé Đại Nội thế nào?", full_corpus_documents
-        )
+def test_real_context_takes_every_document_up_to_the_count_cap_whatever_the_size(full_corpus_documents):
+    """User 19/11/2026: không còn ngân sách token của ngữ cảnh — rào duy nhất là SỐ đoạn. Ngữ cảnh đã có sẵn dù dài bao nhiêu (ở đây ~60 nghìn chữ
+    — vượt xa ngân sách 16.384 token cũ) thì lần dựng kế vẫn nhận đủ các đoạn nguyên vẹn; đoạn đã có (`skip_ids`) bị bỏ, đánh số nối tiếp."""
+    co_san = "x " * 60000
+    packed = make_builder(max_documents=3).build("Giá vé Đại Nội thế nào?", full_corpus_documents, prior_context=co_san, first_id=4,
+                                                 skip_ids=frozenset({full_corpus_documents[0].id}))
+    assert len(packed.sources) == 3 and [s.id for s in packed.sources] == [4, 5, 6]
+    assert full_corpus_documents[0].id not in packed.document_ids
+    assert packed.input_tokens > 16384
+    mot = make_builder(max_documents=1).build("Giá vé Đại Nội thế nào?", full_corpus_documents)
+    assert len(mot.sources) == 1 and mot.text in make_builder().build("Giá vé Đại Nội thế nào?", full_corpus_documents).text
 
 
 def test_packed_context_excludes_metadata_v2_private_fields(full_corpus_documents):
