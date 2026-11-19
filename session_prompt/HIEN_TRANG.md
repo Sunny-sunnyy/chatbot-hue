@@ -74,7 +74,7 @@ Sản phẩm:
   trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
 - Không mở lại khi User chưa nêu: giọng nói (dẹp) · so ảnh bằng embedding (hoãn, chưa có ngày; ảnh mẫu còn giữ) · nhớ sở thích người dùng (không làm) ·
   "tra web sớm" (bỏ) · "gộp câu tìm" (gác) · mục web giữ bản dài (bản gọn đã thử, không dùng).
-- User 18/11: bỏ qua phần cần User, làm hết phần không cần; cuối cùng User test toàn bộ một lần. Deploy AWS: sau đợt hoàn thiện local, xong sớm thì làm luôn.
+- User 18/11: bỏ qua phần cần User, làm hết phần không cần; cuối cùng User test toàn bộ một lần. User nói rõ 09:13 19/11/2026: thứ User chưa có giờ làm CHỈ là tự tay test — User vẫn duyệt, trao đổi, trò chuyện bình thường ⇒ việc thuộc hàng "hỏi User trước" cứ hỏi ngay (một câu, có đáp án), không dồn về buổi test cuối; nhóm không chờ User đóng Phase 9 mới làm tiếp đợt hoàn thiện / chuẩn bị deploy. Deploy AWS: sau đợt hoàn thiện local, xong sớm thì làm luôn.
 - Đây là ĐỒ ÁN TỐT NGHIỆP, chấm một lần, User trình bày với giảng viên — tài liệu không dùng chữ "sếp" / "công ty"; gói "giảng viên hỏi vặn" làm sau khi
   hệ thống hoàn tất và User đã đọc bài học.
 
