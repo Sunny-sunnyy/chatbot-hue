@@ -21,7 +21,7 @@ Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** =
   **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn
   nhầm đoạn của nơi khác), `so_vet` (bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
-- **Lần chạy cả bộ test gần nhất:** 19/11 trên `55d01a8`: 1.437 đạt, 0 hỏng. SAU ĐÓ main gộp ba thay đổi code CHƯA có lượt cả bộ (`76ef380` · `26ccef9` · `1a9a0f8`; hai cờ mới đều TẮT) ⇒ chạy cả bộ TRƯỚC khi bật cờ nào.
+- **Lần chạy cả bộ test gần nhất:** tối 19/11 trên nhánh bật cờ đã gồm main `38b4434` (từng file, 53 file): 1.512 đạt, 0 hỏng; main sau đó chỉ thêm đúng nhánh đó + tài liệu. Lỗi lọt chiều 19/11 (hai biến cùng tên trong file lập lịch) đã sửa `38b4434`.
 - **Bẫy RAM (19/11):** không gom nhiều file test dựng cả app vào một tiến trình pytest; chạy từng file ở cây chính, không cùng lúc với server.
 - **Máy:** mở lại máy ⇒ `/tmp` MẤT (worktree) và Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1). Server không chạy sẵn.
 - **Giới hạn đã biết:** `guides/RUNBOOK_BAN_GIAO.md` mục 10 — gặp hành vi trông như lỗi thì tra ở đó TRƯỚC khi sửa hay báo.
