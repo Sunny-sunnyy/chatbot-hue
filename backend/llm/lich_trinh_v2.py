@@ -667,7 +667,7 @@ def dong_lich_dang_co(bang: BangV2, luu: dict) -> list[str]:
     khoang, tong, n_ngay_diem, n_toi = {}, {}, 0, 0  # theo số ngày: phút từ đầu tới cuối phần ban ngày · tổng phút tham quan ban ngày
     for ng in khung["ngay"]:
         n = ng["ngay"]
-        ban_ngay = [(b, j) for b in BUOI_NGAY for j in ng["buoi"][b]]
+        ban_ngay = [(b, j) for b in BUOI_NGAY for j in ng["buoi"][b] if j in bang.theo_id]  # như mục tối: điểm không còn trong bảng ⇒ bỏ, không vỡ
         toi = [j for j in ng["buoi"].get("toi") or [] if j in bang.theo_id]
         muc = [f"{NHAN_BUOI[b]} ({gio_k[j]}) {bang.theo_id[j]['ten']}" if j in gio_k else f"{NHAN_BUOI[b]} {bang.theo_id[j]['ten']}" for b, j in ban_ngay]
         muc += [f"Tối ({bang.theo_id[j]['gio_toi']}) {bang.theo_id[j]['ten']}" if bang.theo_id[j].get("gio_toi") else f"Tối {bang.theo_id[j]['ten']}"

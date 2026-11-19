@@ -1016,8 +1016,12 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
     if trace.khoang_cach:  # số km / phút trong chữ model ⊂ số code dựng ∪ số trong đoạn kho được trích; hỏng ⇒ rút lại như citation hỏng
         cho_phep = kc.tap_so_theo_loai(" ".join(d for k in trace.khoang_cach for d in k["dong"]))  # số code dựng: km ↔ thời gian tách riêng
         chung = kc.tap_so(" ".join(e for src in (trace.cited or ()) if src.source not in (kc.NGUON_SOURCE, lt2.NGUON_LICH_SOURCE)
-                                   for e in src.excerpts))  # đoạn kho: mọi số (nguồn lịch đầy giờ / phút ⇒ không tính)
-        cho_phep = {loai: tap | chung for loai, tap in cho_phep.items()}
+                                   for e in src.excerpts))  # đoạn kho: mọi số
+        # Nguồn lịch (cờ `lich_vao_hoi_thuong`): chỉ nhận số CÓ ĐƠN VỊ thời gian do code in ("8 giờ", "15 phút") vào tập thời gian — phép này xét mọi
+        # số kèm đơn vị thời gian trong chữ model nên thiếu thì câu nêu đúng số giờ của lịch bị rút (review B M1); không nhận mọi số của nguồn lịch
+        # (giờ đồng hồ "10:30" sẽ cho qua "30 phút" bịa), không nới tập km
+        lich_tg = kc.tap_so_theo_loai(" ".join(e for src in (trace.cited or ()) if src.source == lt2.NGUON_LICH_SOURCE for e in src.excerpts))["tg"]
+        cho_phep = {loai: tap | chung | (lich_tg if loai == "tg" else set()) for loai, tap in cho_phep.items()}
         trace.khoang_cach_kiem = kc.kiem_so(text, cho_phep)
         if trace.khoang_cach_kiem and trace.citation_error is None:
             trace.citation_error = CitationIntegrityError(f"distance numbers without source: {len(trace.khoang_cach_kiem)}")

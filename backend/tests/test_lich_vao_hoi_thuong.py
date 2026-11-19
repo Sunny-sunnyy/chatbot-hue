@@ -215,3 +215,33 @@ def test_so_cua_nguon_lich_khong_mo_rong_kiem_so_thoi_tiet():
     a._thoi_tiet_cuoi(trace, "Hôm đó khoảng 30 °C, có lúc 25 °C. [1][2]")
     assert trace.thoi_tiet_kiem == ["30"]  # 25 có ở bài kho ⇒ được; 30 chỉ có trong giờ của lịch ⇒ bị bắt
     assert tt.tap_so(" ".join(lich.excerpts)) >= {"30", "15"}  # đúng là nguồn lịch có các số đó
+
+
+def _luot_co_lich_va_khoang_cach(chu_model: str) -> AnswerTrace:
+    """Lượt hỏi thường có nguồn lịch [1] + nguồn khoảng cách do code dựng [2] (model gọi công cụ khoảng cách để ước đường về)."""
+    from types import SimpleNamespace
+    from llm import khoang_cach as kc
+    from retrieval.full_corpus_context import PackedSource
+    dong_kc = ("Từ Đại Nội Huế đến Đầm Chuồn: khoảng 12 km theo đường đi, đi xe ước khoảng 25 phút (chưa tính kẹt xe).",)
+    trace = AnswerTrace()
+    trace.so_nguon = [PackedSource(id=1, title=v2.TIEU_DE_NGUON_LICH, heading_path=(v2.MUC_NGUON_LICH,),
+                                   excerpts=tuple(v2.dong_lich_dang_co(B, lich_2_ngay())), source=v2.NGUON_LICH_SOURCE),
+                      PackedSource(id=2, title=kc.TIEU_DE_NGUON, heading_path=(kc.MUC_NGUON,), excerpts=dong_kc, source=kc.NGUON_SOURCE)]
+    trace.khoang_cach = [{"diem_a": "dai_noi", "diem_b": "dam_chuon", "dong": dong_kc}]
+    trace.generated = SimpleNamespace(text=chu_model)
+    a._finish_generated(trace, AssistantFlags())
+    return trace
+
+
+def test_so_gio_do_code_in_o_nguon_lich_khong_bi_kiem_so_khoang_cach_rut():
+    """Review B M1: phép kiểm số khoảng cách xét MỌI số kèm đơn vị thời gian trong chữ model. Câu trả lời nêu đúng "8 giờ", "5 giờ" code in ở nguồn
+    lịch, cạnh số km / phút của nguồn khoảng cách ⇒ không được rút."""
+    trace = _luot_co_lich_va_khoang_cach("Ngày 1 phần ban ngày kéo dài 8 giờ, tổng thời lượng tham quan 5 giờ [1]. "
+                                         "Từ Đại Nội đến Đầm Chuồn khoảng 12 km, đi xe khoảng 25 phút, có thể kẹt xe [2].")
+    assert trace.khoang_cach_kiem == [] and trace.citation_error is None
+
+
+def test_thoi_gian_di_lai_bia_van_bi_bat_khi_co_nguon_lich():
+    """Chỉ số CÓ ĐƠN VỊ thời gian của nguồn lịch được phép: "30 phút" (30 chỉ có trong giờ đồng hồ "10:30") và "40 km" vẫn bị bắt."""
+    trace = _luot_co_lich_va_khoang_cach("Ngày 1 kéo dài 8 giờ [1]. Từ Đại Nội đến Đầm Chuồn khoảng 40 km, đi xe khoảng 30 phút, có thể kẹt xe [2].")
+    assert trace.khoang_cach_kiem == ["40", "30"] and trace.citation_error is not None
