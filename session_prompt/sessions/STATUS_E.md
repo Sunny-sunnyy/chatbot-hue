@@ -7,7 +7,7 @@
 - 19:03 19/11/2026: ĐỌC TAY bước 2 XONG (file riêng tư `data/ngu_canh_lon_2026-11-19/chay/doc_tay_E.md`, bảy mục; đã báo phiên điều phối + B): nhánh cả mục phạm sàn (một câu ngoài kho được trả lời; bộ an toàn thiếu cảnh báo ở hai câu), nhánh 15 đoạn phạm sàn lỗi trích dẫn (một câu), an toàn sạch; "Đủ ý" không khác ở cả hai; 37 cặp lệch điểm: khoảng hai phần ba cùng nội dung. Chưa đọc: câu không lệch điểm, nhãn vòng sinh lại (số của B).
 - Review nhánh sửa trùng tên biến giờ của C (`5be59b9`): ready, đã báo phiên điều phối; worktree review đã gỡ.
 - CÒN NỢ: ba việc của nhánh xuất lịch (mục 3 bên dưới) — chờ nhánh bật cờ của C vào main + lượt máy.
-- Bẫy tối nay: ghi giờ ước (hai tiêu đề mục) và một phép trừ sai vào file đọc tay — đã sửa; giờ lấy bằng biến \`date\` trong chính lệnh ghi.
+- Bẫy tối nay: ghi giờ ước (hai tiêu đề mục) và một phép trừ sai vào file đọc tay — đã sửa; giờ lấy bằng biến `date` trong chính lệnh ghi.
 - Lượt máy cho việc xuất lịch: xin A từng lần (C giữ lượt nặng trước). Vấp luật do đọc ngắn: 0.
 
 Bản cũ nguyên văn tới 11:16 19/11: `session_prompt/archive/STATUS_E_LICH_SU_2026-11-18_19.md`. Nhật ký cả ngày: `report_agent/2026-11-19/e_nhat_ky.md`.
