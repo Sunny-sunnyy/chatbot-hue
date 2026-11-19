@@ -12,7 +12,9 @@ Tất cả [chưa chạy] ở một dự án thứ hai — sửa bộ khung này
 | 3 | `HIEN_TRANG.mau.md` | trang hiện trạng (một trang, viết lại tại chỗ) | toàn bộ nội dung; giữ khuôn mục |
 | 4 | `BAO_CAO_4_Y.mau.md` | khuôn báo cáo mỗi việc xong | không cần sửa |
 | 5 | `GOI_REVIEW_KHAC_HANG.mau.md` | dùng khi cần người chấm khác hãng | điền bối cảnh + ranh giới của dự án |
-| 6 | skill (bảng dưới) | `skills/<tên>/SKILL.md` | theo cột "Mang đi" |
+| 6 | `VIEC_DANG_MO.mau.md` | mục lục việc (một trang ghi đè, mỗi việc kéo quá một ngày một khối) [đang thử ở repo gốc từ 19/11/2026] | toàn bộ nội dung; giữ khuôn khối |
+| 7 | `TONG_HOP_NGAY.mau.md` | `TONG_HOP.md` trong thư mục báo cáo của từng ngày [đang thử ở repo gốc từ 19/11/2026] | điền mỗi ngày; phần đầu là khối "phiên sau" |
+| 8 | skill (bảng dưới) | `skills/<tên>/SKILL.md` | theo cột "Mang đi" |
 
 Sau khi chép: bật hook git nếu có (`git config core.hooksPath <thư mục hook>`), rồi mở công cụ và hỏi "bạn đã nạp file hướng dẫn nào, trích dòng đầu" để chắc nó đọc `AGENTS.md`.
 
@@ -21,7 +23,9 @@ Sau khi chép: bật hook git nếu có (`git config core.hooksPath <thư mục 
 - **Code + test** — trong git.
 - **Dữ liệu riêng** (dữ liệu gốc, bộ câu chấm, kết quả đo chi tiết, khoá) — NGOÀI git, có tên thư mục cố định ghi trong `AGENTS.md`, có hook chặn commit nhầm, có bản sao ngoài máy.
 - **Tài liệu cho người** (chủ dự án đọc) — một thư mục riêng, lời thường; chỉ viết việc đã xong.
-- **Sổ việc cho agent** — `AGENTS.md` (luật, ngắn) · một trang hiện trạng viết lại tại chỗ · nhật ký nối đuôi (để tra, không bắt đọc) · sổ tay lệnh (runbook).
+- **Sổ việc cho agent** — `AGENTS.md` (luật, ngắn) · ba trang GHI ĐÈ đọc lúc mở phiên (trang hiện trạng · mục lục việc · mục đầu sổ riêng của từng phiên) ·
+  một thư mục báo cáo cho MỖI NGÀY (báo cáo từng phiên + tổng hợp ngày + nhật ký từng phiên — để tra, không bắt đọc; báo cáo đã đặt vào ngày nào thì không dời) · sổ tay lệnh (runbook).
+  Chi tiết + lý do: `../CACH_LAM_VIEC.md` mục 5 "Làm việc theo thư mục từng ngày" [đang thử từ 19/11/2026].
 
 ## Phát triển theo cỡ việc
 
