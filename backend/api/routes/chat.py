@@ -536,6 +536,12 @@ async def chat_stream(body: ChatRequest, request: Request):
 def _notice_event(trace: AnswerTrace) -> bytes:
     """Sự kiện `notice`. Ghi chú có câu bản tin chính thức + 112 (lưới cuối câu bão) được TÁCH riêng vào `an_toan`: giao diện vẽ nó đậm và, ở lượt có lịch,
     đặt lên ĐẦU khung lịch (người hỏi "có cảnh báo gì không" phải thấy trước lịch); `text` chỉ còn ghi chú thường ("có thể đã thay đổi"…), có thể rỗng."""
+    if trace.luu_y_nguon and trace.luu_y_nguon in trace.notice:  # cờ `noi_dong_tam_ngung`: câu an toàn chép từ nguồn cũng vào `an_toan` (vẽ nổi)
+        an_toan = [c for c in (tt.CAU_BAO_LU, trace.luu_y_nguon) if c in trace.notice]
+        text = trace.notice
+        for c in an_toan:
+            text = text.replace(c, "", 1)
+        return sse_event("notice", {"text": " ".join(text.split()), "an_toan": " ".join(an_toan)})
     if tt.CAU_BAO_LU not in trace.notice:
         return sse_event("notice", {"text": trace.notice})
     return sse_event("notice", {"text": trace.notice.replace(tt.CAU_BAO_LU, "", 1).strip(), "an_toan": tt.CAU_BAO_LU})

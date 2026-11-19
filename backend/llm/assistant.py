@@ -39,6 +39,7 @@ from llm import tra_web as tw
 from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
 from llm import khoang_cach as kc
+from llm.luu_y_nguon import dong_tam_ngung
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
@@ -107,6 +108,9 @@ class AssistantFlags:
     so_vet: bool = False  # sổ vết debug có nội dung, chỉ máy local (`core/so_vet.py`); bật bằng `HUE_SO_VET=true`
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
+    # 19/11 (plan private `data/phase_9/s09_code/PLAN.md`): CODE nối vào dòng ghi chú một câu "tạm ngừng khi lũ / lệnh cấm / thời tiết xấu" chép
+    # nguyên văn từ nguồn câu trả lời ĐÃ TRÍCH khi câu trả lời chưa nêu (`llm/luu_y_nguon.py`). Không model, không đổi chuỗi gửi model. TẮT tới khi đạt.
+    noi_dong_tam_ngung: bool = False
     # 15/11 (plan `2026-11-15-cau-noi-tiep-web-plan.md`): lượt CÓ lịch sử mà model đã tự tìm kho ⇒ phần web dùng câu tìm kho cuối model viết (có tên
     # nơi lấy từ lượt trước) thay câu người dùng gõ — câu hỏi tiếp "mở cửa mấy giờ" không còn ra web trần. TẮT tới khi đo đạt; cần `tra_web`
     web_cau_noi_tiep: bool = False
@@ -267,6 +271,7 @@ class AnswerTrace:
     routing_ms: float | None = None
     today: str | None = None  # dòng ngày đã gửi model (D7) — log chỉ ghi phần ngày
     notice: str | None = None  # dòng H4c (D8)
+    luu_y_nguon: str | None = None  # cờ `noi_dong_tam_ngung`: câu an toàn chép từ nguồn, đã nằm trong `notice`; route tách ra để giao diện vẽ nổi
     # B2: câu tìm định tuyến viết (V1 / V3) — chỉ trong RAM, KHÔNG log (chữ người dùng); số câu + cờ rỗng thì log được
     cau_tim: list[str] | None = None
     cau_tim_rong: bool = False
@@ -905,6 +910,12 @@ def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
     Khoảng cách (16/11): câu trả lời TRÍCH nguồn khoảng cách mà chữ model không nhắc "kẹt xe" ⇒ code nối câu ghi chú của nguồn vào dòng cố định —
     ghi chú là phần bắt buộc đi cùng số ước, model bỏ nó ở ~35 % câu (đếm 4 lượt đo: 33 / 52 câu có), cả đường công cụ lẫn đường tính sẵn."""
     dong = []
+    # câu an toàn của nguồn đã trích đứng TRƯỚC các ghi chú thường; cờ tắt ⇒ `notice` y như trước. Lượt có lịch (biểu mẫu, sửa lịch, công cụ lịch) KHÔNG
+    # nhận: chưa có dữ liệu đo, và "một dòng mỗi câu trả lời" là tuỳ tiện với lịch nhiều điểm (review E 19/11)
+    if flags.noi_dong_tam_ngung and trace.cited and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None:
+        trace.luu_y_nguon = dong_tam_ngung(trace.answer or "", [(src.title, src.excerpts) for src in trace.cited])
+        if trace.luu_y_nguon:
+            dong.append(trace.luu_y_nguon)
     if trace.cited and any(src.source == kc.NGUON_SOURCE for src in trace.cited) and "kẹt xe" not in (trace.answer or "").casefold():
         dong.append(kc.CAU_GHI_CHU)
     if flags.may_have_changed_notice and trace.cited and any(src.source.startswith(NOTICE_SOURCE_PREFIXES) for src in trace.cited):
