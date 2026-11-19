@@ -40,8 +40,8 @@ ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y = ANSWER_SYSTEM_INSTRUCTIONS.replace(_LUAT_TU
 # (chuỗi gửi model giống byte). Không ví dụ có địa danh thật (model hay chép ví dụ).
 _DONG_LUU_Y = "Không tự thêm lời khuyên hay lưu ý an toàn mà Bằng chứng không nêu; lời khuyên, lưu ý có trong Bằng chứng thì giữ lại."
 LUU_Y_AN_TOAN = (
-    "Khi Bằng chứng bạn dùng để trả lời có nêu cảnh báo an toàn, hoặc điều kiện khiến chính hoạt động hay dịch vụ được hỏi bị tạm ngừng, bị cấm "
-    "(thời tiết xấu, mùa mưa lũ, lệnh cấm…), thì nêu điều đó trong một câu có citation, kể cả khi câu hỏi không hỏi tới."
+    "Khi Bằng chứng bạn dùng để trả lời có nêu cảnh báo an toàn của chính hoạt động hay dịch vụ được hỏi, hoặc điều kiện khiến hoạt động, dịch vụ đó "
+    "bị tạm ngừng, bị cấm (thời tiết xấu, mùa mưa lũ, lệnh cấm…), thì nêu điều đó trong một câu có citation, kể cả khi câu hỏi không hỏi tới."
 )
 assert ANSWER_SYSTEM_INSTRUCTIONS.count(_DONG_LUU_Y) == 1  # đổi dòng lưu ý của lời dặn gốc mà quên đoạn này ⇒ lỗi ngay lúc import
 

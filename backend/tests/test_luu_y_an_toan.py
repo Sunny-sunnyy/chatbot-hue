@@ -77,7 +77,8 @@ def test_sentence_is_added_once_right_after_the_safety_note_line():
 @pytest.mark.parametrize("history", [(), LICH_SU])
 @pytest.mark.parametrize("nhieu_y", [False, True])
 def test_budget_string_equals_instructions_of_the_agent_that_is_sent(history, nhieu_y):
-    """Chuỗi lõi dùng để đếm ngân sách ngữ cảnh = đúng lời dặn của agent generator dựng cho lượt, ở cả bốn bản trợ lý, cờ bật lẫn tắt."""
+    """HÀM lõi dùng để đếm ngân sách ngữ cảnh trả đúng lời dặn của agent generator dựng cho lượt, ở cả bốn bản trợ lý, cờ bật lẫn tắt.
+    Test này giữ hàm, KHÔNG giữ ba nơi gọi hàm trong lõi (bỏ cờ ở nơi gọi ⇒ ngân sách đếm thiếu đúng một câu, test vẫn đạt — review E 19/11)."""
     gen = generator(script)
     trace = AnswerTrace(history=history)
     for bat in (False, True):
