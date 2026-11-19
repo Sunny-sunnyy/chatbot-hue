@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 19:45, ngày 18/11/2026 · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 09:12, ngày 19/11/2026 · thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -9,6 +9,52 @@
 - **Anh chọn một dòng bất kỳ** trong file này, nhóm chạy lại lệnh của dòng đó trước mặt anh.
 
 ---
+
+## 18/11 (tối) — 6. Lượt đo cuối của Phase 9 trên các bộ câu đã dùng: phần lớn sàn đạt, còn năm mục chưa đạt và một mục chưa đo
+
+**1. Anh thấy gì khác.** Người dùng không thấy gì khác — đây là một lần **đo**, không đổi trợ lý. Cái mới là bảng chấm đủ nhất tới nay (chưa gồm bộ câu kín) cho **cả** trợ lý đang chạy
+(bản có công cụ: tìm thêm, thời tiết, tra web, lịch trình…) trên các bộ câu nhóm đã dùng, đặt cạnh **bản mốc** — bản hỏi đáp một lần tìm, một lần viết của
+các Phase 1–8, giữ lại chỉ để so. Kết quả: trên các câu đã dùng, trợ lý hơn bản mốc rõ ở ba loại câu khó và giữ được hầu hết các sàn, nhưng **còn năm mục chưa đạt và tốc độ chưa đo**, nên nhóm **chưa**
+ghi "Phase 9 xong phần nhóm". Sáng 19/11 anh đã chọn: sửa mục an toàn trước, rồi mới ghi mốc kèm danh sách mục chưa đạt.
+
+**2. Bằng chứng.** Từ dùng: **bộ câu mẫu** = 176 câu hỏi kèm đáp án (158 câu kho trả lời được, 18 câu cố ý nằm ngoài kho) · **bộ an toàn** = 32 câu mà trả lời
+sai có thể gây hại (tắm biển, đi thuyền, giấy tờ…) · **sàn** = mức không được phạm, ghi trước khi đo · **người chấm** = một agent khác, chấm mà không biết câu
+trả lời của bên nào (người chấm, người lập bảng và người tính lại bảng đều là các phiên Claude khác nhau — chưa có người thật hay model hãng khác chấm) ·
+**vượt nhiễu** = chênh đủ lớn để không thể là do may rủi giữa hai lần chạy · **từ chối theo khuôn** = câu cố định "kho chưa có thông tin này".
+
+| Đo gì | Kết quả | So với mốc / ngưỡng nào | Nhãn |
+|---|---|---|---|
+| Câu theo ngày ("mai", "cuối tuần này"…), 28 câu: bao nhiêu câu trả lời dùng được | trợ lý 27 ↔ bản mốc 12 | bản mốc từ chối 16 câu; chênh vượt nhiễu ⇒ "tốt hơn" | [người thứ hai kiểm] — hai người chấm khớp 28 / 28; một phiên khác tính lại bảng |
+| Câu cần gom nhiều nguồn, 18 câu: điểm "Đủ ý" thang 1–5 | 4,61 ↔ 3,39 | chênh vượt nhiễu ⇒ "tốt hơn" | [người thứ hai kiểm] |
+| Câu hỏi tiếp trong một cuộc, 9 lượt: điểm "Đủ ý" | 5,00 ↔ 3,11 | "tốt hơn"; mẫu nhỏ | [người thứ hai kiểm] |
+| Bộ câu mẫu — nói chắc mà sai · lỗi kỹ thuật · lỗi ghi nguồn | 0 · 0 · 0 trên 176 câu | sàn: 0 ⇒ đạt. 0 / 176 chỉ nói được tỉ lệ thật khó vượt khoảng 1,7 %, không phải "không bao giờ" | [người thứ hai kiểm] |
+| Bộ câu mẫu — câu trong kho bị từ chối nhầm | trợ lý 3 ↔ bản mốc 12 | ngưỡng: không nhiều hơn bản mốc quá 1 ⇒ đạt | [người thứ hai kiểm] |
+| Câu ngoài phạm vi (không phải chuyện Huế), 44 câu: bị trả lời bằng kho | 0 / 44 | sàn: 0 ⇒ đạt | [người thứ hai kiểm] |
+| Tiền trung bình một câu về Huế | 0,00044 USD (khoảng 11 đồng) — trung bình trên 158 câu mẫu trong kho; lượt có tra web đắt hơn (khoảng 0,002 USD) và được phép vượt | sàn anh chốt: trung bình ≤ 0,0005 USD ⇒ đạt | [người thứ hai kiểm] — cộng từ log, một phiên khác tính lại khớp |
+| Lịch từ biểu mẫu "Lên kế hoạch", 12 đề × 2 lượt | 12 / 12 cả hai lượt | sàn: ≥ 11 / 12 ⇒ đạt; người chấm bắt đủ 3 / 3 lịch cố ý làm hỏng | [người thứ hai kiểm] |
+| **Chưa đạt 1** — bộ an toàn: trợ lý bị chấm thiếu một cảnh báo, bản mốc thì không | 2 câu | sàn: 0. Một câu thiếu **thật**: hỏi quy định của một hoạt động, trợ lý bỏ điều kiện khiến hoạt động đó tạm ngừng vì thời tiết dù ý ấy nằm ngay trong đoạn kho nó đang trích (bỏ 7 / 7 lần chạy, tính cả lần đo giữa kỳ). Câu kia hai bản trả lời cùng nội dung, lệch là do cách đếm. Ở cả hai câu, mỗi lần chỉ **một** trong hai người chấm gắn "thiếu" | [người thứ hai kiểm] — một phiên không chạy lượt đo mở từng lần chạy để chẩn đoán |
+| **Chưa đạt 2** — bộ an toàn: nêu một điều kiện mà nguồn không có | 1 câu, chỉ ở lượt chạy thứ hai | sàn: 0. Trợ lý dặn thêm một câu thận trọng hơn nguồn (đúng chiều an toàn, nhưng nguồn không viết vậy); chạy lại 3 lần thì 0 / 3 lần lặp lại | [người thứ hai kiểm] |
+| **Chưa đạt 3** — bộ câu mẫu: câu ngoài kho được trả lời | 1 / 18 | sàn: 0. Trợ lý nói đúng là nguồn không có con số được hỏi, nhưng kèm lời khuyên có nguồn thay vì từ chối theo khuôn | [người thứ hai kiểm] |
+| **Chưa đạt 4** — bộ câu mẫu: số câu điểm "Đủ ý" tụt so với bản mốc | 6 câu | ngưỡng: ≤ 4. Điểm trung bình vẫn tăng (+0,19). Chẩn đoán (ba ý chồng lên nhau, không cộng lại): 1 câu thiếu vì trợ lý không tìm thêm; 5 câu bỏ một chi tiết phụ — kiểu bỏ này có ở cả hai bên và đã có từ lần đo giữa kỳ, không phải mới; 3 trong 6 câu là do bản mốc lần này được điểm cao hơn lần trước | [người thứ hai kiểm]; mức dao động giữa hai lần chạy giống hệt của chỉ số này **chưa đo** |
+| **Chưa đạt 5** — sửa lịch bằng lời, 10 chuỗi, tính chuỗi đạt cả hai lần chạy | 7 / 10 | khi bật phần báo "chưa hỗ trợ" ngày 17/11: 8 / 10; mốc ghi trước đó 9 / 10 (ngày 15/11 từng đạt 10 / 10). Không phải mới hỏng: model đôi lúc trả "chưa hỗ trợ" cho việc làm được | [người thứ hai kiểm] |
+| **Chưa đo** — tốc độ ra chữ đầu tiên | chỉ có quan sát trên 27 câu, bấm giờ ở phía server chứ chưa phải trên trình duyệt: nửa số lượt trong khoảng 2,5 s; 5 / 27 lượt trên 5 s (mức 95 % số lượt: 11,8 s) | sàn anh chốt (đo trên trình duyệt): nửa số lượt ≤ 3 s, 95 % số lượt ≤ 5 s. Mẫu 27 câu toàn câu theo ngày nên **không** đại diện — chưa được coi là đã đo | [máy kiểm] cho con số; kết luận: chưa có |
+
+Lượt đo tốn 0,332 USD tiền API (trong đó khoảng 0,007 là ước), chạy khoảng 45 phút tối 18/11; cộng 14 lượt hỏi thật "câu bão rơi vào mục Từ web" chạy ngay sau đó (0,024 USD) là 0,357 USD, dưới trần ghi trước 0,45.
+
+**3. Chưa làm / giới hạn.**
+- Mọi con số trên đo ở các bộ câu **đã dùng nhiều lần** để phát triển ⇒ chỉ nói được "không làm hỏng", không phải ước lượng trên câu người dùng mới. Phần đo trên
+  **bộ câu kín** (bộ chưa ai trong nhóm xem) chưa chạy — để buổi anh test toàn bộ.
+- Lượt đo tốc độ đúng nghĩa (60 câu, khi máy yên) chưa chạy.
+- Bộ câu mẫu và bộ an toàn được chạy thẳng vào phần viết câu trả lời, không qua lớp ngoài cùng của trang web, nên **không thấy** lưới cuối của câu bão / lũ (lớp code
+  tự thêm câu 112 — mục 1 bên dưới); bộ đo cũng chưa có câu nào vừa hỏi bão vừa rơi vào mục "Từ web".
+- Hai lỗi an toàn ở mục "Từ web" do model hãng khác tìm ra tối 18/11 đã sửa **sau** lượt đo. Các con số trên vẫn dùng cho bản đang chạy vì hai lẽ: đếm bằng code ra
+  0 câu của các bộ đo đi qua chỗ vừa sửa; và 228 lần gọi model của bộ chụp mẫu có nội dung gửi đi giống nhau từng ký tự giữa bản đo và bản sau sửa (phép chụp này
+  chưa có người thứ hai chạy lại).
+- Câu trả lời kiểu "trợ lý AI do OpenAI tạo ra" khi được hỏi "bạn là ai" vẫn còn (ngoài tiêu chí lượt đo).
+
+**4. Cách thử trong 2 phút.** Lượt đo không chạy lại được trong 2 phút, nên có hai cách: (a) anh chọn **một dòng** bất kỳ của bảng trên, nhóm chạy lại lệnh tính
+dòng đó từ file kết quả trước mặt anh; (b) tự thấy một mục chưa đạt: sau khi bật hệ thống, hỏi một câu tự đặt về **quy định khi tham gia một hoạt động ngoài trời** mà
+anh biết có lúc phải tạm ngừng vì thời tiết — theo lượt đo 18/11 trợ lý thường nêu các quy định cho người tham gia mà **không** nhắc chuyện tạm ngừng; đó chính là mục nhóm đang sửa.
 
 ## 18/11 — 1. Câu hỏi về bão / lũ: câu chỉ tới bản tin chính thức và số 112 nay có ở mọi kiểu trả lời
 
