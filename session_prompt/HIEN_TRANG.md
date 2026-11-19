@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 13:30 19/11/2026 (giờ `date`; phiên điều phối sửa mục 1–4 lúc kết phiên nhẹ đầu chiều 19/11). Người giữ: phiên C.
+Viết lại lần cuối: 14:09 19/11/2026 (giờ `date`; phiên điều phối sửa mục 3–4 sau ba lựa chọn của User đầu chiều 19/11). Người giữ: phiên C.
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án cho BẤT KỲ coding agent nào vừa mở phiên; **viết lại tại chỗ** mỗi lần kết phiên, không nối thêm. Thứ tự mở
 phiên ở `session_prompt/START_SESSION.md`; sổ việc dài chỉ mở khi cần. `AGENTS.md`, code và file cấu hình thắng trang này — thấy lệch thì báo để sửa trang.
@@ -50,8 +50,8 @@ Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / n
 
 1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
 2. Buổi User tự tay test toàn bộ (bước 7) — User chưa có giờ; KHÔNG nhắc.
-3. ĐANG CHỜ User chọn: bảng 41 điểm chưa có giá vé — thêm cột giá cho điểm kho có giá (khuyến nghị) / chưa làm tiền vé / điền đủ 41 (`data/lich_da_luu_2026-11-19/PLAN.md` mục 5).
-4. Hỏi khi tới lượt: câu chữ "nói thật giới hạn" (`data/tu_choi_khuon_2026-11-19/PLAN.md` mục 5) · "vượt 1 USD" áp cho việc nào · giá phòng, bổ sung kho, vị trí.
+3. ĐANG HỎI User: mức "làm thay" cho gửi thư / đặt phòng / hỏi còn phòng (User hỏi lại 14:09 19/11/2026 — A đang giải thích, chưa chốt).
+4. Hỏi khi tới lượt: giá phòng, bổ sung kho, vị trí người dùng.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
 
@@ -61,6 +61,7 @@ Sản phẩm:
 - Bão / lũ / khẩn cấp: hành vi đang có giữ nguyên, không đầu tư thêm (giới hạn đã nhận: runbook mục 10).
 - **19/11 — User TỰ NÊU:** chất lượng trước, tiền / tốc độ sau (dòng 10:04 dưới) · thử mức suy luận (duyệt chi phí thử) · làm việc phổ thông, không dồn công vào bão / lũ / khẩn cấp · báo cáo theo thư mục ngày · tự nhắc nhau không over-engineer.
 - **19/11 — User CHỌN Ô theo đề xuất của nhóm:** "Sửa lỗi an toàn trước" · "Chung tính sàn, riêng đọc tay" · "Làm bản code rồi ghi mốc" · "Bật khi E đọc đạt" · "Bật ngay, ghi giới hạn" · cả bốn nhóm việc phổ thông · "Chạy medium + low" (bậc 2 mức suy luận) · "Chèn hai lỗi nặng lên trước" (thứ tự ở mục 2).
+- **19/11 — User CHỌN Ô (14:09 19/11/2026):** giá vé cho "tổng tiền vé của lịch" = chép giá kho ĐÃ CÓ vào bảng điểm (kèm bài nguồn + ngày; điểm thiếu ⇒ "chưa có giá trong bảng"; bản đầu chỉ vé lẻ) · lượt nhờ "làm thay": ba câu nói thật riêng theo loại do code chọn, KHÔNG hiện mục web ở các lượt đó.
 - **19/11 — User TỰ NÊU (11:32):** việc thử "ngữ cảnh lớn hơn" vượt 1 USD vẫn duyệt (trần trong plan 1,40 USD; hiểu là riêng việc đó).
 - Không nói giá phòng ở phần gợi ý chỗ ở (câu hỏi chi phí chung vẫn nêu khoảng giá có nguồn từ kho). Khối "Nơi ở" chỉ hiện khi người dùng
   đã chọn hạng chỗ ở — ở biểu mẫu hoặc nói bằng lời.

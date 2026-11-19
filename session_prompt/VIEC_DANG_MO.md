@@ -1,6 +1,6 @@
 # VIỆC ĐANG MỞ — mục lục theo việc (sống xuyên ngày; GHI ĐÈ tại chỗ)
 
-Cập nhật: 13:58 19/11/2026 (giờ `date`). Người giữ: phiên điều phối. **[đang thử từ 19/11, xét lại sau 3 ngày làm việc]**
+Cập nhật: 14:09 19/11/2026 (giờ `date`). Người giữ: phiên điều phối. **[đang thử từ 19/11, xét lại sau 3 ngày làm việc]**
 
 Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đây, để phiên mở sáng hôm sau tìm lại đủ hồ sơ mà không lục từng thư mục ngày. Việc xong ⇒ dời MỘT dòng sang `session_prompt/VIEC_DA_XONG.md` (tên · ngày xong · sha gộp · các thư mục ngày có hồ sơ) rồi xoá khối. Trần: 8 việc / 60 dòng. **"Bước kế" của một việc CHỈ ghi ở trang này** — trang hiện trạng, `TONG_HOP.md` của ngày và `STATUS_<X>.md` chỉ trỏ tới đây, không chép lại. Dòng "plan" luôn là bản HIỆN HÀNH + sha đã duyệt; bản plan cũ có dòng đầu "đã thay bởi …". Report đã nằm ở thư mục ngày nào thì KHÔNG dời; bản cập nhật ngày sau là file MỚI ở thư mục ngày mới, dòng "report" liệt kê đủ theo ngày. Dữ liệu riêng tư ở `data/<tên việc>/` (không vào git) — ở đây chỉ ghi đường dẫn.
 
@@ -30,12 +30,11 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 - Bước kế (lúc KẾT PHIÊN 19/11, không làm giữa chừng): mỗi phiên GHI ĐÈ mục đầu `STATUS_<X>.md` theo khuôn mới; A cắt `CURRENT_HANDOFF.md` còn khối trỏ (bản cũ nguyên văn sang `archive/`, `cmp`); trang hiện trạng mục 2 chỉ còn bảng bước + dòng trỏ trang này; `scripts/mo_ngay.sh`. Ghi hai con số của ngày + số dòng mỗi phiên đọc lúc mở để so sau 3 ngày.
 
 ## 5. Lịch đã lưu vào lượt hỏi thường + code tính trên đúng lịch đó (User chọn làm TRƯỚC, 13:21 19/11/2026)
-- Trạng thái: plan bản 1 `data/lich_da_luu_2026-11-19/PLAN.md` sha `7d2fca7bd28b` (C viết; E đang review từ 13:58 19/11/2026, CHƯA duyệt). Lỗi gốc: 3 kịch bản của bộ 80 trả lời trên một lịch khác (nói chắc mà sai).
-- Thiết kế: một cờ mới mặc định tắt; cuộc có lịch ⇒ lượt hỏi thường nhận nguồn "Lịch bạn đang có" do code dựng + số code tính sẵn (số giờ; tiền vé khi bảng có giá). Ước 0,05–0,09 USD, trần 0,15.
-- Bước kế: A giao MỘT phiên review (B hoặc E) ⇒ A duyệt theo sha ⇒ C code phần lịch + số giờ (không chờ User) ⇒ E soạn ≥ 20 câu dò. **Chờ User chọn** cách có giá vé (plan mục 5: thêm cột giá cho điểm kho có giá — khuyến nghị / chưa làm tiền vé / điền đủ 41 điểm).
-- Không được: tự bổ sung giá vào bảng điểm khi User chưa chọn; đổi lời dặn; đụng đường sửa lịch.
+- Trạng thái: plan `data/lich_da_luu_2026-11-19/PLAN.md` — **A DUYỆT 14:08 19/11/2026 bản `de7e9b7a79a3`** (C viết; E review hai vòng, vòng 2 đạt, `PLAN_review.md`); ba minor chốt theo E, C nối khối "Sửa sau duyệt" (sha mới ghi khi C báo). Hai giai đoạn: (1) lịch + số giờ, trần 0,15 USD · (2) tiền vé, trần 0,05 USD. **User CHỌN Ô 14:09 19/11/2026: chép giá kho đã có** (vé lẻ; điểm thiếu ⇒ "chưa có giá trong bảng").
+- Bước kế: C code giai đoạn 1 trên `/tmp/hr_c_lich_da_luu` (cờ mặc định tắt) ⇒ bộ dò của E (`bo_do_E/`, 29 câu, sha `86817cf664c4`, C không xem) ⇒ lượt có phí (báo A trước) ⇒ một review cả nhánh. Song song: E chép cột giá (chỉ từ kho, kèm nguồn + ngày) ⇒ một phiên khác soát từng dòng ⇒ C nối giai đoạn 2.
+- Không được: tra web để điền giá; nhập vé gộp; đổi lời dặn; đụng đường sửa lịch.
 
 ## 6. Nói thật giới hạn thay câu từ chối khuôn ở việc "làm thay" (User chọn làm thứ hai, 13:21 19/11/2026)
 - Trạng thái: plan bản 2 `data/tu_choi_khuon_2026-11-19/PLAN.md` — **A DUYỆT 13:42 19/11/2026 bản `84669acd93a9`** (E viết; B review hai vòng, vòng 2 ready): hàm thuần đọc câu người dùng (đặt chỗ · gửi · hỏi tình trạng), chỉ thay khi câu trả lời ĐÃ là câu khuôn; không byte nào gửi model đổi; không thêm trường vào định tuyến (A chốt — nâng lên khi có số cho thấy sót nhiều). Ước 0,03–0,05 USD, trần 0,10.
-- Bước kế: **hỏi User** ba phương án câu chữ + có giữ mục web ở lượt đó không (plan mục 5) ⇒ B code sau cờ mặc định tắt ⇒ C soạn bộ dò 20 + 20 ⇒ lượt qua server 4 kịch bản đích × 3 + 5 lượt từ chối đúng ⇒ một review cả nhánh.
-- Việc 0 USD kèm (User hỏi đầu chiều 19/11 về bước định tuyến): đếm từ log 114 lượt của bộ kịch bản số lượt chia SAI tuyến; ≥ 3 ⇒ mới viết plan thử lời dặn định tuyến / thêm trạng thái. C nhận 13:58 19/11/2026: đọc tay cả 114 lượt, chỉ tính lượt sai CÓ hệ quả, kết quả ghi vào `data/kich_ban_pho_thong_2026-11-19/luot_1/`.
+- **User CHỌN Ô 14:09 19/11/2026:** ba câu riêng theo loại, KHÔNG hiện mục web ở các lượt đó; User hỏi lại có làm THẬT gửi email / đặt phòng không — A đang trả lời, chữ loại "gửi" có thể đổi. Bước kế: E code sau cờ mặc định tắt (`/tmp/hr_e_noi_that`; đổi phân công vì B đang đo) ⇒ B hoặc C soạn bộ dò 20 + 20 ⇒ lượt qua server 4 kịch bản đích × 3 + 5 lượt từ chối đúng ⇒ B review cả nhánh.
+- Đếm lượt chia sai tuyến (C, 0 USD): ĐÓNG — 0 lượt sai có hệ quả / 106 lượt qua định tuyến (ngưỡng 3) ⇒ không sửa bước định tuyến; giới hạn: bộ này chỉ đo một chiều; `data/kich_ban_pho_thong_2026-11-19/luot_1/dem_chia_sai_tuyen_C.md` [một người đọc tay].
