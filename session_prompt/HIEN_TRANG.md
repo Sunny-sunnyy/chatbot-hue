@@ -48,8 +48,7 @@ Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / n
 
 1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
 2. Buổi User tự tay test toàn bộ (bước 7) — User chưa có giờ; KHÔNG nhắc.
-3. User nói "xoá đi" ở phiên điều phối hue_rag thì mới xoá hai image `hue-rag-app:a9d1674`, `:dep10b` (đã trả lời User: xoá được).
-4. Hỏi khi tới lượt (sau khi đủ điều kiện ở `VIEC_DANG_MO.md`): bật cờ `noi_that_lam_thay` · bật hai nút xuất lịch (`xuat_pptx`) · giá phòng, bổ sung kho, vị trí người dùng.
+3. Hỏi khi tới lượt (sau khi đủ điều kiện ở `VIEC_DANG_MO.md`): bật cờ `noi_that_lam_thay` · bật hai nút xuất lịch (`xuat_pptx`) · giá phòng, bổ sung kho, vị trí người dùng.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
 
