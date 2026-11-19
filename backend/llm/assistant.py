@@ -131,6 +131,9 @@ class AssistantFlags:
     # Plan 2026-11-17-chua-ho-tro-plan.md: lần hiểu ý có thêm hành động `chua_ho_tro` (câu sửa mà bộ hành động chưa làm được ⇒ lịch giữ nguyên +
     # câu cố định của code, không rơi sang đường thường). TẮT tới khi đạt S1–S3; cần cờ sua_lich_v2. Tắt ⇒ chuỗi gửi model giống byte.
     sua_lich_chua_ho_tro: bool = False
+    # Lượt đo cuối 18/11 (sửa lịch bằng lời 7 / 10): model trả `chua_ho_tro` cho câu "dời hai điểm, mỗi điểm một buổi" ⇒ code đọc câu và áp hai lần
+    # dời (`sua_lich_v2.doi_buoi_tu_cau`). TẮT tới khi đạt tiêu chí ghi trước; cần cờ sua_lich_chua_ho_tro. Không đổi chuỗi gửi model.
+    sua_lich_doi_cho_code: bool = False
     # Gợi ý nơi ở trong lịch bản 2 (plan `2026-11-14-luu-tru-trong-lich-plan.md`): khu cả chuyến + ≤ 5 cơ sở do code chọn, `lich["o_dau"]`
     # (không vào tin nhắn gửi model). TẮT tới khi đạt; cần cờ bản 2 + bảng lưu trú (`assistant.lich_trinh_bang_luu_tru`, kiểm lúc khởi động)
     luu_tru_lich: bool = False
@@ -179,6 +182,8 @@ class AssistantFlags:
             raise ValueError("assistant.sua_lich_v2 needs assistant.len_ke_hoach_v2: true")
         if self.sua_lich_chua_ho_tro and not self.sua_lich_v2:
             raise ValueError("assistant.sua_lich_chua_ho_tro needs assistant.sua_lich_v2: true")
+        if self.sua_lich_doi_cho_code and not self.sua_lich_chua_ho_tro:
+            raise ValueError("assistant.sua_lich_doi_cho_code needs assistant.sua_lich_chua_ho_tro: true")
         if self.anh_lich and (not self.len_ke_hoach_v2 or self.anh_lich_bang is None):
             raise ValueError("assistant.anh_lich needs assistant.len_ke_hoach_v2: true and the photo table (assistant.lich_trinh_bang_anh)")
         if self.luu_tru_lich and (not self.len_ke_hoach_v2 or self.luu_tru_bang is None):

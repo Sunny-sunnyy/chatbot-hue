@@ -258,7 +258,11 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             ra, hanh_dong, bi_chan, cht = [], [], 0, 0
         finally:
             record_llm_calls(trace, call_log.calls, "sua_lich")
-        trace.vet["sua"] = {"hanh_dong": [h.model_dump(exclude_none=True) for h in hanh_dong], "bi_chan": bi_chan, "chua_ho_tro": cht,
+        # cờ `sua_lich_doi_cho_code`: model CHỈ trả "chưa hỗ trợ" ⇒ code đọc câu "dời hai điểm"; đọc được ⇒ áp hai lần dời thay cho câu cố định
+        doc_cau = sl.doi_buoi_tu_cau(bang, luu, query) if flags.sua_lich_doi_cho_code and cht and not hanh_dong and not bi_chan else []
+        if doc_cau:
+            hanh_dong = doc_cau
+        trace.vet["sua"] = {"hanh_dong": [h.model_dump(exclude_none=True) for h in hanh_dong], "bi_chan": bi_chan, "chua_ho_tro": cht, "doc_cau": bool(doc_cau),
                            "model_ra": [h.model_dump(exclude_none=True) for h in ra]}  # sổ vết (RAM): `model_ra` = trước khi lọc (review E)
         if not hanh_dong and not bi_chan and not cht:
             trace.sua = {"n_hanh_dong": 0}
@@ -274,7 +278,7 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         # (C 17/11) model đã nhận là câu sửa: "đổi chỗ ngày 1 với ngày 2" từng ra "Chưa làm: đổi số ngày"; ý đổi chỗ ngày đi kèm ý làm được từng bị bỏ lặng
         if sl.la_viec_ngay_chua_lam(query) and not any(f == "so_ngay" for f, _, _ in kq["doi_truong"]):  # "gộp…" đã ra đổi số ngày ⇒ không báo ngược
             kq["chua_lam"].append(sl.VIEC_KHAC)
-        elif cht:  # cờ `sua_lich_chua_ho_tro`: model nhận câu sửa chưa làm được ⇒ lượt sửa, lịch giữ nguyên, câu cố định (không đường thường)
+        elif cht and not doc_cau:  # cờ `sua_lich_chua_ho_tro`: model nhận câu sửa chưa làm được ⇒ lượt sửa, lịch giữ nguyên, câu cố định (không đường thường)
             kq["chua_lam"].append(sl.CHUA_HO_TRO)
         elif bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi
             kq["chua_lam"].append("doi_so_ngay")
