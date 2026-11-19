@@ -14,7 +14,7 @@
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
 
-## 19/11 — 13. Hỏi tiếp về lịch vừa lập: trợ lý nhìn thấy đúng lịch đó và số giờ do chương trình tính (đã đo xong, anh chọn bật; chờ bật trên bản chính)
+## 19/11 — 13. Hỏi tiếp về lịch vừa lập: trợ lý nhìn thấy đúng lịch đó và số giờ do chương trình tính (đã bật trên bản chính tối 19/11)
 
 **Từ dùng ở mục này:** **lịch đã lưu** = lịch anh vừa lập bằng biểu mẫu "Lên kế hoạch"; hệ thống giữ nó trong bộ nhớ của cuộc trò chuyện 30 phút kể từ lượt cuối ·
 **lượt hỏi thường** = một câu anh gõ để hỏi (không phải bấm biểu mẫu, không phải câu nhờ sửa lịch) · **nguồn** = một đoạn tư liệu hệ thống đưa cho model đọc trước khi viết;
@@ -24,7 +24,7 @@ tính — có thể sai · **sổ vết** = bản ghi từng bước của một
 
 **1. Anh thấy gì khác.** Sau khi lập lịch, anh hỏi tiếp bằng lời về chính lịch đó — "ngày 1 đi hết mấy tiếng, có kịp về trước 5 giờ chiều không", "tóm gọn lịch này để mình
 chép gửi nhóm" — thì trợ lý trả lời **trên đúng lịch đang hiện trên màn hình**, với số giờ do chương trình tính sẵn. Trước hôm nay trợ lý không nhìn thấy lịch vừa lập: nó đi tìm
-trong kho, gặp một bài lịch mẫu và trả lời trên lịch mẫu đó — nói rất chắc mà sai. Anh đã chọn bật phần này chiều 19/11 (cờ `lich_vao_hoi_thuong`). **Lưu ý: lúc kết phiên 19/11 cờ CHƯA bật trên bản chính — nhánh bật cờ `origin/p9-c-bat-lich-vao-hoi-thuong` còn nợ lượt chạy cả bộ test; tới khi nhánh đó được gộp, hệ thống vẫn chạy như trước.** Mọi chữ "khi bật" dưới đây nói về bản đã đo, chưa phải bản anh đang mở.
+trong kho, gặp một bài lịch mẫu và trả lời trên lịch mẫu đó — nói rất chắc mà sai. Anh đã chọn bật phần này chiều 19/11 (cờ `lich_vao_hoi_thuong`). **Đã bật trên bản chính tối 19/11** (mã commit `79b0154`), sau khi chạy đủ ba phép kiểm còn nợ từ buổi chiều — kết quả ở cuối ý 2. Bản anh mở từ giờ là bản đã bật.
 
 Vì sao trước đây sai (theo đường đi của một câu hỏi): câu hỏi ⇒ chọn tuyến ⇒ tìm trong kho ⇒ gom nguồn ⇒ model viết. Lịch vừa lập nằm ở bộ nhớ của cuộc trò chuyện nhưng chỉ
 được đưa cho bước "hiểu câu nhờ sửa lịch", không được đưa vào bước gom nguồn. Việc này thêm đúng một thứ ở bước gom nguồn: chương trình in lịch đang có thành một nguồn — từng
@@ -54,6 +54,15 @@ ngày nào dài nhất. Model chỉ việc diễn đạt lại.
   rút oan câu trả lời nêu đúng số giờ của lịch — đã sửa, có test.
 - **Tiền:** lượt thật của phần anh chọn bật 0,073 USD — khoảng 0,075 nếu cộng cả các câu trả lời chạy song song rồi bị bỏ (trần ghi trước 0,15); phần thử tổng tiền vé ở ý 3 thêm 0,034 USD.
 
+
+- **Ba phép kiểm làm tối 19/11 trước khi bật trên bản chính** (cả ba chạy trên đúng bản có cờ bật):
+  - cả bộ test của phần máy chủ, mỗi file một lượt riêng: **1.512 đạt, 0 hỏng** (mốc gần nhất: 1.437 đạt trên bản sáng 19/11; số tăng vì các việc gộp trong ngày mang thêm test). Lượt đầu
+    có 4 test hỏng: 1 do lỗi trùng tên biến kể ở ý 3, 1 do một test cũ chưa biết tới cờ mới (sửa hai dòng test), 3 do thư mục chạy thử thiếu bản dựng giao diện (không phải lỗi code);
+    sửa xong chạy lại các file đó đều đạt [máy kiểm; một phiên khác đọc phần sửa];
+  - chữ hệ thống gửi cho model ở 228 câu của các bộ đo (cuộc chưa có lịch): **giống từng byte** so với bản chính chụp cùng buổi ⇒ bật cờ không đổi gì ở câu hỏi thường khi chưa lập lịch [máy kiểm];
+  - một cuộc thật trên bản chính sau khi bật (0,0024 USD): lập lịch mặc định ⇒ hỏi "ngày 1 đi tham quan mất mấy tiếng" ⇒ nhờ tóm lịch theo ngày: cả hai câu trả lời trên đúng lịch vừa lập,
+    "5 tiếng tham quan ban ngày, chưa tính đi lại, ăn nghỉ" khớp dòng chương trình in; bản tóm đủ 8 mục, đúng giờ [người viết code tự đọc 3 / 3 lượt — chưa có người thứ hai đọc]. Ở câu số giờ,
+    model tự cộng thêm buổi tối thành "10 tiếng" — phép cộng đúng nhưng là số model tự tính, không phải số chương trình in.
 **3. Chưa làm / giới hạn.**
 - **Tổng tiền vé do chương trình tính: đã làm thử, CHƯA bật.** Anh chọn "chép giá kho đã có"; một phiên chép giá vé từ kho vào bảng điểm của lịch (26 / 41 điểm có giá hoặc
   được kho ghi rõ miễn phí; 25 dòng đã được soát độc lập, 1 dòng thêm sau), chương trình cộng "giá × số người" và in sẵn tổng, tổng theo từng ngày, điểm miễn phí, điểm chưa có giá (không coi là 0 đồng).
@@ -68,10 +77,10 @@ ngày nào dài nhất. Model chỉ việc diễn đạt lại.
   (1 lượt). Đã ghi vào sổ tay bàn giao mục 10.2.
 - Lịch chỉ được nhớ 30 phút kể từ lượt cuối; quá hạn thì trợ lý lại không thấy lịch.
 - Mới đo trên lịch mặc định (2 ngày, 2 người lớn) và một lịch gia đình có trẻ em; câu hỏi do nhóm viết, chưa phải câu người dùng thật gõ; mỗi câu chạy 1–2 lần.
-- **Chưa chạy lại cả bộ test trên bản bật cờ** ⇒ cờ chưa vào bản chính; đây là việc đầu tiên của phiên sau.
+- **Lượt chạy cả bộ test tối 19/11 bắt được một lỗi do chính việc này gây ra, đã sửa trước khi bật:** trong file code của lịch có hai biến trùng tên — một cái có từ 13/11 dùng để bắt giờ giấc trong câu tả điểm do model viết (lịch lập qua biểu mẫu: câu nào tự nêu giờ thì bị thay bằng câu an toàn do chương trình viết), một cái thêm chiều 19/11 cho việc này. Cái sau đè cái trước, nên từ 15:47 tới 18:55 ngày 19/11 (khoảng 3 giờ) trên bản chính, câu tả điểm có giờ lẻ kiểu "mở cửa lúc 8:00" có thể lọt vào lịch mà không bị thay. Lỗi lọt vì lúc gộp code buổi chiều máy đang bận, nhóm chỉ chạy các file test liên quan trực tiếp chứ chưa chạy cả bộ; test bắt được lỗi này nằm ở một file khác. Đã sửa bằng cách đổi tên biến (hai dòng), một phiên khác đọc lại và tự chạy test. Chưa ai đếm trong khoảng 3 giờ đó có lịch nào thật sự bị lọt giờ hay không (không có người dùng ngoài nhóm).
 
 **4. Cách anh thử trong 2 phút.**
-0. Chỉ thử được SAU khi nhóm báo cờ đã bật trên bản chính (xem lưu ý ở ý 1).
+0. Cờ đã bật trên bản chính từ tối 19/11 — thử được ngay.
 1. Bật hệ thống, mở giao diện, vào "Lên kế hoạch", để nguyên mặc định (2 ngày, 2 người lớn), bấm tạo lịch.
 2. Gõ: *ngày 1 đi hết mấy tiếng, có kịp về trước 5 giờ chiều không* ⇒ **đúng** là câu trả lời nêu 5 giờ tham quan và khung 8:00 – 16:00 của lịch đang hiện; **sai** là nhắc tới
    một điểm không có trên màn hình.
