@@ -1,6 +1,6 @@
 # Bài 19 — Bảng tổng các lần so sánh
 
-*Cập nhật lần cuối: 12:03, ngày 15/11/2026 · thêm dòng 43–44 (hai lần thử làm câu tìm thêm nhanh hơn, đều bỏ). Trước: 17:14 14/11/2026 (dòng 38–42 và ý 7).*
+*Cập nhật lần cuối: 14:49, ngày 19/11/2026 · thêm dòng 45 (thử mức suy luận thấp cho model viết, bỏ). Trước: 12:03, ngày 15/11/2026 · thêm dòng 43–44 (hai lần thử làm câu tìm thêm nhanh hơn, đều bỏ). Trước: 17:14 14/11/2026 (dòng 38–42 và ý 7).*
 
 ## Bảng từ
 
@@ -84,6 +84,7 @@ không được làm tụt (bài 9, 11).
 | 42 | **Quán ăn trong lịch** (quán kho + bản đồ mở có nhãn "chưa kiểm", ≤ 2 km) | không có | 80,7 % số bữa có dòng; trung vị 0,78 km; người xem **10 / 10**; đếm trước khi xây: bản đầu ghi sai 95,2 %, đếm lại 74,7 % (mức ≥ 50 %) | giữ | 25 |
 | 43 | **Cho trợ lý tìm thêm hai lần cùng lúc** (cho phép gọi hai công cụ trong một lượt) | tìm lần lượt từng lần | model **gần như không dùng**: 1 / 176 câu; 7 câu nhanh hơn 2,3 giây nhưng vì model **tìm 1 lần thay vì 2**, không phải vì tìm cùng lúc; bộ an toàn 32 không đổi | bỏ (giữ hồ sơ) | 13 |
 | 44 | **Cho trợ lý tìm thêm tối đa 1 lần** (thay vì 2) | tìm thêm tối đa 2 lần | câu cần tìm 2 lần nhanh hơn **2,4 giây** (7 câu), số lần gọi model 81 ⇒ 66; nhưng câu trong kho bị từ chối **5 ⇒ 7** trên 30 câu chạm (cho phép thêm 1) — một câu so sánh nhiều nguồn thiếu bằng chứng nên từ chối | bỏ (giữ hồ sơ) | 13 |
+| 45 | **Model viết "nghĩ ít hơn"** (mức suy luận low) trên bản trợ lý, sau khi bỏ trần độ dài | mức đang chạy (medium), chạy lại cùng buổi | "đủ ý" chênh **0,000** [−0,101; +0,093] trên 129 câu (không khác); rẻ hơn ~4 %, mỗi lần gọi nhanh hơn ~14 % (cả câu gần như bằng); bộ an toàn: **1 lần nói trái nguồn** về vé trẻ em ở một trong hai lượt ⇒ phạm sàn. Mức high chưa đo chất lượng (chỉ thử giá: gần bằng medium) | bỏ (giữ medium) | Việc mới xong 19/11 |
 
 ## Nhìn cả bảng thấy gì
 

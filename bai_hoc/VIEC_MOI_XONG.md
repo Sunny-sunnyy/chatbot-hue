@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 13:16, ngày 19/11/2026 · thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 14:49, ngày 19/11/2026 · thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -13,6 +13,44 @@
 **Từ dùng chung cho các mục 19/11:** **cờ** = một dòng bật / tắt trong file cấu hình, tắt là hệ thống chạy như trước khi có tính năng · **lời dặn** = đoạn chữ cố định gửi kèm mọi
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
+
+## 19/11 — 12. Thử cho model "nghĩ ít hơn" hoặc "nghĩ nhiều hơn" trước khi viết: giữ nguyên mức đang chạy
+
+**Từ dùng ở mục này:** **mức suy luận** = model được "nghĩ thầm" bao nhiêu trước khi viết câu trả lời; có ba nấc được thử: thấp (`low`), vừa (`medium` — mức đang chạy, là mức
+mặc định khi không dặn gì), cao (`high`). Nghĩ thầm cũng tính tiền và tốn giây · **mốc** = bản đang chạy (mức vừa) được chạy LẠI cùng buổi, xen kẽ từng câu với mức thử — không so
+với điểm của hôm khác · **khoảng tin cậy 95 %** = vùng mà chênh lệch thật nhiều khả năng nằm trong; vùng này chứa số 0 thì coi là "không khác".
+
+**1. Anh thấy gì khác.** Không thấy gì khác: trợ lý **vẫn chạy mức vừa**. Anh đề nghị thử ba mức sau khi đã bỏ trần độ dài câu trả lời; nhóm đo xong và luật ghi trước cho ra
+"không đổi".
+
+**2. Bằng chứng.**
+- **Bước 1 — thử giá trên 45 câu chọn sẵn, cả ba mức** (không dùng để kết luận chất lượng vì là câu chọn có chủ đích): tiền mỗi câu (tính trên 37 câu bộ mẫu của mẫu 45 câu) gần bằng nhau (mức thấp bằng 0,94 lần mức vừa,
+  mức cao bằng 0,97 lần); mức cao **hầu như không làm model nghĩ nhiều hơn** trên loại câu hỏi này (lượng nghĩ thầm ở giữa: 42 đơn vị so với 21 của mức vừa — rất ít so với vài
+  nghìn đơn vị của một câu hỏi). Anh xem số rồi chọn: bước 2 chỉ đo mức thấp so với mức vừa. [máy kiểm]
+- **Bước 2 — mức thấp so với mức vừa, trên bộ đủ:** 176 câu mẫu chạy một lượt và 32 câu an toàn chạy hai lượt, mỗi mức. [máy kiểm]
+  - **Chất lượng không khác.** Điểm "đủ ý" (thang 1–5, người chấm không biết câu nào của mức nào) trên 129 câu tính điểm: chênh **0,000**, khoảng tin cậy 95 % từ −0,101 đến
+    +0,093 — chứa số 0. Trong 129 câu: 5 câu mức thấp được điểm cao hơn, 5 câu được điểm thấp hơn, 119 câu bằng nhau. Điểm "đúng" cũng chênh 0,000. Hai lượt KHÔNG đổi gì chạy sáng 19/11 đã lệch
+    nhau +0,031 ⇒ chênh 0,000 nằm hẳn trong dao động tự nhiên.
+  - **Một lỗi ở bộ an toàn.** Trong hai lượt của mức thấp, có MỘT lần trợ lý so sánh sai một con số chiều cao với ngưỡng miễn vé trẻ em và bảo phải mua vé, trong khi nguồn ghi
+    được miễn. Sáu lần chạy khác của đúng câu đó trong ngày (ba lần mức vừa, hai lần mức thấp, một lần mức cao) đều đúng. Luật ghi trước: "đảo cảnh báo / sai điều kiện mới — 0 lần" (người chấm gắn ca này cả hai loại) ⇒ mức thấp
+    **phạm sàn**. Người thứ hai đã đọc và xác nhận đây là sai thật. [người thứ hai kiểm] Một lần sai chưa nói được tỉ lệ; nhưng luật ghi trước không cho bỏ qua.
+  - **Rẻ và nhanh hơn một chút:** tiền mỗi câu 0,000405 so với 0,000424 USD (rẻ hơn khoảng 4 %); một lần gọi model viết 2,08 so với 2,43 giây ở giữa (nhanh hơn khoảng 14 %, đo
+    khi máy còn việc khác chạy); nhưng mức thấp gọi model và tìm thêm nhiều lần hơn một chút nên tổng thời gian model của cả câu gần như bằng nhau (5,26 so với 5,31 giây ở giữa). Tiền và giây chỉ để báo — theo lời anh "chất lượng trước", không dùng để chọn.
+  - **Kết luận theo luật ghi trước:** mức thấp không tốt hơn về chất lượng và phạm một sàn an toàn ⇒ **không đổi sang mức thấp**.
+- **Một phép kiểm thêm, làm sau khi đã thấy số (không dùng để quyết):** ở lượt mức thấp có một câu trong kho bị bước chọn tuyến đẩy nhầm sang "ngoài phạm vi". Bước chọn tuyến
+  không nhận tham số mức suy luận nên không thể do mức thấp; chạy lại riêng bước đó 10 lần: 10 / 10 chọn đúng ⇒ là dao động một lần của bước chọn tuyến. [máy kiểm]
+- Tiền thật cả việc: **0,323 USD** (ước ban đầu cho ba mức 0,6–1,0; ước sau khi bỏ mức cao ở bước 2 khoảng 0,36–0,40; trần 1,2).
+
+**3. Chưa làm / giới hạn.**
+- **Mức cao CHƯA được đo chất lượng** (anh chọn bỏ ở bước 2) ⇒ không được nói "mức cao không tốt hơn"; chỉ biết nó không đắt hơn và model gần như không nghĩ thêm.
+- Lượt lập lịch từ biểu mẫu và bước hiểu ý sửa lịch đang chạy mức thấp (chọn trong đợt 07/11–14/11, vì tốc độ) — chưa so chất lượng với mức vừa; là phép thử riêng, chưa làm.
+- Bộ 176 câu mẫu đã dùng hơn mười lượt nên kết luận là "trên bộ đã thấy"; mỗi mức chỉ một lượt bộ câu mẫu.
+- Công cụ so bốn lượt an toàn viết trong ngày, đã có người thứ hai đọc code nhưng chưa ai chạy lại độc lập. [chưa kiểm]
+- Thấy thêm khi đo: hai lượt mức vừa không đổi gì cũng lệch nhau 1 "sai điều kiện mới" + 2 "thiếu cảnh báo mới" theo người chấm ⇒ con số "0 lỗi mới" trên MỘT lượt an toàn không tách
+  được khỏi dao động; lần đo an toàn sau cần luôn có cặp "không đổi gì" đi kèm.
+
+**4. Cách thử trong 2 phút.** Không có gì để thử trên giao diện (không đổi gì). Muốn xem bảng số, nhóm mở file kết quả của bước 2 trước mặt anh; báo cáo kỹ thuật:
+`report_agent/2026-11-19/b_muc_suy_luan_implementation.md`.
 
 ## 19/11 — 11. Ghi mốc "Phase 9 xong phần nhóm, kèm danh sách mục chưa đạt"
 
