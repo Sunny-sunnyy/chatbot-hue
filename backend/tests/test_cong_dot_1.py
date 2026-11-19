@@ -36,11 +36,15 @@ SETTINGS = load_settings(validate_private_paths=False)
 BUILD_RECORD = Path(__file__).resolve().parents[2] / "data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json"
 
 
+# MỘT chỗ duy nhất liệt kê các cờ phụ thuộc "sửa lịch bản 2" / nơi ở mà test phải tự tắt (test không đọc cờ thật của settings.yaml).
+# Thêm một cờ mới cần `sua_lich_v2` ⇒ thêm vào ĐÂY; `test_b5_lich_trinh` dùng chung hằng này (19/11: chép tay ở hai file ⇒ vấp hai lần khi bật cờ).
+CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lich_doi_cho_code": False, "luu_tru_lich": False, "quan_lich": False, "ban_do_lich": False,
+                   "lich_vao_hoi_thuong": False}
+
+
 def flags_from(**assistant) -> AssistantFlags:
     s = copy.deepcopy(SETTINGS)
-    s["assistant"].update({"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lich_doi_cho_code": False, "luu_tru_lich": False, "quan_lich": False, "ban_do_lich": False,
-                           "lich_vao_hoi_thuong": False,  # cần `sua_lich_v2` (đã tắt ở trên) ⇒ phải tắt theo, không thì cờ bật trong settings làm hàm này ném lỗi
-                           **assistant})  # sửa lịch bản 2 / nơi ở: test không đọc cờ thật (bật tạm khi đo trong worktree)
+    s["assistant"].update({**CO_SUA_LICH_TAT, **assistant})
     return AssistantFlags.from_settings(s)
 
 

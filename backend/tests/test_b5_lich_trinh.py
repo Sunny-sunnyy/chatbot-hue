@@ -29,6 +29,7 @@ from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusCo
 from test_api_chat import chat_log_records, metric_lines
 from test_b2_tool_loop import _ids, answer, deps, generator, tool_call  # noqa: F401  (fixture `deps` dùng chung)
 from test_chat_stream import parse_sse
+from test_cong_dot_1 import CO_SUA_LICH_TAT
 
 SETTINGS = load_settings(validate_private_paths=False)
 BANG = nap_bang_lich(SETTINGS)
@@ -552,7 +553,7 @@ def test_flags_need_table_and_tool_loop():
     with pytest.raises(ValueError):
         AssistantFlags(lich_trinh=True, bang_lich=BANG)
     s = copy.deepcopy(SETTINGS)
-    s["assistant"].update(lich_trinh=True, lich_trinh_bieu_mau=False, len_ke_hoach_v2=False, anh_lich=False, sua_lich_v2=False, sua_lich_chua_ho_tro=False, sua_lich_doi_cho_code=False, luu_tru_lich=False, quan_lich=False, ban_do_lich=False, lich_vao_hoi_thuong=False)
+    s["assistant"].update(lich_trinh=True, lich_trinh_bieu_mau=False, len_ke_hoach_v2=False, anh_lich=False, **CO_SUA_LICH_TAT)
     tat = copy.deepcopy(SETTINGS)
-    tat["assistant"].update(lich_trinh=False, lich_trinh_bieu_mau=False, len_ke_hoach_v2=False, anh_lich=False, sua_lich_v2=False, sua_lich_chua_ho_tro=False, sua_lich_doi_cho_code=False, luu_tru_lich=False, quan_lich=False, ban_do_lich=False, lich_vao_hoi_thuong=False)  # cờ tắt đặt rõ: không theo settings.yaml
+    tat["assistant"].update(lich_trinh=False, lich_trinh_bieu_mau=False, len_ke_hoach_v2=False, anh_lich=False, **CO_SUA_LICH_TAT)  # cờ tắt đặt rõ: không theo settings.yaml
     assert AssistantFlags.from_settings(s).bang_lich is not None and AssistantFlags.from_settings(tat).bang_lich is None
