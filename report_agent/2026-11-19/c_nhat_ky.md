@@ -18,6 +18,8 @@ Tạo 11:20 19/11/2026 (giờ `date`) lúc kết phiên nhẹ. Sổ cũ nguyên 
 11. **Review** nhánh sửa "trả lời rỗng" của B (ready; test mới đỏ khi bỏ bản sửa — C tự chạy; một ca còn sót ghi vào report) · liếc diff công cụ chấm hai bên của B (đạt).
 12. **Sửa nhãn bằng chứng** ở report bản code câu thiếu cảnh báo: C đã ghi "người thứ hai kiểm" cho việc người khác chỉ ĐỌC — báo xong bị lật lại: 1.
 13. **Test đổi cờ `noi_dong_tam_ngung`**: 31 đạt / 0 hỏng, cả có lẫn không `--env-file` (RSS 130 MB). SỰ CỐ trước đó: C chạy 20 file test trong một tiến trình (hiểu "file chạm cờ" quá rộng), xâu sẵn lượt hai ⇒ RAM cả máy chạm sàn, phiên điều phối phải dừng tiến trình. Bẫy: việc nặng chạy TỪNG lệnh, đo RSS trước, không xâu hai lượt trong một lệnh nền.
+14. **Bàn giao bước 1 của việc ngữ cảnh lớn** cho người chạy: lệnh từng bước + ghi trước dự báo "chưa rõ" (người đọc thấy khoảng 7 và 4–6 câu có chỗ lên điểm; cổng đạt theo chữ plan 12 / 10). Công cụ chạy có phí sửa theo lượt đọc của B: lượt lỗi / bị hạn giờ được ghi một cận trên vào sổ trần. 0 USD.
+15. **Plan "lịch đã lưu vào lượt hỏi thường"** (riêng tư, bản 1 `7d2fca7bd28b`, chưa review): lượt hỏi thường không thấy lịch vì đường trả lời thường chạy trên trace phụ không mang lịch; thiết kế một cờ mới mặc định tắt — code dựng nguồn "Lịch bạn đang có" kèm con số tính sẵn. Bảng 41 điểm chưa có trường giá vé nào ⇒ một câu hỏi cho User. 0 USD.
 
 ## Tiền thật của C trong ngày
 0,21179 (lượt đo bản lời dặn) + 0,00213 (lượt thật bản code) = **0,2139 USD**. Buổi trưa: 0 USD. Hai con số cả ngày: báo xong bị lật lại 1 (nhãn bằng chứng, mục 12) · User phải nhắc lại 0.
