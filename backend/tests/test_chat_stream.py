@@ -103,7 +103,9 @@ def packed_two_sources() -> PackedContext:
     return PackedContext(text="", sources=sources, input_tokens=0)
 
 
-def stream_with_text(answer: str) -> tuple[StreamEvents, list[bytes], AnswerTrace]:
+def stream_with_text(answer: str, first_block: str = "") -> tuple[StreamEvents, list[bytes], AnswerTrace]:
+    """`first_block`: chữ của một khối chữ model phát TRƯỚC khối trả lời cuối trong cùng một lần trả lời (vòng đọc của lõi đưa mọi mảnh
+    chữ vào một bộ bóc); chữ cuối (`trace.answer`) vẫn là của khối cuối, như `final_output`."""
     """Đi như `_answer_events`: status ⇒ các delta bóc từ JSON ⇒ kiểm citation chữ cuối ⇒ sự kiện kết."""
     metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
     stream = StreamEvents(metrics, time.perf_counter())
@@ -111,7 +113,7 @@ def stream_with_text(answer: str) -> tuple[StreamEvents, list[bytes], AnswerTrac
     trace = AnswerTrace(packed=packed, so_nguon=list(packed.sources), answer=answer)  # như `tim_kho` ghi sổ nguồn
     chunks = [stream.status({"stage": "searched", "n_sources": 2}), stream.status({"stage": "generating"})]
     extractor = AnswerTextStream()
-    raw = json.dumps({"answer": answer}, ensure_ascii=False)
+    raw = first_block + json.dumps({"answer": answer}, ensure_ascii=False)
     for start in range(0, len(raw), 7):
         text = extractor.feed(raw[start:start + 7])
         if text:
@@ -134,6 +136,29 @@ def test_success_order_seq_and_only_cited_sources():
     assert events[-1][1] == {"outcome": "success"}
     assert stream.metrics["delta_matches_final"] is True and stream.metrics["refusal"] is False
     assert isinstance(stream.metrics["first_event_ms"], float) and isinstance(stream.metrics["first_text_ms"], float)
+
+
+def test_answer_still_reaches_user_when_an_earlier_text_block_hid_every_piece():
+    # 19/11: model phát 2–3 khối chữ trong MỘT lần trả lời; khối đầu không phải `{"answer":"…"}` (hoặc là answer rỗng) ⇒ bộ bóc không ra mảnh
+    # nào dù chữ cuối hợp lệ ⇒ lượt "success" mà người dùng không thấy chữ. Lưới cuối: chưa phát mảnh nào ⇒ phát cả câu trước `sources`.
+    for first_block in ("Để mình tìm thêm.", '{"answer":""}'):
+        stream, chunks, _ = stream_with_text("Mở cửa từ 7 giờ [Nguồn 2].", first_block)
+        events = parse_sse(chunks)
+        names = [name for name, _ in events]
+        assert names == ["status", "status", "delta", "sources", "done"], first_block
+        assert events[2][1] == {"seq": 1, "text": "Mở cửa từ 7 giờ [2]."}
+        assert stream.metrics["delta_matches_final"] is True and isinstance(stream.metrics["first_text_ms"], float)
+    stream, chunks, _ = stream_with_text(INSUFFICIENT_ANSWER, '{"answer":""}')  # câu từ chối của model cũng phải hiện
+    events = parse_sse(chunks)
+    assert [name for name, _ in events] == ["status", "status", "delta", "sources", "done"]
+    assert events[2][1]["text"] == INSUFFICIENT_ANSWER and stream.metrics["refusal"] is True
+
+
+def test_hidden_answer_that_fails_citation_check_is_not_sent():
+    stream, chunks, _ = stream_with_text("Mở cửa từ 7 giờ.", "Để mình tìm thêm.")  # chữ cuối thiếu trích dẫn ⇒ vẫn rút, không phát bù
+    events = parse_sse(chunks)
+    assert [name for name, _ in events] == ["status", "status", "error", "done"]
+    assert events[2][1]["after_text"] is False and stream.metrics["outcome"] == "retracted"
 
 
 def test_final_answer_without_citation_is_retracted_without_sources():
@@ -213,7 +238,7 @@ def test_notice_event_follows_sources_when_set():
     stream, chunks, trace = stream_with_text("Mở cửa từ 7 giờ [1].")
     assert "notice" not in [name for name, _ in parse_sse(chunks)]  # không đặt notice ⇒ không có sự kiện
     trace.notice = "dòng thử"
-    names = [name for name, _ in parse_sse(StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter()).finish(trace))]
+    names = [name for name, _ in parse_sse(stream.finish(trace))]  # cùng `stream` đã phát chữ (stream mới chưa phát mảnh nào ⇒ lưới cuối phát bù)
     assert names == ["sources", "notice", "done"]
 
 

@@ -612,6 +612,9 @@ class StreamEvents:
         """Sau kiểm citation: qua ⇒ `sources` (chỉ nguồn được trích) [+ `notice` H4c]; hỏng ⇒ `error` để giao diện rút lại chữ (D3 (a))."""
         final = normalize_citations(trace.answer)
         self.metrics["refusal"] = normalize_citations(chu_cua_model(trace)).strip() in REFUSAL_ANSWERS  # review C m-1: trên chữ model
+        # Lưới cuối (19/11): model phát nhiều khối chữ trong một lần trả lời mà khối đầu không phải `{"answer":"…"}` (hoặc answer rỗng) ⇒ bộ bóc
+        # chữ không ra mảnh nào dù chữ cuối hợp lệ ⇒ lượt "success" không có chữ. Chưa phát mảnh nào ⇒ phát cả câu một lần, trước `sources`.
+        bu = [self.delta(final)] if trace.citation_error is None and not self.shown and final.strip() else []
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == final
         if trace.citation_error is not None:
             logger.error("Citation integrity failed")
@@ -620,7 +623,7 @@ class StreamEvents:
                                           "message": self.sua_loi(_loi_trich_dan(trace)), "after_text": bool(self.shown)})]
         else:
             self.metrics["outcome"] = "success"
-            events = [sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited, self.bai_ids)])]
+            events = bu + [sse_event("sources", [source.model_dump() for source in _source_responses(trace.cited, self.bai_ids)])]
             if trace.notice is not None:
                 events.append(_notice_event(trace))
             lich = None if self.lich is None else self.lich()
