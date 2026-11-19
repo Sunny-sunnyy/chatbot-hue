@@ -326,7 +326,11 @@ function XuatLich() {
     document.documentElement.classList.add("in-lich");
     const xong = () => { the.classList.remove("lkh-dang-in"); document.documentElement.classList.remove("in-lich"); window.removeEventListener("afterprint", xong); };
     window.addEventListener("afterprint", xong);
-    window.print();
+    // ảnh `loading="lazy"` dưới màn hình đầu chưa tải ⇒ bản in thiếu ảnh: tải hết ảnh của thẻ rồi mới mở khung in (chờ tối đa 4 giây)
+    const anh = [...the.querySelectorAll("img")];
+    anh.forEach(i => { i.loading = "eager"; });
+    const cho = Promise.all(anh.map(i => (i.complete ? Promise.resolve() : i.decode().catch(() => {}))));
+    Promise.race([cho, new Promise(r => setTimeout(r, 4000))]).then(() => window.print());
   }
   async function taiPptx() {
     setBao("Đang tạo file…");

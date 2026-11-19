@@ -90,3 +90,17 @@ Tiền lượt thử: khoảng 0,004 USD (ước theo số lần gọi model; ch
 Giới hạn / việc còn lại: (1) lỗi trang cuối bản in còn nguyên — hình thức, không sai nội dung; cách sửa nhỏ nhất chưa thử: cho riêng ngày cuối được ngắt trang giữa các điểm để điểm cuối đi cùng hai dòng ghi chú. (2) Chỉ thử lịch mặc định 2 ngày; lịch 1 ngày và 3 ngày chưa in lại sau khi gộp. (3) Sau khi nhánh vào main cần `uv sync` ở cây chính (thư viện `python-pptx`).
 
 **Sửa tiếp lỗi trang cuối bản in (19:26 19/11/2026, một lần thử, một dòng CSS ở `frontend/src/lkh.css`):** cho riêng ngày CUỐI được ngắt trang giữa các điểm. Chạy lại đúng lượt thử trên: bản in vẫn 3 trang nhưng trang 3 nay là MỘT khối 8 dòng liền nhau (ghi chú của lịch · dòng Nguồn · hai dòng lưu ý), không còn hai dòng lẻ; trang 2 kết thúc gọn ở điểm cuối của ngày 2 (31 · 34 · 8 dòng chữ) [máy kiểm — đếm và đọc chữ từng trang; CHƯA có người thứ hai nhìn file PDF]. Hai việc kia của lượt thử ra y như bảng trên. Giới hạn còn lại: lịch 2 ngày vẫn in ra 3 trang; lịch 1 và 3 ngày chưa in lại. Dòng "CHƯA ĐẠT" ở bảng trên là kết quả TRƯỚC bản sửa này.
+
+## 5e. Ba điểm phiên điều phối trả lại sau khi mở file PDF (phiên E, 19:43 19/11/2026, giờ `date`) — THAY phần bản in của mục 5d
+
+Phiên điều phối mở bản in và thấy hai lỗi tôi KHÔNG bắt được ở 5d (tôi chỉ đếm dòng chữ từng trang, không nhìn hình; phép đếm "8 / 8 ảnh hiện" chỉ đếm khung ảnh, không đếm ảnh đã tải hay bị che):
+
+| Lỗi | Nguyên nhân (đã tái hiện) | Sửa | Kết quả sau sửa |
+|---|---|---|---|
+| Cả ngày 2 không có ảnh điểm | ảnh điểm có hiệu ứng "lộ dần theo cuộn" (cắt bằng `clip-path`); khi in không có cuộn nên ảnh nằm dưới màn hình đầu bị che hết — không phải thiếu ảnh | bản in gỡ hiệu ứng trên mọi ảnh của thẻ (`frontend/src/lkh.css`) + nút in tải hết ảnh `loading="lazy"` của thẻ rồi mới mở khung in, chờ tối đa 4 giây (`frontend/src/LichV2.jsx`) | lịch 2 ngày: 8 / 8 ảnh điểm đã tải, 0 bị che · lịch 3 ngày: 12 / 12, 0 bị che [máy kiểm + tôi nhìn ảnh từng trang] |
+| Tiêu đề "Ghi chú của lịch" nằm cuối trang, thân sang trang sau | khối ghi chú không có luật đi nguyên khối | thêm `break-inside: avoid` cho khối đó | lịch 2 ngày: khối ghi chú nguyên vẹn ở đầu trang 3 cùng dòng Nguồn + hai dòng lưu ý · lịch 3 ngày: 3 trang, khối ghi chú nằm trọn cuối trang 3 [tôi nhìn ảnh] |
+| Một quán không có ảnh nhỏ cạnh tên | không phải lỗi tải: trang không có thẻ ảnh cho quán đó (bảng ảnh không có ảnh dùng được); mọi thẻ ảnh quán có mặt đều đã tải (7 / 7 và 10 / 10) | không sửa | — |
+
+Cách thử mới bấm đúng NÚT "In / Lưu PDF" của giao diện (hàm in của trình duyệt được thay bằng một cờ để chạy không màn hình) rồi xuất PDF — tức đi qua chính đoạn code tải ảnh trước khi in. Chưa làm: bấm nút bằng tay trên trình duyệt có màn hình; in trên Firefox / Safari.
+
+**Cả bộ `backend/tests` trên nhánh đã gộp main `ab7e47f` (từng file một tiến trình, kèm thư viện `python-pptx`):** 54 file. Không có file env: 1.522 đạt, 5 test lỗi ở 4 file — cả 5 là test cần khoá OpenAI (đúng "4 nhóm test cần khoá" của sổ tay bàn giao). Chạy lại 4 file đó CÓ file env: 15 · 9 · 19 · 5 đạt, 0 lỗi ⇒ tổng 1.527 đạt, 0 hỏng [máy kiểm]. Lượt này chạy TRƯỚC ba dòng sửa giao diện ở bảng trên (chỉ đổi `frontend/`, không đổi `backend/`).

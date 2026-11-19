@@ -226,6 +226,10 @@
   /* dòng cuối: không tự đứng một trang riêng (lần chụp 19/11 ra trang 3 chỉ có hai dòng này) */
   html.in-lich .lkh-dang-in .lkh-chi-in { display: block; margin-top: 4mm; font-size: 9pt; break-before: avoid-page; break-inside: avoid; }
   html.in-lich .lkh-dang-in .lich-ghi-chu, html.in-lich .lkh-dang-in .notice { break-after: avoid-page; }
+  /* khối ghi chú ngắn: đi nguyên khối (lần in 19/11 tối: tiêu đề nằm cuối trang, thân sang trang sau) */
+  html.in-lich .lkh-dang-in .lich-ghi-chu { break-inside: avoid; }
+  /* ảnh điểm lộ dần theo cuộn (`lkh-lo`, clip-path): khi in không có cuộn ⇒ ảnh ngoài màn hình đầu bị che hết — gỡ hiệu ứng lúc in */
+  html.in-lich .lkh-dang-in img { animation: none !important; clip-path: none !important; }
   html.in-lich .lkh-dang-in .lkh-in-tieu-de { margin: 0 0 5mm; font: 700 24pt Georgia, serif; color: #49634D; border-bottom: 2pt solid #B28739; padding-bottom: 3mm; }
   html.in-lich .lkh-dang-in .lkh-thanh { background: #49634D !important; color: #F8F4E9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   html.in-lich .lkh-dang-in h3, html.in-lich .lkh-dang-in .lkh-tong-h { font-family: Georgia, serif; color: #49634D; }
