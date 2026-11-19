@@ -252,6 +252,67 @@ def test_model_chon_loai_bao_lu_roi_loi_thi_loi_bao_cua_route_co_cau_112():
     assert khong_goi.json()["error"]["message"] == GENERATION_FAILURE_MESSAGE
 
 
+def test_stream_model_chon_loai_bao_lu_roi_loi_thi_su_kien_error_co_cau_112():
+    """Cùng ca với test `/api/chat` ở trên nhưng đi qua ROUTE thật `/api/chat/stream` — chỗ hai cơ chế gặp nhau: ở đường stream có cờ
+    `song_song_tra_loi`, phần trả lời chạy trên trace PHỤ; lỗi của nó phải được gộp về trace chính TRƯỚC khi route dựng sự kiện `error`
+    (`sua_loi` đọc `trace.thoi_tiet_ctx`). Câu gõ không khớp lưới bão / lũ; model (SDK thật + client kịch bản) gọi `thoi_tiet(loai="bao_lu")`
+    rồi lần gọi kế lỗi ⇒ sự kiện `error` phải mang câu bản tin chính thức + 112. Kiểm cả hai nhánh cờ song song. Đối chứng: model lỗi khi
+    CHƯA gọi công cụ ⇒ lời báo nguyên. Tìm kho + ngữ cảnh thật (Qdrant chỉ đọc); model và dự báo là đồ thay thế — không mạng, không cần khoá."""
+    from dataclasses import replace
+
+    from openai import OpenAIError
+
+    from api.routes.chat import GENERATION_FAILURE_MESSAGE
+    from llm import thoi_tiet as tt
+    from test_b2_tool_loop import generator
+    from test_b5b_thoi_tiet import bao_call
+    from test_chat_stream import parse_sse
+
+    cau = "Mai đi biển Thuận An thời tiết có nguy hiểm gì không?"
+    assert not tt.la_luot_bao_lu(cau, ())
+
+    def kich_ban(goi_bao_lu: bool):
+        lan_tro_ly = []
+
+        def script(n, kw):
+            instructions = kw.get("instructions") or ""
+            if "tro_ly_hue" in instructions and "ngoai_pham_vi" in instructions:  # lời dặn định tuyến
+                return [{"type": "message", "id": f"r{n}", "role": "assistant", "status": "completed",
+                         "content": [{"type": "output_text", "text": json.dumps({"route": "tro_ly_hue"}), "annotations": []}]}]
+            lan_tro_ly.append(n)
+            if goi_bao_lu and len(lan_tro_ly) == 1:
+                return [bao_call()]
+            raise OpenAIError("x")
+        return script
+
+    async def du_bao_loi():
+        return tt.DuBao(trang_thai="loi", loi="test")
+
+    def loi_bao(client, app, flags, goi_bao_lu: bool) -> dict:
+        app.state.generator, app.state.assistant_flags = generator(kich_ban(goi_bao_lu)), flags
+        client.cookies.clear()  # mỗi lượt một cuộc mới: lượt trước không thành "câu liền trước" của lưới
+        r = client.post("/api/chat/stream", json={"query": cau})
+        assert r.status_code == 200
+        events = parse_sse([block.encode() + b"\n\n" for block in r.text.split("\n\n") if block.strip()])
+        assert events[-1][0] == "done" and [name for name, _ in events].count("error") == 1
+        return dict(events)["error"]
+
+    app = create_app(load_settings())
+    with TestClient(app) as client:
+        goc = app.state.generator, app.state.generator_ready, app.state.assistant_flags
+        app.state.generator_ready = True
+        ket_qua = {}
+        for song_song in (True, False):  # cờ đặt trong test (không dựa vào settings.yaml): hai nhánh của đường stream
+            flags = replace(goc[2], router=True, tim_them=True, lan_tim_dau="v0", thoi_tiet=True, bao_lu_cong_cu=True,
+                            song_song_tra_loi=song_song, du_bao=du_bao_loi)
+            ket_qua[song_song] = loi_bao(client, app, flags, True), loi_bao(client, app, flags, False)
+        app.state.generator, app.state.generator_ready, app.state.assistant_flags = goc
+    for song_song, (co_goi, khong_goi) in ket_qua.items():
+        assert co_goi["code"] == khong_goi["code"] == "generation_unavailable", song_song
+        assert co_goi["message"] == f"{GENERATION_FAILURE_MESSAGE}\n\n{tt.CAU_BAO_LU}", song_song
+        assert khong_goi["message"] == GENERATION_FAILURE_MESSAGE, song_song
+
+
 def test_api_catches_the_same_error_classes_that_retrieval_raises():
     """Gói 1b (B-01 / C-01): lệnh production `uvicorn api.app:app` chạy từ backend/ — mỗi module chỉ nạp một lần và lớp lỗi API bắt
     là đúng đối tượng lớp mà module ném ra (trước đây `core.schema` và `backend.core.schema` cùng nạp ⇒ bắt hụt)."""
