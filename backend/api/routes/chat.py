@@ -23,7 +23,6 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from core import so_vet
 from core.schema import (
-    ContextBudgetError,
     GenerationError,
     GeneratorNotReadyError,
     RetrievalDependencyError,
@@ -99,7 +98,6 @@ STREAM_METRIC_FIELDS = METRIC_FIELDS + ("first_event_ms", "first_text_ms", "delt
 GENERATION_FAILURE_MESSAGE = "Không thể tạo câu trả lời vào lúc này."
 INTERNAL_ERROR_MESSAGE = "Đã xảy ra lỗi trong hệ thống. Vui lòng thử lại sau."  # giống handler 500 chung (`api/app.py`)
 RETRIEVAL_UNAVAILABLE_MESSAGE = "Hệ thống tra cứu tạm thời không khả dụng."
-CONTEXT_BUDGET_MESSAGE = "Không thể đóng gói ngữ cảnh trong giới hạn cho phép."
 
 
 # Cổng đợt 1 D3: câu gốc cố định của lượt biểu mẫu "Lên kế hoạch"; câu gửi model = câu này + giá trị nút (`ghep_cau`, tất định).
@@ -306,7 +304,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
     try:
         await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder,
                           _tim_web(state))
-    except (RetrievalDependencyError, ContextBudgetError, GeneratorNotReadyError, GenerationError) as exc:
+    except (RetrievalDependencyError, GeneratorNotReadyError, GenerationError) as exc:
         trace.vet["loi"] = repr(exc)[:500]
         return _error_response_for(exc, recorder, metrics, sua_loi), conversation_id
     finally:
@@ -382,10 +380,6 @@ def _error_response_for(exc: Exception, recorder, metrics: dict, sua_loi=None) -
         if recorder:
             recorder.record_error("retrieval_unavailable")
         return error_response(503, "retrieval_unavailable", sua_loi(RETRIEVAL_UNAVAILABLE_MESSAGE))
-    if isinstance(exc, ContextBudgetError):
-        if recorder:
-            recorder.record_error("context_budget_error")
-        return error_response(500, "context_budget_error", sua_loi(CONTEXT_BUDGET_MESSAGE))
     if isinstance(exc, GeneratorNotReadyError):
         if recorder:
             recorder.record_error("generation_unavailable")
@@ -635,8 +629,6 @@ class StreamEvents:
         logger.error("Answer stream failed: %s", type(exc).__name__)  # chỉ tên lớp lỗi, không thông điệp (có thể chứa nội dung)
         if isinstance(exc, RetrievalDependencyError):
             code, message = "retrieval_unavailable", RETRIEVAL_UNAVAILABLE_MESSAGE
-        elif isinstance(exc, ContextBudgetError):
-            code, message = "context_budget_error", CONTEXT_BUDGET_MESSAGE
         elif isinstance(exc, (TimeoutError, AgentsException, OpenAIError, GenerationError, GeneratorNotReadyError)):
             code, message = "generation_unavailable", GENERATION_FAILURE_MESSAGE
         else:

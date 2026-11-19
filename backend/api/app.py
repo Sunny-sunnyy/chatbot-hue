@@ -163,9 +163,6 @@ def create_app(settings=None):
             generation = settings["full_corpus_generation"]
             context_builder = FullCorpusContextBuilder(
                 tokenizer,
-                context_limit=generation["context_limit"],
-                reserved_output_tokens=generation["reserved_output_tokens"],
-                safety_margin=generation["safety_margin"],
                 max_documents=generation["max_context_documents"],
             )
             app.state.tokenizer = tokenizer

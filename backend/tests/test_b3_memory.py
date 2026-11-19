@@ -38,14 +38,15 @@ def store(**kw) -> ConversationStore:
     return ConversationStore(lambda text: len(text.split()), **kw)
 
 
-def test_store_keeps_last_three_turns_and_token_cap_dropping_oldest_first():
-    s = store(max_history_tokens=12)
+def test_store_keeps_last_three_turns_and_has_no_token_cap():
+    s = store()
     cid = s.ensure(None)
     for i in range(5):
         s.append(cid, f"câu {i}", f"đáp {i}")
     assert s.history(cid) == (("câu 2", "đáp 2"), ("câu 3", "đáp 3"), ("câu 4", "đáp 4"))  # 3 lượt gần nhất
-    s.append(cid, "một câu hỏi rất dài có tới mười chữ để vượt trần", "đáp")  # 12 chữ ⇒ vượt trần token ⇒ bỏ lượt cũ nhất trước
-    assert s.history(cid) == (("một câu hỏi rất dài có tới mười chữ để vượt trần", "đáp"),)
+    dai = "chữ " * 5000  # User 19/11/2026: bỏ trần 1.500 token của lịch sử ⇒ lượt dài bao nhiêu cũng giữ, chỉ còn trần SỐ lượt
+    s.append(cid, dai, "đáp")
+    assert s.history(cid) == (("câu 3", "đáp 3"), ("câu 4", "đáp 4"), (dai, "đáp")) and s.history_tokens(cid) > 1500
 
 
 def test_store_ttl_new_conversation_and_reset():

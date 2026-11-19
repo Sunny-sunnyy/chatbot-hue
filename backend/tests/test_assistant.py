@@ -9,21 +9,20 @@ from core.settings_loader import load_settings
 from evaluation.full_corpus_eval import RETRIEVAL_K, answer_case, build_context_builder, build_retrieval
 
 
-def test_answer_case_turns_context_budget_error_into_row_error():
+def test_answer_case_turns_a_technical_error_after_search_into_row_error():
+    """Lỗi kỹ thuật SAU bước tìm (ở đây: không có generator ⇒ `GeneratorNotReadyError`) thành `row["error"]`, các bước đã chạy vẫn ghi vào dòng.
+    (Trước 19/11/2026 test này ép lỗi bằng ngân sách ngữ cảnh — rào đó đã bỏ theo yêu cầu của User.)"""
     settings = load_settings(validate_private_paths=False)
-    settings["full_corpus_generation"] = dict(settings["full_corpus_generation"])
-    settings["full_corpus_generation"]["context_limit"] = 2561  # cùng ngưỡng ép lỗi ngân sách như test_api_chat.py
     service = build_retrieval(settings, settings["full_corpus_runtime"]["retrieval_treatment"])
     try:
         case = {"case_index": 0, "category": "test", "question": "  Giá vé Đại Nội?  "}
-        # generator=None: lỗi ngân sách xảy ra trước bước sinh nên model không bao giờ được gọi
-        row = asyncio.run(answer_case(case, service, build_context_builder(settings), None))
+        row = asyncio.run(answer_case(case, service, build_context_builder(settings), None))  # generator=None: model không bao giờ được gọi
     finally:
         service.close()
-    assert row["error"].startswith("ContextBudgetError")
+    assert row["error"].startswith("GeneratorNotReadyError")
     assert len(row["top_chunk_ids"]) == RETRIEVAL_K  # bước tìm đã chạy ⇒ vẫn ghi
-    assert row["context_sources"] is None and row["answer"] is None and row["refusal"] is None
-    assert row["input_tokens"] is None and row["response_id"] is None
+    assert row["context_sources"] == settings["full_corpus_generation"]["max_context_documents"]  # ngữ cảnh đã dựng đủ số đoạn
+    assert row["answer"] is None and row["refusal"] is None and row["response_id"] is None
 
 
 # ---------- Phase 9 B1: rẽ tuyến (plan D1, D3–D5, D8; m-1) — generator thay thế ghi lại lần gọi, KHÔNG phải bằng chứng hành vi model ----------
