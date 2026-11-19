@@ -35,7 +35,7 @@ Tạo 11:03 19/11/2026 (giờ `date`) từ khối sáng 19/11 của sổ riêng 
 27. **Phép thêm sau khi thấy số (A cho, không dùng để đổi dòng quyết)** — một câu trong kho có cảnh báo bị đẩy ra "ngoài phạm vi" ở lượt low: bước định tuyến KHÔNG nhận tham số mức suy luận nên không thể do low; sinh lại riêng bước định tuyến 5 + 5 lần ⇒ 10 / 10 đúng tuyến ⇒ nhiễu một lần của bước định tuyến. **0,0014 USD.**
 
 ## Tiền thật của B trong ngày (đọc từ log / file kết quả; cập nhật khi có lượt mới)
-Sáng: 0,0391 USD (sửa lịch 0,0297 + hai lượt nhỏ 0,0048 + 0,0046). Chiều: bậc 1 mức suy luận 0,0850 · bộ 80 kịch bản 0,131 + phí tra web 0,02 · bậc 2 mức suy luận 0,238 (sinh 0,146 + an toàn 0,091 + định tuyến lại 0,0014). Tổng tới 14:35 ≈ **0,51 USD**; các lượt chạy test và chấm bằng agent con không gọi model trả phí.
+Sáng: 0,0391 USD (sửa lịch 0,0297 + hai lượt nhỏ 0,0048 + 0,0046). Chiều: bậc 1 mức suy luận 0,0850 · bộ 80 kịch bản 0,131 + phí tra web 0,02 · bậc 2 mức suy luận 0,238 (sinh 0,146 + an toàn 0,091 + định tuyến lại 0,0014). Tổng tới 14:18 19/11/2026 ≈ **0,51 USD**; các lượt chạy test và chấm bằng agent con không gọi model trả phí.
 
 ## Việc ĐANG DỞ — lệnh chạy tiếp + điều kiện dừng (phiên B mới đọc mục này)
 Mọi lệnh từ `backend/` của cây chính (KHÔNG chạy ở worktree `/tmp`), một tiến trình một lúc, A cho lượt máy trước; RAM khả dụng < 4 GB ⇒ dừng. Viết tắt: `R` = `HF_HUB_OFFLINE=1 PYTHONPATH=$PWD uv run --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env python`, `T` = `../data/phase_9/muc_suy_luan/tools`, `O` = `../data/phase_9/muc_suy_luan/bac_2`.
