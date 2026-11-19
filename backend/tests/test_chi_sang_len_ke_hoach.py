@@ -26,6 +26,10 @@ BANG = object()   # cờ biểu mẫu đòi có bảng lịch; test này không 
     "Lịch 1 ngày chỉ đi các lăng, xuất phát 8 giờ",                 # mở đầu bằng cụm lịch + số ngày, không có từ hỏi
     "tụi mình tới Huế 2 ngày 1 đêm",                               # kể chuyến đi, không hỏi gì
     "Chiều mai mới tới nơi, xếp giúp mình với",                    # "xếp giúp" ở cuối câu
+    # sau bộ dò của người khác (19/11, một lần sửa): "sắp" / "gợi ý" làm động từ lập lịch · ràng buộc tiền không phải câu hỏi chi phí
+    "bạn sắp cho mình lịch 3 ngày ở Huế đi các làng nghề",
+    "gợi ý lịch trình Huế 3 ngày 2 đêm theo từng buổi",
+    "nhờ bạn sắp xếp lịch trình đi Huế 4 ngày cho cả nhà, ít tiền thôi",
 ])
 def test_requests_for_an_itinerary_are_recognised(cau):
     assert nho_xep_lich(cau) is True
@@ -44,6 +48,8 @@ def test_requests_for_an_itinerary_are_recognised(cau):
     "lịch này dày quá, bớt giúp mình",
     "tóm gọn lịch trình 2 ngày để mình chép",                        # việc bằng chữ
     "lịch sử Huế 200 năm có gì đáng nhớ",                            # "lịch sử" không phải "lịch"
+    "hãng xe nào ở Huế nhận lên lịch trình riêng cho đoàn đông người",   # sau bộ dò: có động từ lập lịch nhưng là hỏi AI làm dịch vụ đó
+    "xep lich hue 2n1d giup minh",                                   # SÓT có chủ ý: không dấu (sản phẩm chỉ nhận tiếng Việt có dấu)
     "xếp giúp mình hành lý vào cốp xe thế nào",                      # "xếp giúp" nhưng không ở cuối câu và có từ hỏi
     "Đại Nội mở cửa mấy giờ",
     "",

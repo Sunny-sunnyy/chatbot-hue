@@ -69,7 +69,7 @@ def nho_lam_thay(cau: str) -> str | None:
 # một lịch đã có ⇒ False. Chỉ dùng để thay câu từ chối khuôn (`assistant._noi_that_lam_thay`) ⇒ sót một cách nói lạ thì lượt đó y như cờ tắt.
 _SO_NGAY = r"(?:(?:\d+|một|hai|ba|bốn|năm|nửa)\s*ngày|\d\s*n\s*\d\s*đ\b)"
 _LICH = r"(?:lịch trình|lịch(?!\s*(?:sử|thiệp|vạn niên))|kế hoạch|hành trình)"
-_LAP = r"(?:lên|xếp|sắp xếp|lập|làm|tạo|thiết kế|vạch)"
+_LAP = r"(?:lên|xếp|sắp xếp|sắp|lập|làm|tạo|thiết kế|vạch|gợi ý|đề xuất|tư vấn)"  # sau bộ dò của người khác: thêm "sắp", "gợi ý / đề xuất / tư vấn"
 # "lên lịch …", "xếp giúp mình lịch trình …", "lập cho mình kế hoạch …"
 _NHO_LICH = re.compile(rf"\b{_LAP}\s+(?:(?:{_GIUP}|cho)\s+(?:{_TOI}\s+)?)?(?:một\s+|1\s+|cái\s+)?{_LICH}\b")
 # câu mở đầu bằng chính cụm lịch + số ngày: "lịch 1 ngày chỉ đi các lăng, xuất phát 8h"
@@ -82,8 +82,10 @@ _XEP_GIUP_CUOI = re.compile(rf"\b(?:xếp|sắp xếp)\s+{_GIUP}(?:\s+{_TOI})?(?
 _LICH_THU_KHAC = re.compile(r"lịch(?:\s+trình)?\s+(?:của\s+)?(?:lễ hội|festival|diễn|biểu diễn|trình diễn|mở cửa|đóng cửa|hoạt động|tàu|xe|bay|chuyến|chạy|khởi hành|"
                             r"chiếu|làm việc|nghỉ|thi|học|tết|sự kiện|ca huế|nhã nhạc)|âm lịch|dương lịch")
 _LICH_DA_CO = re.compile(r"lịch(?:\s+trình)?\s+(?:này|đó|kia|vừa|trên|cũ|đang|hiện|hôm nay|của mình|của tôi|của em)|(?:trong|khỏi|vào|ra khỏi)\s+lịch")
-_HOI_QUANH_LICH = re.compile(r"bao nhiêu|\bhết\b|\btốn\b|chi phí|ngân sách|\btiền\b|\bgiá\b|\bmấy\b|\bcách\b|làm sao|thế nào|ra sao|kinh nghiệm|"
-                             r"\bnên\b|\bcó nên\b|ở đâu|chỗ nào|khi nào|bao giờ|tại sao|vì sao")
+# sau bộ dò của người khác (một lần sửa): bỏ "tiền / giá / chi phí / ngân sách" đứng một mình — đó là RÀNG BUỘC của lời nhờ ("… cho nhóm sinh viên ít tiền"),
+# câu hỏi chi phí thật luôn có "bao nhiêu / hết / tốn / mấy"; thêm từ hỏi "nào / ai / gì / đâu" ("công ty nào nhận xếp lịch tour …" là hỏi thông tin)
+_HOI_QUANH_LICH = re.compile(r"bao nhiêu|\bhết\b|\btốn\b|\bmấy\b|\bcách\b|làm sao|thế nào|ra sao|kinh nghiệm|\bnên\b|\bnào\b|\bai\b|\bgì\b|"
+                             r"\bđâu\b|khi nào|bao giờ|tại sao|vì sao")
 _CO_HOI = re.compile(r"\?|bao nhiêu|\bmấy\b|\bgì\b|\bnào\b|\bkhông\b|\bko\b|\bk\b|\bchưa\b|\bsao\b|\bđâu\b|bao giờ|\bnên\b|\bđủ\b|\bhết\b|\btốn\b|"
                      r"\bgiá\b|\btiền\b|chi phí|ngân sách")
 
