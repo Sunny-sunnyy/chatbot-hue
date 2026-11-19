@@ -17,6 +17,7 @@ from evaluation.full_corpus_eval import is_refusal
 from llm.assistant import (AnswerTrace, AssistantFlags, ROUTE_TRO_LY_HUE, _finish_generated, _noi_that_lam_thay, answer_turn, answer_turn_stream,
                            answer_turn_stream_parallel, web_gate_open)
 from llm.full_corpus_prompt import CAU_LAM_THAY, INSUFFICIENT_ANSWER, REFUSAL_ANSWERS
+from llm.citations import CITATION_PATTERN
 from llm.lam_thay import DAT_CHO, GUI, TINH_TRANG, nho_lam_thay
 from test_chat_stream import parse_sse
 
@@ -85,7 +86,8 @@ def test_every_honest_sentence_counts_as_a_refusal_everywhere():
     nhầm sẽ bị đếm là "được trả lời"."""
     assert set(CAU_LAM_THAY) == {DAT_CHO, GUI, TINH_TRANG} and "lam_thay" in REMEMBERED_OUTCOMES
     for cau in CAU_LAM_THAY.values():
-        assert cau in REFUSAL_ANSWERS and is_refusal(cau) and "[" not in cau
+        assert cau in REFUSAL_ANSWERS and is_refusal(cau) and not CITATION_PATTERN.search(cau)   # không mã trích dẫn [n]
+    assert "(#/cho-o)" in CAU_LAM_THAY[DAT_CHO] and "http" not in "".join(CAU_LAM_THAY.values())   # chỉ link NỘI BỘ tới trang Chỗ ở
 
 
 def _trace(loai, text=INSUFFICIENT_ANSWER, **kw):

@@ -69,6 +69,13 @@ Mọi lệnh từ `backend/` của worktree, `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 u
 - **Giới hạn nhận sau thu hẹp (sót, không bắt):** "nhắn / nhắn tin cho <khách sạn, nhà hàng…> giúp mình là …" · "gửi tin nhắn cho … báo giúp mình …" · "đặt … cho mình nhé" khi thứ được đặt đứng trước chữ "cho mình" · "gửi mail … cho mình" (kênh là tân ngữ, không sau giới từ) · "còn bàn / còn vé không". Các lượt đó vẫn ra câu từ chối khuôn + mục web như hôm nay.
 - CHƯA có: kết quả chạy lại bộ dò gốc + bộ bù của C trên bản này; 9 test nạp bộ tìm thật chạy lại; lượt model thật.
 
+## 5d. Lượt qua server với model thật + sửa chữ sau khi người khác đọc tay — 19/11/2026
+
+- **Lượt thật** (bản `57bef18`, cờ bật ở server chạy từ worktree; công cụ + bộ chạy riêng tư ở `data/tu_choi_khuon_2026-11-19/`): 18 kịch bản / 27 lượt gửi, 0 lỗi hạ tầng, **0,0346 USD** (trần 0,10).
+  12 lượt đích (4 kịch bản × 3): **11 ra câu nói thật đúng loại** (đặt chỗ 6 / 6 · tình trạng 3 / 3 · gửi 2 / 3) — ngưỡng ≥ 10 / 12 ĐẠT; 1 lượt "gửi lịch qua mail" bị định tuyến sang ngoài phạm vi ⇒ câu ngoài phạm vi cố định (ghi giới hạn, không sửa).
+  Sàn stream 12 / 12: không mảnh chữ nào của câu khuôn; lượt nói thật chỉ có một mảnh = câu nói thật; không tra web, không mục web, không khối gợi ý cách hỏi. 5 lượt từ chối đúng: 5 / 5 vẫn câu khuôn + mục web. Câu nhờ đặt vé máy bay: tuyến ngoài phạm vi, câu cố định.
+- **Đọc tay 100 % bởi phiên khác (C):** hành vi đạt; một lỗi CHỮ — câu "đặt chỗ" chỉ sang "mục Chỗ ở" nhưng trang đó không có ở thanh điều hướng (chỉ mở từ một lịch đã lập). Đã sửa một hằng số: câu mang link nội bộ `[trang Chỗ ở](#/cho-o)`. Kiểm: chạy đúng thư viện dựng chữ + bộ lọc của giao diện trong trình duyệt thật ⇒ link được giữ nguyên [máy kiểm]; CHƯA bấm thử trong ô chat của bản chạy thật.
+
 ## 6. Bàn giao cho người kiểm
 
 - Đọc diff: `git diff origin/main...origin/p9-e-noi-that-gioi-han -- backend` (4 file sửa + 2 file mới).

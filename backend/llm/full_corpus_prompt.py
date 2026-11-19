@@ -63,10 +63,11 @@ def today_line(now: datetime | None = None) -> str:
 OUT_OF_SCOPE_ANSWER = "Mình chỉ hỗ trợ thông tin về văn hoá và du lịch Huế. Bạn muốn hỏi gì về Huế không?"
 # Cờ `noi_that_lam_thay` (19/11/2026; User chọn "ba câu riêng theo loại", không hiện mục web): người dùng nhờ trợ lý TỰ LÀM việc hệ thống không có
 # (`llm/lam_thay.py`) và câu trả lời đã là câu từ chối khuôn ⇒ code thay bằng câu của loại đó. Chỉ nhắc nút / trang ĐANG có trên giao diện
-# ("Sao chép lịch", "Tải về" dưới lịch; mục Chỗ ở) — đổi tên nút thì sửa ở đây. Không hứa việc chưa làm được (soạn tin, gửi thư).
+# ("Sao chép lịch", "Tải về" dưới lịch) — đổi tên nút thì sửa ở đây. Trang Chỗ ở KHÔNG có ở thanh điều hướng
+# (chỉ mở được từ một lịch đã lập) ⇒ câu "đặt chỗ" mang link trong chữ `#/cho-o` (giao diện giữ link nội bộ sau khi lọc — đã thử trên trình duyệt 19/11). Không hứa việc chưa làm được (soạn tin, gửi thư).
 CAU_LAM_THAY = {
     "dat_cho": "Mình chưa đặt phòng, đặt bàn hay mua vé thay bạn được, cũng không có link đặt của từng cơ sở. "
-               "Bạn xem gợi ý chỗ ở theo khu ở mục Chỗ ở rồi liên hệ trực tiếp nơi bạn chọn.",
+               "Bạn xem gợi ý chỗ ở theo khu ở [trang Chỗ ở](#/cho-o) rồi liên hệ trực tiếp nơi bạn chọn.",
     "gui": "Mình không gửi thư hay tin nhắn được. Nếu bạn đã có lịch, dưới lịch có nút Sao chép lịch và Tải về để bạn tự gửi.",
     "tinh_trang": "Mình không gửi yêu cầu đặt chỗ và không xem được tình trạng phòng; bạn cần hỏi trực tiếp nơi lưu trú.",
 }
