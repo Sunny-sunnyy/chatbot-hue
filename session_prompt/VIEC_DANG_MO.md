@@ -14,6 +14,7 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 
 ## 8. Hỏi tiếp về thứ vừa gợi ý (danh sách đóng; B)
 - Plan + sha duyệt: `data/hoi_tiep_goi_y_2026-11-19/PLAN.md` bản `794384caf568` — **A DUYỆT 19:19 19/11/2026** (mức nhẹ, A đọc đủ; ước 0,17 USD, trần cứng 0,30). Lỗi đã thấy thật ở lượt 1 bộ 80 kịch bản: trợ lý chỉ nhớ câu hỏi nên lượt hỏi tiếp tìm lại ra nơi khác. Cách: CODE ghi tên bài riêng của nơi đã trích (≤ 5) vào lịch sử, cờ mới `nho_ten_goi_y` mặc định TẮT; KHÔNG bật lại `nho_cau_tra_loi`.
+- **Sửa sau duyệt — A DUYỆT 19:40 19/11/2026 bản `3463b2509ee6`** (chỉ thêm mục 6, trước lượt đo có phí): dòng ghi chú bỏ đánh số / "đã gợi ý" / "theo thứ tự" (hai lỗ thiết kế C thấy khi khoá bộ đích; code `3f5c106`, E ready); ngưỡng quyết giữ nguyên trên MỌI chuỗi của bộ khoá (bộ > 12 ⇒ ≥ 75 % làm tròn lên, vẫn ≥ TẮT + 4); giới hạn mới: câu "quán thứ hai / chỗ đầu tiên" không được giải.
 - Phân vai: B code · C soạn bộ chuỗi đích ≥ 12 (B không xem) · E review nhánh + đọc tay 100 % lượt hỏi tiếp. Giới hạn A nhận cho bản đầu: nơi chỉ nêu qua bài tổng hợp không được nhớ; "gần X nhất" không giải.
 - Bước kế: B code + test (0 USD) ⇒ E review ⇒ C khoá bộ đích (một lượt cờ tắt) ⇒ một lượt đo hai bên ⇒ E đọc tay ⇒ đạt thì A hỏi User bật cờ. Lượt máy xin A.
 
