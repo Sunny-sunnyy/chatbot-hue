@@ -72,3 +72,19 @@ Cuộc thi bốn coding agent khác hãng (đề + bài + bảng sàn: riêng t�
 - Rà bảo mật đường GET mới (skill `agent-security-review`): yêu cầu không thân / không tham số có thật không · lịch chỉ đến từ cookie cuộc của chính người gọi · file không chứa chữ tự do · không đọc file ngoài `frontend/public/anh/lich/` (đường ảnh lấy từ bảng ảnh của server, không từ yêu cầu) · chưa có giới hạn số lượt tải mỗi phút (người viết CHƯA thêm — nhờ cho ý kiến có cần ở bản local không).
 - Nên tự kiểm bằng cách khác: mở `data/xuat_lich_dep_2026-11-19/buoc_2/anh/` (ảnh do PowerPoint xuất) và file mẫu; dựng một lịch khác (ví dụ 3 ngày nhiều điểm không trẻ em — người viết chưa nhìn ca ngày 5 điểm ở lịch 3 ngày) rồi nhìn.
 - Việc còn lại: chụp lại bản in · thử ba lịch trên giao diện thật · `uv sync` sau gộp · bật cờ là việc hỏi chủ dự án.
+
+## 5d. Sau khi gộp main + lượt thử qua trình duyệt (phiên E, 19:24 19/11/2026, giờ `date`) — trạng thái HIỆN HÀNH của ba việc còn nợ
+
+Nhánh đã gộp `origin/main` `79b0154` ⇒ `d1afba5` (hai chỗ xung đột: dòng cờ ở `backend/config/settings.yaml` — giữ mọi dòng; `flags_from` ở `backend/tests/test_cong_dot_1.py` — giữ cả `xuat_pptx` lẫn `lich_vao_hoi_thuong` trong danh sách tắt). Cờ `xuat_pptx` và `noi_that_lam_thay` vẫn TẮT trong file cấu hình; lượt thử bật tạm hai cờ trong worktree rồi trả lại (`git status` sạch).
+
+| Việc | Kết quả | Nhãn |
+|---|---|---|
+| Ba file test, mỗi file một tiến trình, có và không file env | `test_lich_pptx.py` 15 đạt · `test_cong_dot_1.py` 22 đạt · `test_settings_env.py` 6 đạt — giống nhau ở cả hai cách chạy | [máy kiểm] |
+| File PowerPoint tải qua giao diện thật ở lượt có câu hỏi về bão | 4 trang; câu "gọi 112" có ở bìa VÀ ở trang "Lưu ý trước khi đi"; không có trang hay chữ nguồn ảnh; thẻ lịch trên màn hình có câu an toàn | [máy kiểm — script đọc lại file tải về] |
+| Bấm link "trang Chỗ ở" trong ô chat thật (nợ của việc "nói thật giới hạn") | chuỗi hai lượt ra câu nói thật "chưa đặt phòng thay bạn được…"; bấm link ⇒ địa chỉ `#/cho-o`, tiêu đề "Chỗ ở theo khu", vẫn một tab | [máy kiểm; có ảnh màn hình trong thư mục dữ liệu riêng] |
+| Bản in PDF: trang cuối không còn chỉ hai dòng | **CHƯA ĐẠT** — bản in lịch mặc định 2 ngày vẫn ra 3 trang, trang 3 chỉ có hai dòng ghi chú (31 · 38 · 2 dòng chữ). Luật CSS thêm buổi chiều không có tác dụng: khối của ngày cuối không được phép ngắt giữa chừng nên hai dòng sau nó không có chỗ bám | [máy kiểm — đếm dòng chữ từng trang của file PDF] |
+| Ảnh điểm trong bản in | 8 / 8 ảnh hiện | [máy kiểm] |
+
+Tiền lượt thử: khoảng 0,004 USD (ước theo số lần gọi model; chưa đối chiếu sổ tiền). Lần chạy đầu của script thử hỏng ở hai bước vì chính script (phép chờ bị chính sách bảo mật của trang chặn) — đã sửa script, chạy lại ra bảng trên; bản in giống nhau ở cả hai lần.
+
+Giới hạn / việc còn lại: (1) lỗi trang cuối bản in còn nguyên — hình thức, không sai nội dung; cách sửa nhỏ nhất chưa thử: cho riêng ngày cuối được ngắt trang giữa các điểm để điểm cuối đi cùng hai dòng ghi chú. (2) Chỉ thử lịch mặc định 2 ngày; lịch 1 ngày và 3 ngày chưa in lại sau khi gộp. (3) Sau khi nhánh vào main cần `uv sync` ở cây chính (thư viện `python-pptx`).
