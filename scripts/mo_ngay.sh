@@ -4,7 +4,7 @@
 #
 #   scripts/mo_ngay.sh         — tạo (nếu chưa có) `report_agent/<hôm nay>/TONG_HOP.md` (khung) và `data/loi_user/<hôm nay>.md` (riêng tư; chỉ khi
 #                                cây này có `data/`), rồi IN: khối "PHIÊN SAU ĐỌC TRƯỚC" của TONG_HOP gần nhất · `session_prompt/VIEC_DANG_MO.md` ·
-#                                trạng thái máy thật · cỡ + ngày mục đầu của từng `STATUS_<X>.md`. Tên thư mục ngày lấy bằng `date +%F`, không gõ tay.
+#                                trạng thái máy thật · cỡ + ngày của từng `STATUS_<X>.md` (khuôn ghi đè ≤ 15 dòng / 4 KB). Tên thư mục ngày lấy bằng `date +%F`, không gõ tay.
 #   scripts/mo_ngay.sh kiem    — CHỈ ĐỌC: mọi đường dẫn và tên nhánh nêu trong `HIEN_TRANG.md`, `VIEC_DANG_MO.md` và MỤC ĐẦU các `STATUS_<X>.md` phải
 #                                tồn tại (nhánh: có trên origin hoặc đã gộp vào origin/main); `HIEN_TRANG.md` ≤ 14.000 byte; `VIEC_DANG_MO.md` ≤ 60 dòng.
 #                                Thoát 1 khi có chỗ lệch (để ghép `scripts/mo_ngay.sh kiem && …`), 0 khi sạch.
@@ -136,14 +136,20 @@ echo "cổng server đang nghe (80xx / 88xx): ${cong:-không có}"
 echo "worktree:"; git worktree list | sed 's/^/  /'
 
 # ---------- 5. sổ từng phiên ----------
-echo; echo "===== SỔ TỪNG PHIÊN — cỡ + ngày ở mục đầu ====="
+# Khuôn GHI ĐÈ (chốt 19/11 sau ca thử đầu): cả file là MỘT khối ≤ 15 dòng / 4 KB; phần cũ dời nguyên văn sang session_prompt/archive/.
+echo; echo "===== SỔ TỪNG PHIÊN — khối ghi đè: ≤ 15 dòng / 4 KB ====="
 ngay_ngan=$(date +%d/%m)
 for f in "$SP"/sessions/STATUS_*.md; do
   [ -f "$f" ] || continue
-  co=$(wc -c < "$f"); ngay=$(muc_dau "$f" | head -4 | grep -oE '[0-9]{1,2}/[0-9]{1,2}(/20[0-9]{2})?' | head -1)
+  co=$(wc -c < "$f"); dong=$(wc -l < "$f"); ngay=$(muc_dau "$f" | head -4 | grep -oE '[0-9]{1,2}/[0-9]{1,2}(/20[0-9]{2})?' | head -1)
   canh=""
-  [ "${ngay%/20*}" = "$ngay_ngan" ] || canh="$canh  ⇐ mục đầu ghi ngày ${ngay:-?}, hôm nay $ngay_ngan: ghi đè mục đầu khi nhận việc"
-  [ "$co" -le 30000 ] || canh="$canh  ⇐ > 30 KB: dời phần cũ sang archive/"
-  echo "$(basename "$f"): $co byte · mục đầu $(muc_dau "$f" | wc -l) dòng · ngày ${ngay:-?}$canh"
+  [ "${ngay%/20*}" = "$ngay_ngan" ] || canh="$canh  ⇐ ghi ngày ${ngay:-?}, hôm nay $ngay_ngan: ghi đè khi nhận việc"
+  { [ "$dong" -le 15 ] && [ "$co" -le 4096 ]; } || canh="$canh  ⇐ vượt 15 dòng / 4 KB: ghi đè theo khuôn, dời phần cũ sang archive/"
+  echo "$(basename "$f"): $dong dòng · $co byte · ngày ${ngay:-?}$canh"
 done
+cat <<'KHUON'
+Khuôn sổ phiên (ghi đè cả file; tiền: trỏ nhật ký ngày `report_agent/<ngày>/<vai>_nhat_ky.md`):
+  1. đang dở + sha / nhánh / worktree   2. đã soạn / đã review CHƯA gộp (file ở đâu)   3. việc kế + "xong khi" + lệnh (hoặc trỏ nhật ký ngày)
+  4. ai chờ mình ↔ mình chờ ai          5. câu treo cho phiên điều phối / User          6. thứ đang chạy / rác          7. bẫy phiên này
+KHUON
 echo; echo "Kiểm đường dẫn + nhánh + cỡ: scripts/mo_ngay.sh kiem"
