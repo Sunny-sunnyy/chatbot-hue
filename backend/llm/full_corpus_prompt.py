@@ -61,7 +61,19 @@ def today_line(now: datetime | None = None) -> str:
 
 # Câu cố định cho tuyến ngoài phạm vi (D5) — chữ cho người dùng: A chọn / User đọc trước merge. Được tính là từ chối như câu kho.
 OUT_OF_SCOPE_ANSWER = "Mình chỉ hỗ trợ thông tin về văn hoá và du lịch Huế. Bạn muốn hỏi gì về Huế không?"
-REFUSAL_ANSWERS = (INSUFFICIENT_ANSWER, OUT_OF_SCOPE_ANSWER)
+# Cờ `noi_that_lam_thay` (19/11/2026; User chọn "ba câu riêng theo loại", không hiện mục web): người dùng nhờ trợ lý TỰ LÀM việc hệ thống không có
+# (`llm/lam_thay.py`) và câu trả lời đã là câu từ chối khuôn ⇒ code thay bằng câu của loại đó. Chỉ nhắc nút / trang ĐANG có trên giao diện
+# ("Sao chép lịch", "Tải về" dưới lịch) — đổi tên nút thì sửa ở đây. Trang Chỗ ở KHÔNG có ở thanh điều hướng
+# (chỉ mở được từ một lịch đã lập) ⇒ câu "đặt chỗ" mang link trong chữ `#/cho-o` (giao diện giữ link nội bộ sau khi lọc — đã thử trên trình duyệt 19/11). Không hứa việc chưa làm được (soạn tin, gửi thư).
+CAU_LAM_THAY = {
+    "dat_cho": "Mình chưa đặt phòng, đặt bàn hay mua vé thay bạn được, cũng không có link đặt của từng cơ sở. "
+               "Bạn xem gợi ý chỗ ở theo khu ở [trang Chỗ ở](#/cho-o) rồi liên hệ trực tiếp nơi bạn chọn.",
+    "gui": "Mình không gửi thư hay tin nhắn được. Nếu bạn đã có lịch, dưới lịch có nút Sao chép lịch và Tải về để bạn tự gửi.",
+    "tinh_trang": "Mình không gửi yêu cầu đặt chỗ và không xem được tình trạng phòng; bạn cần hỏi trực tiếp nơi lưu trú.",
+}
+# Mọi câu được tính là TỪ CHỐI (cờ `refusal` của log, `evaluation.is_refusal`): câu nói thật giới hạn cũng là một loại từ chối — thiếu ở đây thì
+# một câu ngoài kho bị thay nhầm sẽ bị đếm là "được trả lời".
+REFUSAL_ANSWERS = (INSUFFICIENT_ANSWER, OUT_OF_SCOPE_ANSWER, *CAU_LAM_THAY.values())
 
 # Dòng H4c (D8) — hiện dưới câu trả lời có nguồn vé / điểm đến / lễ hội; không vào chữ câu trả lời.
 MAY_HAVE_CHANGED_NOTICE = "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi — hãy kiểm lại với nơi đến trước khi đi."

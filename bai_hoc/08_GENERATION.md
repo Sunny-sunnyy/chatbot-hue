@@ -103,6 +103,8 @@ trước khi có streaming, phải chờ **cả câu**: 3,1 / 6,0 giây. Trướ
 - Mỗi câu ghi **một dòng nhật ký số đo**: loại câu, thời gian từng bước, số token, tiền, công cụ đã dùng. **Không ghi chữ câu hỏi hay câu trả lời.**
 - Mức "suy luận" của model để mặc định. Đã thử tắt suy luận để nhanh và rẻ hơn (27/10): tiền chỉ giảm khoảng 5 %, mà 1 câu lẽ ra phải từ chối thì lại bị
   trả lời vòng vo ⇒ bỏ.
+  Đo lại trên bản trợ lý ngày 19/11 (mức thấp so với mức đang chạy, 176 câu mẫu + 32 câu an toàn × 2): chất lượng không khác (luật ghi trước: không khác thì không đổi), rẻ hơn khoảng 4 %,
+  và có một lần nói trái nguồn ở bộ an toàn ⇒ vẫn giữ mặc định (bảng tổng dòng 45).
 
 ## Một chuyện thật: model chép đúng nhãn, code lại không hiểu
 
