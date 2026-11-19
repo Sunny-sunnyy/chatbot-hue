@@ -632,6 +632,70 @@ def dong_minh_hieu_v2(ts: dict, ngay_di: str | None) -> str:
     return "Mình hiểu: " + " · ".join(phan) + " — sai thì bấm **Sửa**."
 
 
+# ---------- Nguồn "Lịch bạn đang có" cho lượt hỏi thường (cờ `lich_vao_hoi_thuong`) ----------
+# Cuộc đã có lịch lưu mà người dùng hỏi tiếp bằng lời ("lịch này ngày 1 mấy tiếng?") ⇒ code in lịch + con số thành một nguồn; model chỉ diễn đạt.
+# Chỉ in giá trị biểu mẫu + tên / giờ của bảng: KHÔNG in câu tả do model viết (`luu["cau"]`), không chữ người dùng gõ.
+NGUON_LICH_SOURCE = "lich-dang-co"  # `source` của nguồn — không phải bài kho (không `bai_id`), không thuộc tiền tố H4c
+TIEU_DE_NGUON_LICH = "Lịch bạn đang có"
+MUC_NGUON_LICH = "Lịch tham quan đã lưu của cuộc trò chuyện này (hệ thống tính)"
+DONG_TIEN_VE_CHUA_CO = "Tiền vé của lịch: chưa có bảng giá theo từng điểm nên chưa tính được tổng; giá từng điểm xem bài vé."
+_GIO = re.compile(r"(\d{1,2}):(\d{2}) – (\d{1,2}):(\d{2})")
+
+
+def doc_gio(chuoi: str | None) -> tuple[int, int] | None:
+    """Ngược của `in_gio`: "8:00 – 10:30" ⇒ (480, 630) phút. Chuỗi không đúng khuôn / kết thúc không sau bắt đầu ⇒ None (không đoán)."""
+    m = _GIO.fullmatch(chuoi or "")
+    if m is None:
+        return None
+    a, b = int(m[1]) * 60 + int(m[2]), int(m[3]) * 60 + int(m[4])
+    return (a, b) if a < b and int(m[2]) < 60 and int(m[4]) < 60 else None
+
+
+def in_thoi_luong(phut: int) -> str:
+    gio, le = divmod(phut, 60)
+    return f"{gio} giờ {le} phút" if gio and le else f"{gio} giờ" if gio else f"{le} phút"
+
+
+def dong_lich_dang_co(bang: BangV2, luu: dict) -> list[str]:
+    """Trạng thái lịch đã lưu (`sua_lich_v2.luu_tu_lich`) ⇒ các dòng của nguồn "Lịch bạn đang có". Mỗi ngày: dòng lịch (buổi, giờ, tên điểm) + dòng
+    số do code tính (số điểm, giờ bắt đầu, giờ kết thúc mục ban ngày cuối, khoảng đầu – cuối, tổng thời lượng tham quan). Cuối: số cả lịch + ngày dài
+    nhất + dòng tiền vé. Một mục ban ngày không đọc được giờ ⇒ ngày đó chỉ in số điểm, và KHÔNG in tổng / ngày dài nhất của cả lịch."""
+    khung = luu["khung"]
+    gio_k = khung.get("gio", {})
+    tham_so = dong_minh_hieu_v2(luu["tham_so"], luu.get("ngay_di")).removeprefix("Mình hiểu: ").removesuffix(" — sai thì bấm **Sửa**.")
+    dong = [f"Tham số của lịch: {tham_so}."]
+    khoang, tong, n_ngay_diem, n_toi = {}, {}, 0, 0  # theo số ngày: phút từ đầu tới cuối phần ban ngày · tổng phút tham quan ban ngày
+    for ng in khung["ngay"]:
+        n = ng["ngay"]
+        ban_ngay = [(b, j) for b in BUOI_NGAY for j in ng["buoi"][b]]
+        toi = [j for j in ng["buoi"].get("toi") or [] if j in bang.theo_id]
+        muc = [f"{NHAN_BUOI[b]} ({gio_k[j]}) {bang.theo_id[j]['ten']}" if j in gio_k else f"{NHAN_BUOI[b]} {bang.theo_id[j]['ten']}" for b, j in ban_ngay]
+        muc += [f"Tối ({bang.theo_id[j]['gio_toi']}) {bang.theo_id[j]['ten']}" if bang.theo_id[j].get("gio_toi") else f"Tối {bang.theo_id[j]['ten']}"
+                for j in toi]
+        dong.append(f"Ngày {n}: " + ("; ".join(muc) if muc else "chưa xếp điểm nào") + ".")
+        n_ngay_diem += len(ban_ngay)
+        n_toi += len(toi)
+        so = [f"{len(ban_ngay)} điểm tham quan ban ngày"]
+        gio = [doc_gio(gio_k.get(j)) for _, j in ban_ngay]
+        if gio and all(gio):
+            dau, cuoi = min(g[0] for g in gio), max(g[1] for g in gio)
+            khoang[n], tong[n] = cuoi - dau, sum(g[1] - g[0] for g in gio)
+            so += [f"bắt đầu {dau // 60}:{dau % 60:02d}", f"kết thúc mục ban ngày cuối {cuoi // 60}:{cuoi % 60:02d}",
+                   f"từ đầu tới cuối phần ban ngày {in_thoi_luong(khoang[n])}",
+                   f"tổng thời lượng tham quan ban ngày {in_thoi_luong(tong[n])} (chưa gồm đi lại, ăn nghỉ)"]
+        so.append("buổi tối: " + ", ".join(f"{bang.theo_id[j]['ten']}" + (f" {bang.theo_id[j]['gio_toi']}" if bang.theo_id[j].get("gio_toi") else "")
+                                           for j in toi) if toi else "buổi tối: không xếp hoạt động")
+        dong.append(f"Ngày {n} — số do hệ thống tính: " + "; ".join(so) + ".")
+    ca = [f"{n_ngay_diem} điểm tham quan ban ngày", f"{n_toi} hoạt động buổi tối"]
+    if khoang and len(khoang) == len(khung["ngay"]):
+        dai = max(khoang.values())
+        ca += [f"tổng thời lượng tham quan ban ngày {in_thoi_luong(sum(tong.values()))} (chưa gồm đi lại, ăn nghỉ)",
+               "ngày dài nhất (từ đầu tới cuối phần ban ngày): " + ", ".join(f"Ngày {n}" for n in khoang if khoang[n] == dai) + f" ({in_thoi_luong(dai)})"]
+    dong.append("Cả lịch — số do hệ thống tính: " + "; ".join(ca) + ".")
+    dong.append(DONG_TIEN_VE_CHUA_CO)
+    return dong
+
+
 def tin_nhan_model(lich: dict, tai_lieu: str) -> str:
     """Tin nhắn user của lần gọi viết câu (5c.6): danh sách mục (id_muc, tên điểm, mã tài liệu của điểm) + tài liệu từng điểm. Không chữ người
     dùng nào vào đây (chỉ giá trị biểu mẫu đã thành khung)."""

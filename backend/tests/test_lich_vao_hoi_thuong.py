@@ -1,0 +1,217 @@
+"""Cờ `lich_vao_hoi_thuong` (plan private `data/lich_da_luu_2026-11-19/PLAN.md` mục 4): cuộc đã có lịch lưu + lượt hỏi thường tuyến `tro_ly_hue` ⇒ code nối
+MỘT nguồn "Lịch bạn đang có" (lịch + số giờ do code tính) vào ngữ cảnh. Phần hàm thuần: đáp số tính tay ghi trong test. Phần loại lượt (WORKFLOW §4 4c):
+chạy qua `answer_turn_stream_parallel` với ĐÚNG các cờ đường đi đang chạy thật (định tuyến + chạy song song + tìm thêm + sửa lịch bản 2) — đường tìm thật
+(Qdrant chỉ đọc), model thay bằng client trả lời theo kịch bản ⇒ **không** phải bằng chứng hành vi model, chỉ kiểm code đưa gì vào yêu cầu gửi model."""
+import asyncio
+import copy
+import json
+
+import pytest
+
+from llm import assistant as a
+from llm import lich_trinh_v2 as v2
+from llm import sua_lich_v2 as s
+from llm.assistant import AnswerTrace, AssistantFlags, answer_turn_stream_parallel
+from llm.full_corpus_prompt import OUT_OF_SCOPE_ANSWER, ROUTER_INSTRUCTIONS, SUA_LICH_LOI_DAN, SUA_LICH_LOI_DAN_CHT
+from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
+from test_cong_dot_1 import chu_gui, flags_from
+from test_toc_do_song_song import Client, TimedResponses, _request_bytes, deps  # noqa: F401 (`deps`: fixture đường tìm thật)
+
+# Cờ đường đi đặt RÕ trong test (không dựa vào `settings.yaml`): đúng bộ đang chạy thật khiến lượt hỏi thường đi qua HAI tầng trace phụ
+DUONG_DI = dict(router=True, tim_them=True, song_song_tra_loi=True, lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=True,
+                sua_lich_chua_ho_tro=True, sua_lich_doi_cho_code=True, tra_web=False, thoi_tiet=False, bao_lu_cong_cu=False)
+ON = flags_from(**DUONG_DI, lich_vao_hoi_thuong=True)
+OFF = flags_from(**DUONG_DI, lich_vao_hoi_thuong=False)
+B = ON.bang_lich_v2
+QUERY = "Ngày 1 của lịch này đi hết mấy tiếng?"
+
+
+def lich_2_ngay() -> dict:
+    """Lịch mặc định của biểu mẫu (2 ngày, 2 người lớn, đi cân bằng) — đúng lịch của các kịch bản đã thấy lỗi."""
+    khung = v2.xep_v2(B, v2.ThamSoV2(2, kieu_di="can_bang", so_thich=(), nguoi_lon=2))
+    return s.luu_tu_lich(khung, None, None)
+
+
+# ---------- Hàm thuần ----------
+
+def test_gio_doc_nguoc_dung_khuon_va_khong_doan():
+    assert v2.doc_gio(v2.in_gio(480, 630)) == (480, 630)
+    assert v2.doc_gio("8:00 - 10:30") is None and v2.doc_gio("10:30 – 8:00") is None and v2.doc_gio(None) is None and v2.doc_gio("sáng") is None
+    assert [v2.in_thoi_luong(p) for p in (495, 300, 45)] == ["8 giờ 15 phút", "5 giờ", "45 phút"]
+
+
+def test_dong_lich_mac_dinh_khop_dap_so_tinh_tay():
+    """Đáp số tính tay trên lịch mặc định: ngày 1 = Đại Nội 8:00 – 10:30 + Đầm Chuồn 13:30 – 16:00 ⇒ đầu – cuối 8 giờ, tham quan 2,5 + 2,5 = 5 giờ;
+    ngày 2 = bốn điểm 75 phút, 8:00 ⇒ 16:15 ⇒ đầu – cuối 8 giờ 15 phút, tham quan 5 giờ; cả lịch 6 điểm, 10 giờ; ngày dài nhất = ngày 2."""
+    dong = v2.dong_lich_dang_co(B, lich_2_ngay())
+    assert dong[0] == "Tham số của lịch: 2 ngày · 2 người lớn · đi cân bằng."
+    assert dong[1] == "Ngày 1: Sáng (8:00 – 10:30) Đại Nội Huế; Chiều (13:30 – 16:00) Đầm Chuồn; Tối (18:00 – 23:00) Chợ Đông Ba."
+    assert dong[2] == ("Ngày 1 — số do hệ thống tính: 2 điểm tham quan ban ngày; bắt đầu 8:00; kết thúc mục ban ngày cuối 16:00; "
+                       "từ đầu tới cuối phần ban ngày 8 giờ; tổng thời lượng tham quan ban ngày 5 giờ (chưa gồm đi lại, ăn nghỉ); "
+                       "buổi tối: Chợ Đông Ba 18:00 – 23:00.")
+    assert "4 điểm tham quan ban ngày; bắt đầu 8:00; kết thúc mục ban ngày cuối 16:15; từ đầu tới cuối phần ban ngày 8 giờ 15 phút; " \
+           "tổng thời lượng tham quan ban ngày 5 giờ" in dong[4]
+    assert dong[5] == ("Cả lịch — số do hệ thống tính: 6 điểm tham quan ban ngày; 2 hoạt động buổi tối; tổng thời lượng tham quan ban ngày 10 giờ "
+                       "(chưa gồm đi lại, ăn nghỉ); ngày dài nhất (từ đầu tới cuối phần ban ngày): Ngày 2 (8 giờ 15 phút).")
+    assert dong[-1] == v2.DONG_TIEN_VE_CHUA_CO and len(dong) == 7
+
+
+def test_gio_khong_doc_duoc_thi_khong_in_so_cua_ngay_do_va_khong_in_tong():
+    luu = lich_2_ngay()
+    luu["khung"]["gio"]["dai_noi"] = "buổi sáng"  # chuỗi lạ ⇒ không đoán
+    dong = v2.dong_lich_dang_co(B, luu)
+    assert dong[2] == "Ngày 1 — số do hệ thống tính: 2 điểm tham quan ban ngày; buổi tối: Chợ Đông Ba 18:00 – 23:00."
+    assert "bắt đầu 8:00" in dong[4]  # ngày đọc được vẫn có số
+    assert dong[5] == "Cả lịch — số do hệ thống tính: 6 điểm tham quan ban ngày; 2 hoạt động buổi tối."
+
+
+def test_nguon_khong_mang_cau_ta_cua_model_va_theo_lich_da_sua():
+    luu = lich_2_ngay()
+    luu["cau"] = {"dai_noi": "CÂU TẢ DO MODEL VIẾT"}  # `luu_sau_luot` lưu câu tả đã kiểm — không được vào nguồn
+    assert "CÂU TẢ" not in " ".join(v2.dong_lich_dang_co(B, luu))
+    kq = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten="Đầm Chuồn")])  # lượt sửa: bỏ một điểm ⇒ lượt hỏi kế phải thấy lịch ĐÃ sửa
+    sau = " ".join(v2.dong_lich_dang_co(B, kq["luu"]))
+    assert "Đầm Chuồn" not in sau.split("Ngày 2:")[0] and "Đại Nội Huế" in sau
+
+
+def test_co_can_sua_lich_v2_va_tim_them():
+    with pytest.raises(ValueError, match="lich_vao_hoi_thuong"):
+        AssistantFlags(lich_vao_hoi_thuong=True)
+    assert ON.lan_tim_dau == "v0" and ON.router and ON.song_song_tra_loi  # điều kiện để `_answer_core` dựng trace phụ tầng hai
+
+
+# ---------- Loại lượt: nguồn lịch CÓ / KHÔNG trong yêu cầu gửi model ----------
+
+class KichBan(TimedResponses):
+    """Như `TimedResponses` + lần gọi "hiểu ý sửa lịch" (nhận ra bằng lời dặn) trả danh sách hành động cho trước."""
+
+    def __init__(self, route, sua=(), **kw):
+        super().__init__(route, kw.pop("router_delay", 0), kw.pop("answer_delay", 0))
+        self.sua = list(sua)
+
+    async def create(self, **kwargs):
+        if str(kwargs.get("instructions", "")).startswith((SUA_LICH_LOI_DAN[:60], SUA_LICH_LOI_DAN_CHT[:60])):
+            return await self._tra({"hanh_dong": self.sua}, kwargs)
+        return await super().create(**kwargs)
+
+    async def _tra(self, payload, kwargs):
+        from openai.types.responses import Response
+        from test_toc_do_song_song import USAGE, message
+        self.calls.append(kwargs)
+        return Response.model_validate({"id": "resp_sua", "created_at": 0, "model": "probe", "object": "response", "output": [message(payload)],
+                                        "parallel_tool_calls": False, "tool_choice": "auto", "tools": [], "usage": USAGE, "status": "completed"})
+
+
+def loai(kwargs) -> str:
+    dan = str(kwargs.get("instructions", ""))
+    return "router" if dan.startswith(ROUTER_INSTRUCTIONS[:80]) else \
+        "sua" if dan.startswith((SUA_LICH_LOI_DAN[:60], SUA_LICH_LOI_DAN_CHT[:60])) else "khac"
+
+
+def chay(deps, flags, luu, route="tro_ly_hue", sua=(), query=QUERY, **kw):
+    responses = KichBan(route, sua, **kw)
+    gen = OpenAIFullCorpusGenerator(client=Client(responses), model="probe")
+
+    async def go():
+        trace = AnswerTrace()
+        trace.lich_luu = copy.deepcopy(luu)
+        events = [e async for e in answer_turn_stream_parallel(query, *deps, gen, trace, flags)]
+        return trace, events
+
+    trace, events = asyncio.run(go())
+    return trace, events, responses.calls
+
+
+def co_nguon(calls) -> list[str]:
+    """Loại của mọi yêu cầu gửi model có mang nguồn lịch (nhận ra bằng tiêu đề nguồn + dòng tiền vé do code in)."""
+    return [loai(c) for c in calls if v2.TIEU_DE_NGUON_LICH in chu_gui(c) and v2.DONG_TIEN_VE_CHUA_CO in chu_gui(c)]
+
+
+def test_hoi_thuong_trong_cuoc_co_lich_nhan_dung_mot_nguon_qua_ca_hai_tang(deps):
+    trace, _, calls = chay(deps, ON, lich_2_ngay())
+    assert co_nguon(calls) == ["khac"]  # đúng MỘT yêu cầu — lần gọi trợ lý; định tuyến và lần hiểu ý sửa không mang nguồn này
+    assert [t["name"] for t in trace.tools].count("lich_dang_co") == 1
+    nguon = [x for x in trace.so_nguon if x.source == v2.NGUON_LICH_SOURCE]
+    assert len(nguon) == 1 and nguon[0].id == len(trace.so_nguon) and nguon[0].excerpts == tuple(v2.dong_lich_dang_co(B, lich_2_ngay()))
+    assert trace.sua == {"n_hanh_dong": 0, "khan_cap": False} and [c["route"] for c in trace.llm_calls] == ["sua_lich", "router", "tro_ly_hue"]
+    tat, _, calls_tat = chay(deps, OFF, lich_2_ngay())
+    assert co_nguon(calls_tat) == [] and "lich_dang_co" not in [t["name"] for t in tat.tools]
+    # cờ bật chỉ đổi yêu cầu của lần gọi trợ lý: định tuyến + hiểu ý sửa giống byte cờ tắt
+    assert _request_bytes([c for c in calls if loai(c) != "khac"]) == _request_bytes([c for c in calls_tat if loai(c) != "khac"])
+
+
+def test_cuoc_khong_co_lich_co_bat_giong_byte_co_tat(deps):
+    bat, _, calls_bat = chay(deps, ON, None)
+    tat, _, calls_tat = chay(deps, OFF, None)
+    assert _request_bytes(calls_bat) == _request_bytes(calls_tat) and co_nguon(calls_bat) == []
+    assert [t["name"] for t in bat.tools] == [t["name"] for t in tat.tools]
+
+
+def test_luot_sua_khong_nhan_nguon_va_duong_sua_giong_byte(deps):
+    """Model hiểu là câu sửa ("thay điểm" thiếu điểm mới ⇒ thẻ chọn, không cần lần gọi viết câu) ⇒ lượt sửa: đường thường bị huỷ, kết quả không có nguồn lịch;
+    yêu cầu của đường sửa giống byte cờ tắt. `answer_delay` giữ lần gọi trợ lý của đường thường chưa xong lúc bị huỷ."""
+    sua = [{"loai": "thay_diem", "ten": "Đầm Chuồn"}]
+    bat, su_kien, calls_bat = chay(deps, ON, lich_2_ngay(), sua=sua, query="Thay Đầm Chuồn bằng chỗ khác", answer_delay=3)
+    tat, _, calls_tat = chay(deps, OFF, lich_2_ngay(), sua=sua, query="Thay Đầm Chuồn bằng chỗ khác", answer_delay=3)
+    assert "sua_the" in [k for k, _ in su_kien] and bat.fixed_outcome == "sua_the"
+    assert "lich_dang_co" not in [t["name"] for t in bat.tools] and not [x for x in bat.so_nguon if x.source == v2.NGUON_LICH_SOURCE]
+    assert _request_bytes([c for c in calls_bat if loai(c) == "sua"]) == _request_bytes([c for c in calls_tat if loai(c) == "sua"])
+    assert len([c for c in calls_bat if loai(c) == "sua"]) == 1
+
+
+def test_luot_bam_the_chon_khong_chay_duong_thuong(deps, monkeypatch):
+    """Lượt bấm nút thẻ chọn (`sua_chon`): không có đường trả lời thường ⇒ không thể có nguồn lịch. Đồ giả chỉ để dựng điều kiện: lõi đường thường
+    bị gọi thì test hỏng; bước viết lại lịch (cần model) thay bằng một sự kiện."""
+    from llm import len_ke_hoach
+
+    async def khong_duoc_goi(*args, **kw):
+        raise AssertionError("đường thường không được chạy ở lượt bấm thẻ chọn")
+        yield  # pragma: no cover
+
+    async def sua_gia(query, rs, cb, gen, tr, flags, kq):
+        yield "sua", {"n_ap": len(kq["da_ap"])}
+
+    monkeypatch.setattr(a, "_answer_core", khong_duoc_goi)
+    monkeypatch.setattr(len_ke_hoach, "stream_sua", sua_gia)
+
+    async def go():
+        trace = AnswerTrace()
+        trace.lich_luu, trace.sua_chon = lich_2_ngay(), {"cu": "Đầm Chuồn", "moi": "bo"}
+        gen = OpenAIFullCorpusGenerator(client=Client(KichBan("tro_ly_hue")), model="probe")
+        return trace, [e async for e in answer_turn_stream_parallel("", *deps, gen, trace, ON)]
+
+    trace, su_kien = asyncio.run(go())
+    assert ("sua", {"n_ap": 1}) in su_kien and "lich_dang_co" not in [t["name"] for t in trace.tools]
+
+
+def test_tro_chuyen_va_ngoai_pham_vi_trong_cuoc_co_lich_khong_nhan_nguon(deps):
+    """Định tuyến chậm hơn lần gọi trợ lý chạy trước ⇒ lần gọi chạy trước (bị bỏ) có thể đã mang nguồn; thứ người dùng nhận và trace cuối thì không."""
+    chat, _, calls = chay(deps, ON, lich_2_ngay(), route="tro_chuyen", query="Cảm ơn bạn nhé")
+    assert chat.route == "tro_chuyen" and "lich_dang_co" not in [t["name"] for t in chat.tools] and chat.so_nguon == []
+    tro_chuyen = [c for c in calls if loai(c) == "khac" and v2.TIEU_DE_NGUON_LICH not in chu_gui(c)]
+    assert tro_chuyen  # lần gọi của tuyến trò chuyện (lần cho ra câu trả lời) không mang lịch
+    ngoai, su_kien, _ = chay(deps, ON, lich_2_ngay(), route="ngoai_pham_vi", query="Giá vàng hôm nay bao nhiêu?")
+    assert [d for k, d in su_kien if k == "delta"] == [OUT_OF_SCOPE_ANSWER]
+    assert ngoai.so_nguon == [] and ngoai.tools == [] and ngoai.fixed_outcome == "out_of_scope"
+
+
+def test_dinh_tuyen_chon_khan_cap_di_duong_tro_ly_hue_nen_co_nguon(deps):
+    trace, _, calls = chay(deps, ON, lich_2_ngay(), route="khan_cap", query="Tôi bị lạc ở Đại Nội")
+    assert trace.emergency_by == "router" and co_nguon(calls) == ["khac"] and [t["name"] for t in trace.tools].count("lich_dang_co") == 1
+
+
+# ---------- Phép kiểm số không nhận số của nguồn lịch ----------
+
+def test_so_cua_nguon_lich_khong_mo_rong_kiem_so_thoi_tiet():
+    """Nguồn lịch đầy giờ / phút ("8:00", "30", "15"). Câu trả lời trích nguồn lịch rồi nêu "30 °C" không có ở nguồn nào khác ⇒ phép kiểm số thời tiết
+    vẫn phải bắt (trước khi sửa: số của mọi nguồn được trích đều được phép)."""
+    from llm import thoi_tiet as tt
+    from retrieval.full_corpus_context import PackedSource
+    lich = PackedSource(id=1, title=v2.TIEU_DE_NGUON_LICH, heading_path=(v2.MUC_NGUON_LICH,), excerpts=tuple(v2.dong_lich_dang_co(B, lich_2_ngay())),
+                        source=v2.NGUON_LICH_SOURCE)
+    kho = PackedSource(id=2, title="Bài kho", heading_path=("Mục",), excerpts=("Nhiệt độ trung bình 25 °C.",), source="travel/x.md")
+    trace = AnswerTrace()
+    trace.cited, trace.answer = (lich, kho), "x"
+    a._thoi_tiet_cuoi(trace, "Hôm đó khoảng 30 °C, có lúc 25 °C. [1][2]")
+    assert trace.thoi_tiet_kiem == ["30"]  # 25 có ở bài kho ⇒ được; 30 chỉ có trong giờ của lịch ⇒ bị bắt
+    assert tt.tap_so(" ".join(lich.excerpts)) >= {"30", "15"}  # đúng là nguồn lịch có các số đó
