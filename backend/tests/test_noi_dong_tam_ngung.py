@@ -70,6 +70,8 @@ def test_source_label_adds_last_section_name_when_present():
      "Vào mùa mưa, đò ngang có thể phải dừng chạy khi nước lên cao hoặc có lệnh cấm xuất bến."),
     ("- Đò ngang chạy cả ngày.\n- Giá 5.000 đồng\n  mỗi lượt.\nkhi nước lên cao hoặc có lệnh cấm xuất bến.", None),   # mẩu câu chữ thường đứng riêng ⇒ không chép
     ("Tuân thủ lệnh cấm xuất bến.", "Tuân thủ lệnh cấm xuất bến."),   # câu ngắn nhưng đủ nghĩa, mở bằng chữ hoa ⇒ được
+    # dòng tiêu đề không dính vào câu đứng ngay dưới nó
+    ("## Mùa mưa lũ\nTour tạm ngừng khi có lũ lớn.", "Tour tạm ngừng khi có lũ lớn."),
     # điều khoản hoàn vé có nhắc bão lũ ⇒ KHÔNG chép (không phải cảnh báo an toàn của hoạt động — A quyết)
     ("- Vé không được hoàn trả, trừ khi bão lũ khiến điểm tham quan phải tạm dừng đón khách.", None),
     # ký hiệu trình bày: chữ nghiêng + ngoặc bọc cả câu + "Lưu ý:" lặp ⇒ bỏ, chữ của câu giữ nguyên

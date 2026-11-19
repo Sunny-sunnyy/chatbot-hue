@@ -44,6 +44,9 @@ def _don_vi(doan: str) -> list[str]:
             noi = False
         elif dong.lstrip().startswith("|"):
             noi = False
+        elif dong.lstrip().startswith("#"):  # dòng tiêu đề là đơn vị riêng: không nối dòng sau vào (chữ tiêu đề sẽ dính vào câu)
+            ra.append(dong.strip())
+            noi = False
         elif noi and not _MO_DON_VI.match(dong) and ra[-1][-1] not in ".!?:…":  # dòng trước đã kết câu ⇒ dòng này không phải phần nối của nó
             ra[-1] = f"{ra[-1]} {dong.strip()}"
         else:
