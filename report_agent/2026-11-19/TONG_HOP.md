@@ -9,7 +9,7 @@ Viết: 10:56 19/11/2026 (giờ `date`), phiên điều phối. Thư mục này 
 - **Đã có số buổi trưa:** thí nghiệm mức suy luận bậc 1 (ba mức gần bằng nhau về tiền / giây; cổng đạt) · bộ 80 kịch bản phổ thông (xong việc 51 / 80 chấm nới, 40 sát chữ; nguyên nhân gốc đã xếp hạng) · bước đếm 0 USD của việc "ngữ cảnh lớn hơn". Đã vào main: bản sửa "lượt báo thành công nhưng câu trả lời rỗng" (`76ef380`; chưa chạy cả bộ test, chưa có lượt thật) · các mục 7–11 của `bai_hoc/VIEC_MOI_XONG.md` kèm kết quả thử tay.
 - **Chủ dự án chọn buổi trưa:** bậc 2 mức suy luận chỉ medium + low · thứ tự sửa: lịch đã lưu vào lượt hỏi thường ⇒ nói thật giới hạn thay câu từ chối khuôn ⇒ các bước cũ · việc "ngữ cảnh lớn hơn" vượt 1 USD vẫn duyệt.
 - **Đang chờ chủ dự án:** cách có giá vé cho "tổng tiền vé của lịch" (ba phương án, đã nêu) · câu chữ "nói thật giới hạn". Hộp hỏi hôm nay: 9 ⇒ gom câu.
-- **Đang chạy lúc viết:** phần sinh bậc 2 mức suy luận (phiên B cũ bật nền) — phiên mới kiểm file kết quả đủ dòng chưa.
+- **Không còn gì chạy nền:** phần sinh bậc 2 mức suy luận đã xong (176 / 176 câu mỗi mức, 0 lỗi); còn phần an toàn, chấm, đọc tay.
 - **Chưa làm cho ngày này:** cả bộ test trên bản mới · sao lưu ổ D cho mốc · cắt `CURRENT_HANDOFF.md` · vòng cải tiến cuối ngày · `bai_hoc/` cho việc buổi chiều.
 - **Bẫy của ngày:** `STATUS_A.md` mục 7; nhật ký `b_nhat_ky.md`, `c_nhat_ky.md`, `e_nhat_ky.md`.
 
