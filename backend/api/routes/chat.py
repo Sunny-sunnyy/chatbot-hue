@@ -155,7 +155,7 @@ def error_response(status_code: int, code: str, message: str) -> JSONResponse:
 # `HUE_COOKIE_SECURE=1` (bản https — spec §7); không đặt ⇒ tắt vì máy User chạy http://127.0.0.1 (trình duyệt không gửi cookie Secure qua http).
 CONVERSATION_COOKIE = "conversation_id"
 COOKIE_SECURE_ENV = "HUE_COOKIE_SECURE"
-REMEMBERED_OUTCOMES = {"success", "out_of_scope", "refusal_no_sources", "max_turns", "hoi_lai", "sua_the"}  # phương án B G: bỏ "emergency"
+REMEMBERED_OUTCOMES = {"success", "out_of_scope", "refusal_no_sources", "max_turns", "hoi_lai", "sua_the", "lam_thay"}  # phương án B G: bỏ "emergency"
 
 
 def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> str | None:
@@ -586,7 +586,7 @@ class StreamEvents:
 
     def done(self, answered: bool = False) -> bytes:
         data = {"outcome": self.metrics["outcome"]}
-        if self.metrics.get("refusal") and self.metrics["outcome"] != "out_of_scope":
+        if self.metrics.get("refusal") and self.metrics["outcome"] not in ("out_of_scope", "lam_thay"):  # câu nói thật giới hạn đã tự chỉ cách làm
             data["tu_choi_kho"] = True  # việc nhỏ (5) 08/11: kho không đủ ⇒ giao diện hiện gợi ý cách hỏi do code viết sẵn (không gọi model)
         if answered and self.new_turn_id is not None:
             data["turn_id"] = self.metrics["turn_id"] = self.new_turn_id()
