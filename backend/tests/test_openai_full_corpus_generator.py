@@ -25,7 +25,7 @@ def test_real_environment_builds_openai_generator(require_openai_key):
 
     # Verify absence of reasoning/temperature/sampling knobs
     model_settings = generator.answer_agent.model_settings
-    assert model_settings.max_tokens == 2048
+    assert model_settings.max_tokens is None  # User 19/11/2026: không đặt trần token đầu ra (trần gồm cả token suy luận)
     assert model_settings.include_usage is True
     assert model_settings.store is False
     assert model_settings.temperature is None
@@ -143,3 +143,19 @@ def test_call_log_records_each_llm_call_with_full_price():
     # 100 thường × 0,10 + 700 ghi đệm × 0,125 + 200 đọc đệm × 0,01 + 100 ra × 0,50 (USD / 1M)
     assert call["usd"] == pytest.approx(149.5e-6, abs=1e-12)
     assert (call["cached_tokens"], call["cache_write_tokens"], call["reasoning_tokens"]) == (200, 700, 0)
+
+
+def test_khong_loi_goi_model_nao_dat_tran_token_dau_ra():
+    """User 19/11/2026: bỏ trần token đầu ra ở MỌI lời gọi model của trợ lý (trả lời, định tuyến, lịch, hiểu ý sửa, mục web, nhận ảnh). Trần gồm cả
+    token suy luận — log tới 19/11 có lời gọi định tuyến 512 / 512 token suy luận, không còn chữ đầu ra. Rào còn lại: hạn giờ + trần số vòng công cụ."""
+    from agents import Agent
+    from openai import AsyncOpenAI
+
+    from llm import nhan_anh
+
+    g = OpenAIFullCorpusGenerator(client=AsyncOpenAI(api_key="x", base_url="http://127.0.0.1:9"), model="gpt-6-luna")
+    agents = [a for a in vars(g).values() if isinstance(a, Agent)]
+    agents += [a for d in vars(g).values() if isinstance(d, dict) for a in d.values() if isinstance(a, Agent)]
+    agents.append(nhan_anh.tao_agent(g, [{"id": "a", "ten": "A"}]))
+    assert len(agents) >= 7, [a.name for a in agents]
+    assert [a.name for a in agents if a.model_settings.max_tokens is not None] == []

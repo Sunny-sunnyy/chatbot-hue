@@ -120,8 +120,6 @@ class SuaLichOutputCHT(BaseModel):
     hanh_dong: list[HanhDongCHT] = Field(default_factory=list, max_length=MAX_HANH_DONG)
 
 
-ROUTER_MAX_OUTPUT_TOKENS = 512  # gồm cả token suy luận của model
-WEB_MAX_OUTPUT_TOKENS = 1024  # B6 D8: lần gọi viết mục web (gồm token suy luận); mục ≤ 3 đoạn văn ngắn
 
 
 def _dung_khi_hoi_lai(_context, results) -> ToolsToFinalOutputResult:
@@ -271,7 +269,6 @@ class OpenAIFullCorpusGenerator:
         client: AsyncOpenAI,
         model: str,
         timeout: int = 45,
-        answer_max_output_tokens: int = 2048,
         answer_instructions: str = ANSWER_SYSTEM_INSTRUCTIONS,
         reasoning_effort: str | None = None,
         router_timeout: float = 10,
@@ -281,7 +278,6 @@ class OpenAIFullCorpusGenerator:
         self.client = client
         self.model = model
         self.timeout = timeout
-        self.answer_max_output_tokens = answer_max_output_tokens
         self.router_timeout = router_timeout
 
         # Create one shared OpenAIResponsesModel with gpt-6-luna alias
@@ -289,14 +285,14 @@ class OpenAIFullCorpusGenerator:
             model=self.model, openai_client=self.client
         )
 
-        # Answer agent: max_tokens=2048, include_usage=True, store=False
+        # Answer agent: include_usage=True, store=False. KHÔNG đặt trần token đầu ra ở bất kỳ lời gọi nào (User 19/11/2026: trần gồm cả token suy luận,
+        # từng cắt lời gọi định tuyến 512 / 512 token suy luận); rào còn lại là hạn giờ mỗi lượt + trần số vòng công cụ.
         # No temperature, verbosity, top_p or sampling knobs; reasoning only when reasoning_effort is set
         self.answer_agent = Agent(
             name="hue_full_corpus_answer_generator",
             instructions=answer_instructions,
             model=self.responses_model,
             model_settings=ModelSettings(
-                max_tokens=self.answer_max_output_tokens,
                 include_usage=True,
                 store=False,
                 reasoning=Reasoning(effort=reasoning_effort) if reasoning_effort else None,
@@ -308,14 +304,14 @@ class OpenAIFullCorpusGenerator:
             name="hue_router",
             instructions=ROUTER_INSTRUCTIONS,
             model=self.responses_model,
-            model_settings=ModelSettings(max_tokens=ROUTER_MAX_OUTPUT_TOKENS, include_usage=True, store=False),
+            model_settings=ModelSettings(include_usage=True, store=False),
             output_type=RouteOutput,
         )
         self.chat_agent = Agent(
             name="hue_chat",
             instructions=CHAT_INSTRUCTIONS,
             model=self.responses_model,
-            model_settings=ModelSettings(max_tokens=self.answer_max_output_tokens, include_usage=True, store=False),
+            model_settings=ModelSettings(include_usage=True, store=False),
             output_type=AnswerOutput,
         )
         # Phase 9 B2 (plan D2): định tuyến viết câu tìm — cùng agent định tuyến B1, lời dặn thêm một đoạn, kiểu đầu ra theo biến.
@@ -352,7 +348,7 @@ class OpenAIFullCorpusGenerator:
             name="hue_lich_v2",
             instructions=LICH_V2_LOI_DAN,
             model=self.responses_model,
-            model_settings=ModelSettings(max_tokens=self.answer_max_output_tokens, include_usage=True, store=False,
+            model_settings=ModelSettings(include_usage=True, store=False,
                                          reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
             output_type=CauLichOutput,
         )
@@ -363,7 +359,7 @@ class OpenAIFullCorpusGenerator:
             model=self.responses_model,
             # khoá đệm CỐ ĐỊNH (đo 14/11): SDK tự sinh khoá riêng mỗi lần chạy ⇒ 0 token trúng đệm; khoá cố định ⇒ ~1.244 token đầu (lời dặn +
             # khuôn đầu ra, giống nhau mọi lượt) trúng đệm, lần hiểu ý 0,00024 ⇒ ~0,0001 USD. Đệm chỉ là phần cố định; chữ người dùng ở cuối tin nhắn
-            model_settings=ModelSettings(max_tokens=ROUTER_MAX_OUTPUT_TOKENS, include_usage=True, store=False,
+            model_settings=ModelSettings(include_usage=True, store=False,
                                          reasoning=Reasoning(effort=BIEU_MAU_REASONING), extra_args={"prompt_cache_key": "hue_sua_lich_v1"}),
             output_type=SuaLichOutput,
         )
@@ -376,7 +372,7 @@ class OpenAIFullCorpusGenerator:
             name="hue_web_section",
             instructions=TU_WEB_LUAT,
             model=self.responses_model,
-            model_settings=ModelSettings(max_tokens=WEB_MAX_OUTPUT_TOKENS, include_usage=True, store=False),
+            model_settings=ModelSettings(include_usage=True, store=False),
             output_type=AnswerOutput,
         )
 
@@ -397,7 +393,6 @@ class OpenAIFullCorpusGenerator:
 
         model = config.get("model", "gpt-6-luna")
         timeout = config.get("timeout_seconds", 45)
-        answer_max = config.get("answer_max_output_tokens", 2048)
 
         client = AsyncOpenAI(
             api_key=api_key,
@@ -408,7 +403,6 @@ class OpenAIFullCorpusGenerator:
             client=client,
             model=model,
             timeout=timeout,
-            answer_max_output_tokens=answer_max,
             answer_instructions=answer_instructions,
             reasoning_effort=reasoning_effort,
             router_timeout=settings.get("assistant", {}).get("router_timeout_seconds", 10),
