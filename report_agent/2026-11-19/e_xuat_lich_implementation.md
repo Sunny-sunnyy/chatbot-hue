@@ -4,6 +4,8 @@ Người viết: phiên E · 15:25 19/11/2026 (giờ `date`) · nhánh `p9-e-xua
 Trạng thái: **chờ review cả nhánh + một lượt rà bảo mật ngắn cho đường GET mới**. CHƯA bật cờ, CHƯA chạy cả bộ test. Tiền API cả việc: ≈ 0,0005 USD (một lượt biểu mẫu khi thử giao diện).
 Plan (riêng tư, phiên điều phối duyệt theo sha `7f0b39432419`): `data/xuat_lich_dep_2026-11-19/PLAN.md`. Chủ dự án đã chọn: PDF = in từ trình duyệt · PowerPoint = `python-pptx` · kiểu thiết kế "Di sản" (chọn bằng ảnh mẫu 19/11).
 
+> **Đọc trước:** mục 1–4 viết TRƯỚC review. Mọi chỗ ở đó nói "chỉ ảnh có giấy phép", "trang Nguồn ảnh", "ẩn ảnh không giấy phép khi in" đã bị THAY bởi mục 5b (không ghi công ảnh, dùng đủ ảnh; thêm câu an toàn của lượt). Mục 5b + 5c là trạng thái hiện hành.
+
 ## 1. Phạm vi
 
 Người dùng đã có lịch (từ trang Lên kế hoạch hoặc sau khi sửa bằng lời) có thêm hai nút dưới lịch: **In / Lưu PDF** và **Tải PowerPoint**. Lúc tải KHÔNG gọi model: code điền lịch vào trang. Mọi chữ trong file là chữ đã hiện trên trang (tên điểm, giờ, câu tả đã kiểm, ghi chú của lịch) hoặc hằng số của khuôn.
