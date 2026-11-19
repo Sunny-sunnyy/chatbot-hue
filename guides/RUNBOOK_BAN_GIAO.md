@@ -248,7 +248,7 @@ lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 
 | Phút đi ra phá Tam Giang | Ghi 15 phút dù gồm cả bữa trưa | Phút đi cố định theo cụm | HO chiều 17/11 (#17) |
 | Lịch không dời theo giờ tới / giờ về | Ngày đầu / cuối vẫn xếp đủ buổi | Chưa làm; đã rà nợ 15/11 | `R/b_ra_no_cu.md` |
 | "Đổi chỗ ngày 1 với ngày 2" | Trả lời "chưa hỗ trợ" (câu cố định), lịch không đổi | User chọn chặn lịch giả trước, hành động đổi chỗ hai ngày sau B7 | `R/c_chua_ho_tro_implementation.md` |
-| "Chỉ đi buổi sáng" / "bớt một chỗ" / dời điểm sang buổi khác | Có lượt bị trả "chưa hỗ trợ" dù làm được (bộ chuỗi 8 / 10, mốc 9 / 10) | Vòng chỉnh lời dặn thứ hai làm tệ hơn (7 / 10) ⇒ giữ vòng 1 | `R/c_chua_ho_tro_implementation.md` |
+| "Chỉ đi buổi sáng" / "bớt một chỗ" / dời điểm sang buổi khác | Có lượt bị trả "chưa hỗ trợ" dù làm được (bộ 10 chuỗi, tính chuỗi đạt cả hai lần chạy: 8 / 10 lúc bật cờ 17/11, 7 / 10 ở lượt đo cuối 18/11 — thêm một chuỗi trượt 1 / 2 lần, cùng kiểu lỗi; mốc trước khi bật cờ 9 / 10) | Vòng chỉnh lời dặn thứ hai làm tệ hơn (7 / 10) ⇒ giữ vòng 1 | `R/c_chua_ho_tro_implementation.md` |
 | Một lượt ba ý có đổi hạng chỗ ở | "Chưa làm: đổi hạng chỗ ở" | Code áp tối đa 2 hành động / lượt | HO chiều 15/11 mục "Giới hạn đã nhận" |
 | Sửa bằng lời: số người lớn | Không sửa được bằng lời (7 / 8 trường sửa được); nút biểu mẫu không tự đổi theo lời | Chưa có nhu cầu đo được | `R/c_dem_sua_lich_truong.md` |
 | Hàm đọc ngày từ chữ người dùng | Ngày tương đối ("dời 2 hôm"), ngày âm, "dịp Tết" không đọc; có câu bị từ chối nhầm; "tuần sau" tính theo tuần lịch | Danh sách dạng được nhận là đóng — từ chối nhầm chấp nhận được, đọc SAI thì không | HO chiều 15/11; bộ dò private `data/review_sua_ngay_di_2026-11-15/` |
