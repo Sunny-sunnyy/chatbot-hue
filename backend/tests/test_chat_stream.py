@@ -104,9 +104,9 @@ def packed_two_sources() -> PackedContext:
 
 
 def stream_with_text(answer: str, first_block: str = "") -> tuple[StreamEvents, list[bytes], AnswerTrace]:
-    """`first_block`: chữ của một khối chữ model phát TRƯỚC khối trả lời cuối trong cùng một lần trả lời (vòng đọc của lõi đưa mọi mảnh
+    """Đi như `_answer_events`: status ⇒ các delta bóc từ JSON ⇒ kiểm citation chữ cuối ⇒ sự kiện kết.
+    `first_block`: chữ của một khối chữ model phát TRƯỚC khối trả lời cuối trong cùng một lần trả lời (vòng đọc của lõi đưa mọi mảnh
     chữ vào một bộ bóc); chữ cuối (`trace.answer`) vẫn là của khối cuối, như `final_output`."""
-    """Đi như `_answer_events`: status ⇒ các delta bóc từ JSON ⇒ kiểm citation chữ cuối ⇒ sự kiện kết."""
     metrics = dict.fromkeys(STREAM_METRIC_FIELDS)
     stream = StreamEvents(metrics, time.perf_counter())
     packed = packed_two_sources()

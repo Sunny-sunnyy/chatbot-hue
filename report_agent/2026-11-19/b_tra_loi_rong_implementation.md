@@ -33,6 +33,11 @@ Mọi lượt stream thành công có phí còn trong log (1.093 lượt, từ 2
 Lỗi không phải do bỏ trần token đầu ra hôm 19/11: đã có một lượt ngày 16/11, và hai lời gọi lỗi hôm nay dùng ít token hơn trần cũ.
 
 ## 5. Chưa làm / giới hạn
+- **Ca còn sót (review của C, chưa thấy thật):** chữ model bị ẩn hết NHƯNG code đã nối một khối sau đó (ghi chú lịch / khối số liệu thời tiết / câu bão — `backend/llm/assistant.py:1489-1492`) ⇒ đã có mảnh chữ
+  được phát ⇒ lưới cuối KHÔNG bù ⇒ người dùng chỉ thấy khối code nối, mất câu trả lời của model. C tái hiện được bằng cách gọi thẳng `finish`. Đây là một dạng của ca "đã phát một phần nhưng khác bản cuối"
+  (0 / 1.093 lượt trong log) nên nhánh này không xây; tín hiệu dò sau này: `outcome = success` + `delta_matches_final = false`.
+- Review: C đọc cả nhánh — READY (0 blocker · 0 major · 2 minor, cả hai đã làm ở commit này: ghi ca còn sót, gộp docstring helper test). C tự thấy test mới ĐỎ khi thay `chat.py` bằng bản `main`, và đột biến bỏ điều kiện
+  "không lỗi trích dẫn" thì test thứ hai đỏ [người thứ hai kiểm].
 - Chưa biết nội dung khối chữ đầu (log không ghi chữ) — không cần để sửa.
 - Chưa xét lượt bị rút vì trích dẫn có nhiều khối chữ có cùng gốc hay không.
 - Giao diện: không sửa; sự kiện `delta` duy nhất đi đúng đường hiện chữ sẵn có [chưa kiểm trên trình duyệt].
