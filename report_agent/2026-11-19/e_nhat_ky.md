@@ -20,7 +20,7 @@ Viết 11:19 19/11/2026 (`date`) lúc kết phiên nhẹ. Vai hôm nay: người
 14. **Phân xử hai phiếu chấm bộ 80 kịch bản** — xong nới 51 · sát chữ 40 · mục web 4 · chưa xong 25 · sai 5; ba lỗi đầu: trả lời theo lịch khác (3), trả lời rỗng báo thành công (2 lượt), từ chối khuôn thay vì nói thật. E chỉ mở 21 / 80 kịch bản. 0 USD.
 15. **Khối "sửa sau duyệt" plan mức suy luận** (bậc 2 chỉ medium + low, một phép so, S19 sinh lại 3 + 3, trần bậc 2 hạ còn 0,35 USD) — sha `de90b6bde2da`, A đã duyệt; B chạy bậc 2 theo bản đó.
 16. **Bước 0b plan "ngữ cảnh lớn hơn": đọc 26 câu yếu** — chạm: 15 đoạn 7 câu · cả mục 6 câu; tổng cổng 12 / 10 (theo chữ plan) hoặc 8 / 7 (chỉ trong 26 câu) — A chốt: chạy bước 1 mẫu nhỏ, ghi trước "dự báo: chưa rõ". Dò theo từ khoá rồi mới mở dòng. 0 USD.
-17. **Plan "nói thật giới hạn thay câu từ chối khuôn"** — sha `78de38324834`, B đang review. Đếm trước: 18 lượt từ chối khuôn đều do model viết; chỉ 4 lượt là "làm thay". Thiết kế: một trường thêm ở lần gọi định tuyến + code thay câu, không sửa lời dặn trả lời.
+17. **Plan "nói thật giới hạn thay câu từ chối khuôn"** — bản 1 `78de38324834` ⇒ B review (2 major: câu khuôn lọt ra màn hình ở đường stream trước khi thay; thêm trường ở định tuyến là quá tay cho 4 / 114 lượt) ⇒ **bản 2 `84669acd93a9`**: hàm thuần, không đổi byte nào gửi model, ≈ 0,03–0,05 USD; chờ B đọc diff. Đếm trước: 18 lượt từ chối khuôn đều do model viết; chỉ 4 lượt là "làm thay". Thiết kế: một trường thêm ở lần gọi định tuyến + code thay câu, không sửa lời dặn trả lời.
 
 **File riêng tư E viết hôm nay (ngoài git — chỉ ghi đường dẫn):**
 - `data/phase_9/b7_cuoi/review_bao_cao_E.md`
