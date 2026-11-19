@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 15:53, ngày 19/11/2026 · thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 19:20, ngày 19/11/2026 · thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -13,6 +13,51 @@
 **Từ dùng chung cho các mục 19/11:** **cờ** = một dòng bật / tắt trong file cấu hình, tắt là hệ thống chạy như trước khi có tính năng · **lời dặn** = đoạn chữ cố định gửi kèm mọi
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
+
+## 19/11 — 14. Thử đưa NHIỀU chữ nguồn hơn cho model viết câu trả lời: không khác về chất lượng, giữ nguyên 10 đoạn
+
+**Từ dùng ở mục này:** **đoạn** = một mảnh nhỏ của một bài trong kho; mỗi lần trả lời, bước tìm chọn 10 đoạn hợp nhất đưa cho model đọc rồi viết · **mốc** = bản đang chạy
+(10 đoạn), được chạy LẠI cùng buổi, xen kẽ từng câu với bản thử — không so với điểm của hôm khác · **"15 đoạn"** = đưa 15 đoạn thay vì 10 · **"cả mục"** = mỗi đoạn trong 10 đoạn
+được thay bằng nguyên cả mục chứa nó (mục = phần dưới một tiêu đề của bài) · **"cả bài"** = thay bằng nguyên cả bài · **sàn** = loại lỗi không được phép có thêm · **"đủ ý"** = điểm
+1–5 do người chấm cho (người chấm không biết câu nào của bản nào), đo câu trả lời có đủ các ý của đáp án không · **khoảng tin cậy 95 %** = vùng mà chênh lệch thật nhiều khả năng
+nằm trong; vùng này chứa số 0 thì coi là "không khác".
+
+**1. Anh thấy gì khác.** Không thấy gì khác: trợ lý **vẫn đưa 10 đoạn** cho model. Anh hỏi "có nên cho model thấy nhiều ngữ cảnh hơn không" (một dự án khác của anh làm vậy thì tốt
+hơn); nhóm đã đo ba cách và luật ghi trước cho ra "không đổi".
+
+**2. Bằng chứng.**
+- **Bước 1 — thử trên 30 câu chọn sẵn, cả ba cách** (câu chọn vì đang yếu nên KHÔNG dùng để kết luận chất lượng): cách "cả bài" bị dừng ngay — đắt gấp 5,5 lần mốc, và ở cả 2 lượt
+  có dòng cảnh báo do chương trình nối thì dòng đó thuộc một hoạt động KHÁC với điều được hỏi (bài dài chứa nhiều hoạt động). [máy kiểm phần giá; phần đọc dòng cảnh báo do người chạy đọc — chưa người thứ hai đọc lại]
+- **Bước 2 — "15 đoạn" và "cả mục" so với mốc, trên bộ đủ:** 176 câu mẫu chạy một lượt và 32 câu an toàn chạy hai lượt, mỗi bản. [máy kiểm]
+  - **Chất lượng không khác.** Điểm "đủ ý" trên 129 câu tính điểm: "15 đoạn" chênh **−0,008** so với mốc, khoảng tin cậy 95 % từ −0,140 đến +0,116; "cả mục" chênh **−0,008**, từ
+    −0,047 đến +0,031 — cả hai vùng đều chứa số 0. Trong 129 câu: "15 đoạn" 7 câu điểm cao hơn, 5 câu thấp hơn, 117 câu bằng; "cả mục" 3 cao hơn, 4 thấp hơn, 122 bằng. Để so: hai
+    lượt KHÔNG đổi gì chạy sáng 19/11 đã lệch nhau +0,031. [máy kiểm; chưa người thứ hai tính lại]
+  - **Người thứ hai đọc tay 37 cặp câu lệch điểm:** khoảng hai phần ba là cùng nội dung, điểm lệch do cách diễn đạt. "15 đoạn" có 4 câu thêm được ý thật (ví dụ thêm được một quán
+    nằm ở đoạn hạng 12) và 5 câu mất ý thật; "cả mục" thêm 2, mất 2. Tức là được và mất gần ngang nhau. [người thứ hai kiểm]
+  - **Mỗi bản phạm một sàn đếm bằng máy:** "15 đoạn" có 1 câu trả lời đúng nội dung nhưng thiếu ký hiệu nguồn (ở bản chạy thật người dùng sẽ nhận lời báo lỗi thay cho câu trả lời);
+    "cả mục" có 1 câu ngoài kho được trả lời thay vì từ chối (không có con số hay ý bịa nào). Mỗi ô đứng trên MỘT lượt, chưa biết lặp lại hay ngẫu nhiên. [máy kiểm; người thứ hai đọc]
+  - **Bộ an toàn:** "15 đoạn" sạch về cảnh báo an toàn, còn thêm được một cảnh báo đúng ở một câu về đi thuyền (cả hai lượt). "Cả mục" **mất một cảnh báo ở một lượt**: câu cảnh báo
+    "tạm ngừng mùa lũ" (mục 7 của file này: do chương trình nối từ nguồn đã được trích) không hiện, vì khi có nhiều mục hơn để chọn, lượt đó model không trích đúng mục chứa câu
+    cảnh báo — trong khi mốc hiện ở cả hai lượt. [người thứ hai kiểm] Hai người chấm an toàn đều bắt được 10 / 10 câu sai cài sẵn, báo nhầm 0 / 5 câu đúng cài sẵn. [máy kiểm]
+  - **Đắt hơn, không nhanh hơn:** tiền mỗi câu 0,000501 USD ("15 đoạn", gấp 1,20 lần mốc 0,000419) và 0,000620 USD ("cả mục", gấp 1,48 lần); thời gian cả câu ở giữa 5,4 và 5,6 giây
+    so với 5,5 của mốc (đo khi máy còn việc khác chạy). Tiền và giây chỉ để báo — theo lời anh "chất lượng trước", không dùng để chọn.
+  - **Kết luận theo luật ghi trước:** không bản nào tốt hơn về "đủ ý", và mỗi bản phạm ít nhất một sàn ⇒ **không đổi**.
+- Tiền thật cả việc: **0,586 USD** (bước 1: 0,144; bước 2: 0,442; chấm bằng agent con: 0 đồng API). Anh đã duyệt riêng việc này tới 1,40 USD.
+
+**3. Chưa làm / giới hạn.**
+- Kết luận là "trên bộ 176 câu mẫu đã dùng nhiều lượt", mỗi bản một lượt. Nó KHÔNG nói "nhiều ngữ cảnh hơn thì vô ích với mọi loại câu": 4 câu "15 đoạn" thêm được ý thật cho
+  thấy có lúc đoạn đúng nằm ở hạng 11–15. Cách đáng thử về sau (chưa làm, chưa có plan): chỉ lấy thêm đoạn cho loại câu xin danh sách, thay vì cho mọi câu.
+- Bộ an toàn chạy trong lúc nhánh chính nhận hai nhánh code mới (đều tắt cờ); đã chụp lại 228 yêu cầu gửi model sau đó: giống từng byte bản đầu buổi. [máy kiểm]
+- File kết quả bộ an toàn không lưu dòng cảnh báo do chương trình nối, nên các dòng đó được DỰNG LẠI bằng chính hàm đang chạy thật (thử trước trên dữ liệu cũ biết chắc có dòng nối:
+  ra đúng). Trước đó người làm đã ghi nhầm "0 dòng" vì đếm trên một trường mà file không lưu — người thứ hai đọc công cụ đã bắt được, số đã sửa. Bài rút ra: trước khi ghi "0", phải
+  thấy phép đếm đó ra số khác 0 ở một chỗ biết chắc là có.
+- Người đọc tay biết bản nào thuộc cách nào (không mù) và chỉ đọc các cặp lệch điểm.
+- Thấy thêm khi đo: hai lượt mốc không đổi gì cũng bị người chấm an toàn gắn lệch nhau 1 câu "lỗi mới" + 4 câu "hết lỗi" ⇒ số ô thô của người chấm không dùng làm sàn được; từ nay
+  sàn an toàn tính trên các ô mà người đọc tay xác nhận, in kèm cặp mốc so với mốc.
+- Bài học về cách làm (nhóm đã chốt tối 19/11): chấm chỉ số quyết trước; đã "không khác" thì dừng, không chấm tiếp phần an toàn và phần sinh lại cho bản không còn là ứng viên.
+
+**4. Cách thử trong 2 phút.** Không có gì để thử trên giao diện (không đổi gì). Muốn xem bảng số, nhóm mở file kết quả trước mặt anh; báo cáo kỹ thuật:
+`report_agent/2026-11-19/b_ngu_canh_lon_implementation.md`.
 
 ## 19/11 — 13. Hỏi tiếp về lịch vừa lập: trợ lý nhìn thấy đúng lịch đó và số giờ do chương trình tính (đã đo xong, anh chọn bật; chờ bật trên bản chính)
 
