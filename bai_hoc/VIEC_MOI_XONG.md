@@ -67,8 +67,7 @@ bình thường nguồn là đoạn lấy từ kho, ở việc này có thêm m�
 tính — có thể sai · **sổ vết** = bản ghi từng bước của một lượt hỏi (model đã tìm gì, nhận gì), chỉ bật ở máy làm việc · **câu từ chối khuôn** = câu cố định "Tôi không tìm thấy
 đủ thông tin…" · **kịch bản** = một cuộc trò chuyện mẫu nhiều lượt dùng để đo.
 
-**1. Anh thấy gì khác.** Sau khi lập lịch, anh hỏi tiếp bằng lời về chính lịch đó — "ngày 1 đi hết mấy tiếng, có kịp về trước 5 giờ chiều không", "tóm gọn lịch này để mình
-chép gửi nhóm" — thì trợ lý trả lời **trên đúng lịch đang hiện trên màn hình**, với số giờ do chương trình tính sẵn. Trước hôm nay trợ lý không nhìn thấy lịch vừa lập: nó đi tìm
+**1. Anh thấy gì khác.** Sau khi lập lịch, anh hỏi tiếp bằng lời về chính lịch đó — "ngày đầu mình tham quan tổng cộng bao lâu, mấy giờ thì xong điểm cuối", "viết lại lịch này thật ngắn, mỗi ngày một dòng" — thì trợ lý trả lời **trên đúng lịch đang hiện trên màn hình**, với số giờ do chương trình tính sẵn. Trước hôm nay trợ lý không nhìn thấy lịch vừa lập: nó đi tìm
 trong kho, gặp một bài lịch mẫu và trả lời trên lịch mẫu đó — nói rất chắc mà sai. Anh đã chọn bật phần này chiều 19/11 (cờ `lich_vao_hoi_thuong`). **Đã bật trên bản chính tối 19/11** (mã commit gộp `62a2762`), sau khi chạy đủ ba phép kiểm còn nợ từ buổi chiều — kết quả ở cuối ý 2. Bản anh mở từ giờ là bản đã bật.
 
 Vì sao trước đây sai (theo đường đi của một câu hỏi): câu hỏi ⇒ chọn tuyến ⇒ tìm trong kho ⇒ gom nguồn ⇒ model viết. Lịch vừa lập nằm ở bộ nhớ của cuộc trò chuyện nhưng chỉ
@@ -127,10 +126,10 @@ ngày nào dài nhất. Model chỉ việc diễn đạt lại.
 **4. Cách anh thử trong 2 phút.**
 0. Cờ đã bật trên bản chính từ tối 19/11 — thử được ngay.
 1. Bật hệ thống, mở giao diện, vào "Lên kế hoạch", để nguyên mặc định (2 ngày, 2 người lớn), bấm tạo lịch.
-2. Gõ: *ngày 1 đi hết mấy tiếng, có kịp về trước 5 giờ chiều không* ⇒ **đúng** là câu trả lời nêu 5 giờ tham quan và khung 8:00 – 16:00 của lịch đang hiện; **sai** là nhắc tới
+2. Gõ: *ngày đầu mình tham quan tổng cộng bao lâu, mấy giờ thì xong điểm cuối* ⇒ **đúng** là câu trả lời nêu 5 giờ tham quan và khung 8:00 – 16:00 của lịch đang hiện; **sai** là nhắc tới
    một điểm không có trên màn hình.
-3. Gõ: *tóm gọn lịch này để mình chép* ⇒ đúng là đủ các mục của lịch trên màn hình, đúng giờ.
-4. Gõ: *tổng tiền vé của lịch này hết bao nhiêu* ⇒ sẽ thấy một tổng kèm câu "còn điểm chưa có giá" — nhớ đây là số model tự cộng (ý 3).
+3. Gõ: *viết lại lịch này thật ngắn, mỗi ngày một dòng* ⇒ đúng là đủ các mục của lịch trên màn hình, đúng giờ.
+4. Gõ: *hai người đi hết lịch này thì tiền vé vào cửa khoảng bao nhiêu* ⇒ sẽ thấy một tổng kèm câu "còn điểm chưa có giá" — nhớ đây là số model tự cộng (ý 3).
 
 ## 19/11 — 12. Thử cho model "nghĩ ít hơn" hoặc "nghĩ nhiều hơn" trước khi viết: giữ nguyên mức đang chạy
 
