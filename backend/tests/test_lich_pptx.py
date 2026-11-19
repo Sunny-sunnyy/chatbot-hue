@@ -7,14 +7,15 @@ from pathlib import Path
 
 import pytest
 
-from api.lich_pptx import DONG_DU_BAO, DONG_NGUON, DONG_THAY_DOI, KIEU, MUC_MOI_TRANG, dung_pptx, trang_lich
+from api.lich_pptx import CAU_TOI_DA, DONG_DU_BAO, DONG_NGUON, DONG_THAY_DOI, MAP_PREFIX, dung_pptx, trang_lich
 
 COMMONS = {"src": "/anh/lich/dai_noi.jpg", "tac_gia": "Người Chụp", "giay_phep": "CC BY-SA 4.0", "trang": "https://commons.wikimedia.org/x"}
 ANH_WEB = {"src": "/anh/lich/pho_tay.jpg", "nguon": "web", "ten_mien": "vi-du.vn", "trang": "https://vi-du.vn/x"}   # không có giấy phép
 
 
 def muc(ngay, buoi, k, ten, gio, anh=None, ghi_chu=None, loai="tham_quan"):
-    return {"id_muc": f"n{ngay}-{buoi}-{k}", "buoi": buoi, "loai": loai, "id_diem": ten.lower(), "ten": ten, "gio": gio, "ghi_chu": ghi_chu, "anh": anh}
+    return {"id_muc": f"n{ngay}-{buoi}-{k}", "buoi": buoi, "loai": loai, "id_diem": ten.lower(), "ten": ten, "gio": gio, "ghi_chu": ghi_chu, "anh": anh,
+            "map_url": MAP_PREFIX + "?api=1&query=" + ten.replace(" ", "+")}
 
 
 def lich_mau(so_muc_ngay_2=2):
@@ -40,8 +41,18 @@ def test_every_item_is_present_in_order_with_time_and_session():
     assert [(m["buoi"], m["gio"], m["ten"]) for m in n1["muc"]] == [("Sáng", "8:00 – 10:30", "Đại Nội Huế"), ("Chiều", "13:30 – 14:45", "Khu phố Tây"),
                                                                     ("Tối", "18:00 – 23:00", "Chợ Đông Ba")]
     assert n1["muc"][0]["cau"] == "Khám phá Hoàng thành." and n1["muc"][2]["cau"] == "Dạo chợ đêm."   # mã nguồn [n] không vào file
-    assert n1["muc"][2]["ghi_chu"] == "phố ẩm thực đêm trước cổng chợ" and n1["an"] == ["Trưa gần Đại Nội Huế: Quán A, Quán B"]
+    assert n1["muc"][2]["ghi_chu"] == "phố ẩm thực đêm trước cổng chợ" and n1["an"] == [{"bua": "Trưa", "gan": "Đại Nội Huế", "quan": ["Quán A", "Quán B"]}]
     assert trang[0]["so_diem"] == 5 and trang[0]["tom_tat"] == "2 ngày · 2 người lớn"
+    assert trang[0]["diem_chinh"] == ["Đại Nội Huế", "Khu phố Tây", "Điểm 1", "Điểm 2"]          # điểm ban ngày đầu tiên, theo thứ tự đi
+    assert [d["ten"] for d in trang[3]["ban_do"]] == ["Đại Nội Huế", "Khu phố Tây", "Chợ Đông Ba", "Điểm 1", "Điểm 2"]
+
+
+def test_long_description_is_cut_at_a_word_boundary_but_names_and_times_never_are():
+    dai = "Rất dài " * 40
+    lich = lich_mau()
+    lich["ngay"][0]["muc"][0]["ten"] = "Tên điểm rất dài " * 6
+    m = trang_lich(lich, {"n1-sang-1": dai + "[2]."})[1]["muc"][0]
+    assert len(m["cau"]) <= CAU_TOI_DA + 1 and m["cau"].endswith("dài…") and m["ten"] == "Tên điểm rất dài " * 6 and m["gio"] == "8:00 – 10:30"
 
 
 def test_safety_notes_follow_into_the_file_but_stale_forecast_does_not():
@@ -54,7 +65,7 @@ def test_only_licensed_photos_and_each_used_photo_is_credited():
     trang = trang_lich(lich_mau(), CAU)
     anh = [m["anh"] for t in trang if t["kieu"] == "ngay" for m in t["muc"]]
     assert [a["src"] if a else None for a in anh] == ["/anh/lich/dai_noi.jpg", None, None, None, None]   # ảnh web không giấy phép ⇒ không dùng
-    assert trang[0]["anh"]["src"] == "/anh/lich/dai_noi.jpg"
+    assert [a["src"] for a in trang[0]["anh"]] == ["/anh/lich/dai_noi.jpg"]
     assert trang[-1] == {"kieu": "nguon_anh", "dong": ["Đại Nội Huế: ảnh của Người Chụp — CC BY-SA 4.0 (Wikimedia Commons)"]}
 
 
@@ -69,28 +80,33 @@ def test_plan_without_any_licensed_photo_has_no_credit_page():
     lich = lich_mau()
     lich["ngay"][0]["muc"][0]["anh"] = None
     trang = trang_lich(lich, CAU)
-    assert trang[0]["anh"] is None and trang[-1]["kieu"] == "luu_y"
+    assert trang[0]["anh"] == [] and trang[-1]["kieu"] == "luu_y"
 
 
-@pytest.mark.parametrize("kieu", sorted(KIEU))
-def test_file_text_is_a_subset_of_plan_text_plus_template_constants(kieu, tmp_path):
+def test_file_text_is_a_subset_of_plan_text_plus_template_constants(tmp_path):
     """Đọc LẠI file đã dựng: mỗi đoạn chữ trong file phải là chữ của lịch (tên, giờ, câu tả đã bỏ mã nguồn, ghi chú) hoặc chữ cố định của khuôn."""
     pptx = pytest.importorskip("pptx")
     lich = lich_mau(7)
-    trang = trang_lich(lich, CAU, MUC_MOI_TRANG[kieu], ngay_tao="19/11/2026")
-    prs = pptx.Presentation(io.BytesIO(dung_pptx(trang, kieu, Path(tmp_path))))   # thư mục ảnh rỗng ⇒ ô màu thay ảnh, không lỗi
+    trang = trang_lich(lich, CAU, ngay_tao="19/11/2026")
+    prs = pptx.Presentation(io.BytesIO(dung_pptx(trang, Path(tmp_path))))   # thư mục ảnh rỗng ⇒ ô hoạ tiết mang tên điểm thay ảnh, không lỗi
     assert len(prs.slides) == len(trang)
     chu = [p.text for s in prs.slides for sh in s.shapes if sh.has_text_frame for p in sh.text_frame.paragraphs if p.text.strip()]
-    cho_phep = " ".join(str(v) for t in trang for v in ([t.get(k) for k in ("tieu_de", "tom_tat", "ngay_chu", "chang")] + (t.get("dong") or []) + (t.get("an") or [])
+    cho_phep = " ".join(str(v) for t in trang for v in ([t.get(k) for k in ("tieu_de", "tom_tat", "ngay_chu", "chang")] + (t.get("dong") or []) + (t.get("diem_chinh") or [])
+                                                        + [x for a in t.get("an") or [] for x in (a["bua"], a["gan"], *a["quan"])] + [d["ten"] for d in t.get("ban_do") or []]
                                                         + [x for m in t.get("muc") or [] for x in (m["buoi"], m["gio"], m["ten"], m["cau"], m["ghi_chu"])]) if v)
-    co_dinh = ("Lịch trình Huế · trang", "điểm tham quan", "Tạo ngày 19/11/2026", "Ngày ", "Lưu ý trước khi đi", "Nguồn ảnh", "Ăn gần đó — ", "•  ")
+    co_dinh = ("Lịch trình Huế · trang", "điểm tham quan", "Tạo ngày 19/11/2026", "Ngày ", "Lưu ý trước khi đi", "Nguồn ảnh", "Ăn gần đó", "Mở bản đồ từng điểm",
+               " gần ", "•  ")
     for doan in chu:
         con = doan
         for c in co_dinh:
             con = con.replace(c, " ")
-        assert all(tu in cho_phep or tu in ("(tiếp)", "·", "—") or tu.isdigit() for tu in con.split()), doan
-    ten = [d for d in chu if d.startswith("Điểm ")]
-    assert ten == [f"Điểm {i + 1}" for i in range(7)]   # thứ tự điểm ngày 2 giữ nguyên qua các trang
+        assert all(tu.strip(",:") in cho_phep or tu in ("(tiếp)", "·", "—") or tu.isdigit() for tu in con.split()), doan
+    link = {r.text: r.hyperlink.address for s in prs.slides for sh in s.shapes if sh.has_text_frame for p in sh.text_frame.paragraphs for r in p.runs
+            if r.hyperlink.address}
+    assert len(link) == 10 and all(u.startswith(MAP_PREFIX) for u in link.values())          # chỉ link bản đồ do code dựng; chữ hiện ra là TÊN điểm
+    trang_ngay_2 = [i for i, t in enumerate(trang) if t["kieu"] == "ngay" and t["so"] == 2]
+    ten = [p.text for i in trang_ngay_2 for sh in prs.slides[i].shapes if sh.has_text_frame for p in sh.text_frame.paragraphs if p.text.startswith("Điểm ")]
+    assert [x for k, x in enumerate(ten) if x not in ten[:k]] == [f"Điểm {i + 1}" for i in range(7)]   # thứ tự điểm ngày 2 giữ nguyên qua các trang
 
 
 # ---------- đường tải `GET /api/lich/pptx` (bảng điểm thật — private; không model, không bộ tìm) ----------
@@ -144,8 +160,10 @@ def test_download_rebuilds_the_saved_plan_and_expires_with_it(may_chu):
     r = client.get("/api/lich/pptx?ten=../../x", cookies={"conversation_id": cid})   # tham số lạ bị bỏ qua: route không đọc tham số nào
     assert r.status_code == 200 and r.headers["content-type"].startswith("application/vnd.openxmlformats")
     assert "lich-trinh-hue.pptx" in r.headers["content-disposition"] and r.headers["cache-control"] == "no-store"
-    chu = [p.text for s in pptx.Presentation(io.BytesIO(r.content)).slides for sh in s.shapes if sh.has_text_frame for p in sh.text_frame.paragraphs]
-    assert [c for c in chu if c in ten_diem] == ten_diem                              # mọi điểm của lịch lưu, đúng thứ tự đi
+    trang = [[p.text for sh in s.shapes if sh.has_text_frame for p in sh.text_frame.paragraphs] for s in pptx.Presentation(io.BytesIO(r.content)).slides]
+    chu = [c for t in trang for c in t]
+    ngay = [c for t in trang if any(x.startswith("Ngày ") for x in t) for c in t if c in ten_diem]   # chỉ các trang "Ngày N"
+    assert [c for k, c in enumerate(ngay) if c not in ngay[:k]] == ten_diem           # mọi điểm của lịch lưu, đúng thứ tự đi
     assert "Câu tả đã kiểm của điểm đầu." in chu and DONG_THAY_DOI in " ".join(chu)    # câu tả đã bỏ mã nguồn; dòng "có thể đã thay đổi" theo vào file
     assert not any("api=1" in c or "http" in c for c in chu)                           # không link / đường dẫn nào trong chữ
     gio[0] += 31 * 60                                                                  # quá hạn 30 phút, cuộc chưa bị dọn

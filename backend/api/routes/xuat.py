@@ -10,7 +10,7 @@ from pathlib import Path
 from fastapi import APIRouter, Request
 from fastapi.responses import Response
 
-from api.lich_pptx import KIEU_MAC_DINH, MUC_MOI_TRANG, dung_pptx, trang_lich
+from api.lich_pptx import dung_pptx, trang_lich
 from api.routes.chat import CONVERSATION_COOKIE, _flags, error_response
 from llm import lich_trinh_v2 as lt2
 from llm import thoi_tiet as tt
@@ -44,6 +44,6 @@ def tai_pptx(request: Request):
         return error_response(404, "khong_co_lich", CAU_HET_HAN)
     lich, cau = lich_tu_luu(luu, flags)
     hom_nay = tt.hom_nay_vn()
-    trang = trang_lich(lich, cau, MUC_MOI_TRANG[KIEU_MAC_DINH], ngay_tao=f"{hom_nay.day}/{hom_nay.month}/{hom_nay.year}")
-    return Response(dung_pptx(trang, KIEU_MAC_DINH, THU_MUC_ANH), media_type=KIEU_PPTX,
+    trang = trang_lich(lich, cau, ngay_tao=f"{hom_nay.day}/{hom_nay.month}/{hom_nay.year}")
+    return Response(dung_pptx(trang, THU_MUC_ANH), media_type=KIEU_PPTX,
                     headers={"Content-Disposition": 'attachment; filename="lich-trinh-hue.pptx"', "Cache-Control": "no-store"})
