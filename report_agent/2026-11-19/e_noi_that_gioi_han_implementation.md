@@ -61,6 +61,14 @@ Mọi lệnh từ `backend/` của worktree, `PYTHONPATH=$PWD HF_HUB_OFFLINE=1 u
 - **Bộ dò lượt 1 của C** (C chạy, người viết không xem trước; trên bản `ca6223e`): đúng loại 14 / 20 (ngưỡng ≥ 15) · ra SAI LOẠI 1 (sàn 0) · đối chứng bắt nhầm 0 / 20 ⇒ CHƯA đạt. Họ lỗi: loại "gửi". Sửa đúng một lần theo plan: xét "gửi" TRƯỚC "đặt chỗ" (câu nhờ gửi thư xác nhận đặt phòng từng ra "đặt chỗ"); thêm "gửi tin nhắn / thư … giúp", "nhắn … cho <nơi> … giúp", "email cho mình …"; bỏ luật coi "số điện thoại của …" là câu hỏi thông tin; câu gửi ĐỒ VẬT (bưu thiếp, hành lý, quà…) không bắt. Trên sáu câu trượt C gửi: 5 / 6 nay đúng loại; câu còn lại ("còn bàn trống không") là cách nói ngoài danh sách của plan — để sót có chủ ý vì câu nói thật loại "tình trạng" chỉ nói về phòng.
 - Chạy lại sau sửa [máy kiểm]: phần test không nạp bộ tìm 70 đạt (gồm file test stream cũ) · quét hàm trên 252 câu đối chứng bắt 0, 4 / 4 lượt đích đúng loại. **CHƯA chạy lại 9 test nạp bộ tìm thật sau bản sửa** (máy đang có lượt đo; phần sửa không chạm đường stream, trừ một điều kiện ở bước gộp) và CHƯA có kết quả bộ dò chạy lại + bộ bù của C.
 
+## 5c. Bản sửa CUỐI — thu hẹp hàm (phiên điều phối chốt sau bộ bù của reviewer), 19/11/2026
+
+- Bộ bù 18 câu của B trên bản 5b: bắt nhầm 4 / 12 câu "không phải nhờ làm" (3 câu do các mẫu "gửi / nhắn … giúp" vừa nới, 1 câu "đặt cọc … giúp mình với"). Phiên điều phối chốt: THU HẸP, không chỉnh thêm mẫu — bắt nhầm một câu hỏi thông tin (mất câu trả lời + mục web) tệ hơn sót một câu nhờ làm thay (lượt sót chạy y như cờ tắt).
+- Đã làm: bỏ ba mẫu "gửi tin nhắn … giúp", "nhắn … cho <nơi> … giúp", "nhắn giúp mình cho …" và chữ "nhắn" khỏi dấu người gửi; "giúp / hộ" chỉ là dấu nhờ khi kề đại từ hoặc ở cuối câu; "đặt cọc / tiền cọc" vào danh sách loại. Giữ: xét "gửi" trước "đặt chỗ", "tới số điện thoại của …", "email cho mình …".
+- Kết quả trên MỌI bộ đã ghi [máy kiểm, người viết chạy]: 22 câu của B — bắt nhầm 1 (câu reviewer ghi là lành: hỏi còn phòng), sót 1 / 10 · 18 câu bù của B — bắt nhầm **0 / 12**, sót 3 / 6 · 252 câu đối chứng (câu mẫu, ngoài phạm vi, an toàn) — bắt **0** · 4 lượt đích của bộ kịch bản — 4 / 4 đúng loại · sáu câu trượt bộ dò lượt 1: 3 nay đúng loại (gồm câu từng ra sai loại), 3 sót có chủ ý. Phần test không nạp bộ tìm: 73 đạt.
+- **Giới hạn nhận sau thu hẹp (sót, không bắt):** "nhắn / nhắn tin cho <khách sạn, nhà hàng…> giúp mình là …" · "gửi tin nhắn cho … báo giúp mình …" · "đặt … cho mình nhé" khi thứ được đặt đứng trước chữ "cho mình" · "gửi mail … cho mình" (kênh là tân ngữ, không sau giới từ) · "còn bàn / còn vé không". Các lượt đó vẫn ra câu từ chối khuôn + mục web như hôm nay.
+- CHƯA có: kết quả chạy lại bộ dò gốc + bộ bù của C trên bản này; 9 test nạp bộ tìm thật chạy lại; lượt model thật.
+
 ## 6. Bàn giao cho người kiểm
 
 - Đọc diff: `git diff origin/main...origin/p9-e-noi-that-gioi-han -- backend` (4 file sửa + 2 file mới).

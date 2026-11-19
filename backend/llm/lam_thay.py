@@ -24,23 +24,22 @@ _VIEC_BANG_CHU = re.compile(r"\b(?:soạn|viết|tóm|tóm tắt|tóm gọn|copy
 # được đặt chỉ nhận ở cuối câu ("đặt phòng này giúp mình nhé"); câu kể việc đã đặt / hỏi kinh nghiệm ⇒ không phải nhờ.
 _GAN = r"(?:[^\s,;:.?!]+\s+){0,3}"
 _CUOI = rf"(?:\s+{_TOI})?(?:\s+(?:với|nhé|nha|nhen|đi|luôn|được không|được ko|được k|nha bạn|nhé bạn))*\s*[.!?]*$"
-_DA_DAT = re.compile(r"\b(?:đã|vừa|mới|lỡ|từng)\s+(?:đặt|book)\b|bao giờ chưa|\b(?:đặt|book)\s+(?:giúp\s+\S+\s+)?(?:một\s+|1\s+)?(?:câu hỏi|tên|lịch)\b")
-_DAT_NHO = re.compile(rf"\b(?:đặt|book)\s+{_GIUP}\s+(?:{_TOI}\s+)?{_GAN}{_THU_DAT}\b"         # "đặt giúp mình 1 phòng đôi"
+_DA_DAT = re.compile(r"\b(?:đã|vừa|mới|lỡ|từng)\s+(?:đặt|book)\b|bao giờ chưa|đặt cọc|tiền cọc"
+                     r"|\b(?:đặt|book)\s+(?:giúp\s+\S+\s+)?(?:một\s+|1\s+)?(?:câu hỏi|tên|lịch)\b")
+# Bản sửa CUỐI (phiên điều phối chốt 19/11, sau bộ bù của reviewer): THU HẸP — "giúp / hộ" chỉ là dấu nhờ khi KỀ đại từ ("đặt giúp mình …",
+# "giúp mình đặt …") hoặc ở CUỐI câu ("đặt phòng này giúp mình nhé"); bắt nhầm một câu hỏi thông tin tệ hơn sót một câu nhờ làm thay.
+_DAT_NHO = re.compile(rf"\b(?:đặt|book)\s+{_GIUP}\s+{_TOI}\s+{_GAN}{_THU_DAT}\b"              # "đặt giúp mình 1 phòng đôi"
                       rf"|\b(?:đặt|book)\s+cho\s+{_TOI}\s+{_GAN}{_THU_DAT}\b"                # "đặt cho mình một bàn"
                       rf"|\b(?:{_GIUP}|nhờ)\s+(?:{_TOI}|bạn)\s+(?:đặt|book)\s+{_GAN}{_THU_DAT}\b"  # "giúp mình đặt phòng", "nhờ bạn đặt bàn"
                       rf"|\b(?:đặt|book)\s+{_GAN}{_THU_DAT}\b[^,;:.?!]*?\s{_GIUP}{_CUOI}"     # "đặt phòng này giúp mình nhé" (dấu nhờ ở cuối câu)
                       rf"|\b(?:bạn|bot|trợ lý|ad)\s+(?:có thể\s+)?(?:đặt|book)\s+{_GAN}{_THU_DAT}\b")  # "bạn đặt xe đi Lăng Cô … luôn nhé"
 _LINK_DAT = re.compile(r"\blink\s+(?:để\s+)?(?:đặt|book)")                                  # "cho link đặt đúng khách sạn này"
-# Bộ dò của C (19/11, sửa đúng một lần): thêm "gửi tin nhắn / thư … giúp", "nhắn … cho <nơi> … giúp", "email cho mình …"; câu gửi ĐỒ VẬT
-# (bưu thiếp, hành lý, quà, xe…) là việc của người dùng ⇒ không bắt.
-_BEN_NHAN = r"(?:khách sạn|nhà hàng|quán|homestay|resort|chủ nhà|lễ tân|nhà xe|tài xế|bên đó|họ)"
-_GUI_KENH = re.compile(rf"\bgửi\b.*\b(?:qua|vào|tới|đến|sang|lên)\s+{_KENH}"
-                       rf"|\bgửi\s+(?:một\s+|1\s+)?(?:tin nhắn|thư|mail|email|e-mail|sms)\b[^,;.?!]*\b{_GIUP}\b"   # "gửi tin nhắn cho khách sạn báo giúp mình là…"
-                       rf"|\bnhắn(?:\s+tin)?\b[^,;.?!]*\bcho\s+{_BEN_NHAN}\b[^,;.?!]*\b{_GIUP}\b"               # "nhắn tin cho khách sạn giúp mình là…"
-                       rf"|\bnhắn(?:\s+tin)?\s+{_GIUP}\s+{_TOI}\s+cho\s+{_BEN_NHAN}\b"                          # "nhắn giúp mình cho nhà hàng là…"
-                       rf"|^(?:email|mail)\s+cho\s+{_TOI}\b")                                                    # "email cho mình bản lịch này"
-_GUI_NHO = re.compile(rf"^\s*gửi\b|\bgửi\s+{_GIUP}\b|\b{_GIUP}\s+{_TOI}\s+gửi\b|\bgửi\b.*\bcho\s+{_TOI}\b"       # người gửi là trợ lý
-                      rf"|\bnhắn(?:\s+tin)?\b|^(?:email|mail)\s+cho\b")
+# Gửi: phải có KÊNH sau giới từ ("gửi … qua / vào / tới mail, zalo, số điện thoại…") hoặc "email cho mình …". Ba mẫu "gửi tin nhắn … giúp",
+# "nhắn … cho <nơi> … giúp", "nhắn giúp mình cho …" đã thử ở bản trước và BỎ: bắt nhầm câu hỏi thông tin ("nhắn tin cho quán trước có giúp giữ
+# bàn không") ⇒ các cách nói đó nay là SÓT có chủ ý. Câu gửi ĐỒ VẬT (bưu thiếp, hành lý, quà, xe…) là việc của người dùng ⇒ không bắt.
+_GUI_KENH = re.compile(rf"\bgửi\b.*\b(?:qua|vào|tới|đến|sang|lên)\s+{_KENH}|^(?:email|mail)\s+cho\s+{_TOI}\b")
+_GUI_NHO = re.compile(rf"^\s*gửi\b|\bgửi\s+{_GIUP}\s+{_TOI}\b|\bgửi\b[^,;:.?!]*\s{_GIUP}{_CUOI}|\b{_GIUP}\s+{_TOI}\s+gửi\b"
+                      rf"|\bgửi\b.*\bcho\s+{_TOI}\b|^(?:email|mail)\s+cho\b")           # người gửi là trợ lý
 _GUI_DO = re.compile(r"bưu thiếp|bưu điện|bưu phẩm|bưu kiện|hành lý|vali|\bquà\b|\bđồ\b|gửi hàng|hàng hoá|gửi xe|gửi tiền")
 _CON_PHONG = re.compile(r"\b(?:có|còn)\s+phòng\s+(?:trống\s+)?(?:chưa|không|ko|k|hông|hem)\b")
 _YEU_CAU = re.compile(r"\b(?:yêu cầu|đơn|booking|đơn đặt)\b.*\b(?:được chưa|tới đâu|đến đâu|xác nhận chưa|xong chưa|được duyệt chưa)")

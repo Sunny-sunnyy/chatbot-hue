@@ -33,12 +33,9 @@ CAU_DAT = "đặt giúp mình một phòng đôi cho tối thứ bảy gần sô
     ("Gửi giúp mình lịch qua Zalo", GUI),
     ("mình vừa gửi yêu cầu rồi, có phòng chưa vậy", TINH_TRANG),   # có chữ "gửi" nhưng là hỏi tình trạng
     ("đơn đặt phòng của mình xác nhận chưa", TINH_TRANG),
-    # sau bộ dò của người khác (19/11): nhờ GỬI có chữ "đặt phòng" · gửi tin nhắn cho bên thứ ba · tới số điện thoại · "nhắn", "email" làm động từ
+    # sau bộ dò của người khác (19/11): nhờ GỬI có chữ "đặt phòng" (không phải nhờ đặt) · tới số điện thoại · "email" làm động từ
     ("Gửi giấy xác nhận đặt phòng vào email của mình giúp với", GUI),
-    ("Gửi tin nhắn cho homestay báo giúp mình là 9 giờ tối mới đến", GUI),
     ("gửi lịch 3 ngày này tới số điện thoại của em mình nhé", GUI),
-    ("nhắn tin cho nhà xe giúp mình là mình ra trễ", GUI),
-    ("Nhắn giúp mình cho nhà hàng là nhóm mình tới muộn 20 phút", GUI),   # "nhà hàng" không phải "gửi hàng"
     ("Email cho mình bản kế hoạch này được không", GUI),
     ("nhờ bạn đặt bàn 5 người tối nay ở quán đó", DAT_CHO),
     ("đặt vé này giúp mình nhé", DAT_CHO),
@@ -66,6 +63,14 @@ def test_requests_to_act_are_recognised_by_kind(cau, loai):
     "bạn đặt phòng hộ ai bao giờ chưa",
     "gửi bưu thiếp qua thư về Sài Gòn mất mấy ngày",               # gửi đồ vật: việc của người dùng
     "nhắn giúp mình tên quán bún bò ngon",                         # nhờ trợ lý nói, không nhờ nhắn cho bên thứ ba
+    # bản sửa cuối (thu hẹp): "giúp" đi với động từ khác, không kề đại từ / không ở cuối câu ⇒ câu hỏi thông tin
+    "nhắn tin cho nhà nghỉ trước có giúp giữ phòng không",
+    "gửi tin nhắn cho tổng đài có giúp tra được giờ xe không",
+    "mình muốn nhắn chủ homestay trước, nên gửi qua zalo hay gọi điện thì hơn",
+    "đặt cọc phòng khoảng bao nhiêu là vừa giúp mình với",
+    # SÓT có chủ ý sau khi thu hẹp (nhờ thật nhưng không bắt — lượt đó chạy y như cờ tắt)
+    "Gửi tin nhắn cho homestay báo giúp mình là 9 giờ tối mới đến",
+    "Nhắn giúp mình cho nhà hàng là nhóm mình tới muộn 20 phút",
     "Chia đều thì mỗi người bao nhiêu, phòng tính chung",
     "Đại Nội mở cửa mấy giờ",
     "",
