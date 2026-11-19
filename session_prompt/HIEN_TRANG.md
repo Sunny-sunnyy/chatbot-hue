@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 11:18 19/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
+Viết lại lần cuối: 13:30 19/11/2026 (giờ `date`; phiên điều phối sửa mục 1–4 lúc kết phiên nhẹ đầu chiều 19/11). Người giữ: phiên C.
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án cho BẤT KỲ coding agent nào vừa mở phiên; **viết lại tại chỗ** mỗi lần kết phiên, không nối thêm. Thứ tự mở
 phiên ở `session_prompt/START_SESSION.md`; sổ việc dài chỉ mở khi cần. `AGENTS.md`, code và file cấu hình thắng trang này — thấy lệch thì báo để sửa trang.
@@ -21,7 +21,8 @@ Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** =
   **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn
   nhầm đoạn của nơi khác), `so_vet` (bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
-- **Lần chạy cả bộ test gần nhất:** 19/11 trên `main` `55d01a8` (hai cờ mới bật, đã gỡ ngân sách ngữ cảnh): 1.437 đạt, 0 hỏng (B).
+- **Lần chạy cả bộ test gần nhất:** 19/11 trên `main` `55d01a8` (hai cờ mới bật, đã gỡ ngân sách ngữ cảnh): 1.437 đạt, 0 hỏng (B). Sau đó `76ef380` sửa "lượt báo thành công nhưng câu trả lời rỗng" (3 dòng; test file chạm đạt, CHƯA chạy cả bộ / lượt thật).
+- **Bẫy RAM (19/11):** không gom nhiều file test dựng cả app vào một tiến trình pytest; chạy từng file ở cây chính, không cùng lúc với server.
 - **Máy:** mở lại máy ⇒ `/tmp` MẤT (worktree) và Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1). Server không chạy sẵn.
 - **Giới hạn đã biết:** `guides/RUNBOOK_BAN_GIAO.md` mục 10 — gặp hành vi trông như lỗi thì tra ở đó TRƯỚC khi sửa hay báo.
 
@@ -31,16 +32,15 @@ Thứ tự việc, KHÔNG gắn ngày — bước trước đạt và máy rản
 
 | Bước | Việc | Trạng thái |
 |---|---|---|
-| 1–4 | Cả bộ test · soát tích hợp · code đứng yên · lượt đo cuối phần đã thấy (18/11, có mục không đạt) | XONG; bộ kín NOT RUN |
-| 4b | Sửa lỗi an toàn trước khi ghi mốc (User 19/11): câu thiếu cảnh báo "tạm ngừng mùa lũ" | bản lời dặn KHÔNG đạt (không vào main); bản CODE đã bật, giới hạn ở runbook 10.1 |
-| 5 | **Đợt hoàn thiện local — theo hướng mới: việc PHỔ THÔNG của người dùng thật** (dưới) | đang bàn với User |
+| 1–4 | Cả bộ test · soát tích hợp · code đứng yên · lượt đo cuối phần đã thấy (18/11) · sửa câu thiếu cảnh báo bằng code (19/11) | XONG; bộ kín NOT RUN |
+| 5 | **Đợt hoàn thiện local — theo hướng mới: việc PHỔ THÔNG của người dùng thật** (dưới) | đo hiện trạng xong (51 / 80 kịch bản xong việc); đang viết plan sửa |
 | 6 | Deploy AWS (cần User một lần: tài khoản, khoá, ngân sách) | chưa |
 | 7 | **User test TOÀN BỘ một lần** (`data/test_cuoi/DANH_SACH.md`) ⇒ User đóng Phase 9 | chưa |
 
 **Việc đang mở, ai làm, bước kế:** CHỈ ở `session_prompt/VIEC_DANG_MO.md` (xong: `session_prompt/VIEC_DA_XONG.md`). Mốc "Phase 9 xong phần nhóm" = code `55d01a8`.
 
-**Hướng của User từ 19/11:** việc 100 người dùng thật sẽ thử, thứ tự đã chốt: bộ kịch bản phổ thông + đo hiện trạng ⇒ câu xin danh sách bị thiếu mục + hỏi tiếp
-đúng thứ vừa gợi ý ⇒ gợi ý theo tiêu chí / "gần X" ⇒ ngày của nguồn ⇒ ngân sách do code tính (bắt đầu từ tổng tiền vé của lịch) ⇒ mang lịch đi / soạn sẵn tin + link.
+**Hướng của User từ 19/11:** việc 100 người dùng thật sẽ thử. Thứ tự (User chọn lại 13:21 19/11/2026): đo hiện trạng (XONG) ⇒ **lịch đã lưu vào lượt hỏi thường, code tính trên lịch đó** ⇒ **nói thật giới hạn thay câu từ chối khuôn** ⇒ câu xin danh sách thiếu mục + hỏi tiếp
+đúng thứ vừa gợi ý ⇒ gợi ý theo tiêu chí / "gần X" ⇒ ngày của nguồn ⇒ ngân sách do code tính ⇒ mang lịch đi / soạn sẵn tin + link.
 KHÔNG mở thêm việc nào về bão / lũ / khẩn cấp. Trước khi thêm file, cờ, test, bước kiểm: "lỗi đã thấy thật chưa · ai dùng · không làm thì mất gì".
 
 Số nhiễu (19/11): hai lượt bộ câu mẫu không đổi gì lệch 1 câu "Đúng" · 2 "Đủ ý" · 7 "Trọng tâm" ⇒ thử đổi lời dặn phải có bên tắt CÙNG BUỔI, chấm cùng lô.
@@ -50,21 +50,21 @@ Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / n
 
 1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
 2. Buổi User tự tay test toàn bộ (bước 7) — User chưa có giờ; KHÔNG nhắc.
-3. Các câu còn mở của hướng việc phổ thông (mức "làm thay", giá phòng, bổ sung kho…) — phiên điều phối hỏi từng câu.
+3. ĐANG CHỜ User chọn: bảng 41 điểm chưa có giá vé — thêm cột giá cho điểm kho có giá (khuyến nghị) / chưa làm tiền vé / điền đủ 41 (`data/lich_da_luu_2026-11-19/PLAN.md` mục 5).
+4. Hỏi khi tới lượt: câu chữ "nói thật giới hạn" (`data/tu_choi_khuon_2026-11-19/PLAN.md` mục 5) · "vượt 1 USD" áp cho việc nào · giá phòng, bổ sung kho, vị trí.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
 
 Sản phẩm:
 - Trả lời chỉ từ kho, có nguồn; câu ngoài kho phải bị từ chối (sàn: 0 câu ngoài kho được trả lời bằng kho). Người dùng gõ tiếng Việt CÓ DẤU; không làm tiếng Anh.
 - Câu khẩn cấp (bị cướp, mất ví, mất giấy tờ, số khẩn cấp) là NGOÀI PHẠM VI — User chốt ba lần; không sửa, không báo lại.
-- Bão / lũ / khẩn cấp: hành vi đang có giữ nguyên, không đầu tư thêm; hỏi tiếp sau câu bão chỉ xét câu liền trước; dòng "tạm ngừng" chỉ hiện khi câu trả lời trích bài có cảnh báo.
-- **19/11 — User TỰ NÊU:** chất lượng trước, tiền / tốc độ sau (dòng 10:04 dưới) · thử mức suy luận low / medium / high (duyệt chi phí thử) · đừng dồn công vào
-  bão / lũ / khẩn cấp, làm việc phổ thông · báo cáo theo thư mục từng ngày mà vẫn nhớ đủ trạng thái · "tự nhắc nhở nhau là không over-engineer".
-- **19/11 — User CHỌN Ô theo đề xuất của nhóm:** "Sửa lỗi an toàn trước" · "Chung tính sàn, riêng đọc tay" (cách đếm thiếu cảnh báo) · "Làm bản code rồi ghi mốc" ·
-  "Bật khi E đọc đạt" (cờ sửa lịch dời hai điểm) · "Bật ngay, ghi giới hạn" (cờ nối dòng cảnh báo) · chọn cả bốn nhóm việc phổ thông · đồng ý thứ tự ở mục 2.
+- Bão / lũ / khẩn cấp: hành vi đang có giữ nguyên, không đầu tư thêm (giới hạn đã nhận: runbook mục 10).
+- **19/11 — User TỰ NÊU:** chất lượng trước, tiền / tốc độ sau (dòng 10:04 dưới) · thử mức suy luận (duyệt chi phí thử) · làm việc phổ thông, không dồn công vào bão / lũ / khẩn cấp · báo cáo theo thư mục ngày · tự nhắc nhau không over-engineer.
+- **19/11 — User CHỌN Ô theo đề xuất của nhóm:** "Sửa lỗi an toàn trước" · "Chung tính sàn, riêng đọc tay" · "Làm bản code rồi ghi mốc" · "Bật khi E đọc đạt" · "Bật ngay, ghi giới hạn" · cả bốn nhóm việc phổ thông · "Chạy medium + low" (bậc 2 mức suy luận) · "Chèn hai lỗi nặng lên trước" (thứ tự ở mục 2).
+- **19/11 — User TỰ NÊU (11:32):** việc thử "ngữ cảnh lớn hơn" vượt 1 USD vẫn duyệt (trần trong plan 1,40 USD; hiểu là riêng việc đó).
 - Không nói giá phòng ở phần gợi ý chỗ ở (câu hỏi chi phí chung vẫn nêu khoảng giá có nguồn từ kho). Khối "Nơi ở" chỉ hiện khi người dùng
   đã chọn hạng chỗ ở — ở biểu mẫu hoặc nói bằng lời.
-- Việc phải luôn đúng (phép tính, ngày, tiền, thứ tự bắt buộc) do CODE làm; model chỉ diễn đạt. Giữ model `gpt-6-luna`, giữ `e5-small`; số đoạn / cách đưa ngữ cảnh: đang mở lại để thử (A hiểu từ lời User 10:04 19/11 về cách đưa ngữ cảnh; đã báo, User chưa phản đối; bật gì do User quyết).
+- Việc phải luôn đúng (phép tính, ngày, tiền, thứ tự bắt buộc) do CODE làm; model chỉ diễn đạt. Giữ model `gpt-6-luna`, giữ `e5-small`; số đoạn / cách đưa ngữ cảnh: đang thử (plan đã duyệt; bật gì do User quyết).
 - **User 10:04 19/11/2026 — GỠ các rào tối ưu sớm:** bỏ sàn tiền "TB ≤ 0,0005 USD / câu" và sàn tốc độ "chữ đầu p50 ≤ 3 s, p95 ≤ 5 s" (tiền / giây chỉ ĐO và BÁO cạnh chất
   lượng, không dùng để loại phương án; đặt lại sau khi chất lượng đạt, User quyết); bỏ trần token đầu ra, ngân sách ngữ cảnh 16.384 token / lượt, trần lịch sử 1.500 token (đã gỡ);
   được dùng tiền API để thử (một việc > 1 USD vẫn báo trước). Thứ tự lỗi tệ nhất: sai cảnh báo an toàn > nói chắc mà sai > trả lời câu ngoài kho > thiếu ý > từ chối nhầm.

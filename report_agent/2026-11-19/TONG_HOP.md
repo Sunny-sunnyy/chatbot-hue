@@ -2,14 +2,16 @@
 
 Viết: 10:56 19/11/2026 (giờ `date`), phiên điều phối. Thư mục này gom mọi báo cáo viết trong ngày — từ 19/11 mỗi ngày làm việc một thư mục `report_agent/<năm-tháng-ngày>/` (chủ dự án yêu cầu). Phần riêng tư (kết quả đo có câu của bộ đo, kế hoạch, câu dò) không vào repo công khai; file này chỉ trỏ tên thư mục trong `data/`.
 
-## PHIÊN SAU ĐỌC TRƯỚC (GHI ĐÈ lúc kết phiên; ≤ 20 dòng) — viết 11:16 19/11/2026, kết phiên nhẹ của phiên điều phối giữa ngày
+## PHIÊN SAU ĐỌC TRƯỚC (GHI ĐÈ lúc kết phiên; ≤ 20 dòng) — viết 13:42 19/11/2026, kết phiên nhẹ đầu chiều, chủ dự án mở lại cả bốn phiên
 
-- **Máy (thoả thuận ba dự án hôm nay):** một việc nạp model một lúc; RAM khả dụng < 4 GB thì không bật; dự án khác thứ nhất đang trong KHUNG ĐO GIÂY (bắt đầu 11:01, ước xong ~12:30) ⇒ hue_rag không chạy gì tốn CPU / nạp model tới dòng "xong" của họ. Qdrant hue_rag đang bật, 9.436 điểm; 0 server.
-- **Thứ tự mở đầu:** đọc `session_prompt/VIEC_DANG_MO.md` (bước kế của từng việc CHỈ ghi ở đó) ⇒ `session_prompt/sessions/STATUS_A.md` mục 3. Ba phiên B, C, E KHÔNG tắt: nhắn tên terminal mới cho họ, không giao lại việc đang chạy.
-- **Đã chốt với User hôm nay (đủ ở `session_prompt/HIEN_TRANG.md` mục 4 + sổ việc khối 19/11):** chất lượng trước — đã gỡ trần token đầu ra, ngân sách ngữ cảnh, trần lịch sử, sàn tiền và sàn tốc độ · hai cờ mới BẬT (`sua_lich_doi_cho_code`, `noi_dong_tam_ngung`) · mốc "Phase 9 xong phần nhóm kèm mục chưa đạt" = code `55d01a8`, cả bộ test 1.437 đạt · KHÔNG đầu tư thêm cho bão / lũ / khẩn cấp · hướng mới "việc phổ thông của người dùng thật", thứ tự sáu bước User đã đồng ý (mục lục việc, việc 2) · báo cáo theo thư mục ngày [thử 3 ngày, đã đóng băng — không thêm file / phép kiểm] · tự nhắc nhau không over-engineer.
-- **Đang chờ User:** điền ~20 câu thật vào `data/kich_ban_pho_thong_2026-11-19/CAU_CUA_USER.md` (không gấp). Các câu A sẽ hỏi khi tới lượt: `STATUS_A.md` mục 5. Hộp hỏi hôm nay: 7 / ngưỡng 8.
-- **Chưa làm cho ngày này:** `bai_hoc/VIEC_MOI_XONG.md` mới có mục lượt đo cuối · sao lưu ổ D cho mốc · cắt `CURRENT_HANDOFF.md` · vòng cải tiến cuối ngày · trang hiện trạng mục 2 trỏ sang mục lục việc (C).
-- **Bẫy của ngày:** `STATUS_A.md` mục 7; nhật ký của B: `b_nhat_ky.md`.
+- **Thứ tự mở đầu:** `session_prompt/HIEN_TRANG.md` ⇒ `session_prompt/VIEC_DANG_MO.md` (6 việc; bước kế CHỈ ghi ở đó) ⇒ `session_prompt/sessions/STATUS_A.md` mục 1, 3, 5.
+- **Máy:** dùng chung ba dự án; trưa nay chạm sàn 4 GB RAM một lần (một tiến trình pytest 20 file của nhóm lên 2,8 GB — đã dừng). Từ giờ: test dựng cả app chạy từng file ở cây chính, không chạy cùng lúc với server; trước việc nạp model nhìn `free -m`. Qdrant bật, 9.436 điểm.
+- **Đã có số buổi trưa:** thí nghiệm mức suy luận bậc 1 (ba mức gần bằng nhau về tiền / giây; cổng đạt) · bộ 80 kịch bản phổ thông (xong việc 51 / 80 chấm nới, 40 sát chữ; nguyên nhân gốc đã xếp hạng) · bước đếm 0 USD của việc "ngữ cảnh lớn hơn". Đã vào main: bản sửa "lượt báo thành công nhưng câu trả lời rỗng" (`76ef380`; chưa chạy cả bộ test, chưa có lượt thật) · các mục 7–11 của `bai_hoc/VIEC_MOI_XONG.md` kèm kết quả thử tay.
+- **Chủ dự án chọn buổi trưa:** bậc 2 mức suy luận chỉ medium + low · thứ tự sửa: lịch đã lưu vào lượt hỏi thường ⇒ nói thật giới hạn thay câu từ chối khuôn ⇒ các bước cũ · việc "ngữ cảnh lớn hơn" vượt 1 USD vẫn duyệt.
+- **Đang chờ chủ dự án:** cách có giá vé cho "tổng tiền vé của lịch" (ba phương án, đã nêu) · câu chữ "nói thật giới hạn". Hộp hỏi hôm nay: 9 ⇒ gom câu.
+- **Đang chạy lúc viết:** phần sinh bậc 2 mức suy luận (phiên B cũ bật nền) — phiên mới kiểm file kết quả đủ dòng chưa.
+- **Chưa làm cho ngày này:** cả bộ test trên bản mới · sao lưu ổ D cho mốc · cắt `CURRENT_HANDOFF.md` · vòng cải tiến cuối ngày · `bai_hoc/` cho việc buổi chiều.
+- **Bẫy của ngày:** `STATUS_A.md` mục 7; nhật ký `b_nhat_ky.md`, `c_nhat_ky.md`, `e_nhat_ky.md`.
 
 ## 1. Việc trong ngày và kết quả
 
