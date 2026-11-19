@@ -117,7 +117,7 @@ fi
 echo; echo "===== PHIÊN SAU ĐỌC TRƯỚC — TONG_HOP gần nhất có khối này ====="
 co_khoi=0
 for f in $(ls -d report_agent/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]/TONG_HOP.md 2>/dev/null | sort -r); do
-  khoi=$(awk '/^## PHIÊN SAU ĐỌC TRƯỚC/{in_k=1; print; next} in_k && /^## /{exit} in_k{print}' "$f")
+  khoi=$(awk '/^## ([0-9]+\. )?(PHIÊN SAU ĐỌC TRƯỚC|Phiên sau đọc trước)/{in_k=1; print; next} in_k && /^## /{exit} in_k{print}' "$f")  # nhận cả tiêu đề của mẫu guides/khung ("## 0. Phiên sau đọc trước")
   if [ -n "$khoi" ] && ! grep -q '^(chưa viết)$' <<<"$khoi"; then echo "($f)"; echo "$khoi"; co_khoi=1; break; fi
 done
 [ "$co_khoi" -eq 1 ] || echo "(chưa TONG_HOP nào có khối \"PHIÊN SAU ĐỌC TRƯỚC\" đã viết — đọc khối đầu $SP/CURRENT_HANDOFF.md)"
