@@ -105,9 +105,8 @@ function anhHopLe(a) {
 }
 
 function AnhLich({ anh, ten }) {
-  // `data-phep`: bản IN / lưu PDF chỉ giữ ảnh có giấy phép ghi trong bảng ảnh (ảnh lấy từ trang web khác thì ẩn khi in — `lkh.css` @media print)
   return (
-    <figure className="lich-anh" data-phep={anh.giay_phep && anh.tac_gia ? "co" : "khong"}>
+    <figure className="lich-anh">
       <img src={`${import.meta.env.BASE_URL}${anh.src.slice(1)}`} alt={anh.chu_thich ? `${ten} — ${anh.chu_thich}` : ten} loading="lazy" decoding="async" />
     </figure>
   );
@@ -203,10 +202,9 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
       )}
       {turn.sources?.length > 0 && <SourceLine turn={turn} />}
       {turn.notice && <p className="notice">{turn.notice}</p>}
-      {/* chỉ hiện khi IN: dòng cuối + nguồn ảnh (ảnh có giấy phép) — file rời khỏi trang thì không còn ghi chú nào của giao diện đi theo */}
+      {/* chỉ hiện khi IN: dòng cuối — file rời khỏi trang thì không còn ghi chú nào của giao diện đi theo. Không in ghi công ảnh (User 14/11). */}
       <div className="lkh-chi-in">
         <p>{DONG_CUOI_LICH}</p>
-        {nguonAnh(lich).length > 0 && <p>Nguồn ảnh: {nguonAnh(lich).join("; ")}.</p>}
       </div>
       {xong && (
         <div className="lich">
@@ -317,14 +315,6 @@ function NutIcs({ lich, cau, anToan }) {
 // - "Tải PowerPoint": `GET /api/lich/pptx` — server dựng từ lịch ĐÃ LƯU của cuộc (lịch MỚI NHẤT, hết hạn sau 30 phút); trình duyệt không gửi lịch lên.
 let XUAT_LICH = false;
 export function batXuatLich(co) { XUAT_LICH = co === true; }
-
-function nguonAnh(lich) {
-  const da = new Map();
-  for (const ng of lich.ngay) for (const m of ng.muc) {
-    if (anhHopLe(m.anh) && m.anh.giay_phep && m.anh.tac_gia && !da.has(m.anh.src)) da.set(m.anh.src, `${m.ten} — ${m.anh.tac_gia}, ${m.anh.giay_phep}`);
-  }
-  return [...da.values()];
-}
 
 function XuatLich() {
   const [bao, setBao] = useState("");

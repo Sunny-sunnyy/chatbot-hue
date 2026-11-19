@@ -1,6 +1,6 @@
 """Xuất lịch ra PowerPoint (`api/lich_pptx.py`) — code điền đối tượng lịch vào các trang, không model.
-Khoá các sàn ghi trước của plan: mọi điểm có mặt đúng ngày / buổi / giờ / thứ tự · ghi chú an toàn theo vào file, dự báo cũ thì không · chỉ ảnh có giấy
-phép + có dòng nguồn ảnh · ngày dài chia trang ĐỀU, không mất điểm · chữ trong file ⊂ chữ của lịch + hằng số của khuôn.
+Khoá các sàn ghi trước của plan: mọi điểm có mặt đúng ngày / buổi / giờ / thứ tự · ghi chú an toàn theo vào file, dự báo cũ thì không · dùng đủ ảnh tự host,
+KHÔNG in ghi công ảnh (chủ dự án 14/11) · câu an toàn của LƯỢT theo vào file · ngày dài chia trang ĐỀU, không mất điểm · chữ trong file ⊂ chữ của lịch + hằng số của khuôn.
 Lịch trong test tự dựng (không phải dữ liệu bộ đo). Phần đọc lại file cần `python-pptx` (chưa có trong môi trường ⇒ bỏ qua, ghi rõ)."""
 import io
 from pathlib import Path
@@ -35,7 +35,7 @@ CAU = {"n1-sang-1": "Khám phá Hoàng thành [1].", "n1-toi-1": "Dạo chợ đ
 
 def test_every_item_is_present_in_order_with_time_and_session():
     trang = trang_lich(lich_mau(), CAU, ngay_tao="19/11/2026")
-    assert [t["kieu"] for t in trang] == ["bia", "ngay", "ngay", "luu_y", "nguon_anh"]
+    assert [t["kieu"] for t in trang] == ["bia", "ngay", "ngay", "luu_y"]
     n1 = trang[1]
     assert (n1["so"], n1["tiep"], n1["ngay_chu"]) == (1, False, "Thứ Bảy 5/12/2026")
     assert [(m["buoi"], m["gio"], m["ten"]) for m in n1["muc"]] == [("Sáng", "8:00 – 10:30", "Đại Nội Huế"), ("Chiều", "13:30 – 14:45", "Khu phố Tây"),
@@ -61,12 +61,17 @@ def test_safety_notes_follow_into_the_file_but_stale_forecast_does_not():
     assert not any("mưa 90 %" in d for d in dong)   # dự báo lấy lúc trả lời, server không lưu ⇒ không in số cũ vào file tải về
 
 
-def test_only_licensed_photos_and_each_used_photo_is_credited():
-    trang = trang_lich(lich_mau(), CAU)
+def test_all_self_hosted_photos_are_used_and_nothing_is_credited():
+    """Chủ dự án 14/11/2026 (nhắc lại 19/11): gỡ mọi chữ ghi công khỏi hệ thống ⇒ file dùng đủ ảnh của bảng ảnh (cả ảnh lấy từ trang web khác),
+    không có trang nguồn ảnh, không in tác giả / giấy phép. Ảnh ngoài `/anh/lich/` hoặc có thư mục con / ".." ⇒ không dùng."""
+    lich = lich_mau()
+    lich["ngay"][0]["muc"][2]["anh"] = {"src": "/anh/lich/../../bi_mat.jpg"}
+    trang = trang_lich(lich, CAU)
     anh = [m["anh"] for t in trang if t["kieu"] == "ngay" for m in t["muc"]]
-    assert [a["src"] if a else None for a in anh] == ["/anh/lich/dai_noi.jpg", None, None, None, None]   # ảnh web không giấy phép ⇒ không dùng
-    assert [a["src"] for a in trang[0]["anh"]] == ["/anh/lich/dai_noi.jpg"]
-    assert trang[-1] == {"kieu": "nguon_anh", "dong": ["Đại Nội Huế: ảnh của Người Chụp — CC BY-SA 4.0 (Wikimedia Commons)"]}
+    assert anh[:3] == [{"src": "/anh/lich/dai_noi.jpg"}, {"src": "/anh/lich/pho_tay.jpg"}, None]
+    assert trang[0]["anh"] == [{"src": "/anh/lich/dai_noi.jpg"}, {"src": "/anh/lich/pho_tay.jpg"}]
+    assert [t["kieu"] for t in trang][-1] == "luu_y" and "nguon_anh" not in {t["kieu"] for t in trang}
+    assert not any(x in str(trang) for x in ("Người Chụp", "CC BY", "Commons", "vi-du.vn", "tac_gia", "giay_phep"))
 
 
 @pytest.mark.parametrize("so, chia", [(5, [5]), (6, [3, 3]), (7, [4, 3]), (11, [4, 4, 3])])
@@ -76,9 +81,10 @@ def test_long_day_is_split_evenly_and_loses_nothing(so, chia):
     assert [m["ten"] for t in ngay_2 for m in t["muc"]] == [f"Điểm {i + 1}" for i in range(so)]
 
 
-def test_plan_without_any_licensed_photo_has_no_credit_page():
+def test_plan_without_any_photo_still_builds():
     lich = lich_mau()
-    lich["ngay"][0]["muc"][0]["anh"] = None
+    for m in lich["ngay"][0]["muc"]:
+        m["anh"] = None
     trang = trang_lich(lich, CAU)
     assert trang[0]["anh"] == [] and trang[-1]["kieu"] == "luu_y"
 
@@ -94,7 +100,7 @@ def test_file_text_is_a_subset_of_plan_text_plus_template_constants(tmp_path):
     cho_phep = " ".join(str(v) for t in trang for v in ([t.get(k) for k in ("tieu_de", "tom_tat", "ngay_chu", "chang")] + (t.get("dong") or []) + (t.get("diem_chinh") or [])
                                                         + [x for a in t.get("an") or [] for x in (a["bua"], a["gan"], *a["quan"])] + [d["ten"] for d in t.get("ban_do") or []]
                                                         + [x for m in t.get("muc") or [] for x in (m["buoi"], m["gio"], m["ten"], m["cau"], m["ghi_chu"])]) if v)
-    co_dinh = ("Lịch trình Huế · trang", "điểm tham quan", "Tạo ngày 19/11/2026", "Ngày ", "Lưu ý trước khi đi", "Nguồn ảnh", "Ăn gần đó", "Mở bản đồ từng điểm",
+    co_dinh = ("Lịch trình Huế · trang", "điểm tham quan", "Tạo ngày 19/11/2026", "Ngày ", "Lưu ý trước khi đi", "Ăn gần đó", "Mở bản đồ từng điểm",
                " gần ", "•  ", "Bấm tên điểm để mở bản đồ.", "File này sửa được: đổi chữ, thêm ảnh của bạn trước khi gửi cho người đi cùng.")
     for doan in chu:
         con = doan
@@ -169,3 +175,40 @@ def test_download_rebuilds_the_saved_plan_and_expires_with_it(may_chu):
     gio[0] += 31 * 60                                                                  # quá hạn 30 phút, cuộc chưa bị dọn
     het = client.get("/api/lich/pptx", cookies={"conversation_id": cid})
     assert (het.status_code, het.json()["error"]["code"]) == (404, "khong_co_lich")
+
+
+# ---------- câu AN TOÀN của LƯỢT (bão / lũ: bản tin chính thức + 112) phải theo vào file (review nhánh, M1) ----------
+def test_turn_safety_sentence_is_first_note_and_on_cover():
+    """Màn hình vẽ câu này đậm ở đầu thẻ lịch; file dựng từ trạng thái lưu nên trạng thái lưu phải mang nó. Không có ⇒ file y như trước."""
+    from llm import thoi_tiet as tt
+    co = trang_lich(lich_mau(), CAU, an_toan=tt.CAU_BAO_LU)
+    luu_y = next(t for t in co if t["kieu"] == "luu_y")
+    assert luu_y["dong"][0] == tt.CAU_BAO_LU and luu_y["an_toan"] is True and co[0]["an_toan"] == tt.CAU_BAO_LU
+    khong = trang_lich(lich_mau(), CAU)
+    assert khong[0]["an_toan"] is None and not next(t for t in khong if t["kieu"] == "luu_y")["an_toan"]
+    assert all(tt.CAU_BAO_LU not in d for t in khong for d in t.get("dong") or [])
+
+
+def test_saved_plan_keeps_the_storm_sentence_of_its_turn():
+    """Route: lượt lịch mà dòng ghi chú có câu bão / lũ ⇒ trạng thái lưu mang đúng HẰNG SỐ đó (không chữ tự do); lượt thường ⇒ không có khoá."""
+    from api.routes.chat import an_toan_cua_luot
+    from llm import thoi_tiet as tt
+    from llm.assistant import AnswerTrace
+    assert an_toan_cua_luot(AnswerTrace(notice=f"{tt.CAU_BAO_LU} Giờ mở cửa có thể đã thay đổi.")) == tt.CAU_BAO_LU
+    assert an_toan_cua_luot(AnswerTrace(notice="Giờ mở cửa có thể đã thay đổi.")) is None and an_toan_cua_luot(AnswerTrace()) is None
+
+
+def test_download_carries_the_saved_storm_sentence(may_chu):
+    import pptx
+    from llm import thoi_tiet as tt
+    client, app, gio, luu, _ = may_chu
+    gio[0] += 3600                                   # cuộc mới sau ca hết hạn của test trước
+    store = app.state.conversations
+    cid = store.ensure(None)
+    store.luu_lich(cid, {**luu, "an_toan": tt.CAU_BAO_LU})
+    r = client.get("/api/lich/pptx", cookies={"conversation_id": cid})
+    assert r.status_code == 200
+    trang = [[p.text for sh in s.shapes if sh.has_text_frame for p in sh.text_frame.paragraphs] for s in pptx.Presentation(io.BytesIO(r.content)).slides]
+    assert tt.CAU_BAO_LU in trang[0]                                                    # bìa
+    luu_y = next(t for t in trang if "Lưu ý trước khi đi" in t)
+    assert [d for d in luu_y if d.startswith("•")][0] == "•  " + tt.CAU_BAO_LU           # dòng ĐẦU của trang lưu ý

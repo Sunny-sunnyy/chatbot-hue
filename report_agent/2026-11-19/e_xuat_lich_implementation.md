@@ -52,6 +52,17 @@ Quyết định thiết kế đáng biết:
 - Ép trạng thái lưu qua JSON làm mất dòng "tối nghỉ" (khoá ngày là số) — hôm nay server giữ trong RAM nên không dính; ghi để người sau biết nếu lưu ra đĩa.
 - Link bản đồ trong file gắn vào ô chữ (giữ màu của kiểu); trên vài ứng dụng xem slide link gắn vào ô có thể không bấm được — chưa thử.
 
+## 5b. Sửa sau review nhánh (C) + một quyết định cũ của chủ dự án bị bỏ sót — 19/11/2026
+
+- **Major của C — câu an toàn của LƯỢT không theo vào file .pptx.** Đúng: câu "bản tin chính thức + 112" của lượt bão / lũ chỉ nằm ở dòng ghi chú của lượt, không nằm trong trạng thái lưu. Sửa: lúc lưu lịch, route lưu kèm đúng HẰNG SỐ đó (`an_toan_cua_luot`); file in nó ở bìa và là dòng đầu (đậm) của trang "Lưu ý trước khi đi". Ba test mới đã thấy ĐỎ trước khi sửa; đã dựng một file thật có câu này và nhìn ảnh do PowerPoint xuất.
+- **Bỏ ghi công ảnh, dùng đủ ảnh.** Chủ dự án đã quyết 14/11/2026 "gỡ mọi chữ ghi công khỏi hệ thống" — người viết và phiên điều phối bỏ sót khi làm plan. Nay: bỏ trang "Nguồn ảnh", bỏ bộ lọc "chỉ ảnh có giấy phép" (file dùng mọi ảnh tự host của bảng ảnh — 8 / 8 điểm của lịch mặc định có ảnh thật), bản in không ẩn ảnh nào và không in dòng nguồn ảnh. Đường ảnh vẫn bị kiểm (ngay dưới `/anh/lich/`, không thư mục con, không ".."). Plan có khối "Sửa sau duyệt".
+- Minor của C: (m1) nút tải ở mọi thẻ lịch nhưng file là lịch mới nhất — GIỮ, dòng trạng thái đã nói rõ (C: đủ cho bản đầu) · (m2) **bản in giữ dòng dự báo thật của lượt, file .pptx thay bằng dòng chung** — ghi nhận là giới hạn · (m3) đã thêm `xuat_pptx: False` vào danh sách tắt của `tests/test_cong_dot_1.flags_from` (không thì commit bật cờ làm các test dùng hàm đó ném lỗi phụ thuộc) · (m4) **trước khi deploy:** `THU_MUC_ANH` trỏ `frontend/public` — bản deploy chỉ có `dist` thì mọi ảnh thành ô hoạ tiết; và chưa có giới hạn số lượt tải.
+- Trạng thái test sau sửa: 15 test của nhánh đạt (chạy với `--with python-pptx`); giao diện dựng được. Lỗi trang cuối bản in (trang 3 chỉ có hai dòng) đã thêm luật CSS, CHƯA chụp lại.
+
+## 5c. Đề xuất sau (KHÔNG làm ở nhánh này) — ý ngoài thẩm mỹ thấy ở bốn bài thi thiết kế
+
+Cuộc thi bốn coding agent khác hãng (đề + bài + bảng sàn: riêng tư, `data/thi_thiet_ke_2026-11-19/`): chủ dự án giữ kiểu "Di sản" của nhóm. Hai ý đáng mượn về sau: (1) trang **"Tổng quan hành trình"** — mỗi ngày một cột, liệt kê điểm + giờ, để nhìn cả chuyến trong một trang (hai bài có); (2) dòng **"buổi tối để trống"** vẽ thành một ô có chủ ý (nhãn + lý do) thay cho một dòng chữ. Lưu ý từ lượt kiểm sàn: hai bài đó tự thêm nhãn / câu không có trong dữ liệu — nếu mượn bố cục thì chữ vẫn phải lấy từ lịch.
+
 ## 6. Bàn giao cho người kiểm
 
 - Đọc diff: `git diff origin/main...origin/p9-e-xuat-lich -- backend frontend pyproject.toml` (13 file, ~670 dòng thêm; `uv.lock` 118 dòng do công cụ sinh).

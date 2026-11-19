@@ -4,7 +4,8 @@
 Server KHÔNG nhận dữ liệu lịch nào từ trình duyệt: yêu cầu không có thân, không có tham số; lịch lấy từ trạng thái server đã lưu cho cuộc trò
 chuyện (cookie HttpOnly sẵn có) rồi dựng lại bằng đúng các hàm của lượt trả lời (`dung_lich`, `gan_o_an`) ⇒ mọi chữ trong file là chữ của bảng
 điểm, câu tả đã kiểm, hoặc hằng số của khuôn. Lịch hết hạn (30 phút) / cuộc chưa có lịch ⇒ 404 có lời, không dựng file rỗng.
-Những thứ trạng thái lưu không có (số nguồn [n], dòng dự báo thời tiết) không vào file — `api/lich_pptx.py` in một dòng cố định thay dự báo."""
+Những thứ trạng thái lưu không có (số nguồn [n], dòng dự báo thời tiết) không vào file — `api/lich_pptx.py` in một dòng cố định thay dự báo.
+Câu an toàn của lượt (bão / lũ) được lưu kèm lịch ở route chat (`an_toan_cua_luot`) ⇒ có trong file."""
 from pathlib import Path
 
 from fastapi import APIRouter, Request
@@ -44,6 +45,6 @@ def tai_pptx(request: Request):
         return error_response(404, "khong_co_lich", CAU_HET_HAN)
     lich, cau = lich_tu_luu(luu, flags)
     hom_nay = tt.hom_nay_vn()
-    trang = trang_lich(lich, cau, ngay_tao=f"{hom_nay.day}/{hom_nay.month}/{hom_nay.year}")
+    trang = trang_lich(lich, cau, ngay_tao=f"{hom_nay.day}/{hom_nay.month}/{hom_nay.year}", an_toan=luu.get("an_toan"))
     return Response(dung_pptx(trang, THU_MUC_ANH), media_type=KIEU_PPTX,
                     headers={"Content-Disposition": 'attachment; filename="lich-trinh-hue.pptx"', "Cache-Control": "no-store"})

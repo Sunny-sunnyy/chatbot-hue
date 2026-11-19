@@ -4,8 +4,9 @@ Hai lớp tách nhau để kiểm riêng:
 - `trang_lich(lich, cau, …)` — hàm THUẦN: đối tượng lịch bản 2 (như giao diện nhận) + câu tả đã kiểm ⇒ danh sách trang (dict). Mọi chữ lấy từ lịch
   hoặc là hằng số ở file này; ngày dài ⇒ trang "tiếp", không bỏ điểm, không cắt tên / giờ (câu tả quá dài thì cắt ở ranh giới từ, thêm "…").
 - `dung_pptx(trang, thu_muc_anh)` — vẽ các trang bằng `python-pptx` theo kiểu "Di sản" (chủ dự án chọn 19/11/2026 bằng ảnh mẫu). Vẽ bằng toạ độ,
-  không dùng file khuôn nhị phân. Ảnh chỉ lấy từ thư mục ảnh tự host, chỉ ảnh có giấy phép ghi trong bảng ảnh (ảnh lấy từ trang web khác không
-  có giấy phép ⇒ không vào file tải về; chỗ đó là ô hoạ tiết mang tên điểm).
+  không dùng file khuôn nhị phân. Ảnh = ảnh tự host của bảng ảnh đang chạy (mọi ảnh giao diện đang hiện); điểm không có ảnh ⇒ ô hoạ tiết mang tên
+  điểm. KHÔNG in tác giả / giấy phép / trang nguồn ảnh ở đâu trong file (chủ dự án 14/11/2026: gỡ mọi chữ ghi công khỏi hệ thống; nhắc lại 19/11).
+- Câu AN TOÀN của lượt (bão / lũ: bản tin chính thức + 112) nếu có ⇒ in ở bìa và là dòng ĐẦU trang "Lưu ý trước khi đi".
 """
 import datetime as dt
 import io
@@ -28,10 +29,14 @@ CAU_TOI_DA = 170             # trần ký tự câu tả một điểm (câu th�
 DIEM_CHINH_TREN_BIA = 4
 
 
-def _anh_duoc_phep(anh: dict | None) -> dict | None:
-    """Chỉ ảnh có tác giả + giấy phép (ảnh Wikimedia Commons) và nằm dưới `/anh/lich/`."""
-    if anh and anh.get("giay_phep") and anh.get("tac_gia") and str(anh.get("src", "")).startswith("/anh/lich/"):
-        return {"src": anh["src"], "tac_gia": anh["tac_gia"], "giay_phep": anh["giay_phep"]}
+ANH_LICH = "/anh/lich/"
+
+
+def _anh_hop_le(anh: dict | None) -> dict | None:
+    """Ảnh tự host của bảng ảnh: `src` ngay dưới `/anh/lich/` (không thư mục con, không "..") — cùng luật với giao diện. Chỉ giữ `src`."""
+    src = str((anh or {}).get("src") or "")
+    if src.startswith(ANH_LICH) and "/" not in src[len(ANH_LICH):] and ".." not in src:
+        return {"src": src}
     return None
 
 
@@ -50,26 +55,22 @@ def _gon(cau: str | None) -> str | None:
     return chu[:CAU_TOI_DA].rsplit(" ", 1)[0].rstrip(",;:—-") + "…"
 
 
-def trang_lich(lich: dict, cau: dict[str, str], muc_moi_trang: int = MUC_MOI_TRANG, ngay_tao: str | None = None) -> list[dict]:
-    """Đối tượng lịch ⇒ các trang: bìa · mỗi ngày ≥ 1 trang (quá `muc_moi_trang` điểm ⇒ chia ĐỀU sang trang "tiếp") · lưu ý + bản đồ · nguồn ảnh."""
+def trang_lich(lich: dict, cau: dict[str, str], muc_moi_trang: int = MUC_MOI_TRANG, ngay_tao: str | None = None, an_toan: str | None = None) -> list[dict]:
+    """Đối tượng lịch ⇒ các trang: bìa · mỗi ngày ≥ 1 trang (quá `muc_moi_trang` điểm ⇒ chia ĐỀU sang trang "tiếp") · lưu ý + bản đồ.
+    `an_toan` = câu an toàn của lượt đã lưu cùng lịch (hằng số của code), None khi lượt không có."""
     ts = lich["tham_so"]
     tom_tat = lich["minh_hieu"].removeprefix("Mình hiểu: ").split(" — sai thì bấm")[0]
     moi_muc = [m for ng in lich["ngay"] for m in ng["muc"]]
     diem = [m for m in moi_muc if m["loai"] != "nghi"]
-    anh_co = list({a["src"]: a for a in (_anh_duoc_phep(m.get("anh")) for m in moi_muc) if a}.values())   # theo thứ tự đi, không lặp
+    anh_co = list({a["src"]: a for a in (_anh_hop_le(m.get("anh")) for m in moi_muc) if a}.values())   # theo thứ tự đi, không lặp
     trang = [{"kieu": "bia", "tieu_de": TIEU_DE.format(n=len(lich["ngay"])), "tom_tat": tom_tat, "anh": anh_co[:3], "so_diem": len(diem),
-              "diem_chinh": [m["ten"] for m in diem if m["buoi"] != "toi"][:DIEM_CHINH_TREN_BIA], "ngay_tao": ngay_tao, "ngay_di": ts.get("ngay_di")}]
-    da_dung: dict[str, dict] = {}
-    for a in anh_co[:3]:   # ảnh bìa cũng phải có dòng nguồn
-        da_dung[a["src"]] = {**a, "ten": next(m["ten"] for m in moi_muc if (m.get("anh") or {}).get("src") == a["src"])}
+              "diem_chinh": [m["ten"] for m in diem if m["buoi"] != "toi"][:DIEM_CHINH_TREN_BIA], "ngay_tao": ngay_tao, "ngay_di": ts.get("ngay_di"), "an_toan": an_toan}]
     for ng in lich["ngay"]:
         an = [{"bua": "Trưa" if a["bua"] == "trua" else "Tối", "gan": a["gan"], "quan": [q["ten"] for q in a["quan"]]}
               for a in (lich.get("an") or []) if a["ngay"] == ng["ngay"] and a.get("quan")]
         muc = []
         for m in ng["muc"]:
-            anh = _anh_duoc_phep(m.get("anh"))
-            if anh:
-                da_dung.setdefault(anh["src"], {**anh, "ten": m["ten"]})
+            anh = _anh_hop_le(m.get("anh"))
             muc.append({"buoi": TEN_BUOI[m["buoi"]], "ma_buoi": m["buoi"], "gio": m.get("gio"), "ten": m["ten"], "nghi": m["loai"] == "nghi",
                         "cau": _gon(cau.get(m["id_muc"])), "ghi_chu": m.get("ghi_chu"), "anh": anh})
         so_trang = max(1, -(-len(muc) // muc_moi_trang))
@@ -78,13 +79,12 @@ def trang_lich(lich: dict, cau: dict[str, str], muc_moi_trang: int = MUC_MOI_TRA
         for k, phan in enumerate(cac):
             trang.append({"kieu": "ngay", "so": ng["ngay"], "tiep": k > 0, "ngay_chu": _ngay_chu(ng), "chang": " · ".join(ng.get("chang") or []),
                           "muc": phan, "an": an if k == len(cac) - 1 else []})
-    luu_y = [g["cau"] for g in lich.get("ghi_chu") or [] if g.get("ma") != "du_bao"] + [DONG_DU_BAO, DONG_THAY_DOI, DONG_NGUON]
+    luu_y = ([an_toan] if an_toan else []) + [g["cau"] for g in lich.get("ghi_chu") or [] if g.get("ma") != "du_bao"] + [DONG_DU_BAO, DONG_THAY_DOI, DONG_NGUON]
     ban_do = [{"ten": m["ten"], "url": m["map_url"]} for m in diem if str(m.get("map_url") or "").startswith(MAP_PREFIX)]
     for i in range(0, len(luu_y), DONG_LUU_Y_MOI_TRANG):
         cuoi = i + DONG_LUU_Y_MOI_TRANG >= len(luu_y)
-        trang.append({"kieu": "luu_y", "tiep": i > 0, "dong": luu_y[i:i + DONG_LUU_Y_MOI_TRANG], "ban_do": ban_do if cuoi else []})
-    if da_dung:
-        trang.append({"kieu": "nguon_anh", "dong": [f"{a['ten']}: ảnh của {a['tac_gia']} — {a['giay_phep']} (Wikimedia Commons)" for a in da_dung.values()]})
+        trang.append({"kieu": "luu_y", "tiep": i > 0, "dong": luu_y[i:i + DONG_LUU_Y_MOI_TRANG], "ban_do": ban_do if cuoi else [],
+                      "an_toan": bool(an_toan) and i == 0})   # dòng đầu của trang đầu là câu an toàn ⇒ vẽ nổi
     return trang
 
 
@@ -167,9 +167,14 @@ def dung_pptx(trang: list[dict], thu_muc_anh: Path) -> bytes:
             chu(s, 0.6, 6.2, 4.2, 0.8, [(f"{t['so_diem']} điểm tham quan", 15, "nhan", True)]
                 + ([(f"Tạo ngày {t['ngay_tao']}", 11, "nhat", False)] if t["ngay_tao"] else []))
             a = t["anh"] + [None] * (3 - len(t["anh"]))
-            anh(s, a[0], 5.6, 0.6, 7.15, 4.05)                       # một ảnh lớn + hai ảnh nhỏ (ảnh gốc ~640 px: không phóng tràn trang)
-            anh(s, a[1], 5.6, 4.8, 3.5, 2.1)
-            anh(s, a[2], 9.25, 4.8, 3.5, 2.1)
+            thap = 0.95 if t["an_toan"] else 0                       # có câu an toàn ⇒ ảnh thấp lại, chừa một dải dưới cùng cho câu đó
+            anh(s, a[0], 5.6, 0.6, 7.15, 4.05 - thap * 0.5)          # một ảnh lớn + hai ảnh nhỏ (ảnh gốc ~640 px: không phóng tràn trang)
+            anh(s, a[1], 5.6, 4.8 - thap * 0.5, 3.5, 2.1 - thap * 0.5)
+            anh(s, a[2], 9.25, 4.8 - thap * 0.5, 3.5, 2.1 - thap * 0.5)
+            if t["an_toan"]:
+                hop(s, 5.6, 6.02, 7.15, 0.9, "nhat", MSO_SHAPE.ROUNDED_RECTANGLE, 0.1)
+                hop(s, 5.6, 6.02, 0.1, 0.9, "phu")
+                chu(s, 5.8, 6.04, 6.85, 0.86, t["an_toan"], 10.5, "chu", True, giua=True)
         elif t["kieu"] == "ngay":
             hop(s, 0, 0, 2.5, CAO, "chinh")
             hop(s, 0.3, 0.55, 0.7, 0.06, "nhan")
@@ -201,15 +206,14 @@ def dung_pptx(trang: list[dict], thu_muc_anh: Path) -> bytes:
                 chu(s, 4.95, 5.9, RONG - 5.6, 0.95, [(f"{a['bua']} gần {a['gan']}: " + ", ".join(a["quan"]), 12, "chu", False) for a in t["an"]],
                     giua=True, cach=2)
         else:
-            la_luu_y = t["kieu"] == "luu_y"
             hop(s, 0, 0, RONG, 1.15, "chinh")
             hop(s, 0.6, 1.15, 1.2, 0.07, "nhan")
-            chu(s, 0.6, 0.18, 10, 0.8, ("Lưu ý trước khi đi" + (" (tiếp)" if t.get("tiep") else "")) if la_luu_y else "Nguồn ảnh", 30, "nen", True,
-                PHONG_TD, giua=True)
+            chu(s, 0.6, 0.18, 10, 0.8, "Lưu ý trước khi đi" + (" (tiếp)" if t.get("tiep") else ""), 30, "nen", True, PHONG_TD, giua=True)
             ban_do = t.get("ban_do") or []
             rong_trai = 7.4 if ban_do else RONG - 1.6
-            co = (15 if len(t["dong"]) <= 6 else 13) if la_luu_y else 13
-            chu(s, 0.8, 1.55, rong_trai, 5.2, [("•  " + d, co, "chu", False) for d in t["dong"]], cach=9 if len(t["dong"]) <= 6 else 6)
+            co = 15 if len(t["dong"]) <= 6 else 13
+            chu(s, 0.8, 1.55, rong_trai, 5.2, [("•  " + d, co, "phu" if t.get("an_toan") and i == 0 else "chu", bool(t.get("an_toan")) and i == 0)
+                                               for i, d in enumerate(t["dong"])], cach=9 if len(t["dong"]) <= 6 else 6)
             if ban_do:
                 hop(s, 8.6, 1.55, 4.15, 5.2, "nhat", MSO_SHAPE.ROUNDED_RECTANGLE, 0.05)
                 chu(s, 8.8, 1.65, 3.8, 0.5, "Mở bản đồ từng điểm", 16, "phu", True, PHONG_TD)

@@ -158,6 +158,11 @@ COOKIE_SECURE_ENV = "HUE_COOKIE_SECURE"
 REMEMBERED_OUTCOMES = {"success", "out_of_scope", "refusal_no_sources", "max_turns", "hoi_lai", "sua_the", "lam_thay"}  # phương án B G: bỏ "emergency"
 
 
+def an_toan_cua_luot(trace: AnswerTrace) -> str | None:
+    """Câu bản tin chính thức + 112 của lượt (lưới cuối câu bão đặt vào `notice` trước khi lượt kết thúc) — đúng HẰNG SỐ của code, hoặc None."""
+    return tt.CAU_BAO_LU if tt.CAU_BAO_LU in (trace.notice or "") else None
+
+
 def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> str | None:
     """Nhớ bật ⇒ mã cuộc của lượt này (giữ cookie còn hạn, không thì cuộc mới) + đưa lịch sử vào `trace`. Nhớ tắt ⇒ None."""
     store = getattr(request.app.state, "conversations", None)
@@ -503,6 +508,9 @@ async def chat_stream(body: ChatRequest, request: Request):
                 from llm.len_ke_hoach import luu_sau_luot
                 luu = luu_sau_luot(trace, _flags(state))
                 if luu is not None:
+                    an_toan = an_toan_cua_luot(trace)   # file tải về dựng từ trạng thái lưu ⇒ câu an toàn của lượt phải nằm trong đó (review 19/11)
+                    if an_toan:
+                        luu["an_toan"] = an_toan
                     request.app.state.conversations.luu_lich(conversation_id, luu)
 
 
