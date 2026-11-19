@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 10:49 19/11/2026 (giờ `date`; sau khi bật hai cờ, User đổi hướng ưu tiên). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
+Viết lại lần cuối: 11:18 19/11/2026 (giờ `date`). Người giữ: phiên C (phiên điều phối sửa mục 2–3 lúc kết phiên).
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án cho BẤT KỲ coding agent nào vừa mở phiên; **viết lại tại chỗ** mỗi lần kết phiên, không nối thêm. Thứ tự mở
 phiên ở `session_prompt/START_SESSION.md`; sổ việc dài chỉ mở khi cần. `AGENTS.md`, code và file cấu hình thắng trang này — thấy lệch thì báo để sửa trang.
@@ -25,9 +25,9 @@ Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** =
 - **Máy:** mở lại máy ⇒ `/tmp` MẤT (worktree) và Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1). Server không chạy sẵn.
 - **Giới hạn đã biết:** `guides/RUNBOOK_BAN_GIAO.md` mục 10 — gặp hành vi trông như lỗi thì tra ở đó TRƯỚC khi sửa hay báo.
 
-## 2. Mốc và việc đang mở
+## 2. Mốc và hướng (việc đang mở KHÔNG ghi ở đây)
 
-Thứ tự việc — KHÔNG gắn ngày: bước trước đạt và máy rảnh là làm bước sau ngay:
+Thứ tự việc, KHÔNG gắn ngày — bước trước đạt và máy rảnh thì làm bước sau:
 
 | Bước | Việc | Trạng thái |
 |---|---|---|
@@ -37,37 +37,37 @@ Thứ tự việc — KHÔNG gắn ngày: bước trước đạt và máy rản
 | 6 | Deploy AWS (cần User một lần: tài khoản, khoá, ngân sách) | chưa |
 | 7 | **User test TOÀN BỘ một lần** (`data/test_cuoi/DANH_SACH.md`) ⇒ User đóng Phase 9 | chưa |
 
-**Hướng của User từ 19/11:** KHÔNG mở thêm việc nào về bão / lũ / khẩn cấp (hành vi an toàn đang có giữ nguyên). Ưu tiên việc 100 người dùng thật sẽ thử: hỏi đáp +
-xác nhận thông tin · gợi ý quán / chỗ ở / địa chỉ · lịch trình + ngân sách · làm thay (đặt phòng, gửi thư) · việc phổ thông khác. Ba phiên đã nộp danh sách việc;
-phiên điều phối gom, hỏi User từng câu. Mốc "Phase 9 xong phần nhóm" = code `55d01a8`, kèm danh sách mục chưa đạt (sổ việc).
+**Việc đang mở, ai làm, bước kế:** CHỈ ở `session_prompt/VIEC_DANG_MO.md` (xong: `session_prompt/VIEC_DA_XONG.md`). Mốc "Phase 9 xong phần nhóm" = code `55d01a8`.
 
-Việc đang mở (ai · việc) — chi tiết ở sổ việc (mục 7):
-- **A:** gom ba danh sách "việc phổ thông", tra cứu + xin tư vấn model khác hãng, hỏi User; gộp nhánh; ghi mốc.
-- **B:** thí nghiệm mức suy luận low / medium / high (User duyệt chi phí; plan của E); lượt cả bộ test trên `main`.
-- **C:** giữ trang này + runbook mục 10; đọc tay thí nghiệm mức suy luận; góc lịch trình + ngân sách.
-- **E:** plan mức suy luận; góc "làm thay"; giữ `guides/CACH_LAM_VIEC.md`.
-- **Chưa ai nhận:** mục không đạt còn lại của lượt đo cuối (câu ngoài kho trả lời sai khuôn · câu tụt "Đủ ý") · lỗi tìm "quán gần một chùa lớn" (10.1) · runbook mục 8.
+**Hướng của User từ 19/11:** việc 100 người dùng thật sẽ thử, thứ tự đã chốt: bộ kịch bản phổ thông + đo hiện trạng ⇒ câu xin danh sách bị thiếu mục + hỏi tiếp
+đúng thứ vừa gợi ý ⇒ gợi ý theo tiêu chí / "gần X" ⇒ ngày của nguồn ⇒ ngân sách do code tính (bắt đầu từ tổng tiền vé của lịch) ⇒ mang lịch đi / soạn sẵn tin + link.
+KHÔNG mở thêm việc nào về bão / lũ / khẩn cấp. Trước khi thêm file, cờ, test, bước kiểm: "lỗi đã thấy thật chưa · ai dùng · không làm thì mất gì".
 
-Số nhiễu (19/11): hai lượt bộ câu mẫu không đổi gì lệch 1 câu "Đúng" · 2 "Đủ ý" · 7 "Trọng tâm" ⇒ phép thử đổi lời dặn phải có bên tắt CÙNG BUỔI, chấm cùng lô.
-Hai con số đo cách làm (bị lật lại · User nhắc lại): `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / ngày ⇒ gom câu.
+Số nhiễu (19/11): hai lượt bộ câu mẫu không đổi gì lệch 1 câu "Đúng" · 2 "Đủ ý" · 7 "Trọng tâm" ⇒ thử đổi lời dặn phải có bên tắt CÙNG BUỔI, chấm cùng lô.
+Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / ngày ⇒ gom câu.
 
 ## 3. Đang chờ User (chỉ những việc ghi ở đây đang chờ User; việc đã chốt hoặc đã hỏi rồi thì đừng hỏi lại)
 
 1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
-2. Buổi User tự tay test toàn bộ (bước 7) — User chưa có giờ; KHÔNG nhắc. Việc thuộc hàng "hỏi User trước" thì vẫn hỏi ngay, một câu có đáp án.
-3. Chọn việc phổ thông làm trước + gửi file xin tư vấn model khác hãng — phiên điều phối đưa.
+2. Buổi User tự tay test toàn bộ (bước 7) — User chưa có giờ; KHÔNG nhắc.
+3. Các câu còn mở của hướng việc phổ thông (mức "làm thay", giá phòng, bổ sung kho…) — phiên điều phối hỏi từng câu.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
 
 Sản phẩm:
 - Trả lời chỉ từ kho, có nguồn; câu ngoài kho phải bị từ chối (sàn: 0 câu ngoài kho được trả lời bằng kho). Người dùng gõ tiếng Việt CÓ DẤU; không làm tiếng Anh.
 - Câu khẩn cấp (bị cướp, mất ví, mất giấy tờ, số khẩn cấp) là NGOÀI PHẠM VI — User chốt ba lần; không sửa, không báo lại.
-- Bão / lũ / khẩn cấp: KHÔNG đầu tư thêm (User 19/11); hỏi tiếp sau câu bão chỉ xét câu liền trước; dòng "tạm ngừng" chỉ hiện khi câu trả lời trích bài có cảnh báo — giới hạn đã nhận.
+- Bão / lũ / khẩn cấp: hành vi đang có giữ nguyên, không đầu tư thêm; hỏi tiếp sau câu bão chỉ xét câu liền trước; dòng "tạm ngừng" chỉ hiện khi câu trả lời trích bài có cảnh báo.
+- **19/11 — User TỰ NÊU:** chất lượng trước, tiền / tốc độ sau (dòng 10:04 dưới) · thử mức suy luận low / medium / high (duyệt chi phí thử) · đừng dồn công vào
+  bão / lũ / khẩn cấp, làm việc phổ thông · báo cáo theo thư mục từng ngày mà vẫn nhớ đủ trạng thái · "tự nhắc nhở nhau là không over-engineer".
+- **19/11 — User CHỌN Ô theo đề xuất của nhóm:** "Sửa lỗi an toàn trước" · "Chung tính sàn, riêng đọc tay" (cách đếm thiếu cảnh báo) · "Làm bản code rồi ghi mốc" ·
+  "Bật khi E đọc đạt" (cờ sửa lịch dời hai điểm) · "Bật ngay, ghi giới hạn" (cờ nối dòng cảnh báo) · chọn cả bốn nhóm việc phổ thông · đồng ý thứ tự ở mục 2.
 - Không nói giá phòng ở phần gợi ý chỗ ở (câu hỏi chi phí chung vẫn nêu khoảng giá có nguồn từ kho). Khối "Nơi ở" chỉ hiện khi người dùng
   đã chọn hạng chỗ ở — ở biểu mẫu hoặc nói bằng lời.
 - Việc phải luôn đúng (phép tính, ngày, tiền, thứ tự bắt buộc) do CODE làm; model chỉ diễn đạt. Giữ model `gpt-6-luna`, giữ `e5-small`; số đoạn / cách đưa ngữ cảnh: đang mở lại để thử (A hiểu từ lời User 10:04 19/11 về cách đưa ngữ cảnh; đã báo, User chưa phản đối; bật gì do User quyết).
-- **User 10:04 19/11/2026: chất lượng TRƯỚC, tiền / tốc độ sau — GỠ các rào tối ưu sớm:** bỏ sàn tiền "TB ≤ 0,0005 USD / câu" và sàn tốc độ "chữ đầu p50 ≤ 3 s, p95 ≤ 5 s" (từ nay tiền / giây chỉ ĐO và BÁO cạnh chất lượng, không dùng để loại phương án; đặt lại sau khi chất lượng đã đạt, User quyết); bỏ trần token đầu ra (đã gỡ); bỏ ngân sách ngữ cảnh 16.384 token / lượt; bỏ trần lịch sử 1.500 token; thử mức suy luận low / medium / high; User cho dùng tiền API để thử (một việc > 1 USD vẫn báo trước). Thứ tự lỗi tệ nhất giữ nguyên: sai cảnh báo an toàn > nói chắc mà sai >
-  trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
+- **User 10:04 19/11/2026 — GỠ các rào tối ưu sớm:** bỏ sàn tiền "TB ≤ 0,0005 USD / câu" và sàn tốc độ "chữ đầu p50 ≤ 3 s, p95 ≤ 5 s" (tiền / giây chỉ ĐO và BÁO cạnh chất
+  lượng, không dùng để loại phương án; đặt lại sau khi chất lượng đạt, User quyết); bỏ trần token đầu ra, ngân sách ngữ cảnh 16.384 token / lượt, trần lịch sử 1.500 token (đã gỡ);
+  được dùng tiền API để thử (một việc > 1 USD vẫn báo trước). Thứ tự lỗi tệ nhất: sai cảnh báo an toàn > nói chắc mà sai > trả lời câu ngoài kho > thiếu ý > từ chối nhầm.
 - Không mở lại khi User chưa nêu: giọng nói (dẹp) · so ảnh bằng embedding (hoãn, chưa có ngày; ảnh mẫu còn giữ) · nhớ sở thích người dùng (không làm) ·
   "tra web sớm" (bỏ) · "gộp câu tìm" (gác) · mục web giữ bản dài (bản gọn đã thử, không dùng).
 - User chỉ chưa có giờ TỰ TAY TEST (test toàn bộ một lần ở cuối); vẫn duyệt, trao đổi bình thường ⇒ việc "hỏi User trước" hỏi ngay, không dồn; nhóm không chờ User đóng Phase 9 mới làm tiếp. Deploy AWS: sau đợt hoàn thiện local.
