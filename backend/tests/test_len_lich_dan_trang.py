@@ -23,6 +23,9 @@ PHAI_NHAN = [
     "làm cho mình lịch trình đi Huế hai ngày, thích di tích",
     "tạo lịch trình 3 ngày khám phá Huế",
     "thiết kế giúp em lịch trình Huế 4 ngày 3 đêm",
+    "cho mình xin lịch trình Huế 3 ngày 2 đêm",   # ba câu bộ dò mù của phiên C trượt ở bản đầu
+    "Lên lịch 2N1Đ ở Huế giúp mình",
+    "mình cần một lịch trình 2 ngày đi các lăng và Đại Nội",
 ]
 KHONG_NHAN = [
     "dời Đại Nội trong lịch này sang ngày 2",                      # sửa lịch đã lập
@@ -36,6 +39,9 @@ KHONG_NHAN = [
     "bài Lịch trình du lịch Huế ngắn ngày viết gì",                  # hỏi về một bài
     "lên lịch giúp mình đi ăn tối nay",                              # không có số ngày
     "tạo lịch tàu từ Huế đi Đà Nẵng 2 ngày tới",                     # lịch tàu
+    "mình cần lịch mở cửa Đại Nội 2 ngày Tết",                       # "cần" + lịch mở cửa
+    "xin lịch diễn Nhã nhạc 3 ngày tới",                             # "xin" + lịch diễn
+    "cần mấy ngày để đi hết các lăng",                               # "cần" + số ngày, không có lịch
     "",
 ]
 

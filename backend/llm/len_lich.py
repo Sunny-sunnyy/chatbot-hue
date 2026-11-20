@@ -11,11 +11,11 @@ import re
 TEN_TRANG = "trang Lên kế hoạch"  # giao diện (`chat.jsx`) đổi đúng cụm chữ này trong dòng ghi chú thành link `#/len-ke-hoach`
 CAU_DAN_TRANG = f"Muốn lịch có giờ từng điểm, bản đồ và sửa được bằng lời, bạn mở {TEN_TRANG}."
 
-_NHO = r"(?:lên|xếp|sắp xếp|sắp|lập|soạn|tạo|làm|thiết kế|vạch|gợi ý|tư vấn)"
+_NHO = r"(?:lên|xếp|sắp xếp|sắp|lập|soạn|tạo|làm|thiết kế|vạch|gợi ý|tư vấn|xin|cần)"  # "xin", "cần": bộ dò mù của phiên C 20/11 ("cho mình xin lịch trình…")
 # "lịch" theo nghĩa lịch đi chơi: không phải lịch diễn / lịch mở cửa / lịch tàu xe / lịch tổ chức lễ hội
 _LICH = r"(?:lịch trình|kế hoạch|lịch)(?!\s+(?:diễn|chiếu|mở|đóng|tàu|xe|bay|chạy|tổ chức|thi đấu|làm việc|sự kiện|lễ|âm|dương))"
 _MAU = re.compile(rf"(?<!\w){_NHO}\s+(?:[^\s,;:.?!]+\s+){{0,4}}?{_LICH}(?!\w)", re.I)
-_SO_NGAY = re.compile(r"(?<!\w)(?:\d{1,2}|một|hai|ba|bốn|năm|sáu|bảy)\s+ngày(?!\w)", re.I)
+_SO_NGAY = re.compile(r"(?<!\w)(?:\d{1,2}|một|hai|ba|bốn|năm|sáu|bảy)\s+ngày(?!\w)|(?<!\w)\d\s?n\s?\d\s?đ(?!\w)", re.I)  # cả kiểu gõ tắt "2N1Đ"
 # đang nói về một lịch ĐÃ có (sửa / hỏi về nó) hoặc hỏi giá ⇒ không phải nhờ lập lịch mới
 _KHONG = re.compile(r"(?<!\w)lịch\s+(?:này|đó|trên|vừa|đã|cũ)(?!\w)|(?<!\w)(?:bao nhiêu tiền|giá bao nhiêu|hết bao nhiêu|tốn bao nhiêu)(?!\w)", re.I)
 
