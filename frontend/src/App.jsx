@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { ChatView, TrangTroLy, useChat } from "./chat.jsx";
 import { CAU_BIEU_MAU, GOI_Y } from "./chung.jsx";
 import { TrangChu } from "./TrangChu.jsx";
@@ -9,6 +9,8 @@ import { ChoO } from "./ChoO.jsx";
 import { useRoute } from "./route.js";
 import { datNguonBanDo } from "./nguonBanDo.js";
 import { batXuatLich } from "./LichV2.jsx";
+
+const TrangBanDo = lazy(() => import("./TrangBanDo.jsx"));  // tải riêng ⇒ trang khác không tải Leaflet
 
 // Khung cổng du lịch đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`; bản mẫu 2 "Sông Hương", User chọn 07/11):
 // điều hướng bằng hash (D5), trợ lý nổi trên mọi trang + trang `#/tro-ly`, MỘT cuộc trò chuyện qua các trang (D8), điện thoại có thanh dưới.
@@ -97,10 +99,15 @@ export default function App() {
   const nav = [
     { href: "#/", ten: "Trang chủ", on: route.page === "trang-chu" },
     { href: "#/kham-pha", ten: "Khám phá", on: ["kham-pha", "linh-vuc", "bai"].includes(route.page) },
+    ...(tinhNang.ban_do_lich ? [{ href: "#/ban-do", ten: "Bản đồ", on: route.page === "ban-do" }] : []),
     ...(tinhNang.lich_trinh_bieu_mau ? [{ href: "#/len-ke-hoach", ten: "Lên kế hoạch", on: route.page === "len-ke-hoach" }] : []),
     { href: "#/tro-ly", ten: TEN_TRO_LY, on: onTroLy },
     { href: "#/gioi-thieu", ten: "Giới thiệu", on: route.page === "gioi-thieu" },
   ];
+
+  // Thanh dưới ở điện thoại: bốn mục + nút tròn "Trợ lý" ở GIỮA. Có "Bản đồ" ⇒ bỏ "Giới thiệu" khỏi thanh (sáu mục làm nút tròn lệch, chữ xuống hai
+  // dòng — đo 390 px 20/11); "Giới thiệu" vẫn vào được từ chân trang và trang chủ.
+  const navDuoi = nav.filter(item => item.href !== "#/tro-ly" && !(tinhNang.ban_do_lich && item.href === "#/gioi-thieu"));
 
   return (
     <div className={`cong ${panelOpen ? "chat-mo" : ""}`}>
@@ -136,11 +143,14 @@ export default function App() {
             : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
         {route.page === "cho-o" && <ChoO khu={route.khu} />}
+        {route.page === "ban-do" && daCoTinhNang && (tinhNang.ban_do_lich
+          ? <Suspense fallback={<div className="khung co-cho" aria-busy="true" />}><TrangBanDo /></Suspense>
+          : <div className="khung"><p>Trang bản đồ chưa bật. <a href="#/">Về trang chủ</a></p></div>)}
         {route.page === "gioi-thieu" && <GioiThieu tinhNang={tinhNang} daCo={daCoTinhNang && (bai !== null || !!baiLoi)} bai={bai} muc={route.muc} onAsk={askAnywhere} />}
         {onTroLy && <TrangTroLy chat={chat} onEditPlan={editPlan} tinhNang={tinhNang} />}
       </main>
 
-      {!onTroLy && <footer className="ft"><div className="khung">{TEN_DAY_DU} — đồ án tốt nghiệp. Trả lời từ kho tư liệu về Huế, có thể sai.</div></footer>}
+      {!onTroLy && <footer className="ft"><div className="khung">{TEN_DAY_DU} — đồ án tốt nghiệp. Trả lời từ kho tư liệu về Huế, có thể sai. <a href="#/gioi-thieu">Giới thiệu</a></div></footer>}
 
       {!onTroLy && !panelOpen && (
         <button type="button" className="noi" aria-expanded="false" aria-controls="khung-tro-ly" onClick={() => setPanelOpen(true)}>
@@ -169,11 +179,11 @@ export default function App() {
       )}
 
       <nav className="td" aria-label="Điều hướng nhanh">
-        {nav.filter(item => item.href !== "#/tro-ly").slice(0, 2).map(item => (
+        {navDuoi.slice(0, 2).map(item => (
           <a key={item.href} href={item.href} className="td-a" aria-current={item.on ? "page" : undefined}>{item.ten}</a>
         ))}
         <a href="#/tro-ly" className="td-giua" aria-current={onTroLy ? "page" : undefined}>{TEN_TRO_LY}</a>
-        {nav.filter(item => item.href !== "#/tro-ly").slice(2).map(item => (
+        {navDuoi.slice(2).map(item => (
           <a key={item.href} href={item.href} className="td-a" aria-current={item.on ? "page" : undefined}>{item.ten}</a>
         ))}
       </nav>

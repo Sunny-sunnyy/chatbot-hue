@@ -10,7 +10,7 @@ import { nguonBanDo } from "./nguonBanDo.js";
 
 // URL ô + tên nhà cung cấp do server gửi (`nguonBanDo.js`) — cùng một hằng số với CSP `img-src`, nên đổi host không phải sửa file này.
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-const ghiCong = n => '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
+export const ghiCong = n => '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
   + ` · Ô bản đồ: <a href="${esc(n.trang_nha_cung_cap)}" target="_blank" rel="noopener noreferrer">${esc(n.ten_ngan)}</a>`
   + " · Toạ độ: dữ liệu mở thành phố Huế";
 const NHAN_BUOI = { sang: "Sáng", chieu: "Chiều", toi: "Tối" };

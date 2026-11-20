@@ -108,3 +108,22 @@ def test_csp_adds_tile_host_and_data_images_only_when_flag_on():
     # host ghi MỘT chỗ (`cong.BAN_DO`): URL ô gửi xuống giao diện cùng host với CSP; cờ tắt ⇒ không có khoá `ban_do` (test_cong_dot_1 khoá phản hồi)
     ban_do = client.get("/api/tinh_nang").json()["ban_do"]
     assert ban_do["tile"].startswith(TILE_HOST + "/") and ban_do["nha_cung_cap"]
+
+
+def test_map_page_lists_every_itinerary_point_that_has_coordinates():
+    # trang "Bản đồ" riêng (20/11): mọi điểm của bảng điểm có toạ độ, đúng một lần, toạ độ trong khung Huế, link theo tên; cờ tắt ⇒ không có dữ liệu
+    from api.routes import cong
+    on = AssistantFlags(lich_trinh_bieu_mau=True, bang_lich=BANG, ban_do_lich=True, toa_do_lich=TOA_DO)
+    diem = cong.dung_ban_do(on)
+    assert sorted(d["ten"] for d in diem) == sorted(BANG.theo_id[i]["ten"] for i in TOA_DO) and len(diem) == len(TOA_DO) > 0
+    (vmin, vmax), (kmin, kmax) = lt.KHUNG_HUE
+    for d in diem:
+        assert set(d) == {"ten", "loai", "toa_do", "map_url"} and vmin <= d["toa_do"][0] <= vmax and kmin <= d["toa_do"][1] <= kmax
+        assert d["map_url"] == lt.map_url(d["ten"]) and isinstance(d["loai"], list)
+    tat = AssistantFlags(lich_trinh_bieu_mau=True, bang_lich=BANG)
+    assert cong.dung_ban_do(tat) is None
+    app = create_app(SETTINGS)  # không chạy lifespan ⇒ gắn cờ tay (như test CSP ở trên)
+    app.state.assistant_flags = on
+    assert TestClient(app).get("/api/ban_do").json() == {"diem": diem}
+    app.state.assistant_flags = tat
+    assert TestClient(app).get("/api/ban_do").status_code == 404
