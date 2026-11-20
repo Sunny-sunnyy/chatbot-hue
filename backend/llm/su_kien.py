@@ -198,7 +198,8 @@ def dong_nguon(cau: str, bang: tuple[dict, ...], now: dt.datetime | None = None)
             dong.append("Lễ hội có ngày cố định gần nhất sau khoảng này:")
             dong.append(_dong_le_hoi(d, a, b))
     if kq["uoc"]:
-        dong.append("Lễ hội mà kho chỉ ghi KHOẢNG thời gian (ngày cụ thể do ban tổ chức công bố từng năm), khoảng đó chạm khoảng được hỏi:")
+        dong.append("Lễ hội mà kho chỉ ghi một KHOẢNG thời gian — lễ chỉ diễn ra một hoặc vài ngày TRONG khoảng đó, ngày cụ thể do ban tổ chức công bố từng năm — và "
+                    "khoảng đó chạm khoảng được hỏi (không khẳng định là có diễn ra đúng những ngày được hỏi):")
         dong += [f"- {d['ten']}: bài «{d['ten']}» của kho ghi: “{d['chu']}”." + (f" Bài cũng ghi: “{d['ghi_chu']}”." if d.get("ghi_chu") else "")
                  for d, _, _ in kq["uoc"]]
     if kq["tuan"]:

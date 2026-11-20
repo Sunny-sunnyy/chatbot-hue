@@ -8,7 +8,7 @@ import pytest
 from core.settings_loader import BACKEND_DIR
 from llm import su_kien as sk
 
-DUONG_BANG = BACKEND_DIR.parent / "data" / "su_kien_theo_ngay_2026-11-20" / "su_kien_theo_ngay_v1.json"  # bảng private như các bảng lịch (`settings.yaml` `su_kien_bang`)
+DUONG_BANG = BACKEND_DIR.parent / "data" / "su_kien_theo_ngay_2026-11-20" / "su_kien_theo_ngay_v2.json"  # bảng private như các bảng lịch (`settings.yaml` `su_kien_bang`)
 if not DUONG_BANG.is_file():
     pytest.skip("bản chép không có data/ (bảng sự kiện là dữ liệu private)", allow_module_level=True)
 BANG = sk.nap_bang(DUONG_BANG)
