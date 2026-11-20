@@ -625,7 +625,15 @@ class StreamEvents:
         self.metrics["refusal"] = normalize_citations(chu_cua_model(trace)).strip() in REFUSAL_ANSWERS  # review C m-1: trên chữ model
         # Lưới cuối (19/11): model phát nhiều khối chữ trong một lần trả lời mà khối đầu không phải `{"answer":"…"}` (hoặc answer rỗng) ⇒ bộ bóc
         # chữ không ra mảnh nào dù chữ cuối hợp lệ ⇒ lượt "success" không có chữ. Chưa phát mảnh nào ⇒ phát cả câu một lần, trước `sources`.
-        bu = [self.delta(final)] if trace.citation_error is None and not self.shown and final.strip() else []
+        # Soát khác hãng 20/11: khối đầu là một `{"answer":"…"}` NGẮN đã đóng, chữ cuối dài hơn ⇒ người dùng chỉ thấy khúc đầu (phần thiếu có thể là câu
+        # cảnh báo của nguồn). Chữ đã phát là TIỀN TỐ của chữ cuối ⇒ phát nốt phần đuôi; không phải tiền tố ⇒ như cũ (chỉ ghi `delta_matches_final`).
+        da_phat = "".join(self.shown).strip()
+        if trace.citation_error is not None or not final.strip():
+            bu = []
+        elif not self.shown:
+            bu = [self.delta(final)]
+        else:
+            bu = [self.delta(final[len(da_phat):])] if da_phat and final.startswith(da_phat) and len(final) > len(da_phat) else []
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == final
         if trace.citation_error is not None:
             logger.error("Citation integrity failed")
