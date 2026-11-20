@@ -105,6 +105,10 @@ export default function App() {
     { href: "#/gioi-thieu", ten: "Giới thiệu", on: route.page === "gioi-thieu" },
   ];
 
+  // Thanh dưới ở điện thoại: bốn mục + nút tròn "Trợ lý" ở GIỮA. Có "Bản đồ" ⇒ bỏ "Giới thiệu" khỏi thanh (sáu mục làm nút tròn lệch, chữ xuống hai
+  // dòng — đo 390 px 20/11); "Giới thiệu" vẫn vào được từ chân trang và trang chủ.
+  const navDuoi = nav.filter(item => item.href !== "#/tro-ly" && !(tinhNang.ban_do_lich && item.href === "#/gioi-thieu"));
+
   return (
     <div className={`cong ${panelOpen ? "chat-mo" : ""}`}>
       <header className="hd hd-cuon">
@@ -146,7 +150,7 @@ export default function App() {
         {onTroLy && <TrangTroLy chat={chat} onEditPlan={editPlan} tinhNang={tinhNang} />}
       </main>
 
-      {!onTroLy && <footer className="ft"><div className="khung">{TEN_DAY_DU} — đồ án tốt nghiệp. Trả lời từ kho tư liệu về Huế, có thể sai.</div></footer>}
+      {!onTroLy && <footer className="ft"><div className="khung">{TEN_DAY_DU} — đồ án tốt nghiệp. Trả lời từ kho tư liệu về Huế, có thể sai. <a href="#/gioi-thieu">Giới thiệu</a></div></footer>}
 
       {!onTroLy && !panelOpen && (
         <button type="button" className="noi" aria-expanded="false" aria-controls="khung-tro-ly" onClick={() => setPanelOpen(true)}>
@@ -175,11 +179,11 @@ export default function App() {
       )}
 
       <nav className="td" aria-label="Điều hướng nhanh">
-        {nav.filter(item => item.href !== "#/tro-ly").slice(0, 2).map(item => (
+        {navDuoi.slice(0, 2).map(item => (
           <a key={item.href} href={item.href} className="td-a" aria-current={item.on ? "page" : undefined}>{item.ten}</a>
         ))}
         <a href="#/tro-ly" className="td-giua" aria-current={onTroLy ? "page" : undefined}>{TEN_TRO_LY}</a>
-        {nav.filter(item => item.href !== "#/tro-ly").slice(2).map(item => (
+        {navDuoi.slice(2).map(item => (
           <a key={item.href} href={item.href} className="td-a" aria-current={item.on ? "page" : undefined}>{item.ten}</a>
         ))}
       </nav>
