@@ -33,7 +33,7 @@ from llm.full_corpus_prompt import REFUSAL_ANSWERS
 from llm import lich_trinh_v2 as lt2
 from llm import ngay_lich as nl
 from llm import thoi_tiet as tt
-from llm.ten_goi_y import ghi_chu_goi_y
+from llm.ten_goi_y import ghi_chu_goi_y, lich_su_cho_luot
 from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_moi, ghep_cau, ghep_cau_v2, loi_v2
 from api.conversations import TTL_SECONDS
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, loi_bao_luoi_cuoi, luoi_cuoi_bao, elapsed_ms, lich_cho_giao_dien, turn_usd
@@ -164,14 +164,15 @@ def an_toan_cua_luot(trace: AnswerTrace) -> str | None:
     return tt.CAU_BAO_LU if tt.CAU_BAO_LU in (trace.notice or "") else None
 
 
-def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict) -> str | None:
-    """Nhớ bật ⇒ mã cuộc của lượt này (giữ cookie còn hạn, không thì cuộc mới) + đưa lịch sử vào `trace`. Nhớ tắt ⇒ None."""
+def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict, cau: str) -> str | None:
+    """Nhớ bật ⇒ mã cuộc của lượt này (giữ cookie còn hạn, không thì cuộc mới) + đưa lịch sử vào `trace`. Nhớ tắt ⇒ None.
+    `cau` = câu gõ của lượt: câu xin liệt kê lại các nơi vừa nêu ⇒ lịch sử lượt này không mang dòng ghi chú tên nơi (`llm/ten_goi_y.py`)."""
     store = getattr(request.app.state, "conversations", None)
     if store is None:
         return None
     conversation_id = store.ensure(request.cookies.get(CONVERSATION_COOKIE))
-    trace.history = store.history(conversation_id)
-    metrics["n_history_turns"], metrics["history_tokens"] = len(trace.history), store.history_tokens(conversation_id)
+    trace.history = lich_su_cho_luot(store.history(conversation_id), cau)
+    metrics["n_history_turns"], metrics["history_tokens"] = len(trace.history), store.tokens_of(trace.history)
     return conversation_id
 
 
@@ -304,7 +305,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
         return not_ready, None
 
     trace = AnswerTrace()
-    conversation_id = _start_conversation(request, trace, metrics)
+    conversation_id = _start_conversation(request, trace, metrics, query)
     query = _model_query(body, query, trace, metrics, state)
     vet.update(trace=trace, query=query)
     sua_loi = lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history, trace.thoi_tiet_ctx)  # noqa: E731
@@ -495,7 +496,7 @@ async def chat_stream(body: ChatRequest, request: Request):
             return response
 
         trace = AnswerTrace()
-        conversation_id = _start_conversation(request, trace, metrics)
+        conversation_id = _start_conversation(request, trace, metrics, query)
         query = _model_query(body, query, trace, metrics, state)
         if _flags(state).sua_lich_v2 and conversation_id is not None:  # sửa lịch bản 2: lịch đã lưu của cuộc + lựa chọn của thẻ
             trace.lich_luu = request.app.state.conversations.lay_lich(conversation_id)

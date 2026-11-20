@@ -67,7 +67,11 @@ class ConversationStore:
 
     def history_tokens(self, conversation_id: str) -> int:
         """Số token lịch sử của cuộc (chỉ số đếm cho log — không chữ)."""
-        return sum(self._count(q) + self._count(a) for q, a in self.history(conversation_id))
+        return self.tokens_of(self.history(conversation_id))
+
+    def tokens_of(self, turns) -> int:
+        """Số token của một dãy lượt — route dùng cho lịch sử THẬT gửi model khi nó khác bản lưu (lượt xin liệt kê lại bỏ dòng ghi chú tên nơi)."""
+        return sum(self._count(q) + self._count(a) for q, a in turns)
 
     def append(self, conversation_id: str, question: str, answer: str, ghi_chu: str = "") -> None:
         """Ghi một lượt đã xong rồi cắt theo trần SỐ LƯỢT (bỏ lượt cũ nhất trước). Không còn trần token của lịch sử (User 19/11/2026).

@@ -9,10 +9,10 @@ from types import SimpleNamespace
 import pytest
 
 from api.conversations import ConversationStore
-from api.routes.chat import _remember
+from api.routes.chat import CONVERSATION_COOKIE, _remember, _start_conversation
 from llm.assistant import AnswerTrace, AssistantFlags
 from llm.generator_openai_full_corpus import with_history
-from llm.ten_goi_y import TOI_DA, ghi_chu_goi_y, ten_noi_da_trich
+from llm.ten_goi_y import TOI_DA, ghi_chu_goi_y, la_cau_xin_liet_ke_lai, lich_su_cho_luot, ten_noi_da_trich
 from retrieval.full_corpus_context import PackedSource
 
 
@@ -139,11 +139,72 @@ def test_run_chains_keeps_row_keys_and_passes_note_to_next_turn(monkeypatch):
     monkeypatch.setattr(fe, "build_context_builder", lambda s: builder)
     monkeypatch.setattr(fe.OpenAIFullCorpusGenerator, "from_environment", classmethod(lambda cls, s: Gen()))
     monkeypatch.setattr(fe, "answer_turn", fake_turn)
-    chains = [{"id": "c1", "loai": "x", "luot": [{"cau": "quán nào ngon", "ky_vong": "tra_loi"}, {"cau": "cho địa chỉ quán đó", "ky_vong": "tra_loi"}]}]
-    for bat, lich_su_luot_2 in ((True, (("quán nào ngon", GHI_CHU),)), (False, (("quán nào ngon", ""),))):
+    cau = ["quán nào ngon", "cho địa chỉ quán đó", CAU_LIET_KE, "quán thứ nhất mở cửa mấy giờ"]  # lượt 3 xin liệt kê lại ⇒ không ghi chú; lượt 4 nhận lại
+    chains = [{"id": "c1", "loai": "x", "luot": [{"cau": c, "ky_vong": "tra_loi"} for c in cau]}]
+    for bat in (True, False):
         seen.clear()
         monkeypatch.setattr(fe.AssistantFlags, "from_settings", classmethod(lambda cls, s, _b=bat: AssistantFlags(nho_ten_goi_y=_b, nho_cau_tra_loi=False)))  # như settings.yaml: chỉ nhớ câu hỏi
         rows = asyncio.run(fe.run_chains(chains, "nho"))
-        assert seen == [(), lich_su_luot_2]
-        assert [r["cau_tim_model"] for r in rows] == [["câu tìm"], ["câu tìm"]] and [r["n_history_turns"] for r in rows] == [0, 1]
-        assert [r["ghi_chu_goi_y"] for r in rows] == ([GHI_CHU, GHI_CHU] if bat else ["", ""])
+        du = tuple((c, GHI_CHU if bat else "") for c in cau)
+        assert seen == [(), du[:1], tuple((c, "") for c in cau[:2]), du[:3]]
+        assert [r["cau_tim_model"] for r in rows] == [["câu tìm"]] * 4 and [r["n_history_turns"] for r in rows] == [0, 1, 2, 3]
+        assert [r["ghi_chu_goi_y"] for r in rows] == [GHI_CHU if bat else ""] * 4
+
+
+# ── Sửa nhỏ 20/11: lượt mà câu gõ xin liệt kê lại các nơi vừa nêu KHÔNG nhận dòng ghi chú (model từng coi ghi chú là danh sách đủ) ──────────────────
+CAU_LIET_KE = "Kể hết các quán vừa nêu giúp mình"
+
+
+def test_list_again_question_is_recognised_narrowly():
+    for cau in (CAU_LIET_KE, "Kể đủ các chùa trong bài đó giúp tôi", "liệt kê lại các chỗ đó nhé", "Cho mình danh sách đầy đủ các điểm tham quan ở trên",
+                "TẤT CẢ các quán đó!"):
+        assert la_cau_xin_liet_ke_lai(cau), cau
+    for cau in ("cho địa chỉ quán đó", "chỗ đầu tiên giá vé bao nhiêu", "quán đó ở đâu",
+                "liệt kê địa chỉ các quán vừa nêu",                               # cần dòng ghi chú để biết quán nào
+                "kể hết các nơi vừa nêu, rồi nơi thứ hai giá vé bao nhiêu",        # câu ghép: nửa sau hỏi về MỘT nơi
+                "kể hết các điểm tham quan trong lăng đó",                        # "trong lăng đó" = bên trong một nơi vừa nêu
+                "kể hết các món ở quán đó", "kể lại quán đó", "", "Huế có chùa nào đẹp?"):
+        assert not la_cau_xin_liet_ke_lai(cau), cau
+
+
+def test_history_for_turn_drops_notes_only_for_list_again_question():
+    luu = (("quán nào ngon", GHI_CHU), ("lên lịch 2 ngày", ""))
+    assert lich_su_cho_luot(luu, CAU_LIET_KE) == (("quán nào ngon", ""), ("lên lịch 2 ngày", ""))
+    assert lich_su_cho_luot(luu, "cho địa chỉ quán đó") == luu and lich_su_cho_luot((), CAU_LIET_KE) == ()
+    cu = (("quán nào ngon", ""),)                       # cờ tắt: không có ghi chú ⇒ y như cũ dù câu gì
+    assert lich_su_cho_luot(cu, CAU_LIET_KE) == cu
+    tra_loi = (("quán nào ngon", "Thử Quán A."),)       # nhớ cả câu trả lời (đường cũ) ⇒ không đụng câu trả lời
+    assert lich_su_cho_luot(tra_loi, CAU_LIET_KE) == tra_loi
+
+
+def _mo_luot(request, cid, cau):
+    """Lịch sử + số đo mà route đặt cho một lượt có câu gõ `cau` (như `_answer` / luồng stream gọi `_start_conversation`)."""
+    request.cookies = {CONVERSATION_COOKIE: cid}
+    t, metrics = AnswerTrace(), {}
+    assert _start_conversation(request, t, metrics, cau) == cid
+    return t.history, metrics
+
+
+def test_route_history_per_turn_type():
+    """Mỗi loại lượt: lượt đầu · hỏi tiếp câu thường · hỏi tiếp xin liệt kê lại · lượt SAU lượt liệt kê (ghi chú vẫn được lưu, lượt sau nhận lại)."""
+    request, store, cid = req(AssistantFlags(nho_ten_goi_y=True))
+    assert _mo_luot(request, cid, "quán nào ngon")[0] == ()                                                  # lượt đầu
+    _remember(request, cid, "quán nào ngon", trace(), "success")
+
+    lich_su, so = _mo_luot(request, cid, "cho địa chỉ quán đó")                                              # hỏi tiếp câu thường: có ghi chú
+    assert lich_su == (("quán nào ngon", GHI_CHU),) and so["history_tokens"] == store.history_tokens(cid)
+
+    lich_su, so = _mo_luot(request, cid, CAU_LIET_KE)                                                        # hỏi tiếp xin liệt kê lại: KHÔNG ghi chú
+    assert lich_su == (("quán nào ngon", ""),) and so["n_history_turns"] == 1
+    assert with_history(CAU_LIET_KE, lich_su) == [{"role": "user", "content": "quán nào ngon"}, {"role": "user", "content": CAU_LIET_KE}]
+    assert so["history_tokens"] == len("quán nào ngon".split()) < store.history_tokens(cid)                  # log đếm lịch sử THẬT gửi đi
+    assert store.history(cid) == (("quán nào ngon", GHI_CHU),)                                               # kho lịch sử không bị đổi
+    _remember(request, cid, CAU_LIET_KE, trace(), "success")
+
+    lich_su, _ = _mo_luot(request, cid, "quán thứ nhất mở cửa mấy giờ")                                      # lượt SAU lượt liệt kê: nhận lại cả hai ghi chú
+    assert lich_su == (("quán nào ngon", GHI_CHU), (CAU_LIET_KE, GHI_CHU))
+
+    request, store, cid = req(AssistantFlags())                                                              # cờ TẮT: câu liệt kê cũng y như trước
+    _remember(request, cid, "quán nào ngon", trace(), "success")
+    lich_su, so = _mo_luot(request, cid, CAU_LIET_KE)
+    assert lich_su == store.history(cid) == (("quán nào ngon", ""),) and so["history_tokens"] == store.history_tokens(cid)

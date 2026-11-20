@@ -6,7 +6,13 @@ Cách làm: CODE (không model) lấy tên bài của các nguồn câu trả l�
 chú (không đánh số, không gọi là "đã gợi ý" — xem `ghi_chu_goi_y`). Không lấy chữ model viết, không lấy mục web, không lấy lịch (chữ lịch có tên quán từ bản đồ mở).
 Nơi chỉ được nêu qua bài tổng hợp (cẩm nang) KHÔNG được nhớ; câu hỏi tiếp kiểu "quán thứ hai / chỗ đầu tiên" KHÔNG được dòng này giải — giới hạn
 đã nhận của bản đầu.
+
+Sửa nhỏ 20/11/2026 (plan private `data/kich_ban_pho_thong_2026-11-19/viec_2_sua_nho/PLAN.md`): dòng ghi chú chỉ là MỘT PHẦN các nơi đã nêu, nhưng khi
+người dùng hỏi tiếp "kể hết các chỗ vừa nêu" model có lúc coi nó là danh sách đủ và chỉ kể mấy tên đó (đo 19/11: một lượt kể 3 / 8). Nên lượt mà CÂU GÕ
+là câu xin liệt kê lại thì không nhận dòng ghi chú (`lich_su_cho_luot`) — lịch sử của đúng lượt đó về như khi cờ tắt; ghi chú vẫn nằm trong kho lịch sử cho lượt sau.
 """
+import re
+import unicodedata
 from collections.abc import Sequence
 
 from llm.citations import CITATION_PATTERN
@@ -16,6 +22,25 @@ from llm.citations import CITATION_PATTERN
 # Tên bài đi thẳng vào dòng ghi chú, không lọc ký tự: kho hôm nay không có tên bài chứa `[`, `]`, `;` — thêm bài có ký tự đó thì xem lại khuôn dòng.
 THU_MUC_NOI = ("foods/restaurants/", "foods/cafes/", "travel/places/", "heritages/heritage/")
 TOI_DA = 5
+TIEN_TO_GHI_CHU = "[Ghi chú hệ thống — câu trả lời lượt này có trích bài kho của các nơi: "
+
+# Câu xin liệt kê lại — luật HẸP có chủ ý: bắt nhầm (câu "địa chỉ các quán đó" mất dòng ghi chú ⇒ model lại nói về nơi khác) nặng hơn bỏ sót
+# (danh sách có lúc thiếu, như trước bản sửa). Câu được nhận khi có một cụm xin danh sách đủ VÀ, sau khi bỏ các cụm trỏ lại, MỌI từ còn lại thuộc
+# `TU_CHO_PHEP`. Một từ ngoài bộ (địa chỉ, giá, thứ hai, món, "trong lăng đó"…) ⇒ không nhận. Thêm từ vào ba bộ dưới ⇒ chạy lại bộ dò của việc này.
+CUM_XIN_DU = ("kể hết", "kể đủ", "kể đầy đủ", "nêu hết", "nêu đủ", "nêu đầy đủ", "liệt kê", "danh sách", "tất cả", "toàn bộ",
+              "kể lại các", "kể lại những", "nêu lại các", "nêu lại những", "nhắc lại các", "nhắc lại những",
+              "kể tên các", "kể tên những", "nêu tên các", "nêu tên những")
+# Cụm trỏ lại câu trả lời trước. "trong" / "ở" chỉ được nhận bên trong các cụm này: "trong lăng đó", "ở quán đó" là hỏi về MỘT nơi.
+CUM_TRO_LAI = ("trong bài đó", "trong bài này", "trong bài ấy", "trong bài", "trong câu trả lời", "trong câu đó", "trong danh sách",
+               "trong đó", "ở trên", "phía trên", "bên trên", "ở câu trước", "lúc nãy", "khi nãy", "hồi nãy")
+TU_CHO_PHEP = frozenset((
+    "kể hết đủ đầy lại nêu nhắc liệt kê tên danh sách tất cả toàn bộ "                                      # chữ của các cụm xin danh sách đủ
+    "giúp mình tôi tớ em anh chị bạn với nhé nha nhỉ đi ạ cho xem hãy làm ơn vui lòng được không có thể thử coi ra luôn hộ dùm giùm xin nhờ biết "
+    "đó này ấy kia vừa nói gợi ý đã mới nãy mà đến tới đề cập "                                             # trỏ lại
+    "các những mọi chỗ nơi điểm địa tham quan quán ăn uống cà phê cafe nhà hàng lăng tẩm vua chùa di tích đền miếu cung điện làng chợ bãi biển "
+    "du lịch chơi mục cái"                                                                                  # danh từ chỉ nơi
+).split())
+_CUM_TRO_LAI_RE = re.compile(r"(?<!\w)(?:" + "|".join(sorted(CUM_TRO_LAI, key=len, reverse=True)) + r")(?!\w)")
 
 
 def _la_bai_mot_noi(source: str) -> bool:
@@ -45,5 +70,21 @@ def ghi_chu_goi_y(trace) -> str:
     # Chỉ nói điều code biết chắc (sửa 19/11 trước lượt đo, sau khi người soạn bộ đích thấy hai cơ chế trên dữ liệu thật): bài riêng được TRÍCH,
     # không phải "đã gợi ý" (có bài được trích chỉ để nêu vị trí / so sánh), không đánh số (nơi được nêu qua bài tổng hợp không có trong danh sách
     # ⇒ số thứ tự lệch với thứ tự người dùng thấy, "quán thứ hai" sẽ trỏ nhầm nơi).
-    return ("[Ghi chú hệ thống — câu trả lời lượt này có trích bài kho của các nơi: " + "; ".join(ten)
+    return (TIEN_TO_GHI_CHU + "; ".join(ten)
             + ". Danh sách có thể thiếu nơi đã được nêu và không theo thứ tự trong câu trả lời.]")
+
+
+def la_cau_xin_liet_ke_lai(cau: str) -> bool:
+    """Câu gõ CHỈ xin kể lại / kể đủ các nơi vừa nêu ("Kể đủ các chùa trong bài đó giúp tôi")? Câu ghép hay câu hỏi thêm điều gì về nơi ⇒ False."""
+    chu = " ".join(re.sub(r"[^\w\s]", " ", unicodedata.normalize("NFC", cau or "").lower()).split())
+    if not any(re.search(rf"(?<!\w){cum}(?!\w)", chu) for cum in CUM_XIN_DU):
+        return False
+    return all(tu in TU_CHO_PHEP for tu in _CUM_TRO_LAI_RE.sub(" ", chu).split())
+
+
+def lich_su_cho_luot(lich_su: Sequence, cau: str) -> tuple:
+    """Lịch sử gửi model ở lượt có câu gõ `cau`: câu xin liệt kê lại ⇒ các dòng ghi chú tên nơi thành chuỗi rỗng (như cờ tắt); câu khác ⇒ nguyên.
+    Lịch sử không có dòng ghi chú (cờ tắt, hoặc nhớ cả câu trả lời) ⇒ luôn trả đúng nội dung cũ."""
+    if not la_cau_xin_liet_ke_lai(cau):
+        return tuple(lich_su)
+    return tuple((hoi, "" if dap.startswith(TIEN_TO_GHI_CHU) else dap) for hoi, dap in lich_su)
