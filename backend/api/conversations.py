@@ -18,6 +18,21 @@ TTL_SECONDS = 30 * 60
 MAX_CONVERSATIONS = 500
 MAX_TURNS = 3
 _SPACE_BEFORE_PUNCT = re.compile(r"\s+([.,;:!?])")
+# Cờ `nho_cau_tra_loi` nghĩa MỚI (20/11/2026, plan `report_agent/2026-11-20/b_nho_cau_tra_loi_plan.md`): lịch sử mang câu trả lời của lượt LIỀN TRƯỚC
+# (đã bỏ mã trích dẫn, cắt ngắn) sau một dòng nhãn do code viết — để hiểu "quán thứ hai bạn vừa nói", "chia ra mỗi người". Nhãn nằm trong chính ô
+# lịch sử nên lời dặn hệ thống không đổi (lời dặn lịch sử sẵn có đã buộc mỗi nhận định lấy từ Bằng chứng của lượt này).
+NHAN_LOI_TRUOC = "[Lời trợ lý ở lượt trước — chỉ để hiểu câu hỏi tiếp; KHÔNG phải nguồn, không được trích hay coi là bằng chứng]"
+CAT_LOI_TRUOC = 1200  # ký tự; dài hơn ⇒ cắt đuôi (mục cuối của một danh sách dài có thể mất — giới hạn đã ghi)
+
+
+def loi_luot_truoc(answer: str) -> str:
+    """Ô lịch sử của lượt LIỀN TRƯỚC khi nhớ câu trả lời: nhãn + chữ đã bỏ mã trích dẫn, cắt ở `CAT_LOI_TRUOC`. Không có chữ ⇒ ""."""
+    text = stored_answer(answer or "")
+    if not text:
+        return ""
+    if len(text) > CAT_LOI_TRUOC:
+        text = text[:CAT_LOI_TRUOC].rstrip() + " …"
+    return f"{NHAN_LOI_TRUOC}\n{text}"
 
 
 def stored_answer(answer: str) -> str:
@@ -27,21 +42,32 @@ def stored_answer(answer: str) -> str:
     return _SPACE_BEFORE_PUNCT.sub(r"\1", re.sub(r"[ \t]{2,}", " ", text)).strip()
 
 
+def dap_duoc_nho(trace, outcome: str | None) -> bool:
+    """Lượt này có được giữ câu trả lời cho lượt kế không (`chi_dap_lien_truoc`): chỉ lượt hỏi đáp thường trả lời được. KHÔNG giữ: câu cố định (từ chối,
+    ngoài phạm vi, nói thật giới hạn, hỏi lại), lượt lịch / biểu mẫu / sửa lịch — chữ lịch có tên quán lấy từ bản đồ mở, model không được thấy
+    (`llm/quan_lich.py`). Chữ mục web vốn không nằm trong `trace.answer`."""
+    return (outcome == "success" and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None and trace.sua is None)
+
+
 @dataclass
 class Conversation:
     turns: list[tuple[str, str]] = field(default_factory=list)  # (câu hỏi, câu trả lời đã cắt) — chỉ nhớ câu hỏi ⇒ "" hoặc dòng ghi chú tên nơi do code dựng
     expires_at: float = 0.0
     lich: dict | None = None  # sửa lịch bản 2: lịch đã lưu của cuộc (chỉ dữ liệu code dựng — khung, ngày đi, điểm đã bỏ, câu đã kiểm)
+    ghi_chu_cuoi: str | None = None  # `chi_dap_lien_truoc`: lượt cuối đang giữ câu trả lời ⇒ dòng ghi chú sẽ thế chỗ nó khi có lượt mới; None = không giữ
 
 
 class ConversationStore:
     def __init__(self, count_tokens: Callable[[str], int], *, ttl: float = TTL_SECONDS, max_conversations: int = MAX_CONVERSATIONS,
-                 max_turns: int = MAX_TURNS, keep_answers: bool = True,
+                 max_turns: int = MAX_TURNS, keep_answers: bool = True, chi_dap_lien_truoc: bool = False,
                  clock: Callable[[], float] = time.monotonic) -> None:
         self._count = count_tokens
         self._ttl, self._max_conversations = ttl, max_conversations
         self._max_turns = max_turns
         self._keep_answers = keep_answers
+        # nghĩa mới của cờ `nho_cau_tra_loi`: chỉ lượt LIỀN TRƯỚC mang câu trả lời (`loi_luot_truoc`), lượt cũ hơn về dòng ghi chú / rỗng như khi chỉ nhớ
+        # câu hỏi. `keep_answers` (nhớ đáp của cả ba lượt, bản 03/11 đã đo và không dùng) chỉ còn test cũ gọi — nơi dựng app không bật nữa.
+        self.chi_dap_lien_truoc = chi_dap_lien_truoc
         self._clock = clock
         self._items: OrderedDict[str, Conversation] = OrderedDict()
 
@@ -75,11 +101,20 @@ class ConversationStore:
 
     def append(self, conversation_id: str, question: str, answer: str, ghi_chu: str = "") -> None:
         """Ghi một lượt đã xong rồi cắt theo trần SỐ LƯỢT (bỏ lượt cũ nhất trước). Không còn trần token của lịch sử (User 19/11/2026).
-        `ghi_chu` (cờ `nho_ten_goi_y`): dòng do CODE dựng — tên nơi lượt này đã gợi ý — đứng ở chỗ câu trả lời khi chỉ nhớ câu hỏi."""
+        `ghi_chu` (cờ `nho_ten_goi_y`): dòng do CODE dựng — tên nơi lượt này đã gợi ý — đứng ở chỗ câu trả lời khi chỉ nhớ câu hỏi.
+        `chi_dap_lien_truoc`: lượt vừa xong giữ câu trả lời (KHÔNG kèm dòng ghi chú — tên nơi đã nằm trong chính câu trả lời, không nói hai lần);
+        khi có lượt mới thì ô của nó về dòng ghi chú."""
         conversation = self._items.get(conversation_id)
         if conversation is None:  # hết hạn trong lúc trả lời ⇒ không ghi
             return
-        conversation.turns.append((question, stored_answer(answer) if self._keep_answers else ghi_chu))
+        if self.chi_dap_lien_truoc:
+            if conversation.turns and conversation.ghi_chu_cuoi is not None:  # lượt trước thôi là "liền trước" ⇒ bỏ câu trả lời, về dòng ghi chú
+                conversation.turns[-1] = (conversation.turns[-1][0], conversation.ghi_chu_cuoi)
+            dap = loi_luot_truoc(answer)  # nơi gọi đưa `answer` rỗng cho lượt không được nhớ đáp (lịch, câu cố định…)
+            conversation.turns.append((question, dap or ghi_chu))
+            conversation.ghi_chu_cuoi = ghi_chu if dap else None
+        else:
+            conversation.turns.append((question, stored_answer(answer) if self._keep_answers else ghi_chu))
         del conversation.turns[:-self._max_turns]
         conversation.expires_at = self._clock() + self._ttl
         self._items.move_to_end(conversation_id)

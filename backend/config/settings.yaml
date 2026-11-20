@@ -61,7 +61,7 @@ assistant:
   lan_tim_dau: v0                # B2 (plan D1): v0 câu gốc · v1 / v3 câu tìm do định tuyến viết · v2 trợ lý tự gọi tim_kho
   tim_them: true                 # BẬT (B2b Q8: 18 câu nhiều nguồn +1,17 [+0,44; +2,00]; User giữ 03/11). Sau lần tìm đầu, trợ lý được gọi tim_kho thêm ≤ 2 lần
   nho_hoi_thoai: true            # BẬT (B3b: đã thấy Q3 6/6, Q4 +0,80 [+0,25; +1,50], Q5 0/0; bộ mới C152 S1 0/6, S2 0/19 ↔ 5/19; A quyết theo User "đạt ⇒ bật")
-  nho_cau_tra_loi: false         # B3b (B138, A quyết (a) — đường kết quả âm ghi trước): chỉ nhớ câu hỏi; B3: true
+  nho_cau_tra_loi: false         # B3b (B138, A quyết (a) — đường kết quả âm ghi trước): chỉ nhớ câu hỏi; B3: true. NGHĨA MỚI từ 20/11/2026 (plan `report_agent/2026-11-20/b_nho_cau_tra_loi_plan.md`): true = lịch sử mang câu trả lời của lượt LIỀN TRƯỚC (bỏ mã trích dẫn, cắt 1.200 ký tự, có dòng nhãn "không phải nguồn"); bản nhớ đáp cả ba lượt của 03/11 không còn bật được. TẮT tới khi qua bốn sàn + bộ đích của plan
   lich_trinh: false              # B5 (plan bản 7 D1): công cụ lịch trình (code xếp + code tự hỏi số ngày) — TẮT tới khi đạt luật ghi trước. Công cụ `hoi_lai` của B4 đã gỡ (C183 m-2)
   lich_trinh_bang: ../data/phase_9/lich_trinh/diem_v3.json  # bảng điểm User duyệt (v3 `e94b7f4263f2`, private); chỉ nạp khi cờ bật
   ban_do_lich: true              # bản đồ lịch trình (plan 2026-11-08 bản 1 `e738f6f9f3ae`): ghim có số theo thứ tự trong ngày, toạ độ do code gắn; bật ⇒ CSP img-src thêm data: + host ô bản đồ ở `BAN_DO` (`api/routes/cong.py`; nay OSM Đức — Leaflet huỷ tile bằng GIF data:). BẬT 16/11 tối (User chọn bật cho lượt thử; tắt lại = đổi dòng này)

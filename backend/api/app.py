@@ -173,7 +173,8 @@ def create_app(settings=None):
             app.state.context_builder = context_builder
             flags = app.state.assistant_flags
             # B3 D1: kho cuộc trò chuyện trong RAM — chỉ khi cờ nhớ bật (tắt ⇒ không cookie, không kho)
-            app.state.conversations = ConversationStore(lambda text: len(tokenizer.encode(text)), keep_answers=flags.nho_cau_tra_loi) \
+            app.state.conversations = ConversationStore(lambda text: len(tokenizer.encode(text)), keep_answers=False,
+                                                        chi_dap_lien_truoc=flags.nho_cau_tra_loi) \
                 if flags.nho_hoi_thoai else None
             app.state.tokenizer_ready = True
             logger.info("OpenAI tokenizer and context builder initialized successfully")
