@@ -69,7 +69,7 @@ giao (`guides/RUNBOOK_BAN_GIAO.md` mục 10) để người sau gặp thì biế
   8. Lúc chữ đang hiện dần: có ca màn hình chỉ hiện khối thời tiết do chương trình nối, thiếu câu trả lời của model (chỗ sửa nằm sâu trong lõi; chưa từng thấy thật).
   9. (đợt hai) Trong cuộc đã có lịch, câu hỏi có cả khoảng cách: model viết giờ của lịch bằng chữ ("lúc 23 giờ") hay tự trừ thời lượng một điểm ("2 giờ 30 phút") thì cả câu trả lời ĐÚNG bị rút, hiện lỗi + nút "Thử lại".
   10. (đợt hai) Câu nhờ đặt phòng mà model tìm kho tới hết số lần cho phép: ra câu từ chối quen thuộc thay vì câu nói thật về việc đặt.
-  11. (đợt hai) File PowerPoint của lịch 5 ngày kiểu "khám phá": các dòng link bản đồ ở trang cuối đè lên nhau (lịch ngắn hơn không bị).
+  11. (đợt hai) File PowerPoint của lịch 5 ngày kiểu "khám phá" (22 điểm): các dòng link bản đồ ở trang cuối xếp rất sát. Mở bằng PowerPoint thật thì vẫn đọc được, không dòng nào chồng lên dòng nào — Gemini nói "đè nhau" là quá mức; lịch ngắn hơn thì rộng rãi.
 - **Giới hạn của chính ba thay đổi này:** người dùng thật sự muốn hai điểm vào cùng một buổi cũng nhận câu "chưa làm" (nói từng điểm một thì được) · bản sửa "gõ lại câu A" chỉ áp khi câu
   không có từ trỏ lại và lượt ngay trước không có dòng ghi chú; câu hỏi cụt như "địa chỉ ở đâu?" gõ lại nguyên văn có thể mất dòng ghi chú · ba lượt mỗi ô, một cặp câu — không phải tỉ lệ ngoài đời.
 - Ba thay đổi ở ý 1 đã gộp vào bản chính lúc 09:41 20/11/2026. Lượt chạy CẢ bộ test trên bản này chưa làm — nhóm chạy một lượt trên bản cuối trước buổi anh test.
