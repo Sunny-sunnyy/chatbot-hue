@@ -12,7 +12,9 @@ from collections.abc import Iterable
 TAM_NGUNG = re.compile(r"tạm ngừng|tạm dừng|tạm nghỉ|tạm đóng|ngừng hoạt động|dừng hoạt động|không hoạt động|ngừng phục vụ|ngừng chạy|ngừng đón|"
                        r"\bhoãn\b|\bhuỷ\b|\bhủy\b|không xuất bến|cấm xuất bến|không được (phép )?xuất bến", re.I)
 DIEU_KIEN = re.compile(r"\blũ\b|\blụt\b|lệnh cấm|thời tiết xấu|mưa bão|\bbão\b(?! ho[àa])|nước (sông )?(dâng|lên)", re.I)
-_PHU_DINH = re.compile(r"không (nêu|đề cập|ghi|nói|có thông tin)|chưa (nêu|đề cập|ghi)", re.I)  # "nguồn không nêu việc tạm ngừng…" không phải là đã nêu
+# "nguồn không nêu việc tạm ngừng…" không phải là đã nêu. "chưa có thông tin" phải có: dòng ý thiếu của câu nhiều ý mở bằng hằng `CAU_Y_THIEU`
+# ("Tư liệu chưa có thông tin về:") — thiếu nó thì dòng ý thiếu nhắc "tạm ngừng … lệnh cấm" bị coi là đã nêu cảnh báo (soát khác hãng 20/11).
+_PHU_DINH = re.compile(r"không (nêu|đề cập|ghi|nói|có thông tin)|chưa (nêu|đề cập|ghi|nói|có thông tin)", re.I)
 _TACH_CAU = re.compile(r"(?<=[.!?])\s+(?!\[)|\n")  # câu TRẢ LỜI: không tách trước mã trích đứng sau dấu chấm
 # Câu của NGUỒN (chữ sẽ hiện cho người dùng): chỉ tách ở dấu kết câu + khoảng trắng + chữ HOA / số / dấu mở, và không tách sau viết tắt ("TP. Huế").
 # Dấu chấm trong số tiền ("1.200.000") không có khoảng trắng sau nên không bao giờ là ranh câu. Tách thừa ⇒ câu cụt, nên thà không tách.

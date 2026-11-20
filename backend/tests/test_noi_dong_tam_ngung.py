@@ -6,7 +6,7 @@ import dataclasses
 import pytest
 
 from llm.assistant import AnswerTrace, AssistantFlags, set_notice
-from llm.full_corpus_prompt import MAY_HAVE_CHANGED_NOTICE
+from llm.full_corpus_prompt import CAU_Y_THIEU, MAY_HAVE_CHANGED_NOTICE
 from llm.luu_y_nguon import dong_tam_ngung
 from retrieval.full_corpus_context import PackedSource
 
@@ -27,6 +27,17 @@ def test_appends_exactly_one_source_sentence_when_answer_omits_it():
 ])
 def test_no_duplicate_when_answer_already_states_it(answer):
     assert dong_tam_ngung(answer, NGUON) is None
+
+
+def test_missing_idea_line_of_a_multi_part_answer_is_not_taken_as_the_warning():
+    """Soát khác hãng 20/11: câu nhiều ý — dòng ý thiếu do lời dặn bắt model viết (`CAU_Y_THIEU` + tên ý) nhắc "tạm ngừng … lệnh cấm" thì code từng
+    tưởng câu trả lời ĐÃ nêu cảnh báo ⇒ mất dòng lưu ý của nguồn đã trích. Dòng "chưa có thông tin" là phủ định, không phải đã nêu."""
+    thieu = f"Khán giả phải mặc áo phao [1].\n{CAU_Y_THIEU} quy định tạm ngừng khi có lệnh cấm hay thời tiết xấu."
+    assert dong_tam_ngung(thieu, NGUON) == MONG
+    assert dong_tam_ngung("Khán giả mặc áo phao [1]. Tài liệu chưa có thông tin về việc thuyền tạm dừng khi bão.", NGUON) == MONG
+    # đối chứng: câu trả lời THẬT SỰ đã nêu cảnh báo, kèm một dòng ý thiếu về việc khác ⇒ vẫn không nối trùng
+    da_neu = f"Khi có lệnh cấm, thuyền tạm ngừng xuất bến [1].\n{CAU_Y_THIEU} giá vé trẻ em."
+    assert dong_tam_ngung(da_neu, NGUON) is None
 
 
 @pytest.mark.parametrize("doan", [
