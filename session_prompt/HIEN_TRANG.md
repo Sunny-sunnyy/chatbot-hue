@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 22:32 19/11/2026 (giờ `date`; kết phiên cuối ngày 19/11). Người giữ: phiên C.
+Viết lại lần cuối: 12:10 20/11/2026 (giờ `date`; giữa phiên 20/11, sau cả bộ test trên bản cuối). Người giữ: phiên điều phối.
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án cho BẤT KỲ coding agent nào vừa mở phiên; **viết lại tại chỗ** mỗi lần kết phiên, không nối thêm. Thứ tự mở
 phiên ở `session_prompt/START_SESSION.md`; sổ việc dài chỉ mở khi cần. `AGENTS.md`, code và file cấu hình thắng trang này — thấy lệch thì báo để sửa trang.
@@ -16,10 +16,10 @@ Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** =
   Web: FastAPI (`backend/`) + giao diện React dựng sẵn (`frontend/`). Chạy trên máy User; **chưa deploy**.
 - **Số hôm nay** (lệnh kiểm: runbook mục 0): kho **265 bài ⇒ 9.436 đoạn**, collection Qdrant `hue_full_corpus_7a2_e5_small_384` (cổng 6335);
   tìm = vector `e5-small` + từ khoá BM25 trộn RRF, **10 đoạn** vào ngữ cảnh, không xếp lại; model viết `gpt-6-luna` (OpenAI), từ 19/11 không còn trần token đầu ra và ngân sách ngữ cảnh mỗi lượt; tra web qua Serper.
-- **Cờ:** **29 BẬT** (28 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh). Bật 19/11: `sua_lich_doi_cho_code` · `noi_dong_tam_ngung` · `lich_vao_hoi_thuong` · `noi_that_lam_thay` · `xuat_pptx` · `nho_ten_goi_y`. Giới hạn từng cờ: runbook 10.1, 10.2.
+- **Cờ:** **29 BẬT** (28 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh). Giới hạn từng cờ: runbook 10.1, 10.2.
   **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
-- **Lần chạy cả bộ test gần nhất:** tối 19/11 trên đúng tổ hợp 29 cờ bật (từng file, 55 file): 1.542 đạt, 0 hỏng. `frontend/dist` cây chính dựng lại 19/11 tối — đổi `frontend/src` thì phải `npm run build` lại.
+- **Lần chạy cả bộ test gần nhất:** 20/11 trên main `d8651d4` (29 cờ, từng file, 55 file, Python 3.13): 1.554 đạt, 0 hỏng (lỡ chạy hai bản song song; mã thoát đều 0). `frontend/dist` cây chính dựng lại 20/11 (nút in chỉ còn ở trang Lên kế hoạch).
 - **Bẫy RAM (19/11):** không gom nhiều file test dựng cả app vào một tiến trình pytest; chạy từng file ở cây chính, không cùng lúc với server.
 - **Máy:** mở lại máy ⇒ `/tmp` MẤT, Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1).
 - **Giới hạn đã biết:** `guides/RUNBOOK_BAN_GIAO.md` mục 10 — gặp hành vi trông như lỗi thì tra ở đó TRƯỚC khi sửa hay báo.
@@ -31,20 +31,20 @@ Thứ tự việc, KHÔNG gắn ngày — bước trước đạt và máy rản
 | Bước | Việc | Trạng thái |
 |---|---|---|
 | 1–4 | Cả bộ test · soát tích hợp · code đứng yên · lượt đo cuối phần đã thấy (18/11) · sửa câu thiếu cảnh báo bằng code (19/11) | XONG; bộ kín NOT RUN |
-| 5 | **Đợt hoàn thiện local — việc PHỔ THÔNG của người dùng thật**: danh sách đóng BỐN việc đã xong + bật (lịch vào hỏi thường · nói thật giới hạn · xuất lịch · hỏi tiếp về nơi vừa nêu); đo lại bộ 80 kịch bản: xong việc 51 ⇒ 58, 0 điều sai mới | còn: soát khác hãng ⇒ nhóm chạy trọn danh sách test bằng trình duyệt ⇒ mời User |
+| 5 | **Đợt hoàn thiện local — việc PHỔ THÔNG**: bốn việc của danh sách đóng đã bật; bộ 80 kịch bản 51 ⇒ 58; 20/11: soát khác hãng ba lượt ⇒ 12 bản sửa nhỏ đã gộp, còn lại ghi giới hạn (runbook mục 10); test trình duyệt + cả bộ test đạt | XONG phần nhóm (20/11); code ĐỨNG YÊN ở `d8651d4` — chỉ sửa lỗi buổi test tìm ra |
 | 6 | **User test TOÀN BỘ một lần, trên máy LOCAL, khi nhóm đã làm xong hết** (`data/test_cuoi/DANH_SACH.md`) — nhóm KHÔNG chờ buổi này để làm bước kế | chưa |
 | 7 | Deploy AWS, SAU buổi test local (cần User một lần: tài khoản, khoá, ngân sách); xong thì User thử khói ~10 phút trên máy chủ | chưa |
 
 **Việc đang mở, ai làm, bước kế:** CHỈ ở `session_prompt/VIEC_DANG_MO.md` (xong: `session_prompt/VIEC_DA_XONG.md`). Mốc "Phase 9 xong phần nhóm" = code `55d01a8`.
 
-Số nhiễu (19/11): hai lượt bộ câu mẫu không đổi gì lệch 1 câu "Đúng" · 2 "Đủ ý" · 7 "Trọng tâm" ⇒ thử đổi lời dặn phải có bên tắt CÙNG BUỔI, chấm cùng lô.
+Số nhiễu (19/11): hai lượt bộ câu mẫu không đổi gì lệch 1 "Đúng" · 2 "Đủ ý" · 7 "Trọng tâm" ⇒ thử đổi lời dặn phải có bên tắt CÙNG BUỔI.
 Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / ngày ⇒ gom.
 
 ## 3. Đang chờ User (chỉ các việc ghi ở đây; việc đã chốt thì đừng hỏi lại)
 
-1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
+1. User tự làm: trần chi tiêu từng khoá API · vô hiệu hoá khoá AWS cũ ở thư mục khoá học.
 2. Buổi User tự tay test toàn bộ (bước 6) — User chưa có giờ; KHÔNG nhắc.
-3. Khi nhóm YÊU CẦU: User tự lái Gemini 4 Hydrogen với đề bài soát khác hãng (đường dẫn ở `VIEC_DANG_MO.md`). Không gấp: ~20 câu User tự gõ vào `data/kich_ban_pho_thong_2026-11-19/CAU_CUA_USER.md`.
+3. Chờ User trả lời (gác tới khi User quay lại): điều phối tự viết bản sửa "báo đã dời khi lịch không đổi" hay giữ giới hạn · bộ bài đánh giá model (khung ở `data/danh_gia_model_2026-11-20/`, chưa có đề; phiên Claude bị hệ thống dừng khi dựng) đi tiếp cách nào. Không gấp: ~20 câu User tự gõ (`data/kich_ban_pho_thong_2026-11-19/CAU_CUA_USER.md`).
 4. Chưa hỏi, không tự mở: giá phòng, bổ sung kho (số điện thoại, chỗ đậu xe…), vị trí người dùng.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
@@ -53,9 +53,10 @@ Sản phẩm:
 - Trả lời chỉ từ kho, có nguồn; câu ngoài kho phải bị từ chối (sàn: 0 câu ngoài kho được trả lời bằng kho). Người dùng gõ tiếng Việt CÓ DẤU; không làm tiếng Anh.
 - Câu khẩn cấp (bị cướp, mất ví, mất giấy tờ, số khẩn cấp) là NGOÀI PHẠM VI — User chốt ba lần; không sửa, không báo lại.
 - **19/11 — hướng:** chất lượng trước, tiền / tốc độ sau · việc PHỔ THÔNG mà 100 người dùng thật sẽ thử; KHÔNG mở thêm việc bão / lũ / khẩn cấp · trước khi thêm file, cờ, test, bước kiểm: "lỗi đã thấy thật chưa · ai dùng · không làm thì mất gì".
-- **19/11 — THỨ TỰ ĐÓNG (User nói rõ):** xong HẾT ở local ⇒ User test MỘT lần ở local ⇒ KHÔNG phát triển gì nữa (chỉ sửa lỗi buổi test tìm ra) ⇒ rồi mới deploy. Phần cần User test gác lại, nhóm làm tiếp không chờ. Thứ gì muốn có trong sản phẩm phải vào danh sách TRƯỚC buổi test. KHÔNG thêm tính năng mới, không nghiên cứu rộng (nhóm cùng ý, User nhận).
-- **19/11 — danh sách đóng = BỐN việc, đều đã bật:** lịch đã lưu vào lượt hỏi thường · nói thật giới hạn (không gửi email, không giả lập đặt phòng) · xuất lịch (kiểu "Di sản" của nhóm) · nhớ tên nơi vừa trích (giới hạn mới thấy tối 19/11: hỏi tiếp "kể hết các chỗ vừa nêu" có lúc ra danh sách thiếu — sửa nhỏ ở phiên sau; User chọn "đọc sàn bộ bẫy theo mục đích": 5 / 6 theo chữ, hiểu là không trả lời bằng thông tin nơi khác).
-- **19/11 — GHI GIỚI HẠN, không làm trước khi đóng, không mở lại khi User chưa nêu:** "gần X" · ngày của nguồn giá vé · ngân sách / tổng tiền vé do code tính · câu "những quán nào có đặc điểm X" trả thiếu mục · "kho có một phần thì từ chối cả câu" (đã đếm: bản an toàn chỉ chữa 3–6 lượt) · gõ "lên lịch giúp mình" trong ô chat (không còn tái hiện; nhánh hồ sơ) · 15 đoạn / cả mục / cả bài (đo xong: không khác, giữ 10 đoạn) · đổi mức suy luận (giữ mặc định).
+- **19/11 — THỨ TỰ ĐÓNG (User nói rõ):** xong HẾT ở local ⇒ User test MỘT lần ở local ⇒ KHÔNG phát triển gì nữa (chỉ sửa lỗi buổi test tìm ra) ⇒ rồi mới deploy. Thứ gì muốn có trong sản phẩm phải vào danh sách TRƯỚC buổi test. KHÔNG thêm tính năng mới.
+- **19/11 — danh sách đóng = BỐN việc, đều đã bật:** lịch đã lưu vào lượt hỏi thường · nói thật giới hạn (không gửi email, không giả lập đặt phòng) · xuất lịch (kiểu "Di sản" của nhóm) · nhớ tên nơi vừa trích (20/11: câu đúng khuôn "kể lại các nơi vừa nêu" và câu gõ lại nguyên văn không còn nhận dòng tên nơi — giới hạn còn lại ở runbook 10.1; User chọn "đọc sàn bộ bẫy theo mục đích").
+- **19/11 — GHI GIỚI HẠN, không làm trước khi đóng, không mở lại khi User chưa nêu:** "gần X" · ngày của nguồn giá vé · ngân sách / tổng tiền vé do code tính · câu "những quán nào có đặc điểm X" trả thiếu mục · "kho có một phần thì từ chối cả câu" · gõ "lên lịch giúp mình" trong ô chat · 15 đoạn / cả mục / cả bài · đổi mức suy luận.
+- **20/11 — soát khác hãng:** mọi điểm chưa sửa GHI GIỚI HẠN; KHÔNG soát vòng nữa, không vá thêm khâu đoán ý từ câu gõ. Nút in chỉ còn ở trang Lên kế hoạch. Đề xuất trình User = ý đa số / cả nhóm, ghi rõ ai không có ý kiến.
 - **19/11 — khác:** sàn "thiếu cảnh báo mới": ngữ cảnh chung tính sàn, phần riêng người đọc tay xét · agent được gọi PowerPoint của Windows dựng slide thử (một file một lần, PowerPoint đang mở thì không gọi) · trước deploy phải giới hạn số lượt tải file xuất.
 - Không nói giá phòng ở phần gợi ý chỗ ở (câu hỏi chi phí chung vẫn nêu khoảng giá có nguồn từ kho). Khối "Nơi ở" chỉ hiện khi người dùng
   đã chọn hạng chỗ ở — ở biểu mẫu hoặc nói bằng lời.
