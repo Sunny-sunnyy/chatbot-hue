@@ -7,15 +7,22 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 ## 0. ĐỢT HOÀN THIỆN PHASE 9–12 (User chốt 15:25 20/11/2026) — VIỆC CHÍNH; buổi User test (khối 1) HOÃN tới khi khối này xong
 - Lời User: "không thêm tính năng mới" = không thêm gì NGOÀI thứ đã chốt ở Phase 9–12 và trước đó; thứ đã chốt phải XONG HẾT. Bảng kiểm kê có nguồn từng dòng (riêng tư): `data/kiem_ke_phase_2026-11-20/` (`BANG_GOP_cho_User.md`, `B_phase_11_12.md`, `C_phase_9_10.md`). User chọn: làm nhóm I (13 mục) + bốn mục phổ thông của nhóm II; mục tính tổng tiền bằng code · bảng vé + giờ có cấu trúc · trợ lý tự yêu cầu tra web · ngày nguồn giá vé GIỮ giới hạn.
 - Cách làm (chốt vòng tự soi 2): mỗi việc đếm / thử MỘT lượt trước khi viết · plan một trang, A đọc rồi duyệt · sửa xong chạy file test chạm đường đổi + MỘT lượt thật qua giao diện · một review cả nhánh · cả bộ test chỉ chạy MỘT lượt ở cuối đợt · việc nào đo lại vẫn không đạt ⇒ báo A, A hỏi User, không lặng lẽ ghi giới hạn.
-- Thứ tự (phổ thông trước) — số là số trong bảng gộp; "ai" điền khi giao:
-  1. [21] Sửa lịch — dời một điểm: câu từ chối nói đúng lý do + gợi ý chỗ dời ĐƯỢC (mốc: dời được 24 / 176; script `data/test_cuoi/tools/dem_doi_buoi_2026-11-20.py`) — E viết, B review
-  2. [1] Cache câu trả lời giữa các cuộc trò chuyện, dạng đã thống nhất 05/11 (khớp đúng chữ, lượt đầu, có nguồn kho, không câu từ chối / web / thời tiết, khoá theo phiên bản kho + lời dặn + model, 24 giờ; KHÔNG cache theo nghĩa; nghiên cứu `data/nghien_cuu_cache_2026-11-05/`; điều kiện 05/11 "chờ người dùng thật, đo câu lặp ≥ 20 % mới làm" User BỎ chiều 20/11 — nguyên văn: "khoảng 10 đến 15p sau có người khác hỏi lại câu đó thì phải lấy ra được câu trả lời cũ mà không cần tính toán lại") — B viết, C review
-  3. [18] câu liệt kê: CHỈ làm phần nhỏ — code nối một dòng nói thật "danh sách có thể chưa đủ" (C viết; độ đủ thật cần bổ sung thuộc tính quán vào kho — KHÔNG mở) · [19] câu nhiều ý: GIỮ GIỚI HẠN (User chọn 15:33 20/11/2026 theo số đếm của C: ≈ 1 % lượt thử, bản sửa chạm sàn câu ngoài kho; số đếm `data/kiem_ke_phase_2026-11-20/C_dem_18_19.md`)
-  4. [14 mức nhẹ] gõ "lên lịch giúp mình" trong ô chat ⇒ dẫn sang trang Lên kế hoạch (trước hết MỘT lượt thật xem hiện trả lời gì) · [5] "gần X có gì ăn" trong ô chat
-  5. [2] sự kiện theo ngày · [3] ứng xử / trang phục (đo hỏi thường trước) · [4] trang Bản đồ riêng
-  6. [8] nhớ cả câu trả lời trong một cuộc trò chuyện · [9] hỏi lại khi thiếu thông tin · [11] đổi chỗ ngày 1 với ngày 2 · [12] bốn việc hẹn "sau lượt đo cuối"
-  7. [6] trang theo dõi · [7] agent đề xuất sửa kho có User duyệt
-  8. [10] so sánh cuối trên bộ câu kín — chỉ User gõ lệnh · [13] deploy + các chốt trước deploy — sau buổi test
+- BẢNG TRẠNG THÁI (16:08 20/11/2026; số trong ngoặc vuông = số trong bảng gộp; phiên mở lại đọc bảng này trước):
+  | Mục | Việc | Trạng thái | Nhánh / hồ sơ |
+  |---|---|---|---|
+  | [21] | Dời một điểm: nói lý do + gợi ý chỗ dời được | ĐÃ GỘP, có lượt thật qua giao diện (E); còn viết `bai_hoc/` (E) | `report_agent/2026-11-20/e_doi_diem_goi_y_plan.md`; giới hạn runbook 10.2 |
+  | [1] | Cache câu trả lời giữa các cuộc trò chuyện | ĐÃ GỘP, cờ `cache_cau_tra_loi` TẮT — chờ lượt thật qua trình duyệt (B đang chạy) rồi A bật | `report_agent/2026-11-20/b_cache_cau_tra_loi_plan.md` |
+  | [18] | Câu xin danh sách: dòng "có thể chưa đủ" | ĐÃ GỘP, cờ `danh_sach_noi_that` TẮT — chờ hai câu khói (B chạy chung lượt) rồi A bật; bộ dò: nối nhầm 2 / 52 | `report_agent/2026-11-20/c_danh_sach_noi_that.md` |
+  | [19] | Câu nhiều ý bị từ chối cả câu | GIỮ GIỚI HẠN (User chọn theo số đếm ≈ 1 %) | `data/kiem_ke_phase_2026-11-20/C_dem_18_19.md` |
+  | [4] | Trang "Bản đồ" riêng | Code xong, B READY, lượt trình duyệt đạt (40 ghim); E đang bỏ "Giới thiệu" khỏi thanh dưới điện thoại ⇒ A gộp ⇒ E dựng lại `frontend/dist` | `origin/p9-e-trang-ban-do` |
+  | [2] | Sự kiện theo ngày (chỉ ở ô hỏi đáp) | Code xong `origin/p9-c-su-kien-theo-ngay` `83659c8`, cờ TẮT; chờ B đọc 100 % bảng 27 dòng + review, E soạn bộ dò, lượt thật cặp tắt ↔ bật | bảng ở `data/su_kien_theo_ngay_2026-11-20/` (hook chặn vì chép nguyên văn kho) |
+  | [3] | Ứng xử / trang phục | COI LÀ ĐÃ CÓ qua hỏi đáp thường: lượt thật 6 câu ⇒ 4 trả lời từ kho có nguồn, 2 nói thật + mục web; không xây gì. Hai chỗ kho thiếu (chụp ảnh trong lăng, cởi giày vào chùa) = bổ sung kho, không mở | `data/test_cuoi/chay_2026-11-20_chieu/` |
+  | [14] | "Lên lịch giúp mình" trong ô chat — mức nhẹ | Đo: trợ lý viết lịch bằng chữ chung chung, 0 link sang trang Lên kế hoạch ⇒ E làm dòng dẫn sang trang (cờ, mặc định tắt; C soạn bộ dò) | — |
+  | [5] | "Gần X có gì ăn" trong ô chat | CHƯA bắt đầu (cần bảng thuộc tính / toạ độ quán — xem số đếm của C) | — |
+  | [8] [9] [11] [12] | Nhớ cả câu trả lời · hỏi lại khi thiếu thông tin · đổi chỗ ngày 1 với ngày 2 · bốn việc hẹn "sau lượt đo cuối" | [11] + kiểm [12]: giao C; [8], [9] chưa bắt đầu | — |
+  | [6] [7] | Trang theo dõi · agent đề xuất sửa kho có User duyệt | CHƯA bắt đầu | — |
+  | [10] [13] | So sánh cuối trên bộ kín (chỉ User gõ lệnh) · deploy + chốt trước deploy | Sau khi các mục trên xong | — |
+- Lượt giao diện chiều 20/11 (E, 0,018 USD, `data/test_cuoi/chay_2026-11-20_chieu/`): 390 px tràn ngang 0 ở mọi màn; câu khói G1, #7, #4, "báo đã dời" đạt; G2 chờ B xác nhận đúng ý; #1 không thử được qua giao diện. Ghi nhận không sửa: câu từ chối dài bị khuất dưới mép khung trợ lý nổi (cuộn được); nút trợ lý nổi không có ở điện thoại (chủ ý).
 - Nhóm tự làm khi có lượt bật server: ảnh năm màn chính ở bề rộng điện thoại + một lượt thật cho sáu bản sửa 20/11 (E).
 - User 15:33 20/11/2026: "cứ triển khai những gì đã chốt cho xong đã, không tạo thêm việc" ⇒ không mở việc ngoài danh sách này, không hỏi User thêm trừ khi một việc đo lại không đạt hoặc chạm hàng "hỏi User trước". Đã duyệt plan: [21] `report_agent/2026-11-20/e_doi_diem_goi_y_plan.md` (E đang code) · [1] `report_agent/2026-11-20/b_cache_cau_tra_loi_plan.md` (B đang code).
 - Chưa ai ước lượng công. Giọng nói: tài liệu ghi hai nghĩa ("dẹp" ↔ "không làm trước 30/11") — đang coi là bỏ, chờ User nói lại.
