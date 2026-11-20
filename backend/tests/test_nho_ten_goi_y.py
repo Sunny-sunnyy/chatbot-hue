@@ -12,7 +12,7 @@ from api.conversations import ConversationStore
 from api.routes.chat import CONVERSATION_COOKIE, _remember, _start_conversation
 from llm.assistant import AnswerTrace, AssistantFlags
 from llm.generator_openai_full_corpus import with_history
-from llm.ten_goi_y import TOI_DA, ghi_chu_goi_y, la_cau_xin_liet_ke_lai, lich_su_cho_luot, ten_noi_da_trich
+from llm.ten_goi_y import TOI_DA, ghi_chu_goi_y, la_cau_go_lai, la_cau_xin_liet_ke_lai, lich_su_cho_luot, ten_noi_da_trich
 from retrieval.full_corpus_context import PackedSource
 
 
@@ -170,6 +170,7 @@ def test_list_again_question_is_recognised_narrowly():
                 "chùa vừa nói còn những điểm nào nữa, kể hết đi",                 # điểm bên trong một nơi
                 "tất cả những điểm đó có chợ không",                               # hỏi một điều về cả nhóm, không xin kể lại
                 "tất cả mấy quán đó đi được không", "tất cả các chùa đó",          # không có lời xin kể: "đi được không" là câu hỏi có / không về cả nhóm
+                "Liệt kê các chùa đó. Đi được không?", "Kể hết mấy quán vừa nêu! Được không",  # dấu ngắt câu ở giữa ⇒ có thêm một câu hỏi về cả nhóm
                 "liệt kê tất cả ra đi", "kể hết đi",                              # không nêu loại nơi ⇒ không nhận (có thể đang trỏ một nơi)
                 "", "Huế có chùa nào đẹp?"):
         assert not la_cau_xin_liet_ke_lai(cau), cau
@@ -183,6 +184,20 @@ def test_history_for_turn_drops_notes_only_for_list_again_question():
     assert lich_su_cho_luot(cu, CAU_LIET_KE) == cu
     tra_loi = (("quán nào ngon", "Thử Quán A."),)       # nhớ cả câu trả lời (đường cũ) ⇒ không đụng câu trả lời
     assert lich_su_cho_luot(tra_loi, CAU_LIET_KE) == tra_loi
+
+
+def test_retyped_old_question_gets_history_without_notes_only_in_the_narrow_case():
+    """Đo 20/11: hỏi A (trích bài riêng ⇒ có ghi chú) ⇒ hỏi B (không ghi chú) ⇒ gõ lại NGUYÊN VĂN câu A thì model trả lời câu B; cờ tắt thì đúng.
+    Bản hẹp: đúng ca đó ⇒ lịch sử lượt ấy như cờ tắt. Diễn đạt lại · câu có từ trỏ lại · lượt liền trước có ghi chú ⇒ giữ nguyên ghi chú."""
+    A, B = "Quán A mở cửa mấy giờ?", "Vé xem ca Huế bao nhiêu tiền?"
+    lech = ((A, GHI_CHU), (B, ""))
+    assert lich_su_cho_luot(lech, "  quán a mở cửa mấy giờ ") == ((A, ""), (B, ""))            # gõ lại nguyên văn (khác hoa thường / dấu) ⇒ như cờ tắt
+    assert lich_su_cho_luot(lech, "Giờ mở cửa của Quán A thế nào?") == lech                     # diễn đạt lại ⇒ vẫn có ghi chú
+    assert lich_su_cho_luot(((A, GHI_CHU), (B, GHI_CHU)), A) == ((A, GHI_CHU), (B, GHI_CHU))    # lượt liền trước có ghi chú ⇒ không lệch dạng ⇒ để nguyên
+    tro = (("quán nào ngon", GHI_CHU), ("quán đó ở đâu?", GHI_CHU), ("Vé xem ca Huế bao nhiêu tiền?", ""))
+    assert lich_su_cho_luot(tro, "Quán đó ở đâu?") == tro                                       # câu trỏ lại gõ lại nguyên văn ⇒ CẦN ghi chú ⇒ không gỡ
+    assert not la_cau_go_lai((), A) and not la_cau_go_lai(lech, "") and la_cau_go_lai(lech, A)
+    assert lich_su_cho_luot(((A, ""), (B, "")), A) == ((A, ""), (B, ""))                        # cờ tắt: không có ghi chú ⇒ y như cũ
 
 
 def _mo_luot(request, cid, cau):
@@ -211,6 +226,12 @@ def test_route_history_per_turn_type():
 
     lich_su, _ = _mo_luot(request, cid, "quán thứ nhất mở cửa mấy giờ")                                      # lượt SAU lượt liệt kê: nhận lại cả hai ghi chú
     assert lich_su == (("quán nào ngon", GHI_CHU), (CAU_LIET_KE, GHI_CHU))
+
+    _remember(request, cid, "quán thứ nhất mở cửa mấy giờ", trace(cited=(MON,), answer="Bánh nậm.[4]"), "success")       # lượt KHÔNG có ghi chú
+    lich_su, so = _mo_luot(request, cid, "Quán nào ngon?")                                                   # gõ lại nguyên văn câu đầu ⇒ lượt này như cờ tắt
+    assert [a for _, a in lich_su] == ["", "", ""] and so["history_tokens"] < store.history_tokens(cid)
+    assert [a for _, a in store.history(cid)] == [GHI_CHU, GHI_CHU, ""]                                      # kho lịch sử giữ nguyên ⇒ lượt sau nhận lại
+    assert [a for _, a in _mo_luot(request, cid, "còn quán nào khác không")[0]] == [GHI_CHU, GHI_CHU, ""]
 
     request, store, cid = req(AssistantFlags())                                                              # cờ TẮT: câu liệt kê cũng y như trước
     _remember(request, cid, "quán nào ngon", trace(), "success")

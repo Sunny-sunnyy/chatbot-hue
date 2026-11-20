@@ -215,6 +215,9 @@ def doi_buoi_tu_cau(bang: v2.BangV2, luu: dict, cau: str) -> list[HanhDong]:
         if ngay_truoc is not None and not 1 <= ngay_truoc <= so_ngay:
             return []
         ra.append(HanhDong(loai="doi_buoi", ten=thu_tu[d], ngay=ngay_truoc, buoi=buoi))
+    # Hai vế cùng MỘT đích (ngày, buổi): lần dời sau tự đổi chỗ ngược lần dời trước ⇒ lịch y nguyên mà vẫn báo "đã dời" (soát khác hãng 20/11) ⇒ không đọc
+    if len({(h.ngay if h.ngay is not None else trong_lich[h.ten][0], h.buoi) for h in ra}) == 1:
+        return []
     return ra
 
 
