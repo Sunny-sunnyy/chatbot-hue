@@ -27,6 +27,8 @@ qdrant_storage/
 knowledge-base-hue/**/*sealed*
 knowledge-base-hue/**/*Sealed*
 knowledge-base-hue/knowledge-base-hue
+# danh sách người thật (họ tên + số thẻ) tải từ cổng dữ liệu mở — trợ lý không dùng, không đưa lên repo công khai
+knowledge-base-hue/_source-dumps/huegov_department_of_tourism/huongdanviendulich_hue_*
 
 # OS/editor noise
 .DS_Store

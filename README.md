@@ -111,7 +111,7 @@ Số liệu đo trong tháng 10–11/2026.
 
 ### Dữ liệu
 
-Kho tri thức (`knowledge-base-hue/`) và bộ đánh giá **không** được công bố trong repository này. Mã nguồn và phần lớn test chạy độc lập
+Kho tri thức (`knowledge-base-hue/`) và bộ câu mẫu có trong repository này (từ 20/11/2026); chỉ mục tìm kiếm và thư mục `data/` thì không. Mã nguồn và phần lớn test chạy độc lập
 với dữ liệu. Để chạy hỏi đáp đầy đủ, cần:
 
 - kho Markdown theo cấu trúc `knowledge-base-hue/<foods|heritages|festivals|performing_arts|travel>/`;
