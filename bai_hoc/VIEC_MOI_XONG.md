@@ -29,7 +29,7 @@ model chỉ ĐỌC ý, còn việc dời và dòng báo "Đã dời…" do chư�
 **2. Bằng chứng.**
 - Test mới hỏng trên code cũ (dời về chỗ đang đứng vẫn bị ghi "đã dời"), đạt sau sửa; trong test, ca "hai lần dời đổi chỗ ngược nhau" gặp thật 4 cặp điểm trên bảng điểm thật, cả 4 đều không còn báo "Đã dời". [máy kiểm]
 - Một phiên khác người viết tự dò bằng chương trình thật, 0 đồng: lịch 3 ngày mặc định, 8 điểm × 6 chỗ, MỌI cặp hai lần dời = **2.304 cặp**, chạy cả trên bản trước sửa làm mốc.
-  "Báo Đã dời mà điểm vẫn ở chỗ cũ": trước **768** cặp ⇒ sau **0**. "Lịch y nguyên mà vẫn có dòng Đã…": trước **478** ⇒ sau **0**. Lịch phạm luật xếp: 0 ở cả hai bản. [người thứ hai kiểm]
+  "Báo Đã dời mà điểm vẫn ở chỗ cũ": trước **768** dòng (ở 696 / 2.304 cặp) ⇒ sau **0**. "Lịch y nguyên mà vẫn có dòng Đã…": trước **478** ⇒ sau **0**. Lịch phạm luật xếp: 0 ở cả hai bản. [người thứ hai kiểm]
 - **Lần kiểm đó bắt được một lỗi của chính bản sửa đầu:** câu vừa dời một điểm vừa bỏ / làm điểm đó rời lịch (ví dụ dời rồi rút lịch còn 1 ngày) làm lượt sửa hỏng hẳn —
   9 lần trên 120 lần thử (bản trước sửa: 0). Đã sửa trong cùng nhánh, thêm test; chạy lại: 120 / 120 không hỏng. Cũng lần kiểm đó thấy 170 / 2.304 cặp cho thẻ lịch đổi thứ tự trong buổi
   dù mọi dòng đều "không đổi" ⇒ đã sửa, còn 0. [người thứ hai kiểm, hai vòng]
@@ -37,12 +37,15 @@ model chỉ ĐỌC ý, còn việc dời và dòng báo "Đã dời…" do chư�
 - CHƯA có lượt thật qua model, chưa bấm trên trình duyệt. [chưa đo trên đường thật]
 
 **3. Chưa làm / giới hạn.**
-- Còn 8 / 2.304 cặp (trước 16): model đọc ra "dời A về chỗ đang đứng" RỒI "dời A sang chỗ khác" trong cùng một câu ⇒ có hai dòng "Đã dời A…", dòng đầu thừa (lịch vẫn đúng theo dòng sau).
+- Còn 8 / 2.304 cặp (trước 16), đều bắt đầu bằng "dời A về chỗ đang đứng": 4 cặp sau đó dời chính A sang chỗ khác ⇒ hai dòng "Đã dời A…", dòng đầu thừa; 4 cặp sau đó dời điểm B vào đúng
+  buổi ấy (B đổi chỗ với A) ⇒ dòng đầu ghi A ở chỗ cũ trong khi A đã sang chỗ của B. Lịch vẫn đúng luật xếp. [người thứ hai kiểm]
 - Phép dò mới chạy một kiểu lịch (3 ngày, tham số mặc định); lịch 1, 2, 4, 5 ngày chỉ có các test sẵn có.
 - Hai vế cùng đích mà một điểm không hợp buổi ⇒ vẫn từ chối cả câu (giới hạn cũ, sổ tay bàn giao mục 10.3b).
 
-**4. Cách anh thử trong 2 phút.** Lập một lịch 3 ngày ở trang Lên kế hoạch, nhìn một điểm đang ở sáng ngày 1 (gọi là A), rồi nhắn trợ lý: "Dời A sang sáng ngày 1". Phải KHÔNG thấy dòng "Đã dời…";
-thấy "Không đổi được: A vẫn ở chỗ cũ…" (hoặc model tự trả lời là điểm đã ở đó) và lịch giữ nguyên. Sau đó "Dời A sang chiều ngày 2" ⇒ phải thấy "Đã dời A…" và A đổi chỗ thật. [chưa ai thử trên giao diện]
+**4. Cách anh thử trong 2 phút.** Ở trang Lên kế hoạch lập lịch 3 ngày · cân bằng · sở thích di tích, không chọn ngày đi. Nhắn trợ lý "Dời Đại Nội sang sáng ngày 1" (đúng chỗ nó đang đứng) ⇒ phải KHÔNG thấy
+"Đã dời…"; thấy "Không đổi được: Đại Nội Huế vẫn ở chỗ cũ…" (hoặc model tự nói điểm đã ở đó) và lịch giữ nguyên. Rồi nhắn "Dời Đại Nội sang sáng ngày 3" ⇒ phải thấy "Đã dời Đại Nội Huế sang buổi sáng ngày 3."
+và điểm đổi chỗ thật. Lịch lập với lựa chọn khác thì lần dời thứ hai có thể ra "Không đổi được: … phạm luật xếp" — cũng là đúng (trên lịch này chỉ 4 / 40 lần dời một điểm là làm được).
+[đo bằng chương trình, không qua model; chưa ai thử trên giao diện]
 
 ## 20/11 — 17. Nhờ AI khác hãng soát code trước khi đứng yên: GPT 13 điểm + Gemini 6 điểm mới, nhóm kiểm lại từng điểm — sửa, ghi giới hạn, và một lỗi nhóm tự tìm ra
 
