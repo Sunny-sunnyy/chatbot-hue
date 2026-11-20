@@ -1094,6 +1094,8 @@ def test_edit_turn_that_changes_nothing_keeps_the_saved_plan_and_its_storm_sente
         r = client.get("/api/lich/pptx", cookies={"conversation_id": cid})
         return [p.text for s_ in pptx.Presentation(io.BytesIO(r.content)).slides for sh in s_.shapes if sh.has_text_frame for p in sh.text_frame.paragraphs]
 
+    cuoi = []  # trace của các lượt sửa đã chạy
+
     def luot_sua(cau, ra):
         class Gen:  # chỉ lần gọi hiểu ý; lượt không có mục mới ⇒ không gọi model viết câu (gọi ⇒ AttributeError)
             async def hieu_sua(self, prompt, call_log, **kw):
@@ -1108,6 +1110,7 @@ def test_edit_turn_that_changes_nothing_keeps_the_saved_plan_and_its_storm_sente
         assert tr.citation_error is None
         luoi_cuoi_bao(cau, tr, flags)  # như route: câu gõ (hoặc câu liền trước) khớp lưới bão ⇒ câu an toàn vào dòng ghi chú của lượt
         luu_lich_cua_luot(store, cid, tr, flags)  # đúng hàm route gọi sau lượt đạt
+        cuoi.append(tr)
         return kq, lkh.luu_sau_luot(tr, flags)
 
     assert tt.CAU_BAO_LU in tai()
@@ -1125,3 +1128,15 @@ def test_edit_turn_that_changes_nothing_keeps_the_saved_plan_and_its_storm_sente
     duoc = next(h for h in doi if sl.ap(flags.bang_lich_v2, luu, [h])["da_ap"])
     kq, moi = luot_sua("dời điểm đó sang buổi khác", [duoc])
     assert kq["da_ap"] and moi is not None and store.lay_lich(cid)["khung"] == kq["khung"] != khung
+    assert "an_toan" not in store.lay_lich(cid)  # bản trước không có câu an toàn ⇒ bản mới cũng không
+    # 20/11 (điều phối chốt sửa): bản trước CÓ câu an toàn (lịch lập ngay sau câu hỏi bão) ⇒ lượt sửa LÀM ĐƯỢC không nhắc bão vẫn giữ câu đó trong
+    # bản lưu mới ⇒ file của lịch đã sửa còn câu bão / lũ + 112
+    store.luu_lich(cid, {**luu, "an_toan": tt.CAU_BAO_LU})
+    kq, moi = luot_sua("dời điểm đó sang buổi khác", [duoc])
+    assert store.lay_lich(cid)["khung"] == kq["khung"] != khung and store.lay_lich(cid)["an_toan"] == tt.CAU_BAO_LU and tt.CAU_BAO_LU in tai()
+    # lượt BIỂU MẪU lập lịch mới hoàn toàn (lịch của lượt không có khối `thay_doi`) ⇒ KHÔNG thừa hưởng: lịch mới là lịch khác
+    bieu_mau = cuoi[-1]
+    del bieu_mau.lich_v2["lich"]["thay_doi"]
+    bieu_mau.lich_luu = {**luu, "an_toan": tt.CAU_BAO_LU}
+    luu_lich_cua_luot(store, cid, bieu_mau, flags)
+    assert "an_toan" not in store.lay_lich(cid) and tt.CAU_BAO_LU not in tai()
