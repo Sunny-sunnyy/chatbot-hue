@@ -32,6 +32,18 @@ def test_recognises_requests_for_a_list(cau):
     "Trong các quán vừa nêu, quán nào gần cầu Trường Tiền nhất?",   # chọn một
     "trong các quán vừa nêu quán nào gần nhất",                     # bộ dò mù của E 20/11 (B18): hỏi tiếp chọn MỘT trong các nơi đã nêu
     "trong số những lăng đó lăng nào đẹp",
+    # review E 20/11 (F1): chữ "nào" thuộc cụm hỏi GIỜ / CÁCH / THỜI ĐIỂM ("lúc nào", "khi nào", "thế nào", "mùa nào"…) của nhiều nơi — không phải xin danh sách
+    "các lăng này mở cửa lúc nào",
+    "những quán đó mở cửa đến khi nào",
+    "các lễ hội ở Huế diễn ra khi nào",
+    "các chùa ở Huế vào cửa thế nào, có mất vé không",
+    "những điểm đó đi lại như thế nào",
+    "các quán này giá cả thế nào",
+    "các bãi biển ở Huế mùa nào đẹp",
+    "những món đó ăn vào lúc nào trong ngày",
+    "các lăng vua nên đi vào buổi nào",
+    "các chợ ở Huế họp vào giờ nào",
+    "các nhà vườn này bán vé ở chỗ nào",
     "Vé vào các lăng giá bao nhiêu?",                   # "các lăng" nhưng hỏi giá
     "Các bạn cho mình hỏi đường ra chợ Đông Ba",
     "Đi Huế 2 ngày nên ở khách sạn hay homestay?",

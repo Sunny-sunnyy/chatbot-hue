@@ -42,3 +42,12 @@ chữa độ đủ của danh sách (cần bảng thuộc tính + bổ sung kho)
 - Sau sửa (C chạy lại CÙNG 40 câu — C đã đọc bộ nên lần này KHÔNG còn mù): nhận 19 / 20, nối nhầm 2 / 20 (đúng hai câu ghi giới hạn). Test: hai ca mới ĐỎ trước
   dòng loại trừ (2 hỏng / 26 đạt), xanh sau (28 đạt). Hậu quả của một lần nối nhầm: thừa một dòng ghi chú dưới câu trả lời không phải danh sách.
 - Nói thẳng: sàn ghi trước là 0 và kết quả là 2 ⇒ bật cờ hay không là quyết định của chủ dự án với con số này, không phải "đạt".
+
+## Sau review của phiên E (ghi 15:58 20/11/2026, giờ `date`) — một lỗi thật, đã sửa
+- E đọc code rồi soạn 12 câu: 11 / 12 câu hỏi GIỜ / CÁCH / THỜI ĐIỂM của nhiều nơi ("các lăng này mở cửa lúc nào", "các lễ hội ở Huế diễn ra khi nào", "các quán này giá cả
+  thế nào"…) bị nhận nhầm là xin danh sách, vì khuôn nhận chữ "nào" đứng trong "lúc nào / khi nào / thế nào / mùa nào / chỗ nào". Đây là câu người dùng thật hay gõ ⇒ phiên
+  điều phối chốt SỬA. Bộ dò mù không bắt được vì viết "mấy giờ", "bao nhiêu". Lỗi của C: bộ câu "giống-mà-không-phải" trong test tự viết quá ít kiểu.
+- Sửa một chỗ trong `backend/llm/danh_sach.py`: từ đứng NGAY trước "nào / gì" không được là từ hỏi giờ / cách / thời điểm (lúc, khi, thế, sao, mùa, buổi, giờ, ngày, tháng, năm,
+  chỗ, nơi, đâu, cách, bằng, kiểu, bao, mấy); "<loại> nào" liền nhau vẫn nhận. 11 câu của E thành ca test: ĐỎ trước sửa (11 hỏng / 28 đạt), xanh sau (39 đạt).
+- C chạy lại 40 câu bộ mù của E: nhận 19 / 20, nối nhầm 2 / 20 (hai câu dựng tay đã ghi giới hạn). Hai câu nhỏ E nêu thêm ("tất cả các … có … không", "không cần danh sách …")
+  ghi giới hạn ở runbook 10.1. Chờ E chạy lại 12 + 40 câu của E; tiêu chí phiên điều phối đặt: nối nhầm ≤ 2 / 52, không đạt thì cờ giữ tắt, không vòng nữa.

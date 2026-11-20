@@ -13,7 +13,10 @@ CAU_DANH_SACH = "Danh sách trên chỉ gồm những nơi có trong các bài t
 # Thứ người dùng xin kể: nơi chốn / món / sự kiện có bài trong kho. Từ chung ("thông tin", "lưu ý", "bước") cố ý không có.
 _LOAI = (r"(?:quán|nhà hàng|tiệm|hàng|chỗ|nơi|điểm|địa điểm|địa chỉ|lăng|lăng tẩm|chùa|đền|miếu|nhà vườn|làng|làng nghề|chợ|bãi biển|bãi tắm|bãi|biển|"
          r"khách sạn|homestay|resort|món|đặc sản|lễ hội|bảo tàng|di tích|cà phê|cafe)")
-_GIUA = r"(?:[^\s,;:.?!]+\s+){0,6}?"  # vài từ chen giữa, không vắt qua dấu câu
+# Vài từ chen giữa <loại> và "nào / gì", không vắt qua dấu câu. Từ đứng NGAY trước "nào / gì" không được là từ hỏi giờ / cách / thời điểm
+# ("lúc nào", "khi nào", "thế nào", "mùa nào", "chỗ nào"…): "các lăng này mở cửa lúc nào" hỏi GIỜ của nhiều nơi, không xin danh sách (review E 20/11).
+_KHONG_TRUOC_NAO = r"(?!(?:lúc|khi|thế|sao|mùa|buổi|giờ|ngày|tháng|năm|chỗ|nơi|đâu|cách|bằng|kiểu|bao|mấy)\s)"
+_GIUA = rf"(?:(?:[^\s,;:.?!]+\s+){{0,5}}?{_KHONG_TRUOC_NAO}[^\s,;:.?!]+\s+)?"
 _MAU = re.compile(
     rf"(?<!\w)(?:những|các)\s+{_LOAI}\s+{_GIUA}(?:nào|gì)(?!\w)"                      # "những quán nào mở sớm", "các lăng vua nào mở cửa"
     rf"|(?<!\w)có\s+(?:những|các)\s+{_LOAI}\s+{_GIUA}(?:nào|gì)(?!\w)"
