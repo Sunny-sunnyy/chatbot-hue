@@ -206,3 +206,33 @@ def test_every_new_stop_after_removal_is_named_in_the_note():  # (C 17/11) tự 
             moi = {j for ng in kq["khung"]["ngay"] for b in v2.BUOI for j in ng["buoi"][b]} - truoc
             bao = " ".join(d["cau"] for d in s.thay_doi(B, kq))
             assert all(B.theo_id[j]["ten"] in bao for j in moi), (x, moi, bao)
+
+
+def test_move_that_leaves_the_point_where_it_was_is_not_reported_as_moved():
+    # soát khác hãng 20/11: model hiểu một câu thành hai lần dời về cùng một (ngày, buổi) ⇒ hai lần đổi chỗ ngược nhau, lịch y nguyên mà báo "Đã dời…"
+    k, luu = _lich()
+    vt = s._vi_tri(k)
+    x = sorted(vt)[0]
+    kq = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=x, ngay=vt[x][0], buoi=vt[x][1])])  # dời về đúng chỗ đang đứng
+    assert kq["da_ap"] == [] and kq["khung"] == k and [d["ma_luat"] for d in kq["khong_doi"]] == ["van_cho_cu"]
+    assert [d["duoc"] for d in s.thay_doi(B, kq)] == [False]
+    for y in vt:  # mọi điểm: tự dời về chỗ đang đứng ⇒ khung trả về đúng bản đã lưu (cả thứ tự trong buổi)
+        tu = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=y, ngay=vt[y][0], buoi=vt[y][1])])
+        assert tu["da_ap"] == [] and tu["khung"] == k and tu["luu"]["khung"] == k
+    dich = "chieu" if vt[x][1] == "sang" else "sang"
+    roi = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=x, buoi=dich), s.HanhDong(loai="bo_diem", ten=x)])  # dời rồi bỏ chính điểm đó: không văng
+    assert x not in s._vi_tri(roi["khung"]) and not any(d["ma_luat"] == "van_cho_cu" for d in roi["khong_doi"])
+    cap = [(a, b) for a in sorted(vt) for b in sorted(vt) if a != b and vt[a] != vt[b] and sum(v == vt[b] for v in vt.values()) == 1
+           and vt[b][1] in B.theo_id[a]["buoi"] and vt[a][1] in B.theo_id[b]["buoi"]]
+    thay = 0
+    for a, b in cap:
+        dich = {"ngay": vt[b][0], "buoi": vt[b][1]}
+        mot = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=a, **dich)])
+        if not mot["da_ap"] or s._vi_tri(mot["khung"]).get(b) != vt[a]:
+            continue  # lần dời đầu không ra đổi chỗ hai điểm ⇒ không phải ca này
+        thay += 1
+        assert s._vi_tri(mot["khung"])[a] == vt[b] and "Đã dời" in s.thay_doi(B, mot)[0]["cau"]  # ca ngược: dời thật vẫn báo "Đã dời"
+        hai = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=a, **dich), s.HanhDong(loai="doi_buoi", ten=b, **dich)])
+        if hai["khung"] == k:
+            assert hai["da_ap"] == [] and not any(d["duoc"] for d in s.thay_doi(B, hai))
+    assert thay  # bảng điểm thật phải có ít nhất một cặp đổi chỗ được, không thì test này không kiểm gì
