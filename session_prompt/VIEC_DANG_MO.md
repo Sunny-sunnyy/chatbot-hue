@@ -10,16 +10,18 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 - BẢNG TRẠNG THÁI (16:08 20/11/2026; số trong ngoặc vuông = số trong bảng gộp; phiên mở lại đọc bảng này trước):
   | Mục | Việc | Trạng thái | Nhánh / hồ sơ |
   |---|---|---|---|
-  | [21] | Dời một điểm: nói lý do + gợi ý chỗ dời được | ĐÃ GỘP, có lượt thật qua giao diện (E); còn viết `bai_hoc/` (E) | `report_agent/2026-11-20/e_doi_diem_goi_y_plan.md`; giới hạn runbook 10.2 |
-  | [1] | Cache câu trả lời giữa các cuộc trò chuyện | ĐÃ GỘP, cờ `cache_cau_tra_loi` TẮT — chờ lượt thật qua trình duyệt (B đang chạy) rồi A bật | `report_agent/2026-11-20/b_cache_cau_tra_loi_plan.md` |
-  | [18] | Câu xin danh sách: dòng "có thể chưa đủ" | ĐÃ GỘP, cờ `danh_sach_noi_that` TẮT — chờ hai câu khói (B chạy chung lượt) rồi A bật; bộ dò: nối nhầm 2 / 52 | `report_agent/2026-11-20/c_danh_sach_noi_that.md` |
+  | [21] | Dời một điểm: nói lý do + gợi ý chỗ dời được | XONG — đã gộp, lượt thật qua giao diện đạt, `bai_hoc/` mục 19 có | `report_agent/2026-11-20/e_doi_diem_goi_y_plan.md`; giới hạn runbook 10.2 |
+  | [1] | Cache câu trả lời giữa các cuộc trò chuyện | XONG — ĐÃ BẬT `cache_cau_tra_loi` (16:16 20/11/2026); lượt thật qua trình duyệt (B): lần một 7,5 s · lần hai 0,11 s, 0 lần gọi model, 0 USD, chữ + nguồn + ảnh giống; còn: B ghi giới hạn runbook + `bai_hoc/` | `report_agent/2026-11-20/b_cache_cau_tra_loi_plan.md`; `data/cache_cau_tra_loi_2026-11-20/luot_that/` |
+  | [18] | Câu xin danh sách: dòng "có thể chưa đủ" | XONG — ĐÃ BẬT `danh_sach_noi_that` (16:16 20/11/2026); hai câu khói đạt (câu xin danh sách có dòng, câu hỏi giờ không có); bộ dò nối nhầm 2 / 52; `bai_hoc/` do B viết | `report_agent/2026-11-20/c_danh_sach_noi_that.md` |
   | [19] | Câu nhiều ý bị từ chối cả câu | GIỮ GIỚI HẠN (User chọn theo số đếm ≈ 1 %) | `data/kiem_ke_phase_2026-11-20/C_dem_18_19.md` |
-  | [4] | Trang "Bản đồ" riêng | Code xong, B READY, lượt trình duyệt đạt (40 ghim); E đang bỏ "Giới thiệu" khỏi thanh dưới điện thoại ⇒ A gộp ⇒ E dựng lại `frontend/dist` | `origin/p9-e-trang-ban-do` |
-  | [2] | Sự kiện theo ngày (chỉ ở ô hỏi đáp) | Code xong `origin/p9-c-su-kien-theo-ngay` `83659c8`, cờ TẮT; chờ B đọc 100 % bảng 27 dòng + review, E soạn bộ dò, lượt thật cặp tắt ↔ bật | bảng ở `data/su_kien_theo_ngay_2026-11-20/` (hook chặn vì chép nguyên văn kho) |
+  | [4] | Trang "Bản đồ" riêng | XONG — ĐÃ GỘP `b2f27d78` (40 ghim, lọc theo loại; thanh dưới điện thoại bỏ "Giới thiệu"); `bai_hoc/` mục 20 có; E dựng lại `frontend/dist` cây chính | `report_agent/2026-11-20/e_trang_ban_do_plan.md` |
+  | [2] | Sự kiện theo ngày (chỉ ở ô hỏi đáp) | Code xong `origin/p9-c-su-kien-theo-ngay` (bảng v2 27 dòng — B đọc 100 %, số đúng 27 / 27), cờ TẮT; bộ dò của E: mở đúng 15 / 15, mở nhầm 1 / 20 ⇒ C sửa một lần; chờ B review + lượt thật cặp tắt ↔ bật | bảng ở `data/su_kien_theo_ngay_2026-11-20/` |
   | [3] | Ứng xử / trang phục | COI LÀ ĐÃ CÓ qua hỏi đáp thường: lượt thật 6 câu ⇒ 4 trả lời từ kho có nguồn, 2 nói thật + mục web; không xây gì. Hai chỗ kho thiếu (chụp ảnh trong lăng, cởi giày vào chùa) = bổ sung kho, không mở | `data/test_cuoi/chay_2026-11-20_chieu/` |
-  | [14] | "Lên lịch giúp mình" trong ô chat — mức nhẹ | Đo: trợ lý viết lịch bằng chữ chung chung, 0 link sang trang Lên kế hoạch ⇒ E làm dòng dẫn sang trang (cờ, mặc định tắt; C soạn bộ dò) | — |
+  | [14] | "Lên lịch giúp mình" trong ô chat — mức nhẹ | Code xong `origin/p9-e-len-lich-dan-trang` `6d21bb2`, cờ `len_lich_dan_trang` TẮT (dòng ghi chú có link sang trang Lên kế hoạch); chờ bộ dò mù + review của C + lượt thật | `report_agent/2026-11-20/e_len_lich_dan_trang.md` |
   | [5] | "Gần X có gì ăn" trong ô chat | CHƯA bắt đầu (cần bảng thuộc tính / toạ độ quán — xem số đếm của C) | — |
-  | [8] [9] [11] [12] | Nhớ cả câu trả lời · hỏi lại khi thiếu thông tin · đổi chỗ ngày 1 với ngày 2 · bốn việc hẹn "sau lượt đo cuối" | [11] + kiểm [12]: giao C; [8], [9] chưa bắt đầu | — |
+  | [11] | Sửa lịch "đổi chỗ ngày 1 với ngày 2" | Plan duyệt (`report_agent/2026-11-20/c_doi_cho_ngay_plan.md` trên `origin/p9-c-doi-cho-ngay`; đếm trước: 39 / 39 cặp ngày hoán đổi hợp luật) — C đang code; B soạn bộ dò, E review | — |
+  | [12] | Bốn việc hẹn "sau lượt đo cuối" | CHỐT: cả bốn GIỮ GIỚI HẠN (0 / 4 đã làm; đều hiếm hoặc không có lượt thật gặp — `data/kiem_ke_phase_2026-11-20/C_muc_12.md`) | — |
+  | [8] [9] | Nhớ cả câu trả lời trong một cuộc trò chuyện · hỏi lại khi thiếu thông tin | CHƯA bắt đầu | — |
   | [6] [7] | Trang theo dõi · agent đề xuất sửa kho có User duyệt | CHƯA bắt đầu | — |
   | [10] [13] | So sánh cuối trên bộ kín (chỉ User gõ lệnh) · deploy + chốt trước deploy | Sau khi các mục trên xong | — |
 - Lượt giao diện chiều 20/11 (E, 0,018 USD, `data/test_cuoi/chay_2026-11-20_chieu/`): 390 px tràn ngang 0 ở mọi màn; câu khói G1, #7, #4, "báo đã dời" đạt; G2 chờ B xác nhận đúng ý; #1 không thử được qua giao diện. Ghi nhận không sửa: câu từ chối dài bị khuất dưới mép khung trợ lý nổi (cuộn được); nút trợ lý nổi không có ở điện thoại (chủ ý).
