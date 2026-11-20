@@ -122,6 +122,9 @@ class AssistantFlags:
     # 19/11 (plan private `data/hoi_tiep_goi_y_2026-11-19/PLAN.md`): lịch sử chỉ nhớ câu hỏi ⇒ hỏi tiếp "địa chỉ quán đó" model không biết quán nào.
     # Bật: code ghi TÊN BÀI các nguồn đã trích là bài riêng của một nơi vào chỗ tin trợ lý của lịch sử (`llm/ten_goi_y.py`). TẮT tới khi đo đạt.
     nho_ten_goi_y: bool = False
+    # 20/11 (plan `report_agent/2026-11-20/b_cache_cau_tra_loi_plan.md`): người khác gõ ĐÚNG câu đó ở lượt đầu một cuộc mới ⇒ route trả lại bản đã
+    # lưu, không tìm kho / gọi model (`api/cache_tra_loi.py`). Lõi không đọc cờ này — chỉ nơi dựng app. TẮT tới khi review + lượt thật đạt.
+    cache_cau_tra_loi: bool = False
     # "Lên kế hoạch" đợt 1 (plan `2026-11-12-len-ke-hoach-dot-1-plan.md`, spec bản 3.3 §5c.8): biểu mẫu bốn nhóm + hợp đồng `truong` mới — một cờ cho
     # cả đợt, TẮT tới khi đạt nghiệm thu; cần `lich_trinh_bieu_mau`. `len_ke_hoach_o_hien` = các ô biểu mẫu hiện (`/api/tinh_nang`): ô chưa có tác
     # dụng với bộ xếp đang dùng thì chưa hiện (spec N1)
