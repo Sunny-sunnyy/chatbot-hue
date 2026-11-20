@@ -23,3 +23,10 @@
 **4. Chưa làm ở nhánh này / giới hạn biết trước**
 - Lượt thật qua giao diện (model + trình duyệt): gộp vào lượt bật server chung do phiên điều phối báo. Cả bộ test: một lượt cuối đợt. Tỉ lệ dời được KHÔNG tăng (vẫn 14 %) — bản này chỉ làm câu từ chối có ích; nới luật hay thêm đường lui là việc khác, chưa ai giao.
 - Một lý do cho mỗi ca: ca dính cả khu lẫn kín (60 / 152 ở mốc) chỉ nói lý do khu. `them_diem` và điểm chưa có trong lịch giữ câu cũ. Câu dài hơn khi có nhiều gợi ý (lịch nhẹ nhàng: tới 4 chỗ) — không cắt.
+
+**5. Kết quả (E ghi 15:36 20/11/2026, giờ `date`; mọi dòng [máy kiểm], hàm thật, 0 USD; CHƯA có lượt thật qua model / trình duyệt; chưa ai review)**
+- a. Dời được 24 / 176, cả 24 khung giống từng byte mốc ghi trên code trước sửa; 152 ca từ chối trùng đúng 152 ca của mốc. (Chạy riêng sau bước tách hàm, trước khi viết phần gợi ý: cũng 24 / 24.)
+- b. 152 / 152 ca từ chối: lịch trả về = bản đã lưu, `ma_luat` vẫn `khong_hop_luat`; lý do: hai khu không liền nhau 111 · quá kín hoặc quá giờ 41 · ngoài giờ mở cửa 0 · giữ câu cũ 0.
+- c. 60 ca có gợi ý (92 gợi ý, nhiều nhất 2 / ca — plan đoán "tới 4" là sai), áp lại bằng `ap`: 92 / 92 dời được đúng chỗ và điểm đổi chỗ về đúng chỗ cũ; 92 ca không gợi ý đều ra câu "chỉ đứng được ở chỗ hiện tại"; số gợi ý của từng ca khớp phép đếm mốc 152 / 152.
+- d. Test mới `test_refused_move_says_one_reason_and_lists_slots_that_work`: ĐỎ trên code cũ (`KeyError: 'dich'`), xanh sau. `test_sua_lich_v2` 13 · `test_rao_so_ngay` 44 · `test_len_ke_hoach_v2` 93 · `test_b5_lich_trinh` 245, đều đạt (Python 3.13 của cây chính, từng file).
+- Lệch plan: code +49 dòng (plan ước ~35). Lệnh kiểm (script riêng tư, chạy từ `backend/`): `HF_HUB_OFFLINE=1 PYTHONPATH=.:tests uv run --no-sync python ../data/test_cuoi/tools/kiem_doi_diem_goi_y_2026-11-20.py kiem` (mốc: `data/test_cuoi/chay_2026-11-20/moc_doi_buoi_truoc_goi_y.json`).
