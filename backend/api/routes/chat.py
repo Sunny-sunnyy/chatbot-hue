@@ -160,8 +160,21 @@ REMEMBERED_OUTCOMES = {"success", "out_of_scope", "refusal_no_sources", "max_tur
 
 
 def an_toan_cua_luot(trace: AnswerTrace) -> str | None:
-    """Câu bản tin chính thức + 112 của lượt (lưới cuối câu bão đặt vào `notice` trước khi lượt kết thúc) — đúng HẰNG SỐ của code, hoặc None."""
-    return tt.CAU_BAO_LU if tt.CAU_BAO_LU in (trace.notice or "") else None
+    """Câu bản tin chính thức + 112 của lượt — đúng HẰNG SỐ của code, hoặc None. Hai nguồn: (1) lưới cuối câu bão đã đặt vào `notice` của chính lượt;
+    (2) lượt SỬA lịch LÀM ĐƯỢC mà không có câu riêng ⇒ thừa hưởng câu của bản lưu trước (cùng một lịch, đã sửa). Lượt biểu mẫu (lịch không có
+    `thay_doi`) lập lịch KHÁC ⇒ không thừa hưởng. MỘT hàm cho cả sự kiện ghi chú lẫn bản lưu, để thẻ lịch và file tải về không lệch nhau (soát 20/11)."""
+    if tt.CAU_BAO_LU in (trace.notice or ""):
+        return tt.CAU_BAO_LU
+    thay_doi = ((trace.lich_v2 or {}).get("lich") or {}).get("thay_doi") or ()
+    return (trace.lich_luu or {}).get("an_toan") if any(d["duoc"] for d in thay_doi) else None
+
+
+def an_toan_vao_ghi_chu(trace: AnswerTrace) -> None:
+    """Trước khi phát sự kiện ghi chú: câu an toàn THỪA HƯỞNG (xem `an_toan_cua_luot`) vào `notice` của lượt ⇒ thẻ lịch đã sửa, bản in, .txt, .ics
+    (đều đọc ghi chú an toàn của lượt) có câu đó như file PowerPoint. Lượt đã có câu riêng, hoặc không có gì để thừa hưởng ⇒ không đổi gì."""
+    an_toan = an_toan_cua_luot(trace)
+    if an_toan and an_toan not in (trace.notice or ""):
+        trace.notice = f"{an_toan} {trace.notice}" if trace.notice else an_toan
 
 
 def luu_lich_cua_luot(store, conversation_id: str, trace: AnswerTrace, flags: AssistantFlags) -> None:
@@ -171,10 +184,6 @@ def luu_lich_cua_luot(store, conversation_id: str, trace: AnswerTrace, flags: As
     # lượt SỬA không đổi được gì (không có bản lưu mới) mà chính lượt đó có câu an toàn ⇒ giữ bản lưu cũ, chỉ thêm câu đó (review E 20/11)
     if luu is None and an_toan and trace.lich_luu is not None and trace.lich_v2 is not None and "thay_doi" in trace.lich_v2["lich"]:
         luu = dict(trace.lich_luu)
-    # lượt SỬA làm được mà lượt đó không có câu an toàn riêng ⇒ bản lưu mới thừa hưởng câu an toàn của bản trước (cùng một lịch, đã sửa); lượt biểu mẫu
-    # (lịch không có `thay_doi`) lập lịch KHÁC ⇒ không thừa hưởng (điều phối chốt 20/11: file của lịch đã sửa không được mất câu bão / lũ + 112)
-    elif luu is not None and not an_toan and "thay_doi" in trace.lich_v2["lich"]:
-        an_toan = (trace.lich_luu or {}).get("an_toan")
     if luu is not None:
         if an_toan:
             luu["an_toan"] = an_toan
@@ -692,6 +701,7 @@ async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float
             yield stream.status(data) if kind == "status" else stream.delta(data) if kind == "delta" else stream.lich_v2(kind, data)
         if luoi_cuoi is not None:
             luoi_cuoi()  # lưới cuối câu bão: sau khi lõi xong, trước `sources` / `notice` / `done`
+        an_toan_vao_ghi_chu(trace)  # lượt sửa lịch làm được thừa hưởng câu an toàn của bản lưu trước — trước khi phát `notice`
         for event in (stream.fixed(trace) if trace.fixed_outcome is not None else stream.finish(trace)):
             yield event
     except (asyncio.CancelledError, GeneratorExit):
