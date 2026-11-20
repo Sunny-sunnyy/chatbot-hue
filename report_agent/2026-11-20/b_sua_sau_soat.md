@@ -20,3 +20,12 @@ Giới hạn ghi sổ tay bàn giao mục 10 trong cùng nhánh (chỉ chữ, kh
 Hai điểm sửa khác của đợt soát (stream thiếu phần đuôi · PowerPoint mất câu an toàn sau lượt sửa không đổi lịch) do phiên C viết trên nhánh `p9-c-sua-sau-soat-2011`.
 
 Lệnh kiểm: `cd backend && uv run pytest tests/test_nho_ten_goi_y.py tests/test_rao_so_ngay.py -q` ⇒ 19 + 44 passed (hai tiến trình riêng: 19 passed · 44 passed).
+
+## Đợt hai — sau hai lượt Gemini (B, 10:02 20/11/2026, giờ `date`; nhánh `p9-b-sua-sau-soat-2-2011`)
+Trạng thái: **code + test xong; chờ phiên C đọc code (≤ 5 dòng) và phiên điều phối gộp.** Hai lượt Gemini (4 Neon, 4 Hydrogen) soát bản trước khi gộp đợt một: 16 phát hiện, 10 trùng, 6 mới — cả 6 nhóm kiểm lại là có thật, 3 chỗ nói quá mức.
+| # | Sửa gì | Vì sao (đã tái hiện bằng hàm thật) | Code | Bằng chứng [máy kiểm] |
+|---|---|---|---|---|
+| 4 | Dòng ý thiếu của câu nhiều ý ("Tư liệu chưa có thông tin về: …") không còn bị coi là câu trả lời đã nêu cảnh báo tạm ngừng | Cả hai Gemini nêu: bộ từ phủ định có "không có thông tin" nhưng thiếu "chưa có thông tin" — trong khi đó là hằng của chính code ⇒ mất dòng "Lưu ý trong nguồn" đúng lúc người dùng hỏi về điều kiện tạm ngừng | `backend/llm/luu_y_nguon.py` 1 dòng regex | test đỏ–xanh có ca đối chứng "đã nêu thật ⇒ không nối trùng"; `test_noi_dong_tam_ngung` 32 đạt; chạy lại bước nối trên câu trả lời cũ (công cụ 19/11): 11 dòng được nối trước ↔ sau sửa giống byte, giống cả bản 19/11 |
+| 5 | Câu có "dông" kèm nhờ làm thay: không thay bằng câu nói thật — như "giông" | Gemini Neon nêu; nhóm kiểm: nhẹ hơn lời Neon (câu 112 vẫn tới người dùng qua lưới cuối), nhưng "dông" / "giông" chạy lệch nhau và cổng tra web đóng | `backend/llm/assistant.py` 2 dòng (thêm khoá `luoi_cuoi` vào ngữ cảnh thời tiết của lượt + một điều kiện) | test đỏ–xanh qua đúng hàm dựng ngữ cảnh của lượt ("dông", "giông" ⇒ không thay; "nắng" ⇒ vẫn thay); `test_noi_that_lam_thay` 63 · `test_luoi_cuoi_bao` 10 · `test_b5b_thoi_tiet` 120 đạt |
+Chưa có lượt thật cho cả hai. Ghi giới hạn cùng nhánh (sổ tay bàn giao mục 10): giờ của lịch viết bằng chữ bị rút nhầm · nhờ làm thay chạm trần vòng công cụ · PowerPoint lịch 5 ngày kiểu khám phá đè chữ link.
+Sửa ở nhánh khác: bản in từ khung trợ lý nổi (phiên E) · lượt sửa lịch làm được làm mất câu 112 (phiên C).
