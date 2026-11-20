@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 16:11 20/11/2026 · thêm mục 20 (trang "Bản đồ" riêng trong menu: 40 điểm tham quan, lọc theo loại; đã thử trên trình duyệt ở màn rộng và bề rộng điện thoại; lúc viết nhánh CHỜ gộp vào bản chính) · trước đó 16:08 20/11/2026 · thêm mục 19 (sửa lịch bằng lời: khi KHÔNG dời được một điểm, trợ lý nói vì sao và gợi ý chỗ dời được; đã có một lượt thật trên giao diện và một phiên khác kiểm lại) · trước đó 13:45 20/11/2026 · thêm mục 18 (bản sửa "báo đã dời khi lịch không đổi" — việc mục 17 ý 5 ghi "được duyệt nhưng không làm được" nay đã làm; cả bộ test trên bản đã có sửa này (chạy 13:44–14:04 20/11/2026): 55 / 55 file, 1.555 ca đạt, 0 hỏng) · trước đó 11:40 20/11/2026 · mục 17 thêm ý 5 (lượt soát lần hai riêng cho các bản sửa: ba bản sửa nhỏ đã gộp, một bản không làm được, phần còn lại ghi giới hạn; cả bộ test trên bản cuối CHƯA chạy lúc viết) · trước đó 10:02, ngày 20/11/2026 · mục 17 thêm đợt hai (hai model Gemini: 16 phát hiện, 6 điểm mới; hai sửa của đợt hai đã gộp vào bản chính 10:10 20/11/2026) · trước đó 09:39, ngày 20/11/2026 · thêm mục 17 (một AI khác hãng soát code: 13 điểm, sửa bốn, ghi giới hạn tám, kèm một lỗi nhóm tự tìm; ba thay đổi của mục này đã gộp vào bản chính 09:41 20/11/2026) · trước đó 08:49, ngày 20/11/2026 thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; đã gộp vào bản chính 08:58 20/11/2026) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 16:17 20/11/2026 · thêm mục 22 (câu xin danh sách: trợ lý nói thật "danh sách có thể chưa đủ"; đã bật) và mục 21 (người sau gõ đúng câu người trước đã hỏi thì nhận lại câu trả lời cũ gần như ngay; đã bật sau một lượt thật trên trình duyệt) · trước đó 16:11 20/11/2026 · thêm mục 20 (trang "Bản đồ" riêng trong menu: 40 điểm tham quan, lọc theo loại; đã thử trên trình duyệt ở màn rộng và bề rộng điện thoại; lúc viết nhánh CHỜ gộp vào bản chính) · trước đó 16:08 20/11/2026 · thêm mục 19 (sửa lịch bằng lời: khi KHÔNG dời được một điểm, trợ lý nói vì sao và gợi ý chỗ dời được; đã có một lượt thật trên giao diện và một phiên khác kiểm lại) · trước đó 13:45 20/11/2026 · thêm mục 18 (bản sửa "báo đã dời khi lịch không đổi" — việc mục 17 ý 5 ghi "được duyệt nhưng không làm được" nay đã làm; cả bộ test trên bản đã có sửa này (chạy 13:44–14:04 20/11/2026): 55 / 55 file, 1.555 ca đạt, 0 hỏng) · trước đó 11:40 20/11/2026 · mục 17 thêm ý 5 (lượt soát lần hai riêng cho các bản sửa: ba bản sửa nhỏ đã gộp, một bản không làm được, phần còn lại ghi giới hạn; cả bộ test trên bản cuối CHƯA chạy lúc viết) · trước đó 10:02, ngày 20/11/2026 · mục 17 thêm đợt hai (hai model Gemini: 16 phát hiện, 6 điểm mới; hai sửa của đợt hai đã gộp vào bản chính 10:10 20/11/2026) · trước đó 09:39, ngày 20/11/2026 · thêm mục 17 (một AI khác hãng soát code: 13 điểm, sửa bốn, ghi giới hạn tám, kèm một lỗi nhóm tự tìm; ba thay đổi của mục này đã gộp vào bản chính 09:41 20/11/2026) · trước đó 08:49, ngày 20/11/2026 thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; đã gộp vào bản chính 08:58 20/11/2026) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -13,6 +13,80 @@
 **Từ dùng chung cho các mục 19/11:** **cờ** = một dòng bật / tắt trong file cấu hình, tắt là hệ thống chạy như trước khi có tính năng · **lời dặn** = đoạn chữ cố định gửi kèm mọi
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
+
+## 20/11 — 22. Câu xin danh sách ("ở Huế có những quán … nào"): trợ lý nói thật rằng danh sách có thể chưa đủ
+
+**Từ dùng ở mục này:** **dòng ghi chú** = dòng chữ nhỏ dưới câu trả lời (chỗ vẫn hiện "thông tin có thể đã thay đổi") · **khuôn nhận câu** = quy tắc bằng chương trình để nhận ra
+"đây là câu xin một danh sách" (model không tham gia) · **bộ dò mù** = bộ câu thử do một phiên KHÁC người viết soạn khi chưa xem quy tắc đó · **nối nhầm** = dòng ghi chú hiện ở một câu không xin danh sách.
+
+**Vì sao có việc này.** Khi anh hỏi "kể hết các quán …", trợ lý chỉ kể được những nơi có trong 10 đoạn kho tìm thấy, nên danh sách thường thiếu một hai nơi (đo sáng 20/11: thiếu ở 5 / 6 lần) mà không nói gì.
+Chữa cho danh sách ĐỦ cần bảng thuộc tính và bổ sung kho — việc lớn, anh chọn làm phần nhỏ trước (15:3x 20/11/2026): để trợ lý không còn im lặng.
+
+**1. Anh thấy gì khác.** Hỏi kiểu "Ở Huế có những quán bún bò nào?", "liệt kê các quán cà phê ven sông" mà trợ lý trả lời được từ kho ⇒ dưới câu trả lời, ở dòng ghi chú, có thêm câu:
+"Danh sách trên chỉ gồm những nơi có trong các bài tìm được, nên có thể chưa đủ." Chữ của câu trả lời không đổi. Câu hỏi về MỘT nơi, câu hỏi giờ / giá / cách đi của nhiều nơi, câu từ chối, lượt có lịch: không có dòng này.
+
+**2. Bằng chứng.**
+- **Lượt thật trên trình duyệt** (20/11/2026, hệ thống thật, mỗi câu một cuộc trò chuyện mới; một phiên khác người viết tính năng chạy) [người thứ hai kiểm]: "Ở Huế có những quán bún bò nào?" ⇒ trợ lý nêu bốn quán và CÓ dòng ghi chú trên;
+  "Các lăng vua ở Huế mở cửa lúc mấy giờ?" ⇒ nêu bảy lăng kèm giờ và KHÔNG có dòng đó. Tiền hai câu: 0,0009 USD.
+- **Bộ dò mù** (20 câu phải nhận + 20 câu giống-mà-không-phải, cộng 12 câu người review soạn sau khi đọc quy tắc) [người thứ hai kiểm]: nhận 19 / 20; nối nhầm **2 / 52**.
+  Nói thẳng: người viết ghi trước mức "nối nhầm 0"; kết quả là 2 — hai câu dựng tay dùng chữ "danh sách" / "liệt kê" theo nghĩa khác. Phiên điều phối chốt ghi giới hạn, không sửa tiếp.
+- **Lỗi thật người review bắt được và đã sửa trước khi bật:** 11 / 12 câu hỏi GIỜ / CÁCH / THỜI ĐIỂM của nhiều nơi ("các lăng này mở cửa lúc nào") từng bị nhận nhầm là xin danh sách, vì chữ "nào" trong "lúc nào / khi nào / thế nào".
+- Test bằng đồ giả [máy kiểm]: file test của tính năng 39 ca đạt; mỗi ca mới đều đã thấy hỏng trên bản trước khi sửa.
+
+**3. Chưa làm / giới hạn.**
+- KHÔNG chữa độ đủ của danh sách: trợ lý vẫn có thể kể thiếu — nay chỉ nói thật là có thể thiếu.
+- Khuôn hẹp, cố ý: "quán nào ngon" (không có "những / các"), câu xin gợi ý, câu so sánh không được nhận ⇒ không có dòng ghi chú dù câu trả lời là một danh sách. Sót thì chấp nhận; nối nhầm thì không.
+- Hai kiểu câu còn nối nhầm (thừa một dòng ghi chú, không sai nội dung) và hai kiểu câu nhỏ khác: sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 10.1.
+- Chưa thử trên điện thoại thật. Chưa có câu của người dùng thật.
+
+**4. Cách anh thử trong 2 phút.** Mở `http://127.0.0.1:8010/#/tro-ly`, hỏi "Ở Huế có những quán bún bò nào?" ⇒ dưới câu trả lời phải có dòng "Danh sách trên chỉ gồm những nơi có trong các bài tìm được, nên có thể chưa đủ."
+Bấm "Cuộc trò chuyện mới", hỏi "Bún bò Huế ăn ở quán nào ngon?" ⇒ không có dòng đó (câu xin gợi ý, không phải xin danh sách).
+
+## 20/11 — 21. Người sau gõ đúng câu người trước đã hỏi thì nhận lại câu trả lời cũ gần như ngay (nhớ câu trả lời giữa các cuộc trò chuyện)
+
+**Từ dùng ở mục này:** **cuộc trò chuyện** = một chuỗi hỏi đáp của một người; bấm "Cuộc trò chuyện mới" hoặc mở trình duyệt khác là một cuộc khác · **lượt đầu** = câu hỏi đầu tiên của một cuộc ·
+**bản lưu** = câu trả lời + các nguồn + dòng ghi chú của một lượt, hệ thống giữ trong bộ nhớ của chương trình đang chạy (RAM), không ghi ra đĩa · **trúng** = câu gõ khớp một bản lưu ·
+**khớp đúng chữ** = so từng chữ, chỉ bỏ qua chữ hoa / thường và khoảng trắng thừa · **khớp theo nghĩa** = coi hai câu "gần giống nhau" là một (KHÔNG dùng) · **cờ** = một dòng bật / tắt trong file cấu hình.
+
+**Vì sao có việc này.** Anh nói rõ chiều 20/11: sau khi một người hỏi một câu và hệ thống đã trả lời, khoảng 10–15 phút sau người khác hỏi lại câu đó thì phải lấy ra được câu trả lời cũ mà không tính toán lại.
+Việc này đã được bàn 05/11 (để dành tới khi có người dùng thật); nay làm đúng dạng đã thống nhất hôm đó: khớp đúng chữ, không khớp theo nghĩa — nghiên cứu 05/11 cho thấy khớp theo nghĩa trả nhầm khoảng 8 % số lần trúng
+(câu của "lăng A" trả cho người hỏi "lăng B"), tức lỗi "nói chắc mà sai".
+
+**1. Anh thấy gì khác.**
+- Một người hỏi một câu về Huế mà kho trả lời được. Trong 24 giờ sau, người KHÁC (cuộc trò chuyện khác) gõ đúng câu đó làm câu đầu tiên ⇒ nhận lại đúng câu trả lời cũ — cùng chữ, cùng dòng Nguồn, cùng ảnh —
+  gần như ngay, thay vì chờ vài giây. Viết khác chữ hoa / thường hay thừa khoảng trắng vẫn trúng.
+- Lượt trúng KHÔNG hiện các dòng tiến độ ("đang tìm…") vì không bước nào chạy; còn lại trông y như một lượt thường, hỏi tiếp bình thường.
+- **Khi nào KHÔNG lấy bản cũ** (trả lời như trước nay): gõ khác một chữ, một dấu thanh, thiếu dấu "?" · câu thứ hai trở đi của một cuộc (nghĩa của nó phụ thuộc câu trước) · lượt từ nút / biểu mẫu Lên kế hoạch / sửa lịch.
+- **Lượt nào KHÔNG được lưu:** câu trợ lý từ chối · lượt có mục "Từ web" · câu về thời tiết, ngày / lịch âm, khoảng cách, lịch trình (đổi theo giờ hoặc theo người) · lượt có câu cảnh báo an toàn · hỏi bằng ảnh · lượt lỗi.
+- Bản lưu tự mất: sau 24 giờ · khi mở lại hệ thống · khi kho, lời dặn, model hay cờ đổi (đều phải mở lại hệ thống). Nhiều nhất 500 câu, đầy thì bỏ câu lưu sớm nhất.
+
+**2. Bằng chứng.**
+- **Lượt thật trên trình duyệt** (20/11/2026, hệ thống thật với model thật, ba trình duyệt không chung cookie = ba cuộc trò chuyện; người viết đã mở ảnh lượt hai ra nhìn) [máy kiểm]:
+
+  | Lượt | Câu gõ | Kết quả |
+  |---|---|---|
+  | 1 | "Cơm hến Huế là món gì, ăn như thế nào?" | trả lời thường: 3 lần gọi model, 0,00076 USD, **7,5 giây** trên trình duyệt |
+  | 2 | đúng câu đó, cuộc khác | trúng: 0 lần gọi model, **0 USD**, **0,11 giây**; chữ, nguồn, ảnh giống lượt 1 từng chữ |
+  | 3 | câu đó viết thường / hoa lẫn lộn, thừa khoảng trắng, cuộc thứ ba | trúng: 0 USD, 0,11 giây, giống lượt 1 |
+
+  Phía hệ thống, lượt trúng mất khoảng 1 phần nghìn giây (lượt 1: 7,25 giây). 0 lỗi trang.
+- **Hệ thống không đổi khi tắt cờ** [máy kiểm]: 228 nội dung gửi model của bộ câu đối chiếu giống TỪNG BYTE giữa bản có tính năng (cờ tắt) và bản trước đó.
+- **Test bằng đồ giả** (model dựng sẵn, tìm kho thật; đếm được số lần gọi model) [máy kiểm]: 25 ca đạt — trúng ở cả hai đường trả lời; thiếu "?" / khác một dấu thanh / khác một chữ ⇒ không trúng; câu thứ hai của một cuộc và lượt từ nút ⇒ không tra;
+  câu từ chối hỏi ba lần ⇒ model được gọi cả ba lần; 17 loại lượt không được lưu; quá 24 giờ, vượt 500 câu, kho đổi ⇒ không trúng.
+- **Một phiên khác người viết** đọc toàn bộ thay đổi và các đường đặc biệt của hệ thống [người thứ hai kiểm]: không thấy loại lượt nào đổi theo giờ / theo người mà vẫn được lưu; bốn góp ý nhỏ, ba đã sửa.
+- Câu hỏi riêng tư: "câu của người này có mang gì riêng sang người khác không?" — bản lưu chỉ sinh từ lượt KHÔNG có lịch sử, không chứa mã cuộc / cookie / địa chỉ máy; người sau chỉ nhận được khi gõ đúng nguyên văn câu của người trước [đọc code + test; người thứ hai đã đọc].
+
+**3. Chưa làm / giới hạn** (bốn dòng đầu cũng ghi ở sổ tay bàn giao mục 10.1).
+- Lượt trúng không hiện dòng tiến độ.
+- Câu trả lời đầu tiên mà thiếu ý hay kém thì mọi người gõ đúng câu đó nhận lại bản ấy trong 24 giờ. Gỡ nhanh: mở lại hệ thống (bản lưu chỉ nằm trong RAM) hoặc tắt cờ `cache_cau_tra_loi`.
+- Sai một chữ, một dấu là không trúng — cố ý. Vì vậy tỉ lệ trúng ngoài đời có thể thấp; CHƯA có số (chưa có người dùng thật). Log ghi mỗi lượt được tra là "trúng" hay "trượt" để sau này đếm.
+- Qua tốc độ trả lời, người ngoài đoán được "câu này đã có người hỏi trong 24 giờ qua" (mức thấp, câu du lịch chung).
+- Khi hệ thống chạy nhiều tiến trình hoặc nhiều máy, mỗi tiến trình nhớ riêng (hiện chạy một tiến trình). Lợi về tiền nhỏ: khoảng 0,0008 USD mỗi lần trúng.
+- Chưa thử: lượt trúng trên điện thoại thật; hỏi tiếp sau một lượt trúng QUA TRÌNH DUYỆT (mới có test bằng đồ giả). Cả bộ test chưa chạy lại sau việc này (chạy một lượt ở cuối đợt).
+
+**4. Cách anh thử trong 2 phút.** Mở `http://127.0.0.1:8010/#/tro-ly`, hỏi "Cơm hến Huế là món gì, ăn như thế nào?" ⇒ chờ vài giây, có câu trả lời + dòng Nguồn. Bấm **"Cuộc trò chuyện mới"**, gõ lại ĐÚNG câu đó ⇒
+câu trả lời y hệt hiện ra gần như ngay, không có dòng "đang tìm…". Bấm "Cuộc trò chuyện mới" lần nữa, gõ câu đó nhưng bỏ dấu "?" ⇒ lại phải chờ vài giây (không trúng — đúng thiết kế).
+Lưu ý: nếu trước anh đã có ai hỏi câu này trong 24 giờ thì ngay lần đầu của anh cũng về tức thì. [đã chạy đúng ba bước này bằng trình duyệt tự động, trừ bước bỏ dấu "?" — bước đó mới có test bằng đồ giả]
 
 ## 20/11 — 20. Trang "Bản đồ" riêng trong menu: mọi điểm tham quan của trang Lên kế hoạch trên một bản đồ
 
