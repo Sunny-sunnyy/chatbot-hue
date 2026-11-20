@@ -87,7 +87,7 @@ report.
   và xóa khi xong (script dùng lại để `data/<đợt>/tools/`; `rm` bị chặn ⇒ nhờ User `!`). User hỏi về câu kín ⇒ A nhắc
   User mô tả chung, không dán nguyên câu.
 - Kho có Git từ 20/11/2026: sửa kho rồi commit, review bằng `git diff` (không cần backup vào `meta/` nữa; hook KHÔNG quét trùng chính file kho ⇒ bước quét nháp dưới đây vẫn bắt buộc). Bài nháp trước khi ghi kho: `uv run python .githooks/overlap_scan.py <nháp…>` phải ra 0 dòng trùng
-  Golden / câu kín (hook commit không quét kho vì kho không tracked) (User duyệt 10:15 15/11/2026).
+  Golden / câu kín (hook commit bỏ qua chính file kho) (User duyệt 10:15 15/11/2026).
 - **Chống mất dữ liệu** (User 14:41 20/11/2026; thay bản dài cùng ngày — User: ba tháng không sao lưu vẫn ổn, đừng thêm nghi thức): (1) **kho `knowledge-base-hue/` + bộ câu mẫu nằm trong git** (repo public, User cho phép) — sửa kho xong thì commit như code; file câu kín (`*sealed*`) KHÔNG commit, hook chặn. (2) `data/` chỉ nằm trên máy, **không sao lưu định kỳ**; không ghi gì lên ổ C. (3) Không xoá gì trong `data/`, kho cho tới khi nộp đồ án (cần xoá ⇒ hỏi User theo bảng quyền); file kết quả đo / log của một lượt chạy không ghi đè (tên kèm mã commit hoặc ngày-giờ). Các bản chép cũ ở `/mnt/d/hue_rag_sao_luu/` để nguyên, không chép thêm.
 - Curated Markdown: không YAML frontmatter, file bắt đầu bằng `#`; không ghi
   field/section rỗng; không thêm "Liên kết nội bộ"; nguồn tối giản ở
