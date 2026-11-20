@@ -1,0 +1,87 @@
+[
+  {
+    "source": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+    "condition": {
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế"
+      ],
+      "block_type": "paragraph",
+      "exact_text": "Dưới đây là mức giá khảo sát thực tế từ các đơn vị cung cấp dịch vụ tiêu biểu (Thuyền Rồng Huế, Ca Huế Trên Sông Hương - Lá Quê Travel, Đại Việt Tourist) tại thời điểm tháng 09/2026:"
+    },
+    "targets": [
+      {
+        "heading_path": [
+          "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+          "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+          "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+        ],
+        "block_type": "table",
+        "exact_text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |\n| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |"
+      },
+      {
+        "heading_path": [
+          "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+          "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+          "B. Thuê trọn gói nguyên thuyền rồng biểu diễn Ca Huế riêng (Bao chuyến)"
+        ],
+        "block_type": "table",
+        "exact_text": "| Loại phương tiện | Sức chứa tối đa | Mức giá khảo sát trọn gói | Thành phần phục vụ |\n|---|:---:|---:|---|\n| **Thuyền rồng đơn (thuyền nhỏ)** | Dưới 15 khách (tối đa 8 – 15 khách tùy thuyền) | **1.200.000 – 1.500.000** đồng/thuyền/chuyến | Toàn bộ thuyền đơn riêng biệt; đoàn biểu diễn riêng gồm ít nhất **07 nghệ sĩ, nhạc công**; thời lượng biểu diễn từ 50 – 60 phút; hoa đăng thả sông cho toàn đoàn. (Thuyền Rồng Huế khảo sát niêm yết 1.300.000đ/chuyến). |\n| **Thuyền rồng đôi (thuyền lớn)** | Dưới 35 khách (tối đa 25 – 35 khách tùy thuyền) | **1.600.000 – 2.500.000** đồng/thuyền/chuyến | Toàn bộ thuyền đôi lớn riêng biệt; đoàn biểu diễn riêng gồm ít nhất **08 nghệ sĩ, nhạc công**; thời lượng biểu diễn từ 50 – 60 phút; hoa đăng thả sông cho toàn đoàn. (Thuyền Rồng Huế khảo sát niêm yết 1.600.000đ/chuyến; các đại lý lữ hành đoàn lớn niêm yết 2.000.000 – 2.500.000đ). |"
+      }
+    ]
+  },
+  {
+    "source": "travel/tickets/Vé biểu diễn nghệ thuật và trải nghiệm sông Hương.md",
+    "condition": {
+      "heading_path": [
+        "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+        "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+        "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+      ],
+      "block_type": "list_item",
+      "exact_text": "- **Không bao gồm:** Phương tiện đưa đón tận nơi (khách tự di chuyển đến Bến Tòa Khâm), ăn uống cá nhân trên thuyền, tiền tip bồi dưỡng nghệ sĩ (không bắt buộc, tùy tâm)."
+    },
+    "targets": [
+      {
+        "heading_path": [
+          "2. Ca Huế trên sông Hương và dịch vụ thuyền rồng",
+          "2.3. Chi tiết bảng giá khảo sát dịch vụ Ca Huế",
+          "A. Vé khách lẻ ghép thuyền (Tour ghép đoàn)"
+        ],
+        "block_type": "table",
+        "exact_text": "| Hạng mục đối tượng | Mức giá niêm yết khảo sát | Đơn vị tính | Thành phần bao gồm | Ghi chú & Điều kiện áp dụng |\n|---|---:|:---:|---|---|\n| **Khách Việt Nam** | 100.000 – 130.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, ngắm sông Hương, 01 đèn hoa đăng | Giá phổ biến thực tế là 100.000 đồng; một số đơn vị niêm yết giá gốc 130.000đ khuyến mại về 100.000đ |\n| **Khách quốc tế** | 150.000 | đồng/người/suất | Chỗ ngồi thuyền rồng, xem Ca Huế 50 phút, hoa đăng thả sông, thuyết minh song ngữ ngắn | Áp dụng cho khách người nước ngoài |\n| **Trẻ em (theo chiều cao)** | Miễn phí (< 1.0m)<br>70.000 – 100.000 (1.0m – < 1.3m)<br>Tính như người lớn (≥ 1.3m) | đồng/trẻ/suất | Dịch vụ tương đương người lớn theo phân khúc | Tiêu chuẩn chiều cao quy định bởi đơn vị Lá Quê Travel (cahuetrensonghuong.com) |\n| **Trẻ em (theo độ tuổi)** | Miễn phí (< 4 tuổi)<br>50% – 70% vé lớn (4 – 9 tuổi)<br>100% vé lớn (≥ 10 tuổi) | đồng/trẻ/suất | Dịch vụ tương đương người lớn | Tiêu chuẩn độ tuổi áp dụng tại Thuyền Rồng Huế (thuyenronghue.com) |"
+      }
+    ]
+  },
+  {
+    "source": "travel/services/Chi phí du lịch Huế.md",
+    "condition": {
+      "heading_path": [],
+      "block_type": "paragraph",
+      "exact_text": "Ngân sách du lịch Huế phụ thuộc nơi khởi hành, thời điểm đặt dịch vụ, số người\nvà loại trải nghiệm. Các bảng dưới đây là hạn mức lập kế hoạch được đối chiếu\ntừ nguồn công khai ngày 08/09/2026, không phải giá niêm yết của một nhà cung cấp."
+    },
+    "targets": [
+      {
+        "heading_path": [
+          "Dự toán một ngày tại Huế"
+        ],
+        "block_type": "table",
+        "exact_text": "| Hạng mục | Tiết kiệm | Tiêu chuẩn | Thoải mái |\n|---|---:|---:|---:|\n| Đi lại tại Huế | 80.000–150.000 | 150.000–300.000 | 350.000–700.000 |\n| Ăn uống | 150.000–250.000 | 250.000–450.000 | 500.000–900.000 |\n| Dự toán tham quan | 0–200.000 | 200.000–400.000 | 400.000–600.000 |\n| Trải nghiệm và mua sắm | 0–150.000 | 150.000–350.000 | 350.000–800.000 |\n| Quỹ dự phòng | 50.000–100.000 | 100.000–200.000 | 200.000–400.000 |\n| **Tổng tại Huế** | **280.000–850.000** | **850.000–1.700.000** | **1.800.000–3.400.000** |"
+      },
+      {
+        "heading_path": [
+          "Dự toán hai ngày một đêm tại Huế"
+        ],
+        "block_type": "table",
+        "exact_text": "| Hạng mục | Tiết kiệm | Tiêu chuẩn | Thoải mái |\n|---|---:|---:|---:|\n| Đi lại tại Huế | 160.000–300.000 | 300.000–600.000 | 700.000–1.400.000 |\n| Lưu trú một đêm | 150.000–300.000 | 300.000–600.000 | 700.000–1.600.000 |\n| Ăn uống hai ngày | 300.000–500.000 | 500.000–900.000 | 1.000.000–1.800.000 |\n| Dự toán tham quan | 0–250.000 | 200.000–500.000 | 400.000–600.000 |\n| Trải nghiệm và mua sắm | 0–150.000 | 150.000–350.000 | 350.000–800.000 |\n| Quỹ dự phòng | 100.000–200.000 | 150.000–300.000 | 300.000–600.000 |\n| **Tổng tại Huế** | **710.000–1.700.000** | **1.600.000–3.250.000** | **3.450.000–6.800.000** |"
+      },
+      {
+        "heading_path": [
+          "Dự toán ba ngày hai đêm tại Huế"
+        ],
+        "block_type": "table",
+        "exact_text": "| Hạng mục | Tiết kiệm | Tiêu chuẩn | Thoải mái |\n|---|---:|---:|---:|\n| Đi lại tại Huế | 240.000–450.000 | 450.000–900.000 | 1.050.000–2.100.000 |\n| Lưu trú hai đêm | 300.000–600.000 | 600.000–1.200.000 | 1.400.000–3.200.000 |\n| Ăn uống ba ngày | 450.000–750.000 | 750.000–1.350.000 | 1.500.000–2.700.000 |\n| Dự toán tham quan | 0–350.000 | 300.000–600.000 | 400.000–600.000 |\n| Trải nghiệm và mua sắm | 0–200.000 | 200.000–500.000 | 500.000–1.200.000 |\n| Quỹ dự phòng | 150.000–300.000 | 250.000–500.000 | 500.000–1.000.000 |\n| **Tổng tại Huế** | **1.140.000–2.650.000** | **2.550.000–5.050.000** | **5.350.000–10.800.000** |"
+      }
+    ]
+  }
+]
