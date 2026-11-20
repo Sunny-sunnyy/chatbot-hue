@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 12:10 20/11/2026 (giờ `date`; giữa phiên 20/11, sau cả bộ test trên bản cuối). Người giữ: phiên điều phối.
+Viết lại lần cuối: 14:05 20/11/2026 (giờ `date`; chiều 20/11, sau bản sửa "báo đã dời" + cả bộ test trên bản mới). Người giữ: phiên điều phối.
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án cho BẤT KỲ coding agent nào vừa mở phiên; **viết lại tại chỗ** mỗi lần kết phiên, không nối thêm. Thứ tự mở
 phiên ở `session_prompt/START_SESSION.md`; sổ việc dài chỉ mở khi cần. `AGENTS.md`, code và file cấu hình thắng trang này — thấy lệch thì báo để sửa trang.
@@ -19,7 +19,7 @@ Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** =
 - **Cờ:** **29 BẬT** (28 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh). Giới hạn từng cờ: runbook 10.1, 10.2.
   **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
-- **Lần chạy cả bộ test gần nhất:** 20/11 trên main `d8651d4` (29 cờ, từng file, 55 file, Python 3.13): 1.554 đạt, 0 hỏng (lỡ chạy hai bản song song; mã thoát đều 0). `frontend/dist` cây chính dựng lại 20/11 (nút in chỉ còn ở trang Lên kế hoạch).
+- **Lần chạy cả bộ test gần nhất:** 20/11 chiều trên main `e13709a9` (29 cờ, từng file, 55 file, Python 3.13): 1.555 đạt, 0 hỏng. `frontend/dist` cây chính dựng lại 20/11 (nút in chỉ còn ở trang Lên kế hoạch).
 - **Bẫy RAM (19/11):** không gom nhiều file test dựng cả app vào một tiến trình pytest; chạy từng file ở cây chính, không cùng lúc với server.
 - **Máy:** mở lại máy ⇒ `/tmp` MẤT, Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1).
 - **Giới hạn đã biết:** `guides/RUNBOOK_BAN_GIAO.md` mục 10 — gặp hành vi trông như lỗi thì tra ở đó TRƯỚC khi sửa hay báo.
@@ -31,7 +31,7 @@ Thứ tự việc, KHÔNG gắn ngày — bước trước đạt và máy rản
 | Bước | Việc | Trạng thái |
 |---|---|---|
 | 1–4 | Cả bộ test · soát tích hợp · code đứng yên · lượt đo cuối phần đã thấy (18/11) · sửa câu thiếu cảnh báo bằng code (19/11) | XONG; bộ kín NOT RUN |
-| 5 | **Đợt hoàn thiện local — việc PHỔ THÔNG**: bốn việc của danh sách đóng đã bật; bộ 80 kịch bản 51 ⇒ 58; 20/11: soát khác hãng ba lượt ⇒ 12 bản sửa nhỏ đã gộp, còn lại ghi giới hạn (runbook mục 10); test trình duyệt + cả bộ test đạt | XONG phần nhóm (20/11); code ĐỨNG YÊN ở `d8651d4` — chỉ sửa lỗi buổi test tìm ra |
+| 5 | **Đợt hoàn thiện local — việc PHỔ THÔNG**: bốn việc của danh sách đóng đã bật; bộ 80 kịch bản 51 ⇒ 58; 20/11: soát khác hãng ba lượt ⇒ 12 bản sửa nhỏ đã gộp, còn lại ghi giới hạn (runbook mục 10); test trình duyệt + cả bộ test đạt | XONG phần nhóm (20/11); chiều 20/11 thêm bản sửa "báo đã dời khi lịch không đổi" (User chọn); code ĐỨNG YÊN ở `e13709a9` — chỉ sửa lỗi buổi test tìm ra |
 | 6 | **User test TOÀN BỘ một lần, trên máy LOCAL, khi nhóm đã làm xong hết** (`data/test_cuoi/DANH_SACH.md`) — nhóm KHÔNG chờ buổi này để làm bước kế | chưa |
 | 7 | Deploy AWS, SAU buổi test local (cần User một lần: tài khoản, khoá, ngân sách); xong thì User thử khói ~10 phút trên máy chủ | chưa |
 
@@ -44,7 +44,7 @@ Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / n
 
 1. User tự làm: trần chi tiêu từng khoá API · vô hiệu hoá khoá AWS cũ ở thư mục khoá học.
 2. Buổi User tự tay test toàn bộ (bước 6) — User chưa có giờ; KHÔNG nhắc.
-3. Chờ User trả lời (gác tới khi User quay lại): điều phối tự viết bản sửa "báo đã dời khi lịch không đổi" hay giữ giới hạn · bộ bài đánh giá model (khung ở `data/danh_gia_model_2026-11-20/`, chưa có đề; phiên Claude bị hệ thống dừng khi dựng) đi tiếp cách nào. Không gấp: ~20 câu User tự gõ (`data/kich_ban_pho_thong_2026-11-19/CAU_CUA_USER.md`).
+3. Ba câu gác 20/11 ĐÃ trả lời (đừng hỏi lại): bản sửa "báo đã dời" — đã gộp · bộ bài đánh giá coding agent — User TỰ đưa khung cho AI khác hãng soạn, nhóm không soạn / kiểm đề · cảnh báo câu bộ đo — KHÔNG thêm. Không gấp: ~20 câu User tự gõ (`data/kich_ban_pho_thong_2026-11-19/CAU_CUA_USER.md`).
 4. Chưa hỏi, không tự mở: giá phòng, bổ sung kho (số điện thoại, chỗ đậu xe…), vị trí người dùng.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
@@ -76,7 +76,7 @@ Cách làm:
 - Hỏi User: mỗi lần MỘT câu, có sẵn đáp án, mỗi đáp án kèm hệ quả. Tiếng Việt, lời thường, đủ quan trọng hơn ngắn. Giờ ghi vào tài liệu lấy bằng `date`.
 - Lỗi cách làm lặp lần hai mới thành luật; máy kiểm được thì làm phép kiểm thay chữ. Không thêm công cụ / rào riêng tư mới (User 14/11) — giữ rào đang có.
 - User không vắng trừ khi tự nói "đi vắng" (User 15/11). Không bao giờ gọi `agy` từ agent. Repo PUBLIC: `data/`, kho, câu của bộ đo không vào file được git theo dõi.
-- Thứ ngoài git (`data/`, kho, chỉ mục) sao lưu sang ổ khác cùng máy (18/11) — chép lại ở mỗi mốc chốt. Câu kín chỉ còn luật chữ giữ.
+- Thứ ngoài git (`data/`, kho, chỉ mục) có bản chép ở `D:\hue_rag_sao_luu` (cùng đĩa với ổ ảo WSL ⇒ chỉ chống xoá nhầm). KHÔNG ghi gì lên ổ C (User 20/11). Câu kín chỉ còn luật chữ giữ.
 - User chỉ đọc `bai_hoc/`: việc xong mới viết vào đó, mỗi con số kèm đo gì / so với mốc nào.
 
 Danh sách đủ, có ngày và nguồn: `session_prompt/Project_Status.md` mục 5 (nhật ký — chỉ mở khi cần tra một quyết định cụ thể).
