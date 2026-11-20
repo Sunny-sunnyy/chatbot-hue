@@ -154,6 +154,23 @@ def test_answer_still_reaches_user_when_an_earlier_text_block_hid_every_piece():
     assert events[2][1]["text"] == INSUFFICIENT_ANSWER and stream.metrics["refusal"] is True
 
 
+def test_tail_of_final_answer_is_sent_when_the_shown_text_is_only_its_beginning():
+    # Soát khác hãng 20/11: khối đầu là một answer NGẮN đã đóng, chữ cuối dài hơn (câu thêm có thể là cảnh báo của nguồn) ⇒ trước đây người dùng chỉ
+    # thấy câu đầu mà lượt vẫn "success". Chữ đã phát là tiền tố của chữ cuối ⇒ phát nốt phần đuôi, trước `sources`.
+    dau, cuoi = "Bến có chuyến buổi sáng [2].", "Bến có chuyến buổi sáng [Nguồn 2]. Bến tạm ngừng khi nước sông dâng [Nguồn 2]."
+    stream, chunks, _ = stream_with_text(cuoi, json.dumps({"answer": dau}, ensure_ascii=False))
+    events = parse_sse(chunks)
+    assert "".join(data["text"] for name, data in events if name == "delta") == "Bến có chuyến buổi sáng [2]. Bến tạm ngừng khi nước sông dâng [2]."
+    assert [name for name, _ in events][-3:] == ["delta", "sources", "done"] and stream.metrics["delta_matches_final"] is True
+    seqs = [data["seq"] for name, data in events if name == "delta"]
+    assert seqs == list(range(1, len(seqs) + 1))
+    # đối chứng: chữ đã phát KHÔNG phải tiền tố của chữ cuối ⇒ không phát thêm gì (không ghép hai bản khác nhau), cờ lệch vẫn ghi để đếm
+    stream, chunks, _ = stream_with_text("Bến tạm ngừng khi nước sông dâng [Nguồn 2].", json.dumps({"answer": dau}, ensure_ascii=False))
+    events = parse_sse(chunks)
+    assert "".join(data["text"] for name, data in events if name == "delta") == dau and stream.metrics["delta_matches_final"] is False
+    assert stream.metrics["outcome"] == "success"
+
+
 def test_hidden_answer_that_fails_citation_check_is_not_sent():
     stream, chunks, _ = stream_with_text("Mở cửa từ 7 giờ.", "Để mình tìm thêm.")  # chữ cuối thiếu trích dẫn ⇒ vẫn rút, không phát bù
     events = parse_sse(chunks)
