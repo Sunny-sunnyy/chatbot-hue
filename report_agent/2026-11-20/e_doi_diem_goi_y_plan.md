@@ -1,4 +1,4 @@
-# Plan một trang — dời một điểm bị từ chối: nói đúng lý do + gợi ý chỗ dời ĐƯỢC (E viết 15:31 20/11/2026, giờ `date`; chờ phiên điều phối duyệt)
+# Plan một trang — dời một điểm bị từ chối: nói đúng lý do + gợi ý chỗ dời ĐƯỢC (E viết 15:28 20/11/2026, giờ `date`; chờ phiên điều phối duyệt)
 
 **Từ dùng:** *khu* = cụm điểm gần nhau (mã `cum` trong bảng điểm) · *đổi chỗ* = luật có sẵn: buổi đích có đúng một điểm thì hai điểm đổi chỗ cho nhau · *mốc* = phép đếm chiều 20/11 trên bốn kiểu lịch, dời được 24 / 176 (script riêng tư `data/test_cuoi/tools/dem_doi_buoi_2026-11-20.py`).
 
@@ -21,7 +21,5 @@
 - d. test mới trong `backend/tests/test_sua_lich_v2.py` ĐỎ trên code cũ, xanh sau; bốn file `test_sua_lich_v2`, `test_len_ke_hoach_v2`, `test_b5_lich_trinh`, `test_rao_so_ngay` đạt (Python 3.13 của cây chính).
 
 **4. Chưa làm ở nhánh này / giới hạn biết trước**
-- Lượt thật qua giao diện (model + trình duyệt): gộp vào lượt bật server chung do phiên điều phối báo. Cả bộ test: một lượt cuối đợt.
-- Tỉ lệ dời được KHÔNG tăng (vẫn 14 %) — bản này chỉ làm câu từ chối có ích; nới luật hay thêm đường lui là việc khác, chưa ai giao.
-- Một lý do cho mỗi ca: ca dính cả khu lẫn kín (60 / 152 ở mốc) chỉ nói lý do khu. `them_diem` và điểm chưa có trong lịch giữ câu cũ.
-- Câu dài hơn khi có nhiều gợi ý (lịch nhẹ nhàng: tới 4 chỗ) — không cắt.
+- Lượt thật qua giao diện (model + trình duyệt): gộp vào lượt bật server chung do phiên điều phối báo. Cả bộ test: một lượt cuối đợt. Tỉ lệ dời được KHÔNG tăng (vẫn 14 %) — bản này chỉ làm câu từ chối có ích; nới luật hay thêm đường lui là việc khác, chưa ai giao.
+- Một lý do cho mỗi ca: ca dính cả khu lẫn kín (60 / 152 ở mốc) chỉ nói lý do khu. `them_diem` và điểm chưa có trong lịch giữ câu cũ. Câu dài hơn khi có nhiều gợi ý (lịch nhẹ nhàng: tới 4 chỗ) — không cắt.
