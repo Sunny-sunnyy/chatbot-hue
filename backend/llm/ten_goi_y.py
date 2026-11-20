@@ -26,10 +26,10 @@ TIEN_TO_GHI_CHU = "[Ghi chú hệ thống — câu trả lời lượt này có 
 
 # Câu xin liệt kê lại — luật HẸP có chủ ý: bắt nhầm (câu hỏi về MỘT nơi mất dòng ghi chú ⇒ model lại nói về nơi khác) nặng hơn bỏ sót (danh sách có
 # lúc thiếu, như trước bản sửa). Câu được nhận khi có một cụm xin danh sách đủ VÀ cả câu đúng MỘT khuôn:
-#   [lời lịch sự] [lời xin kể] [tất cả / toàn bộ] các / những / mấy / mọi <ĐÚNG MỘT loại nơi> [cụm trỏ lại] [lời lịch sự]
+#   [lời lịch sự] <lời xin kể — BẮT BUỘC> [tất cả / toàn bộ] các / những / mấy / mọi <ĐÚNG MỘT loại nơi> [cụm trỏ lại] [lời lịch sự]
 # Bản đầu xét "mọi từ thuộc bộ cho phép" đã bị bộ dò thêm bắt (review 20/11): túi từ không thấy cấu trúc, nên "liệt kê các điểm tham quan lăng đó",
 # "nêu đủ tên quán vừa gợi ý", "tất cả các điểm đó có cho tham quan không" đều lọt. Khuôn buộc dấu số nhiều đứng NGAY trước loại nơi, chỉ một loại
-# nơi, và sau cụm trỏ lại chỉ còn lời lịch sự. Sửa khuôn ⇒ chạy lại hai bộ dò của việc này.
+# nơi, và sau cụm trỏ lại chỉ còn lời lịch sự. Lời xin kể bắt buộc vì "đi", "được không" ở cuối cũng là câu hỏi thật ("tất cả mấy quán đó đi được không"). Sửa khuôn ⇒ chạy lại hai bộ dò của việc này.
 CUM_XIN_DU = ("kể hết", "kể đủ", "kể đầy đủ", "nêu hết", "nêu đủ", "nêu đầy đủ", "liệt kê", "danh sách", "tất cả", "toàn bộ",
               "kể lại các", "kể lại những", "nêu lại các", "nêu lại những", "nhắc lại các", "nhắc lại những",
               "kể tên các", "kể tên những", "nêu tên các", "nêu tên những")
@@ -41,7 +41,7 @@ _LOAI_NOI = (r"(?:chỗ|nơi|địa điểm|điểm tham quan|điểm du lịch|
 _TRO_LAI = (r"(?:đó|này|ấy|kia|ở trên|vừa rồi|lúc nãy|trong bài(?: (?:đó|này|ấy))?|trong danh sách"
             r"|(?:bạn )?(?:vừa|mới|đã) (?:nêu|nói|nhắc|kể|gợi ý|đề cập))")
 _LICH_SU_CUOI = r"(?:giúp (?:mình|tôi|em)|với|nhé|nha|đi|ạ|được không|xem nào|ra|luôn)"
-_KHUON_LIET_KE_LAI = re.compile(rf"(?:{_LICH_SU_DAU} )*(?:{_XIN_KE} )?(?:(?:tất cả|toàn bộ) )?(?:các|những|mấy|mọi) {_LOAI_NOI}"
+_KHUON_LIET_KE_LAI = re.compile(rf"(?:{_LICH_SU_DAU} )*(?:{_XIN_KE} )(?:(?:tất cả|toàn bộ) )?(?:các|những|mấy|mọi) {_LOAI_NOI}"
                                 rf"(?: {_TRO_LAI}){{0,2}}(?: {_LICH_SU_CUOI})*")
 
 

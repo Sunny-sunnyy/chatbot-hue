@@ -157,7 +157,7 @@ CAU_LIET_KE = "Kể hết các quán vừa nêu giúp mình"
 
 def test_list_again_question_is_recognised_narrowly():
     for cau in (CAU_LIET_KE, "Kể đủ các chùa trong bài đó giúp tôi", "liệt kê lại các chỗ đó nhé", "Cho mình danh sách đầy đủ các điểm tham quan ở trên",
-                "TẤT CẢ các quán đó!", "kể tên toàn bộ mấy chùa đó đi", "Bạn nêu lại những nơi bạn vừa nói được không?"):
+                "Liệt kê TẤT CẢ các quán đó!", "kể tên toàn bộ mấy chùa đó đi", "Bạn nêu lại những nơi bạn vừa nói được không?"):
         assert la_cau_xin_liet_ke_lai(cau), cau
     for cau in ("cho địa chỉ quán đó", "chỗ đầu tiên giá vé bao nhiêu", "quán đó ở đâu",
                 "liệt kê địa chỉ các quán vừa nêu",                               # cần dòng ghi chú để biết quán nào
@@ -169,6 +169,7 @@ def test_list_again_question_is_recognised_narrowly():
                 "liệt kê các quán ăn làng đó",                                    # hai loại nơi: quán ăn CỦA một làng vừa nêu
                 "chùa vừa nói còn những điểm nào nữa, kể hết đi",                 # điểm bên trong một nơi
                 "tất cả những điểm đó có chợ không",                               # hỏi một điều về cả nhóm, không xin kể lại
+                "tất cả mấy quán đó đi được không", "tất cả các chùa đó",          # không có lời xin kể: "đi được không" là câu hỏi có / không về cả nhóm
                 "liệt kê tất cả ra đi", "kể hết đi",                              # không nêu loại nơi ⇒ không nhận (có thể đang trỏ một nơi)
                 "", "Huế có chùa nào đẹp?"):
         assert not la_cau_xin_liet_ke_lai(cau), cau
