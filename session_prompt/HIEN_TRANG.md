@@ -31,7 +31,7 @@ Thứ tự việc, KHÔNG gắn ngày — bước trước đạt và máy rản
 | Bước | Việc | Trạng thái |
 |---|---|---|
 | 1–4 | Cả bộ test · soát tích hợp · code đứng yên · lượt đo cuối phần đã thấy (18/11) · sửa câu thiếu cảnh báo bằng code (19/11) | XONG; bộ kín NOT RUN |
-| 5 | **Đợt hoàn thiện local — việc PHỔ THÔNG**: bốn việc của danh sách đóng đã bật; bộ 80 kịch bản 51 ⇒ 58; 20/11: soát khác hãng ba lượt ⇒ 12 bản sửa nhỏ đã gộp, còn lại ghi giới hạn (runbook mục 10); test trình duyệt + cả bộ test đạt | XONG phần "bốn việc" (20/11) — CHƯA đủ theo phạm vi User nêu chiều 20/11 (mục 4); chiều 20/11 thêm bản sửa "báo đã dời khi lịch không đổi" (User chọn); code ĐỨNG YÊN ở `e13709a9` — chỉ sửa lỗi buổi test tìm ra |
+| 5 | **Đợt hoàn thiện local — việc PHỔ THÔNG**: bốn việc của danh sách đóng đã bật; bộ 80 kịch bản 51 ⇒ 58; 20/11: soát khác hãng ba lượt ⇒ 12 bản sửa nhỏ đã gộp, còn lại ghi giới hạn (runbook mục 10); test trình duyệt + cả bộ test đạt | XONG phần "bốn việc" (20/11) — CHƯA đủ theo phạm vi User nêu chiều 20/11 (mục 4); chiều 20/11 thêm bản sửa "báo đã dời khi lịch không đổi" (User chọn); bản code gần nhất đã chạy cả bộ test: `e13709a9`; còn phải làm các tính năng đã chốt chưa xong (bảng kiểm kê, mục 4) — mốc đứng yên đặt lại sau đó |
 | 6 | **User test TOÀN BỘ một lần, trên máy LOCAL, khi nhóm đã làm xong hết** (`data/test_cuoi/DANH_SACH.md`) — nhóm KHÔNG chờ buổi này để làm bước kế | chưa |
 | 7 | Deploy AWS, SAU buổi test local (cần User một lần: tài khoản, khoá, ngân sách); xong thì User thử khói ~10 phút trên máy chủ | chưa |
 
