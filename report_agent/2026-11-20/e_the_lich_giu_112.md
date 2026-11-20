@@ -12,7 +12,7 @@ Hỏi về bão ⇒ lập lịch (thẻ lịch có câu "theo dõi bản tin ch�
 - `an_toan_cua_luot` — MỘT hàm trả "câu an toàn của lượt": câu lưới cuối bão đã đặt cho chính lượt đó, hoặc — lượt SỬA lịch LÀM ĐƯỢC không có câu riêng — câu của bản lưu trước. Lượt biểu mẫu (lập lịch mới) không thừa hưởng.
 - `an_toan_vao_ghi_chu` (mới, 4 dòng) — gọi một chỗ, ngay sau lưới cuối và TRƯỚC khi phát sự kiện ghi chú: đưa câu thừa hưởng vào ghi chú của lượt. Thẻ lịch, bản in, .txt, .ics đều đọc ghi chú an toàn của lượt nên tự có.
 - `luu_lich_cua_luot` — bỏ nhánh thừa hưởng riêng (nay nằm trong hàm chung) ⇒ thẻ và bản lưu (file PowerPoint) không thể lệch nhau vì cùng hỏi một hàm.
-Cỡ: `chat.py` +18 −8 (kể chú thích); test +9 −0 trong test chuỗi đã có.
+Cỡ (theo `git show --numstat`): `chat.py` +16 −6 (kể chú thích); file test +11 −2, trong test chuỗi đã có.
 
 ## 3. Bằng chứng
 | Phép | Kết quả | Nhãn |
