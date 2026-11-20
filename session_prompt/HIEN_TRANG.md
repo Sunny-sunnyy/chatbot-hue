@@ -12,16 +12,16 @@ Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** =
 
 ## 1. Hệ thống đang chạy
 
-- **Là gì:** trợ lý hỏi đáp du lịch – văn hoá Huế cho du khách và người dân (đồ án tốt nghiệp của User; hiện chỉ User và nhóm dùng thử), trả lời CHỈ từ kho, có ghi nguồn; kho không có thì từ chối, rồi tra web một lần ở mục riêng "chưa kiểm".
+- **Là gì:** trợ lý hỏi đáp du lịch – văn hoá Huế cho du khách và người dân (đồ án tốt nghiệp của User), trả lời CHỈ từ kho, có ghi nguồn; kho không có thì từ chối, rồi tra web một lần ở mục riêng "chưa kiểm".
   Web: FastAPI (`backend/`) + giao diện React dựng sẵn (`frontend/`). Chạy trên máy User; **chưa deploy**.
-- **Số hôm nay** (lệnh kiểm: runbook mục 0): kho **265 bài ⇒ 9.436 đoạn**, một collection Qdrant `hue_full_corpus_7a2_e5_small_384` (cổng 6335);
+- **Số hôm nay** (lệnh kiểm: runbook mục 0): kho **265 bài ⇒ 9.436 đoạn**, collection Qdrant `hue_full_corpus_7a2_e5_small_384` (cổng 6335);
   tìm = vector `e5-small` + từ khoá BM25 trộn RRF, **10 đoạn** vào ngữ cảnh, không xếp lại; model viết `gpt-6-luna` (OpenAI), từ 19/11 không còn trần token đầu ra và ngân sách ngữ cảnh mỗi lượt; tra web qua Serper.
 - **Cờ:** **29 BẬT** (28 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh). Bật 19/11: `sua_lich_doi_cho_code` · `noi_dong_tam_ngung` · `lich_vao_hoi_thuong` · `noi_that_lam_thay` · `xuat_pptx` · `nho_ten_goi_y`. Giới hạn từng cờ: runbook 10.1, 10.2.
-  **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt; nay qua biểu mẫu), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
+  **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
-- **Lần chạy cả bộ test gần nhất:** tối 19/11 trên đúng tổ hợp 29 cờ bật (từng file, 55 file): 1.542 đạt, 0 hỏng; sau đó main chỉ thêm hai dòng CSS bản in + tài liệu. `frontend/dist` cây chính dựng lại 19/11 tối (có hai nút xuất lịch) — đổi `frontend/src` thì phải `npm run build` lại.
+- **Lần chạy cả bộ test gần nhất:** tối 19/11 trên đúng tổ hợp 29 cờ bật (từng file, 55 file): 1.542 đạt, 0 hỏng. `frontend/dist` cây chính dựng lại 19/11 tối — đổi `frontend/src` thì phải `npm run build` lại.
 - **Bẫy RAM (19/11):** không gom nhiều file test dựng cả app vào một tiến trình pytest; chạy từng file ở cây chính, không cùng lúc với server.
-- **Máy:** mở lại máy ⇒ `/tmp` MẤT (worktree) và Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1). Server không chạy sẵn.
+- **Máy:** mở lại máy ⇒ `/tmp` MẤT, Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1).
 - **Giới hạn đã biết:** `guides/RUNBOOK_BAN_GIAO.md` mục 10 — gặp hành vi trông như lỗi thì tra ở đó TRƯỚC khi sửa hay báo.
 
 ## 2. Mốc và hướng (việc đang mở KHÔNG ghi ở đây)
@@ -38,12 +38,12 @@ Thứ tự việc, KHÔNG gắn ngày — bước trước đạt và máy rản
 **Việc đang mở, ai làm, bước kế:** CHỈ ở `session_prompt/VIEC_DANG_MO.md` (xong: `session_prompt/VIEC_DA_XONG.md`). Mốc "Phase 9 xong phần nhóm" = code `55d01a8`.
 
 Số nhiễu (19/11): hai lượt bộ câu mẫu không đổi gì lệch 1 câu "Đúng" · 2 "Đủ ý" · 7 "Trọng tâm" ⇒ thử đổi lời dặn phải có bên tắt CÙNG BUỔI, chấm cùng lô.
-Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / ngày ⇒ gom câu.
+Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / ngày ⇒ gom.
 
 ## 3. Đang chờ User (chỉ các việc ghi ở đây; việc đã chốt thì đừng hỏi lại)
 
 1. User tự làm: trần chi tiêu trên từng khoá API · vô hiệu hoá khoá AWS cũ trong thư mục khoá học.
-2. Buổi User tự tay test toàn bộ (bước 7) — User chưa có giờ; KHÔNG nhắc.
+2. Buổi User tự tay test toàn bộ (bước 6) — User chưa có giờ; KHÔNG nhắc.
 3. Khi nhóm YÊU CẦU: User tự lái Gemini 4 Hydrogen với đề bài soát khác hãng (đường dẫn ở `VIEC_DANG_MO.md`). Không gấp: ~20 câu User tự gõ vào `data/kich_ban_pho_thong_2026-11-19/CAU_CUA_USER.md`.
 4. Chưa hỏi, không tự mở: giá phòng, bổ sung kho (số điện thoại, chỗ đậu xe…), vị trí người dùng.
 
