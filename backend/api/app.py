@@ -10,6 +10,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
 
+from api.cache_tra_loi import CacheTraLoi, dau_phien_ban
 from api.conversations import ConversationStore
 from llm import lich_trinh_v2 as lt2
 from api.feedback import FeedbackTurns
@@ -17,6 +18,7 @@ from api.feedback import router as feedback_router
 from api.gioi_han import ChanLuot, GioiHanLuot, tran_tu_moi_truong
 from api.health import router as health_router
 from api.routes.anh import router as anh_router
+from api.routes.chat import GIT_SHA
 from api.routes.chat import router as chat_router
 from api.routes.cong import BAN_DO, nap_kham_pha
 from api.routes.cong import router as cong_router
@@ -30,11 +32,11 @@ from core.schema import (
 from core.settings_loader import BACKEND_DIR, load_settings
 from ingestion.source_state import discover_full_corpus_files
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
-from llm.assistant import AssistantFlags
+from llm.assistant import BOOL_FIELDS, AssistantFlags
 from llm.nhan_anh import nap_danh_sach, tao_agent
 from llm.tra_web import SERPER_API_KEY_ENV, tim_web
 from llm.openai_tokenizer import load_openai_tokenizer
-from retrieval.full_corpus import build_full_corpus_retrieval_service
+from retrieval.full_corpus import build_full_corpus_retrieval_service, build_record_path, candidate_by_id
 from retrieval.full_corpus_context import FullCorpusContextBuilder
 
 logger = logging.getLogger("api")
@@ -109,6 +111,7 @@ def create_app(settings=None):
         app.state.tokenizer = None
         app.state.context_builder = None
         app.state.conversations = None
+        app.state.cache_tra_loi = None
 
         app.state.generator_ready = False
         app.state.generator = None
@@ -185,6 +188,14 @@ def create_app(settings=None):
             logger.info("OpenAI full-corpus generator initialized successfully")
         except Exception:
             logger.error("Generator startup failed")
+
+        # 3b. Nhớ câu trả lời giữa các cuộc trò chuyện (cờ `cache_cau_tra_loi`): chỉ khi tìm kho + generator đã sẵn sàng. Dấu phiên bản gom mọi
+        # thứ quyết định câu trả lời ngoài câu hỏi: build record của kho (file bước 1 đã đối chiếu với kho), lời dặn, model, cờ, bản code.
+        if app.state.assistant_flags.cache_cau_tra_loi and app.state.retrieval_ready and app.state.generator_ready:
+            flags, generator = app.state.assistant_flags, app.state.generator
+            record = build_record_path(candidate_by_id(settings["full_corpus_runtime"]["candidate_id"])).read_bytes()
+            co = repr(sorted((ten, getattr(flags, ten)) for ten in BOOL_FIELDS)) + flags.lan_tim_dau
+            app.state.cache_tra_loi = CacheTraLoi(dau_phien_ban(record, generator.assistant_instructions, generator.model, co, GIT_SHA))
 
         # 4. Hỏi bằng ảnh (Phase 10 A1 D2): cờ tắt / thiếu generator / danh sách lỗi ⇒ `app.state.anh = None` ⇒ route trả 404
         anh = settings.get("anh") or {}

@@ -36,6 +36,7 @@ from llm import thoi_tiet as tt
 from llm.ten_goi_y import ghi_chu_goi_y, lich_su_cho_luot
 from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_moi, ghep_cau, ghep_cau_v2, loi_v2
 from api.conversations import TTL_SECONDS
+from api.cache_tra_loi import BanLuu, luot_luu_duoc
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, loi_bao_luoi_cuoi, luoi_cuoi_bao, elapsed_ms, lich_cho_giao_dien, turn_usd
 
 logger = logging.getLogger("chat")
@@ -249,6 +250,32 @@ def _tim_web(state):
     return getattr(state, "tim_web", None)
 
 
+def _tra_cache(state, body: "ChatRequest", query: str, trace: AnswerTrace, metrics: dict):
+    """Nhớ câu trả lời giữa các cuộc trò chuyện (`api/cache_tra_loi.py`). Trả (kho, bản lưu): kho = None ⇒ lượt này KHÔNG được tra và cũng không
+    được lưu (cờ tắt, lượt có lịch sử, lượt từ nút / biểu mẫu / thẻ chọn); bản lưu khác None ⇒ đã trúng, `trace` đã mang chữ + nguồn + ghi chú
+    của bản lưu để đường dựng phản hồi sẵn có chạy như mọi lượt. Khoá log `cache` chỉ có ở lượt được tra ("trung" / "truot")."""
+    kho = getattr(state, "cache_tra_loi", None)
+    if kho is None or trace.history or body.truong is not None or body.bieu_mau or body.sua_chon is not None:
+        return None, None
+    ban = kho.lay(query)
+    metrics["cache"] = "truot" if ban is None else "trung"
+    if ban is not None:
+        trace.answer, trace.cited, trace.notice, trace.route = ban.answer, ban.cited, ban.notice, ban.route
+    return kho, ban
+
+
+def _luu_cache(kho, query: str, trace: AnswerTrace, metrics: dict) -> None:
+    """Sau một lượt "success" được tra mà trượt: lưu nếu là lượt trả lời từ kho thuần (`luot_luu_duoc`)."""
+    if kho is not None and luot_luu_duoc(trace, bool(metrics["refusal"])):
+        kho.luu(query, BanLuu(answer=trace.answer, cited=tuple(trace.cited), notice=trace.notice, route=trace.route))
+
+
+async def _luot_tu_cache():
+    """Lõi của lượt trúng: không có bước nào chạy ⇒ không sự kiện tiến độ, không mảnh chữ; `StreamEvents.finish` phát cả câu một lần."""
+    return
+    yield  # noqa: unreachable — để hàm là async generator (đường stream cần `aclose`)
+
+
 def _new_turn_id(request: Request, trace: AnswerTrace, outcome: str | None) -> str | None:
     """B142: mã lượt ngẫu nhiên cho lượt có câu trả lời cuối (đánh giá 👍 / 👎) — không liên quan mã cuộc trò chuyện."""
     turns = getattr(request.app.state, "feedback_turns", None)
@@ -335,9 +362,11 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
     query = _model_query(body, query, trace, metrics, state)
     vet.update(trace=trace, query=query)
     sua_loi = lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history, trace.thoi_tiet_ctx)  # noqa: E731
+    kho_cache, ban_luu = _tra_cache(state, body, query, trace, metrics)
     try:
-        await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder,
-                          _tim_web(state))
+        if ban_luu is None:  # trúng bản lưu ⇒ không tìm kho, không gọi model; phần dựng phản hồi bên dưới chạy như mọi lượt
+            await answer_turn(query, state.retrieval_service, state.context_builder, _ready_generator(state), trace, _flags(state), recorder,
+                              _tim_web(state))
     except (RetrievalDependencyError, GeneratorNotReadyError, GenerationError) as exc:
         trace.vet["loi"] = repr(exc)[:500]
         return _error_response_for(exc, recorder, metrics, sua_loi), conversation_id
@@ -369,6 +398,8 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
 
     _remember(request, conversation_id, query, trace, "success")
     metrics["refusal"] = normalize_citations(chu_cua_model(trace)).strip() in REFUSAL_ANSWERS
+    if ban_luu is None:
+        _luu_cache(kho_cache, query, trace, metrics)
     return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited, _bai_ids(state)), notice=trace.notice,
                         turn_id=_new_turn_id(request, trace, "success"),
                         lich_trinh=lich_cho_giao_dien(trace, _flags(state), trace.search_query or query), web=_web_payload(trace)), conversation_id
@@ -527,12 +558,15 @@ async def chat_stream(body: ChatRequest, request: Request):
         if _flags(state).sua_lich_v2 and conversation_id is not None:  # sửa lịch bản 2: lịch đã lưu của cuộc + lựa chọn của thẻ
             trace.lich_luu = request.app.state.conversations.lay_lich(conversation_id)
             trace.sua_chon = None if body.sua_chon is None or trace.lich_luu is None else body.sua_chon.model_dump()
-        turn = answer_turn_stream_parallel(query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder,
-                                           _tim_web(state))
+        kho_cache, ban_luu = _tra_cache(state, body, query, trace, metrics)
+        turn = _luot_tu_cache() if ban_luu is not None else answer_turn_stream_parallel(
+            query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder, _tim_web(state))
         cau_goc = trace.search_query or query
 
         def remember() -> None:  # gọi ở `finally` của luồng, sau khi outcome đã có
             _remember(request, conversation_id, query, trace, metrics["outcome"])
+            if ban_luu is None and metrics["outcome"] == "success":
+                _luu_cache(kho_cache, query, trace, metrics)
             if _flags(state).sua_lich_v2 and conversation_id is not None and metrics["outcome"] == "success":
                 luu_lich_cua_luot(request.app.state.conversations, conversation_id, trace, _flags(state))
 
