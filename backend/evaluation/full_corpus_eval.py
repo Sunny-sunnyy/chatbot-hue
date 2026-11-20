@@ -36,7 +36,7 @@ from llm.assistant import (BOOL_FIELDS as ASSISTANT_BOOL_FIELDS, ROUTE_TRO_LY_HU
                            search_into_trace, tim_kho, tool_for_turn,
                            turn_usd)
 from core.schema import GenerationError
-from llm.ten_goi_y import ghi_chu_goi_y
+from llm.ten_goi_y import ghi_chu_goi_y, lich_su_cho_luot
 from llm.pricing import cost_usd  # giá dời sang `llm.pricing` (Phase 9 B0); `from evaluation.full_corpus_eval import cost_usd` cũ vẫn chạy
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service
@@ -521,7 +521,7 @@ async def run_chains(chains: list[dict], side: str) -> list[dict]:
             for idx, turn in enumerate(chain["luot"]):
                 if side == "tran" and not turn.get("dung_mot_minh"):
                     continue
-                history = store.history(conversation_id) if side == "nho" else ()
+                history = lich_su_cho_luot(store.history(conversation_id), turn["cau"].strip()) if side == "nho" else ()  # như route
                 row = await one_turn(chain, idx, turn, history)
                 rows.append(row)
                 if side == "nho" and row["error"] is None and row["answer"] and (row["fixed_outcome"] or not row["citation_error"]):
