@@ -164,6 +164,19 @@ def an_toan_cua_luot(trace: AnswerTrace) -> str | None:
     return tt.CAU_BAO_LU if tt.CAU_BAO_LU in (trace.notice or "") else None
 
 
+def luu_lich_cua_luot(store, conversation_id: str, trace: AnswerTrace, flags: AssistantFlags) -> None:
+    """Sau lượt lịch bản 2 đạt: ghi bản lưu của cuộc. File tải về dựng từ bản lưu ⇒ câu an toàn của lượt phải nằm trong đó (review 19/11)."""
+    from llm.len_ke_hoach import luu_sau_luot
+    luu, an_toan = luu_sau_luot(trace, flags), an_toan_cua_luot(trace)
+    # lượt SỬA không đổi được gì (không có bản lưu mới) mà chính lượt đó có câu an toàn ⇒ giữ bản lưu cũ, chỉ thêm câu đó (review E 20/11)
+    if luu is None and an_toan and trace.lich_luu is not None and trace.lich_v2 is not None and "thay_doi" in trace.lich_v2["lich"]:
+        luu = dict(trace.lich_luu)
+    if luu is not None:
+        if an_toan:
+            luu["an_toan"] = an_toan
+        store.luu_lich(conversation_id, luu)
+
+
 def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict, cau: str) -> str | None:
     """Nhớ bật ⇒ mã cuộc của lượt này (giữ cookie còn hạn, không thì cuộc mới) + đưa lịch sử vào `trace`. Nhớ tắt ⇒ None.
     `cau` = câu gõ của lượt: câu xin liệt kê lại các nơi vừa nêu ⇒ lịch sử lượt này không mang dòng ghi chú tên nơi (`llm/ten_goi_y.py`)."""
@@ -508,13 +521,7 @@ async def chat_stream(body: ChatRequest, request: Request):
         def remember() -> None:  # gọi ở `finally` của luồng, sau khi outcome đã có
             _remember(request, conversation_id, query, trace, metrics["outcome"])
             if _flags(state).sua_lich_v2 and conversation_id is not None and metrics["outcome"] == "success":
-                from llm.len_ke_hoach import luu_sau_luot
-                luu = luu_sau_luot(trace, _flags(state))
-                if luu is not None:
-                    an_toan = an_toan_cua_luot(trace)   # file tải về dựng từ trạng thái lưu ⇒ câu an toàn của lượt phải nằm trong đó (review 19/11)
-                    if an_toan:
-                        luu["an_toan"] = an_toan
-                    request.app.state.conversations.luu_lich(conversation_id, luu)
+                luu_lich_cua_luot(request.app.state.conversations, conversation_id, trace, _flags(state))
 
 
         response = StreamingResponse(

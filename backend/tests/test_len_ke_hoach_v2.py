@@ -1069,14 +1069,15 @@ def test_sample_itinerary_gets_lodging_and_food_by_the_same_step_as_real_plans()
 def test_edit_turn_that_changes_nothing_keeps_the_saved_plan_and_its_storm_sentence(deps):
     """Soát khác hãng 20/11: hỏi bão ⇒ lập lịch (bản lưu mang câu bão / lũ + 112) ⇒ câu sửa KHÔNG làm được. Giao diện giữ thẻ lịch cũ có câu đó, nên
     file tải về cũng phải còn: lượt sửa không đổi gì không được ghi đè bản lưu. Đối chứng: lượt sửa làm được thì bản lưu đổi theo.
-    Hàm thật (hiểu ý ⇒ áp ⇒ dựng lịch ⇒ `luu_sau_luot` như `remember()` của route ⇒ route tải); giả: câu trả của lần gọi hiểu ý, câu tả của bản lưu."""
+    Hàm thật (hiểu ý ⇒ áp ⇒ dựng lịch ⇒ `luu_lich_cua_luot` — hàm route gọi sau lượt đạt ⇒ route tải); giả: câu trả của lần gọi hiểu ý, câu tả của bản lưu."""
     import io
     import pptx
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
     from api.conversations import ConversationStore
-    from api.routes.chat import an_toan_cua_luot
+    from api.routes.chat import luu_lich_cua_luot
     from api.routes.xuat import router
+    from llm.assistant import luoi_cuoi_bao
     from llm import len_ke_hoach as lkh, lich_trinh_v2 as lt2, sua_lich_v2 as sl, thoi_tiet as tt
     flags = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=True, sua_lich_chua_ho_tro=True, xuat_pptx=True, anh_lich=False)
     app = FastAPI()
@@ -1105,17 +1106,20 @@ def test_edit_turn_that_changes_nothing_keeps_the_saved_plan_and_its_storm_sente
             return [k async for k, _ in lkh.stream_sua(cau, *deps, Gen(), tr, flags, kq)]
         asyncio.run(chay())
         assert tr.citation_error is None
-        moi = lkh.luu_sau_luot(tr, flags)
-        if moi is not None:  # như `remember()` của route
-            if an_toan_cua_luot(tr):
-                moi["an_toan"] = an_toan_cua_luot(tr)
-            store.luu_lich(cid, moi)
-        return kq, moi
+        luoi_cuoi_bao(cau, tr, flags)  # như route: câu gõ (hoặc câu liền trước) khớp lưới bão ⇒ câu an toàn vào dòng ghi chú của lượt
+        luu_lich_cua_luot(store, cid, tr, flags)  # đúng hàm route gọi sau lượt đạt
+        return kq, lkh.luu_sau_luot(tr, flags)
 
     assert tt.CAU_BAO_LU in tai()
     kq, moi = luot_sua("Đổi thứ tự toàn bộ các điểm theo bảng chữ cái", [sl.HanhDongCHT(loai="chua_ho_tro")])
     assert kq["khung"] == khung and moi is None and store.lay_lich(cid)["an_toan"] == tt.CAU_BAO_LU
     assert tt.CAU_BAO_LU in tai()  # file vẫn còn câu bão / lũ + 112
+    # ca ngược (review E 20/11): lịch lập khi CHƯA nhắc bão ⇒ câu sửa không làm được mà CÓ chữ bão ⇒ bản lưu cũ giữ nguyên, thêm câu an toàn của lượt
+    store.luu_lich(cid, dict(luu))
+    assert tt.CAU_BAO_LU not in tai()
+    kq, moi = luot_sua("Mai có bão, đổi thứ tự toàn bộ các điểm theo bảng chữ cái giúp mình", [sl.HanhDongCHT(loai="chua_ho_tro")])
+    assert moi is None and store.lay_lich(cid) == {**luu, "an_toan": tt.CAU_BAO_LU} and tt.CAU_BAO_LU in tai()
+    store.luu_lich(cid, dict(luu))
     # đối chứng: một lượt sửa LÀM ĐƯỢC mà không thêm điểm mới (dời buổi ⇒ không cần model viết câu) ⇒ bản lưu là lịch mới
     doi = [sl.HanhDong(loai="doi_buoi", ten=x, buoi="chieu" if buoi == "sang" else "sang") for x, (_, buoi) in sorted(sl._vi_tri(khung).items())]
     duoc = next(h for h in doi if sl.ap(flags.bang_lich_v2, luu, [h])["da_ap"])
