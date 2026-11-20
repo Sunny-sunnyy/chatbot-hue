@@ -10,13 +10,14 @@ Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đâ
 - Thứ tự (phổ thông trước) — số là số trong bảng gộp; "ai" điền khi giao:
   1. [21] Sửa lịch — dời một điểm: câu từ chối nói đúng lý do + gợi ý chỗ dời ĐƯỢC (mốc: dời được 24 / 176; script `data/test_cuoi/tools/dem_doi_buoi_2026-11-20.py`) — E viết, B review
   2. [1] Cache câu trả lời giữa các cuộc trò chuyện, dạng đã thống nhất 05/11 (khớp đúng chữ, lượt đầu, có nguồn kho, không câu từ chối / web / thời tiết, khoá theo phiên bản kho + lời dặn + model, 24 giờ; KHÔNG cache theo nghĩa; nghiên cứu `data/nghien_cuu_cache_2026-11-05/`; điều kiện 05/11 "chờ người dùng thật, đo câu lặp ≥ 20 % mới làm" User BỎ chiều 20/11 — nguyên văn: "khoảng 10 đến 15p sau có người khác hỏi lại câu đó thì phải lấy ra được câu trả lời cũ mà không cần tính toán lại") — B viết, C review
-  3. [18] câu liệt kê trả thiếu mục · [19] câu nhiều ý kho có một phần thì từ chối cả câu — C đếm trước (≤ 0,02 USD mỗi việc) rồi plan
+  3. [18] câu liệt kê: CHỈ làm phần nhỏ — code nối một dòng nói thật "danh sách có thể chưa đủ" (C viết; độ đủ thật cần bổ sung thuộc tính quán vào kho — KHÔNG mở) · [19] câu nhiều ý: GIỮ GIỚI HẠN (User chọn 15:33 20/11/2026 theo số đếm của C: ≈ 1 % lượt thử, bản sửa chạm sàn câu ngoài kho; số đếm `data/kiem_ke_phase_2026-11-20/C_dem_18_19.md`)
   4. [14 mức nhẹ] gõ "lên lịch giúp mình" trong ô chat ⇒ dẫn sang trang Lên kế hoạch (trước hết MỘT lượt thật xem hiện trả lời gì) · [5] "gần X có gì ăn" trong ô chat
   5. [2] sự kiện theo ngày · [3] ứng xử / trang phục (đo hỏi thường trước) · [4] trang Bản đồ riêng
   6. [8] nhớ cả câu trả lời trong một cuộc trò chuyện · [9] hỏi lại khi thiếu thông tin · [11] đổi chỗ ngày 1 với ngày 2 · [12] bốn việc hẹn "sau lượt đo cuối"
   7. [6] trang theo dõi · [7] agent đề xuất sửa kho có User duyệt
   8. [10] so sánh cuối trên bộ câu kín — chỉ User gõ lệnh · [13] deploy + các chốt trước deploy — sau buổi test
 - Nhóm tự làm khi có lượt bật server: ảnh năm màn chính ở bề rộng điện thoại + một lượt thật cho sáu bản sửa 20/11 (E).
+- User 15:33 20/11/2026: "cứ triển khai những gì đã chốt cho xong đã, không tạo thêm việc" ⇒ không mở việc ngoài danh sách này, không hỏi User thêm trừ khi một việc đo lại không đạt hoặc chạm hàng "hỏi User trước". Đã duyệt plan: [21] `report_agent/2026-11-20/e_doi_diem_goi_y_plan.md` (E đang code) · [1] `report_agent/2026-11-20/b_cache_cau_tra_loi_plan.md` (B đang code).
 - Chưa ai ước lượng công. Giọng nói: tài liệu ghi hai nghĩa ("dẹp" ↔ "không làm trước 30/11") — đang coi là bỏ, chờ User nói lại.
 
 ## 1. Buổi User test MỘT lần ở máy local (bước 6) — VIỆC KẾ, mọi thứ phía nhóm đã sẵn
