@@ -80,15 +80,33 @@ def la_cau_xin_liet_ke_lai(cau: str) -> bool:
     """Câu gõ CHỈ xin kể lại / kể đủ các nơi vừa nêu ("Kể đủ các chùa trong bài đó giúp tôi")? Câu ghép hay câu hỏi thêm điều gì về nơi ⇒ False."""
     if re.search(r"[.?!;…]\s*\w", cau or ""):  # dấu ngắt câu ở GIỮA = có thêm một câu nữa ("Liệt kê các chỗ đó. Đi được không?" — soát khác hãng 20/11)
         return False
-    chu = " ".join(re.sub(r"[^\w\s]", " ", unicodedata.normalize("NFC", cau or "").lower()).split())
+    chu = _chuan(cau)
     if not any(re.search(rf"(?<!\w){cum}(?!\w)", chu) for cum in CUM_XIN_DU):
         return False
     return _KHUON_LIET_KE_LAI.fullmatch(chu) is not None
 
 
+# Từ trỏ lại lượt trước: câu có một từ này ("quán đó ở đâu", "chỗ thứ hai giá bao nhiêu") cần dòng ghi chú để biết đang nói nơi nào ⇒ không bao giờ gỡ.
+_TU_TRO = re.compile(r"(?<!\w)(?:đó|này|ấy|kia|đấy|nó|nãy|vừa|trên|thứ|đầu|cuối)(?!\w)")
+
+
+def _chuan(cau: str) -> str:
+    return " ".join(re.sub(r"[^\w\s]", " ", unicodedata.normalize("NFC", cau or "").lower()).split())
+
+
+def la_cau_go_lai(lich_su: Sequence, cau: str) -> bool:
+    """Câu gõ TRÙNG NGUYÊN VĂN (sau chuẩn hoá dấu câu / hoa thường / khoảng trắng) một câu hỏi cũ, không có từ trỏ lại, và lượt LIỀN TRƯỚC không có
+    dòng ghi chú. Đo 20/11: hỏi A (có ghi chú) ⇒ hỏi B (không ghi chú) ⇒ gõ lại A thì model trả lời câu B 3 / 3 lần — lượt có ghi chú trông như đã
+    đáp, lượt rỗng trông như còn treo; cờ tắt đúng 3 / 3. Lượt liền trước CÓ ghi chú thì không lệch dạng (đúng 3 / 3) ⇒ để nguyên."""
+    chu = _chuan(cau)
+    if not chu or not lich_su or _TU_TRO.search(chu) or lich_su[-1][1].startswith(TIEN_TO_GHI_CHU):
+        return False
+    return any(_chuan(hoi) == chu for hoi, _ in lich_su)
+
+
 def lich_su_cho_luot(lich_su: Sequence, cau: str) -> tuple:
-    """Lịch sử gửi model ở lượt có câu gõ `cau`: câu xin liệt kê lại ⇒ các dòng ghi chú tên nơi thành chuỗi rỗng (như cờ tắt); câu khác ⇒ nguyên.
-    Lịch sử không có dòng ghi chú (cờ tắt, hoặc nhớ cả câu trả lời) ⇒ luôn trả đúng nội dung cũ."""
-    if not la_cau_xin_liet_ke_lai(cau):
+    """Lịch sử gửi model ở lượt có câu gõ `cau`: câu xin liệt kê lại, hoặc câu gõ lại nguyên văn một câu cũ (`la_cau_go_lai`) ⇒ các dòng ghi chú
+    tên nơi thành chuỗi rỗng (như cờ tắt); câu khác ⇒ nguyên. Lịch sử không có dòng ghi chú (cờ tắt, hoặc nhớ cả câu trả lời) ⇒ luôn trả đúng nội dung cũ."""
+    if not (la_cau_xin_liet_ke_lai(cau) or la_cau_go_lai(lich_su, cau)):
         return tuple(lich_su)
     return tuple((hoi, "" if dap.startswith(TIEN_TO_GHI_CHU) else dap) for hoi, dap in lich_su)
