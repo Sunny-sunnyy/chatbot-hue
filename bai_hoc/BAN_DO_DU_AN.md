@@ -1,6 +1,6 @@
 # Bản đồ dự án hue_rag — đọc trang này trước
 
-*Cập nhật lần cuối: 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
+*Cập nhật lần cuối: 16:22, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" thêm hai dòng bật 20/11 (lấy lại câu trả lời cũ giữa các cuộc trò chuyện; dòng "danh sách có thể chưa đủ") · trước đó 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
 
 Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm những khối nào, khối nào đang bật, và muốn hiểu sâu một khối thì mở bài nào. Mọi con số ở đây là
 **số của hệ thống hôm nay**; các bài viết trước ngày 14/11 (bài 0–18) viết lúc kho còn 204 bài, nên anh sẽ gặp số nhỏ hơn ở đó, không phải lỗi.
@@ -74,7 +74,9 @@ Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì ch�
 | Trả lời song song với xếp loại | **bật** | chữ đầu câu về Huế nhanh hơn 1,37 giây (trung vị 20 cặp câu, đo 04/11, so với chạy lần lượt) |
 | Tìm thêm (tối đa 2 lần) + hết lượt thì dừng | **bật** | câu nhiều nguồn đủ ý hơn +1,17 điểm (thang 1–5, 18 câu, so bản không tìm thêm); 8 / 8 câu kho không có bớt được ít nhất một lần gọi model, nhanh hơn khoảng 6,7 giây cả câu |
 | Nhớ 3 câu hỏi gần nhất | **bật** | câu hỏi tiếp bị từ chối nhầm 5 / 19 ⇒ 0 / 19 (so bản không nhớ) |
-| Nhớ cả câu trả lời | **tắt** | bản thử từng mượn nhầm đoạn của nơi khác |
+| Nhớ cả câu trả lời (trong MỘT cuộc trò chuyện) | **tắt** | bản thử từng mượn nhầm đoạn của nơi khác |
+| Người sau gõ đúng câu người trước đã hỏi ⇒ lấy lại câu trả lời cũ (giữa CÁC cuộc trò chuyện, 24 giờ) | **bật** (20/11) | lượt thật 20/11: lần đầu 7,5 giây và 0,00076 USD, người sau 0,11 giây và 0 USD, chữ + nguồn + ảnh giống hệt (một câu, ba cuộc trò chuyện — mẫu nhỏ); chỉ khớp đúng chữ, không lưu câu từ chối / web / thời tiết / lịch — `VIEC_MOI_XONG.md` mục 21 |
+| Câu xin danh sách ⇒ thêm dòng "danh sách có thể chưa đủ" | **bật** (20/11) | trước đó danh sách thiếu nơi mà không nói gì (đo sáng 20/11: thiếu ở 5 / 6 lần); bộ câu thử của người khác soạn: nhận 19 / 20, hiện nhầm 2 / 52; KHÔNG làm danh sách đủ hơn — `VIEC_MOI_XONG.md` mục 22 |
 | Câu hỏi nhiều ý (ý kho có thì trả lời, ý thiếu mới ra web) | **bật** | từ 14/11 |
 | Tra web khi kho từ chối · câu hỏi nối tiếp ra web | **bật** · **bật** | mục web tách riêng, code chặn link lạ / số tiền không có trong đoạn trích; câu nối tiếp: 8 / 8 nêu đúng nơi (mẫu nhỏ) |
 | Thời tiết · câu bão / lũ | **bật** · **bật** (17/11) | số dự báo do code dựng; câu bão / lũ model không nhận số nào, code nối khối chỉ dẫn cố định |
