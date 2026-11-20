@@ -299,6 +299,9 @@ def test_model_tra_chua_ho_tro_cho_cau_doi_hai_diem_thi_code_ap_hai_lan_doi_buoi
     # cờ BẬT nhưng câu không thuộc lớp này ⇒ vẫn câu cố định
     f, k, kq, tr = _hieu_doi_cho("Dời cả lịch sớm lên 2 tiếng", cht)
     assert kq["khung"] == k and [d["cau"] for d in sl.thay_doi(f.bang_lich_v2, kq)] == [sl.CAU_CHUA_HO_TRO]
+    # cờ BẬT, hai vế CÙNG một đích (cùng ngày, cùng buổi): hai lần dời sẽ tự đổi chỗ ngược nhau ⇒ code không đọc câu, lịch giữ nguyên + câu cố định
+    f, k, kq, tr = _hieu_doi_cho(f"Cho {ten_a} lên sáng ngày {nb}, còn {ten_b} để sáng ngày {nb} nhé.", cht)
+    assert kq["khung"] == k and [d["cau"] for d in sl.thay_doi(f.bang_lich_v2, kq)] == [sl.CAU_CHUA_HO_TRO] and tr.vet["sua"]["doc_cau"] is False
     # cờ BẬT, model trả "chưa hỗ trợ" KÈM một hành động khác ⇒ code không đọc câu (chỉ áp hành động của model, giữ dòng "chưa làm")
     f, k, kq, tr = _hieu_doi_cho(cau, [sl.HanhDong(loai="bo_diem", ten=a), *cht])
     assert a not in sl._vi_tri(kq["khung"]) and sl._vi_tri(kq["khung"])[b] == sl._vi_tri(k)[b] and kq["chua_lam"] == [sl.CHUA_HO_TRO]

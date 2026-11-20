@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 08:49, ngày 20/11/2026 · thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; đã gộp vào bản chính 08:58 20/11/2026) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 09:39, ngày 20/11/2026 · thêm mục 17 (một AI khác hãng soát code: 13 điểm, sửa bốn, ghi giới hạn tám, kèm một lỗi nhóm tự tìm; ba thay đổi của mục này đã gộp vào bản chính 09:41 20/11/2026) · trước đó 08:49, ngày 20/11/2026 thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; đã gộp vào bản chính 08:58 20/11/2026) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -13,6 +13,52 @@
 **Từ dùng chung cho các mục 19/11:** **cờ** = một dòng bật / tắt trong file cấu hình, tắt là hệ thống chạy như trước khi có tính năng · **lời dặn** = đoạn chữ cố định gửi kèm mọi
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
+
+## 20/11 — 17. Nhờ một AI khác hãng soát code trước khi đứng yên: 13 điểm, nhóm kiểm lại từng điểm — sửa bốn, ghi giới hạn tám; kèm một lỗi nhóm tự tìm ra
+
+**Từ dùng ở mục này:** **soát khác hãng** = đưa một đề bài viết sẵn cho một AI KHÔNG phải AI viết code (ở đây: GPT-6.2 Sol) để nó đọc code và tìm chỗ hai tính năng gặp nhau
+làm ra kết quả sai; nó không được biết nhóm đã tìm ra gì · **tái hiện** = nhóm tự chạy lại đúng đầu vào AI kia nêu, bằng chương trình thật, để xem điểm đó có thật không (AI kia chỉ
+đọc code, có thể đoán sai) · **ca đối chứng** = đổi một chi tiết của đầu vào thì lỗi phải biến mất — để chắc đã hiểu đúng nguyên nhân · **ghi giới hạn** = không sửa, viết rõ vào sổ tay bàn
+giao (`guides/RUNBOOK_BAN_GIAO.md` mục 10) để người sau gặp thì biết · **dòng ghi chú** = dòng tên nơi do chương trình viết, ở mục 15.
+
+**1. Anh thấy gì khác.** Ba thay đổi nằm ở nhánh này (hai thay đổi nữa ở một nhánh khác — xem ý 3):
+- **Sửa lịch bằng lời, dời hai điểm về CÙNG một buổi của cùng một ngày** (ví dụ tự đặt: "Cho điểm A lên sáng ngày 3, còn điểm B để sáng ngày 3"). Trước: trợ lý báo "đã dời" cả hai nhưng
+  lịch y nguyên — lần dời sau tự đổi chỗ ngược lần dời trước. Nay: trợ lý nói thật là chưa làm được câu này. Dời hai điểm về hai buổi khác nhau vẫn chạy như cũ.
+- **Hỏi A, hỏi sang B, rồi gõ lại nguyên văn câu A.** Trước: trợ lý trả lời câu B. Nay: trả lời đúng câu A. (Lỗi này do nhóm tìm ra khi test bằng trình duyệt sáng 20/11, không phải do AI kia nêu; sửa chung một nhánh.)
+- **Câu xin liệt kê lại có thêm một câu hỏi phía sau** (ví dụ tự đặt: "Liệt kê các chùa đó. Đi được không?"): chương trình không còn coi cả câu là "xin liệt kê lại" nữa, nên
+  trợ lý vẫn biết "các chùa đó" là những chùa nào. (Sửa tiếp cho mục 16.)
+
+**2. Bằng chứng.**
+- **Đợt soát:** GPT-6.2 Sol chạy HAI lượt riêng (một lượt nhóm gọi, một lượt anh lái), chỉ đọc code. Gộp lại **13 điểm khác nhau** (lượt đầu 10; lượt hai 8, trong đó 5 trùng lượt đầu).
+  Nhóm kiểm lại từng điểm bằng chương trình thật, 0 đồng, không sửa code lúc kiểm: **11 điểm tái hiện được** (kèm ca đối chứng), 1 điểm xác nhận bằng đọc code (chính code đã ghi
+  đó là con số ước thấp), 1 điểm trùng một giới hạn nhóm đã tự ghi sáng cùng ngày. **Không điểm nào AI kia nêu sai.** [máy kiểm; hai phiên chia nhau kiểm]
+- **Chưa có hãng thứ hai:** cả hai lượt đều là GPT. Lượt của Gemini chưa chạy — kết quả về sau sẽ xử lý thành một đợt nhỏ riêng. [chưa kiểm]
+- **Ba thay đổi ở nhánh này:**
+  - Test bằng đồ giả: tám file test liên quan, 384 ca đạt, 0 hỏng (bản Python của hệ thống đang chạy). Mỗi thay đổi có test mới đã thấy hỏng trên code cũ rồi đạt sau khi sửa. [máy kiểm]
+  - **Gõ lại câu A — lượt thật** (trình duyệt thật, model thật; phiên khác người viết code chạy và đọc tay từng lượt; 0,015 USD ≈ 385 đồng cho 33 lượt): trả lời đúng câu A **3 / 3** sau
+    sửa. Mốc so: cùng chuỗi trước khi sửa **0 / 3**; bản cờ tắt chạy cùng buổi 3 / 3. Phép kiểm kèm, ghi trước khi đo: gõ lại một câu trỏ lại kiểu "quán đó ở đâu?" sau khi đã hỏi sang nơi
+    khác thì trợ lý phải nói về nơi MỚI — đạt 3 / 3 (nếu bản sửa làm quá tay thì chỗ này sẽ hỏng trước). [người thứ hai kiểm]
+  - Hai bộ câu đo của mục 15 và 16 không phải đo lại: chương trình đếm thấy 0 / 46 và 0 / 106 lượt của hai bộ đó chạm vào các thay đổi này. [máy kiểm, hai phiên đếm khớp]
+  - Dời hai điểm cùng đích và câu liệt kê có câu hỏi phía sau: CHƯA có lượt thật — mới có test bằng đồ giả và phép tái hiện bằng chương trình thật (không qua model). [chưa đo trên đường thật]
+
+**3. Chưa làm / giới hạn.**
+- **Hai sửa thuộc loại an toàn nằm ở nhánh khác, gộp riêng:** (a) lúc chữ đang hiện dần, nếu phần đã hiện ngắn hơn câu trả lời cuối thì phần đuôi (có thể là câu cảnh báo) không lên màn hình;
+  (b) sau một câu sửa lịch mà trợ lý không làm được, file PowerPoint tải về mất câu "theo dõi bản tin chính thức + 112" dù thẻ lịch trên màn hình vẫn có. Chưa từng thấy ở lượt thật (0 / 1.488 lượt cho (a)); mục riêng sẽ viết khi nhánh đó gộp.
+- **Tám điểm chỉ ghi giới hạn, không sửa** (đủ chữ ở sổ tay bàn giao mục 10):
+  1. Câu trả lời nói về HAI nơi: đã nêu lưu ý tạm ngừng của một nơi thì lưu ý của nơi kia không được chương trình nối thêm. Đếm: 0 / 561 lượt thật đã lưu gặp tình huống này.
+  2. Trong cuộc đã có lịch: một số phút đi xe sai mà trùng một thời lượng tham quan trong lịch thì không bị phép kiểm số bắt.
+  3. Câu trộn "nhờ đặt bàn + hỏi mưa tháng sau": chỉ ra câu nói thật về việc đặt, mất dòng "chỉ có dự báo 7 ngày tới".
+  4. Câu trộn "còn phòng không + một câu hỏi thông tin": câu thứ hai không được trả lời và không được tra web.
+  5. Cuộc có hai lịch: bấm "Tải PowerPoint" ở thẻ lịch cũ vẫn ra lịch mới nhất.
+  6. File PowerPoint không có mục "Nơi ở" dù thẻ lịch và bản in có.
+  7. Tiền ước của một phần trả lời bị huỷ giữa chừng là con số thấp hơn thật (chỉ ở log).
+  8. Lúc chữ đang hiện dần: có ca màn hình chỉ hiện khối thời tiết do chương trình nối, thiếu câu trả lời của model (chỗ sửa nằm sâu trong lõi; chưa từng thấy thật).
+- **Giới hạn của chính ba thay đổi này:** người dùng thật sự muốn hai điểm vào cùng một buổi cũng nhận câu "chưa làm" (nói từng điểm một thì được) · bản sửa "gõ lại câu A" chỉ áp khi câu
+  không có từ trỏ lại và lượt ngay trước không có dòng ghi chú; câu hỏi cụt như "địa chỉ ở đâu?" gõ lại nguyên văn có thể mất dòng ghi chú · ba lượt mỗi ô, một cặp câu — không phải tỉ lệ ngoài đời.
+- Ba thay đổi ở ý 1 đã gộp vào bản chính lúc 09:41 20/11/2026. Lượt chạy CẢ bộ test trên bản này chưa làm — nhóm chạy một lượt trên bản cuối trước buổi anh test.
+
+**4. Cách anh thử trong 2 phút** (sau khi đã gộp và bật hệ thống): hỏi "Lăng Minh Mạng mở cửa mấy giờ?", rồi "Vé xem ca Huế trên sông bao nhiêu tiền?", rồi gõ lại đúng câu đầu. Trợ lý phải
+trả lời về giờ mở cửa của lăng, không lặp lại chuyện vé. Báo cáo kỹ thuật: `report_agent/2026-11-20/b_sua_sau_soat.md`.
 
 ## 20/11 — 16. Sửa nhỏ cho mục 15: hỏi tiếp "kể hết các chỗ vừa nêu" không còn bị dòng ghi chú làm ngắn danh sách
 
