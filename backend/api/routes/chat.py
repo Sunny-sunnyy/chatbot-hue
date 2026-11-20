@@ -255,7 +255,8 @@ def _tra_cache(state, body: "ChatRequest", query: str, trace: AnswerTrace, metri
     được lưu (cờ tắt, lượt có lịch sử, lượt từ nút / biểu mẫu / thẻ chọn); bản lưu khác None ⇒ đã trúng, `trace` đã mang chữ + nguồn + ghi chú
     của bản lưu để đường dựng phản hồi sẵn có chạy như mọi lượt. Khoá log `cache` chỉ có ở lượt được tra ("trung" / "truot")."""
     kho = getattr(state, "cache_tra_loi", None)
-    if kho is None or trace.history or body.truong is not None or body.bieu_mau or body.sua_chon is not None:
+    # `lich_luu`: cuộc đã có lịch thì luôn có lịch sử — vế này để không dựa vào bất biến ngầm đó (review C 20/11)
+    if kho is None or trace.history or trace.lich_luu is not None or body.truong is not None or body.bieu_mau or body.sua_chon is not None:
         return None, None
     ban = kho.lay(query)
     metrics["cache"] = "truot" if ban is None else "trung"

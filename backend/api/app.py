@@ -191,6 +191,8 @@ def create_app(settings=None):
 
         # 3b. Nhớ câu trả lời giữa các cuộc trò chuyện (cờ `cache_cau_tra_loi`): chỉ khi tìm kho + generator đã sẵn sàng. Dấu phiên bản gom mọi
         # thứ quyết định câu trả lời ngoài câu hỏi: build record của kho (file bước 1 đã đối chiếu với kho), lời dặn, model, cờ, bản code.
+        # Hôm nay mọi thứ trong dấu chỉ đổi khi khởi động lại, mà kho nhớ (RAM) cũng mất lúc đó ⇒ dấu chỉ là lớp thứ hai. Nếu sau này kho nhớ
+        # sống qua lần khởi động thì phải bổ sung: số đoạn ngữ cảnh, mức suy luận, lời dặn nhiều ý / định tuyến, và mã commit thật trong Docker (review C 20/11).
         if app.state.assistant_flags.cache_cau_tra_loi and app.state.retrieval_ready and app.state.generator_ready:
             flags, generator = app.state.assistant_flags, app.state.generator
             record = build_record_path(candidate_by_id(settings["full_corpus_runtime"]["candidate_id"])).read_bytes()
