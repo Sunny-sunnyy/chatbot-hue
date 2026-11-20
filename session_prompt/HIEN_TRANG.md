@@ -1,6 +1,6 @@
 # HIỆN TRẠNG hue_rag — trang agent đọc khi mở phiên
 
-Viết lại lần cuối: 14:05 20/11/2026 (giờ `date`; chiều 20/11, sau bản sửa "báo đã dời" + cả bộ test trên bản mới). Người giữ: phiên điều phối.
+Viết lại lần cuối: 16:42 20/11/2026 (giờ `date`; KẾT PHIÊN CHIỀU 20/11). Người giữ: phiên điều phối.
 
 **Trang này là gì.** Ảnh chụp "bây giờ" của dự án cho BẤT KỲ coding agent nào vừa mở phiên; **viết lại tại chỗ** mỗi lần kết phiên, không nối thêm. Thứ tự mở
 phiên ở `session_prompt/START_SESSION.md`; sổ việc dài chỉ mở khi cần. `AGENTS.md`, code và file cấu hình thắng trang này — thấy lệch thì báo để sửa trang.
@@ -16,7 +16,7 @@ Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** =
   Web: FastAPI (`backend/`) + giao diện React dựng sẵn (`frontend/`). Chạy trên máy User; **chưa deploy**.
 - **Số hôm nay** (lệnh kiểm: runbook mục 0): kho **265 bài ⇒ 9.436 đoạn**, collection Qdrant `hue_full_corpus_7a2_e5_small_384` (cổng 6335);
   tìm = vector `e5-small` + từ khoá BM25 trộn RRF, **10 đoạn** vào ngữ cảnh, không xếp lại; model viết `gpt-6-luna` (OpenAI), từ 19/11 không còn trần token đầu ra và ngân sách ngữ cảnh mỗi lượt; tra web qua Serper.
-- **Cờ:** **31 BẬT** (30 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh); hai cờ mới bật chiều 20/11: `cache_cau_tra_loi` (câu lặp ở cuộc trò chuyện khác trả từ bộ nhớ, 24 giờ, trong RAM) và `danh_sach_noi_that` (câu xin danh sách có dòng "có thể chưa đủ"). Giới hạn từng cờ: runbook 10.1, 10.2.
+- **Cờ:** **31 BẬT** (30 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh); đã gộp nhưng còn TẮT, chờ bước cuối (xem `VIEC_DANG_MO.md` khối 0): `su_kien_theo_ngay`, `len_lich_dan_trang`; hai cờ mới bật chiều 20/11: `cache_cau_tra_loi` (câu lặp ở cuộc trò chuyện khác trả từ bộ nhớ, 24 giờ, trong RAM) và `danh_sach_noi_that` (câu xin danh sách có dòng "có thể chưa đủ"). Giới hạn từng cờ: runbook 10.1, 10.2.
   **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
 - **Lần chạy cả bộ test gần nhất:** 20/11 chiều trên main `e13709a9` (29 cờ, từng file, 55 file, Python 3.13): 1.555 đạt, 0 hỏng — các bản gộp SAU đó (dời điểm, cache, dòng danh sách, trang Bản đồ; 31 cờ) mới chạy file test chạm đường đổi + lượt thật qua giao diện, CHƯA chạy cả bộ (để dành một lượt cuối đợt). `frontend/dist` cây chính dựng lại 16:17 20/11 trên `58bad83e` (có trang Bản đồ; nút in chỉ còn ở trang Lên kế hoạch).
@@ -31,8 +31,8 @@ Thứ tự việc, KHÔNG gắn ngày — bước trước đạt và máy rản
 | Bước | Việc | Trạng thái |
 |---|---|---|
 | 1–4 | Cả bộ test · soát tích hợp · code đứng yên · lượt đo cuối phần đã thấy (18/11) · sửa câu thiếu cảnh báo bằng code (19/11) | XONG; bộ kín NOT RUN |
-| 5 | **Đợt hoàn thiện local — việc PHỔ THÔNG**: bốn việc của danh sách đóng đã bật; bộ 80 kịch bản 51 ⇒ 58; 20/11: soát khác hãng ba lượt ⇒ 12 bản sửa nhỏ đã gộp, còn lại ghi giới hạn (runbook mục 10); test trình duyệt + cả bộ test đạt | XONG phần "bốn việc" (20/11) — CHƯA đủ theo phạm vi User nêu chiều 20/11 (mục 4); chiều 20/11 thêm bản sửa "báo đã dời khi lịch không đổi" (User chọn); bản code gần nhất đã chạy cả bộ test: `e13709a9`; còn phải làm các tính năng đã chốt chưa xong (bảng kiểm kê, mục 4) — mốc đứng yên đặt lại sau đó |
-| 6 | **User test TOÀN BỘ một lần, trên máy LOCAL, khi nhóm đã làm xong hết** (`data/test_cuoi/DANH_SACH.md`) — nhóm KHÔNG chờ buổi này để làm bước kế | chưa |
+| 5 | **Đợt hoàn thiện local** — phần "bốn việc" + soát khác hãng xong sáng 20/11; chiều 20/11 User nói rõ phạm vi rộng hơn (mục 4) ⇒ **ĐỢT HOÀN THIỆN PHASE 9–12 đang chạy**: đã xong + đang chạy 5 mục (dời điểm có lý do + gợi ý · cache câu trả lời · dòng "danh sách có thể chưa đủ" · trang Bản đồ · ứng xử coi là đã có); đã gộp cờ TẮT chờ bước cuối 2 mục (sự kiện theo ngày · dòng dẫn sang trang Lên kế hoạch); code xong chưa gộp 3 mục (đổi chỗ hai ngày · nhớ câu trả lời liền trước · trang theo dõi); chưa bắt đầu 3 mục (hỏi lại khi thiếu thông tin · "gần X có gì ăn" · agent đề xuất sửa kho) | ĐANG LÀM — bảng từng mục + bước kế: `VIEC_DANG_MO.md` khối 0. Bản code gần nhất đã chạy CẢ bộ test: `e13709a9`; mọi thứ gộp sau đó mới qua file test chạm đường đổi + lượt thật |
+| 6 | **User test TOÀN BỘ một lần, trên máy LOCAL** (`data/test_cuoi/DANH_SACH.md` — CHƯA có dòng cho các việc chiều 20/11; thêm khi đợt xong) — HOÃN tới khi bước 5 xong hết | chưa |
 | 7 | Deploy AWS, SAU buổi test local (cần User một lần: tài khoản, khoá, ngân sách); xong thì User thử khói ~10 phút trên máy chủ | chưa |
 
 **Việc đang mở, ai làm, bước kế:** CHỈ ở `session_prompt/VIEC_DANG_MO.md` (xong: `session_prompt/VIEC_DA_XONG.md`). Mốc "Phase 9 xong phần nhóm" = code `55d01a8`.
@@ -44,7 +44,7 @@ Hai con số đo cách làm: `SO_CAI_TIEN_CACH_LAM.md`. Hỏi User > 8 hộp / n
 
 1. User tự làm: trần chi tiêu từng khoá API · vô hiệu hoá khoá AWS cũ ở thư mục khoá học.
 2. Buổi User tự tay test toàn bộ (bước 6) — User chưa có giờ; KHÔNG nhắc.
-3. Ba câu gác 20/11 ĐÃ trả lời (đừng hỏi lại): bản sửa "báo đã dời" — đã gộp · bộ bài đánh giá coding agent — User TỰ đưa khung cho AI khác hãng soạn, nhóm không soạn / kiểm đề · cảnh báo câu bộ đo — KHÔNG thêm. Không gấp: ~20 câu User tự gõ (`data/kich_ban_pho_thong_2026-11-19/CAU_CUA_USER.md`).
+3. Đã trả lời trong ngày 20/11 (đừng hỏi lại): bản sửa "báo đã dời" — đã gộp · bộ bài đánh giá coding agent — User TỰ đưa `data/danh_gia_model_2026-11-20/KHUNG.md` + `KHUON_MO_DAU.md` cho AI khác hãng soạn đề (đó là file ĐỂ SOẠN ĐỀ, không phải đề; nhóm không soạn / không kiểm đề; A đã đưa đường dẫn + câu dán) · cảnh báo câu bộ đo — KHÔNG thêm · sao lưu — KHÔNG sao lưu định kỳ, kho + bộ câu mẫu ở git, KHÔNG ghi ổ C · phạm vi + tám điều cách làm (mục 4). Chờ User xác nhận, không gấp: dòng "© OpenStreetMap" trên hai bản đồ (xem `VIEC_DANG_MO.md` khối 0); giọng nói "dẹp" hay "không làm trước 30/11" (đang coi là bỏ). Không gấp: ~20 câu User tự gõ (`data/kich_ban_pho_thong_2026-11-19/CAU_CUA_USER.md`).
 4. Chưa hỏi, không tự mở: giá phòng, bổ sung kho (số điện thoại, chỗ đậu xe…), vị trí người dùng.
 
 ## 4. Quyết định còn hiệu lực — không hỏi lại, không trình lại như lỗi
