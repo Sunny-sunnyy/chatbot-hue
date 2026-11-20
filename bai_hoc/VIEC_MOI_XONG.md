@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 21:29, ngày 19/11/2026 · thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 08:49, ngày 20/11/2026 · thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; CHƯA gộp vào bản chính lúc viết — chờ lượt cả bộ test) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -13,6 +13,47 @@
 **Từ dùng chung cho các mục 19/11:** **cờ** = một dòng bật / tắt trong file cấu hình, tắt là hệ thống chạy như trước khi có tính năng · **lời dặn** = đoạn chữ cố định gửi kèm mọi
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
+
+## 20/11 — 16. Sửa nhỏ cho mục 15: hỏi tiếp "kể hết các chỗ vừa nêu" không còn bị dòng ghi chú làm ngắn danh sách
+
+**Từ dùng ở mục này:** **dòng ghi chú** = dòng do chương trình viết ở mục 15, ghi tên các nơi mà câu trả lời trước đã trích bài riêng — nó chỉ là MỘT PHẦN các nơi đã nêu
+(nơi nêu qua bài tổng hợp không có trong dòng) · **câu xin liệt kê lại** = câu hỏi tiếp chỉ xin kể lại / kể đủ các nơi vừa nêu, không hỏi thêm gì · **khuôn câu** = mẫu
+chương trình dùng để nhận ra câu xin liệt kê lại: lời lịch sự, lời xin kể ("kể hết", "liệt kê", "cho mình danh sách"…), "các / những / mấy" đi liền một loại nơi (quán, chùa, điểm
+tham quan…), lời trỏ lại ("vừa nêu", "trong bài đó"), lời lịch sự · **bộ dò** = danh sách câu do một phiên KHÁC người viết code soạn để thử khuôn câu, chạy thẳng vào chương trình, 0 đồng ·
+**bắt nhầm** = chương trình tưởng một câu là câu xin liệt kê lại trong khi nó hỏi về một nơi cụ thể · **bỏ sót** = câu xin liệt kê lại mà chương trình không nhận ra.
+
+**1. Anh thấy gì khác.** Tối 19/11 nhóm thấy một tác dụng phụ của mục 15: trợ lý vừa kể tám nơi, anh hỏi tiếp "kể hết các chỗ vừa nêu", có lượt trợ lý chỉ kể lại ba nơi — đúng
+ba tên nằm trong dòng ghi chú. Model đã coi dòng ghi chú là danh sách đủ. Nay, lượt nào câu anh gõ khớp khuôn câu xin liệt kê lại thì chương trình KHÔNG đưa dòng ghi chú cho
+model ở đúng lượt đó; lượt sau model nhận lại như thường. Câu hỏi về một nơi ("cho địa chỉ quán đó") không đổi gì. Không thêm cờ; đây là sửa bên trong cờ `nho_ten_goi_y`.
+**Điều KHÔNG đổi, anh cần biết:** danh sách kể lại vẫn thường thiếu một hai nơi — đó là một lỗi khác, có từ trước, không do dòng ghi chú (xem ý 3).
+
+**2. Bằng chứng.**
+- **Lượt thật** (model thật qua hệ thống đang chạy; một kịch bản hai lượt "hỏi danh sách rồi xin kể hết", chạy 3 lần bản có sửa và 3 lần bản cờ tắt cùng buổi; 0,014 USD ≈ 350 đồng):
+  - Thứ gửi cho model ở lượt 2 của bản có sửa KHÔNG còn dòng ghi chú ở cả 3 / 3 lần, và giống từng byte với bản cờ tắt. Mốc so: tối 19/11, bản chưa sửa có dòng ghi chú ở 3 / 3 lần. [máy kiểm]
+  - Số nơi kể được ở lượt 2 (trên 8 nơi có trong kho): bản có sửa 8 · 7 · 7; bản cờ tắt 7 · 7 · 6. Mốc so: bản chưa sửa tối 19/11 là 3 · 8 · 7 — lượt "3" là lượt bị dòng ghi chú
+    làm ngắn, nay không còn. Ngưỡng ghi trước khi đo: số lần kể đủ của bản có sửa không kém bản cờ tắt (1 / 3 so với 0 / 3) ⇒ đạt. [máy đếm tên trong câu trả lời; người thứ hai đang đọc tay]
+  - **Đọc con số này thế nào:** vì thứ gửi model ở hai bên giống hệt nhau, chênh lệch 1 / 3 so với 0 / 3 là dao động của model, KHÔNG phải bản có sửa kể giỏi hơn. Ba lần mỗi bên chỉ đủ để nói "không còn thấy lượt tụt xuống ba nơi", không đủ để nói tỉ lệ.
+- **Khuôn câu, chạy thẳng vào chương trình (0 đồng)** — hai bộ dò, 74 câu:
+  - Bắt nhầm câu hỏi về MỘT nơi: **0 / 32**; bắt nhầm câu hỏi có / không về cả nhóm nơi: **0 / 3**; bắt nhầm câu ngoài phạm vi: 0 / 10. Đây là sàn: bắt nhầm làm trợ lý mất dòng ghi chú
+    và quay lại lỗi nói chắc về sai nơi của mục 15. [người thứ hai kiểm — người soạn bộ dò tự chạy lại]
+  - Nhận đúng câu xin liệt kê lại: **9 / 20** ở bộ thứ nhất, 5 / 5 ở bộ thứ hai. 11 câu bỏ sót là câu ghép, câu có số, viết tắt, hoặc không nêu loại nơi ("kể hết ra xem nào") —
+    các lượt đó chạy y như trước khi sửa, không tệ hơn. [người thứ hai kiểm]
+  - **Bản đầu của khuôn câu đã bị bắt lỗi trước khi vào bản chính:** bản đầu chỉ xét "mọi từ trong câu có thuộc danh sách từ cho phép không". Người review soạn thêm 20 câu và 11 / 12
+    câu hỏi về một nơi bị bắt nhầm. Nhóm bỏ cách đó, viết lại thành khuôn câu chặt như trên; số nhận đúng tụt từ 14 / 20 xuống 9 / 20, đổi lại bắt nhầm về 0. [người thứ hai kiểm]
+- **Test bằng đồ giả:** 18 test của file chạm đạt; các test mới đều đã thấy hỏng khi cố ý phá code (kể cả ca "lượt sau lượt liệt kê vẫn nhận lại dòng ghi chú"). [máy kiểm]
+- **Không đo lại bộ 17 chuỗi của mục 15:** chương trình đếm thấy 0 / 46 lượt của bộ đó khớp khuôn câu, nên thứ gửi model ở bộ đó không đổi một byte; đo lại chỉ tốn tiền. [máy kiểm, hai phiên đếm khớp nhau]
+
+**3. Chưa làm / giới hạn.**
+- **Lỗi có sẵn "danh sách thiếu mục" còn nguyên:** ở phép đo trên, 5 / 6 lần lượt 2 thiếu một hoặc hai nơi, ở CẢ bản có sửa lẫn bản cờ tắt. Bản sửa này chỉ gỡ tác dụng phụ của dòng ghi chú, không chữa lỗi đó.
+- Câu xin liệt kê diễn đạt ngoài khuôn (khoảng một nửa số câu của bộ dò) không được nhận ⇒ lượt đó vẫn có thể bị dòng ghi chú làm ngắn danh sách như tối 19/11.
+- Hai trường hợp chương trình không thể biết từ câu gõ: câu MỚI không trỏ lại gì ("liệt kê các quán ăn") cũng khớp khuôn — lượt đó mất dòng ghi chú nhưng không hỏi về nơi vừa nêu;
+  câu "liệt kê lại các điểm tham quan đó" khi lượt trước nói về các điểm BÊN TRONG một nơi — chương trình không biết "các điểm đó" thuộc một nơi. Chưa thấy ngoài thực tế, đã ghi ở sổ tay bàn giao mục 10.1.
+- Chưa có lượt thật nào trên đúng bản cuối của nhánh: phép đo chạy trên bản trước hai lần siết khuôn; phiên đo đã kiểm bằng máy rằng với kịch bản đó thứ gửi model giống từng byte. [máy kiểm]
+- Lúc viết mục này bản sửa CHƯA gộp vào bản chính: còn chờ lượt cả bộ test (máy đang nhường cho việc khác).
+
+**4. Cách anh thử trong 2 phút** (sau khi bản sửa đã gộp và bật hệ thống): hỏi một câu để trợ lý kể nhiều nơi, ví dụ "Huế có những chùa nào nên ghé?"; rồi gõ "Kể hết các chùa vừa nêu giúp mình".
+Trợ lý phải kể lại danh sách dài cỡ lượt trước, không rút còn hai ba nơi (thiếu một hai nơi là lỗi có sẵn ở ý 3). Gõ tiếp "Cho địa chỉ chùa đó" sau một câu trả lời nhắc đúng một chùa — trợ lý vẫn phải trả đúng chùa vừa nhắc như mục 15.
+Báo cáo kỹ thuật: `report_agent/2026-11-20/b_nho_ten_liet_ke_lai_implementation.md`.
 
 ## 19/11 — 15. Hỏi tiếp "cho địa chỉ quán đó": trợ lý nay biết mình vừa nhắc tới nơi nào (đã đo, anh chọn bật)
 

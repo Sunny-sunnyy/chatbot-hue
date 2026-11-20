@@ -7,7 +7,7 @@ duyệt bản `d26eb6099da3`): `data/kich_ban_pho_thong_2026-11-19/viec_2_sua_nh
 Trợ lý nhớ tên các nơi vừa trích bằng một dòng ghi chú do code viết (cờ bật 19/11). Dòng đó chỉ là một phần các nơi đã nêu. Khi người dùng hỏi tiếp kiểu
 "kể hết các chỗ vừa nêu", model có lúc coi dòng ghi chú là danh sách đủ và chỉ kể mấy tên đó (đo 19/11: một lượt kể 3 / 8 nơi). Bản sửa: lượt mà CÂU GÕ chỉ
 xin liệt kê lại thì code không đưa dòng ghi chú cho model ở đúng lượt đó (lịch sử lượt đó giống như khi cờ tắt); ghi chú vẫn được lưu, lượt sau nhận lại.
-Câu hỏi về một nơi ("địa chỉ quán đó") không đổi gì. [chưa kiểm trên model thật — chờ phép đo của C]
+Câu hỏi về một nơi ("địa chỉ quán đó") không đổi gì. [lượt thật: mục 3]
 
 ## 2. Sửa gì
 | File | Đổi |
@@ -29,7 +29,7 @@ nơi). Phiên điều phối cho đúng một lần sửa ⇒ thay bằng khuôn
 Khi kiểm lại, E đọc luật và thấy thêm một lỗ cùng họ ("tất cả mấy quán đó đi được không" — không có lời xin kể, "đi được không" là câu hỏi thật) ⇒ phiên điều phối cho
 một commit thu hẹp: lời xin kể thành bắt buộc; câu trần "tất cả các chùa đó" không được nhận nữa (chấp nhận).
 
-## 3. Bằng chứng (tất cả 0 USD; chưa có lượt nào qua model thật)
+## 3. Bằng chứng (phần của B 0 USD; lượt thật do C đo: 0,0142 USD)
 | Phép | Kết quả | Nhãn |
 |---|---|---|
 | Test file chạm `tests/test_nho_ten_goi_y.py` (đồ giả chỉ để dựng điều kiện) | 18 đạt, ~10 giây | [máy kiểm] |
@@ -40,12 +40,14 @@ một commit thu hẹp: lời xin kể thành bắt buộc; câu trần "tất c
 | Cả HAI bộ dò, sau lần sửa bằng khuôn câu (bản hiện tại của nhánh) | bộ đầu: bắt nhầm **0 / 20** · 0 / 10 · nhận đúng **9 / 20** · bộ thêm: câu hỏi về một nơi **0 / 12** · về cả nhóm **0 / 3** · đối chứng 5 / 5 | [máy kiểm]; chờ E chạy lại |
 | Sau commit thu hẹp "lời xin kể bắt buộc" | hai bộ dò không đổi số (9 / 20 · 0 / 20 · 0 / 10 · 0 / 12 · 0 / 3 · 5 / 5); test câu tự đặt cho ca này đỏ trên bản trước, xanh sau sửa; đếm lượt chạm không đổi | [máy kiểm]; chờ E chạy lại |
 | Test câu tự đặt cho từng họ lỗ, chạy trên hàm bản cũ | đỏ (5 câu tự đặt bản cũ nhận, bản mới không) | [máy kiểm] |
+| **Lượt thật — kịch bản "kể hết" × 3 mỗi bên, C đo qua server thật, cùng buổi, 0,0142 USD** (bản `bf2490b`) | lịch sử lượt 2 bên bật KHÔNG có dòng ghi chú 3 / 3, giống byte bên tắt · số nơi kể ở lượt 2: bật 8 · 7 · 7, tắt 7 · 7 · 6 (trên 8) ⇒ kể đủ bật 1 / 3 ≥ tắt 0 / 3 ⇒ đạt ngưỡng ghi trước · mốc 19/11 bản chưa sửa: 3 · 8 · 7 · lỗi có sẵn danh sách thiếu mục còn 5 / 6 lần ở cả hai bên | [máy kiểm, C đo]; E đang đọc tay |
 | Đếm lượt chạm đường đổi bằng hàm thuần | bộ 17 chuỗi đích (md5 `4e45408521db`): **0 / 46 lượt** ⇒ chuỗi gửi model của bộ đó không đổi ⇒ theo luật "đo đúng chỗ đổi" KHÔNG chạy lượt có phí bộ này · kịch bản "kể hết": chạm đúng lượt 2 · cả bộ 80 kịch bản: 1 / 106 lượt | [máy kiểm] |
 
 Kết quả bộ dò từng câu + hai công cụ đếm (riêng tư): thư mục plan — `KQ_BO_DO_lan_1_8f43e3b.txt`, `KQ_BO_DO_lan_2_sau_sua.txt`, `chay_bo_do.py`, `dem_luot_cham.py`.
 
 ## 4. Chưa làm / giới hạn
-- **Chưa đo qua hệ thống thật** (C chạy khi máy có lượt): kịch bản "kể hết" × 3 mỗi bên cùng buổi — ngưỡng ghi trước: bên bật kể đủ ≥ bên tắt; dấu vết phải thấy: lượt 2 bên bật KHÔNG có dòng ghi chú trong lịch sử.
+- Phép đo qua hệ thống thật chạy trên bản `bf2490b` (trước hai lần siết khuôn); C kiểm bằng máy rằng dùng lại được cho bản cuối (hai chỗ gọi hàm không đổi, kịch bản đích vẫn được nhận, lịch sử ra giống byte) — KHÔNG có lượt server thật nào trên bản cuối.
+- Cả bộ test CHƯA chạy trên nhánh (máy nhường dự án khác) — điều kiện gộp còn lại.
 - 11 / 20 câu xin liệt kê của bộ dò đầu bị bỏ sót (câu ghép, câu có số, viết tắt, câu không nêu loại nơi như "kể hết ra xem nào") — lượt đó giữ hành vi cũ, không tệ hơn. Đã dùng hết: một bộ dò thêm + một lần sửa; E chạy lại hai bộ mà còn câu ra sai ⇒ không gộp, giữ dòng giới hạn, không mở vòng.
 - Lỗi có sẵn "danh sách thiếu mục" (bên cờ tắt cũng thiếu 1 / 3 lần) KHÔNG được chữa — bản sửa chỉ gỡ tác dụng phụ của dòng ghi chú.
 - Hai giới hạn không đọc được từ câu gõ (E nêu, không sửa): câu MỚI không trỏ lại ("liệt kê các quán ăn") cũng được nhận — lượt đó mất ghi chú nhưng không hỏi về nơi vừa nêu; câu "liệt kê lại các điểm tham quan đó" khi lượt trước nói về các điểm bên trong MỘT nơi — code không biết "các điểm đó" thuộc một nơi.
