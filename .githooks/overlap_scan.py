@@ -87,6 +87,8 @@ def staged_added_lines() -> list[tuple[str, list[tuple[int, str]]]]:
             current = None
         elif line.startswith("+++ ") and current is None:
             current = line[6:].rstrip("\t") if line.startswith("+++ b/") else None  # tên có khoảng trắng: git thêm tab cuối
+            if current and current.startswith("knowledge-base-hue/"):  # chính file kho (được commit từ 20/11) — không quét trùng với chính nó
+                current = None
         elif line.startswith("@@") and current is not None:
             n = int(re.match(r"@@ -\S+ \+(\d+)", line).group(1))
             files.setdefault(current, [])

@@ -71,9 +71,8 @@ report.
 
 - Data flow chuẩn: `raw -> curated Markdown -> chunks -> embeddings/index ->
   retrieval -> context -> answer`. Không chunk trực tiếp từ source dumps.
-- `knowledge-base-hue/`, `data/`, Qdrant storage, Golden, trace chi tiết,
-  `gửi chatgpt/` là private: không commit, report tracked không chép nội dung,
-  câu hỏi Golden, vector hay payload. Repo GitHub là **public**: số liệu, đường dẫn,
+- `data/`, Qdrant storage, trace chi tiết, `gửi chatgpt/`, câu kín là private: không commit, report tracked không chép nội dung,
+  vector hay payload (kho + bộ câu mẫu được commit từ 14:41 20/11/2026 — xem "Chống mất dữ liệu"). Repo GitHub là **public**: số liệu, đường dẫn,
   sự cố của dự án khác của User chỉ ghi ở `data/` (file tracked chỉ nói "một dự án
   khác của User"); hook `.githooks/pre-commit` chặn phần máy kiểm được. Report tracked tả câu dev / test ở **mức loại
   câu** (so sánh, giá, nhiều nguồn…), không nêu chủ đề cụ thể (tên nơi, món, loại giá, tên thông tin) cạnh `case_index` —
@@ -90,7 +89,7 @@ report.
 - Corpus không có Git: backup file gốc vào `knowledge-base-hue/meta/` trước khi
   sửa, review bằng diff với backup. Bài nháp trước khi ghi kho: `uv run python .githooks/overlap_scan.py <nháp…>` phải ra 0 dòng trùng
   Golden / câu kín (hook commit không quét kho vì kho không tracked) (User duyệt 10:15 15/11/2026).
-- **Chống mất dữ liệu ngoài git** (User duyệt 14:28 20/11/2026, sau khi A, B, C, E bàn; lỗi đã gặp thật đều là GHI ĐÈ, chưa có ca xoá nhầm): (1) **không ai xoá gì** trong `data/`, `knowledge-base-hue/`, thư mục sao lưu cho tới khi User nộp đồ án; thật cần xoá ⇒ phiên xin gửi danh sách đích thật (`ls` / `du`), MỘT phiên khác xác nhận "đúng danh sách, không còn dùng", A hỏi User một câu, rồi **chỉ A xoá** và ghi một dòng `CURRENT_HANDOFF.md`. Không áp cho: file tạm / worktree `/tmp/hr_<x>_*` do chính mình tạo, file trong git; `qdrant_storage/` và collection Qdrant vẫn theo bảng quyền `AGENTS.md` (xoá dữ liệu: hỏi User trước). (2) **File kết quả đo / log của một lượt chạy không ghi đè** — tên kèm mã commit hoặc ngày-giờ; file sống (danh sách, bảng đối chiếu) sửa tại chỗ như cũ; thứ còn dùng lại không để ở `/tmp`. (3) **Sao lưu ổ D** (`/mnt/d/hue_rag_sao_luu/`, CÙNG đĩa vật lý với ổ ảo WSL ⇒ chỉ chống xoá nhầm / hỏng ổ ảo): chép ở mỗi mốc chốt, giữ ÍT NHẤT hai bản gần nhất (bản và file gói cũ hơn cũng KHÔNG tự xoá — dọn theo câu (1), chỉ sau khi bản mới đếm khớp), mỗi lần chép đếm số file nguồn ↔ đích (ổ D không phân biệt hoa thường ⇒ file trùng tên chép thêm dưới tên khác). (4) **Hỏng đĩa D:** A đóng một file gói (`data/` + kho) ở thư mục sao lưu; User TỰ chép ra USB / ổ rời — agent không gửi dữ liệu riêng lên dịch vụ nào, **không ghi gì lên ổ C**. `.env` không nằm trong bản chép nào (agent không đọc) — User tự giữ khoá. Không thêm rào bằng máy.
+- **Chống mất dữ liệu** (User 14:41 20/11/2026; thay bản dài cùng ngày — User: ba tháng không sao lưu vẫn ổn, đừng thêm nghi thức): (1) **kho `knowledge-base-hue/` + bộ câu mẫu nằm trong git** (repo public, User cho phép) — sửa kho xong thì commit như code; file câu kín (`*sealed*`) KHÔNG commit, hook chặn. (2) `data/` chỉ nằm trên máy, **không sao lưu định kỳ**; không ghi gì lên ổ C. (3) Không xoá gì trong `data/`, kho cho tới khi nộp đồ án (cần xoá ⇒ hỏi User theo bảng quyền); file kết quả đo / log của một lượt chạy không ghi đè (tên kèm mã commit hoặc ngày-giờ). Các bản chép cũ ở `/mnt/d/hue_rag_sao_luu/` để nguyên, không chép thêm.
 - Curated Markdown: không YAML frontmatter, file bắt đầu bằng `#`; không ghi
   field/section rỗng; không thêm "Liên kết nội bộ"; nguồn tối giản ở
   `## Nguồn dữ liệu`; nội dung tự nhiên, độc lập, answer-facing. Chi tiết foods:

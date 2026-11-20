@@ -17,7 +17,7 @@ chỉ trỏ đường và nêu luật cứng; luật đầy đủ ở `session_p
 
 Luật cứng (chi tiết ở mục ghi trong ngoặc của `session_prompt/Session_Prompt.md`):
 1. Không đọc / in / log `.env` hay secret; nạp env bằng `uv run --env-file .env …` (§5).
-2. Repo **public**: không commit `data/`, `knowledge-base-hue/`, `gửi chatgpt/`, câu Golden / câu kín, chi tiết dự
+2. Repo **public**: không commit `data/`, `gửi chatgpt/`, câu kín (`*sealed*`), (kho `knowledge-base-hue/` + bộ câu mẫu ĐƯỢC commit — User 14:41 20/11/2026), chi tiết dự
    án khác của User (§5). Hook `.githooks/pre-commit` chặn phần máy kiểm được (bật:
    `git config core.hooksPath .githooks`).
 3. Câu kín (`*sealed*`) chỉ mở khi việc giao rõ cho đúng người / sub-agent đó; tìm trong nội dung kho CHỈ bằng

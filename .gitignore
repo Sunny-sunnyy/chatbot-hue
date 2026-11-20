@@ -23,7 +23,10 @@ data/
 logs/
 tai_lieu/
 qdrant_storage/
-knowledge-base-hue/
+# Kho + bộ câu mẫu vào git từ 20/11 (User chọn); câu kín và symlink tự trỏ thì không
+knowledge-base-hue/**/*sealed*
+knowledge-base-hue/**/*Sealed*
+knowledge-base-hue/knowledge-base-hue
 
 # OS/editor noise
 .DS_Store
