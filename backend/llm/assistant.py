@@ -38,6 +38,7 @@ from llm import quan_lich as ql
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
+from llm import su_kien as sk
 from llm.lam_thay import nho_lam_thay
 from llm import khoang_cach as kc
 from llm.danh_sach import CAU_DANH_SACH, hoi_ve_mot_noi, xin_danh_sach
@@ -172,6 +173,10 @@ class AssistantFlags:
     # mã); chỉ đưa khi câu có từ khoá khoảng cách. TẮT tới khi đo đạt; cần `tim_them` + bảng (`assistant.khoang_cach_bang`, nạp ở rìa)
     khoang_cach: bool = False
     khoang_cach_bang: "kc.BangKhoangCach | None" = field(default=None, compare=False, repr=False)
+    # 20/11 (plan `report_agent/2026-11-20/c_su_kien_theo_ngay_plan.md`): câu vừa nêu một khoảng ngày vừa hỏi lễ hội / sự kiện ⇒ code tra bảng chép từ kho
+    # (`assistant.su_kien_bang`, nạp ở rìa), đổi ngày âm ⇒ dương, đăng một nguồn trước lần gọi model đầu (`llm/su_kien.py`). TẮT tới khi đo đạt; cần `tim_them`.
+    su_kien_theo_ngay: bool = False
+    su_kien_bang: "tuple[dict, ...] | None" = field(default=None, compare=False, repr=False)
     # 17/11 (plan `2026-11-17-khoang-cach-tinh-san-plan.md`): câu đang gõ có từ khoá + đúng hai tên điểm của bảng ⇒ code tra bảng và nối nguồn khoảng
     # cách TRƯỚC lần gọi model đầu, lượt đó không đưa công cụ `khoang_cach` (bớt một lần gọi model ≈ 1,8 s trên đường chữ đầu). TẮT tới khi đo đạt
     khoang_cach_tinh_san: bool = False
@@ -239,6 +244,7 @@ class AssistantFlags:
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
                    khoang_cach_bang=kc.nap_bang(BACKEND_DIR / config["khoang_cach_bang"], BACKEND_DIR / config["lich_trinh_bang_v2"])
                    if values["khoang_cach"] else None,
+                   su_kien_bang=sk.nap_bang(BACKEND_DIR / config["su_kien_bang"]) if values["su_kien_theo_ngay"] else None,
                    len_ke_hoach_o_hien=tuple(config.get("len_ke_hoach_o_hien") or ()),
                    len_ke_hoach_so_thich_an=tuple(config.get("len_ke_hoach_so_thich_an") or ()),
                    bang_lich_v2=bang_v2,
@@ -272,7 +278,7 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
                     if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
                                      "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do",
-                                     "khoang_cach_bang"))
+                                     "khoang_cach_bang", "su_kien_bang"))
 
 
 def elapsed_ms(started: float) -> float:
@@ -721,6 +727,16 @@ def _nguon_khoang_cach_san(trace: AnswerTrace, bang: "kc.BangKhoangCach", cap: t
     return chu
 
 
+def _nguon_su_kien(trace: AnswerTrace, dong: list[str]) -> str:
+    """Cờ `su_kien_theo_ngay`: các dòng code tra từ bảng lễ hội / hoạt động theo ngày, đăng thành **một nguồn** (mẫu `_nguon_lich_san`). Log chỉ số dòng."""
+    src = PackedSource(id=len(trace.so_nguon) + 1, title=sk.TIEU_DE_NGUON, heading_path=(sk.MUC_NGUON,), excerpts=tuple(dong), source=sk.NGUON_SOURCE)
+    trace.so_nguon.append(src)
+    chu = FullCorpusContextBuilder._block(src)
+    trace.context_parts.append(chu)
+    trace.tools.append({"name": "su_kien_san", "ms": 0.0, "n_dong": len(dong)})
+    return chu
+
+
 def _nguon_lich_san(trace: AnswerTrace, query: str) -> str:
     """T1 nhanh (plan `2026-11-10-phase-9-t1-nhanh-plan.md` D2): S5 09/11 câu ngày gọi model 2–4 lần vì model phải gọi `ngay_lich` rồi mới viết ⇒
     code tính sẵn hôm nay / mai / tuần / ngày âm nêu trong câu và trong đoạn kho lần tìm đầu, đăng thành **một nguồn** (như kết quả `ngay_lich`), nối
@@ -1010,6 +1026,9 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     context = trace.packed.text
     if flags.ngay_lich and trace.fixed_outcome is None and nl.co_tu_ngay_luot(query, trace.history):
         context = f"{context}\n\n{_nguon_lich_san(trace, query)}"  # T1 nhanh D2: lượt có từ chỉ ngày ⇒ lịch code tính trước lần gọi model đầu
+    su_kien = sk.dong_nguon(query, flags.su_kien_bang) if flags.su_kien_theo_ngay and flags.su_kien_bang and trace.fixed_outcome is None else None
+    if su_kien:  # cổng hẹp do code đọc câu gõ; câu không qua cổng ⇒ chuỗi gửi model y như cờ tắt
+        context = f"{context}\n\n{_nguon_su_kien(trace, su_kien)}"
     cap = kc.cap_tinh_san(query, flags.khoang_cach_bang) if flags.khoang_cach_tinh_san and trace.fixed_outcome is None else None
     if cap:
         context = f"{context}\n\n{_nguon_khoang_cach_san(trace, flags.khoang_cach_bang, cap)}"
