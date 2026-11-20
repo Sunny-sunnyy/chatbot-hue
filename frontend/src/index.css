@@ -274,6 +274,9 @@ picture { display: contents; }
 .ghim.ghim-ngay-2 { background: #6D28D9; }
 .ghim.ghim-ngay-3 { background: #0E7490; }
 .ghim.ghim-ngay-4 { background: #4D7C0F; }
+/* Trang "Bản đồ" riêng (20/11): khung cao hơn, ghim nhỏ không số, danh sách tên chia cột */
+.bd-trang .bd-khung { height: 520px; margin-bottom: 16px; }
+.bd-trang-ds { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 20px; }
 .bd-ds { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: 15px; }
 .bd-ds a { color: var(--color-accent); text-decoration: underline; }
 .bd-so { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 999px;
@@ -385,6 +388,7 @@ picture { display: contents; }
   .anh-lon { aspect-ratio: 16 / 7; }
   .ft { padding-bottom: 96px; }
   .bd-khung { height: 220px; }
+  .bd-trang .bd-khung { height: 360px; }
   .noi { display: none; }
   .chat { inset: 0; width: auto; height: auto; max-height: none; border-radius: 0; border: 0; }
   .td { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; height: 64px;

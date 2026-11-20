@@ -25,3 +25,10 @@
 
 **5. Giới hạn biết trước**
 - Bản đồ cần mạng tới máy chủ ô bản đồ (như bản đồ lịch); mất mạng ⇒ chỉ còn danh sách. Chỉ 41 điểm tham quan — người tìm quán ăn / khách sạn trên bản đồ sẽ không thấy. Lượt trình duyệt cần bật server (0 USD model, chờ lượt chung).
+
+**6. Kết quả phần code (E ghi 15:49 20/11/2026, giờ `date`; CHƯA có lượt trình duyệt nào — tiêu chí b, c, d chờ lượt bật server; chưa ai review)**
+- Phiên điều phối duyệt plan với ba mặc định: chỉ điểm tham quan của bảng điểm · mục menu sau "Khám phá" · được dùng chung phần bản đồ nếu bản đồ lịch không đổi.
+- Đã viết: `GET /api/ban_do` + hàm thuần `dung_ban_do` (`backend/api/routes/cong.py` +24) · `frontend/src/TrangBanDo.jsx` (mới, 78 dòng) · `route.js` (`#/ban-do`) · `App.jsx` (mục menu "Bản đồ" chỉ khi cờ `ban_do_lich` bật; trang tải riêng) · `index.css` +4 · `BanDoLich.jsx`: CHỈ thêm chữ `export` cho hàm dòng ghi công bản đồ (không tách gì khác ⇒ bản đồ trong thẻ lịch không đổi một dòng lệnh nào).
+- a. [máy kiểm] test mới `test_map_page_lists_every_itinerary_point_that_has_coordinates`: ĐỎ trên code cũ (`AttributeError`), xanh sau; cả file `test_ban_do_lich.py` 14 đạt (Python 3.13). Dữ liệu thật của bộ cờ đang chạy: xem dòng số điểm ở tin báo phiên điều phối.
+- [máy kiểm] `npm run build` trong worktree đạt; trang Bản đồ thành file riêng `TrangBanDo-*.js` 2,9 kB, dùng chung file Leaflet `BanDoLich-*.js` với bản đồ lịch.
+- CHƯA làm: b (số ghim, lọc, bấm ghim, tràn ngang ở 390 px, ảnh) · c (nhìn lại bản đồ trong thẻ lịch) · d (trang chủ không tải Leaflet) · dựng lại `frontend/dist` ở cây chính sau khi gộp · `bai_hoc/`.
