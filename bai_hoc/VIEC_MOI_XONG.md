@@ -75,7 +75,7 @@ cho từng điểm thử dời sang từng buổi khác, tổng 176 lần thử.
   tự thử từng chỗ bằng đúng phép thử của lần dời thật, model không viết.
 
 **2. Bằng chứng.**
-- **Lượt thật trên giao diện** (16:0x 20/11/2026, hệ thống thật, lịch 3 ngày · cân bằng · di tích, mỗi câu một lượt) [máy kiểm, người viết đã mở ảnh ra nhìn]: "Dời Đại Nội sang sáng ngày 3" ⇒ "Đã dời Đại Nội Huế
+- **Lượt thật trên giao diện** (chiều 20/11/2026, sau 15:56 — giờ hệ thống khởi động theo log; hệ thống thật, lịch 3 ngày · cân bằng · di tích, mỗi câu một lượt) [máy kiểm, người viết đã mở ảnh ra nhìn]: "Dời Đại Nội sang sáng ngày 3" ⇒ "Đã dời Đại Nội Huế
   sang buổi sáng ngày 3." và lịch đổi thật (Đại Nội đổi chỗ với Phố cổ Bao Vinh); câu "Cho Lăng Tự Đức lên sáng ngày 1, còn Lăng Khải Định để sáng ngày 1" ⇒ hai dòng câu mới, mỗi dòng nêu lý do
   "hai khu không liền nhau" và một chỗ dời được; lịch giữ nguyên.
 - **Phép đếm của người viết** (chương trình thật, 0 đồng, cùng 176 lần thử của mốc) [máy kiểm]: dời được vẫn **24 / 176**, và cả 24 lịch sau khi dời giống TỪNG CHỮ lịch của bản trước sửa — tức bản sửa không
