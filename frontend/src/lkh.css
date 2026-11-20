@@ -213,6 +213,12 @@
 .lkh-chi-in { display: none; }
 .lkh-xuat { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .lkh-xuat .retry { margin-top: 0; }
+/* Thẻ lịch nằm trong khung trò chuyện (khung Trợ lý NỔI và trang Trợ lý): ẩn nút in — chỉ in ở trang Lên kế hoạch. Vùng trò chuyện là hộp có
+   cuộn bên trong nên bản in bị cắt: khung nổi ra 5 trang giống nhau không có ngày nào; trang Trợ lý ra đúng 1 trang, mất ngày 2 và phần ghi chú
+   (soát khác hãng 20/11 + thử lại bằng PDF). Hai lần gỡ hộp bằng luật in vẫn thừa trang trắng ⇒ chọn cách chắc. Nút "Tải PowerPoint" giữ nguyên
+   (file do máy chủ dựng, không phụ thuộc khung). */
+.chat-view .lkh-nut-in { display: none; }
+
 @media print {
   /* Bảng màu + phông của kiểu "Di sản" (như file PowerPoint): xanh rêu 49634D · đất nung A75B43 · nền trắng để in; tiêu đề Georgia, chữ Arial */
   @page { size: A4; margin: 14mm; }

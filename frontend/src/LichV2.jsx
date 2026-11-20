@@ -354,7 +354,7 @@ function XuatLich() {
   }
   return (
     <span className="lkh-xuat" ref={ref}>
-      <button type="button" className="retry" onClick={inLich}>In / Lưu PDF</button>
+      <button type="button" className="retry lkh-nut-in" onClick={inLich}>In / Lưu PDF</button>
       <button type="button" className="retry" onClick={taiPptx}>Tải PowerPoint</button>
       <span className="text-sm text-muted" role="status">{bao}</span>
     </span>
