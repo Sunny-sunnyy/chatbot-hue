@@ -1,6 +1,6 @@
 # Bản đồ dự án hue_rag — đọc trang này trước
 
-*Cập nhật lần cuối: 16:22, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" thêm hai dòng bật 20/11 (lấy lại câu trả lời cũ giữa các cuộc trò chuyện; dòng "danh sách có thể chưa đủ") · trước đó 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
+*Cập nhật lần cuối: 16:24, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" đủ 31 cờ đang bật (thêm các cờ bật 19–20/11); mục "Nhóm đang làm gì" viết lại theo đợt hoàn thiện Phase 9–12 · trước đó 16:22, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" thêm hai dòng bật 20/11 (lấy lại câu trả lời cũ giữa các cuộc trò chuyện; dòng "danh sách có thể chưa đủ") · trước đó 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
 
 Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm những khối nào, khối nào đang bật, và muốn hiểu sâu một khối thì mở bài nào. Mọi con số ở đây là
 **số của hệ thống hôm nay**; các bài viết trước ngày 14/11 (bài 0–18) viết lúc kho còn 204 bài, nên anh sẽ gặp số nhỏ hơn ở đó, không phải lỗi.
@@ -66,7 +66,7 @@ Ngoài hình: **khối đo / chấm** đứng cạnh để kiểm mọi thay đ�
 
 ## Cái gì ĐANG chạy, cái gì TẮT hoặc đã bỏ
 
-Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì chỉ phần đó mất, phần khác giữ nguyên. Bảng dưới đúng với file cấu hình sáng 18/11.
+Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì chỉ phần đó mất, phần khác giữ nguyên. Bảng dưới đúng với file cấu hình chiều 20/11: **31 cờ đang bật** (đếm bằng lệnh ở sổ tay bàn giao mục 0), mọi cờ bật đều có trong bảng.
 
 | Tên người dùng thấy | Trạng thái | Vì sao (một dòng) |
 |---|---|---|
@@ -76,8 +76,11 @@ Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì ch�
 | Nhớ 3 câu hỏi gần nhất | **bật** | câu hỏi tiếp bị từ chối nhầm 5 / 19 ⇒ 0 / 19 (so bản không nhớ) |
 | Nhớ cả câu trả lời (trong MỘT cuộc trò chuyện) | **tắt** | bản thử từng mượn nhầm đoạn của nơi khác |
 | Người sau gõ đúng câu người trước đã hỏi ⇒ lấy lại câu trả lời cũ (giữa CÁC cuộc trò chuyện, 24 giờ) | **bật** (20/11) | lượt thật 20/11: lần đầu 7,5 giây và 0,00076 USD, người sau 0,11 giây và 0 USD, chữ + nguồn + ảnh giống hệt (một câu, ba cuộc trò chuyện — mẫu nhỏ); chỉ khớp đúng chữ, không lưu câu từ chối / web / thời tiết / lịch — `VIEC_MOI_XONG.md` mục 21 |
-| Câu xin danh sách ⇒ thêm dòng "danh sách có thể chưa đủ" | **bật** (20/11) | trước đó danh sách thiếu nơi mà không nói gì (đo sáng 20/11: thiếu ở 5 / 6 lần); bộ câu thử của người khác soạn: nhận 19 / 20, hiện nhầm 2 / 52; KHÔNG làm danh sách đủ hơn — `VIEC_MOI_XONG.md` mục 22 |
+| Câu xin danh sách ⇒ thêm dòng "danh sách có thể chưa đủ" | **bật** (20/11) | trước đó danh sách thiếu nơi mà không nói gì (đo sáng 20/11: thiếu ở 5 / 6 lần); bộ câu thử của người khác soạn: nhận 19 / 20 câu xin danh sách, hiện nhầm ở 2 trên 32 câu không phải xin danh sách (tổng 52 câu thử); KHÔNG làm danh sách đủ hơn — `VIEC_MOI_XONG.md` mục 22 |
 | Câu hỏi nhiều ý (ý kho có thì trả lời, ý thiếu mới ra web) | **bật** | từ 14/11 |
+| Hỏi tiếp "cho địa chỉ quán đó": trợ lý biết TÊN nơi mình vừa nhắc | **bật** (19/11) | lượt hỏi tiếp nói đúng nơi vừa nêu 15 / 17 chuỗi ↔ 2 / 17 khi tắt (lượt thật); 0 lượt nói chắc về sai nơi; chỉ nhớ tên bài đã trích, không nhớ chữ model viết — `VIEC_MOI_XONG.md` mục 15, 16 |
+| Nhờ trợ lý TỰ LÀM (đặt phòng, gửi thư, xem còn phòng không) ⇒ câu nói thật "mình không làm thay được" kèm cách tự làm | **bật** (19/11) | 11 / 12 lượt đích ra câu nói thật đúng loại; 5 / 5 lượt từ chối đúng giữ nguyên (lượt thật, người thứ hai đọc tay 100 %); lượt bão / dông vẫn giữ câu từ chối + khối an toàn |
+| Dòng in đậm "tạm ngừng khi lũ / thời tiết xấu / có lệnh cấm" chép từ bài nguồn khi câu trả lời chưa nêu | **bật** (19/11) | lượt thật 2 / 3, dữ liệu cũ 7 / 7 có dòng; 0 ca gán nhầm cảnh báo của nơi khác; chỉ hiện khi câu trả lời TRÍCH bài có cảnh báo |
 | Tra web khi kho từ chối · câu hỏi nối tiếp ra web | **bật** · **bật** | mục web tách riêng, code chặn link lạ / số tiền không có trong đoạn trích; câu nối tiếp: 8 / 8 nêu đúng nơi (mẫu nhỏ) |
 | Thời tiết · câu bão / lũ | **bật** · **bật** (17/11) | số dự báo do code dựng; câu bão / lũ model không nhận số nào, code nối khối chỉ dẫn cố định |
 | Ngày + âm lịch | **bật** | model hay tính nhầm ngày; câu theo ngày "dùng được" 27 / 28 ↔ 11 / 28 ở bản chưa có trợ lý (đo 12/11) |
@@ -86,6 +89,11 @@ Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì ch�
 | Hỏi bằng ảnh | **bật** | gợi ý tên kèm "có thể sai"; sai nơi 6 / 66 lượt ↔ 14 / 66 nếu lượt nào cũng trả lời thẳng (33 ảnh × 2 lượt, mẫu nhỏ) |
 | Lên kế hoạch bản 2 · ảnh từng điểm · bản đồ ghim · chỗ ở · quán ăn | **bật** cả năm | bật 14/11 (bản đồ 16/11) sau nghiệm thu; chỗ ở chỉ hiện khi người dùng chọn hạng |
 | Sửa lịch bằng lời · câu sửa chưa làm được ⇒ giữ lịch + câu cố định | **bật** · **bật** (17/11) | câu thường trong cuộc có lịch: chữ đầu p50 2,65 giây (20 câu) sau khi sửa tốc độ, trước đó 4,17 giây |
+| Sửa lịch: câu dời HAI điểm một lúc do chương trình đọc | **bật** (19/11) | 10 chuỗi sửa lịch × 2 lần: đạt 9 / 10 ↔ 7 / 10 trước đó, 0 lượt sửa sai (lượt thật); chỉ mẫu câu hẹp, còn lại vẫn báo "chưa làm" |
+| Sửa lịch: không dời được một điểm ⇒ nói lý do + gợi ý chỗ dời được | **có** từ 20/11 (không có cờ riêng) | tỉ lệ dời được KHÔNG tăng (24 / 176 lần thử); 152 / 152 lần từ chối nay có lý do, 92 / 92 gợi ý dời được thật — `VIEC_MOI_XONG.md` mục 19 |
+| Hỏi tiếp về lịch vừa lập ("lịch này mấy giờ xong", "ngày 2 đi đâu"): trợ lý nhìn đúng lịch đã lưu, số giờ do chương trình tính | **bật** (19/11) | 3 kịch bản từng nói chắc mà sai nay trả lời trên đúng lịch; 0 lượt bị rút lại / 57 (lượt thật); tổng TIỀN vé vẫn do model tự cộng — giới hạn đã ghi — `VIEC_MOI_XONG.md` mục 13 |
+| Xuất lịch: nút "In / Lưu PDF" + "Tải PowerPoint" (trang Lên kế hoạch) | **bật** (19/11) | đã thử qua giao diện thật: file 4 trang mở được bằng PowerPoint, có câu an toàn khi lượt có bão; CHƯA giới hạn số lượt tải — phải làm trước khi đưa lên mạng |
+| Trang "Bản đồ" riêng trong menu (40 điểm tham quan, lọc theo loại) | **có** từ 20/11 (theo cờ bản đồ ghim) | số ghim = số điểm chương trình trả về = 40; đã thử ở màn rộng và bề rộng điện thoại; chỉ điểm tham quan, chưa có quán / chỗ ở — `VIEC_MOI_XONG.md` mục 20 |
 | Lịch trình từ câu gõ tự do | **tắt** | thử 2 lần chưa đạt luật ghi trước; chỉ dùng qua biểu mẫu nút |
 | Dòng "hôm nay là ngày…" đầu mọi tin nhắn | **tắt** | không làm giảm từ chối nhầm |
 | Sổ vết debug có nội dung | **tắt** mặc định | chỉ bật trên máy anh khi cần xem từng bước; bản công khai không bật |
@@ -133,50 +141,41 @@ Lưu ý khi đọc bài 0–18: số kho trong đó (204 bài, 8.435 đoạn) l�
 
 ## Nhóm đang làm gì, xong tới đâu
 
-*Mục này cập nhật mỗi lần kết phiên (anh đã duyệt giữ mục này để biết ai đang làm gì — nó là ngoại lệ của luật "bài học chỉ viết việc đã xong").*
+*Mục này viết lại lúc 16:24, ngày 20/11/2026 (anh đã duyệt giữ mục này để biết ai đang làm gì — nó là ngoại lệ của luật "bài học chỉ viết việc đã xong"). Nguồn: bảng trạng thái của phiên điều phối
+(`session_prompt/VIEC_DANG_MO.md` khối 0, bản 16:08 20/11/2026) cộng các việc xong sau đó mà người viết trang này trực tiếp làm hoặc kiểm.*
+
 Nhóm là bốn phiên Claude Code chạy song song: A điều phối và nói chuyện với anh; B, C, E làm và kiểm chéo nhau (người viết không tự kiểm).
 
-**Thứ tự việc — không gắn ngày** (anh chốt chiều 18/11). Nhóm không làm theo lịch nữa: bước trước đạt điều kiện và máy rảnh là làm bước sau ngay, chất lượng giữ nguyên.
-Những phần cần anh — buổi anh tự tay bật và hỏi thử, gửi gói cho model hãng khác soát, các lệnh chạy bộ câu giữ kín, đóng giai đoạn trợ lý, buổi anh lái Codex / Antigravity —
-dời hết về **một buổi anh test toàn bộ ở cuối** (bước 7); trước đó nhóm không nhắc anh các việc này.
+**Việc chính bây giờ: đợt hoàn thiện các tính năng đã chốt ở Phase 9–12** (anh nói rõ 15:25 20/11/2026). "Không thêm tính năng mới" nghĩa là không thêm gì NGOÀI thứ đã chốt;
+thứ đã chốt thì phải xong hết trước buổi anh test. Trước đó nhóm hiểu hẹp hơn ý anh (chỉ bốn việc của Phase 9) — hệ thống ở máy **chưa** xong. Buổi anh test một lần hoãn tới khi đợt này xong.
+Bảng kiểm kê từng tính năng, có nguồn từng dòng, nằm ở thư mục riêng tư `data/kiem_ke_phase_2026-11-20/`.
 
-| Bước | Việc | Đạt khi | Xong chưa |
-|---|---|---|---|
-| 1 | Chạy toàn bộ bộ test của phần máy chủ một lượt trên bản chính; test nào hỏng mà tái hiện được thì sửa | không còn test nào hỏng do code (test hỏng vì thiếu khoá API hay thiếu bản dựng giao diện thì ghi riêng) | chưa |
-| 2 | Một agent con ngữ cảnh mới soát chỗ các tính năng gặp nhau (thay cho gói gửi model hãng khác); nhóm tự chạy năm mục "cách thử" đã viết cho anh ở trang "Việc mới xong" | mỗi điểm tìm ra đã tái hiện được rồi sửa, hoặc ghi vào danh sách giới hạn đã biết | chưa |
-| 3 | **Code đứng yên**: ghi lại mã của bản code đó vào sổ đo; chép lại bản sao lưu các thứ nằm ngoài git | có mã bản code đứng yên | chưa |
-| 4 | **Lượt đo cuối** cả trợ lý trên các bộ câu đã từng đo (bộ câu mẫu + an toàn + ngoài chủ đề + web; trần 0,45 USD). Các bộ câu giữ kín **không chạy** ở bước này — agent không được mở, chờ anh ở bước 7 | mọi sàn chất lượng đã ghi trước đều đạt ⇒ "giai đoạn trợ lý xong phần của nhóm" | chưa |
-| 5 | **Đợt hoàn thiện trên máy**: thử cho hệ thống tự dò cấu hình tốt hơn ở bước tìm · sửa các lỗi đã hoãn ở mục "Chỗ còn yếu" · một lệnh kiểm nhanh dùng lại · kế hoạch deploy trên giấy | từng sửa đổi có đo, đạt tiêu chí ghi trước, và có người khác người viết kiểm | chưa |
-| 6 | Deploy lên AWS — cần anh một lần: tài khoản, khoá, ngân sách | kiểm được trên bản đã lên mạng (hỏi một câu thật, không chỉ xem trang báo "sống") | chưa |
-| 7 | **Anh test toàn bộ một lần**, theo một danh sách nhóm gom dần từ bây giờ (mỗi việc xong thêm một dòng "cách thử"), có phiếu chấm sẵn ⇒ anh đóng giai đoạn trợ lý | — | chưa |
+**Cách làm anh chọn chiều 20/11:** mỗi việc đếm hoặc thử một lượt trước khi viết · kế hoạch một trang · test vừa đủ + MỘT lượt thật qua giao diện · một người khác đọc cả nhánh ·
+cả bộ test chỉ chạy một lượt ở cuối đợt · lỗi hiếm thì ghi lại, không sửa · việc đo lại vẫn không đạt thì báo anh, không lặng lẽ ghi giới hạn.
 
-**Sáng 18/11 đã xong:**
-- Sổ số đo ghi được mỗi câu chạy bằng **bản code nào**, cả khi chạy trong Docker (trước đó Docker ghi "không rõ") — một chỗ đổi nhỏ, không đổi cách trả lời.
-- Bộ đo câu ngoài kho của lượt cuối có thêm cột đếm câu được tính "từ chối" **chỉ vì hết lượt tìm** (ở lượt giữa kỳ: 1 / 18 câu).
-- **Soát chỗ các tính năng gặp nhau** (lần đầu làm): ra 11 điểm, đã sửa 3 — xem mục "Chỗ còn yếu" số 8.
-- Trang "khi chỉ có một agent" (cách làm việc khi chỉ còn một công cụ) và bảng **quyền thường trực** cho mọi coding agent (tự làm / hỏi trước / không bao giờ) — anh
-  đã duyệt, từ nay không hỏi quyền mỗi lần mở phiên.
-- Ghi chép bốn khoá học + một buổi chia sẻ: B, C, E báo xong (A chưa kiểm lại).
-
-**Chiều 18/11 đã xong** (cả buổi chiều **không đổi dòng code nào** của trợ lý — chỉ tài liệu và cách làm việc):
-- Có file **"Việc mới xong"** trong thư mục bài học: mỗi việc vừa xong viết đúng bốn ý cho anh (anh thấy gì khác · bằng chứng · chưa làm · cách thử trong 2 phút). Hiện có 5 mục của ngày 18/11.
-- **10 skill** (bản hướng dẫn cho agent theo từng loại việc): sửa 8 cái cũ, viết 2 cái mới. Nói thẳng: nhóm đã chấm 6 trong 10 bằng cách cho agent làm cùng một đề có và không có skill —
-  chỉ **1 skill** (soát chỗ các tính năng gặp nhau) cho thấy giúp rõ: 3 / 12 điểm khi không có ↔ 10 / 12 khi có, mới chạy một lượt; 5 cái còn lại không thấy giúp rõ (riêng skill review, điểm trung bình khi CÓ skill còn thấp hơn: 5,7 ↔ 7,3 trên 10, ba lượt mỗi bên); 4 cái chưa chấm.
-- **Mở phiên nhẹ hơn**: lúc mở, mỗi phiên chỉ đọc luật cứng + trang hiện trạng + sổ riêng của mình; luật dài đọc đúng mục khi nhận việc. Lý do: lần mở 13:20 mỗi phiên đọc 880–1.400 dòng
-  mà chỉ dùng khoảng 185 dòng. **Chưa thử lần nào** — ba lần mở kế là phép thử, đếm số lần vấp luật vì chưa đọc.
-- **Vòng tự cải thiện cách làm cuối ngày chạy lần đầu.** Hai con số của tuần: **5** việc đã báo "xong" rồi bị lật lại (đếm việc đã gộp hoặc đã báo anh) và **6** lần anh phải nhắc lại
-  một điều đã nói — chưa có mốc tuần trước để so, tuần sau mới biết tăng hay giảm. Kết quả vòng: gỡ 5 đoạn luật cũ, không thêm luật chữ nào; một lỗi lặp lần hai (để sót file tạm
-  qua phiên) được đổi thành bước dán đầu ra của lệnh.
-- **Phiếu chấm sẵn cho buổi anh test** (ba ô có / không cho mỗi câu, kèm danh sách những điều đã biết để anh không chấm oan) và thang chấm cho buổi anh lái công cụ hãng khác. Cả hai chưa được dùng thử lần nào.
-- Đã thử bản sao lưu: toàn bộ 496 file của kho bài viết ở bản sao trùng từng byte với bản gốc (so mã băm). Bản sao nằm trên ổ khác của **cùng máy**.
+| Việc | Trạng thái | Chi tiết ở đâu |
+|---|---|---|
+| Dời một điểm trong lịch bị từ chối: nói lý do + gợi ý chỗ dời được | **xong**, đang chạy | `VIEC_MOI_XONG.md` mục 19 |
+| Người sau gõ đúng câu người trước đã hỏi ⇒ lấy lại câu trả lời cũ | **xong**, đã bật 20/11 | mục 21 |
+| Câu xin danh sách: dòng "danh sách có thể chưa đủ" | **xong**, đã bật 20/11 | mục 22 |
+| Trang "Bản đồ" riêng trong menu | **xong**, đang chạy | mục 20 |
+| Ứng xử / trang phục | **coi là đã có** qua hỏi đáp thường: 6 câu thật ⇒ 4 trả lời từ kho có nguồn, 2 nói thật kèm mục web; không xây gì thêm. Kho còn thiếu hai ý (chụp ảnh trong lăng, cởi giày vào chùa) | chưa có mục riêng |
+| Sự kiện theo ngày ("cuối tuần này Huế có lễ hội gì") | code xong, **cờ tắt**; bảng 27 dòng đã có người thứ hai đọc đủ (số đúng 27 / 27), code đã có người thứ hai kiểm; còn thiếu lượt thật | chưa viết (xong mới viết) |
+| Gõ "lên lịch giúp mình" trong ô chat ⇒ dẫn sang trang Lên kế hoạch | code xong, **cờ tắt**; chờ bộ câu thử của người khác + lượt thật | chưa viết |
+| Sửa lịch "đổi chỗ ngày 1 với ngày 2" | đang viết code (kế hoạch đã duyệt) | — |
+| Nhớ cả câu trả lời trong một cuộc trò chuyện | đang đếm xem có bao nhiêu lượt thật cần tới, rồi mới viết kế hoạch | — |
+| Hỏi lại khi thiếu thông tin · "gần X có gì ăn" trong ô chat · trang theo dõi · agent đề xuất sửa kho có anh duyệt | **chưa bắt đầu** | — |
+| Câu nhiều ý mà kho chỉ có một phần thì bị từ chối cả câu | **giữ giới hạn** — anh chọn theo số đếm (khoảng 1 % lượt) | sổ tay bàn giao mục 10.1 |
+| Bốn việc từng hẹn "sau lượt đo cuối" | **giữ giới hạn** cả bốn (hiếm hoặc chưa có lượt thật nào gặp) | sổ tay bàn giao mục 10 |
+| So sánh cuối trên bộ câu giữ kín (chỉ anh gõ lệnh) · đưa lên AWS | sau khi các việc trên xong | — |
 
 **Chưa làm** (nói thẳng để anh không tưởng đã xong):
-- **Bộ test đầy đủ chưa chạy** trên bản code hiện tại — lần chạy đủ gần nhất là 17/11 (1.345 test đạt, 0 hỏng), sau đó sáng 18/11 có 10 commit sửa code, mỗi cái chỉ được chạy test của các file bị chạm. Đây là bước 1.
-- **Năm mục "cách thử"** trong file "Việc mới xong" chưa ai chạy lại trên hệ thống thật theo đúng lời hướng dẫn viết cho anh. Đây là bước 2.
-- **Bản dựng giao diện phải dựng lại**: bản đang nằm trên máy dựng từ trưa 17/11, cũ hơn mã nguồn giao diện (sửa trưa 18/11) ⇒ mở trang bây giờ chưa thấy dòng an toàn in đậm của câu hỏi về bão.
-- Kế hoạch cho việc "hệ thống tự dò cấu hình" (bước 5) chưa viết; kế hoạch deploy bản 3 đã viết xong nhưng chưa ai duyệt, để tới bước 5–6.
+- **Cả bộ test chưa chạy lại** sau các thay đổi chiều 20/11 — lần chạy đủ gần nhất là 13:44–14:04 20/11/2026 (55 file, 1.555 ca đạt, 0 hỏng), trước khi gộp năm việc ở trên. Theo cách làm mới, cả bộ chạy một lượt ở cuối đợt.
+- **Chưa ai thử trên điện thoại thật**; nhóm mới thử bằng trình duyệt ở bề rộng màn hình điện thoại.
+- Giọng nói: tài liệu cũ ghi hai nghĩa ("bỏ hẳn" ↔ "không làm trước 30/11") — nhóm đang coi là bỏ, chờ anh nói lại.
+- Kế hoạch đưa lên AWS đã viết nhưng chưa duyệt; 11 câu cần anh quyết (tài khoản, tên miền, khoá, ngân sách…) để tới bước đó.
 
-**Ai giữ việc gì:** A điều phối, gom danh sách cho buổi anh test · B chạy bộ test và lượt đo cuối, giữ trang này · C giữ trang hiện trạng và danh sách giới hạn đã biết, lo bước 2 · E giữ trang cách làm việc và 10 skill.
+**Ai giữ việc gì:** A điều phối, giữ trang hiện trạng và danh sách việc đang mở · B, C, E nhận việc theo từng mục, người viết một việc không tự kiểm việc đó.
 
 ## Chỗ còn yếu đã biết
 
