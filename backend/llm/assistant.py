@@ -1001,7 +1001,7 @@ def _noi_that_lam_thay(trace: AnswerTrace, text: str) -> bool:
     Câu trả lời khác câu khuôn ⇒ không đụng. Lượt có lịch / có dự báo / khớp lưới bão – lũ ⇒ không thay: các lớp code nối ở đó giữ nguyên."""
     ctx = trace.thoi_tiet_ctx or {}
     if (trace.lam_thay is None or (text or "").strip() != INSUFFICIENT_ANSWER or trace.lich is not None or trace.thoi_tiet is not None
-            or ctx.get("bao_lu") or ctx.get("bao_lu_cau")):
+            or ctx.get("bao_lu") or ctx.get("bao_lu_cau") or ctx.get("luoi_cuoi")):  # `luoi_cuoi`: cả "dông" — như lưới cuối và nơi thay thứ nhất
         return False
     _set_fixed(trace, CAU_LAM_THAY[trace.lam_thay], "lam_thay")
     trace.tools.append({"name": "lam_thay", "ms": 0.0, "loai": trace.lam_thay})  # log: mã loại, không chữ
@@ -1128,7 +1128,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         if flags.bao_lu_cong_cu:  # plan 17/11 (đã lùi theo luật 2.5): cổng = từ thời tiết + từ nguy hiểm thời tiết (câu cuối / câu liền trước); lưới rộng
             tu_khoa = tt.co_tu_khoa_luot_rong(query, trace.history)
             trace.thoi_tiet_ctx.update(bao_lu=tt.la_luot_bao_lu(query, trace.history), bao_lu_cau=tt.la_cau_bao_lu_rong(query),
-                                       bao_lu_cong_cu=True, bao_lu_model=False,
+                                       bao_lu_cong_cu=True, bao_lu_model=False, luoi_cuoi=_luot_bao_lu(query, trace.history),
                                        tu_khoa=tu_khoa, co_cong_cu=tu_khoa and not ngoai_7)
         tuan_sau = tt.ngay_tuan_sau(query, hom_nay_vn())
         if tuan_sau and not ngoai_7:  # rà nợ 15/11: "tuần sau" có phần trong 7 ngày ⇒ code đặt khoảng ngày (không có ⇒ khoá vắng, như trước)

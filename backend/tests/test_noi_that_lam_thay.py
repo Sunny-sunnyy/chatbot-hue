@@ -118,6 +118,7 @@ def test_nothing_changes_when_the_turn_is_not_a_request_to_act():
     {"thoi_tiet": {"khoi": "x"}},                                  # lượt có dự báo
     {"thoi_tiet_ctx": {"bao_lu_cau": True}},                       # câu khớp lưới bão / lũ: các lớp an toàn giữ nguyên
     {"thoi_tiet_ctx": {"bao_lu": True}},
+    {"thoi_tiet_ctx": {"luoi_cuoi": True}},                        # "dông": chỉ lưới cuối bắt (soát khác hãng 20/11) ⇒ cũng không thay
 ])
 def test_guard_conditions_leave_the_answer_alone(kw):
     text = kw.pop("text", INSUFFICIENT_ANSWER)
@@ -143,6 +144,18 @@ def test_empty_context_refusal_is_replaced_except_on_storm_turns(monkeypatch, ca
     asyncio.run(assistant._before_model(cau, None, None, None, trace, None, None, flags))
     assert trace.lam_thay == DAT_CHO and trace.fixed_outcome == ket_thuc
     assert trace.answer == (CAU_LAM_THAY[DAT_CHO] if ket_thuc == "lam_thay" else INSUFFICIENT_ANSWER)
+
+
+@pytest.mark.parametrize("tu, thay", [("dông", False), ("giông", False), ("nắng", True)])
+def test_model_refusal_is_not_replaced_when_the_final_storm_net_matches(tu, thay):
+    """Nơi thay thứ hai (model tự trả câu từ chối): ngữ cảnh thời tiết do ĐÚNG hàm của lượt dựng (`_lich_extra`). "dông" và "giông" phải chạy như
+    nhau — trước bản sửa, "dông" (chỉ lưới cuối bắt) vẫn bị thay bằng câu nói thật và đóng cổng tra web; "nắng" là ca đối chứng: vẫn được thay."""
+    from llm import assistant
+    flags = AssistantFlags(router=True, tim_them=True, thoi_tiet=True, bao_lu_cong_cu=True, noi_that_lam_thay=True, du_bao=lambda *a, **k: None)
+    trace = _trace(DAT_CHO)
+    assistant._lich_extra(f"Chiều nay trời {tu}, " + CAU_DAT, None, None, trace, None, None, flags)
+    _finish_generated(trace, flags)
+    assert (trace.fixed_outcome == "lam_thay") is thay and (trace.answer == CAU_LAM_THAY[DAT_CHO]) is thay
 
 
 def test_done_event_has_no_ask_tips_for_honest_limit_turn():
