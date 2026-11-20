@@ -1,6 +1,6 @@
 # Nhật ký phiên C ngày 20/11/2026 — do phiên điều phối GHI THAY (13:10 20/11/2026, giờ `date`)
 
-Vì sao ghi thay: lượt viết nhật ký của chính phiên C bị hệ thống an toàn dừng (lần thứ tư trong ngày); phiên C không thử lại. Dưới đây CHỈ là điều phiên điều phối biết qua tin nhắn của C và qua các file C đã tạo — chưa được C đọc lại. Sổ ngắn của C: `session_prompt/sessions/STATUS_C.md`.
+Vì sao ghi thay: lượt viết nhật ký của chính phiên C bị hệ thống an toàn dừng (lần thứ tư trong ngày); phiên C không thử lại. Dưới đây CHỈ là điều phiên điều phối biết qua tin nhắn của C và qua các file C đã tạo — phiên C đã đọc lại lúc 13:11 20/11/2026 và xác nhận đúng (C chỉ đọc, không sửa file). Sổ ngắn của C: `session_prompt/sessions/STATUS_C.md`.
 
 ## Việc C đã làm (đã gộp)
 - Đo phép "kể hết" cho bản sửa nhỏ cờ nhớ tên: 3 lượt bật + 3 lượt tắt, một server một lúc; kiểm "đầu vào gửi model giống byte" để dùng lại kết quả sau mỗi lần nhánh đổi. Riêng tư: `data/kich_ban_pho_thong_2026-11-19/viec_2_sua_nho/` (`GHI_TRUOC.md`, `LENH_CHAY.md`, `KET_QUA.md`, `dem_lang.py`).
