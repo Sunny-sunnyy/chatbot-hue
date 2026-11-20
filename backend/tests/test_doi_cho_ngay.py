@@ -19,6 +19,7 @@ LUU3 = s.luu_tu_lich(K3, None, None)
     ("hoán đổi ngày đầu với ngày cuối", 4, (1, 4)),
     ("đảo ngày 2 với ngày thứ ba cho mình", 3, (2, 3)),
     ("đổi chỗ hai ngày cho nhau", 2, (1, 2)),
+    ("đổi chỗ ngày 1 với ngày 2 được không", 3, (1, 2)),   # "được không" cuối câu là lời nhờ, không phải phủ định
 ])
 def test_reads_a_plain_request_to_swap_two_days(cau, so_ngay, mong):
     assert s.cap_ngay_doi_cho(cau, so_ngay) == mong
@@ -35,6 +36,8 @@ def test_reads_a_plain_request_to_swap_two_days(cau, so_ngay, mong):
     ("đổi ngày đi sang ngày 2 tháng 12", 3),
     ("đổi chỗ ở ngày 1 sang gần sông", 3),
     ("ngày 1 với ngày 2 ngày nào đi nhiều hơn", 3),
+    ("không đổi chỗ ngày 1 với ngày 2", 3),                    # review E 20/11: câu PHỦ ĐỊNH không phải lệnh đổi
+    ("đừng đổi chỗ ngày 1 với ngày 2 nhé", 3),
     ("", 3),
 ])
 def test_anything_else_is_left_to_the_fixed_not_done_line(cau, so_ngay):

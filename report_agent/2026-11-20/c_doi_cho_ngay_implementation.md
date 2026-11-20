@@ -31,3 +31,13 @@ gõ tiếp "gộp ngày 1 với ngày 2" ⇒ vẫn dòng "Chưa làm".
 | Đã làm | Chưa làm | Tự hoãn + lý do | Lệnh kiểm + đầu ra |
 |---|---|---|---|
 | hàm đọc câu + hoán đổi + nối luồng sửa + cờ tắt + test + đếm 15.360 cặp + năm dòng runbook | bộ dò của phiên khác; review; lượt thật; bật cờ | lượt thật chờ lượt bật server chung | `cd backend && uv run pytest tests/test_doi_cho_ngay.py -q` ⇒ `23 passed` |
+
+## Sau bộ dò của phiên B và review của phiên E (ghi 16:41 20/11/2026, giờ `date`)
+- **Bộ dò MÙ 10 + 10 của B** cho hàm đọc câu (chạy trên `759c265`; hồ sơ riêng tư `data/kiem_ke_phase_2026-11-20/B_bo_do_doi_cho_ngay.md` + `.py`): đọc NHẦM **0 / 10**, ra sai cặp 0 / 10 — sàn ghi trước ĐẠT;
+  đọc đúng **6 / 10** — dưới mức mong (≥ 7). Bốn câu sót: "đổi lịch ngày 2 và ngày 3 cho nhau" · "Swap ngày 1 và ngày 2" · hai câu nói vòng B cố ý đặt. Sót ⇒ người dùng nhận dòng "Chưa làm" như hôm nay.
+  C KHÔNG nới khuôn: nhận "đổi lịch … cho nhau" phải nới cả hàm `la_viec_ngay_chua_lam` (đổi hành vi cả khi cờ tắt) — ngoài phạm vi bản nhỏ nhất; ghi là giới hạn.
+- **Review cả nhánh của E** (`759c265`): READY, 0 lỗi chặn. E gọi `doi_cho_ngay` 46 lần trên 5 kiểu lịch (gồm bản lưu đã bỏ một điểm): gói trả về cùng bộ khoá với `ap`, điểm đã bỏ không quay lại, phần ban ngày
+  đúng phép hoán đổi 46 / 46. E chỉ ĐỌC code nhánh bị chặn (không gặp ca chặn nào trong 46 lần) và phần câu an toàn thừa hưởng.
+- **Một điểm nhỏ E tìm ra, đã sửa:** câu PHỦ ĐỊNH "không đổi chỗ ngày 1 với ngày 2" bị đọc thành lệnh đổi (chữ "không" nằm trong từ đệm). Nay "không / ko" chỉ được bỏ qua trong cụm
+  "được không / được ko" ở cuối câu; ca test mới đỏ trước sửa (1 hỏng / 25 đạt), xanh sau; `test_doi_cho_ngay` + `test_rao_so_ngay` 70 đạt. C chạy lại file bộ dò của B: vẫn 6 / 10 · 0 / 10 · 0 / 10.
+- Còn thiếu trước khi bật: MỘT lượt thật qua giao diện (≈ 4 lượt; chưa chạy — kết phiên).

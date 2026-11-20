@@ -170,7 +170,8 @@ _SO_CHU = {"một": 1, "nhất": 1, "hai": 2, "ba": 3, "bốn": 4, "tư": 4, "n�
 _MOC_DOI = re.compile(r"(?<!\w)ngày\s+(?:thứ\s+)?(\d|một|nhất|hai|ba|bốn|tư|năm|đầu tiên|đầu|cuối cùng|cuối)(?!\w)", re.I)
 _HAI_NGAY = re.compile(r"(?<!\w)(?:hai|2)\s+ngày(?!\w)", re.I)
 _DEM_DOI_NGAY = {"với", "và", "cho", "nhau", "giúp", "hộ", "dùm", "giùm", "mình", "tôi", "em", "bạn", "ơi", "hãy", "nhé", "nha", "đi", "lại", "thứ", "tự",
-                 "của", "lịch", "trong", "được", "không", "ko", "ạ", "thì", "luôn", "nhỉ", "vị", "trí", "sang", "lên", "xuống"}
+                 "của", "lịch", "trong", "ạ", "thì", "luôn", "nhỉ", "vị", "trí", "sang", "lên", "xuống"}
+_DUOC_KHONG = re.compile(r"(?<!\w)được\s+(?:không|ko|chứ)(?=[\s?.!ạ]*$|\s+(?:ạ|nhỉ|bạn)\b)")  # lời nhờ cuối câu; "không" ở chỗ khác là phủ định ⇒ None (review E)
 
 
 def cap_ngay_doi_cho(cau: str, so_ngay: int) -> tuple[int, int] | None:
@@ -182,7 +183,7 @@ def cap_ngay_doi_cho(cau: str, so_ngay: int) -> tuple[int, int] | None:
     for m in _MOC_DOI.finditer(t):
         chu = m.group(1)
         moc.append(1 if chu.startswith("đầu") else so_ngay if chu.startswith("cuối") else _SO_CHU.get(chu) or int(chu))
-    con = _MOC_DOI.sub(" ", _DT_DOI_NGAY.sub(" ", t))
+    con = _DUOC_KHONG.sub(" ", _MOC_DOI.sub(" ", _DT_DOI_NGAY.sub(" ", t)))
     if not moc and so_ngay == 2 and len(_HAI_NGAY.findall(con)) == 1:  # lịch 2 ngày: "đổi chỗ hai ngày cho nhau"
         moc, con = [1, 2], _HAI_NGAY.sub(" ", con)
     if len(moc) != 2 or moc[0] == moc[1] or not all(1 <= n <= so_ngay for n in moc):
