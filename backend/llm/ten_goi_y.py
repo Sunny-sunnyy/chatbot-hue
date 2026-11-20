@@ -32,14 +32,16 @@ CUM_XIN_DU = ("kể hết", "kể đủ", "kể đầy đủ", "nêu hết", "n�
               "kể tên các", "kể tên những", "nêu tên các", "nêu tên những")
 # Cụm trỏ lại câu trả lời trước. "trong" / "ở" chỉ được nhận bên trong các cụm này: "trong lăng đó", "ở quán đó" là hỏi về MỘT nơi.
 CUM_TRO_LAI = ("trong bài đó", "trong bài này", "trong bài ấy", "trong bài", "trong câu trả lời", "trong câu đó", "trong danh sách",
-               "trong đó", "ở trên", "phía trên", "bên trên", "ở câu trước", "lúc nãy", "khi nãy", "hồi nãy")
+               "trong đó", "ở trên", "phía trên", "bên trên", "ở câu trước", "lúc nãy", "khi nãy", "hồi nãy", "vừa rồi")
 TU_CHO_PHEP = frozenset((
     "kể hết đủ đầy lại nêu nhắc liệt kê tên danh sách tất cả toàn bộ "                                      # chữ của các cụm xin danh sách đủ
     "giúp mình tôi tớ em anh chị bạn với nhé nha nhỉ đi ạ cho xem hãy làm ơn vui lòng được không có thể thử coi ra luôn hộ dùm giùm xin nhờ biết "
+    "muốn viết full còn nữa nào sót thiếu "                                                                 # thêm sau lần chạy đầu bộ dò (20/11)
     "đó này ấy kia vừa nói gợi ý đã mới nãy mà đến tới đề cập "                                             # trỏ lại
-    "các những mọi chỗ nơi điểm địa tham quan quán ăn uống cà phê cafe nhà hàng lăng tẩm vua chùa di tích đền miếu cung điện làng chợ bãi biển "
+    "các những mọi mấy chỗ nơi điểm địa tham quan quán ăn uống cà phê cafe nhà hàng lăng tẩm vua chùa di tích đền miếu cung điện làng nghề chợ bãi biển "
     "du lịch chơi mục cái"                                                                                  # danh từ chỉ nơi
 ).split())
+TU_TRO_MOT, TU_SO_NHIEU = frozenset("đó này ấy kia".split()), frozenset("các những mấy mọi".split())
 _CUM_TRO_LAI_RE = re.compile(r"(?<!\w)(?:" + "|".join(sorted(CUM_TRO_LAI, key=len, reverse=True)) + r")(?!\w)")
 
 
@@ -79,7 +81,12 @@ def la_cau_xin_liet_ke_lai(cau: str) -> bool:
     chu = " ".join(re.sub(r"[^\w\s]", " ", unicodedata.normalize("NFC", cau or "").lower()).split())
     if not any(re.search(rf"(?<!\w){cum}(?!\w)", chu) for cum in CUM_XIN_DU):
         return False
-    return all(tu in TU_CHO_PHEP for tu in _CUM_TRO_LAI_RE.sub(" ", chu).split())
+    tu = _CUM_TRO_LAI_RE.sub(" ", chu).split()
+    # "quán đó / lăng này" không có "các / những / mấy / mọi" đứng trước = trỏ MỘT nơi ("nêu đủ tên quán đó") ⇒ không nhận
+    for i, t in enumerate(tu):
+        if t in TU_TRO_MOT and not TU_SO_NHIEU.intersection(tu[:i]):
+            return False
+    return all(t in TU_CHO_PHEP for t in tu)
 
 
 def lich_su_cho_luot(lich_su: Sequence, cau: str) -> tuple:
