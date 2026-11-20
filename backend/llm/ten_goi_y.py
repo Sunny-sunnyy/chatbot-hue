@@ -24,25 +24,25 @@ THU_MUC_NOI = ("foods/restaurants/", "foods/cafes/", "travel/places/", "heritage
 TOI_DA = 5
 TIEN_TO_GHI_CHU = "[Ghi chú hệ thống — câu trả lời lượt này có trích bài kho của các nơi: "
 
-# Câu xin liệt kê lại — luật HẸP có chủ ý: bắt nhầm (câu "địa chỉ các quán đó" mất dòng ghi chú ⇒ model lại nói về nơi khác) nặng hơn bỏ sót
-# (danh sách có lúc thiếu, như trước bản sửa). Câu được nhận khi có một cụm xin danh sách đủ VÀ, sau khi bỏ các cụm trỏ lại, MỌI từ còn lại thuộc
-# `TU_CHO_PHEP`. Một từ ngoài bộ (địa chỉ, giá, thứ hai, món, "trong lăng đó"…) ⇒ không nhận. Thêm từ vào ba bộ dưới ⇒ chạy lại bộ dò của việc này.
+# Câu xin liệt kê lại — luật HẸP có chủ ý: bắt nhầm (câu hỏi về MỘT nơi mất dòng ghi chú ⇒ model lại nói về nơi khác) nặng hơn bỏ sót (danh sách có
+# lúc thiếu, như trước bản sửa). Câu được nhận khi có một cụm xin danh sách đủ VÀ cả câu đúng MỘT khuôn:
+#   [lời lịch sự] [lời xin kể] [tất cả / toàn bộ] các / những / mấy / mọi <ĐÚNG MỘT loại nơi> [cụm trỏ lại] [lời lịch sự]
+# Bản đầu xét "mọi từ thuộc bộ cho phép" đã bị bộ dò thêm bắt (review 20/11): túi từ không thấy cấu trúc, nên "liệt kê các điểm tham quan lăng đó",
+# "nêu đủ tên quán vừa gợi ý", "tất cả các điểm đó có cho tham quan không" đều lọt. Khuôn buộc dấu số nhiều đứng NGAY trước loại nơi, chỉ một loại
+# nơi, và sau cụm trỏ lại chỉ còn lời lịch sự. Sửa khuôn ⇒ chạy lại hai bộ dò của việc này.
 CUM_XIN_DU = ("kể hết", "kể đủ", "kể đầy đủ", "nêu hết", "nêu đủ", "nêu đầy đủ", "liệt kê", "danh sách", "tất cả", "toàn bộ",
               "kể lại các", "kể lại những", "nêu lại các", "nêu lại những", "nhắc lại các", "nhắc lại những",
               "kể tên các", "kể tên những", "nêu tên các", "nêu tên những")
-# Cụm trỏ lại câu trả lời trước. "trong" / "ở" chỉ được nhận bên trong các cụm này: "trong lăng đó", "ở quán đó" là hỏi về MỘT nơi.
-CUM_TRO_LAI = ("trong bài đó", "trong bài này", "trong bài ấy", "trong bài", "trong câu trả lời", "trong câu đó", "trong danh sách",
-               "trong đó", "ở trên", "phía trên", "bên trên", "ở câu trước", "lúc nãy", "khi nãy", "hồi nãy", "vừa rồi")
-TU_CHO_PHEP = frozenset((
-    "kể hết đủ đầy lại nêu nhắc liệt kê tên danh sách tất cả toàn bộ "                                      # chữ của các cụm xin danh sách đủ
-    "giúp mình tôi tớ em anh chị bạn với nhé nha nhỉ đi ạ cho xem hãy làm ơn vui lòng được không có thể thử coi ra luôn hộ dùm giùm xin nhờ biết "
-    "muốn viết full còn nữa nào sót thiếu "                                                                 # thêm sau lần chạy đầu bộ dò (20/11)
-    "đó này ấy kia vừa nói gợi ý đã mới nãy mà đến tới đề cập "                                             # trỏ lại
-    "các những mọi mấy chỗ nơi điểm địa tham quan quán ăn uống cà phê cafe nhà hàng lăng tẩm vua chùa di tích đền miếu cung điện làng nghề chợ bãi biển "
-    "du lịch chơi mục cái"                                                                                  # danh từ chỉ nơi
-).split())
-TU_TRO_MOT, TU_SO_NHIEU = frozenset("đó này ấy kia".split()), frozenset("các những mấy mọi".split())
-_CUM_TRO_LAI_RE = re.compile(r"(?<!\w)(?:" + "|".join(sorted(CUM_TRO_LAI, key=len, reverse=True)) + r")(?!\w)")
+_LICH_SU_DAU = r"(?:bạn|hãy|làm ơn|vui lòng|nhờ bạn|xin|có thể|cho (?:mình|tôi|em|xin)|giúp (?:mình|tôi|em))"
+_XIN_KE = (r"(?:(?:kể|nêu|liệt kê|nhắc|viết)(?: (?:lại|tên|hết|đủ|đầy đủ|ra))*(?: (?:full )?danh sách(?: (?:đầy đủ|đủ))?)?"
+           r"|(?:full )?danh sách(?: (?:đầy đủ|đủ))?|tên)")
+_LOAI_NOI = (r"(?:chỗ|nơi|địa điểm|điểm tham quan|điểm du lịch|điểm đến|điểm|quán ăn|quán cà phê|quán cafe|quán|nhà hàng|lăng tẩm|lăng vua|lăng|chùa"
+             r"|di tích|đền|làng nghề|làng|chợ|bãi biển|cung điện)")
+_TRO_LAI = (r"(?:đó|này|ấy|kia|ở trên|vừa rồi|lúc nãy|trong bài(?: (?:đó|này|ấy))?|trong danh sách"
+            r"|(?:bạn )?(?:vừa|mới|đã) (?:nêu|nói|nhắc|kể|gợi ý|đề cập))")
+_LICH_SU_CUOI = r"(?:giúp (?:mình|tôi|em)|với|nhé|nha|đi|ạ|được không|xem nào|ra|luôn)"
+_KHUON_LIET_KE_LAI = re.compile(rf"(?:{_LICH_SU_DAU} )*(?:{_XIN_KE} )?(?:(?:tất cả|toàn bộ) )?(?:các|những|mấy|mọi) {_LOAI_NOI}"
+                                rf"(?: {_TRO_LAI}){{0,2}}(?: {_LICH_SU_CUOI})*")
 
 
 def _la_bai_mot_noi(source: str) -> bool:
@@ -81,12 +81,7 @@ def la_cau_xin_liet_ke_lai(cau: str) -> bool:
     chu = " ".join(re.sub(r"[^\w\s]", " ", unicodedata.normalize("NFC", cau or "").lower()).split())
     if not any(re.search(rf"(?<!\w){cum}(?!\w)", chu) for cum in CUM_XIN_DU):
         return False
-    tu = _CUM_TRO_LAI_RE.sub(" ", chu).split()
-    # "quán đó / lăng này" không có "các / những / mấy / mọi" đứng trước = trỏ MỘT nơi ("nêu đủ tên quán đó") ⇒ không nhận
-    for i, t in enumerate(tu):
-        if t in TU_TRO_MOT and not TU_SO_NHIEU.intersection(tu[:i]):
-            return False
-    return all(t in TU_CHO_PHEP for t in tu)
+    return _KHUON_LIET_KE_LAI.fullmatch(chu) is not None
 
 
 def lich_su_cho_luot(lich_su: Sequence, cau: str) -> tuple:
