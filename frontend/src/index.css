@@ -276,7 +276,7 @@ picture { display: contents; }
 .ghim.ghim-ngay-4 { background: #4D7C0F; }
 /* Trang "Bản đồ" riêng (20/11): khung cao hơn, ghim nhỏ không số, danh sách tên chia cột */
 .bd-trang .bd-khung { height: 520px; margin-bottom: 16px; }
-.bd-trang-ds { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 20px; }
+.bd-ds.bd-trang-ds { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 20px; }
 .bd-ds { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: 15px; }
 .bd-ds a { color: var(--color-accent); text-decoration: underline; }
 .bd-so { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; margin-right: 8px; border-radius: 999px;
