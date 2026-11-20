@@ -26,7 +26,7 @@ _THANG_CHU = {"giêng": 1, "hai": 2, "ba": 3, "tư": 4, "năm": 5, "sáu": 6, "b
               "mười hai": 12}
 # Từ hỏi LỄ HỘI / SỰ KIỆN — theo danh từ, không theo chữ "có gì" trần ("cuối tuần này thời tiết có gì đáng lo" không phải hỏi sự kiện).
 _HOI = re.compile(r"(?<!\w)(?:lễ hội|sự kiện|festival|hội hè|hoạt động (?:gì|nào|văn hoá|văn hóa|vui chơi|giải trí)|chương trình (?:gì|nào|biểu diễn|nghệ thuật)|"
-                  r"biểu diễn (?:gì|nào)|có gì (?:vui|chơi|hay|đặc biệt|đáng xem|diễn ra)|có gì (?:không|ko|k)(?!\w)|"
+                  r"biểu diễn (?:gì|nào)|có gì (?:vui|chơi|hay|đặc biệt|đáng xem|diễn ra)|có gì (?:không|ko|k)\s*[?.!]*$|"  # "có gì không" chỉ khi đứng CUỐI câu (review B)
                   r"(?:ở|tại) huế có gì\s*\??$)", re.I)
 _KHONG_HOI = re.compile(r"(?<!\w)(?:thời tiết|mưa|nắng|bão|lũ|lụt|giông|dông|nhiệt độ|giá vé|bao nhiêu tiền|mở cửa|đóng cửa)(?!\w)", re.I)
 # Hỏi về QUÁ KHỨ ("tháng 3 năm ngoái", "tuần trước", "cuối tuần vừa rồi") ⇒ không tra: bảng chỉ tính lần SẮP TỚI (bộ dò mù của E 20/11)

@@ -77,6 +77,7 @@ def test_approximate_rows_are_listed_apart_and_never_as_nearest():
     "tuần sau có lễ hội nào ở Huế",
     "tháng 2 ở Huế có lễ hội gì",
     "ngày 27/2 ở Huế có sự kiện gì đặc biệt",
+    "cuối tuần này ở Huế có gì không?",               # "có gì không" đứng cuối câu vẫn là hỏi sự kiện
 ])
 def test_gate_opens_only_with_both_a_date_window_and_an_event_word(cau):
     dong = sk.dong_nguon(cau, BANG, NOW)
@@ -93,6 +94,7 @@ def test_gate_opens_only_with_both_a_date_window_and_an_event_word(cau):
     "năm sau Huế có lễ hội gì",                       # khoảng quá dài / không đọc được
     "tháng 3 năm ngoái Huế có lễ hội gì",             # bộ dò mù của E 20/11: hỏi QUÁ KHỨ — không được đưa lịch sắp tới
     "tuần trước ở Huế có sự kiện gì",
+    "Ngày mai có gì không ổn với chuyến bay không?",   # review B 20/11: "có gì không ổn / không nên" không phải hỏi sự kiện
     "cuối tuần vừa rồi Huế có lễ hội gì không",
     "",
 ])
