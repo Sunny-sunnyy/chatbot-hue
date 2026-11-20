@@ -8,6 +8,7 @@ import { giamChuyenDong } from "./hieuUng.js";
 //   #/kham-pha/<linh_vuc>    danh sách bài một lĩnh vực (mã = tên thư mục kho)
 //   #/kham-pha/bai/<id>      một bài (id = đường dẫn bài trong kho, có dấu `/`)
 //   #/len-ke-hoach · #/tro-ly · #/gioi-thieu
+//   #/ban-do                 trang Bản đồ điểm tham quan (mục menu chỉ có khi cờ `ban_do_lich` bật)
 //   #/gioi-thieu/<mục>       trang Giới thiệu, cuộn tới mục có id đó (vd `gt-lam`)
 //   #/cho-o[/<khu>]          trang Chỗ ở (chỉ mở từ ô "Nơi ở" của lịch), lọc sẵn theo khu
 // Hash lạ ⇒ trang chủ.
@@ -26,7 +27,7 @@ export function parseHash(hash) {
   }
   if (parts[0] === "gioi-thieu") return parts[1] ? { page: "gioi-thieu", muc: parts[1] } : { page: "gioi-thieu" };
   if (parts[0] === "cho-o") return parts[1] ? { page: "cho-o", khu: parts[1] } : { page: "cho-o" };
-  if (["len-ke-hoach", "tro-ly"].includes(parts[0])) return { page: parts[0] };
+  if (["len-ke-hoach", "tro-ly", "ban-do"].includes(parts[0])) return { page: parts[0] };
   return { page: "trang-chu" };
 }
 

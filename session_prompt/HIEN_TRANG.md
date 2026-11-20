@@ -16,10 +16,10 @@ Markdown riêng tư trợ lý được phép trả lời từ đó · **cờ** =
   Web: FastAPI (`backend/`) + giao diện React dựng sẵn (`frontend/`). Chạy trên máy User; **chưa deploy**.
 - **Số hôm nay** (lệnh kiểm: runbook mục 0): kho **265 bài ⇒ 9.436 đoạn**, collection Qdrant `hue_full_corpus_7a2_e5_small_384` (cổng 6335);
   tìm = vector `e5-small` + từ khoá BM25 trộn RRF, **10 đoạn** vào ngữ cảnh, không xếp lại; model viết `gpt-6-luna` (OpenAI), từ 19/11 không còn trần token đầu ra và ngân sách ngữ cảnh mỗi lượt; tra web qua Serper.
-- **Cờ:** **29 BẬT** (28 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh). Giới hạn từng cờ: runbook 10.1, 10.2.
+- **Cờ:** **31 BẬT** (30 cờ ở mục `assistant:` của `backend/config/settings.yaml` + `anh.bat` = hỏi bằng ảnh); hai cờ mới bật chiều 20/11: `cache_cau_tra_loi` (câu lặp ở cuộc trò chuyện khác trả từ bộ nhớ, 24 giờ, trong RAM) và `danh_sach_noi_that` (câu xin danh sách có dòng "có thể chưa đủ"). Giới hạn từng cờ: runbook 10.1, 10.2.
   **TẮT (đủ 4 cờ còn lại):** `lich_trinh` (lịch từ câu gõ tự do — không đạt), `today_line` (vô ích), `nho_cau_tra_loi` (từng mượn nhầm đoạn của nơi khác), `so_vet` (bật bằng biến `HUE_SO_VET=true` lúc mở server, chỉ ở máy local).
 - **Mỗi cờ làm gì, bằng lời thường, kèm số đo:** bảng "Cái gì ĐANG chạy" của `bai_hoc/BAN_DO_DU_AN.md`.
-- **Lần chạy cả bộ test gần nhất:** 20/11 chiều trên main `e13709a9` (29 cờ, từng file, 55 file, Python 3.13): 1.555 đạt, 0 hỏng. `frontend/dist` cây chính dựng lại 20/11 (nút in chỉ còn ở trang Lên kế hoạch).
+- **Lần chạy cả bộ test gần nhất:** 20/11 chiều trên main `e13709a9` (29 cờ, từng file, 55 file, Python 3.13): 1.555 đạt, 0 hỏng — các bản gộp SAU đó (dời điểm, cache, dòng danh sách, trang Bản đồ; 31 cờ) mới chạy file test chạm đường đổi + lượt thật qua giao diện, CHƯA chạy cả bộ (để dành một lượt cuối đợt). `frontend/dist` cây chính dựng lại 16:17 20/11 trên `58bad83e` (có trang Bản đồ; nút in chỉ còn ở trang Lên kế hoạch).
 - **Bẫy RAM (19/11):** không gom nhiều file test dựng cả app vào một tiến trình pytest; chạy từng file ở cây chính, không cùng lúc với server.
 - **Máy:** mở lại máy ⇒ `/tmp` MẤT, Qdrant TẮT: `docker compose up -d qdrant`, kiểm 9.436 điểm (runbook mục 1).
 - **Giới hạn đã biết:** `guides/RUNBOOK_BAN_GIAO.md` mục 10 — gặp hành vi trông như lỗi thì tra ở đó TRƯỚC khi sửa hay báo.

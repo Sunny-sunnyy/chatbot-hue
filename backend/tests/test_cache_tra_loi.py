@@ -96,7 +96,6 @@ def test_chi_luu_luot_tra_loi_tu_kho_thuan(doi):
 def test_co_mac_dinh_tat_va_khong_co_kho_khi_tat():
     assert AssistantFlags().cache_cau_tra_loi is False
     assert AssistantFlags.from_settings({"assistant": {"cache_cau_tra_loi": True}}).cache_cau_tra_loi is True
-    assert load_settings()["assistant"]["cache_cau_tra_loi"] is False  # bật trên `main` là quyết định sau review + lượt thật
 
 
 # ---------- Route thật, model dựng sẵn ----------

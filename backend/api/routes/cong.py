@@ -11,6 +11,7 @@ from fastapi import APIRouter, Query, Request
 
 from api.routes.chat import _flags, error_response
 from ingestion.source_state import read_source_lf
+from llm import lich_trinh as lt
 from llm import lich_trinh_v2 as lt2
 from llm import luu_tru_lich as ltl
 from llm import thoi_tiet as tt
@@ -169,6 +170,29 @@ async def lich_mau(request: Request):
     if id(flags) not in _mau:  # cờ + bảng nạp một lần lúc khởi động ⇒ dựng một lần cho bộ cờ đó
         _mau[id(flags)] = dung_lich_mau(flags)
     return _mau[id(flags)]
+
+
+# Trang "Bản đồ" riêng trong menu (cổng mức 2 — chủ dự án 06/11; plan `report_agent/2026-11-20/e_trang_ban_do_plan.md`): ghim của MỌI điểm tham quan
+# trong bảng điểm lịch có toạ độ. Cùng bảng điểm + bảng toạ độ đã nạp cho bản đồ lịch (cờ `ban_do_lich`) — không nguồn dữ liệu mới, không model.
+def dung_ban_do(flags) -> list[dict] | None:
+    """Mỗi điểm: tên, loại (mã của bảng điểm), toạ độ, link Google Maps theo tên (như bản đồ lịch). Cờ `ban_do_lich` tắt ⇒ None."""
+    bang = flags.bang_lich_v2 or flags.bang_lich  # cùng bảng mà `AssistantFlags.from_settings` đã dùng để nạp toạ độ
+    if not flags.ban_do_lich or bang is None:
+        return None
+    return [{"ten": d["ten"], "loai": list(d.get("loai") or []), "toa_do": list(flags.toa_do_lich[d["id"]]), "map_url": lt.map_url(d["ten"])}
+            for d in bang.diem if d["id"] in flags.toa_do_lich]
+
+
+_ban_do: dict[int, list | None] = {}
+
+
+@router.get("/api/ban_do")
+async def ban_do(request: Request):
+    """Dữ liệu trang "Bản đồ". Cờ `ban_do_lich` tắt ⇒ 404. Dựng một lần mỗi bộ cờ."""
+    flags = _flags(request.app.state)
+    if id(flags) not in _ban_do:
+        _ban_do[id(flags)] = dung_ban_do(flags)
+    return _khong_thay() if _ban_do[id(flags)] is None else {"diem": _ban_do[id(flags)]}
 
 
 _cho_o: dict[int, dict] = {}
