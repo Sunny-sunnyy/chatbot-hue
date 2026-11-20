@@ -41,6 +41,7 @@ from llm import ngay_lich as nl
 from llm.lam_thay import nho_lam_thay
 from llm import khoang_cach as kc
 from llm.danh_sach import CAU_DANH_SACH, hoi_ve_mot_noi, xin_danh_sach
+from llm.len_lich import CAU_DAN_TRANG, nho_len_lich
 from llm.luu_y_nguon import dong_tam_ngung, nhan_nguon
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
@@ -120,6 +121,9 @@ class AssistantFlags:
     # 20/11 (report `report_agent/2026-11-20/c_danh_sach_noi_that.md`): câu XIN DANH SÁCH (`llm/danh_sach.py`, hàm thuần đọc câu người dùng) có nguồn kho
     # ⇒ code nối vào dòng ghi chú một câu nói thật "danh sách có thể chưa đủ". Không model, không đổi chuỗi gửi model, không đổi chữ câu trả lời.
     danh_sach_noi_that: bool = False
+    # 20/11 (report `report_agent/2026-11-20/e_len_lich_dan_trang.md`): câu NHỜ LẬP LỊCH nhiều ngày gõ trong ô chat (`llm/len_lich.py`, hàm thuần) ⇒ code
+    # nối vào dòng ghi chú một câu trỏ sang trang Lên kế hoạch. Không model, không đổi chuỗi gửi model, không đổi chữ câu trả lời. Cần `lich_trinh_bieu_mau`.
+    len_lich_dan_trang: bool = False
     # 15/11 (plan `2026-11-15-cau-noi-tiep-web-plan.md`): lượt CÓ lịch sử mà model đã tự tìm kho ⇒ phần web dùng câu tìm kho cuối model viết (có tên
     # nơi lấy từ lượt trước) thay câu người dùng gõ — câu hỏi tiếp "mở cửa mấy giờ" không còn ra web trần. TẮT tới khi đo đạt; cần `tra_web`
     web_cau_noi_tiep: bool = False
@@ -345,6 +349,7 @@ class AnswerTrace:
     # câu nhiều ý vòng 2 (plan 2026-11-14-cau-nhieu-y-v2): cờ bật VÀ câu người dùng có ≥ 2 vế hỏi (`so_y`) ⇒ luật theo ý; khác ⇒ y như cờ tắt
     nhieu_y: bool = False
     chi_y_thieu: bool = False  # chốt (a): câu trả lời chỉ còn dòng CAU_Y_THIEU ⇒ code đã đổi thành INSUFFICIENT_ANSWER
+    nho_len_lich: bool = False  # cờ `len_lich_dan_trang`: câu của lượt khớp khuôn nhờ lập lịch nhiều ngày (`_before_model`)
     xin_danh_sach: str | None = None  # cờ `danh_sach_noi_that`: câu người dùng của lượt khi nó khớp khuôn xin danh sách (`_before_model`); KHÔNG log
     lam_thay: str | None = None  # cờ `noi_that_lam_thay`: loại việc "làm thay" code đọc từ câu người dùng (`lam_thay.nho_lam_thay`); None ⇒ lượt như cũ
     # B5b: ngữ cảnh code dò ở câu này (bão / lũ, ngoài 7 ngày, có buổi, có đưa công cụ) · kết quả công cụ `thoi_tiet` (trạng thái, khối số liệu code
@@ -960,6 +965,9 @@ def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
         dong.append(CAU_DANH_SACH)
     if flags.may_have_changed_notice and trace.cited and any(src.source.startswith(NOTICE_SOURCE_PREFIXES) for src in trace.cited):
         dong.append(MAY_HAVE_CHANGED_NOTICE)
+    # câu nhờ lập lịch nhiều ngày ở lượt hỏi đáp thường (kể cả khi kho không trả lời được) ⇒ trỏ sang trang Lên kế hoạch; đứng CUỐI dòng ghi chú
+    if trace.nho_len_lich and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None:
+        dong.append(CAU_DAN_TRANG)
     if dong:
         trace.notice = " ".join(dong)
 
@@ -985,6 +993,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     trace.nhieu_y = flags.cau_nhieu_y and so_y(query) >= 2
     trace.lam_thay = nho_lam_thay(query) if flags.noi_that_lam_thay else None
     trace.xin_danh_sach = query if flags.danh_sach_noi_that and xin_danh_sach(query) else None
+    trace.nho_len_lich = flags.len_lich_dan_trang and flags.lich_trinh_bieu_mau and nho_len_lich(query)
     if flags.lan_tim_dau == "v2":
         if generator is None:
             raise GeneratorNotReadyError("generator is not ready")
