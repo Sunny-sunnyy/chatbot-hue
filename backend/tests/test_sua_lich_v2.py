@@ -236,3 +236,36 @@ def test_move_that_leaves_the_point_where_it_was_is_not_reported_as_moved():
         if hai["khung"] == k:
             assert hai["da_ap"] == [] and not any(d["duoc"] for d in s.thay_doi(B, hai))
     assert thay  # bảng điểm thật phải có ít nhất một cặp đổi chỗ được, không thì test này không kiểm gì
+
+
+def test_refused_move_says_one_reason_and_lists_slots_that_work():
+    # đếm 20/11: dời MỘT điểm bị từ chối 36 / 40 lần trên lịch này, mọi ca cùng một câu chung, không gợi ý ⇒ nay: một lý do + các chỗ dời ĐƯỢC
+    k, luu = _lich()
+    vt = s._vi_tri(k)
+    cho = sorted({(ng["ngay"], b) for ng in k["ngay"] for b in v2.BUOI_NGAY})
+    ly_do, co_goi_y, khong_goi_y = set(), 0, 0
+    for a in sorted(vt):
+        duoc = {c for c in cho if c != vt[a] and s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=a, ngay=c[0], buoi=c[1])])["da_ap"]}
+        for c in cho:
+            if c == vt[a] or c in duoc:
+                continue
+            kq = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=a, ngay=c[0], buoi=c[1])])
+            (kd,), cau = kq["khong_doi"], s.thay_doi(B, kq)[0]["cau"]
+            assert kq["khung"] == k and kd["ma_luat"] == "khong_hop_luat" and kd["dich"] == list(c)  # lịch giữ nguyên, mã cho bộ đo giữ nguyên
+            assert {(g["ngay"], g["buoi"]) for g in kd["goi_y"]} == duoc  # gợi ý = ĐÚNG các chỗ lần dời thật nhận, không thừa không thiếu
+            assert kd["ly_do"] in s.CAU_LY_DO and s.CAU_LY_DO[kd["ly_do"]] in cau and f"buổi {s.NHAN_BUOI[c[1]]} ngày {c[0]}" in cau
+            for g in kd["goi_y"]:
+                assert f"buổi {s.NHAN_BUOI[g['buoi']]} ngày {g['ngay']}" in cau.split("Dời được sang:")[1]
+                if g["doi_voi"]:  # chỗ đích có đúng một điểm ⇒ câu nói rõ điểm sẽ đổi chỗ, và áp thật thì điểm đó về chỗ cũ của điểm được dời
+                    lai = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=a, ngay=g["ngay"], buoi=g["buoi"])])
+                    assert s._vi_tri(lai["khung"])[g["doi_voi"]] == vt[a] and f"(đổi chỗ với {B.theo_id[g['doi_voi']]['ten']})" in cau
+            if not duoc:
+                assert cau.endswith("chỉ đứng được ở chỗ hiện tại.") and "Dời được sang" not in cau
+            ly_do.add(kd["ly_do"])
+            co_goi_y, khong_goi_y = co_goi_y + bool(duoc), khong_goi_y + (not duoc)
+    assert {"khu", "kin"} <= ly_do and co_goi_y and khong_goi_y  # bảng điểm thật phải có đủ hai lý do chính và cả hai kiểu câu, không thì test không kiểm gì
+    # điểm chưa có trong lịch (dời = thêm) và "thêm điểm" giữ câu chung cũ
+    ngoai = next(d["id"] for d in B.diem if d["id"] not in vt and d["id"] not in {j for ng in k["ngay"] for j in ng["buoi"]["toi"]})
+    for loai in ("doi_buoi", "them_diem"):
+        kq = s.ap(B, luu, [s.HanhDong(loai=loai, ten=ngoai, ngay=1, buoi="sang")])
+        assert all("goi_y" not in d for d in kq["khong_doi"])
