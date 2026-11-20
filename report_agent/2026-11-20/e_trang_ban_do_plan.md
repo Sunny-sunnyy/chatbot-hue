@@ -44,4 +44,4 @@
 
 **8. Thanh dưới ở điện thoại (E ghi 16:10 20/11/2026, giờ `date`)** — phiên điều phối chốt: có "Bản đồ" thì BỎ "Giới thiệu" khỏi thanh dưới. Đã sửa `frontend/src/App.jsx`: thanh dưới còn Trang chủ · Khám phá · (nút tròn Trợ lý Huế) · Bản đồ · Lên kế hoạch; chân trang thêm link "Giới thiệu" (trang chủ vốn đã có một link sang Giới thiệu); menu màn rộng giữ đủ sáu mục.
 - [máy kiểm + E nhìn ảnh] bản dựng tĩnh của nhánh, cờ dựng sẵn trong trình duyệt (không server dự án, 0 đồng): 390 px — năm ô, nút tròn đúng giữa (mép trái 162 px, rộng 66 ⇒ tâm 195 = nửa 390), chỉ "Lên kế hoạch" xuống hai dòng như trước khi có Bản đồ, tràn ngang 0; 1440 px — sáu mục như cũ; link "Giới thiệu" ở chân trang có ở cả hai. Ảnh riêng tư `data/test_cuoi/chay_2026-11-20_chieu/ban_do_390_5_thanh_duoi_sau_sua.png`; script `data/test_cuoi/tools/xem_thanh_duoi_tinh_2026-11-20.py <thư mục dist> <ảnh ra>`.
-- Phần này CHƯA ai review (sau review của phiên B): `App.jsx` +6 −3, `index.css` +1 −1.
+- Phần này CHƯA ai review (sau review của phiên B): `App.jsx` +7 −3, `index.css` +1 −1 (số từ `git diff --numstat`).
