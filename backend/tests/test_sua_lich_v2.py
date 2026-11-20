@@ -216,6 +216,12 @@ def test_move_that_leaves_the_point_where_it_was_is_not_reported_as_moved():
     kq = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=x, ngay=vt[x][0], buoi=vt[x][1])])  # dời về đúng chỗ đang đứng
     assert kq["da_ap"] == [] and kq["khung"] == k and [d["ma_luat"] for d in kq["khong_doi"]] == ["van_cho_cu"]
     assert [d["duoc"] for d in s.thay_doi(B, kq)] == [False]
+    for y in vt:  # mọi điểm: tự dời về chỗ đang đứng ⇒ khung trả về đúng bản đã lưu (cả thứ tự trong buổi)
+        tu = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=y, ngay=vt[y][0], buoi=vt[y][1])])
+        assert tu["da_ap"] == [] and tu["khung"] == k and tu["luu"]["khung"] == k
+    dich = "chieu" if vt[x][1] == "sang" else "sang"
+    roi = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=x, buoi=dich), s.HanhDong(loai="bo_diem", ten=x)])  # dời rồi bỏ chính điểm đó: không văng
+    assert x not in s._vi_tri(roi["khung"]) and not any(d["ma_luat"] == "van_cho_cu" for d in roi["khong_doi"])
     cap = [(a, b) for a in sorted(vt) for b in sorted(vt) if a != b and vt[a] != vt[b] and sum(v == vt[b] for v in vt.values()) == 1
            and vt[b][1] in B.theo_id[a]["buoi"] and vt[a][1] in B.theo_id[b]["buoi"]]
     thay = 0

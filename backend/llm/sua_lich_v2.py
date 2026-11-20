@@ -66,7 +66,7 @@ CAU_KHONG_DOI = {
     "khong_buoi_hop_le": "{diem} không đi được vào buổi đó.",
     "khong_hop_luat": "{diem} đặt ở chỗ đó sẽ làm lịch phạm luật xếp (giờ mở cửa / cụm xa / quá dày) nên mình chưa đổi.",
     "thieu_cho": "Chưa rõ ngày / buổi để dời {diem}.",
-    "van_cho_cu": "{diem} vẫn ở chỗ cũ, lịch chưa đổi — bạn nói lại từng điểm một nhé.",
+    "van_cho_cu": "{diem} vẫn ở chỗ cũ — bạn nói lại từng điểm một nhé.",
     "het_diem_thay": "Không còn điểm phù hợp để thay {diem} (đặt được vào đúng chỗ đó) nên mình giữ nguyên.",
     # đổi số ngày / kiểu lịch mà không đổi được gì (trước 15/11 tối: lượt sửa im lặng, không dòng nào)
     "tham_so_chua_ro": "Mình chưa rõ bạn muốn {diem} thành gì — bạn nói cụ thể hơn nhé.",  # {diem} = nhãn hành động
@@ -519,9 +519,11 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             kq["da_ap"].append({"loai": "thay_diem", "diem": i, "moi": j})
     # điểm "đã dời" mà cuối lượt vẫn ở đúng chỗ cũ (dời về chỗ đang đứng; hai lần dời đổi chỗ ngược nhau) ⇒ không báo "Đã dời" (soát khác hãng 20/11)
     vt_cu, vt_moi = _vi_tri(luu["khung"]), _vi_tri(khung)
-    for a in [a for a in kq["da_ap"] if a["loai"] == "doi_buoi" and vt_cu.get(a["diem"]) == vt_moi[a["diem"]]]:
+    for a in [a for a in kq["da_ap"] if a["loai"] == "doi_buoi" and a["diem"] in vt_moi and vt_cu.get(a["diem"]) == vt_moi[a["diem"]]]:
         kq["da_ap"].remove(a)
         khong(ten_cua_diem(bang, a["diem"]), "van_cho_cu")
+    if not kq["da_ap"]:  # không ý nào làm được ⇒ trả đúng khung đã lưu (bộ xếp có thể đã đổi thứ tự / giờ trong buổi — review E)
+        khung = copy.deepcopy(luu["khung"])
     luu.update(tham_so=copy.deepcopy(khung["tham_so"]), khung=copy.deepcopy(khung), loai=loai)
     return {**kq, "khung": khung, "luu": luu}
 
