@@ -171,6 +171,10 @@ def luu_lich_cua_luot(store, conversation_id: str, trace: AnswerTrace, flags: As
     # lượt SỬA không đổi được gì (không có bản lưu mới) mà chính lượt đó có câu an toàn ⇒ giữ bản lưu cũ, chỉ thêm câu đó (review E 20/11)
     if luu is None and an_toan and trace.lich_luu is not None and trace.lich_v2 is not None and "thay_doi" in trace.lich_v2["lich"]:
         luu = dict(trace.lich_luu)
+    # lượt SỬA làm được mà lượt đó không có câu an toàn riêng ⇒ bản lưu mới thừa hưởng câu an toàn của bản trước (cùng một lịch, đã sửa); lượt biểu mẫu
+    # (lịch không có `thay_doi`) lập lịch KHÁC ⇒ không thừa hưởng (điều phối chốt 20/11: file của lịch đã sửa không được mất câu bão / lũ + 112)
+    elif luu is not None and not an_toan and "thay_doi" in trace.lich_v2["lich"]:
+        an_toan = (trace.lich_luu or {}).get("an_toan")
     if luu is not None:
         if an_toan:
             luu["an_toan"] = an_toan
