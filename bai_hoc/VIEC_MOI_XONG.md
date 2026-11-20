@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 13:45 20/11/2026 · thêm mục 18 (bản sửa "báo đã dời khi lịch không đổi" — việc mục 17 ý 5 ghi "được duyệt nhưng không làm được" nay đã làm; cả bộ test trên bản đã có sửa này (chạy 13:44–14:04 20/11/2026): 55 / 55 file, 1.555 ca đạt, 0 hỏng) · trước đó 11:40 20/11/2026 · mục 17 thêm ý 5 (lượt soát lần hai riêng cho các bản sửa: ba bản sửa nhỏ đã gộp, một bản không làm được, phần còn lại ghi giới hạn; cả bộ test trên bản cuối CHƯA chạy lúc viết) · trước đó 10:02, ngày 20/11/2026 · mục 17 thêm đợt hai (hai model Gemini: 16 phát hiện, 6 điểm mới; hai sửa của đợt hai đã gộp vào bản chính 10:10 20/11/2026) · trước đó 09:39, ngày 20/11/2026 · thêm mục 17 (một AI khác hãng soát code: 13 điểm, sửa bốn, ghi giới hạn tám, kèm một lỗi nhóm tự tìm; ba thay đổi của mục này đã gộp vào bản chính 09:41 20/11/2026) · trước đó 08:49, ngày 20/11/2026 thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; đã gộp vào bản chính 08:58 20/11/2026) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 16:11 20/11/2026 · thêm mục 20 (trang "Bản đồ" riêng trong menu: 40 điểm tham quan, lọc theo loại; đã thử trên trình duyệt ở màn rộng và bề rộng điện thoại; lúc viết nhánh CHỜ gộp vào bản chính) · trước đó 16:08 20/11/2026 · thêm mục 19 (sửa lịch bằng lời: khi KHÔNG dời được một điểm, trợ lý nói vì sao và gợi ý chỗ dời được; đã có một lượt thật trên giao diện và một phiên khác kiểm lại) · trước đó 13:45 20/11/2026 · thêm mục 18 (bản sửa "báo đã dời khi lịch không đổi" — việc mục 17 ý 5 ghi "được duyệt nhưng không làm được" nay đã làm; cả bộ test trên bản đã có sửa này (chạy 13:44–14:04 20/11/2026): 55 / 55 file, 1.555 ca đạt, 0 hỏng) · trước đó 11:40 20/11/2026 · mục 17 thêm ý 5 (lượt soát lần hai riêng cho các bản sửa: ba bản sửa nhỏ đã gộp, một bản không làm được, phần còn lại ghi giới hạn; cả bộ test trên bản cuối CHƯA chạy lúc viết) · trước đó 10:02, ngày 20/11/2026 · mục 17 thêm đợt hai (hai model Gemini: 16 phát hiện, 6 điểm mới; hai sửa của đợt hai đã gộp vào bản chính 10:10 20/11/2026) · trước đó 09:39, ngày 20/11/2026 · thêm mục 17 (một AI khác hãng soát code: 13 điểm, sửa bốn, ghi giới hạn tám, kèm một lỗi nhóm tự tìm; ba thay đổi của mục này đã gộp vào bản chính 09:41 20/11/2026) · trước đó 08:49, ngày 20/11/2026 thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; đã gộp vào bản chính 08:58 20/11/2026) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -13,6 +13,92 @@
 **Từ dùng chung cho các mục 19/11:** **cờ** = một dòng bật / tắt trong file cấu hình, tắt là hệ thống chạy như trước khi có tính năng · **lời dặn** = đoạn chữ cố định gửi kèm mọi
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
+
+## 20/11 — 20. Trang "Bản đồ" riêng trong menu: mọi điểm tham quan của trang Lên kế hoạch trên một bản đồ
+
+**Từ dùng ở mục này:** **bảng điểm** = danh sách 41 điểm tham quan mà trang Lên kế hoạch dùng để xếp lịch (riêng tư, không nằm trong kho bài viết) · **toạ độ** = vị trí (vĩ độ, kinh độ) của một
+điểm · **ghim** = dấu tròn trên bản đồ · **thanh dưới** = hàng nút ở mép dưới màn hình điện thoại (Trang chủ, Khám phá…) · **bề rộng 390** = bề rộng màn hình điện thoại phổ biến, nhóm dùng để thử thay cho điện thoại thật.
+
+**Vì sao có việc này.** Ngày 06/11 anh chốt giao diện kiểu cổng du lịch có menu "Trang chủ · Trợ lý AI · Khám phá · **Bản đồ**". Tới 20/11 bản đồ mới chỉ có bên trong thẻ lịch (ghim các điểm của
+từng ngày); chưa có trang Bản đồ riêng. Lời chốt 06/11 chỉ có một chữ "Bản đồ" — không nói trang hiện nơi nào, bấm vào làm được gì. Phiên điều phối chọn bản nhỏ nhất dưới đây (không hỏi lại anh).
+
+**1. Anh thấy gì khác.**
+- Menu có thêm mục **"Bản đồ"**, đứng sau "Khám phá". Bấm vào ⇒ trang "Bản đồ điểm tham quan": một bản đồ Huế với **40 ghim**, mỗi ghim là một điểm của bảng điểm.
+- Hàng nút lọc phía trên bản đồ, số trong ngoặc là số điểm: Tất cả (40) · Di tích (19) · Ẩm thực (7) · Thiên nhiên (10) · Lễ hội, nghệ thuật (5) · Chụp ảnh (9). Một điểm có thể thuộc hai loại nên cộng
+  lại lớn hơn 40. Bấm một loại ⇒ bản đồ chỉ còn ghim của loại đó và tự thu / phóng cho vừa.
+- Bấm một ghim ⇒ ô nhỏ ghi tên điểm, loại, và link "Mở Google Maps" (mở tab mới, tìm theo tên điểm — cùng kiểu link thẻ lịch đang dùng).
+- Dưới bản đồ là danh sách tên các điểm đang hiện (mỗi tên cũng là link Google Maps) — dùng được cả khi ô bản đồ không tải được.
+- Ở điện thoại: thanh dưới nay là Trang chủ · Khám phá · (nút tròn Trợ lý Huế) · Bản đồ · Lên kế hoạch. Mục "Giới thiệu" rời thanh dưới, chuyển thành một link ở chân trang (trang chủ vốn có sẵn một
+  link sang Giới thiệu). Lý do: để sáu mục thì nút tròn lệch khỏi giữa và chữ bốn mục xuống hai dòng (đã chụp ảnh trước khi đổi). Menu ở màn rộng giữ đủ sáu mục.
+- **Không đổi:** bản đồ trong thẻ lịch (nút "Ngày 1 / Ngày 2", ghim đánh số). Trang không dùng model, không thêm nguồn dữ liệu nào: lấy đúng bảng điểm và bảng toạ độ hệ thống đã nạp cho bản đồ lịch.
+  Khi tính năng bản đồ lịch tắt thì mục menu "Bản đồ" cũng không hiện.
+
+**2. Bằng chứng.**
+- **Trên trình duyệt thật** (hệ thống chạy từ đúng nhánh này, màn rộng 1440 và bề rộng 390; người viết đã mở từng ảnh ra nhìn) [máy kiểm]: vào trang từ menu; số ghim = số điểm chương trình trả về = số dòng danh sách = **40**;
+  lọc "Ẩm thực" ⇒ **7** ghim, 7 dòng; bấm ghim ⇒ ô "Chợ Đông Ba · Ẩm thực · Mở Google Maps"; trang không tràn ngang ở cả hai bề rộng; 0 lỗi trang; trang chủ không tải thêm file bản đồ nào (trang khác không chậm đi);
+  một lịch thật lập trên nhánh này vẫn có bản đồ với ghim 1–2–3 như trước.
+- **Một phiên khác người viết** gọi phần chương trình dựng dữ liệu trên dữ liệu thật [người thứ hai kiểm]: 40 mục, mỗi mục chỉ có bốn thứ (tên, loại, toạ độ, link) — không lọt ghi chú nào của bảng riêng tư ra ngoài;
+  0 toạ độ nằm ngoài vùng Huế; 0 tên trùng.
+- Test [máy kiểm]: test mới cho dữ liệu trang Bản đồ hỏng trên bản cũ, đạt trên bản mới; file test bản đồ 14 ca đạt.
+- Thanh dưới sau khi bỏ "Giới thiệu" [máy kiểm, người viết nhìn ảnh; CHƯA có người thứ hai đọc phần này lúc viết]: thử trên bản dựng của nhánh ở bề rộng 390 — năm ô, nút tròn đúng giữa, không tràn ngang.
+- Lỗi người viết tự thấy khi nhìn ảnh và đã sửa: danh sách tên ở màn rộng lúc đầu xếp một cột dài ⇒ nay chia cột.
+
+**3. Chưa làm / giới hạn.**
+- Chỉ có **điểm tham quan**. Quán ăn, chỗ ở KHÔNG có trên trang này (bảng quán có toạ độ nhưng chưa đưa lên — anh muốn thì nói). Không có vị trí của người dùng, không đường đi, không ô tìm kiếm, không nút "thêm vào lịch".
+- 40 chứ không phải 41: "Không gian lưu niệm Lê Bá Đảng" có trong bảng điểm nhưng chưa có toạ độ ⇒ không lên bản đồ, không có trong danh sách (lịch vẫn có thể xếp điểm này).
+- Các điểm ở trung tâm nằm sát nhau: nhìn xa thì ghim chồng lên nhau, phải phóng to (nút +) mới tách. Điện thoại: một ngón vuốt qua bản đồ là cuộn trang (cố ý, như bản đồ lịch); phóng to bằng nút + hoặc hai ngón.
+- Bản đồ cần mạng tới máy chủ ô bản đồ; mất mạng ⇒ khung xám, chỉ còn danh sách. Dưới bản đồ có dòng chữ nhỏ ghi nguồn bản đồ, như bản đồ trong thẻ lịch đang có.
+- Mới thử bằng trình duyệt không màn hình ở hai bề rộng; CHƯA thử trên điện thoại thật, chưa thử Firefox / Safari. Lúc viết mục này nhánh chưa gộp vào bản chính ⇒ muốn thử phải chờ nhóm báo đã gộp và dựng lại giao diện.
+
+**4. Cách anh thử trong 2 phút** (sau khi nhóm báo đã gộp). Mở `http://127.0.0.1:8010/`, bấm "Bản đồ" trên menu ⇒ thấy tiêu đề "Bản đồ điểm tham quan" và dòng "40 điểm tham quan…". Bấm "Ẩm thực (7)" ⇒ còn 7 dấu tròn và 7 tên
+dưới bản đồ. Bấm một dấu tròn ⇒ ô tên hiện ra, bấm "Mở Google Maps" ⇒ tab mới mở đúng nơi đó. Thu hẹp cửa sổ trình duyệt cho thật hẹp (hoặc mở bằng điện thoại cùng mạng) ⇒ thanh dưới có năm ô, nút tròn "Trợ lý Huế" ở giữa. [chưa ai thử trên điện thoại thật]
+
+## 20/11 — 19. Sửa lịch bằng lời: khi KHÔNG dời được một điểm, trợ lý nói vì sao và gợi ý chỗ dời được
+
+**Từ dùng ở mục này:** **dời một điểm** = anh nhắn trợ lý kiểu "dời Đại Nội sang chiều ngày 2" trên một lịch đã lập ở trang Lên kế hoạch · **luật xếp** = các điều kiện chương trình
+tự kiểm để lịch đi được thật (một buổi không quá hai điểm và không quá số phút cho phép; hai khu đi trong cùng một ngày phải nằm liền nhau; điểm phải mở cửa vào giờ đó) ·
+**khu** = nhóm điểm nằm gần nhau (ví dụ khu Kinh thành, khu lăng ở Thủy Xuân) · **đổi chỗ** = luật có sẵn: dời A vào một buổi đang có đúng một điểm B thì A và B đổi chỗ cho nhau ·
+**mốc** = phép đếm chiều 20/11 TRƯỚC khi sửa, trên bốn kiểu lịch (3 ngày · cân bằng · di tích; 2 ngày · cân bằng · di tích; 3 ngày · nhẹ nhàng; 4 ngày · khám phá · di tích + ẩm thực):
+cho từng điểm thử dời sang từng buổi khác, tổng 176 lần thử.
+
+**Vì sao có việc này.** Phép đếm mốc cho thấy dời một điểm — việc sửa lịch hay làm nhất — chỉ làm được **24 / 176** lần (khoảng 14 %); 152 lần còn lại trợ lý từ chối bằng CÙNG một câu
+"… đặt ở chỗ đó sẽ làm lịch phạm luật xếp (giờ mở cửa / cụm xa / quá dày) nên mình chưa đổi": không nói luật nào chặn, không gợi ý thử chỗ nào. Anh chọn làm mục này trong đợt hoàn thiện (15:25 20/11/2026).
+
+**1. Anh thấy gì khác.**
+- **Trước:** mọi lần không dời được đều ra một câu chung như trên; muốn biết điểm đó dời đi đâu được thì phải thử từng buổi.
+- **Nay:** câu từ chối nêu MỘT lý do bằng lời thường và liệt kê các chỗ dời được. Ba dạng câu (giao diện tự thêm chữ "Không đổi được:" ở đầu):
+  - "Phố cổ và chợ Bao Vinh chưa dời sang buổi chiều ngày 2 được vì **một ngày sẽ phải đi hai khu không liền nhau**. Dời được sang: buổi sáng ngày 1 (đổi chỗ với Đại Nội Huế)."
+  - "… vì **lịch sẽ có buổi quá kín hoặc quá giờ**. Dời được sang: …"
+  - "Chùa Thiên Mụ chưa dời sang buổi sáng ngày 1 được vì lịch sẽ có buổi quá kín hoặc quá giờ. **Trong lịch này Chùa Thiên Mụ chỉ đứng được ở chỗ hiện tại.**"
+- Chữ "(đổi chỗ với …)" báo trước điểm nào sẽ bị chuyển sang chỗ cũ của điểm anh dời, để anh không bất ngờ.
+- **Không đổi:** lần dời nào trước đây làm được thì nay vẫn làm được y như cũ; lịch không đổi gì ở lượt bị từ chối; chương trình không đọc thêm chữ nào trong câu anh gõ — lý do và gợi ý do chương trình
+  tự thử từng chỗ bằng đúng phép thử của lần dời thật, model không viết.
+
+**2. Bằng chứng.**
+- **Lượt thật trên giao diện** (16:0x 20/11/2026, hệ thống thật, lịch 3 ngày · cân bằng · di tích, mỗi câu một lượt) [máy kiểm, người viết đã mở ảnh ra nhìn]: "Dời Đại Nội sang sáng ngày 3" ⇒ "Đã dời Đại Nội Huế
+  sang buổi sáng ngày 3." và lịch đổi thật (Đại Nội đổi chỗ với Phố cổ Bao Vinh); câu "Cho Lăng Tự Đức lên sáng ngày 1, còn Lăng Khải Định để sáng ngày 1" ⇒ hai dòng câu mới, mỗi dòng nêu lý do
+  "hai khu không liền nhau" và một chỗ dời được; lịch giữ nguyên.
+- **Phép đếm của người viết** (chương trình thật, 0 đồng, cùng 176 lần thử của mốc) [máy kiểm]: dời được vẫn **24 / 176**, và cả 24 lịch sau khi dời giống TỪNG CHỮ lịch của bản trước sửa — tức bản sửa không
+  đụng tới ca làm được. **152 / 152** lần từ chối đều có lý do (hai khu không liền nhau: 111 · quá kín hoặc quá giờ: 41 · ngoài giờ mở cửa: 0; mốc: 0 / 152 có lý do). 60 lần từ chối có gợi ý, tổng 92 gợi ý,
+  đem từng gợi ý ra dời thật: **92 / 92** dời được đúng chỗ đó. 92 lần còn lại ra câu "chỉ đứng được ở chỗ hiện tại" — và đúng là điểm đó không dời đi đâu được trong phép đếm mốc.
+- **Một phiên khác người viết kiểm bằng cách khác** (bảy kiểu lịch người viết KHÔNG dùng: 1 ngày, 5 ngày, có trẻ em, có người lớn tuổi, có ngày đi, có ngày mưa, 2 ngày nhẹ nhàng) [người thứ hai kiểm]:
+  1.688 / 1.688 trường hợp cho lịch và các dòng báo giống hệt giữa bản trước và sau sửa ở mọi phần không thuộc bản sửa; 345 lần từ chối đều có lý do; 139 / 139 gợi ý dời được thật.
+- Test [máy kiểm]: test mới hỏng trên bản cũ, đạt trên bản mới; bốn file test chạm đường sửa lịch đạt (13 + 44 + 93 + 245 ca, 0 hỏng). Cả bộ test CHƯA chạy lại sau bản này — theo cách làm anh chọn 15:43
+  20/11/2026, cả bộ chạy một lượt ở cuối đợt.
+
+**3. Chưa làm / giới hạn.**
+- **Tỉ lệ dời được KHÔNG tăng: vẫn 24 / 176.** Bản này chỉ làm câu từ chối có ích. 92 / 152 lần từ chối là "chỉ đứng được ở chỗ hiện tại": với bốn kiểu lịch đã đếm, phần lớn điểm không dời đi đâu được vì lịch
+  xếp sẵn đã kín và luật "hai khu liền nhau" chặt. Muốn dời được nhiều hơn phải nới luật xếp hoặc cho chương trình tự dọn chỗ — việc khác, chưa ai giao.
+- Chỉ nói MỘT lý do, ở mức cả lịch ("một ngày sẽ…", "lịch sẽ có buổi…"), không chỉ ra ngày nào; ca dính cả hai loại luật (60 / 152) chỉ nói lý do "hai khu".
+- Câu có HAI lệnh dời mà lệnh đầu bị từ chối, lệnh sau làm được: gợi ý của lệnh đầu được tính trước khi lệnh sau đổi lịch nên có thể không còn đúng (người kiểm đo: 81 / 408 gợi ý kiểu này đem dời thì bị từ chối;
+  thứ tự ngược lại 382 / 382 đúng). Kiểu câu hiếm, chưa có số lượt thật nào gặp ⇒ ghi lại, không sửa (sổ tay bàn giao mục 10.2).
+- "Thêm một điểm" và dời một điểm chưa có trong lịch vẫn dùng câu chung cũ. Trong khung trợ lý nhỏ ở góc màn hình, câu từ chối dài phải cuộn mới đọc hết.
+- Phép đếm thử đều mọi điểm × mọi buổi; người thật không chọn đều như vậy — chưa có số lượt thật của người dùng. Chưa ai bấm thử lại một gợi ý QUA GIAO DIỆN (mới kiểm bằng chương trình). Chưa thử trên điện thoại thật.
+
+**4. Cách anh thử trong 2 phút.** Ở trang Lên kế hoạch lập lịch **3 ngày · Cân bằng · thích Di tích**, không chọn ngày đi. Mở trợ lý rồi nhắn lần lượt:
+(a) "Dời Phố cổ Bao Vinh sang chiều ngày 2" ⇒ phải thấy "Không đổi được: … vì một ngày sẽ phải đi hai khu không liền nhau. Dời được sang: buổi sáng ngày 1 (đổi chỗ với Đại Nội Huế)." và lịch giữ nguyên;
+(b) nhắn đúng gợi ý đó: "Dời Phố cổ Bao Vinh sang sáng ngày 1" ⇒ phải thấy "Đã dời…", Bao Vinh lên sáng ngày 1 và Đại Nội xuống sáng ngày 3;
+(c) "Dời Chùa Thiên Mụ sang sáng ngày 1" ⇒ phải thấy "… chỉ đứng được ở chỗ hiện tại." Nếu model hiểu câu khác đi (ví dụ tự trả lời bằng lời) thì gõ lại sát mẫu hơn. Bước (a), (c) người viết mới chạy bằng chương trình; bước tương tự đã chạy trên giao diện là hai câu ở ý 2. [bước (a)–(c) chưa ai bấm trên giao diện]
 
 ## 20/11 — 18. Sửa lịch bằng lời: điểm "được dời" mà rốt cuộc vẫn đứng chỗ cũ thì trợ lý không còn báo "Đã dời"
 
