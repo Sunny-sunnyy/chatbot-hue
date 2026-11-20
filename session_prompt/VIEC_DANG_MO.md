@@ -1,8 +1,23 @@
 # VIỆC ĐANG MỞ — mục lục theo việc (sống xuyên ngày; GHI ĐÈ tại chỗ)
 
-Cập nhật: 14:09 20/11/2026 (giờ `date`; chiều 20/11 — User đã trả lời ba câu gác, bản sửa "báo đã dời" đã gộp). Người giữ: phiên điều phối. **[đang thử từ 19/11, xét lại sau 3 ngày làm việc]**
+Cập nhật: 15:25 20/11/2026 (giờ `date`; User nói rõ phạm vi: mọi tính năng đã chốt Phase 9–12 phải xong trước buổi test). Người giữ: phiên điều phối. **[đang thử từ 19/11, xét lại sau 3 ngày làm việc]**
 
 Trang này là gì: mỗi việc kéo quá một ngày có MỘT khối ở đây, để phiên mở sáng hôm sau tìm lại đủ hồ sơ mà không lục từng thư mục ngày. Việc xong ⇒ dời MỘT dòng sang `session_prompt/VIEC_DA_XONG.md` (tên · ngày xong · sha gộp · các thư mục ngày có hồ sơ) rồi xoá khối. Trần: 8 việc / 60 dòng. **"Bước kế" của một việc CHỈ ghi ở trang này** — trang hiện trạng, `TONG_HOP.md` của ngày và `STATUS_<X>.md` chỉ trỏ tới đây, không chép lại. Dòng "plan" luôn là bản HIỆN HÀNH + sha đã duyệt; bản plan cũ có dòng đầu "đã thay bởi …". Report đã nằm ở thư mục ngày nào thì KHÔNG dời; bản cập nhật ngày sau là file MỚI ở thư mục ngày mới, dòng "report" liệt kê đủ theo ngày. Dữ liệu riêng tư ở `data/<tên việc>/` (không vào git) — ở đây chỉ ghi đường dẫn.
+
+## 0. ĐỢT HOÀN THIỆN PHASE 9–12 (User chốt 15:25 20/11/2026) — VIỆC CHÍNH; buổi User test (khối 1) HOÃN tới khi khối này xong
+- Lời User: "không thêm tính năng mới" = không thêm gì NGOÀI thứ đã chốt ở Phase 9–12 và trước đó; thứ đã chốt phải XONG HẾT. Bảng kiểm kê có nguồn từng dòng (riêng tư): `data/kiem_ke_phase_2026-11-20/` (`BANG_GOP_cho_User.md`, `B_phase_11_12.md`, `C_phase_9_10.md`). User chọn: làm nhóm I (13 mục) + bốn mục phổ thông của nhóm II; mục tính tổng tiền bằng code · bảng vé + giờ có cấu trúc · trợ lý tự yêu cầu tra web · ngày nguồn giá vé GIỮ giới hạn.
+- Cách làm (chốt vòng tự soi 2): mỗi việc đếm / thử MỘT lượt trước khi viết · plan một trang, A đọc rồi duyệt · sửa xong chạy file test chạm đường đổi + MỘT lượt thật qua giao diện · một review cả nhánh · cả bộ test chỉ chạy MỘT lượt ở cuối đợt · việc nào đo lại vẫn không đạt ⇒ báo A, A hỏi User, không lặng lẽ ghi giới hạn.
+- Thứ tự (phổ thông trước) — số là số trong bảng gộp; "ai" điền khi giao:
+  1. [21] Sửa lịch — dời một điểm: câu từ chối nói đúng lý do + gợi ý chỗ dời ĐƯỢC (mốc: dời được 24 / 176; script `data/test_cuoi/tools/dem_doi_buoi_2026-11-20.py`) — E viết, B review
+  2. [1] Cache câu trả lời giữa các cuộc trò chuyện, dạng đã thống nhất 05/11 (khớp đúng chữ, lượt đầu, có nguồn kho, không câu từ chối / web / thời tiết, khoá theo phiên bản kho + lời dặn + model, 24 giờ; KHÔNG cache theo nghĩa; nghiên cứu `data/nghien_cuu_cache_2026-11-05/`; điều kiện 05/11 "chờ người dùng thật, đo câu lặp ≥ 20 % mới làm" User BỎ chiều 20/11 — nguyên văn: "khoảng 10 đến 15p sau có người khác hỏi lại câu đó thì phải lấy ra được câu trả lời cũ mà không cần tính toán lại") — B viết, C review
+  3. [18] câu liệt kê trả thiếu mục · [19] câu nhiều ý kho có một phần thì từ chối cả câu — C đếm trước (≤ 0,02 USD mỗi việc) rồi plan
+  4. [14 mức nhẹ] gõ "lên lịch giúp mình" trong ô chat ⇒ dẫn sang trang Lên kế hoạch (trước hết MỘT lượt thật xem hiện trả lời gì) · [5] "gần X có gì ăn" trong ô chat
+  5. [2] sự kiện theo ngày · [3] ứng xử / trang phục (đo hỏi thường trước) · [4] trang Bản đồ riêng
+  6. [8] nhớ cả câu trả lời trong một cuộc trò chuyện · [9] hỏi lại khi thiếu thông tin · [11] đổi chỗ ngày 1 với ngày 2 · [12] bốn việc hẹn "sau lượt đo cuối"
+  7. [6] trang theo dõi · [7] agent đề xuất sửa kho có User duyệt
+  8. [10] so sánh cuối trên bộ câu kín — chỉ User gõ lệnh · [13] deploy + các chốt trước deploy — sau buổi test
+- Nhóm tự làm khi có lượt bật server: ảnh năm màn chính ở bề rộng điện thoại + một lượt thật cho sáu bản sửa 20/11 (E).
+- Chưa ai ước lượng công. Giọng nói: tài liệu ghi hai nghĩa ("dẹp" ↔ "không làm trước 30/11") — đang coi là bỏ, chờ User nói lại.
 
 ## 1. Buổi User test MỘT lần ở máy local (bước 6) — VIỆC KẾ, mọi thứ phía nhóm đã sẵn
 - Bản để test: main lúc kết phiên (`git log -1`), code đứng yên ở `e13709a9` — các commit sau chỉ là tài liệu (kiểm: `git diff --quiet e13709a9 HEAD -- backend frontend/src scripts pyproject.toml uv.lock; echo $?` phải ra 0). 29 cờ bật. Cả bộ test 55 file · 1.555 đạt · 0 hỏng (`data/test_rong_2026-11-20/KET_QUA_e13709a9.tsv`, report `report_agent/2026-11-20/b_ca_bo_test.md`). Sao lưu: bản gần nhất ĐỦ là `/mnt/d/hue_rag_sao_luu/2026-11-20_sau_soat_d8651d4` (trưa 20/11; từ đó chỉ đổi 8 dòng code đã ở git). Thư mục `…/2026-11-20_sau_sua_bao_doi_e13709a` là bản chép DỞ (điều phối tự dừng khi User hỏi "có cần không") — không dùng, xoá khi User đồng ý.
