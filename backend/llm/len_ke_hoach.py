@@ -317,6 +317,11 @@ def luu_sau_luot(trace: AnswerTrace, flags: AssistantFlags) -> dict | None:
     v = trace.lich_v2
     if v is None or v.get("cau") is None or v.get("loi_khung"):
         return None
+    # Soát khác hãng 20/11: lượt SỬA mà không ý nào làm được (lịch giữ nguyên) ⇒ không lưu lại — giao diện vẫn giữ thẻ lịch cũ (`App.jsx`), nên file
+    # tải về phải dựng từ bản lưu cũ, còn nguyên câu an toàn (bão / lũ + 112) của lượt đã tạo ra nó. Lượt biểu mẫu không có `thay_doi`.
+    thay_doi = v["lich"].get("thay_doi")
+    if thay_doi is not None and not any(d["duoc"] for d in thay_doi):
+        return None
     luu = sl.luu_tu_lich(v["khung"], v["ngay_di"], v["mua"])
     luu["loai"] = list(v.get("loai") or [])
     muc = {m["id_muc"]: m["id_diem"] for m in lt2.moi_muc(v["lich"]) if m.get("id_diem")}
