@@ -30,6 +30,7 @@ Tiền lượt trình duyệt: khoảng 0,004 USD (5 lượt có phí, cộng t�
 - Câu an toàn đi theo lịch qua mọi lượt sửa làm được về sau, tới khi lập lịch mới bằng biểu mẫu.
 - Lượt sửa KHÔNG đổi được gì và không nhắc bão: ghi chú của lượt đó không thừa hưởng (thẻ cũ trên màn hình vẫn còn câu của nó) — giữ như đã gộp.
 - Đường không hiện chữ dần (`POST /api/chat`) không lưu lịch từ trước — ngoài phạm vi.
+- Test mới gọi thẳng hai hàm (`an_toan_vao_ghi_chu`, hàm dựng sự kiện ghi chú), KHÔNG đi qua chỗ phát sự kiện của lượt ⇒ dòng gọi ở chỗ đó chỉ được lượt trình duyệt ở mục 3 bảo vệ, chưa có test nào giữ (người review nêu).
 - Chưa chạy: cả bộ test; lịch 3 ngày; trình duyệt có màn hình. Chưa có người thứ hai mở các tệp tải về.
 
 | Đã làm | Chưa làm | Lệnh kiểm (từ `backend/`) | Đầu ra |
