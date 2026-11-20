@@ -91,6 +91,9 @@ def test_gate_opens_only_with_both_a_date_window_and_an_event_word(cau):
     "tối nay Đại Nội mở cửa tới mấy giờ, có sự kiện gì không",  # câu hỏi giờ mở cửa: để đường thường
     "lễ hội Cầu ngư năm 2027 rơi vào ngày nào",       # hỏi ngày của MỘT lễ hội: đường "Lịch hệ thống" đang có
     "năm sau Huế có lễ hội gì",                       # khoảng quá dài / không đọc được
+    "tháng 3 năm ngoái Huế có lễ hội gì",             # bộ dò mù của E 20/11: hỏi QUÁ KHỨ — không được đưa lịch sắp tới
+    "tuần trước ở Huế có sự kiện gì",
+    "cuối tuần vừa rồi Huế có lễ hội gì không",
     "",
 ])
 def test_gate_stays_closed_otherwise(cau):

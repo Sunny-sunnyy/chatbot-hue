@@ -29,6 +29,8 @@ _HOI = re.compile(r"(?<!\w)(?:lễ hội|sự kiện|festival|hội hè|hoạt �
                   r"biểu diễn (?:gì|nào)|có gì (?:vui|chơi|hay|đặc biệt|đáng xem|diễn ra)|có gì (?:không|ko|k)(?!\w)|"
                   r"(?:ở|tại) huế có gì\s*\??$)", re.I)
 _KHONG_HOI = re.compile(r"(?<!\w)(?:thời tiết|mưa|nắng|bão|lũ|lụt|giông|dông|nhiệt độ|giá vé|bao nhiêu tiền|mở cửa|đóng cửa)(?!\w)", re.I)
+# Hỏi về QUÁ KHỨ ("tháng 3 năm ngoái", "tuần trước", "cuối tuần vừa rồi") ⇒ không tra: bảng chỉ tính lần SẮP TỚI (bộ dò mù của E 20/11)
+_QUA_KHU = re.compile(r"(?<!\w)(?:năm ngoái|năm trước|năm rồi|hôm qua|hôm kia|tuần trước|tuần rồi|tháng trước|tháng rồi|vừa rồi|vừa qua|đã qua|trước đây|hồi (?:đó|trước|xưa))(?!\w)", re.I)
 _NGAY_SO = re.compile(r"(?<![\d/])(\d{1,2})/(\d{1,2})(?:/(\d{4}))?(?![\d/])")
 _NGAY_CHU = re.compile(r"(?<!\w)ngày\s+(\d{1,2})\s+tháng\s+(\d{1,2})(?:\s+năm\s+(\d{4}))?(?!\s*âm)(?!\w)", re.I)
 _THANG_AM = re.compile(r"(?<!\w)tháng\s+(giêng|chạp|\d{1,2})\s+âm(?:\s+lịch)?(?!\w)", re.I)
@@ -48,7 +50,7 @@ def nap_bang(path: Path) -> tuple[dict, ...]:
 
 
 def hoi_su_kien(cau: str) -> bool:
-    return bool(_HOI.search(cau)) and not _KHONG_HOI.search(cau)
+    return bool(_HOI.search(cau)) and not _KHONG_HOI.search(cau) and not _QUA_KHU.search(cau)
 
 
 def _cuoi_thang_am(dau: dt.date) -> dt.date:
