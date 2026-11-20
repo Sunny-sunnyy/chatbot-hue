@@ -45,7 +45,7 @@ Kết quả bộ dò từng câu + hai công cụ đếm (riêng tư): thư mụ
 - **Chưa đo qua hệ thống thật** (C chạy khi máy có lượt): kịch bản "kể hết" × 3 mỗi bên cùng buổi — ngưỡng ghi trước: bên bật kể đủ ≥ bên tắt; dấu vết phải thấy: lượt 2 bên bật KHÔNG có dòng ghi chú trong lịch sử.
 - 11 / 20 câu xin liệt kê của bộ dò đầu bị bỏ sót (câu ghép, câu có số, viết tắt, câu không nêu loại nơi như "kể hết ra xem nào") — lượt đó giữ hành vi cũ, không tệ hơn. Đã dùng hết: một bộ dò thêm + một lần sửa; E chạy lại hai bộ mà còn câu ra sai ⇒ không gộp, giữ dòng giới hạn, không mở vòng.
 - Lỗi có sẵn "danh sách thiếu mục" (bên cờ tắt cũng thiếu 1 / 3 lần) KHÔNG được chữa — bản sửa chỉ gỡ tác dụng phụ của dòng ghi chú.
-- Khuôn chỉ biết 22 loại nơi (quán, lăng, chùa, điểm tham quan…); loại nơi khác ("các bảo tàng đó") không được nhận — bỏ sót, không sai.
+- Khuôn chỉ biết 23 cụm chỉ loại nơi (quán, lăng, chùa, điểm tham quan…); loại nơi khác ("các bảo tàng đó") không được nhận — bỏ sót, không sai.
 - Quan sát ngoài phạm vi: `uv run` trong worktree mới tự dựng `.venv` bằng Python 3.14.7, cây chính đang dùng 3.13.15 — test file này đạt ở 3.14; lượt đo của C dùng môi trường cây chính.
 - Dòng giới hạn ở sổ tay bàn giao mục 10.1 và `bai_hoc/`: sửa SAU khi phép đo có kết quả (đạt ⇒ viết lại dòng; trượt ⇒ giữ nguyên, nhánh làm hồ sơ).
 
