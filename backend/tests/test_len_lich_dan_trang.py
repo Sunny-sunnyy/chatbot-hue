@@ -42,6 +42,15 @@ KHONG_NHAN = [
     "mình cần lịch mở cửa Đại Nội 2 ngày Tết",                       # "cần" + lịch mở cửa
     "xin lịch diễn Nhã nhạc 3 ngày tới",                             # "xin" + lịch diễn
     "cần mấy ngày để đi hết các lăng",                               # "cần" + số ngày, không có lịch
+    # review của phiên C: động từ nhờ và chữ "lịch" không thuộc về nhau / người dùng đã tự có lịch / không phải lịch đi chơi
+    "gợi ý quán ăn theo lịch trình 2 ngày của mình",
+    "lên Đại Nội theo lịch trình 2 ngày thì nên đi buổi nào",
+    "mình tự lập lịch 3 ngày rồi, bạn xem giúp có hợp lý không",
+    "làm thế nào để đổi lịch 2 ngày thành 3 ngày",
+    "xếp hàng mua vé theo lịch 3 ngày Festival có lâu không",
+    "soạn lịch trình 3 ngày: ngày 1 đi Đại Nội, ngày 2 đi lăng — bạn thấy ổn không",
+    "gợi ý giúp mình kế hoạch học tiếng Huế trong 7 ngày",
+    "tạo giúp mình lịch nhắc uống thuốc 3 ngày",
     "",
 ]
 
