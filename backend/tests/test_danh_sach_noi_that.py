@@ -30,6 +30,8 @@ def test_recognises_requests_for_a_list(cau):
     "Lăng Tự Đức mở cửa mấy giờ?",
     "Lăng Minh Mạng với lăng Tự Đức, lăng nào xa trung tâm hơn?",   # so sánh
     "Trong các quán vừa nêu, quán nào gần cầu Trường Tiền nhất?",   # chọn một
+    "trong các quán vừa nêu quán nào gần nhất",                     # bộ dò mù của E 20/11 (B18): hỏi tiếp chọn MỘT trong các nơi đã nêu
+    "trong số những lăng đó lăng nào đẹp",
     "Vé vào các lăng giá bao nhiêu?",                   # "các lăng" nhưng hỏi giá
     "Các bạn cho mình hỏi đường ra chợ Đông Ba",
     "Đi Huế 2 ngày nên ở khách sạn hay homestay?",

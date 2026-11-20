@@ -20,7 +20,8 @@ _MAU = re.compile(
     rf"|(?<!\w)(?:kể hết|kể tên|kể ra|liệt kê|danh sách|tất cả)\s+(?:[^\s,;:.?!]+\s+){{0,3}}?{_LOAI}(?!\w)"  # "kể hết các lăng", "liệt kê quán chay"
     rf"|(?<!\w)(?:những|các)\s+{_LOAI}\s+{_GIUA}(?:kể hết|kể tên|liệt kê)(?!\w)", re.I)
 # Hỏi so sánh / chọn một trong vài thứ đã nêu, hoặc hỏi về giá / giờ của các nơi ⇒ không phải xin danh sách
-_KHONG = re.compile(r"(?<!\w)(?:nào|gì)\s+(?:hơn|nhất)(?!\w)|(?<!\w)(?:hay|hoặc)\s+(?:là\s+)?\S+\s*\?*$|(?<!\w)trong\s+(?:hai|ba|2|3)\s", re.I)
+_KHONG = re.compile(r"(?<!\w)(?:nào|gì)\s+(?:hơn|nhất)(?!\w)|(?<!\w)(?:hay|hoặc)\s+(?:là\s+)?\S+\s*\?*$|(?<!\w)trong\s+(?:hai|ba|2|3)\s"
+                    r"|(?<!\w)trong\s+(?:số\s+)?(?:các|những|mấy)\s", re.I)  # "trong các quán vừa nêu, quán nào …": chọn MỘT (bộ dò mù của E 20/11)
 
 
 def xin_danh_sach(cau: str) -> bool:

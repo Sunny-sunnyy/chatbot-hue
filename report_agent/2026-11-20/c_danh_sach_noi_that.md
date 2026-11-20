@@ -33,3 +33,12 @@ chữa độ đủ của danh sách (cần bảng thuộc tính + bổ sung kho)
 | Đã làm | Chưa làm | Tự hoãn + lý do | Lệnh kiểm + đầu ra |
 |---|---|---|---|
 | hàm nhận câu + nhánh nối + cờ tắt + test + hai dòng runbook | lượt thật; bộ dò của E; bật cờ | lượt thật gộp vào lượt bật server chung (phiên điều phối xếp) | `cd backend && uv run pytest tests/test_danh_sach_noi_that.py -q` ⇒ `26 passed` |
+
+## Bộ dò mù của phiên E (ghi 15:46 20/11/2026, giờ `date`) — sàn ghi trước KHÔNG đạt
+- Bộ: riêng tư `data/kiem_ke_phase_2026-11-20/E_bo_do_danh_sach.md` (E soạn và chạy trên `9ea5c448` trước khi mở mã nguồn hàm). Phải nhận 19 / 20 (mức mong ≥ 14: đạt).
+  Giống-mà-không-phải: nối nhầm **3 / 20** — sàn "0 / 20" C ghi trước **không đạt**.
+- Phiên điều phối chốt (theo ý E, luật "lỗi hiếm ghi lại không sửa"): sửa MỘT dòng cho kiểu câu hỏi tiếp có thật "trong các … vừa nêu, … nào …" (chọn một);
+  hai câu còn lại dựng tay để thử chữ "danh sách" / "liệt kê" dùng nghĩa khác ⇒ ghi giới hạn (runbook 10.1), không sửa; không mở bộ dò thứ hai.
+- Sau sửa (C chạy lại CÙNG 40 câu — C đã đọc bộ nên lần này KHÔNG còn mù): nhận 19 / 20, nối nhầm 2 / 20 (đúng hai câu ghi giới hạn). Test: hai ca mới ĐỎ trước
+  dòng loại trừ (2 hỏng / 26 đạt), xanh sau (28 đạt). Hậu quả của một lần nối nhầm: thừa một dòng ghi chú dưới câu trả lời không phải danh sách.
+- Nói thẳng: sàn ghi trước là 0 và kết quả là 2 ⇒ bật cờ hay không là quyết định của chủ dự án với con số này, không phải "đạt".
