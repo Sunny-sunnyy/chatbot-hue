@@ -1,0 +1,27 @@
+# Plan một trang — mục [4] trang "Bản đồ" riêng trong menu (E viết 15:41 20/11/2026, giờ `date`; chờ phiên điều phối duyệt; chưa viết code)
+
+**Từ dùng:** *bảng điểm* = 41 điểm tham quan mà trang Lên kế hoạch dùng để xếp lịch · *bảng toạ độ* = vị trí của các điểm đó (file riêng tư, khoá `lich_trinh_toa_do` trong `backend/config/settings.yaml`; server đã nạp sẵn khi cờ `ban_do_lich` bật) · *ghim* = dấu tròn trên bản đồ.
+
+**1. Điều chủ dự án đã chốt — và chỗ CHƯA đủ rõ**
+- Nguồn duy nhất: `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-06.md` dòng 15 — cổng mức 2, menu "Trang chủ · Trợ lý AI · Khám phá · **Bản đồ**", trong ngoặc có chữ "bản đồ". Không có spec đợt 2 nào (`ls docs/superpowers/specs`).
+- KHÔNG có chữ nào nói: trang hiện NHỮNG nơi nào (chỉ điểm tham quan, hay cả quán / chỗ ở) · bấm vào một nơi thì làm được gì · có lọc không. Mặc định E đề nghị ở mục 2 — phiên điều phối quyết, không hỏi chủ dự án.
+
+**2. Người dùng thấy gì (mặc định đề nghị — bản nhỏ nhất đúng chữ "trang Bản đồ")**
+- Menu có thêm "Bản đồ" (sau "Khám phá"), địa chỉ `#/ban-do`; cờ `ban_do_lich` tắt ⇒ không có mục menu, gõ thẳng địa chỉ ⇒ về trang chủ như mọi địa chỉ lạ.
+- Một bản đồ Huế có ghim của MỌI điểm trong bảng điểm có toạ độ (hiện 41 điểm; đếm lại khi code), hàng nút lọc theo loại có sẵn trong bảng (Di tích 19 · Thiên nhiên 10 · Chụp ảnh 9 · Ẩm thực 7 · Lễ hội, nghệ thuật 6 — một điểm có thể thuộc hai loại).
+- Bấm ghim ⇒ ô nhỏ: tên điểm, loại, link "Mở Google Maps" (cùng link trang lịch đang dùng). Dưới bản đồ: danh sách tên theo loại đang lọc (đọc được khi ô bản đồ không tải, và cho người dùng bàn phím).
+- KHÔNG làm ở bản này: quán ăn / chỗ ở trên bản đồ · nút "thêm vào lịch" · vị trí người dùng · đường đi · tìm kiếm · link sang bài Khám phá (bảng điểm không có mã bài chắc chắn cho từng điểm — chưa kiểm).
+
+**3. Dùng lại gì, thêm gì** (KHÔNG thêm nguồn dữ liệu, không thư viện mới, model không tham gia)
+- Dùng lại: Leaflet + nguồn ô bản đồ + dòng ghi công bản đồ của `frontend/src/BanDoLich.jsx` (tách phần dựng khung bản đồ thành hàm chung để hai nơi cùng dùng — nếu tách làm đổi hành vi bản đồ lịch thì KHÔNG tách, chép ~15 dòng) · `toaDo.js` · `nguonBanDo.js` · lớp CSS `.bd-khung`, `.ghim` · `lich_trinh.map_url` · điều hướng `route.js` · menu `App.jsx`.
+- Thêm: một đường `GET /api/ban_do` trong `backend/api/routes/cong.py` (dựng một lần, trả `[{ten, loai, toa_do, map_url}]` từ bảng điểm + bảng toạ độ đã nạp; cờ tắt ⇒ 404 như `/api/cho_o`) · `frontend/src/TrangBanDo.jsx` (tải riêng như bản đồ lịch ⇒ trang khác không tải Leaflet) · một dòng `route.js`, một dòng menu.
+- Ước: backend ~20 dòng + test ~15 · frontend ~90 dòng + ~10 dòng CSS. Dựng lại `frontend/dist` ở cây chính sau khi gộp.
+
+**4. Xong khi (ghi trước)**
+- a. `GET /api/ban_do`: số mục = số điểm bảng điểm có toạ độ; mọi toạ độ trong khung Huế; cờ tắt ⇒ 404 (test trong `backend/tests/test_cong_dot_1.py` hoặc file test cổng đang có, đỏ trước xanh sau).
+- b. Trình duyệt thật, rộng 1440 và 390: vào `#/ban-do` từ menu ⇒ số ghim = số mục API; bấm lọc "Ẩm thực" ⇒ số ghim = số điểm loại đó; bấm một ghim ⇒ thấy tên + link; trang không tràn ngang ở 390; 0 lỗi trang. Ảnh chụp hai bề rộng, E MỞ ảnh ra nhìn.
+- c. Bản đồ trong thẻ lịch không đổi: test hiện có của bản đồ lịch đạt + một lượt nhìn thẻ lịch trên trình duyệt (cùng lượt b).
+- d. Trang Trợ lý / Trang chủ không tải thêm file Leaflet (so danh sách file mạng trước ↔ sau ở trang chủ).
+
+**5. Giới hạn biết trước**
+- Bản đồ cần mạng tới máy chủ ô bản đồ (như bản đồ lịch); mất mạng ⇒ chỉ còn danh sách. Chỉ 41 điểm tham quan — người tìm quán ăn / khách sạn trên bản đồ sẽ không thấy. Lượt trình duyệt cần bật server (0 USD model, chờ lượt chung).
