@@ -170,6 +170,7 @@ def test_list_again_question_is_recognised_narrowly():
                 "chùa vừa nói còn những điểm nào nữa, kể hết đi",                 # điểm bên trong một nơi
                 "tất cả những điểm đó có chợ không",                               # hỏi một điều về cả nhóm, không xin kể lại
                 "tất cả mấy quán đó đi được không", "tất cả các chùa đó",          # không có lời xin kể: "đi được không" là câu hỏi có / không về cả nhóm
+                "Liệt kê các chùa đó. Đi được không?", "Kể hết mấy quán vừa nêu! Được không",  # dấu ngắt câu ở giữa ⇒ có thêm một câu hỏi về cả nhóm
                 "liệt kê tất cả ra đi", "kể hết đi",                              # không nêu loại nơi ⇒ không nhận (có thể đang trỏ một nơi)
                 "", "Huế có chùa nào đẹp?"):
         assert not la_cau_xin_liet_ke_lai(cau), cau

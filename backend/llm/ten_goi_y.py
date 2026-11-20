@@ -78,6 +78,8 @@ def ghi_chu_goi_y(trace) -> str:
 
 def la_cau_xin_liet_ke_lai(cau: str) -> bool:
     """Câu gõ CHỈ xin kể lại / kể đủ các nơi vừa nêu ("Kể đủ các chùa trong bài đó giúp tôi")? Câu ghép hay câu hỏi thêm điều gì về nơi ⇒ False."""
+    if re.search(r"[.?!;…]\s*\w", cau or ""):  # dấu ngắt câu ở GIỮA = có thêm một câu nữa ("Liệt kê các chỗ đó. Đi được không?" — soát khác hãng 20/11)
+        return False
     chu = " ".join(re.sub(r"[^\w\s]", " ", unicodedata.normalize("NFC", cau or "").lower()).split())
     if not any(re.search(rf"(?<!\w){cum}(?!\w)", chu) for cum in CUM_XIN_DU):
         return False
