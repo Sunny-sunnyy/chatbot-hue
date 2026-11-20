@@ -1075,7 +1075,7 @@ def test_edit_turn_that_changes_nothing_keeps_the_saved_plan_and_its_storm_sente
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
     from api.conversations import ConversationStore
-    from api.routes.chat import luu_lich_cua_luot
+    from api.routes.chat import _notice_event, an_toan_vao_ghi_chu, luu_lich_cua_luot
     from api.routes.xuat import router
     from llm.assistant import luoi_cuoi_bao
     from llm import len_ke_hoach as lkh, lich_trinh_v2 as lt2, sua_lich_v2 as sl, thoi_tiet as tt
@@ -1109,6 +1109,7 @@ def test_edit_turn_that_changes_nothing_keeps_the_saved_plan_and_its_storm_sente
         asyncio.run(chay())
         assert tr.citation_error is None
         luoi_cuoi_bao(cau, tr, flags)  # như route: câu gõ (hoặc câu liền trước) khớp lưới bão ⇒ câu an toàn vào dòng ghi chú của lượt
+        an_toan_vao_ghi_chu(tr)  # như route: ngay sau lưới cuối, TRƯỚC khi phát sự kiện ghi chú
         luu_lich_cua_luot(store, cid, tr, flags)  # đúng hàm route gọi sau lượt đạt
         cuoi.append(tr)
         return kq, lkh.luu_sau_luot(tr, flags)
@@ -1116,6 +1117,7 @@ def test_edit_turn_that_changes_nothing_keeps_the_saved_plan_and_its_storm_sente
     assert tt.CAU_BAO_LU in tai()
     kq, moi = luot_sua("Đổi thứ tự toàn bộ các điểm theo bảng chữ cái", [sl.HanhDongCHT(loai="chua_ho_tro")])
     assert kq["khung"] == khung and moi is None and store.lay_lich(cid)["an_toan"] == tt.CAU_BAO_LU
+    assert cuoi[-1].notice is None  # lượt sửa KHÔNG đổi gì, không nhắc bão: không thừa hưởng vào ghi chú của lượt (thẻ cũ trên màn hình vẫn còn câu đó)
     assert tt.CAU_BAO_LU in tai()  # file vẫn còn câu bão / lũ + 112
     # ca ngược (review E 20/11): lịch lập khi CHƯA nhắc bão ⇒ câu sửa không làm được mà CÓ chữ bão ⇒ bản lưu cũ giữ nguyên, thêm câu an toàn của lượt
     store.luu_lich(cid, dict(luu))
@@ -1129,14 +1131,21 @@ def test_edit_turn_that_changes_nothing_keeps_the_saved_plan_and_its_storm_sente
     kq, moi = luot_sua("dời điểm đó sang buổi khác", [duoc])
     assert kq["da_ap"] and moi is not None and store.lay_lich(cid)["khung"] == kq["khung"] != khung
     assert "an_toan" not in store.lay_lich(cid)  # bản trước không có câu an toàn ⇒ bản mới cũng không
+    assert tt.CAU_BAO_LU not in (cuoi[-1].notice or "")  # … và ghi chú của lượt (thẻ lịch, bản in, .txt, .ics) cũng không
     # 20/11 (điều phối chốt sửa): bản trước CÓ câu an toàn (lịch lập ngay sau câu hỏi bão) ⇒ lượt sửa LÀM ĐƯỢC không nhắc bão vẫn giữ câu đó trong
     # bản lưu mới ⇒ file của lịch đã sửa còn câu bão / lũ + 112
     store.luu_lich(cid, {**luu, "an_toan": tt.CAU_BAO_LU})
     kq, moi = luot_sua("dời điểm đó sang buổi khác", [duoc])
     assert store.lay_lich(cid)["khung"] == kq["khung"] != khung and store.lay_lich(cid)["an_toan"] == tt.CAU_BAO_LU and tt.CAU_BAO_LU in tai()
+    # soát đợt sửa 20/11 (hai hãng cùng nêu): câu thừa hưởng cũng phải ra SỰ KIỆN ghi chú của lượt — thẻ lịch đã sửa, bản in, .txt, .ics đọc từ đó;
+    # trước đây chỉ bản lưu (file PowerPoint) có, màn hình thì mất
+    su_kien = json.loads(_notice_event(cuoi[-1]).decode().split("data: ", 1)[1])
+    assert su_kien["an_toan"] == tt.CAU_BAO_LU and tt.CAU_BAO_LU not in su_kien["text"]
     # lượt BIỂU MẪU lập lịch mới hoàn toàn (lịch của lượt không có khối `thay_doi`) ⇒ KHÔNG thừa hưởng: lịch mới là lịch khác
     bieu_mau = cuoi[-1]
     del bieu_mau.lich_v2["lich"]["thay_doi"]
     bieu_mau.lich_luu = {**luu, "an_toan": tt.CAU_BAO_LU}
+    bieu_mau.notice = None
+    an_toan_vao_ghi_chu(bieu_mau)
     luu_lich_cua_luot(store, cid, bieu_mau, flags)
-    assert "an_toan" not in store.lay_lich(cid) and tt.CAU_BAO_LU not in tai()
+    assert "an_toan" not in store.lay_lich(cid) and tt.CAU_BAO_LU not in tai() and bieu_mau.notice is None
