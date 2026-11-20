@@ -1,0 +1,29 @@
+# Plan (một trang) — nhớ câu trả lời giữa các cuộc trò chuyện (B, 15:29 20/11/2026, giờ `date`; nền main `44dfb0a9`; chờ A duyệt, C review nhánh)
+
+**Người dùng thấy gì:** một người hỏi một câu, hệ thống trả lời; trong 24 giờ người KHÁC gõ đúng câu đó ở cuộc trò chuyện mới ⇒ nhận lại đúng câu trả lời cũ (cùng chữ, cùng nguồn, cùng dòng ghi chú) gần như ngay, không tìm kho, không gọi model. Căn cứ: User 20/11 (bỏ điều kiện "chờ người dùng thật" của 05/11); dạng đã chốt 05/11 ở `bao_cao_he_thong/93_DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md` dòng 81. KHÔNG khớp theo nghĩa.
+
+1. **Chặn ở đâu.** Ở lớp route, không đụng lõi: `backend/api/routes/chat.py` — hàm `_answer` (đường `/api/chat`) và `chat_stream`, ngay SAU `_start_conversation` + `_model_query` (đã biết lượt có lịch sử / có nút hay không), TRƯỚC `answer_turn` / `answer_turn_stream_parallel`. Trúng ⇒ điền `AnswerTrace` (`answer`, `cited`, `notice`, `route`) từ bản lưu rồi đi tiếp ĐÚNG đường dựng phản hồi sẵn có (`ChatResponse` / `StreamEvents.finish`) ⇒ không viết đường trả lời thứ hai. Lưu: sau khi lượt xong (`_answer` cuối hàm; `remember()` ở `finally` của luồng). Kho nhớ: file mới `backend/api/cache_tra_loi.py` (lớp thuần, kiểu `api/conversations.py`), đặt ở `app.state.cache_tra_loi`; cờ tắt ⇒ `None` ⇒ không dòng code nào của đường cũ chạy khác.
+2. **Khoá** = băm SHA-256 của (câu đã chuẩn hoá, dấu phiên bản). Chuẩn hoá: Unicode NFC + gộp khoảng trắng + bỏ khoảng trắng hai đầu + đổi chữ thường. KHÔNG bỏ dấu tiếng Việt, KHÔNG bỏ dấu câu, KHÔNG sửa lỗi gõ (đổi một ký tự có nghĩa là câu khác). Dấu phiên bản tính MỘT lần lúc khởi động (`api/app.py`): băm nội dung build record của kho (file mà `build_full_corpus_retrieval_service` đã đối chiếu với kho lúc bật) + chữ lời dặn trợ lý (`generator.assistant_instructions`) + tên model + giá trị mọi cờ `assistant:` + mã commit (`GIT_SHA`). Kho / lời dặn / cờ đổi đều phải mở lại server ⇒ bộ nhớ RAM tự mất; dấu phiên bản là lớp thứ hai.
+3. **Chỉ TRA khi:** cờ bật · lượt ĐẦU của cuộc (lịch sử rỗng) · không `truong`, không `bieu_mau`, không `sua_chon`. **Chỉ LƯU khi** thêm: kết quả `success` · không phải câu cố định (`fixed_outcome` rỗng: từ chối, ngoài phạm vi, hỏi lại, nói thật giới hạn) · chữ không phải câu từ chối · có ≥ 1 nguồn kho được trích · không lỗi trích dẫn · `trace.web` rỗng · mọi công cụ đã chạy đều là `tim_kho` (loại thời tiết, ngày / lịch âm, khoảng cách, lịch, tra web, bão lũ) · không lịch (`lich`, `lich_v2`) · không dòng ngày hôm nay · ghi chú không mang câu an toàn (câu bản tin chính thức + 112, câu "tạm ngừng" chép từ nguồn). Lượt lỗi / bị ngắt / bị rút lại không lưu. Đường hỏi bằng ảnh là route khác, không chạm.
+4. **Giới hạn bộ nhớ:** sống 24 giờ (hết hạn ⇒ coi như không có), trần 500 mục (đầy ⇒ bỏ mục cũ nhất), chỉ trong RAM của một tiến trình. Lượt trúng vẫn: được ghi vào lịch sử cuộc như lượt thường (câu hỏi tiếp theo vẫn có ngữ cảnh), có mã lượt mới, vẫn tính vào giới hạn lượt / IP.
+5. **Luồng chữ (stream) khi trúng:** `delta` (cả câu một lần) ⇒ `sources` ⇒ `notice` (nếu có) ⇒ `done` — cùng thứ tự loại sự kiện như lượt thường. KHÔNG phát các sự kiện tiến độ ("đang tìm kho…") vì bước đó không chạy (luật "chỉ hiện bước đã làm thật").
+6. **Log:** `chat_metrics` thêm khoá `cache` = `"trung"` / `"luu"` CHỈ khi cờ bật (cờ tắt ⇒ dòng log như cũ); lượt trúng có `n_llm_calls` 0, tiền 0, không `search_ms`. Không ghi chữ, không ghi băm.
+7. **Cờ:** `assistant.cache_cau_tra_loi`, mặc định TẮT trong nhánh; bật là quyết định của A / User sau review + lượt thật.
+
+**Tiêu chí đạt (ghi trước khi viết code)**
+- Sàn cờ tắt: 228 chuỗi gửi model giống byte với main (`data/phase_9/b2_chay/tools/capture_all.py`) · các file test dựng app chạm route chat đạt như cũ.
+- Trúng (test dựng app, model giả đếm số lần gọi): hỏi một câu ở cuộc 1, hỏi lại ở cuộc 2 (không cookie) ⇒ lần hai 0 lần gọi model, 0 lần tìm kho; chữ + nguồn + ghi chú giống lần một ở CẢ hai route; stream: chữ ghép từ `delta` = chữ cuối lần một. Khác hoa thường / thừa khoảng trắng ⇒ vẫn trúng.
+- Ca ngược (đều phải KHÔNG trúng / KHÔNG lưu): đổi một ký tự có nghĩa (kể cả một dấu thanh, một dấu "?") · lượt hai của một cuộc (cùng câu) · lượt có nút / biểu mẫu · câu từ chối hỏi hai lần ⇒ model được gọi hai lần · lượt có công cụ khác `tim_kho` · lượt có mục web · lượt lỗi trích dẫn · dấu phiên bản khác (kho đổi) · quá 24 giờ (đồng hồ giả) · mục thứ 501 đẩy mục cũ nhất.
+- Lượt thật (một lần, ≤ 0,01 USD, chờ lượt bật server): một câu hỏi kho, hai cuộc trò chuyện ⇒ lần hai: dòng log `cache: "trung"`, tiền 0, tổng thời gian < 300 ms; chữ trên màn hình giống lần một.
+- Không đạt một dòng nào ⇒ cờ giữ TẮT, báo A.
+
+**Rà một rủi ro (theo `agent-security-review`): câu của người này có mang gì riêng tư sang người khác không?**
+| Đường có thể lộ | Vì sao không / còn lại gì |
+|---|---|
+| Lịch sử, tên nơi đã nhớ, lịch đã lưu của người trước | chỉ lượt ĐẦU, lịch sử rỗng mới được lưu ⇒ câu trả lời không dựa vào gì của cuộc trước |
+| Chữ riêng tư người trước gõ trong câu hỏi | người sau chỉ nhận lại khi gõ ĐÚNG chuỗi đó ⇒ họ đã biết chuỗi ấy; bản lưu không chứa mã cuộc, cookie, IP |
+| Người xấu "cài" câu trả lời xấu | chữ trả về vẫn do model sinh từ kho + qua kiểm trích dẫn như mọi lượt; chỉ ai gõ đúng nguyên văn câu đó mới nhận |
+| Đoán được "đã có người hỏi câu này trong 24 giờ" qua tốc độ trả lời | CÒN LẠI, mức thấp (câu du lịch chung); ghi giới hạn |
+| Mục web / ảnh / thời tiết theo người, theo giờ | không lưu các lượt này |
+
+**Giới hạn biết trước:** một câu trả lời thiếu ý sẽ được trả lại cho mọi người gõ đúng câu đó trong 24 giờ (mở lại server là xoá) · sai một chữ, thiếu một dấu là không trúng · tỉ lệ câu lặp ngoài đời chưa đo. Trần tiền việc này 0,05 USD.
