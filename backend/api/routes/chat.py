@@ -641,7 +641,7 @@ class StreamEvents:
         da_phat = "".join(self.shown).strip()
         if trace.citation_error is not None or not final.strip():
             bu = []
-        elif not self.shown:
+        elif not da_phat:  # chưa phát mảnh nào, HOẶC mới phát toàn khoảng trắng (soát đợt sửa 20/11: khối đầu `{"answer":" "}` ⇒ ô trả lời trống mà lượt "success")
             bu = [self.delta(final)]
         else:
             bu = [self.delta(final[len(da_phat):])] if da_phat and final.startswith(da_phat) and len(final) > len(da_phat) else []

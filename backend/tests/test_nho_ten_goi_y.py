@@ -198,6 +198,11 @@ def test_retyped_old_question_gets_history_without_notes_only_in_the_narrow_case
     assert lich_su_cho_luot(tro, "Quán đó ở đâu?") == tro                                       # câu trỏ lại gõ lại nguyên văn ⇒ CẦN ghi chú ⇒ không gỡ
     assert not la_cau_go_lai((), A) and not la_cau_go_lai(lech, "") and la_cau_go_lai(lech, A)
     assert lich_su_cho_luot(((A, ""), (B, "")), A) == ((A, ""), (B, ""))                        # cờ tắt: không có ghi chú ⇒ y như cũ
+    # Soát đợt sửa 20/11: câu hỏi tiếp LƯỢC TÊN NƠI, lượt cũ của nó không có ghi chú ⇒ gõ lại vẫn cần dòng tên nơi của lượt đầu ⇒ KHÔNG gỡ
+    luoc = (("Cho mình thông tin về Lăng A", GHI_CHU), ("Có cần mua vé trước không?", ""), ("Có cần mang giấy tờ không?", ""))
+    assert not la_cau_go_lai(luoc, "Có cần mua vé trước không?") and lich_su_cho_luot(luoc, "Có cần mua vé trước không?") == luoc
+    ghep = (("Cho mình thông tin về Lăng A", GHI_CHU), ("Liệt kê các lăng. Đi được không?", ""), ("Có cần mang giấy tờ không?", ""))
+    assert lich_su_cho_luot(ghep, "Liệt kê các lăng. Đi được không?") == ghep                 # câu ghép gõ lại: nhánh gõ lại không lấn qua rào câu ghép
 
 
 def _mo_luot(request, cid, cau):
