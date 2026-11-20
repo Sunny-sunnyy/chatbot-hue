@@ -19,7 +19,7 @@ while read -r _local_ref local_sha _remote_ref remote_sha; do
     files=$(git diff-tree -z --no-commit-id --name-only -r --diff-filter=ACMR "$c" | tr '\0' '\n')
     added=$(git show --format= -U0 --no-color --diff-filter=ACMR "$c" | awk '/^diff --git /{h=0; next} /^@@/{h=1; next} h && /^\+/')
     short=$(git rev-parse --short "$c")
-    if printf '%s\n' "$files" | grep -qE '^(data/|knowledge-base-hue/|gửi chatgpt/|\.aws/)|(^|/)\.env($|\.)'; then
+    if printf '%s\n' "$files" | grep -qE '^(data/|gửi chatgpt/|\.aws/)|(^|/)\.env($|\.)|^knowledge-base-hue/.*[Ss]ealed'; then
       echo "pre-push: CHẶN — commit $short có file thuộc vùng private." >&2; fail=1
     fi
     if printf '%s\n' "$added" | grep -qE 'sk-[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|BEGIN[A-Z ]*PRIVATE KEY'; then

@@ -75,8 +75,8 @@ Cách làm:
   cách thử 2 phút; mỗi khẳng định gắn nhãn [máy kiểm] / [người thứ hai kiểm] / [chưa kiểm].
 - Hỏi User: mỗi lần MỘT câu, có sẵn đáp án, mỗi đáp án kèm hệ quả. Tiếng Việt, lời thường, đủ quan trọng hơn ngắn. Giờ ghi vào tài liệu lấy bằng `date`.
 - Lỗi cách làm lặp lần hai mới thành luật; máy kiểm được thì làm phép kiểm thay chữ. Không thêm công cụ / rào riêng tư mới (User 14/11) — giữ rào đang có.
-- User không vắng trừ khi tự nói "đi vắng" (User 15/11). Không bao giờ gọi `agy` từ agent. Repo PUBLIC: `data/`, kho, câu của bộ đo không vào file được git theo dõi.
-- Thứ ngoài git (`data/`, kho, chỉ mục) chống mất: `Session_Prompt.md` §5 (20/11). KHÔNG ghi lên ổ C. Câu kín chỉ còn luật chữ giữ.
+- User không vắng trừ khi tự nói "đi vắng" (User 15/11). Không bao giờ gọi `agy` từ agent. Repo PUBLIC: `data/`, câu kín không vào git (kho + bộ câu mẫu thì được, User 20/11).
+- Kho + bộ câu mẫu ở git (20/11); `data/`, chỉ mục: chỉ ở máy, không sao lưu. KHÔNG ghi ổ C. Câu kín chỉ còn luật chữ giữ.
 - User chỉ đọc `bai_hoc/`: việc xong mới viết vào đó, mỗi con số kèm đo gì / so với mốc nào.
 
 Danh sách đủ, có ngày và nguồn: `session_prompt/Project_Status.md` mục 5 (nhật ký — chỉ mở khi cần tra một quyết định cụ thể).

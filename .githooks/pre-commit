@@ -2,7 +2,8 @@
 # Hook pre-commit của hue_rag — chạy cho MỌI agent (Claude Code, Codex, AGY) và cho người, vì nằm ở tầng git.
 # Vì sao: repo `chatbot-hue` là PUBLIC; lộ dữ liệu riêng / secret / chi tiết dự án khác lên lịch sử git thì không
 # lấy lại được (Session_Prompt.md §5; sổ session_prompt/SO_CAI_TIEN_CACH_LAM.md). Chặn khi:
-#   1. stage file thuộc vùng private: data/, knowledge-base-hue/, "gửi chatgpt/", .aws/, .env*;
+#   1. stage file thuộc vùng private: data/, "gửi chatgpt/", .aws/, .env*, file câu kín (*sealed*) trong kho
+#      (kho + bộ câu mẫu ĐƯỢC commit từ 14:41 20/11/2026 — User chọn, để không mất khi hỏng đĩa);
 #   2. dòng THÊM MỚI có dạng secret (key OpenAI/OpenRouter, AWS access key, private key);
 #   3. dòng THÊM MỚI hoặc tên file nhắc tên dự án khác của User (ghi chú về dự án đó để ở data/ — Session_Prompt.md §5);
 #   4. dòng THÊM MỚI trùng >= 40 ký tự với Golden / kho / câu kín (`.githooks/overlap_scan.py`; chỉ khi máy có kho — clone public bỏ qua).
@@ -13,7 +14,7 @@ set -u
 fail=0
 staged=$(git diff --cached --name-only --diff-filter=ACMR -z | tr '\0' '\n')
 
-private=$(printf '%s\n' "$staged" | grep -E '^(data/|knowledge-base-hue/|gửi chatgpt/|\.aws/)|(^|/)\.env($|\.)' || true)
+private=$(printf '%s\n' "$staged" | grep -E '^(data/|gửi chatgpt/|\.aws/)|(^|/)\.env($|\.)|^knowledge-base-hue/.*[Ss]ealed' || true)
 if [ -n "$private" ]; then
   echo "pre-commit: CHẶN — file thuộc vùng private (không commit lên repo public):" >&2
   printf '%s\n' "$private" | sed 's/^/  /' >&2
