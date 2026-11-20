@@ -171,6 +171,14 @@ def test_tail_of_final_answer_is_sent_when_the_shown_text_is_only_its_beginning(
     assert stream.metrics["outcome"] == "success"
 
 
+def test_whitespace_only_first_block_does_not_leave_the_answer_empty():
+    # Soát đợt sửa 20/11: khối đầu của model chỉ là khoảng trắng ⇒ trước đây coi như "đã phát" nên không bù, người dùng thấy ô trả lời trống mà lượt "success".
+    stream, chunks, _ = stream_with_text("Mở cửa từ 7 giờ [Nguồn 2].", json.dumps({"answer": " "}))
+    events = parse_sse(chunks)
+    assert "".join(data["text"] for name, data in events if name == "delta").strip() == "Mở cửa từ 7 giờ [2]."
+    assert [name for name, _ in events][-3:] == ["delta", "sources", "done"] and stream.metrics["outcome"] == "success"
+
+
 def test_hidden_answer_that_fails_citation_check_is_not_sent():
     stream, chunks, _ = stream_with_text("Mở cửa từ 7 giờ.", "Để mình tìm thêm.")  # chữ cuối thiếu trích dẫn ⇒ vẫn rút, không phát bù
     events = parse_sse(chunks)

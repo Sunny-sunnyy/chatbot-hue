@@ -101,7 +101,9 @@ def la_cau_go_lai(lich_su: Sequence, cau: str) -> bool:
     chu = _chuan(cau)
     if not chu or not lich_su or _TU_TRO.search(chu) or lich_su[-1][1].startswith(TIEN_TO_GHI_CHU):
         return False
-    return any(_chuan(hoi) == chu for hoi, _ in lich_su)
+    # Soát đợt sửa 20/11 (ba AI cùng nêu): chỉ gỡ khi lượt CŨ trùng nguyên văn tự nó TỪNG CÓ ghi chú (đúng ca đã đo: A có ghi chú ⇒ B rỗng ⇒ gõ lại A).
+    # Câu hỏi tiếp lược tên nơi ("Địa chỉ ở đâu?") mà lượt cũ không có ghi chú thì gõ lại vẫn CẦN dòng tên nơi của lượt trước nữa ⇒ không gỡ.
+    return any(_chuan(hoi) == chu and dap.startswith(TIEN_TO_GHI_CHU) for hoi, dap in lich_su)
 
 
 def lich_su_cho_luot(lich_su: Sequence, cau: str) -> tuple:
