@@ -9,3 +9,13 @@
   - Trái luật "một tiến trình dựng app một lúc": RAM khả dụng thấp nhất lúc bắt đầu một file 4.966 MB (chưa chạm ngưỡng 4 GB); không dự án nào báo dừng.
 - **Tiền gọi model thật:** cận trên 0,0048 USD (28 dòng `chat_metrics` có model + tiền trong khung giờ chạy) — `test_api_chat` chạy hai lần do sai sót trên, và không tách được ca dùng model giả có ghi tiền.
 - **Chưa làm:** không chạy lại lượt sạch (phiên điều phối chốt không cần) · không có lượt trình duyệt / model thật nào trong việc này.
+
+## Lượt hai — sau bản sửa "báo đã dời khi lịch không đổi" (B, 14:04 20/11/2026, giờ `date`)
+
+- **Vì sao chạy lại:** bản sửa lượt sửa lịch bằng lời (dời một điểm về đúng chỗ nó đang đứng thì không còn báo "đã dời") đã gộp ⇒ code không còn đứng yên ở `d8651d41`.
+- **Bản được chạy:** `main` bắt đầu bằng `e13709a9`, Python 3.13.15, môi trường của cây chính; vùng `backend/` và `frontend/src` không có thay đổi chưa commit (script tự kiểm trước khi chạy).
+- **Kết quả [máy kiểm]:** **55 / 55 file thoát mã 0 · 1.555 ca đạt · 0 hỏng · 0 lỗi.** Mốc so: lượt một ở trên là 1.554 ca ⇒ thêm 1 ca, khớp với test mới của bản sửa. Dòng script in: `TỔNG: 55 file · 0 file thoát khác 0 · 1555 ca đạt · 1204 giây`.
+- **Lượt này chạy ĐÚNG MỘT bản** (khác lượt một): khởi động bằng chế độ chạy nền của công cụ, kiểm trước khi bật không có bản nào đang chạy, kiểm sau khi bật có đúng một tiến trình script; bảng có 55 dòng, 0 tên file trùng ⇒ dòng "TỔNG" và số giây dùng được. Bắt đầu 13:44:23, xong 14:04:27 (≈ 20 phút).
+- **RAM:** khả dụng thấp nhất lúc bắt đầu một file 6.259 MB (ngưỡng dừng 4.000 MB); trong lúc chạy không bật việc nặng nào khác của dự án này.
+- **Hồ sơ (riêng tư):** `data/test_rong_2026-11-20/KET_QUA_e13709a9.tsv`, `chay_e13709a9.out`, `log/` (log lượt một bị ghi đè theo tên file).
+- **Chưa làm:** chưa đếm tiền gọi model thật của lượt này (các file cần khoá API có chạy; lượt một cận trên 0,0048 USD cho hai lần chạy) · không có lượt trình duyệt / model thật nào kiểm riêng bản sửa trong việc này.
