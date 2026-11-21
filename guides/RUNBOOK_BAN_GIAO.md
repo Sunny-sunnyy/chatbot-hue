@@ -14,7 +14,8 @@ session đó điền trước 30/11. Luật cứng của dự án vẫn ở `AGE
 - Repo **public**. Không commit dữ liệu private. Bật hook một lần sau khi clone: `git config core.hooksPath .githooks`.
 - Máy WSL ~19 GB RAM, dùng chung với dự án khác ⇒ một việc nặng một lúc (server, test rộng, dựng chỉ mục, đo); container luôn có `--name`.
 - **Dừng và hỏi User** theo hàng "Hỏi User trước" của bảng quyền trong `AGENTS.md` (tính năng mới / đổi hướng sản phẩm, đổi lớn thứ người dùng thấy, sửa kho,
-  xoá dữ liệu, gửi dữ liệu riêng ra dịch vụ mới, một việc trên 1 USD, deploy), hoặc khi kết quả ngược với quyết định đã ghi ở `session_prompt/HIEN_TRANG.md` mục 4.
+  xoá dữ liệu, gửi dữ liệu riêng ra dịch vụ mới, một việc trên 1 USD, deploy; và các việc ở `session_prompt/Session_Prompt.md` §4 cột phải: đổi model / provider /
+  dữ liệu mới, sửa bộ câu mẫu), hoặc khi kết quả ngược với quyết định đã ghi ở `session_prompt/HIEN_TRANG.md` mục 4.
 
 **Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 265 bài ⇒ 9.436 đoạn, số cờ bật — 31 từ 20/11; kho hoặc cờ đổi thì sửa cả hai nơi):
 
