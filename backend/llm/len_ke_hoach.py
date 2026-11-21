@@ -252,11 +252,16 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         try:
             ra = await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query), call_log,
                                           **({"chua_ho_tro": True} if flags.sua_lich_chua_ho_tro else {}),  # cờ tắt ⇒ lời gọi như cũ
-                                          **({"buoi_toi": True} if flags.sua_lich_buoi_toi else {}))
+                                          **({"buoi_toi": True} if flags.sua_lich_buoi_toi else {}),
+                                          **({"kem_hoi": True} if flags.sua_lich_kem_hoi else {}))
+            # cờ `sua_lich_kem_hoi`: `hoi_them` không phải hành động sửa ⇒ tách ra TRƯỚC mọi bước cũ (tin chỉ có `hoi_them` ⇒ như danh sách rỗng ⇒
+            # đường thường). Cờ tắt ⇒ khuôn không có loại này ⇒ `ra` giữ nguyên.
+            hoi_them = any(h.loai == sl.HOI_THEM for h in ra)
+            ra = [h for h in ra if h.loai != sl.HOI_THEM]
             hanh_dong, bi_chan = sl.loc_hanh_dong([h for h in ra if h.loai != sl.CHUA_HO_TRO], query, luu)
             cht = len(ra) - len([h for h in ra if h.loai != sl.CHUA_HO_TRO])
         except GenerationError:
-            ra, hanh_dong, bi_chan, cht = [], [], 0, 0
+            ra, hanh_dong, bi_chan, cht, hoi_them = [], [], 0, 0, False
         finally:
             record_llm_calls(trace, call_log.calls, "sua_lich")
         # cờ `sua_lich_doi_cho_code`: model CHỈ trả "chưa hỗ trợ" ⇒ code đọc câu "dời hai điểm"; đọc được ⇒ áp hai lần dời thay cho câu cố định
@@ -264,7 +269,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         if doc_cau:
             hanh_dong = doc_cau
         trace.vet["sua"] = {"hanh_dong": [h.model_dump(exclude_none=True) for h in hanh_dong], "bi_chan": bi_chan, "chua_ho_tro": cht, "doc_cau": bool(doc_cau),
-                           "model_ra": [h.model_dump(exclude_none=True) for h in ra]}  # sổ vết (RAM): `model_ra` = trước khi lọc (review E)
+                           "model_ra": [h.model_dump(exclude_none=True) for h in ra],  # sổ vết (RAM): `model_ra` = trước khi lọc (review E)
+                           **({"hoi_them": True} if hoi_them else {})}
         if not hanh_dong and not bi_chan and not cht:
             trace.sua = {"n_hanh_dong": 0}
             return None
@@ -289,9 +295,11 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             kq["chua_lam"].append(sl.CHUA_HO_TRO)
         elif bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi
             kq["chua_lam"].append("doi_so_ngay")
+        if hoi_them:  # lượt này là lượt sửa VÀ tin còn có câu hỏi ⇒ `thay_doi` thêm dòng nói thật (không vào `chua_lam`: không phải việc sửa)
+            kq["hoi_them"] = True
     trace.vet.setdefault("sua", {}).update(chon_the=trace.sua_chon, thay_doi=sl.thay_doi(bang, kq))
     trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),
-                 "n_khong": len(kq["khong_doi"]), "the": kq["the"] is not None}
+                 "n_khong": len(kq["khong_doi"]), "the": kq["the"] is not None, **({"hoi_them": True} if kq.get("hoi_them") else {})}
     # model đã hiểu là câu sửa ⇒ luôn là lượt sửa, kể cả khi mọi hành động trượt (báo "Không đổi được: X không có trong lịch" thay vì trả lời
     # lạc đề — Q3 pilot 14/11). Câu không phải sửa ⇒ model trả danh sách rỗng ⇒ None ở trên (Q5: 0 / 64 câu an toàn ra hành động).
     return kq
