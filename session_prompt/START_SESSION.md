@@ -38,4 +38,4 @@ Ghi chú:
 - Prompt mở session là chỉ thị mới nhất của User; nếu khác `CURRENT_HANDOFF.md`,
   session báo lệch.
 - Việc mới trong ngày: A ghi vào `CURRENT_HANDOFF.md` rồi nhắn session đó.
-- Bài cho chủ dự án ở `bai_hoc/`; report agent ở `report_agent/<YYYY-MM-DD>_<chủ_đề>/` (`WORKFLOW.md` §6).
+- Bài cho chủ dự án ở `bai_hoc/`; report agent ở `report_agent/<YYYY-MM-DD>/` (`WORKFLOW.md` §6).
