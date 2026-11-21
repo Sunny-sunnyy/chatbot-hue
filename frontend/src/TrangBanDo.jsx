@@ -3,7 +3,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { toaDoHopLe } from "./toaDo.js";
 import { nguonBanDo } from "./nguonBanDo.js";
-import { ghiCong } from "./BanDoLich.jsx";
+import { TUY_CHON_BAN_DO } from "./BanDoLich.jsx";
 import { BIEU_MAU } from "./chung.jsx";
 import "./co.css";
 
@@ -44,8 +44,8 @@ export default function TrangBanDo() {
   useEffect(() => {
     if (!nguon || !khung.current || hien.length === 0) return undefined;
     // Điện thoại: một ngón vuốt qua khung là cuộn trang, như bản đồ lịch (đo 16/11 khổ 390); phóng to / thu nhỏ bằng nút hoặc hai ngón
-    const map = L.map(khung.current, { scrollWheelZoom: false, dragging: !L.Browser.mobile });
-    L.tileLayer(nguon.tile, { maxZoom: 18, attribution: ghiCong(nguon) }).addTo(map);
+    const map = L.map(khung.current, TUY_CHON_BAN_DO);
+    L.tileLayer(nguon.tile, { maxZoom: 18 }).addTo(map);
     const bieuTuong = L.divIcon({ className: "ghim ghim-diem", html: "", iconSize: [18, 18], iconAnchor: [9, 9] });
     hien.forEach(d => L.marker(d.toa_do, { icon: bieuTuong, title: d.ten, alt: d.ten, keyboard: true }).bindPopup(oGhim(d)).addTo(map));
     map.fitBounds(L.latLngBounds(hien.map(d => d.toa_do)), { paddingTopLeft: [28, 28], paddingBottomRight: [28, 60], maxZoom: 15 });
