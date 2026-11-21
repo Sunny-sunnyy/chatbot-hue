@@ -170,6 +170,14 @@ LICH_V2_LOI_DAN = (
 # D5: chữ công cụ trả ở lần model gọi `tim_kho` thứ 3 (A quyết D5 = (b), `max_turns` 4): không tìm, để model viết bằng bằng chứng đã có.
 TOOL_LIMIT_TEXT = "Đã hết lượt tìm kho. Hãy trả lời bằng Bằng chứng đã có hoặc trả câu không đủ thông tin."
 TOOL_NO_NEW_TEXT = "Không có nguồn mới cho câu tìm này."
+# Cờ `bao_het_luot_tim` (21/11): nối vào kết quả của lần tìm kho CUỐI được phép. Từ 12/11 công cụ tìm bị ẩn sau lần đó mà model không được báo ⇒ model vẫn
+# muốn tìm tiếp: luna xin công cụ đã ẩn ⇒ câu từ chối trống; Sonnet nộp câu tìm / chữ rác làm câu trả lời (ba dạng hỏng của một câu trong bộ chuỗi).
+TOOL_HET_LUOT_TIM_TEXT = ("Lưu ý: đây là lần tìm kho cuối cùng của câu này — từ bước kế không còn công cụ tìm kho. Hãy viết câu trả lời từ Bằng chứng đã có; "
+                          "ý nào Bằng chứng không nói tới thì nói rõ là tư liệu chưa có.")
+# Cờ `vong_cuoi_chi_viet` (21/11): nối vào kết quả của lượt công cụ SÁT CUỐI — bước kế model không còn công cụ nào, nên phải được báo bằng chữ (lượt đo đầu
+# không có dòng này: luna vẫn xin công cụ ở vòng cuối 3 / 15 lượt ⇒ lỗi). Dòng mới nằm ở cuối chuỗi gửi model ⇒ không đổi phần đã gửi trước đó.
+TOOL_VONG_CUOI_TEXT = ("Lưu ý: đây là lượt dùng công cụ cuối cùng của câu này — ở bước kế không còn công cụ nào. Hãy viết câu trả lời từ Bằng chứng đã có; "
+                       "ý nào Bằng chứng không nói tới thì nói rõ là tư liệu chưa có.")
 # B5 vòng chỉnh 1 (A quyết (a), 05/11): lượt đã có khung lịch ⇒ `tim_kho` không tìm nữa (pilot / server L2: model tìm thêm 3 lần ⇒ chạm `max_turns`)
 # B5b D3 (plan B5b bản 2): mô tả ngắn, không thêm lời dặn hệ thống; số liệu do code in (model không thêm số)
 THOI_TIET_MO_TA = (

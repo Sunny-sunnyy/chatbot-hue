@@ -46,7 +46,7 @@ from llm.len_lich import CAU_DAN_TRANG, nho_len_lich
 from llm.luu_y_nguon import dong_tam_ngung, nhan_nguon
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
-from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_LAM_THAY, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
+from llm.full_corpus_prompt import (TOOL_HET_LUOT_TIM_TEXT, THOI_TIET_BAO_LU_MO_TA, CAU_LAM_THAY, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
                                    TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
@@ -178,6 +178,13 @@ class AssistantFlags:
     khoang_cach_bang: "kc.BangKhoangCach | None" = field(default=None, compare=False, repr=False)
     # 20/11 (plan `report_agent/2026-11-20/c_su_kien_theo_ngay_plan.md`): câu vừa nêu một khoảng ngày vừa hỏi lễ hội / sự kiện ⇒ code tra bảng chép từ kho
     # (`assistant.su_kien_bang`, nạp ở rìa), đổi ngày âm ⇒ dương, đăng một nguồn trước lần gọi model đầu (`llm/su_kien.py`). TẮT tới khi đo đạt; cần `tim_them`.
+    # 21/11/2026 (plan `report_agent/2026-11-21/b_bac_1_vong_cong_cu_plan.md` phần 1a; người dùng mô phỏng: 5 / 44 lượt luna chạm trần vòng ở câu 3–5 ý có "bao xa"
+    # + nơi không có trong bảng khoảng cách ⇒ câu từ chối trống): vòng cuối cùng của lượt có công cụ gửi KHÔNG kèm công cụ ⇒ model viết từ bằng chứng đã có.
+    vong_cuoi_chi_viet: bool = False
+    # cùng ngày: công cụ khoảng cách khi không có số cho cặp nơi ⇒ thêm một dòng trạng thái (đừng gọi lại cho cặp này, vẫn trả lời các ý khác)
+    khoang_cach_trang_thai: bool = False
+    # cùng ngày: kết quả của lần tìm kho cuối được phép kèm một dòng báo "từ bước kế không còn công cụ tìm kho" (model đang không được báo điều đó)
+    bao_het_luot_tim: bool = False
     su_kien_theo_ngay: bool = False
     su_kien_bang: "tuple[dict, ...] | None" = field(default=None, compare=False, repr=False)
     # 17/11 (plan `2026-11-17-khoang-cach-tinh-san-plan.md`): câu đang gõ có từ khoá + đúng hai tên điểm của bảng ⇒ code tra bảng và nối nguồn khoảng
@@ -433,7 +440,7 @@ async def tim_kho(cau_tim: str, *, retrieval_service, context_builder, trace: An
 
 
 def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str,
-                  search_limit: int = MODEL_SEARCH_LIMIT):
+                  search_limit: int = MODEL_SEARCH_LIMIT, bao_het_luot: bool = False):
     """Hàm `tim_kho` của **một lượt** cho trợ lý có công cụ (B2 D5): generator bọc thành công cụ SDK (lõi không import SDK — T-3).
     Model chỉ thấy `cau_tim`; trần `MODEL_SEARCH_LIMIT` đếm ở đây; lần vượt ⇒ chữ "đã hết lượt", không tìm. Lỗi tìm / ngữ cảnh: ghi
     `trace.tool_error` rồi ném (lõi ném lại đúng lỗi gốc ⇒ route ra câu lỗi như B1, không đưa lỗi cho model)."""
@@ -458,7 +465,10 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
         except RetrievalDependencyError as exc:
             trace.tool_error = exc
             raise
-        return packed.text or TOOL_NO_NEW_TEXT
+        chu = packed.text or TOOL_NO_NEW_TEXT
+        if bao_het_luot and trace.model_searches >= search_limit:  # cờ `bao_het_luot_tim`: lần tìm cuối được phép ⇒ báo model bằng chữ (cờ tắt ⇒ như cũ)
+            chu = f"{chu}\n\n{TOOL_HET_LUOT_TIM_TEXT}"
+        return chu
 
     return tim_kho
 
@@ -1140,7 +1150,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     try:
         if flags.uses_tools:
             instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
-            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho)
+            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho, flags.bao_het_luot_tim)
             extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
             try:
                 trace.generated = await generator.generate_with_tools(tool_prompt, tool_fn, call_log, **_history_kwargs(trace), **extra)
@@ -1191,6 +1201,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         extra["con_luot_fn"] = lambda: trace.model_searches < flags.so_lan_tim_kho
     if trace.nhieu_y:  # lời dặn theo ý (cờ tắt / câu một ý ⇒ không truyền, gọi y như trước)
         extra["nhieu_y"] = True
+    if flags.vong_cuoi_chi_viet:  # cờ tắt ⇒ không truyền, công cụ không có điều kiện bật mới (giống byte)
+        extra["vong_cuoi_chi_viet"] = True
     return extra
 
 
@@ -1513,7 +1525,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 # B3 D9 (b): vòng công cụ ⇒ "đang viết" phát ngay trước chữ đầu (không trước các lượt `tim_kho`)
                 pending_generating = True
                 instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
-                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho)
+                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho, flags.bao_het_luot_tim)
                 extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
                 result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace), **extra)
             else:
