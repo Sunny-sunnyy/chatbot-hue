@@ -116,3 +116,18 @@ trên câu xin danh sách nơi có rủi ro.
 
 **Khi ghép với nhánh "vòng cuối chỉ viết" (C đã xem cả hai diff):** (a) điều kiện ẩn `liet_ke_bai` đi qua cùng hàm gom điều kiện của nhánh kia để vòng cuối không gửi nó; (b) trần vòng truyền cho cơ chế vòng cuối phải
 tính cả vòng thêm của công cụ này; (c) hàm nhận "xin công cụ đã ẩn" hợp ba điều kiện (hết lượt tìm · hết lượt liệt kê · vòng cuối). Nhánh nào gộp sau, tôi ghép.
+
+## 8. Thêm 15:19 21/11/2026 (giờ `date`) — nhánh `p9-b-liet-ke-ghi-chu`: chữ dòng trạng thái + giữ ghi chú của bài khi câu trả lời trích mục lục (cờ vẫn TẮT)
+
+1. **Chữ dòng trạng thái** (điểm nhỏ của vòng soát lại): lọc MỘT nhóm ⇒ "trong nhóm quán ăn có N bài khớp" thay cho "trong tư liệu có N bài khớp" (để model không lấy số của một nhóm làm tổng của cả kho).
+2. **Giữ dòng ghi chú / cảnh báo của nguồn bài** (điều kiện bật phiên điều phối đặt): mỗi nguồn "mục lục" nay nhớ (trong RAM của lượt) các bài nó liệt kê. Khi câu trả lời TRÍCH mục lục, bài nào của mục lục đó
+   CÓ TÊN trong câu trả lời được xét như bài đã trích cho hai dòng ghi chú có sẵn: "giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi" (bài thuộc nhóm vé / điểm đến / lễ hội) và "Lưu ý trong nguồn «…»: …" (câu
+   tạm ngừng khi bão lũ của chính bài đó). Không thêm chữ mới nào; vẫn "một dòng cảnh báo mỗi câu trả lời" như luật hiện có. Cờ tắt / câu trả lời không trích mục lục ⇒ dòng ghi chú y như trước.
+
+**Bằng chứng:** `tests/test_liet_ke_bai.py` 17 ca (hai ca mới: chữ dòng trạng thái; bài được nêu tên kéo theo đúng ghi chú của nó, bài không được nêu tên thì không, cờ dòng tạm ngừng tắt thì không nối); 7 file test
+chạm ghi chú / vòng công cụ / stream `237 passed`.
+**Lượt thật — nói thẳng là CHƯA thấy khác biệt:** 7 câu xin danh sách trên Sonnet high, cờ bật, chạy trên main và trên nhánh: dòng ghi chú người dùng thấy GIỐNG NHAU ở cả 7 câu, vì ở các lượt này Sonnet trích cả mục lục
+lẫn các đoạn bài nên ghi chú vốn đã hiện. Bản sửa là lưới cho lượt CHỈ trích mục lục — chưa gặp lượt thật nào như vậy trong 14 lượt này.
+**Ca review đã thấy KHÔNG được bản sửa này phủ:** câu "có mấy lăng vua" — cờ tắt có dòng "có thể đã thay đổi" (vì model trích một đoạn của bài vé), cờ bật không có. Bài lăng thuộc nhóm di tích, mà luật hiện có chỉ
+nối dòng đó cho bài vé / điểm đến / lễ hội ⇒ muốn giữ thì phải ĐỔI LUẬT của dòng ghi chú (thêm nhóm di tích) — đổi thứ người dùng thấy ở cả lượt không dùng công cụ, cần chủ dự án quyết; tôi không làm.
+Phiên đo vẫn cần cột "thiếu cảnh báo / thiếu ghi chú" trên câu xin danh sách trước khi bật cờ.
