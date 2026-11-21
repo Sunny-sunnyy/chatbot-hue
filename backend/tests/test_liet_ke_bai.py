@@ -146,7 +146,7 @@ def test_tool_registers_one_source_that_can_be_cited_and_stops_after_two_calls()
     trace = AnswerTrace()
     cong_cu = liet_ke_for_turn(trace, MUC_LUC)
     ra = asyncio.run(cong_cu("quan_an", ["hút chân không"]))
-    assert ra.startswith("Trạng thái: trong tư liệu có 2 bài khớp") and "[Nguồn 1]" in ra and "Quán Cơm B — Quán KHÔNG nhận hút chân không." in ra
+    assert ra.startswith("Trạng thái: trong nhóm quán ăn có 2 bài khớp") and "[Nguồn 1]" in ra and "Quán Cơm B — Quán KHÔNG nhận hút chân không." in ra
     src, = trace.so_nguon
     assert (src.id, src.title, src.source) == (1, lk.TIEU_DE_NGUON, lk.NGUON_SOURCE) and len(src.excerpts) == 2 and "hút chân không" in src.heading_path[0]
     assert trace.tools == [{"name": "liet_ke_bai", "ms": 0.0, "nhom": "quan_an", "n_cum_tu": 1, "n_bai": 2, "n_o_ten": 0}]  # sổ chỉ có số đếm, không có chữ cụm từ
@@ -209,7 +209,7 @@ def test_a_real_turn_lists_then_cites_the_index_source(deps):
     trace, gen = turn(deps, script, ON)
     assert trace.citation_error is None and trace.fixed_outcome is None and len(gen.client.responses.calls) == 2
     assert [(s.title, s.source) for s in trace.cited] == [(lk.TIEU_DE_NGUON, lk.NGUON_SOURCE)]
-    assert ket_qua_cong_cu(gen.client.responses.calls[1])[-1].startswith("Trạng thái: trong tư liệu có 2 bài khớp")
+    assert ket_qua_cong_cu(gen.client.responses.calls[1])[-1].startswith("Trạng thái: trong nhóm quán ăn có 2 bài khớp")
     assert [t["name"] for t in trace.tools if t["name"] == "liet_ke_bai"] == ["liet_ke_bai"]
 
 
@@ -227,3 +227,36 @@ def test_tool_is_hidden_after_its_two_calls_and_asking_again_is_a_fixed_refusal_
 
     trace, gen = turn(deps, lambda n, kw: [goi_liet_ke("quan_an", [f"cụm {n}"])], ON)  # model cứ xin mãi
     assert trace.fixed_outcome == "max_turns" and trace.answer == INSUFFICIENT_ANSWER and len(gen.client.responses.calls) == 3
+
+
+def test_status_says_in_this_group_when_one_group_was_filtered():
+    assert lk.trang_thai(lk.loc(MUC_LUC, "quan_an", ["quán"])).startswith("Trạng thái: trong nhóm quán ăn có 3 bài khớp")
+    assert lk.trang_thai(lk.loc(MUC_LUC, lk.TAT_CA, ["quán"])).startswith("Trạng thái: trong tư liệu có 4 bài khớp")
+    assert [b.tieu_de for b in lk.loc(MUC_LUC, "quan_an", ["bún"]).bai] == ["Quán Bún A"]  # bài ứng với từng dòng
+
+
+def test_answer_citing_the_index_keeps_the_notes_of_the_articles_it_names():
+    """Review 21/11: câu trả lời trích "mục lục" thay cho từng bài ⇒ mất dòng "giờ mở cửa, giá vé… có thể đã thay đổi" và dòng cảnh báo tạm ngừng của nguồn
+    bài. Nay bài của mục lục CÓ TÊN trong câu trả lời được xét như bài đã trích; bài không được nêu tên thì không kéo ghi chú; cờ dòng tạm ngừng tắt ⇒ không nối."""
+    from llm.assistant import MAY_HAVE_CHANGED_NOTICE, check_citations, set_notice
+    from llm.luu_y_nguon import TIEN_TO
+
+    kho = tuple(lk.bai_tu_markdown(rel, md) for rel, md in {
+        "travel/places/bai-x.md": "# Bãi X\n\nBãi tắm công cộng.\n\n## Lưu ý\nBãi tạm ngừng đón khách tắm biển khi có bão hoặc lũ.",
+        "travel/places/bai-y.md": "# Bãi Y\n\nBãi tắm tự nhiên.",
+        "foods/restaurants/quan-z.md": "# Quán Z\n\nQuán gần bãi tắm."}.items())
+
+    def luot(answer, **co):
+        trace = AnswerTrace()
+        asyncio.run(liet_ke_for_turn(trace, kho)("tat_ca", ["bãi tắm"]))
+        trace.answer = answer
+        check_citations(trace)
+        assert trace.citation_error is None and [c.source for c in trace.cited] == [lk.NGUON_SOURCE]
+        set_notice(trace, AssistantFlags(tim_them=True, liet_ke_bai=True, muc_luc=kho, **co))
+        return trace.notice or ""
+
+    day_du = luot("Trong tư liệu hiện có Bãi X và Bãi Y [1].", noi_dong_tam_ngung=True, may_have_changed_notice=True)
+    assert day_du.startswith(f"{TIEN_TO} «Bãi X»: Bãi tạm ngừng đón khách tắm biển khi có bão hoặc lũ.") and day_du.endswith(MAY_HAVE_CHANGED_NOTICE)
+    chi_quan = luot("Trong tư liệu hiện có Quán Z gần bãi tắm [1].", noi_dong_tam_ngung=True, may_have_changed_notice=True)
+    assert chi_quan == ""  # bài được nêu tên không thuộc nhóm có ghi chú và không có câu cảnh báo; bãi không được nêu tên ⇒ không kéo theo
+    assert TIEN_TO not in luot("Trong tư liệu hiện có Bãi X [1].", may_have_changed_notice=True)  # cờ dòng tạm ngừng tắt
