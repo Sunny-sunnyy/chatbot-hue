@@ -146,7 +146,9 @@ Lưu ý khi đọc bài 0–18: số kho trong đó (204 bài, 8.435 đoạn) l�
 
 Nhóm là bốn phiên Claude Code chạy song song: A điều phối và nói chuyện với anh; B, C, E làm và kiểm chéo nhau (người viết không tự kiểm).
 
-**Việc chính bây giờ: đợt hoàn thiện các tính năng đã chốt ở Phase 9–12** (anh nói rõ 15:25 20/11/2026). "Không thêm tính năng mới" nghĩa là không thêm gì NGOÀI thứ đã chốt;
+**Việc chính từ 16:14 21/11/2026 (anh chọn): ba ngày làm việc đuổi MỘT con số** — số phiên người dùng do model đóng vai đạt mục tiêu (gọi là tỉ lệ đạt trong mô phỏng; mới MỘT lượt mỗi model, chưa dùng làm mốc so: 9 / 12 với model đang chạy, 6 / 12 với model cũ). Các mục Phase 9–12 dưới đây ĐỨNG CHỜ, không bỏ. *(Đoạn này thêm lúc 17:50, ngày 21/11/2026; nguồn ghi ở mục Nguồn cuối trang.)*
+
+**Trước đó (từ 20/11), việc chính là đợt hoàn thiện các tính năng đã chốt ở Phase 9–12** (anh nói rõ 15:25 20/11/2026). "Không thêm tính năng mới" nghĩa là không thêm gì NGOÀI thứ đã chốt;
 thứ đã chốt thì phải xong hết trước buổi anh test. Trước đó nhóm hiểu hẹp hơn ý anh (chỉ bốn việc của Phase 9) — hệ thống ở máy **chưa** xong. Buổi anh test một lần hoãn tới khi đợt này xong.
 Bảng kiểm kê từng tính năng, có nguồn từng dòng, nằm ở thư mục riêng tư `data/kiem_ke_phase_2026-11-20/`.
 
@@ -210,5 +212,7 @@ Bảng đối chiếu từng số / khẳng định ⇒ `file:dòng` và biên b
 - Số đo (tốc độ, từ chối nhầm, giữa kỳ): `session_prompt/Project_Status.md` mục 2 + 4, `report_agent/2026-11-12_ra_khoang_cach/`, `bai_hoc/13`–`16` [số của phiên trước, chưa đo lại]
 - Mốc ngày, việc sáng 18/11, soát 11 điểm: `session_prompt/CURRENT_HANDOFF.md` mục "PHIÊN SÁNG 18/11"; sổ bàn giao `guides/RUNBOOK_BAN_GIAO.md` mục 1–3, 8–10 [đã đọc 18/11]
 - Cỡ hai sổ: `wc -c` 10:14 18/11 — 175.884 và 101.162 byte [đã chạy]; 0 / 11 lượt bão, 1 / 18 câu hết lượt: B đếm 18/11 [đã chạy, chưa ai tính lại]
+
+- Đoạn "Việc chính từ 16:14 21/11/2026" (thêm 17:50, ngày 21/11/2026): `session_prompt/HIEN_TRANG.md` mục 4, gạch 16:14 21/11/2026 [tài liệu]; hai con số 9 / 12 và 6 / 12 là của một phiên đếm trên một lượt chạy mỗi model [chưa ai tính lại].
 
 </details>

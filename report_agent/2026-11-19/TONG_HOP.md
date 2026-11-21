@@ -50,3 +50,7 @@ Ai kiểm việc nào (người thứ hai): biên bản review / đọc tay nằ
 ## 4. Tiền API trong ngày (số từng phiên báo, chưa cộng lại từ log)
 
 Thử câu lời dặn ≈ 0,212 USD · bản code cảnh báo ≈ 0,002 · sửa lịch ≈ 0,030 · bỏ trần / bỏ ngân sách ≈ 0,009 ⇒ khoảng 0,25 USD.
+
+## Dòng theo giờ dời nguyên văn từ `session_prompt/CURRENT_HANDOFF.md` (17:47 21/11/2026)
+
+- 22:32 19/11/2026 — tên terminal tối 19/11 (CŨ khi mở lại): A `hue-rag-67` · B `hue-rag-02` · C `hue-rag-c6` · E `hue-rag-29`. Lần "đọc ngắn" thứ sáu: 0 tin rải, 0 lần vấp luật do chưa đọc (tự khai).

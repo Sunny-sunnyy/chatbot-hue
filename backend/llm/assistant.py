@@ -168,6 +168,13 @@ class AssistantFlags:
     # "chiều" 2 / 9): lần hiểu ý dùng khuôn + lời dặn cho `buoi` nhận "toi"; code trả lời thật (điểm ban ngày ⇒ lý do + chỗ dời được). TẮT tới khi đo
     # trên cả hai model; cần cờ sua_lich_chua_ho_tro. Tắt ⇒ chuỗi gửi model giống byte.
     sua_lich_buoi_toi: bool = False
+    # 20/11 (plan `report_agent/2026-11-20/c_doi_cho_ngay_plan.md`): "đổi chỗ ngày 1 với ngày 2" — code đọc cặp ngày (danh sách cho phép) rồi hoán đổi nội dung
+    # hai ngày qua đúng đường xếp-rồi-kiểm (`sua_lich_v2.doi_cho_ngay`). TẮT tới khi đạt; cần `sua_lich_v2`. Không đổi chuỗi gửi model.
+    sua_lich_doi_cho_ngay: bool = False
+    # 21/11/2026 (người dùng mô phỏng: 4 / 4 tin vừa sửa lịch vừa hỏi, cả hai model — lịch được sửa, phần hỏi bị bỏ không một lời): lần hiểu ý có thêm
+    # hành động `hoi_them`; code thêm một dòng cố định "phần câu hỏi chưa trả lời, bạn gửi riêng" vào khối thay đổi của lịch. Lượt sửa vẫn KHÔNG trả lời
+    # câu hỏi đó. TẮT tới khi đo trên cả hai model; cần cờ sua_lich_chua_ho_tro. Tắt ⇒ chuỗi gửi model giống byte.
+    sua_lich_kem_hoi: bool = False
     # Lịch đã lưu của cuộc vào LƯỢT HỎI THƯỜNG (plan private data/lich_da_luu_2026-11-19/PLAN.md): cuộc có lịch + tuyến `tro_ly_hue` ⇒ code nối một nguồn
     # "Lịch bạn đang có" (lịch + số giờ do code tính) sau ngữ cảnh kho; lượt biểu mẫu / lượt sửa / trò chuyện / câu cố định không nhận. TẮT tới khi
     # đo đạt; cần cờ sua_lich_v2 (route chỉ nạp lịch khi cờ đó bật) + tim_them. Tắt ⇒ chuỗi gửi model giống byte.
@@ -242,6 +249,8 @@ class AssistantFlags:
             raise ValueError("assistant.sua_lich_doi_cho_code needs assistant.sua_lich_chua_ho_tro: true")
         if self.sua_lich_buoi_toi and not self.sua_lich_chua_ho_tro:
             raise ValueError("assistant.sua_lich_buoi_toi needs assistant.sua_lich_chua_ho_tro: true")
+        if self.sua_lich_kem_hoi and not self.sua_lich_chua_ho_tro:
+            raise ValueError("assistant.sua_lich_kem_hoi needs assistant.sua_lich_chua_ho_tro: true")
         if self.lich_vao_hoi_thuong and not (self.sua_lich_v2 and self.tim_them):
             raise ValueError("assistant.lich_vao_hoi_thuong needs assistant.sua_lich_v2: true and assistant.tim_them: true")
         if self.anh_lich and (not self.len_ke_hoach_v2 or self.anh_lich_bang is None):
@@ -399,6 +408,9 @@ class AnswerTrace:
     # 21/11/2026: phép kiểm số (thời tiết / khoảng cách) trượt ⇒ gỡ câu chứa số lạ thay vì rút cả câu trả lời. Ghi lại để đếm: các số lạ theo loại,
     # nấc (1 = gỡ câu, phần còn lại vẫn có nguồn · 2 = không còn gì dùng được ⇒ câu từ chối cố định), số ký tự đã gỡ. None = lượt không trượt.
     kiem_so_go: dict | None = None
+    # cờ `liet_ke_bai`: mã nguồn "mục lục" đã đăng ⇒ các bài nó liệt kê (chỉ RAM). `set_notice` dùng để bài CÓ TÊN trong câu trả lời vẫn kéo theo dòng "có thể đã
+    # thay đổi" và dòng cảnh báo tạm ngừng của chính bài đó, dù câu trả lời trích mục lục thay cho bài (review 21/11: một lượt mất dòng ghi chú).
+    muc_luc_bai: dict = field(default_factory=dict)
     # Sổ vết debug (`core/so_vet.py`): nội dung chỉ giữ trong RAM của lượt — `tim` (từng lần tìm), `web` (câu gửi tra web + sổ web), `sua`
     # (hành động model hiểu), `loi`. Route ghi ra file CHỈ khi cờ `so_vet` bật; không vào `chat_metrics`, không vào chuỗi gửi model.
     vet: dict = field(default_factory=dict)
@@ -782,6 +794,7 @@ def liet_ke_for_turn(trace: AnswerTrace, muc_luc: "tuple[lk.Bai, ...]"):
             return lk.trang_thai(kq) + cuoi
         src = PackedSource(id=len(trace.so_nguon) + 1, title=lk.TIEU_DE_NGUON, heading_path=(lk.muc_nguon(nhom, kq),), excerpts=kq.dong, source=lk.NGUON_SOURCE)
         trace.so_nguon.append(src)
+        trace.muc_luc_bai[src.id] = kq.bai
         da_goi[khoa] = src.id
         chu = FullCorpusContextBuilder._block(src)
         trace.context_parts.append(chu)
@@ -1036,10 +1049,15 @@ def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
     Khoảng cách (16/11): câu trả lời TRÍCH nguồn khoảng cách mà chữ model không nhắc "kẹt xe" ⇒ code nối câu ghi chú của nguồn vào dòng cố định —
     ghi chú là phần bắt buộc đi cùng số ước, model bỏ nó ở ~35 % câu (đếm 4 lượt đo: 33 / 52 câu có), cả đường công cụ lẫn đường tính sẵn."""
     dong = []
+    # cờ `liet_ke_bai`: câu trả lời trích nguồn "mục lục" ⇒ bài nào của mục lục đó CÓ TÊN trong câu trả lời được coi như bài đã trích khi xét hai dòng ghi chú
+    # dưới (rỗng khi cờ tắt / không trích mục lục ⇒ `notice` y như trước)
+    tra_loi = (trace.answer or "").casefold()
+    bai_neu = [bai for src in (trace.cited or ()) if src.source == lk.NGUON_SOURCE for bai in trace.muc_luc_bai.get(src.id, ()) if bai.tieu_de.casefold() in tra_loi]
     # câu an toàn của nguồn đã trích đứng TRƯỚC các ghi chú thường; cờ tắt ⇒ `notice` y như trước. Lượt có lịch (biểu mẫu, sửa lịch, công cụ lịch) KHÔNG
     # nhận: chưa có dữ liệu đo, và "một dòng mỗi câu trả lời" là tuỳ tiện với lịch nhiều điểm (review E 19/11)
     if flags.noi_dong_tam_ngung and trace.cited and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None:
-        trace.luu_y_nguon = dong_tam_ngung(trace.answer or "", [(nhan_nguon(src.title, src.heading_path), src.excerpts) for src in trace.cited])
+        trace.luu_y_nguon = dong_tam_ngung(trace.answer or "", [(nhan_nguon(src.title, src.heading_path), src.excerpts) for src in trace.cited]
+                                           + [(bai.tieu_de, bai.dong) for bai in bai_neu])
         if trace.luu_y_nguon:
             dong.append(trace.luu_y_nguon)
     if trace.cited and any(src.source == kc.NGUON_SOURCE for src in trace.cited) and "kẹt xe" not in (trace.answer or "").casefold():
@@ -1049,7 +1067,8 @@ def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
     if (trace.xin_danh_sach and trace.cited and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None
             and not co_y_thieu(trace.answer or "") and not hoi_ve_mot_noi(trace.xin_danh_sach, [src.title for src in trace.cited])):
         dong.append(CAU_DANH_SACH)
-    if flags.may_have_changed_notice and trace.cited and any(src.source.startswith(NOTICE_SOURCE_PREFIXES) for src in trace.cited):
+    if flags.may_have_changed_notice and trace.cited and (any(src.source.startswith(NOTICE_SOURCE_PREFIXES) for src in trace.cited)
+                                                           or any(bai.rel.startswith(NOTICE_SOURCE_PREFIXES) for bai in bai_neu)):
         dong.append(MAY_HAVE_CHANGED_NOTICE)
     # câu nhờ lập lịch nhiều ngày ở lượt hỏi đáp thường (kể cả khi kho không trả lời được) ⇒ trỏ sang trang Lên kế hoạch; đứng CUỐI dòng ghi chú
     if trace.nho_len_lich and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None:

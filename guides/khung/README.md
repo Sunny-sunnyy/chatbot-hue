@@ -24,17 +24,17 @@ Sau khi chép: bật hook git nếu có (`git config core.hooksPath <thư mục 
 - **Dữ liệu riêng** (dữ liệu gốc, bộ câu chấm, kết quả đo chi tiết, khoá) — NGOÀI git, có tên thư mục cố định ghi trong `AGENTS.md`, có hook chặn commit nhầm, có bản sao ngoài máy.
 - **Tài liệu cho người** (chủ dự án đọc) — một thư mục riêng, lời thường; chỉ viết việc đã xong.
 - **Sổ việc cho agent** — `AGENTS.md` (luật, ngắn) · ba trang GHI ĐÈ đọc lúc mở phiên (trang hiện trạng · mục lục việc · mục đầu sổ riêng của từng phiên) ·
-  một thư mục báo cáo cho MỖI NGÀY (báo cáo từng phiên + tổng hợp ngày + nhật ký từng phiên — để tra, không bắt đọc; báo cáo đã đặt vào ngày nào thì không dời) · sổ tay lệnh (runbook).
-  Chi tiết + lý do: `../CACH_LAM_VIEC.md` mục 5 "Làm việc theo thư mục từng ngày" [đang thử từ 19/11/2026].
+  một thư mục báo cáo cho MỖI NGÀY (báo cáo từng phiên + tổng hợp ngày — để tra, không bắt đọc; báo cáo đã đặt vào ngày nào thì không dời) · sổ tay lệnh (runbook).
+  Chi tiết: `../CACH_LAM_VIEC.md` mục 5.
 
 ## Phát triển theo cỡ việc
 
 - **Nhỏ** (≤ một hàm, lùi được ngay): làm, test file chạm, một dòng nhật ký.
 - **Vừa** (người dùng thấy khác): kế hoạch một trang (file đổi · thứ tự · rủi ro · bằng chứng) ⇒ làm ⇒ một lượt kiểm bởi phiên khác.
-- **Lớn** (không lùi được, tiền, dữ liệu, bảo mật — hoặc việc nhiều ngày, nhiều file): chủ dự án nói ý bằng lời thường ⇒ agent hỏi lại tối đa ba câu ⇒ năm dòng đề bài do AGENT soạn, chủ dự án sửa / tick ⇒ kế hoạch ⇒ làm ⇒ review (khác hãng nếu được) ⇒ chủ dự án tự thử.
+- **Lớn** (không lùi được, tiền, dữ liệu, bảo mật — hoặc việc nhiều ngày, nhiều file): đề bài chép từ LỜI chủ dự án ⇒ agent bổ sung phần thiếu, tự vẽ bài toán, chỉ hỏi lại thứ chỉ chủ dự án biết (`../CACH_LAM_VIEC.md` mục 1) ⇒ kế hoạch, chủ dự án duyệt một lần ⇒ làm ⇒ review (khác hãng nếu được) ⇒ chủ dự án tự thử.
 Chi tiết mức kiểm: `../CACH_LAM_VIEC.md` mục 2.
 
-## Skill nào mang đi được (10 skill của repo gốc, thư mục `skills/`)
+## Skill nào mang đi được (11 skill của repo gốc, thư mục `skills/`)
 
 | Skill | Mang đi | Lý do một dòng |
 |---|---|---|
@@ -47,7 +47,8 @@ Chi tiết mức kiểm: `../CACH_LAM_VIEC.md` mục 2.
 | `teach-and-quiz` | sửa nhẹ | cách giảng + hỏi lại là chung; đổi đường dẫn sổ học và thư mục tài liệu cho người |
 | `risk-gated-agent-review` | sửa nhẹ | cổng tối thiểu + bảng kiểm theo tác động là chung; đổi đường dẫn mẫu report; làm một mình: người kiểm = phiên mới ngữ cảnh sạch |
 | `run-experiment` | phải sửa | khung "tiêu chí ghi trước, mốc, đổi một thứ, luật giữ / gỡ" là chung; bộ câu, thủ tục bộ an toàn, tên báo cáo khâu là của một hệ RAG |
-| `improve-workflow` | sửa nhẹ | nhịp cuối ngày ba bước + nấc "máy trước chữ sau" là chung; đổi tên sổ cải tiến và các file luật |
+| `improve-workflow` | nguyên, viết lại khối "Ở dự án này" | thân trung tính: nhịp cuối ngày, ba con số, nấc "máy trước chữ sau" |
+| `improve-project` | nguyên, viết lại khối "Ở dự án này" | cải tiến SẢN PHẨM theo vòng: đích bằng lời người chủ, một con số, lỗi theo nguyên nhân, đo lại, dừng / quay đầu [chưa chạy trọn một vòng nào] |
 
-Bảng này lập sau khi **đọc trọn 8 skill cũ (đã sửa) và viết 2 skill mới** (18/11/2026); chưa skill nào được chép thử sang một dự án thứ hai [chưa chạy]. Công cụ khác Claude Code tìm skill ở thư mục
+Bảng này lập 18/11/2026, soát lại cả 11 skill ngày 21/11/2026; chưa skill nào được chép thử sang một dự án thứ hai [chưa chạy]. Công cụ khác Claude Code tìm skill ở thư mục
 `.agents/skills` (theo tài liệu công khai, chưa thử) ⇒ ở dự án mới đặt skill vào đó hoặc tạo liên kết.

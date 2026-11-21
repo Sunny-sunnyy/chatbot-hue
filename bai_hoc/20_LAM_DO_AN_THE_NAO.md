@@ -1,6 +1,6 @@
 # Bài 20 — Làm đồ án thế nào: dòng thời gian, nhiều agent, rào bằng máy
 
-*Cập nhật lần cuối: 18:24, ngày 15/11/2026 · thêm hai rào nhỏ của 15/11: mã bản code trong sổ số đo, phép kiểm phải có ca đối chứng. Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm ví dụ thật của "đếm lỗi trước khi xây" (12/11), dòng thời gian 12–13/11, tiền tới hết 12/11.*
+*Cập nhật lần cuối: 17:50, ngày 21/11/2026 · sửa sáu câu không còn đúng sau những điều anh chọn 18–21/11 (ai quyết luật cách làm, vòng tự soi, mốc tốc độ / tiền, trần tiền theo phiên, kho vào git, việc B / C / E không chờ giao). Trước: 18:24, ngày 15/11/2026 · thêm hai rào nhỏ của 15/11: mã bản code trong sổ số đo, phép kiểm phải có ca đối chứng. Trước: 20:37, ngày 13/11/2026 · sửa theo kiểm độc lập; thêm ví dụ thật của "đếm lỗi trước khi xây" (12/11), dòng thời gian 12–13/11, tiền tới hết 12/11.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -9,7 +9,7 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 | Tên trong bài | Tên gốc | Nghĩa ngắn |
 |---|---|---|
 | Agent — **mới** | coding agent (Claude Code, Codex, Antigravity) | Một chương trình AI đọc code, chạy lệnh, viết code và báo cáo theo việc được giao. |
-| Session A / B / C / E | vai trong `session_prompt/WORKFLOW.md` | Mỗi agent mở một cửa sổ riêng, giữ một vai. A điều phối và làm việc với anh; B, C, E làm việc A giao. |
+| Session A / B / C / E | vai trong `session_prompt/WORKFLOW.md` | Mỗi agent mở một cửa sổ riêng, giữ một vai. A điều phối và làm việc với anh; B, C, E làm việc A giao (từ 21/11: việc xây chờ A giao; nghĩ, đếm, nêu hướng khác thì không chờ). |
 | Kiểm chéo | review chéo (`risk-gated-agent-review`) | Việc một agent làm thì một agent khác kiểm; không ai tự duyệt việc của mình. |
 | Rào bằng máy — **mới** | hook git (`.githooks/pre-commit`, `pre-push`) | Đoạn mã tự chạy mỗi lần ghi hay đẩy code lên GitHub, chặn dữ liệu riêng tư. |
 | Cổng kiểm | "cổng ổn định" | Danh sách kiểm phải qua trước khi một thay đổi vào bản chính (`main`). |
@@ -62,7 +62,7 @@ nguồn thì cố ý đổi: hết báo lỗi nhầm.
 - 24/10: luôn so với mốc trước khi chọn; câu đánh giá phải giống câu người thật hỏi.
 - 26/10: chất lượng cần thiết trước, tối ưu tốc độ / tiền sau.
 - 27/10: đồ án xem như sản phẩm thật; người dùng là du khách, người dân, và anh.
-- 28/10: mốc tốc độ p50 ≤ 3 / p95 ≤ 5 giây, ≤ 0,0005 USD / câu; thứ tự lỗi tệ nhất (bài 11).
+- 28/10: mốc tốc độ p50 ≤ 3 / p95 ≤ 5 giây, ≤ 0,0005 USD / câu; thứ tự lỗi tệ nhất (bài 11). Các mốc tốc độ và tiền này anh đã gỡ ngày 19/11: nay chỉ đo và báo.
 - 01/11: tên đề tài chốt với giảng viên (bài 0); đóng Phase 8.
 - 02/11: Phase 9 phải là trợ lý có công cụ, không chỉ RAG.
 
@@ -83,7 +83,7 @@ trang chủ mở được, kiểm sức khoẻ 5 / 5, hỏi 1 câu trong kho + 1
 đoạn thì kết quả tìm 158 câu phải giống từng byte.
 
 **4. Tự soi chỗ làm quá tay.** Anh đã nhắc nhiều lần là làm quá kỹ những phần lợi ít. Ví dụ: chữ hiện dần qua 4 bản thiết kế và 3 vòng kiểm, mà lợi đo được chỉ
-0,44 giây; có giai đoạn 65 % commit chỉ là tài liệu. Từ 09/11, phiên nào cũng có **vòng tự soi**: bỏ mọi lượt đo không bảo vệ sàn nào, các session tự nhận
+0,44 giây; có giai đoạn 65 % commit chỉ là tài liệu. Từ 09/11, phiên nào cũng có **vòng tự soi** (từ 20/11: một lần mỗi ngày): bỏ mọi lượt đo không bảo vệ sàn nào, các session tự nhận
 định có đang làm quá tay không. Lần đầu làm, 4 session cắt nhiều lượt đo thừa, tiết kiệm khoảng 1–2 giờ.
 
 ## Rào bằng máy: không cần ai nhớ
@@ -93,7 +93,7 @@ chỉ dặn bằng chữ:
 
 | Rào | Chặn gì |
 |---|---|
-| Hook lúc ghi code (`pre-commit`) | file vùng riêng tư (dữ liệu, kho, bản nháp gửi ChatGPT, khoá); dòng mới trông như khoá bí mật; dòng mới nhắc tên dự án khác của anh; dòng mới **trùng từ 40 ký tự liên tiếp** với bộ câu mẫu, câu kín hay kho |
+| Hook lúc ghi code (`pre-commit`) | file vùng riêng tư (dữ liệu, bản nháp gửi ChatGPT, khoá, câu kín — từ 20/11 kho và bộ câu mẫu được commit); dòng mới trông như khoá bí mật; dòng mới nhắc tên dự án khác của anh; dòng mới **trùng từ 40 ký tự liên tiếp** với bộ câu mẫu, câu kín hay kho |
 | Hook lúc đẩy lên GitHub (`pre-push`) | kiểm lại mọi commit sắp đẩy bằng 3 phép nhanh (file riêng tư, khoá, tên dự án khác), phòng khi ai đó bỏ qua hook lúc ghi |
 | Cấu hình Claude Code | cấm đọc file khoá `.env`; cấm gọi Antigravity (điều khoản của Google cấm phần mềm bên thứ ba truy cập, có thể khoá tài khoản anh). Với agent khác, đây là luật chữ trong `AGENTS.md` |
 | Script tìm trong kho | agent tìm trong kho chỉ bằng script đã loại sẵn bộ câu mẫu, câu kín, ghi chép nội bộ và bản thô của nguồn |
@@ -125,7 +125,7 @@ có khoá). Lỗ hổng nằm ngay trong rào chống lộ dữ liệu, và đư
 
 ## Sổ cải tiến cách làm
 
-Cuối mỗi phiên, A gom các sự cố có bằng chứng (mất giờ, mất tiền, anh phải nhắc lại) thành tối đa 3 đề xuất sửa luật hay thêm rào, anh duyệt rồi mới áp; luật
+Cuối mỗi phiên, A gom các sự cố có bằng chứng (mất giờ, mất tiền, anh phải nhắc lại) thành tối đa 3 thay đổi về luật hay rào. Tới 20/11 anh duyệt rồi mới áp; từ 21/11 (ba ngày làm việc thử) nhóm tự quyết luật về cách làm, một phiên khác đọc, và chỉ hỏi anh khi chạm bảy luật cứng hoặc bảng quyền; luật
 nào thành thừa thì gỡ. Tới 11/11: **25 vòng**, **120 sự cố** được ghi (gồm cả việc làm đúng đáng giữ). Hầu hết các luật trong bài này ra đời từ đó: giờ ghi
 trong tài liệu phải lấy từ máy, không gõ tay (đã lọt ít nhất 11 lần; rào chỉ cảnh báo nên 11/11 vẫn lọt một lần); "đếm lỗi rẻ trước khi xây tính năng" (sau khi một loạt tính năng thử ra âm hoặc phải quay về phương án cũ, tốn
 khoảng 0,6 USD).
@@ -162,7 +162,7 @@ an toàn; mỗi câu chỉ một lượt nên 4 câu tụt không tách được
 | **Cộng từ 24/10 tới hết 12/11** | **khoảng 5,38 USD ≈ 135.000 đồng** (tới hết 12/11) |
 
 Phase 0–6 (08–10/2026) không có số tiền trong tài liệu; ngày 24/10 (công cụ chấm + điểm mốc) khoảng 0,09 USD. Phần agent đọc, viết, kiểm dùng gói thuê bao Claude, không tính vào bảng. Phần lớn tiền (khoảng 86 %)
-nằm ở Phase 9, gồm cả lượt đo của những tính năng thử rồi bỏ. Mỗi phiên có trần tiền, ban đầu ≤ 1 USD / phiên; từ 07/11 anh cho vượt khi cần, nhưng mỗi việc
+nằm ở Phase 9, gồm cả lượt đo của những tính năng thử rồi bỏ. Mỗi phiên có trần tiền, ban đầu ≤ 1 USD / phiên; từ 07/11 anh cho vượt khi cần (từ 18/11 không còn trần theo phiên: một việc dự kiến trên 1 USD mới hỏi), nhưng mỗi việc
 vẫn ghi tiền thật từ log.
 
 ## Khi nào cách làm này hỏng
@@ -212,5 +212,7 @@ vẫn ghi tiền thật từ log.
 - **Sửa 20:37 13/11/2026** theo kiểm độc lập (`data/hoc_cung_user_2026-11-10/kiem_doc_lap_13_11.md`, riêng tư): bộ kiểm số: 11 câu có số ngoài 10 đoạn đầu, 7 xem tay giải thích được, 4 không kiểm được (CPO §3b (c)); "4 tính năng đều âm" ⇒ "một loạt tính năng thử 09/11 ra âm hoặc quay về phương án cũ" (S110), sửa ở cả hai chỗ; tổng 5,38 USD tới hết 12/11; bảng từ bỏ đường dẫn.
 
 - Hai rào 15/11: mã bản code trong sổ số đo (`git_sha` trong `chat_metrics`, `scripts/dem_chat_metrics.py`): `report_agent/2026-11-12_ra_khoang_cach/b_w79_git_sha_implementation.md`; số tốc độ sai sáng 15/11: `…/b_dem_toc_do.md` mục Đính chính; cột số khẩn cấp 0 / 16 chưa từng đo được + thay bằng `khan_cap_dinh_tuyen` 16 / 16: `session_prompt/sessions/STATUS_B.md` (15/11), `…/c_sua_ngay_di_implementation.md`; luật: `session_prompt/Session_Prompt.md` §8 [đã chạy]
+
+- Sửa 21/11/2026: sáu câu nêu ở dòng "Cập nhật lần cuối" — theo `session_prompt/HIEN_TRANG.md` mục 4 (các gạch 18/11, 19/11, 20/11, 21/11) và `AGENTS.md` (luật cứng 2, mục "Cách nhìn việc") [tài liệu]. CHƯA sửa câu "Người chấm câu trả lời là Claude" ở mục "Khi nào cách làm này hỏng": sổ quyết định ghi người chấm chính của giai đoạn tới 01/11 là Claude, còn các lượt đo 21/11 dùng model của sản phẩm làm người chấm; chưa xác nhận được từng con số trong bài do người chấm nào.
 
 </details>

@@ -260,7 +260,7 @@ picture { display: contents; }
 .lich { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; max-width: 68ch; margin-top: 10px; }
 .map-links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 4px 0 0; padding: 0; list-style: none; }
 .map-links a { color: var(--color-accent); text-decoration: underline; }
-/* Bản đồ lịch trình (plan 2026-11-08 §2): ghim tròn có số = thứ tự trong ngày; dòng ghi công OSM luôn hiện trong khung */
+/* Bản đồ lịch trình (plan 2026-11-08 §2): ghim tròn có số = thứ tự trong ngày; không hiện dòng ghi nguồn (chủ dự án 21/11/2026) */
 .luu-lich { display: flex; flex-wrap: wrap; align-items: center; gap: 0 10px; }
 .luu-lich .retry { margin-top: 0; }
 .bd { display: flex; flex-direction: column; gap: 8px; width: 100%; }
@@ -274,6 +274,19 @@ picture { display: contents; }
 .ghim.ghim-ngay-2 { background: #6D28D9; }
 .ghim.ghim-ngay-3 { background: #0E7490; }
 .ghim.ghim-ngay-4 { background: #4D7C0F; }
+/* Trang theo dõi của chủ dự án (20/11): bảng số theo ngày, thanh ngang cho số lượt; bảng rộng thì cuộn ngang TRONG khung (trang không tràn) */
+.td-khoa { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 20px; }
+.td-khoa input { min-height: 44px; padding: 0 12px; border: 1px solid var(--color-line); border-radius: 10px; font: inherit; min-width: 220px; }
+.td-bao, .td-loi { color: #9A3412; font-weight: 600; }
+.td-cuon { overflow-x: auto; }
+.td-bang { border-collapse: collapse; font-size: 14px; white-space: nowrap; width: 100%; }
+.td-bang th { white-space: normal; vertical-align: bottom; }  /* tên cột xuống dòng ⇒ đủ 13 cột trong khung 1136 px ở màn rộng */
+.td-bang th, .td-bang td { padding: 7px 8px; border-bottom: 1px solid var(--color-line); text-align: right; }
+.td-bang th:first-child, .td-bang td:first-child { text-align: left; }
+.td-luot { position: relative; min-width: 110px; }
+.td-thanh { position: absolute; left: 0; top: 6px; bottom: 6px; background: var(--color-accent); opacity: .18; border-radius: 4px; }
+.td-sha { font-family: ui-monospace, monospace; font-size: 13px; }
+.td-chu { margin-top: 14px; font-size: 14px; }
 /* Trang "Bản đồ" riêng (20/11): khung cao hơn, ghim nhỏ không số, danh sách tên chia cột */
 .bd-trang .bd-khung { height: 520px; margin-bottom: 16px; }
 .bd-ds.bd-trang-ds { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 20px; }

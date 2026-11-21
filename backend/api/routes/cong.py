@@ -118,7 +118,7 @@ async def thoi_tiet(request: Request):
 # đường ra ở trang Giới thiệu đều lấy từ đây qua `/api/tinh_nang`. Đổi nhà cung cấp ⇒ chỉ sửa khối này (một tên con cố định ⇒ CSP chỉ một host).
 # Tạm (16/11): OSM Đức (FOSSGIS — không khoá, cho ứng dụng web nhỏ phi thương mại); `tile.openstreetmap.org` bắt tay TLS lỗi ở mạng đã thử.
 # Host cuối do User chọn (plan `2026-11-16-ban-do-bat-plan.md` mục 2a).
-BAN_DO = {"tile": "https://tile.openstreetmap.de/{z}/{x}/{y}.png", "nha_cung_cap": "OpenStreetMap Đức (FOSSGIS)", "ten_ngan": "OSM Đức",  # tên ngắn: dòng ghi công trên khung 220 px
+BAN_DO = {"tile": "https://tile.openstreetmap.de/{z}/{x}/{y}.png", "nha_cung_cap": "OpenStreetMap Đức (FOSSGIS)", "ten_ngan": "OSM Đức",  # tên ngắn: từng dùng cho dòng ghi nguồn trên bản đồ (bỏ 21/11/2026); trang Giới thiệu còn dùng `nha_cung_cap`
           "trang_nha_cung_cap": "https://www.openstreetmap.de/"}
 
 

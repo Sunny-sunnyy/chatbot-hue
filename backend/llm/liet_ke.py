@@ -62,6 +62,8 @@ class KetQua:
     dong: tuple[str, ...]          # "Tên bài — dòng làm chứng", tối đa `TOI_DA_DONG`
     cum_tu: tuple[str, ...]        # cụm từ thật sự dùng để lọc (đã bỏ cụm rỗng / quá dài)
     ngoai_nhom: int = 0            # số bài Ở NHÓM KHÁC cũng có cụm từ (0 khi lọc `tat_ca` hoặc không có cụm từ) — để model biết nên mở rộng nhóm
+    nhom: str = TAT_CA             # nhóm đã lọc — dòng trạng thái nói "trong nhóm …" chứ không nói "trong tư liệu" khi chỉ lọc một nhóm
+    bai: tuple[Bai, ...] = ()      # các bài ứng với `dong` (cùng thứ tự) — để phần nối ghi chú / cảnh báo của nguồn bài vẫn chạy khi câu trả lời trích mục lục
 
 
 def _sach(line: str) -> str:
@@ -157,7 +159,7 @@ def loc(muc_luc: tuple[Bai, ...], nhom: str, cum_tu: list[str]) -> KetQua:
     if not cum:
         khop = [(bai, _cat(chung)) for bai, chung in khop]
     dong = tuple(f"{bai.tieu_de} — {chung}" if chung else bai.tieu_de for bai, chung in khop[:TOI_DA_DONG])
-    return KetQua(tong=len(khop), o_ten=len(o_ten), dong=dong, cum_tu=cum, ngoai_nhom=ngoai_nhom)
+    return KetQua(tong=len(khop), o_ten=len(o_ten), dong=dong, cum_tu=cum, ngoai_nhom=ngoai_nhom, nhom=nhom, bai=tuple(bai for bai, _ in khop[:TOI_DA_DONG]))
 
 
 def muc_nguon(nhom: str, kq: KetQua) -> str:
@@ -190,5 +192,7 @@ def trang_thai(kq: KetQua) -> str:
         return "Trạng thái: không có bài nào trong tư liệu khớp. Thử một lần với cụm từ khác (ngắn hơn, cách viết khác) hoặc nhóm khác; vẫn không có thì coi như tư liệu không có thông tin này."
     con = kq.tong - len(kq.dong)
     ten = f" ({kq.o_ten} bài có cụm từ ngay ở tên, xếp trước; {kq.tong - kq.o_ten} bài chỉ nhắc tới trong nội dung)" if kq.cum_tu and kq.o_ten and kq.o_ten < kq.tong else ""
-    return (f"Trạng thái: trong tư liệu có {kq.tong} bài khớp{ten}" + (f", dưới đây là {len(kq.dong)} bài đầu; còn {con} bài nữa — thêm cụm từ để thu hẹp." if con else ".")
+    # lọc MỘT nhóm ⇒ "trong nhóm …" (review 21/11: viết "trong tư liệu có 22 bài" khi ngoài nhóm còn 39 bài có cụm từ làm model nói sai tổng số)
+    o_dau = "trong tư liệu" if kq.nhom == TAT_CA else f"trong nhóm {NHOM[kq.nhom][1]}"
+    return (f"Trạng thái: {o_dau} có {kq.tong} bài khớp{ten}" + (f", dưới đây là {len(kq.dong)} bài đầu; còn {con} bài nữa — thêm cụm từ để thu hẹp." if con else ".")
             + " Mỗi dòng là tên bài và một dòng lấy từ chính bài đó." + ngoai)
