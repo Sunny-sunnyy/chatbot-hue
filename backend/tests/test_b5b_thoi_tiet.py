@@ -317,13 +317,18 @@ def test_forecast_turn_cites_forecast_source_and_catches_invented_number(deps):
 
 
 @pytest.mark.parametrize("text_fn, rut", [
-    (lambda k: "Mai trời 23–27 °C. Đại Nội mở cửa 7h–17h, vé 200.000 đồng.", True),  # E17 ca (b): có công cụ + nội dung không [n] ⇒ rút lại
-    (lambda k: "Lăng Tự Đức đóng cửa thứ hai.", True),                                 # E17: ca không số, không [n] ⇒ rút lại
+    (lambda k: "Mai trời 23–27 °C. Đại Nội mở cửa 7h–17h, vé 200.000 đồng.", True),  # E17 ca (b): có công cụ + nội dung không [n] ⇒ chữ đó không tới người dùng
+    (lambda k: "Lăng Tự Đức đóng cửa thứ hai.", True),                                 # E17: ca không số, không [n] ⇒ chữ đó không tới người dùng
     (lambda k: f"Ngày mai Huế có thể mưa [{k}].", False),                               # E17 ca (a): câu chỉ dự báo có [k] ⇒ qua
 ])
 def test_no_citation_exemption_after_e17(deps, text_fn, rut):
     trace, _ = run(deps, "Mai Huế có mưa không?", generator(sau_cong_cu(text_fn)), dataclasses.replace(WEATHER, du_bao=nguon()))
-    assert (trace.citation_error is not None) is rut
+    # 21/11/2026: vẫn KHÔNG có ngoại lệ cho chữ thiếu [n] — nhưng thay vì rút cả lượt (màn hình lỗi), chữ đó bị thay bằng câu dẫn cố định + khối dự
+    # báo của hệ thống; loại lỗi ghi vào `kiem_trich_dan_go`
+    assert trace.citation_error is None and (trace.kiem_trich_dan_go == "khong_trich_dan") is rut
+    if rut:
+        assert "200.000" not in trace.answer and "đóng cửa thứ hai" not in trace.answer
+        assert trace.answer.startswith(tt.CAU_DAN_DU_BAO) and trace.thoi_tiet["khoi"] in trace.answer and trace.cited == ()
 
 
 def test_api_error_turn_has_fixed_sentence_and_no_numbers(deps):

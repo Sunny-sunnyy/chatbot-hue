@@ -179,6 +179,66 @@ def test_stream_sends_replace_text_before_sources_when_a_sentence_was_removed():
     assert "thay_chu" not in dict(events) and stream.metrics["thay_chu"] is None and stream.metrics["kiem_so_go"] is None
 
 
+# ---------- (iii) bộ kiểm TRÍCH DẪN trượt ở lượt thường ⇒ câu từ chối cố định, không còn "rút lại" ----------
+
+def ket_luot(chu_model, lich=None, thoi_tiet=False):
+    """Đi qua `_finish_generated` thật với chữ model dựng tay (sổ nguồn có [1] bài kho, [2] dự báo)."""
+    from types import SimpleNamespace
+    trace = AnswerTrace(so_nguon=[KHO, PackedSource(2, "Dự báo", (), (KHOI,), tt.NGUON_SOURCE)], lich=lich)
+    trace.generated = SimpleNamespace(text=chu_model)
+    trace.thoi_tiet_ctx = {"bao_lu": False, "ngoai_7": False, "buoi": False, "co_cong_cu": thoi_tiet, "tu_khoa": thoi_tiet}
+    if thoi_tiet:
+        trace.thoi_tiet = {"trang_thai": "ok", "khoi": KHOI, "bao_lu": False}
+    at._finish_generated(trace, WEATHER, "Câu hỏi?")
+    return trace
+
+
+@pytest.mark.parametrize("chu_model, loai", [
+    ("placeholder", "khong_trich_dan"),                                         # rác ở vòng cuối (phát lại phiên mô phỏng V10 lượt 2)
+    ("tim_kho", "khong_trich_dan"),                                             # tên công cụ viết thành câu trả lời (bộ câu khó K27)
+    ("Tôi chưa tìm được đủ thông tin về giá thuyền trong nguồn.", "khong_trich_dan"),  # model tự diễn đạt lại câu từ chối (K20)
+    (f"{INSUFFICIENT_ANSWER} Nhưng chùa mở cửa buổi sáng [1].", "tu_choi_kem_trich_dan"),  # câu khuôn KHÔNG ở cuối + [n]
+    ("Chùa mở cửa buổi sáng [7].", "ma_nguon_la"),                             # trích nguồn không có trong sổ
+])
+def test_citation_failure_on_ordinary_turn_becomes_fixed_refusal(chu_model, loai):
+    trace = ket_luot(chu_model)
+    assert trace.citation_error is None and trace.answer == INSUFFICIENT_ANSWER and trace.cited == ()
+    assert trace.kiem_trich_dan_go == loai and trace.vet["kiem_trich_dan_go"] == {"loai": loai, "chu_model": chu_model}
+    co_du_bao = ket_luot(chu_model, thoi_tiet=True)  # lượt có dự báo: không để câu từ chối đứng trước số liệu — câu dẫn cố định + khối hệ thống
+    assert co_du_bao.citation_error is None and co_du_bao.answer == f"{tt.CAU_DAN_DU_BAO}\n\n{KHOI}" and co_du_bao.kiem_trich_dan_go == loai
+
+
+def test_citation_pass_and_plain_refusal_are_untouched():
+    for chu in ("Chùa mở cửa buổi sáng [1].", INSUFFICIENT_ANSWER, f"Chùa mở cửa buổi sáng [1].\n\n{INSUFFICIENT_ANSWER}"):
+        trace = ket_luot(chu)
+        assert trace.citation_error is None and trace.kiem_trich_dan_go is None and "kiem_trich_dan_go" not in trace.vet
+    assert ket_luot("Chùa mở cửa buổi sáng [1].").answer == "Chùa mở cửa buổi sáng [1]."
+
+
+def test_stream_replaces_shown_garbage_with_the_fixed_refusal():
+    import time
+
+    from api.routes.chat import STREAM_METRIC_FIELDS, StreamEvents, _copy_trace_metrics
+    from test_chat_stream import parse_sse
+
+    stream = StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter())
+    da_hien = [stream.delta("tim_kho")]
+    trace = ket_luot("tim_kho")
+    events = parse_sse(da_hien + stream.finish(trace))
+    assert [name for name, _ in events] == ["delta", "thay_chu", "sources", "done"] and dict(events)["thay_chu"] == {"text": INSUFFICIENT_ANSWER}
+    assert dict(events)["done"] == {"outcome": "success", "tu_choi_kho": True}  # giao diện hiện gợi ý cách hỏi như mọi lượt kho thiếu
+    _copy_trace_metrics(trace, stream.metrics)
+    assert stream.metrics["refusal"] is True and stream.metrics["kiem_trich_dan_go"] == "khong_trich_dan" and stream.metrics["outcome"] == "success"
+
+
+def test_form_itinerary_turn_keeps_old_retraction_for_citation_failure():
+    from types import SimpleNamespace
+    trace = AnswerTrace(so_nguon=[KHO], bieu_mau=True)  # lượt biểu mẫu "Lên kế hoạch": không phục hồi, vẫn rút như trước
+    trace.generated = SimpleNamespace(text="placeholder")
+    at._finish_generated(trace, WEATHER, "Lên lịch 1 ngày")
+    assert trace.citation_error is not None and trace.kiem_trich_dan_go is None and trace.answer == "placeholder"
+
+
 # ---------- review phiên B 21/11/2026 (M1 + m1 + m2 + m3) ----------
 
 @pytest.mark.parametrize("text, query, kw, so_la", [
