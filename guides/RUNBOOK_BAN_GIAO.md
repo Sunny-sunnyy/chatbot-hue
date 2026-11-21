@@ -197,6 +197,7 @@ mục "Câu hỏi A còn nợ".
 
 **Ghi chờ — làm TRƯỚC khi deploy** (chưa làm; ghi 18/11/2026 để không quên, không làm khi chưa mở lại chuyện deploy):
 - Chạy đủ skill `agent-security-review` MỘT lượt trên bản đã gộp mọi công cụ + tra web (tới 18/11 mới có bảng theo từng kế hoạch và lần đóng gói 31/10).
+- Trang theo dõi `#/theo-doi` (`GET /api/theo_doi`, chỉ bật khi đặt biến `HUE_KHOA_THEO_DOI`): CHƯA giới hạn số lần thử khoá ⇒ thêm giới hạn (cùng lúc với giới hạn số lượt tải file xuất, mục 10.2) trước khi bật trang này trên bản công khai.
 - Mọi lệnh deploy / sửa dữ liệu bị ngắt giữa chừng **có thể đã chạy một nửa** ⇒ kiểm trạng thái thật trước khi cho chạy lại, không chạy lại mù.
 
 ## 9. Quyết định của User không hỏi lại
