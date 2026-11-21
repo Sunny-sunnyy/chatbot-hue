@@ -54,6 +54,17 @@ Bản này viết lại danh sách thành mỗi dòng một họ từ kèm các 
 **Ý của nhánh, để người review đọc đúng:** lưới chữ này chỉ giữ các cụm CHẮC và là lớp phụ. Độ PHỦ các cách nói nguy hiểm thời tiết (gõ không dấu, câu dài, cách nói địa phương chưa gặp) phải đến từ việc model
 tự chọn loại bão / lũ khi luôn có công cụ thời tiết — tức chế độ `cong_cong_cu: luon`, phần CHƯA đo và là phần quyết của bậc 5. Test của nhánh: `test_cong_cong_cu.py` nay 23 ca.
 
+## 3c. Gộp main `1a7bc5a3` vào nhánh (14:41 21/11/2026, giờ `date`) — để người review đọc trên nền hiện tại
+
+Main đã đi xa từ lúc nhánh tách (công tắc Sonnet high, phục hồi sau phép kiểm số, hai bản sửa của phiên B). Gộp có 4 chỗ xung đột, đều là "hai bên cùng thêm dòng cạnh nhau" —
+giữ cả hai: `settings.yaml` (mức suy luận `high` của main + khoá cổng của nhánh), `settings_loader.py` (hai phép kiểm khoá), `assistant.py` (trường `cong_cong_cu` + `so_lan_tim_kho`),
+`test_phase6_settings.py`. **Một lỗi do gộp, C tự bắt bằng test:** nhánh này từng bỏ dòng `import unicodedata` (lúc đó không còn ai dùng), trong khi code gỡ câu mới của main cần
+nó ⇒ 25 test phép kiểm số hỏng với `NameError` ngay sau khi gộp; đã thêm lại dòng import đúng chỗ của main.
+
+Chạy lại trên cây đã gộp [máy kiểm]: `test_cong_cong_cu.py` 23 đạt · 11 file chạm đường này 440 đạt (+ 1 ca cần khoá OpenAI khi không nạp `.env`) · mã băm 10 lời gọi đường OpenAI
+`d71894d0e7265323` = main · bộ dò lượt một 20 / 20, nhận nhầm 0 / 20 · bộ dò lượt hai 10 / 12, nhận nhầm 0 / 12 — không đổi so với trước khi gộp. Lượt thật ba câu × hai model
+(mục 3) KHÔNG chạy lại sau khi gộp: phần đổi của nhánh là hàm chữ thuần, kết quả hai bộ dò trên cây đã gộp giống hệt.
+
 ## 4. Giới hạn và điều người đo cần biết
 
 - Bốn câu ranh giới của bộ dò lệch mong đợi của người soạn: "Mùa nào ở Huế hay có dông?" (câu khí hậu chung) và "… khi nước lên hay nước ròng" (câu lễ hội) NAY bị coi là câu nguy hiểm thời tiết ⇒ có thêm câu bản tin chính thức (thừa, không hại); "con nước lớn … có nguy hiểm không" KHÔNG được nhận; "xây kè chống nước dâng từ khi nào" đã bị nhận từ trước nhánh này.
