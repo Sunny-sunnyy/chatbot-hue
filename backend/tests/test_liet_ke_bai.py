@@ -93,6 +93,36 @@ def test_long_result_is_cut_and_says_how_many_are_left():
     assert len(lk.loc((dai,), "quan_ca_phe", ["chữ"]).dong[0]) <= len("Quán dài — ") + lk.DONG_DAI_NHAT + 1
 
 
+def test_evidence_line_is_cut_around_the_phrase_and_says_when_more_lines_match():
+    """Review 21/11 (M1): dòng dài bị cắt 220 ký tự ĐẦU ⇒ dòng làm chứng không còn cụm từ. Nay cắt quanh cụm từ: dòng trả về LUÔN chứa cụm từ, dù cụm từ ở
+    đầu, giữa hay cuối một dòng dài. (m1): bài có nhiều dòng chứa cụm từ ⇒ dòng đầu + số dòng còn lại."""
+    for truoc, sau in ((0, 400), (300, 300), (700, 0)):
+        md = "# Bãi X\n\n" + "chữ " * (truoc // 4) + "có phiên chợ cá buổi sớm " + "nữa " * (sau // 4)
+        dong, = lk.loc((lk.bai_tu_markdown("travel/places/x.md", md),), "diem_den", ["chợ cá"]).dong
+        assert "chợ cá" in dong and len(dong) <= len("Bãi X — ") + lk.DONG_DAI_NHAT + 2, (truoc, sau, dong)
+        assert dong.startswith("Bãi X — …") is (truoc > 0) and dong.endswith("…") is (sau > 0)
+    nhieu = lk.bai_tu_markdown("travel/places/y.md", "# Bãi Y\n\nNước sông đổ ra gần bãi, không phải nước ngọt để uống.\n\nCó nhà tắm nước ngọt.\n\nGiá tắm nước ngọt 10.000 đồng.")
+    assert lk.loc((nhieu,), "diem_den", ["nước ngọt"]).dong == ("Bãi Y — Nước sông đổ ra gần bãi, không phải nước ngọt để uống. (+2 dòng khác của bài cũng có cụm từ)",)
+    assert "(+" not in lk.loc(MUC_LUC, "quan_an", ["hút chân không"]).dong[0]  # một dòng khớp ⇒ không ghi thêm
+
+
+def test_filtering_by_one_group_reports_matches_in_other_groups():
+    """Review 21/11 (m2): cụm từ có ở bài của NHÓM KHÁC ⇒ dòng trạng thái nói còn bao nhiêu bài ngoài nhóm (cả khi nhóm đang lọc ra 0 bài), để model
+    không kết luận "tư liệu không có". Lọc `tat_ca` hoặc không có cụm từ ⇒ không có câu này."""
+    kq = lk.loc(MUC_LUC, "quan_ca_phe", ["quán"])  # nhóm cà phê không bài nào có "quán"; ba quán ăn + bài lăng có
+    assert kq.tong == 0 and kq.ngoai_nhom == 4
+    assert lk.trang_thai(kq) == "Trạng thái: không có bài nào của nhóm này khớp. Ngoài nhóm này còn 4 bài khác có cụm từ — gọi lại với nhom = tat_ca để xem."
+    kq = lk.loc(MUC_LUC, "quan_an", ["quán"])
+    assert (kq.tong, kq.ngoai_nhom) == (3, 1) and lk.trang_thai(kq).endswith("Ngoài nhóm này còn 1 bài khác có cụm từ — gọi lại với nhom = tat_ca để xem.")
+    assert lk.loc(MUC_LUC, lk.TAT_CA, ["quán"]).ngoai_nhom == 0 and lk.loc(MUC_LUC, "quan_an", []).ngoai_nhom == 0
+    assert "Ngoài nhóm" not in lk.trang_thai(lk.loc(MUC_LUC, "quan_an", ["sân golf"]))  # không đâu có ⇒ câu "không có bài nào trong tư liệu" như cũ
+    # cụm từ phổ biến: nhóm đang lọc có bài mà ngoài nhóm còn NHIỀU ⇒ không nhắc (lượt thật: nhắc làm luna mở rộng thừa, câu chậm gấp đôi); nhóm ra 0 bài thì vẫn nhắc
+    nhieu = tuple(lk.bai_tu_markdown(f"travel/places/p{i}.md", f"# Nơi {i}\n\nGần chợ.") for i in range(lk.NGOAI_NHOM_IT + 1)) + (
+        lk.bai_tu_markdown("foods/restaurants/q.md", "# Quán Q\n\nGần chợ."),)
+    assert lk.loc(nhieu, "quan_an", ["chợ"]).ngoai_nhom == lk.NGOAI_NHOM_IT + 1 and "Ngoài nhóm" not in lk.trang_thai(lk.loc(nhieu, "quan_an", ["chợ"]))
+    assert "Ngoài nhóm này còn 7 bài khác" in lk.trang_thai(lk.loc(nhieu, "le_hoi", ["chợ"]))
+
+
 def test_index_from_the_real_knowledge_base_has_every_article_and_known_groups():
     """Kho thật: mục lục có đúng số bài `discover_full_corpus_files` trả; mọi nhóm của công cụ có ít nhất một bài; bài nào cũng có tên."""
     root, rel = discover_full_corpus_files(load_settings(validate_private_paths=False))

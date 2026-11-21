@@ -33,6 +33,7 @@ TOI_DA_CUM_TU = 3
 CUM_TU_DAI_NHAT = 40      # ký tự; cụm dài hơn bị bỏ (câu cả dòng không phải "cụm từ")
 DONG_DAI_NHAT = 220       # ký tự của dòng làm chứng
 SO_LAN_MOI_LUOT = 2
+NGOAI_NHOM_IT = 5         # nhóm đang lọc CÓ bài khớp mà ngoài nhóm còn nhiều hơn số này ⇒ không nhắc mở rộng (cụm từ phổ biến: nhắc là nhiễu)
 
 _GACH = re.compile(r"\s*[-–—−]\s*")
 _DAU_DONG = re.compile(r"^(?:[-*+]\s+|\d+\.\s+)")
@@ -60,6 +61,7 @@ class KetQua:
     o_ten: int                     # trong đó số bài có cụm từ ngay ở TÊN bài (xếp trước)
     dong: tuple[str, ...]          # "Tên bài — dòng làm chứng", tối đa `TOI_DA_DONG`
     cum_tu: tuple[str, ...]        # cụm từ thật sự dùng để lọc (đã bỏ cụm rỗng / quá dài)
+    ngoai_nhom: int = 0            # số bài Ở NHÓM KHÁC cũng có cụm từ (0 khi lọc `tat_ca` hoặc không có cụm từ) — để model biết nên mở rộng nhóm
 
 
 def _sach(line: str) -> str:
@@ -104,27 +106,58 @@ def _cat(text: str) -> str:
     return text if len(text) <= DONG_DAI_NHAT else text[:DONG_DAI_NHAT].rsplit(" ", 1)[0] + "…"
 
 
+def _cat_quanh(text: str, cum: tuple[str, ...]) -> str:
+    """Dòng làm chứng của bài chỉ nhắc cụm từ trong thân: dòng dài hơn `DONG_DAI_NHAT` thì cắt MỘT CỬA SỔ QUANH chỗ có cụm từ (review 21/11: cắt 220 ký tự
+    đầu dòng làm 6 / 16 bài của cụm "chợ" nhận dòng không còn chữ "chợ" ⇒ model nêu chi tiết không có trong nguồn đã trích). Luôn trả đoạn CÒN chứa cụm
+    từ: thử cửa sổ quanh vị trí ước lượng, chưa chứa thì nới gấp đôi cho tới cả dòng."""
+    if len(text) <= DONG_DAI_NHAT:
+        return text
+    ca = chuan(text)
+    vi_tri = min(ca.find(c) for c in cum if c in ca)
+    giua = int(vi_tri / max(len(ca), 1) * len(text))  # `chuan` chỉ gộp khoảng trắng / gạch nối ⇒ vị trí trên chữ gốc lệch ít
+    rong = DONG_DAI_NHAT
+    while True:
+        dau = max(0, min(giua - rong // 3, len(text) - rong))
+        doan = text[dau:dau + rong]
+        if any(c in chuan(doan) for c in cum) or rong >= len(text):
+            break
+        rong *= 2
+    if dau > 0:
+        doan = "…" + doan.split(" ", 1)[-1]
+    if dau + rong < len(text):
+        doan = doan.rsplit(" ", 1)[0] + "…"
+    return doan if any(c in chuan(doan) for c in cum) else text  # cắt ở ranh từ làm mất cụm từ (hiếm) ⇒ giữ cả dòng
+
+
 def loc(muc_luc: tuple[Bai, ...], nhom: str, cum_tu: list[str]) -> KetQua:
     """Bài của `nhom` (hoặc mọi bài khi `tat_ca`) mà tên bài hoặc toàn văn chứa ÍT NHẤT MỘT cụm từ; không có cụm từ ⇒ mọi bài của nhóm.
     So nguyên cụm sau `chuan` — không phải biểu thức. Bài có cụm từ ngay ở TÊN xếp trước (đó thường là "loại" người hỏi cần: lăng, chùa, bún bò…) với
     dòng giới thiệu của bài; bài chỉ nhắc cụm từ trong thân xếp sau, kèm đúng dòng đầu tiên chứa cụm từ để model đọc ngữ cảnh (kể cả câu phủ định)."""
     prefix = "" if nhom == TAT_CA else NHOM[nhom][0]
     cum = tuple(dict.fromkeys(c for c in (chuan(x) for x in cum_tu[:TOI_DA_CUM_TU]) if c and len(c) <= CUM_TU_DAI_NHAT))
-    o_ten, o_than = [], []
+    o_ten, o_than, ngoai_nhom = [], [], 0
     for bai in muc_luc:
-        if not bai.rel.startswith(prefix):
-            continue
+        trong_nhom = bai.rel.startswith(prefix)
         if not cum:
-            o_than.append((bai, bai.tom_tat))
-        elif any(c in chuan(bai.tieu_de) for c in cum):
-            o_ten.append((bai, bai.tom_tat))
-        else:
-            chung = next((bai.dong[i] for i, d in enumerate(bai.dong_chuan) if any(c in d for c in cum)), None)
-            if chung is not None:
-                o_than.append((bai, chung))
+            if trong_nhom:
+                o_than.append((bai, bai.tom_tat))
+            continue
+        o_tieu_de = any(c in chuan(bai.tieu_de) for c in cum)
+        co = [i for i, d in enumerate(bai.dong_chuan) if any(c in d for c in cum)]
+        if not trong_nhom:
+            ngoai_nhom += bool(o_tieu_de or co)
+        elif o_tieu_de:
+            o_ten.append((bai, _cat(bai.tom_tat)))
+        elif co:
+            # dòng ĐẦU TIÊN chứa cụm từ, cắt quanh cụm từ; bài còn dòng khác cũng có cụm từ ⇒ nói số dòng (review 21/11: ý cần tìm nằm ở dòng sau ⇒ model
+            # đọc đúng dòng nhận được nhưng sót ý) để model biết cần `tim_kho` bài đó
+            them = f" (+{len(co) - 1} dòng khác của bài cũng có cụm từ)" if len(co) > 1 else ""
+            o_than.append((bai, _cat_quanh(bai.dong[co[0]], cum) + them))
     khop = o_ten + o_than
-    dong = tuple(f"{bai.tieu_de} — {_cat(chung)}" if chung else bai.tieu_de for bai, chung in khop[:TOI_DA_DONG])
-    return KetQua(tong=len(khop), o_ten=len(o_ten), dong=dong, cum_tu=cum)
+    if not cum:
+        khop = [(bai, _cat(chung)) for bai, chung in khop]
+    dong = tuple(f"{bai.tieu_de} — {chung}" if chung else bai.tieu_de for bai, chung in khop[:TOI_DA_DONG])
+    return KetQua(tong=len(khop), o_ten=len(o_ten), dong=dong, cum_tu=cum, ngoai_nhom=ngoai_nhom)
 
 
 def muc_nguon(nhom: str, kq: KetQua) -> str:
@@ -145,9 +178,17 @@ def trang_thai_lap(ma_nguon: int | None) -> str:
 
 def trang_thai(kq: KetQua) -> str:
     """Dòng đầu của kết quả công cụ (đứng ngoài khối nguồn): có bao nhiêu bài khớp, có bị cắt trang không."""
+    # lọc theo MỘT nhóm che bài ở nhóm khác (review 21/11: "công viên nước" nằm ở một bài vé, model lọc nhóm điểm đến ⇒ nói "tư liệu không thấy") ⇒ luôn nói
+    # còn bao nhiêu bài ngoài nhóm có cụm từ
+    # … nhưng chỉ khi nhóm này ra 0 bài hoặc số bài ngoài nhóm ÍT: lượt thật sau khi thêm câu nhắc — cụm "chợ" có 39 bài ngoài nhóm, luna nghe theo, gọi lại
+    # `tat_ca` (61 bài) rồi tìm thêm hai lần ⇒ 29 giây cho một câu trước đó 15 giây.
+    nhac = kq.ngoai_nhom and (kq.tong == 0 or kq.ngoai_nhom <= NGOAI_NHOM_IT)
+    ngoai = f" Ngoài nhóm này còn {kq.ngoai_nhom} bài khác có cụm từ — gọi lại với nhom = tat_ca để xem." if nhac else ""
     if kq.tong == 0:
+        if ngoai:
+            return "Trạng thái: không có bài nào của nhóm này khớp." + ngoai
         return "Trạng thái: không có bài nào trong tư liệu khớp. Thử một lần với cụm từ khác (ngắn hơn, cách viết khác) hoặc nhóm khác; vẫn không có thì coi như tư liệu không có thông tin này."
     con = kq.tong - len(kq.dong)
     ten = f" ({kq.o_ten} bài có cụm từ ngay ở tên, xếp trước; {kq.tong - kq.o_ten} bài chỉ nhắc tới trong nội dung)" if kq.cum_tu and kq.o_ten and kq.o_ten < kq.tong else ""
     return (f"Trạng thái: trong tư liệu có {kq.tong} bài khớp{ten}" + (f", dưới đây là {len(kq.dong)} bài đầu; còn {con} bài nữa — thêm cụm từ để thu hẹp." if con else ".")
-            + " Mỗi dòng là tên bài và một dòng lấy từ chính bài đó.")
+            + " Mỗi dòng là tên bài và một dòng lấy từ chính bài đó." + ngoai)

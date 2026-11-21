@@ -96,3 +96,23 @@ Tiền thật: 160 lượt, 2,33 USD (gần hết là Sonnet) — vượt mốc 
 | Review của phiên khác + đọc tay 12 câu danh sách | Chưa | — |
 | Phiên đo: 5 câu đặc điểm của bộ mẫu có chấm, thước, 85 câu | Chưa | — |
 | Bật cờ | Chưa — chủ dự án quyết | — |
+
+## 7. Thêm 15:04 21/11/2026 (giờ `date`) — ba điểm của review (phiên C: READY với cờ tắt, ba điều kiện trước khi BẬT)
+
+| Điểm review | Sửa | Kiểm |
+|---|---|---|
+| Dòng làm chứng cắt 220 ký tự ĐẦU dòng ⇒ dòng model nhận không còn cụm từ (C đếm: "chợ" 6 / 16 bài, "nước ngọt" 8 / 21, "chùa" 2 / 9) — gốc của một chi tiết không có trong nguồn đã trích | Dòng dài cắt MỘT CỬA SỔ QUANH chỗ có cụm từ; cắt làm mất cụm từ thì giữ cả dòng | Đếm lại bằng hàm thật trên kho thật: 0 / 16 · 0 / 21 · 0 / 9 (thêm "hồ" 0 / 35) [máy kiểm] |
+| Chỉ lấy dòng ĐẦU có cụm từ ⇒ sót ý nằm ở dòng sau (bãi có "nhà tắm nước ngọt" ở dòng sau bị model bỏ sót) | Dòng làm chứng kèm "(+k dòng khác của bài cũng có cụm từ)" để model biết cần tìm thêm bài đó | Câu đó chạy lại trên Sonnet 2 lần: bãi bị sót nay có mặt 2 / 2 (model gọi `tim_kho` thêm); luna 2 / 2 lần không gọi công cụ ở câu này ⇒ không đổi |
+| Lọc theo một nhóm che bài ở nhóm khác ("công viên nước" nằm ở một bài vé) | Dòng trạng thái thêm "Ngoài nhóm này còn k bài khác có cụm từ — gọi lại với nhom = tat_ca", CHỈ khi nhóm đang lọc ra 0 bài hoặc k ≤ 5 | Test hàm thuần. Lượt thật: 1 / 4 lần model gọi công cụ ở câu này (Sonnet, tự chọn "tất cả", nêu đúng khu có công viên nước); 3 / 4 lần model không gọi công cụ ⇒ tình huống "lọc sai nhóm" không tái hiện lại được để xác nhận trên chữ model thật |
+
+Vì sao câu nhắc "ngoài nhóm" có ngưỡng: bản đầu nhắc ở MỌI lần có bài ngoài nhóm; với cụm phổ biến ("chợ": 39 bài ngoài nhóm) luna nghe theo, gọi lại "tất cả" (61 bài) rồi tìm thêm hai lần ⇒ 29 giây.
+Có ngưỡng: luna không gọi lại "tất cả" nữa nhưng câu đó vẫn 24 giây (bản trước review: 15,5 giây; cờ tắt 10,9 giây — một lượt mỗi ô) ⇒ **câu danh sách dài trên luna chậm hơn rõ khi cờ bật**; phiên đo cần cột thời gian.
+Test: `tests/test_liet_ke_bai.py` nay 15 ca. Thêm 12 lượt thật (6 câu × 2 lần chạy, hai model), 0 lỗi.
+
+**Điều review nêu mà nhánh này KHÔNG giải:** câu trả lời trích "Mục lục kho tư liệu" thay cho từng bài ⇒ các dòng ghi chú sinh từ NGUỒN BÀI được trích có thể không hiện (dòng "giờ mở cửa, giá vé có thể đã thay đổi",
+dòng cảnh báo tạm ngừng của bãi biển / suối / thác) — C thấy 1 ca mất dòng "có thể đã thay đổi". Hướng có thể làm (chưa làm, cần quyết vì đổi thứ người dùng thấy): nguồn mục lục mang theo đường dẫn các bài nó
+liệt kê; bộ nối ghi chú coi bài nào CÓ TÊN trong câu trả lời là "được trích" khi xét ghi chú. Rủi ro: một danh sách 8 bãi biển kéo theo nhiều dòng cảnh báo cùng lúc. Trước khi bật cờ, phiên đo cần đếm cột "thiếu cảnh báo"
+trên câu xin danh sách nơi có rủi ro.
+
+**Khi ghép với nhánh "vòng cuối chỉ viết" (C đã xem cả hai diff):** (a) điều kiện ẩn `liet_ke_bai` đi qua cùng hàm gom điều kiện của nhánh kia để vòng cuối không gửi nó; (b) trần vòng truyền cho cơ chế vòng cuối phải
+tính cả vòng thêm của công cụ này; (c) hàm nhận "xin công cụ đã ẩn" hợp ba điều kiện (hết lượt tìm · hết lượt liệt kê · vòng cuối). Nhánh nào gộp sau, tôi ghép.
