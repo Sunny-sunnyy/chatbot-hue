@@ -31,7 +31,7 @@ Sau khi chép: bật hook git nếu có (`git config core.hooksPath <thư mục 
 
 - **Nhỏ** (≤ một hàm, lùi được ngay): làm, test file chạm, một dòng nhật ký.
 - **Vừa** (người dùng thấy khác): kế hoạch một trang (file đổi · thứ tự · rủi ro · bằng chứng) ⇒ làm ⇒ một lượt kiểm bởi phiên khác.
-- **Lớn** (không lùi được, tiền, dữ liệu, bảo mật — hoặc việc nhiều ngày, nhiều file): chủ dự án nói ý bằng lời thường ⇒ agent hỏi lại tối đa ba câu ⇒ năm dòng đề bài do AGENT soạn, chủ dự án sửa / tick ⇒ kế hoạch ⇒ làm ⇒ review (khác hãng nếu được) ⇒ chủ dự án tự thử.
+- **Lớn** (không lùi được, tiền, dữ liệu, bảo mật — hoặc việc nhiều ngày, nhiều file): đề bài chép từ LỜI chủ dự án ⇒ agent bổ sung phần thiếu, tự vẽ bài toán, chỉ hỏi lại thứ chỉ chủ dự án biết (`../CACH_LAM_VIEC.md` mục 1) ⇒ kế hoạch, chủ dự án duyệt một lần ⇒ làm ⇒ review (khác hãng nếu được) ⇒ chủ dự án tự thử.
 Chi tiết mức kiểm: `../CACH_LAM_VIEC.md` mục 2.
 
 ## Skill nào mang đi được (10 skill của repo gốc, thư mục `skills/`)
