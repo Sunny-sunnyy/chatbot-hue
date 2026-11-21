@@ -95,11 +95,15 @@ def test_body_carries_tools_format_and_an_explicit_reasoning_mode():
     settings = ModelSettings(include_usage=True, store=False, parallel_tool_calls=False, extra_args={"prompt_cache_key": "k"}, max_tokens=50)
     body = build_body("lời dặn", "câu hỏi", settings, [tool], AgentOutputSchema(AnswerOutput), 1000, "none")
     assert body["anthropic_version"] == "bedrock-2023-05-31" and body["max_tokens"] == 1000 and body["system"] == "lời dặn"
-    assert [(t["name"], t["strict"], t["input_schema"]["required"]) for t in body["tools"]] == [("tim_kho", True, ["cau_tim"])]
+    # khuôn + công cụ ⇒ KHÔNG ép khuôn (Claude sẽ gọi công cụ mãi không viết — đo 21/11); khuôn đi theo công cụ nội bộ `tra_loi`
+    assert [(t["name"], t["strict"], t["input_schema"]["required"]) for t in body["tools"]] == [("tim_kho", True, ["cau_tim"]), ("tra_loi", True, ["answer"])]
+    assert body["tools"][1]["input_schema"] == AgentOutputSchema(AnswerOutput).json_schema() and "output_config" not in body
     assert body["tool_choice"] == {"type": "auto", "disable_parallel_tool_use": True}
     # mức mặc định `none` ⇒ `between_tools`, không gửi effort; không trường nào của riêng OpenAI lọt sang
-    assert body["output_config"] == {"format": {"type": "json_schema", "schema": AgentOutputSchema(AnswerOutput).json_schema()}}
     assert body["thinking"] == {"type": "between_tools"}
+    # không công cụ (kể cả lượt mọi công cụ đã ẩn) ⇒ ép khuôn như cũ, không có công cụ nội bộ
+    no_tools = build_body("lời dặn", "câu hỏi", settings, [], AgentOutputSchema(AnswerOutput), 1000, "none")
+    assert no_tools["output_config"] == {"format": {"type": "json_schema", "schema": AgentOutputSchema(AnswerOutput).json_schema()}} and "tools" not in no_tools
     assert not {"store", "prompt_cache_key", "temperature", "top_p", "model"} & body.keys()
 
     # agent KHÔNG tự đặt mức ⇒ mức mặc định của cấu hình; agent tự đặt "low" (nhóm lịch) ⇒ giữ "low" dù mặc định là "high"
@@ -125,6 +129,34 @@ def test_response_drops_thinking_and_usage_counts_like_openai():
     assert cost_usd(150, 50, 30, 20) == pytest.approx((100 * 0.1 + 30 * 0.125 + 20 * 0.01 + 50 * 0.5) / 1_000_000)  # mặc định vẫn giá luna
 
 
+def test_internal_answer_tool_never_reaches_the_sdk():
+    """Công cụ nội bộ `tra_loi` (lượt có cả công cụ lẫn khuôn): (1) chỉ `tra_loi` ⇒ tham số thành tin trả lời JSON, chữ dẫn bỏ, hai lần gọi lấy lần
+    đầu; (2) `tra_loi` cùng công cụ thật ⇒ chạy công cụ thật, bỏ `tra_loi`; (3) chữ thường không gọi gì ⇒ bọc vào khuôn một trường chuỗi, chữ đã
+    là JSON thì giữ; khuôn nhiều trường ⇒ lỗi nhóm model; (4) lời gọi KHÔNG gửi `tra_loi` ⇒ chữ giữ nguyên như trước."""
+    schema = AgentOutputSchema(AnswerOutput).json_schema()
+
+    def submit(answer: str, n: int = 1) -> dict:
+        return {"type": "tool_use", "id": f"toolu_a{n}", "name": "tra_loi", "input": {"answer": answer}}
+
+    search = {"type": "tool_use", "id": "toolu_s", "name": "tim_kho", "input": {"cau_tim": "Huế"}}
+    only = to_response(claude_message({"type": "text", "text": "Đã đủ."}, submit("Có [1]."), submit("Lần hai", 2)), "m", schema)
+    assert [item.type for item in only.output] == ["message"] and json.loads(only.output[0].content[0].text) == {"answer": "Có [1]."}
+    both = to_response(claude_message(submit("Có [1]."), search), "m", schema)
+    assert [(item.type, getattr(item, "name", None)) for item in both.output] == [("function_call", "tim_kho")]
+    plain = to_response(claude_message({"type": "text", "text": ' Có "thật" [1].\n'}), "m", schema)
+    assert json.loads(plain.output[0].content[0].text) == {"answer": 'Có "thật" [1].'}
+    already = to_response(claude_message({"type": "text", "text": '{"answer": "Có [1]."}'}), "m", schema)
+    assert already.output[0].content[0].text == '{"answer": "Có [1]."}'
+    fenced = to_response(claude_message({"type": "text", "text": '```json\n{"answer": "Vé 200.000 đồng [1]."}\n```'}), "m", schema)
+    assert fenced.output[0].content[0].text == '{"answer": "Vé 200.000 đồng [1]."}'  # gỡ rào, dùng chính JSON bên trong
+    code = to_response(claude_message({"type": "text", "text": "```\nkhông phải JSON\n```"}), "m", schema)
+    assert json.loads(code.output[0].content[0].text) == {"answer": "```\nkhông phải JSON\n```"}  # rào không chứa JSON ⇒ bọc nguyên chữ
+    with pytest.raises(GenerationError):
+        to_response(claude_message({"type": "text", "text": "chữ thường"}), "m", AgentOutputSchema(RouteSplitOutput).json_schema())
+    untouched = to_response(claude_message({"type": "text", "text": "chữ thường"}), "m")
+    assert untouched.output[0].content[0].text == "chữ thường"
+
+
 def test_sigv4_signature_is_stable_for_fixed_inputs():
     """Cùng đầu vào ⇒ cùng chữ ký; đổi thân ⇒ chữ ký đổi; header ký gồm token phiên. (Chữ ký ĐÚNG với AWS chỉ lượt gọi thật chứng minh.)"""
     creds = {"accessKeyId": "AKIDEXAMPLE", "secretAccessKey": "secret", "sessionToken": "token"}
@@ -145,7 +177,8 @@ def test_sdk_tool_loop_runs_on_the_bedrock_model(tmp_path, streamed):
     model, sent = scripted_model(tmp_path, [
         claude_message({"type": "thinking", "thinking": "…", "signature": "s"},
                        {"type": "tool_use", "id": "toolu_1", "name": "tim_kho", "input": {"cau_tim": "Đại Nội"}}, n=1),
-        claude_message({"type": "text", "text": '{"answer": "Có [1]."}'}, n=2),
+        claude_message({"type": "text", "text": "Mình đã có đủ thông tin."},  # chữ dẫn đi kèm bị bỏ; câu trả lời = tham số của `tra_loi`
+                       {"type": "tool_use", "id": "toolu_2", "name": "tra_loi", "input": {"answer": "Có [1]."}}, n=2),
     ])
     seen = []
 
@@ -273,6 +306,45 @@ def test_edit_understanding_agents_run_at_their_own_reasoning_level(monkeypatch)
     openai_settings["full_corpus_generation"]["provider"] = "openai"
     openai_generator = OpenAIFullCorpusGenerator.from_environment(openai_settings)
     assert [a.model_settings.reasoning.effort for a in (openai_generator.sua_lich_agent, openai_generator.sua_lich_cht_agent)] == ["low", "low"]
+
+
+def test_sonnet_only_instructions_are_appended_on_bedrock_and_absent_on_openai(monkeypatch):
+    """Ba đoạn dặn chỉ dành cho Sonnet (21/11/2026): đường OpenAI gửi ĐÚNG các hằng lời dặn cũ (không thêm ký tự nào); đường Bedrock nối đoạn
+    dặn vào đúng agent — trả lời / trợ lý (kể cả bản lịch sử, bản nhiều ý), viết câu lịch (bản nới một đến hai câu), hai agent hiểu ý sửa lịch."""
+    from llm import full_corpus_prompt as p
+
+    monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    settings = bedrock_settings()
+    sonnet = OpenAIFullCorpusGenerator.from_environment(settings)
+    settings["full_corpus_generation"]["provider"] = "openai"
+    luna = OpenAIFullCorpusGenerator.from_environment(settings)
+
+    tool = f"{p.ANSWER_SYSTEM_INSTRUCTIONS}\n\n{p.ASSISTANT_TOOL_NOTE}"
+    assert luna.answer_agent.instructions == p.ANSWER_SYSTEM_INSTRUCTIONS and luna.assistant_instructions == luna.assistant_agent.instructions == tool
+    assert luna.assistant_history_agent.instructions == luna.assistant_instructions_for([("q", "a")]) == f"{tool}\n\n{p.ASSISTANT_HISTORY_NOTE}"
+    assert luna.assistant_agent_nhieu_y.instructions == f"{p.ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y}\n\n{p.ASSISTANT_TOOL_NOTE}"
+    assert luna.bieu_mau_agent.instructions == f"{p.ANSWER_SYSTEM_INSTRUCTIONS}\n\n{p.LICH_TRINH_LUAT}"
+    assert (luna.lich_v2_agent.instructions, luna.sua_lich_agent.instructions, luna.sua_lich_cht_agent.instructions) == (
+        p.LICH_V2_LOI_DAN, p.SUA_LICH_LOI_DAN, p.SUA_LICH_LOI_DAN_CHT)
+    assert (luna.router_agent.instructions, luna.router_history_agent.instructions) == (
+        p.ROUTER_INSTRUCTIONS, f"{p.ROUTER_INSTRUCTIONS}\n\n{p.ROUTER_HISTORY_NOTE}")
+    assert [a.instructions for a in luna.router_search_agents.values()] == [f"{p.ROUTER_INSTRUCTIONS}\n\n{p.ROUTER_SEARCH_V1}", f"{p.ROUTER_INSTRUCTIONS}\n\n{p.ROUTER_SEARCH_V3}"]
+    assert (luna.chat_agent.instructions, luna.web_agent.instructions) == (sonnet.chat_agent.instructions, sonnet.web_agent.instructions)  # hai vai không có đoạn dặn riêng
+    assert sonnet.router_agent.instructions == f"{p.ROUTER_INSTRUCTIONS}\n\n{p.SONNET_DINH_TUYEN}"
+    assert all(p.SONNET_DINH_TUYEN in a.instructions for a in (sonnet.router_history_agent, *sonnet.router_search_agents.values()))
+
+    assert sonnet.answer_agent.instructions == f"{p.ANSWER_SYSTEM_INSTRUCTIONS}\n\n{p.SONNET_TRA_LOI}"
+    assert sonnet.assistant_instructions == sonnet.assistant_agent.instructions == f"{tool}\n\n{p.SONNET_TRA_LOI}"
+    for agent in (sonnet.assistant_history_agent, sonnet.assistant_agent_nhieu_y, sonnet.assistant_history_agent_nhieu_y):
+        assert p.SONNET_TRA_LOI in agent.instructions
+    assert sonnet.assistant_instructions_for([("q", "a")]) == sonnet.assistant_history_agent.instructions  # chuỗi đếm = chuỗi gửi
+    assert sonnet.lich_v2_agent.instructions == p.LICH_V2_LOI_DAN_SONNET
+    assert "một hoặc hai câu" in p.LICH_V2_LOI_DAN_SONNET and "đúng một câu" not in p.LICH_V2_LOI_DAN_SONNET
+    assert sonnet.bieu_mau_agent.instructions.endswith(p.SONNET_GIU_DUNG_VAT)
+    assert sonnet.sua_lich_agent.instructions.startswith(p.SUA_LICH_LOI_DAN) and "trả danh sách rỗng. Trường hợp" in sonnet.sua_lich_agent.instructions
+    assert sonnet.sua_lich_cht_agent.instructions.startswith(p.SUA_LICH_LOI_DAN_CHT) and "trả chua_ho_tro để" in sonnet.sua_lich_cht_agent.instructions
+    assert "{khong_ro}" not in sonnet.sua_lich_agent.instructions + sonnet.sua_lich_cht_agent.instructions
 
 
 def test_settings_loader_accepts_bedrock_and_rejects_a_broken_block():

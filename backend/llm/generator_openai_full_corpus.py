@@ -38,6 +38,12 @@ from llm.full_corpus_prompt import (
     INSUFFICIENT_ANSWER,
     LICH_TRINH_LUAT,
     LICH_V2_LOI_DAN,
+    LICH_V2_LOI_DAN_SONNET,
+    SONNET_DINH_TUYEN,
+    SONNET_GIU_DUNG_VAT,
+    SONNET_SUA_LICH,
+    SONNET_SUA_LICH_KHONG_RO,
+    SONNET_TRA_LOI,
     ROUTER_INSTRUCTIONS,
     ROUTER_SEARCH_V1,
     ROUTER_SEARCH_V3,
@@ -289,6 +295,11 @@ class OpenAIFullCorpusGenerator:
         self.timeout = timeout
         self.router_timeout = router_timeout
 
+        # Đoạn dặn chỉ dành cho Sonnet (`full_corpus_prompt.SONNET_*`, 21/11/2026): NỐI vào cuối lời dặn khi đang chạy lớp dịch Bedrock; đường
+        # OpenAI ⇒ trả nguyên chuỗi (lời dặn gửi luna giống byte như trước).
+        def kem(loi_dan: str, ghi_chu: str) -> str:
+            return f"{loi_dan}\n\n{ghi_chu}" if bedrock_model is not None else loi_dan
+
         # Create one shared OpenAIResponsesModel with gpt-6-luna alias
         self.responses_model = bedrock_model if bedrock_model is not None else OpenAIResponsesModel(
             model=self.model, openai_client=self.client
@@ -299,7 +310,7 @@ class OpenAIFullCorpusGenerator:
         # No temperature, verbosity, top_p or sampling knobs; reasoning only when reasoning_effort is set
         self.answer_agent = Agent(
             name="hue_full_corpus_answer_generator",
-            instructions=answer_instructions,
+            instructions=kem(answer_instructions, SONNET_TRA_LOI),
             model=self.responses_model,
             model_settings=ModelSettings(
                 include_usage=True,
@@ -309,9 +320,10 @@ class OpenAIFullCorpusGenerator:
             output_type=AnswerOutput,
         )
         # Phase 9 B1: định tuyến (D3) — không công cụ, không stream, không lịch sử; trò chuyện (D4) — không ngữ cảnh kho, đầu ra {answer}.
+        router_instructions = kem(ROUTER_INSTRUCTIONS, SONNET_DINH_TUYEN)  # đường OpenAI: đúng `ROUTER_INSTRUCTIONS`
         self.router_agent = Agent(
             name="hue_router",
-            instructions=ROUTER_INSTRUCTIONS,
+            instructions=router_instructions,
             model=self.responses_model,
             model_settings=ModelSettings(include_usage=True, store=False),
             output_type=RouteOutput,
@@ -325,37 +337,37 @@ class OpenAIFullCorpusGenerator:
         )
         # Phase 9 B2 (plan D2): định tuyến viết câu tìm — cùng agent định tuyến B1, lời dặn thêm một đoạn, kiểu đầu ra theo biến.
         self.router_search_agents = {
-            variant: self.router_agent.clone(instructions=f"{ROUTER_INSTRUCTIONS}\n\n{note}", output_type=output_type)
+            variant: self.router_agent.clone(instructions=f"{router_instructions}\n\n{note}", output_type=output_type)
             for variant, (output_type, note) in ROUTER_OUTPUTS.items()
         }
         # B2 D5: trợ lý có công cụ — lời dặn trả lời + đoạn công cụ, cùng model setting, một công cụ mỗi lượt gọi.
         # Công cụ gắn mỗi lượt (`_assistant_for`): lõi đưa hàm của lượt đó (giữ trace / sổ nguồn riêng).
-        self.assistant_instructions = f"{answer_instructions}\n\n{ASSISTANT_TOOL_NOTE}"
+        self.assistant_instructions = kem(f"{answer_instructions}\n\n{ASSISTANT_TOOL_NOTE}", SONNET_TRA_LOI)
         self.assistant_agent = self.answer_agent.clone(
             name="hue_assistant",
             instructions=self.assistant_instructions,
             model_settings=dataclasses.replace(self.answer_agent.model_settings, parallel_tool_calls=False),
         )
         # B3 D3: bản agent cho lượt có lịch sử — thêm đúng một câu dặn; lượt không lịch sử dùng bản trên (chuỗi gửi model như B2).
-        self.router_history_agent = self.router_agent.clone(instructions=f"{ROUTER_INSTRUCTIONS}\n\n{ROUTER_HISTORY_NOTE}")
+        self.router_history_agent = self.router_agent.clone(instructions=f"{router_instructions}\n\n{ROUTER_HISTORY_NOTE}")
         self.assistant_history_instructions = f"{self.assistant_instructions}\n\n{ASSISTANT_HISTORY_NOTE}"
         self.assistant_history_agent = self.assistant_agent.clone(instructions=self.assistant_history_instructions)
         # Việc agent (3) 14/11 (cờ `cau_nhieu_y`): cùng hai bản trợ lý, chỉ thay đoạn luật từ chối của lời dặn trả lời bằng luật theo ý.
         # Chỉ dựng khi lời dặn là bản runtime (harness 8.1 truyền lời dặn khác ⇒ không có biến thể này). Cờ tắt ⇒ không dùng tới.
         if answer_instructions == ANSWER_SYSTEM_INSTRUCTIONS:
-            ny = f"{ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y}\n\n{ASSISTANT_TOOL_NOTE}"
+            ny = kem(f"{ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y}\n\n{ASSISTANT_TOOL_NOTE}", SONNET_TRA_LOI)
             self.assistant_agent_nhieu_y = self.assistant_agent.clone(instructions=ny)
             self.assistant_history_agent_nhieu_y = self.assistant_agent.clone(instructions=f"{ny}\n\n{ASSISTANT_HISTORY_NOTE}")
         # Cổng đợt 1 D3 (V5 — X1c): lượt biểu mẫu = agent trả lời + luật viết lịch trong lời dặn hệ thống + mức suy luận "low". Chỉ lượt biểu
         # mẫu dùng; mọi lượt khác gọi `answer_agent` như cũ (Q1). Luật vẫn nằm cả trong khung ngữ cảnh — giữ đúng cấu hình C đã đo.
         self.bieu_mau_agent = self.answer_agent.clone(
-            instructions=f"{answer_instructions}\n\n{LICH_TRINH_LUAT}",
+            instructions=kem(f"{answer_instructions}\n\n{LICH_TRINH_LUAT}", SONNET_GIU_DUNG_VAT),
             model_settings=dataclasses.replace(self.answer_agent.model_settings, reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
         )
         # "Lên kế hoạch" bản 2 (c): vai riêng viết câu cho từng mục của khung — không công cụ, không lịch sử, suy luận như lượt biểu mẫu
         self.lich_v2_agent = Agent(
             name="hue_lich_v2",
-            instructions=LICH_V2_LOI_DAN,
+            instructions=LICH_V2_LOI_DAN if bedrock_model is None else LICH_V2_LOI_DAN_SONNET,  # bản Sonnet: một đến hai câu + giữ đúng vật
             model=self.responses_model,
             model_settings=ModelSettings(include_usage=True, store=False,
                                          reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
@@ -364,7 +376,7 @@ class OpenAIFullCorpusGenerator:
         # Sửa lịch bản 2: lần gọi riêng chỉ hiểu ý ⇒ hành động có tên (code áp); không công cụ, không lịch sử, suy luận thấp
         self.sua_lich_agent = Agent(
             name="hue_sua_lich",
-            instructions=SUA_LICH_LOI_DAN,
+            instructions=kem(SUA_LICH_LOI_DAN, SONNET_SUA_LICH.format(khong_ro=SONNET_SUA_LICH_KHONG_RO[False])),
             model=self.responses_model,
             # khoá đệm CỐ ĐỊNH (đo 14/11): SDK tự sinh khoá riêng mỗi lần chạy ⇒ 0 token trúng đệm; khoá cố định ⇒ ~1.244 token đầu (lời dặn +
             # khuôn đầu ra, giống nhau mọi lượt) trúng đệm, lần hiểu ý 0,00024 ⇒ ~0,0001 USD. Đệm chỉ là phần cố định; chữ người dùng ở cuối tin nhắn
@@ -373,7 +385,8 @@ class OpenAIFullCorpusGenerator:
             output_type=SuaLichOutput,
         )
         # cờ `sua_lich_chua_ho_tro`: cùng cấu hình, lời dặn + khuôn có `chua_ho_tro`; khoá đệm riêng (phần cố định khác bản trên)
-        self.sua_lich_cht_agent = self.sua_lich_agent.clone(name="hue_sua_lich_cht", instructions=SUA_LICH_LOI_DAN_CHT, output_type=SuaLichOutputCHT,
+        self.sua_lich_cht_agent = self.sua_lich_agent.clone(name="hue_sua_lich_cht", output_type=SuaLichOutputCHT,
+                                                            instructions=kem(SUA_LICH_LOI_DAN_CHT, SONNET_SUA_LICH.format(khong_ro=SONNET_SUA_LICH_KHONG_RO[True])),
                                                             model_settings=self.sua_lich_agent.model_settings.resolve(
                                                                 ModelSettings(extra_args={"prompt_cache_key": "hue_sua_lich_cht_v1"})))
         # B6 D4: lần gọi riêng viết mục "Từ web" — không công cụ, không lịch sử, không kho; đầu ra {answer} như trả lời kho.

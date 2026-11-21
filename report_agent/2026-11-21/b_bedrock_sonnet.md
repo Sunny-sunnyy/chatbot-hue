@@ -106,3 +106,45 @@ một lỗi GỘP Ý của Sonnet (tháp Phước Duyên bị xếp chung vào "
 
 **Giới hạn ghi lại, CHƯA sửa:** lệnh sửa lịch mơ hồ — Sonnet high vẫn tự bỏ một điểm người dùng không nêu 3 / 6 lần (1 / 3 ở lượt đo + 2 / 3 ở lượt thật của nhánh); low và medium 3 / 3.
 Sửa việc này cần đổi lời dặn và đo lại — không làm ở nhánh này. Lỗi gộp ý trong câu mô tả điểm của thẻ lịch (1 mục / 5 đã đối chiếu, 0 chi tiết bịa hẳn, bộ kiểm của code không bắt) cũng chưa sửa: phiên điều phối chốt GHI GIỚI HẠN sau khi một phiên khác đọc tay 36 câu trả lời ở ô hỏi đáp và thấy 0 / 36 lần lặp lại.
+
+## 7. Nhánh `p9-b-loi-dan-sonnet` (11:26 21/11/2026, giờ `date`): sửa lỗi gọi lặp công cụ + bốn đoạn dặn riêng cho Sonnet
+
+### 7.1 Lỗi gọi lặp công cụ — nguyên nhân gốc và bản sửa
+
+Phiên đo thấy: câu cần công cụ thời tiết / ngày, Sonnet gọi lặp công cụ tới hết vòng rồi trả câu từ chối — 4 câu × 3 lượt chạm trần vòng 9 / 12 ở low, 8 / 12 medium, 1 / 12 high, luna 0.
+Tái hiện một câu trên bản chính, in nguyên thân gửi Bedrock từng vòng: kết quả công cụ tới model ĐÚNG và đủ ⇒ không phải lỗi dịch. Phát lại đúng thân của vòng "đã có dự báo, phải viết", mỗi lần đổi MỘT thứ:
+
+| Đổi gì | Model viết | Model gọi công cụ tiếp |
+|---|---|---|
+| không đổi (low) · medium · high · không suy luận | 0 / 8 mỗi mức | 8 / 8 mỗi mức |
+| thêm câu "đã có dự báo, hãy viết" vào kết quả công cụ | 1 / 8 | 7 / 8 |
+| thêm "mỗi lượt gọi một lần" vào mô tả công cụ | 0 / 8 | 8 / 8 |
+| ẩn công cụ thời tiết | 0 / 8 | 8 / 8 (quay sang công cụ tìm kho) |
+| công cụ không strict · bỏ `tool_choice` | 0 / 12 | 12 / 12 |
+| **bỏ khuôn JSON ép đầu ra, giữ mọi thứ khác** | **14 / 14** | 0 |
+
+Nguyên nhân: khuôn JSON ép đầu ra (`output_config.format`) gửi cùng công cụ. Bản sửa (chỉ trong `backend/llm/bedrock_model.py`): lời gọi vừa có công cụ vừa có khuôn thì không gửi khuôn, thêm công cụ nội bộ
+`tra_loi` mang đúng khuôn của agent; model gọi nó ⇒ lớp dịch đổi thành tin trả lời JSON. Quy tắc: `tra_loi` cùng công cụ thật ⇒ chạy công cụ thật, bỏ `tra_loi`; gọi hai lần ⇒ lấy lần đầu;
+model viết chữ thường ⇒ bọc vào khuôn nếu khuôn chỉ có một trường chuỗi, khuôn khác ⇒ lỗi nhóm model. SDK, sổ vết, số vòng, stream giả không thấy khác.
+
+| Kiểm sau sửa [máy kiểm] | Kết quả |
+|---|---|
+| Phát lại cùng thân yêu cầu, có bản sửa | nộp câu trả lời 8 / 8 ở low, 8 / 8 ở high (trước: 0 / 8) |
+| 8 câu dạng công cụ (4 câu của phiên đo + 4 tự đặt) × 3 lượt ở high, qua `answer_turn` | chạm trần vòng 0 / 24 · lỗi 0 · lỗi trích nguồn 0 · nhiều nhất 4 lời gọi / lượt · lâu nhất 12,4 s |
+| cùng 8 câu × 2 lượt ở low | chạm trần vòng 0 / 16 · lỗi 0 |
+| 4 câu thường mỗi mức (có nguồn · hỏi rộng · kho không có · ngoài phạm vi) | câu có nguồn trả lời đúng khuôn, 0 lỗi trích nguồn; hai câu phải từ chối ra ĐÚNG câu từ chối cố định |
+| Cách model nộp câu trả lời ở lời gọi có `tra_loi` | high: 14 lần qua `tra_loi`, 13 lần viết chữ thường (đường bọc); low: 19 qua `tra_loi`, 0 chữ thường |
+
+Đọc dòng cuối: ở high gần một nửa số câu trả lời đi qua đường bọc chữ thường — đường đó là đường chính, không phải ca hiếm; nó chỉ an toàn vì khuôn của trợ lý có đúng một trường chuỗi.
+Quan sát kèm, không sửa: câu "ngày mai nắng hay mưa, có nên ra biển…" Sonnet chọn loại `bao_lu` 3 / 3 lần ⇒ theo thiết kế câu bão / lũ, model không nêu số, phần dự báo do code nối dưới câu trả lời.
+
+### 7.2 Bốn đoạn dặn chỉ nối khi chạy Sonnet (lời dặn gửi luna không đổi — test so đúng từng hằng cũ)
+
+| Đoạn | Đo lại (cùng mẫu, mong đợi ghi trước) |
+|---|---|
+| Hiểu ý sửa lịch (ở high) | Sửa 11:36 sau review: bản đầu của đoạn dặn lấy NGUYÊN VĂN câu đo số 8 làm ví dụ ⇒ số của câu đó không tính. Đã đổi sang tả theo loại câu và đo lại: 8 lệnh còn lại × 3 lượt đúng ý 24 / 24 (trước đoạn dặn, ở high: 20 / 24… cộng câu 8 là 23 / 27); câu 8 (nay không còn trong lời dặn) 3 / 3; ba câu mơ hồ do phiên review đặt × 3 lượt 9 / 9 — đều đổi kiểu đi sang "nhẹ nhàng", 0 lần tự bỏ điểm (trước: 3 / 6 tự bỏ). Lệnh bị luật chặn 3 / 3. Lâu nhất 7,1 s ở một câu mơ hồ (hạn của lời gọi này là 10 s). |
+| Viết câu thẻ lịch (nới một đến hai câu ~50 từ + giữ đúng vật) | Sửa 11:36 — số của người viết lúc đầu ("đúng 11 / 12") quá rộng; phiên review đọc lại 12 lượt mục Chùa Thiên Mụ: ĐÚNG RÕ 7 · LỎNG 4 (kể ba vật rồi "hai Bảo vật quốc gia", không nói hai vật nào) · SAI 1 ("đều là Bảo vật quốc gia"). Mốc bản 30 từ không đoạn dặn, cùng model, 10 lượt (4 lượt sáng + 6 lượt đo thêm): đúng rõ 2 · lỏng 4 · sai 1 · không nhắc danh hiệu 3. **Đọc thẳng: tỉ lệ sai và lỏng KHÔNG giảm thấy được (sai 1 / 10 ↔ 1 / 12; lỏng 4 / 10 ↔ 4 / 12); cái được là nhiều lượt viết đúng rõ hơn (2 / 10 ↔ 7 / 12) và câu đầy đủ hơn.** Thử 40 từ: sai 2 / 6. Câu dự phòng do nhắc tên điểm khác: bản 30 từ 3 / 51 mục, bản 50 từ 4 / 102 mục ⇒ ngang nhau (dòng "0 / 27" viết trước đó là mẫu quá nhỏ). Giá phải trả của bản 50 từ: PowerPoint cắt "…" 13 / 51 mục (bản 30 từ 0 / 27). Việc giữ bản 50 từ là lựa chọn về độ đầy đủ của câu, không phải bản sửa đã chứng minh được của lỗi ghép sai ý. |
+| Định tuyến | 14 câu tự đặt × 2, hai bên cùng buổi: nơi rìa Huế low 14 / 16 ⇒ 16 / 16, high 16 / 16 ⇒ 16 / 16; nơi tỉnh khác vẫn từ chối 8 / 8 cả hai bên. Câu tự đặt chưa tái hiện được lỗi ở high ⇒ phép thử chính là bộ mù của phiên đo. |
+| Trả lời | Chưa đo điểm "Trọng tâm" (phiên đo chạy lại 85 câu). Đã thấy: 44 lượt qua `answer_turn` có đoạn dặn này, 0 lỗi, câu từ chối cố định vẫn đúng chữ. |
+
+Chưa làm: lượt thật qua giao diện sau các thay đổi này; thẻ lịch câu dài trên màn 390 px và bản in; cả bộ test. Tiền Bedrock phần này ≈ 3 USD.
