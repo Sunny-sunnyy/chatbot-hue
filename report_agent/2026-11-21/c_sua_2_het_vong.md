@@ -32,3 +32,8 @@ Chưa viết: phần chặn lời gọi công cụ trùng — chỉ viết nếu
 - Chưa chạy `test_chat_stream.py` và các file dựng cả app (gọi model thật theo cấu hình đang chạy).
 - Test dùng phản hồi dựng sẵn ⇒ không phải bằng chứng cho hệ thống thật.
 - Phép này KHÔNG cho biết: tần suất chạm trần ở người thật · hướng rộng hơn: nếu sàn không giữ ở model đang chạy thì cần chọn cờ theo nhà cung cấp (vài dòng, việc riêng) · đếm rẻ nhất: ô "chỉ `vong_cuoi_chi_viet`" trên 41 câu khó đường model cũ.
+
+## Thêm 19:00 21/11/2026 — dấu đếm cho bộ đo + một điểm của người đọc
+- **Dấu đếm `bao_vong_cuoi`** (phiên đo đề nghị: không có dấu thì không đếm chính xác được lượt nào dòng báo vòng cuối đã thật sự tới model): khi dòng báo được nối vào kết quả công cụ, mục công cụ chạy sau cùng của lượt trong sổ lượt (`tools`, có trong dòng số đo) mang `bao_vong_cuoi: true` — cả đường stream lẫn không stream; lượt model lờ dòng báo rồi xin tiếp công cụ cũng mang dấu (model ĐÃ được báo). Cờ tắt, hoặc lượt kết thúc trước vòng sát cuối ⇒ không mục nào có trường này.
+  Kiểm: `pytest tests/test_vong_cuoi_chi_viet.py -q` ⇒ `7 passed`; cố ý gỡ dòng ghi dấu ⇒ `3 failed, 4 passed` ⇒ trả lại ⇒ `7 passed`; so lại cờ tắt giống byte: khác 0 / 180; `test_het_luot_tim` 7 · `test_b2_tool_loop` 12 · `test_khoang_cach` 101 · `test_liet_ke_bai` 17 · `test_bedrock_model` 21 passed.
+- **Công cụ trả kết quả KHÔNG phải chuỗi ở vòng sát cuối** (điểm nhỏ của người đọc): chỉ có thẻ hỏi lại của công cụ lịch (một dict) — thẻ đó DỪNG lượt ngay, không còn lần gọi model nào ⇒ không có model nào cần được báo; năm công cụ còn lại (tìm kho, thời tiết, ngày, khoảng cách, liệt kê) luôn trả chuỗi [đọc code từng hàm `*_for_turn`]. Ca đó không ghi dấu.

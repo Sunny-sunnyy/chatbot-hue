@@ -1266,6 +1266,8 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None, q
         trace.clarify = clarify
         _set_fixed(trace, "", "hoi_lai")
         return
+    if getattr(trace.generated, "bao_vong_cuoi", False) and trace.tools:  # cờ `vong_cuoi_chi_viet`: dấu đếm (như `khong_co` của công cụ khoảng cách) — công cụ
+        trace.tools[-1]["bao_vong_cuoi"] = True                             # chạy sau cùng của lượt là công cụ mang dòng báo (sau nó không còn công cụ nào)
     if getattr(trace.generated, "hit_max_turns", False):  # getattr: generator thay thế trong test chỉ có `text` (như route, B68 m-4)
         _set_fixed(trace, INSUFFICIENT_ANSWER, "max_turns")
         if flags is not None and flags.thoi_tiet and (trace.thoi_tiet_ctx or {}).get("bao_lu"):

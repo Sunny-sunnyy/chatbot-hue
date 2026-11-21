@@ -45,6 +45,9 @@ def test_last_round_has_no_tools_and_the_model_is_told_in_the_last_tool_result(d
     assert trace.fixed_outcome is None and trace.answer == "Có thông tin [1]." and trace.citation_error is None
     ra = tool_outputs(gen, 4)
     assert len(ra) == 3 and ra[2].endswith(TOOL_VONG_CUOI_TEXT) and not any(TOOL_VONG_CUOI_TEXT in x for x in ra[:2])
+    # dấu đếm cho bộ đo: đúng MỘT mục công cụ của lượt (mục chạy sau cùng) mang `bao_vong_cuoi`; cờ tắt ⇒ không mục nào
+    assert [bool(t.get("bao_vong_cuoi")) for t in trace.tools][-3:] == [False, False, True] and sum(bool(t.get("bao_vong_cuoi")) for t in trace.tools) == 1
+    assert not any("bao_vong_cuoi" in t for t in trace_off.tools)
 
 
 def test_stream_path_also_drops_the_tools_in_the_last_round(deps):
@@ -57,8 +60,9 @@ def test_stream_path_also_drops_the_tools_in_the_last_round(deps):
 
     gen, trace, chu = asyncio.run(collect(VONG_CUOI))
     assert [bool(names) for names in tools_sent(gen)] == [True, True, True, False]
-    assert trace.fixed_outcome is None and chu == "Có thông tin [1]."
+    assert trace.fixed_outcome is None and chu == "Có thông tin [1]." and trace.tools[-1].get("bao_vong_cuoi") is True
     gen_off, trace_off, chu_off = asyncio.run(collect(OFF))
+    assert not any("bao_vong_cuoi" in t for t in trace_off.tools)
     assert [bool(names) for names in tools_sent(gen_off)] == [True] * 4 and trace_off.fixed_outcome == "max_turns" and chu_off == INSUFFICIENT_ANSWER
 
 
@@ -67,9 +71,10 @@ def test_turns_that_end_early_send_the_same_bytes_as_flag_off(deps):
     ở cuối lượt dài. Kiểm cả lượt có lịch sử."""
     for history in ((), (("Huế có gì chơi?", "Có Đại Nội [1]."),)):
         for n_searches in (0, 1):
-            _, gen_on = turn(deps, searches_then_answer(n_searches), VONG_CUOI, history)
+            trace_on, gen_on = turn(deps, searches_then_answer(n_searches), VONG_CUOI, history)
             _, gen_off = turn(deps, searches_then_answer(n_searches), OFF, history)
             assert sent_requests(gen_on) == sent_requests(gen_off), (history, n_searches)
+            assert not any("bao_vong_cuoi" in t for t in trace_on.tools)  # lượt không tới vòng sát cuối ⇒ KHÔNG được đếm là "dòng báo đã hiện"
 
 
 def test_model_still_asking_for_a_tool_in_the_last_round_gets_the_fixed_refusal_not_an_error(deps):
@@ -78,6 +83,7 @@ def test_model_still_asking_for_a_tool_in_the_last_round_gets_the_fixed_refusal_
     trace, gen = turn(deps, lambda n, kw: [tool_call(f"câu tìm {n}")], VONG_CUOI)
     assert len(gen.client.responses.calls) == 4 and not tools_sent(gen)[3]
     assert trace.fixed_outcome == "max_turns" and trace.answer == INSUFFICIENT_ANSWER
+    assert trace.tools[-1].get("bao_vong_cuoi") is True  # model ĐÃ được báo rồi mới xin tiếp ⇒ lượt này vẫn đếm là "dòng báo đã hiện"
 
 
 def test_distance_tool_says_plainly_when_it_has_no_number():

@@ -166,6 +166,8 @@ class GeneratedText:
     llm_calls: tuple[dict, ...] = ()
     # B2 D5: lượt trợ lý chạm `max_turns` ⇒ handler trả câu từ chối; lõi đọc cờ này để đặt `outcome="max_turns"`
     hit_max_turns: bool = False
+    # cờ `vong_cuoi_chi_viet`: dòng báo "bước kế không còn công cụ" ĐÃ được nối vào một kết quả công cụ của lượt (dấu đếm cho bộ đo; lõi chép vào sổ công cụ)
+    bao_vong_cuoi: bool = False
     # B5 D15 (đường B4 D8): công cụ `lich_trinh` thiếu số ngày ⇒ lượt dừng, giá trị công cụ trả (dữ liệu thẻ hỏi lại), không có chữ trả lời
     clarify: dict | None = None
 
@@ -565,7 +567,10 @@ class OpenAIFullCorpusGenerator:
                 if len(call_log.calls) < so_vong - 1:  # chưa phải lượt công cụ sát cuối: lần gọi model kế vẫn còn công cụ
                     return ket_qua
                 state["het_cong_cu"] = True  # lần gọi model kế là lần cuối của lượt ⇒ không còn công cụ, và model được báo ngay trong kết quả này
-                return f"{ket_qua}\n\n{TOOL_VONG_CUOI_TEXT}" if isinstance(ket_qua, str) else ket_qua
+                if not isinstance(ket_qua, str):  # chỉ thẻ hỏi lại của công cụ lịch (dict) — nó dừng lượt ngay, không còn lần gọi model nào để báo
+                    return ket_qua
+                state["bao_vong_cuoi"] = True
+                return f"{ket_qua}\n\n{TOOL_VONG_CUOI_TEXT}"
             return chay
 
         tools = [function_tool(bao(tool_fn), name_override="tim_kho", failure_error_function=None, **mo(con_luot_fn))]
@@ -629,13 +634,14 @@ class OpenAIFullCorpusGenerator:
     def _tools_result(self, result, started: float, call_log: "CallLog", state: dict) -> GeneratedText:
         """Kết quả lượt trợ lý có công cụ. Dừng ở thẻ hỏi lại (B5 D15, đường B4 D8) ⇒ `final_output` là dict công cụ trả ⇒ đọc **trước** khi ép
         `AnswerOutput`."""
+        da_bao = bool(state.get("bao_vong_cuoi"))  # cờ `vong_cuoi_chi_viet` tắt ⇒ luôn False (giá trị mặc định của trường)
         if state.get("xin_cong_cu_da_an"):  # hết lượt tìm mà model vẫn xin `tim_kho`: không có chữ model ⇒ câu từ chối cố định (như `max_turns`)
-            return dataclasses.replace(self._generated_text(result, INSUFFICIENT_ANSWER, started, call_log), hit_max_turns=True)
+            return dataclasses.replace(self._generated_text(result, INSUFFICIENT_ANSWER, started, call_log), hit_max_turns=True, bao_vong_cuoi=da_bao)
         output = getattr(result, "final_output", None)
         if isinstance(output, dict) and "loai" in output:
             return dataclasses.replace(self._generated_text(result, "", started, call_log), clarify=output)
         text = parse_structured_output(output, AnswerOutput)
-        return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"])
+        return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"], bao_vong_cuoi=da_bao)
 
     def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
                            con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None,
