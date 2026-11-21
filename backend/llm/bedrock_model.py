@@ -13,6 +13,9 @@ Các giới hạn đã đo thật trên bộ khoá đang dùng (46 lời gọi s
 - Mức suy luận luôn gửi RÕ: không gửi gì thì Claude tự suy luận cỡ "high". `none` ⇒ `thinking: between_tools` (đo: 0 token suy luận; `effort: none`
   và `thinking: disabled` đều 400); `low | medium | high` ⇒ `thinking: adaptive` + `output_config.effort`.
 - Khối suy luận (`thinking`) không cần gửi lại ở vòng công cụ kế ⇒ bỏ khỏi đầu ra, không cất chữ ký.
+- Khuôn JSON ép đầu ra (`output_config.format`) gửi CÙNG công cụ làm Claude gọi công cụ mãi không viết (phát lại một thân yêu cầu đã có đủ kết quả
+  công cụ: viết 0 / 30 lần ở mọi mức suy luận; bỏ khuôn: viết 14 / 14) ⇒ lượt vừa có công cụ vừa có khuôn KHÔNG gửi khuôn mà thêm một công cụ nội
+  bộ `tra_loi` mang đúng khuôn đó; Claude gọi nó để nộp câu trả lời, lớp dịch đổi lời gọi ấy thành tin trả lời JSON cho SDK (`ANSWER_TOOL`).
 """
 import datetime as dt
 import hashlib
@@ -40,6 +43,11 @@ UNSUPPORTED_SCHEMA_KEYS = frozenset({"maxItems", "minItems", "minimum", "maximum
 # Khoá mà GIÁ TRỊ là bảng tên ⇒ tên trong bảng không phải từ khoá schema (trường tên `default`, `pattern`… vẫn phải giữ).
 NAME_MAP_KEYS = frozenset({"properties", "$defs", "definitions"})
 AWS_IDENTIFIER = re.compile(r"arn:aws\S*|(?<!\d)\d{12}(?!\d)")  # không để ARN / mã tài khoản lọt vào lời lỗi ⇒ log
+# Công cụ nội bộ để nộp câu trả lời có khuôn ở lượt có công cụ (xem đầu file). SDK không biết tới nó: không bao giờ được chạy như công cụ thật.
+ANSWER_TOOL = "tra_loi"
+ANSWER_TOOL_DESCRIPTION = ("Nộp câu trả lời cuối cùng cho người dùng. Gọi khi đã đủ thông tin để trả lời, hoặc khi không thể tìm thêm — kể cả khi câu trả lời "
+                           "là câu từ chối theo lời dặn. Gọi đúng một lần, đặt toàn bộ câu trả lời vào tham số; không viết câu trả lời ra ngoài công cụ này.")
+CODE_FENCE = re.compile(r"^```(?:json)?\s*(?P<body>.*?)\s*```$", re.DOTALL)
 DATA_URL = re.compile(r"^data:(?P<media>[\w/+.-]+);base64,(?P<data>.+)$", re.DOTALL)
 
 
@@ -132,7 +140,11 @@ def build_body(system_instructions: str | None, input: "str | list[dict]", model
             body["tool_choice"] = {"type": "auto", "disable_parallel_tool_use": True}
     output_config: dict = {}
     if output_schema is not None and not output_schema.is_plain_text():
-        output_config["format"] = {"type": "json_schema", "schema": strip_constraints(output_schema.json_schema())}
+        schema = strip_constraints(output_schema.json_schema())
+        if tools:  # khuôn + công cụ ⇒ nộp câu trả lời qua công cụ nội bộ, không ép khuôn (lý do ở đầu file)
+            body["tools"].append({"name": ANSWER_TOOL, "description": ANSWER_TOOL_DESCRIPTION, "input_schema": schema, "strict": True})
+        else:
+            output_config["format"] = {"type": "json_schema", "schema": schema}
     effort = getattr(model_settings.reasoning, "effort", None) or reasoning_default
     if effort == "none":
         body["thinking"] = {"type": "between_tools"}
@@ -156,18 +168,45 @@ def to_usage_dict(usage: dict) -> dict:
             "output_tokens_details": {"reasoning_tokens": (usage.get("output_tokens_details") or {}).get("thinking_tokens") or 0}}
 
 
-def to_response(message: dict, model: str) -> Response:
+def _wrap_plain_answer(text: str, schema: dict) -> str:
+    """Đường lùi của `to_response`: Claude viết chữ thường thay vì gọi `ANSWER_TOOL`. Chữ đã là JSON đối tượng — kể cả nằm trong rào ```json … ```
+    (review C 21/11: không gỡ rào thì người dùng thấy nguyên khối rào) — ⇒ dùng chính JSON đó (SDK kiểm khuôn như thường)."""
+    fenced = CODE_FENCE.match(text.strip())
+    for candidate in filter(None, (fenced and fenced["body"], text)):
+        try:
+            if isinstance(json.loads(candidate), dict):
+                return candidate
+        except ValueError:
+            pass
+    required, properties = schema.get("required") or [], schema.get("properties") or {}
+    if len(properties) == 1 and required == list(properties) and properties[required[0]].get("type") == "string":
+        return json.dumps({required[0]: text.strip()}, ensure_ascii=False)
+    raise BedrockError("Bedrock: model không nộp câu trả lời theo khuôn (viết chữ thường thay vì gọi công cụ nộp câu trả lời)")
+
+
+def to_response(message: dict, model: str, answer_schema: dict | None = None) -> Response:
     """Một Message của Claude ⇒ `Response` của SDK: các khối chữ thành MỘT tin assistant, mỗi `tool_use` thành một `function_call` (giữ `id` làm
-    `call_id`), khối suy luận bỏ."""
+    `call_id`), khối suy luận bỏ. `answer_schema` = khuôn đã gửi kèm công cụ nội bộ `ANSWER_TOOL` ở lời gọi này (None = không gửi). Khi có:
+    - Claude gọi `ANSWER_TOOL` và KHÔNG gọi công cụ thật nào ⇒ tham số của nó (JSON đúng khuôn) là câu trả lời: thành tin assistant duy nhất, chữ dẫn
+      đi kèm bị bỏ; gọi hai lần ⇒ lấy lần đầu.
+    - Claude gọi `ANSWER_TOOL` CÙNG công cụ thật ⇒ chạy công cụ thật, bỏ `ANSWER_TOOL` của lượt đó (nó còn muốn tìm thêm; lượt sau nộp lại).
+    - Claude không gọi công cụ nào mà viết chữ thường (không ép `tool_choice` được) ⇒ đường lùi: khuôn chỉ có một trường chuỗi bắt buộc thì bọc chữ
+      vào trường đó; khuôn khác ⇒ `BedrockError` (nhóm lỗi model). SDK không bao giờ thấy `ANSWER_TOOL`."""
+    blocks = message["content"]
+    real_calls = [block for block in blocks if block["type"] == "tool_use" and block["name"] != ANSWER_TOOL]
+    answer = next((block["input"] for block in blocks if block["type"] == "tool_use" and block["name"] == ANSWER_TOOL), None)
+    text = "".join(block["text"] for block in blocks if block["type"] == "text")
+    if answer is not None and not real_calls:
+        text = json.dumps(answer, ensure_ascii=False)
+    elif answer_schema is not None and not real_calls and text:
+        text = _wrap_plain_answer(text, answer_schema)
     output: list[dict] = []
-    text = "".join(block["text"] for block in message["content"] if block["type"] == "text")
     if text:
         output.append({"type": "message", "id": message["id"], "role": "assistant", "status": "completed",
                        "content": [{"type": "output_text", "text": text, "annotations": []}]})
-    for block in message["content"]:
-        if block["type"] == "tool_use":
-            output.append({"type": "function_call", "id": block["id"], "call_id": block["id"], "name": block["name"],
-                           "arguments": json.dumps(block["input"], ensure_ascii=False), "status": "completed"})
+    for block in real_calls:
+        output.append({"type": "function_call", "id": block["id"], "call_id": block["id"], "name": block["name"],
+                       "arguments": json.dumps(block["input"], ensure_ascii=False), "status": "completed"})
     return Response.model_validate({"id": message["id"], "created_at": 0, "model": model, "object": "response", "output": output,
                                     "parallel_tool_calls": False, "tool_choice": "auto", "tools": [], "status": "completed",
                                     "usage": to_usage_dict(message.get("usage") or {})})
@@ -221,7 +260,8 @@ class BedrockClaudeModel(Model):
             raise BedrockError("Bedrock HTTP 403: khoá Bedrock bị từ chối hoặc đã hết hạn")
         if reply.status_code != 200:
             raise BedrockError(f"Bedrock HTTP {reply.status_code}: {AWS_IDENTIFIER.sub('<aws>', reply.text)[:300]}")
-        return to_response(reply.json(), self.model)
+        answer_schema = next((tool["input_schema"] for tool in body.get("tools", ()) if tool["name"] == ANSWER_TOOL), None)
+        return to_response(reply.json(), self.model, answer_schema)
 
     async def get_response(self, system_instructions, input, model_settings, tools, output_schema, handoffs, tracing, *,
                            previous_response_id=None, conversation_id=None, prompt=None) -> ModelResponse:
