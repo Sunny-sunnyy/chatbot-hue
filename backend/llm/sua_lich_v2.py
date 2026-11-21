@@ -86,6 +86,10 @@ MA_LUAT_KIN = {"qua_day_buoi", "vuot_quy", "sang_chong_chieu", "gio_chong", "han
 CAU_LY_DO = {"khu": "một ngày sẽ phải đi hai khu không liền nhau", "kin": "lịch sẽ có buổi quá kín hoặc quá giờ",
              "gio_mo": "điểm sẽ rơi ngoài giờ mở cửa",
              "ban_ngay": "đây là điểm tham quan ban ngày, còn buổi tối lịch chỉ xếp hoạt động buổi tối"}  # cờ `sua_lich_buoi_toi`
+# Lý do riêng của "đổi chỗ hai ngày" (đếm 20/11 trên 15.360 cặp: 1.346 ca bị chặn đều vì điểm khu xa rơi vào ngày 1; 183 ca có ngày đi / mưa mà
+# một điểm không đứng được ở buổi của nó sau khi đổi)
+CAU_LY_DO_NGAY = {"xa_ngay_dau": "ngày 1 sẽ có điểm ở khu xa trung tâm, mà lịch không xếp khu xa vào ngày đầu",
+                  "khong_giu_cho": "với ngày đi của lịch (thứ trong tuần, dự báo mưa) có điểm không đứng được ở buổi của nó sau khi đổi"}
 NHAN_TRUONG = {"so_ngay": "số ngày", "kieu_di": "kiểu đi", "so_thich": "sở thích", "tre_em": "số trẻ em", "lon_tuoi": "người lớn tuổi",
                "ngan_sach": "hạng chỗ ở"}
 CAU_KHONG_DOI = {
@@ -190,6 +194,66 @@ def la_viec_ngay_chua_lam(cau: str) -> bool:
     t = unicodedata.normalize("NFC", cau)
     hai_ngay = len(_MOC_NGAY.findall(t)) >= 2 and not re.search(r"đổi chỗ\s+ở", t, re.I)
     return bool(_VIEC_NGAY.search(t) or (hai_ngay and _DONG_TU_DOI_CHO.search(t)))
+
+
+# Cờ `sua_lich_doi_cho_ngay` (20/11, plan `report_agent/2026-11-20/c_doi_cho_ngay_plan.md`): "đổi chỗ ngày 1 với ngày 2" ⇒ code hoán đổi nội dung hai ngày.
+# Đọc câu theo DANH SÁCH CHO PHÉP (như `doi_buoi_tu_cau`): một động từ đổi chỗ + ĐÚNG hai mốc ngày khác nhau + từ đệm; gặp chữ nào khác (tên điểm,
+# gộp / tách, buổi, ngày đi…) ⇒ None ⇒ giữ dòng "Chưa làm" (từ chối nhầm được phép, áp sai thì không).
+_DT_DOI_NGAY = re.compile(r"(?<!\w)(?:đổi chỗ|hoán đổi|hoán vị|hoán|tráo|đảo)(?!\w)", re.I)
+_SO_CHU = {"một": 1, "nhất": 1, "hai": 2, "ba": 3, "bốn": 4, "tư": 4, "năm": 5}
+_MOC_DOI = re.compile(r"(?<!\w)ngày\s+(?:thứ\s+)?(\d|một|nhất|hai|ba|bốn|tư|năm|đầu tiên|đầu|cuối cùng|cuối)(?!\w)", re.I)
+_HAI_NGAY = re.compile(r"(?<!\w)(?:hai|2)\s+ngày(?!\w)", re.I)
+_DEM_DOI_NGAY = {"với", "và", "cho", "nhau", "giúp", "hộ", "dùm", "giùm", "mình", "tôi", "em", "bạn", "ơi", "hãy", "nhé", "nha", "đi", "lại", "thứ", "tự",
+                 "của", "lịch", "trong", "ạ", "thì", "luôn", "nhỉ", "vị", "trí", "sang", "lên", "xuống"}
+_DUOC_KHONG = re.compile(r"(?<!\w)được\s+(?:không|ko|chứ)(?=[\s?.!ạ]*$|\s+(?:ạ|nhỉ|bạn)\b)")  # lời nhờ cuối câu; "không" ở chỗ khác là phủ định ⇒ None (review E)
+
+
+def cap_ngay_doi_cho(cau: str, so_ngay: int) -> tuple[int, int] | None:
+    """Hai ngày người dùng nhờ ĐỔI CHỖ cho nhau, hoặc None khi câu không đúng khuôn. Chỉ đọc chữ của lượt này."""
+    t = " ".join(unicodedata.normalize("NFC", cau).casefold().split())
+    if len(_DT_DOI_NGAY.findall(t)) != 1:
+        return None
+    moc = []
+    for m in _MOC_DOI.finditer(t):
+        chu = m.group(1)
+        moc.append(1 if chu.startswith("đầu") else so_ngay if chu.startswith("cuối") else _SO_CHU.get(chu) or int(chu))
+    con = _DUOC_KHONG.sub(" ", _MOC_DOI.sub(" ", _DT_DOI_NGAY.sub(" ", t)))
+    if not moc and so_ngay == 2 and len(_HAI_NGAY.findall(con)) == 1:  # lịch 2 ngày: "đổi chỗ hai ngày cho nhau"
+        moc, con = [1, 2], _HAI_NGAY.sub(" ", con)
+    if len(moc) != 2 or moc[0] == moc[1] or not all(1 <= n <= so_ngay for n in moc):
+        return None
+    if any(tu not in _DEM_DOI_NGAY for tu in re.findall(r"\w+", con)):
+        return None
+    return min(moc), max(moc)
+
+
+def doi_cho_ngay(bang: v2.BangV2, luu: dict, a: int, b: int) -> dict:
+    """Hoán đổi nội dung ban ngày của ngày `a` và ngày `b` (mỗi điểm giữ buổi của nó) rồi đi đúng đường xếp-rồi-kiểm của mọi lượt sửa. Trả gói như `ap`.
+    Hợp luật và mọi điểm đứng đúng chỗ mới ⇒ `da_ap` có mục `doi_cho_ngay` (+ `xep_them`: thứ bộ xếp đổi THÊM so với phép hoán đổi thuần — buổi tối,
+    điểm lấp — để dòng báo nói rõ). Không ⇒ khung giữ nguyên, `khong_doi` có lý do quy từ mã luật (bảng lý do của "dời một điểm")."""
+    luu = copy.deepcopy(luu)
+    khung = copy.deepcopy(luu["khung"])
+    kq = {"da_ap": [], "khong_doi": [], "chua_lam": [], "doi_truong": [], "the": None, "ngay_di": None, "xep_lai": None}
+    doi = {a: b, b: a}
+    giu = {j: (doi.get(ngay, ngay), buoi) for j, (ngay, buoi) in _vi_tri(khung).items()}
+    k = _xep(bang, luu, _ts(khung["tham_so"]), giu, list(luu["loai"]))
+    ma = set(v2.kiem_khung_v2(bang, k))
+    vt_moi = _vi_tri(k)
+    if ma or any(vt_moi.get(j) != cho for j, cho in giu.items()):
+        kq["khong_doi"].append({"diem": f"ngày {a} với ngày {b}", "ma_luat": "ngay_khong_doi_cho",
+                                "ly_do": "xa_ngay_dau" if "cum_xa" in ma else "khu" if ma & MA_LUAT_KHU else "kin" if ma & MA_LUAT_KIN
+                                else "gio_mo" if "ngoai_gio_mo" in ma else "khong_giu_cho" if not ma else None})
+        return {**kq, "khung": khung, "luu": luu}
+    # Khung mong đợi = hoán đổi buổi sáng + chiều, buổi TỐI giữ theo ngày (hoạt động tối gắn với thứ trong tuần — đếm 20/11: 150 / 153 lịch thử giữ
+    # nguyên buổi tối theo ngày). Bộ xếp ra khác khung này ⇒ `xep_them` để dòng báo nói rõ.
+    mong = copy.deepcopy(khung)
+    na, nb = (next(ng for ng in mong["ngay"] if ng["ngay"] == n) for n in (a, b))
+    for buoi in v2.BUOI_NGAY:
+        na["buoi"][buoi], nb["buoi"][buoi] = nb["buoi"][buoi], na["buoi"][buoi]
+    them = _so_cho(mong, k)
+    kq["da_ap"].append({"loai": "doi_cho_ngay", "ngay_a": a, "ngay_b": b, "xep_them": them if any(them.values()) else None})
+    luu.update(tham_so=copy.deepcopy(k["tham_so"]), khung=copy.deepcopy(k))
+    return {**kq, "khung": k, "luu": luu}
 
 
 def loc_hanh_dong(hanh_dong: list, cau: str, luu: dict) -> tuple[list, int]:
@@ -645,6 +709,9 @@ def _phan_xep_lai(bang: v2.BangV2, x: dict) -> str:
 
 def _cau_khong_doi(bang: v2.BangV2, k: dict) -> str:
     """Một dòng "không đổi được". Mục có `goi_y` (dời một điểm đang ở trong lịch bị luật xếp chặn) ⇒ lý do + các chỗ dời được."""
+    if k["ma_luat"] == "ngay_khong_doi_cho":  # cờ `sua_lich_doi_cho_ngay`: hoán đổi hai ngày bị luật xếp chặn ⇒ lý do lời thường, lịch giữ nguyên
+        vi = f"vì {(CAU_LY_DO | CAU_LY_DO_NGAY)[k['ly_do']]}" if k["ly_do"] else "vì lịch sẽ phạm luật xếp (giờ mở cửa / cụm xa / quá dày)"
+        return f"Chưa đổi chỗ {k['diem']} được {vi} — lịch giữ nguyên."
     if "goi_y" not in k:
         return CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"], ngay=k.get("ngay"))
     ngay, buoi = k["dich"]
@@ -672,6 +739,10 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
             out.append(f"Đã dời {ten_cua_diem(bang, a['diem'])} sang buổi {NHAN_BUOI[a['buoi']]} ngày {a['ngay']}.")
         elif t == "thay_diem":
             out.append(f"Đã thay {ten_cua_diem(bang, a['diem'])} bằng {ten_cua_diem(bang, a['moi'])}.")
+        elif t == "doi_cho_ngay":
+            out.append(f"Đã đổi chỗ các điểm buổi sáng và chiều của ngày {a['ngay_a']} với ngày {a['ngay_b']}; hoạt động buổi tối giữ theo từng ngày.")
+            if a.get("xep_them"):  # nói thật khi bộ xếp đổi nhiều hơn điều được nhờ
+                out.append("Ngoài phần đổi chỗ, lịch xếp lại thêm: " + _phan_xep_lai(bang, a["xep_them"]) + ".")
     # lịch chưa có mức hạng (khối nơi ở chưa hiện) ⇒ lượt này BẬT khối: nói "đã thêm", không nói "đổi … chưa chọn → …"
     out += [f"Đã thêm gợi ý chỗ ở hạng {ten_muc_o(moi)}." for f, cu, moi in kq["doi_truong"] if f == "ngan_sach" and cu is None]
     out += [f"Đã đổi {NHAN_TRUONG[f]}: {_gia_tri(f, cu)} → {_gia_tri(f, moi)}."

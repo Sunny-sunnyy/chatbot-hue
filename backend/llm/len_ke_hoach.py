@@ -284,7 +284,13 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         kq = sl.ap(bang, luu, hanh_dong, luu_tru=luu_tru, ngay_moi=ngay_moi)
         # (C 17/11) model đã nhận là câu sửa: "đổi chỗ ngày 1 với ngày 2" từng ra "Chưa làm: đổi số ngày"; ý đổi chỗ ngày đi kèm ý làm được từng bị bỏ lặng
         if sl.la_viec_ngay_chua_lam(query) and not any(f == "so_ngay" for f, _, _ in kq["doi_truong"]):  # "gộp…" đã ra đổi số ngày ⇒ không báo ngược
-            kq["chua_lam"].append(sl.VIEC_KHAC)
+            # cờ `sua_lich_doi_cho_ngay`: câu CHỈ nhờ đổi chỗ hai ngày (code đọc được cặp ngày, lượt không có ý nào khác đã áp / bị chặn) ⇒ hoán đổi thật
+            sach = not (kq["da_ap"] or kq["khong_doi"] or kq["doi_truong"] or kq["ngay_di"] or kq["the"] or bi_chan)
+            cap = sl.cap_ngay_doi_cho(query, luu["khung"]["tham_so"]["so_ngay"]) if flags.sua_lich_doi_cho_ngay and sach else None
+            if cap:
+                kq = sl.doi_cho_ngay(bang, luu, *cap)
+            else:
+                kq["chua_lam"].append(sl.VIEC_KHAC)
         elif cht and not doc_cau:  # cờ `sua_lich_chua_ho_tro`: model nhận câu sửa chưa làm được ⇒ lượt sửa, lịch giữ nguyên, câu cố định (không đường thường)
             kq["chua_lam"].append(sl.CHUA_HO_TRO)
         elif bi_chan:  # rào số ngày (review E M-1): vẫn là lượt SỬA, code nói thẳng "chưa làm" — đường thường từng viết "đã rút" mà lịch không đổi

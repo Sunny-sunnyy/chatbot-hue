@@ -167,6 +167,9 @@ class AssistantFlags:
     # "chiều" 2 / 9): lần hiểu ý dùng khuôn + lời dặn cho `buoi` nhận "toi"; code trả lời thật (điểm ban ngày ⇒ lý do + chỗ dời được). TẮT tới khi đo
     # trên cả hai model; cần cờ sua_lich_chua_ho_tro. Tắt ⇒ chuỗi gửi model giống byte.
     sua_lich_buoi_toi: bool = False
+    # 20/11 (plan `report_agent/2026-11-20/c_doi_cho_ngay_plan.md`): "đổi chỗ ngày 1 với ngày 2" — code đọc cặp ngày (danh sách cho phép) rồi hoán đổi nội dung
+    # hai ngày qua đúng đường xếp-rồi-kiểm (`sua_lich_v2.doi_cho_ngay`). TẮT tới khi đạt; cần `sua_lich_v2`. Không đổi chuỗi gửi model.
+    sua_lich_doi_cho_ngay: bool = False
     # 21/11/2026 (người dùng mô phỏng: 4 / 4 tin vừa sửa lịch vừa hỏi, cả hai model — lịch được sửa, phần hỏi bị bỏ không một lời): lần hiểu ý có thêm
     # hành động `hoi_them`; code thêm một dòng cố định "phần câu hỏi chưa trả lời, bạn gửi riêng" vào khối thay đổi của lịch. Lượt sửa vẫn KHÔNG trả lời
     # câu hỏi đó. TẮT tới khi đo trên cả hai model; cần cờ sua_lich_chua_ho_tro. Tắt ⇒ chuỗi gửi model giống byte.
