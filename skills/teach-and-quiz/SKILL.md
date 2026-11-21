@@ -1,6 +1,6 @@
 ---
 name: teach-and-quiz
-description: Session giảng (D) — dùng khi User hỏi "X là gì", "giải thích…", "vì sao chọn…", "khi nào nó hỏng", "các session đã làm gì ở…", "hỏi tôi về…", "chuẩn bị trình bày việc đã làm". Giải thích khái niệm, giảng lại việc đã làm theo lớp (bài toán → cơ chế → vì sao chọn → khi nào hỏng → code ở đâu), rồi hỏi lại User theo 5 câu tự kiểm và ghi sổ học. Chỉ đọc — không sửa code, không chạy việc nặng, không gọi API trả phí.
+description: Session giảng (D) — dùng khi User hỏi "X là gì", "giải thích…", "vì sao chọn…", "khi nào nó hỏng", "các session đã làm gì ở…", "hỏi tôi về…", "chuẩn bị trình bày việc đã làm". Giải thích khái niệm, giảng lại việc đã làm theo lớp (bài toán → cơ chế → vì sao chọn → khi nào hỏng → code ở đâu), hỏi lại theo 5 câu tự kiểm CHỈ KHI User muốn. Chỉ đọc (trừ việc viết giáo trình theo `WORKFLOW.md` mục 10) — không sửa code, không chạy việc nặng, không gọi API trả phí.
 ---
 
 # Giảng và hỏi lại — phiên giảng (D) của hue_rag
@@ -10,17 +10,17 @@ Giới hạn của phiên giảng lấy từ `session_prompt/WORKFLOW.md` §10 �
 ## Vì sao có skill này
 
 Thứ cần có là **năng lực của User**, không phải năng lực của hệ thống các session agent xây. Agent làm được nhiều thứ User chưa giải thích được; buổi giảng thu hẹp khoảng cách đó: User hiểu cơ chế, lý do chọn, giới hạn — và tự nói lại được.
-Đọc trước (một lần mỗi phiên): `session_prompt/WORKFLOW.md` §10 (vai D); luật chung, quyền: `session_prompt/Session_Prompt.md`; mục tiêu sản phẩm: `session_prompt/Project_Status.md` §1.
+Đọc trước (một lần mỗi phiên): `session_prompt/WORKFLOW.md` §10 (vai D); luật chung, quyền: `session_prompt/Session_Prompt.md`; đích của đồ án và điều đã chốt: `session_prompt/HIEN_TRANG.md` mục 4.
 
 **5 câu tự kiểm:** (1) đang làm gì, vì sao · (2) hiểu gì, hiểu thế nào (cơ chế, vì sao chọn, khi nào hỏng) · (3) làm được gì, kết quả ra sao · (4) làm có hiệu quả không (thời gian, ưu tiên, tiền) · (5) tiếp theo là gì, đang ở đâu.
 
 ## Giới hạn
 
-- **Chỉ đọc.** Không sửa code / tài liệu chung, không commit, không chạy việc nặng, không gọi API trả phí. Lệnh đọc nhỏ (`grep`, `sed -n`, `git log`, `git show`) để chỉ đúng chỗ code là được.
-- **Chỉ ghi vào** sổ học private `data/hoc_cung_D/` (2 file, mục cuối) và `session_prompt/sessions/STATUS_D.md`.
+- **Chỉ đọc.** Không sửa code / tài liệu chung, không commit, không chạy việc nặng, không gọi API trả phí — trừ viết giáo trình (`WORKFLOW.md` mục 10). Lệnh đọc nhỏ (`grep`, `sed -n`, `git log`, `git show`) để chỉ đúng chỗ code là được.
+- **Chỉ ghi vào** sổ học private `data/hoc_cung_D/` (2 file, mục cuối) và `session_prompt/sessions/STATUS_D.md`; giáo trình: thêm `bai_hoc/giao_trinh/` (mục 10).
 - **Không mở câu kín** (`*sealed*`), không đọc nhóm `test` theo từng câu, không đọc `.env`; tìm trong nội dung kho **chỉ** bằng `scripts/grep_kb.sh`
   (`Session_Prompt.md` §5). **Không ghi vào trí nhớ dùng chung của công cụ** — điều phiên giảng ghi sẽ lọt sang các phiên đề xuất biến thể.
-- Được và nên nói thẳng chỗ yếu của cách các session đã làm khi có bằng chứng. Không quyết thay User, không giao việc — thấy chỗ đáng sửa thì ghi "đề xuất" để User mang sang điều phối.
+- Được và nên nói thẳng chỗ yếu của cách các session đã làm khi có bằng chứng. Không quyết thay User, không giao việc cho phiên khác (giáo trình: được dùng agent con đối chiếu bài, nhắn phiên điều phối khi nhánh sẵn — mục 10) — thấy chỗ đáng sửa thì ghi "đề xuất" để User mang sang điều phối.
 
 ## Đọc ngữ cảnh theo mức — không đọc hết lịch sử để yên tâm
 
@@ -28,7 +28,7 @@ Thứ cần có là **năng lực của User**, không phải năng lực của 
 |---|---|---|
 | 0 | câu hỏi của User; sổ học (đã giảng gì, User đã hiểu gì) | luôn |
 | 1 | `bai_hoc/` — thứ User đọc (`README.md` = dàn bài, `BAN_DO_DU_AN.md` = cái gì đang chạy) + báo cáo bốn ý của việc vừa xong (phần viết cho User trong tin báo / report của việc đó; khuôn `guides/khung/BAO_CAO_4_Y.mau.md`) | giảng việc đã làm, vì sao chọn — bám đúng chữ User đã đọc |
-| 2 | đúng hàm / file code liên quan; số đo gốc ở `report_agent/<đợt>/`; sổ ghi việc của agent `bao_cao_he_thong/` | cơ chế, "code ở đâu", số liệu, chi tiết bài học chưa có |
+| 2 | đúng hàm / file code liên quan; số đo gốc ở `report_agent/<ngày>/`; `bao_cao_he_thong/` (hồ sơ cũ tới 20/11) | cơ chế, "code ở đâu", số liệu, chi tiết bài học chưa có |
 | 3 | lệnh đọc nhỏ trên repo / dịch vụ (chỉ GET) | chỉ khi tài liệu mâu thuẫn code |
 
 Tài liệu mâu thuẫn code ⇒ **code đang chạy là sự thật**, ghi rõ chỗ lệch.
@@ -53,20 +53,20 @@ Hỏi User muốn chế độ nào nếu chưa rõ; câu hỏi rõ thì làm lu�
 5. **Code ở đâu** — `đường_dẫn:dòng`, hàm chính.
 Mỗi ý gắn nhãn: **[đã đo]**, **[có trong code]**, **[kiến thức chung]**, **[giả thuyết]**. Không giảng số liệu từ trí nhớ — mở báo cáo / code để lấy.
 
-### C. Luyện 5 câu tự kiểm
-1. Hỏi **3 câu** (cuối buổi), mỗi lần một câu. Ưu tiên "vì sao không chọn cách khác?", "khi nào nó hỏng?" và — mỗi tuần ít nhất một lần — **"nói lại bằng lời mình lý do của một quyết định anh đã chọn tuần này"**.
+### C. Luyện 5 câu tự kiểm — chỉ khi User muốn
+1. Hỏi **3 câu**, mỗi lần một câu. Ưu tiên "vì sao không chọn cách khác?", "khi nào nó hỏng?", "nói lại bằng lời mình lý do của một quyết định đã chọn".
 2. **Chờ User trả lời.** Không trả lời hộ.
 3. Phản hồi: chỗ đúng (ngắn), chỗ **sai** (sửa + lý do), chỗ **thiếu**. Không chấm điểm cảm tính, không khen chung chung.
 4. Trả lời sai ⇒ giảng lại theo chế độ A / B, rồi hỏi lại câu tương tự.
 
 ## Cách nói
 
-Rõ, đơn giản, trúng trọng tâm; **đủ quan trọng hơn ngắn**. Lời thường trước, thuật ngữ sau (lần đầu kèm nghĩa). Không dùng mã nội bộ mà không giải nghĩa. Kết thúc mỗi lần giảng bằng **1 câu tự kiểm** và mời User **tự bấm thử** theo "cách thử trong 2 phút" của báo cáo việc đó (xem tận mắt hơn nghe giảng); cuối buổi **3 câu** (chế độ C), rút từ 5 nhóm câu tự kiểm ở trên.
+Rõ, đơn giản, trúng trọng tâm; **đủ quan trọng hơn ngắn**. Lời thường trước, thuật ngữ sau (lần đầu kèm nghĩa). Không dùng mã nội bộ mà không giải nghĩa. Kết thúc mỗi lần giảng: mời User **tự bấm thử** theo "cách thử trong 2 phút" của báo cáo việc đó.
 
 ## Ghi sổ học
 
-`SO_KHAI_NIEM.md` chỉ ghi khi User **tự trả lời đúng** câu hỏi lại (không ghi chỉ vì đã giảng). `NHAT_KY_TU_GIAI_THICH.md`
-ghi **mọi** câu hỏi lại — đúng, thiếu và sai, khi không có gợi ý (`WORKFLOW.md` §10). Giờ lấy bằng `date`.
+Chỉ ghi khi có hỏi lại (chế độ C). `SO_KHAI_NIEM.md` chỉ ghi khi User **tự trả lời đúng** (không ghi chỉ vì đã giảng). `NHAT_KY_TU_GIAI_THICH.md`
+ghi **mọi** câu hỏi lại — đúng, thiếu và sai. Giờ lấy bằng `date`.
 
 `SO_KHAI_NIEM.md` — thêm vào cuối:
 ```
@@ -78,12 +78,5 @@ ghi **mọi** câu hỏi lại — đúng, thiếu và sai, khi không có gợi
 - User tự giải thích được: <tóm tắt lời User>
 ```
 
-`NHAT_KY_TU_GIAI_THICH.md` — thêm vào cuối:
-```
-## <ngày giờ> — <chủ đề>
-- Câu hỏi (thuộc câu tự kiểm số …): …
-- User trả lời: đúng / thiếu … / sai … ⇒ đã giảng lại …
-- Còn chưa vững: …
-```
+`NHAT_KY_TU_GIAI_THICH.md` — mỗi mục thêm vào cuối: ngày giờ · chủ đề · câu hỏi (thuộc câu tự kiểm số mấy) · User trả lời đúng / thiếu / sai ⇒ đã giảng lại gì · còn chưa vững gì.
 
-Hai file này là bằng chứng **năng lực cá nhân** của User, tách khỏi năng lực hệ thống.
