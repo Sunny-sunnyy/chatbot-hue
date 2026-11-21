@@ -9,6 +9,8 @@ import json
 import random
 import time
 
+import pytest
+
 from api.routes.chat import STREAM_METRIC_FIELDS, StreamEvents, _answer_events, sse_event
 from core.schema import GenerationError
 from llm.answer_stream import AnswerTextStream, decode_partial_string, displayable_prefix
@@ -325,3 +327,23 @@ def test_disconnect_while_route_sends_text_still_logs_calls_the_core_records_on_
 def test_sse_format_keeps_vietnamese_and_puts_multiline_text_on_one_data_line():
     chunk = sse_event("delta", {"seq": 1, "text": "Huế\nđẹp"})
     assert chunk == 'event: delta\ndata: {"seq": 1, "text": "Huế\\nđẹp"}\n\n'.encode("utf-8")
+
+
+@pytest.mark.parametrize("chu_model, ma", [
+    ("Mở cửa từ 7 giờ [Nguồn 2].", None),                                         # qua kiểm ⇒ không có mã
+    ("tim_kho", "khong_trich_dan"),                                              # chữ rác, không [n] nào (bộ câu khó 21/11)
+    (f"{INSUFFICIENT_ANSWER} Nhưng bến có chuyến buổi sáng [1].", "tu_choi_kem_trich_dan"),
+    ("Mở cửa từ 7 giờ [9].", "ma_nguon_la"),
+])
+def test_metrics_record_which_check_retracted_the_turn_without_changing_the_outcome(chu_model, ma):
+    """21/11/2026: số đo `loi_kiem` chỉ GHI loại phép kiểm làm lượt bị rút; lượt vẫn bị rút y như trước (sự kiện `error`, outcome `retracted`)."""
+    from api.routes.chat import _copy_trace_metrics, loai_loi_kiem
+    from core.schema import CitationIntegrityError
+
+    stream, chunks, trace = stream_with_text(chu_model)
+    _copy_trace_metrics(trace, stream.metrics)
+    assert stream.metrics["loi_kiem"] == ma and (stream.metrics["outcome"] == "retracted") is (ma is not None)
+    assert ("error" in [name for name, _ in parse_sse(chunks)]) is (ma is not None)
+    assert [loai_loi_kiem(CitationIntegrityError(loi)) for loi in ("itinerary check failed: gio_chong", "weather numbers without source: 2",
+                                                                   "distance numbers without source: 1", "lời lạ")] == [
+        "kiem_lich", "so_thoi_tiet", "so_khoang_cach", "khac"]

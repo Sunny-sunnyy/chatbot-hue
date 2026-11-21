@@ -90,3 +90,24 @@ def test_distance_tool_says_plainly_when_it_has_no_number():
     assert co_so.startswith("[Nguồn 1]") and kc.TRANG_THAI_KHONG_CO not in co_so
     cu, _ = goi(False, kc.KHAC)
     assert cu.startswith("[Nguồn 1]") and kc.TRANG_THAI_KHONG_CO not in cu
+
+
+def test_listing_tool_shares_the_last_round_rule_and_its_extra_round_is_counted(deps):
+    """Ghép với cờ `liet_ke_bai` (21/11): lượt có công cụ liệt kê được thêm MỘT vòng (5 thay vì 4) ⇒ vòng cuối chỉ viết phải là vòng thứ 5, không phải thứ 4;
+    công cụ liệt kê bị ẩn sau hai lần dùng VÀ ở vòng cuối, qua cùng hàm gom điều kiện với mọi công cụ khác."""
+    from llm import liet_ke as lk
+    from test_liet_ke_bai import MUC_LUC, goi_liet_ke
+
+    co = AssistantFlags(tim_them=True, vong_cuoi_chi_viet=True, liet_ke_bai=True, muc_luc=MUC_LUC)
+
+    def script(n, kw):
+        if not kw.get("tools"):
+            return [answer("Có thông tin [1].")]
+        return [goi_liet_ke("quan_an", [("bún", "chè")[n - 1]])] if n <= 2 else [tool_call(f"câu tìm {n}")]
+
+    trace, gen = turn(deps, script, co)
+    assert tools_sent(gen) == [["tim_kho", "liet_ke_bai"], ["tim_kho", "liet_ke_bai"], ["tim_kho"], ["tim_kho"], []]  # 5 vòng; vòng 5 không công cụ
+    assert trace.fixed_outcome is None and trace.answer == "Có thông tin [1]." and trace.citation_error is None
+    ra = tool_outputs(gen, 5)
+    assert ra[-1].endswith(TOOL_VONG_CUOI_TEXT) and not any(TOOL_VONG_CUOI_TEXT in x for x in ra[:-1])  # chỉ kết quả công cụ của vòng sát cuối (vòng 4) mang dòng báo
+    assert lk.LAN_CUOI in ra[1]  # lần liệt kê thứ hai vẫn nói đó là lần cuối của riêng công cụ này

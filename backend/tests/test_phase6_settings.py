@@ -26,6 +26,7 @@ def test_phase6_settings_are_exact():
             "model": "global.anthropic.claude-sonnet-5-5",
             "region": "ap-southeast-1",
             "max_tokens": 128000,
+            "cong_cong_cu": "tu_khoa",
             "sua_lich_timeout_seconds": 10,
             "creds_file_env": "HUE_BEDROCK_CREDS_FILE",
         },
