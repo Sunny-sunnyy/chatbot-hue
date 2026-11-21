@@ -277,8 +277,9 @@ def _tra_cache(state, body: "ChatRequest", query: str, trace: AnswerTrace, metri
 
 def _luu_cache(kho, query: str, trace: AnswerTrace, metrics: dict, khong_luu_y_thieu: bool = False) -> None:
     """Sau một lượt "success" được tra mà trượt: lưu nếu là lượt trả lời từ kho thuần (`luot_luu_duoc`).
-    `khong_luu_y_thieu` (cờ `web_chi_khi_tu_choi`): lượt nhiều ý còn dòng "Tư liệu chưa có thông tin về…" trước đây luôn có mục web nên không bao giờ được
-    lưu; cờ bật thì lượt đó không còn mục web ⇒ giữ nguyên việc KHÔNG lưu (không để một câu trả lời thiếu ý thành bản lưu cho người sau)."""
+    `khong_luu_y_thieu` (cờ `web_chi_khi_tu_choi`): lượt nhiều ý còn dòng "Tư liệu chưa có thông tin về…" trước đây có mục web (khi dịch vụ tìm web
+    sẵn sàng) nên không được lưu — dịch vụ web không có / hết lượt thì lượt đó TỪNG được lưu (review C 21/11); cờ bật thì lượt đó không còn mục web ⇒ KHÔNG lưu
+    trong mọi trường hợp (không để một câu trả lời thiếu ý thành bản lưu cho người sau)."""
     if khong_luu_y_thieu and trace.nhieu_y and co_y_thieu(trace.answer or ""):
         return
     if kho is not None and luot_luu_duoc(trace, bool(metrics["refusal"])):

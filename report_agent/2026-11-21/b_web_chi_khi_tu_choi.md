@@ -16,7 +16,7 @@ Từ dùng: *tin nhiều ý* = tin mà bộ đếm ý hỏi của code ra từ 2
 
 ## Đổi gì trong code
 - `backend/llm/assistant.py`: thêm công tắc `web_chi_khi_tu_choi`; luật mở mục web (`web_gate_open`, một chỗ cho mọi đường) bỏ nhánh "tin nhiều ý có dòng chưa có" khi công tắc bật; hàm `so_y_thieu` đếm dòng "chưa có".
-- `backend/api/routes/chat.py`: lượt nhiều ý còn dòng "chưa có" không được lưu vào bộ nhớ đệm câu trả lời khi công tắc bật (trước đây lượt đó có mục web nên vốn không lưu — giữ nguyên hành vi); dòng số đo của lượt nhiều ý thêm `n_y_thieu` (một con số, không chữ).
+- `backend/api/routes/chat.py`: lượt nhiều ý còn dòng "chưa có" không được lưu vào bộ nhớ đệm câu trả lời khi công tắc bật (trước đây lượt đó có mục web nên không lưu — nhưng chỉ khi dịch vụ tìm web sẵn sàng; dịch vụ web không có / hết lượt thì lượt đó từng được lưu [review C, ca dò qua route thật]; công tắc bật thì không lưu trong mọi trường hợp); dòng số đo của lượt nhiều ý thêm `n_y_thieu` (một con số, không chữ).
 - `backend/config/settings.yaml`: một dòng, đang `false`.
 - `backend/tests/test_web_chi_khi_tu_choi.py`: 13 test (tìm kho thật, model giả).
 
