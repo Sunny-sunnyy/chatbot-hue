@@ -219,6 +219,8 @@ class AssistantFlags:
             raise ValueError("assistant.khoang_cach_tinh_san needs assistant.khoang_cach: true")
         if self.thoi_tiet and (not self.tim_them or self.du_bao is None):
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
+        if self.liet_ke_bai and (not self.tim_them or self.muc_luc is None):
+            raise ValueError("assistant.liet_ke_bai needs assistant.tim_them: true and the article index (loaded from the knowledge base)")
         if self.bao_lu_cong_cu and not self.thoi_tiet:
             raise ValueError("assistant.bao_lu_cong_cu needs assistant.thoi_tiet: true")
         if self.len_ke_hoach_v2 and (not self.lich_trinh_bieu_mau or self.bang_lich_v2 is None):
