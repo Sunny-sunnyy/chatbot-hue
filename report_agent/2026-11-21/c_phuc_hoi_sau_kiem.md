@@ -130,3 +130,12 @@ Giới hạn nói thẳng: phép kiểm không kiểm được phép tính, nên
   lượt mất một gạch đầu dòng như kể trên); lượt thứ 7 (V10 lượt 2) lần này model tự trả câu từ chối khuôn; 4 câu số sai × 2 model: model xác nhận số sai 0 / 8 (7 đính chính bằng số
   hệ thống, 1 nói không xác nhận được). Dữ liệu: `phat_lai_nhanh_2.jsonl` cùng thư mục riêng tư.
 - Lỗ còn lại sau thu hẹp (chấp nhận, ghi để đếm): người dùng gõ "45 độ", model tự khẳng định "mai 45 độ" ⇒ qua phép kiểm. 0 / 8 lượt thật model làm vậy.
+- Giới hạn phiên B nêu khi soát lại `f85fed7` (READY): người dùng nêu số KHÔNG kèm đơn vị ("mai nóng 45 phải không?") và model đính chính "không phải 45 độ đâu" ⇒ câu đính chính
+  bị gỡ; người dùng nhận câu dẫn cố định + khối dự báo (không lỗi, không số sai, nhưng mất lời đính chính). Cái giá của việc thu hẹp; để thước đếm.
+
+## 9. Ghi 14:17 21/11/2026 (giờ `date`) — nhánh này (`p9-c-phuc-hoi-kiem-so`) CHỈ có phần kiểm SỐ; phần (iii) trích dẫn TREO
+
+Phiên điều phối quyết gộp phần kiểm số (đã có review READY) và treo phần (iii) — đổi lượt trượt bộ kiểm TRÍCH DẪN thành câu từ chối cố định. Lý do: với chữ rác của model
+(`placeholder`, `tim_kho`), câu "không tìm thấy đủ thông tin" nói một điều chưa chắc đúng, và số "lượt lỗi hoặc từ chối" của thước không giảm (lượt chỉ chuyển cột); hai gốc của
+chữ rác đang được chữa ở nhánh khác. Commit (iii) được giữ làm hồ sơ trên nhánh `p9-c-phuc-hoi-sau-kiem` (`70c9f44`), không nằm trong nhánh này (đã hoàn nguyên). Ở nhánh này, lượt
+trượt bộ kiểm trích dẫn vẫn như main: bị rút + nút Thử lại.
