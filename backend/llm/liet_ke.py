@@ -1,0 +1,143 @@
+"""Công cụ `liet_ke_bai` — liệt kê BÀI của kho theo nhóm / cụm từ, do code trả lời (plan `report_agent/2026-11-21/b_cong_cu_liet_ke_plan.md`).
+
+Vì sao: câu xin danh sách và câu "nơi nào có đặc điểm X" cần chạm NHIỀU BÀI, mà bước tìm chỉ trả 10 đoạn (đếm 21/11: lăng 2 / 8 bài, quán cà phê
+3 / 24, lễ hội 0 / 39). Ở đây code đi qua mọi bài của một nhóm, so NGUYÊN CỤM TỪ trên tên bài + toàn văn, trả mỗi bài một dòng kèm một dòng làm chứng
+lấy từ chính bài đó. Không gọi model, không dữ liệu mới: nhóm = thư mục của bài trong kho (không nhãn tự đặt).
+
+Module thuần (không đọc cấu hình, không SDK); `assistant.py` bọc thành công cụ của một lượt.
+"""
+from dataclasses import dataclass
+from pathlib import Path
+import re
+import unicodedata
+
+from ingestion.source_state import read_source_lf
+
+# Nhóm = thư mục của bài trong kho ⇒ nhãn hiển thị. Bài cẩm nang nằm ngay ở thư mục lĩnh vực (không thuộc nhóm nào) chỉ có mặt khi chọn `tat_ca`.
+NHOM = {
+    "quan_an": ("foods/restaurants/", "quán ăn"),
+    "quan_ca_phe": ("foods/cafes/", "quán cà phê"),
+    "mon_dac_san": ("foods/local_specialties/", "món đặc sản"),
+    "le_hoi": ("festivals/festival/", "lễ hội"),
+    "di_tich": ("heritages/heritage/", "di tích"),
+    "nghe_thuat": ("performing_arts/arts/", "nghệ thuật biểu diễn"),
+    "diem_den": ("travel/places/", "điểm đến"),
+    "dich_vu": ("travel/services/", "dịch vụ du lịch"),
+    "ve": ("travel/tickets/", "vé"),
+}
+TAT_CA = "tat_ca"
+TIEU_DE_NGUON = "Mục lục kho tư liệu"
+NGUON_SOURCE = "he-thong-muc-luc"  # `source` của nguồn — không phải một bài kho (không `bai_id`)
+TOI_DA_DONG = 40          # số bài tối đa trong một kết quả; nhiều hơn ⇒ dòng "còn k bài nữa"
+TOI_DA_CUM_TU = 3
+CUM_TU_DAI_NHAT = 40      # ký tự; cụm dài hơn bị bỏ (câu cả dòng không phải "cụm từ")
+DONG_DAI_NHAT = 220       # ký tự của dòng làm chứng
+SO_LAN_MOI_LUOT = 2
+
+_GACH = re.compile(r"\s*[-–—−]\s*")
+_DAU_DONG = re.compile(r"^(?:[-*+]\s+|\d+\.\s+)")
+_MARKUP = re.compile(r"\*\*|__|`")
+
+
+def chuan(text: str) -> str:
+    """Dạng để SO cụm từ: NFC, không phân biệt hoa thường, gộp khoảng trắng, mọi kiểu gạch nối thành `-` và bỏ khoảng trắng quanh nó
+    ("6h - 8h" khớp "6h–8h"). GIỮ dấu tiếng Việt — bỏ dấu dễ khớp nhầm."""
+    return _GACH.sub("-", " ".join(unicodedata.normalize("NFC", text).casefold().split()))
+
+
+@dataclass(frozen=True)
+class Bai:
+    rel: str                       # đường dẫn tương đối của file trong kho
+    tieu_de: str
+    dong: tuple[str, ...]          # các dòng chữ của bài (đã bỏ ký hiệu Markdown đầu dòng), không gồm tiêu đề
+    dong_chuan: tuple[str, ...]    # `chuan` của từng dòng — tính một lần lúc nạp
+    tom_tat: str                   # dòng giới thiệu bài khi không lọc theo cụm từ
+
+
+@dataclass(frozen=True)
+class KetQua:
+    tong: int                      # số bài khớp (trước khi cắt trang)
+    o_ten: int                     # trong đó số bài có cụm từ ngay ở TÊN bài (xếp trước)
+    dong: tuple[str, ...]          # "Tên bài — dòng làm chứng", tối đa `TOI_DA_DONG`
+    cum_tu: tuple[str, ...]        # cụm từ thật sự dùng để lọc (đã bỏ cụm rỗng / quá dài)
+
+
+def _sach(line: str) -> str:
+    return _MARKUP.sub("", _DAU_DONG.sub("", line.strip())).strip()
+
+
+def _tom_tat(dong: list[tuple[str, str]]) -> str:
+    """Dòng giới thiệu một bài: dòng "Loại hình: …" nếu có, không thì câu đầu của mục "Tóm tắt", không thì dòng chữ đầu tiên."""
+    for _, text in dong:
+        if text.casefold().startswith("loại hình:"):
+            return text
+    for muc, text in dong:
+        if muc.casefold() == "tóm tắt":
+            return text
+    return dong[0][1] if dong else ""
+
+
+def bai_tu_markdown(rel: str, markdown: str) -> Bai:
+    tieu_de, muc, dong = Path(rel).stem, "", []
+    for raw in markdown.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        if line.startswith("# ") and tieu_de == Path(rel).stem:
+            tieu_de = line[2:].strip()
+        elif line.startswith("#"):
+            muc = line.lstrip("#").strip()
+        else:
+            text = _sach(line)
+            if text:
+                dong.append((muc, text))
+    return Bai(rel=rel, tieu_de=tieu_de, dong=tuple(t for _, t in dong), dong_chuan=tuple(chuan(t) for _, t in dong), tom_tat=_tom_tat(dong))
+
+
+def nap_muc_luc(root: Path, rel_paths: list[str]) -> tuple[Bai, ...]:
+    """Mục lục của kho đang chạy: mọi file mà `discover_full_corpus_files` trả (cùng danh sách bài của chỉ mục), xếp theo tiêu đề."""
+    bai = [bai_tu_markdown(rel, read_source_lf(root / rel)) for rel in rel_paths]
+    return tuple(sorted(bai, key=lambda b: chuan(b.tieu_de)))
+
+
+def _cat(text: str) -> str:
+    return text if len(text) <= DONG_DAI_NHAT else text[:DONG_DAI_NHAT].rsplit(" ", 1)[0] + "…"
+
+
+def loc(muc_luc: tuple[Bai, ...], nhom: str, cum_tu: list[str]) -> KetQua:
+    """Bài của `nhom` (hoặc mọi bài khi `tat_ca`) mà tên bài hoặc toàn văn chứa ÍT NHẤT MỘT cụm từ; không có cụm từ ⇒ mọi bài của nhóm.
+    So nguyên cụm sau `chuan` — không phải biểu thức. Bài có cụm từ ngay ở TÊN xếp trước (đó thường là "loại" người hỏi cần: lăng, chùa, bún bò…) với
+    dòng giới thiệu của bài; bài chỉ nhắc cụm từ trong thân xếp sau, kèm đúng dòng đầu tiên chứa cụm từ để model đọc ngữ cảnh (kể cả câu phủ định)."""
+    prefix = "" if nhom == TAT_CA else NHOM[nhom][0]
+    cum = tuple(dict.fromkeys(c for c in (chuan(x) for x in cum_tu[:TOI_DA_CUM_TU]) if c and len(c) <= CUM_TU_DAI_NHAT))
+    o_ten, o_than = [], []
+    for bai in muc_luc:
+        if not bai.rel.startswith(prefix):
+            continue
+        if not cum:
+            o_than.append((bai, bai.tom_tat))
+        elif any(c in chuan(bai.tieu_de) for c in cum):
+            o_ten.append((bai, bai.tom_tat))
+        else:
+            chung = next((bai.dong[i] for i, d in enumerate(bai.dong_chuan) if any(c in d for c in cum)), None)
+            if chung is not None:
+                o_than.append((bai, chung))
+    khop = o_ten + o_than
+    dong = tuple(f"{bai.tieu_de} — {_cat(chung)}" if chung else bai.tieu_de for bai, chung in khop[:TOI_DA_DONG])
+    return KetQua(tong=len(khop), o_ten=len(o_ten), dong=dong, cum_tu=cum)
+
+
+def muc_nguon(nhom: str, kq: KetQua) -> str:
+    """Tên mục của nguồn (model và người đọc sổ nguồn thấy): nhóm + cụm từ đã lọc."""
+    ten = "mọi nhóm" if nhom == TAT_CA else NHOM[nhom][1]
+    return f"Bài thuộc nhóm {ten}" + (f" có cụm từ: {'; '.join(kq.cum_tu)}" if kq.cum_tu else "")
+
+
+def trang_thai(kq: KetQua) -> str:
+    """Dòng đầu của kết quả công cụ (đứng ngoài khối nguồn): có bao nhiêu bài khớp, có bị cắt trang không."""
+    if kq.tong == 0:
+        return "Trạng thái: không có bài nào trong tư liệu khớp. Thử một lần với cụm từ khác (ngắn hơn, cách viết khác) hoặc nhóm khác; vẫn không có thì coi như tư liệu không có thông tin này."
+    con = kq.tong - len(kq.dong)
+    ten = f" ({kq.o_ten} bài có cụm từ ngay ở tên, xếp trước; {kq.tong - kq.o_ten} bài chỉ nhắc tới trong nội dung)" if kq.cum_tu and kq.o_ten and kq.o_ten < kq.tong else ""
+    return (f"Trạng thái: trong tư liệu có {kq.tong} bài khớp{ten}" + (f", dưới đây là {len(kq.dong)} bài đầu; còn {con} bài nữa — thêm cụm từ để thu hẹp." if con else ".")
+            + " Mỗi dòng là tên bài và một dòng lấy từ chính bài đó.")
