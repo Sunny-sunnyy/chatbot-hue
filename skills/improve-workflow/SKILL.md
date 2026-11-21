@@ -79,4 +79,4 @@ lập mới chỉ để khớp skill; tối thiểu cần MỘT file sổ cải 
   `session_prompt/sessions/STATUS_<X>.md` · lời User: `data/loi_user/` · nơi ghi việc trong ngày: `session_prompt/CURRENT_HANDOFF.md` và
   `report_agent/<ngày>/TONG_HOP.md` · trí nhớ riêng của công cụ: thư mục trí nhớ của từng công cụ, ngoài repo.
 - Riêng dự án này: rào riêng tư MỚI hỏi User trước (User 14/11/2026: không thêm rào riêng tư mới — `session_prompt/HIEN_TRANG.md` mục 4). Skill đi kèm:
-  `propose-options`, `giao-viec-agent-con`.
+  `propose-options`, `giao-viec-agent-con`; cải tiến SẢN PHẨM (đích, thước, hướng) là skill anh em `improve-project`.

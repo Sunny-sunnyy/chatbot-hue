@@ -48,6 +48,7 @@ Chi tiết mức kiểm: `../CACH_LAM_VIEC.md` mục 2.
 | `risk-gated-agent-review` | sửa nhẹ | cổng tối thiểu + bảng kiểm theo tác động là chung; đổi đường dẫn mẫu report; làm một mình: người kiểm = phiên mới ngữ cảnh sạch |
 | `run-experiment` | phải sửa | khung "tiêu chí ghi trước, mốc, đổi một thứ, luật giữ / gỡ" là chung; bộ câu, thủ tục bộ an toàn, tên báo cáo khâu là của một hệ RAG |
 | `improve-workflow` | nguyên, viết lại khối "Ở dự án này" | thân trung tính: nhịp cuối ngày, ba con số, nấc "máy trước chữ sau" |
+| `improve-project` | nguyên, viết lại khối "Ở dự án này" | cải tiến SẢN PHẨM theo vòng: đích bằng lời người chủ, một con số, lỗi theo nguyên nhân, đo lại, dừng / quay đầu [chưa chạy trọn một vòng nào] |
 
 Bảng này lập sau khi **đọc trọn 8 skill cũ (đã sửa) và viết 2 skill mới** (18/11/2026); chưa skill nào được chép thử sang một dự án thứ hai [chưa chạy]. Công cụ khác Claude Code tìm skill ở thư mục
 `.agents/skills` (theo tài liệu công khai, chưa thử) ⇒ ở dự án mới đặt skill vào đó hoặc tạo liên kết.
