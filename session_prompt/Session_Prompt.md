@@ -8,7 +8,7 @@ Bản gọt 21/11/2026: bỏ chuyện kể sự cố, luật trùng, luật củ
 ## 1. Dự án và giao tiếp
 
 - Repo `/home/minhhieu/hue_rag`, nhánh `main`, remote `origin`.
-- Nói với User bằng tiếng Việt, rõ, đơn giản, đủ ý. Identifier, schema, lệnh bằng tiếng Anh; comment / docstring cần thiết bằng tiếng Việt, ghi *vì sao*.
+- Nói với User bằng tiếng Việt, rõ, đơn giản, đủ ý. Tên biến, hàm, trường schema theo quy ước của module đang sửa (phần lớn là tiếng Việt không dấu); comment / docstring cần thiết bằng tiếng Việt, ghi *vì sao*.
 - Phản biện bằng lập luận và dữ liệu. Phân biệt **đã chốt** / **đề xuất** / **giả thuyết**, và **quan sát** / **nguyên nhân đã chứng minh**.
 - Hỏi User khi câu trả lời đổi phạm vi, dữ liệu, tiền, thao tác phá hủy, kiến trúc hoặc quyền. Có mặc định hợp lý thì dùng và nói ra. Đưa lựa chọn cho User
   theo skill `propose-options`.
