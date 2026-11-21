@@ -1,0 +1,92 @@
+"""Vòng cuối chỉ viết + hai dòng báo cho model + trạng thái "không có số" của công cụ khoảng cách (21/11/2026) — 0 USD.
+
+Vì sao: người dùng mô phỏng — câu 3–5 ý có "bao xa" + nơi không có trong bảng khoảng cách ⇒ 3 lần tìm kho + 3 lần khoảng cách ⇒ hết vòng ⇒ câu từ chối trống
+(luna 5 / 44 lượt). Ba cờ, mặc định TẮT: `vong_cuoi_chi_viet` (vòng cuối không kèm công cụ, và kết quả công cụ sát cuối báo điều đó), `bao_het_luot_tim`
+(kết quả lần tìm kho cuối được phép báo "hết lượt tìm"), `khoang_cach_trang_thai` (dòng trạng thái khi không có số).
+Model là `OpenAIResponsesModel` thật của SDK với phản hồi dựng sẵn (như `test_b2_tool_loop.py`); tìm kho là Qdrant thật (chỉ đọc). Đây không phải bằng chứng
+model thật viết gì ở vòng cuối — phần đó là lượt đo có phí ghi trong report của nhánh.
+"""
+import asyncio
+
+from llm import khoang_cach as kc
+from llm.assistant import AnswerTrace, AssistantFlags, khoang_cach_for_turn
+from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, TOOL_HET_LUOT_TIM_TEXT, TOOL_VONG_CUOI_TEXT
+from test_b2_tool_loop import answer, deps, tool_call  # noqa: F401  (fixture `deps` dùng chung)
+from test_het_luot_tim import searches_then_answer, sent_requests, tools_sent, turn
+
+OFF = AssistantFlags(tim_them=True)
+VONG_CUOI = AssistantFlags(tim_them=True, vong_cuoi_chi_viet=True)
+
+
+def tool_outputs(gen, call: int) -> list[str]:
+    """Kết quả công cụ nằm trong đầu vào của lần gọi model thứ `call` (từ 1)."""
+    return [i["output"] for i in gen.client.responses.calls[call - 1]["input"] if isinstance(i, dict) and i.get("type") == "function_call_output"]
+
+
+def tim_mai(n, kw):
+    """Model cứ xin tìm kho chừng nào còn được đưa công cụ; hết công cụ thì viết (trích nguồn [1] của lần tìm đầu)."""
+    return [tool_call(f"câu tìm {n}")] if kw.get("tools") else [answer("Có thông tin [1].")]
+
+
+def test_three_flags_default_off():
+    assert (AssistantFlags().vong_cuoi_chi_viet, AssistantFlags().bao_het_luot_tim, AssistantFlags().khoang_cach_trang_thai) == (False, False, False)
+
+
+def test_last_round_has_no_tools_and_the_model_is_told_in_the_last_tool_result(deps):
+    """Cờ tắt: 4 lần gọi đều kèm công cụ, hết vòng ⇒ câu từ chối cố định. Cờ bật: lần gọi thứ 4 KHÔNG kèm công cụ ⇒ model viết; kết quả công cụ của lượt sát
+    cuối (và chỉ lượt đó) kết thúc bằng dòng báo "bước kế không còn công cụ"."""
+    trace_off, gen_off = turn(deps, tim_mai, OFF)
+    assert [bool(names) for names in tools_sent(gen_off)] == [True] * 4
+    assert trace_off.fixed_outcome == "max_turns" and trace_off.answer == INSUFFICIENT_ANSWER
+
+    trace, gen = turn(deps, tim_mai, VONG_CUOI)
+    assert [bool(names) for names in tools_sent(gen)] == [True, True, True, False]
+    assert trace.fixed_outcome is None and trace.answer == "Có thông tin [1]." and trace.citation_error is None
+    ra = tool_outputs(gen, 4)
+    assert len(ra) == 3 and ra[2].endswith(TOOL_VONG_CUOI_TEXT) and not any(TOOL_VONG_CUOI_TEXT in x for x in ra[:2])
+
+
+def test_turns_that_end_early_send_the_same_bytes_as_flag_off(deps):
+    """Lượt kết thúc trước vòng sát cuối (không tìm thêm / tìm một lần): cờ bật gửi model đúng từng byte như cờ tắt — dòng báo và việc ẩn công cụ chỉ xuất hiện
+    ở cuối lượt dài. Kiểm cả lượt có lịch sử."""
+    for history in ((), (("Huế có gì chơi?", "Có Đại Nội [1]."),)):
+        for n_searches in (0, 1):
+            _, gen_on = turn(deps, searches_then_answer(n_searches), VONG_CUOI, history)
+            _, gen_off = turn(deps, searches_then_answer(n_searches), OFF, history)
+            assert sent_requests(gen_on) == sent_requests(gen_off), (history, n_searches)
+
+
+def test_model_still_asking_for_a_tool_in_the_last_round_gets_the_fixed_refusal_not_an_error(deps):
+    """Model lờ dòng báo, vẫn xin công cụ ở vòng không còn công cụ ⇒ SDK báo công cụ không dùng được ⇒ kết cục như hết vòng hôm nay (câu từ chối cố định),
+    không phải lỗi 500."""
+    trace, gen = turn(deps, lambda n, kw: [tool_call(f"câu tìm {n}")], VONG_CUOI)
+    assert len(gen.client.responses.calls) == 4 and not tools_sent(gen)[3]
+    assert trace.fixed_outcome == "max_turns" and trace.answer == INSUFFICIENT_ANSWER
+
+
+def test_last_allowed_search_result_tells_the_model_the_search_budget_is_used(deps):
+    """Cờ `bao_het_luot_tim` (cùng cờ ẩn công cụ tìm sau hai lần): kết quả lần tìm thứ hai kết thúc bằng dòng báo; lần đầu thì không. Cờ tắt: không dòng nào."""
+    co_bao = AssistantFlags(tim_them=True, het_luot_bo_cong_cu=True, bao_het_luot_tim=True)
+    _, gen = turn(deps, searches_then_answer(2), co_bao)
+    ra = tool_outputs(gen, 3)
+    assert len(ra) == 2 and ra[1].endswith(TOOL_HET_LUOT_TIM_TEXT) and TOOL_HET_LUOT_TIM_TEXT not in ra[0]
+    _, gen_off = turn(deps, searches_then_answer(2), AssistantFlags(tim_them=True, het_luot_bo_cong_cu=True))
+    assert not any(TOOL_HET_LUOT_TIM_TEXT in x for x in tool_outputs(gen_off, 3))
+
+
+def test_distance_tool_says_plainly_when_it_has_no_number():
+    """Cờ `khoang_cach_trang_thai`: nơi ngoài danh sách ⇒ kết quả mở đầu bằng dòng trạng thái (đứng ngoài khối nguồn), nguồn "chưa có số" vẫn được đăng để trích;
+    cặp có số ⇒ không có dòng trạng thái; cờ tắt ⇒ chữ như cũ."""
+    bang = kc.BangKhoangCach(ten={"a": "Điểm A", "b": "Điểm B"}, ten_khac={"a": (), "b": ()}, cap={"a|b": {"km": 4.4, "phut": 9}})
+
+    def goi(trang_thai: bool, diem_b: str) -> tuple[str, AnswerTrace]:
+        trace = AnswerTrace()
+        return asyncio.run(khoang_cach_for_turn(trace, bang, trang_thai)("a", diem_b)), trace
+
+    khong_co, trace = goi(True, kc.KHAC)
+    assert khong_co.startswith(kc.TRANG_THAI_KHONG_CO + "\n\n[Nguồn 1]") and kc.CAU_CHUA_CO in khong_co
+    assert len(trace.so_nguon) == 1 and kc.TRANG_THAI_KHONG_CO not in " ".join(trace.so_nguon[0].excerpts) and trace.tools[0]["khong_co"] is True
+    co_so, _ = goi(True, "b")
+    assert co_so.startswith("[Nguồn 1]") and kc.TRANG_THAI_KHONG_CO not in co_so
+    cu, _ = goi(False, kc.KHAC)
+    assert cu.startswith("[Nguồn 1]") and kc.TRANG_THAI_KHONG_CO not in cu

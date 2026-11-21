@@ -515,11 +515,16 @@ class OpenAIFullCorpusGenerator:
         return parsed.route, queries
 
     def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                       con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, con_vong_fn=None) -> tuple[Agent, dict, dict]:
+                       con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, vong_cuoi: "tuple[CallLog, int] | None" = None) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
-        state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn, "con_vong_fn": con_vong_fn}
+        # `vong_cuoi` = (sổ lời gọi của lượt, trần vòng) khi cờ `vong_cuoi_chi_viet` bật. SDK hỏi `is_enabled` HAI lúc: khi gom công cụ cho lần gọi kế VÀ khi xử lý
+        # lời xin công cụ của lần gọi vừa xong — hai lúc đó có cùng số lần gọi đã xong, nên không phân biệt được bằng bộ đếm (bản đầu: công cụ của lượt sát cuối
+        # bị coi là "đã tắt" ngay khi model xin ⇒ lỗi). Mốc đúng là: công cụ của lượt sát cuối ĐÃ CHẠY XONG ⇒ `state["het_cong_cu"]` (đặt trong `bao`).
+        state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn, "het_cong_cu": False}
+        con_vong_fn = None if vong_cuoi is None else (lambda: not state["het_cong_cu"])
+        state["con_vong_fn"] = con_vong_fn
 
         def on_max_turns(_input) -> AnswerOutput:
             state["hit_max_turns"] = True
@@ -543,7 +548,11 @@ class OpenAIFullCorpusGenerator:
                 ket_qua = fn(*args, **kwargs)
                 if inspect.isawaitable(ket_qua):
                     ket_qua = await ket_qua
-                return f"{ket_qua}\n\n{TOOL_VONG_CUOI_TEXT}" if isinstance(ket_qua, str) and not con_vong_fn() else ket_qua
+                call_log, so_vong = vong_cuoi
+                if len(call_log.calls) < so_vong - 1:  # chưa phải lượt công cụ sát cuối: lần gọi model kế vẫn còn công cụ
+                    return ket_qua
+                state["het_cong_cu"] = True  # lần gọi model kế là lần cuối của lượt ⇒ không còn công cụ, và model được báo ngay trong kết quả này
+                return f"{ket_qua}\n\n{TOOL_VONG_CUOI_TEXT}" if isinstance(ket_qua, str) else ket_qua
             return chay
 
         tools = [function_tool(bao(tool_fn), name_override="tim_kho", failure_error_function=None, **mo(con_luot_fn))]
@@ -573,7 +582,7 @@ class OpenAIFullCorpusGenerator:
         so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns)
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
                                                      con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn,
-                                                     con_vong_fn=self._con_vong(call_log, so_vong) if vong_cuoi_chi_viet else None)
+                                                     vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None)
         try:
             result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=so_vong,
                                      error_handlers=handlers)
@@ -582,12 +591,6 @@ class OpenAIFullCorpusGenerator:
                 raise
             result = None
         return self._tools_result(result, started, call_log, state)
-
-    @staticmethod
-    def _con_vong(call_log: "CallLog", so_vong: int):
-        """Điều kiện "còn được dùng công cụ" của một lượt: số lần gọi model ĐÃ XONG < trần − 1 ⇒ lần gọi cuối cùng của lượt (thứ `so_vong`) không còn công cụ.
-        Hôm nay lần gọi cuối vẫn được xin công cụ nhưng kết quả của nó không bao giờ được dùng (hết vòng ⇒ câu từ chối) ⇒ không mất lượt công cụ nào có ích."""
-        return lambda: len(call_log.calls) < so_vong - 1
 
     @staticmethod
     def xin_cong_cu_da_an(exc: BaseException | None, state: dict) -> bool:
@@ -623,7 +626,7 @@ class OpenAIFullCorpusGenerator:
         so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns)
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
                                                      con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn,
-                                                     con_vong_fn=self._con_vong(call_log, so_vong) if vong_cuoi_chi_viet else None)
+                                                     vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None)
         result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=so_vong, run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state
