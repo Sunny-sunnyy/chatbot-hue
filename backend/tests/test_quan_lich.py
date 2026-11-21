@@ -158,4 +158,3 @@ def test_no_kb_place_in_the_table_is_marked_closed_in_its_own_article():
         if any(tu in d.lower() for d in trang_thai for tu in ("đóng cửa", "ngừng hoạt động", "ngưng hoạt động")):
             da_dong.append(q["bai_id"])
     assert da_dong == []
-

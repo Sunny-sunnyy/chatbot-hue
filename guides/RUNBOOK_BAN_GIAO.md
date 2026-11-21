@@ -115,7 +115,7 @@ duy nhất là khối `assistant:` của `backend/config/settings.yaml` — chú
 | `lich_trinh_toa_do` | `../data/phase_9/lich_trinh/diem_toa_do_v9.json` | `f6068ff37d61` | `ban_do_lich`, `quan_lich` | điểm không có ghim; bữa ăn gần điểm đó không có quán |
 | `lich_trinh_bang_anh` | `../data/phase_9/lich_trinh/bang_anh_v7.json` | `4c4158648085` | `anh_lich` | điểm không có ảnh |
 | `lich_trinh_bang_luu_tru` | `../data/anh_user_2026-11-15_ghep/bang_luu_tru_lich_v6.json` | `44d7b14d8fce` | `luu_tru_lich` | — (theo cụm) |
-| `lich_trinh_bang_quan` | `../data/phase_9/lich_trinh/bang_quan_lich_v1.json` (468 quán) | `ab481586d46f` | `quan_lich` | — (theo cụm + toạ độ) |
+| `lich_trinh_bang_quan` | `../data/phase_9/lich_trinh/bang_quan_lich_v2.json` (467 quán; bản 1 giữ lại, không dùng) | `8f7c6cb0bb23` | `quan_lich` | — (theo cụm + toạ độ) |
 | `khoang_cach_bang` | `../data/phase_9/lich_trinh/khoang_cach_v1.json` | `cb76ab72199c` | `khoang_cach` | không trả lời khoảng cách tới điểm đó |
 
 In lại md5 các bảng đang trỏ (so với bảng trên; khác ⇒ có người đổi bảng mà chưa cập nhật mục này):
