@@ -630,13 +630,15 @@ def test_follow_up_without_disaster_in_previous_question_still_gets_web_section(
 
 
 def test_follow_up_after_disaster_question_through_whole_turn(deps):
-    """Cả lượt (đường thường gặp: model tự từ chối ⇒ cổng web): câu trấn an của model không tới người dùng; có 112 đúng một lần + hai địa chỉ chính thức."""
+    """Cả lượt (đường thường gặp: model tự từ chối): câu trấn an của model không tới người dùng; có 112 đúng một lần + hai địa chỉ chính thức.
+    Từ 21/11/2026 "dông" nằm trong danh sách từ nguy hiểm thời tiết DÙNG CHUNG ⇒ lưới bão / lũ TRONG lượt nối câu bản tin chính thức + 112 vào câu trả
+    lời ⇒ câu trả lời không còn đúng bằng câu từ chối ⇒ cổng web KHÔNG mở (trước đó: mục web chế độ thiên tai). Sàn giữ nguyên, đường đi khác."""
     trace = AnswerTrace(history=(("Chiều nay ở Thuận An có dông không?", "…"),))
     asyncio.run(answer_turn(CAU_TIEP, *deps, generator(_script_refuse(web_text=TRAN_AN)), trace, BAO_WEB, None, serper()))
     luoi_cuoi_bao(CAU_TIEP, trace, BAO_WEB)
     thay = _nguoi_dung_nhan(trace)
-    assert trace.web["outcome"] == "thien_tai" and "yên tâm" not in thay
-    assert thay.count("112") == 1 and tt.NCHMF_URL in thay and tt.LU_QUET_URL in thay
+    assert trace.web is None and not any(t["name"] == "tra_web" for t in trace.tools) and "yên tâm" not in thay
+    assert tt.CAU_BAO_LU in trace.answer and thay.count("112") == 1 and tt.NCHMF_URL in thay and tt.LU_QUET_URL in thay
 
 
 @pytest.mark.parametrize("cau", ["Chiều nay ở Huế có bão không?", "Chiều nay ở Huế có giông không?", "Chiều nay ở Huế có dông không?"])
@@ -649,15 +651,18 @@ def test_disaster_web_section_plus_last_net_gives_112_once_and_both_official_lin
     assert trace.web["outcome"] == "thien_tai" and thay.count("112") == 1 and tt.NCHMF_URL in thay and tt.LU_QUET_URL in thay
 
 
-def test_disaster_turn_with_ordinary_web_links_still_gives_112_once_and_both_official_links(deps, cau="Chiều nay ở Huế có dông không?"):
-    """#2 qua cả lượt — đúng ca test cũ bỏ sót: Serper trả link thường (SNIPPETS không có địa chỉ chính thức nào) ⇒ người dùng vẫn nhận hai địa chỉ
-    chính thức. Chỉ chữ "dông": với bão / giông và model từ chối, code đã nối sẵn câu 112 vào câu trả lời nên cổng web không mở (đường khác)."""
+@pytest.mark.parametrize("cau", ["Chiều nay ở Huế có bão không?", "Chiều nay ở Huế có giông không?", "Chiều nay ở Huế có dông không?",
+                                 "Chiều nay có sấm sét không?", "Nước sông Hương có lên cao không?"])
+def test_disaster_turn_refused_by_the_model_gives_112_once_and_both_official_links_without_the_web_section(deps, cau):
+    """#2 qua cả lượt, model tự từ chối: MỌI từ nguy hiểm thời tiết của danh sách dùng chung (từ 21/11 gồm cả "dông", "sấm sét", "nước … lên") ⇒ lưới
+    trong lượt nối câu bản tin chính thức + 112 (có sẵn hai địa chỉ chính thức) ⇒ cổng web không mở, dịch vụ tìm web không bị gọi. Trước 21/11 riêng chữ
+    "dông" đi đường mục web chế độ thiên tai (test cũ của đúng khe đó); nhánh thiên tai của mục web vẫn được kiểm ở mức `cong_web` ngay trên."""
     trace = AnswerTrace()
     asyncio.run(answer_turn(cau, *deps, generator(_script_refuse()), trace, BAO_WEB, None, serper()))
     luoi_cuoi_bao(cau, trace, BAO_WEB)
     thay = _nguoi_dung_nhan(trace)
-    assert trace.web["outcome"] == "thien_tai" and thay.count("112") == 1 and tt.NCHMF_URL in thay and tt.LU_QUET_URL in thay
-    assert [s["id"] for s in trace.web["nguon"]][-3:] == [1, 2, 3]  # link Serper vẫn còn, sau hai địa chỉ chính thức
+    assert trace.web is None and not any(t["name"] == "tra_web" for t in trace.tools)
+    assert tt.CAU_BAO_LU in trace.answer and thay.count("112") == 1 and tt.NCHMF_URL in thay and tt.LU_QUET_URL in thay
 
 
 # ---------- 18/11 tối (soát khác hãng lần hai, #2): lưới mục web phải nhận MỌI lượt mà lưới cuối coi là lượt bão / lũ ----------
