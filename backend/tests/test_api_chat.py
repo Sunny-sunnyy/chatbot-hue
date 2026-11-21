@@ -101,7 +101,7 @@ def test_real_error_after_search_has_no_partial_answer(caplog):
     assert "sources" not in response.text
     # Câu hỏi đã đi qua tìm kiếm + dựng context: log số đo có đúng một dòng, đúng danh sách trắng, không lọt câu hỏi (plan C59 §4).
     assert len(lines) == 1
-    assert set(lines[0]) == set(METRIC_FIELDS)
+    assert set(lines[0]) - {"cache"} == set(METRIC_FIELDS)  # `cache`: khoá tuỳ chọn của lượt đầu khi bộ nhớ đệm câu trả lời bật (20/11; khoá ở test_cache_tra_loi)
     assert lines[0]["outcome"] == "generation_failed" and lines[0]["status_code"] == 502
     assert isinstance(lines[0]["search_ms"], float) and isinstance(lines[0]["dense_ms"], float)
     assert lines[0]["dense_ms"] == round(lines[0]["dense_ms"], 1)  # làm tròn 1 chữ số như các trường *_ms (B70 m-2)
