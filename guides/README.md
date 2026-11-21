@@ -9,6 +9,7 @@ của file này.
 |---|---|
 | Hệ thống **đang chạy** (runtime, dữ liệu, Qdrant, bẫy) | [`session_prompt/Project_Status.md`](../session_prompt/Project_Status.md) §4, §8 |
 | Việc đang mở, ai làm gì | [`session_prompt/CURRENT_HANDOFF.md`](../session_prompt/CURRENT_HANDOFF.md) |
+| **Đổi model viết** qua Claude Sonnet 5.5 (Bedrock) ⇄ về gpt-6-luna: từng bước, lệnh kiểm, bảng khác biệt đã đo | [`DOI_MODEL_VIET.md`](DOI_MODEL_VIET.md) |
 | Luật chung, cách làm A / B / C | [`session_prompt/Session_Prompt.md`](../session_prompt/Session_Prompt.md), [`session_prompt/WORKFLOW.md`](../session_prompt/WORKFLOW.md) |
 | Guide hiện hành của luồng full-corpus (cập nhật 7A2 / 7B, build lại index) | [`full_corpus_rag.md`](full_corpus_rag.md) |
 | Báo cáo cho User theo từng khâu | [`bao_cao_he_thong/README.md`](../bao_cao_he_thong/README.md) |
