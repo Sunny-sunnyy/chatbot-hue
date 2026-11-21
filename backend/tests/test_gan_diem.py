@@ -36,7 +36,7 @@ def test_restaurants_only_kb_places_within_two_km_nearest_first():
     dong, n = gd.ket_qua(BANG, QUAN, TOA, "a", "quan_an")
     assert n == 3 and dong[0] == "Quán ăn có bài trong kho quanh Điểm A (gần trước):" and dong[-1] == gd.CAU_GHI_CHU_QUAN
     assert dong[1:4] == ("- Quán Gần: cách Điểm A dưới 0,5 km theo đường chim bay.",
-                         "- Quán Ước: cách Điểm A trong khoảng 1 km theo đường chim bay.",  # toạ độ mức "ước" ⇒ nấc, không số lẻ
+                         "- Quán Ước: cách Điểm A chưa tới 1 km theo đường chim bay.",  # toạ độ mức "ước" ⇒ nấc, không số lẻ
                          "- Quán Vừa: cách Điểm A khoảng 1,2 km theo đường chim bay.")
     chu = " ".join(dong)
     assert "Quán Xa" not in chu and "Quán Nguồn Mở" not in chu  # ngoài 2 km · không có bài kho

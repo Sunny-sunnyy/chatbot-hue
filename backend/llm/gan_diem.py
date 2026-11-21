@@ -38,9 +38,11 @@ def co_tu_khoa_luot(query: str, history) -> bool:
 
 
 def _chu_cach(km: float, muc: str | None) -> str:
-    """Chữ khoảng cách của một quán. Toạ độ mức "ước" ⇒ chỉ nói theo nấc, không số lẻ (vị trí quán có thể lệch vài trăm mét)."""
+    """Chữ khoảng cách của một quán. Toạ độ mức "ước" ⇒ chỉ nói theo nấc, không số lẻ (vị trí quán có thể lệch vài trăm mét).
+    Nấc gần viết "chưa tới 1 km": bản đầu viết "trong khoảng 1 km" thì model chép lại thành "khoảng 1 km" ở 8 / 8 lần của lượt đo 21/11 — quán cách vài
+    trăm mét nghe như cách một cây số."""
     if muc == "uoc":
-        return "trong khoảng 1 km" if km <= 1 else "khoảng 1–2 km"
+        return "chưa tới 1 km" if km < 1 else "khoảng 1–2 km"
     return kc._km(km)
 
 
