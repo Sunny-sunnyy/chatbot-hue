@@ -43,7 +43,7 @@ xin đổi requirement hay xin duyệt lại từng focused fix.
 
 ## Ngôn ngữ
 
-- Tên biến, hàm, class, trường schema: rõ nghĩa, theo quy ước của module đang sửa (hue_rag: phần lớn tên tiếng Việt không dấu).
+- Tên biến, hàm, class, trường schema: rõ nghĩa, theo quy ước của module đang sửa (hue_rag: phần lớn tên tiếng Việt không dấu); không đổi tên hàng loạt.
 - Thêm comment/docstring bằng tiếng Việt khi mục đích, bước xử lý hoặc constraint
   chưa rõ từ code; dùng ngôn ngữ khác chỉ khi project
   governance quy định rõ ngôn ngữ khác.

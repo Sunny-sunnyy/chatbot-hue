@@ -90,7 +90,7 @@ Code này phục vụ hành vi thật nào, có cách trực tiếp hơn mà v�
   chứng mới hoặc điểm trước bỏ sót.
 - **Số vòng:** code — một review cả nhánh; plan / spec — **tối đa 2 vòng**: vòng 2 chỉ còn minor ⇒ duyệt, minor sửa lúc code; còn blocker / major sau vòng 2 ⇒
   dừng, xem lại thiết kế (với User nếu đổi phạm vi). Ngoại lệ gộp không cần review vòng nữa: `session_prompt/WORKFLOW.md` §5.
-- Bất đồng kéo dài: phiên điều phối quyết theo bằng chứng; đưa User khi nó chạm việc thuộc hàng "hỏi trước" của bảng quyền (`AGENTS.md`).
+- Bất đồng kéo dài: phiên điều phối quyết theo bằng chứng (phiên điều phối là người viết ⇒ một phiên thứ ba quyết); đưa User khi nó chạm việc thuộc hàng "hỏi trước" của bảng quyền (`AGENTS.md`).
 
 ## Đóng việc và khi làm một mình
 
