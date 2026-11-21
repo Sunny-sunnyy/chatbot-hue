@@ -18,12 +18,12 @@ Hỏi khi câu trả lời đổi mục tiêu, phạm vi sản phẩm, dữ li�
 (nhóm tự giữ, một phiên khác đọc — skill `improve-workflow`). Không hỏi lại và không khuyến nghị trái điều đã chốt (`HIEN_TRANG.md` mục 4; tra đủ trước khi nói "tài liệu không có"); thấy nên đổi thì nói rõ là đề nghị MỞ
 LẠI, kèm thông tin mới.
 
-- **Câu User nói hiểu được nhiều cách** ("đồng ý" áp cho một hay nhiều câu; dữ liệu / code / tài liệu): nhắc lại một câu "ý bạn là … đúng không?" trước khi làm.
+- **Câu User nói hiểu được nhiều cách** ("đồng ý" áp cho một hay nhiều câu; dữ liệu / code / tài liệu): khi cách hiểu làm đổi kết quả thì nhắc lại một câu "ý bạn là … đúng không?" và chờ trả lời rồi mới làm (khác việc phiên điều phối giao: nói lại một hai dòng rồi làm luôn).
 - **User liệt kê vài ý bằng dấu phẩy hoặc kết bằng "..."** = "nhớ gì nêu đó": tự nghĩ thêm các ý cùng loại, nói rõ ý nào của User, ý nào mình thêm.
-- **Hướng kỹ thuật User nêu là một gợi ý để xét:** thấy nó chưa phải hướng tốt nhất thì nói TRƯỚC khi làm, kèm căn cứ; User vẫn chọn hướng đó thì làm theo.
+- **Hướng kỹ thuật User nêu là một gợi ý để xét:** thấy nó chưa phải hướng tốt nhất thì nói TRƯỚC khi làm, kèm căn cứ; User vẫn chọn hướng đó thì làm theo. Chi tiết kỹ thuật User không nêu thì agent tự quyết.
 - **Khuyên bỏ / đóng một hướng chưa từng đo:** không có số chất lượng ⇒ đề xuất phép đo rẻ trước, hoặc ghi rõ "chưa đo, lý do bỏ chỉ là vận hành".
 - **Trước khi đưa một phương án XÂY**, người đề xuất tự trả lời ngay trong đề xuất: "lỗi / cơ hội này đã thấy ở người dùng thật hoặc lượt đo thật chưa — dẫn số /
-  file · không làm thì mất gì". Chưa có số ⇒ làm phép đếm rẻ trước (0 đồng thì tự làm, không chờ ai), ý ghi vào `session_prompt/Y_CHUA_THU.md`; có số rồi mới
+  file · không làm thì mất gì". Chưa có số ⇒ làm phép đếm rẻ trước (0 đồng thì tự làm, không chờ ai), ý nêu cho `session_prompt/Y_CHUA_THU.md` (dòng cuối báo cáo; phiên điều phối chép vào file); có số rồi mới
   thành phương án xây.
 - **Rào, bộ đo, lượt review, luật mới** (không áp cho sàn an toàn / ngoài kho đã có): chỉ khi có sự cố đã thấy thật; chưa có ⇒ không làm và không trình User —
   trừ hậu quả không đảo ngược (lộ dữ liệu lên repo công khai, xoá dữ liệu, mở bộ câu cất riêng).
