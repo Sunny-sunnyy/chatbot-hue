@@ -50,7 +50,7 @@ Vậy phải gọi Claude bằng cách gọi gốc của nó, mà cách đó kh�
 
 **1. Anh thấy gì khác.**
 - **Trợ lý đang chạy Sonnet 5.5, mức suy luận high**, ở mọi chỗ có model.
-- **Câu trả lời dài gấp 2,6–2,9 lần** (độ dài giữa trên 85 câu: 236 và 258 ký tự ở hai lượt đo, luna 90): trả lời thẳng ở câu đầu rồi thêm một đến bốn câu chi tiết có nguồn; đôi chỗ lặp ý.
+- **Câu trả lời dài gấp khoảng 2,6–3,6 lần tuỳ loại câu** (câu một dữ kiện: độ dài giữa 236–258 ký tự, luna 90; câu so sánh / cần nhiều nguồn: 416, luna 116): trả lời thẳng ở câu đầu rồi thêm một đến bốn câu chi tiết có nguồn; đôi chỗ lặp ý.
 - **Chờ lâu hơn, và chữ hiện MỘT lần ở cuối** thay vì chạy dần. Trong lúc chờ màn hình KHÔNG trắng: có dòng trạng thái đổi dần ("Đang hiểu câu hỏi…" ⇒ "Đã tìm trong kho, đang chuẩn bị câu trả lời…" ⇒ "Đang viết câu trả lời…").
   Thời gian đo qua trình duyệt, cùng buổi, cùng code, mỗi model một lượt [máy kiểm, phiên đo]:
 
@@ -67,8 +67,12 @@ Vậy phải gọi Claude bằng cách gọi gốc của nó, mà cách đó kh�
 - Đổi qua hay đổi về chỉ là sửa MỘT dòng (`provider: bedrock` ⇄ `provider: openai` trong `backend/config/settings.yaml`) rồi mở lại hệ thống; về luna thì chữ lại chạy dần. Từng bước kèm lệnh kiểm: `guides/DOI_MODEL_VIET.md` mục 2 và 3.
 
 **2. Bằng chứng** (mọi bảng: cùng câu cho hai model; người chấm là luna trừ khi ghi khác; mẫu nhỏ nên chỉ bắt được khác biệt lớn).
+Các bảng NHIỀU LƯỢT của Sonnet dưới đây (người dùng mô phỏng, 41 câu khó, phiên trình duyệt, phần cuộc trò chuyện của thước) đo khi lớp dịch CÒN lỗi "câu hỏi cũ dính vào câu đang hỏi" nêu ở trên
+⇒ số của Sonnet ở các lượt có lịch sử có thể đổi sau bản sửa; phiên đo đang đo cặp trước ↔ sau.
 - **Hỏi đáp một lượt — 85 câu đầu của bộ câu mẫu, 66 câu tính điểm, thang 1–5** [máy kiểm, phiên đo]. Để biết chênh bao nhiêu là thật: hai lượt luna giống hệt nhau lệch nhau 0–1 câu ở Đúng, 1–3 câu ở Đủ ý, 2–5 câu ở Trọng tâm.
-  Sonnet high được đo hai lượt: lượt sáng (lời dặn như bản đang chạy) và lượt trưa (sau bản sửa lớp dịch, lúc còn kèm đoạn dặn "nói thẳng" nay đã gỡ) — bảng ghi cả hai số, sáng trước.
+  Sonnet high được đo hai lượt: lượt sáng (lời dặn trả lời như bản đang chạy, nhưng lớp dịch là bản TRƯỚC khi sửa) và lượt trưa (sau bản sửa lớp dịch, lúc còn kèm đoạn dặn "nói thẳng" nay đã gỡ) — bảng ghi cả hai số, sáng trước.
+  **Chưa có lượt 85 câu nào trên đúng bản đang chạy.** Thứ gần nhất trên bản đang chạy là 54 câu so sánh / cần nhiều nguồn (nhóm câu KHÓ hơn nên điểm thấp hơn bảng dưới), cùng buổi, luna ↔ Sonnet: Đúng 4,87 ↔ 4,89 · Đủ ý 4,63 ↔ 4,78 ·
+  Trọng tâm 4,78 ↔ 4,22 · câu trong kho bị từ chối nhầm 1 ↔ 0 (người chấm Sonnet ra cùng chiều: 4,80 ↔ 4,78 · 4,50 ↔ 4,69 · 4,78 ↔ 4,20).
 
   | | luna | Sonnet high (sáng · trưa) | Đọc thế nào |
   |---|---|---|---|
@@ -83,7 +87,7 @@ Vậy phải gọi Claude bằng cách gọi gốc của nó, mà cách đó kh�
 - **Làm trợ lý có công cụ — thước 29 câu** (15 câu chọn công cụ, 6 câu nơi ở rìa Huế, 8 câu cần nhiều công cụ) [máy kiểm, phiên đo; hai lượt mỗi model không câu nào đổi kết quả ⇒ chênh từ 2 câu mới đáng kể]:
   đạt máy luna 28 / 29, Sonnet 29 / 29; riêng 8 câu cần nhiều công cụ: luna 7, Sonnet 8. Trước các bản sửa trong ngày Sonnet chỉ đạt 2 / 8 ở nhóm này — tức phần lớn tiến bộ đến từ sửa lớp dịch, không phải từ model.
   10 câu an toàn và 10 câu ngoài phạm vi: 0 câu bị từ chối nhầm, 0 câu bị trả lời bằng kho, ở cả hai model.
-- **Người dùng mô phỏng — 12 kiểu du khách, mỗi kiểu một phiên tối đa 5 lượt cho mỗi model** [người thứ hai kiểm: một phiên khác đọc tay cả 24 phiên]. KHÔNG so cặp được từng lượt, vì hai phiên của cùng một vai rẽ sang hướng khác nhau sau lượt đầu:
+- **Người dùng mô phỏng — 12 kiểu du khách, mỗi kiểu một phiên tối đa 5 lượt cho mỗi model** [một phiên đọc tay cả 24 phiên — cũng là phiên đã chạy chúng, biết phiên nào của model nào; chưa có người thứ hai]. KHÔNG so cặp được từng lượt, vì hai phiên của cùng một vai rẽ sang hướng khác nhau sau lượt đầu:
 
   | Người dùng gặp gì | luna (48 lượt) | Sonnet high (53 lượt) |
   |---|---|---|
@@ -99,7 +103,7 @@ Vậy phải gọi Claude bằng cách gọi gốc của nó, mà cách đó kh�
   câu bị rút luna 3, Sonnet 6 · chạm trần vòng luna 5, Sonnet 0 · thời gian lượt cuối, số giữa: luna 9,6 giây, Sonnet 14,9 giây. *Lượt đo lại trên bản đang chạy: chờ phiên đo điền.*
 - **Một phiên trọn vẹn qua trình duyệt trên bản đang chạy** (lên lịch ⇒ hỏi về lịch ⇒ sửa ⇒ hỏi tiếp ⇒ câu kho thiếu ⇒ tải PowerPoint + bản in ⇒ màn hình điện thoại 390 px ⇒ hỏi lại tên; 9 bước, mỗi model một lượt) [máy kiểm, phiên đo]:
   Sonnet đạt 8 bước, không lỗi; bước không đạt là lệnh "dời … sang buổi tối" — trợ lý nói "chưa rõ ngày / buổi" thay vì nêu lý do và gợi ý chỗ dời được (lịch không bị đổi sai). luna đạt 7 bước, một bước đạt một phần (cùng lệnh đó, nói nhầm "buổi chiều"), một bước LỖI (câu bị rút ở câu kho thiếu).
-- **Nêu cảnh báo an toàn** (8 câu có ý cảnh báo, hai người chấm mù là model khác; đo trước các bản sửa trong ngày; người chấm cùng họ model với Sonnet nên đọc dè dặt): thiếu cảnh báo luna 5 / 8, Sonnet 1 / 8; trái nguồn 0 ở cả hai.
+- **Nêu cảnh báo an toàn** (8 câu có ý cảnh báo, hai người chấm mù là agent con Claude — cùng họ model với Sonnet nên đọc dè dặt; đo trước các bản sửa trong ngày): thiếu cảnh báo luna 5 / 8, Sonnet 1 / 8; trái nguồn 0 ở cả hai.
 - **Review và test:** mỗi nhánh code trong ngày được một phiên khác đọc trước khi gộp; lớp dịch có 20 ca test bằng đồ giả (phản hồi của Claude là bản dựng sẵn, vòng chạy của bộ khung là thật), ca nào mới cũng đã thấy đỏ trên bản cũ.
   Đường luna: một phiên khác chụp 10 loại lời gọi gửi OpenAI trước và sau khi có lớp dịch, giống nhau từng byte [người thứ hai kiểm].
 
@@ -123,7 +127,7 @@ Vậy phải gọi Claude bằng cách gọi gốc của nó, mà cách đó kh�
 - **Chậm hơn luna ở mọi bước có viết** (bảng ở ý 1) và chữ không chạy dần — muốn chạy dần phải xin thêm quyền cho bộ khoá ở Amazon. Phiên đo đang đo lại mức suy luận thấp hơn (medium, low) để xem nhanh hơn được bao nhiêu mà không tụt chất lượng.
 - **Lỗi đang biết của đường Sonnet:** (a) hỏi lại điều mình vừa kể giữa cuộc ("mình tên gì nhỉ") có thể báo "Thử lại", bấm lại vẫn lỗi — bản sửa đang chờ đo; (b) câu bị rút vì bước kiểm con số (người dùng nhắc lại con số dự báo rồi hỏi thêm) —
   cả hai model đều dính (3 ↔ 4 lượt ở người dùng mô phỏng), một phiên khác đang sửa; (c) lệnh sửa lịch "sang buổi tối" chưa nêu lý do (một lượt, chưa tái hiện lại); (d) câu trả lời dài, Trọng tâm thấp hơn luna — anh đã nhận.
-- **Chưa chạy trên Sonnet:** cả bộ 176 câu mẫu (mới 85 câu đầu), bộ an toàn 32 câu (mới 10 câu + 8 câu có người chấm), bộ câu kín, cả bộ test với công tắc ở Sonnet. Mọi bộ đã dùng là bộ đã thấy hoặc do phiên đo tự soạn, phần lớn một lượt mỗi câu.
+- **Chưa chạy trên Sonnet:** cả bộ 176 câu mẫu (mới 85 câu đầu + 54 câu so sánh / nhiều nguồn, hai phần trùng nhau một ít), bộ an toàn 32 câu (mới 10 câu, trong đó 8 câu có ý cảnh báo đã qua người chấm một lần), bộ câu kín, cả bộ test với công tắc ở Sonnet. Mọi bộ đã dùng là bộ đã thấy hoặc do phiên đo tự soạn, phần lớn một lượt mỗi câu.
 - **Chưa thử qua giao diện ở mức high:** hỏi bằng ảnh (sáng 21/11 ở mức low: nhận đúng một ảnh chùa Thiên Mụ), câu bão lũ kèm mục "Từ web", hai người hỏi cùng lúc, khoá hết hạn giữa một lượt.
 - Trong thẻ lịch, Sonnet viết một đến hai câu (khoảng 50 từ) thay cho một câu 30 từ: đầy đủ hơn, không bịa ngoài nguồn (đối chiếu 17 câu: 0), nhưng vẫn có thể ghép sai ý của một câu nguồn dài (12 lượt ở một mục: sai 1, nói lỏng 4);
   file PowerPoint cắt câu dài bằng "…" ở 13 / 51 mục.
@@ -134,7 +138,7 @@ Vậy phải gọi Claude bằng cách gọi gốc của nó, mà cách đó kh�
 - Xem công tắc: `grep -n '^  provider:' backend/config/settings.yaml` ⇒ dòng in ra có chữ `bedrock`.
 - Bật hệ thống như mọi lần, thêm biến trỏ tới file khoá Bedrock anh đang giữ (`guides/DOI_MODEL_VIET.md` mục 3 bước 3), mở `http://127.0.0.1:8010/`, hỏi giá vé tham quan Đại Nội.
   Anh sẽ thấy: dòng trạng thái đổi dần, rồi cả câu trả lời hiện MỘT lần sau khoảng 5–10 giây, có nguồn, dài hơn câu luna từng trả.
-- Hỏi tiếp một câu nối ("thế còn lăng Minh Mạng?") ⇒ trợ lý hiểu là hỏi giá vé lăng Minh Mạng.
+- Hỏi tiếp một câu nối ("thế còn lăng Minh Mạng?") ⇒ trợ lý hiểu là hỏi giá vé lăng Minh Mạng [đã thử 13:54 21/11/2026 trên bản đang chạy, qua code sản phẩm không qua trình duyệt: lượt đầu 4,3 giây, lượt nối 8,2 giây, trả lời đúng giá vé lăng Minh Mạng có nguồn].
 - Tự kiểm mình đã hiểu, không nhìn tài liệu: (a) vì sao không đổi địa chỉ suông được mà phải có lớp dịch? (b) vì sao với Sonnet chữ hiện một lần? (c) vì sao người chấm vẫn là luna?
   (d) hai lỗi lớn của lớp dịch là gì, và vì sao luna không gặp? (e) muốn về luna thì sửa gì? Đáp án nằm ở các đoạn "Vì sao…", "Hai lỗi lớn…" và ý 1 phía trên.
 

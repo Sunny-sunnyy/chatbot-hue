@@ -164,7 +164,7 @@ khoảng 2.000 token: 15–20 giây; 0 lần bị giới hạn tần suất (429
 
 - **Chữ hiện MỘT lần** sau khi model viết xong, không chạy dần như luna. Trong lúc chờ màn hình KHÔNG trắng: dòng trạng thái đổi dần ("Đang hiểu câu hỏi…" ⇒ "Đã tìm trong kho, đang chuẩn bị
   câu trả lời… (N đoạn)" ⇒ "Đang viết câu trả lời…") — ảnh chụp sau 3 giây ở mọi bước.
-- **Câu trả lời dài gấp 2,6–2,9 lần luna** (độ dài giữa 236–258 ký tự so với 90, trên 85 câu).
+- **Câu trả lời dài gấp khoảng 2,6–3,6 lần luna tuỳ loại câu** (câu một dữ kiện: độ dài giữa 236–258 ↔ 90 ký tự trên 85 câu; câu so sánh / cần nhiều nguồn: 416 ↔ 116 trên 54 câu).
 - Tải PowerPoint và bản in từ lịch do Sonnet viết: chạy, đủ Ngày 1–3 (chưa nhìn từng trang).
 - Lệnh sửa lịch "dời … sang buổi tối": Sonnet trả "chưa rõ ngày / buổi" thay vì lý do + gợi ý (một lượt, chưa tái hiện lại lúc viết).
 - Hạn giờ mỗi lượt vẫn là 45 giây; chưa lượt nào tới 35 giây.
@@ -220,9 +220,9 @@ khoá hết hạn giữa một lượt · cả bộ test với `provider: bedroc
 |---|---|
 | Sàn "0 câu ngoài kho được trả lời bằng kho" | 85 câu đầu bộ mẫu: 0 / 7 ↔ 0 / 7 · 10 câu ngoài phạm vi của thước: 0 ↔ 0. Cả bộ 176 câu: CHƯA chạy trên Sonnet |
 | Bộ an toàn | 10 câu (máy kiểm): từ chối nhầm 0 ↔ 0, ngoài kho bị trả lời 0 ↔ 0 · 8 câu có ý cảnh báo, hai người chấm mù (đo trước các bản sửa lớp dịch; người chấm cùng họ model với Sonnet): thiếu cảnh báo 5 / 8 ↔ 1 / 8, trái nguồn 0 ↔ 0. Bộ 32 câu: CHƯA chạy trên Sonnet |
-| Đúng / Đủ ý / Trọng tâm, 66 câu tính điểm (nhiễu hai lượt luna: 0–1 · 1–3 · 2–5 câu tụt) | Đúng 4,97 ↔ 4,94 (lượt sáng) · 4,97 (lượt trưa) — ngang · Đủ ý 4,83 ↔ 4,88 · 4,92 — Sonnet nhỉnh hơn dưới cả hai người chấm · Trọng tâm 4,94 ↔ 4,39 · 4,26 — Sonnet thấp hơn rõ vì dài (236–258 ↔ 90 ký tự); chủ dự án đã nhận |
+| Đúng / Đủ ý / Trọng tâm, 66 câu tính điểm (nhiễu hai lượt luna: 0–1 · 1–3 · 2–5 câu tụt). Lượt sáng = lời dặn như bản đang chạy nhưng lớp dịch trước khi sửa; lượt trưa = sau sửa lớp dịch, còn kèm đoạn dặn đã gỡ; chưa có lượt 85 câu trên đúng bản đang chạy (gần nhất: 54 câu so sánh / nhiều nguồn — Đúng 4,87 ↔ 4,89 · Đủ ý 4,63 ↔ 4,78 · Trọng tâm 4,78 ↔ 4,22) | Đúng 4,97 ↔ 4,94 (lượt sáng) · 4,97 (lượt trưa) — ngang · Đủ ý 4,83 ↔ 4,88 · 4,92 — Sonnet nhỉnh hơn dưới cả hai người chấm · Trọng tâm 4,94 ↔ 4,39 · 4,26 — Sonnet thấp hơn rõ vì dài (236–258 ↔ 90 ký tự); chủ dự án đã nhận |
 | Làm trợ lý có công cụ (thước 29 câu; hai lượt giống nhau không câu nào đổi ⇒ chênh từ 2 câu mới đáng kể) | đạt máy 28 ↔ 29 · 8 câu cần nhiều công cụ 7 ↔ 8 (Sonnet trước các bản sửa lớp dịch: 2) · chạm trần vòng 0 ↔ 0 |
-| Người dùng mô phỏng (12 vai, không so cặp, một phiên khác đọc tay) | lượt nhận câu từ chối trống hoặc lỗi 12 / 48 (25 %) ↔ 7 / 53 (13 %) · phiên đạt mục tiêu 6 ↔ 9 trên 12 · lượt chờ > 15 giây 11 ↔ 17 |
+| Người dùng mô phỏng (12 vai, không so cặp; người đọc tay cũng là phiên đã chạy chúng; đo khi lớp dịch còn lỗi dính lịch sử) | lượt nhận câu từ chối trống hoặc lỗi 12 / 48 (25 %) ↔ 7 / 53 (13 %) · phiên đạt mục tiêu 6 ↔ 9 trên 12 · lượt chờ > 15 giây 11 ↔ 17 |
 | 41 câu khó, so cặp qua đường giao diện (lượt đầu, trước hai bản sửa cuối) | đạt máy 24 ↔ 31 · lượt nhận lỗi hoặc từ chối trống 16 ↔ 8 · câu bị rút vì bước kiểm 3 ↔ 6 · thời gian lượt cuối, số giữa 9,6 ↔ 14,9 giây. Lượt đo lại trên bản đang chạy: phiên đo điền |
 | Mức suy luận được chọn và lý do | `high` cho lời gọi thường và cho hiểu ý sửa lịch; nhóm viết câu lịch tự đặt `low`. Lý do: hỏi đáp một lượt bốn mức ngang nhau (chênh 1–2 câu), nhưng (i) lượt có công cụ thời tiết / ngày TRƯỚC bản sửa lớp dịch: medium / low chạm trần vòng 8–9 / 12 lượt, high 1 / 12; (ii) hai lệnh sửa lịch khó: high 5 / 6, low 2 / 6, medium 0 / 6. Cái giá: chậm (mục 5). Sau bản sửa lớp dịch CHƯA đo lại medium / low ở lượt có công cụ — phiên đo đang đo; kết quả điền ở đây |
 | Quyết định của chủ dự án | Đổi TẠM sang Sonnet; công tắc bật 13:26 21/11/2026 ở `high`. Chưa có quyết định giữ lâu dài |
