@@ -3,6 +3,7 @@
 Việc đang mở, ai làm, bước kế: sổ việc `session_prompt/VIEC_DANG_MO.md` (khối đầu = ba ngày thử đuổi một con số). Quyết định của chủ dự án + câu đang chờ: `session_prompt/HIEN_TRANG.md` mục 3, 4. Trang này chỉ ghi phần riêng của phiên điều phối.
 
 ## Việc đầu của phiên điều phối khi mở lại
+- (ghi 18:12 21/11/2026) Phiên sau chủ dự án ĐI VẮNG (tự nói lúc kết phiên 21/11): câu thuộc quyền chủ dự án thì gác vào `HIEN_TRANG.md` mục 3, không mở hộp hỏi, không chờ; mở bốn phiên cho bước 0–3, tới bước sửa rút còn hai. Việc gác lúc kết phiên (nhánh bỏ dòng ghi nguồn bản đồ, đề xuất hook chờ lời chủ dự án…): sổ việc khối A, gạch "Việc GÁC".
 - Nhắn tên terminal; giao việc theo khối đầu của sổ việc — tin giao việc mở đầu bằng "quyết định nào đang chờ kết quả này", không giao danh sách bước. KHÔNG giao lại hàng đo cờ và các mục Phase 9–12: chúng đứng chờ.
 - Mặc định: giao NGAY theo sổ việc. Chỉ khi prompt mở phiên hoặc lời chủ dự án nêu một mục đích KHÁC sổ việc (như buổi bàn chiều 21/11) thì hỏi MỘT câu trước khi giao.
 - Khởi động bước 2 của khối A ngay lúc mở: một agent con ngữ cảnh mới soát tích hợp chỉ đọc (skill `soat-tich-hop`), vai đo đọc kết quả. Báo chủ dự án con số ước của bước 0 (8–10 USD Bedrock, khoảng 100 phút máy) trước khi chạy.
