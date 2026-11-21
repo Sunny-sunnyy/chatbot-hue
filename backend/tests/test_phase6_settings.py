@@ -11,13 +11,21 @@ def test_phase6_settings_are_exact():
         "retrieval_treatment": "dense_bm25_rrf",
         "reranker": "none",
     }
+    # `provider` là công tắc đổi qua / đổi về model viết (21/11/2026) ⇒ không khoá giá trị ở đây; mọi dòng còn lại vẫn khoá đúng từng chữ
+    assert settings["full_corpus_generation"].pop("provider") in ("openai", "bedrock")
     assert settings["full_corpus_generation"] == {
-        "provider": "openai",
         "model": "gpt-6-luna",
         "api_key_env": "OPENAI_API_KEY",
         "token_encoding": "o200k_base",
         "timeout_seconds": 45,
         "max_context_documents": 10,
+        "bedrock": {
+            "model": "global.anthropic.claude-sonnet-5-5",
+            "region": "ap-southeast-1",
+            "max_tokens": 128000,
+            "reasoning_default": "low",
+            "creds_file_env": "HUE_BEDROCK_CREDS_FILE",
+        },
     }
     forbidden_keys = {
         "temperature",

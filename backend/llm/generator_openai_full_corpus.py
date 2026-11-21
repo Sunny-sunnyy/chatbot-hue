@@ -24,6 +24,7 @@ from openai.types.shared import Reasoning
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from core.schema import GenerationError
+from llm.bedrock_model import BedrockClaudeModel, BedrockError
 from llm.pricing import cost_usd
 from llm.sua_lich_v2 import MAX_HANH_DONG, HanhDong, HanhDongCHT
 from llm.full_corpus_prompt import (
@@ -213,10 +214,11 @@ class CallLog(RunHooks):
 
     async def on_llm_end(self, context, agent, response) -> None:
         ms = None if self._started is None else round((time.monotonic() - self._started) * 1000, 1)
-        self.calls.append(call_entry(response, ms))
+        # bảng giá theo model THẬT của lần gọi: lớp dịch Bedrock có thuộc tính `provider`; `OpenAIResponsesModel` không có ⇒ giá luna như trước
+        self.calls.append(call_entry(response, ms, provider=getattr(getattr(agent, "model", None), "provider", "openai")))
 
 
-def call_entry(response: Any, ms: float | None) -> dict:
+def call_entry(response: Any, ms: float | None, provider: str = "openai") -> dict:
     """Một mục log từ `ModelResponse` của một lần gọi: loại đầu ra, ms, USD giá đủ (`llm.pricing.cost_usd`), token."""
     usage = response.usage
     cached, cache_write = input_cache_tokens(usage)
@@ -224,7 +226,7 @@ def call_entry(response: Any, ms: float | None) -> dict:
     return {
         "kind": [getattr(item, "type", None) for item in response.output],
         "ms": ms,
-        "usd": cost_usd(usage.input_tokens, usage.output_tokens, cache_write or 0, cached or 0),
+        "usd": cost_usd(usage.input_tokens, usage.output_tokens, cache_write or 0, cached or 0, provider=provider),
         "input_tokens": usage.input_tokens,
         "output_tokens": usage.output_tokens,
         "reasoning_tokens": reasoning,
@@ -266,22 +268,26 @@ class OpenAIFullCorpusGenerator:
     def __init__(
         self,
         *,
-        client: AsyncOpenAI,
+        client: AsyncOpenAI | None,
         model: str,
         timeout: int = 45,
         answer_instructions: str = ANSWER_SYSTEM_INSTRUCTIONS,
         reasoning_effort: str | None = None,
         router_timeout: float = 10,
+        bedrock_model: BedrockClaudeModel | None = None,
     ) -> None:
         # answer_instructions / reasoning_effort: chỉ để harness Phase 8.1 thử prompt và mức suy luận;
         # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning; None hoặc "" = không gửi).
+        # `bedrock_model` (đổi tạm 21/11/2026, `provider: bedrock`): mọi agent dưới đây gọi Claude qua lớp dịch thay cho OpenAI; không truyền ⇒
+        # đúng đường OpenAI như trước. `model` vẫn là tên ghi log / dấu phiên bản cache.
         self.client = client
         self.model = model
+        self.provider = "openai" if bedrock_model is None else bedrock_model.provider
         self.timeout = timeout
         self.router_timeout = router_timeout
 
         # Create one shared OpenAIResponsesModel with gpt-6-luna alias
-        self.responses_model = OpenAIResponsesModel(
+        self.responses_model = bedrock_model if bedrock_model is not None else OpenAIResponsesModel(
             model=self.model, openai_client=self.client
         )
 
@@ -386,13 +392,31 @@ class OpenAIFullCorpusGenerator:
     ) -> "OpenAIFullCorpusGenerator":
         """Instantiate generator from settings and process environment fail-closed."""
         config = settings.get("full_corpus_generation", {})
+        timeout = config.get("timeout_seconds", 45)
+        if config.get("provider") == "bedrock":
+            # Khối `bedrock` của settings.yaml: mã model, vùng, `max_tokens` (trường bắt buộc — để mức tối đa), mức suy luận mặc định, tên biến môi
+            # trường trỏ tới file khoá tạm. Đọc từ dict truyền vào ⇒ bộ đo dựng nhiều generator khác cấu hình trong một tiến trình.
+            # Đường dẫn file khoá chỉ nằm ở môi trường — không ghi vào repo.
+            bedrock = config["bedrock"]
+            creds_file = os.getenv(bedrock["creds_file_env"], "").strip()
+            if not creds_file:
+                raise GenerationError(f"{bedrock['creds_file_env']} is missing from environment")
+            return cls(
+                client=None,
+                model=bedrock["model"],
+                timeout=timeout,
+                answer_instructions=answer_instructions,
+                reasoning_effort=reasoning_effort,
+                router_timeout=settings.get("assistant", {}).get("router_timeout_seconds", 10),
+                bedrock_model=BedrockClaudeModel(model=bedrock["model"], region=bedrock["region"], creds_file=creds_file, timeout=timeout,
+                                                 max_tokens=bedrock["max_tokens"], reasoning_default=bedrock["reasoning_default"]),
+            )
         api_key_env = config.get("api_key_env", "OPENAI_API_KEY")
         api_key = os.getenv(api_key_env, "").strip()
         if not api_key:
             raise GenerationError(f"{api_key_env} is missing from environment")
 
         model = config.get("model", "gpt-6-luna")
-        timeout = config.get("timeout_seconds", 45)
 
         client = AsyncOpenAI(
             api_key=api_key,
@@ -429,6 +453,8 @@ class OpenAIFullCorpusGenerator:
             raise GenerationError(f"OpenAI generation timed out after {timeout}s") from exc
         except (AgentsException, OpenAIError) as exc:
             raise GenerationError("OpenAI generation failed") from exc
+        except BedrockError as exc:  # lời lỗi của lớp dịch đã che thân 403 / ARN ⇒ đưa thẳng ra (403: có chữ "khoá Bedrock")
+            raise GenerationError(str(exc)) from exc
         except Exception as exc:
             raise GenerationError("OpenAI generation encountered unexpected failure") from exc
 
@@ -672,5 +698,8 @@ class OpenAIFullCorpusGenerator:
         return self._generated_text(result, "", started, call_log), parse_cau_lich(getattr(result, "final_output", None))
 
     async def aclose(self) -> None:
-        """Close AsyncOpenAI client connection."""
+        """Close AsyncOpenAI client connection (đường Bedrock: đóng kết nối của lớp dịch)."""
+        if self.client is None:
+            await self.responses_model.close()
+            return
         await self.client.close()

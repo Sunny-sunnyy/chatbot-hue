@@ -1797,7 +1797,7 @@ async def _answer_core(query: str, retrieval_service, context_builder, generator
             usd = sum(call["usd"] for call in spec.llm_calls)
             trace.n_tra_loi_bo, trace.bo_huy_giua = 1, not finished_before_route
             if trace.bo_huy_giua and spec.generation_ms is not None and spec.packed is not None:
-                usd += cost_usd(spec.packed.input_tokens, 0)  # lần gọi bị huỷ không có usage ⇒ cận dưới (plan D2)
+                usd += cost_usd(spec.packed.input_tokens, 0, provider=getattr(generator, "provider", "openai"))  # lần gọi bị huỷ không có usage ⇒ cận dưới (plan D2)
             trace.usd_bo = usd
 
 
