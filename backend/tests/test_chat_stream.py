@@ -164,11 +164,15 @@ def test_tail_of_final_answer_is_sent_when_the_shown_text_is_only_its_beginning(
     assert [name for name, _ in events][-3:] == ["delta", "sources", "done"] and stream.metrics["delta_matches_final"] is True
     seqs = [data["seq"] for name, data in events if name == "delta"]
     assert seqs == list(range(1, len(seqs) + 1))
-    # đối chứng: chữ đã phát KHÔNG phải tiền tố của chữ cuối ⇒ không phát thêm gì (không ghép hai bản khác nhau), cờ lệch vẫn ghi để đếm
+    assert stream.metrics["thay_chu"] is None  # đường thường: không có sự kiện thay chữ
+    # chữ đã phát KHÔNG phải tiền tố của chữ cuối (21/11/2026: code gỡ một câu sau khi kiểm) ⇒ không ghép hai bản khác nhau: MỘT sự kiện `thay_chu`
+    # mang cả chữ cuối, đứng trước `sources`; không phát thêm `delta`; cờ `thay_chu` ghi để đếm
     stream, chunks, _ = stream_with_text("Bến tạm ngừng khi nước sông dâng [Nguồn 2].", json.dumps({"answer": dau}, ensure_ascii=False))
     events = parse_sse(chunks)
-    assert "".join(data["text"] for name, data in events if name == "delta") == dau and stream.metrics["delta_matches_final"] is False
-    assert stream.metrics["outcome"] == "success"
+    assert "".join(data["text"] for name, data in events if name == "delta") == dau
+    assert [(name, data) for name, data in events if name == "thay_chu"] == [("thay_chu", {"text": "Bến tạm ngừng khi nước sông dâng [2]."})]
+    assert [name for name, _ in events][-3:] == ["thay_chu", "sources", "done"]
+    assert stream.metrics["outcome"] == "success" and stream.metrics["thay_chu"] is True and stream.metrics["delta_matches_final"] is True
 
 
 def test_whitespace_only_first_block_does_not_leave_the_answer_empty():

@@ -51,7 +51,8 @@ def luot_luu_duoc(trace, tu_choi: bool) -> bool:
     Chỉ lượt trả lời từ kho, có nguồn, và mọi công cụ đã chạy đều là tìm kho — một luật loại cả thời tiết, ngày / lịch âm, khoảng cách, lịch,
     tra web, bão lũ (đều đổi theo giờ hoặc theo người). Lượt có câu an toàn trong ghi chú cũng không lưu: chỗ an toàn chọn chặt."""
     cau_an_toan = tt.CAU_BAO_LU in (trace.notice or "") or trace.luu_y_nguon is not None
-    return (not tu_choi and trace.fixed_outcome is None and trace.citation_error is None and bool(trace.cited)
+    # 21/11/2026: lượt đã bị code gỡ câu sau phép kiểm số (trước đây lượt đó bị rút nên không bao giờ tới đây) ⇒ không lưu bản đã gỡ cho người sau
+    return (not tu_choi and trace.fixed_outcome is None and trace.citation_error is None and bool(trace.cited) and trace.kiem_so_go is None
             and trace.web is None and trace.lich is None and trace.lich_v2 is None and trace.clarify is None and trace.lam_thay is None
             and trace.today is None and trace.thoi_tiet_noi is None and trace.thoi_tiet_dau is None
             and all(cong_cu["name"] == "tim_kho" for cong_cu in trace.tools) and not cau_an_toan)
