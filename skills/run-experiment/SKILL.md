@@ -1,6 +1,6 @@
 ---
 name: run-experiment
-description: Dùng trước khi thử bất kỳ thay đổi nào ở discovery / chia đoạn / embedding / BM25 / Qdrant / tìm kiếm / rerank / context / prompt / model sinh / lời dặn – công cụ – cờ của trợ lý / bộ chấm của hue_rag, hoặc khi so sánh phương án, đo chất lượng, quyết một thay đổi có vào chatbot hay không. Các bước — tiêu chí ghi trước (sàn / mức tụt cho phép / chỉ số quyết), cỡ mẫu trước khi chạy, mốc (baseline; khâu có LLM đo nhiễu A/A), kiểm người chấm, đổi một thứ, đo theo cặp và theo tầng, luật giữ/gỡ vượt nhiễu, xác nhận trên nhóm kiểm, giữ hồ sơ cả phương án bị bỏ, trần tiền/thời gian. Không dùng cho sửa lỗi nhỏ đã rõ nguyên nhân (dùng practical-project-coding).
+description: Dùng trước khi thử bất kỳ thay đổi nào ở discovery / chia đoạn / embedding / BM25 / Qdrant / tìm kiếm / rerank / context / prompt / model sinh / lời dặn – công cụ – cờ của trợ lý / bộ chấm của hue_rag, hoặc khi so sánh phương án, đo chất lượng, quyết một thay đổi có vào chatbot hay không. Các bước — tiêu chí ghi trước (sàn / mức tụt cho phép / chỉ số quyết), cỡ mẫu trước khi chạy, mốc (baseline; khâu có LLM đo nhiễu A/A), kiểm người chấm, đổi một thứ, đo theo cặp và theo tầng, luật giữ/gỡ vượt nhiễu, xác nhận trên nhóm kiểm, giữ hồ sơ cả phương án bị bỏ. Không dùng cho sửa lỗi nhỏ đã rõ nguyên nhân (dùng practical-project-coding).
 ---
 
 # Thí nghiệm có kỷ luật — hue_rag
@@ -57,7 +57,7 @@ theo dõi), ngưỡng, nhiễu + nguồn số · kết luận.
 - Bảng số trong report do script in ra, không gõ lại tay; n = 0 cho một lớp câu ⇒ `NOT RUN`, không ghi "đạt". Bảng kết quả từng câu có cột
   **"kết thúc kiểu gì"** (bình thường / chạm trần / lỗi): lượt chạm trần hay lỗi giữa chừng **không** được tính vào "từ chối đúng" hay "đúng".
 - **Thước nhiều lượt:** người dùng do model đóng vai tự hỏi tiếp ⇒ hai phiên rẽ nhánh sau lượt 1, KHÔNG so theo cặp: so tỉ lệ; bộ phát lại câu hỏi cố định
-  thì so theo mục được; cả hai lấy nhiễu từ lượt lặp cùng điều kiện (tắt bộ nhớ đệm câu trả lời khi đo); giữ riêng vài vai / câu chỉ để đo lại; sàn kiểm
+  thì so theo mục được; cả hai chạy lặp cùng điều kiện, tắt bộ nhớ đệm câu trả lời; giữ riêng vài vai / câu chỉ để đo lại; sàn kiểm
   cùng lượt (`improve-project` bước 7).
 - **Sản phẩm có agent / công cụ:** ngoài câu trả lời cuối, đo thêm: đoạn đúng có nằm trong kết quả của **mọi** lần tìm trong lượt không · số lần gọi công cụ
   mỗi lượt · tiền mỗi lượt.
@@ -97,8 +97,8 @@ theo dõi), ngưỡng, nhiễu + nguồn số · kết luận.
   từ chối đúng giảm).
 - **Luật giữ / gỡ** — đủ cả ba mới là "tốt hơn": (1) không vi phạm sàn; (2) không chỉ số nào xấu quá mức tụt
   cho phép (đã trừ nhiễu); (3) ít nhất một chỉ số quyết tốt lên **vượt nhiễu và CI 95% > 0**. Câu chỉ đổi ở
-  một lượt không tính. Luật CI áp cho bộ câu mẫu so THEO CẶP; thước nhỏ / nhiều lượt (vài chục mục): "tốt hơn" = vượt mức nhiễu đo bằng
-  lượt lặp cùng điều kiện — ghi rõ là bằng chứng yếu hơn. Đây là ngưỡng thực dụng, không viết "đã chứng minh". Chỉ số theo dõi tụt mạnh ⇒ báo
+  một lượt không tính. Luật CI áp cho bộ câu mẫu so THEO CẶP; thước nhỏ / nhiều lượt: ít nhất BA lượt lặp mỗi bên, "tốt hơn" khi mọi cặp lượt cùng
+  chiều VÀ chênh gộp lớn hơn chênh lớn nhất giữa hai lượt không đổi gì; không đạt ⇒ "chưa rõ". Ngưỡng thực dụng, không viết "đã chứng minh". Chỉ số theo dõi tụt mạnh ⇒ báo
   dù luật nói giữ.
 - **Báo kết quả bộ an toàn (hue_rag: 32 câu) luôn đủ 4 số**, kể cả số đạt: đảo cảnh báo · sai điều kiện (mới / hết) · thiếu cảnh báo (mới / hết)
   · câu ngoài kho bị trả lời — người quyết phải thấy đủ trước khi chọn.
