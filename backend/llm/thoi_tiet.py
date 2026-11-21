@@ -274,15 +274,32 @@ def chuan_so(s: str) -> str:
     return s.replace(".", ",")
 
 
-def so_thoi_tiet(text: str) -> list[str]:
-    """Mọi chuỗi số dạng thời tiết trong `text` (đã chuẩn `.` ⇒ `,`), theo thứ tự xuất hiện."""
+def vi_tri_so_thoi_tiet(text: str) -> list[tuple[str, int, int]]:
+    """(số đã chuẩn, đầu, cuối) của mọi chuỗi số dạng thời tiết trong `text` — vị trí tính trên chữ đã chuẩn NFC, là cả cụm "số + đơn vị"."""
     t = _nfc(text)
     out = []
     for m in _DON_VI_LUON.finditer(t):
-        out += [chuan_so(g) for g in m.groups() if g]
+        out += [(chuan_so(g), m.start(), m.end()) for g in m.groups() if g]
     for m in _DON_VI_CANH_MUA.finditer(t):
         if _CANH_MUA.search(t[max(0, m.start() - 30):m.start()]):
-            out += [chuan_so(g) for g in m.groups() if g]
+            out += [(chuan_so(g), m.start(), m.end()) for g in m.groups() if g]
+    return out
+
+
+def so_thoi_tiet(text: str) -> list[str]:
+    """Mọi chuỗi số dạng thời tiết trong `text` (đã chuẩn `.` ⇒ `,`), theo thứ tự xuất hiện."""
+    return [s for s, _, _ in vi_tri_so_thoi_tiet(text)]
+
+
+def so_kem_don_vi(text: str) -> set[str]:
+    """Số đứng KÈM đơn vị thời tiết trong một CÂU HỎI của người dùng ("63 %", "2mm", "45 độ") — phần câu hỏi góp vào tập số được phép. Không lấy mọi
+    con số của câu hỏi: ngày tháng, số người, số tiền trùng giá trị sẽ mở cửa cho một con số thời tiết model tự thêm ("Ngày 30/11 … trời thế nào?" ⇒
+    "khoảng 30 °C" — review phiên B 21/11/2026). "%" chỉ nhận khi câu hỏi có chữ mưa / ẩm / khả năng / xác suất ở bất kỳ đâu (người dùng hay viết
+    "63% thì mưa nhiều không" — chữ "mưa" đứng SAU số, khác luật dành cho chữ model)."""
+    t = _nfc(text)
+    out = {chuan_so(g) for m in _DON_VI_LUON.finditer(t) for g in m.groups() if g}
+    if _CANH_MUA.search(t):
+        out |= {chuan_so(g) for m in _DON_VI_CANH_MUA.finditer(t) for g in m.groups() if g}
     return out
 
 
