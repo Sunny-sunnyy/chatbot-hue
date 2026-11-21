@@ -45,7 +45,7 @@ Vậy phải gọi Claude bằng cách gọi gốc của nó, mà cách đó kh�
 
 **2. Bằng chứng.**
 - **Lượt thật qua trình duyệt với Sonnet** (21/11/2026, hệ thống thật bật tạm ở một cổng riêng, mức suy luận `low`) [máy kiểm; một phiên khác đếm lại từ log ra cùng số]: 14 lượt, 14 thành công, 0 lỗi.
-  Thời gian dưới đây là người dùng chờ từ lúc gửi tới lúc thấy câu trả lời; để so, luna thường cho chữ ĐẦU TIÊN sau vài giây rồi chạy dần (ví dụ đo 20/11: một câu kho trả lời trong 7,5 giây).
+  Thời gian dưới đây là người dùng chờ từ lúc gửi tới lúc thấy câu trả lời; để so với luna: một câu kho đo 20/11 mất 7,5 giây cả lượt (mục 21), nhưng với luna chữ bắt đầu chạy ra TRƯỚC khi lượt xong, còn với Sonnet thì phải chờ hết. Chưa có phép so cùng một câu, cùng một buổi giữa hai model — đó là việc của lượt đo.
 
   | Người dùng làm gì | Thấy gì | Chờ |
   |---|---|---|
