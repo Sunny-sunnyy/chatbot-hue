@@ -264,6 +264,16 @@ SUA_LICH_LOI_DAN_CHT = SUA_LICH_LOI_DAN.replace(
     "⇒ một hành động chua_ho_tro, không điền gì.\n",
 )  # vòng 2 (thêm "dời một ĐIỂM … là doi_buoi") đã đo và BỎ: Q3 7 / 10 ↔ vòng 1 8 / 10, thêm ca S02 mới (Sửa đổi 17/11 của plan)
 
+# Cờ `sua_lich_buoi_toi` (21/11/2026): `buoi` nhận thêm "toi". Bản trên chỉ cho sáng / chiều ⇒ người dùng nói "sang buổi tối" thì model không có cách
+# ghi đúng (để trống buổi hoặc đổi thành chiều). Xếp được hay không do code trả lời. Cờ tắt ⇒ bản trên, giống byte.
+_DOI_BUOI_CU = "- doi_buoi: dời điểm ten sang buoi (sang / chieu), ngay nếu có.\n"
+assert _DOI_BUOI_CU in SUA_LICH_LOI_DAN_CHT
+SUA_LICH_LOI_DAN_TOI = SUA_LICH_LOI_DAN_CHT.replace(
+    _DOI_BUOI_CU,
+    "- doi_buoi: dời điểm ten sang buoi (sang / chieu / toi), ngay nếu có. Người dùng nói buổi tối thì điền toi, kể cả khi điểm đó là điểm tham quan "
+    "ban ngày: xếp được vào buổi tối hay không là việc hệ thống kiểm và trả lời, bạn chỉ ghi lại đúng buổi họ nói (với them_diem cũng vậy).\n",
+)
+
 
 # Công cụ `liet_ke_bai` (cờ `assistant.liet_ke_bai`, plan `report_agent/2026-11-21/b_cong_cu_liet_ke_plan.md`) — mô tả theo khuôn bốn ý: làm gì · dùng khi
 # nào · KHÔNG dùng khi nào · trả về gì. Dùng chung cho cả hai model.
