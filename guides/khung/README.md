@@ -24,8 +24,8 @@ Sau khi chép: bật hook git nếu có (`git config core.hooksPath <thư mục 
 - **Dữ liệu riêng** (dữ liệu gốc, bộ câu chấm, kết quả đo chi tiết, khoá) — NGOÀI git, có tên thư mục cố định ghi trong `AGENTS.md`, có hook chặn commit nhầm, có bản sao ngoài máy.
 - **Tài liệu cho người** (chủ dự án đọc) — một thư mục riêng, lời thường; chỉ viết việc đã xong.
 - **Sổ việc cho agent** — `AGENTS.md` (luật, ngắn) · ba trang GHI ĐÈ đọc lúc mở phiên (trang hiện trạng · mục lục việc · mục đầu sổ riêng của từng phiên) ·
-  một thư mục báo cáo cho MỖI NGÀY (báo cáo từng phiên + tổng hợp ngày + nhật ký từng phiên — để tra, không bắt đọc; báo cáo đã đặt vào ngày nào thì không dời) · sổ tay lệnh (runbook).
-  Chi tiết + lý do: `../CACH_LAM_VIEC.md` mục 5 "Làm việc theo thư mục từng ngày" [đang thử từ 19/11/2026].
+  một thư mục báo cáo cho MỖI NGÀY (báo cáo từng phiên + tổng hợp ngày — để tra, không bắt đọc; báo cáo đã đặt vào ngày nào thì không dời) · sổ tay lệnh (runbook).
+  Chi tiết: `../CACH_LAM_VIEC.md` mục 5.
 
 ## Phát triển theo cỡ việc
 
@@ -34,7 +34,7 @@ Sau khi chép: bật hook git nếu có (`git config core.hooksPath <thư mục 
 - **Lớn** (không lùi được, tiền, dữ liệu, bảo mật — hoặc việc nhiều ngày, nhiều file): đề bài chép từ LỜI chủ dự án ⇒ agent bổ sung phần thiếu, tự vẽ bài toán, chỉ hỏi lại thứ chỉ chủ dự án biết (`../CACH_LAM_VIEC.md` mục 1) ⇒ kế hoạch, chủ dự án duyệt một lần ⇒ làm ⇒ review (khác hãng nếu được) ⇒ chủ dự án tự thử.
 Chi tiết mức kiểm: `../CACH_LAM_VIEC.md` mục 2.
 
-## Skill nào mang đi được (10 skill của repo gốc, thư mục `skills/`)
+## Skill nào mang đi được (11 skill của repo gốc, thư mục `skills/`)
 
 | Skill | Mang đi | Lý do một dòng |
 |---|---|---|
@@ -50,5 +50,5 @@ Chi tiết mức kiểm: `../CACH_LAM_VIEC.md` mục 2.
 | `improve-workflow` | nguyên, viết lại khối "Ở dự án này" | thân trung tính: nhịp cuối ngày, ba con số, nấc "máy trước chữ sau" |
 | `improve-project` | nguyên, viết lại khối "Ở dự án này" | cải tiến SẢN PHẨM theo vòng: đích bằng lời người chủ, một con số, lỗi theo nguyên nhân, đo lại, dừng / quay đầu [chưa chạy trọn một vòng nào] |
 
-Bảng này lập sau khi **đọc trọn 8 skill cũ (đã sửa) và viết 2 skill mới** (18/11/2026); chưa skill nào được chép thử sang một dự án thứ hai [chưa chạy]. Công cụ khác Claude Code tìm skill ở thư mục
+Bảng này lập 18/11/2026, soát lại cả 11 skill ngày 21/11/2026; chưa skill nào được chép thử sang một dự án thứ hai [chưa chạy]. Công cụ khác Claude Code tìm skill ở thư mục
 `.agents/skills` (theo tài liệu công khai, chưa thử) ⇒ ở dự án mới đặt skill vào đó hoặc tạo liên kết.

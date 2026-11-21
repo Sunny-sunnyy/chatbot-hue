@@ -14,7 +14,7 @@
   gì, hai ba hướng kể cả hướng chưa ai nhắc, phép đếm nào làm đổi ý); thấy hướng được nêu chưa phải tốt nhất thì nói TRƯỚC khi làm — chủ dự án vẫn chọn thì làm theo.
 - **Không cần ai giao:** nêu hướng khác / nói việc được giao thiếu gì · đếm 0 đồng trên dữ liệu, log, code đã có · đọc thêm · phản đối đề bài.
 - **XÂY** (sửa code, đổi hệ thống) theo việc được giao hoặc bảng quyền dưới; một ý rộng được một phép đếm rẻ trước, có số mới xây.
-- **Thêm luật, rào, file sổ, vòng review** chỉ khi có sự cố đã thấy thật; cách làm do agent tự quyết và tự chịu, không đưa chủ dự án duyệt.
+- **Thêm luật, rào, file sổ, vòng review** chỉ khi có sự cố đã thấy thật; cách làm do agent tự quyết KHI chủ dự án đã giao việc đó (ghi ngày) — chưa giao thì trình chủ dự án.
 - **Giao việc** mở đầu bằng "quyết định nào đang chờ kết quả này"; **báo xong** kết bằng một dòng: phép này không cho biết gì · hướng rộng hơn · đếm rẻ nhất bằng gì.
 
 ## Luật cứng (ví dụ — xoá dòng không áp, thêm dòng của dự án; mỗi dòng nên có rào bằng máy)

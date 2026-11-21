@@ -11,22 +11,22 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
    session_prompt/START_SESSION.md (file này)
    session_prompt/HIEN_TRANG.md (hiện trạng — đọc đủ)
    session_prompt/sessions/STATUS_<X>.md — mục đầu (chưa có thì tạo từ mẫu trong sessions/README.md)
-   session_prompt/CURRENT_HANDOFF.md — chỉ khối trên cùng + mục việc của mình
+   session_prompt/VIEC_DANG_MO.md (sổ việc) — khối đầu (việc chính hiện nay) + khối nào có tên mình
+   session_prompt/CURRENT_HANDOFF.md (nhật ký theo giờ) — chỉ khối "Phiên sau đọc trước"
    session_prompt/Session_Prompt.md (luật) và WORKFLOW.md (cách làm): B, C, E KHÔNG đọc trọn lúc mở — khi NHẬN việc thì đọc
    đúng mục việc đó chạm (tin giao việc ghi "đọc mục nào"; không ghi ⇒ xem tiêu đề mục hai file rồi đọc mục liên quan).
    A (giữ luật, giao việc) vẫn đọc đủ hai file.
    Project_Status.md, phần còn lại của handoff, PROJECT_HISTORY.md, report cũ = nhật ký — mở khi cần.
-   Skill dự án: danh sách ở AGENTS.md (Claude Code thấy qua .claude/skills/; agent khác đọc skills/<tên>/SKILL.md khi việc cần).
-   Khi code/test/chạy script: luôn `uv run …` trong .venv của dự án (Session_Prompt.md §10).
+   Skill dự án và bảy luật cứng: AGENTS.md.
 2. Kiểm nhanh, chỉ đọc: đọc riêng WORKFLOW.md mục 2 và chạy các lệnh ở đó.
 3. Báo ngắn: bạn là ai, Phase/việc đang ở đâu, việc của bạn, chỗ lệch giữa tài liệu
    và thực tế, thắc mắc. Nếu <X> là B, C hoặc E: báo cả A — KHÔNG rải tin cho mọi terminal để tìm A: đợi tin mở
    phiên của A (A gửi tên terminal mình cho cả nhóm) rồi trả lời đúng MỘT tin bằng SendMessage, tin đó gồm cả vai lẫn báo cáo
    mở phiên; ~5 phút chưa thấy tin của A ⇒ hỏi User tên terminal của A (vẫn không rải). Agent không phải Claude Code thì viết
    khối "Tin cho A" để User chuyển (WORKFLOW.md §7).
-   Mọi session (cả A): vòng tự soi một lần / ngày hỏi HAI chiều (Session_Prompt.md §7): có đang làm thừa (rào, nghi thức) không · có đang nhìn hẹp (sai bài toán, bỏ sót hướng tốt hơn) không.
+   Mọi session (cả A): vòng tự soi một lần / ngày, hỏi hai chiều — làm thừa ↔ nhìn hẹp (Session_Prompt.md §7).
    Rồi: A KHÔNG hỏi quyền phiên — theo bảng "Quyền thường trực" trong `AGENTS.md`, báo xong là A giao ngay B/C/E mọi việc đã có trong
-   handoff; chỉ việc thuộc hàng "hỏi User trước" mới chờ User; B/C/E: việc XÂY chờ A giao (việc A giao = User nói "làm đi"), còn nghĩ, đếm 0 đồng, nêu hướng khác — và một bản thử sau cờ tắt cho ý của chính mình khi phép đếm đã ra số (báo phiên điều phối một dòng trước khi sửa code) — thì không chờ (AGENTS.md mục "Cách nhìn việc"); D chờ User nói muốn hiểu việc gì. Trước đó không sửa file (trừ tạo
+   sổ việc; chỉ việc thuộc hàng "hỏi User trước" mới chờ User; B/C/E: việc XÂY chờ A giao (việc A giao = User nói "làm đi"), còn nghĩ, đếm 0 đồng, nêu hướng khác thì không chờ (AGENTS.md mục "Cách nhìn việc"); D chờ User nói muốn hiểu việc gì. Trước khi báo xong bước 3: không sửa file (trừ tạo
    `sessions/STATUS_<X>.md` của mình), không chạy việc nặng, không gọi API trả phí.
 ```
 
@@ -35,7 +35,6 @@ Ghi chú:
 - Làm mới ngữ cảnh giữa chừng: chỉ cần mở lại phiên đã đầy (thường là A); trước khi tắt làm "kết phiên nhẹ" (`WORKFLOW.md` §8).
 - Agent nào không phải Claude Code: User nói rõ khi mở (ví dụ "B là Codex"); các
   session liên lạc với nó qua User (khối "Tin cho <X>").
-- Prompt mở session là chỉ thị mới nhất của User; nếu khác `CURRENT_HANDOFF.md`,
-  session báo lệch.
-- Việc mới trong ngày: A ghi vào `CURRENT_HANDOFF.md` rồi nhắn session đó.
+- Prompt mở session là chỉ thị mới nhất của User; nếu khác sổ việc (`VIEC_DANG_MO.md`), session báo lệch.
+- Việc mới trong ngày: A ghi vào `VIEC_DANG_MO.md` rồi nhắn session đó.
 - Bài cho chủ dự án ở `bai_hoc/`; report agent ở `report_agent/<YYYY-MM-DD>/` (`WORKFLOW.md` §6).
