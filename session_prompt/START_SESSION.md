@@ -5,7 +5,7 @@ User copy khối dưới, thay `<X>` bằng A, B, C, E (hoặc D — học cùng
 
 ```text
 Bạn là Session <X> của dự án /home/minhhieu/hue_rag. A là điều phối (làm việc với
-User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọc, giúp User tự học — WORKFLOW.md §10.
+User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọc (trừ viết giáo trình), giúp User tự học — WORKFLOW.md §10.
 
 1. Đọc NGẮN (AGENTS.md công cụ tự nạp, agent khác đọc nó trước):
    session_prompt/START_SESSION.md (file này)
