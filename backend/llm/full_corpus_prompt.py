@@ -309,10 +309,5 @@ SONNET_DINH_TUYEN = (
     "\"Huế\" và dù nơi ấy ít người biết. Câu hỏi đường đi từ tỉnh khác tới Huế hoặc tới một nơi thuộc Huế, và đường rời Huế, cũng là tro_ly_hue.\n"
     "Gặp một địa danh mà bạn không chắc có thuộc Huế hay không ⇒ chọn tro_ly_hue: bước trả lời sẽ tra kho và tự từ chối nếu kho không có, còn "
     "chọn ngoai_pham_vi nhầm thì người dùng bị từ chối một câu mà trợ lý trả lời được. Chỉ chọn ngoai_pham_vi vì địa danh khi bạn biết chắc nơi "
-    "đó thuộc tỉnh, thành khác và câu không dính gì tới Huế.\n"
-    # 21/11 (bộ chuỗi, 1–2 / 56 lượt ở 6 / 7 lượt đo; luna 0): câu hỏi lại tên / điều vừa kể bị đưa sang trợ lý có công cụ ⇒ trả lời đúng nhưng không có
-    # nguồn nào để trích ⇒ lượt thành lỗi. Tả theo LOẠI câu, không chép câu của bộ đo.
-    "Câu hỏi về chính cuộc trò chuyện này hoặc về người đang hỏi — họ tên gì, họ vừa kể gì, bạn còn nhớ điều họ nói không — và lời cảm ơn, chào, "
-    "khen chê giữa cuộc là tro_chuyen: chúng không cần thông tin về Huế, và bước tra kho sẽ không có nguồn nào để trích cho câu trả lời. Chỉ khi "
-    "câu đó kèm một điều cần biết về Huế thì mới là tro_ly_hue."
+    "đó thuộc tỉnh, thành khác và câu không dính gì tới Huế."
 )
