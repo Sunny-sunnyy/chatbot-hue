@@ -1,6 +1,6 @@
 ---
 name: improve-workflow
-description: Tự cải tiến CÁCH LÀM của agent (một agent hay nhiều phiên) — dùng cuối mỗi ngày làm việc, lúc kết phiên / đóng đợt, khi User phải nhắc một điều lần thứ hai hoặc phải tự gợi một hướng agent lẽ ra phải nêu, khi một sự cố quy trình làm mất giờ / tiền / dữ liệu, hoặc khi User xin "rút kinh nghiệm", "cải tiến cách làm". Biến sự cố có bằng chứng thành ≤ 3 thay đổi luật / skill / rào bằng máy do agent tự quyết (một phiên khác đọc), gỡ luật cũ, sửa trí nhớ sai; chỉ hỏi User khi chạm luật cứng hoặc bảng quyền. Không dùng để đổi mục tiêu, tiêu chí đo, quyền, trần tiền hay code sản phẩm.
+description: Tự cải tiến CÁCH LÀM của agent (một agent hay nhiều phiên) — dùng cuối mỗi ngày làm việc, lúc kết phiên / đóng đợt, khi User phải nhắc một điều lần thứ hai hoặc phải tự gợi một hướng agent lẽ ra phải nêu, khi một sự cố quy trình làm mất giờ / tiền / dữ liệu, hoặc khi User xin "rút kinh nghiệm", "cải tiến cách làm". Biến sự cố có bằng chứng thành ≤ 3 thay đổi luật / skill / rào bằng máy do agent tự quyết (một phiên khác đọc), gỡ luật cũ, sửa trí nhớ sai; Không TỰ đổi mục tiêu, tiêu chí đo, luật cứng, quyền, trần tiền hay code sản phẩm — thấy cần đổi thì nêu cho User quyết.
 ---
 
 # Tự cải tiến cách làm
@@ -39,13 +39,13 @@ Hậu quả **không đảo ngược được** (lộ dữ liệu lên repo côn
 cụ chịu ⇒ luôn giữ dòng chữ tương ứng cho agent khác.
 
 Mỗi thay đổi ghi cho phiên đọc: sự cố + lần thứ mấy; sửa ở đâu (nguyên văn dòng thêm / gỡ); cái giá (thêm bao nhiêu chữ, chặn nhầm gì); **cách biết có ích =
-các con số ở mục 0 + sự cố đó có lặp không**; khi nào gỡ. **Không đi qua skill này:** mục tiêu / phạm vi, tiêu chí đo hay bộ thử của thí nghiệm đang chạy, quyền,
-trần tiền, code sản phẩm.
+các con số ở mục 0 + sự cố đó có lặp không**; khi nào gỡ. **Skill này không tự đổi:** mục tiêu / phạm vi, tiêu chí đo hay bộ thử của thí nghiệm đang chạy, luật
+cứng, quyền, trần tiền, code sản phẩm — thấy cần đổi thì nêu cho User quyết.
 
 ## 3. Quyết → thử → giữ / gỡ — người xét KHÁC người đề xuất
 
-- **Agent tự quyết:** người đề xuất viết diff trên nhánh riêng, một phiên KHÁC đọc rồi mới gộp. **Hỏi User** — một câu, có đáp án kèm hệ quả — chỉ khi
-  thay đổi chạm luật cứng hoặc bảng quyền, hoặc gỡ / đảo một câu ghi là lựa chọn của chính User. Gộp = **cho thử**: ghi sổ `đang thử` (ngày, file đổi,
+- **Agent tự quyết luật cách làm:** phiên nào cũng đề xuất được; người đề xuất viết diff trên nhánh riêng, một phiên KHÁC người viết đọc; ai gộp theo luật
+  của dự án. Thay đổi chạm luật cứng hoặc bảng quyền, hoặc gỡ / đảo một câu ghi là lựa chọn của chính User ⇒ **hỏi User** một câu, có đáp án kèm hệ quả. Gộp = **cho thử**: ghi sổ `đang thử` (ngày, file đổi,
   theo dõi gì, **ai sẽ xét**). Người đề xuất không tự kết luận luật của mình có hiệu quả; người xét kết luận theo các con số + sự cố có lặp không.
 - **Mỗi vòng, trước khi thêm thay đổi mới,** xét lại **mọi** mục `đang thử`: không lặp và luật được dùng ⇒ `đang dùng`; lặp ⇒ lên một nấc ở mục 2; qua 2 phiên
   làm việc thật không ai cần, gây vướng, hoặc **đang chặn việc đáng làm** ⇒ `gỡ`; chưa có dịp dùng ⇒ giữ, ghi lý do. Ghi kết quả xét **thêm vào trước** ghi chú
@@ -53,7 +53,7 @@ trần tiền, code sản phẩm.
 
 ## 4. Giữ harness gọn và đúng (mỗi vòng kết phiên)
 
-- `wc -c` các file bắt đọc lúc mở phiên; ghi số vào sổ; sau một vòng tổng đó không tăng. File agent luôn đọc giữ **dưới 24.000 byte** (có công cụ cắt file luật
+- `wc -c` các file bắt đọc lúc mở phiên; ghi số vào sổ; sau một vòng tổng đó không tăng (trừ luật an toàn / dữ liệu). File agent luôn đọc giữ **dưới 24.000 byte** (có công cụ cắt file luật
   ở cỡ đó mà không báo). Dài thêm ⇒ dời lịch sử ra, để link — **không cắt nội dung còn hiệu lực**.
 - Trí nhớ riêng của một công cụ (nạp trước cả file luật): mục sai / cũ, lời dè dặt không ghi phạm vi ⇒ sửa hoặc xoá; điều mọi agent cần ⇒ đưa vào tài liệu chung.
 - Một luật ở hai chỗ ⇒ giữ một, chỗ kia trỏ tới.
@@ -72,4 +72,5 @@ File luật, bảy luật cứng, bảng quyền: `AGENTS.md`, `session_prompt/S
 `session_prompt/HIEN_TRANG.md` mục 4 · sổ cải tiến: `session_prompt/SO_CAI_TIEN_CACH_LAM.md` · ý chưa thử: `session_prompt/Y_CHUA_THU.md` · sổ riêng của phiên:
 `session_prompt/sessions/STATUS_<X>.md` · lời User: `data/loi_user/` · sổ việc, tổng hợp ngày: `session_prompt/CURRENT_HANDOFF.md`,
 `report_agent/<ngày>/TONG_HOP.md` · skill đi kèm: `propose-options`, `giao-viec-agent-con`.
-"Agent tự giữ luật cách làm" đang THỬ ba ngày làm việc từ 21/11/2026; User đổi lại lúc nào cũng được.
+"Agent tự giữ luật cách làm" đang THỬ ba ngày làm việc từ 21/11/2026 — lúc xét lại và số để xét: `session_prompt/HIEN_TRANG.md` mục 4;
+User đổi lại lúc nào cũng được.
