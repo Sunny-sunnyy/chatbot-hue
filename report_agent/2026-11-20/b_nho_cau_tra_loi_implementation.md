@@ -34,3 +34,36 @@ câu trả lời vừa rồi của chính mình để biết đang nói nơi nà
 | Đã làm | Chưa làm | Tự hoãn + lý do | Lệnh kiểm + đầu ra |
 |---|---|---|---|
 | code chế độ "chỉ đáp liền trước" + test + chú thích cờ | sàn 1 · lượt đo có phí · review · lượt thật · bật cờ | kết phiên theo lời chủ dự án; lượt có phí chờ lượt máy | `cd backend && HF_HUB_OFFLINE=1 uv run python -m pytest tests/test_nho_dap_lien_truoc.py -q -p no:cacheprovider` ⇒ `12 passed` |
+
+## Thêm 15:14 21/11/2026 (giờ `date`) — làm tiếp sau khi model viết đổi sang Sonnet: sàn 1, lượt tự kiểm, hai thay đổi nhỏ. Cờ vẫn TẮT.
+
+**Sàn 1 [máy kiểm]:** cờ tắt, 228 chuỗi gửi model (đường luna) trên nhánh giống từng byte main (cùng mã băm `fd8382fa…`).
+
+**Lượt tự kiểm của người viết** (7 chuỗi hai lượt TỰ ĐẶT, mong đợi ghi trước; qua đúng lệnh chạy chuỗi của phiên đo; hai model; tắt ↔ bật; không phải bộ đích của phiên đo, không phải bộ bẫy 03/11 — hai bộ đó tôi không mở).
+Đọc lượt 2 và đối chiếu với danh sách ở lượt 1 của chính lần chạy đó:
+
+| Kiểu câu hỏi tiếp | luna: tắt ⇒ bật | Sonnet high: tắt ⇒ bật |
+|---|---|---|
+| "Quán thứ hai bạn vừa nói ở đường nào" | nêu SAI quán (nói chắc) ⇒ đúng quán | từ chối ⇒ đúng quán |
+| "Ý thứ hai bạn vừa nói, giải thích rõ hơn" | từ chối ⇒ đúng ý | từ chối ⇒ đúng ý |
+| "Cái đầu tiên trong danh sách cách trung tâm bao xa" | từ chối ⇒ đúng | đúng ⇒ đúng |
+| "Con số bạn vừa nói là cho một người hay cả nhóm" (giá vé) | đúng ⇒ đúng | đúng ⇒ đúng |
+| Đối chứng: câu không liên quan lượt trước | giống hệt | giống hệt |
+| Bẫy tự đặt: số điện thoại của "quán đầu tiên" (kho không có) | từ chối ⇒ từ chối | từ chối ⇒ từ chối (không mượn số quán khác) |
+
+⇒ 5 lượt hỏng (4 từ chối, 1 sai) thành đúng; 0 lượt đúng thành sai ở các kiểu này. 0 lỗi kỹ thuật, 0 lỗi trích dẫn.
+
+**Một kiểu câu XẤU ĐI ở bản đầu, đã đổi thiết kế (phiên điều phối chọn):** hỏi tiếp về con số DỰ BÁO vừa đưa ("con số khả năng mưa bạn vừa đưa là cao hay thấp?") trên Sonnet — có câu trả lời cũ trong lịch sử thì
+model tự từ chối 8 / 10 lần (con số đã nằm trong lời "không phải nguồn" nên model không gọi lại công cụ thời tiết), không có thì 0 / 6. luna không bị.
+**Đổi:** lượt đã dùng công cụ / nguồn đổi theo giờ (dự báo, ngày - lịch âm, sự kiện theo ngày, khoảng cách, lịch đã lưu) KHÔNG được giữ đáp — cùng luật với bộ nhớ câu trả lời giữa các cuộc. Sau đổi, chạy lại:
+Sonnet 4 / 4 lượt trả lời (0 từ chối); luna 3 / 3 ở cả hai bên. Lượt tìm kho, tra web, liệt kê bài vẫn giữ đáp.
+**Giới hạn mới:** sau một lượt thời tiết / ngày / khoảng cách, câu trỏ ngược bằng thứ tự ("ý thứ hai bạn vừa nói") không hiểu được — chưa thấy ca nào như vậy trong sổ vết hay các bộ đã chạy.
+
+**Trần cắt câu trả lời được nhớ: 1.200 ⇒ 4.000 ký tự.** Câu trả lời lượt 1 của Sonnet dài hơn 1.200 ở 2 / 7 chuỗi (1.283 và 1.422; dài nhất cả ngày 2.229); luna 0 / 7. Giữ một trần để bộ bẫy đọc được trên lượng chữ có giới hạn.
+
+**Lớp dịch Sonnet:** không sửa. Thêm một test khẳng định thân gửi có CHỮ THẬT của câu trả lời ở cặp lượt cuối và dòng giữ chỗ ở các cặp cũ hơn.
+Test: `tests/test_nho_dap_lien_truoc.py` 20 ca; 7 file chạm trí nhớ hội thoại / lớp dịch đạt. Tiền lượt tự kiểm: 1,4 USD (gần hết Sonnet) + các lượt phát lại ≈ 0,5 USD.
+
+**Còn lại trước khi được bật (không đổi so với plan):** bộ bẫy 03/11 (phiên khác chạy + chấm) · bộ đích của phiên đo + các mục "quên câu trả lời trước / câu cụt đại từ" của bộ câu khó · người thứ hai đọc tay lượt đích
+(0 nhận định chỉ có trong câu trả lời trước) · một lượt trình duyệt. Điểm nối chưa đo: phép kiểm số không nhận số chỉ có ở câu TRẢ LỜI trước — sau thay đổi trên, lượt thời tiết / khoảng cách không còn được nhớ nên
+tình huống đó hẹp lại còn "số trong câu trả lời từ kho" (giá vé…), vốn không qua phép kiểm số.

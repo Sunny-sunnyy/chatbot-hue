@@ -37,7 +37,7 @@ def test_chi_luot_lien_truoc_giu_cau_tra_loi_luot_cu_ve_dong_ghi_chu():
 
 
 def test_cat_cau_tra_loi_dai_va_co_tat_thi_nhu_cu():
-    dai = "chữ " * 1000
+    dai = "chữ " * (CAT_LOI_TRUOC // 2)  # dài gấp đôi trần
     o = loi_luot_truoc(dai)
     assert o.startswith(NHAN_LOI_TRUOC + "\n") and o.endswith(" …") and len(o) <= len(NHAN_LOI_TRUOC) + 1 + CAT_LOI_TRUOC + 2
     assert loi_luot_truoc("") == "" and loi_luot_truoc("[1]") == ""
@@ -56,6 +56,15 @@ def test_cat_cau_tra_loi_dai_va_co_tat_thi_nhu_cu():
     (lambda t: setattr(t, "lich", {"nguon": []}), "success", False),
     (lambda t: setattr(t, "lich_v2", {"lich": {}}), "success", False),
     (lambda t: setattr(t, "sua", {"n_ap": 1}), "success", False),
+    # 21/11: lượt dùng công cụ / nguồn đổi theo giờ không được giữ đáp (số dự báo, ngày, khoảng cách phải đến từ công cụ của lượt này); tìm kho, tra web,
+    # liệt kê bài thì giữ
+    (lambda t: t.tools.extend([{"name": "tim_kho"}, {"name": "thoi_tiet"}]), "success", False),
+    (lambda t: t.tools.extend([{"name": "tim_kho"}, {"name": "lich_san"}]), "success", False),
+    (lambda t: t.tools.append({"name": "ngay_lich"}), "success", False),
+    (lambda t: t.tools.append({"name": "khoang_cach_san"}), "success", False),
+    (lambda t: t.tools.append({"name": "lich_dang_co"}), "success", False),
+    (lambda t: t.tools.extend([{"name": "tim_kho"}, {"name": "tim_kho"}, {"name": "tra_web"}]), "success", True),
+    (lambda t: t.tools.extend([{"name": "tim_kho"}, {"name": "liet_ke_bai"}]), "success", True),
 ])
 def test_luot_nao_duoc_giu_cau_tra_loi(doi, outcome, mong):
     trace = AnswerTrace(answer="đáp [1]")
@@ -112,3 +121,15 @@ def test_route_gui_cau_tra_loi_lien_truoc_chi_khi_co_bat(bat):
     assert tin_tro_ly(luot_2) == [f"{NHAN_LOI_TRUOC}\nCâu trả lời số 1."]  # lượt hai thấy đáp lượt một, đã bỏ mã [1]
     lien_truoc = [t for t in tin_tro_ly(luot_3) if t.startswith(NHAN_LOI_TRUOC)]
     assert len(lien_truoc) == 1 and "Câu trả lời số 2." in lien_truoc[0] and "Câu trả lời số 1." not in "".join(tin_tro_ly(luot_3))  # lượt ba: chỉ đáp lượt hai
+
+
+def test_bedrock_messages_carry_the_remembered_answer_only_for_the_last_turn():
+    """Đường Sonnet (lớp dịch): lịch sử chỉ nhớ câu hỏi ⇒ giữa hai câu hỏi liền nhau lớp dịch chèn dòng giữ chỗ. Khi lượt liền trước có đáp được nhớ, chỗ đó
+    là CHỮ THẬT (nhãn + câu trả lời đã bỏ mã trích dẫn) — không còn dòng giữ chỗ cho cặp cuối; các cặp cũ hơn vẫn là dòng giữ chỗ. Không sửa lớp dịch."""
+    from llm.bedrock_model import HISTORY_GAP, to_messages
+    from llm.generator_openai_full_corpus import with_history
+
+    nho = loi_luot_truoc("Có Quán A [1] và Quán B [2].")
+    tin = [(m["role"], m["content"][0]["text"]) for m in to_messages(with_history("Quán thứ hai ở đâu?", (("Ăn bún ở đâu?", ""), ("Ăn cơm hến ở đâu?", nho))))]
+    assert tin == [("user", "Ăn bún ở đâu?"), ("assistant", HISTORY_GAP), ("user", "Ăn cơm hến ở đâu?"), ("assistant", nho), ("user", "Quán thứ hai ở đâu?")]
+    assert nho.startswith(NHAN_LOI_TRUOC) and "[1]" not in nho and "Quán B" in nho

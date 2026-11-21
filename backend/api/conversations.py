@@ -22,7 +22,9 @@ _SPACE_BEFORE_PUNCT = re.compile(r"\s+([.,;:!?])")
 # (đã bỏ mã trích dẫn, cắt ngắn) sau một dòng nhãn do code viết — để hiểu "quán thứ hai bạn vừa nói", "chia ra mỗi người". Nhãn nằm trong chính ô
 # lịch sử nên lời dặn hệ thống không đổi (lời dặn lịch sử sẵn có đã buộc mỗi nhận định lấy từ Bằng chứng của lượt này).
 NHAN_LOI_TRUOC = "[Lời trợ lý ở lượt trước — chỉ để hiểu câu hỏi tiếp; KHÔNG phải nguồn, không được trích hay coi là bằng chứng]"
-CAT_LOI_TRUOC = 1200  # ký tự; dài hơn ⇒ cắt đuôi (mục cuối của một danh sách dài có thể mất — giới hạn đã ghi)
+# ký tự; dài hơn ⇒ cắt đuôi. 20/11 đặt 1.200 (luna trả lời ngắn); 21/11 model viết là Sonnet: 2 / 7 câu trả lời của lượt tự kiểm dài hơn 1.200 (dài nhất
+# cả ngày 2.229) ⇒ nâng lên 4.000 để mục cuối một danh sách không bị mất; vẫn giữ MỘT trần để bộ bẫy "mượn nhầm đoạn" đọc được trên lượng chữ có giới hạn
+CAT_LOI_TRUOC = 4000
 
 
 def loi_luot_truoc(answer: str) -> str:
@@ -42,11 +44,21 @@ def stored_answer(answer: str) -> str:
     return _SPACE_BEFORE_PUNCT.sub(r"\1", re.sub(r"[ \t]{2,}", " ", text)).strip()
 
 
+# Tên mục `trace.tools` của các nguồn / công cụ ĐỔI THEO GIỜ hoặc theo người: dự báo, ngày - lịch âm (công cụ và bản code tính sẵn), sự kiện theo ngày, khoảng
+# cách (công cụ và bản tính sẵn), lịch đã lưu của cuộc. Lượt có một trong số này không được giữ đáp. `tim_kho`, `tra_web` (chữ web không nằm trong câu trả lời),
+# `liet_ke_bai` (danh sách — đúng thứ người dùng hay trỏ ngược bằng thứ tự) thì giữ.
+CONG_CU_KHONG_NHO_DAP = frozenset({"thoi_tiet", "ngay_lich", "lich_san", "su_kien_san", "khoang_cach", "khoang_cach_san", "lich_dang_co"})
+
+
 def dap_duoc_nho(trace, outcome: str | None) -> bool:
     """Lượt này có được giữ câu trả lời cho lượt kế không (`chi_dap_lien_truoc`): chỉ lượt hỏi đáp thường trả lời được. KHÔNG giữ: câu cố định (từ chối,
     ngoài phạm vi, nói thật giới hạn, hỏi lại), lượt lịch / biểu mẫu / sửa lịch — chữ lịch có tên quán lấy từ bản đồ mở, model không được thấy
     (`llm/quan_lich.py`). Chữ mục web vốn không nằm trong `trace.answer`."""
-    return (outcome == "success" and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None and trace.sua is None)
+    # 21/11/2026: KHÔNG giữ đáp của lượt đã dùng công cụ đổi theo giờ (thời tiết, ngày / lịch âm, khoảng cách — cùng luật `luot_luu_duoc` của bộ nhớ câu trả
+    # lời giữa các cuộc). Lượt tự kiểm trên Sonnet: hỏi tiếp về "con số khả năng mưa bạn vừa đưa" — có đáp cũ trong lịch sử thì model tự từ chối 8 / 10 lần
+    # (số đã nằm trong lời "không phải nguồn" nên nó không gọi lại công cụ), không có thì 0 / 6. Số dự báo phải luôn đến từ công cụ của LƯỢT NÀY.
+    return (outcome == "success" and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None and trace.sua is None
+            and not any(cong_cu["name"] in CONG_CU_KHONG_NHO_DAP for cong_cu in trace.tools))
 
 
 @dataclass
