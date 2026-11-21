@@ -1,6 +1,6 @@
 ---
 name: run-experiment
-description: Dùng trước khi thử bất kỳ thay đổi nào ở discovery / chia đoạn / embedding / BM25 / Qdrant / tìm kiếm / rerank / context / prompt / model sinh / lời dặn – công cụ – cờ của trợ lý / bộ chấm của hue_rag, hoặc khi so sánh phương án, đo chất lượng, quyết một thay đổi có vào chatbot hay không — kể cả khi quay lại Phase cũ. Các bước — tiêu chí ghi trước (sàn / mức tụt cho phép / chỉ số quyết), cỡ mẫu trước khi chạy, mốc (baseline; khâu có LLM đo nhiễu A/A), kiểm người chấm, đổi một thứ, đo theo cặp và theo tầng, luật giữ/gỡ vượt nhiễu, xác nhận trên nhóm kiểm, giữ hồ sơ cả phương án bị bỏ, trần tiền/thời gian. Không dùng cho sửa lỗi nhỏ đã rõ nguyên nhân (dùng practical-project-coding).
+description: Dùng trước khi thử bất kỳ thay đổi nào ở discovery / chia đoạn / embedding / BM25 / Qdrant / tìm kiếm / rerank / context / prompt / model sinh / lời dặn – công cụ – cờ của trợ lý / bộ chấm của hue_rag, hoặc khi so sánh phương án, đo chất lượng, quyết một thay đổi có vào chatbot hay không. Các bước — tiêu chí ghi trước (sàn / mức tụt cho phép / chỉ số quyết), cỡ mẫu trước khi chạy, mốc (baseline; khâu có LLM đo nhiễu A/A), kiểm người chấm, đổi một thứ, đo theo cặp và theo tầng, luật giữ/gỡ vượt nhiễu, xác nhận trên nhóm kiểm, giữ hồ sơ cả phương án bị bỏ, trần tiền/thời gian. Không dùng cho sửa lỗi nhỏ đã rõ nguyên nhân (dùng practical-project-coding).
 ---
 
 # Thí nghiệm có kỷ luật — hue_rag
@@ -23,8 +23,8 @@ Kế hoạch có tiêu chí ghi trước được một phiên khác đọc trư
    - **sàn** — không bao giờ được vi phạm (0 câu mất đoạn đúng khỏi context, từ chối đúng `out_of_scope` giữ
      nguyên);
    - **mức tụt cho phép** của từng chỉ số còn lại, ghi bằng **số câu** khi bộ nhỏ (lỗi citation, từ chối nhầm);
-   - **1–2 chỉ số quyết** (phải tốt lên vượt nhiễu) tách khỏi **chỉ số theo dõi** (chỉ báo, không quyết) — tiền / câu và
-     độ trễ p50 / p95 thuộc nhóm này: đo và báo, không làm sàn (19/11/2026).
+   - **1–2 chỉ số quyết** (phải tốt lên vượt nhiễu) tách khỏi **chỉ số theo dõi** (chỉ báo, không quyết). Tiền / câu và độ trễ không làm
+     SÀN (19/11/2026): là chỉ số theo dõi, trừ thí nghiệm nhằm chính tốc độ / tiền thì là chỉ số quyết.
    Mỗi chỉ số định nghĩa chính xác: hàm nào tính, đếm gì, không đếm gì, trên tập nào, n bao nhiêu. Sàn / mức tụt đo
    một hành vi production thì trỏ `file:dòng` hành vi đó, và kiểm hai dòng tiêu chí không đếm cùng một lỗi. Không đổi tiêu chí sau khi thấy số.
 4. **Hợp đồng kiểm:** ai review chéo; người làm nộp bằng chứng gì; người kiểm tự chạy lại phần nào.
@@ -33,9 +33,8 @@ Kế hoạch có tiêu chí ghi trước được một phiên khác đọc trư
    số câu phải thắng để CI 95% > 0 (kể cả Holm khi nhiều biến thể). Không đủ câu ⇒ ghi trước "kết quả có thể
    chỉ là chưa rõ", mở rộng bộ hoặc đổi câu hỏi thí nghiệm, đừng chạy rồi mới thấy. Đếm **trên đúng mốc của thí nghiệm**, không dùng số của mốc / tầng khác.
 
-Khuôn ghi trước (một khối trong plan): `experiment_id` · `baseline` (cấu hình đang chạy + commit) · `changed_variable` (đúng một thứ) · `unchanged` ·
-`data` (bộ, nhóm, n) · `metrics` (mỗi dòng: tên, hàm tính, chiều tốt, vai trò sàn / mức tụt / quyết / theo dõi, ngưỡng, nhiễu + nguồn số) · `result` ·
-`conclusion` (tốt hơn / không đổi / kém hơn / chưa rõ).
+Khuôn ghi trước (một khối trong plan): mốc + commit · đúng MỘT thứ đổi · bộ, nhóm, n · mỗi chỉ số: hàm tính, chiều tốt, vai trò (sàn / mức tụt / quyết /
+theo dõi), ngưỡng, nhiễu + nguồn số · kết luận.
 
 ## 2. Bộ câu và nhãn
 
@@ -57,8 +56,9 @@ Khuôn ghi trước (một khối trong plan): `experiment_id` · `baseline` (c�
   (`backend/evaluation/full_corpus_judge_prompt.md`) ⇒ độ bám nguồn phải đo bằng code riêng.
 - Bảng số trong report do script in ra, không gõ lại tay; n = 0 cho một lớp câu ⇒ `NOT RUN`, không ghi "đạt". Bảng kết quả từng câu có cột
   **"kết thúc kiểu gì"** (bình thường / chạm trần / lỗi): lượt chạm trần hay lỗi giữa chừng **không** được tính vào "từ chối đúng" hay "đúng".
-- **Thước nhiều lượt / người dùng do model đóng vai:** hai phiên của cùng một vai rẽ nhánh sau lượt 1 ⇒ KHÔNG so theo cặp; so tỉ lệ và chạy lặp để
-  biết nhiễu trước khi đọc chênh; giữ riêng vài vai / câu chỉ để đo lại; các sàn kiểm cùng lượt đo (skill `improve-project` bước 7).
+- **Thước nhiều lượt:** người dùng do model đóng vai tự hỏi tiếp ⇒ hai phiên rẽ nhánh sau lượt 1, KHÔNG so theo cặp: so tỉ lệ; bộ phát lại câu hỏi cố định
+  thì so theo mục được; cả hai lấy nhiễu từ lượt lặp cùng điều kiện (tắt bộ nhớ đệm câu trả lời khi đo); giữ riêng vài vai / câu chỉ để đo lại; sàn kiểm
+  cùng lượt (`improve-project` bước 7).
 - **Sản phẩm có agent / công cụ:** ngoài câu trả lời cuối, đo thêm: đoạn đúng có nằm trong kết quả của **mọi** lần tìm trong lượt không · số lần gọi công cụ
   mỗi lượt · tiền mỗi lượt.
 
@@ -107,7 +107,7 @@ Khuôn ghi trước (một khối trong plan): `experiment_id` · `baseline` (c�
 - **Câu an toàn / khẩn cấp / ca rủi ro mới viết** (bất kỳ bậc nào) ⇒ thêm ngay vào bộ hồi quy của khâu nó kiểm (hue_rag: bộ tuyến, bộ an toàn 32 + phần thêm) ở
   lượt đo kế tiếp; ghi trong mục việc.
 - "Tốt hơn" chỉ đề xuất vào chatbot khi **đã xác nhận trên nhóm kiểm**; đưa vào runtime là việc riêng, theo bảng quyền `AGENTS.md`
-  (đổi lớn thứ người dùng thấy, model / provider, dữ liệu ⇒ hỏi chủ dự án trước).
+  (tính năng mới, đổi lớn thứ người dùng thấy, sửa kho, gửi dữ liệu ra dịch vụ mới ⇒ hỏi chủ dự án trước).
 - **3 vòng sửa cùng một biến thể không đạt ⇒ dừng**, ghi giới hạn, báo phiên điều phối / User; không vá cơ chế bảo vệ cơ chế.
   Hết trần tiền / thời gian ⇒ dừng, báo phiên điều phối.
 
