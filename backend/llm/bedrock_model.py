@@ -47,6 +47,7 @@ AWS_IDENTIFIER = re.compile(r"arn:aws\S*|(?<!\d)\d{12}(?!\d)")  # không để A
 ANSWER_TOOL = "tra_loi"
 ANSWER_TOOL_DESCRIPTION = ("Nộp câu trả lời cuối cùng cho người dùng. Gọi khi đã đủ thông tin để trả lời, hoặc khi không thể tìm thêm — kể cả khi câu trả lời "
                            "là câu từ chối theo lời dặn. Gọi đúng một lần, đặt toàn bộ câu trả lời vào tham số; không viết câu trả lời ra ngoài công cụ này.")
+CODE_FENCE = re.compile(r"^```(?:json)?\s*(?P<body>.*?)\s*```$", re.DOTALL)
 DATA_URL = re.compile(r"^data:(?P<media>[\w/+.-]+);base64,(?P<data>.+)$", re.DOTALL)
 
 
@@ -168,12 +169,15 @@ def to_usage_dict(usage: dict) -> dict:
 
 
 def _wrap_plain_answer(text: str, schema: dict) -> str:
-    """Đường lùi của `to_response`: Claude viết chữ thường thay vì gọi `ANSWER_TOOL`. Chữ đã là JSON đối tượng ⇒ giữ (SDK kiểm khuôn như thường)."""
-    try:
-        if isinstance(json.loads(text), dict):
-            return text
-    except ValueError:
-        pass
+    """Đường lùi của `to_response`: Claude viết chữ thường thay vì gọi `ANSWER_TOOL`. Chữ đã là JSON đối tượng — kể cả nằm trong rào ```json … ```
+    (review C 21/11: không gỡ rào thì người dùng thấy nguyên khối rào) — ⇒ dùng chính JSON đó (SDK kiểm khuôn như thường)."""
+    fenced = CODE_FENCE.match(text.strip())
+    for candidate in filter(None, (fenced and fenced["body"], text)):
+        try:
+            if isinstance(json.loads(candidate), dict):
+                return candidate
+        except ValueError:
+            pass
     required, properties = schema.get("required") or [], schema.get("properties") or {}
     if len(properties) == 1 and required == list(properties) and properties[required[0]].get("type") == "string":
         return json.dumps({required[0]: text.strip()}, ensure_ascii=False)

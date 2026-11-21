@@ -147,6 +147,10 @@ def test_internal_answer_tool_never_reaches_the_sdk():
     assert json.loads(plain.output[0].content[0].text) == {"answer": 'Có "thật" [1].'}
     already = to_response(claude_message({"type": "text", "text": '{"answer": "Có [1]."}'}), "m", schema)
     assert already.output[0].content[0].text == '{"answer": "Có [1]."}'
+    fenced = to_response(claude_message({"type": "text", "text": '```json\n{"answer": "Vé 200.000 đồng [1]."}\n```'}), "m", schema)
+    assert fenced.output[0].content[0].text == '{"answer": "Vé 200.000 đồng [1]."}'  # gỡ rào, dùng chính JSON bên trong
+    code = to_response(claude_message({"type": "text", "text": "```\nkhông phải JSON\n```"}), "m", schema)
+    assert json.loads(code.output[0].content[0].text) == {"answer": "```\nkhông phải JSON\n```"}  # rào không chứa JSON ⇒ bọc nguyên chữ
     with pytest.raises(GenerationError):
         to_response(claude_message({"type": "text", "text": "chữ thường"}), "m", AgentOutputSchema(RouteSplitOutput).json_schema())
     untouched = to_response(claude_message({"type": "text", "text": "chữ thường"}), "m")

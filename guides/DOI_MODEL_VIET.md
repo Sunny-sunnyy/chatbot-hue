@@ -37,8 +37,8 @@ giao diện, bộ đếm token dựng ngữ cảnh, người chấm. Lời dặn
 | Hằng | Nối vào lời gọi nào | Vì sao (số đo 21/11) |
 |---|---|---|
 | `SONNET_TRA_LOI` | trả lời không công cụ, trợ lý có công cụ (cả bản có lịch sử, bản nhiều ý) | 34–42 / 66 câu của Sonnet bị người chấm trừ "Trọng tâm", có câu nhắc một con số bốn lần. Đoạn dặn: nói điều được hỏi trước, không nhắc lại; KHÔNG dặn viết ngắn. Hiệu quả: chờ lượt đo của phiên đo. |
-| `LICH_V2_LOI_DAN_SONNET` (+ `SONNET_GIU_DUNG_VAT` cho lượt biểu mẫu cũ) | viết câu cho thẻ lịch | Bản luna ép "đúng một câu, 30 từ"; Sonnet dồn ý làm đổi nghĩa (nguồn ghi HAI bảo vật, viết thành ba). Bản Sonnet: một đến hai câu, khoảng 50 từ, kèm dặn giữ danh hiệu / con số đi đúng vật. Mục thử: sai hoặc lỏng 3 / 4 lần trước ⇒ sai 1 / 12 lần sau. Thử 40 từ: sai 2 / 6 ⇒ giữ 50. |
-| `SONNET_SUA_LICH` | hai lời gọi hiểu ý sửa lịch | Lệnh mơ hồ ("ngày 2 hơi nặng, làm nhẹ bớt"): Sonnet tự bỏ một điểm (high 3 / 6). Lệnh dời cụ thể bị luật chặn: medium trả "chưa hỗ trợ" 3 / 3. Sau đoạn dặn (ở high): 9 lệnh × 3 lượt đúng ý 27 / 27, lâu nhất 3,8 giây. |
+| `LICH_V2_LOI_DAN_SONNET` (+ `SONNET_GIU_DUNG_VAT` cho lượt biểu mẫu cũ) | viết câu cho thẻ lịch | Bản luna ép "đúng một câu, 30 từ"; Sonnet dồn ý làm đổi nghĩa (nguồn ghi HAI bảo vật, viết thành ba). Bản Sonnet: một đến hai câu, khoảng 50 từ, kèm dặn giữ danh hiệu / con số đi đúng vật. Mục thử (người thứ hai đọc): bản 30 từ 10 lượt — sai 1, lỏng 4; bản 50 từ 12 lượt — sai 1, lỏng 4, đúng rõ 7 (trước 2). Tức lỗi KHÔNG giảm thấy được; câu đầy đủ hơn. Thử 40 từ: sai 2 / 6. |
+| `SONNET_SUA_LICH` | hai lời gọi hiểu ý sửa lịch | Lệnh mơ hồ ("ngày 2 hơi nặng, làm nhẹ bớt"): Sonnet tự bỏ một điểm (high 3 / 6). Lệnh dời cụ thể bị luật chặn: medium trả "chưa hỗ trợ" 3 / 3. Sau đoạn dặn (ở high; đoạn dặn tả theo loại câu, không chép câu đo): 9 lệnh × 3 lượt đúng ý 27 / 27 + ba câu mơ hồ do người khác đặt 9 / 9; lâu nhất 7,1 giây. |
 | `SONNET_DINH_TUYEN` | định tuyến (cả bản có lịch sử, bản viết câu tìm) | Sonnet đẩy câu về nơi ở rìa Huế sang "ngoài phạm vi" (lượt phải trả lời bị từ chối: luna 1 / 43, medium 6, high 4). Trên 14 câu tự đặt × 2: low 14 / 16 ⇒ 16 / 16 nơi rìa; high vốn 16 / 16; câu nơi tỉnh khác vẫn bị từ chối 8 / 8. Bộ câu mù của phiên đo mới là phép thử chính. | Chín loại lời gọi model dùng chung MỘT đối tượng model nên đổi là đổi cả chín, không đổi lẻ được.
 
 **Đường luna giống từng byte so với trước khi có lớp dịch** — một phiên khác đã chụp 10 loại lời gọi gửi OpenAI ở bản trước và bản sau, ra cùng một mã băm [người thứ hai kiểm].
@@ -167,11 +167,11 @@ khoảng 2.000 token: 15–20 giây; 0 lần bị giới hạn tần suất (429
 
 Giới hạn đã đo của Sonnet ở nhóm lịch (viết lại 11:26 21/11/2026, sau bốn đoạn dặn):
 - Câu mô tả trong thẻ lịch: Sonnet chép nhiều chi tiết hơn luna và không lấy gì ngoài đoạn nguồn (đối chiếu 17 câu: 0 chi tiết bịa), nhưng có thể ghép sai ý của một câu nguồn dài.
-  Sau khi nới (một đến hai câu, ~50 từ) + đoạn dặn: mục đã thấy lỗi viết đúng 11 / 12 lần, còn 1 / 12 lần vẫn gán danh hiệu cho cả ba vật. Bộ kiểm câu của code không bắt được loại lỗi này.
+  Sau khi nới (một đến hai câu, ~50 từ) + đoạn dặn, lỗi này KHÔNG giảm thấy được: mục đã thấy lỗi, 12 lượt — sai 1, nói lỏng 4, đúng rõ 7 (bản 30 từ, 10 lượt: sai 1, lỏng 4). Bộ kiểm câu của code không bắt được loại lỗi này.
   Ở ô hỏi đáp thường thì chưa thấy (một phiên khác đọc tay 36 câu: 0 / 36).
 - Câu dài hơn có hai giá phải trả: (i) file PowerPoint cắt câu quá 170 ký tự bằng "…" — 13 / 51 mục ở lượt đo (trước khi nới: 0 / 27); không nâng trần cắt vì trang 5 điểm chỉ đủ ba dòng chữ;
-  (ii) câu nhắc tên điểm khác bị bộ kiểm thay bằng câu dự phòng — 4 / 102 mục (trước khi nới: Sonnet 0 / 27, luna 0 / 27).
-- Lời gọi hiểu ý sửa lịch chạy dưới hạn 10 giây (hạn của định tuyến). Ở high trước đoạn dặn, lần lâu nhất là 7,0 giây; sau đoạn dặn 3,8 giây (27 lần). Quá hạn ⇒ câu đó đi như câu hỏi thường, không sửa lịch.
+  (ii) câu nhắc tên điểm khác bị bộ kiểm thay bằng câu dự phòng — 4 / 102 mục; bản 30 từ cùng model 3 / 51 mục ⇒ không phải do nới (luna 0 / 27, một lượt mỗi lịch).
+- Lời gọi hiểu ý sửa lịch chạy dưới hạn 10 giây (hạn của định tuyến). Ở high lần lâu nhất đã thấy là 7,1 giây (câu mơ hồ, có suy luận); phần lớn 1–3 giây. Quá hạn ⇒ câu đó đi như câu hỏi thường, không sửa lịch.
 - Thẻ lịch trên màn hẹp 390 px và bản in với câu dài gấp rưỡi: CHƯA thử (đọc code: ô chữ tự xuống dòng, không cắt).
 
 Chưa thử qua giao diện với Sonnet: lịch 1 ngày / kiểu gấp / nhiều sở thích · ảnh ra 2–3 tên · câu bão lũ · màn hẹp điện thoại · hai người hỏi cùng lúc ·

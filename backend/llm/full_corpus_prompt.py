@@ -284,10 +284,11 @@ assert _CAU_LICH_MOT_CAU in LICH_V2_LOI_DAN  # lời dặn gốc đổi chữ �
 
 # (2) Hiểu ý sửa lịch. Ca đo (9 lệnh × 3 lượt): lệnh mơ hồ "ngày 2 hơi nặng, làm nhẹ bớt" ⇒ Sonnet tự bỏ một lăng (low 3 / 3, medium 3 / 3,
 # high 3 / 6); lệnh dời cụ thể mà luật xếp lịch chặn ⇒ Sonnet medium trả "chưa hỗ trợ" 3 / 3, người dùng mất lý do + gợi ý chỗ dời được.
+# Đoạn dặn tả LOẠI câu, không chép câu nào của bộ đo (review C 21/11: bản đầu lấy nguyên văn một câu đo làm ví dụ ⇒ số của câu đó không tính).
 # `{khong_ro}` = việc trả về khi ý người dùng không khớp kiểu đi nào (khuôn có `chua_ho_tro` hay không tuỳ cờ).
 SONNET_SUA_LICH = (
     "Hai trường hợp dễ nhầm:\n"
-    "- Người dùng chỉ than chung về lịch mà không nêu việc cần làm (ví dụ \"ngày 2 hơi nặng, làm sao cho nhẹ bớt\") ⇒ không tự chọn một điểm "
+    "- Người dùng chỉ than hay nhận xét chung về lịch (một ngày quá kín, đi sẽ mệt, muốn thong thả hơn…) mà không nêu việc cần làm ⇒ không tự chọn một điểm "
     "để bỏ, thay hay dời. Lịch là của họ, và hệ thống sẽ lấp chỗ trống bằng điểm khác nên bỏ hộ một điểm thường không làm lịch nhẹ đi. Ý của "
     "họ khớp một kiểu đi (nhẹ hơn ⇒ nhe_nhang, dày hơn ⇒ kham_pha) thì trả doi_tham_so với kieu_di đó; không khớp thì {khong_ro}. Trường hợp "
     "này khác với khi họ nói rõ việc cần làm mà không nêu tên (\"bỏ bớt một chỗ ở ngày 2\") — khi đó vẫn chọn điểm như đã dặn ở trên.\n"
