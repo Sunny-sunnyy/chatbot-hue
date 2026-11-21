@@ -46,7 +46,7 @@ số đã đếm, tốn gì, khi nào sai, DỰ ĐOÁN con số sẽ đổi bao 
 sản phẩm, đưa ra dùng), mỗi lần một câu; phần còn lại nhóm tự quyết, báo sau.
 
 **7. Làm — đo lại — giữ hoặc gỡ.** Nhiều nhất HAI nhóm lỗi / hướng đứng đầu (nhóm chọn, ghi lý do một dòng; thứ thuộc quyền người chủ thì theo bước 6) đi
-vào đường làm việc thường, LẦN LƯỢT; đo lại sau TỪNG hướng bằng CÙNG thước, cùng điều kiện, đủ lượt lặp để biết nhiễu; không hơn rõ ngoài nhiễu ⇒ gỡ. Ý đã thử thì rút khỏi danh sách ý; kết quả ghi vào trang, kể cả kết quả âm. Giữ riêng một phần của thước (vài vai / câu) không dùng
+vào đường làm việc thường, LẦN LƯỢT; đo lại sau TỪNG hướng bằng CÙNG thước, cùng điều kiện, đủ lượt lặp để biết nhiễu (thước nhỏ: luật ba lượt ở `run-experiment` mục 4); không hơn rõ ngoài nhiễu ⇒ gỡ. Ý đã thử thì rút khỏi danh sách ý; kết quả ghi vào trang, kể cả kết quả âm. Giữ riêng một phần của thước (vài vai / câu) không dùng
 để tìm lỗi, chỉ để đo lại; các SÀN của dự án (điều không được xảy ra) kiểm cùng lượt đo — phạm sàn thì không giữ dù con số tăng; bản sửa một lỗi an toàn / sai
 sự thật đã tái hiện được thì giữ dù con số không nhúc nhích.
 

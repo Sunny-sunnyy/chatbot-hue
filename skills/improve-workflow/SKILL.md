@@ -1,6 +1,6 @@
 ---
 name: improve-workflow
-description: Tự cải tiến CÁCH LÀM của agent (một agent hay nhiều phiên) — dùng cuối mỗi ngày làm việc, lúc kết phiên / đóng đợt, khi User phải nhắc một điều lần thứ hai hoặc phải tự gợi một hướng agent lẽ ra phải nêu, khi một sự cố quy trình làm mất giờ / tiền / dữ liệu, hoặc khi User xin "rút kinh nghiệm", "cải tiến cách làm". Biến sự cố có bằng chứng thành ≤ 3 thay đổi luật / skill / rào bằng máy do agent tự quyết (một phiên khác đọc), gỡ luật cũ, sửa trí nhớ sai. Không TỰ đổi mục tiêu, tiêu chí đo, luật cứng, quyền, trần tiền hay code sản phẩm — thấy cần đổi thì nêu cho User quyết.
+description: Tự cải tiến CÁCH LÀM của agent (một agent hay nhiều phiên) — dùng cuối mỗi ngày làm việc, lúc kết phiên / đóng đợt, khi User phải nhắc một điều lần thứ hai hoặc phải tự gợi một hướng agent lẽ ra phải nêu (soát hướng sản phẩm ⇒ improve-project), khi một sự cố quy trình làm mất giờ / tiền / dữ liệu, hoặc khi User xin "rút kinh nghiệm", "cải tiến cách làm". Biến sự cố có bằng chứng thành ≤ 3 thay đổi luật / skill / rào bằng máy do agent tự quyết (một phiên khác đọc), gỡ luật cũ, sửa trí nhớ sai. Không TỰ đổi mục tiêu, tiêu chí đo, luật cứng, quyền, trần tiền hay code sản phẩm — thấy cần đổi thì nêu cho User quyết.
 ---
 
 # Tự cải tiến cách làm
