@@ -49,6 +49,13 @@ class HanhDongCHT(HanhDong):
     loai: Literal["bo_diem", "them_diem", "thay_diem", "doi_buoi", "doi_so_ngay", "doi_tham_so", "doi_hang_o", "doi_ngay_di", "chua_ho_tro"]
 
 
+class HanhDongToi(HanhDongCHT):
+    """Cờ `sua_lich_buoi_toi` (21/11/2026): `buoi` có thêm "toi" để model NÓI LẠI ĐƯỢC điều người dùng nói. Khuôn chỉ có sáng / chiều ⇒ câu "dời X sang
+    buổi tối" không có cách ghi đúng: Sonnet để trống buổi (người dùng thấy "Chưa rõ ngày / buổi" dù họ nói rõ — 5 / 9 lượt thật), luna đổi thành
+    "chiều" (2 / 9). Xếp được vào buổi tối hay không vẫn do CODE quyết và trả lời (`ap`). Cờ tắt ⇒ khuôn `HanhDongCHT` cũ (giống byte)."""
+    buoi: Literal["sang", "chieu", "toi"] | None = None
+
+
 CHUA_HO_TRO = "chua_ho_tro"
 NHAN_HANH_DONG = {"bo_diem": "bỏ điểm", "them_diem": "thêm điểm", "thay_diem": "thay điểm", "doi_buoi": "dời buổi",
                   "doi_so_ngay": "đổi số ngày", "doi_tham_so": "đổi kiểu lịch", "doi_hang_o": "đổi hạng chỗ ở", "doi_ngay_di": "đổi ngày đi"}
@@ -56,13 +63,14 @@ CAU_VIEC_KHAC = ("Chưa làm: đổi chỗ, gộp hay tách các ngày — mình
                  "dời sang buổi / ngày khác); bạn nói cụ thể điểm muốn đổi nhé.")
 CAU_CHUA_HO_TRO = ("Chưa làm: việc này mình chưa sửa được trên lịch — lịch giữ nguyên. Mình sửa được từng điểm (bỏ, thêm, thay, dời sang "
                    "buổi / ngày khác) hoặc đổi số ngày, kiểu đi, sở thích, ngày đi, hạng chỗ ở; bạn nói cụ thể nhé.")
-NHAN_BUOI = {"sang": "sáng", "chieu": "chiều"}
+NHAN_BUOI = {"sang": "sáng", "chieu": "chiều", "toi": "tối"}
 # Dời một điểm bị từ chối (đếm 20/11: 152 / 176 lần dời thử bị từ chối, mọi ca cùng một câu chung): mã `kiem_khung_v2` của khung thử ⇒ MỘT lý do
 # lời thường. Nói ở mức cả lịch — bộ kiểm chỉ trả mã, không trả ngày, và lỗi có thể nằm ở ngày của điểm bị đổi chỗ. Thứ tự xét: khu > kín > giờ mở.
 MA_LUAT_KHU = {"cum_khong_ke", "qua_2_cum", "ghep_khong_ke", "cum_xa"}
 MA_LUAT_KIN = {"qua_day_buoi", "vuot_quy", "sang_chong_chieu", "gio_chong", "han_che_qua_day"}
 CAU_LY_DO = {"khu": "một ngày sẽ phải đi hai khu không liền nhau", "kin": "lịch sẽ có buổi quá kín hoặc quá giờ",
-             "gio_mo": "điểm sẽ rơi ngoài giờ mở cửa"}
+             "gio_mo": "điểm sẽ rơi ngoài giờ mở cửa",
+             "ban_ngay": "đây là điểm tham quan ban ngày, còn buổi tối lịch chỉ xếp hoạt động buổi tối"}  # cờ `sua_lich_buoi_toi`
 # Lý do riêng của "đổi chỗ hai ngày" (đếm 20/11 trên 15.360 cặp: 1.346 ca bị chặn đều vì điểm khu xa rơi vào ngày 1; 183 ca có ngày đi / mưa mà
 # một điểm không đứng được ở buổi của nó sau khi đổi)
 CAU_LY_DO_NGAY = {"xa_ngay_dau": "ngày 1 sẽ có điểm ở khu xa trung tâm, mà lịch không xếp khu xa vào ngày đầu",
@@ -76,6 +84,17 @@ CAU_KHONG_DOI = {
     "khong_buoi_hop_le": "{diem} không đi được vào buổi đó.",
     "khong_hop_luat": "{diem} đặt ở chỗ đó sẽ làm lịch phạm luật xếp (giờ mở cửa / cụm xa / quá dày) nên mình chưa đổi.",
     "thieu_cho": "Chưa rõ ngày / buổi để dời {diem}.",
+    # cờ `sua_lich_buoi_toi`: điểm ĐI ĐƯỢC buổi tối nhưng code chưa có phép xếp tay vào buổi tối (hoạt động tối do bộ xếp chọn, mỗi tối một hoạt động)
+    "toi_chua_xep": "Mình chưa đặt được {diem} vào buổi tối theo ý bạn — hoạt động buổi tối do lịch tự chọn. Bạn có thể bỏ hoạt động tối đang có, lịch sẽ "
+                    "tự chọn một hoạt động khác.",
+    # review của phiên khác 21/11: xin đặt vào buổi tối một điểm ĐANG ở đúng buổi tối đó ⇒ không khuyên "bỏ hoạt động tối đang có" (chính là nó)
+    "toi_dang_o": "{diem} đang ở buổi tối ngày {ngay} rồi.",
+    # … và thêm / dời một điểm ban ngày CHƯA có trong lịch vào buổi tối ⇒ nói rõ buổi nào và vì sao (trước: "không đi được vào buổi đó")
+    "ban_ngay_khong_toi": "{diem} không xếp được vào buổi tối vì đây là điểm tham quan ban ngày, còn buổi tối lịch chỉ xếp hoạt động buổi tối.",
+    # lỗi có sẵn (phiên khác tái hiện 4 / 4 lượt, hai model, 21/11): THAY một hoạt động buổi tối ⇒ code báo "… không có trong lịch hiện tại" dù nó đang ở
+    # buổi tối của chính lịch đó (`_vi_tri` chỉ có buổi ban ngày). Code chưa thay được hoạt động buổi tối ⇒ nói thật điều đó.
+    "toi_chua_thay": "Mình chưa thay được hoạt động buổi tối theo ý bạn — hoạt động buổi tối do lịch tự chọn. Bạn có thể bỏ {diem}, lịch sẽ tự chọn một "
+                     "hoạt động tối khác.",
     "van_cho_cu": "{diem} vẫn ở chỗ cũ — bạn nói lại từng điểm một nhé.",
     "het_diem_thay": "Không còn điểm phù hợp để thay {diem} (đặt được vào đúng chỗ đó) nên mình giữ nguyên.",
     # đổi số ngày / kiểu lịch mà không đổi được gì (trước 15/11 tối: lượt sửa im lặng, không dòng nào)
@@ -309,6 +328,15 @@ def _vi_tri(khung: dict) -> dict[str, tuple[int, str]]:
     return {i: (ng["ngay"], b) for ng in khung["ngay"] for b in v2.BUOI_NGAY for i in ng["buoi"][b]}
 
 
+def _ngay_toi(khung: dict) -> dict[str, list[int]]:
+    """Hoạt động buổi tối của lịch ⇒ các ngày nó đang đứng (`_vi_tri` chỉ có hai buổi ban ngày)."""
+    out: dict[str, list[int]] = {}
+    for ng in khung["ngay"]:
+        for i in ng["buoi"]["toi"]:
+            out.setdefault(i, []).append(ng["ngay"])
+    return out
+
+
 def _xep(bang, luu: dict, ts: v2.ThamSoV2, giu: dict | None, loai) -> dict:
     ngay = dt.date.fromisoformat(luu["ngay_di"]) if luu["ngay_di"] else None
     mua = {dt.date.fromisoformat(k): v for k, v in luu["mua"].items()} or None
@@ -325,6 +353,17 @@ def _cho_thu(bang, khung: dict, id_: str, ngay: int | None, buoi: str | None) ->
     cho = [(ng["ngay"], b) for ng in khung["ngay"] for b in v2.BUOI_NGAY
            if (ngay is None or ng["ngay"] == ngay) and (buoi is None or b == buoi) and b in d["buoi"]]
     return sorted(cho, key=lambda c: bool(next(ng for ng in khung["ngay"] if ng["ngay"] == c[0])["buoi"][c[1]]))
+
+
+def _goi_y_doi(bang, luu: dict, ts, khung: dict, vt: dict, loai, i: str) -> list[dict]:
+    """Các chỗ điểm `i` (đang ở trong lịch) dời ĐƯỢC — thử bằng đúng phép thử của lần dời thật; cho câu "Dời được sang: …"."""
+    goi_y = []
+    for cho in sorted(_cho_thu(bang, khung, i, None, None), key=lambda c: (c[0], v2.BUOI_NGAY.index(c[1]))):
+        if cho != vt[i]:
+            k2, _, kia = _thu_cho(bang, luu, ts, vt, loai, i, cho, True)
+            if k2 is not None:
+                goi_y.append({"ngay": cho[0], "buoi": cho[1], "doi_voi": kia})
+    return goi_y
 
 
 def _thu_giu(bang, luu: dict, ts, giu: dict, loai, can: str | None = None) -> dict | None:
@@ -545,6 +584,18 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 khong(ten_cua_diem(bang, i), "thieu_cho")
                 continue
             ngay = h.ngay if h.ngay is not None else (vt[i][0] if h.loai == "doi_buoi" and i in vt else None)
+            if h.buoi == "toi":  # chỉ khuôn của cờ `sua_lich_buoi_toi` mang được giá trị này; code KHÔNG xếp tay vào buổi tối ⇒ luôn là một câu nói thật
+                toi = _ngay_toi(khung)
+                if i in toi and (h.ngay is None or h.ngay in toi[i]):  # đang ở đúng buổi tối được xin
+                    kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "toi_dang_o", "ngay": h.ngay if h.ngay is not None else toi[i][0]})
+                elif "toi" in bang.theo_id[i]["buoi"]:
+                    khong(ten_cua_diem(bang, i), "toi_chua_xep")
+                elif h.loai == "doi_buoi" and i in vt:  # điểm ban ngày đang ở trong lịch ⇒ lý do + các chỗ dời được (như lần dời bị luật xếp chặn)
+                    kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "khong_buoi_hop_le", "dich": [ngay, "toi"], "ly_do": "ban_ngay",
+                                            "goi_y": _goi_y_doi(bang, luu, ts, khung, vt, loai, i)})
+                else:
+                    khong(ten_cua_diem(bang, i), "ban_ngay_khong_toi")
+                continue
             if h.buoi is not None and h.buoi not in bang.theo_id[i]["buoi"]:
                 khong(ten_cua_diem(bang, i), "khong_buoi_hop_le")
                 continue
@@ -570,12 +621,7 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                         break
             if k is None and doi_cho:  # nói lý do + các chỗ điểm này dời ĐƯỢC (thử bằng đúng phép thử của lần dời thật); `ma_luat` giữ nguyên
                 ma = set(loi)
-                goi_y = []
-                for cho in sorted(_cho_thu(bang, khung, i, None, None), key=lambda c: (c[0], v2.BUOI_NGAY.index(c[1]))):
-                    if cho != vt[i]:
-                        k2, _, kia = _thu_cho(bang, luu, ts, vt, loai, i, cho, True)
-                        if k2 is not None:
-                            goi_y.append({"ngay": cho[0], "buoi": cho[1], "doi_voi": kia})
+                goi_y = _goi_y_doi(bang, luu, ts, khung, vt, loai, i)
                 kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "khong_hop_luat", "dich": [ngay, h.buoi], "goi_y": goi_y,
                                         "ly_do": "khu" if ma & MA_LUAT_KHU else "kin" if ma & MA_LUAT_KIN else "gio_mo" if "ngoai_gio_mo" in ma else None})
                 continue
@@ -586,7 +632,8 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             kq["da_ap"].append({"loai": h.loai, "diem": i, "ngay": _vi_tri(k)[i][0], "buoi": _vi_tri(k)[i][1], "the_cho": the_cho})
         elif h.loai == "thay_diem":
             if i is None or i not in vt:
-                khong(h.ten if i is None else ten_cua_diem(bang, i), "ngoai_bang" if i is None else "khong_co_trong_lich")
+                khong(h.ten if i is None else ten_cua_diem(bang, i),
+                      "ngoai_bang" if i is None else "toi_chua_thay" if i in _ngay_toi(khung) else "khong_co_trong_lich")
                 continue
             if h.ten_moi is None:  # không nói thay bằng gì ⇒ thẻ chọn (khung không đổi lượt này)
                 lua_chon = _lua_chon_thay(bang, luu, ts, khung, loai, i)
@@ -651,7 +698,7 @@ def _cau_khong_doi(bang: v2.BangV2, k: dict) -> str:
         vi = f"vì {(CAU_LY_DO | CAU_LY_DO_NGAY)[k['ly_do']]}" if k["ly_do"] else "vì lịch sẽ phạm luật xếp (giờ mở cửa / cụm xa / quá dày)"
         return f"Chưa đổi chỗ {k['diem']} được {vi} — lịch giữ nguyên."
     if "goi_y" not in k:
-        return CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"])
+        return CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"], ngay=k.get("ngay"))
     ngay, buoi = k["dich"]
     dau = (f"{k['diem']} chưa dời sang buổi {NHAN_BUOI[buoi]} ngày {ngay} được vì {CAU_LY_DO[k['ly_do']]}." if k["ly_do"]
            else CAU_KHONG_DOI["khong_hop_luat"].format(diem=k["diem"]))

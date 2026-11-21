@@ -196,12 +196,31 @@ def _loai(don_vi: str) -> str:
     return "km" if don_vi.lower().startswith(("k", "c")) else "tg"
 
 
-def so_khoang_cach(text: str) -> list[tuple[str, str]]:
-    """(loại, số) của mọi số đi kèm đơn vị khoảng cách (`km`) / thời gian (`tg`) trong chữ model."""
+# 21/11/2026 (lượt người dùng mô phỏng: câu "bạn vào từ 13h thì không vướng giờ này" làm cả câu trả lời bị rút): GIỜ ĐỒNG HỒ không phải thời lượng.
+# Hẹp có chủ ý: chỉ "<lúc | từ | vào | trước | sau> N h / giờ" với N từ 5 tới 23; "mất tới 2h", "khoảng 3 giờ" vẫn là thời lượng và vẫn bị kiểm.
+_TRUOC_GIO_DONG_HO = re.compile(r"\b(?:lúc|từ|vào|trước|sau)\s+$", re.IGNORECASE)
+
+
+def _la_gio_dong_ho(t: str, m: re.Match) -> bool:
+    return (m.group(2) is None and m.group(3).lower() in ("h", "giờ") and m.group(1).isdigit() and 5 <= int(m.group(1)) <= 23
+            and bool(_TRUOC_GIO_DONG_HO.search(t[max(0, m.start() - 8):m.start()])))
+
+
+def vi_tri_so_khoang_cach(text: str, bo_gio_dong_ho: bool = True) -> list[tuple[str, str, int, int]]:
+    """(loại, số, đầu, cuối) của mọi số đi kèm đơn vị khoảng cách (`km`) / thời gian (`tg`) — vị trí trên chữ đã chuẩn NFC. Mặc định dùng cho CHỮ
+    MODEL: giờ đồng hồ không tính. `bo_gio_dong_ho=False`: mọi số (dùng khi dựng tập số được phép từ dòng code in — tập đó không được hẹp đi)."""
+    t = _nfc(text)
     out = []
-    for m in _SO_DON_VI.finditer(_nfc(text)):
-        out += [(_loai(m.group(3)), _chuan(g)) for g in m.groups()[:2] if g]
+    for m in _SO_DON_VI.finditer(t):
+        if not (bo_gio_dong_ho and _la_gio_dong_ho(t, m)):
+            out += [(_loai(m.group(3)), _chuan(g), m.start(), m.end()) for g in m.groups()[:2] if g]
     return out
+
+
+def so_khoang_cach(text: str) -> list[tuple[str, str]]:
+    """(loại, số) của MỌI số đi kèm đơn vị khoảng cách / thời gian trong `text`, kể cả giờ đồng hồ (như trước 21/11) — `tap_so_theo_loai` dựng tập số
+    được phép từ đây."""
+    return [(loai, s) for loai, s, _, _ in vi_tri_so_khoang_cach(text, bo_gio_dong_ho=False)]
 
 
 def tap_so(text: str) -> set[str]:
@@ -228,4 +247,4 @@ def tap_so_theo_loai(text: str) -> dict[str, set[str]]:
 def kiem_so(text: str, cho_phep: dict[str, set[str]]) -> list[str]:
     """Số km / thời gian trong chữ model nằm ngoài tập cho phép CÙNG LOẠI (rỗng = đạt). Giới hạn đã biết: không tách theo cặp (lượt gọi nhiều cặp
     ⇒ số của cặp này dùng cho cặp kia vẫn lọt), không xét số viết bằng chữ ("hai cây số")."""
-    return [s for loai, s in so_khoang_cach(text) if s not in cho_phep[loai]]
+    return [s for loai, s, _, _ in vi_tri_so_khoang_cach(text) if s not in cho_phep[loai]]

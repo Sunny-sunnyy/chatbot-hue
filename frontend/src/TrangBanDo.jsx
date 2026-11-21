@@ -3,13 +3,13 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { toaDoHopLe } from "./toaDo.js";
 import { nguonBanDo } from "./nguonBanDo.js";
-import { ghiCong } from "./BanDoLich.jsx";
+import { TUY_CHON_BAN_DO } from "./BanDoLich.jsx";
 import { BIEU_MAU } from "./chung.jsx";
 import "./co.css";
 
 // Trang "Bản đồ" (menu cổng mức 2 — chủ dự án 06/11; plan `report_agent/2026-11-20/e_trang_ban_do_plan.md`): ghim của mọi điểm tham quan trong bảng điểm
 // lịch có toạ độ (`/api/ban_do`, server dựng từ bảng — model không tạo toạ độ), lọc theo loại. File tải riêng (`lazy` ở `App.jsx`) ⇒ trang khác không
-// tải Leaflet. Không quán / chỗ ở, không vị trí người dùng, không đường đi (plan mục 2). Nguồn ô + dòng ghi công bản đồ: như bản đồ lịch (`BanDoLich.jsx`).
+// tải Leaflet. Không quán / chỗ ở, không vị trí người dùng, không đường đi (plan mục 2). Nguồn ô bản đồ và tuỳ chọn (không hiện dòng ghi nguồn): như bản đồ lịch (`BanDoLich.jsx`).
 const LOAI = BIEU_MAU.find(t => t.ten === "so_thich").chon;  // [mã, nhãn] — cùng nhãn với ô "Thích gì" của trang Lên kế hoạch
 
 function oGhim(d) {
@@ -44,8 +44,8 @@ export default function TrangBanDo() {
   useEffect(() => {
     if (!nguon || !khung.current || hien.length === 0) return undefined;
     // Điện thoại: một ngón vuốt qua khung là cuộn trang, như bản đồ lịch (đo 16/11 khổ 390); phóng to / thu nhỏ bằng nút hoặc hai ngón
-    const map = L.map(khung.current, { scrollWheelZoom: false, dragging: !L.Browser.mobile });
-    L.tileLayer(nguon.tile, { maxZoom: 18, attribution: ghiCong(nguon) }).addTo(map);
+    const map = L.map(khung.current, TUY_CHON_BAN_DO);
+    L.tileLayer(nguon.tile, { maxZoom: 18 }).addTo(map);
     const bieuTuong = L.divIcon({ className: "ghim ghim-diem", html: "", iconSize: [18, 18], iconAnchor: [9, 9] });
     hien.forEach(d => L.marker(d.toa_do, { icon: bieuTuong, title: d.ten, alt: d.ten, keyboard: true }).bindPopup(oGhim(d)).addTo(map));
     map.fitBounds(L.latLngBounds(hien.map(d => d.toa_do)), { paddingTopLeft: [28, 28], paddingBottomRight: [28, 60], maxZoom: 15 });

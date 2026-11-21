@@ -61,6 +61,15 @@ function newTurn(key, question, truong, summary, bieuMau, hienThi = null) {
            error: "", clarify: null, truong, summary, bieuMau, hienThi, progress: [], lich: null, web: null, tuChoiKho: false, buoc: [] };
 }
 
+// Dòng ghi chú do server viết là chữ thường; riêng cụm "trang Lên kế hoạch" (cờ `len_lich_dan_trang`, `backend/llm/len_lich.py` `TEN_TRANG`) thành link
+// trong ứng dụng. Không có cụm đó ⇒ trả nguyên chuỗi như trước.
+const TEN_TRANG_LKH = "trang Lên kế hoạch";
+function ghiChuCoLink(chu) {
+  const i = chu.indexOf(TEN_TRANG_LKH);
+  if (i < 0) return chu;
+  return <>{chu.slice(0, i)}<a href="#/len-ke-hoach">{TEN_TRANG_LKH}</a>{chu.slice(i + TEN_TRANG_LKH.length)}</>;
+}
+
 export function useChat() {
   const [turns, setTurns] = useState([]);
   const [draft, setDraft] = useState("");
@@ -140,6 +149,11 @@ export function useChat() {
                 update({ text: bufferRef.current });
               });
             }
+          } else if (name === "thay_chu") {
+            // Sau khi kiểm, code đã gỡ một câu khỏi chữ model (ví dụ câu có con số không có nguồn) ⇒ thay CẢ ô chữ bằng bản cuối, không nối thêm.
+            stopFrame();
+            bufferRef.current = data.text;
+            update({ text: data.text });
           } else if (name === "sources") {
             // Chữ đã qua bộ kiểm trích dẫn: vẽ bản cuối rồi mới hiện dòng Nguồn (yêu cầu 9; cổng D1).
             stopFrame();
@@ -420,7 +434,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
           {turn.notice && (
             <p className="notice">
               {ICON_GHI_CHU}
-              {turn.notice}
+              {ghiChuCoLink(turn.notice)}
             </p>
           )}
         </div>

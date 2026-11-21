@@ -24,4 +24,5 @@ Ai kiểm: <phiên / người khác người viết> — <đã chạy lại gì>
 1. Mở <đâu>. 2. Gõ / bấm <gì>. 3. Thấy <gì> là đúng; thấy <gì> là sai ⇒ báo lại.
 
 ---
-Khi báo cho phiên điều phối / trong chat (không phải cho chủ dự án), dùng bảng ngắn: **đã làm · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra**.
+Khi báo cho phiên điều phối / trong chat (không phải cho chủ dự án), dùng bảng ngắn: **người dùng làm được / chưa làm được · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra**,
+kết bằng MỘT dòng: phép này KHÔNG cho biết gì · hướng rộng hơn tôi thấy · đếm rẻ nhất bằng gì.

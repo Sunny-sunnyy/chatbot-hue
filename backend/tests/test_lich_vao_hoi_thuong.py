@@ -211,9 +211,12 @@ def test_so_cua_nguon_lich_khong_mo_rong_kiem_so_thoi_tiet():
                         source=v2.NGUON_LICH_SOURCE)
     kho = PackedSource(id=2, title="Bài kho", heading_path=("Mục",), excerpts=("Nhiệt độ trung bình 25 °C.",), source="travel/x.md")
     trace = AnswerTrace()
-    trace.cited, trace.answer = (lich, kho), "x"
-    a._thoi_tiet_cuoi(trace, "Hôm đó khoảng 30 °C, có lúc 25 °C. [1][2]")
+    chu = "Hôm đó khoảng 30 °C, có lúc 25 °C. [1][2]"
+    trace.so_nguon, trace.cited, trace.answer = [lich, kho], (lich, kho), chu
+    # 21/11/2026: phép kiểm số tách khỏi `_thoi_tiet_cuoi`; cờ thời tiết bật (hàm dự báo không được gọi ở đây)
+    a.kiem_so_sau_khi_viet(trace, chu, AssistantFlags(tim_them=True, thoi_tiet=True, du_bao=lambda: None))
     assert trace.thoi_tiet_kiem == ["30"]  # 25 có ở bài kho ⇒ được; 30 chỉ có trong giờ của lịch ⇒ bị bắt
+    assert "30 °C" not in trace.answer and trace.citation_error is None  # … và câu chứa nó không tới người dùng (gỡ câu, không rút cả lượt)
     assert tt.tap_so(" ".join(lich.excerpts)) >= {"30", "15"}  # đúng là nguồn lịch có các số đó
 
 
@@ -244,4 +247,6 @@ def test_so_gio_do_code_in_o_nguon_lich_khong_bi_kiem_so_khoang_cach_rut():
 def test_thoi_gian_di_lai_bia_van_bi_bat_khi_co_nguon_lich():
     """Chỉ số CÓ ĐƠN VỊ thời gian của nguồn lịch được phép: "30 phút" (30 chỉ có trong giờ đồng hồ "10:30") và "40 km" vẫn bị bắt."""
     trace = _luot_co_lich_va_khoang_cach("Ngày 1 kéo dài 8 giờ [1]. Từ Đại Nội đến Đầm Chuồn khoảng 40 km, đi xe khoảng 30 phút, có thể kẹt xe [2].")
-    assert trace.khoang_cach_kiem == ["40", "30"] and trace.citation_error is not None
+    # 21/11/2026: lượt hỏi thường (không dựng lịch) ⇒ gỡ đúng câu có số bịa, giữ câu đúng của nguồn lịch; không rút cả lượt
+    assert trace.khoang_cach_kiem == ["40", "30"] and trace.citation_error is None and trace.kiem_so_go["nac"] == 1
+    assert trace.answer == "Ngày 1 kéo dài 8 giờ [1]." and [src.id for src in trace.cited] == [1]

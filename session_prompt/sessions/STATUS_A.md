@@ -1,9 +1,23 @@
-# STATUS A — KẾT PHIÊN NHẸ (ghi đè 13:03 20/11/2026, giờ `date`; User tắt / mở lại các phiên để làm mới ngữ cảnh). Terminal lúc viết: A `hue-rag-a6` · B `hue-rag-04` · C `hue-rag-49` · E `hue-rag-95` — sẽ đổi
+# STATUS A — ghi đè 17:47 21/11/2026 (giờ `date`; kết phiên chiều 21/11), sửa dòng này 18:22 21/11/2026 khi mở phiên tối. Vai: phiên điều phối. Terminal phiên này: `hue-rag-55` (đổi khi mở lại); phiên tối: B `hue-rag-bb` · C `hue-rag-62` · E `hue-rag-b6`; chủ dự án vắng tới 21:30
 
-1. **Đang dở:** không nhánh / worktree nào của A. main lúc viết: `git log -1` (code đứng yên ở `d8651d4`). Việc đang mở + bước kế: `session_prompt/VIEC_DANG_MO.md`.
-2. **Đã soạn / đã review chưa gộp:** nhánh kết phiên nhẹ của C và E (nếu chưa gộp lúc tắt: `git branch -r | grep ket-phien-nhe-2011`, chỉ tài liệu, đọc diff rồi gộp).
-3. **Việc kế của A (theo thứ tự; ĐỦ chi tiết + phương án từng câu ở `VIEC_DANG_MO.md` khối 1–5):** nhắn tên terminal mới ⇒ hỏi User BA câu gác (mỗi lần một câu): (i) điều phối tự viết bản sửa "báo đã dời khi lịch không đổi" (≤ 6 dòng, so khung trước ↔ sau; đã duyệt, phiên thực thi không viết được) hay giữ giới hạn; (ii) bộ bài đánh giá model: đưa `data/danh_gia_model_2026-11-20/KHUNG.md` cho AI khác soạn đề, hay gác; (iii) đề xuất cảnh báo "câu bộ đo trong file tracked" (sổ cải tiến) ⇒ mời User test MỘT lần (`data/test_cuoi/DANH_SACH.md`; cách thử 2 phút ở `bai_hoc/VIEC_MOI_XONG.md` mục 16–17) ⇒ sửa lỗi buổi test ⇒ kết phiên cuối ngày (nhật ký `bao_cao_he_thong/nhat_ky/`, `TONG_HOP.md` mục 1–4, vòng cải tiến, `Project_Status.md` mục 5 cho 20/11).
-4. **Ai chờ A ↔ A chờ ai:** không ai chờ A. A chờ User (ba câu trên + buổi test).
-5. **Câu treo cho User:** ba câu ở mục 3. Không gấp: ~20 câu tự gõ; trần chi tiêu từng khoá API; khoá AWS cũ.
-6. **Đang chạy / rác lúc viết:** Qdrant `hue_rag-qdrant-1` BẬT (9.436 điểm) · 0 server · 0 tiến trình đo · worktree `/tmp/hr_e_sv` của E (nhánh đã gộp — E gỡ). Sao lưu ổ D `2026-11-20_sau_soat_d8651d4` (3,6 GB; kho 496 ↔ 496 file). Tiền API cả ngày tới lúc viết ≈ 0,11 USD (E ≈ 0,091 · C ≈ 0,017 · B ≈ 0,005 cận trên · A 0; số từng phiên báo).
-7. **Bẫy phiên này (A):** xếp việc sửa nhỏ chặn bước soát khác hãng cả buổi sáng (E nêu ở vòng tự soi) · chốt cách đo trước khi đọc plan · lượt viết của B, C, E bị hệ thống an toàn dừng nhiều lần ở hai cụm (dựng bộ bài đánh giá model; kiểm lại lượt soát đợt sửa) — KHÔNG chia lại việc bị dừng cho phiên khác, báo User · ổ D không phân biệt hoa thường: hai file kết quả chỉ khác chữ hoa bị ghi đè khi sao lưu (đã chép thêm dưới tên khác; bản sao lưu cũ CHƯA kiểm) · B lỡ chạy cả bộ test hai bản song song (theo dõi nhầm PID). Làm đúng, giữ: đếm trước khi sửa (0 / 561 lượt) · dừng khâu đoán ý từ câu gõ sau ba vòng lộ lỗ · đề xuất trình User kèm số phiếu từng phiên · không đổi cây chính khi cả bộ test đang chạy.
+Việc đang mở, ai làm, bước kế: sổ việc `session_prompt/VIEC_DANG_MO.md` (khối đầu = ba ngày thử đuổi một con số). Quyết định của chủ dự án + câu đang chờ: `session_prompt/HIEN_TRANG.md` mục 3, 4. Trang này chỉ ghi phần riêng của phiên điều phối.
+
+## Việc đầu của phiên điều phối khi mở lại
+- (ghi 18:12 21/11/2026) Phiên sau chủ dự án ĐI VẮNG (tự nói lúc kết phiên 21/11): câu thuộc quyền chủ dự án thì gác vào `HIEN_TRANG.md` mục 3, không mở hộp hỏi, không chờ; mở bốn phiên cho bước 0–3, tới bước sửa rút còn hai. Việc gác lúc kết phiên (nhánh bỏ dòng ghi nguồn bản đồ, đề xuất hook chờ lời chủ dự án…): sổ việc khối A, gạch "Việc GÁC".
+- Nhắn tên terminal; giao việc theo khối đầu của sổ việc — tin giao việc mở đầu bằng "quyết định nào đang chờ kết quả này", không giao danh sách bước. KHÔNG giao lại hàng đo cờ và các mục Phase 9–12: chúng đứng chờ.
+- Mặc định: giao NGAY theo sổ việc. Chỉ khi prompt mở phiên hoặc lời chủ dự án nêu một mục đích KHÁC sổ việc (như buổi bàn chiều 21/11) thì hỏi MỘT câu trước khi giao.
+- Khởi động bước 2 của khối A ngay lúc mở: một agent con ngữ cảnh mới soát tích hợp chỉ đọc (skill `soat-tich-hop`), vai đo đọc kết quả. Báo chủ dự án con số ước của bước 0 (8–10 USD Bedrock, khoảng 100 phút máy) trước khi chạy.
+- Hỏi chủ dự án khi việc cần tới: mở hai phiên hay bốn cho ba ngày thử; các câu còn chờ ở `HIEN_TRANG.md` mục 3 (mỗi lần một câu).
+- Ghi ba con số cách làm của ngày vào `session_prompt/SO_CAI_TIEN_CACH_LAM.md`; chép ý mới các phiên nêu vào `session_prompt/Y_CHUA_THU.md`.
+
+- (ghi 18:14 21/11/2026) Chủ dự án muốn TIẾP TỤC buổi trò chuyện bàn hướng khi về ("khi nào tôi đi về có thể tiếp tục trò chuyện trao đổi brainstorming"): chuẩn bị sẵn để bàn — con số trước ↔ sau của việc chính, đề xuất hook đang chờ, danh sách `Y_CHUA_THU.md` (các ý cải tiến sản phẩm 13–17), số phiên.
+
+## Đang khai báo sửa
+- không (các nhánh của lượt soát 21/11: xem `git branch -r --no-merged origin/main`).
+
+## Đang chạy / file tạm lúc ghi
+- 0 server, 0 tiến trình đo, Qdrant bật. Worktree của A: `/tmp/hr_a_trang_thai` (nhánh viết lại trang trạng thái — gỡ sau khi gộp). File tạm: `/tmp/hr_a_tra_*.md` (xoá được).
+
+## Đã học / bẫy của phiên 21/11
+- Giao lại việc theo sổ khi chủ dự án muốn cả nhóm bàn chuyện khác · đưa chủ dự án một con số trước khi có người thứ hai kiểm · chủ dự án hỏi về KẾT QUẢ mà chuyển xuống nhóm câu hỏi về ĐẦU VÀO · bàn nhiều vòng mà chưa sửa file nào · báo số byte trước khi áp bản đọc của người khác · nối bảy dòng vào trang hiện trạng mà không viết lại ⇒ bốn chỗ cùng xưng "việc đầu" · viết luật trái một quyết định còn hiệu lực (người đọc bắt) · sửa file luật riêng của chủ dự án rộng quá phạm vi một dự án (người đọc bắt) · chỉ giao agent con soát khi chủ dự án muốn các phiên cùng soát.
+- Làm đúng, giữ: mỗi phiên một góc khác nhau (luật / lịch sử / nguồn ngoài) cho ra phát hiện không trùng · agent ngữ cảnh mới đọc như phiên vừa mở bắt được chỗ hai nghĩa mà người viết không thấy, phiên có lịch sử bắt được chỗ trái quyết định cũ — cần cả hai · tự mở nguồn chính trước khi đưa chủ dự án · đề nghị trước, cả nhóm chốt, rồi mới sửa.

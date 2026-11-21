@@ -133,6 +133,16 @@ CAU_HAI_Y = "Vé lẻ vào Đại Nội giá bao nhiêu, dịp Tết năm tới 
     ("Vé Đại Nội bao nhiêu còn vé lăng Minh Mạng bao nhiêu?", 2),
     ("Bún bò và bánh khoái giá bao nhiêu?", 1),                                               # "và" nối hai món của MỘT câu hỏi
     ("Đi với trẻ nhỏ thì nên tham quan đâu?", 1),
+    # 21/11/2026: "bao xa", "thì sao" là từ hỏi; "ai" chỉ trong cụm hỏi hẹp (thờ / do / là / của ai); "ai" / "sao" trần KHÔNG phải từ hỏi
+    ("Mình thích khách sạn 4 sao, ở gần Đại Nội có chỗ nào không?", 1),
+    ("Nhà mình không có ai, đi một mình thì nên ở khu nào?", 1),
+    ("Cầu Trường Tiền do ai thiết kế, dài bao nhiêu?", 2),
+    ("Từ Đại Nội đến chùa Thiên Mụ bao xa, vào đó có mất vé không", 2),
+    ("Lăng Tự Đức cách trung tâm bao xa?", 1),
+    ("Điện Hòn Chén thờ ai, đi bằng gì", 2),
+    ("Ai cũng khen cơm hến, ăn ở đâu ngon", 1),
+    ("Khách sạn năm sao gần sông Hương có những chỗ nào", 1),
+    ("Ngày mai mưa thì sao, có nên đi biển không", 2),
 ])
 def test_so_y_counts_question_clauses(cau, n):
     assert so_y(cau) == n

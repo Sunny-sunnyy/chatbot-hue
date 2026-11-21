@@ -11,6 +11,14 @@ from llm.generator_openai_full_corpus import (
 from llm.full_corpus_prompt import build_answer_messages
 
 
+def openai_settings() -> dict:
+    """Cấu hình thật với `provider` ép về `openai`: file này kiểm ĐƯỜNG OpenAI, không phụ thuộc dòng công tắc đổi model viết đang để gì
+    (21/11/2026: lật `provider: bedrock` làm ba ca dưới đỏ dù đường OpenAI không đổi)."""
+    settings = load_settings()
+    settings["full_corpus_generation"]["provider"] = "openai"
+    return settings
+
+
 def test_structured_outputs_have_one_field():
     assert AnswerOutput(answer="Câu trả lời [1].").model_dump() == {
         "answer": "Câu trả lời [1]."
@@ -18,7 +26,7 @@ def test_structured_outputs_have_one_field():
 
 
 def test_real_environment_builds_openai_generator(require_openai_key):
-    generator = OpenAIFullCorpusGenerator.from_environment(load_settings())
+    generator = OpenAIFullCorpusGenerator.from_environment(openai_settings())
     assert generator.model == "gpt-6-luna"
     assert generator.timeout == 45
     assert generator.client.max_retries == 0
@@ -37,7 +45,7 @@ def test_real_environment_builds_openai_generator(require_openai_key):
 
 
 def test_empty_or_blank_input_rejected_before_network(require_openai_key):
-    generator = OpenAIFullCorpusGenerator.from_environment(load_settings())
+    generator = OpenAIFullCorpusGenerator.from_environment(openai_settings())
     with pytest.raises((ValueError, GenerationError)):
         asyncio.run(generator.generate_answer("", "Ngữ cảnh"))
     with pytest.raises((ValueError, GenerationError)):
@@ -49,7 +57,7 @@ def test_answer_call_sends_exactly_the_messages_counted_for_context(monkeypatch)
     """Chuỗi gửi model (instructions + input) phải đúng là chuỗi FullCorpusContextBuilder đếm token (C-03).
     Không gọi mạng: key giả chỉ để dựng client, bước gọi agent được thay bằng hàm ghi lại."""
     monkeypatch.setenv("OPENAI_API_KEY", "khong-dung-key-that")
-    generator = OpenAIFullCorpusGenerator.from_environment(load_settings())
+    generator = OpenAIFullCorpusGenerator.from_environment(openai_settings())
     sent = {}
 
     async def record(agent, user_prompt, expected_type, call_log=None):

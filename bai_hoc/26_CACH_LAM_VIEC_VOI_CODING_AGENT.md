@@ -1,6 +1,6 @@
 # Bài 26 — Làm việc với coding agent: tin tới đâu, kiểm bằng gì, phần của anh là gì
 
-*Cập nhật lần cuối: 13:46, ngày 18/11/2026 · thêm hai dòng "vì sao cột hỏi-trước phải ngắn" ở mục 3. Trước: 11:47, ngày 18/11/2026 · bài mới: gom mọi điều anh chốt và nhóm đã làm trong sáng 18/11 về cách làm việc; đã sửa theo một lượt kiểm độc lập trước khi đưa vào.*
+*Cập nhật lần cuối: 17:50, ngày 21/11/2026 · sửa các câu không còn đúng sau những điều anh chọn ngày 20–21/11 (đoạn "Cập nhật 21/11" ngay dưới bảng từ). Trước: 13:46, ngày 18/11/2026 · thêm hai dòng "vì sao cột hỏi-trước phải ngắn" ở mục 3. Trước: 11:47, ngày 18/11/2026 · bài mới: gom mọi điều anh chốt và nhóm đã làm trong sáng 18/11 về cách làm việc; đã sửa theo một lượt kiểm độc lập trước khi đưa vào.*
 
 ## Bảng từ — tên mình dùng và tên gốc
 
@@ -8,7 +8,7 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 
 | Tên trong bài | Tên gốc | Nghĩa ngắn |
 |---|---|---|
-| Coding agent | coding agent (Claude Code, Codex, Antigravity) | Chương trình AI tự đọc code, sửa code, chạy lệnh theo lời giao. Nhóm làm đồ án này gồm bốn phiên như vậy. |
+| Coding agent | coding agent (Claude Code, Codex, Antigravity) | Chương trình AI tự đọc code, sửa code, chạy lệnh theo lời giao. Nhóm làm đồ án này gồm bốn phiên như vậy, và từ 21/11 anh giao thêm một phiên giảng viết giáo trình. |
 | Phiên — **mới** | session | Một lần mở một coding agent. "Phiên mới, ngữ cảnh sạch" = mở cuộc trò chuyện mới, chỉ đưa thứ cần xem, không mang theo lịch sử cũ. |
 | Agent con | sub-agent | Agent do một phiên tạo ra để làm một phần việc. Nó chỉ biết đúng những gì ghi trong lời giao. |
 | Bảng quyền — **mới** | mục "Quyền thường trực" trong `AGENTS.md` | Ba nhóm: việc agent tự làm · việc phải hỏi anh trước · việc không bao giờ làm. |
@@ -26,6 +26,8 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 *Bài 20 kể đồ án được làm thế nào: anh quyết, nhiều agent làm và kiểm chéo nhau, rào bằng máy. Bài này kể bước tiếp theo, làm trong sáng 18/11: sau khi
 nhóm đọc bốn khoá học và một bài chia sẻ của một kỹ sư làm coding agent, anh và nhóm chốt lại **cách làm việc** — không riêng cho đồ án này, không riêng cho
 một hãng agent nào.*
+
+> **Cập nhật 21/11/2026.** Bài này viết ngày 18/11. Từ 21/11 có năm điều đổi: (1) Trong ba ngày làm việc thử, nhóm tự giữ và tự gọt luật về CÁCH LÀM, anh không duyệt từng luật; anh vẫn giữ mục tiêu, bảy luật cứng và bảng quyền, và hết ba ngày xét lại bằng ba con số (mục 8). (2) Anh nêu KẾT QUẢ muốn có; hướng kỹ thuật anh nêu là một gợi ý để xét, không phải đề bài đóng. (3) Phiên nào cũng được tự đếm trên dữ liệu đã có và tự nêu hướng khác mà không chờ giao; việc xây thì theo việc được giao và bảng quyền. (4) Đích của đồ án: anh tự demo trên máy mình và tự trình bày toàn bộ; giảng viên hỏi dựa trên phần trình bày. (5) Model viết của trợ lý đang đổi TẠM từ gpt-6-luna sang Claude Sonnet 5.5; đổi về chỉ sửa một dòng cấu hình.
 
 ## Quay lại người hướng dẫn viên
 
@@ -71,8 +73,8 @@ dù dạy ba việc khác nhau, đều nói cùng ý này.
 Mỗi khẳng định gắn một nhãn độ tin: **máy kiểm** (có lệnh in ra kết quả) · **người thứ hai kiểm** · **chưa kiểm**. Anh đọc nhãn là biết câu nào đứng trên
 bằng chứng, câu nào mới là lời kể.
 
-**Lớp 3 — phần của anh** (anh đã nhận sáng 18/11): luôn đọc báo cáo; khi rảnh thì bấm thử theo ý 4, việc xong thì tự thử và nêu ý kiến; mỗi lần báo cáo có thể
-chọn **một dòng "xong" bất kỳ** bảo agent chạy lại trước mặt; mỗi tuần tự nói lại bằng lời mình **lý do của một quyết định** đã chọn. Việc cuối quan trọng với
+**Lớp 3 — phần của anh** (anh đã nhận sáng 18/11): luôn đọc báo cáo; khi rảnh thì bấm thử theo ý 4, việc xong thì tự thử và nêu ý kiến. Hai việc nữa anh làm KHI MUỐN, nhóm không nhắc:
+chọn **một dòng "xong" bất kỳ** bảo agent chạy lại trước mặt, và tự nói lại bằng lời mình **lý do của một quyết định** đã chọn. Việc sau quan trọng với
 một đồ án tốt nghiệp: người chấm chỉ chấm một lần, và hỏi "vì sao em chọn cách này" là hỏi anh, không hỏi agent.
 
 ## 3. Bảng quyền thường trực
@@ -101,7 +103,9 @@ từ 18/11 làm theo thứ tự này:
 1. Anh nói ý bằng lời thường.
 2. Agent hỏi lại **tối đa ba câu**, mỗi câu có sẵn đáp án để anh chọn.
 3. Agent viết lại đúng **năm dòng**: vấn đề · ai dùng · "xong khi" (người dùng thấy gì, thử thế nào) · không làm gì · điều tệ nhất chấp nhận được.
-4. Anh sửa hoặc đánh dấu đồng ý, rồi nói "làm đi".
+4. Anh xem đề bài có đúng KẾT QUẢ mình muốn không — không cần duyệt cách làm — rồi nói "làm đi".
+
+Từ 21/11: hướng kỹ thuật anh nêu là một gợi ý; agent phải tự vẽ đủ bài toán, nêu cả hướng anh chưa nhắc, và nói TRƯỚC khi làm nếu thấy hướng được nêu chưa phải tốt nhất.
 
 Việc nhỏ và sửa lỗi thì không cần bước này — chỉ cần dòng "xong khi" ghi trước.
 
@@ -159,11 +163,11 @@ thấy chạy đúng một lần", chưa phải "luôn đúng". 46 file test cò
 khuyến khích test thật, dữ liệu thật, và được dùng tiền API để test.
 
 Thêm một điều dành cho việc đổi thứ người dùng thấy: agent tự chạy trên hệ thống đang chạy và **đính ảnh trước – sau** vào báo cáo — anh nhìn năm giây là biết.
-Điều này nhóm mới ghi vào trang cách làm việc; anh chưa duyệt riêng và nó chưa thành nếp.
+Điều này nhóm mới ghi vào trang cách làm việc và nó chưa thành nếp (luật về cách làm nay do nhóm tự giữ — xem cập nhật 21/11 ở đầu bài).
 
 ## 7. Chấm skill: có skill thì agent làm tốt hơn không?
 
-Đồ án có 8 skill (file hướng dẫn quy trình). Chưa skill nào từng được chấm. Anh chọn: **chấm rồi mới gọt**.
+Đồ án lúc đó có 8 skill (file hướng dẫn quy trình; tới 21/11 là 11). Chưa skill nào từng được chấm. Anh chọn: **chấm rồi mới gọt**.
 
 **Cách chấm.** Mỗi skill một việc thử nhỏ (tới trưa 18/11 mới chạy 4 trong 8 skill; 4 skill còn lại mới có đề); hai agent con ngữ cảnh mới cùng làm, một bên được bảo đọc skill, một bên không; thang điểm viết TRƯỚC khi chạy, lấy
 từ lỗi đã gặp thật. Một phiên chấm theo thang (phiên này biết bản nào có skill); ở đợt đầu có thêm một phiên thứ hai chấm mà không được cho biết — phiên đó
@@ -176,7 +180,7 @@ skill còn cao hơn) ⇒ không cặp nào tới ngưỡng 3 điểm, **chưa k�
 **Một quan sát (chưa phải kết luận).** Cái lỗi mà lượt review thật buổi sáng đã bỏ sót (chuyện ở mục 5) thì cả hai agent con — có skill lẫn không skill — đều
 tự tìm ra. Khác nhau ở chỗ: hai agent con này có **ngữ cảnh sạch và chỉ làm một việc**, còn người review buổi sáng đang làm nhiều việc cùng lúc. Có vẻ thứ
 quyết định là điều kiện làm việc, hơn là chữ trong skill. **Hai điều làm quan sát này yếu đi, phải nói kèm:** đề đợt đầu dễ, lời giao đã gợi ý khá nhiều; và ở
-đợt hai — cũng ngữ cảnh sạch, cũng một việc — chỉ 1 trong 6 lượt tìm ra lỗi thật của đề đó. Buổi thử với Codex và Antigravity tối thứ Ba 24/11 sẽ chạy lại
+đợt hai — cũng ngữ cảnh sạch, cũng một việc — chỉ 1 trong 6 lượt tìm ra lỗi thật của đề đó. Buổi thử với Codex và Antigravity (khi anh mở) sẽ chạy lại
 các đề này.
 
 ## 8. Nhóm tự cải thiện cách làm — cuối mỗi ngày, bằng hai con số
@@ -187,7 +191,9 @@ Trước đây việc "rút kinh nghiệm" là kể lại sự cố rồi thêm 
 - **Cuối mỗi ngày** chạy một vòng ba bước: đọc hai con số · lỗi lặp lại lần thứ hai thì làm **phép kiểm bằng máy trước, viết luật sau** · thêm bao nhiêu luật
   thì gỡ bấy nhiêu. Người xét một luật có ích hay không phải khác người đề xuất luật đó.
 
-Đây là điều **mới chốt**: chưa có ngày nào chạy đủ vòng này, nên chưa có con số nào để kể.
+Đây là điều **mới chốt**: chưa có ngày nào chạy đủ vòng này, nên chưa có con số nào để kể (tính tới 18/11).
+
+Từ 21/11 có con số thứ ba: số lần anh phải tự gợi một hướng mà nhóm lẽ ra phải nêu. Một phiên đếm trên phần sổ đã mở được ít nhất 12 lần trong khoảng bốn tuần; một agent con đã xếp loại lại các dòng đó mà không biết trước kết quả, nhưng chưa ai đếm lại số lần. Nhóm cũng đuổi thêm một con số của sản phẩm (trang bản đồ dự án, mục "Nhóm đang làm gì").
 
 ## Khi nào cách làm này hỏng — những chỗ còn hở, nói thẳng
 
@@ -195,13 +201,11 @@ Trước đây việc "rút kinh nghiệm" là kể lại sự cố rồi thêm 
   các đường đọc trực tiếp, nhưng một đoạn chương trình tự mở file thì vẫn đọc được. Nghĩa là chốt này chống lỡ tay, không chống được một agent bị một trang web
   xấu sai khiến. Rào đáng tin nhất vẫn là rào của git (bài 20): nó chặn việc đưa dữ liệu riêng lên GitHub. Nó **không** chặn việc đọc, và
   cũng không chặn một lệnh gửi file ra mạng theo đường khác.
-- **Thứ nằm ngoài git không lùi lại được — nhưng nay đã có bản sao.** Kho bài viết, dữ liệu đo và chỉ mục tìm kiếm không nằm trong git, hỏng là mất. Anh nói
-  "làm đi" và từ 11:45 ngày 18/11 đã có một bản sao trên ổ đĩa khác của máy (kho bài: đủ 496 / 496 file, một file được so mã kiểm thấy khớp). Đây là bản sao
-  **cùng một máy**: nó cứu khi ổ làm việc hỏng hoặc lỡ tay xoá, không cứu khi mất cả máy. Chỉ mục tìm kiếm trong bản sao được chép lúc dịch vụ đang chạy;
-  nếu nó hỏng thì dựng lại được từ kho. Bản sao chỉ đúng tới lúc chép ⇒ chép lại ở mỗi mốc chốt.
+- **Thứ nằm ngoài git.** Từ 20/11 kho bài viết và bộ câu mẫu ĐÃ nằm trong git (anh cho phép 14:41 20/11). Dữ liệu đo và chỉ mục tìm kiếm chỉ ở máy và KHÔNG
+  sao lưu định kỳ (anh chọn 20/11; chỉ mục dựng lại được từ kho). Bản sao ngày 18/11 trên ổ khác của máy vẫn còn nhưng không chép lại ở mỗi mốc.
 - **Bộ câu chấm cất riêng chỉ còn được giữ bằng luật chữ.** Ở chế độ trên không có rào máy nào chặn agent mở nó. Anh chọn giữ luật chữ và ghi rõ giới hạn
   này trong báo cáo lượt đo cuối.
-- **Chưa thử với Codex và Antigravity.** Trang cách làm việc và bộ file mẫu mang sang dự án khác mới được các phiên Claude đọc. Buổi thử: tối thứ Ba 24/11.
+- **Chưa thử với Codex và Antigravity.** Trang cách làm việc và bộ file mẫu mang sang dự án khác mới được các phiên Claude đọc. Buổi thử: khi anh mở.
 - **Chưa đo một phiên so với bốn phiên.** Nhóm nghiêng về "một phiên + agent con, phiên thứ hai để kiểm", nhưng đó mới là suy luận từ khoá học; anh chưa chọn
   kiểu điều phối cho giai đoạn sau, sát ngày mới thử.
 - **Agent con không thay người kiểm.** Sáng 18/11 hai agent con đọc cùng một hình mà ra hai kết luận ngược nhau; phải có người mở nguồn phân xử.
@@ -216,7 +220,7 @@ Trước đây việc "rút kinh nghiệm" là kể lại sự cố rồi thêm 
 3. **Bằng chứng phải là lượt thật, và cách làm cũng phải được đo.** Một test thay lõi ⇒ bốn lượt thật, chưa tới 100 đồng. Chấm skill chưa cho kết luận — và
    nói thẳng là chưa. Cách làm của nhóm từ nay được xét bằng hai con số mỗi ngày.
 
-**Bài sau:** chưa viết — sẽ kể buổi thử Codex và Antigravity (tối thứ Ba 24/11) khi đã làm xong.
+**Bài sau:** chưa viết — sẽ kể buổi thử Codex và Antigravity khi đã làm xong.
 
 ---
 
@@ -242,5 +246,7 @@ Trước đây việc "rút kinh nghiệm" là kể lại sự cố rồi thêm 
 - Sổ việc 11:09 ghi "chênh ≤ 1 điểm" cho chấm skill là chép nhầm (đó là độ lệch giữa hai người chấm); số đúng ở bảng tổng của `data/cham_skill_2026-11-18/KET_QUA.md`.
 
 - Bản sao dữ liệu ngoài git trên ổ D (11:45 18/11): số file kho 496 ở bản gốc và 496 ở bản sao — phiên C và người viết bài cùng đếm lại bằng `find … -type f | wc -l` [đã chạy]; "một file khớp mã kiểm" là số của phiên điều phối, chưa ai so lại; "chỉ mục chép lúc dịch vụ đang chạy" theo sổ việc 11:45 [tài liệu].
+
+- Sửa 21/11/2026: phần của anh (hai việc làm khi muốn), bước 4 của năm dòng đề bài, con số thứ ba, đoạn sao lưu, số skill, buổi thử không gắn ngày, đoạn "Cập nhật 21/11" — theo các điều anh chọn 20–21/11 ghi ở `session_prompt/HIEN_TRANG.md` mục 4 và `AGENTS.md` mục "Cách nhìn việc" [tài liệu]; số skill: `ls skills | wc -l` = 11 [đã chạy].
 
 </details>

@@ -1,6 +1,6 @@
 ---
 name: risk-gated-agent-review
-description: Dùng khi một session kiểm (review chéo) việc của session khác hoặc khi bàn giao việc để được kiểm — đối chiếu diff với tiêu chí nghiệm thu, kiểm tra độc lập theo rủi ro, viết finding, xử lý correction và đóng việc. Áp dụng cho mô hình A điều phối + B/C thực thi của hue_rag.
+description: Dùng khi một session kiểm (review chéo) việc của session khác hoặc khi bàn giao việc để được kiểm — đối chiếu diff với tiêu chí nghiệm thu, kiểm tra độc lập theo rủi ro, viết finding, xử lý correction và đóng việc. Dùng được cả khi làm một mình (người kiểm = phiên mới ngữ cảnh sạch).
 ---
 
 # Review chéo theo rủi ro
@@ -38,6 +38,8 @@ Không trình bày giá trị mong đợi hay kết quả cũ như kết quả m
 8. **Khai phần CHƯA đọc / CHƯA chạy** của chính lượt review (file nào, đường nào, test nào) và tách [chỉ đọc code] ↔ [đã chạy]. Kết luận kiểu "mọi đường đều
    đúng" / "không còn chỗ nào" phải kèm **lệnh tìm mọi nơi dùng** thứ bị đổi (`git grep -n <hàm / hằng / trường>`) + số nơi đã mở; không có lệnh ⇒ chỉ được
    viết "các đường tôi đã mở: …".
+9. Nhánh có code: tự chạy lại lệnh kiểm của MỘT dòng "xong" do mình chọn trong report, ghi đầu ra; ra khác report ⇒ finding, và cộng vào con số "báo xong bị
+   lật lại". Chủ dự án muốn tự chọn một dòng thì vẫn được. (Nhóm chốt 21/11/2026, thay việc chờ chủ dự án chọn dòng; ba ngày làm việc liền 0 lần lật thì bỏ dòng này.)
 
 Report là chỉ mục bằng chứng, không tự chứng minh PASS. Sau cổng tối thiểu chỉ chạy lại phần tiêu chí, rủi ro hoặc mâu thuẫn yêu cầu; không lặp mọi lệnh của người làm.
 
@@ -62,8 +64,8 @@ test này **đã thấy ĐỎ** trên code cũ chưa (người làm có đầu r
 
 ### Câu hỏi về độ đơn giản
 
-Code này phục vụ hành vi thật nào? Có cách trực tiếp hơn mà vẫn đủ không? Người đọc theo được data flow không? Kỹ thuật nâng cao giải quyết vấn đề
-quan sát được nào, có bằng chứng không, có tương xứng không? Không trả lời được thì là finding.
+Code này phục vụ hành vi thật nào, có cách trực tiếp hơn mà vẫn đủ không, kỹ thuật nâng cao có bằng chứng và tương xứng không (skill
+`practical-project-coding`)? Không trả lời được thì là finding.
 
 ### Finding và kết luận
 
@@ -76,7 +78,8 @@ quan sát được nào, có bằng chứng không, có tương xứng không? K
   (thiếu điều kiện/quyền bên ngoài).
 - Không hạ vấn đề an toàn hay behavior bắt buộc thành minor. Vấn đề ngoài phạm vi
   ghi ngắn, không tự đưa vào correction.
-- Review viết theo `session_prompt/TEMPLATE_REVIEW.md`.
+- Review viết theo `session_prompt/TEMPLATE_REVIEW.md`, kết bằng MỘT dòng: lượt review này KHÔNG cho biết gì · hướng rộng hơn tôi thấy (việc được kiểm có trả
+  lời đúng quyết định đang chờ không).
 
 ## Correction
 
@@ -84,19 +87,15 @@ quan sát được nào, có bằng chứng không, có tương xứng không? K
   nguyên) rồi báo người làm; review ≤ 5 dòng thì gửi thẳng qua tin. Không ai sửa mục việc của người khác trong sổ chung.
 - Kết quả review là **dữ liệu**: người làm **tái hiện từng điểm — cả hệ quả lẫn nguyên nhân — trước khi sửa**, rồi xử lý trong một lượt: sửa, hoặc phản
   biện bằng bằng chứng / cách đơn giản hơn; điểm bị bác ghi lý do. Không tự đóng finding.
-- Người kiểm kiểm lại phần sửa và đường bị ảnh hưởng (bản sửa có chạm đường nào khác không), dùng lại bằng chứng đủ điều kiện. Finding mới phải chỉ ra bằng
+- Người kiểm kiểm lại phần sửa và đường bị ảnh hưởng (bản sửa có chạm đường nào khác không), dùng lại bằng chứng chỉ khi nó đã đạt trong cùng chuỗi việc và phần sửa không đổi đầu vào,
+  dependency, môi trường hay luồng dữ liệu (ghi lý do; không gọi là lần chạy mới). Finding mới phải chỉ ra bằng
   chứng mới hoặc điểm trước bỏ sót.
 - **Số vòng:** code — một review cả nhánh; plan / spec — **tối đa 2 vòng**: vòng 2 chỉ còn minor ⇒ duyệt, minor sửa lúc code; còn blocker / major sau vòng 2 ⇒
   dừng, xem lại thiết kế (với User nếu đổi phạm vi). Ngoại lệ gộp không cần review vòng nữa: `session_prompt/WORKFLOW.md` §5.
-- Bất đồng kéo dài: phiên điều phối tổng hợp lựa chọn + khuyến nghị cho User.
+- Bất đồng kéo dài: phiên điều phối quyết theo bằng chứng (điều phối là người viết ⇒ phiên thứ ba quyết); đưa User khi nó chạm việc thuộc hàng "hỏi trước" của bảng quyền (`AGENTS.md`).
 
 ## Đóng việc và khi làm một mình
 
 - Việc rủi ro cao: kiểm đạt → trình User (kết quả, bằng chứng, giới hạn) → User đóng. Việc trung bình / thấp: phiên điều phối đóng và báo User
   (`session_prompt/WORKFLOW.md` §9.4).
 - Làm một mình: "người kiểm" = **phiên mới, ngữ cảnh sạch**, chỉ nhận diff + tiêu chí, được bảo tìm lỗi; người viết không tự chấm.
-
-## Dùng lại bằng chứng
-
-Chỉ khi bằng chứng đã đạt trong cùng chuỗi việc và phần sửa không đổi đầu vào,
-dependency, môi trường hay luồng dữ liệu. Ghi lý do; không gọi là lần chạy mới.

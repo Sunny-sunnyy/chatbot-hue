@@ -16,6 +16,7 @@ from llm import lich_trinh_v2 as lt2
 from api.feedback import FeedbackTurns
 from api.feedback import router as feedback_router
 from api.gioi_han import ChanLuot, GioiHanLuot, tran_tu_moi_truong
+from api.theo_doi import router as theo_doi_router
 from api.health import router as health_router
 from api.routes.anh import router as anh_router
 from api.routes.chat import GIT_SHA
@@ -246,6 +247,7 @@ def create_app(settings=None):
     app.include_router(feedback_router)
     app.include_router(cong_router)  # cổng đợt 1 D6: 4 route chỉ đọc
     app.include_router(xuat_router)  # tải lịch .pptx: luôn đăng ký, cờ `xuat_pptx` tắt ⇒ 404
+    app.include_router(theo_doi_router)  # trang theo dõi của chủ dự án: luôn đăng ký; chưa đặt `HUE_KHOA_THEO_DOI` ⇒ 404
     app.state.feedback_turns = FeedbackTurns()  # B142: mã lượt cho 👍 / 👎 (RAM, không cần lifespan)
 
     tran = tran_tu_moi_truong()
