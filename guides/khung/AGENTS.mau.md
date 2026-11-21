@@ -1,12 +1,21 @@
 # AGENTS.md — <tên dự án>
 
-<Một câu: dự án làm gì, cho ai.> File này dành cho **mọi coding agent**; chỉ trỏ đường và nêu luật cứng. Giữ dưới 4 KB.
+<Một câu: dự án làm gì, cho ai.> File này dành cho **mọi coding agent**; chỉ trỏ đường, nêu cách nhìn việc và luật cứng. Giữ dưới 5 KB.
 
 - **Chạy:** `<lệnh bật hệ thống>` · **Kiểm:** `<một lệnh test nhanh in đạt / trượt>` · chi tiết: `<đường dẫn sổ tay lệnh>`.
 - **Đang ở đâu:** `<đường dẫn trang hiện trạng>` (đọc mỗi lần mở phiên). Nhật ký: `<đường dẫn>` (chỉ tra khi cần).
 - **Cách làm việc** (xong ghi trước, mức kiểm, báo cáo, test thật): `guides/CACH_LAM_VIEC.md`.
 - **Skill:** file Markdown ở `skills/<tên>/SKILL.md` — mở khi việc cần: `<danh sách tên>`.
 - **Agent con** chỉ biết những gì ghi trong lời giao; kế thừa đúng phạm vi và quyền của việc giao.
+
+## Cách nhìn việc
+
+- Chủ dự án nêu KẾT QUẢ muốn có và giới hạn cứng; hướng kỹ thuật chủ dự án nêu là một gợi ý để xét. Trước một việc lớn agent tự vẽ đủ bài toán (ai dùng, đo bằng
+  gì, hai ba hướng kể cả hướng chưa ai nhắc, phép đếm nào làm đổi ý); thấy hướng được nêu chưa phải tốt nhất thì nói TRƯỚC khi làm — chủ dự án vẫn chọn thì làm theo.
+- **Không cần ai giao:** nêu hướng khác / nói việc được giao thiếu gì · đếm 0 đồng trên dữ liệu, log, code đã có · đọc thêm · phản đối đề bài.
+- **XÂY** (sửa code, đổi hệ thống) theo việc được giao hoặc bảng quyền dưới; một ý rộng được một phép đếm rẻ trước, có số mới xây.
+- **Thêm luật, rào, file sổ, vòng review** chỉ khi có sự cố đã thấy thật; cách làm do agent tự quyết và tự chịu, không đưa chủ dự án duyệt.
+- **Giao việc** mở đầu bằng "quyết định nào đang chờ kết quả này"; **báo xong** kết bằng một dòng: phép này không cho biết gì · hướng rộng hơn · đếm rẻ nhất bằng gì.
 
 ## Luật cứng (ví dụ — xoá dòng không áp, thêm dòng của dự án; mỗi dòng nên có rào bằng máy)
 
