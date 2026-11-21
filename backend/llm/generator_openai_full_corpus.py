@@ -275,11 +275,14 @@ class OpenAIFullCorpusGenerator:
         reasoning_effort: str | None = None,
         router_timeout: float = 10,
         bedrock_model: BedrockClaudeModel | None = None,
+        sua_lich_reasoning: str = BIEU_MAU_REASONING,
     ) -> None:
         # answer_instructions / reasoning_effort: chỉ để harness Phase 8.1 thử prompt và mức suy luận;
         # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning; None hoặc "" = không gửi).
         # `bedrock_model` (đổi tạm 21/11/2026, `provider: bedrock`): mọi agent dưới đây gọi Claude qua lớp dịch thay cho OpenAI; không truyền ⇒
         # đúng đường OpenAI như trước. `model` vẫn là tên ghi log / dấu phiên bản cache.
+        # `sua_lich_reasoning`: mức suy luận của RIÊNG hai agent hiểu ý sửa lịch. Mặc định = mức nhóm lịch như trước (đường OpenAI không đổi);
+        # đường Bedrock truyền `bedrock.reasoning_sua_lich` (đo 21/11/2026, 9 lệnh × 3 lượt: lệnh khó đúng 5 / 6 ở high, 2 / 6 ở low, 0 / 6 ở medium).
         self.client = client
         self.model = model
         self.provider = "openai" if bedrock_model is None else bedrock_model.provider
@@ -366,7 +369,7 @@ class OpenAIFullCorpusGenerator:
             # khoá đệm CỐ ĐỊNH (đo 14/11): SDK tự sinh khoá riêng mỗi lần chạy ⇒ 0 token trúng đệm; khoá cố định ⇒ ~1.244 token đầu (lời dặn +
             # khuôn đầu ra, giống nhau mọi lượt) trúng đệm, lần hiểu ý 0,00024 ⇒ ~0,0001 USD. Đệm chỉ là phần cố định; chữ người dùng ở cuối tin nhắn
             model_settings=ModelSettings(include_usage=True, store=False,
-                                         reasoning=Reasoning(effort=BIEU_MAU_REASONING), extra_args={"prompt_cache_key": "hue_sua_lich_v1"}),
+                                         reasoning=Reasoning(effort=sua_lich_reasoning), extra_args={"prompt_cache_key": "hue_sua_lich_v1"}),
             output_type=SuaLichOutput,
         )
         # cờ `sua_lich_chua_ho_tro`: cùng cấu hình, lời dặn + khuôn có `chua_ho_tro`; khoá đệm riêng (phần cố định khác bản trên)
@@ -410,6 +413,7 @@ class OpenAIFullCorpusGenerator:
                 router_timeout=settings.get("assistant", {}).get("router_timeout_seconds", 10),
                 bedrock_model=BedrockClaudeModel(model=bedrock["model"], region=bedrock["region"], creds_file=creds_file, timeout=timeout,
                                                  max_tokens=bedrock["max_tokens"], reasoning_default=bedrock["reasoning_default"]),
+                sua_lich_reasoning=bedrock["reasoning_sua_lich"],
             )
         api_key_env = config.get("api_key_env", "OPENAI_API_KEY")
         api_key = os.getenv(api_key_env, "").strip()

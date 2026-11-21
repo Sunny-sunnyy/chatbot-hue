@@ -79,3 +79,30 @@ Phiên C đã kiểm đạt: đường OpenAI giống từng byte (10 loại l�
 | Lớn | Trên đường stream, lỗi của Bedrock (403, 429, hết giờ, rớt mạng) đi tới nơi đọc dưới dạng lỗi lạ ⇒ lịch mất đường "câu dự phòng, lịch vẫn hiện", ô chat báo "lỗi hệ thống" thay cho "không tạo được câu trả lời" | `BedrockError` nay là một `GenerationError`; lỗi mạng / hết giờ / không đọc được file khoá đều được đổi thành lỗi này ngay trong lớp dịch. Test mới 5 ca trên đường stream: ĐỎ trên code cũ, xanh sau sửa. |
 | Nhỏ 1 | Che mã tài khoản SAU khi cắt 300 ký tự ⇒ mã vắt qua mốc cắt còn sót một phần | Che trước rồi cắt. Ca test mới còn bắt thêm một lỗi của chính mẫu che (mã đứng liền sau chữ cái không được nhận) — đã sửa mẫu. |
 | Nhỏ 2 | Lời lỗi chung vẫn ghi chữ "OpenAI generation…" khi chạy Bedrock | Không sửa (chỉ là chữ trong log; đổi sẽ chạm đường OpenAI). |
+
+## 6. Lượt đo nhỏ lịch · sửa lịch · ảnh trên bốn nhánh, và nhánh `p9-b-sua-lich-high` (11:04 21/11/2026, giờ `date`)
+
+Câu hỏi của chủ dự án: với lên lịch, sửa lịch và ảnh, Sonnet ở low / medium / high khác nhau gì, và so với luna. 156 lời gọi thật qua code sản phẩm (không server), 0 lỗi,
+0 lời gọi bị cắt vì trần token, lời gọi dài nhất 11,7 giây. Mẫu và kết quả mong đợi ghi trước khi chạy (đầu script riêng tư `b_do_lich_sua_anh.py`). Cỡ mẫu nhỏ: đọc là "ngang nhau" trừ chỗ lặp lại qua ba lượt.
+
+| Phần (cỡ mẫu mỗi nhánh) | luna | Sonnet low | Sonnet medium | Sonnet high |
+|---|---|---|---|---|
+| Sửa lịch, lệnh rõ ràng: đúng ý (18 lần) | 17 | 18 | 18 | 18 |
+| Sửa lịch, lệnh phủ định "đừng bỏ…" (3 lần) | 3 | 3 | 3 | 3 |
+| Sửa lịch, lệnh mơ hồ: không tự chọn điểm (3 lần) | 3 | 0 | 0 | 2 |
+| Sửa lịch, lệnh bị luật chặn: model vẫn trả đúng hành động (3 lần) | 3 | 2 | 0 | 3 |
+| Sửa lịch, thời gian giữa – lâu nhất | 2,1 – 5,5 s | 1,3 – 4,0 s | 1,4 – 3,1 s | 2,1 – 6,8 s |
+| Lên lịch 4 kiểu: câu model qua bộ kiểm của code (27 mục, một lần) | 27 | 27 | 27 | 27 |
+| Lên lịch, thời gian giữa – lâu nhất | 3,7 – 4,4 s | 5,5 – 8,3 s | 5,2 – 8,3 s | 6,0 – 11,7 s |
+| Ảnh trong danh sách: tên đúng trong ≤ 3 tên (6 ảnh, một lần) | 6 | 6 | 6 | 6 |
+| Ảnh ngoài danh sách: không ép tên Huế (2 ảnh) | 1 | 2 | 2 | 2 |
+| Ảnh, thời gian giữa – lâu nhất | 3,1 – 7,8 s | 1,6 – 3,5 s | 1,4 – 1,8 s | 1,5 – 2,3 s |
+
+Đối chiếu sự thật 17 câu mô tả điểm (5 mục) với đúng đoạn nguồn của lời gọi: luna 7 chi tiết, Sonnet low 13, medium 9, high 14 — tất cả có trong đoạn nguồn, 0 chi tiết bịa;
+một lỗi GỘP Ý của Sonnet (tháp Phước Duyên bị xếp chung vào "Bảo vật quốc gia" — nguồn chỉ ghi chuông và bia): sai hẳn ở một câu của lượt giao diện, nói lỏng ở low và high, đúng ở medium.
+
+**Đổi ở nhánh `p9-b-sua-lich-high`:** đường Bedrock, hai agent hiểu ý sửa lịch gửi mức suy luận của khoá mới `bedrock.reasoning_sua_lich` (`high`); viết câu lịch và lượt biểu mẫu giữ `low`;
+đường OpenAI không đổi (tham số mới của generator mặc định bằng mức cũ). Lượt thật trên cấu hình của nhánh [máy kiểm]: lệnh bị luật chặn đúng 3 / 3; lệnh dễ đúng 1 / 1.
+
+**Giới hạn ghi lại, CHƯA sửa:** lệnh sửa lịch mơ hồ — Sonnet high vẫn tự bỏ một điểm người dùng không nêu 3 / 6 lần (1 / 3 ở lượt đo + 2 / 3 ở lượt thật của nhánh); low và medium 3 / 3.
+Sửa việc này cần đổi lời dặn và đo lại — không làm ở nhánh này. Lỗi gộp ý trong câu mô tả điểm cũng chưa sửa.
