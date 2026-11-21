@@ -148,3 +148,23 @@ Quan sát kèm, không sửa: câu "ngày mai nắng hay mưa, có nên ra biể
 | Trả lời | Chưa đo điểm "Trọng tâm" (phiên đo chạy lại 85 câu). Đã thấy: 44 lượt qua `answer_turn` có đoạn dặn này, 0 lỗi, câu từ chối cố định vẫn đúng chữ. |
 
 Chưa làm: lượt thật qua giao diện sau các thay đổi này; thẻ lịch câu dài trên màn 390 px và bản in; cả bộ test. Tiền Bedrock phần này ≈ 3 USD.
+
+## 8. Nhánh `p9-b-sua-rong-m03` (11:54 21/11/2026, giờ `date`): lỗi "nội dung rỗng" ở vòng đã hết lượt tìm + gỡ đoạn dặn trả lời
+
+**Lỗi phiên đo báo:** một câu của bộ chuỗi (hỏi độ cao một ngọn núi mà kho không ghi) ở Sonnet high ném lỗi "nội dung rỗng" 2 / 2 lượt, trước và sau bản 0 ⇒ người dùng thấy "Thử lại"; luna trả câu từ chối.
+**Tái hiện + nguyên nhân gốc [máy kiểm]:** chạy câu đó 5 lần trên bản chính, in phản hồi thô: 2 / 5 lượt trả lời người dùng bằng đúng một chữ **"tim_kho"** (tên công cụ) với kết cục "thành công" — tệ hơn lỗi rỗng.
+Cả hai là một bệnh: sau hai lần model tự tìm, công cụ tìm kho bị ẩn (cơ chế có từ 12/11) ⇒ vòng viết không còn công cụ ⇒ lớp dịch ép khuôn JSON; Claude vẫn muốn tìm tiếp, không gọi được công cụ nên viết rác vào khuôn.
+Phát lại đúng thân của vòng đó:
+
+| Thân gửi | Đúng câu từ chối | Rác vào khuôn (`placeholder`, `tim_kho`, rỗng, lời tự nhủ) | Tự nói bằng lời "chưa tìm thấy" |
+|---|---|---|---|
+| như bản chính (ép khuôn, không công cụ) — 22 lần | 8 | 14 | 0 |
+| bản sửa (bỏ khuôn, chỉ còn công cụ nội bộ `tra_loi`) — 22 lần | 20 | 0 | 2 |
+| bản sửa + thêm câu "không còn công cụ tìm" vào mô tả — 12 lần | 10 | 0 | 2 (không hơn ⇒ không dùng) |
+
+**Sửa** (chỉ `backend/llm/bedrock_model.py`, hàm `build_body`): có khuôn VÀ (có công cụ HOẶC lượt đã có lời gọi công cụ) ⇒ không ép khuôn, đưa công cụ nội bộ. Test mới đỏ trên lớp dịch cũ.
+**Lượt thật sau sửa:** câu đó 6 lần qua `answer_turn` ở high: 0 lỗi, 0 rác; 5 lần đúng câu từ chối cố định, 1 lần trả lời phần kho có (tên khác của ngọn núi, có trích nguồn) và nói rõ chưa thấy độ cao.
+**Không làm lưới "rỗng ⇒ câu từ chối cố định":** lưới đó chỉ bắt được 1 trong 14 kết quả hỏng của phép phát lại (13 cái còn lại là chữ rác, không rỗng) và che mất dấu hiệu nếu bệnh quay lại; sau bản sửa chưa thấy lượt rỗng nào (0 / 22 + 0 / 6). Nếu lượt đo lại còn thấy rỗng thì thêm.
+
+**Gỡ đoạn dặn riêng cho phần trả lời** (phiên điều phối giao theo số của phiên đo): 85 câu ở high, lời dặn mới ↔ cũ, hai người chấm — Đúng / Đủ ý không đổi; độ dài trung vị 236 ⇒ 258 ký tự; Trọng tâm 4,39 ⇒ 4,26.
+Ba đoạn còn lại (câu lịch, sửa lịch, định tuyến) giữ.

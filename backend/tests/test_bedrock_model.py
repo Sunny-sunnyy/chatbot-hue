@@ -101,9 +101,17 @@ def test_body_carries_tools_format_and_an_explicit_reasoning_mode():
     assert body["tool_choice"] == {"type": "auto", "disable_parallel_tool_use": True}
     # mức mặc định `none` ⇒ `between_tools`, không gửi effort; không trường nào của riêng OpenAI lọt sang
     assert body["thinking"] == {"type": "between_tools"}
-    # không công cụ (kể cả lượt mọi công cụ đã ẩn) ⇒ ép khuôn như cũ, không có công cụ nội bộ
+    # không công cụ và lượt chưa có lời gọi công cụ nào ⇒ ép khuôn như cũ, không có công cụ nội bộ
     no_tools = build_body("lời dặn", "câu hỏi", settings, [], AgentOutputSchema(AnswerOutput), 1000, "none")
     assert no_tools["output_config"] == {"format": {"type": "json_schema", "schema": AgentOutputSchema(AnswerOutput).json_schema()}} and "tools" not in no_tools
+    # mọi công cụ đã ẨN nhưng lượt đã có lời gọi công cụ (hết lượt tìm) ⇒ KHÔNG ép khuôn — ép thì Claude viết rác vào khuôn ("placeholder", tên công cụ,
+    # rỗng; lỗi M03 21/11) — chỉ còn công cụ nội bộ để nộp câu trả lời
+    rounds = [{"role": "user", "content": "câu hỏi"},
+              {"type": "function_call", "id": "toolu_1", "call_id": "toolu_1", "name": "tim_kho", "arguments": '{"cau_tim": "x"}', "status": "completed"},
+              {"type": "function_call_output", "call_id": "toolu_1", "output": "[Nguồn 1] …"}]
+    hidden = build_body("lời dặn", rounds, settings, [], AgentOutputSchema(AnswerOutput), 1000, "none")
+    assert [t["name"] for t in hidden["tools"]] == ["tra_loi"] and "output_config" not in hidden
+    assert hidden["tool_choice"] == {"type": "auto", "disable_parallel_tool_use": True}
     assert not {"store", "prompt_cache_key", "temperature", "top_p", "model"} & body.keys()
 
     # agent KHÔNG tự đặt mức ⇒ mức mặc định của cấu hình; agent tự đặt "low" (nhóm lịch) ⇒ giữ "low" dù mặc định là "high"
@@ -334,10 +342,11 @@ def test_sonnet_only_instructions_are_appended_on_bedrock_and_absent_on_openai(m
     assert sonnet.router_agent.instructions == f"{p.ROUTER_INSTRUCTIONS}\n\n{p.SONNET_DINH_TUYEN}"
     assert all(p.SONNET_DINH_TUYEN in a.instructions for a in (sonnet.router_history_agent, *sonnet.router_search_agents.values()))
 
-    assert sonnet.answer_agent.instructions == f"{p.ANSWER_SYSTEM_INSTRUCTIONS}\n\n{p.SONNET_TRA_LOI}"
-    assert sonnet.assistant_instructions == sonnet.assistant_agent.instructions == f"{tool}\n\n{p.SONNET_TRA_LOI}"
-    for agent in (sonnet.assistant_history_agent, sonnet.assistant_agent_nhieu_y, sonnet.assistant_history_agent_nhieu_y):
-        assert p.SONNET_TRA_LOI in agent.instructions
+    # đoạn dặn riêng cho phần trả lời đã thử và gỡ (đo lại không đạt) ⇒ lời dặn trả lời / trợ lý của Sonnet y như luna
+    for ten in ("answer_agent", "assistant_agent", "assistant_history_agent", "assistant_agent_nhieu_y", "assistant_history_agent_nhieu_y", "bieu_mau_agent"):
+        if ten != "bieu_mau_agent":
+            assert getattr(sonnet, ten).instructions == getattr(luna, ten).instructions
+    assert sonnet.assistant_instructions == luna.assistant_instructions and not hasattr(p, "SONNET_TRA_LOI")
     assert sonnet.assistant_instructions_for([("q", "a")]) == sonnet.assistant_history_agent.instructions  # chuỗi đếm = chuỗi gửi
     assert sonnet.lich_v2_agent.instructions == p.LICH_V2_LOI_DAN_SONNET
     assert "một hoặc hai câu" in p.LICH_V2_LOI_DAN_SONNET and "đúng một câu" not in p.LICH_V2_LOI_DAN_SONNET
