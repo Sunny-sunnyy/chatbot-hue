@@ -1,7 +1,7 @@
 # Ý chưa thử — MỘT danh sách chung, xếp theo thứ tự đáng thử (tạo 16:12 21/11/2026)
 
 Là gì: nơi duy nhất ghi hướng rộng hơn / cơ hội mà một phiên thấy nhưng chưa ai giao — thay cho các dòng rải trong sổ riêng (chín "ý chờ" cũ nằm chết vì không ai giữ).
-Cách dùng: phiên nào cũng NÊU được (dòng cuối báo cáo hoặc một tin cho phiên điều phối); phiên điều phối chép vào đây: ý · ai nêu, ngày · phép đếm / phép thử RẺ NHẤT cho biết ý đúng hay sai · trạng thái. Đếm 0 đồng thì tự làm rồi ghi số vào dòng đó. XÂY chỉ khi phép đếm ra số và máy còn làn đo. Ý đã thử (kể cả ra âm) thì xoá khỏi đây, kết quả ghi ở báo cáo của việc đó. Phiên điều phối xếp lại thứ tự khi có số mới.
+Cách dùng: phiên nào cũng NÊU được (dòng cuối báo cáo hoặc một tin cho phiên điều phối); phiên điều phối chép vào đây: ý · ai nêu, ngày · phép đếm / phép thử RẺ NHẤT cho biết ý đúng hay sai · trạng thái. Đếm 0 đồng thì tự làm rồi ghi số vào dòng đó. XÂY chỉ khi phép đếm ra số, máy còn làn đo VÀ phiên điều phối đã đưa việc đó vào sổ việc (`VIEC_DANG_MO.md`). Ý đã thử (kể cả ra âm) thì xoá khỏi đây, kết quả ghi ở báo cáo của việc đó. Phiên điều phối xếp lại thứ tự khi có số mới.
 
 | # | Ý | Ai nêu | Phép đếm / thử rẻ nhất | Trạng thái |
 |---|---|---|---|---|
