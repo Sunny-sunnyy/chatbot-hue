@@ -10,6 +10,8 @@ Việc đang mở, ai làm, bước kế: sổ việc `session_prompt/VIEC_DANG_
 - Hỏi chủ dự án khi việc cần tới: mở hai phiên hay bốn cho ba ngày thử; các câu còn chờ ở `HIEN_TRANG.md` mục 3 (mỗi lần một câu).
 - Ghi ba con số cách làm của ngày vào `session_prompt/SO_CAI_TIEN_CACH_LAM.md`; chép ý mới các phiên nêu vào `session_prompt/Y_CHUA_THU.md`.
 
+- (ghi 18:14 21/11/2026) Chủ dự án muốn TIẾP TỤC buổi trò chuyện bàn hướng khi về ("khi nào tôi đi về có thể tiếp tục trò chuyện trao đổi brainstorming"): chuẩn bị sẵn để bàn — con số trước ↔ sau của việc chính, đề xuất hook đang chờ, danh sách `Y_CHUA_THU.md` (các ý cải tiến sản phẩm 13–17), số phiên.
+
 ## Đang khai báo sửa
 - không (các nhánh của lượt soát 21/11: xem `git branch -r --no-merged origin/main`).
 
