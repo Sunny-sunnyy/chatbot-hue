@@ -322,4 +322,3 @@ def test_judge_agent_sends_no_output_token_cap():
     agent = judge_agent("gpt-6-luna")
     assert agent.model_settings.max_tokens is None and agent.output_type is JudgeScores
     assert (agent.model_settings.include_usage, agent.model_settings.store) == (True, False)
-
