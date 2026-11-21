@@ -24,6 +24,7 @@ def test_phase6_settings_are_exact():
             "region": "ap-southeast-1",
             "max_tokens": 128000,
             "reasoning_default": "low",
+            "sua_lich_timeout_seconds": 10,
             "reasoning_sua_lich": "high",
             "creds_file_env": "HUE_BEDROCK_CREDS_FILE",
         },

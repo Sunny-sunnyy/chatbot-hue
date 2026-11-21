@@ -360,3 +360,30 @@ def test_settings_loader_accepts_bedrock_and_rejects_a_broken_block():
         broken["full_corpus_generation"]["bedrock"][key] = value
         with pytest.raises(ValueError):
             validate_phase6_settings(broken)
+
+
+def test_tool_round_limits_and_edit_timeout_come_from_settings_with_old_defaults(monkeypatch):
+    """Bậc 1b (21/11/2026): số vòng công cụ, số lần tìm kho, hạn giờ hiểu ý sửa lịch đọc từ dict settings. Giá trị trong repo = giá trị cũ (4 · 2 ·
+    10 giây = hạn định tuyến); bộ đo đổi trong bản chép dict. Đường OpenAI: hạn sửa lịch vẫn là hạn định tuyến."""
+    from llm.assistant import MODEL_SEARCH_LIMIT, AssistantFlags
+    from llm.generator_openai_full_corpus import ASSISTANT_MAX_TURNS, max_turns_for
+
+    monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    settings = bedrock_settings()
+    sonnet = OpenAIFullCorpusGenerator.from_environment(settings)
+    assert (sonnet.max_turns, sonnet.sua_lich_timeout, sonnet.router_timeout) == (ASSISTANT_MAX_TURNS, 10, 10) == (4, 10, 10)
+    assert AssistantFlags(so_lan_tim_kho=settings["assistant"]["so_lan_tim_kho"]).so_lan_tim_kho == MODEL_SEARCH_LIMIT == AssistantFlags().so_lan_tim_kho == 2
+    assert max_turns_for(None) == 4 and max_turns_for(object(), object()) == 6 and max_turns_for(object(), None, 6) == 7
+
+    settings["assistant"].update(so_vong_cong_cu=6, router_timeout_seconds=10)
+    settings["full_corpus_generation"]["bedrock"]["sua_lich_timeout_seconds"] = 20
+    wider = OpenAIFullCorpusGenerator.from_environment(settings)
+    assert (wider.max_turns, wider.sua_lich_timeout, wider.router_timeout) == (6, 20, 10)
+    settings["full_corpus_generation"]["provider"] = "openai"
+    luna = OpenAIFullCorpusGenerator.from_environment(settings)
+    assert (luna.max_turns, luna.sua_lich_timeout) == (6, 10)
+    broken = bedrock_settings()
+    broken["full_corpus_generation"]["bedrock"]["sua_lich_timeout_seconds"] = 0
+    with pytest.raises(ValueError):
+        validate_phase6_settings(broken)
