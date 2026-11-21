@@ -1,6 +1,6 @@
 ---
 name: risk-gated-agent-review
-description: Dùng khi một session kiểm (review chéo) việc của session khác hoặc khi bàn giao việc để được kiểm — đối chiếu diff với tiêu chí nghiệm thu, kiểm tra độc lập theo rủi ro, viết finding, xử lý correction và đóng việc. Dùng được với nhiều phiên hoặc làm một mình (người kiểm = phiên mới ngữ cảnh sạch).
+description: Dùng khi một session kiểm (review chéo) việc của session khác hoặc khi bàn giao việc để được kiểm — đối chiếu diff với tiêu chí nghiệm thu, kiểm tra độc lập theo rủi ro, viết finding, xử lý correction và đóng việc. Dùng được cả khi làm một mình (người kiểm = phiên mới ngữ cảnh sạch).
 ---
 
 # Review chéo theo rủi ro

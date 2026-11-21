@@ -50,4 +50,4 @@ KHUÔN TRẢ VỀ: <bảng / mục cố định>; mỗi ý gắn [nguồn nói �
 Báo cáo việc ghi ngắn: giao mấy agent · mỗi agent đọc gì · file đầu ra ở đâu · đã tự kiểm ý nào (kèm lệnh) · ý nào còn "chưa kiểm" · tiền nếu có.
 File đầu ra của agent con thuộc dữ liệu riêng thì để ở thư mục riêng của dự án (hue_rag: `data/`), không commit.
 
-[Khuôn gom từ các lời giao đã dùng thật; skill chưa được chấm có / không skill.]
+[Khuôn gom từ lời giao đã dùng thật; skill chưa được chấm.]

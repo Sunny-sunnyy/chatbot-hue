@@ -197,5 +197,5 @@ Trước khi bàn giao, đọc exact diff và kiểm tra:
 - test và verification thực sự bảo vệ behavior đã nêu;
 - observed result không bị trộn với expected hoặc prior result.
 
-Bàn giao: bảng **đã làm · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra** + MỘT dòng: phép này không cho biết gì · hướng rộng hơn tôi thấy · đếm rẻ nhất bằng gì. Phần viết cho chủ dự án: khuôn bốn ý, tách dòng "test bằng đồ giả" ↔ "lượt thật", mỗi khẳng định
+Bàn giao: bảng **đã làm · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra** + MỘT dòng: không cho biết gì · hướng rộng hơn · đếm rẻ nhất bằng gì. Phần viết cho chủ dự án: khuôn bốn ý, tách dòng "test bằng đồ giả" ↔ "lượt thật", mỗi khẳng định
 gắn nhãn [máy kiểm] / [người thứ hai kiểm] / [chưa kiểm] — `guides/CACH_LAM_VIEC.md` mục 4, mẫu `guides/khung/BAO_CAO_4_Y.mau.md`. Đổi thứ người dùng thấy ⇒ kèm ảnh trước–sau hoặc đầu ra thật. Thí nghiệm: 3–5 dòng của `run-experiment` §5.
