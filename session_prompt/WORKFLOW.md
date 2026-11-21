@@ -34,7 +34,7 @@ Bản gọt 21/11/2026 — SỐ MỤC giữ nguyên để chỗ trỏ cũ còn �
 
 ## 3. Nhận và làm việc
 
-1. Đọc mục việc của mình và các input theo mức đọc được ghi.
+1. Đọc mục việc của mình và các input được ghi trong đó.
 2. **Khai báo trước khi sửa:** ghi file sắp sửa vào `sessions/STATUS_<X>.md`; không sửa file session khác đang khai báo. Governance (`session_prompt/`,
    `skills/`, `AGENTS.md`, `.githooks/`, `.claude/settings.json`, `.claude/hooks/`) do A sửa — trừ mục việc / trạng thái của chính mình trong
    `CURRENT_HANDOFF.md` và `sessions/STATUS_<X>.md`. Code làm trong `git worktree` riêng (lệnh + luật máy dùng chung: `AGENTS.md` mục "Hay vấp").
@@ -133,8 +133,7 @@ dọn worktree, file tạm, collection thử của phiên. A: viết lại `HIEN
    người dùng thấy gì; chỉ có một nghĩa thì làm luôn. Việc rủi ro cao: **một** tài liệu thiết kế trong `docs/superpowers/specs/` (mục tiêu, quyết định,
    phạm vi, tiêu chí nghiệm thu, quyền, rủi ro), User duyệt một lần; có agent, công cụ, dữ liệu hay đường ra mới thì kèm bảng rà khung AI FDE. **Duyệt
    gắn với đúng bản:** A tính sha từ file (`sha256sum <file> | cut -c1-12`) lúc ghi duyệt; sửa sau duyệt mà đổi tiêu chí / ngưỡng / tiền / phạm vi ⇒ duyệt
-   lại phần đổi. **Plan có tiêu chí ghi trước** (lượt trả phí > ~0,05 USD hoặc chạm an toàn): đầu file ghi "Căn cứ để review" (2–4 file + mục / hàm) và
-   có bộ kín hay không; một session khác người viết review chỉ dựa trên gói đó trước khi A ghi duyệt.
+   lại phần đổi. Plan có lượt trả phí > ~0,05 USD hoặc chạm an toàn: ghi ngay có bộ kín hay không; một session khác người viết đọc trước khi A ghi duyệt.
 2. **Giao việc:** mở đầu bằng quyết định nào đang chờ kết quả này, rồi kết quả cần có, đọc gì, tiêu chí, quyền / giới hạn tiền, điều kiện dừng; ghi sổ
    việc rồi nhắn session đó. Giao song song khi file không chồng nhau. Tin giao việc kèm `notify_when_idle: true` để bắt session **kẹt** (chờ permission,
    vòng chờ hỏng) — session rảnh là bình thường, không dựng việc phụ để lấp giờ. Giao việc kế cho session đang bận ⇒ ghi "làm ngay sau việc hiện tại".
@@ -156,8 +155,6 @@ dọn worktree, file tạm, collection thử của phiên. A: viết lại `HIEN
 
 ## 10. Session D — học cùng User (tùy chọn)
 
-Mở bằng `START_SESSION.md` với `<X>` = D khi User muốn tự hiểu một việc vừa xong. Mục tiêu: User tự giải thích lại được bằng lời của mình.
-
-- **Chỉ đọc** repo, report, code, `bai_hoc/`; không sửa file dự án, không chạy việc nặng, không gọi API trả phí, không commit. Chỉ ghi vào sổ học private
-  `data/hoc_cung_D/` (và `sessions/STATUS_D.md`). Không mở câu kín; không ghi memory Claude (memory dùng chung mọi session).
-- Giảng theo skill `teach-and-quiz`. Thấy chỗ yếu trong việc của các phiên khác thì nói thẳng với User và ghi vào sổ để A xem; D không tự sửa, D báo **User**.
+Mở bằng `START_SESSION.md` với `<X>` = D khi User muốn tự hiểu một việc vừa xong; làm theo skill `teach-and-quiz` (chỉ đọc, chỉ ghi sổ học private
+`data/hoc_cung_D/`, không mở câu kín). Thêm: không ghi memory Claude (memory dùng chung mọi session); thấy chỗ yếu trong việc của phiên khác thì nói thẳng với
+User, không tự sửa; D báo **User**, việc để giảng do User chọn.

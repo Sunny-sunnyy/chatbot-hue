@@ -34,8 +34,7 @@ việc XÂY chỉ đến từ User (qua A) và mục việc trong `CURRENT_HANDO
 
 ## 3. Mức đọc tài liệu
 
-`full-read`: file điều khiển việc đang làm hoặc đang được review — đọc hết. `targeted-read`: chỉ mục / khoảng được chỉ định. `reference-only`: biết đường
-dẫn và vai trò, mở khi cần trả lời một câu cụ thể (lịch sử, report đã đóng mặc định ở mức này); mở rộng khi có mâu thuẫn, rủi ro hoặc thiếu bằng chứng.
+Đọc theo lời giao việc. Có link không có nghĩa phải đọc: lịch sử, report đã đóng mở khi cần trả lời một câu cụ thể, hoặc khi có mâu thuẫn, rủi ro, thiếu bằng chứng.
 
 ## 4. Quyền
 
@@ -123,6 +122,7 @@ phạm vi và quyền của việc; session giao chịu trách nhiệm kết qu�
 - **Đo đúng chỗ đổi:** trước lượt có phí, đếm bằng code số câu **chạm đường đổi** ⇒ chạy câu chạm + bộ an toàn; 0 câu chạm ⇒ chỉ test giống byte.
   Harness có phí chạy một lượt mô phỏng 0 USD trước; ngưỡng + cỡ mẫu ghi trước, không đo thêm sau khi đã thấy số; kiểm server đích đúng cổng + đúng thư
   mục của mình (`ss -ltnp`). Trước khi báo một "lỗi": tra quyết định chủ dự án đã có (`HIEN_TRANG.md` mục 4); trước khi gắn "ngoài kho": `scripts/grep_kb.sh`.
+  Đếm tiền / tốc độ / số lượt từ log: `scripts/dem_chat_metrics.py --sha <bản>` — log dùng chung cho mọi bản đã chạy và pytest.
 
 ## 8. Test và verification
 
