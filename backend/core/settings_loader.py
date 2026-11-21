@@ -57,6 +57,12 @@ def validate_phase6_settings(settings: dict) -> None:
     if runtime.get("reranker") != "none":
         raise ValueError(f"Invalid full_corpus_runtime.reranker: {runtime.get('reranker')!r}")
 
+    # Bậc 1b (21/11/2026): hai con số của vòng công cụ là khoá cấu hình ⇒ kiểm kiểu ở rìa (thiếu khoá = dùng giá trị mặc định trong code)
+    for key in ("so_vong_cong_cu", "so_lan_tim_kho"):
+        value = (settings.get("assistant") or {}).get(key)
+        if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value < 1):
+            raise ValueError(f"Invalid assistant.{key}: {value!r}")
+
     generation = settings.get("full_corpus_generation")
     if not isinstance(generation, dict):
         raise ValueError("full_corpus_generation configuration must be a dictionary")
@@ -75,8 +81,23 @@ def validate_phase6_settings(settings: dict) -> None:
     if found_forbidden:
         raise ValueError(f"full_corpus_generation contains forbidden keys: {sorted(found_forbidden)}")
 
-    if generation.get("provider") != "openai":
+    if generation.get("provider") not in ("openai", "bedrock"):
         raise ValueError(f"Invalid provider: {generation.get('provider')!r}")
+    if generation["provider"] == "bedrock":  # đổi tạm 21/11/2026: các dòng dưới (model luna, khoá OpenAI) vẫn kiểm — người chấm và đường về dùng chúng
+        bedrock = generation.get("bedrock")
+        if not isinstance(bedrock, dict):
+            raise ValueError("full_corpus_generation.bedrock must be a dictionary when provider is bedrock")
+        for key in ("model", "region", "creds_file_env"):
+            if not isinstance(bedrock.get(key), str) or not bedrock[key]:
+                raise ValueError(f"Invalid full_corpus_generation.bedrock.{key}: {bedrock.get(key)!r}")
+        if not isinstance(bedrock.get("max_tokens"), int) or bedrock["max_tokens"] <= 0:
+            raise ValueError(f"Invalid full_corpus_generation.bedrock.max_tokens: {bedrock.get('max_tokens')!r}")
+        timeout = bedrock.get("sua_lich_timeout_seconds")
+        if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or timeout <= 0:
+            raise ValueError(f"Invalid full_corpus_generation.bedrock.sua_lich_timeout_seconds: {timeout!r}")
+        for key in ("reasoning_default", "reasoning_sua_lich"):
+            if bedrock.get(key) not in ("none", "low", "medium", "high"):
+                raise ValueError(f"Invalid full_corpus_generation.bedrock.{key}: {bedrock.get(key)!r}")
     if generation.get("model") != "gpt-6-luna":
         raise ValueError(f"Invalid model: {generation.get('model')!r}")
     if generation.get("api_key_env") != "OPENAI_API_KEY":

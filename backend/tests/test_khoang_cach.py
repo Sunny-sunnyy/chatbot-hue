@@ -9,6 +9,7 @@ import pytest
 
 from llm import khoang_cach as kc
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream
+from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
 from test_b2_tool_loop import _ids, answer, deps, generator, tool_call  # noqa: F401
 from test_b5_lich_trinh import tool_names
 
@@ -149,7 +150,9 @@ def test_model_number_not_in_source_is_withdrawn(deps):
         return [answer(f"Khoảng 5 km, đi xe 12 phút [{so[-1]}].")]
 
     trace, _ = chay(deps, "Từ A sang B bao xa?", generator(kich_ban), BAT)
-    assert trace.khoang_cach_kiem == ["5", "12"] and trace.citation_error is not None
+    # 21/11/2026: số lạ không còn làm cả lượt báo lỗi — câu chứa nó bị gỡ; ở đây không còn gì ⇒ câu từ chối cố định. Lần trượt vẫn được ghi.
+    assert trace.khoang_cach_kiem == ["5", "12"] and trace.citation_error is None and trace.kiem_so_go["nac"] == 2
+    assert trace.answer == INSUFFICIENT_ANSWER
 
 
 @pytest.mark.parametrize("cau, flags, so_vong", [("Từ A sang B bao xa?", BAT, 5), ("Đại Nội có những công trình gì?", BAT, 4),
@@ -255,7 +258,8 @@ def test_number_check_still_runs_on_precomputed_distance(deps, chu_model, loi, s
         return [answer(chu_model.format(n=so[-1]))]
 
     trace, _ = chay(deps, CAU_SAN, generator(kich_ban), SAN, stream=stream)
-    assert trace.khoang_cach_kiem == loi and (trace.citation_error is None) is (not loi)
+    assert trace.khoang_cach_kiem == loi and trace.citation_error is None and (trace.kiem_so_go is None) is (not loi)
+    assert ("5 km" in trace.answer) is False
     if not loi:
         assert trace.cited[-1].title == kc.TIEU_DE_NGUON
 

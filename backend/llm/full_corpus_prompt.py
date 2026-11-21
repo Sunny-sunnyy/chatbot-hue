@@ -263,3 +263,61 @@ SUA_LICH_LOI_DAN_CHT = SUA_LICH_LOI_DAN.replace(
     "- chua_ho_tro: người dùng muốn sửa LỊCH NÀY theo cách không có ở trên (đổi chỗ / gộp / tách các ngày, dời giờ cả lịch, thêm giờ nghỉ…) "
     "⇒ một hành động chua_ho_tro, không điền gì.\n",
 )  # vòng 2 (thêm "dời một ĐIỂM … là doi_buoi") đã đo và BỎ: Q3 7 / 10 ↔ vòng 1 8 / 10, thêm ca S02 mới (Sửa đổi 17/11 của plan)
+
+# Cờ `sua_lich_buoi_toi` (21/11/2026): `buoi` nhận thêm "toi". Bản trên chỉ cho sáng / chiều ⇒ người dùng nói "sang buổi tối" thì model không có cách
+# ghi đúng (để trống buổi hoặc đổi thành chiều). Xếp được hay không do code trả lời. Cờ tắt ⇒ bản trên, giống byte.
+_DOI_BUOI_CU = "- doi_buoi: dời điểm ten sang buoi (sang / chieu), ngay nếu có.\n"
+assert _DOI_BUOI_CU in SUA_LICH_LOI_DAN_CHT
+SUA_LICH_LOI_DAN_TOI = SUA_LICH_LOI_DAN_CHT.replace(
+    _DOI_BUOI_CU,
+    "- doi_buoi: dời điểm ten sang buoi (sang / chieu / toi), ngay nếu có. Người dùng nói buổi tối thì điền toi, kể cả khi điểm đó là điểm tham quan "
+    "ban ngày: xếp được vào buổi tối hay không là việc hệ thống kiểm và trả lời, bạn chỉ ghi lại đúng buổi họ nói (với them_diem cũng vậy).\n",
+)
+
+
+# ---------- Đoạn dặn CHỈ dành cho Claude Sonnet (provider bedrock) — 21/11/2026, chủ dự án cho chỉnh lời dặn cho hợp model ----------
+# Lời dặn của đường OpenAI ở trên KHÔNG đổi một ký tự; generator chỉ dùng các chuỗi dưới khi provider là bedrock. Mỗi đoạn có một ca đã đo thật
+# làm lý do (report `report_agent/2026-11-21/b_bedrock_sonnet.md` mục 6–7). Viết theo kiểu nêu lý do, không viết hoa ra lệnh.
+
+# (1) Viết câu cho lịch. Ca đo: nguồn ghi "hai Bảo vật quốc gia (chuông, bia)… cùng với tháp", Sonnet dồn vào một câu thành ba bảo vật.
+# Nguyên nhân một phần là giới hạn "đúng một câu, 30 từ" ⇒ với Sonnet nới thành một đến hai câu (chủ dự án: không cần nén nguồn).
+_CAU_LICH_MOT_CAU = "viết đúng một câu (tối đa 30 từ) nói"
+SONNET_GIU_DUNG_VAT = (
+    "Một câu của tài liệu thường nói về nhiều vật cùng lúc. Khi tóm lại, giữ mỗi danh hiệu, con số, năm tháng đi với đúng vật mà tài liệu gắn "
+    "cho nó — ví dụ tài liệu ghi hai hiện vật mang một danh hiệu rồi nhắc thêm một công trình bên cạnh thì chỉ hai hiện vật đó mang danh hiệu. "
+    "Người đọc sẽ tin từng chi tiết như một sự thật về điểm đến, nên một chi tiết gán nhầm còn tệ hơn bỏ sót. Chưa chắc chi tiết thuộc về vật "
+    "nào thì tách ra câu riêng, hoặc bỏ chi tiết đó."
+)
+LICH_V2_LOI_DAN_SONNET = (LICH_V2_LOI_DAN.replace(_CAU_LICH_MOT_CAU, "viết một hoặc hai câu (cả mục tối đa khoảng 50 từ) nói")
+                          + "\n\n" + SONNET_GIU_DUNG_VAT)
+assert _CAU_LICH_MOT_CAU in LICH_V2_LOI_DAN  # lời dặn gốc đổi chữ ⇒ phải xem lại bản Sonnet, không để lặng lẽ mất chỗ nới
+
+# (2) Hiểu ý sửa lịch. Ca đo (9 lệnh × 3 lượt): lệnh mơ hồ "ngày 2 hơi nặng, làm nhẹ bớt" ⇒ Sonnet tự bỏ một lăng (low 3 / 3, medium 3 / 3,
+# high 3 / 6); lệnh dời cụ thể mà luật xếp lịch chặn ⇒ Sonnet medium trả "chưa hỗ trợ" 3 / 3, người dùng mất lý do + gợi ý chỗ dời được.
+# Đoạn dặn tả LOẠI câu, không chép câu nào của bộ đo (review C 21/11: bản đầu lấy nguyên văn một câu đo làm ví dụ ⇒ số của câu đó không tính).
+# `{khong_ro}` = việc trả về khi ý người dùng không khớp kiểu đi nào (khuôn có `chua_ho_tro` hay không tuỳ cờ).
+SONNET_SUA_LICH = (
+    "Hai trường hợp dễ nhầm:\n"
+    "- Người dùng chỉ than hay nhận xét chung về lịch (một ngày quá kín, đi sẽ mệt, muốn thong thả hơn…) mà không nêu việc cần làm ⇒ không tự chọn một điểm "
+    "để bỏ, thay hay dời. Lịch là của họ, và hệ thống sẽ lấp chỗ trống bằng điểm khác nên bỏ hộ một điểm thường không làm lịch nhẹ đi. Ý của "
+    "họ khớp một kiểu đi (nhẹ hơn ⇒ nhe_nhang, dày hơn ⇒ kham_pha) thì trả doi_tham_so với kieu_di đó; không khớp thì {khong_ro}. Trường hợp "
+    "này khác với khi họ nói rõ việc cần làm mà không nêu tên (\"bỏ bớt một chỗ ở ngày 2\") — khi đó vẫn chọn điểm như đã dặn ở trên.\n"
+    "- Người dùng nêu rõ điểm và chỗ muốn dời tới ⇒ luôn trả đúng doi_buoi đó, kể cả khi bạn thấy chỗ ấy có vẻ không hợp (kín lịch, xa, ngoài "
+    "giờ mở cửa). Dời được hay không là việc hệ thống kiểm; có hành động của bạn thì hệ thống mới nói được lý do và gợi ý chỗ dời được."
+)
+SONNET_SUA_LICH_KHONG_RO = {True: "trả chua_ho_tro để hệ thống mời họ nói cụ thể", False: "trả danh sách rỗng"}
+
+# (3) Trả lời — ĐÃ THỬ, ĐÃ GỠ 21/11/2026. Đoạn dặn "nói điều được hỏi trước, không nhắc lại ý" (nhắm vào 34–42 / 66 câu bị trừ "Trọng tâm") đo lại
+# trên 85 câu ở high, hai người chấm: Đúng / Đủ ý không đổi; độ dài trung vị 236 ⇒ 258 ký tự; Trọng tâm 4,39 ⇒ 4,26 (so cặp 4 thắng / 49 hoà / 13 thua)
+# ⇒ không đạt điều nó nhắm tới ⇒ gỡ. Lời dặn trả lời / trợ lý của Sonnet nay y như của luna.
+
+# (4) Định tuyến. Ca đo (chuỗi hội thoại, 43 lượt phải trả lời): Sonnet đẩy câu về nơi ở rìa Huế sang "ngoài phạm vi" — medium 4 lượt, high 2 lượt,
+# luna 0 (luna trả lời đúng các câu đó từ kho). Viết theo LOẠI nơi, không nêu tên nơi nào của bộ đo.
+SONNET_DINH_TUYEN = (
+    "Về địa danh: \"Huế\" ở đây là cả thành phố Huế hiện nay, tức toàn tỉnh Thừa Thiên Huế trước đây — không chỉ khu nội đô mà cả vùng núi, thác, "
+    "suối, vườn quốc gia, đầm phá, bãi biển, đèo và các huyện, thị xã ở rìa. Câu hỏi về một nơi thuộc vùng đó là tro_ly_hue, dù câu không có chữ "
+    "\"Huế\" và dù nơi ấy ít người biết. Câu hỏi đường đi từ tỉnh khác tới Huế hoặc tới một nơi thuộc Huế, và đường rời Huế, cũng là tro_ly_hue.\n"
+    "Gặp một địa danh mà bạn không chắc có thuộc Huế hay không ⇒ chọn tro_ly_hue: bước trả lời sẽ tra kho và tự từ chối nếu kho không có, còn "
+    "chọn ngoai_pham_vi nhầm thì người dùng bị từ chối một câu mà trợ lý trả lời được. Chỉ chọn ngoai_pham_vi vì địa danh khi bạn biết chắc nơi "
+    "đó thuộc tỉnh, thành khác và câu không dính gì tới Huế."
+)

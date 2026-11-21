@@ -286,3 +286,39 @@ def test_paired_stats_counts_wins_in_the_metric_direction():
 def test_holm_adjust_step_down():
     adjusted = holm_adjust([0.01, 0.04, 0.03])
     assert [round(p, 6) for p in adjusted] == [0.03, 0.06, 0.06]
+
+
+def test_judge_model_defaults_to_openai_and_can_be_claude_at_high_reasoning(monkeypatch):
+    """Người chấm mặc định là model OpenAI ghi ở `model` (luna) KỂ CẢ khi công tắc model viết đang là `bedrock`; `provider="bedrock"` ⇒ Claude
+    với mức suy luận `high`, không đổi cấu hình gốc (User 21/11/2026: thử người chấm Sonnet)."""
+    import copy
+
+    from agents import OpenAIResponsesModel
+
+    from core.settings_loader import load_settings
+    from evaluation.full_corpus_eval import judge_settings
+    from llm.bedrock_model import BedrockClaudeModel
+    from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
+
+    settings = copy.deepcopy(load_settings(validate_private_paths=False))
+    settings["full_corpus_generation"]["provider"] = "bedrock"  # sản phẩm đang chạy Sonnet
+    settings["full_corpus_generation"]["bedrock"]["reasoning_default"] = "low"
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")  # file chỉ được đọc lúc gọi model
+
+    luna = OpenAIFullCorpusGenerator.from_environment(judge_settings(settings, "openai"))
+    assert type(luna.responses_model) is OpenAIResponsesModel and luna.model == "gpt-6-luna"
+    claude = OpenAIFullCorpusGenerator.from_environment(judge_settings(settings, "bedrock"))
+    assert isinstance(claude.responses_model, BedrockClaudeModel) and claude.responses_model.reasoning_default == "high"
+    assert settings["full_corpus_generation"]["bedrock"]["reasoning_default"] == "low"  # dict gốc không bị sửa
+    with pytest.raises(ValueError):
+        judge_settings(settings, "anthropic")
+
+
+def test_judge_agent_sends_no_output_token_cap():
+    """Người chấm không bị đặt trần token đầu ra (trần cũ 1024 gồm cả token suy luận ⇒ phiếu chấm có thể bị cắt)."""
+    from evaluation.full_corpus_eval import JudgeScores, judge_agent
+
+    agent = judge_agent("gpt-6-luna")
+    assert agent.model_settings.max_tokens is None and agent.output_type is JudgeScores
+    assert (agent.model_settings.include_usage, agent.model_settings.store) == (True, False)

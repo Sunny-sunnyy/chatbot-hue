@@ -251,7 +251,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         call_log = CallLog()
         try:
             ra = await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query), call_log,
-                                          **({"chua_ho_tro": True} if flags.sua_lich_chua_ho_tro else {}))  # cờ tắt ⇒ lời gọi như cũ
+                                          **({"chua_ho_tro": True} if flags.sua_lich_chua_ho_tro else {}),  # cờ tắt ⇒ lời gọi như cũ
+                                          **({"buoi_toi": True} if flags.sua_lich_buoi_toi else {}))
             hanh_dong, bi_chan = sl.loc_hanh_dong([h for h in ra if h.loai != sl.CHUA_HO_TRO], query, luu)
             cht = len(ra) - len([h for h in ra if h.loai != sl.CHUA_HO_TRO])
         except GenerationError:

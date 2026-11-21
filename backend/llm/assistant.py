@@ -30,7 +30,7 @@ from core import so_vet
 from core.schema import (CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievalDependencyError,
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
-from llm.citations import select_cited_sources
+from llm.citations import CITATION_PATTERN, select_cited_sources
 from llm import lich_trinh as lt
 from llm import lich_trinh_v2 as lt2
 from llm import luu_tru_lich as ltl
@@ -38,6 +38,7 @@ from llm import quan_lich as ql
 from llm import tra_web as tw
 from llm import thoi_tiet as tt
 from llm import ngay_lich as nl
+from llm import su_kien as sk
 from llm.lam_thay import nho_lam_thay
 from llm import khoang_cach as kc
 from llm.danh_sach import CAU_DANH_SACH, hoi_ve_mot_noi, xin_danh_sach
@@ -78,6 +79,9 @@ class AssistantFlags:
     today_line: bool = False
     may_have_changed_notice: bool = False
     lan_tim_dau: str = "v0"
+    # Bậc 1b (21/11/2026): số lần MODEL được tìm kho thật trong một lượt — khoá `assistant.so_lan_tim_kho`, mặc định = `MODEL_SEARCH_LIMIT` như trước;
+    # mở thành cấu hình để bộ đo thử nới. (Số vòng công cụ: `assistant.so_vong_cong_cu`, generator đọc.)
+    so_lan_tim_kho: int = MODEL_SEARCH_LIMIT
     tim_them: bool = False
     # B3 (plan B3 D7): nhớ hội thoại trong một cuộc trò chuyện — tắt tới khi giao diện nhiều lượt xong (D8); chỉ nhớ câu hỏi khi `nho_cau_tra_loi` tắt
     # 20/11/2026: `nho_cau_tra_loi` bật = chỉ câu trả lời của lượt LIỀN TRƯỚC vào lịch sử (`api/conversations.py` `chi_dap_lien_truoc`); lõi không đọc cờ này
@@ -154,6 +158,10 @@ class AssistantFlags:
     # Lượt đo cuối 18/11 (sửa lịch bằng lời 7 / 10): model trả `chua_ho_tro` cho câu "dời hai điểm, mỗi điểm một buổi" ⇒ code đọc câu và áp hai lần
     # dời (`sua_lich_v2.doi_buoi_tu_cau`). TẮT tới khi đạt tiêu chí ghi trước; cần cờ sua_lich_chua_ho_tro. Không đổi chuỗi gửi model.
     sua_lich_doi_cho_code: bool = False
+    # 21/11/2026 (phiên trình duyệt trên Sonnet: "dời Đại Nội sang buổi tối ngày 1" ⇒ "Chưa rõ ngày / buổi"; tái hiện 18 lượt: Sonnet 5 / 9, luna đổi thành
+    # "chiều" 2 / 9): lần hiểu ý dùng khuôn + lời dặn cho `buoi` nhận "toi"; code trả lời thật (điểm ban ngày ⇒ lý do + chỗ dời được). TẮT tới khi đo
+    # trên cả hai model; cần cờ sua_lich_chua_ho_tro. Tắt ⇒ chuỗi gửi model giống byte.
+    sua_lich_buoi_toi: bool = False
     # Lịch đã lưu của cuộc vào LƯỢT HỎI THƯỜNG (plan private data/lich_da_luu_2026-11-19/PLAN.md): cuộc có lịch + tuyến `tro_ly_hue` ⇒ code nối một nguồn
     # "Lịch bạn đang có" (lịch + số giờ do code tính) sau ngữ cảnh kho; lượt biểu mẫu / lượt sửa / trò chuyện / câu cố định không nhận. TẮT tới khi
     # đo đạt; cần cờ sua_lich_v2 (route chỉ nạp lịch khi cờ đó bật) + tim_them. Tắt ⇒ chuỗi gửi model giống byte.
@@ -173,6 +181,10 @@ class AssistantFlags:
     # mã); chỉ đưa khi câu có từ khoá khoảng cách. TẮT tới khi đo đạt; cần `tim_them` + bảng (`assistant.khoang_cach_bang`, nạp ở rìa)
     khoang_cach: bool = False
     khoang_cach_bang: "kc.BangKhoangCach | None" = field(default=None, compare=False, repr=False)
+    # 20/11 (plan `report_agent/2026-11-20/c_su_kien_theo_ngay_plan.md`): câu vừa nêu một khoảng ngày vừa hỏi lễ hội / sự kiện ⇒ code tra bảng chép từ kho
+    # (`assistant.su_kien_bang`, nạp ở rìa), đổi ngày âm ⇒ dương, đăng một nguồn trước lần gọi model đầu (`llm/su_kien.py`). TẮT tới khi đo đạt; cần `tim_them`.
+    su_kien_theo_ngay: bool = False
+    su_kien_bang: "tuple[dict, ...] | None" = field(default=None, compare=False, repr=False)
     # 17/11 (plan `2026-11-17-khoang-cach-tinh-san-plan.md`): câu đang gõ có từ khoá + đúng hai tên điểm của bảng ⇒ code tra bảng và nối nguồn khoảng
     # cách TRƯỚC lần gọi model đầu, lượt đó không đưa công cụ `khoang_cach` (bớt một lần gọi model ≈ 1,8 s trên đường chữ đầu). TẮT tới khi đo đạt
     khoang_cach_tinh_san: bool = False
@@ -215,6 +227,8 @@ class AssistantFlags:
             raise ValueError("assistant.sua_lich_chua_ho_tro needs assistant.sua_lich_v2: true")
         if self.sua_lich_doi_cho_code and not self.sua_lich_chua_ho_tro:
             raise ValueError("assistant.sua_lich_doi_cho_code needs assistant.sua_lich_chua_ho_tro: true")
+        if self.sua_lich_buoi_toi and not self.sua_lich_chua_ho_tro:
+            raise ValueError("assistant.sua_lich_buoi_toi needs assistant.sua_lich_chua_ho_tro: true")
         if self.lich_vao_hoi_thuong and not (self.sua_lich_v2 and self.tim_them):
             raise ValueError("assistant.lich_vao_hoi_thuong needs assistant.sua_lich_v2: true and assistant.tim_them: true")
         if self.anh_lich and (not self.len_ke_hoach_v2 or self.anh_lich_bang is None):
@@ -236,10 +250,12 @@ class AssistantFlags:
         # toạ độ nạp theo bảng rộng nhất đang dùng: bảng v8 (bản 2, chứa mọi id của v3) khi cờ bản 2 bật, không thì bảng v3 — một dict theo id
         bang_toa_do = bang_v2 or bang
         toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang_toa_do) if values["ban_do_lich"] and bang_toa_do is not None else None
-        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), bang_lich=bang, toa_do_lich=toa_do,
+        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), so_lan_tim_kho=int(config.get("so_lan_tim_kho", MODEL_SEARCH_LIMIT)),
+                   bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
                    khoang_cach_bang=kc.nap_bang(BACKEND_DIR / config["khoang_cach_bang"], BACKEND_DIR / config["lich_trinh_bang_v2"])
                    if values["khoang_cach"] else None,
+                   su_kien_bang=sk.nap_bang(BACKEND_DIR / config["su_kien_bang"]) if values["su_kien_theo_ngay"] else None,
                    len_ke_hoach_o_hien=tuple(config.get("len_ke_hoach_o_hien") or ()),
                    len_ke_hoach_so_thich_an=tuple(config.get("len_ke_hoach_so_thich_an") or ()),
                    bang_lich_v2=bang_v2,
@@ -271,9 +287,9 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 
 
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
-                    if name not in ("lan_tim_dau", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
+                    if name not in ("lan_tim_dau", "so_lan_tim_kho", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
                                      "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do",
-                                     "khoang_cach_bang"))
+                                     "khoang_cach_bang", "su_kien_bang"))
 
 
 def elapsed_ms(started: float) -> float:
@@ -362,6 +378,9 @@ class AnswerTrace:
     thoi_tiet_kiem: list[str] | None = None
     khoang_cach: list[dict] | None = None  # mỗi lần gọi `khoang_cach`: mã hai điểm + các dòng code dựng (chỉ RAM; log chỉ ghi mã)
     khoang_cach_kiem: list[str] | None = None
+    # 21/11/2026: phép kiểm số (thời tiết / khoảng cách) trượt ⇒ gỡ câu chứa số lạ thay vì rút cả câu trả lời. Ghi lại để đếm: các số lạ theo loại,
+    # nấc (1 = gỡ câu, phần còn lại vẫn có nguồn · 2 = không còn gì dùng được ⇒ câu từ chối cố định), số ký tự đã gỡ. None = lượt không trượt.
+    kiem_so_go: dict | None = None
     # Sổ vết debug (`core/so_vet.py`): nội dung chỉ giữ trong RAM của lượt — `tim` (từng lần tìm), `web` (câu gửi tra web + sổ web), `sua`
     # (hành động model hiểu), `loi`. Route ghi ra file CHỈ khi cờ `so_vet` bật; không vào `chat_metrics`, không vào chuỗi gửi model.
     vet: dict = field(default_factory=dict)
@@ -423,7 +442,8 @@ async def tim_kho(cau_tim: str, *, retrieval_service, context_builder, trace: An
                             context_builder=context_builder, trace=trace, today=today)
 
 
-def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str):
+def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str,
+                  search_limit: int = MODEL_SEARCH_LIMIT):
     """Hàm `tim_kho` của **một lượt** cho trợ lý có công cụ (B2 D5): generator bọc thành công cụ SDK (lõi không import SDK — T-3).
     Model chỉ thấy `cau_tim`; trần `MODEL_SEARCH_LIMIT` đếm ở đây; lần vượt ⇒ chữ "đã hết lượt", không tìm. Lỗi tìm / ngữ cảnh: ghi
     `trace.tool_error` rồi ném (lõi ném lại đúng lỗi gốc ⇒ route ra câu lỗi như B1, không đưa lỗi cho model)."""
@@ -439,7 +459,7 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
         if trace.lich is not None:  # B5 vòng chỉnh 1 (a): đã có khung lịch + đoạn từng điểm ⇒ không tìm thật, bảo model viết ngay (chặn bằng code)
             trace.tools.append({"name": "tim_kho", "ms": 0.0, "by": "model", "n_queries": 0, "n_new": 0, "sau_lich": True})
             return TOOL_DA_DU_LICH
-        if trace.model_searches > MODEL_SEARCH_LIMIT:
+        if trace.model_searches > search_limit:
             trace.tools.append({"name": "tim_kho", "ms": 0.0, "by": "model", "n_queries": 0, "n_new": 0, "het_luot": True})
             return TOOL_LIMIT_TEXT
         try:
@@ -722,6 +742,16 @@ def _nguon_khoang_cach_san(trace: AnswerTrace, bang: "kc.BangKhoangCach", cap: t
     return chu
 
 
+def _nguon_su_kien(trace: AnswerTrace, dong: list[str]) -> str:
+    """Cờ `su_kien_theo_ngay`: các dòng code tra từ bảng lễ hội / hoạt động theo ngày, đăng thành **một nguồn** (mẫu `_nguon_lich_san`). Log chỉ số dòng."""
+    src = PackedSource(id=len(trace.so_nguon) + 1, title=sk.TIEU_DE_NGUON, heading_path=(sk.MUC_NGUON,), excerpts=tuple(dong), source=sk.NGUON_SOURCE)
+    trace.so_nguon.append(src)
+    chu = FullCorpusContextBuilder._block(src)
+    trace.context_parts.append(chu)
+    trace.tools.append({"name": "su_kien_san", "ms": 0.0, "n_dong": len(dong)})
+    return chu
+
+
 def _nguon_lich_san(trace: AnswerTrace, query: str) -> str:
     """T1 nhanh (plan `2026-11-10-phase-9-t1-nhanh-plan.md` D2): S5 09/11 câu ngày gọi model 2–4 lần vì model phải gọi `ngay_lich` rồi mới viết ⇒
     code tính sẵn hôm nay / mai / tuần / ngày âm nêu trong câu và trong đoạn kho lần tìm đầu, đăng thành **một nguồn** (như kết quả `ngay_lich`), nối
@@ -792,14 +822,11 @@ def _can_dau_bao_lu(trace: AnswerTrace) -> bool:
     return bool(ctx.get("bao_lu_cong_cu") and ctx.get("bao_lu_cau")) and trace.thoi_tiet is None and trace.lich is None
 
 
-def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
-    """B5b, sau lần sinh (cờ bật, mọi câu tuyến `tro_ly_hue` — D8 m-1): số thời tiết trong chữ model ⊂ số code in ∪ số trong đoạn kho được trích; hỏng
-    ⇒ rút lại như citation hỏng. Rồi code nối: khối số liệu (hoặc câu lỗi) · câu bão / lũ (D6) · câu "chỉ có dự báo 7 ngày" (D3)."""
+def _thoi_tiet_cuoi(trace: AnswerTrace) -> None:
+    """B5b, sau lần sinh và sau phép kiểm số (`_so_la` — D8), cờ bật, mọi câu tuyến `tro_ly_hue`: code nối khối số liệu (hoặc câu lỗi) · câu bão / lũ
+    (D6) · câu "chỉ có dự báo 7 ngày" (D3)."""
     ctx = trace.thoi_tiet_ctx or {}
     tool = trace.thoi_tiet
-    cho_phep = tt.tap_so(tool["khoi"]) if tool and tool["khoi"] else set()
-    cho_phep |= tt.tap_so(" ".join(e for src in (trace.cited or ()) if src.source != lt2.NGUON_LICH_SOURCE for e in src.excerpts))  # nguồn lịch (giờ, phút) không mở rộng số thời tiết
-    trace.thoi_tiet_kiem = tt.kiem_so(text, cho_phep)
     if tool is not None and tool["khoi"] and (trace.answer or "").strip() == INSUFFICIENT_ANSWER:
         trace.answer = tt.CAU_DAN_BAO_LU if tool.get("bao_lu") else tt.CAU_DAN_DU_BAO  # review C M-1: có dự báo mà model từ chối ⇒ không để câu từ chối đứng trước số liệu
         tool["thay_tu_choi"] = True
@@ -816,8 +843,6 @@ def _thoi_tiet_cuoi(trace: AnswerTrace, text: str) -> None:
     trace.thoi_tiet_noi = "\n\n".join(noi) or None
     if trace.thoi_tiet_noi:
         trace.answer = f"{trace.answer}\n\n{trace.thoi_tiet_noi}"
-    if trace.thoi_tiet_kiem and trace.citation_error is None:
-        trace.citation_error = CitationIntegrityError(f"weather numbers without source: {len(trace.thoi_tiet_kiem)}")
 
 
 def _do_dai_bang_chung(doc: RetrievedDocument) -> int:
@@ -1011,6 +1036,9 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     context = trace.packed.text
     if flags.ngay_lich and trace.fixed_outcome is None and nl.co_tu_ngay_luot(query, trace.history):
         context = f"{context}\n\n{_nguon_lich_san(trace, query)}"  # T1 nhanh D2: lượt có từ chỉ ngày ⇒ lịch code tính trước lần gọi model đầu
+    su_kien = sk.dong_nguon(query, flags.su_kien_bang) if flags.su_kien_theo_ngay and flags.su_kien_bang and trace.fixed_outcome is None else None
+    if su_kien:  # cổng hẹp do code đọc câu gõ; câu không qua cổng ⇒ chuỗi gửi model y như cờ tắt
+        context = f"{context}\n\n{_nguon_su_kien(trace, su_kien)}"
     cap = kc.cap_tinh_san(query, flags.khoang_cach_bang) if flags.khoang_cach_tinh_san and trace.fixed_outcome is None else None
     if cap:
         context = f"{context}\n\n{_nguon_khoang_cach_san(trace, flags.khoang_cach_bang, cap)}"
@@ -1032,7 +1060,127 @@ def _noi_that_lam_thay(trace: AnswerTrace, text: str) -> bool:
     return True
 
 
-def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -> None:
+_DONG_DANH_SACH = re.compile(r"^\s*(?:[-*•–]|\d+[.)]|#{1,6})\s")  # dòng gạch đầu dòng / đánh số / tiêu đề: gỡ là gỡ cả dòng
+_RANH_CAU = re.compile(r"(?<=[.!?…])\s+(?!\[)")  # ranh giữa hai câu trong một dòng; không tách trước "[n]" đứng sau dấu chấm (trích dẫn của câu vừa xong)
+_VIET_TAT_CUOI = re.compile(r"(?:^|[\s(])(?:[A-ZĐ]{1,3}|Tp|Th)\.$")  # "TP.", "Q.", "TT.", "Tp." — không phải hết câu ("Huế." vẫn là hết câu)
+_DONG_DAN = re.compile(r":\s*(?:\[(?:Nguồn\s*)?\d+\]\s*)*$")  # dòng kết thúc bằng ":" (có thể kèm [n] sau dấu hai chấm)
+
+
+def go_cau_chua(text: str, vi_tri: list[tuple[int, int]]) -> str:
+    """Gỡ khỏi `text` CÂU chứa mỗi khoảng ký tự trong `vi_tri` (dòng gạch đầu dòng / tiêu đề: câu trong phần thân; thân không còn gì ⇒ mất cả dòng;
+    dòng dẫn "…:" không còn danh sách theo sau ⇒ gỡ luôn). Phần còn lại giữ nguyên chữ và thứ tự. Hàm thuần — không biết gì về loại kiểm."""
+    if not vi_tri:
+        return text
+    cac_dong = text.split("\n")
+    out: list[tuple[int, str]] = []  # (số thứ tự dòng gốc, chữ còn lại)
+    pos = 0
+    for i, dong in enumerate(cac_dong):
+        dau = pos
+        pos += len(dong) + 1
+        if not any(a < dau + len(dong) and b > dau for a, b in vi_tri):
+            out.append((i, dong))
+            continue
+        # dòng gạch đầu dòng / tiêu đề: giữ ký hiệu đầu dòng, gỡ câu trong phần thân như dòng văn thường; thân không còn gì ⇒ mất cả dòng. (Lượt thật
+        # 21/11: một gạch đầu dòng ba câu của Sonnet chỉ có câu cuối chứa số tự tính — gỡ cả dòng làm mất hai câu có nguồn đứng trước.)
+        dau_dong = _DONG_DANH_SACH.match(dong)
+        than = dau_dong.end() if dau_dong else 0
+        # ranh câu = sau dấu kết câu + khoảng trắng; KHÔNG cắt sau chữ viết tắt ("TP. Huế" — review phiên B: phần còn lại cụt thành "Từ TP.")
+        moc = [than] + [m.end() for m in _RANH_CAU.finditer(dong, than) if not _VIET_TAT_CUOI.search(dong[:m.start()])] + [len(dong)]
+        con = "".join(dong[x:y] for x, y in zip(moc, moc[1:]) if not any(a < dau + y and b > dau + x for a, b in vi_tri)).strip()
+        if con:
+            out.append((i, dong[:than] + con))
+
+    def dong_ke(dongs: list[str]) -> str:
+        return next((d for d in dongs if d.strip()), "")
+
+    giu = []
+    for k, (i, dong) in enumerate(out):
+        # dòng dẫn "…:" mà trong chữ gốc đứng trước một danh sách, nay không còn dòng danh sách nào theo sau ⇒ gỡ luôn (không để "Hai cách đi [2]:" trơ trọi)
+        if (_DONG_DAN.search(dong) and _DONG_DANH_SACH.match(dong_ke(cac_dong[i + 1:]))
+                and not _DONG_DANH_SACH.match(dong_ke([d for _, d in out[k + 1:]]))):
+            continue
+        giu.append(dong)
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(giu)).strip()
+
+
+def _so_la(trace: AnswerTrace, text: str, flags: AssistantFlags | None, query: str) -> list[tuple[str, str, int, int]]:
+    """Phép kiểm số (D8): (loại kiểm, số, đầu, cuối) của mọi số thời tiết / khoảng cách trong chữ model nằm NGOÀI tập cho phép. Tập cho phép = số code
+    in (khối dự báo, dòng khoảng cách) ∪ số trong đoạn kho được trích ∪ — từ 21/11/2026 — số ĐỨNG KÈM ĐƠN VỊ của đúng phép kiểm đó trong câu hỏi của
+    lượt này và câu hỏi liền trước: người dùng nhắc một con số ("63 % thì mưa nhiều không", "2 mm là mưa phùn à") thì model được nhắc theo (5 / 7 lượt
+    bị rút oan ở lượt người dùng mô phỏng). Số KHÔNG kèm đơn vị trong câu hỏi (ngày tháng, số người, số tiền) không vào tập. Cách so số không đổi:
+    2 khác 2,1."""
+    cau_hoi = [query] + [cau for cau, _ in trace.history[-1:]]
+    out: list[tuple[str, str, int, int]] = []
+    if flags is not None and flags.thoi_tiet:
+        tool = trace.thoi_tiet
+        cho_phep = tt.tap_so(tool["khoi"]) if tool and tool["khoi"] else set()
+        cho_phep |= tt.tap_so(" ".join(e for src in (trace.cited or ()) if src.source != lt2.NGUON_LICH_SOURCE for e in src.excerpts))  # nguồn lịch (giờ, phút) không mở rộng số thời tiết
+        cho_phep |= {s for cau in cau_hoi for s in tt.so_kem_don_vi(cau)}
+        out += [("thoi_tiet", s, a, b) for s, a, b in tt.vi_tri_so_thoi_tiet(text) if s not in cho_phep]
+    if trace.khoang_cach:  # số km / phút trong chữ model ⊂ số code dựng ∪ số trong đoạn kho được trích ∪ số kèm đơn vị cùng loại trong câu hỏi
+        theo_loai = kc.tap_so_theo_loai(" ".join(d for k in trace.khoang_cach for d in k["dong"]))  # số code dựng: km ↔ thời gian tách riêng
+        chung = kc.tap_so(" ".join(e for src in (trace.cited or ()) if src.source not in (kc.NGUON_SOURCE, lt2.NGUON_LICH_SOURCE)
+                                   for e in src.excerpts))  # đoạn kho: mọi số
+        hoi = [kc.tap_so_theo_loai(cau) for cau in cau_hoi]  # câu hỏi: chỉ số kèm đơn vị, tách km ↔ thời gian ("đoàn 15 người" không mở "15 km")
+        # Nguồn lịch (cờ `lich_vao_hoi_thuong`): chỉ nhận số CÓ ĐƠN VỊ thời gian do code in ("8 giờ", "15 phút") vào tập thời gian — phép này xét mọi
+        # số kèm đơn vị thời gian trong chữ model nên thiếu thì câu nêu đúng số giờ của lịch bị rút (review B M1); không nhận mọi số của nguồn lịch
+        # (giờ đồng hồ "10:30" sẽ cho qua "30 phút" bịa), không nới tập km
+        lich_tg = kc.tap_so_theo_loai(" ".join(e for src in (trace.cited or ()) if src.source == lt2.NGUON_LICH_SOURCE for e in src.excerpts))["tg"]
+        cho_phep_kc = {loai: tap | chung | (lich_tg if loai == "tg" else set()) | {s for h in hoi for s in h[loai]} for loai, tap in theo_loai.items()}
+        out += [("khoang_cach", s, a, b) for loai, s, a, b in kc.vi_tri_so_khoang_cach(text) if s not in cho_phep_kc[loai]]
+    return out
+
+
+def _go_so_la(trace: AnswerTrace, text: str, flags: AssistantFlags | None, query: str, la: list[tuple[str, str, int, int]]) -> str:
+    """Phép kiểm số trượt ở lượt KHÔNG có lịch ⇒ không rút cả câu trả lời. Nấc 1: gỡ câu / dòng chứa số lạ; phần còn lại còn trích dẫn, qua bộ kiểm
+    trích dẫn và không còn số lạ ⇒ đó là câu trả lời. Nấc 2: không còn gì dùng được ⇒ câu từ chối cố định (khối dự báo / câu bản tin chính thức vẫn
+    do `_thoi_tiet_cuoi` nối). Trả chữ model sau xử lý; ghi `trace.kiem_so_go` để số đo và sổ vết đếm được từng lần trượt."""
+    goc = unicodedata.normalize("NFC", text)  # vị trí của `la` tính trên chữ đã chuẩn NFC
+    moi = go_cau_chua(goc, [(a, b) for _, _, a, b in la])
+    trace.kiem_so_go = {"thoi_tiet": [s for loai, s, _, _ in la if loai == "thoi_tiet"], "khoang_cach": [s for loai, s, _, _ in la if loai == "khoang_cach"],
+                        "nac": 1, "so_ky_tu_go": len(goc) - len(moi)}
+    if moi and CITATION_PATTERN.search(moi):
+        trace.answer = moi
+        check_citations(trace)
+        if trace.citation_error is None and not _so_la(trace, moi, flags, query):
+            return moi
+        trace.citation_error = None  # phần còn lại không đứng được ⇒ xuống nấc 2, không báo lỗi
+    trace.kiem_so_go["nac"] = 2
+    trace.answer, trace.cited = INSUFFICIENT_ANSWER, ()
+    return INSUFFICIENT_ANSWER
+
+
+def _vet_go_so_la(trace: AnswerTrace, text: str) -> None:
+    """Sổ vết debug (riêng tư, không phải `chat_metrics`): chữ model TRƯỚC khi gỡ — để đọc lại model đã viết gì ở lượt phép kiểm số trượt."""
+    if trace.kiem_so_go is not None:
+        trace.vet["kiem_so_go"] = {**trace.kiem_so_go, "chu_model": text}
+
+
+def _la_luot_thuong(trace: AnswerTrace) -> bool:
+    """Lượt hỏi đáp thường — không dựng lịch bằng công cụ, không biểu mẫu "Lên kế hoạch", không lịch bản 2 (cùng điều kiện `set_notice` dùng). Chỉ lượt
+    thường mới được phục hồi sau khi kiểm trượt (gỡ câu / câu từ chối cố định); lượt lịch giữ kết cục rút lại như trước."""
+    return not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None
+
+
+def kiem_so_sau_khi_viet(trace: AnswerTrace, text: str, flags: AssistantFlags | None, query: str = "") -> None:
+    """Phép kiểm số của một lượt, sau bộ kiểm trích dẫn và trước phần code nối: ghi số lạ theo loại vào `trace.thoi_tiet_kiem` / `khoang_cach_kiem`
+    (như trước); có số lạ ⇒ lượt có lịch vẫn bị rút lại như cũ, lượt thường thì gỡ câu / xuống câu từ chối cố định (`_go_so_la`)."""
+    la = _so_la(trace, text, flags, query)
+    if flags is not None and flags.thoi_tiet:
+        trace.thoi_tiet_kiem = [s for loai, s, _, _ in la if loai == "thoi_tiet"]
+    if trace.khoang_cach:
+        trace.khoang_cach_kiem = [s for loai, s, _, _ in la if loai == "khoang_cach"]
+    if not la or trace.citation_error is not None:
+        return
+    if not _la_luot_thuong(trace):  # lượt có lịch: chữ do code ghép với khung ⇒ giữ cách cũ (rút lại), không gỡ từng câu
+        loai, kiem = ("weather", trace.thoi_tiet_kiem) if trace.thoi_tiet_kiem else ("distance", trace.khoang_cach_kiem)
+        trace.citation_error = CitationIntegrityError(f"{loai} numbers without source: {len(kiem)}")
+    else:
+        _go_so_la(trace, text, flags, query, la)
+        _vet_go_so_la(trace, text)
+
+
+def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None, query: str = "") -> None:
     """Sau lần sinh: dừng ở thẻ hỏi lại (B5 D15) ⇒ lượt hỏi lại (không chữ, không kiểm citation); chạm `max_turns` (cờ generator, B2 D5) ⇒ câu
     từ chối cố định `max_turns`; lượt có lịch ⇒ ghép dòng "Mình hiểu" + chữ model + khối ghi chú (D12, D4b) rồi kiểm citation + kiểm cuối (D8);
     còn lại ⇒ kiểm citation trên sổ nguồn (cờ `lich_trinh` bật mà chữ có dạng lịch ⇒ kiểm cuối với khung rỗng, D8 (7))."""
@@ -1049,7 +1197,7 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
             trace.thoi_tiet_noi = tt.CAU_BAO_LU
             trace.answer = f"{trace.answer}\n\n{tt.CAU_BAO_LU}"
         return
-    text = trace.generated.text
+    text = bo_cau_tu_choi_cuoi(trace.generated.text)
     if trace.nhieu_y and chi_y_thieu(text):  # chốt (a) vòng 2: không ý nào có Bằng chứng ⇒ đúng câu từ chối cũ (đi đường từ chối + cổng web cũ)
         text, trace.chi_y_thieu = INSUFFICIENT_ANSWER, True
     if _noi_that_lam_thay(trace, text):
@@ -1071,20 +1219,9 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
         trace.lich_kiem = loi
     if loi and trace.citation_error is None:  # D8: hỏng ⇒ xử như citation hỏng hôm nay (rút lại + lời báo + "Thử lại")
         trace.citation_error = CitationIntegrityError("itinerary check failed: " + ",".join(loi))
+    kiem_so_sau_khi_viet(trace, text, flags, query)
     if flags is not None and flags.thoi_tiet:
-        _thoi_tiet_cuoi(trace, text)
-    if trace.khoang_cach:  # số km / phút trong chữ model ⊂ số code dựng ∪ số trong đoạn kho được trích; hỏng ⇒ rút lại như citation hỏng
-        cho_phep = kc.tap_so_theo_loai(" ".join(d for k in trace.khoang_cach for d in k["dong"]))  # số code dựng: km ↔ thời gian tách riêng
-        chung = kc.tap_so(" ".join(e for src in (trace.cited or ()) if src.source not in (kc.NGUON_SOURCE, lt2.NGUON_LICH_SOURCE)
-                                   for e in src.excerpts))  # đoạn kho: mọi số
-        # Nguồn lịch (cờ `lich_vao_hoi_thuong`): chỉ nhận số CÓ ĐƠN VỊ thời gian do code in ("8 giờ", "15 phút") vào tập thời gian — phép này xét mọi
-        # số kèm đơn vị thời gian trong chữ model nên thiếu thì câu nêu đúng số giờ của lịch bị rút (review B M1); không nhận mọi số của nguồn lịch
-        # (giờ đồng hồ "10:30" sẽ cho qua "30 phút" bịa), không nới tập km
-        lich_tg = kc.tap_so_theo_loai(" ".join(e for src in (trace.cited or ()) if src.source == lt2.NGUON_LICH_SOURCE for e in src.excerpts))["tg"]
-        cho_phep = {loai: tap | chung | (lich_tg if loai == "tg" else set()) for loai, tap in cho_phep.items()}
-        trace.khoang_cach_kiem = kc.kiem_so(text, cho_phep)
-        if trace.khoang_cach_kiem and trace.citation_error is None:
-            trace.citation_error = CitationIntegrityError(f"distance numbers without source: {len(trace.khoang_cach_kiem)}")
+        _thoi_tiet_cuoi(trace)
 
 
 def lich_cho_giao_dien(trace: AnswerTrace, flags: AssistantFlags, cau_goc: str) -> dict | None:
@@ -1117,7 +1254,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     try:
         if flags.uses_tools:
             instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
-            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions)
+            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho)
             extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
             try:
                 trace.generated = await generator.generate_with_tools(tool_prompt, tool_fn, call_log, **_history_kwargs(trace), **extra)
@@ -1134,7 +1271,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
         record_llm_calls(trace, call_log.calls, ROUTE_TRO_LY_HUE)  # cả khi lượt lỗi sau phản hồi (review C128 m-1)
     if recorder:
         recorder.record_generation_result(trace.generated)
-    _finish_generated(trace, flags)
+    _finish_generated(trace, flags, query)
 
 
 def _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags) -> dict:
@@ -1165,7 +1302,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
-        extra["con_luot_fn"] = lambda: trace.model_searches < MODEL_SEARCH_LIMIT
+        extra["con_luot_fn"] = lambda: trace.model_searches < flags.so_lan_tim_kho
     if trace.nhieu_y:  # lời dặn theo ý (cờ tắt / câu một ý ⇒ không truyền, gọi y như trước)
         extra["nhieu_y"] = True
     return extra
@@ -1204,7 +1341,7 @@ async def answer_bieu_mau(query: str, retrieval_service, context_builder, genera
     finally:
         trace.generation_ms = elapsed_ms(started)
         record_llm_calls(trace, call_log.calls, ROUTE_TRO_LY_HUE)
-    _finish_generated(trace, flags)
+    _finish_generated(trace, flags, query)
     set_notice(trace, flags)
 
 
@@ -1293,6 +1430,18 @@ def _dong_y_thieu(d: str) -> str:
     return d.strip().lstrip("-*•").strip()
 
 
+def bo_cau_tu_choi_cuoi(text: str) -> str:
+    """21/11/2026 (phiên đo, 1 / 3 lượt stream của một câu kho chỉ có một phần): model viết phần tìm được, có [n], rồi NỐI nguyên câu từ chối khuôn ở
+    cuối ⇒ bộ kiểm trích nguồn coi là "câu từ chối mà có citation" ⇒ người dùng thấy lỗi sau khi chữ đã ra. Câu kết thúc bằng câu khuôn mà phần đứng
+    trước có ít nhất một [n] ⇒ gỡ câu khuôn, giữ phần có nguồn (phần đó vẫn qua kiểm trích nguồn như mọi câu). Mọi trường hợp khác ⇒ nguyên chữ:
+    đúng câu khuôn, câu khuôn nằm giữa, hoặc phần đứng trước không có nguồn (vẫn là lỗi như cũ)."""
+    goc = text.rstrip()
+    if goc == INSUFFICIENT_ANSWER or not goc.endswith(INSUFFICIENT_ANSWER):
+        return text
+    truoc = goc[: -len(INSUFFICIENT_ANSWER)].rstrip()
+    return truoc if CITATION_PATTERN.search(truoc) and INSUFFICIENT_ANSWER not in truoc else text
+
+
 def chi_y_thieu(answer: str) -> bool:
     """Chốt (a) vòng 2: mọi dòng có chữ đều mở đầu bằng `CAU_Y_THIEU` (không ý nào có Bằng chứng) ⇒ True. Câu rỗng ⇒ False."""
     dong = [_dong_y_thieu(d) for d in answer.splitlines() if d.strip()]
@@ -1305,7 +1454,10 @@ def _con_la_y_thieu(giu: str) -> bool:
     return all(not d or d.startswith(CAU_Y_THIEU) for d in du) and (do.startswith(CAU_Y_THIEU) or CAU_Y_THIEU.startswith(do))
 
 
-_VE_HOI = re.compile(r"(?<!\w)(bao nhiêu|gì|nào|đâu|mấy|bao lâu|bao giờ|khi nào|tại sao|vì sao|thế nào|ra sao)(?!\w)", re.IGNORECASE)
+# 21/11/2026 (phiên đo đếm, 0 đồng): "bao xa" chưa được coi là từ hỏi ⇒ câu "A đến B bao xa, vào đó có mất vé không" đếm MỘT ý ⇒ không dùng lời dặn theo ý
+# ⇒ cả hai model từ chối cả câu. Thêm "bao xa", "thì sao" và "ai" CHỈ trong cụm hỏi hẹp ("thờ ai", "do ai", "là ai", "của ai"). KHÔNG nhận "ai" / "sao" trần,
+# kể cả ở cuối vế: review cùng ngày đặt 12 câu một ý sau khi đọc khuôn ⇒ 7 câu bị đếm nhầm ("khách sạn 4 sao, …", "nhà không có ai, …").
+_VE_HOI = re.compile(r"(?<!\w)(bao nhiêu|gì|nào|đâu|mấy|bao lâu|bao xa|bao giờ|khi nào|tại sao|vì sao|thế nào|ra sao|thì sao|(?:là|do|thờ|của) ai)(?!\w)", re.IGNORECASE)
 _CUOI_HOI = re.compile(r"(?<!\w)(không|chưa|nhỉ|vậy|hả)\s*$", re.IGNORECASE)
 _LIEN_TU = re.compile(r"\s+(?:và|còn|với)\s+", re.IGNORECASE)
 
@@ -1490,7 +1642,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 # B3 D9 (b): vòng công cụ ⇒ "đang viết" phát ngay trước chữ đầu (không trước các lượt `tim_kho`)
                 pending_generating = True
                 instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
-                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions)
+                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho)
                 extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
                 result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace), **extra)
             else:
@@ -1568,7 +1720,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
         if call_route == ROUTE_TRO_CHUYEN:
             trace.answer, trace.cited = trace.generated.text, ()
         else:
-            _finish_generated(trace, flags)
+            _finish_generated(trace, flags, query)
             if trace.fixed_outcome is not None:  # chạm `max_turns`: không có chữ model nào ⇒ câu từ chối thành một `delta` (B2 D5)
                 if trace.answer:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer
@@ -1779,7 +1931,7 @@ async def _answer_core(query: str, retrieval_service, context_builder, generator
             usd = sum(call["usd"] for call in spec.llm_calls)
             trace.n_tra_loi_bo, trace.bo_huy_giua = 1, not finished_before_route
             if trace.bo_huy_giua and spec.generation_ms is not None and spec.packed is not None:
-                usd += cost_usd(spec.packed.input_tokens, 0)  # lần gọi bị huỷ không có usage ⇒ cận dưới (plan D2)
+                usd += cost_usd(spec.packed.input_tokens, 0, provider=getattr(generator, "provider", "openai"))  # lần gọi bị huỷ không có usage ⇒ cận dưới (plan D2)
             trace.usd_bo = usd
 
 
