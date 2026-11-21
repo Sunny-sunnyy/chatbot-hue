@@ -1,4 +1,4 @@
-# STATUS_C — ghi đè 22:26 21/11/2026 (giờ `date`; phiên C mở 18:0x 21/11, chủ dự án báo kết phiên 22:2x)
+# STATUS_C — ghi đè 22:26 21/11/2026 (giờ `date`; phiên tối 21/11, chủ dự án đã báo kết phiên)
 
 Từ dùng: *công tắc* = một dòng bật / tắt trong `backend/config/settings.yaml` · *model đang chạy* = Claude Sonnet 5.5 trên Bedrock · *model cũ* = gpt-6-luna (chủ dự án TẠM GÁC, không gọi OpenAI nữa) · *bộ mù* = bộ câu do phiên khác soạn, mở sau khi đóng code.
 
