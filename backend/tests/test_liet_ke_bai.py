@@ -15,6 +15,7 @@ from core.settings_loader import load_settings
 from ingestion.source_state import discover_full_corpus_files
 from llm import liet_ke as lk
 from llm.assistant import AnswerTrace, AssistantFlags, answer_turn_stream, liet_ke_for_turn
+from llm.full_corpus_prompt import INSUFFICIENT_ANSWER
 from llm.generator_openai_full_corpus import ASSISTANT_MAX_TURNS, max_turns_for
 from test_b2_tool_loop import _ids, answer, deps, generator  # noqa: F401  (fixture `deps` dùng chung)
 from test_het_luot_tim import CAU, sent_requests, tools_sent, turn
@@ -119,10 +120,31 @@ def test_tool_registers_one_source_that_can_be_cited_and_stops_after_two_calls()
     src, = trace.so_nguon
     assert (src.id, src.title, src.source) == (1, lk.TIEU_DE_NGUON, lk.NGUON_SOURCE) and len(src.excerpts) == 2 and "hút chân không" in src.heading_path[0]
     assert trace.tools == [{"name": "liet_ke_bai", "ms": 0.0, "nhom": "quan_an", "n_cum_tu": 1, "n_bai": 2, "n_o_ten": 0}]  # sổ chỉ có số đếm, không có chữ cụm từ
-    khong = asyncio.run(cong_cu("quan_an", ["sân golf"]))  # không khớp ⇒ chỉ dòng trạng thái, KHÔNG đăng nguồn rỗng
-    assert khong.startswith("Trạng thái: không có bài nào") and len(trace.so_nguon) == 1
+    assert lk.LAN_CUOI not in ra  # lần đầu: chưa phải lần cuối
+    khong = asyncio.run(cong_cu("quan_an", ["sân golf"]))  # không khớp ⇒ chỉ dòng trạng thái, KHÔNG đăng nguồn rỗng; lần thứ hai = lần cuối ⇒ nói rõ
+    assert khong.startswith("Trạng thái: không có bài nào") and khong.endswith(lk.LAN_CUOI) and len(trace.so_nguon) == 1
     het = asyncio.run(cong_cu("quan_an", []))  # lần thứ ba trong một câu
     assert "đã dùng hết lượt" in het and len(trace.so_nguon) == 1 and trace.tools[-1]["het_luot"] is True
+
+
+def test_repeating_the_same_call_does_not_register_a_second_source():
+    """Lượt thật 21/11 (luna): gọi lại y nguyên nhóm + cụm từ ⇒ trước đây đăng nguồn thứ hai giống hệt và tốn vòng. Nay: dòng trỏ về nguồn đã có (so trên
+    cụm từ ĐÃ CHUẨN — khác hoa thường / kiểu gạch vẫn là trùng); lời gọi KHÁC cụm từ vẫn chạy bình thường."""
+    trace = AnswerTrace()
+    cong_cu = liet_ke_for_turn(trace, MUC_LUC)
+    asyncio.run(cong_cu("quan_an", ["hút chân không"]))
+    lap = asyncio.run(cong_cu("quan_an", ["HÚT  chân không"]))
+    assert lap.startswith("Trạng thái: lời gọi này trùng một lời gọi trước trong câu — kết quả đã có ở nguồn [1]") and lap.endswith(lk.LAN_CUOI)
+    assert len(trace.so_nguon) == 1 and trace.tools[-1]["lap"] is True
+    trace = AnswerTrace()
+    cong_cu = liet_ke_for_turn(trace, MUC_LUC)
+    asyncio.run(cong_cu("quan_an", ["sân golf"]))
+    assert "lần trước đã không có bài nào khớp" in asyncio.run(cong_cu("quan_an", ["sân golf"])) and trace.so_nguon == []
+    trace = AnswerTrace()
+    cong_cu = liet_ke_for_turn(trace, MUC_LUC)
+    asyncio.run(cong_cu("quan_an", ["bún"]))
+    khac = asyncio.run(cong_cu("quan_an", ["chè"]))
+    assert "[Nguồn 2]" in khac and len(trace.so_nguon) == 2 and "lap" not in trace.tools[-1]
 
 
 def test_flag_off_sends_the_same_bytes_and_flag_on_only_adds_one_tool_on_every_kind_of_turn(deps):
@@ -159,3 +181,19 @@ def test_a_real_turn_lists_then_cites_the_index_source(deps):
     assert [(s.title, s.source) for s in trace.cited] == [(lk.TIEU_DE_NGUON, lk.NGUON_SOURCE)]
     assert ket_qua_cong_cu(gen.client.responses.calls[1])[-1].startswith("Trạng thái: trong tư liệu có 2 bài khớp")
     assert [t["name"] for t in trace.tools if t["name"] == "liet_ke_bai"] == ["liet_ke_bai"]
+
+
+def test_tool_is_hidden_after_its_two_calls_and_asking_again_is_a_fixed_refusal_not_an_error(deps):
+    """Dùng đủ hai lần ⇒ lần gọi model kế tiếp KHÔNG gửi `liet_ke_bai` nữa (lượt thật 21/11: lần xin thứ ba ăn mất vòng viết ⇒ chạm trần vòng). Model vẫn
+    xin công cụ đã ẩn ⇒ câu từ chối cố định như ca `tim_kho` bị ẩn, không phải lỗi 500."""
+    def hai_lan_roi_viet(n, kw):
+        if n <= 2:
+            return [goi_liet_ke("quan_an", [("bún", "chè")[n - 1]])]
+        return [answer("Có thông tin [1].")]
+
+    trace, gen = turn(deps, hai_lan_roi_viet, ON)
+    assert [("liet_ke_bai" in names) for names in tools_sent(gen)] == [True, True, False] and all("tim_kho" in names for names in tools_sent(gen))
+    assert trace.citation_error is None and trace.fixed_outcome is None
+
+    trace, gen = turn(deps, lambda n, kw: [goi_liet_ke("quan_an", [f"cụm {n}"])], ON)  # model cứ xin mãi
+    assert trace.fixed_outcome == "max_turns" and trace.answer == INSUFFICIENT_ANSWER and len(gen.client.responses.calls) == 3

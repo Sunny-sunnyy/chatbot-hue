@@ -517,7 +517,7 @@ class OpenAIFullCorpusGenerator:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
-        state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn}
+        state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn, "liet_ke_con_luot": getattr(liet_ke_fn, "con_luot", None)}
 
         def on_max_turns(_input) -> AnswerOutput:
             state["hit_max_turns"] = True
@@ -543,7 +543,8 @@ class OpenAIFullCorpusGenerator:
         if khoang_cach_fn is not None:  # 16/11: chỉ khi code thấy từ khoá khoảng cách; mô tả (luật + danh sách mã) nằm ở docstring của hàm
             tools.append(function_tool(khoang_cach_fn, name_override="khoang_cach", failure_error_function=None))
         if liet_ke_fn is not None:  # cờ `liet_ke_bai` (21/11): liệt kê bài theo nhóm / cụm từ, code trả lời; cờ tắt ⇒ danh sách công cụ như cũ
-            tools.append(function_tool(liet_ke_fn, name_override="liet_ke_bai", description_override=LIET_KE_MO_TA, failure_error_function=None))
+            con_liet_ke = {} if state["liet_ke_con_luot"] is None else {"is_enabled": lambda _context, _agent: state["liet_ke_con_luot"]()}
+            tools.append(function_tool(liet_ke_fn, name_override="liet_ke_bai", description_override=LIET_KE_MO_TA, failure_error_function=None, **con_liet_ke))
         return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
     async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
@@ -567,8 +568,9 @@ class OpenAIFullCorpusGenerator:
         """Model xin `tim_kho` ở lượt công cụ đã ẩn vì hết lượt tìm ⇒ SDK ném `ModelBehaviorError` ("Tool tim_kho not found"; probe 12/11, cả đường
         thường lẫn stream). Đúng ca đó ⇒ đánh dấu lượt và trả True: nơi gọi không coi là lỗi, `_tools_result` trả câu từ chối cố định như nhánh chạm
         `max_turns`. Lỗi hành vi model khác, hoặc công cụ chưa bị ẩn ⇒ False (vẫn là lỗi)."""
-        con_luot_fn = state.get("con_luot_fn")
-        if isinstance(exc, ModelBehaviorError) and con_luot_fn is not None and not con_luot_fn() and "tim_kho" in str(exc):
+        da_an = any(fn is not None and not fn() and ten in str(exc)  # `liet_ke_bai` cũng bị ẩn khi dùng đủ số lần (cờ `liet_ke_bai`)
+                    for fn, ten in ((state.get("con_luot_fn"), "tim_kho"), (state.get("liet_ke_con_luot"), "liet_ke_bai")))
+        if isinstance(exc, ModelBehaviorError) and da_an:
             state["xin_cong_cu_da_an"] = True
             return True
         return False

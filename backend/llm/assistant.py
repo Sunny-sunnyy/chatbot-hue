@@ -737,6 +737,7 @@ def liet_ke_for_turn(trace: AnswerTrace, muc_luc: "tuple[lk.Bai, ...]"):
     `khoang_cach_for_turn`) ⇒ tên nơi lấy từ danh sách trích được [n] và qua bộ kiểm trích nguồn hiện có. Không bài nào khớp ⇒ chỉ dòng trạng thái, không
     đăng nguồn. ≤ `lk.SO_LAN_MOI_LUOT` lần / câu. Sổ vết ghi nhóm + số cụm từ + số bài, không ghi chữ model viết."""
     Nhom = Literal[tuple(lk.NHOM) + (lk.TAT_CA,)]
+    da_goi: dict[tuple, int | None] = {}  # (nhóm, cụm từ đã chuẩn) ⇒ mã nguồn đã đăng (None = lần đó không có bài khớp)
 
     async def liet_ke_bai(nhom: Nhom, cum_tu: list[str]) -> str:
         """Liệt kê bài của kho theo nhóm, lọc theo cụm từ.
@@ -755,14 +756,25 @@ def liet_ke_for_turn(trace: AnswerTrace, muc_luc: "tuple[lk.Bai, ...]"):
             return "Trạng thái: đã dùng hết lượt của công cụ này trong câu — viết câu trả lời từ Bằng chứng đã có."
         kq = lk.loc(muc_luc, nhom, cum_tu)
         entry.update(n_bai=kq.tong, n_o_ten=kq.o_ten)
+        # lượt thật 21/11 (luna): model gọi lại Y NGUYÊN nhóm + cụm từ, rồi xin lần thứ ba ⇒ tốn hai vòng, một lượt chạm trần vòng và thành câu từ chối.
+        # Lời gọi trùng ⇒ không đăng nguồn lần hai, chỉ dòng trỏ về kết quả đã có; lần dùng cuối ⇒ nói rõ là lần cuối (model không xin thêm một vòng vô ích).
+        khoa, cuoi = (nhom, kq.cum_tu), ("\n\n" + lk.LAN_CUOI if lan == lk.SO_LAN_MOI_LUOT - 1 else "")
+        if khoa in da_goi:
+            entry["lap"] = True
+            return lk.trang_thai_lap(da_goi[khoa]) + cuoi
         if kq.tong == 0:
-            return lk.trang_thai(kq)
+            da_goi[khoa] = None
+            return lk.trang_thai(kq) + cuoi
         src = PackedSource(id=len(trace.so_nguon) + 1, title=lk.TIEU_DE_NGUON, heading_path=(lk.muc_nguon(nhom, kq),), excerpts=kq.dong, source=lk.NGUON_SOURCE)
         trace.so_nguon.append(src)
+        da_goi[khoa] = src.id
         chu = FullCorpusContextBuilder._block(src)
         trace.context_parts.append(chu)
-        return f"{lk.trang_thai(kq)}\n\n{chu}"
+        return f"{lk.trang_thai(kq)}\n\n{chu}{cuoi}"
 
+    # generator hỏi hàm này trước MỖI lần gọi model (như `con_luot_fn` của `tim_kho`): đã dùng đủ số lần ⇒ lần gọi đó không gửi công cụ nữa. Lượt thật
+    # 21/11 (luna): lần xin thứ ba chỉ nhận dòng "hết lượt" nhưng ăn mất vòng viết ⇒ chạm trần vòng ⇒ câu từ chối.
+    liet_ke_bai.con_luot = lambda: sum(t["name"] == "liet_ke_bai" for t in trace.tools) < lk.SO_LAN_MOI_LUOT
     return liet_ke_bai
 
 

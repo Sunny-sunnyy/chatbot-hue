@@ -133,6 +133,16 @@ def muc_nguon(nhom: str, kq: KetQua) -> str:
     return f"Bài thuộc nhóm {ten}" + (f" có cụm từ: {'; '.join(kq.cum_tu)}" if kq.cum_tu else "")
 
 
+LAN_CUOI = ("Đây là lần dùng cuối của công cụ liet_ke_bai trong câu này: bước kế hãy viết câu trả lời từ Bằng chứng đã có, hoặc dùng tim_kho nếu còn "
+            "cần chi tiết của một nơi.")
+
+
+def trang_thai_lap(ma_nguon: int | None) -> str:
+    """Model gọi lại đúng nhóm + cụm từ đã gọi trong câu này: không lọc lại, không đăng nguồn lần hai."""
+    da_co = f"kết quả đã có ở nguồn [{ma_nguon}] phía trên" if ma_nguon is not None else "lần trước đã không có bài nào khớp"
+    return f"Trạng thái: lời gọi này trùng một lời gọi trước trong câu — {da_co}. Không gọi lại với cùng nhóm và cụm từ."
+
+
 def trang_thai(kq: KetQua) -> str:
     """Dòng đầu của kết quả công cụ (đứng ngoài khối nguồn): có bao nhiêu bài khớp, có bị cắt trang không."""
     if kq.tong == 0:
