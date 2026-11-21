@@ -30,7 +30,7 @@ from core import so_vet
 from core.schema import (CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievalDependencyError,
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
-from llm.citations import select_cited_sources
+from llm.citations import CITATION_PATTERN, select_cited_sources
 from llm import lich_trinh as lt
 from llm import lich_trinh_v2 as lt2
 from llm import luu_tru_lich as ltl
@@ -1072,7 +1072,7 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
             trace.thoi_tiet_noi = tt.CAU_BAO_LU
             trace.answer = f"{trace.answer}\n\n{tt.CAU_BAO_LU}"
         return
-    text = trace.generated.text
+    text = bo_cau_tu_choi_cuoi(trace.generated.text)
     if trace.nhieu_y and chi_y_thieu(text):  # chốt (a) vòng 2: không ý nào có Bằng chứng ⇒ đúng câu từ chối cũ (đi đường từ chối + cổng web cũ)
         text, trace.chi_y_thieu = INSUFFICIENT_ANSWER, True
     if _noi_that_lam_thay(trace, text):
@@ -1316,6 +1316,18 @@ def _dong_y_thieu(d: str) -> str:
     return d.strip().lstrip("-*•").strip()
 
 
+def bo_cau_tu_choi_cuoi(text: str) -> str:
+    """21/11/2026 (phiên đo, 1 / 3 lượt stream của một câu kho chỉ có một phần): model viết phần tìm được, có [n], rồi NỐI nguyên câu từ chối khuôn ở
+    cuối ⇒ bộ kiểm trích nguồn coi là "câu từ chối mà có citation" ⇒ người dùng thấy lỗi sau khi chữ đã ra. Câu kết thúc bằng câu khuôn mà phần đứng
+    trước có ít nhất một [n] ⇒ gỡ câu khuôn, giữ phần có nguồn (phần đó vẫn qua kiểm trích nguồn như mọi câu). Mọi trường hợp khác ⇒ nguyên chữ:
+    đúng câu khuôn, câu khuôn nằm giữa, hoặc phần đứng trước không có nguồn (vẫn là lỗi như cũ)."""
+    goc = text.rstrip()
+    if goc == INSUFFICIENT_ANSWER or not goc.endswith(INSUFFICIENT_ANSWER):
+        return text
+    truoc = goc[: -len(INSUFFICIENT_ANSWER)].rstrip()
+    return truoc if CITATION_PATTERN.search(truoc) and INSUFFICIENT_ANSWER not in truoc else text
+
+
 def chi_y_thieu(answer: str) -> bool:
     """Chốt (a) vòng 2: mọi dòng có chữ đều mở đầu bằng `CAU_Y_THIEU` (không ý nào có Bằng chứng) ⇒ True. Câu rỗng ⇒ False."""
     dong = [_dong_y_thieu(d) for d in answer.splitlines() if d.strip()]
@@ -1328,7 +1340,10 @@ def _con_la_y_thieu(giu: str) -> bool:
     return all(not d or d.startswith(CAU_Y_THIEU) for d in du) and (do.startswith(CAU_Y_THIEU) or CAU_Y_THIEU.startswith(do))
 
 
-_VE_HOI = re.compile(r"(?<!\w)(bao nhiêu|gì|nào|đâu|mấy|bao lâu|bao giờ|khi nào|tại sao|vì sao|thế nào|ra sao)(?!\w)", re.IGNORECASE)
+# 21/11/2026 (phiên đo đếm, 0 đồng): "bao xa" chưa được coi là từ hỏi ⇒ câu "A đến B bao xa, vào đó có mất vé không" đếm MỘT ý ⇒ không dùng lời dặn theo ý
+# ⇒ cả hai model từ chối cả câu. Thêm "bao xa", "thì sao" và "ai" CHỈ trong cụm hỏi hẹp ("thờ ai", "do ai", "là ai", "của ai"). KHÔNG nhận "ai" / "sao" trần,
+# kể cả ở cuối vế: review cùng ngày đặt 12 câu một ý sau khi đọc khuôn ⇒ 7 câu bị đếm nhầm ("khách sạn 4 sao, …", "nhà không có ai, …").
+_VE_HOI = re.compile(r"(?<!\w)(bao nhiêu|gì|nào|đâu|mấy|bao lâu|bao xa|bao giờ|khi nào|tại sao|vì sao|thế nào|ra sao|thì sao|(?:là|do|thờ|của) ai)(?!\w)", re.IGNORECASE)
 _CUOI_HOI = re.compile(r"(?<!\w)(không|chưa|nhỉ|vậy|hả)\s*$", re.IGNORECASE)
 _LIEN_TU = re.compile(r"\s+(?:và|còn|với)\s+", re.IGNORECASE)
 
