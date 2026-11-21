@@ -54,7 +54,7 @@ Bản này viết lại danh sách thành mỗi dòng một họ từ kèm các 
 **Ý của nhánh, để người review đọc đúng:** lưới chữ này chỉ giữ các cụm CHẮC và là lớp phụ. Độ PHỦ các cách nói nguy hiểm thời tiết (gõ không dấu, câu dài, cách nói địa phương chưa gặp) phải đến từ việc model
 tự chọn loại bão / lũ khi luôn có công cụ thời tiết — tức chế độ `cong_cong_cu: luon`, phần CHƯA đo và là phần quyết của bậc 5. Test của nhánh: `test_cong_cong_cu.py` nay 23 ca.
 
-## 3c. Gộp main `1a7bc5a3` vào nhánh (14:41 21/11/2026, giờ `date`) — để người review đọc trên nền hiện tại
+## 3c. Gộp main `52ebe115` vào nhánh (14:41 21/11/2026, giờ `date`) — để người review đọc trên nền hiện tại
 
 Main đã đi xa từ lúc nhánh tách (công tắc Sonnet high, phục hồi sau phép kiểm số, hai bản sửa của phiên B). Gộp có 4 chỗ xung đột, đều là "hai bên cùng thêm dòng cạnh nhau" —
 giữ cả hai: `settings.yaml` (mức suy luận `high` của main + khoá cổng của nhánh), `settings_loader.py` (hai phép kiểm khoá), `assistant.py` (trường `cong_cong_cu` + `so_lan_tim_kho`),
