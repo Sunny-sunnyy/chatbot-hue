@@ -74,7 +74,7 @@ lập mới chỉ để khớp skill; tối thiểu cần MỘT file sổ cải 
 - User đã giao agent giữ luật cách làm chưa: CÓ, đang THỬ ba ngày làm việc từ 21/11/2026 ("nhóm tự giữ luật cách làm"); lúc xét lại và số để xét:
   `session_prompt/HIEN_TRANG.md` mục 4; User đổi lại lúc nào cũng được.
 - File luật, bảy luật cứng, bảng quyền: `AGENTS.md`, `session_prompt/Session_Prompt.md`, `session_prompt/WORKFLOW.md` · file bắt đọc lúc mở phiên: danh sách ở
-  `session_prompt/START_SESSION.md` · trang hiện trạng + các con số: `session_prompt/HIEN_TRANG.md` mục 4.
+  `session_prompt/START_SESSION.md` · trang hiện trạng: `session_prompt/HIEN_TRANG.md` · các con số cách làm: MỘT nơi là `session_prompt/SO_CAI_TIEN_CACH_LAM.md` (trang hiện trạng chỉ trỏ).
 - Sổ cải tiến: `session_prompt/SO_CAI_TIEN_CACH_LAM.md` · ý chưa thử: `session_prompt/Y_CHUA_THU.md` · sổ riêng của phiên:
   `session_prompt/sessions/STATUS_<X>.md` · lời User: `data/loi_user/` · nơi ghi việc trong ngày: `session_prompt/CURRENT_HANDOFF.md` và
   `report_agent/<ngày>/TONG_HOP.md` · trí nhớ riêng của công cụ: thư mục trí nhớ của từng công cụ, ngoài repo.
