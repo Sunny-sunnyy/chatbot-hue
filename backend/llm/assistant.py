@@ -706,7 +706,7 @@ def ngay_lich_for_turn(trace: AnswerTrace, query: str = ""):
     return ngay_lich
 
 
-def khoang_cach_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach"):
+def khoang_cach_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach", trang_thai: bool = False):
     """Hàm `khoang_cach` của **một lượt** (plan 16/11): model chỉ gửi MÃ hai điểm (enum, `khac` = nơi ngoài danh sách); code tra bảng, dựng dòng,
     đăng thành **một nguồn** trong sổ nguồn (như `ngay_lich_for_turn`). ≤ 3 lần / câu (câu hỏi nhiều cặp); lần thứ 4 ⇒ câu nhắc."""
     Ma = Literal[tuple(bang.ids) + (kc.KHAC,)]
@@ -723,6 +723,9 @@ def khoang_cach_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach"):
         trace.so_nguon.append(src)
         chu = FullCorpusContextBuilder._block(src)
         trace.context_parts.append(chu)
+        if trang_thai and len(dong) == 1:  # `kc.ket_qua` trả đúng MỘT dòng khi không có số (nơi ngoài danh sách / cặp chưa có / hai mã trùng)
+            entry["khong_co"] = True
+            return f"{kc.TRANG_THAI_KHONG_CO}\n\n{chu}"
         return chu
 
     khoang_cach.__doc__ = kc.mo_ta_cong_cu(bang)
@@ -1194,7 +1197,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
     # như thời tiết — lượt không có từ khoá ⇒ danh sách công cụ như cũ (Q1); số đã tính sẵn trước lần gọi đầu (`trace.khoang_cach`) ⇒ không đưa công cụ
     if flags.khoang_cach and trace.khoang_cach is None and kc.co_tu_khoa_luot(query, trace.history):
-        extra["khoang_cach_fn"] = khoang_cach_for_turn(trace, flags.khoang_cach_bang)
+        extra["khoang_cach_fn"] = khoang_cach_for_turn(trace, flags.khoang_cach_bang, flags.khoang_cach_trang_thai)
     if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
