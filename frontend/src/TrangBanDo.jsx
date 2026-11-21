@@ -9,7 +9,7 @@ import "./co.css";
 
 // Trang "Bản đồ" (menu cổng mức 2 — chủ dự án 06/11; plan `report_agent/2026-11-20/e_trang_ban_do_plan.md`): ghim của mọi điểm tham quan trong bảng điểm
 // lịch có toạ độ (`/api/ban_do`, server dựng từ bảng — model không tạo toạ độ), lọc theo loại. File tải riêng (`lazy` ở `App.jsx`) ⇒ trang khác không
-// tải Leaflet. Không quán / chỗ ở, không vị trí người dùng, không đường đi (plan mục 2). Nguồn ô + dòng ghi công bản đồ: như bản đồ lịch (`BanDoLich.jsx`).
+// tải Leaflet. Không quán / chỗ ở, không vị trí người dùng, không đường đi (plan mục 2). Nguồn ô bản đồ và tuỳ chọn (không hiện dòng ghi nguồn): như bản đồ lịch (`BanDoLich.jsx`).
 const LOAI = BIEU_MAU.find(t => t.ten === "so_thich").chon;  // [mã, nhãn] — cùng nhãn với ô "Thích gì" của trang Lên kế hoạch
 
 function oGhim(d) {

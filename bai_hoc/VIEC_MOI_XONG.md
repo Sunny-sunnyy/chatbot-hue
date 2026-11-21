@@ -249,7 +249,7 @@ từng ngày); chưa có trang Bản đồ riêng. Lời chốt 06/11 chỉ có 
 - Chỉ có **điểm tham quan**. Quán ăn, chỗ ở KHÔNG có trên trang này (bảng quán có toạ độ nhưng chưa đưa lên — anh muốn thì nói). Không có vị trí của người dùng, không đường đi, không ô tìm kiếm, không nút "thêm vào lịch".
 - 40 chứ không phải 41: "Không gian lưu niệm Lê Bá Đảng" có trong bảng điểm nhưng chưa có toạ độ ⇒ không lên bản đồ, không có trong danh sách (lịch vẫn có thể xếp điểm này).
 - Các điểm ở trung tâm nằm sát nhau: nhìn xa thì ghim chồng lên nhau, phải phóng to (nút +) mới tách. Điện thoại: một ngón vuốt qua bản đồ là cuộn trang (cố ý, như bản đồ lịch); phóng to bằng nút + hoặc hai ngón.
-- Bản đồ cần mạng tới máy chủ ô bản đồ; mất mạng ⇒ khung xám, chỉ còn danh sách. Dưới bản đồ có dòng chữ nhỏ ghi nguồn bản đồ, như bản đồ trong thẻ lịch đang có.
+- Bản đồ cần mạng tới máy chủ ô bản đồ; mất mạng ⇒ khung xám, chỉ còn danh sách. Từ 21/11 hai bản đồ (trang Bản đồ và bản đồ trong thẻ lịch) không còn hiện dòng chữ nhỏ ghi nguồn bản đồ — anh chọn bỏ; nếu đưa sản phẩm ra công khai thì phải xem lại, vì bên cấp bản đồ yêu cầu ghi nguồn.
 - Mới thử bằng trình duyệt không màn hình ở hai bề rộng; CHƯA thử trên điện thoại thật, chưa thử Firefox / Safari. Trang đã gộp vào bản chính (`b2f27d78`) và giao diện bản chính đã dựng lại 16:17 20/11/2026; sau khi dựng lại mới nhìn lại thanh dưới ở bề rộng 390 bằng bản dựng tĩnh (năm ô, nút tròn giữa), chưa chạy lại cả trang Bản đồ trên bản chính.
 
 **4. Cách anh thử trong 2 phút.** Bật hệ thống rồi mở `http://127.0.0.1:8010/`, bấm "Bản đồ" trên menu ⇒ thấy tiêu đề "Bản đồ điểm tham quan" và dòng "40 điểm tham quan…". Bấm "Ẩm thực (7)" ⇒ còn 7 dấu tròn và 7 tên

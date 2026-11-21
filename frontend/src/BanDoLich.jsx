@@ -64,7 +64,7 @@ export default function BanDoLich({ items }) {
       });
     }
     map.on("zoomend", tachGhim);
-    // Lề dưới rộng hơn: dòng ghi công nằm đè lên mép dưới khung (màn hẹp xuống 2 dòng ≈ 36 px) ⇒ ghim ở mép dưới bị che một phần
+    // Lề dưới rộng hơn (60 px): đặt từ lúc còn dòng ghi nguồn nằm đè mép dưới khung; dòng đó đã bỏ 21/11/2026, lề giữ nguyên — chưa xét giảm
     map.fitBounds(L.latLngBounds(coToaDo.map(i => i.toa_do)), { paddingTopLeft: [28, 28], paddingBottomRight: [28, 60], maxZoom: 15 });
     tachGhim();
     return () => map.remove();
