@@ -265,6 +265,24 @@ SUA_LICH_LOI_DAN_CHT = SUA_LICH_LOI_DAN.replace(
 )  # vòng 2 (thêm "dời một ĐIỂM … là doi_buoi") đã đo và BỎ: Q3 7 / 10 ↔ vòng 1 8 / 10, thêm ca S02 mới (Sửa đổi 17/11 của plan)
 
 
+# Công cụ `liet_ke_bai` (cờ `assistant.liet_ke_bai`, plan `report_agent/2026-11-21/b_cong_cu_liet_ke_plan.md`) — mô tả theo khuôn bốn ý: làm gì · dùng khi
+# nào · KHÔNG dùng khi nào · trả về gì. Dùng chung cho cả hai model.
+LIET_KE_MO_TA = (
+    "Liệt kê các BÀI của kho tư liệu Huế theo nhóm, có thể lọc bằng cụm từ: hệ thống đi qua tên và toàn văn của MỌI bài trong nhóm, trả mỗi bài khớp một "
+    "dòng gồm tên bài và một dòng lấy từ chính bài đó. "
+    "Dùng khi người dùng xin một danh sách hoặc hỏi kiểu \"những … nào\", \"nơi nào / quán nào / lễ hội nào có …\", \"có mấy …\", \"kể hết …\": tim_kho "
+    "chỉ trả vài đoạn nên dễ sót mục, còn công cụ này không sót bài nào có cụm từ. "
+    "Không dùng cho câu hỏi về một nơi đã nêu tên, câu hỏi giờ / giá / cách đi của một nơi (dùng tim_kho), hay câu không cần thông tin của kho. "
+    "cum_tu: 0 đến 3 cụm NGẮN và đặc trưng (một đến ba từ, viết có dấu đúng như chữ sẽ xuất hiện trong bài — tên món, tên dịch vụ, một đặc điểm, một "
+    "khung giờ theo vài cách viết); để mảng rỗng để lấy cả nhóm. So nguyên cụm, không hiểu nghĩa: cụm dài hoặc diễn đạt lại sẽ không khớp. "
+    "Dòng đầu của kết quả cho biết có bao nhiêu bài khớp; không có bài nào thì thử lại MỘT lần với cụm khác hoặc nhóm khác, vẫn không có thì coi như tư liệu "
+    "không có thông tin đó. Bài có cụm từ ngay ở tên được xếp trước; bài chỉ nhắc cụm từ trong nội dung thì đọc dòng kèm theo trước khi đưa vào câu trả "
+    "lời, vì bài có thể nhắc cụm từ theo nghĩa khác hoặc phủ định. "
+    "Kết quả là một nguồn có mã [n]: tên nơi lấy từ danh sách thì ghi mã đó; cần chi tiết của một nơi thì gọi tim_kho. Số bài là số bài TRONG TƯ LIỆU, "
+    "không phải số nơi có ở Huế — khi nêu số lượng hãy nói \"trong tư liệu hiện có …\"."
+)
+
+
 # ---------- Đoạn dặn CHỈ dành cho Claude Sonnet (provider bedrock) — 21/11/2026, chủ dự án cho chỉnh lời dặn cho hợp model ----------
 # Lời dặn của đường OpenAI ở trên KHÔNG đổi một ký tự; generator chỉ dùng các chuỗi dưới khi provider là bedrock. Mỗi đoạn có một ca đã đo thật
 # làm lý do (report `report_agent/2026-11-21/b_bedrock_sonnet.md` mục 6–7). Viết theo kiểu nêu lý do, không viết hoa ra lệnh.
