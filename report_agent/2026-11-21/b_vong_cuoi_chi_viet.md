@@ -53,3 +53,24 @@ Chưa chạy: đường stream với model thật; cả bộ test.
 - Lượt được "cứu" ở vòng cuối viết từ bằng chứng đã có ⇒ rủi ro với sàn "câu ngoài kho không được trả lời bằng kho": phải đo ở thước (ba dòng sàn) trước khi bật.
 - Sonnet ở vòng cuối không công cụ vẫn có thể viết chữ thường thay vì nộp qua công cụ nội bộ — đã có đường bọc (bản sửa trưa 21/11).
 - Người dùng nhận câu trả lời thiếu ý "bao xa" kèm lời nói rõ chưa có số — không phải số ước.
+
+## Thêm 14:11 21/11/2026 (giờ `date`) — lượt "placeholder" của người dùng mô phỏng: cờ nào chữa
+
+Phiên C thấy ở người dùng mô phỏng (vai V10, lượt 2 — một tin năm ý: xin số điện thoại hai khách sạn, nhờ gửi lịch qua email, hỏi đường đi tỉnh khác…): Sonnet high trả lời
+người dùng bằng đúng một chữ "placeholder" ⇒ bước kiểm báo thiếu trích dẫn ⇒ người dùng thấy "Thử lại". Phát lại đúng lượt đó (đúng lịch sử câu hỏi) qua `answer_turn`
+trên cây của nhánh này, Sonnet high, 5 lần mỗi ô, mong đợi ghi trước trong script [máy kiểm]:
+
+| Cờ | Lượt lỗi (người dùng thấy "Thử lại") | Model viết gì |
+|---|---|---|
+| Cả ba cờ TẮT (như bản đang chạy) | **5 / 5** | "placeholder" × 2, "x" × 2, một câu "chưa tìm được thông tin" không có nguồn |
+| Chỉ `vong_cuoi_chi_viet` | 3 / 5 | "placeholder" × 2, "x" × 1; 2 lượt còn lại là câu từ chối cố định |
+| Chỉ `bao_het_luot_tim` | **0 / 5** | 5 / 5 câu trả lời dài 1.000–1.200 ký tự, có trích nguồn, nói thật việc không làm được (đặt phòng, gửi email) và ý nào tư liệu không có |
+| Cả ba cờ BẬT | **0 / 5** | như dòng trên (860–1.160 ký tự, có nguồn) |
+
+Mọi lượt ở cả bốn ô gọi cùng bốn công cụ theo cùng thứ tự (tìm kho, lịch sẵn, tìm kho, tìm kho) và bốn lời gọi model — khác nhau chỉ ở chữ của vòng viết.
+**Đọc:** lượt này KHÔNG chạm trần vòng; nó hỏng ở vòng viết sau khi công cụ tìm kho bị ẩn vì đã dùng hết hai lượt tìm. Model còn muốn tìm tiếp, không được báo là hết lượt
+⇒ nộp chữ giữ chỗ. Dòng "đã hết lượt tìm, hãy viết từ những gì đã có" nối vào kết quả lần tìm cuối (`bao_het_luot_tim`) chữa đúng chỗ đó; cờ vòng-cuối không chạm tới
+lượt này nên một mình nó không chữa. Đây cùng họ với lỗi "nội dung rỗng / tên công cụ" đã sửa ở lớp dịch trưa 21/11 — bản sửa đó chặn chữ rác vào khuôn JSON, còn ở đây
+rác đi qua công cụ nộp câu trả lời.
+**Giới hạn:** một lượt của một vai, 20 lần chạy; chưa thử trên luna (luna không gặp lỗi này ở lượt gốc). Thời gian cả lượt tăng từ ~5 giây (lỗi nhanh) lên 10–16 giây (viết câu
+trả lời thật). Script + số gốc: thư mục riêng tư của lượt thử Bedrock 21/11, `tools/b_phat_lai_v10.py`, `ket_qua/b_phat_lai_v10/`.
