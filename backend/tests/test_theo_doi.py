@@ -27,21 +27,31 @@ LOG = [
     _dong("2026-11-20", cache="trung", model=None, usd=0, total_ms=1, git_sha="cccc3333"),              # trúng bản lưu
     _dong("2026-11-20", cache="truot", git_sha="cccc3333"),                                             # tra bản lưu trượt ⇒ lượt thường
     _dong("2026-11-20", outcome="generation_failed", model=None, usd=0, total_ms=50, git_sha="cccc3333"),  # lỗi
-    '[2026-11-20 11:00:00] INFO - chat - chat_metrics {"outcome": "success", "mod',                    # dòng cắt dở khi log xoay vòng
+    # review B 21/11 — M1: mã không phải lỗi hệ thống; m1: dòng lạ không được làm hỏng trang
+    _dong("2026-11-21", outcome="max_turns", refusal=True, usd=0.01, total_ms=30000),                   # hết lượt tìm ⇒ câu từ chối cố định ⇒ "từ chối"
+    _dong("2026-11-21", outcome="refusal_no_sources", refusal=True, usd=0.0001, total_ms=1500),         # kho không có nguồn ⇒ "từ chối"
+    _dong("2026-11-21", outcome="client_disconnected", usd=0, total_ms=700),                            # người dùng tự ngắt ⇒ cột riêng, không tính độ trễ
+    _dong("2026-11-21", outcome="retracted", usd=0.002, total_ms=8000),                                 # câu trả lời bị rút (trích dẫn hỏng) ⇒ vẫn là lỗi
+    _dong("2026-11-21", usd="nhiều", total_ms="lâu"),                                                   # tiền / độ trễ là chữ ⇒ lượt vẫn đếm, số bỏ qua
+    "[2026-11-21 12:00:00] INFO - chat - chat_metrics [1, 2]\n",                                        # JSON không phải object ⇒ dòng hỏng
+    "[2026-11-21 12:00:01] INFO - chat - chat_metrics null\n",
+    '[2026-11-21 13:00:00] INFO - chat - chat_metrics {"outcome": "success", "mod',                    # dòng cắt dở khi log xoay vòng — không có xuống dòng nên phải đứng CUỐI
 ]
 
 
 def test_daily_summary_puts_every_turn_in_exactly_one_column():
     kq = td.tong_hop(LOG)
-    assert kq["bo_model_gia"] == 1 and kq["bo_dong_hong"] == 1
-    hom_nay, hom_qua = kq["ngay"]  # ngày mới nhất trước
-    assert hom_nay == {"ngay": "2026-11-20", "luot": 5, "tra_loi": 1, "tu_choi": 0, "ngoai_pham_vi": 0, "web": 0, "lich": 2, "cache": 1, "loi": 1,
+    assert kq["bo_model_gia"] == 1 and kq["bo_dong_hong"] == 3
+    ngay_ma_la, hom_nay, hom_qua = kq["ngay"]  # ngày mới nhất trước
+    assert ngay_ma_la == {"ngay": "2026-11-21", "luot": 5, "tra_loi": 1, "tu_choi": 2, "ngoai_pham_vi": 0, "web": 0, "lich": 0, "cache": 0, "ngat": 1, "loi": 1,
+                          "usd": 0.0121, "p50_ms": 1500, "p95_ms": 30000, "git_sha": "aaaa1111"}  # độ trễ chỉ của hai lượt từ chối [1500, 30000] ms
+    assert hom_nay == {"ngay": "2026-11-20", "luot": 5, "tra_loi": 1, "tu_choi": 0, "ngoai_pham_vi": 0, "web": 0, "lich": 2, "cache": 1, "ngat": 0, "loi": 1,
                        "usd": 0.0042, "p50_ms": 4000, "p95_ms": 20000, "git_sha": "cccc3333"}  # độ trễ của 4 lượt không lỗi [1, 3000, 4000, 20000] ms, cùng phép chọn như `scripts/dem_chat_metrics.py`; mã bản = lượt gần nhất
-    assert hom_qua == {"ngay": "2026-11-19", "luot": 4, "tra_loi": 1, "tu_choi": 1, "ngoai_pham_vi": 1, "web": 1, "lich": 0, "cache": 0, "loi": 0,
+    assert hom_qua == {"ngay": "2026-11-19", "luot": 4, "tra_loi": 1, "tu_choi": 1, "ngoai_pham_vi": 1, "web": 1, "lich": 0, "cache": 0, "ngat": 0, "loi": 0,
                        "usd": 0.0036, "p50_ms": 4000, "p95_ms": 9000, "git_sha": "aaaa1111"}
     for hang in kq["ngay"]:
         assert hang["luot"] == sum(hang[c] for c in td.COT)
-    assert [h["ngay"] for h in td.tong_hop(LOG, so_ngay=1)["ngay"]] == ["2026-11-20"]  # chỉ giữ N ngày gần nhất
+    assert [h["ngay"] for h in td.tong_hop(LOG, so_ngay=1)["ngay"]] == ["2026-11-21"]  # chỉ giữ N ngày gần nhất
 
 
 def test_response_carries_only_daily_numbers_never_a_single_turn():
@@ -77,5 +87,5 @@ def test_route_is_off_without_a_key_and_refuses_a_wrong_one(tmp_path, monkeypatc
     assert client.get(f"/api/theo_doi?khoa={KHOA_GIA}").status_code == 403                       # khoá trong URL không được nhận
     with caplog.at_level("DEBUG"):
         dung = client.get("/api/theo_doi", headers={td.KHOA_HEADER: KHOA_GIA})
-    assert dung.status_code == 200 and [h["luot"] for h in dung.json()["ngay"]] == [5, 4] and dung.json()["so_ngay"] == td.SO_NGAY
+    assert dung.status_code == 200 and [h["luot"] for h in dung.json()["ngay"]] == [5, 5, 4] and dung.json()["so_ngay"] == td.SO_NGAY
     assert KHOA_GIA not in caplog.text and KHOA_GIA not in dung.text                              # khoá không vào log, không vọng lại trong phản hồi

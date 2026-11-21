@@ -27,13 +27,22 @@ KHOA_DAI_TOI_THIEU = 16
 SO_NGAY = 14
 SO_BAN_XOAY_VONG = 3  # `config/logging.yaml`: application.log.1 … .3
 MODEL_GIA = "probe"   # model giả của các bộ test ⇒ không phải lượt thật
-# Kết cục KHÔNG phải lỗi; mọi mã khác (sinh câu trả lời lỗi, lỗi nội bộ, không tìm được kho, người dùng ngắt…) tính vào cột "lỗi"
+# Kết cục KHÔNG phải lỗi; mọi mã khác (sinh câu trả lời lỗi, lỗi nội bộ, không tìm được kho, câu trả lời bị rút vì trích dẫn hỏng…) tính vào cột "lỗi"
 KHONG_LOI = frozenset({"success", "out_of_scope", "emergency", "hoi_lai", "sua_the", "lam_thay"})
-COT = ("tra_loi", "tu_choi", "ngoai_pham_vi", "web", "lich", "cache", "loi")
+# Review B 21/11 (M1): hai loại lượt KHÔNG phải lỗi hệ thống từng bị dồn vào cột "lỗi" —
+TU_CHOI_CO_DINH = frozenset({"max_turns", "refusal_no_sources"})  # người dùng nhận CÂU TỪ CHỐI cố định (hết lượt tìm / kho không có nguồn) ⇒ cột "từ chối"
+NGUOI_NGAT = "client_disconnected"                                # người dùng tự bấm dừng / rời trang ⇒ cột riêng "người dùng ngắt"
+COT = ("tra_loi", "tu_choi", "ngoai_pham_vi", "web", "lich", "cache", "ngat", "loi")
+KHONG_TINH_DO_TRE = ("loi", "ngat")
 
 
 def _loai(m: dict) -> str:
-    """Mỗi lượt vào ĐÚNG một cột (cộng các cột = số lượt). Thứ tự xét: lỗi > trúng bản lưu > lượt lịch > ngoài phạm vi > có mục web > từ chối > trả lời."""
+    """Mỗi lượt vào ĐÚNG một cột (cộng các cột = số lượt). Thứ tự xét: người dùng ngắt > từ chối cố định > lỗi > trúng bản lưu > lượt lịch > ngoài phạm vi
+    > có mục web > từ chối > trả lời."""
+    if m.get("outcome") == NGUOI_NGAT:
+        return "ngat"
+    if m.get("outcome") in TU_CHOI_CO_DINH:
+        return "tu_choi"
     if m.get("outcome") not in KHONG_LOI:
         return "loi"
     if m.get("cache") == "trung":
@@ -47,6 +56,11 @@ def _loai(m: dict) -> str:
     return "tu_choi" if m.get("refusal") else "tra_loi"
 
 
+def _so(x):
+    """Số thật thì trả lại, thứ khác (chữ, None, True / False) ⇒ None — một dòng số đo lạ không được làm trang trả lỗi 500 (review B m1)."""
+    return x if isinstance(x, (int, float)) and not isinstance(x, bool) else None
+
+
 def _phan_vi(xs: list, p: float):
     xs = sorted(xs)
     return xs[min(len(xs) - 1, round(p * (len(xs) - 1)))] if xs else None
@@ -54,7 +68,8 @@ def _phan_vi(xs: list, p: float):
 
 def tong_hop(dong_log, so_ngay: int = SO_NGAY) -> dict:
     """Các dòng log (bất kỳ dòng nào; chỉ dòng `chat_metrics` được đọc) ⇒ tổng theo ngày của `so_ngay` ngày gần nhất CÓ lượt, mới nhất trước.
-    Ngày = ngày ghi ở đầu dòng log (giờ máy chủ). Dòng cắt dở (log xoay vòng) và dòng của model giả bị bỏ, có đếm."""
+    Ngày = ngày ghi ở đầu dòng log (giờ máy chủ). Dòng cắt dở (log xoay vòng), dòng không phải object và dòng của model giả bị bỏ, có đếm. Độ trễ
+    không tính lượt lỗi và lượt người dùng ngắt."""
     ngay: dict[str, dict] = {}
     bo_gia = bo_hong = 0
     for dong in dong_log:
@@ -63,6 +78,8 @@ def tong_hop(dong_log, so_ngay: int = SO_NGAY) -> dict:
         try:
             m = json.loads(dong.split("chat_metrics ", 1)[1])
             d = datetime.strptime(dong[1:11], "%Y-%m-%d").date().isoformat()
+            if not isinstance(m, dict):  # JSON đọc được nhưng không phải object (`[1, 2]`, `null`, `5`) ⇒ cũng là dòng hỏng
+                raise ValueError("dòng số đo không phải object")
         except ValueError:  # gồm cả json.JSONDecodeError
             bo_hong += 1
             continue
@@ -72,8 +89,8 @@ def tong_hop(dong_log, so_ngay: int = SO_NGAY) -> dict:
         o = ngay.setdefault(d, {"dem": Counter(), "usd": 0.0, "ms": [], "git_sha": None})
         loai = _loai(m)
         o["dem"][loai] += 1
-        o["usd"] += m.get("usd") or 0
-        if loai != "loi" and m.get("total_ms") is not None:
+        o["usd"] += _so(m.get("usd")) or 0
+        if loai not in KHONG_TINH_DO_TRE and _so(m.get("total_ms")) is not None:
             o["ms"].append(m["total_ms"])
         o["git_sha"] = m.get("git_sha") or o["git_sha"]  # dòng đọc theo thứ tự thời gian ⇒ còn lại là bản của lượt gần nhất trong ngày
     hang = [{"ngay": d, "luot": sum(o["dem"].values()), **{c: o["dem"][c] for c in COT}, "usd": round(o["usd"], 4),

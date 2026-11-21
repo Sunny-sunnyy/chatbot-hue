@@ -10,8 +10,8 @@ import { useRoute } from "./route.js";
 import { datNguonBanDo } from "./nguonBanDo.js";
 import { batXuatLich } from "./LichV2.jsx";
 
-const TrangBanDo = lazy(() => import("./TrangBanDo.jsx"));
-const TheoDoi = lazy(() => import("./TheoDoi.jsx"));  // trang riêng của chủ dự án, không có trong menu  // tải riêng ⇒ trang khác không tải Leaflet
+const TrangBanDo = lazy(() => import("./TrangBanDo.jsx"));  // tải riêng ⇒ trang khác không tải Leaflet
+const TheoDoi = lazy(() => import("./TheoDoi.jsx"));  // trang riêng của chủ dự án, không có trong menu
 
 // Khung cổng du lịch đợt 1 (spec `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md`; bản mẫu 2 "Sông Hương", User chọn 07/11):
 // điều hướng bằng hash (D5), trợ lý nổi trên mọi trang + trang `#/tro-ly`, MỘT cuộc trò chuyện qua các trang (D8), điện thoại có thanh dưới.

@@ -5,7 +5,7 @@ import "./co.css";
 // gom theo ngày từ log số đo (`/api/theo_doi`) — không có chữ câu hỏi nào. Khoá quản trị gửi ở header, chỉ giữ trong bộ nhớ trang (tải lại trang là
 // phải nhập lại; không lưu xuống máy, không nằm trong địa chỉ). File tải riêng (`lazy` ở `App.jsx`).
 const COT = [["tra_loi", "Trả lời từ kho"], ["tu_choi", "Từ chối"], ["ngoai_pham_vi", "Ngoài phạm vi"], ["web", "Có mục web"], ["lich", "Lịch / sửa lịch"],
-             ["cache", "Trúng bản lưu"], ["loi", "Lỗi"]];
+             ["cache", "Trúng bản lưu"], ["ngat", "Người dùng ngắt"], ["loi", "Lỗi"]];
 const giay = ms => (ms == null ? "–" : (ms / 1000).toFixed(1));
 const ngayVn = iso => iso.split("-").reverse().slice(0, 2).join("/");
 
@@ -66,7 +66,7 @@ export default function TheoDoi() {
             </table>
           </div>
           <p className="co-p td-chu">
-            {du.ngay.length} ngày gần nhất có lượt hỏi (tối đa {du.so_ngay}), đọc từ log lúc {du.doc_luc}. Mỗi lượt nằm ở đúng một cột; độ trễ không tính lượt lỗi;
+            {du.ngay.length} ngày gần nhất có lượt hỏi (tối đa {du.so_ngay}), đọc từ log lúc {du.doc_luc}. Mỗi lượt nằm ở đúng một cột; "Từ chối" gồm cả lượt hết số lần tìm; độ trễ không tính lượt lỗi và lượt người dùng ngắt;
             "Bản code" là bản của lượt gần nhất trong ngày. Đã bỏ {du.bo_model_gia} dòng của bộ thử tự động{du.bo_dong_hong > 0 ? ` và ${du.bo_dong_hong} dòng hỏng` : ""}.
             Ở máy phát triển, số còn lẫn lượt thử của nhóm (nhất là cột Lỗi).
           </p>
