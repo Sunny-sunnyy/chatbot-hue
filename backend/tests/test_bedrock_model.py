@@ -230,9 +230,10 @@ def test_error_text_masks_account_numbers_before_truncating(tmp_path):
 
 
 def test_provider_switch_picks_the_model_class_and_openai_stays_openai(monkeypatch):
-    """`provider: openai` (mặc định trong repo) ⇒ vẫn `OpenAIResponsesModel` với model luna; `bedrock` ⇒ lớp dịch, không cần khoá OpenAI."""
-    settings = load_settings(validate_private_paths=False)
-    assert settings["full_corpus_generation"]["provider"] == "openai"
+    """`provider: openai` ⇒ vẫn `OpenAIResponsesModel` với model luna; `bedrock` ⇒ lớp dịch, không cần khoá OpenAI. Không khoá giá trị đang ghi
+    trong `settings.yaml` (dòng đó là công tắc — lật nó không được làm đỏ test)."""
+    settings = copy.deepcopy(load_settings(validate_private_paths=False))
+    settings["full_corpus_generation"]["provider"] = "openai"
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
     openai_generator = OpenAIFullCorpusGenerator.from_environment(settings)
     assert type(openai_generator.responses_model) is OpenAIResponsesModel and openai_generator.responses_model.model == "gpt-6-luna"
