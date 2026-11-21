@@ -26,7 +26,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from core.schema import GenerationError
 from llm.bedrock_model import BedrockClaudeModel, BedrockError
 from llm.pricing import cost_usd
-from llm.sua_lich_v2 import MAX_HANH_DONG, HanhDong, HanhDongCHT, HanhDongToi
+from llm.sua_lich_v2 import HOI_THEM, MAX_HANH_DONG, HanhDong, HanhDongCHT, HanhDongHoi, HanhDongToi, HanhDongToiHoi
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
     ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y,
@@ -49,7 +49,9 @@ from llm.full_corpus_prompt import (
     ROUTER_SEARCH_V3,
     SUA_LICH_LOI_DAN,
     SUA_LICH_LOI_DAN_CHT,
+    SUA_LICH_LOI_DAN_CHT_HOI,
     SUA_LICH_LOI_DAN_TOI,
+    SUA_LICH_LOI_DAN_TOI_HOI,
     ROUTER_HISTORY_NOTE,
     ASSISTANT_HISTORY_NOTE,
     TU_WEB_LUAT,
@@ -131,6 +133,17 @@ class SuaLichOutputCHT(BaseModel):
 class SuaLichOutputToi(BaseModel):
     """Cờ `sua_lich_buoi_toi`: như `SuaLichOutputCHT`, `buoi` nhận thêm "toi"."""
     hanh_dong: list[HanhDongToi] = Field(default_factory=list, max_length=MAX_HANH_DONG)
+
+
+class SuaLichOutputHoi(BaseModel):
+    """Cờ `sua_lich_kem_hoi`: như `SuaLichOutputCHT`, thêm hành động `hoi_them` (không tính vào `MAX_HANH_DONG` ⇒ danh sách dài hơn một phần tử;
+    số hành động SỬA vẫn bị chặn ở `hieu_sua`)."""
+    hanh_dong: list[HanhDongHoi] = Field(default_factory=list, max_length=MAX_HANH_DONG + 1)
+
+
+class SuaLichOutputToiHoi(BaseModel):
+    """Hai cờ `sua_lich_buoi_toi` + `sua_lich_kem_hoi`."""
+    hanh_dong: list[HanhDongToiHoi] = Field(default_factory=list, max_length=MAX_HANH_DONG + 1)
 
 
 
@@ -406,6 +419,15 @@ class OpenAIFullCorpusGenerator:
                                                             instructions=kem(SUA_LICH_LOI_DAN_TOI, SONNET_SUA_LICH.format(khong_ro=SONNET_SUA_LICH_KHONG_RO[True])),
                                                             model_settings=self.sua_lich_agent.model_settings.resolve(
                                                                 ModelSettings(extra_args={"prompt_cache_key": "hue_sua_lich_toi_v1"})))
+        # cờ `sua_lich_kem_hoi`: hai bản trên + hành động `hoi_them` (lời dặn thêm một gạch, khuôn thêm một loại); khoá đệm riêng
+        self.sua_lich_hoi_agent = self.sua_lich_agent.clone(name="hue_sua_lich_cht_hoi", output_type=SuaLichOutputHoi,
+                                                            instructions=kem(SUA_LICH_LOI_DAN_CHT_HOI, SONNET_SUA_LICH.format(khong_ro=SONNET_SUA_LICH_KHONG_RO[True])),
+                                                            model_settings=self.sua_lich_agent.model_settings.resolve(
+                                                                ModelSettings(extra_args={"prompt_cache_key": "hue_sua_lich_cht_hoi_v1"})))
+        self.sua_lich_toi_hoi_agent = self.sua_lich_agent.clone(name="hue_sua_lich_toi_hoi", output_type=SuaLichOutputToiHoi,
+                                                                instructions=kem(SUA_LICH_LOI_DAN_TOI_HOI, SONNET_SUA_LICH.format(khong_ro=SONNET_SUA_LICH_KHONG_RO[True])),
+                                                                model_settings=self.sua_lich_agent.model_settings.resolve(
+                                                                    ModelSettings(extra_args={"prompt_cache_key": "hue_sua_lich_toi_hoi_v1"})))
         # B6 D4: lần gọi riêng viết mục "Từ web" — không công cụ, không lịch sử, không kho; đầu ra {answer} như trả lời kho.
         self.web_agent = Agent(
             name="hue_web_section",
@@ -720,10 +742,13 @@ class OpenAIFullCorpusGenerator:
         result = await self._run(self.lich_v2_agent, prompt, call_log, self.timeout)
         return self._generated_text(result, "", started, call_log), parse_cau_lich(getattr(result, "final_output", None))
 
-    async def hieu_sua(self, prompt: str, call_log: "CallLog", chua_ho_tro: bool = False, buoi_toi: bool = False) -> list:
+    async def hieu_sua(self, prompt: str, call_log: "CallLog", chua_ho_tro: bool = False, buoi_toi: bool = False, kem_hoi: bool = False) -> list:
         """Sửa lịch bản 2: câu người dùng + lịch hiện tại ⇒ danh sách `HanhDong` (rỗng = không phải câu sửa lịch). Lỗi ⇒ `GenerationError`.
-        `chua_ho_tro` (cờ cùng tên) ⇒ agent có thêm hành động `chua_ho_tro`; `buoi_toi` (cờ `sua_lich_buoi_toi`, cần `chua_ho_tro`) ⇒ thêm buổi "toi"."""
-        agent, khuon = ((self.sua_lich_toi_agent, SuaLichOutputToi) if chua_ho_tro and buoi_toi else
+        `chua_ho_tro` (cờ cùng tên) ⇒ agent có thêm hành động `chua_ho_tro`; `buoi_toi` (cờ `sua_lich_buoi_toi`, cần `chua_ho_tro`) ⇒ thêm buổi "toi";
+        `kem_hoi` (cờ `sua_lich_kem_hoi`, cần `chua_ho_tro`) ⇒ thêm hành động `hoi_them` (nơi gọi tách nó ra khỏi các hành động sửa)."""
+        agent, khuon = ((self.sua_lich_toi_hoi_agent, SuaLichOutputToiHoi) if chua_ho_tro and buoi_toi and kem_hoi else
+                        (self.sua_lich_hoi_agent, SuaLichOutputHoi) if chua_ho_tro and kem_hoi else
+                        (self.sua_lich_toi_agent, SuaLichOutputToi) if chua_ho_tro and buoi_toi else
                         (self.sua_lich_cht_agent, SuaLichOutputCHT) if chua_ho_tro else (self.sua_lich_agent, SuaLichOutput))
         result = await self._run(agent, prompt, call_log, self.sua_lich_timeout)
         output = getattr(result, "final_output", None)
@@ -731,6 +756,8 @@ class OpenAIFullCorpusGenerator:
             parsed = output if isinstance(output, khuon) else khuon.model_validate(output)
         except Exception as exc:
             raise GenerationError("Invalid edit-itinerary output") from exc
+        if sum(h.loai != HOI_THEM for h in parsed.hanh_dong) > MAX_HANH_DONG:  # khuôn có `hoi_them` dài hơn một phần tử ⇒ giữ nguyên trần hành động SỬA
+            raise GenerationError("Invalid edit-itinerary output")
         return list(parsed.hanh_dong)
 
     def start_lich_v2_stream(self, prompt: str) -> tuple[RunResultStreaming, CallLog]:
