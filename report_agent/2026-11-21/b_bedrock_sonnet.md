@@ -168,3 +168,29 @@ Phát lại đúng thân của vòng đó:
 
 **Gỡ đoạn dặn riêng cho phần trả lời** (phiên điều phối giao theo số của phiên đo): 85 câu ở high, lời dặn mới ↔ cũ, hai người chấm — Đúng / Đủ ý không đổi; độ dài trung vị 236 ⇒ 258 ký tự; Trọng tâm 4,39 ⇒ 4,26.
 Ba đoạn còn lại (câu lịch, sửa lịch, định tuyến) giữ.
+
+## 9. Nhánh `p9-b-lich-su-tach-luot` (13:43 21/11/2026, giờ `date`): gốc của lỗi "hỏi lại tên giữa cuộc" ở Sonnet
+
+**Người dùng thấy gì trước khi sửa:** đã hỏi một câu về Huế, lượt sau hỏi "bạn còn nhớ tôi tên gì không?" ⇒ Sonnet hoặc báo lỗi "Thử lại" (phiên đo gặp 2 / 2 lần
+trên bộ chuỗi), hoặc trả lời LẠI câu hỏi của lượt trước rồi mới nói tên (lượt tôi chạy lại: 2 / 2 câu như vậy). luna không bị.
+
+**Nguyên nhân gốc [máy kiểm — in đúng thân gửi Bedrock khi chạy đúng lệnh bộ chuỗi của phiên đo]:** lịch sử hội thoại chỉ nhớ CÂU HỎI (câu trả lời cũ không lưu)
+⇒ đầu vào là nhiều tin của người dùng đứng liền nhau. OpenAI giữ chúng là các tin riêng. Lớp dịch sang Claude lại GỘP các tin cùng vai liền nhau thành một tin
+(Claude không nhận hai tin cùng vai liền nhau), nên model nhận MỘT tin duy nhất chứa lời tự giới thiệu, câu hỏi về vé của lượt trước và câu hỏi lại tên viết
+liền nhau. Lời dặn định tuyến "chỉ chọn tuyến cho tin nhắn cuối cùng" không còn nghĩa — model không thấy tin cuối bắt đầu ở đâu ⇒ câu hỏi về Huế của lượt trước
+kéo lượt này sang trợ lý tra kho ⇒ trả lời đúng tên nhưng không có nguồn để trích ⇒ luật "câu có căn cứ phải có [n]" báo lỗi (luật đúng, không nới).
+
+**Sửa** (chỉ `backend/llm/bedrock_model.py`, hàm `to_messages`; đường OpenAI không đổi một byte): giữa hai CÂU HỎI liền nhau chèn một tin của trợ lý ghi "(Câu trả
+lời của lượt này không được lưu trong lịch sử.)" ⇒ mỗi lượt cũ là một tin riêng, tin cuối đúng là câu đang hỏi. Kết quả công cụ liền nhau vẫn gộp như cũ.
+Test: một test cũ đổi mong đợi (đỏ khi tắt riêng phần chèn) + một test mới cho ranh giới (kết quả công cụ không bị chèn).
+
+| Chạy đúng lệnh bộ chuỗi, hai chuỗi có câu hỏi lại tên, Sonnet high | Lượt hỏi lại tên đi tuyến | Câu trả lời |
+|---|---|---|
+| Bản chính `e75cf18` — 1 lần chạy (2 lượt hỏi lại tên) | tra kho 2 / 2 | 2 / 2 trả lời lại câu vé của lượt trước rồi mới nói tên |
+| Bản sửa — 2 lần chạy (4 lượt hỏi lại tên) | trò chuyện 4 / 4 | 4 / 4 chỉ nói đúng tên ("Bạn tên là Quân", "Bà tên là Hạnh, 65 tuổi…"); 0 lỗi |
+
+Các lượt khác của hai chuỗi (6 lượt trong 2 lần chạy): tuyến và nội dung như trước, câu về vé vẫn có trích nguồn.
+
+**Chưa kiểm — cần phiên đo:** cả bộ chuỗi (25 chuỗi) và bộ thước trên bản sửa, vì MỌI lượt có lịch sử ở Sonnet giờ gửi thân khác trước (có thêm tin giữ chỗ) — kể cả
+câu hỏi tiếp kiểu "thế còn lăng Minh Mạng?". Rủi ro tôi thấy được: model nhại lại dòng giữ chỗ trong câu trả lời (10 lượt thật ở trên: 0 lần). Lượt không có lịch sử:
+thân gửi không đổi. Tiền phần này ≈ 0,25 USD.
