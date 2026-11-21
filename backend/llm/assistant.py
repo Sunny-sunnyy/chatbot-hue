@@ -137,6 +137,11 @@ class AssistantFlags:
     # 15/11 (plan `2026-11-15-cau-noi-tiep-web-plan.md`): lượt CÓ lịch sử mà model đã tự tìm kho ⇒ phần web dùng câu tìm kho cuối model viết (có tên
     # nơi lấy từ lượt trước) thay câu người dùng gõ — câu hỏi tiếp "mở cửa mấy giờ" không còn ra web trần. TẮT tới khi đo đạt; cần `tra_web`
     web_cau_noi_tiep: bool = False
+    # 21/11/2026 (đếm trên ba lượt mốc 12 vai + mẫu 68 dòng dò kho): lượt nhiều ý có dòng "Tư liệu chưa có thông tin về…" mở mục web ở 64 / 79 lượt (model
+    # đang chạy) và 44 / 71 (model cũ), nhưng mục web đáp đúng điều thiếu chỉ ở 1 / 66 dòng mẫu, và lượt có mục web chậm hơn khoảng 4,5–10 giây. Cờ bật:
+    # mục web CHỈ mở khi cả câu trả lời là câu từ chối (luật gốc D1); lượt đã trả lời được một phần giữ nguyên dòng "chưa có", không tra web, và (như
+    # trước) không được lưu vào bộ nhớ đệm câu trả lời. TẮT tới khi đo trên cả hai model và chủ dự án chọn (đổi thứ người dùng thấy); cần cờ tra_web.
+    web_chi_khi_tu_choi: bool = False
     # 19/11 (plan private `data/hoi_tiep_goi_y_2026-11-19/PLAN.md`): lịch sử chỉ nhớ câu hỏi ⇒ hỏi tiếp "địa chỉ quán đó" model không biết quán nào.
     # Bật: code ghi TÊN BÀI các nguồn đã trích là bài riêng của một nơi vào chỗ tin trợ lý của lịch sử (`llm/ten_goi_y.py`). TẮT tới khi đo đạt.
     nho_ten_goi_y: bool = False
@@ -231,6 +236,8 @@ class AssistantFlags:
             raise ValueError("assistant.ban_do_lich needs the itinerary table and assistant.lich_trinh_toa_do")
         if self.tra_web and not (self.router and self.tim_them):
             raise ValueError("assistant.tra_web needs assistant.router: true and assistant.tim_them: true")
+        if self.web_chi_khi_tu_choi and not self.tra_web:
+            raise ValueError("assistant.web_chi_khi_tu_choi needs assistant.tra_web: true")
         if self.ngay_lich and not self.tim_them:
             raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
         if self.khoang_cach and (not self.tim_them or self.khoang_cach_bang is None):
@@ -1481,7 +1488,9 @@ def web_gate_open(trace: AnswerTrace, flags: AssistantFlags, tim_web) -> bool:
     return (flags.tra_web and tim_web is not None and trace.web is None and trace.route == ROUTE_TRO_LY_HUE
             and trace.fixed_outcome in (None, "refusal_no_sources") and trace.citation_error is None and trace.tool_error is None
             and trace.clarify is None and trace.lich is None and trace.truong is None
-            and ((trace.answer or "").strip() == INSUFFICIENT_ANSWER or (trace.nhieu_y and co_y_thieu(trace.answer or ""))))
+            and ((trace.answer or "").strip() == INSUFFICIENT_ANSWER
+                 # cờ `web_chi_khi_tu_choi`: lượt nhiều ý đã trả lời được một phần KHÔNG mở cổng web nữa (dòng "Tư liệu chưa có thông tin về…" vẫn còn nguyên)
+                 or (trace.nhieu_y and not flags.web_chi_khi_tu_choi and co_y_thieu(trace.answer or ""))))
 
 
 _CO_TRICH = re.compile(r"\[(?:Nguồn\s*)?\d+\]")
@@ -1495,6 +1504,12 @@ def co_y_thieu(answer: str) -> bool:
         if d.startswith(CAU_Y_THIEU) and not _CO_TRICH.search(d):
             return True
     return False
+
+
+def so_y_thieu(answer: str) -> int:
+    """Số dòng "Tư liệu chưa có thông tin về: …" của câu trả lời (cùng phép nhận dòng với `co_y_thieu`: đầu dòng, không kèm trích dẫn) — cho dòng số đo:
+    MỘT con số, không chữ. 21/11/2026: ở lượt mốc 12 vai, 86 % lượt nhiều ý của model đang chạy có dòng này; trước đó muốn biết phải đọc tay."""
+    return sum(1 for dong in answer.splitlines() if (d := dong.strip().lstrip("-*•").strip()).startswith(CAU_Y_THIEU) and not _CO_TRICH.search(d))
 
 
 def ve_y_thieu(query: str, answer: str) -> str:
