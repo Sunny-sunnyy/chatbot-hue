@@ -54,9 +54,6 @@ METRIC_FIELDS = (
     # 21/11/2026: phép kiểm số (thời tiết / khoảng cách) trượt ở lượt không có lịch ⇒ gỡ câu thay vì rút cả lượt — chỉ số đếm: nấc 1 (gỡ câu) / 2 (câu
     # từ chối cố định), số con số lạ theo loại, số ký tự bị gỡ; None = phép kiểm không trượt
     "kiem_so_go",
-    # 21/11/2026: bộ kiểm trích dẫn trượt ở lượt không có lịch ⇒ câu từ chối cố định thay vì rút — mã loại lỗi (khong_trich_dan / tu_choi_kem_trich_dan /
-    # ma_nguon_la); None = bộ kiểm qua. Lượt này vẫn đếm là `refusal`, tách được nhờ khoá này
-    "kiem_trich_dan_go",
     # B2 D9: ms của lần gọi định tuyến (đã có trong `llm_calls`, tách riêng để theo dõi tốc độ theo tuyến)
     "routing_ms",
     # B3 D4: chỉ số đếm của lịch sử đưa vào lượt này (không chữ, không mã cuộc)
@@ -512,7 +509,6 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         web_outcome=None if trace.web is None else trace.web["outcome"], web_n_ket_qua=None if trace.web is None else trace.web["n_ket_qua"],
         web_n_ma=None if trace.web is None else trace.web["n_ma"], web_kiem=None if trace.web is None else trace.web["kiem"],
         thoi_tiet=_thoi_tiet_metrics(trace),
-        kiem_trich_dan_go=trace.kiem_trich_dan_go,
         kiem_so_go=None if trace.kiem_so_go is None else {
             "nac": trace.kiem_so_go["nac"], "n_thoi_tiet": len(trace.kiem_so_go["thoi_tiet"]), "n_khoang_cach": len(trace.kiem_so_go["khoang_cach"]),
             "so_ky_tu_go": trace.kiem_so_go["so_ky_tu_go"]},

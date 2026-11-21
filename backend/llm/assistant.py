@@ -374,7 +374,6 @@ class AnswerTrace:
     # 21/11/2026: phép kiểm số (thời tiết / khoảng cách) trượt ⇒ gỡ câu chứa số lạ thay vì rút cả câu trả lời. Ghi lại để đếm: các số lạ theo loại,
     # nấc (1 = gỡ câu, phần còn lại vẫn có nguồn · 2 = không còn gì dùng được ⇒ câu từ chối cố định), số ký tự đã gỡ. None = lượt không trượt.
     kiem_so_go: dict | None = None
-    kiem_trich_dan_go: str | None = None  # 21/11/2026: loại lỗi của bộ kiểm trích dẫn đã được đổi thành câu từ chối cố định (`_tu_choi_thay_loi_trich_dan`)
     # Sổ vết debug (`core/so_vet.py`): nội dung chỉ giữ trong RAM của lượt — `tim` (từng lần tìm), `web` (câu gửi tra web + sổ web), `sua`
     # (hành động model hiểu), `loi`. Route ghi ra file CHỈ khi cờ `so_vet` bật; không vào `chat_metrics`, không vào chuỗi gửi model.
     vet: dict = field(default_factory=dict)
@@ -1156,22 +1155,6 @@ def _la_luot_thuong(trace: AnswerTrace) -> bool:
     return not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None
 
 
-_LOAI_LOI_TRICH_DAN = (("Grounded answer has no citation", "khong_trich_dan"), ("Fallback answer must not contain citations", "tu_choi_kem_trich_dan"),
-                       ("Unknown citation IDs", "ma_nguon_la"))
-
-
-def _tu_choi_thay_loi_trich_dan(trace: AnswerTrace, text: str) -> str:
-    """Bộ kiểm trích dẫn trượt ở lượt KHÔNG có lịch (21/11/2026) ⇒ câu từ chối cố định thay cho kết cục "rút lại + Thử lại". Các lượt đã thấy: model
-    viết rác ở vòng cuối ("placeholder", "tim_kho"), hoặc tự diễn đạt lại câu từ chối nên không có [n] — chữ đó không dùng được, và câu từ chối cố định
-    đi tiếp các đường sẵn có của một lượt kho thiếu (gợi ý cách hỏi, mục web, khối dự báo). Loại lỗi ghi vào `trace.kiem_trich_dan_go` để số đo đếm
-    được; chữ model viết giữ ở sổ vết. Không gỡ từng câu như phép kiểm số: chưa thấy lượt thật nào có phần còn lại dùng được."""
-    loi = str(trace.citation_error)
-    trace.kiem_trich_dan_go = next((ma for dau, ma in _LOAI_LOI_TRICH_DAN if loi.startswith(dau)), "khac")
-    trace.vet["kiem_trich_dan_go"] = {"loai": trace.kiem_trich_dan_go, "chu_model": text}
-    trace.answer, trace.cited, trace.citation_error = INSUFFICIENT_ANSWER, (), None
-    return INSUFFICIENT_ANSWER
-
-
 def kiem_so_sau_khi_viet(trace: AnswerTrace, text: str, flags: AssistantFlags | None, query: str = "") -> None:
     """Phép kiểm số của một lượt, sau bộ kiểm trích dẫn và trước phần code nối: ghi số lạ theo loại vào `trace.thoi_tiet_kiem` / `khoang_cach_kiem`
     (như trước); có số lạ ⇒ lượt có lịch vẫn bị rút lại như cũ, lượt thường thì gỡ câu / xuống câu từ chối cố định (`_go_so_la`)."""
@@ -1225,8 +1208,6 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None, q
         loi = lt.kiem_cuoi(flags.bang_lich, text, None) if flags is not None and flags.lich_trinh and lt.co_dang_lich(text) else []
         trace.answer = text
     check_citations(trace)
-    if trace.citation_error is not None and _la_luot_thuong(trace) and not loi:
-        text = _tu_choi_thay_loi_trich_dan(trace, text)
     if trace.lich is not None or loi:
         trace.lich_kiem = loi
     if loi and trace.citation_error is None:  # D8: hỏng ⇒ xử như citation hỏng hôm nay (rút lại + lời báo + "Thử lại")

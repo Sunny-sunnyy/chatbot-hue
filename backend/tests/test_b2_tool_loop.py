@@ -281,5 +281,4 @@ def test_refusal_sentence_appended_after_a_cited_answer_is_dropped(deps):
     trace = run_turn(deps, "Đại Nội mở cửa mấy giờ?", tim_roi_viet(f"Có thông tin [1].\n\n{INSUFFICIENT_ANSWER}"))
     assert trace.citation_error is None and trace.answer == "Có thông tin [1]." and [s.id for s in trace.cited] == [1]
     khong_nguon = run_turn(deps, "Đại Nội mở cửa mấy giờ?", tim_roi_viet(f"Mình nghĩ là có. {INSUFFICIENT_ANSWER}"))
-    # không có [n] phía trước ⇒ chữ đó vẫn không tới người dùng; từ nhánh phục hồi sau kiểm (21/11/2026) là câu từ chối cố định, không còn màn hình lỗi
-    assert khong_nguon.citation_error is None and khong_nguon.answer == INSUFFICIENT_ANSWER and khong_nguon.kiem_trich_dan_go == "khong_trich_dan"
+    assert khong_nguon.citation_error is not None                                                           # không có [n] phía trước ⇒ vẫn rút lại như cũ
