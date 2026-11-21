@@ -1,4 +1,4 @@
-# STATUS A — ghi đè 17:47 21/11/2026 (giờ `date`; kết phiên 21/11). Vai: phiên điều phối. Terminal phiên này: `hue-rag-bf` (đổi khi mở lại)
+# STATUS A — ghi đè 17:47 21/11/2026 (giờ `date`; kết phiên chiều 21/11), sửa dòng này 18:22 21/11/2026 khi mở phiên tối. Vai: phiên điều phối. Terminal phiên này: `hue-rag-55` (đổi khi mở lại); phiên tối: B `hue-rag-bb` · C `hue-rag-62` · E `hue-rag-b6`; chủ dự án vắng tới 21:30
 
 Việc đang mở, ai làm, bước kế: sổ việc `session_prompt/VIEC_DANG_MO.md` (khối đầu = ba ngày thử đuổi một con số). Quyết định của chủ dự án + câu đang chờ: `session_prompt/HIEN_TRANG.md` mục 3, 4. Trang này chỉ ghi phần riêng của phiên điều phối.
 
