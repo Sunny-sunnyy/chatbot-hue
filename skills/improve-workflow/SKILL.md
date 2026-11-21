@@ -48,7 +48,7 @@ Mỗi thay đổi ghi cho phiên đọc: sự cố + lần thứ mấy; sửa �
 ## 3. Quyết → thử → giữ / gỡ — người xét KHÁC người đề xuất
 
 - **Nhóm tự quyết:** người đề xuất viết diff trên nhánh riêng, một phiên KHÁC đọc rồi mới gộp (làm một mình: phiên mới ngữ cảnh sạch). **Hỏi User** — một câu,
-  theo `propose-options` — chỉ khi thay đổi chạm bảy luật cứng hoặc bảng quyền trong `AGENTS.md`. Gộp = **cho thử**, chưa phải "đúng": ghi sổ `đang thử` (ngày,
+  theo `propose-options` — chỉ khi thay đổi chạm bảy luật cứng hoặc bảng quyền trong `AGENTS.md`, hoặc gỡ / đảo một câu ghi là lựa chọn của chính User. Gộp = **cho thử**, chưa phải "đúng": ghi sổ `đang thử` (ngày,
   file đổi, theo dõi gì, **ai sẽ xét**). Người đề xuất không tự kết luận luật của mình có hiệu quả; người xét kết luận theo các con số + sự cố có lặp không.
 - **Mỗi vòng, trước khi thêm thay đổi mới,** xét lại **mọi** mục `đang thử`: không lặp và luật được dùng ⇒ `đang dùng`; lặp ⇒ lên một nấc ở mục 2; qua 2 phiên
   làm việc thật không ai cần, gây vướng, hoặc **đang chặn việc đáng làm** ⇒ `gỡ`; chưa có dịp dùng ⇒ giữ, ghi lý do. Ghi kết quả xét **thêm vào trước** ghi chú

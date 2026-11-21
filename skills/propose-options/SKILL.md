@@ -13,9 +13,10 @@ bên vào ngõ cụt. Việc của agent: tự vẽ đủ bài toán, đưa cả
 
 ## 1. Có cần hỏi không
 
-Hỏi khi câu trả lời đổi mục tiêu, phạm vi sản phẩm, dữ liệu, tiền, thao tác phá hủy, kiến trúc khó lùi hoặc quyền (bảng quyền `AGENTS.md`, cột "Hỏi User
-trước"). Mọi thứ khác — chi tiết kỹ thuật, cách làm, luật quy trình của nhóm — agent tự quyết, nói ra lý do, báo sau; **luật quy trình không trình User duyệt**
-(nhóm tự giữ, một phiên khác đọc — skill `improve-workflow`). Không hỏi lại điều đã chốt (`HIEN_TRANG.md` mục 4).
+Hỏi khi câu trả lời đổi mục tiêu, phạm vi sản phẩm, dữ liệu, tiền, thao tác phá hủy, deploy, đổi model / provider, kiến trúc khó lùi hoặc quyền (bảng quyền
+`AGENTS.md`, cột "Hỏi User trước"; `Session_Prompt.md` §4). Mọi thứ khác — chi tiết kỹ thuật, cách làm, luật quy trình của nhóm — agent tự quyết, nói ra lý do, báo sau; **luật quy trình không trình User duyệt**
+(nhóm tự giữ, một phiên khác đọc — skill `improve-workflow`). Không hỏi lại và không khuyến nghị trái điều đã chốt (`HIEN_TRANG.md` mục 4; tra đủ trước khi nói "tài liệu không có"); thấy nên đổi thì nói rõ là đề nghị MỞ
+LẠI, kèm thông tin mới.
 
 - **Câu User nói hiểu được nhiều cách** ("đồng ý" áp cho một hay nhiều câu; dữ liệu / code / tài liệu): nhắc lại một câu "ý bạn là … đúng không?" trước khi làm.
 - **User liệt kê vài ý bằng dấu phẩy hoặc kết bằng "..."** = "nhớ gì nêu đó": tự nghĩ thêm các ý cùng loại, nói rõ ý nào của User, ý nào mình thêm.
@@ -61,7 +62,8 @@ một phương án khi đó là lựa chọn thật. Mỗi phương án:
    · phép thử nhỏ trên dữ liệu thật (đếm, xem mẫu, một lời gọi trong trần đã duyệt) và điều nó cho thấy · phương án B nếu thử dưới ngưỡng. Cần thông tin ngoài:
    tra trước (`Session_Prompt.md` §9).
 5. Việc rủi ro cao / khó lùi: gom vào **một** tài liệu thiết kế trong `docs/superpowers/specs/` (mục tiêu bằng lời User, quyết định kèm lý do / cái giá, phạm
-   vi, tiêu chí nghiệm thu, quyền, rủi ro) cho User duyệt một lần (`WORKFLOW.md` §9.1); XÂY bắt đầu khi User nói "làm đi". Việc còn lại: làm, báo sau.
+   vi, tiêu chí nghiệm thu, quyền, rủi ro) cho User duyệt một lần (`WORKFLOW.md` §9.1); XÂY bắt đầu khi User nói "làm đi". Việc còn lại: theo bảng quyền `AGENTS.md` — hàng "tự làm" thì làm, báo sau; hàng "hỏi trước" thì hỏi một câu rồi
+   mới xây.
 6. Cuối đề xuất của một việc lớn, thêm vài dòng để User **tự nói lại được** trước người chấm: vấn đề là gì (và cái chưa chắc) → đã xem những hướng nào, vì sao
    chọn hướng này → kiểm bằng cách nào. User chưa hiểu ⇒ agent giải thích lại bằng ví dụ khác, không lặp lại câu cũ.
 

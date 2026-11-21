@@ -64,7 +64,6 @@ việc mạo hiểm; thứ nằm NGOÀI git thì sao lưu trước khi sửa.
 - Ai viết thì người / phiên khác kiểm. Làm một mình: mở phiên mới, ngữ cảnh sạch, chỉ đưa diff + tiêu chí, bảo tìm lỗi.
 - Bộ câu thử cho code đọc chữ người dùng do người **không viết code đó** soạn (cả câu phải đúng lẫn câu "giống mà không phải").
 - Người đề xuất một luật cách làm không phải người kết luận luật đó có hiệu quả — kết luận bằng các con số ở mục 7.
-- Các phiên cùng một model dễ đồng ý với nhau: muốn phản biện thật thì giao mỗi phiên một NGUỒN khác nhau (code · lịch sử · tài liệu ngoài), đừng lấy phiếu.
 - **Gói review khác hãng** (việc mức cao, hoặc sau một đợt gộp lớn): người làm soạn MỘT file `.md` tự đủ ngữ cảnh theo mẫu
   `guides/khung/GOI_REVIEW_KHAC_HANG.mau.md`; chủ dự án tự mở công cụ hãng khác và gửi file; model đó ghi kết quả ra một file. Agent không tự gọi công cụ hãng
   khác thay chủ dự án [đã chạy: thêm được điểm thật mà lượt cùng hãng bỏ sót].
