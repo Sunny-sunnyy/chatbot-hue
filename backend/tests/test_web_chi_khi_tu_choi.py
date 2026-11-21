@@ -20,10 +20,12 @@ TAT = AssistantFlags(router=True, tim_them=True, tra_web=True, cau_nhieu_y=True)
 BAT = dataclasses.replace(TAT, web_chi_khi_tu_choi=True)
 
 
-def test_flag_defaults_off_and_needs_the_web_flag():
+def test_flag_defaults_off_and_is_inert_without_the_web_flag():
+    """Không kiểm chéo với `tra_web` (như cờ `web_cau_noi_tiep`): lõi tự tạo bản cờ tắt `tra_web` cho phần chạy song song — phép kiểm chéo từng làm vỡ đúng
+    đường đó. Không có `tra_web` thì cổng web vốn đã đóng, cờ này không có gì để đổi."""
     assert AssistantFlags().web_chi_khi_tu_choi is False
-    with pytest.raises(ValueError, match="web_chi_khi_tu_choi needs"):
-        AssistantFlags(web_chi_khi_tu_choi=True)
+    co = AssistantFlags(web_chi_khi_tu_choi=True)
+    assert not web_gate_open(AnswerTrace(answer=INSUFFICIENT_ANSWER, route="tro_ly_hue"), co, lambda q: None)
 
 
 @pytest.mark.parametrize("answer, nhieu_y, mo_tat, mo_bat", [
@@ -101,3 +103,26 @@ def test_partly_answered_turn_is_still_not_saved_to_the_answer_cache(deps):
     assert kho.da_luu == []
     _luu_cache(kho, "câu đủ ý", t_du, {"refusal": False}, True)
     assert kho.da_luu == ["câu đủ ý"]
+
+
+@pytest.mark.parametrize("parallel", [False, True])
+def test_live_stream_path_runs_with_the_flag_on(deps, parallel):
+    """Đường stream đang chạy thật (song song định tuyến — đang bật ở settings) tự tạo một bản cờ tắt `tra_web`. Lượt đo thật 21/11 22:00: cờ bật ⇒ MỌI lượt
+    báo lỗi hệ thống sau 0,9 ms vì phép kiểm "cờ này cần tra_web" ném lỗi ở bản cờ đó. Test đi đúng đường đó: cờ bật vẫn trả lời, giữ dòng "chưa có", không tra web."""
+    import json
+
+    from llm.assistant import answer_turn_stream, answer_turn_stream_parallel
+    from test_b2_tool_loop import answer, generator
+    from test_b6_tra_web import _events, serper
+
+    def script(n, kw):
+        ins = kw.get("instructions") or ""
+        if "tro_ly_hue" in ins and "ngoai_pham_vi" in ins:  # lời dặn định tuyến
+            return [{"type": "message", "id": f"r{n}", "role": "assistant", "status": "completed",
+                     "content": [{"type": "output_text", "text": json.dumps({"route": "tro_ly_hue"}), "annotations": []}]}]
+        return [answer(TRA_LOI)]
+    for flags, co_web in ((TAT, True), (BAT, False)):
+        flags, trace = dataclasses.replace(flags, song_song_tra_loi=parallel), AnswerTrace()
+        events = _events(answer_turn_stream_parallel if parallel else answer_turn_stream, CAU_HAI_Y, *deps, generator(script), trace, flags, None, serper())
+        assert [d for k, d in events if k == "error"] == [], flags.web_chi_khi_tu_choi
+        assert CAU_Y_THIEU in trace.answer and (trace.web is not None) is co_web, flags.web_chi_khi_tu_choi

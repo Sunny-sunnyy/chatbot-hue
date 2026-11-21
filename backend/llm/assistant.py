@@ -236,8 +236,6 @@ class AssistantFlags:
             raise ValueError("assistant.ban_do_lich needs the itinerary table and assistant.lich_trinh_toa_do")
         if self.tra_web and not (self.router and self.tim_them):
             raise ValueError("assistant.tra_web needs assistant.router: true and assistant.tim_them: true")
-        if self.web_chi_khi_tu_choi and not self.tra_web:
-            raise ValueError("assistant.web_chi_khi_tu_choi needs assistant.tra_web: true")
         if self.ngay_lich and not self.tim_them:
             raise ValueError("assistant.ngay_lich needs assistant.tim_them: true (tool loop)")
         if self.khoang_cach and (not self.tim_them or self.khoang_cach_bang is None):
