@@ -68,6 +68,7 @@ assistant:
   router_timeout_seconds: 10
   so_vong_cong_cu: 4             # trần vòng gốc của lượt trợ lý có công cụ (+1 khi có công cụ ngày, +1 khi có công cụ khoảng cách) — giá trị cũ; mở thành khoá 21/11 để bộ đo thử nới
   so_lan_tim_kho: 2              # số lần model được tìm kho thật trong một lượt (lần tìm đầu của code không tính) — giá trị cũ; mở thành khoá 21/11 để bộ đo thử nới
+  cong_cu_ban: 1                 # 21/11/2026 (bậc 3, report `report_agent/2026-11-21/b_cong_cu_ban_2.md`): bản mô tả công cụ gửi model — 1 = chữ như trước (giống byte) | 2 = mô tả viết lại của bốn công cụ tìm kho / thời tiết / ngày lịch / khoảng cách. GIỮ 1 tới khi phiên đo có số trên cả hai model
   song_song_tra_loi: true         # BẬT (User duyệt 05/11; #6 đạt: chữ đầu câu về Huế −1,37 s [0,34; 2,14], an toàn 90 lượt 0 vi phạm): đường stream chạy phần tro_ly_hue cùng lúc định tuyến
   lan_tim_dau: v0                # B2 (plan D1): v0 câu gốc · v1 / v3 câu tìm do định tuyến viết · v2 trợ lý tự gọi tim_kho
   tim_them: true                 # BẬT (B2b Q8: 18 câu nhiều nguồn +1,17 [+0,44; +2,00]; User giữ 03/11). Sau lần tìm đầu, trợ lý được gọi tim_kho thêm ≤ 2 lần

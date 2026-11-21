@@ -550,7 +550,7 @@ class OpenAIFullCorpusGenerator:
             tools.append(function_tool(thoi_tiet_fn, name_override="thoi_tiet", description_override=getattr(thoi_tiet_fn, "mo_ta", THOI_TIET_MO_TA),
                                        failure_error_function=None))  # bản cờ `bao_lu_cong_cu` gắn `mo_ta` riêng
         if ngay_lich_fn is not None:  # Phase 9 T1: chỉ khi code thấy từ chỉ ngày (lượt khác ⇒ danh sách công cụ như trước)
-            tools.append(function_tool(ngay_lich_fn, name_override="ngay_lich", description_override=NGAY_LICH_MO_TA, failure_error_function=None))
+            tools.append(function_tool(ngay_lich_fn, name_override="ngay_lich", description_override=getattr(ngay_lich_fn, "mo_ta", NGAY_LICH_MO_TA), failure_error_function=None))  # `cong_cu_ban: 2` gắn `mo_ta` riêng
         if khoang_cach_fn is not None:  # 16/11: chỉ khi code thấy từ khoá khoảng cách; mô tả (luật + danh sách mã) nằm ở docstring của hàm
             tools.append(function_tool(khoang_cach_fn, name_override="khoang_cach", failure_error_function=None))
         if liet_ke_fn is not None:  # cờ `liet_ke_bai` (21/11): liệt kê bài theo nhóm / cụm từ, code trả lời; cờ tắt ⇒ danh sách công cụ như cũ

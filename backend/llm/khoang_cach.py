@@ -153,9 +153,12 @@ def cap_tinh_san(cau: str, bang: BangKhoangCach) -> tuple[str, str] | None:
     return cap if cap and f"{cap[0]}|{cap[1]}" in bang.cap else None
 
 
-def mo_ta_cong_cu(bang: BangKhoangCach) -> str:
-    """Mô tả công cụ: luật ngắn + danh sách `mã: tên (tên khác)` để model ánh xạ tên người dùng gõ ⇒ mã."""
+def mo_ta_cong_cu(bang: BangKhoangCach, luat: str | None = None) -> str:
+    """Mô tả công cụ: luật ngắn + danh sách `mã: tên (tên khác)` để model ánh xạ tên người dùng gõ ⇒ mã. `luat` (khoá `assistant.cong_cu_ban: 2`): phần
+    luật viết lại, có chỗ `{khac}` cho mã "nơi ngoài danh sách"; không truyền ⇒ phần luật như trước (giống byte)."""
     dong = [f"{i}: {bang.ten[i]}" + (f" ({', '.join(bang.ten_khac[i])})" if bang.ten_khac[i] else "") for i in bang.ids]
+    if luat is not None:
+        return luat.format(khac=KHAC) + "\nDanh sách:\n" + "\n".join(dong)
     return ("Khoảng cách và thời gian đi xe ước tính giữa HAI điểm ở Huế trong danh sách dưới. Chỉ gọi khi người dùng hỏi hai nơi cách nhau bao xa / "
             f"đi mất bao lâu. diem_a, diem_b = mã của hai nơi; nơi không có trong danh sách (khách sạn, sân bay, \"trung tâm\", nơi ngoài Huế…) ⇒ \"{KHAC}\", "
             "không chọn điểm gần giống. Kết quả là một nguồn có mã [n]: chỉ dùng đúng số trong đó, ghi mã [n]; không tự ước số khác.\n"

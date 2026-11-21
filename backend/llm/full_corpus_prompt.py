@@ -293,6 +293,73 @@ LIET_KE_MO_TA = (
 )
 
 
+# ---------- Mô tả công cụ BẢN 2 (khoá `assistant.cong_cu_ban: 2`, 21/11/2026; plan `report_agent/2026-11-21/b_bac_3_4_cong_cu_plan.md` + sửa đổi trong
+# report `b_cong_cu_ban_2.md`) ----------
+# Khoá = 1 ⇒ các mô tả phía trên, chuỗi gửi model giống byte. Bản 2 viết lại mô tả của BỐN công cụ đang tới model (tìm kho, thời tiết bản có `loai`, ngày
+# lịch, khoảng cách) theo một khuôn bốn ý: làm gì · gọi khi nào · KHÔNG gọi khi nào · trả về gì và không trả về gì. Ba chỗ đổi NGHĨA, mỗi chỗ một lỗi đã đo:
+#  (1) `loai` của thời tiết: `bao_lu` chỉ khi có từ nguy hiểm thời tiết — Sonnet chọn `bao_lu` cho câu mưa nắng thường 3 / 3 lượt ⇒ câu trả lời không có số;
+#  (2) bỏ luật "không chép lại số dự báo" — cả hai model không nghe (luna 52 / 90 lượt, Sonnet 75 / 104) và số sai đã có phép kiểm số bằng code gỡ;
+#  (3) tìm kho: thấy tên khác của nơi đang hỏi thì tìm lại bằng tên chính — câu "hai bước" của thước 0 / 3 ở mọi ô, model tìm một lần gần nguyên câu hỏi rồi từ chối.
+# Viết kiểu nêu lý do; không dùng tên địa danh thật làm ví dụ (model hay chép ví dụ). Công cụ `lich_trinh` (cờ đang tắt) và bản thời tiết không có `loai`
+# (chỉ chạy khi cờ `bao_lu_cong_cu` tắt) KHÔNG có bản 2 — chưa tới model nên không đo được.
+def tim_kho_mo_ta_2(so_lan: int) -> str:
+    """Docstring bản 2 của công cụ `tim_kho` (mô tả + dòng `Args`); `so_lan` = số lần model được tìm thật trong một câu (`assistant.so_lan_tim_kho`)."""
+    return (
+        "Tìm trong kho tư liệu Huế bằng một câu tìm; trả về các nguồn mới (đoạn trích từ bài của kho), đánh số [n] tiếp theo các nguồn đã có. "
+        "Gọi khi Bằng chứng đang có chưa đủ để trả lời một ý của câu hỏi: mỗi lần tìm cho MỘT ý còn thiếu, câu tìm nêu đủ tên riêng và điều cần biết. "
+        "Khi Bằng chứng cho thấy thứ người dùng hỏi còn có một tên khác (tên chính thức, tên dân gian, tên cũ) hoặc thuộc về một nơi lớn hơn mà chi tiết "
+        "cần trả lời chưa có, hãy tìm lại bằng tên chính ấy kèm điều đang hỏi — chi tiết thường nằm ở bài mang tên chính. "
+        "Không gọi khi Bằng chứng đã đủ; không gọi lại bằng câu gần giống câu đã tìm hay gần giống nguyên câu hỏi, vì kho xếp theo độ khớp với câu tìm nên "
+        "câu gần giống chỉ ra lại các đoạn đã có. "
+        "Kết quả chỉ là vài đoạn khớp nhất, không phải cả bài và không phải danh sách đầy đủ; đoạn đã đưa ở lần trước không lặp lại, không có đoạn mới thì "
+        f"kết quả là một dòng báo không có nguồn mới. Mỗi câu hỏi tìm được tối đa {so_lan} lần, nên mỗi lần dùng một câu tìm khác hẳn lần trước.\n\n"
+        "Args:\n"
+        "    cau_tim: câu tìm đứng một mình (không dùng \"đó\", \"này\", \"ở đấy\"), tiếng Việt có dấu, nêu đủ tên riêng và điều cần tìm."
+    )
+
+
+THOI_TIET_BAO_LU_MO_TA_2 = (
+    "Lấy dự báo thời tiết Huế theo ngày cho hôm nay và 6 ngày tới: nhiệt độ thấp nhất – cao nhất, khả năng mưa, lượng mưa. "
+    "Gọi khi người dùng hỏi thời tiết của những ngày sắp tới hoặc hỏi một việc phụ thuộc thời tiết những ngày đó (có nên ra biển, nên mang gì, đi ngày nào "
+    "thì đẹp trời). "
+    "Không gọi cho câu không dính tới thời tiết sắp tới; câu hỏi về khí hậu chung (mùa mưa, mùa bão rơi vào tháng mấy, tháng nào đẹp) thì dùng tim_kho, vì "
+    "đó là thông tin của tư liệu chứ không phải dự báo. "
+    "tu_ngay / den_ngay = số ngày tính từ hôm nay (0 = hôm nay, 1 = ngày mai, tối đa 6); hỏi một ngày thì hai số bằng nhau. "
+    "loai = \"du_bao\" cho mọi câu hỏi thời tiết thường: mưa, nắng, nóng, lạnh, nên mang gì, nên đi đâu, đi ngày nào. "
+    "loai = \"bao_lu\" chỉ khi tin nhắn của người dùng nhắc tới một nguy hiểm thời tiết — bão, áp thấp, lũ, lụt, ngập, dông, giông lốc, sấm sét, mưa đá, "
+    "sạt lở, triều cường, nước sông dâng — hoặc hỏi thẳng thời tiết có nguy hiểm / có an toàn không, kể cả câu hỏi tiếp của chuyện đó. Chọn đúng là quan "
+    "trọng: với \"bao_lu\" hệ thống không đưa số dự báo để viết câu trả lời mà dẫn người dùng tới bản tin bão / lũ chính thức, nên câu hỏi mưa nắng thường "
+    "mà chọn \"bao_lu\" thì người dùng không nhận được điều họ hỏi. "
+    "Kết quả là một nguồn có mã [n] do hệ thống dựng. Với \"du_bao\" nguồn ghi số liệu từng ngày: khi nói về dự báo thì ghi mã [n] đó; được nêu lại những số "
+    "cần cho câu trả lời, đúng như nguồn ghi, không thêm số nào nguồn không có. Bảng dự báo đầy đủ được hệ thống hiện ngay dưới câu trả lời nên không cần "
+    "chép lại mọi dòng. Dự báo chỉ có nhiệt độ và mưa: không có tin bão, áp thấp, gió, sóng biển hay mực nước sông, và không suy ra những điều đó từ số "
+    "mưa. Điều lấy từ tài liệu kho vẫn ghi đúng mã [n] của tài liệu đó."
+)
+NGAY_LICH_MO_TA_2 = (
+    "Tính ngày theo lịch Việt Nam (giờ Việt Nam): hôm nay là ngày nào, và đổi một ngày giữa dương lịch và âm lịch. "
+    "Gọi khi câu trả lời cần một ngày âm ↔ dương chưa có trong ngữ cảnh — thường là một ngày âm lịch đọc được ở tài liệu tìm thêm (ngày lễ hội, ngày giỗ, "
+    "ngày rằm). "
+    "Không gọi cho những ngày đã có trong nguồn \"Lịch hệ thống\" của ngữ cảnh: khi ngữ cảnh có nguồn đó thì hôm nay, ngày mai, các thứ trong tuần được hỏi "
+    "và ngày âm nêu trong câu hỏi / tài liệu ban đầu đã được hệ thống tính sẵn ở đó — dùng thẳng nguồn đó. Không tự tính hay tự đổi ngày âm ↔ dương, vì "
+    "lịch âm có tháng nhuận nên tự tính dễ lệch; chỉ dùng ngày do công cụ hoặc nguồn Lịch hệ thống ghi. "
+    "loai = \"hom_nay\" ⇒ chỉ ngày hôm nay (ngay, thang, nam ghi 0); \"duong\" ⇒ đổi ngày dương ngay/thang/nam sang âm; \"am\" ⇒ đổi ngày âm sang dương. "
+    "nam = 0 khi người dùng không nêu năm — công cụ trả cả lần gần nhất đã qua và lần sắp tới; thang_nhuan chỉ là true cho tháng âm nhuận. "
+    "Kết quả là một nguồn có mã [n] ghi thứ trong tuần, ngày dương, ngày âm và ngày đó cách hôm nay bao lâu; khi nêu ngày lấy từ đó thì ghi mã [n]. Công cụ "
+    "chỉ đổi ngày: không cho biết lễ hội nào diễn ra hay nơi nào mở cửa vào ngày đó — những điều ấy tìm bằng tim_kho. Mỗi câu hỏi dùng được tối đa 2 lần."
+)
+# Phần luật của mô tả công cụ `khoang_cach` bản 2; danh sách `mã: tên` do `khoang_cach.mo_ta_cong_cu` nối sau (như bản 1). `{khac}` = mã "nơi ngoài danh sách".
+KHOANG_CACH_MO_TA_2 = (
+    "Tra khoảng cách đường đi và thời gian đi xe ước tính giữa HAI điểm ở Huế, từ bảng số liệu hệ thống đã tính sẵn cho các điểm trong danh sách dưới. "
+    "Gọi khi người dùng hỏi hai nơi cách nhau bao xa, đi từ nơi này sang nơi kia mất bao lâu, hoặc so nơi nào gần hơn (mỗi cặp nơi một lần gọi). "
+    "Không gọi khi câu hỏi không cần số khoảng cách hay thời gian đi; không gọi lại cho cặp nơi đã tra trong câu này. "
+    "diem_a, diem_b = mã của hai nơi trong danh sách. Nơi không có trong danh sách (khách sạn, sân bay, nhà ga, \"trung tâm\", nơi ngoài Huế…) ⇒ \"{khac}\"; "
+    "không chọn một điểm gần giống để thay, vì số trả về sẽ là số của nơi khác. "
+    "Kết quả là một nguồn có mã [n] ghi số km và thời gian đi xe của cặp đó: chỉ dùng đúng số trong nguồn và ghi mã [n], không tự ước hay cộng trừ ra số "
+    "khác. Với mã \"{khac}\" hoặc cặp chưa có trong bảng, kết quả là một dòng báo chưa có số — khi đó nói rõ là chưa có số khoảng cách cho nơi ấy, không ước "
+    "lượng. Công cụ không trả đường đi cụ thể, giá xe hay thời gian đi bộ / xe đạp. Mỗi câu hỏi tra được tối đa 3 cặp."
+)
+
+
 # ---------- Đoạn dặn CHỈ dành cho Claude Sonnet (provider bedrock) — 21/11/2026, chủ dự án cho chỉnh lời dặn cho hợp model ----------
 # Lời dặn của đường OpenAI ở trên KHÔNG đổi một ký tự; generator chỉ dùng các chuỗi dưới khi provider là bedrock. Mỗi đoạn có một ca đã đo thật
 # làm lý do (report `report_agent/2026-11-21/b_bedrock_sonnet.md` mục 6–7). Viết theo kiểu nêu lý do, không viết hoa ra lệnh.

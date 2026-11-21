@@ -51,6 +51,7 @@ from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_LAM_THAY, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
                                    TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
+from llm.full_corpus_prompt import KHOANG_CACH_MO_TA_2, NGAY_LICH_MO_TA_2, THOI_TIET_BAO_LU_MO_TA_2, tim_kho_mo_ta_2
 from llm.pricing import cost_usd
 from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusContextBuilder, PackedContext, PackedSource
 
@@ -88,6 +89,9 @@ class AssistantFlags:
     # Bậc 1b (21/11/2026): số lần MODEL được tìm kho thật trong một lượt — khoá `assistant.so_lan_tim_kho`, mặc định = `MODEL_SEARCH_LIMIT` như trước;
     # mở thành cấu hình để bộ đo thử nới. (Số vòng công cụ: `assistant.so_vong_cong_cu`, generator đọc.)
     so_lan_tim_kho: int = MODEL_SEARCH_LIMIT
+    # Bậc 3 (21/11/2026, report `report_agent/2026-11-21/b_cong_cu_ban_2.md`): bản MÔ TẢ công cụ gửi model — 1 (mặc định) = chữ như trước, giống byte ·
+    # 2 = mô tả viết lại của bốn công cụ tìm kho / thời tiết / ngày lịch / khoảng cách (`mo_ta_theo_ban`). Chỉ đổi chữ mô tả; code công cụ không đổi.
+    cong_cu_ban: int = 1
     tim_them: bool = False
     # B3 (plan B3 D7): nhớ hội thoại trong một cuộc trò chuyện — tắt tới khi giao diện nhiều lượt xong (D8); chỉ nhớ câu hỏi khi `nho_cau_tra_loi` tắt
     nho_hoi_thoai: bool = False
@@ -251,6 +255,8 @@ class AssistantFlags:
             raise ValueError("assistant.quan_lich needs assistant.len_ke_hoach_v2: true and the restaurant table (assistant.lich_trinh_bang_quan)")
         if self.cong_cong_cu not in ("tu_khoa", "luon"):
             raise ValueError(f"cong_cong_cu must be 'tu_khoa' or 'luon', got {self.cong_cong_cu!r}")
+        if self.cong_cu_ban not in (1, 2):
+            raise ValueError(f"assistant.cong_cu_ban must be 1 or 2, got {self.cong_cu_ban!r}")
         if not set(self.len_ke_hoach_o_hien) <= set(O_BIEU_MAU_V2):
             raise ValueError(f"assistant.len_ke_hoach_o_hien must be a subset of {O_BIEU_MAU_V2}")
 
@@ -267,7 +273,7 @@ class AssistantFlags:
         sinh = settings.get("full_corpus_generation") or {}
         cong = (sinh.get("bedrock") or {}) if sinh.get("provider") == "bedrock" else config  # cổng công cụ chọn theo provider đang chạy
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), cong_cong_cu=str(cong.get("cong_cong_cu", "tu_khoa")), so_lan_tim_kho=int(config.get("so_lan_tim_kho", MODEL_SEARCH_LIMIT)),
-                   bang_lich=bang, toa_do_lich=toa_do,
+                   bang_lich=bang, toa_do_lich=toa_do, cong_cu_ban=config.get("cong_cu_ban", 1),
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
                    khoang_cach_bang=kc.nap_bang(BACKEND_DIR / config["khoang_cach_bang"], BACKEND_DIR / config["lich_trinh_bang_v2"])
                    if values["khoang_cach"] else None,
@@ -304,7 +310,7 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 
 
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
-                    if name not in ("lan_tim_dau", "cong_cong_cu", "so_lan_tim_kho", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
+                    if name not in ("lan_tim_dau", "cong_cong_cu", "so_lan_tim_kho", "cong_cu_ban", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
                                      "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do",
                                      "khoang_cach_bang", "su_kien_bang", "muc_luc"))
 
@@ -1325,6 +1331,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
             instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
             tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho)
             extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
+            mo_ta_theo_ban(tool_fn, extra, flags)  # `cong_cu_ban: 2` ⇒ mô tả công cụ bản 2; 1 ⇒ không đổi gì
             try:
                 trace.generated = await generator.generate_with_tools(tool_prompt, tool_fn, call_log, **_history_kwargs(trace), **extra)
             except GenerationError:
@@ -1341,6 +1348,22 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     if recorder:
         recorder.record_generation_result(trace.generated)
     _finish_generated(trace, flags, query)
+
+
+def mo_ta_theo_ban(tool_fn, extra: dict, flags: AssistantFlags) -> None:
+    """Khoá `assistant.cong_cu_ban` (bậc 3, 21/11/2026): bản 2 ⇒ thay MÔ TẢ của bốn công cụ đang tới model bằng bản viết lại ở `full_corpus_prompt.py`; bản 1
+    ⇒ không chạm gì (chuỗi gửi model giống byte). Gọi sau khi các hàm công cụ của lượt đã dựng, trước khi đưa cho generator: generator đọc docstring
+    (`tim_kho`, `khoang_cach`) hoặc thuộc tính `mo_ta` (`thoi_tiet`, `ngay_lich`). Công cụ thời tiết: chỉ bản có `loai` (cờ `bao_lu_cong_cu`) có bản 2."""
+    if flags.cong_cu_ban != 2:
+        return
+    tool_fn.__doc__ = tim_kho_mo_ta_2(flags.so_lan_tim_kho)
+    thoi_tiet, ngay_lich, khoang_cach = (extra.get(ten) for ten in ("thoi_tiet_fn", "ngay_lich_fn", "khoang_cach_fn"))
+    if thoi_tiet is not None and getattr(thoi_tiet, "mo_ta", None) == THOI_TIET_BAO_LU_MO_TA:
+        thoi_tiet.mo_ta = THOI_TIET_BAO_LU_MO_TA_2
+    if ngay_lich is not None:
+        ngay_lich.mo_ta = NGAY_LICH_MO_TA_2
+    if khoang_cach is not None:
+        khoang_cach.__doc__ = kc.mo_ta_cong_cu(flags.khoang_cach_bang, KHOANG_CACH_MO_TA_2)
 
 
 def _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags) -> dict:
@@ -1716,6 +1739,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
                 tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho)
                 extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
+                mo_ta_theo_ban(tool_fn, extra, flags)  # `cong_cu_ban: 2` ⇒ mô tả công cụ bản 2; 1 ⇒ không đổi gì
                 result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace), **extra)
             else:
                 yield "status", {"stage": "generating"}
