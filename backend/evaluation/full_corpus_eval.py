@@ -52,7 +52,6 @@ JUDGE_PROMPT_PATH = Path(__file__).resolve().parent / "full_corpus_judge_prompt.
 
 RETRIEVAL_K = 10
 CONCURRENCY = 4
-JUDGE_MAX_OUTPUT_TOKENS = 1024
 JUDGE_PROVIDERS = ("openai", "bedrock")  # model chấm: luna (mặc định) hoặc Claude trên Bedrock — `judge_settings`
 ANSWER_METRICS = ("accuracy", "completeness", "relevance")
 RETRIEVAL_METRICS = ("mrr", "ndcg", "keyword_coverage")
@@ -602,7 +601,7 @@ async def judge_case_luna(agent: Agent, case: dict, answer_row: dict, judge_mode
 def judge_settings(settings: dict, provider: str) -> dict:
     """Cấu hình dựng model CHẤM, không phụ thuộc dòng công tắc model viết: `openai` ⇒ model ghi ở `full_corpus_generation.model` (luna — mặc
     định, điểm so được với mọi mốc cũ); `bedrock` ⇒ Claude ở khối `bedrock` với mức suy luận `high` (User 21/11/2026: thử người chấm Sonnet,
-    không giới hạn khả năng model). Lớp dịch Bedrock luôn gửi `max_tokens` của cấu hình ⇒ `JUDGE_MAX_OUTPUT_TOKENS` không cắt phía Claude."""
+    không giới hạn khả năng model). Không model chấm nào bị đặt trần token đầu ra (`judge_agent`)."""
     if provider not in JUDGE_PROVIDERS:
         raise ValueError(f"Invalid judge provider: {provider!r}")
     generation = {**settings["full_corpus_generation"], "provider": provider}
@@ -611,19 +610,23 @@ def judge_settings(settings: dict, provider: str) -> dict:
     return {**settings, "full_corpus_generation": generation}
 
 
+def judge_agent(model) -> Agent:
+    """Agent chấm: cùng file lời dặn cho mọi model chấm, không tham số sampling, KHÔNG trần token đầu ra — trần cũ 1024 gồm cả token suy luận nên
+    có thể cắt phiếu chấm giữa chừng (chủ dự án 21/11/2026: cả luna lẫn Sonnet đều bỏ trần)."""
+    return Agent(
+        name="hue_full_corpus_answer_judge",
+        instructions=JUDGE_PROMPT_PATH.read_text(encoding="utf-8"),
+        model=model,
+        model_settings=ModelSettings(include_usage=True, store=False),
+        output_type=JudgeScores,
+    )
+
+
 async def run_judge_luna(cases: list[dict], answer_rows: list[dict], provider: str = "openai") -> list[dict]:
     """Judge phụ: không tham số sampling, cùng file lời dặn cho mọi model chấm. `provider` mặc định `openai` = luna như trước nay, kể cả khi sản
     phẩm đang chạy `provider: bedrock`; `bedrock` = chấm bằng Claude (`judge_settings`). Mỗi dòng ghi `judge_model` + `usd` theo giá model chấm."""
     generator = OpenAIFullCorpusGenerator.from_environment(judge_settings(load_settings(validate_private_paths=False), provider))
-    agent = Agent(
-        name="hue_full_corpus_answer_judge",
-        instructions=JUDGE_PROMPT_PATH.read_text(encoding="utf-8"),
-        model=generator.responses_model,
-        model_settings=ModelSettings(
-            max_tokens=JUDGE_MAX_OUTPUT_TOKENS, include_usage=True, store=False,
-        ),
-        output_type=JudgeScores,
-    )
+    agent = judge_agent(generator.responses_model)
     answers = {row["case_index"]: row for row in answer_rows}
     semaphore = asyncio.Semaphore(CONCURRENCY)
 

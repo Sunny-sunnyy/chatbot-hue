@@ -264,6 +264,16 @@ SUA_LICH_LOI_DAN_CHT = SUA_LICH_LOI_DAN.replace(
     "⇒ một hành động chua_ho_tro, không điền gì.\n",
 )  # vòng 2 (thêm "dời một ĐIỂM … là doi_buoi") đã đo và BỎ: Q3 7 / 10 ↔ vòng 1 8 / 10, thêm ca S02 mới (Sửa đổi 17/11 của plan)
 
+# Cờ `sua_lich_buoi_toi` (21/11/2026): `buoi` nhận thêm "toi". Bản trên chỉ cho sáng / chiều ⇒ người dùng nói "sang buổi tối" thì model không có cách
+# ghi đúng (để trống buổi hoặc đổi thành chiều). Xếp được hay không do code trả lời. Cờ tắt ⇒ bản trên, giống byte.
+_DOI_BUOI_CU = "- doi_buoi: dời điểm ten sang buoi (sang / chieu), ngay nếu có.\n"
+assert _DOI_BUOI_CU in SUA_LICH_LOI_DAN_CHT
+SUA_LICH_LOI_DAN_TOI = SUA_LICH_LOI_DAN_CHT.replace(
+    _DOI_BUOI_CU,
+    "- doi_buoi: dời điểm ten sang buoi (sang / chieu / toi), ngay nếu có. Người dùng nói buổi tối thì điền toi, kể cả khi điểm đó là điểm tham quan "
+    "ban ngày: xếp được vào buổi tối hay không là việc hệ thống kiểm và trả lời, bạn chỉ ghi lại đúng buổi họ nói (với them_diem cũng vậy).\n",
+)
+
 
 # ---------- Đoạn dặn CHỈ dành cho Claude Sonnet (provider bedrock) — 21/11/2026, chủ dự án cho chỉnh lời dặn cho hợp model ----------
 # Lời dặn của đường OpenAI ở trên KHÔNG đổi một ký tự; generator chỉ dùng các chuỗi dưới khi provider là bedrock. Mỗi đoạn có một ca đã đo thật
@@ -297,14 +307,9 @@ SONNET_SUA_LICH = (
 )
 SONNET_SUA_LICH_KHONG_RO = {True: "trả chua_ho_tro để hệ thống mời họ nói cụ thể", False: "trả danh sách rỗng"}
 
-# (3) Trả lời. Ca đo (bộ câu mẫu, người chấm luna): 34–42 / 66 câu của Sonnet bị trừ điểm "Trọng tâm", có câu nhắc một con số bốn lần.
-# Không dặn "viết ngắn" (chủ dự án không muốn bóp model) — chỉ bỏ phần lặp và phần không giúp người hỏi.
-SONNET_TRA_LOI = (
-    "Cách trình bày: mở đầu bằng chính điều người hỏi cần biết, rồi mới tới phần bổ sung. Chi tiết khác trong Bằng chứng chỉ đưa vào khi nó "
-    "giúp người hỏi làm việc họ đang hỏi — chi tiết đúng mà không liên quan làm họ khó tìm ý chính. Mỗi ý, mỗi con số nêu một lần; không "
-    "nhắc lại ở đoạn sau hay trong câu kết. Đây không phải yêu cầu viết ngắn: câu hỏi cần nhiều ý thì vẫn trả lời đủ các ý, và điều kiện, "
-    "ngoại lệ, lưu ý an toàn có trong Bằng chứng vẫn giữ như đã dặn ở trên."
-)
+# (3) Trả lời — ĐÃ THỬ, ĐÃ GỠ 21/11/2026. Đoạn dặn "nói điều được hỏi trước, không nhắc lại ý" (nhắm vào 34–42 / 66 câu bị trừ "Trọng tâm") đo lại
+# trên 85 câu ở high, hai người chấm: Đúng / Đủ ý không đổi; độ dài trung vị 236 ⇒ 258 ký tự; Trọng tâm 4,39 ⇒ 4,26 (so cặp 4 thắng / 49 hoà / 13 thua)
+# ⇒ không đạt điều nó nhắm tới ⇒ gỡ. Lời dặn trả lời / trợ lý của Sonnet nay y như của luna.
 
 # (4) Định tuyến. Ca đo (chuỗi hội thoại, 43 lượt phải trả lời): Sonnet đẩy câu về nơi ở rìa Huế sang "ngoài phạm vi" — medium 4 lượt, high 2 lượt,
 # luna 0 (luna trả lời đúng các câu đó từ kho). Viết theo LOẠI nơi, không nêu tên nơi nào của bộ đo.

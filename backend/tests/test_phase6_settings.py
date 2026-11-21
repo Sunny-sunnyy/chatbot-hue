@@ -13,6 +13,9 @@ def test_phase6_settings_are_exact():
     }
     # `provider` là công tắc đổi qua / đổi về model viết (21/11/2026) ⇒ không khoá giá trị ở đây; mọi dòng còn lại vẫn khoá đúng từng chữ
     assert settings["full_corpus_generation"].pop("provider") in ("openai", "bedrock")
+    # Hai mức suy luận của đường Bedrock cũng là giá trị CHỌN SAU KHI ĐO (21/11/2026: mặc định low ⇒ high khi bật) ⇒ chỉ khoá tập giá trị hợp lệ
+    for khoa in ("reasoning_default", "reasoning_sua_lich"):
+        assert settings["full_corpus_generation"]["bedrock"].pop(khoa) in ("none", "low", "medium", "high")
     assert settings["full_corpus_generation"] == {
         "model": "gpt-6-luna",
         "api_key_env": "OPENAI_API_KEY",
@@ -23,9 +26,8 @@ def test_phase6_settings_are_exact():
             "model": "global.anthropic.claude-sonnet-5-5",
             "region": "ap-southeast-1",
             "max_tokens": 128000,
-            "reasoning_default": "low",
-            "reasoning_sua_lich": "high",
             "cong_cong_cu": "tu_khoa",
+            "sua_lich_timeout_seconds": 10,
             "creds_file_env": "HUE_BEDROCK_CREDS_FILE",
         },
     }

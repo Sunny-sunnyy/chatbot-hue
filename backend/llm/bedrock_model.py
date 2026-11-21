@@ -16,6 +16,9 @@ Các giới hạn đã đo thật trên bộ khoá đang dùng (46 lời gọi s
 - Khuôn JSON ép đầu ra (`output_config.format`) gửi CÙNG công cụ làm Claude gọi công cụ mãi không viết (phát lại một thân yêu cầu đã có đủ kết quả
   công cụ: viết 0 / 30 lần ở mọi mức suy luận; bỏ khuôn: viết 14 / 14) ⇒ lượt vừa có công cụ vừa có khuôn KHÔNG gửi khuôn mà thêm một công cụ nội
   bộ `tra_loi` mang đúng khuôn đó; Claude gọi nó để nộp câu trả lời, lớp dịch đổi lời gọi ấy thành tin trả lời JSON cho SDK (`ANSWER_TOOL`).
+  Cũng áp cho vòng mà mọi công cụ thật đã bị ẨN (hết lượt tìm) nhưng lịch sử của lượt đã có lời gọi công cụ: ép khuôn ở vòng đó làm Claude — vẫn
+  muốn tìm tiếp — viết rác vào khuôn (phát lại 22 lần: `{"answer": "placeholder"}`, `"tim_kho"`, rỗng… 14 lần, đúng câu từ chối 8 lần; chỉ còn
+  `tra_loi`: đúng câu từ chối 20 / 22, 0 rác kiểu đó).
 """
 import datetime as dt
 import hashlib
@@ -47,6 +50,11 @@ AWS_IDENTIFIER = re.compile(r"arn:aws\S*|(?<!\d)\d{12}(?!\d)")  # không để A
 ANSWER_TOOL = "tra_loi"
 ANSWER_TOOL_DESCRIPTION = ("Nộp câu trả lời cuối cùng cho người dùng. Gọi khi đã đủ thông tin để trả lời, hoặc khi không thể tìm thêm — kể cả khi câu trả lời "
                            "là câu từ chối theo lời dặn. Gọi đúng một lần, đặt toàn bộ câu trả lời vào tham số; không viết câu trả lời ra ngoài công cụ này.")
+# Lịch sử hội thoại chỉ nhớ CÂU HỎI (câu trả lời cũ bị bỏ) ⇒ SDK gửi nhiều tin user liền nhau. Claude gộp các tin cùng vai liền nhau thành MỘT lượt, nên câu
+# hỏi của lượt trước dính vào câu đang hỏi: định tuyến "chỉ xét tin nhắn cuối" nhìn thấy cả câu hỏi về Huế của lượt trước ⇒ câu "bạn còn nhớ tôi tên gì không"
+# bị đưa sang trợ lý tra kho ⇒ trả lời đúng nhưng không có nguồn để trích ⇒ lỗi (bộ chuỗi 21/11: 2 / 2 lần trên bản chính; luna 0 vì OpenAI giữ các tin tách
+# rời). Chèn một tin assistant giữ chỗ giữa hai câu hỏi của hai lượt để ranh giới lượt còn nguyên.
+HISTORY_GAP = "(Câu trả lời của lượt này không được lưu trong lịch sử.)"
 CODE_FENCE = re.compile(r"^```(?:json)?\s*(?P<body>.*?)\s*```$", re.DOTALL)
 DATA_URL = re.compile(r"^data:(?P<media>[\w/+.-]+);base64,(?P<data>.+)$", re.DOTALL)
 
@@ -117,10 +125,20 @@ def to_messages(input: "str | list[dict]") -> list[dict]:
             add("user", [{"type": "tool_result", "tool_use_id": item["call_id"],
                           "content": output if isinstance(output, str) else json.dumps(output, ensure_ascii=False)}])
         elif kind in (None, "message") and item.get("role") in ("user", "assistant"):
-            add(item["role"], _content_blocks(item["content"]))
+            blocks = _content_blocks(item["content"])
+            # hai CÂU HỎI liền nhau (không phải kết quả công cụ) là hai lượt khác nhau ⇒ giữ ranh giới lượt bằng một tin assistant giữ chỗ
+            if (item["role"] == "user" and blocks and messages and messages[-1]["role"] == "user"
+                    and all(block["type"] != "tool_result" for block in messages[-1]["content"])):
+                messages.append({"role": "assistant", "content": [{"type": "text", "text": HISTORY_GAP}]})
+            add(item["role"], blocks)
         else:
             raise ValueError(f"Unsupported input item for Bedrock model: {kind or item.get('role')!r}")
     return messages
+
+
+def _has_tool_rounds(input: "str | list[dict]") -> bool:
+    """Đầu vào của lời gọi đã mang lời gọi / kết quả công cụ của chính lượt chạy này (SDK gửi lại ở mỗi vòng)."""
+    return not isinstance(input, str) and any(item.get("type") in ("function_call", "function_call_output") for item in input)
 
 
 def build_body(system_instructions: str | None, input: "str | list[dict]", model_settings, tools: list, output_schema, max_tokens: int,
@@ -141,8 +159,10 @@ def build_body(system_instructions: str | None, input: "str | list[dict]", model
     output_config: dict = {}
     if output_schema is not None and not output_schema.is_plain_text():
         schema = strip_constraints(output_schema.json_schema())
-        if tools:  # khuôn + công cụ ⇒ nộp câu trả lời qua công cụ nội bộ, không ép khuôn (lý do ở đầu file)
-            body["tools"].append({"name": ANSWER_TOOL, "description": ANSWER_TOOL_DESCRIPTION, "input_schema": schema, "strict": True})
+        # khuôn + công cụ, hoặc vòng công cụ đã ẩn hết nhưng lượt này đã có lời gọi công cụ ⇒ nộp câu trả lời qua công cụ nội bộ, không ép khuôn
+        if tools or _has_tool_rounds(input):
+            body.setdefault("tools", []).append({"name": ANSWER_TOOL, "description": ANSWER_TOOL_DESCRIPTION, "input_schema": schema, "strict": True})
+            body.setdefault("tool_choice", {"type": "auto", "disable_parallel_tool_use": True})
         else:
             output_config["format"] = {"type": "json_schema", "schema": schema}
     effort = getattr(model_settings.reasoning, "effort", None) or reasoning_default

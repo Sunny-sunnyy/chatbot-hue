@@ -16,7 +16,7 @@ from openai.types.shared import Reasoning
 
 from core.schema import GenerationError
 from core.settings_loader import load_settings, validate_phase6_settings
-from llm.bedrock_model import BedrockClaudeModel, build_body, sign_headers, strip_constraints, to_messages, to_response
+from llm.bedrock_model import HISTORY_GAP, BedrockClaudeModel, build_body, sign_headers, strip_constraints, to_messages, to_response
 from llm.generator_openai_full_corpus import AnswerOutput, CallLog, OpenAIFullCorpusGenerator, RouteSplitOutput, SuaLichOutput
 from llm.pricing import cost_usd
 
@@ -53,7 +53,7 @@ def test_history_tool_round_and_image_become_claude_messages():
     """Lịch sử dạng gọn + mục SDK tự sinh trong vòng công cụ + ảnh data URL ⇒ tin Claude xen kẽ vai, `tool_use` / `tool_result` khớp `call_id`."""
     items = [
         {"role": "user", "content": "câu 1"},
-        {"role": "user", "content": "câu 2"},  # lượt trước chỉ nhớ câu hỏi ⇒ hai tin user liền nhau phải gộp
+        {"role": "user", "content": "câu 2"},  # lượt trước chỉ nhớ câu hỏi ⇒ hai tin user liền nhau: KHÔNG gộp, chèn tin assistant giữ chỗ
         {"role": "assistant", "content": "đáp 2"},
         {"role": "user", "content": [{"type": "input_text", "text": "Danh sách"},
                                      {"type": "input_image", "image_url": "data:image/jpeg;base64,QUJD", "detail": "auto"}]},
@@ -62,7 +62,9 @@ def test_history_tool_round_and_image_become_claude_messages():
         {"type": "function_call_output", "call_id": "toolu_1", "output": "[Nguồn 1] …"},
     ]
     assert to_messages(items) == [
-        {"role": "user", "content": [{"type": "text", "text": "câu 1"}, {"type": "text", "text": "câu 2"}]},
+        {"role": "user", "content": [{"type": "text", "text": "câu 1"}]},
+        {"role": "assistant", "content": [{"type": "text", "text": HISTORY_GAP}]},  # ranh giới lượt: Claude gộp tin cùng vai liền nhau thành một lượt
+        {"role": "user", "content": [{"type": "text", "text": "câu 2"}]},
         {"role": "assistant", "content": [{"type": "text", "text": "đáp 2"}]},
         {"role": "user", "content": [{"type": "text", "text": "Danh sách"},
                                      {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": "QUJD"}}]},
@@ -72,6 +74,18 @@ def test_history_tool_round_and_image_become_claude_messages():
     assert to_messages("xin chào") == [{"role": "user", "content": [{"type": "text", "text": "xin chào"}]}]
     with pytest.raises(ValueError):
         to_messages([{"role": "system", "content": "x"}])
+
+
+def test_tool_results_still_merge_and_a_question_after_a_tool_round_gets_no_placeholder():
+    """Tin giữ chỗ chỉ chen giữa HAI CÂU HỎI liền nhau. Kết quả công cụ liền nhau vẫn gộp một tin user; câu hỏi đứng sau tin assistant thì không chèn gì."""
+    items = [{"role": "user", "content": "câu hỏi"},
+             {"type": "function_call", "id": "t1", "call_id": "t1", "name": "tim_kho", "arguments": "{}", "status": "completed"},
+             {"type": "function_call_output", "call_id": "t1", "output": "kq 1"},
+             {"type": "function_call_output", "call_id": "t1b", "output": "kq 2"},
+             {"role": "assistant", "content": "đáp"}, {"role": "user", "content": "câu kế"}]
+    roles = [(m["role"], [b["type"] for b in m["content"]]) for m in to_messages(items)]
+    assert roles == [("user", ["text"]), ("assistant", ["tool_use"]), ("user", ["tool_result", "tool_result"]), ("assistant", ["text"]), ("user", ["text"])]
+    assert HISTORY_GAP not in str(to_messages(items))
 
 
 def test_schema_constraints_are_stripped_but_field_names_are_kept():
@@ -101,9 +115,17 @@ def test_body_carries_tools_format_and_an_explicit_reasoning_mode():
     assert body["tool_choice"] == {"type": "auto", "disable_parallel_tool_use": True}
     # mức mặc định `none` ⇒ `between_tools`, không gửi effort; không trường nào của riêng OpenAI lọt sang
     assert body["thinking"] == {"type": "between_tools"}
-    # không công cụ (kể cả lượt mọi công cụ đã ẩn) ⇒ ép khuôn như cũ, không có công cụ nội bộ
+    # không công cụ và lượt chưa có lời gọi công cụ nào ⇒ ép khuôn như cũ, không có công cụ nội bộ
     no_tools = build_body("lời dặn", "câu hỏi", settings, [], AgentOutputSchema(AnswerOutput), 1000, "none")
     assert no_tools["output_config"] == {"format": {"type": "json_schema", "schema": AgentOutputSchema(AnswerOutput).json_schema()}} and "tools" not in no_tools
+    # mọi công cụ đã ẨN nhưng lượt đã có lời gọi công cụ (hết lượt tìm) ⇒ KHÔNG ép khuôn — ép thì Claude viết rác vào khuôn ("placeholder", tên công cụ,
+    # rỗng; lỗi M03 21/11) — chỉ còn công cụ nội bộ để nộp câu trả lời
+    rounds = [{"role": "user", "content": "câu hỏi"},
+              {"type": "function_call", "id": "toolu_1", "call_id": "toolu_1", "name": "tim_kho", "arguments": '{"cau_tim": "x"}', "status": "completed"},
+              {"type": "function_call_output", "call_id": "toolu_1", "output": "[Nguồn 1] …"}]
+    hidden = build_body("lời dặn", rounds, settings, [], AgentOutputSchema(AnswerOutput), 1000, "none")
+    assert [t["name"] for t in hidden["tools"]] == ["tra_loi"] and "output_config" not in hidden
+    assert hidden["tool_choice"] == {"type": "auto", "disable_parallel_tool_use": True}
     assert not {"store", "prompt_cache_key", "temperature", "top_p", "model"} & body.keys()
 
     # agent KHÔNG tự đặt mức ⇒ mức mặc định của cấu hình; agent tự đặt "low" (nhóm lịch) ⇒ giữ "low" dù mặc định là "high"
@@ -334,10 +356,11 @@ def test_sonnet_only_instructions_are_appended_on_bedrock_and_absent_on_openai(m
     assert sonnet.router_agent.instructions == f"{p.ROUTER_INSTRUCTIONS}\n\n{p.SONNET_DINH_TUYEN}"
     assert all(p.SONNET_DINH_TUYEN in a.instructions for a in (sonnet.router_history_agent, *sonnet.router_search_agents.values()))
 
-    assert sonnet.answer_agent.instructions == f"{p.ANSWER_SYSTEM_INSTRUCTIONS}\n\n{p.SONNET_TRA_LOI}"
-    assert sonnet.assistant_instructions == sonnet.assistant_agent.instructions == f"{tool}\n\n{p.SONNET_TRA_LOI}"
-    for agent in (sonnet.assistant_history_agent, sonnet.assistant_agent_nhieu_y, sonnet.assistant_history_agent_nhieu_y):
-        assert p.SONNET_TRA_LOI in agent.instructions
+    # đoạn dặn riêng cho phần trả lời đã thử và gỡ (đo lại không đạt) ⇒ lời dặn trả lời / trợ lý của Sonnet y như luna
+    for ten in ("answer_agent", "assistant_agent", "assistant_history_agent", "assistant_agent_nhieu_y", "assistant_history_agent_nhieu_y", "bieu_mau_agent"):
+        if ten != "bieu_mau_agent":
+            assert getattr(sonnet, ten).instructions == getattr(luna, ten).instructions
+    assert sonnet.assistant_instructions == luna.assistant_instructions and not hasattr(p, "SONNET_TRA_LOI")
     assert sonnet.assistant_instructions_for([("q", "a")]) == sonnet.assistant_history_agent.instructions  # chuỗi đếm = chuỗi gửi
     assert sonnet.lich_v2_agent.instructions == p.LICH_V2_LOI_DAN_SONNET
     assert "một hoặc hai câu" in p.LICH_V2_LOI_DAN_SONNET and "đúng một câu" not in p.LICH_V2_LOI_DAN_SONNET
@@ -358,5 +381,37 @@ def test_settings_loader_accepts_bedrock_and_rejects_a_broken_block():
     for key, value in (("region", None), ("reasoning_default", "minimal"), ("reasoning_sua_lich", None), ("max_tokens", 0)):
         broken = copy.deepcopy(settings)
         broken["full_corpus_generation"]["bedrock"][key] = value
+        with pytest.raises(ValueError):
+            validate_phase6_settings(broken)
+
+
+def test_tool_round_limits_and_edit_timeout_come_from_settings_with_old_defaults(monkeypatch):
+    """Bậc 1b (21/11/2026): số vòng công cụ, số lần tìm kho, hạn giờ hiểu ý sửa lịch đọc từ dict settings. Giá trị trong repo = giá trị cũ (4 · 2 ·
+    10 giây = hạn định tuyến); bộ đo đổi trong bản chép dict. Đường OpenAI: hạn sửa lịch vẫn là hạn định tuyến."""
+    from llm.assistant import MODEL_SEARCH_LIMIT, AssistantFlags
+    from llm.generator_openai_full_corpus import ASSISTANT_MAX_TURNS, max_turns_for
+
+    monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    settings = bedrock_settings()
+    sonnet = OpenAIFullCorpusGenerator.from_environment(settings)
+    assert (sonnet.max_turns, sonnet.sua_lich_timeout, sonnet.router_timeout) == (ASSISTANT_MAX_TURNS, 10, 10) == (4, 10, 10)
+    assert AssistantFlags(so_lan_tim_kho=settings["assistant"]["so_lan_tim_kho"]).so_lan_tim_kho == MODEL_SEARCH_LIMIT == AssistantFlags().so_lan_tim_kho == 2
+    assert max_turns_for(None) == 4 and max_turns_for(object(), object()) == 6 and max_turns_for(object(), None, 6) == 7
+
+    settings["assistant"].update(so_vong_cong_cu=6, router_timeout_seconds=10)
+    settings["full_corpus_generation"]["bedrock"]["sua_lich_timeout_seconds"] = 20
+    wider = OpenAIFullCorpusGenerator.from_environment(settings)
+    assert (wider.max_turns, wider.sua_lich_timeout, wider.router_timeout) == (6, 20, 10)
+    settings["full_corpus_generation"]["provider"] = "openai"
+    luna = OpenAIFullCorpusGenerator.from_environment(settings)
+    assert (luna.max_turns, luna.sua_lich_timeout) == (6, 10)
+    broken = bedrock_settings()
+    broken["full_corpus_generation"]["bedrock"]["sua_lich_timeout_seconds"] = 0
+    with pytest.raises(ValueError):
+        validate_phase6_settings(broken)
+    for key, value in (("so_vong_cong_cu", 0), ("so_lan_tim_kho", "2"), ("so_vong_cong_cu", True)):
+        broken = bedrock_settings()
+        broken["assistant"][key] = value
         with pytest.raises(ValueError):
             validate_phase6_settings(broken)

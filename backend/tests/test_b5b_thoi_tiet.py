@@ -14,9 +14,10 @@ import httpx
 import pytest
 
 from core.settings_loader import load_settings
+from llm import assistant as at
 from llm import lich_trinh as lt
 from llm import thoi_tiet as tt
-from llm.assistant import (AnswerTrace, AssistantFlags, _dong_thoi_tiet_lich, _thoi_tiet_cuoi, answer_turn, answer_turn_stream, chu_cua_model,
+from llm.assistant import (AnswerTrace, AssistantFlags, _dong_thoi_tiet_lich, answer_turn, answer_turn_stream, chu_cua_model,
                            ROUTE_TRO_LY_HUE, web_gate_open)
 
 from llm.full_corpus_prompt import INSUFFICIENT_ANSWER, THOI_TIET_BAO_LU_MO_TA, THOI_TIET_MO_TA
@@ -171,6 +172,12 @@ def test_weather_number_forms(text, so):
     assert tt.so_thoi_tiet(text) == so
 
 
+def _thoi_tiet_cuoi(trace, text):
+    """Phép kiểm số rồi phần code nối, đúng thứ tự `_finish_generated` làm ở lượt không có lịch (21/11/2026: phép kiểm tách khỏi phần nối)."""
+    at.kiem_so_sau_khi_viet(trace, text, WEATHER)
+    at._thoi_tiet_cuoi(trace)
+
+
 def _trace(text_cited="", tool_khoi=None, **ctx):
     trace = AnswerTrace(answer="chữ model", cited=(PackedSource(1, "t", (), (text_cited,)),) if text_cited else ())
     trace.thoi_tiet_ctx = {"bao_lu": False, "ngoai_7": False, "buoi": False, "co_cong_cu": tool_khoi is not None, "tu_khoa": tool_khoi is not None, **ctx}
@@ -186,13 +193,15 @@ def test_model_numbers_must_come_from_code_or_cited_kho():
     assert ok.citation_error is None and ok.answer.endswith(khoi)
     bia = _trace(tool_khoi=khoi)
     _thoi_tiet_cuoi(bia, "Mai Huế khoảng 35 độ.")  # cố tình: số model tự thêm
-    assert bia.thoi_tiet_kiem == ["35"] and bia.citation_error is not None
+    # 21/11/2026: không rút cả lượt nữa — câu có số lạ bị gỡ; không còn gì ⇒ câu dẫn cố định + khối số liệu của hệ thống. Lần trượt vẫn được ghi.
+    assert bia.thoi_tiet_kiem == ["35"] and bia.citation_error is None and bia.kiem_so_go["nac"] == 2
+    assert "35" not in bia.answer and bia.answer == f"{tt.CAU_DAN_DU_BAO}\n\n{khoi}"
 
 
 def test_number_without_tool_is_caught_but_cited_climate_number_is_not():
     tu_viet = _trace()
-    _thoi_tiet_cuoi(tu_viet, "Mai chắc khoảng 30 °C.")  # lượt không công cụ (không từ khoá) ⇒ D8 vẫn chặn
-    assert tu_viet.citation_error is not None
+    _thoi_tiet_cuoi(tu_viet, "Mai chắc khoảng 30 °C.")  # lượt không công cụ (không từ khoá) ⇒ D8 vẫn chặn: câu có số lạ không tới người dùng
+    assert tu_viet.citation_error is None and tu_viet.answer == INSUFFICIENT_ANSWER and tu_viet.kiem_so_go == {"thoi_tiet": ["30"], "khoang_cach": [], "nac": 2, "so_ky_tu_go": 22}
     kho = _trace(text_cited="Mùa hè Huế nóng, nhiệt độ có ngày lên 38 °C.")
     _thoi_tiet_cuoi(kho, "Mùa hè có ngày tới 38 °C [1].")  # câu khí hậu trích kho có số ⇒ không bị rút nhầm
     assert kho.citation_error is None and kho.thoi_tiet_noi is None and kho.answer == "chữ model"
@@ -303,7 +312,8 @@ def test_forecast_turn_cites_forecast_source_and_catches_invented_number(deps):
     assert ok.citation_error is None and ok.answer.endswith(ok.thoi_tiet["khoi"]) and ok.thoi_tiet["n_ngay"] == 1
     assert [s.id for s in ok.cited] == [k] and ok.so_nguon[k - 1].title == tt.TIEU_DE_NGUON and ok.so_nguon[k - 1].source == tt.NGUON_SOURCE
     bia, _ = run(deps, "Mai Huế có mưa không?", generator(sau_cong_cu(lambda k: f"Mai Huế khoảng 33 độ [{k}].")), flags)
-    assert bia.citation_error is not None and bia.thoi_tiet_kiem == ["33"]
+    assert bia.thoi_tiet_kiem == ["33"] and bia.citation_error is None and bia.kiem_so_go["nac"] == 2  # số lạ: gỡ câu ⇒ không còn gì ⇒ câu dẫn + khối hệ thống
+    assert "33 độ" not in bia.answer and bia.answer.endswith(bia.thoi_tiet["khoi"])
 
 
 @pytest.mark.parametrize("text_fn, rut", [
