@@ -1,6 +1,6 @@
 # Đổi model viết: qua Claude Sonnet 5.5 (Amazon Bedrock) ⇄ về gpt-6-luna (OpenAI)
 
-Viết: 10:12 21/11/2026 (giờ `date`), phiên B. Người đọc: bất kỳ coding agent nào mở phiên sau và được bảo "chuyển về luna" hoặc "chuyển qua Sonnet".
+Viết: 10:12 21/11/2026 (giờ `date`), phiên B; sửa 13:50 21/11/2026 sau khi công tắc bật (mục 4 thêm hai bẫy, mục 5 thêm số ở mức high, mục 7 điền số). Người đọc: bất kỳ coding agent nào mở phiên sau và được bảo "chuyển về luna" hoặc "chuyển qua Sonnet".
 Trang này đủ để làm việc đó mà không phải đọc lại lịch sử. Số đo trong trang lấy từ các lượt gọi thật ngày 21/11/2026; chỗ nào chưa kiểm ghi rõ **[chưa kiểm]**.
 
 Từ dùng:
@@ -26,7 +26,7 @@ kèm yêu cầu: nói "chuyển về luna" là về được ngay.
 | Kiểm cấu hình | `backend/core/settings_loader.py`, hàm `validate_phase6_settings` | Giá trị lạ ở `provider` hoặc khối `bedrock` thiếu trường ⇒ server không khởi động, lỗi nêu tên trường. |
 | Bảng giá | `backend/llm/pricing.py`, `PRICES_PER_M` | Tiền mỗi lần gọi tính theo model THẬT của lần gọi đó. |
 | Người chấm | `backend/evaluation/full_corpus_eval.py`, hàm `run_judge_luna` | Ép `provider: openai` cho riêng người chấm. |
-| Test của lớp dịch | `backend/tests/test_bedrock_model.py` | 16 ca, không gọi mạng. |
+| Test của lớp dịch | `backend/tests/test_bedrock_model.py` | 20 ca (đếm lại 21/11/2026 sau khi công tắc bật), không gọi mạng. |
 
 **Không bị đụng khi đổi provider:** kho, chỉ mục Qdrant, cách tìm (10 đoạn), mọi cờ ở mục `assistant:`, công cụ của trợ lý, bộ kiểm trích nguồn,
 giao diện, bộ đếm token dựng ngữ cảnh, người chấm. Lời dặn (prompt) gửi luna không đổi một ký tự.
@@ -60,11 +60,11 @@ giao diện, bộ đếm token dựng ngữ cảnh, người chấm. Lời dặn
      uv run pytest tests/$f.py -q | tail -1                                            # KHÔNG khoá
    done
    ```
-   Kết quả phải ra [máy kiểm 21/11/2026, cả khi dòng công tắc là `openai` lẫn `bedrock`]:
+   Kết quả phải ra [máy kiểm 21/11/2026, cả khi dòng công tắc là `openai` lẫn `bedrock`; chạy lại 21/11/2026 sau khi công tắc bật, với công tắc `bedrock`]:
 
    | File | CÓ nạp `.env` | KHÔNG nạp `.env` |
    |---|---|---|
-   | `test_bedrock_model` | 16 đạt | 16 đạt |
+   | `test_bedrock_model` | 20 đạt | 20 đạt |
    | `test_phase6_settings` | 5 đạt | 4 đạt, **1 hỏng**: `test_openai_api_key_exists_without_leaking` |
    | `test_openai_full_corpus_generator` | 9 đạt | 7 đạt, **2 lỗi**: `test_real_environment_builds_openai_generator`, `test_empty_or_blank_input_rejected_before_network` |
 
@@ -93,7 +93,7 @@ Về luna KHÔNG cần: sửa code, xoá khối `bedrock:`, xoá file lớp dị
    - viết câu cho lịch và lượt biểu mẫu: tự đặt `low` trong code, giữ `low` — đo 21/11 (4 kiểu lịch, mỗi mức một lần): ba mức cho cùng kết quả, Sonnet không dùng token suy luận nào cho việc này;
    - hiểu ý sửa lịch (hai agent): theo khoá RIÊNG `full_corpus_generation.bedrock.reasoning_sua_lich`, đang để `high` — đo 21/11 trên 9 lệnh × 3 lượt: lệnh rõ ràng bốn nhánh
      ngang nhau (17–18 / 18); hai lệnh khó (mơ hồ · bị luật xếp lịch chặn) đúng 5 / 6 ở high, 2 / 6 ở low, 0 / 6 ở medium (luna 6 / 6). Đường luna không đọc khoá này (vẫn `low`).
-   Giá trị `reasoning_default` đang ghi trong repo là giá trị TẠM; giá trị chốt chọn theo mục 7.
+   Giá trị `reasoning_default` đang ghi trong repo là `high` (lý do và việc đang đo lại: mục 7).
 3. Đặt biến môi trường `HUE_BEDROCK_CREDS_FILE` trỏ tới file khoá tạm của Bedrock **lúc bật server** (đặt trước lệnh `uv run`, như `HF_HUB_OFFLINE=1`).
    Trang này và repo chỉ ghi TÊN biến; đường dẫn file khoá hỏi chủ dự án hoặc xem bản giao việc riêng tư ghi ở `session_prompt/VIEC_DANG_MO.md`. File khoá là JSON có
    `accessKeyId`, `secretAccessKey`, `sessionToken`; code đọc lại file ở MỖI lời gọi nên khoá được làm mới bên ngoài thì không phải khởi động lại. Không in, không chép, không commit file này.
@@ -113,7 +113,7 @@ Lỗi hay gặp:
 | Lời lỗi có chữ "khoá Bedrock" (HTTP 403) | khoá tạm hết hạn hoặc không có quyền | báo chủ dự án làm mới file khoá; không sửa code |
 | "Không đọc được file khoá Bedrock" | biến trỏ sai chỗ, file thiếu trường, file hỏng | kiểm biến môi trường; lời lỗi cố ý chỉ nêu tên loại lỗi, không nêu đường dẫn |
 | "Bedrock HTTP 400 …" | Bedrock từ chối thân yêu cầu | xem bảng mục 4 — gần như luôn là một trường Claude không nhận |
-| "Bedrock request failed: ReadTimeout" | lời gọi quá `timeout_seconds` (45 giây) | xem mức suy luận; lời gọi dài nhất đã thấy là 11,6 giây ở mức `low` |
+| "Bedrock request failed: ReadTimeout" | lời gọi quá `timeout_seconds` (45 giây) | xem mức suy luận; lời gọi dài nhất đã thấy là 11,6 giây ở mức `low`, 12,6 giây ở mức `high` (thước 29 câu) |
 
 Mọi lỗi trên đều được xếp vào nhóm "không tạo được câu trả lời" ở cả đường thường lẫn đường stream; lịch trình vẫn hiện bằng câu dự phòng khi lần viết câu hỏng.
 
@@ -132,6 +132,8 @@ không có trường `model` trong thân. Yêu cầu được ký AWS SigV4 (tê
 | Công cụ | `tools` kiểu function | `tools` với `name`, `description`, `input_schema`, `strict` | dịch thẳng; khuôn tham số cũng được gỡ ràng buộc |
 | Ép gọi công cụ | `tool_choice` tuỳ ý | chỉ nhận `auto` / `none`; ép một công cụ ⇒ 400 | không ép. `parallel_tool_calls=False` ⇒ `{"type": "auto", "disable_parallel_tool_use": true}` |
 | Lịch sử + vòng công cụ | các mục `function_call`, `function_call_output` rời | `tool_use` nằm trong tin assistant, `tool_result` ở tin user ngay sau | gộp các mục liền nhau cùng vai vào một tin; `call_id` = `id` của `tool_use` |
+| **Bẫy 1 — khuôn JSON + công cụ trong cùng lời gọi** | model gọi công cụ rồi viết vào khuôn | Sonnet cứ gọi công cụ, không viết: 0 / 8 lần ra câu trả lời (bỏ khuôn: 14 / 14). Ở vòng công cụ đã bị ẩn sau khi có lịch sử công cụ, ép khuôn cho ra chữ rác (tên công cụ, `placeholder`, rỗng): 14 / 22 lần | có khuôn VÀ (có công cụ HOẶC lượt đã có lời gọi công cụ) ⇒ KHÔNG gửi khuôn, thêm công cụ nội bộ `tra_loi` mang đúng khuôn đó; model "gọi" `tra_loi` để nộp câu trả lời, lớp dịch đổi lại thành tin JSON cho bộ khung. Model viết chữ thường thay vì gọi ⇒ bọc vào khuôn một trường |
+| **Bẫy 2 — nhiều tin user liền nhau** (lịch sử chỉ nhớ câu hỏi, không nhớ câu trả lời cũ) | các tin giữ rời; "tin cuối" là câu đang hỏi | Claude không nhận hai tin cùng vai liền nhau | bản ở main lúc viết GỘP chúng thành một tin ⇒ các câu hỏi cũ dính vào câu đang hỏi ⇒ lượt hỏi lại tên giữa cuộc đi nhầm sang tra kho, lỗi "không có trích nguồn" hoặc trả lời lại câu cũ. Bản sửa (chèn một tin assistant giữ chỗ giữa hai câu hỏi liền nhau; kết quả công cụ vẫn gộp) ở nhánh `p9-b-lich-su-tach-luot`, chờ phiên đo — kiểm đã gộp chưa: `grep -c HISTORY_GAP backend/llm/bedrock_model.py` khác 0 |
 | Khối suy luận giữa các vòng công cụ | SDK tự giữ | **bỏ** khối suy luận ở lượt kế vẫn 200 (4 / 4 cách thử) | bỏ luôn, không cất chữ ký |
 | Ảnh | `input_image` dạng data URL | khối `image` với `source.type: base64` | tách kiểu ảnh + dữ liệu từ data URL |
 | **Khuôn JSON + công cụ trong CÙNG một lời gọi** (bẫy đắt nhất 21/11) | gửi cả hai, luna gọi công cụ rồi viết | gửi `output_config.format` cùng `tools` ⇒ sau khi đã có kết quả công cụ, Claude gọi công cụ TIẾP thay vì viết, tới hết vòng rồi lượt thành câu từ chối. Phát lại một thân yêu cầu đã đủ dữ liệu: viết 0 / 8 ở low, 0 / 8 medium, 0 / 8 high, 0 / 8 không suy luận; thêm câu "hãy viết" vào kết quả công cụ: 1 / 8; ẩn công cụ đó: quay sang gọi công cụ khác 8 / 8. Chỉ BỎ khuôn thì viết 8 / 8. | lời gọi vừa có công cụ vừa có khuôn ⇒ không gửi khuôn; thêm một công cụ nội bộ `tra_loi` mang đúng khuôn đó. Claude gọi nó để nộp câu trả lời (hoặc viết chữ thường ⇒ lớp dịch bọc vào khuôn một trường); SDK không bao giờ thấy công cụ này. Cùng thân yêu cầu sau sửa: nộp câu trả lời 8 / 8 ở low và 8 / 8 ở high. Lời gọi chỉ có khuôn (định tuyến, viết câu lịch, hiểu ý sửa lịch, ảnh, chấm) vẫn ép khuôn như cũ. Cùng bẫy ở vòng mà công cụ đã bị ẨN hết (hết lượt tìm kho) sau khi lượt đã gọi công cụ: ép khuôn ở vòng đó ⇒ Claude vẫn muốn tìm tiếp và viết rác vào khuôn — phát lại 22 lần: `placeholder`, tên công cụ, rỗng… 14 lần (người dùng thấy chữ rác hoặc lỗi "Thử lại"), đúng câu từ chối 8 lần. Sửa 11:54 21/11/2026: vòng đó cũng chỉ đưa công cụ nội bộ `tra_loi` ⇒ đúng câu từ chối 20 / 22, 2 / 22 tự nói bằng lời là chưa tìm thấy, 0 rác. |
@@ -148,7 +150,27 @@ khoảng 2.000 token: 15–20 giây; 0 lần bị giới hạn tần suất (429
 
 ## 5. Người dùng thấy gì khác khi chạy Sonnet
 
-Đo ở một lượt thật qua giao diện ngày 21/11/2026: 14 lượt, 14 thành công, mức suy luận mặc định `low` [máy kiểm; một phiên khác đếm lại từ log ra cùng số].
+**Ở mức `high` (mức đang chạy)** — một phiên trọn vẹn qua trình duyệt trên main `e75cf18`, cùng buổi, cùng code, mỗi model một lượt (phiên đo, 13:44 21/11/2026) [máy kiểm]:
+
+| Bước | Sonnet high | luna |
+|---|---|---|
+| Lên lịch 3 ngày bằng biểu mẫu | 11,2 giây | 5,6 giây |
+| Hỏi về lịch đang có | 4,4 giây | 3,2 giây |
+| Sửa lịch bằng lời (bỏ một điểm) | 4,4 giây | 5,5 giây |
+| Hỏi tiếp về một điểm trong lịch | 14,0 giây | 4,5 giây |
+| Tự giới thiệu tên rồi hỏi giá vé | 9,5 giây | 3,1 giây |
+| Hỏi lại tên ở lượt sau | 4,4 giây | 3,1 giây |
+| Cùng biểu mẫu ở màn 390 px | 10,9 giây, không tràn ngang | 5,4 giây, không tràn ngang |
+
+- **Chữ hiện MỘT lần** sau khi model viết xong, không chạy dần như luna. Trong lúc chờ màn hình KHÔNG trắng: dòng trạng thái đổi dần ("Đang hiểu câu hỏi…" ⇒ "Đã tìm trong kho, đang chuẩn bị
+  câu trả lời… (N đoạn)" ⇒ "Đang viết câu trả lời…") — ảnh chụp sau 3 giây ở mọi bước.
+- **Câu trả lời dài gấp khoảng 2,6–3,6 lần luna tuỳ loại câu** (câu một dữ kiện: độ dài giữa 236–258 ↔ 90 ký tự trên 85 câu; câu so sánh / cần nhiều nguồn: 416 ↔ 116 trên 54 câu).
+- Tải PowerPoint và bản in từ lịch do Sonnet viết: chạy, đủ Ngày 1–3 (chưa nhìn từng trang).
+- Lệnh sửa lịch "dời … sang buổi tối": Sonnet trả "chưa rõ ngày / buổi" thay vì lý do + gợi ý (một lượt, chưa tái hiện lại lúc viết).
+- Hạn giờ mỗi lượt vẫn là 45 giây; chưa lượt nào tới 35 giây.
+- "Đệm lời dặn" (`cache_control`) đã thử: đệm chạy (6.068 token đọc từ đệm) nhưng thời gian không giảm (2,72 ↔ 2,69 giây, 4 lần mỗi bên) ⇒ chưa bật.
+
+**Ở mức `low`** (lượt thật đầu tiên qua giao diện, sáng 21/11/2026, trước các bản sửa lớp dịch): 14 lượt, 14 thành công [máy kiểm; một phiên khác đếm lại từ log ra cùng số].
 
 | Loại lượt | Thời gian chờ |
 |---|---|
@@ -161,9 +183,7 @@ khoảng 2.000 token: 15–20 giây; 0 lần bị giới hạn tần suất (429
 | Hỏi về lịch đang có | 11,6 giây (lời gọi dài nhất của cả lượt đo) |
 | Hỏi bằng ảnh | nhận tên 1,2–1,7 giây; cả lượt 11,3 giây |
 
-- **Chữ hiện MỘT lần** sau khi model viết xong, không chạy dần như luna: người dùng chờ hết thời gian ở bảng rồi thấy cả câu.
-- **Tiền mỗi câu:** một câu trả lời có nguồn khoảng 0,018 USD trên Sonnet, cùng loại câu trên luna khoảng 0,0007 USD (khoảng 25 lần). Lượt hỏi tiếp có model tự tìm thêm: 0,048 USD.
-- Hạn giờ mỗi lượt vẫn là 45 giây; chưa lượt nào tới 35 giây.
+- **Tiền mỗi câu** (giá ghi sổ, mức `low`): một câu trả lời có nguồn khoảng 0,018 USD trên Sonnet, cùng loại câu trên luna khoảng 0,0007 USD (khoảng 25 lần). Lượt hỏi tiếp có model tự tìm thêm: 0,048 USD.
 
 Giới hạn đã đo của Sonnet ở nhóm lịch (viết lại 11:26 21/11/2026, sau bốn đoạn dặn):
 - Câu mô tả trong thẻ lịch: Sonnet chép nhiều chi tiết hơn luna và không lấy gì ngoài đoạn nguồn (đối chiếu 17 câu: 0 chi tiết bịa), nhưng có thể ghép sai ý của một câu nguồn dài.
@@ -172,9 +192,9 @@ Giới hạn đã đo của Sonnet ở nhóm lịch (viết lại 11:26 21/11/20
 - Câu dài hơn có hai giá phải trả: (i) file PowerPoint cắt câu quá 170 ký tự bằng "…" — 13 / 51 mục ở lượt đo (trước khi nới: 0 / 27); không nâng trần cắt vì trang 5 điểm chỉ đủ ba dòng chữ;
   (ii) câu nhắc tên điểm khác bị bộ kiểm thay bằng câu dự phòng — 4 / 102 mục; bản 30 từ cùng model 3 / 51 mục ⇒ không phải do nới (luna 0 / 27, một lượt mỗi lịch).
 - Lời gọi hiểu ý sửa lịch chạy dưới hạn 10 giây (hạn của định tuyến). Ở high lần lâu nhất đã thấy là 7,1 giây (câu mơ hồ, có suy luận); phần lớn 1–3 giây. Quá hạn ⇒ câu đó đi như câu hỏi thường, không sửa lịch.
-- Thẻ lịch trên màn hẹp 390 px và bản in với câu dài gấp rưỡi: CHƯA thử (đọc code: ô chữ tự xuống dòng, không cắt).
+- Thẻ lịch trên màn hẹp 390 px với câu dài gấp rưỡi: đã thử một lượt, không tràn ngang, đọc được; bản in: có đủ ba ngày, chưa nhìn từng trang.
 
-Chưa thử qua giao diện với Sonnet: lịch 1 ngày / kiểu gấp / nhiều sở thích · ảnh ra 2–3 tên · câu bão lũ · màn hẹp điện thoại · hai người hỏi cùng lúc ·
+Chưa thử qua giao diện với Sonnet: lịch 1 ngày / kiểu gấp / nhiều sở thích · ảnh ở mức `high` · ảnh ra 2–3 tên · câu bão lũ kèm mục "Từ web" · hai người hỏi cùng lúc ·
 khoá hết hạn giữa một lượt · cả bộ test với `provider: bedrock`.
 
 ## 6. Muốn thêm một model / nhà cung cấp khác
@@ -193,16 +213,21 @@ khoá hết hạn giữa một lượt · cả bộ test với `provider: bedroc
 
 ## 7. Chất lượng trả lời so với luna, và mức suy luận nên dùng
 
-**Điền sau lượt đo** (phiên đo đang chạy: bộ câu mẫu 176 câu, bộ an toàn 32 câu, bộ bẫy và chuỗi hội thoại; người chấm luna; so bốn mức suy luận). Chưa có số nào — không suy ra
-từ các lượt chạy thử ở mục 5, vì các lượt đó chỉ chứng minh đường chạy được.
+Điền 13:50 21/11/2026 (giờ `date`) từ bảng tổng của phiên đo; người chấm là luna trừ khi ghi khác. Mọi bộ là bộ đã thấy hoặc do phiên đo tự soạn, phần lớn một lượt mỗi câu —
+**mẫu nhỏ: chỉ bắt được khác biệt lớn, không chứng minh hai model ngang nhau.** Bảng đủ cho người đọc không chuyên: `bai_hoc/VIEC_MOI_XONG.md` mục 23.
 
-| Cần điền | Giá trị |
+| Mục | Giá trị (luna ↔ Sonnet high) |
 |---|---|
-| Sàn "0 câu ngoài kho được trả lời bằng kho" | — |
-| Bộ an toàn 32 câu | — |
-| Đúng / Đủ ý / Trọng tâm so với mốc luna (nhiễu giữa hai lượt giống nhau: 1 · 2 · 7) | — |
-| Mức suy luận được chọn và lý do | — |
-| Quyết định của chủ dự án (giữ Sonnet / về luna) + ngày | — |
+| Sàn "0 câu ngoài kho được trả lời bằng kho" | 85 câu đầu bộ mẫu: 0 / 7 ↔ 0 / 7 · 10 câu ngoài phạm vi của thước: 0 ↔ 0. Cả bộ 176 câu: CHƯA chạy trên Sonnet |
+| Bộ an toàn | 10 câu (máy kiểm): từ chối nhầm 0 ↔ 0, ngoài kho bị trả lời 0 ↔ 0 · 8 câu có ý cảnh báo, hai người chấm mù (đo trước các bản sửa lớp dịch; người chấm cùng họ model với Sonnet): thiếu cảnh báo 5 / 8 ↔ 1 / 8, trái nguồn 0 ↔ 0. Bộ 32 câu: CHƯA chạy trên Sonnet |
+| Đúng / Đủ ý / Trọng tâm, 66 câu tính điểm (nhiễu hai lượt luna: 0–1 · 1–3 · 2–5 câu tụt). Lượt sáng = lời dặn như bản đang chạy nhưng lớp dịch trước khi sửa; lượt trưa = sau sửa lớp dịch, còn kèm đoạn dặn đã gỡ; chưa có lượt 85 câu trên đúng bản đang chạy (gần nhất: 54 câu so sánh / nhiều nguồn — Đúng 4,87 ↔ 4,89 · Đủ ý 4,63 ↔ 4,78 · Trọng tâm 4,78 ↔ 4,22) | Đúng 4,97 ↔ 4,94 (lượt sáng) · 4,97 (lượt trưa) — ngang · Đủ ý 4,83 ↔ 4,88 · 4,92 — Sonnet nhỉnh hơn dưới cả hai người chấm · Trọng tâm 4,94 ↔ 4,39 · 4,26 — Sonnet thấp hơn rõ vì dài (236–258 ↔ 90 ký tự); chủ dự án đã nhận |
+| Làm trợ lý có công cụ (thước 29 câu; hai lượt giống nhau không câu nào đổi ⇒ chênh từ 2 câu mới đáng kể) | đạt máy 28 ↔ 29 · 8 câu cần nhiều công cụ 7 ↔ 8 (Sonnet trước các bản sửa lớp dịch: 2) · chạm trần vòng 0 ↔ 0 |
+| Người dùng mô phỏng (12 vai, không so cặp; người đọc tay cũng là phiên đã chạy chúng; đo khi lớp dịch còn lỗi dính lịch sử) | lượt nhận câu từ chối trống hoặc lỗi 12 / 48 (25 %) ↔ 7 / 53 (13 %) · phiên đạt mục tiêu 6 ↔ 9 trên 12 · lượt chờ > 15 giây 11 ↔ 17 |
+| 41 câu khó, so cặp qua đường giao diện (lượt đầu, trước hai bản sửa cuối) | đạt máy 24 ↔ 31 · lượt nhận lỗi hoặc từ chối trống 16 ↔ 8 · câu bị rút vì bước kiểm 3 ↔ 6 · thời gian lượt cuối, số giữa 9,6 ↔ 14,9 giây. Lượt đo lại trên bản đang chạy: phiên đo điền |
+| Mức suy luận được chọn và lý do | `high` cho lời gọi thường và cho hiểu ý sửa lịch; nhóm viết câu lịch tự đặt `low`. Lý do: hỏi đáp một lượt bốn mức ngang nhau (chênh 1–2 câu), nhưng (i) lượt có công cụ thời tiết / ngày TRƯỚC bản sửa lớp dịch: medium / low chạm trần vòng 8–9 / 12 lượt, high 1 / 12; (ii) hai lệnh sửa lịch khó: high 5 / 6, low 2 / 6, medium 0 / 6. Cái giá: chậm (mục 5). Sau bản sửa lớp dịch CHƯA đo lại medium / low ở lượt có công cụ — phiên đo đang đo; kết quả điền ở đây |
+| Quyết định của chủ dự án | Đổi TẠM sang Sonnet; công tắc bật 13:26 21/11/2026 ở `high`. Chưa có quyết định giữ lâu dài |
+
+Các bước cải thiện đã đo mà không đưa vào (nới số vòng công cụ, tìm kho ba lần, trả lại khối suy nghĩ, đoạn dặn "nói thẳng", lượt tìm đầu nhiều câu tìm, đệm lời dặn): bảng ở `bai_hoc/VIEC_MOI_XONG.md` mục 23.
 
 ## 8. Hồ sơ
 

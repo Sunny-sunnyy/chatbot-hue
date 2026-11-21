@@ -16,7 +16,7 @@ from openai.types.shared import Reasoning
 
 from core.schema import GenerationError
 from core.settings_loader import load_settings, validate_phase6_settings
-from llm.bedrock_model import BedrockClaudeModel, build_body, sign_headers, strip_constraints, to_messages, to_response
+from llm.bedrock_model import HISTORY_GAP, BedrockClaudeModel, build_body, sign_headers, strip_constraints, to_messages, to_response
 from llm.generator_openai_full_corpus import AnswerOutput, CallLog, OpenAIFullCorpusGenerator, RouteSplitOutput, SuaLichOutput
 from llm.pricing import cost_usd
 
@@ -53,7 +53,7 @@ def test_history_tool_round_and_image_become_claude_messages():
     """Lịch sử dạng gọn + mục SDK tự sinh trong vòng công cụ + ảnh data URL ⇒ tin Claude xen kẽ vai, `tool_use` / `tool_result` khớp `call_id`."""
     items = [
         {"role": "user", "content": "câu 1"},
-        {"role": "user", "content": "câu 2"},  # lượt trước chỉ nhớ câu hỏi ⇒ hai tin user liền nhau phải gộp
+        {"role": "user", "content": "câu 2"},  # lượt trước chỉ nhớ câu hỏi ⇒ hai tin user liền nhau: KHÔNG gộp, chèn tin assistant giữ chỗ
         {"role": "assistant", "content": "đáp 2"},
         {"role": "user", "content": [{"type": "input_text", "text": "Danh sách"},
                                      {"type": "input_image", "image_url": "data:image/jpeg;base64,QUJD", "detail": "auto"}]},
@@ -62,7 +62,9 @@ def test_history_tool_round_and_image_become_claude_messages():
         {"type": "function_call_output", "call_id": "toolu_1", "output": "[Nguồn 1] …"},
     ]
     assert to_messages(items) == [
-        {"role": "user", "content": [{"type": "text", "text": "câu 1"}, {"type": "text", "text": "câu 2"}]},
+        {"role": "user", "content": [{"type": "text", "text": "câu 1"}]},
+        {"role": "assistant", "content": [{"type": "text", "text": HISTORY_GAP}]},  # ranh giới lượt: Claude gộp tin cùng vai liền nhau thành một lượt
+        {"role": "user", "content": [{"type": "text", "text": "câu 2"}]},
         {"role": "assistant", "content": [{"type": "text", "text": "đáp 2"}]},
         {"role": "user", "content": [{"type": "text", "text": "Danh sách"},
                                      {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": "QUJD"}}]},
@@ -72,6 +74,18 @@ def test_history_tool_round_and_image_become_claude_messages():
     assert to_messages("xin chào") == [{"role": "user", "content": [{"type": "text", "text": "xin chào"}]}]
     with pytest.raises(ValueError):
         to_messages([{"role": "system", "content": "x"}])
+
+
+def test_tool_results_still_merge_and_a_question_after_a_tool_round_gets_no_placeholder():
+    """Tin giữ chỗ chỉ chen giữa HAI CÂU HỎI liền nhau. Kết quả công cụ liền nhau vẫn gộp một tin user; câu hỏi đứng sau tin assistant thì không chèn gì."""
+    items = [{"role": "user", "content": "câu hỏi"},
+             {"type": "function_call", "id": "t1", "call_id": "t1", "name": "tim_kho", "arguments": "{}", "status": "completed"},
+             {"type": "function_call_output", "call_id": "t1", "output": "kq 1"},
+             {"type": "function_call_output", "call_id": "t1b", "output": "kq 2"},
+             {"role": "assistant", "content": "đáp"}, {"role": "user", "content": "câu kế"}]
+    roles = [(m["role"], [b["type"] for b in m["content"]]) for m in to_messages(items)]
+    assert roles == [("user", ["text"]), ("assistant", ["tool_use"]), ("user", ["tool_result", "tool_result"]), ("assistant", ["text"]), ("user", ["text"])]
+    assert HISTORY_GAP not in str(to_messages(items))
 
 
 def test_schema_constraints_are_stripped_but_field_names_are_kept():

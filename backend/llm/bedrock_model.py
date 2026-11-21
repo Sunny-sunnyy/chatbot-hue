@@ -50,6 +50,11 @@ AWS_IDENTIFIER = re.compile(r"arn:aws\S*|(?<!\d)\d{12}(?!\d)")  # không để A
 ANSWER_TOOL = "tra_loi"
 ANSWER_TOOL_DESCRIPTION = ("Nộp câu trả lời cuối cùng cho người dùng. Gọi khi đã đủ thông tin để trả lời, hoặc khi không thể tìm thêm — kể cả khi câu trả lời "
                            "là câu từ chối theo lời dặn. Gọi đúng một lần, đặt toàn bộ câu trả lời vào tham số; không viết câu trả lời ra ngoài công cụ này.")
+# Lịch sử hội thoại chỉ nhớ CÂU HỎI (câu trả lời cũ bị bỏ) ⇒ SDK gửi nhiều tin user liền nhau. Claude gộp các tin cùng vai liền nhau thành MỘT lượt, nên câu
+# hỏi của lượt trước dính vào câu đang hỏi: định tuyến "chỉ xét tin nhắn cuối" nhìn thấy cả câu hỏi về Huế của lượt trước ⇒ câu "bạn còn nhớ tôi tên gì không"
+# bị đưa sang trợ lý tra kho ⇒ trả lời đúng nhưng không có nguồn để trích ⇒ lỗi (bộ chuỗi 21/11: 2 / 2 lần trên bản chính; luna 0 vì OpenAI giữ các tin tách
+# rời). Chèn một tin assistant giữ chỗ giữa hai câu hỏi của hai lượt để ranh giới lượt còn nguyên.
+HISTORY_GAP = "(Câu trả lời của lượt này không được lưu trong lịch sử.)"
 CODE_FENCE = re.compile(r"^```(?:json)?\s*(?P<body>.*?)\s*```$", re.DOTALL)
 DATA_URL = re.compile(r"^data:(?P<media>[\w/+.-]+);base64,(?P<data>.+)$", re.DOTALL)
 
@@ -120,7 +125,12 @@ def to_messages(input: "str | list[dict]") -> list[dict]:
             add("user", [{"type": "tool_result", "tool_use_id": item["call_id"],
                           "content": output if isinstance(output, str) else json.dumps(output, ensure_ascii=False)}])
         elif kind in (None, "message") and item.get("role") in ("user", "assistant"):
-            add(item["role"], _content_blocks(item["content"]))
+            blocks = _content_blocks(item["content"])
+            # hai CÂU HỎI liền nhau (không phải kết quả công cụ) là hai lượt khác nhau ⇒ giữ ranh giới lượt bằng một tin assistant giữ chỗ
+            if (item["role"] == "user" and blocks and messages and messages[-1]["role"] == "user"
+                    and all(block["type"] != "tool_result" for block in messages[-1]["content"])):
+                messages.append({"role": "assistant", "content": [{"type": "text", "text": HISTORY_GAP}]})
+            add(item["role"], blocks)
         else:
             raise ValueError(f"Unsupported input item for Bedrock model: {kind or item.get('role')!r}")
     return messages
