@@ -14,6 +14,74 @@
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
 
+## 21/11 — 23. Model viết: đã cắm sẵn Claude Sonnet 5.5 (Amazon Bedrock) bên cạnh gpt-6-luna — hiện VẪN chạy luna, chờ số đo rồi mới bật
+
+*Bản nháp viết 10:15 21/11/2026 (giờ `date`). Mục này chỉ được gộp vào file khi công tắc đã bật; lúc đó dòng "hiện vẫn chạy luna" và ý 3 được sửa theo số đo.*
+
+**Từ dùng ở mục này:** **model viết** = model sinh mọi chữ của trợ lý · **Amazon Bedrock** = dịch vụ của Amazon cho thuê các model, trong đó có Claude Sonnet 5.5 của hãng Anthropic ·
+**OpenAI Agents SDK** = bộ khung nhóm đang dùng để chạy model (gọi model, cho model gọi công cụ, kiểm khuôn đầu ra) — giữ nguyên, không đổi ·
+**lớp dịch** = một file code mới đứng giữa bộ khung đó và Claude, đổi "cách nói" của bên này sang bên kia ở cả hai chiều · **công tắc** = một dòng trong file cấu hình chọn luna hay Sonnet ·
+**stream** = chữ chạy dần ra màn hình trong lúc model viết · **mức suy luận** = model "nghĩ" nhiều hay ít trước khi viết (none / low / medium / high) · **người chấm** = model chấm điểm câu trả lời trong bộ đo.
+
+**Vì sao có việc này.** Sáng 21/11 anh quyết định đổi TẠM model viết của cả sản phẩm từ gpt-6-luna sang Claude Sonnet 5.5, với ba điều kiện: giữ nguyên bộ khung đang dùng; người chấm vẫn là luna
+(để điểm mới so được với mọi điểm cũ); và nói "chuyển về luna" là về được ngay.
+
+**Nó nằm ở đâu trong luồng anh đã biết.** Luồng của trợ lý vẫn là: câu hỏi ⇒ định tuyến (câu này thuộc loại nào) ⇒ tìm 10 đoạn trong kho ⇒ dựng ngữ cảnh ⇒ **model viết câu trả lời** ⇒ kiểm trích nguồn ⇒ hiện ra.
+Việc này chỉ thay "ai là model" ở những bước có model: định tuyến, viết câu trả lời, trò chuyện, mục "Từ web", viết câu cho lịch, hiểu ý sửa lịch, nhận ảnh — chín loại lời gọi, đổi cùng lúc.
+Kho, cách tìm, 10 đoạn, lời dặn, mọi cờ, bộ kiểm trích nguồn, giao diện: không đổi một chữ.
+
+**Vì sao phải viết lớp dịch chứ không đổi một địa chỉ.** Cách dễ nhất là trỏ bộ khung sang địa chỉ của Bedrock. Nhóm thử thật: Bedrock trả lỗi "không có" (404) cho Sonnet 5.5 ở cổng kiểu OpenAI.
+Vậy phải gọi Claude bằng cách gọi gốc của nó, mà cách đó khác luna ở nhiều chỗ nhỏ — mỗi chỗ nhóm đều đo thật trước khi viết (46 lời gọi thử, khoảng 0,36 USD):
+- Claude bắt buộc phải có trần số token đầu ra; luna thì không. Anh đã dặn không đặt trần ⇒ lớp dịch luôn gửi mức cao nhất model cho phép (128.000), coi như không trần.
+- Khuôn JSON có ràng buộc kiểu "tối đa 3 mục" bị Bedrock từ chối ⇒ lớp dịch gỡ các ràng buộc đó khỏi khuôn gửi đi; code của mình vẫn kiểm đủ khi nhận về.
+- Bộ khoá Bedrock đang dùng không có quyền stream ⇒ model viết xong cả câu rồi chữ mới hiện, một lần.
+- Không gửi gì về mức suy luận thì Claude tự nghĩ nhiều (cỡ "high") ⇒ lớp dịch luôn gửi một mức rõ ràng, lấy từ file cấu hình.
+- Cách hai bên đếm token khác nhau ⇒ lớp dịch quy về một cách đếm để tiền ghi trong log vẫn đúng.
+
+**1. Anh thấy gì khác.**
+- **Ngay bây giờ: không khác gì.** Công tắc trong kho code vẫn để luna; trợ lý trả lời y như hôm qua. Một phiên khác người viết đã so 10 loại lời gọi gửi luna trước và sau khi thêm lớp dịch: giống nhau từng byte.
+- **Khi bật Sonnet** (sau khi có số đo và anh đồng ý), anh sẽ thấy: câu trả lời do Sonnet viết; chữ hiện MỘT lần sau khi chờ, không chạy dần; thời gian chờ như bảng dưới; tiền mỗi câu cao hơn nhiều.
+- Đổi qua hay đổi về chỉ là sửa MỘT dòng (`provider: openai` ⇄ `provider: bedrock` trong `backend/config/settings.yaml`) rồi mở lại hệ thống. Từng bước kèm lệnh kiểm: `guides/DOI_MODEL_VIET.md`.
+
+**2. Bằng chứng.**
+- **Lượt thật qua trình duyệt với Sonnet** (21/11/2026, hệ thống thật bật tạm ở một cổng riêng, mức suy luận `low`) [máy kiểm; một phiên khác đếm lại từ log ra cùng số]: 14 lượt, 14 thành công, 0 lỗi.
+  Thời gian dưới đây là người dùng chờ từ lúc gửi tới lúc thấy câu trả lời; để so, luna thường cho chữ ĐẦU TIÊN sau vài giây rồi chạy dần (ví dụ đo 20/11: một câu kho trả lời trong 7,5 giây).
+
+  | Người dùng làm gì | Thấy gì | Chờ |
+  |---|---|---|
+  | Hỏi giá vé Đại Nội | câu trả lời có 3 nguồn | 3,7 giây |
+  | Hỏi tiếp "thế còn lăng Minh Mạng?" | hiểu đúng ý nối câu trước; model tự tìm kho thêm 2 lần | 5,7 giây |
+  | Xin danh sách quán bún bò | danh sách + dòng "có thể chưa đủ" (mục 22) | 5,0 giây |
+  | So sánh hai chùa | trả lời từ kho + mục "Từ web" | 11,5 giây |
+  | Lên lịch 3 ngày bằng biểu mẫu (hai lần) | thẻ lịch đủ ba ngày, có mô tả và quán ăn gần | 9,3 và 9,1 giây |
+  | Sửa lịch: "dời Đại Nội sang sáng ngày 3" | "Đã dời…", lịch đổi đúng | 1,6 giây |
+  | Sửa lịch: hai lệnh không làm được | nói lý do, gợi ý chỗ dời được (mục 19) | 2,7–2,9 giây |
+  | Hỏi về lịch đang có: "ngày 1 đi hết mấy tiếng?" | trả lời đúng theo lịch | 11,6 giây — lượt dài nhất |
+  | Hỏi bằng ảnh chùa Thiên Mụ | nhận đúng tên, tự trả lời giới thiệu có nguồn | 11,3 giây cả lượt |
+
+  Hạn giờ của mỗi lượt là 45 giây; lượt dài nhất mới bằng khoảng một phần tư.
+- **Tiền** (giá ghi sổ, chưa đối chiếu hoá đơn Amazon): một câu trả lời có nguồn khoảng 0,018 USD trên Sonnet; cùng loại câu trên luna khoảng 0,0007 USD — Sonnet đắt hơn khoảng 25 lần.
+  Lượt hỏi tiếp mà model tự tìm thêm: 0,048 USD. Cả 14 lượt trên: 0,30 USD. Anh đã nói tiền Bedrock không phải mối lo; nhóm vẫn ghi số thật.
+- **Bốn mức suy luận đều chạy** (none, low, medium, high — bốn bản cùng lúc, mỗi bản một câu có dùng công cụ) [máy kiểm]: 4 / 4 không lỗi. Đây chỉ chứng minh đường chạy được, CHƯA nói mức nào trả lời hay hơn.
+- **Review của một phiên khác** [người thứ hai kiểm]: bắt một lỗi thật trước khi gộp — khi Bedrock hỏng giữa chừng (khoá hết hạn, rớt mạng) ở đường chữ-hiện-dần, trợ lý báo "lỗi hệ thống" và lịch trình mất cả thẻ,
+  thay vì báo "không tạo được câu trả lời" và vẫn hiện lịch bằng câu dự phòng. Đã sửa; năm ca test mới đều đã thấy hỏng trên bản cũ.
+- **Một lỗi nhóm tự bắt khi viết hướng dẫn:** lật công tắc sang Sonnet từng làm 4 ca test báo hỏng dù đường luna không đổi (các ca đó mong "model phải là luna"). Đã sửa để lật công tắc không làm đỏ test.
+- Test bằng đồ giả [máy kiểm]: 16 ca của lớp dịch đạt (phản hồi của Claude là bản dựng sẵn, vòng chạy của bộ khung là thật); các file test cũ chạm đường đổi vẫn đạt.
+
+**3. Chưa làm / giới hạn.**
+- **CHƯA BẬT.** Sản phẩm đang chạy luna. Bật hay không chờ lượt đo.
+- **CHƯA có số chất lượng:** Sonnet trả lời đúng / đủ / trúng trọng tâm hơn hay kém luna, có giữ được sàn "không trả lời câu ngoài kho" và bộ an toàn hay không — đang đo
+  (bộ 176 câu mẫu, bộ an toàn 32 câu, bộ bẫy, chuỗi hội thoại; người chấm luna; so cả bốn mức suy luận). Các lượt ở ý 2 chỉ cho biết "chạy được và mất bao lâu".
+- Chữ không chạy dần khi dùng Sonnet (bộ khoá không có quyền stream). Muốn có phải xin thêm quyền ở Amazon.
+- Chưa bật "đệm lời dặn" cho Claude (cách giảm tiền phần lời dặn lặp lại mỗi câu) — để sau.
+- Chưa thử qua giao diện với Sonnet: lịch 1 ngày / kiểu gấp / nhiều sở thích · ảnh ra 2–3 tên · câu bão lũ · màn hình điện thoại · hai người hỏi cùng lúc · khoá hết hạn giữa một lượt. Cả bộ test chưa chạy với công tắc ở Sonnet.
+- Khoá Bedrock là khoá tạm do anh giữ; hết hạn thì trợ lý báo "không tạo được câu trả lời" cho tới khi khoá được làm mới — nhóm không xây cơ chế tự làm mới (theo lời anh).
+
+**4. Cách anh thử trong 2 phút.** Hiện chưa có gì để thử trên trợ lý, vì công tắc chưa bật. Hai việc anh làm được ngay:
+- Xem công tắc đang để gì: mở `backend/config/settings.yaml`, tìm dòng `provider:` trong mục `full_corpus_generation` ⇒ đang là `openai` (luna).
+- Tự kiểm mình đã hiểu: không nhìn tài liệu, trả lời ba câu — (a) vì sao không đổi địa chỉ suông được mà phải có lớp dịch? (b) khi dùng Sonnet vì sao chữ hiện một lần? (c) vì sao người chấm vẫn là luna?
+  Đáp án nằm ở các đoạn "Vì sao phải viết lớp dịch" và "Vì sao có việc này" phía trên.
+
 ## 20/11 — 22. Câu xin danh sách ("ở Huế có những quán … nào"): trợ lý nói thật rằng danh sách có thể chưa đủ
 
 **Từ dùng ở mục này:** **dòng ghi chú** = dòng chữ nhỏ dưới câu trả lời (chỗ vẫn hiện "thông tin có thể đã thay đổi") · **khuôn nhận câu** = quy tắc bằng chương trình để nhận ra
