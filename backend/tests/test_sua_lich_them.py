@@ -64,6 +64,10 @@ def test_add_never_removes_a_point_and_every_suggestion_really_works():
                 n_chan += 1
                 assert kd["ma_luat"] == "them_bi_chan" and len(kd["cach"]) <= 2
                 assert ("Làm được, bạn nhắn đủ câu: " in cau["cau"]) == bool(kd["cach"]) and ("không còn chỗ nào" in cau["cau"]) == (not kd["cach"])
+            if ng is None:  # không nói chỗ ⇒ câu không được gán lý do riêng của một buổi (lý do đó chỉ là của chỗ thử sau cùng)
+                assert kd["ly_do"] is None and not any(v in cau["cau"] for v in s.CAU_LY_DO.values())
+            if len(kd["cach"]) == 2 and ng is not None:  # cách cùng ngày được xin đứng trước cách ở ngày khác
+                assert (kd["cach"][0]["ngay"] != ng) <= (kd["cach"][1]["ngay"] != ng)
             for g in kd["cach"]:  # mỗi cách = một lệnh người dùng nhắn lại ⇒ áp thật phải làm được, và X vào đúng buổi được nêu
                 n_cach += 1
                 if g["thay"] is None:

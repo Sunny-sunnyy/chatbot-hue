@@ -397,6 +397,17 @@ def _cach_them(bang, luu: dict, ts, khung: dict, vt: dict, loai, i: str, ngay: i
     return ra
 
 
+def _hai_cach(bang, ts, cach: list[dict], ngay: int | None) -> list[dict]:
+    """Hai cách nêu cho người dùng (review của phiên khác 21/11: xếp theo ngày rồi buổi thì gợi ý đầu thường là "thay Đại Nội…" ở một ngày KHÁC ngày được
+    xin): cùng ngày được xin trước · thêm thẳng (không mất gì) trước · điểm bị thay là điểm không có thứ hạng ưu tiên trước, rồi điểm ngoài sở thích."""
+    st = set(ts.so_thich)
+
+    def khoa(g: dict):
+        d = bang.theo_id[g["thay"]] if g["thay"] is not None else None
+        return (ngay is not None and g["ngay"] != ngay, d is not None, bool(d and d.get("uu_tien")), bool(d and st & set(d["loai"])), g["ngay"], v2.BUOI_NGAY.index(g["buoi"]))
+    return sorted(cach, key=khoa)[:2]
+
+
 def _thu_giu(bang, luu: dict, ts, giu: dict, loai, can: str | None = None) -> dict | None:
     """Xếp lại với `giu`; nhận khi đúng luật và (nếu có) điểm `can` thật sự có trong khung."""
     k = _xep(bang, luu, ts, giu, loai)
@@ -646,14 +657,17 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 # Cờ bật: KHÔNG tự thế — nói điểm nào thay được (người dùng tự quyết bằng lệnh "thay Y bằng X" đã có); không thay được ⇒ lý do + chỗ làm được.
                 ten = ten_cua_diem(bang, i)
                 trong = _cach_them(bang, luu, ts, khung, vt, loai, i, ngay, h.buoi)
-                ma = set(loi)  # mã luật của lần thử thêm thẳng vào chỗ cuối cùng được thử (người dùng nói rõ một buổi ⇒ đúng buổi đó)
+                # lý do = mã luật của lần thử thêm thẳng; chỉ chắc khi người dùng nói rõ MỘT buổi (không nói chỗ ⇒ `loi` là của chỗ thử sau cùng,
+                # không phải lý do chung — review của phiên khác 21/11) ⇒ ngoài ca đó để None, câu dùng lời chung
+                ma = set(loi) if ngay is not None and h.buoi is not None else set()
                 ly_do = "khu" if ma & MA_LUAT_KHU else "kin" if ma & MA_LUAT_KIN else "gio_mo" if "ngoai_gio_mo" in ma else None
                 if trong:
-                    kq["khong_doi"].append({"diem": ten, "ma_luat": "them_can_thay", "dich": [ngay, h.buoi], "cach": trong[:2], "ly_do": ly_do,
+                    kq["khong_doi"].append({"diem": ten, "ma_luat": "them_can_thay", "dich": [ngay, h.buoi], "cach": _hai_cach(bang, ts, trong, ngay), "ly_do": ly_do,
                                             "dang_co": [ten_cua_diem(bang, j) for j, v in vt.items() if v == (ngay, h.buoi)]})
                 else:
                     kq["khong_doi"].append({"diem": ten, "ma_luat": "them_bi_chan", "dich": [ngay, h.buoi], "ly_do": ly_do,
-                                            "cach": [] if ngay is None and h.buoi is None else _cach_them(bang, luu, ts, khung, vt, loai, i, None, None)[:2]})
+                                            "cach": [] if ngay is None and h.buoi is None
+                                            else _hai_cach(bang, ts, _cach_them(bang, luu, ts, khung, vt, loai, i, None, None), ngay)})
                 continue
             if k is None and h.loai == "them_diem":
                 # buổi đã kín (lịch bản 2 thường đủ quỹ phút) ⇒ thế chỗ một điểm lấp / ngoài sở thích ở đúng buổi đó; câu báo nói rõ điểm bị thế
@@ -706,7 +720,7 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 ma = set(v2.kiem_khung_v2(bang, _xep(bang, luu, ts, giu_thay, loai_thay)))
                 kq["khong_doi"].append({"diem": ten_cua_diem(bang, j), "ma_luat": "thay_bi_chan", "cu": ten_cua_diem(bang, i), "dich": list(vt[i]),
                                         "ly_do": "khu" if ma & MA_LUAT_KHU else "kin" if ma & MA_LUAT_KIN else "gio_mo" if "ngoai_gio_mo" in ma else None,
-                                        "cach": _cach_them(bang, luu, ts, khung, vt, loai, j, None, None)[:2]})
+                                        "cach": _hai_cach(bang, ts, _cach_them(bang, luu, ts, khung, vt, loai, j, None, None), vt[i][0])})
                 continue
             if k is None:
                 khong(ten_cua_diem(bang, j), "khong_buoi_hop_le" if vt[i][1] not in bang.theo_id[j]["buoi"] else "khong_hop_luat")
@@ -769,7 +783,8 @@ def _cau_them(bang: v2.BangV2, k: dict) -> str:
              else f"{noi or 'lịch'} đang kín, không xếp thêm được một điểm nữa")
         # "đủ câu": lần hiểu ý không thấy lượt trước ⇒ câu đồng ý cụt ("ok thay đi") không được hiểu (đo 21/11: 0 / 6 lượt mỗi model)
         return f"Chưa làm: thêm {x} — {o}. Muốn đổi, bạn nhắn đủ câu: {' hoặc '.join(cach(g, not ro) for g in k['cach'])}."
-    vi = f"vì {CAU_LY_DO[k['ly_do']]}" if k["ly_do"] else "vì lịch sẽ phạm luật xếp (giờ mở cửa / cụm xa / quá dày)"
+    vi = (f"vì {CAU_LY_DO[k['ly_do']]}" if k["ly_do"] else "vì đặt vào đó lịch sẽ phạm luật xếp (giờ mở cửa / cụm xa / quá dày)" if noi or k["ma_luat"] == "thay_bi_chan"
+          else "vì đặt vào buổi nào lịch cũng phạm luật xếp (giờ mở cửa / cụm xa / quá dày)")  # không nói chỗ ⇒ không gán lý do riêng của một buổi
     dau = (f"Chưa làm: thay {k['cu']} bằng {x} — {vi}." if k["ma_luat"] == "thay_bi_chan"
            else f"Chưa làm: thêm {x}" + (f" vào {noi}" if noi else "") + f" — {vi}.")
     if not k["cach"]:

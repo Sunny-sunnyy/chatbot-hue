@@ -65,3 +65,18 @@ Lịch mới lập gần như luôn kín ⇒ "thêm" trên thực tế là "thay
 | S3 mọi cách nêu ra đều làm được | 4.941 / 4.941 · 21.074 / 21.074 · 12.194 / 12.194 · lệnh thay 9.504 / 9.504 |
 | Lệnh thay: 13.680 lệnh | thay được 3.388 (như cờ tắt) · bị chặn 10.292 — có lý do 10.292 / 10.292 (trước: 0), kèm cách làm được 5.490 |
 | test | `pytest tests/test_sua_lich_them.py -q` ⇒ `6 passed`; cố ý tắt nhánh lệnh thay ⇒ `1 failed, 5 passed` ⇒ trả lại ⇒ `6 passed`; `test_sua_lich_v2` 13 · `test_sua_lich_kem_hoi` 7 · `test_doi_cho_ngay` 26 passed |
+
+## Thêm 19:45 21/11/2026 — ba điểm nhỏ của người đọc (phiên B) + chuỗi qua đường chat thật
+Người đọc (phiên B, mô phỏng độc lập 81 lịch có cả ngày đi + mưa, 4.698 lệnh): sẵn gộp cờ tắt, 0 điểm chặn; ba điểm nhỏ đã xử lý ở commit này:
+1. Lệnh thêm KHÔNG nói chỗ mà hết cách: câu không còn gán lý do riêng của một buổi ("vì đặt vào buổi nào lịch cũng phạm luật xếp…"); lý do cụ thể chỉ nêu khi người dùng nói rõ một buổi.
+2. Thứ tự hai cách nêu ra: cùng ngày được xin trước · thêm thẳng trước · điểm bị thay là điểm không có thứ hạng ưu tiên trước, rồi điểm ngoài sở thích.
+3. Script mô phỏng (riêng tư) nay chạy được trên đúng commit này; đầu ra chạy lại: cờ tắt giống byte khác 0 / 53.189 · lệnh thêm làm mất điểm 0 · 0 · 0 · thêm thật 27 · 27 · 1.049 · cách nêu ra làm được 4.941 / 4.941 · 21.074 / 21.074 · 12.194 / 12.194 · lệnh thay 9.504 / 9.504 · lệnh thêm có nói chỗ bị chặn 23.607, đều có lý do cụ thể, 12.821 kèm cách · lệnh thay bị chặn 10.292, đều có lý do, 5.490 kèm cách. `pytest tests/test_sua_lich_them.py -q` ⇒ `6 passed`.
+
+**Chuỗi sáu lượt qua đường chat thật, mỗi model một chuỗi** (cờ bật bằng ghi đè cấu hình; 0,0024 USD + 0,151 USD):
+- "Thêm Đàn Nam Giao vào sáng ngày 1" ⇒ lịch giữ nguyên + dòng gợi ý; nhắn đúng câu gợi ý ⇒ "Đã thay Đại Nội Huế bằng Đàn Nam Giao."; "Thêm Lăng Khải Định vào sáng ngày 2" ⇒ lý do + cách; nhắn câu đó ⇒ áp. Cả hai model như nhau, 5 / 6 lượt đúng thiết kế.
+- Lượt "ok thay đi" (đồng ý cụt): model cũ ra lượt sửa với dòng nói thật "việc này mình chưa sửa được trên lịch — lịch giữ nguyên… bạn nói cụ thể nhé". **Model đang chạy đi đường hỏi đáp thường và viết "Mình đã thêm Đàn Nam Giao vào sáng ngày 1…" trong khi lịch KHÔNG đổi** — nói chắc mà sai.
+
+| Thêm vào bảng "được / mất" | |
+|---|---|
+| Mất (cả hai model) | 36 % lệnh "thêm X" không nói chỗ kết thúc bằng "lịch này hiện không còn chỗ nào xếp được X" (1.637 / 4.489; mẫu của người đọc: 42 %) — hôm nay các lệnh đó cũng không thêm được, chỉ khác là nay nói thẳng |
+| Rủi ro mới (model đang chạy), ĐANG CHỮA | câu khẳng định đã sửa lịch ở đường hỏi đáp thường: 0 / 451 lượt sổ thật, 0 / 290 lượt của ba lượt mốc, nhưng 1 / 1 ở lượt "ok thay đi" ngay sau dòng gợi ý ⇒ dòng gợi ý mời một câu trả lời mà lần hiểu ý không hiểu. Chưa chữa xong thì KHÔNG đề nghị bật cho model đang chạy. Cách chữa đã chọn: đưa câu gợi ý của lượt trước vào lần hiểu ý ở đúng lượt kế — làm ở commit sau, số ghi tiếp vào file này |
