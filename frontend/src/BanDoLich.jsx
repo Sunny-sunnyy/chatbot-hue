@@ -8,11 +8,10 @@ import { nguonBanDo } from "./nguonBanDo.js";
 // dựng từ bảng (model không tạo toạ độ). File này tải riêng (`lazy` ở `chat.jsx`) ⇒ câu thường không tải Leaflet, không gọi máy chủ tile.
 // Không vẽ đường nối (không có đường đi thật); không tải trước vùng / lưu offline (luật dùng tile OSMF).
 
-// URL ô + tên nhà cung cấp do server gửi (`nguonBanDo.js`) — cùng một hằng số với CSP `img-src`, nên đổi host không phải sửa file này.
-const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-export const ghiCong = n => '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
-  + ` · Ô bản đồ: <a href="${esc(n.trang_nha_cung_cap)}" target="_blank" rel="noopener noreferrer">${esc(n.ten_ngan)}</a>`
-  + " · Toạ độ: dữ liệu mở thành phố Huế";
+// URL ô do server gửi (`nguonBanDo.js`) — cùng một hằng số với CSP `img-src`, nên đổi host không phải sửa file này.
+// Không hiện dòng ghi nguồn trên bản đồ (chủ dự án chọn 21/11/2026; điều khoản của OpenStreetMap đòi dòng đó ⇒ đưa ra công khai thì phải xem lại —
+// `guides/RUNBOOK_BAN_GIAO.md` mục 10). `attributionControl: false` gỡ cả ô ghi nguồn mặc định của Leaflet; dùng chung cho `TrangBanDo.jsx`.
+export const TUY_CHON_BAN_DO = { scrollWheelZoom: false, dragging: !L.Browser.mobile, attributionControl: false };
 const NHAN_BUOI = { sang: "Sáng", chieu: "Chiều", toi: "Tối" };
 
 function oGhim(item) {
@@ -46,8 +45,8 @@ export default function BanDoLich({ items }) {
     if (!coKhung || !khung.current) return undefined;
     // Điện thoại: một ngón vuốt qua khung là CUỘN TRANG (không kéo bản đồ — đo 16/11 khổ 390: vuốt dọc kéo bản đồ 144 px, trang đứng yên);
     // vẫn phóng to / thu nhỏ bằng nút hoặc hai ngón, bấm ghim mở ô tên.
-    const map = L.map(khung.current, { scrollWheelZoom: false, dragging: !L.Browser.mobile });
-    L.tileLayer(nguon.tile, { maxZoom: 18, attribution: ghiCong(nguon) }).addTo(map);
+    const map = L.map(khung.current, TUY_CHON_BAN_DO);
+    L.tileLayer(nguon.tile, { maxZoom: 18 }).addTo(map);
     // `lech` = số điểm ảnh vẽ ghim lệch sang phải (đổi điểm neo của biểu tượng; toạ độ thật của ghim không đổi)
     const bieuTuong = (item, lech = 0) => L.divIcon({ className: `ghim ghim-ngay-${(item.ngay - 1) % 5}`, html: String(item.thu_tu),  // màu theo ngày (đợt 2)
                                                      iconSize: [30, 30], iconAnchor: [15 - lech, 15] });
@@ -65,7 +64,7 @@ export default function BanDoLich({ items }) {
       });
     }
     map.on("zoomend", tachGhim);
-    // Lề dưới rộng hơn: dòng ghi công nằm đè lên mép dưới khung (màn hẹp xuống 2 dòng ≈ 36 px) ⇒ ghim ở mép dưới bị che một phần
+    // Lề dưới rộng hơn (60 px): đặt từ lúc còn dòng ghi nguồn nằm đè mép dưới khung; dòng đó đã bỏ 21/11/2026, lề giữ nguyên — chưa xét giảm
     map.fitBounds(L.latLngBounds(coToaDo.map(i => i.toa_do)), { paddingTopLeft: [28, 28], paddingBottomRight: [28, 60], maxZoom: 15 });
     tachGhim();
     return () => map.remove();

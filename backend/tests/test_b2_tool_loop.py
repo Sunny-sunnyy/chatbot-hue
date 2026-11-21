@@ -261,3 +261,24 @@ def test_flags_reject_router_variants_without_router():
         AssistantFlags(lan_tim_dau="v1")
     assert AssistantFlags(lan_tim_dau="v2").uses_tools and AssistantFlags(router=True, tim_them=True).uses_tools
     assert not AssistantFlags(router=True, lan_tim_dau="v3").uses_tools
+
+
+def test_refusal_sentence_appended_after_a_cited_answer_is_dropped(deps):
+    """21/11/2026: model viết phần kho có (có [n]) rồi nối nguyên câu từ chối khuôn ở cuối ⇒ trước đây bộ kiểm trích nguồn báo lỗi và người dùng thấy
+    "Thử lại". Nay câu khuôn ở cuối bị gỡ, phần có nguồn được giữ và vẫn qua kiểm trích nguồn. Các dạng khác giữ nguyên hành vi cũ."""
+    from llm.assistant import bo_cau_tu_choi_cuoi
+
+    co_nguon = "Hòn này còn có tên khác [1]."
+    assert bo_cau_tu_choi_cuoi(f"{co_nguon}\n\n{INSUFFICIENT_ANSWER}\n") == co_nguon
+    assert bo_cau_tu_choi_cuoi(INSUFFICIENT_ANSWER) == INSUFFICIENT_ANSWER                                   # đúng câu khuôn ⇒ vẫn là câu từ chối
+    assert bo_cau_tu_choi_cuoi(f"Mình chưa rõ. {INSUFFICIENT_ANSWER}") == f"Mình chưa rõ. {INSUFFICIENT_ANSWER}"  # phần trước không có nguồn ⇒ không gỡ
+    giua = f"{INSUFFICIENT_ANSWER} Nhưng có điều này [1]."
+    assert bo_cau_tu_choi_cuoi(giua) == giua                                                                # câu khuôn không ở cuối ⇒ không gỡ
+
+    def tim_roi_viet(chu):  # biến thể V2 không có lần tìm đầu của code ⇒ model tìm một lần rồi mới viết (nguồn [1] có thật)
+        return generator(lambda n, kw: [tool_call("Giờ mở cửa Đại Nội Huế")] if n == 1 else [answer(chu)])
+
+    trace = run_turn(deps, "Đại Nội mở cửa mấy giờ?", tim_roi_viet(f"Có thông tin [1].\n\n{INSUFFICIENT_ANSWER}"))
+    assert trace.citation_error is None and trace.answer == "Có thông tin [1]." and [s.id for s in trace.cited] == [1]
+    khong_nguon = run_turn(deps, "Đại Nội mở cửa mấy giờ?", tim_roi_viet(f"Mình nghĩ là có. {INSUFFICIENT_ANSWER}"))
+    assert khong_nguon.citation_error is not None                                                           # không có [n] phía trước ⇒ vẫn rút lại như cũ

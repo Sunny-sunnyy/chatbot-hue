@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 16:17 20/11/2026 · thêm mục 22 (câu xin danh sách: trợ lý nói thật "danh sách có thể chưa đủ"; đã bật) và mục 21 (người sau gõ đúng câu người trước đã hỏi thì nhận lại câu trả lời cũ gần như ngay; đã bật sau một lượt thật trên trình duyệt) · trước đó 16:11 20/11/2026 · thêm mục 20 (trang "Bản đồ" riêng trong menu: 40 điểm tham quan, lọc theo loại; đã thử trên trình duyệt ở màn rộng và bề rộng điện thoại; ĐÃ gộp vào bản chính `b2f27d78`, giao diện bản chính đã dựng lại 16:17 20/11/2026) · trước đó 16:08 20/11/2026 · thêm mục 19 (sửa lịch bằng lời: khi KHÔNG dời được một điểm, trợ lý nói vì sao và gợi ý chỗ dời được; đã có một lượt thật trên giao diện và một phiên khác kiểm lại) · trước đó 13:45 20/11/2026 · thêm mục 18 (bản sửa "báo đã dời khi lịch không đổi" — việc mục 17 ý 5 ghi "được duyệt nhưng không làm được" nay đã làm; cả bộ test trên bản đã có sửa này (chạy 13:44–14:04 20/11/2026): 55 / 55 file, 1.555 ca đạt, 0 hỏng) · trước đó 11:40 20/11/2026 · mục 17 thêm ý 5 (lượt soát lần hai riêng cho các bản sửa: ba bản sửa nhỏ đã gộp, một bản không làm được, phần còn lại ghi giới hạn; cả bộ test trên bản cuối CHƯA chạy lúc viết) · trước đó 10:02, ngày 20/11/2026 · mục 17 thêm đợt hai (hai model Gemini: 16 phát hiện, 6 điểm mới; hai sửa của đợt hai đã gộp vào bản chính 10:10 20/11/2026) · trước đó 09:39, ngày 20/11/2026 · thêm mục 17 (một AI khác hãng soát code: 13 điểm, sửa bốn, ghi giới hạn tám, kèm một lỗi nhóm tự tìm; ba thay đổi của mục này đã gộp vào bản chính 09:41 20/11/2026) · trước đó 08:49, ngày 20/11/2026 thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; đã gộp vào bản chính 08:58 20/11/2026) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 13:48 21/11/2026 · thêm mục 23 (model viết đổi tạm sang Claude Sonnet 5.5 mức high; kèm số so với luna và các bước đã đo mà không đưa vào) · thêm mục 22 (câu xin danh sách: trợ lý nói thật "danh sách có thể chưa đủ"; đã bật) và mục 21 (người sau gõ đúng câu người trước đã hỏi thì nhận lại câu trả lời cũ gần như ngay; đã bật sau một lượt thật trên trình duyệt) · trước đó 16:11 20/11/2026 · thêm mục 20 (trang "Bản đồ" riêng trong menu: 40 điểm tham quan, lọc theo loại; đã thử trên trình duyệt ở màn rộng và bề rộng điện thoại; ĐÃ gộp vào bản chính `b2f27d78`, giao diện bản chính đã dựng lại 16:17 20/11/2026) · trước đó 16:08 20/11/2026 · thêm mục 19 (sửa lịch bằng lời: khi KHÔNG dời được một điểm, trợ lý nói vì sao và gợi ý chỗ dời được; đã có một lượt thật trên giao diện và một phiên khác kiểm lại) · trước đó 13:45 20/11/2026 · thêm mục 18 (bản sửa "báo đã dời khi lịch không đổi" — việc mục 17 ý 5 ghi "được duyệt nhưng không làm được" nay đã làm; cả bộ test trên bản đã có sửa này (chạy 13:44–14:04 20/11/2026): 55 / 55 file, 1.555 ca đạt, 0 hỏng) · trước đó 11:40 20/11/2026 · mục 17 thêm ý 5 (lượt soát lần hai riêng cho các bản sửa: ba bản sửa nhỏ đã gộp, một bản không làm được, phần còn lại ghi giới hạn; cả bộ test trên bản cuối CHƯA chạy lúc viết) · trước đó 10:02, ngày 20/11/2026 · mục 17 thêm đợt hai (hai model Gemini: 16 phát hiện, 6 điểm mới; hai sửa của đợt hai đã gộp vào bản chính 10:10 20/11/2026) · trước đó 09:39, ngày 20/11/2026 · thêm mục 17 (một AI khác hãng soát code: 13 điểm, sửa bốn, ghi giới hạn tám, kèm một lỗi nhóm tự tìm; ba thay đổi của mục này đã gộp vào bản chính 09:41 20/11/2026) · trước đó 08:49, ngày 20/11/2026 thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; đã gộp vào bản chính 08:58 20/11/2026) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -13,6 +13,134 @@
 **Từ dùng chung cho các mục 19/11:** **cờ** = một dòng bật / tắt trong file cấu hình, tắt là hệ thống chạy như trước khi có tính năng · **lời dặn** = đoạn chữ cố định gửi kèm mọi
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
+
+## 21/11 — 23. Model viết đổi TẠM sang Claude Sonnet 5.5 (Amazon Bedrock), mức suy luận high — gpt-6-luna vẫn nằm sẵn, đổi về bằng một dòng
+
+*Viết 13:48 21/11/2026 (giờ `date`). Công tắc bật từ 13:26 21/11/2026. Số trong mục này là của ngày 21/11; chỗ phiên đo còn đang chạy được ghi rõ "chờ điền".*
+
+**Từ dùng ở mục này:** **model viết** = model sinh mọi chữ của trợ lý · **Amazon Bedrock** = dịch vụ của Amazon cho thuê các model, trong đó có Claude Sonnet 5.5 của hãng Anthropic ·
+**OpenAI Agents SDK** = bộ khung nhóm đang dùng để chạy model (gọi model, cho model gọi công cụ, kiểm khuôn đầu ra) — giữ nguyên, không đổi ·
+**lớp dịch** = một file code mới đứng giữa bộ khung đó và Claude, đổi "cách nói" của bên này sang bên kia ở cả hai chiều · **công tắc** = một dòng trong file cấu hình chọn luna hay Sonnet ·
+**stream** = chữ chạy dần ra màn hình trong lúc model viết · **mức suy luận** = model "nghĩ" nhiều hay ít trước khi viết (none / low / medium / high) · **người chấm** = model chấm điểm câu trả lời trong bộ đo ·
+**thước** = bộ câu "làm trợ lý" của phiên đo, chạy bằng một lệnh, cùng câu cho cả hai model · **đạt máy** = code tự kiểm (từ chối đúng lúc, có ý phải có, không hết vòng) — thô hơn người đọc ·
+**chạm trần vòng** = model gọi công cụ hết số vòng cho phép mà chưa viết ⇒ người dùng nhận câu từ chối trống · **câu bị rút** = model đã viết nhưng bước kiểm của code không cho qua ⇒ người dùng thấy "Thử lại" ·
+**người dùng mô phỏng** = một model thứ ba đóng vai du khách, hỏi nhiều lượt liền qua đúng đường của giao diện.
+
+**Vì sao có việc này.** Sáng 21/11 anh quyết định đổi TẠM model viết của cả sản phẩm từ gpt-6-luna sang Claude Sonnet 5.5, với ba điều kiện: giữ nguyên bộ khung đang dùng; người chấm vẫn là luna
+(để điểm mới so được với mọi điểm cũ); và nói "chuyển về luna" là về được ngay. Sau đó anh cho thêm hướng: không xây lại, nhưng được sửa lớp nối model, lời dặn, công cụ — và mỗi thay đổi phải đo trên CẢ hai model.
+
+**Nó nằm ở đâu trong luồng anh đã biết.** Luồng của trợ lý vẫn là: câu hỏi ⇒ định tuyến (câu này thuộc loại nào) ⇒ tìm 10 đoạn trong kho ⇒ dựng ngữ cảnh ⇒ **model viết câu trả lời** ⇒ kiểm trích nguồn ⇒ hiện ra.
+Việc này chỉ thay "ai là model" ở những bước có model: định tuyến, viết câu trả lời, trò chuyện, mục "Từ web", viết câu cho lịch, hiểu ý sửa lịch, nhận ảnh — chín loại lời gọi, đổi cùng lúc.
+Kho, cách tìm, 10 đoạn, mọi cờ, bộ kiểm trích nguồn, giao diện: không đổi. Lời dặn gửi luna không đổi; riêng đường Sonnet có thêm ba đoạn dặn ngắn (định tuyến nơi ở rìa Huế, viết câu thẻ lịch, hiểu ý sửa lịch), mỗi đoạn có một ca đo làm lý do.
+
+**Vì sao phải viết lớp dịch chứ không đổi một địa chỉ.** Cách dễ nhất là trỏ bộ khung sang địa chỉ của Bedrock. Nhóm thử thật: Bedrock trả lỗi "không có" (404) cho Sonnet 5.5 ở cổng kiểu OpenAI.
+Vậy phải gọi Claude bằng cách gọi gốc của nó, mà cách đó khác luna ở nhiều chỗ nhỏ — mỗi chỗ nhóm đều đo thật trước khi viết:
+- Claude bắt buộc phải có trần số token đầu ra; luna thì không. Anh đã dặn không đặt trần ⇒ lớp dịch luôn gửi mức cao nhất model cho phép (128.000), coi như không trần.
+- Khuôn JSON có ràng buộc kiểu "tối đa 3 mục" bị Bedrock từ chối ⇒ lớp dịch gỡ các ràng buộc đó khỏi khuôn gửi đi; code của mình vẫn kiểm đủ khi nhận về.
+- Bộ khoá Bedrock đang dùng không có quyền stream ⇒ model viết xong cả câu rồi chữ mới hiện, một lần.
+- Không gửi gì về mức suy luận thì Claude tự nghĩ nhiều ⇒ lớp dịch luôn gửi một mức rõ ràng, lấy từ file cấu hình.
+- Cách hai bên đếm token khác nhau ⇒ lớp dịch quy về một cách đếm để số ghi trong log vẫn đúng.
+
+**Hai lỗi lớn tìm ra ở chính lớp dịch trong ngày** — cả hai là do Claude hiểu cùng một yêu cầu khác luna, không phải do model kém; đây là phần đáng nhớ nhất nếu ai hỏi "đổi model có phải chỉ đổi tên model không":
+- *Gửi cùng lúc "khuôn JSON bắt buộc" và "danh sách công cụ".* luna vẫn gọi công cụ rồi viết vào khuôn. Sonnet thì cứ gọi công cụ mãi, không viết: 0 / 8 lần viết được câu trả lời; bỏ khuôn đi thì 14 / 14.
+  Sửa: ở lượt có công cụ, Sonnet nộp câu trả lời qua một "công cụ nội bộ" thay cho khuôn. Trên thước: câu cần nhiều công cụ đạt 2 ⇒ 7 trong 8 câu; số câu chạm trần vòng 6 ⇒ 0 trong 29 câu.
+- *Các câu hỏi cũ dính liền vào câu đang hỏi.* Lịch sử cuộc trò chuyện chỉ nhớ câu hỏi (không nhớ câu trả lời cũ) ⇒ gửi đi nhiều tin của người dùng đứng liền nhau. Claude không nhận hai tin cùng vai liền nhau nên lớp dịch gộp chúng thành một
+  ⇒ model thấy câu hỏi về vé của lượt trước và câu "bạn còn nhớ tôi tên gì" như MỘT câu ⇒ đi tra kho, trả lời lại câu cũ, hoặc báo lỗi vì không có nguồn để trích. Bản sửa (chèn một tin giữ chỗ giữa hai lượt) đã viết và thử trên hai
+  cuộc trò chuyện mẫu: lượt hỏi lại tên đi đúng đường 4 / 4 lần (trước đó 0 / 2). **Bản sửa này ĐANG chờ phiên đo, chưa có trong bản đang chạy** — xem ý 3.
+
+**1. Anh thấy gì khác.**
+- **Trợ lý đang chạy Sonnet 5.5, mức suy luận high**, ở mọi chỗ có model.
+- **Câu trả lời dài gấp khoảng 2,6–3,6 lần tuỳ loại câu** (câu một dữ kiện: độ dài giữa 236–258 ký tự, luna 90; câu so sánh / cần nhiều nguồn: 416, luna 116): trả lời thẳng ở câu đầu rồi thêm một đến bốn câu chi tiết có nguồn; đôi chỗ lặp ý.
+- **Chờ lâu hơn, và chữ hiện MỘT lần ở cuối** thay vì chạy dần. Trong lúc chờ màn hình KHÔNG trắng: có dòng trạng thái đổi dần ("Đang hiểu câu hỏi…" ⇒ "Đã tìm trong kho, đang chuẩn bị câu trả lời…" ⇒ "Đang viết câu trả lời…").
+  Thời gian đo qua trình duyệt, cùng buổi, cùng code, mỗi model một lượt [máy kiểm, phiên đo]:
+
+  | Người dùng làm gì | Sonnet high | luna |
+  |---|---|---|
+  | Lên lịch 3 ngày bằng biểu mẫu | 11,2 giây | 5,6 giây |
+  | Hỏi về lịch đang có ("ngày 2 đi đâu, mấy giờ bắt đầu") | 4,4 giây | 3,2 giây |
+  | Sửa lịch bằng lời (bỏ một điểm) | 4,4 giây | 5,5 giây |
+  | Hỏi tiếp về một điểm trong lịch | 14,0 giây — lượt dài nhất | 4,5 giây |
+  | Tự giới thiệu tên rồi hỏi giá vé | 9,5 giây | 3,1 giây |
+
+  Hạn giờ của mỗi lượt là 45 giây. Ở bảng này lượt dài nhất là 14 giây; ở các phiên người dùng mô phỏng (ý 2) lượt lâu nhất của Sonnet là 28 giây, của luna 37 giây.
+- **Câu nhiều ý ít bị từ chối trống hơn** (số ở ý 2, bảng người dùng mô phỏng).
+- Đổi qua hay đổi về chỉ là sửa MỘT dòng (`provider: bedrock` ⇄ `provider: openai` trong `backend/config/settings.yaml`) rồi mở lại hệ thống; về luna thì chữ lại chạy dần. Từng bước kèm lệnh kiểm: `guides/DOI_MODEL_VIET.md` mục 2 và 3.
+
+**2. Bằng chứng** (mọi bảng: cùng câu cho hai model; người chấm là luna trừ khi ghi khác; mẫu nhỏ nên chỉ bắt được khác biệt lớn).
+Các bảng NHIỀU LƯỢT của Sonnet dưới đây (người dùng mô phỏng, 41 câu khó, phiên trình duyệt, phần cuộc trò chuyện của thước) đo khi lớp dịch CÒN lỗi "câu hỏi cũ dính vào câu đang hỏi" nêu ở trên
+⇒ số của Sonnet ở các lượt có lịch sử có thể đổi sau bản sửa; phiên đo đang đo cặp trước ↔ sau.
+- **Hỏi đáp một lượt — 85 câu đầu của bộ câu mẫu, 66 câu tính điểm, thang 1–5** [máy kiểm, phiên đo]. Để biết chênh bao nhiêu là thật: hai lượt luna giống hệt nhau lệch nhau 0–1 câu ở Đúng, 1–3 câu ở Đủ ý, 2–5 câu ở Trọng tâm.
+  Sonnet high được đo hai lượt: lượt sáng (lời dặn trả lời như bản đang chạy, nhưng lớp dịch là bản TRƯỚC khi sửa) và lượt trưa (sau bản sửa lớp dịch, lúc còn kèm đoạn dặn "nói thẳng" nay đã gỡ) — bảng ghi cả hai số, sáng trước.
+  **Chưa có lượt 85 câu nào trên đúng bản đang chạy.** Thứ gần nhất trên bản đang chạy là 54 câu so sánh / cần nhiều nguồn (nhóm câu KHÓ hơn nên điểm thấp hơn bảng dưới), cùng buổi, luna ↔ Sonnet: Đúng 4,87 ↔ 4,89 · Đủ ý 4,63 ↔ 4,78 ·
+  Trọng tâm 4,78 ↔ 4,22 · câu trong kho bị từ chối nhầm 1 ↔ 0 (người chấm Sonnet ra cùng chiều: 4,80 ↔ 4,78 · 4,50 ↔ 4,69 · 4,78 ↔ 4,20).
+
+  | | luna | Sonnet high (sáng · trưa) | Đọc thế nào |
+  |---|---|---|---|
+  | Đúng | 4,97 | 4,94 · 4,97 | ngang nhau (lệch một câu, trong mức nhiễu) |
+  | Đủ ý | 4,83 | 4,88 · 4,92 | Sonnet nhỉnh hơn; chấm lại bằng người chấm Sonnet cũng ra cùng chiều (luna 4,71; Sonnet 4,83 · 4,91) |
+  | Trọng tâm | 4,94 | 4,39 · 4,26 | Sonnet thấp hơn rõ: 37–46 câu bị trừ, hầu hết từ 5 xuống 4 — vì dài |
+  | Độ dài giữa của câu trả lời | 90 ký tự | 236 · 258 ký tự | |
+  | Câu ngoài kho mà vẫn trả lời bằng kho (7 câu) | 0 | 0 · 0 | sàn giữ ở cả hai |
+  | Câu trong kho bị từ chối nhầm (78 câu) | 1 | 0 · 0 | |
+  | Thời gian cả câu, số giữa | 3,1 giây | 2,6 · 2,7 giây | không qua giao diện; qua giao diện xem bảng ở ý 1 |
+
+- **Làm trợ lý có công cụ — thước 29 câu** (15 câu chọn công cụ, 6 câu nơi ở rìa Huế, 8 câu cần nhiều công cụ) [máy kiểm, phiên đo; hai lượt mỗi model không câu nào đổi kết quả ⇒ chênh từ 2 câu mới đáng kể]:
+  đạt máy luna 28 / 29, Sonnet 29 / 29; riêng 8 câu cần nhiều công cụ: luna 7, Sonnet 8. Trước các bản sửa trong ngày Sonnet chỉ đạt 2 / 8 ở nhóm này — tức phần lớn tiến bộ đến từ sửa lớp dịch, không phải từ model.
+  10 câu an toàn và 10 câu ngoài phạm vi: 0 câu bị từ chối nhầm, 0 câu bị trả lời bằng kho, ở cả hai model.
+- **Người dùng mô phỏng — 12 kiểu du khách, mỗi kiểu một phiên tối đa 5 lượt cho mỗi model** [một phiên đọc tay cả 24 phiên — cũng là phiên đã chạy chúng, biết phiên nào của model nào; chưa có người thứ hai]. KHÔNG so cặp được từng lượt, vì hai phiên của cùng một vai rẽ sang hướng khác nhau sau lượt đầu:
+
+  | Người dùng gặp gì | luna (48 lượt) | Sonnet high (53 lượt) |
+  |---|---|---|
+  | Lượt nhận câu từ chối trống hoặc lỗi | 12 (25 %) | 7 (13 %) |
+  | — trong đó chạm trần vòng | 6 | 0 |
+  | — trong đó câu bị rút | 3 | 4 |
+  | "Tư liệu chưa có" trong khi kho có | 3 | 0 |
+  | Từ chối cả câu khi người dùng nhắc lại "số bạn vừa đưa" | 0 | 3 |
+  | Lượt chờ trên 15 giây | 11 | 17 |
+  | Phiên đạt mục tiêu của vai: đạt · một phần · không | 6 · 4 · 2 | 9 · 3 · 0 |
+
+- **41 câu khó rút từ các phiên trên, so cặp** (cùng câu, cùng lịch sử, qua đường giao diện; lượt ĐẦU, đo trước hai bản sửa cuối) [máy kiểm, phiên đo]: đạt máy luna 24, Sonnet 31 · lượt nhận lỗi hoặc câu từ chối trống luna 16 (39 %), Sonnet 8 (20 %) ·
+  câu bị rút luna 3, Sonnet 6 · chạm trần vòng luna 5, Sonnet 0 · thời gian lượt cuối, số giữa: luna 9,6 giây, Sonnet 14,9 giây. *Lượt đo lại trên bản đang chạy: chờ phiên đo điền.*
+- **Một phiên trọn vẹn qua trình duyệt trên bản đang chạy** (lên lịch ⇒ hỏi về lịch ⇒ sửa ⇒ hỏi tiếp ⇒ câu kho thiếu ⇒ tải PowerPoint + bản in ⇒ màn hình điện thoại 390 px ⇒ hỏi lại tên; 9 bước, mỗi model một lượt) [máy kiểm, phiên đo]:
+  Sonnet đạt 8 bước, không lỗi; bước không đạt là lệnh "dời … sang buổi tối" — trợ lý nói "chưa rõ ngày / buổi" thay vì nêu lý do và gợi ý chỗ dời được (lịch không bị đổi sai). luna đạt 7 bước, một bước đạt một phần (cùng lệnh đó, nói nhầm "buổi chiều"), một bước LỖI (câu bị rút ở câu kho thiếu).
+- **Nêu cảnh báo an toàn** (8 câu có ý cảnh báo, hai người chấm mù là agent con Claude — cùng họ model với Sonnet nên đọc dè dặt; đo trước các bản sửa trong ngày): thiếu cảnh báo luna 5 / 8, Sonnet 1 / 8; trái nguồn 0 ở cả hai.
+- **Review và test:** mỗi nhánh code trong ngày được một phiên khác đọc trước khi gộp; lớp dịch có 20 ca test bằng đồ giả (phản hồi của Claude là bản dựng sẵn, vòng chạy của bộ khung là thật), ca nào mới cũng đã thấy đỏ trên bản cũ.
+  Đường luna: một phiên khác chụp 10 loại lời gọi gửi OpenAI trước và sau khi có lớp dịch, giống nhau từng byte [người thứ hai kiểm].
+
+**Các bước đã đo trong ngày mà KHÔNG đưa vào** — để anh trả lời được câu "sao không làm thêm X":
+
+| Đã thử | Số đo | Vì sao không đưa vào |
+|---|---|---|
+| Thêm đoạn dặn "nói thẳng, không lặp ý" cho Sonnet | Đúng / Đủ ý không đổi; câu dài thêm 9 %; Trọng tâm 4,39 ⇒ 4,26 | không gọn hơn như mong ⇒ gỡ |
+| Cho model gọi công cụ nhiều vòng hơn (8 vòng thay 4, tìm kho 4 lần thay 2) | thước 28 ↔ 28 / 29 ở cả hai model; câu lâu nhất của luna 14 ⇒ 22 giây | model hiếm khi dùng phần nới, dùng cũng không đổi kết cục; câu kho không có thì chờ lâu hơn |
+| Cho model tìm kho 3 lần thay 2 | bộ 6 câu "hai bước" × 3: 15 ↔ 15 / 18 ở cả hai model | không lượt nào dùng tới lần thứ ba — chỗ nghẽn là CÂU TÌM, không phải số lần |
+| Trả lại cho Sonnet phần "suy nghĩ" của vòng trước giữa các vòng công cụ | 48 lượt có ↔ không: đạt 24 / 24 ↔ 24 / 24, thời gian ngang nhau | không có lợi ích đo được |
+| Lượt tìm đầu dùng nhiều câu tìm | luna: Đúng giảm 0,24–0,32, từ chối nhầm 1 ⇒ 4. Sonnet: Đủ ý tăng 0,11–0,13 | hại luna ⇒ luna giữ như cũ; Sonnet mới thắng 3 câu trong một lượt ⇒ chờ lượt xác nhận |
+| Công cụ khoảng cách tự tính từ toạ độ | đếm sổ vết 7 ngày: 0 / 32 câu hỏi khoảng cách cần tới nó | không có câu thật nào cần |
+| "Đệm lời dặn" để Sonnet nhanh hơn | 4 lần mỗi bên: 2,72 ↔ 2,69 giây | đệm có chạy nhưng không nhanh hơn — thời gian do số chữ viết ra và số vòng quyết định |
+| Sửa đoạn dặn định tuyến để chữa lỗi "hỏi lại tên" | lượt hỏi lại tên vẫn lỗi 4 / 4 | sai chỗ — gốc ở lớp dịch (đoạn "hai lỗi lớn" phía trên) ⇒ gỡ |
+
+Đã viết xong, đang chờ phiên đo (chưa bật): "hết vòng thì vòng cuối chỉ viết từ những gì đã tìm được" — trên luna số lượt chạm trần vòng 3 / 15 ⇒ 0 / 15 ở lượt thử của người viết.
+
+**3. Chưa làm / giới hạn.**
+- **Đổi TẠM.** Chưa có quyết định giữ Sonnet lâu dài; đường luna nguyên vẹn.
+- **Chậm hơn luna ở mọi bước có viết** (bảng ở ý 1) và chữ không chạy dần — muốn chạy dần phải xin thêm quyền cho bộ khoá ở Amazon. Phiên đo đang đo lại mức suy luận thấp hơn (medium, low) để xem nhanh hơn được bao nhiêu mà không tụt chất lượng.
+- **Lỗi đang biết của đường Sonnet:** (a) hỏi lại điều mình vừa kể giữa cuộc ("mình tên gì nhỉ") có thể báo "Thử lại", bấm lại vẫn lỗi — bản sửa đang chờ đo; (b) câu bị rút vì bước kiểm con số (người dùng nhắc lại con số dự báo rồi hỏi thêm) —
+  cả hai model đều dính (3 ↔ 4 lượt ở người dùng mô phỏng), một phiên khác đang sửa; (c) lệnh sửa lịch "sang buổi tối" chưa nêu lý do (một lượt, chưa tái hiện lại); (d) câu trả lời dài, Trọng tâm thấp hơn luna — anh đã nhận.
+- **Chưa chạy trên Sonnet:** cả bộ 176 câu mẫu (mới 85 câu đầu + 54 câu so sánh / nhiều nguồn, hai phần trùng nhau một ít), bộ an toàn 32 câu (mới 10 câu, trong đó 8 câu có ý cảnh báo đã qua người chấm một lần), bộ câu kín, cả bộ test với công tắc ở Sonnet. Mọi bộ đã dùng là bộ đã thấy hoặc do phiên đo tự soạn, phần lớn một lượt mỗi câu.
+- **Chưa thử qua giao diện ở mức high:** hỏi bằng ảnh (sáng 21/11 ở mức low: nhận đúng một ảnh chùa Thiên Mụ), câu bão lũ kèm mục "Từ web", hai người hỏi cùng lúc, khoá hết hạn giữa một lượt.
+- Trong thẻ lịch, Sonnet viết một đến hai câu (khoảng 50 từ) thay cho một câu 30 từ: đầy đủ hơn, không bịa ngoài nguồn (đối chiếu 17 câu: 0), nhưng vẫn có thể ghép sai ý của một câu nguồn dài (12 lượt ở một mục: sai 1, nói lỏng 4);
+  file PowerPoint cắt câu dài bằng "…" ở 13 / 51 mục.
+- Khoá Bedrock là khoá tạm do anh giữ; hết hạn thì trợ lý báo "không tạo được câu trả lời" cho tới khi khoá được làm mới — nhóm không xây cơ chế tự làm mới (theo lời anh).
+- Mục "Từ web" đang không tra được từ trưa 21/11 vì dịch vụ tìm web hết lượt — không liên quan tới việc đổi model, nhưng anh sẽ gặp khi thử.
+
+**4. Cách anh thử trong 2 phút.**
+- Xem công tắc: `grep -n '^  provider:' backend/config/settings.yaml` ⇒ dòng in ra có chữ `bedrock`.
+- Bật hệ thống như mọi lần, thêm biến trỏ tới file khoá Bedrock anh đang giữ (`guides/DOI_MODEL_VIET.md` mục 3 bước 3), mở `http://127.0.0.1:8010/`, hỏi giá vé tham quan Đại Nội.
+  Anh sẽ thấy: dòng trạng thái đổi dần, rồi cả câu trả lời hiện MỘT lần sau khoảng 5–10 giây, có nguồn, dài hơn câu luna từng trả.
+- Hỏi tiếp một câu nối ("thế còn lăng Minh Mạng?") ⇒ trợ lý hiểu là hỏi giá vé lăng Minh Mạng [đã thử 13:54 21/11/2026 trên bản đang chạy, qua code sản phẩm không qua trình duyệt: lượt đầu 4,3 giây, lượt nối 8,2 giây, trả lời đúng giá vé lăng Minh Mạng có nguồn].
+- Tự kiểm mình đã hiểu, không nhìn tài liệu: (a) vì sao không đổi địa chỉ suông được mà phải có lớp dịch? (b) vì sao với Sonnet chữ hiện một lần? (c) vì sao người chấm vẫn là luna?
+  (d) hai lỗi lớn của lớp dịch là gì, và vì sao luna không gặp? (e) muốn về luna thì sửa gì? Đáp án nằm ở các đoạn "Vì sao…", "Hai lỗi lớn…" và ý 1 phía trên.
 
 ## 20/11 — 22. Câu xin danh sách ("ở Huế có những quán … nào"): trợ lý nói thật rằng danh sách có thể chưa đủ
 
@@ -121,7 +249,7 @@ từng ngày); chưa có trang Bản đồ riêng. Lời chốt 06/11 chỉ có 
 - Chỉ có **điểm tham quan**. Quán ăn, chỗ ở KHÔNG có trên trang này (bảng quán có toạ độ nhưng chưa đưa lên — anh muốn thì nói). Không có vị trí của người dùng, không đường đi, không ô tìm kiếm, không nút "thêm vào lịch".
 - 40 chứ không phải 41: "Không gian lưu niệm Lê Bá Đảng" có trong bảng điểm nhưng chưa có toạ độ ⇒ không lên bản đồ, không có trong danh sách (lịch vẫn có thể xếp điểm này).
 - Các điểm ở trung tâm nằm sát nhau: nhìn xa thì ghim chồng lên nhau, phải phóng to (nút +) mới tách. Điện thoại: một ngón vuốt qua bản đồ là cuộn trang (cố ý, như bản đồ lịch); phóng to bằng nút + hoặc hai ngón.
-- Bản đồ cần mạng tới máy chủ ô bản đồ; mất mạng ⇒ khung xám, chỉ còn danh sách. Dưới bản đồ có dòng chữ nhỏ ghi nguồn bản đồ, như bản đồ trong thẻ lịch đang có.
+- Bản đồ cần mạng tới máy chủ ô bản đồ; mất mạng ⇒ khung xám, chỉ còn danh sách. Từ 21/11 hai bản đồ (trang Bản đồ và bản đồ trong thẻ lịch) không còn hiện dòng chữ nhỏ ghi nguồn bản đồ — anh chọn bỏ; nếu đưa sản phẩm ra công khai thì phải xem lại, vì bên cấp bản đồ yêu cầu ghi nguồn.
 - Mới thử bằng trình duyệt không màn hình ở hai bề rộng; CHƯA thử trên điện thoại thật, chưa thử Firefox / Safari. Trang đã gộp vào bản chính (`b2f27d78`) và giao diện bản chính đã dựng lại 16:17 20/11/2026; sau khi dựng lại mới nhìn lại thanh dưới ở bề rộng 390 bằng bản dựng tĩnh (năm ô, nút tròn giữa), chưa chạy lại cả trang Bản đồ trên bản chính.
 
 **4. Cách anh thử trong 2 phút.** Bật hệ thống rồi mở `http://127.0.0.1:8010/`, bấm "Bản đồ" trên menu ⇒ thấy tiêu đề "Bản đồ điểm tham quan" và dòng "40 điểm tham quan…". Bấm "Ẩm thực (7)" ⇒ còn 7 dấu tròn và 7 tên

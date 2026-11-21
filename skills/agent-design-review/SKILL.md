@@ -5,12 +5,12 @@ description: Dùng khi thiết kế, sửa hoặc rà một agent / trợ lý LL
 
 # Rà thiết kế agent — hue_rag (dùng từ Phase 9)
 
-hue_rag từ Phase 9 là trợ lý **có công cụ** (thời tiết, khoảng cách, tìm thêm, tra web… — cờ nào đang bật: `session_prompt/HIEN_TRANG.md` mục 1): dùng skill này mỗi khi thêm / sửa một công cụ, một bước của vòng lặp, hoặc rà lại thiết kế.
+hue_rag từ Phase 9 là trợ lý **có công cụ** (cờ nào đang bật: `session_prompt/HIEN_TRANG.md` mục 1): dùng skill này mỗi khi thêm / sửa một công cụ, một bước của vòng lặp, hoặc rà lại thiết kế.
 
 Nguồn: khoá AI FDE (mã bài `W1D2·17` = tuần 1, ngày 2, bài 17 — ghi chép riêng của User, ngoài repo). Luật dự án (`AGENTS.md`, `session_prompt/Session_Prompt.md`) thắng skill này khi khác nhau.
 
 ## 1. Có cần agent không
-- Vấn đề đo được + mốc không agent (luật, script, một lời gọi, quy trình cố định) — skill `propose-options` mục 4b.
+- Vấn đề đo được + mốc không agent (luật, script, một lời gọi, quy trình cố định).
 - Luồng cố định ⇒ code / quy trình cố định; agent chỉ khi bước tiếp theo phụ thuộc phán đoán (W1D2·17, W2D1·47).
 - 3 bẫy: "agent cho X" (nói giải pháp, chưa nói vấn đề); agent theo sơ đồ tổ chức người; đầu ra nghe hợp lý mà không đo (W2D1·46).
 
@@ -43,4 +43,4 @@ Nguồn: khoá AI FDE (mã bài `W1D2·17` = tuần 1, ngày 2, bài 17 — ghi 
 - Trước khi ước lợi / tiền của một mô tả công cụ ⇒ đọc **điều kiện đưa công cụ** cho model (có thể chỉ đưa khi câu có từ khoá, không phải mọi lượt).
 
 ## 6. Đầu ra
-Bảng: mục · hiện trạng (`file:dòng`) · khớp / lệch · đề xuất. Mỗi sửa đề xuất là **một bậc đo** (skill `run-experiment`), User duyệt trước khi làm. Chưa duyệt thì không sửa code.
+Bảng: mục · hiện trạng (`file:dòng`) · khớp / lệch · đề xuất. Mỗi sửa đề xuất là **một bậc đo** (skill `run-experiment`). Skill này chỉ rà: sửa theo việc được giao và bảng quyền trong `AGENTS.md`.

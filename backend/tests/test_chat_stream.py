@@ -9,6 +9,8 @@ import json
 import random
 import time
 
+import pytest
+
 from api.routes.chat import STREAM_METRIC_FIELDS, StreamEvents, _answer_events, sse_event
 from core.schema import GenerationError
 from llm.answer_stream import AnswerTextStream, decode_partial_string, displayable_prefix
@@ -164,11 +166,15 @@ def test_tail_of_final_answer_is_sent_when_the_shown_text_is_only_its_beginning(
     assert [name for name, _ in events][-3:] == ["delta", "sources", "done"] and stream.metrics["delta_matches_final"] is True
     seqs = [data["seq"] for name, data in events if name == "delta"]
     assert seqs == list(range(1, len(seqs) + 1))
-    # đối chứng: chữ đã phát KHÔNG phải tiền tố của chữ cuối ⇒ không phát thêm gì (không ghép hai bản khác nhau), cờ lệch vẫn ghi để đếm
+    assert stream.metrics["thay_chu"] is None  # đường thường: không có sự kiện thay chữ
+    # chữ đã phát KHÔNG phải tiền tố của chữ cuối (21/11/2026: code gỡ một câu sau khi kiểm) ⇒ không ghép hai bản khác nhau: MỘT sự kiện `thay_chu`
+    # mang cả chữ cuối, đứng trước `sources`; không phát thêm `delta`; cờ `thay_chu` ghi để đếm
     stream, chunks, _ = stream_with_text("Bến tạm ngừng khi nước sông dâng [Nguồn 2].", json.dumps({"answer": dau}, ensure_ascii=False))
     events = parse_sse(chunks)
-    assert "".join(data["text"] for name, data in events if name == "delta") == dau and stream.metrics["delta_matches_final"] is False
-    assert stream.metrics["outcome"] == "success"
+    assert "".join(data["text"] for name, data in events if name == "delta") == dau
+    assert [(name, data) for name, data in events if name == "thay_chu"] == [("thay_chu", {"text": "Bến tạm ngừng khi nước sông dâng [2]."})]
+    assert [name for name, _ in events][-3:] == ["thay_chu", "sources", "done"]
+    assert stream.metrics["outcome"] == "success" and stream.metrics["thay_chu"] is True and stream.metrics["delta_matches_final"] is True
 
 
 def test_whitespace_only_first_block_does_not_leave_the_answer_empty():
@@ -321,3 +327,23 @@ def test_disconnect_while_route_sends_text_still_logs_calls_the_core_records_on_
 def test_sse_format_keeps_vietnamese_and_puts_multiline_text_on_one_data_line():
     chunk = sse_event("delta", {"seq": 1, "text": "Huế\nđẹp"})
     assert chunk == 'event: delta\ndata: {"seq": 1, "text": "Huế\\nđẹp"}\n\n'.encode("utf-8")
+
+
+@pytest.mark.parametrize("chu_model, ma", [
+    ("Mở cửa từ 7 giờ [Nguồn 2].", None),                                         # qua kiểm ⇒ không có mã
+    ("tim_kho", "khong_trich_dan"),                                              # chữ rác, không [n] nào (bộ câu khó 21/11)
+    (f"{INSUFFICIENT_ANSWER} Nhưng bến có chuyến buổi sáng [1].", "tu_choi_kem_trich_dan"),
+    ("Mở cửa từ 7 giờ [9].", "ma_nguon_la"),
+])
+def test_metrics_record_which_check_retracted_the_turn_without_changing_the_outcome(chu_model, ma):
+    """21/11/2026: số đo `loi_kiem` chỉ GHI loại phép kiểm làm lượt bị rút; lượt vẫn bị rút y như trước (sự kiện `error`, outcome `retracted`)."""
+    from api.routes.chat import _copy_trace_metrics, loai_loi_kiem
+    from core.schema import CitationIntegrityError
+
+    stream, chunks, trace = stream_with_text(chu_model)
+    _copy_trace_metrics(trace, stream.metrics)
+    assert stream.metrics["loi_kiem"] == ma and (stream.metrics["outcome"] == "retracted") is (ma is not None)
+    assert ("error" in [name for name, _ in parse_sse(chunks)]) is (ma is not None)
+    assert [loai_loi_kiem(CitationIntegrityError(loi)) for loi in ("itinerary check failed: gio_chong", "weather numbers without source: 2",
+                                                                   "distance numbers without source: 1", "lời lạ")] == [
+        "kiem_lich", "so_thoi_tiet", "so_khoang_cach", "khac"]
