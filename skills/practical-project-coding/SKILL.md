@@ -43,7 +43,7 @@ xin đổi requirement hay xin duyệt lại từng focused fix.
 
 ## Ngôn ngữ
 
-- Tên biến, hàm, class, type, API và schema dùng English rõ ràng.
+- Tên biến, hàm, class, trường schema: rõ nghĩa, theo quy ước của module đang sửa (hue_rag: phần lớn tên tiếng Việt không dấu).
 - Thêm comment/docstring bằng tiếng Việt khi mục đích, bước xử lý hoặc constraint
   chưa rõ từ code; dùng ngôn ngữ khác chỉ khi project
   governance quy định rõ ngôn ngữ khác.
@@ -61,9 +61,6 @@ xin đổi requirement hay xin duyệt lại từng focused fix.
 - Đổi hàm / module / hằng dùng chung ⇒ `git grep` mọi nơi gọi **trước khi sửa**; verification phải gồm mọi bên gọi.
 - Chọn giải pháp nhỏ nhất đáp ứng đầy đủ requirement, không phải giải pháp có ít
   dòng nhất.
-
-Không tự tạo hoặc đề xuất project governance chỉ vì repo chưa có instruction.
-Chỉ làm việc đó khi người dùng yêu cầu riêng.
 
 ## Cổng 2: Khi sửa
 
@@ -130,15 +127,13 @@ sinh, chấm) đóng gói được và dùng lại được — API, script, not
 - Chỉ gọi là **"đóng gói xong"** khi khâu đã được dùng thật ở chỗ thứ hai (harness, notebook, dự án
   khác) và ra cùng kết quả. Chưa có chỗ dùng thứ hai thì không dựng interface, plugin hay registry "để
   sau này thay". Luật "chỉ thêm abstraction khi có bằng chứng" ở trên vẫn thắng.
-- Thấy khâu còn dính, như hằng số ẩn, đường dẫn cứng hay đọc settings sâu trong logic, mà không thuộc
-  việc đang làm thì ghi vào report. Không tự refactor ngoài phạm vi.
 
 ### Giữ thay đổi surgical
 
 - Mỗi thay đổi phải liên hệ được với requirement, root cause hoặc verification.
 - Không refactor, format hoặc dọn code lân cận ngoài scope.
 - Chỉ xóa import, helper hoặc code khi chính thay đổi hiện tại làm chúng dư.
-- Ghi nhận vấn đề ngoài scope để báo lại; không tự mở rộng task.
+- Ngoài scope: không tự xây thêm; thứ thấy được (lỗi, chỗ thiếu, hướng tốt hơn) ghi vào report — nếu nó làm đổi việc đang làm thì nói trước khi làm tiếp.
 - Không suy diễn thêm quyền từ task; tuân thủ platform và project governance.
 
 ### Xử lý lỗi có mục đích
@@ -158,7 +153,7 @@ hoặc rủi ro thực tế có chi phí tái diễn đáng kể. Không đặt 
 coverage hoặc số file test. Không test implementation detail, abstraction phòng
 xa hoặc cơ chế đang bị loại bỏ.
 
-Skill này không bắt buộc TDD. Nhưng test viết cho một lỗi / hành vi mới chỉ được tin khi đã thấy **ĐỎ một lần** (chạy trên code cũ, hoặc cố ý làm
+Không bắt buộc TDD, nhưng test viết cho một lỗi / hành vi mới chỉ được tin khi đã thấy **ĐỎ một lần** (chạy trên code cũ, hoặc cố ý làm
 hỏng code mới) — test chưa từng đỏ có thể không kiểm gì.
 
 **Sửa lỗi bốn bước, không nhảy bước:** tái hiện (đúng cấu hình đang chạy, thử MỘT lượt trước) ⇒ chứng minh nguyên nhân gốc (log, vết) ⇒ một sửa tập trung ⇒
@@ -192,10 +187,7 @@ Nếu môi trường hoặc quyền không cho phép chạy, ghi đúng `not ver
 
 ## Cổng 4: Review và handoff
 
-Khi review, ưu tiên requirement và user behavior, correctness, data safety,
-scope, compatibility, data flow, complexity và fresh evidence. Dùng hệ severity
-và verdict của project nếu có; không chặn vì sở thích cá nhân hoặc best practice
-không gắn với tác động thật.
+Khi review: theo skill `risk-gated-agent-review`; không chặn vì sở thích cá nhân hoặc best practice không gắn với tác động thật.
 
 Trước khi bàn giao, đọc exact diff và kiểm tra:
 
@@ -205,6 +197,5 @@ Trước khi bàn giao, đọc exact diff và kiểm tra:
 - test và verification thực sự bảo vệ behavior đã nêu;
 - observed result không bị trộn với expected hoặc prior result.
 
-Bàn giao: bảng **đã làm · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra**. Phần viết cho chủ dự án theo khuôn bốn ý (người dùng thấy gì khác · bằng chứng,
-tách dòng "test bằng đồ giả" ↔ "lượt thật" · chưa làm / giới hạn · cách thử trong 2 phút) và mỗi khẳng định gắn nhãn [máy kiểm] / [người thứ hai kiểm] /
-[chưa kiểm] — mẫu `guides/khung/BAO_CAO_4_Y.mau.md`. Đổi thứ người dùng thấy ⇒ kèm ảnh trước–sau hoặc đầu ra thật. Thí nghiệm: 3–5 dòng của `run-experiment` §5.
+Bàn giao: bảng **đã làm · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra** + MỘT dòng: phép này không cho biết gì · hướng rộng hơn tôi thấy · đếm rẻ nhất bằng gì. Phần viết cho chủ dự án: khuôn bốn ý, tách dòng "test bằng đồ giả" ↔ "lượt thật", mỗi khẳng định
+gắn nhãn [máy kiểm] / [người thứ hai kiểm] / [chưa kiểm] — `guides/CACH_LAM_VIEC.md` mục 4, mẫu `guides/khung/BAO_CAO_4_Y.mau.md`. Đổi thứ người dùng thấy ⇒ kèm ảnh trước–sau hoặc đầu ra thật. Thí nghiệm: 3–5 dòng của `run-experiment` §5.
