@@ -177,3 +177,55 @@ def test_turn_level_flag_off_replaces_as_before_and_flag_on_keeps_the_itinerary(
     _, kq2, _ = _chay(lambda k: ra(k, hoi=True), _co(sua_lich_them_khong_the=True, sua_lich_kem_hoi=True))
     dong2 = s.thay_doi(B, kq2)
     assert [d["cau"] for d in dong2] == [dong[0]["cau"], s.CAU_HOI_THEM]
+
+
+# ---------- lượt KẾ sau dòng gợi ý: câu code đã gợi ý vào lần hiểu ý, sống đúng một lượt ----------
+def test_interpretation_message_is_unchanged_without_a_pending_suggestion_and_carries_it_when_there_is_one():
+    """Không có câu gợi ý ⇒ tin hiểu ý giống từng byte bản cũ. Có ⇒ đúng một khối chèn TRƯỚC dòng "Câu người dùng", phần lịch phía trên không đổi."""
+    _, luu = _lich(2)
+    cu = s.tin_nhan_hieu(B, luu, "ok thay đi")
+    assert s.tin_nhan_hieu(B, luu, "ok thay đi", goi_y=()) == cu
+    moi = s.tin_nhan_hieu(B, luu, "ok thay đi", goi_y=("thay Đại Nội Huế bằng Đàn Nam Giao",))
+    dau, duoi = cu.rsplit("\n\nCâu người dùng: ", 1)
+    assert moi.startswith(dau + "\n\nLượt ngay trước, trợ lý CHƯA làm") and moi.endswith("\n\nCâu người dùng: " + duoi)
+    assert "- thay Đại Nội Huế bằng Đàn Nam Giao\n" in moi and moi.count("Câu người dùng: ") == 1
+
+
+def test_suggestions_of_one_turn_reach_only_the_next_interpretation_call_and_only_with_the_flag():
+    """Lượt 1 (lệnh thêm vào buổi kín): `goi_y_moi` = đúng các câu "thay Y bằng X" của dòng gợi ý. Lượt 2: cờ bật ⇒ các câu đó nằm trong tin hiểu ý; cờ
+    tắt ⇒ tin hiểu ý như cũ dù có sẵn câu nhớ. Lượt không gợi ý gì ⇒ `goi_y_moi` rỗng (hết hiệu lực)."""
+    i, ng, b = next((i, ng, b) for _, luu, i, ng, b in _moi_lenh(2) if ng is not None and (_them(luu, i, ng, b)["da_ap"] or [{}])[0].get("the_cho"))
+    bat = _co(sua_lich_them_khong_the=True)
+    _, kq, tr = _chay(lambda k: [s.HanhDongCHT(loai="them_diem", ten=B.theo_id[i]["ten"], ngay=ng, buoi=b)], bat)
+    dong = s.thay_doi(B, kq)[0]["cau"]
+    assert tr.goi_y_moi and all(c.startswith("thay ") and c in dong for c in tr.goi_y_moi)
+
+    def luot_2(flags, goi_y):
+        k, luu = _lich(2)
+        thay = []
+
+        class Gen:
+            async def hieu_sua(self, prompt, call_log, **kw):
+                thay.append(prompt)
+                return []
+
+        t2 = AnswerTrace(history=(("Lên kế hoạch tham quan Huế", "(lịch)"), ("Thêm một điểm", "")))
+        t2.lich_luu, t2.sua_chon, t2.goi_y_sua = luu, None, goi_y
+        assert asyncio.run(lkh.hieu_va_ap("ok thay đi", Gen(), t2, flags)) is None  # model trả rỗng ⇒ không phải lượt sửa
+        return thay[0], t2
+
+    co_nho, t_bat = luot_2(bat, tr.goi_y_moi)
+    assert all(f"- {c}\n" in co_nho for c in tr.goi_y_moi) and t_bat.goi_y_moi == ()
+    khong_nho, _ = luot_2(bat, ())
+    tat, _ = luot_2(_co(), tr.goi_y_moi)
+    assert khong_nho == tat == s.tin_nhan_hieu(B, _lich(2)[1], "ok thay đi") and "Lượt ngay trước" not in tat
+
+
+def test_store_keeps_a_pending_suggestion_for_exactly_one_read():
+    from api.conversations import ConversationStore
+    store = ConversationStore(len)
+    cid = store.ensure(None)
+    assert store.lay_goi_y_sua(cid) == ()
+    store.luu_goi_y_sua(cid, ("thay A bằng B",))
+    assert store.lay_goi_y_sua(cid) == ("thay A bằng B",) and store.lay_goi_y_sua(cid) == ()  # đọc là xoá
+    assert store.lay_goi_y_sua("ma-khong-co") == ()

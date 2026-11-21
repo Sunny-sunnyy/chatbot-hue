@@ -387,6 +387,9 @@ class AnswerTrace:
     # `sua` = kết quả áp của lượt (số đếm cho log — không chữ)
     lich_luu: dict | None = None
     sua_chon: dict | None = None
+    # cờ `sua_lich_them_khong_the`: câu code đã gợi ý ở lượt ngay trước (route nạp) · câu code gợi ý ở lượt này (route nhớ cho đúng một lượt kế)
+    goi_y_sua: tuple = ()
+    goi_y_moi: tuple = ()
     sua: dict | None = None
     # #6 (plan D2): phần `tro_ly_hue` chạy trước định tuyến rồi bị bỏ vì tuyến khác — số lần, USD (lần gọi xong = usage thật; lần bị huỷ
     # giữa chừng không có usage ⇒ cộng token vào bộ dựng đếm × giá vào = cận dưới), cờ bị huỷ giữa chừng. Chỉ số đếm, không chữ.

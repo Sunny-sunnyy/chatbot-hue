@@ -763,6 +763,20 @@ def _phan_xep_lai(bang: v2.BangV2, x: dict) -> str:
     return "; ".join(p for p in phan if p)
 
 
+def _cau_cach(bang: v2.BangV2, x: str, g: dict, kem_cho: bool) -> str:
+    """Câu người dùng nhắn để làm một cách của `_cach_them` ("thay Y bằng X" / "thêm X vào buổi … ngày …")."""
+    cho = f"buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']}"
+    if g["thay"] is None:
+        return f"thêm {x} vào {cho}"
+    return f"thay {ten_cua_diem(bang, g['thay'])} bằng {x}" + (f" ({cho})" if kem_cho else "")
+
+
+def cau_goi_y(bang: v2.BangV2, kq: dict) -> tuple[str, ...]:
+    """Các câu ĐÃ được gợi ý trong khối thay đổi của lượt này (do code dựng, không chữ người dùng / chữ model) — route nhớ đúng một lượt để lần hiểu ý
+    của lượt kế hiểu được lời đồng ý cụt ("ok thay đi"). Lượt không có dòng gợi ý ⇒ rỗng."""
+    return tuple(_cau_cach(bang, k["diem"], g, False) for k in kq["khong_doi"] for g in k.get("cach") or ())
+
+
 def _cau_them(bang: v2.BangV2, k: dict) -> str:
     """Câu của lệnh THÊM chưa làm (cờ `sua_lich_them_khong_the`). Mọi cách nêu ra đều đã được `_cach_them` thử bằng phép thử của lần áp thật."""
     x = k["diem"]
@@ -771,10 +785,7 @@ def _cau_them(bang: v2.BangV2, k: dict) -> str:
            else f"buổi {NHAN_BUOI[buoi]}" if buoi is not None else None)
 
     def cach(g: dict, kem_cho: bool) -> str:
-        cho = f"buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']}"
-        if g["thay"] is None:
-            return f"thêm {x} vào {cho}"
-        return f"thay {ten_cua_diem(bang, g['thay'])} bằng {x}" + (f" ({cho})" if kem_cho else "")
+        return _cau_cach(bang, x, g, kem_cho)
 
     if k["ma_luat"] == "them_can_thay":
         ro = ngay is not None and buoi is not None  # người dùng nói rõ một buổi ⇒ nêu buổi đó đang có gì; không thì mỗi cách kèm buổi của nó
@@ -860,8 +871,11 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
 # đặt 8 / 10) ⇒ khi cuộc có lịch đã lưu, lượt nào cũng qua lần "hiểu ý sửa" (rỗng ⇒ đường trả lời thường).
 
 
-def tin_nhan_hieu(bang: v2.BangV2, luu: dict, cau: str) -> str:
-    """Tin nhắn cho lần "hiểu ý sửa": lịch hiện tại (ngày · buổi · tên — dữ liệu code) + tham số + câu người dùng."""
+def tin_nhan_hieu(bang: v2.BangV2, luu: dict, cau: str, goi_y: tuple[str, ...] = ()) -> str:
+    """Tin nhắn cho lần "hiểu ý sửa": lịch hiện tại (ngày · buổi · tên — dữ liệu code) + tham số + câu người dùng.
+    `goi_y` (cờ `sua_lich_them_khong_the`, chỉ ở lượt NGAY SAU một lượt có dòng gợi ý): các câu code đã gợi ý ở lượt trước — lần hiểu ý không thấy lượt
+    trước nên lời đồng ý cụt ("ok thay đi") từng ra danh sách rỗng; ở model đang chạy lượt đó rơi sang đường hỏi đáp thường và viết "Mình đã thêm…"
+    trong khi lịch không đổi (chuỗi đo 21/11). Rỗng ⇒ tin nhắn giống từng byte bản cũ."""
     k, ts = luu["khung"], luu["khung"]["tham_so"]
     dong = [f"Tham số: {ts['so_ngay']} ngày · kiểu đi {ts['kieu_di']} · sở thích {', '.join(ts['so_thich']) or 'không chọn'}", "Lịch hiện tại:"]
     for ng in k["ngay"]:
@@ -872,7 +886,14 @@ def tin_nhan_hieu(bang: v2.BangV2, luu: dict, cau: str) -> str:
     trong = {j for ng in k["ngay"] for b in v2.BUOI for j in ng["buoi"][b]}
     dong += ["", "Điểm khác có thể thêm / thay vào (chép đúng tên khi điền ten / ten_moi): "
              + "; ".join(d["ten"] for d in bang.diem if d["id"] not in trong)]  # điểm trong lịch đã có tên ở trên ⇒ không lặp (bớt token)
-    return "\n".join(dong) + "\n\nCâu người dùng: " + cau.strip()
+    them = ""
+    if goi_y:
+        them = ("\n\nLượt ngay trước, trợ lý CHƯA làm một lệnh sửa của người dùng và đã đề nghị họ nhắn đủ một trong các câu sau:\n"
+                + "\n".join(f"- {c}" for c in goi_y)
+                + "\nNếu câu người dùng dưới đây chỉ là lời ĐỒNG Ý với đề nghị đó mà không nêu đủ tên điểm (\"ok thay đi\", \"ừ đổi luôn nhé\", \"thay cái đó đi\"…): "
+                  "chỉ có MỘT câu đề nghị ⇒ trả đúng hành động của câu đó; có hai câu mà không rõ họ chọn câu nào ⇒ không tự chọn, trả một hành động "
+                  "chua_ho_tro. Câu người dùng từ chối, còn phân vân, hoặc hỏi chuyện khác ⇒ KHÔNG coi là đồng ý, xử lý như một câu bình thường.")
+    return "\n".join(dong) + them + "\n\nCâu người dùng: " + cau.strip()
 
 
 def sua_ap(kq: dict) -> dict:

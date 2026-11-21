@@ -250,7 +250,9 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
     else:
         call_log = CallLog()
         try:
-            ra = await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query), call_log,
+            # cờ `sua_lich_them_khong_the`: câu code đã gợi ý ở lượt NGAY TRƯỚC (route nạp, đọc là xoá) vào tin hiểu ý; không có ⇒ tin như cũ
+            goi_y = tuple(trace.goi_y_sua or ()) if flags.sua_lich_them_khong_the else ()
+            ra = await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query, **({"goi_y": goi_y} if goi_y else {})), call_log,
                                           **({"chua_ho_tro": True} if flags.sua_lich_chua_ho_tro else {}),  # cờ tắt ⇒ lời gọi như cũ
                                           **({"buoi_toi": True} if flags.sua_lich_buoi_toi else {}),
                                           **({"kem_hoi": True} if flags.sua_lich_kem_hoi else {}))
@@ -298,6 +300,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             kq["chua_lam"].append("doi_so_ngay")
         if hoi_them:  # lượt này là lượt sửa VÀ tin còn có câu hỏi ⇒ `thay_doi` thêm dòng nói thật (không vào `chua_lam`: không phải việc sửa)
             kq["hoi_them"] = True
+    if flags.sua_lich_them_khong_the:  # câu gợi ý của CHÍNH lượt này ⇒ route nhớ cho đúng một lượt kế (lượt không gợi ý gì ⇒ rỗng ⇒ xoá)
+        trace.goi_y_moi = sl.cau_goi_y(bang, kq)
     trace.vet.setdefault("sua", {}).update(chon_the=trace.sua_chon, thay_doi=sl.thay_doi(bang, kq))
     trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),
                  "n_khong": len(kq["khong_doi"]), "the": kq["the"] is not None, **({"hoi_them": True} if kq.get("hoi_them") else {})}
