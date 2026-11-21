@@ -56,7 +56,22 @@ class HanhDongToi(HanhDongCHT):
     buoi: Literal["sang", "chieu", "toi"] | None = None
 
 
+class HanhDongHoi(HanhDongCHT):
+    """Cờ `sua_lich_kem_hoi` (21/11/2026): thêm `hoi_them` — MODEL báo "ngoài ý sửa lịch, tin này còn hỏi một thông tin". Không trường nào: hành động này
+    không sửa gì, code chỉ dùng nó để thêm MỘT dòng cố định vào khối thay đổi (`CAU_HOI_THEM`). Vì sao: người dùng mô phỏng 21/11 — 4 / 4 tin vừa sửa
+    lịch vừa hỏi, cả hai model: lịch được sửa, phần hỏi bị bỏ không một lời, người dùng phải hỏi tới lần ba. Cờ tắt ⇒ khuôn `HanhDongCHT` cũ (giống byte)."""
+    loai: Literal["bo_diem", "them_diem", "thay_diem", "doi_buoi", "doi_so_ngay", "doi_tham_so", "doi_hang_o", "doi_ngay_di", "chua_ho_tro", "hoi_them"]
+
+
+class HanhDongToiHoi(HanhDongToi):
+    """Hai cờ `sua_lich_buoi_toi` + `sua_lich_kem_hoi` cùng bật: khuôn buổi tối có thêm `hoi_them`."""
+    loai: Literal["bo_diem", "them_diem", "thay_diem", "doi_buoi", "doi_so_ngay", "doi_tham_so", "doi_hang_o", "doi_ngay_di", "chua_ho_tro", "hoi_them"]
+
+
 CHUA_HO_TRO = "chua_ho_tro"
+HOI_THEM = "hoi_them"
+# Bắt đầu bằng "Chưa làm" ⇒ giao diện hiện đúng kiểu dòng chưa làm, không gắn tiền tố "Không đổi được" (`frontend/src/LichV2.jsx` `ThayDoi`).
+CAU_HOI_THEM = ("Chưa làm: phần câu hỏi trong tin này mình chưa trả lời — lượt này mình chỉ sửa lịch. Bạn gửi riêng câu hỏi đó, mình trả lời ngay.")
 NHAN_HANH_DONG = {"bo_diem": "bỏ điểm", "them_diem": "thêm điểm", "thay_diem": "thay điểm", "doi_buoi": "dời buổi",
                   "doi_so_ngay": "đổi số ngày", "doi_tham_so": "đổi kiểu lịch", "doi_hang_o": "đổi hạng chỗ ở", "doi_ngay_di": "đổi ngày đi"}
 CAU_VIEC_KHAC = ("Chưa làm: đổi chỗ, gộp hay tách các ngày — mình chưa sửa được kiểu này trên lịch. Mình sửa được từng điểm (bỏ, thêm, thay, "
@@ -678,6 +693,8 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
     dong += [{"cau": _cau_khong_doi(bang, k), "duoc": False} for k in kq["khong_doi"]]
     co_dinh = {VIEC_KHAC: CAU_VIEC_KHAC, CHUA_HO_TRO: CAU_CHUA_HO_TRO}
     dong += [{"cau": co_dinh.get(t) or f"Chưa làm: {NHAN_HANH_DONG[t]} — bạn nhắn tiếp nhé.", "duoc": False} for t in kq["chua_lam"]]
+    if kq.get("hoi_them"):  # cờ `sua_lich_kem_hoi`: tin còn có câu hỏi ⇒ nói thật là lượt sửa chưa trả lời nó (dòng cuối khối, `duoc` False ⇒ không đổi "có ý nào áp được")
+        dong.append({"cau": CAU_HOI_THEM, "duoc": False})
     return dong
 
 

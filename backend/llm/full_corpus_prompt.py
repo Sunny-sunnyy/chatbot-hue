@@ -313,6 +313,23 @@ assert _CAU_LICH_MOT_CAU in LICH_V2_LOI_DAN  # lời dặn gốc đổi chữ �
 # (2) Hiểu ý sửa lịch. Ca đo (9 lệnh × 3 lượt): lệnh mơ hồ "ngày 2 hơi nặng, làm nhẹ bớt" ⇒ Sonnet tự bỏ một lăng (low 3 / 3, medium 3 / 3,
 # high 3 / 6); lệnh dời cụ thể mà luật xếp lịch chặn ⇒ Sonnet medium trả "chưa hỗ trợ" 3 / 3, người dùng mất lý do + gợi ý chỗ dời được.
 # Đoạn dặn tả LOẠI câu, không chép câu nào của bộ đo (review C 21/11: bản đầu lấy nguyên văn một câu đo làm ví dụ ⇒ số của câu đó không tính).
+# Cờ `sua_lich_kem_hoi` (21/11/2026): thêm hành động `hoi_them` ngay sau gạch `chua_ho_tro`. Cờ tắt ⇒ hai bản trên, giống byte.
+_MOC_KEM_HOI = "⇒ một hành động chua_ho_tro, không điền gì.\n"
+_GACH_HOI_THEM = (
+    "- hoi_them: NGOÀI ý sửa lịch, tin còn hỏi một thông tin mà việc sửa lịch không trả lời được (giá vé, giờ mở cửa, trang phục, thời tiết, đi mất bao "
+    "lâu, ăn gì, nhờ gợi ý một nơi…) ⇒ thêm MỘT hành động hoi_them ở cuối danh sách, không điền gì; hoi_them không tính vào số tối đa 3. Lời nhờ sửa "
+    "viết thành câu hỏi (\"bỏ X được không?\", \"thêm Y giúp mình nhé?\") KHÔNG phải hoi_them. Tin không có ý sửa lịch nào ⇒ vẫn trả danh sách rỗng, "
+    "không trả hoi_them một mình.\n")
+
+
+def _kem_hoi(loi_dan: str) -> str:
+    assert loi_dan.count(_MOC_KEM_HOI) == 1
+    return loi_dan.replace(_MOC_KEM_HOI, _MOC_KEM_HOI + _GACH_HOI_THEM)
+
+
+SUA_LICH_LOI_DAN_CHT_HOI = _kem_hoi(SUA_LICH_LOI_DAN_CHT)
+SUA_LICH_LOI_DAN_TOI_HOI = _kem_hoi(SUA_LICH_LOI_DAN_TOI)
+
 # `{khong_ro}` = việc trả về khi ý người dùng không khớp kiểu đi nào (khuôn có `chua_ho_tro` hay không tuỳ cờ).
 SONNET_SUA_LICH = (
     "Hai trường hợp dễ nhầm:\n"
