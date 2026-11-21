@@ -10,15 +10,15 @@
      (`backend/llm/assistant.py`, `first_id=len(trace.so_nguon)+1`) ⇒ "không trích nguồn nào ≤ 10" đọc được từ số trích trong câu trả lời.
 2. **Đã soạn / đã review, chưa gộp** (đều ĐỨNG CHỜ theo quyết định 16:14 21/11): `origin/p9-c-suy-luan-dinh-tuyen` `881ddb7` (khoá mức suy luận của bước định tuyến, mặc định không đổi; bỏ nhánh nếu phiên đo thấy không khác)
    · `origin/p9-c-doi-cho-ngay` `d12c42e` (sổ việc khối C mục [11]) · `origin/p9-c-phuc-hoi-sau-kiem` `70c9f44` (hồ sơ, không gộp).
-3. **Việc kế + "xong khi":** sổ việc `session_prompt/VIEC_DANG_MO.md` khối A, hàng bước 1 — xong khi bảng nhiều nhất sáu nhóm nguyên nhân tới phiên điều phối. Sổ việc trỏ về đây cho LỆNH CHẠY LẠI 12 VAI (việc của vai đo,
+3. **Việc kế + "xong khi":** sổ việc `session_prompt/VIEC_DANG_MO.md` khối A, hàng bước 1 — bắt đầu NGAY khi mở phiên, xong khi bảng nhiều nhất sáu nhóm nguyên nhân tới phiên điều phối. Sổ việc trỏ về đây cho LỆNH CHẠY LẠI 12 VAI (việc của vai đo,
    bước 0), từ `backend/` của cây muốn đo:
    `HUE_BEDROCK_MODEL=global.anthropic.claude-opus-5-5 HUE_BEDROCK_CREDS_FILE=<đường dẫn riêng tư — data/thu_bedrock_2026-11-21/GIAO_VIEC.md> HF_HUB_OFFLINE=1 PYTHONPATH=$PWD uv run --no-sync --env-file ../.env python ../data/thu_bedrock_2026-11-21/c_nguoi_dung_mo_phong/chay.py <luna|s_high> <thư mục ra MỚI> [mã vai,…]`
    ⇒ ghi `<thư mục ra>/luot_<nhánh>.jsonl` + `meta_<nhánh>.json`, không ghi đè; in một phiên để đọc: từ thư mục bộ chạy `python3 xem.py <luna|s_high> V01 … [--dai N]` (đọc cứng thư mục `phien/`).
-   **Hai chỗ PHẢI sửa trong `chay.py` hàm `main` trước lượt đầu (chưa sửa):** (a) hiện chỉ có `if NHANH == "s_high": … provider = "bedrock"`; nhánh `luna` lấy nguyên cấu hình đang có — cấu hình nay là `bedrock` ⇒ chạy
+   **Hai chỗ PHẢI sửa trong `chay.py` hàm `main` trước lượt đầu (chưa sửa; sổ việc giao C sửa, vai đo chạy thử một vai mỗi nhánh):** (a) hiện chỉ có `if NHANH == "s_high": … provider = "bedrock"`; nhánh `luna` lấy nguyên cấu hình đang có — cấu hình nay là `bedrock` ⇒ chạy
    `luna` sẽ lặng lẽ thành chạy model mới, hai cột giống nhau ⇒ thêm nhánh đặt rõ `provider = "openai"`; (b) ghi đè tắt bộ nhớ đệm câu trả lời ngay trên dict cấu hình đó (`s["assistant"]["cache_cau_tra_loi"] = False`),
    không sửa `settings.yaml` ở cây chính. Sửa xong chạy thử MỘT vai mỗi nhánh và nhìn `meta_<nhánh>.json` trường `provider` trước khi chạy cả 12 vai.
 4. **Ai chờ mình ↔ mình chờ ai:** phiên điều phối chờ bảng nhóm nguyên nhân (phiên sau). C không chờ ai.
-5. **Câu treo:** quyền "một phiên tự dựng bản thử sau cờ tắt không chờ giao" là ĐỀ NGHỊ của nhóm, CHƯA có lời chủ dự án (điều phối hỏi) · giới hạn phép kiểm số: số model TÍNH ĐÚNG vẫn bị gỡ; số người dùng gõ không kèm đơn vị thì lời
+5. **Câu treo:** giới hạn phép kiểm số: số model TÍNH ĐÚNG vẫn bị gỡ; số người dùng gõ không kèm đơn vị thì lời
    đính chính bị gỡ · nhánh liệt kê bài: trích "mục lục" làm mất dòng cảnh báo sinh từ nguồn bài — điều kiện trước khi bật.
 6. **Thứ đang chạy / rác** (kiểm lúc ghi): 0 tiến trình, 0 cổng 80xx, 0 agent con. `git worktree list` phần của C: `/tmp/hr_c_nho` (GIỮ — mục [8]) · `/tmp/hr_c_dinh_tuyen` (nhánh chưa gộp) · `/tmp/hr_c_rv_bedrock`,
    `/tmp/hr_c_thinking` (detached, cây review / thử cũ — gỡ được) · `/tmp/hr_c_status` (nhánh sổ này). Chín cây của các nhánh đã gộp C đã gỡ lúc ghi. Thư mục `/tmp/hr_c_bedrock_doc` (không phải worktree; script chụp lời gọi) còn.
