@@ -86,6 +86,9 @@ def validate_phase6_settings(settings: dict) -> None:
                 raise ValueError(f"Invalid full_corpus_generation.bedrock.{key}: {bedrock.get(key)!r}")
         if not isinstance(bedrock.get("max_tokens"), int) or bedrock["max_tokens"] <= 0:
             raise ValueError(f"Invalid full_corpus_generation.bedrock.max_tokens: {bedrock.get('max_tokens')!r}")
+        timeout = bedrock.get("sua_lich_timeout_seconds")
+        if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or timeout <= 0:
+            raise ValueError(f"Invalid full_corpus_generation.bedrock.sua_lich_timeout_seconds: {timeout!r}")
         for key in ("reasoning_default", "reasoning_sua_lich"):
             if bedrock.get(key) not in ("none", "low", "medium", "high"):
                 raise ValueError(f"Invalid full_corpus_generation.bedrock.{key}: {bedrock.get(key)!r}")

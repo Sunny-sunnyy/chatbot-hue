@@ -110,10 +110,10 @@ ROUTER_OUTPUTS = {"v1": (RouteSearchOutput, ROUTER_SEARCH_V1), "v3": (RouteSplit
 ASSISTANT_MAX_TURNS = 4  # B2 D5 (A quyết (b)): ≤ 2 lần tìm thật + lần 3 "đã hết lượt" + 1 lượt viết
 
 
-def max_turns_for(ngay_lich_fn, khoang_cach_fn=None) -> int:
+def max_turns_for(ngay_lich_fn, khoang_cach_fn=None, base: int = ASSISTANT_MAX_TURNS) -> int:
     """T1 (A chọn 08/11, sau lượt đo: 1 câu chạm trần vì `ngay_lich` ăn một vòng): lượt có đưa công cụ ngày ⇒ thêm 1 vòng; công cụ khoảng cách (16/11)
     cũng ăn một vòng ⇒ thêm 1; lượt khác giữ B2 D5."""
-    return ASSISTANT_MAX_TURNS + (1 if ngay_lich_fn is not None else 0) + (1 if khoang_cach_fn is not None else 0)
+    return base + (1 if ngay_lich_fn is not None else 0) + (1 if khoang_cach_fn is not None else 0)
 
 
 class SuaLichOutput(BaseModel):
@@ -281,6 +281,8 @@ class OpenAIFullCorpusGenerator:
         router_timeout: float = 10,
         bedrock_model: BedrockClaudeModel | None = None,
         sua_lich_reasoning: str = BIEU_MAU_REASONING,
+        max_turns: int = ASSISTANT_MAX_TURNS,
+        sua_lich_timeout: float | None = None,
     ) -> None:
         # answer_instructions / reasoning_effort: chỉ để harness Phase 8.1 thử prompt và mức suy luận;
         # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning; None hoặc "" = không gửi).
@@ -293,6 +295,10 @@ class OpenAIFullCorpusGenerator:
         self.provider = "openai" if bedrock_model is None else bedrock_model.provider
         self.timeout = timeout
         self.router_timeout = router_timeout
+        # Bậc 1b (21/11/2026): hai con số mở thành cấu hình để bộ đo thử nới; mặc định = giá trị cũ. `max_turns` = trần vòng gốc của lượt có công cụ
+        # (`assistant.so_vong_cong_cu`); `sua_lich_timeout` = hạn giờ lời gọi hiểu ý sửa lịch, None ⇒ dùng chung hạn định tuyến như trước.
+        self.max_turns = max_turns
+        self.sua_lich_timeout = router_timeout if sua_lich_timeout is None else sua_lich_timeout
 
         # Đoạn dặn chỉ dành cho Sonnet (`full_corpus_prompt.SONNET_*`, 21/11/2026): NỐI vào cuối lời dặn khi đang chạy lớp dịch Bedrock; đường
         # OpenAI ⇒ trả nguyên chuỗi (lời dặn gửi luna giống byte như trước).
@@ -423,6 +429,8 @@ class OpenAIFullCorpusGenerator:
                 answer_instructions=answer_instructions,
                 reasoning_effort=reasoning_effort,
                 router_timeout=settings.get("assistant", {}).get("router_timeout_seconds", 10),
+                max_turns=settings.get("assistant", {}).get("so_vong_cong_cu", ASSISTANT_MAX_TURNS),
+                sua_lich_timeout=bedrock["sua_lich_timeout_seconds"],
                 bedrock_model=BedrockClaudeModel(model=bedrock["model"], region=bedrock["region"], creds_file=creds_file, timeout=timeout,
                                                  max_tokens=bedrock["max_tokens"], reasoning_default=bedrock["reasoning_default"]),
                 sua_lich_reasoning=bedrock["reasoning_sua_lich"],
@@ -446,6 +454,7 @@ class OpenAIFullCorpusGenerator:
             answer_instructions=answer_instructions,
             reasoning_effort=reasoning_effort,
             router_timeout=settings.get("assistant", {}).get("router_timeout_seconds", 10),
+            max_turns=settings.get("assistant", {}).get("so_vong_cong_cu", ASSISTANT_MAX_TURNS),
         )
 
     async def _run(self, agent: Agent, user_prompt: "str | list[dict]", call_log: "CallLog", timeout: float, *, max_turns: int = 1,
@@ -542,7 +551,7 @@ class OpenAIFullCorpusGenerator:
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
                                                      con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn)
         try:
-            result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=max_turns_for(ngay_lich_fn, khoang_cach_fn),
+            result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns),
                                      error_handlers=handlers)
         except GenerationError as exc:
             if not self.xin_cong_cu_da_an(exc.__cause__, state):
@@ -578,7 +587,7 @@ class OpenAIFullCorpusGenerator:
         call_log = CallLog()
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
                                                      con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn)
-        result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=max_turns_for(ngay_lich_fn, khoang_cach_fn), run_config=_run_config(), hooks=call_log,
+        result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns), run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state
 
@@ -699,7 +708,7 @@ class OpenAIFullCorpusGenerator:
         """Sửa lịch bản 2: câu người dùng + lịch hiện tại ⇒ danh sách `HanhDong` (rỗng = không phải câu sửa lịch). Lỗi ⇒ `GenerationError`.
         `chua_ho_tro` (cờ cùng tên) ⇒ agent có thêm hành động `chua_ho_tro`."""
         agent, khuon = (self.sua_lich_cht_agent, SuaLichOutputCHT) if chua_ho_tro else (self.sua_lich_agent, SuaLichOutput)
-        result = await self._run(agent, prompt, call_log, self.router_timeout)
+        result = await self._run(agent, prompt, call_log, self.sua_lich_timeout)
         output = getattr(result, "final_output", None)
         try:
             parsed = output if isinstance(output, khuon) else khuon.model_validate(output)
