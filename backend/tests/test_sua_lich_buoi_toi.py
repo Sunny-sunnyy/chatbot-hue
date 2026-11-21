@@ -64,10 +64,40 @@ def test_evening_capable_place_and_add_to_evening_get_an_honest_sentence_and_the
     ngay_khac = next(ng["ngay"] for ng in k["ngay"] if t not in ng["buoi"]["toi"])
     kq = s.ap(B, luu, [s.HanhDongToi(loai="doi_buoi", ten=B.theo_id[t]["ten"], ngay=ngay_khac, buoi="toi")])  # hoạt động tối sang tối khác: chưa có phép xếp tay
     assert kq["khung"] == k and kq["khong_doi"] == [{"diem": B.theo_id[t]["ten"], "ma_luat": "toi_chua_xep"}]
-    assert "chưa xếp tay được" in s.thay_doi(B, kq)[0]["cau"]
+    cau = s.thay_doi(B, kq)[0]["cau"]
+    assert cau.startswith(f"Mình chưa đặt được {B.theo_id[t]['ten']} vào buổi tối theo ý bạn") and "lịch sẽ tự chọn một hoạt động khác" in cau and "xếp tay" not in cau
+    # điểm ban ngày CHƯA có trong lịch, thêm hoặc dời vào buổi tối ⇒ câu nói rõ "buổi tối" + lý do (review 21/11: trước là "không đi được vào buổi đó")
     ngoai = next(d["id"] for d in B.diem if d["id"] not in s._vi_tri(k) and "toi" not in d["buoi"] and d["id"] not in {j for ng in k["ngay"] for j in ng["buoi"]["toi"]})
-    kq = s.ap(B, luu, [s.HanhDongToi(loai="them_diem", ten=B.theo_id[ngoai]["ten"], ngay=1, buoi="toi")])  # thêm điểm ban ngày vào buổi tối
-    assert kq["khung"] == k and kq["khong_doi"] == [{"diem": B.theo_id[ngoai]["ten"], "ma_luat": "khong_buoi_hop_le"}]
+    for loai in ("them_diem", "doi_buoi"):
+        kq = s.ap(B, luu, [s.HanhDongToi(loai=loai, ten=B.theo_id[ngoai]["ten"], ngay=1, buoi="toi")])
+        assert kq["khung"] == k and kq["khong_doi"] == [{"diem": B.theo_id[ngoai]["ten"], "ma_luat": "ban_ngay_khong_toi"}], loai
+        assert s.thay_doi(B, kq)[0]["cau"] == f"{B.theo_id[ngoai]['ten']} không xếp được vào buổi tối vì đây là điểm tham quan ban ngày, còn buổi tối lịch chỉ xếp hoạt động buổi tối."
+
+
+def test_asking_for_the_evening_slot_a_place_already_has_says_so_without_advice_to_remove_it():
+    """Review 21/11: "dời <hoạt động tối> sang tối ngày N" khi nó ĐANG ở tối ngày N ⇒ trước nhận lời khuyên "bỏ hoạt động tối đang có" (chính là nó)."""
+    k, luu = _lich()
+    _, t = _ban_ngay_va_toi(k)
+    ngay = next(ng["ngay"] for ng in k["ngay"] if t in ng["buoi"]["toi"])
+    for kw in ({"ngay": ngay}, {}):  # nói đúng ngày, hoặc không nói ngày
+        kq = s.ap(B, luu, [s.HanhDongToi(loai="doi_buoi", ten=B.theo_id[t]["ten"], buoi="toi", **kw)])
+        assert kq["khung"] == k and [d["cau"] for d in s.thay_doi(B, kq)] == [f"{B.theo_id[t]['ten']} đang ở buổi tối ngày {ngay} rồi."]
+
+
+def test_replacing_an_evening_activity_no_longer_claims_it_is_not_in_the_plan():
+    """Lỗi có sẵn (không cần cờ, khuôn cũ): "thay <hoạt động đang ở buổi tối> bằng …" ⇒ code báo "… không có trong lịch hiện tại" — SAI, nó đang ở buổi tối của
+    lịch. Code chưa thay được hoạt động buổi tối ⇒ câu nói thật điều đó; lịch không đổi. Điểm thật sự không có trong lịch vẫn nhận câu cũ."""
+    k, luu = _lich()
+    _, t = _ban_ngay_va_toi(k)
+    khac = next(d["ten"] for d in B.diem if "toi" in d["buoi"] and d["id"] != t and d["id"] not in {j for ng in k["ngay"] for j in ng["buoi"]["toi"]})
+    for hd in (s.HanhDong(loai="thay_diem", ten=B.theo_id[t]["ten"], ten_moi=khac), s.HanhDong(loai="thay_diem", ten=B.theo_id[t]["ten"])):
+        kq = s.ap(B, luu, [hd])
+        cau, = [d["cau"] for d in s.thay_doi(B, kq)]
+        assert kq["khung"] == k and not kq.get("the") and "không có trong lịch" not in cau
+        assert cau.startswith("Mình chưa thay được hoạt động buổi tối theo ý bạn") and f"Bạn có thể bỏ {B.theo_id[t]['ten']}" in cau
+    ngoai = next(d for d in B.diem if d["id"] not in s._vi_tri(k) and d["id"] not in {j for ng in k["ngay"] for j in ng["buoi"]["toi"]})
+    kq = s.ap(B, luu, [s.HanhDong(loai="thay_diem", ten=ngoai["ten"], ten_moi=khac)])
+    assert s.thay_doi(B, kq)[0]["cau"] == f"{ngoai['ten']} không có trong lịch hiện tại."
 
 
 def test_daytime_moves_behave_exactly_as_before_with_the_new_schema():

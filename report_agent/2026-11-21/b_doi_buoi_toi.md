@@ -66,3 +66,23 @@ Một trong bốn câu dời sang tối là cách nói không dùng khi viết l
 | Đo hai model, cờ tắt ↔ bật | Xong | số gốc: thư mục riêng tư `ket_qua/b_sua_lich_buoi_toi/` của lượt thử Bedrock 21/11 |
 | Review của phiên khác · thước của phiên đo · lượt trình duyệt | Chưa | — |
 | Bật cờ | Chưa — phiên điều phối quyết sau thước | — |
+
+## 7. Thêm 14:46 21/11/2026 (giờ `date`) — nhánh `p9-b-buoi-toi-chu-va-thay`: ba điểm chữ của review + một lỗi có sẵn
+
+**Ba điểm chữ phiên review nêu (chỉ có tác dụng khi cờ `sua_lich_buoi_toi` bật):**
+
+| Tình huống | Trước | Sau |
+|---|---|---|
+| Xin dời một hoạt động tối sang ĐÚNG buổi tối nó đang đứng | "Mình chưa xếp tay được … Bạn có thể bỏ hoạt động tối đang có…" (bảo bỏ chính thứ họ muốn giữ) | "Chợ Đông Ba đang ở buổi tối ngày 1 rồi." |
+| Thêm / dời một điểm ban ngày CHƯA có trong lịch vào buổi tối | "… không đi được vào buổi đó." | "… không xếp được vào buổi tối vì đây là điểm tham quan ban ngày, còn buổi tối lịch chỉ xếp hoạt động buổi tối." |
+| Chữ "xếp tay" (từ của người làm) | "Mình chưa xếp tay được … để lịch chọn hoạt động khác." | "Mình chưa đặt được … vào buổi tối theo ý bạn — hoạt động buổi tối do lịch tự chọn. Bạn có thể bỏ hoạt động tối đang có, lịch sẽ tự chọn một hoạt động khác." |
+
+**Lỗi có sẵn, sửa KHÔNG sau cờ (phiên review tái hiện 4 / 4 lượt, hai model, cờ tắt cũng vậy):** "thay <hoạt động đang ở buổi tối> bằng …" ⇒ thẻ báo "… không có trong lịch hiện tại" trong khi
+nó đang ở buổi tối của chính lịch đó. Gốc: hàm tra vị trí của code chỉ biết hai buổi ban ngày. Code chưa thay được hoạt động buổi tối (bộ xếp tự chọn hoạt động tối) ⇒ nay nói thật:
+"Mình chưa thay được hoạt động buổi tối theo ý bạn — hoạt động buổi tối do lịch tự chọn. Bạn có thể bỏ Chợ Đông Ba, lịch sẽ tự chọn một hoạt động tối khác." Lịch không đổi (như trước). Điểm
+thật sự không có trong lịch vẫn nhận câu cũ. Không đổi gì gửi model.
+
+**Bằng chứng:** `uv run pytest tests/test_sua_lich_buoi_toi.py -q` ⇒ `7 passed`; chạy test mới trên code main ⇒ 3 ca đỏ (đã thấy); bốn file test sửa lịch `157 passed`.
+Lượt thật qua `hieu_sua` ⇒ `ap` ⇒ câu báo, 5 câu × hai model × cờ tắt / bật = 20 lượt, mong đợi ghi trước [máy kiểm]: hai câu thay hoạt động tối ra câu mới 8 / 8 (không còn "không có
+trong lịch"); cờ bật: "đang ở buổi tối ngày 1 rồi" 2 / 2, câu "điểm tham quan ban ngày" cho điểm chưa có trong lịch 2 / 2; câu đối chứng (thay một điểm ban ngày) như trước 4 / 4.
+**Chưa làm:** lượt trình duyệt; "bỏ buổi tối ngày 1" kéo hoạt động khác lên lấp mà câu báo không nói — phiên điều phối để chủ dự án quyết, không sửa ở đây.
