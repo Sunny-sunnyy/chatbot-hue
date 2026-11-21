@@ -38,6 +38,8 @@ Không trình bày giá trị mong đợi hay kết quả cũ như kết quả m
 8. **Khai phần CHƯA đọc / CHƯA chạy** của chính lượt review (file nào, đường nào, test nào) và tách [chỉ đọc code] ↔ [đã chạy]. Kết luận kiểu "mọi đường đều
    đúng" / "không còn chỗ nào" phải kèm **lệnh tìm mọi nơi dùng** thứ bị đổi (`git grep -n <hàm / hằng / trường>`) + số nơi đã mở; không có lệnh ⇒ chỉ được
    viết "các đường tôi đã mở: …".
+9. Nhánh có code: tự chạy lại lệnh kiểm của MỘT dòng "xong" do mình chọn trong report, ghi đầu ra; ra khác report ⇒ finding, và cộng vào con số "báo xong bị
+   lật lại". Chủ dự án muốn tự chọn một dòng thì vẫn được. (Nhóm chốt 21/11/2026, thay việc chờ chủ dự án chọn dòng; ba ngày làm việc liền 0 lần lật thì bỏ dòng này.)
 
 Report là chỉ mục bằng chứng, không tự chứng minh PASS. Sau cổng tối thiểu chỉ chạy lại phần tiêu chí, rủi ro hoặc mâu thuẫn yêu cầu; không lặp mọi lệnh của người làm.
 
