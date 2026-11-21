@@ -54,6 +54,7 @@ full_corpus_generation:
     model: global.anthropic.claude-sonnet-5-5
     region: ap-southeast-1
     max_tokens: 128000           # trường BẮT BUỘC của kiểu gọi Claude ⇒ để mức tối đa của model = coi như không trần (User 21/11/2026); không đặt nhỏ hơn
+    reasoning_sua_lich: high     # none | low | medium | high — RIÊNG lời gọi hiểu ý sửa lịch (đo 21/11: lệnh khó đúng 5 / 6 ở high, 2 / 6 low, 0 / 6 medium); viết câu lịch + lượt biểu mẫu giữ "low" trong code
     reasoning_default: low       # none | low | medium | high — mức suy luận cho lời gọi KHÔNG tự đặt mức (nhóm lịch tự đặt "low"); TẠM `low`, chọn lại sau lượt đo
     creds_file_env: HUE_BEDROCK_CREDS_FILE  # TÊN biến môi trường trỏ tới file khoá tạm (JSON) — đường dẫn không ghi vào repo
 

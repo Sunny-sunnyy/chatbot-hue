@@ -79,8 +79,11 @@ Về luna KHÔNG cần: sửa code, xoá khối `bedrock:`, xoá file lớp dị
 
 1. Sửa dòng công tắc thành `provider: bedrock` (như bước 1 mục 2).
 2. Chọn mức suy luận mặc định ở `full_corpus_generation.bedrock.reasoning_default`: `none`, `low`, `medium` hoặc `high`. Mức này áp cho lời gọi KHÔNG tự đặt mức
-   (định tuyến, trả lời, trò chuyện, mục web, nhận ảnh). Ba lời gọi của nhóm lịch (lượt biểu mẫu, viết câu cho lịch, hiểu ý sửa lịch) tự đặt `low` trong code và giữ `low`.
-   Giá trị đang ghi trong repo là giá trị TẠM; giá trị chốt chọn theo mục 7.
+   (định tuyến, trả lời, trò chuyện, mục web, nhận ảnh). Nhóm lịch KHÔNG theo khoá này (sửa 11:04 21/11/2026):
+   - viết câu cho lịch và lượt biểu mẫu: tự đặt `low` trong code, giữ `low` — đo 21/11 (4 kiểu lịch, mỗi mức một lần): ba mức cho cùng kết quả, Sonnet không dùng token suy luận nào cho việc này;
+   - hiểu ý sửa lịch (hai agent): theo khoá RIÊNG `full_corpus_generation.bedrock.reasoning_sua_lich`, đang để `high` — đo 21/11 trên 9 lệnh × 3 lượt: lệnh rõ ràng bốn nhánh
+     ngang nhau (17–18 / 18); hai lệnh khó (mơ hồ · bị luật xếp lịch chặn) đúng 5 / 6 ở high, 2 / 6 ở low, 0 / 6 ở medium (luna 6 / 6). Đường luna không đọc khoá này (vẫn `low`).
+   Giá trị `reasoning_default` đang ghi trong repo là giá trị TẠM; giá trị chốt chọn theo mục 7.
 3. Đặt biến môi trường `HUE_BEDROCK_CREDS_FILE` trỏ tới file khoá tạm của Bedrock **lúc bật server** (đặt trước lệnh `uv run`, như `HF_HUB_OFFLINE=1`).
    Trang này và repo chỉ ghi TÊN biến; đường dẫn file khoá hỏi chủ dự án hoặc xem bản giao việc riêng tư ghi ở `session_prompt/VIEC_DANG_MO.md`. File khoá là JSON có
    `accessKeyId`, `secretAccessKey`, `sessionToken`; code đọc lại file ở MỖI lời gọi nên khoá được làm mới bên ngoài thì không phải khởi động lại. Không in, không chép, không commit file này.
@@ -113,7 +116,7 @@ không có trường `model` trong thân. Yêu cầu được ký AWS SigV4 (tê
 |---|---|---|---|
 | Đổi nơi gọi bằng `base_url` | — | cổng kiểu OpenAI của Bedrock trả **404** cho model này | vì vậy phải có lớp dịch, không đổi `base_url` suông được |
 | Trần token đầu ra | không gửi (chủ dự án: không đặt trần) | `max_tokens` là trường **bắt buộc** | luôn gửi `128000` (mức tối đa của model, đã đo 200) lấy từ cấu hình; `max_tokens` của agent bị bỏ qua, không hạ được |
-| Mức suy luận | chỉ nhóm lịch gửi `reasoning.effort: low`; lời gọi khác không gửi | không gửi gì thì model tự suy luận cỡ "high" (687 token suy luận ở một câu thử) | luôn gửi rõ: `low / medium / high` ⇒ `"thinking": {"type": "adaptive"}` + `output_config.effort`; `none` ⇒ `"thinking": {"type": "between_tools"}`, không gửi effort |
+| Mức suy luận | chỉ nhóm lịch gửi `reasoning.effort: low`; lời gọi khác không gửi (đường Sonnet: hiểu ý sửa lịch gửi `reasoning_sua_lich`) | không gửi gì thì model tự suy luận cỡ "high" (687 token suy luận ở một câu thử) | luôn gửi rõ: `low / medium / high` ⇒ `"thinking": {"type": "adaptive"}` + `output_config.effort`; `none` ⇒ `"thinking": {"type": "between_tools"}`, không gửi effort |
 | Tắt hẳn suy luận | — | `effort: "none"` / `"minimal"` ⇒ 400; `thinking: disabled` ⇒ 400 | dùng `between_tools` (đo: 0 token suy luận 6 / 6 lần, kể cả lượt có công cụ) |
 | Khuôn đầu ra (JSON) | `text.format` json_schema strict | `output_config.format` json_schema; khuôn có `maxItems`, `minimum`, `maximum` ⇒ **400** | gỡ các từ khoá ràng buộc (`maxItems`, `minItems`, `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `minLength`, `maxLength`, `pattern`, `default`) khỏi khuôn GỬI ĐI; pydantic phía mình vẫn kiểm đủ ràng buộc khi nhận về. Tên trường trùng từ khoá không bị gỡ. |
 | Công cụ | `tools` kiểu function | `tools` với `name`, `description`, `input_schema`, `strict` | dịch thẳng; khuôn tham số cũng được gỡ ràng buộc |
@@ -150,6 +153,13 @@ khoảng 2.000 token: 15–20 giây; 0 lần bị giới hạn tần suất (429
 - **Chữ hiện MỘT lần** sau khi model viết xong, không chạy dần như luna: người dùng chờ hết thời gian ở bảng rồi thấy cả câu.
 - **Tiền mỗi câu:** một câu trả lời có nguồn khoảng 0,018 USD trên Sonnet, cùng loại câu trên luna khoảng 0,0007 USD (khoảng 25 lần). Lượt hỏi tiếp có model tự tìm thêm: 0,048 USD.
 - Hạn giờ mỗi lượt vẫn là 45 giây; chưa lượt nào tới 35 giây.
+
+Giới hạn đã đo của Sonnet ở nhóm lịch (21/11, chưa sửa — sửa cần đổi lời dặn và đo lại):
+- Lệnh sửa lịch MƠ HỒ ("ngày 2 hơi nặng, làm nhẹ bớt"): Sonnet hay TỰ bỏ một điểm người dùng không nêu — low 3 / 3 lần, medium 3 / 3, high 3 / 6 (ba lần còn lại đổi kiểu đi sang "nhẹ nhàng");
+  luna 3 / 3 giữ nguyên lịch và bảo người dùng nói cụ thể.
+- Câu mô tả điểm trong lịch: Sonnet chép nhiều chi tiết hơn luna và không lấy gì ngoài đoạn nguồn (đối chiếu 17 câu: 0 chi tiết bịa), nhưng có thể GỘP ý làm đổi nghĩa — một câu đã viết
+  tháp Phước Duyên, chuông và bia "đều là Bảo vật quốc gia" trong khi nguồn chỉ ghi chuông và bia. Gặp ở 1 mục trên 5 mục đã đối chiếu. Bộ kiểm câu của code không bắt được loại lỗi này.
+  Ở ô hỏi đáp thường thì CHƯA thấy: một phiên khác đọc tay 36 câu trả lời (12 câu × luna, Sonnet medium, Sonnet high), soi riêng chỗ dễ gộp: 0 / 36. Chủ trương 21/11: ghi giới hạn, chưa sửa lời dặn.
 
 Chưa thử qua giao diện với Sonnet: lịch 1 ngày / kiểu gấp / nhiều sở thích · ảnh ra 2–3 tên · câu bão lũ · màn hẹp điện thoại · hai người hỏi cùng lúc ·
 khoá hết hạn giữa một lượt · cả bộ test với `provider: bedrock`.
