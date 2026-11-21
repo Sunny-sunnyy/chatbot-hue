@@ -172,12 +172,16 @@ TOOL_LIMIT_TEXT = "Đã hết lượt tìm kho. Hãy trả lời bằng Bằng c
 TOOL_NO_NEW_TEXT = "Không có nguồn mới cho câu tìm này."
 # Cờ `bao_het_luot_tim` (21/11): nối vào kết quả của lần tìm kho CUỐI được phép. Từ 12/11 công cụ tìm bị ẩn sau lần đó mà model không được báo ⇒ model vẫn
 # muốn tìm tiếp: luna xin công cụ đã ẩn ⇒ câu từ chối trống; Sonnet nộp câu tìm / chữ rác làm câu trả lời (ba dạng hỏng của một câu trong bộ chuỗi).
+# BẢN CHỮ 2 (21/11 chiều): bản đầu bỏ mất vế "hoặc trả câu không đủ thông tin" của `TOOL_LIMIT_TEXT` ⇒ model không còn lối từ chối cả câu. Lượt thước của
+# phiên đo, Sonnet high, câu đối chứng ngoài tỉnh ("ở Hội An nên ăn món gì"): cờ bật 1 / 1 lượt TRẢ LỜI bằng một mẩu bằng chứng mỏng, cờ tắt 0 / 8. Thêm đúng
+# một vế trả lại lối đó; vế "trả lời phần có, nói rõ phần chưa có" giữ nguyên (thứ đưa luna 25 ⇒ 34 / 41 câu khó). Dùng chung cho hai dòng báo dưới.
+_VAN_TU_CHOI_KHI_KHONG_CO = " Nếu Bằng chứng không nói về điều được hỏi ở ý nào cả thì trả câu không đủ thông tin."
 TOOL_HET_LUOT_TIM_TEXT = ("Lưu ý: đây là lần tìm kho cuối cùng của câu này — từ bước kế không còn công cụ tìm kho. Hãy viết câu trả lời từ Bằng chứng đã có; "
-                          "ý nào Bằng chứng không nói tới thì nói rõ là tư liệu chưa có.")
+                          "ý nào Bằng chứng không nói tới thì nói rõ là tư liệu chưa có." + _VAN_TU_CHOI_KHI_KHONG_CO)
 # Cờ `vong_cuoi_chi_viet` (21/11): nối vào kết quả của lượt công cụ SÁT CUỐI — bước kế model không còn công cụ nào, nên phải được báo bằng chữ (lượt đo đầu
 # không có dòng này: luna vẫn xin công cụ ở vòng cuối 3 / 15 lượt ⇒ lỗi). Dòng mới nằm ở cuối chuỗi gửi model ⇒ không đổi phần đã gửi trước đó.
 TOOL_VONG_CUOI_TEXT = ("Lưu ý: đây là lượt dùng công cụ cuối cùng của câu này — ở bước kế không còn công cụ nào. Hãy viết câu trả lời từ Bằng chứng đã có; "
-                       "ý nào Bằng chứng không nói tới thì nói rõ là tư liệu chưa có.")
+                       "ý nào Bằng chứng không nói tới thì nói rõ là tư liệu chưa có." + _VAN_TU_CHOI_KHI_KHONG_CO)
 # B5 vòng chỉnh 1 (A quyết (a), 05/11): lượt đã có khung lịch ⇒ `tim_kho` không tìm nữa (pilot / server L2: model tìm thêm 3 lần ⇒ chạm `max_turns`)
 # B5b D3 (plan B5b bản 2): mô tả ngắn, không thêm lời dặn hệ thống; số liệu do code in (model không thêm số)
 THOI_TIET_MO_TA = (
