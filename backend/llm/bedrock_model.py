@@ -16,6 +16,9 @@ Các giới hạn đã đo thật trên bộ khoá đang dùng (46 lời gọi s
 - Khuôn JSON ép đầu ra (`output_config.format`) gửi CÙNG công cụ làm Claude gọi công cụ mãi không viết (phát lại một thân yêu cầu đã có đủ kết quả
   công cụ: viết 0 / 30 lần ở mọi mức suy luận; bỏ khuôn: viết 14 / 14) ⇒ lượt vừa có công cụ vừa có khuôn KHÔNG gửi khuôn mà thêm một công cụ nội
   bộ `tra_loi` mang đúng khuôn đó; Claude gọi nó để nộp câu trả lời, lớp dịch đổi lời gọi ấy thành tin trả lời JSON cho SDK (`ANSWER_TOOL`).
+  Cũng áp cho vòng mà mọi công cụ thật đã bị ẨN (hết lượt tìm) nhưng lịch sử của lượt đã có lời gọi công cụ: ép khuôn ở vòng đó làm Claude — vẫn
+  muốn tìm tiếp — viết rác vào khuôn (phát lại 22 lần: `{"answer": "placeholder"}`, `"tim_kho"`, rỗng… 14 lần, đúng câu từ chối 8 lần; chỉ còn
+  `tra_loi`: đúng câu từ chối 20 / 22, 0 rác kiểu đó).
 """
 import datetime as dt
 import hashlib
@@ -123,6 +126,11 @@ def to_messages(input: "str | list[dict]") -> list[dict]:
     return messages
 
 
+def _has_tool_rounds(input: "str | list[dict]") -> bool:
+    """Đầu vào của lời gọi đã mang lời gọi / kết quả công cụ của chính lượt chạy này (SDK gửi lại ở mỗi vòng)."""
+    return not isinstance(input, str) and any(item.get("type") in ("function_call", "function_call_output") for item in input)
+
+
 def build_body(system_instructions: str | None, input: "str | list[dict]", model_settings, tools: list, output_schema, max_tokens: int,
                reasoning_default: str) -> dict:
     """Thân yêu cầu `/invoke`. Bỏ qua các thứ chỉ có nghĩa với OpenAI (`store`, `include_usage`, `prompt_cache_key`, `max_tokens` của agent…).
@@ -141,8 +149,10 @@ def build_body(system_instructions: str | None, input: "str | list[dict]", model
     output_config: dict = {}
     if output_schema is not None and not output_schema.is_plain_text():
         schema = strip_constraints(output_schema.json_schema())
-        if tools:  # khuôn + công cụ ⇒ nộp câu trả lời qua công cụ nội bộ, không ép khuôn (lý do ở đầu file)
-            body["tools"].append({"name": ANSWER_TOOL, "description": ANSWER_TOOL_DESCRIPTION, "input_schema": schema, "strict": True})
+        # khuôn + công cụ, hoặc vòng công cụ đã ẩn hết nhưng lượt này đã có lời gọi công cụ ⇒ nộp câu trả lời qua công cụ nội bộ, không ép khuôn
+        if tools or _has_tool_rounds(input):
+            body.setdefault("tools", []).append({"name": ANSWER_TOOL, "description": ANSWER_TOOL_DESCRIPTION, "input_schema": schema, "strict": True})
+            body.setdefault("tool_choice", {"type": "auto", "disable_parallel_tool_use": True})
         else:
             output_config["format"] = {"type": "json_schema", "schema": schema}
     effort = getattr(model_settings.reasoning, "effort", None) or reasoning_default

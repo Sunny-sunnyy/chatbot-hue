@@ -43,7 +43,6 @@ from llm.full_corpus_prompt import (
     SONNET_GIU_DUNG_VAT,
     SONNET_SUA_LICH,
     SONNET_SUA_LICH_KHONG_RO,
-    SONNET_TRA_LOI,
     ROUTER_INSTRUCTIONS,
     ROUTER_SEARCH_V1,
     ROUTER_SEARCH_V3,
@@ -310,7 +309,7 @@ class OpenAIFullCorpusGenerator:
         # No temperature, verbosity, top_p or sampling knobs; reasoning only when reasoning_effort is set
         self.answer_agent = Agent(
             name="hue_full_corpus_answer_generator",
-            instructions=kem(answer_instructions, SONNET_TRA_LOI),
+            instructions=answer_instructions,
             model=self.responses_model,
             model_settings=ModelSettings(
                 include_usage=True,
@@ -342,7 +341,7 @@ class OpenAIFullCorpusGenerator:
         }
         # B2 D5: trợ lý có công cụ — lời dặn trả lời + đoạn công cụ, cùng model setting, một công cụ mỗi lượt gọi.
         # Công cụ gắn mỗi lượt (`_assistant_for`): lõi đưa hàm của lượt đó (giữ trace / sổ nguồn riêng).
-        self.assistant_instructions = kem(f"{answer_instructions}\n\n{ASSISTANT_TOOL_NOTE}", SONNET_TRA_LOI)
+        self.assistant_instructions = f"{answer_instructions}\n\n{ASSISTANT_TOOL_NOTE}"
         self.assistant_agent = self.answer_agent.clone(
             name="hue_assistant",
             instructions=self.assistant_instructions,
@@ -355,7 +354,7 @@ class OpenAIFullCorpusGenerator:
         # Việc agent (3) 14/11 (cờ `cau_nhieu_y`): cùng hai bản trợ lý, chỉ thay đoạn luật từ chối của lời dặn trả lời bằng luật theo ý.
         # Chỉ dựng khi lời dặn là bản runtime (harness 8.1 truyền lời dặn khác ⇒ không có biến thể này). Cờ tắt ⇒ không dùng tới.
         if answer_instructions == ANSWER_SYSTEM_INSTRUCTIONS:
-            ny = kem(f"{ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y}\n\n{ASSISTANT_TOOL_NOTE}", SONNET_TRA_LOI)
+            ny = f"{ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y}\n\n{ASSISTANT_TOOL_NOTE}"
             self.assistant_agent_nhieu_y = self.assistant_agent.clone(instructions=ny)
             self.assistant_history_agent_nhieu_y = self.assistant_agent.clone(instructions=f"{ny}\n\n{ASSISTANT_HISTORY_NOTE}")
         # Cổng đợt 1 D3 (V5 — X1c): lượt biểu mẫu = agent trả lời + luật viết lịch trong lời dặn hệ thống + mức suy luận "low". Chỉ lượt biểu

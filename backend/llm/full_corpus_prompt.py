@@ -297,14 +297,9 @@ SONNET_SUA_LICH = (
 )
 SONNET_SUA_LICH_KHONG_RO = {True: "trả chua_ho_tro để hệ thống mời họ nói cụ thể", False: "trả danh sách rỗng"}
 
-# (3) Trả lời. Ca đo (bộ câu mẫu, người chấm luna): 34–42 / 66 câu của Sonnet bị trừ điểm "Trọng tâm", có câu nhắc một con số bốn lần.
-# Không dặn "viết ngắn" (chủ dự án không muốn bóp model) — chỉ bỏ phần lặp và phần không giúp người hỏi.
-SONNET_TRA_LOI = (
-    "Cách trình bày: mở đầu bằng chính điều người hỏi cần biết, rồi mới tới phần bổ sung. Chi tiết khác trong Bằng chứng chỉ đưa vào khi nó "
-    "giúp người hỏi làm việc họ đang hỏi — chi tiết đúng mà không liên quan làm họ khó tìm ý chính. Mỗi ý, mỗi con số nêu một lần; không "
-    "nhắc lại ở đoạn sau hay trong câu kết. Đây không phải yêu cầu viết ngắn: câu hỏi cần nhiều ý thì vẫn trả lời đủ các ý, và điều kiện, "
-    "ngoại lệ, lưu ý an toàn có trong Bằng chứng vẫn giữ như đã dặn ở trên."
-)
+# (3) Trả lời — ĐÃ THỬ, ĐÃ GỠ 21/11/2026. Đoạn dặn "nói điều được hỏi trước, không nhắc lại ý" (nhắm vào 34–42 / 66 câu bị trừ "Trọng tâm") đo lại
+# trên 85 câu ở high, hai người chấm: Đúng / Đủ ý không đổi; độ dài trung vị 236 ⇒ 258 ký tự; Trọng tâm 4,39 ⇒ 4,26 (so cặp 4 thắng / 49 hoà / 13 thua)
+# ⇒ không đạt điều nó nhắm tới ⇒ gỡ. Lời dặn trả lời / trợ lý của Sonnet nay y như của luna.
 
 # (4) Định tuyến. Ca đo (chuỗi hội thoại, 43 lượt phải trả lời): Sonnet đẩy câu về nơi ở rìa Huế sang "ngoài phạm vi" — medium 4 lượt, high 2 lượt,
 # luna 0 (luna trả lời đúng các câu đó từ kho). Viết theo LOẠI nơi, không nêu tên nơi nào của bộ đo.
