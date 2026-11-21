@@ -1,6 +1,8 @@
 """Tool-less OpenAI Agents SDK full-corpus answer generator for Phase 6."""
 import asyncio
 import dataclasses
+import functools
+import inspect
 from dataclasses import dataclass
 import logging
 import os
@@ -35,6 +37,7 @@ from llm.full_corpus_prompt import (
     LIET_KE_MO_TA,
     NGAY_LICH_MO_TA,
     THOI_TIET_MO_TA,
+    TOOL_VONG_CUOI_TEXT,
     CHAT_INSTRUCTIONS,
     INSUFFICIENT_ANSWER,
     LICH_TRINH_LUAT,
@@ -524,11 +527,17 @@ class OpenAIFullCorpusGenerator:
         return parsed.route, queries
 
     def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                       con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None) -> tuple[Agent, dict, dict]:
+                       con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None,
+                       vong_cuoi: "tuple[CallLog, int] | None" = None) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
-        state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn, "liet_ke_con_luot": getattr(liet_ke_fn, "con_luot", None)}
+        # `vong_cuoi` = (sổ lời gọi của lượt, trần vòng) khi cờ `vong_cuoi_chi_viet` bật. SDK hỏi `is_enabled` HAI lúc: khi gom công cụ cho lần gọi kế VÀ khi xử lý
+        # lời xin công cụ của lần gọi vừa xong — hai lúc đó có cùng số lần gọi đã xong, nên không phân biệt được bằng bộ đếm (bản đầu: công cụ của lượt sát cuối
+        # bị coi là "đã tắt" ngay khi model xin ⇒ lỗi). Mốc đúng là: công cụ của lượt sát cuối ĐÃ CHẠY XONG ⇒ `state["het_cong_cu"]` (đặt trong `bao`).
+        state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn, "het_cong_cu": False, "liet_ke_con_luot": getattr(liet_ke_fn, "con_luot", None)}
+        con_vong_fn = None if vong_cuoi is None else (lambda: not state["het_cong_cu"])
+        state["con_vong_fn"] = con_vong_fn
 
         def on_max_turns(_input) -> AnswerOutput:
             state["hit_max_turns"] = True
@@ -536,37 +545,63 @@ class OpenAIFullCorpusGenerator:
 
         # Hết lượt tìm (plan 12/11): `con_luot_fn` có ⇒ SDK hỏi lại hàm này trước MỖI lượt gọi model; trả False ⇒ lượt đó không gửi `tim_kho`
         # (model phải viết ngay). Không truyền ⇒ dựng công cụ y như trước (chuỗi gửi model giống byte).
-        con_tim = {} if con_luot_fn is None else {"is_enabled": lambda _context, _agent: con_luot_fn()}
-        tools = [function_tool(tool_fn, name_override="tim_kho", failure_error_function=None, **con_tim)]
+        # Vòng cuối chỉ viết (cờ `vong_cuoi_chi_viet`, 21/11): `con_vong_fn` có ⇒ MỌI công cụ thêm điều kiện đó; nó trả False ở vòng cuối cùng của lượt ⇒
+        # vòng đó không gửi công cụ nào, model viết từ bằng chứng đã có thay vì hết vòng. Không truyền cả hai ⇒ không có `is_enabled` (giống byte).
+        def mo(*dieu_kien) -> dict:
+            dk = [f for f in (*dieu_kien, con_vong_fn) if f is not None]
+            return {"is_enabled": lambda _context, _agent: all(f() for f in dk)} if dk else {}
+
+        def bao(fn):
+            """Cùng cờ: kết quả (chữ) của công cụ chạy ở lượt sát cuối được nối một dòng báo "bước kế không còn công cụ" (`TOOL_VONG_CUOI_TEXT`)."""
+            if con_vong_fn is None:
+                return fn
+
+            @functools.wraps(fn)
+            async def chay(*args, **kwargs):
+                ket_qua = fn(*args, **kwargs)
+                if inspect.isawaitable(ket_qua):
+                    ket_qua = await ket_qua
+                call_log, so_vong = vong_cuoi
+                if len(call_log.calls) < so_vong - 1:  # chưa phải lượt công cụ sát cuối: lần gọi model kế vẫn còn công cụ
+                    return ket_qua
+                state["het_cong_cu"] = True  # lần gọi model kế là lần cuối của lượt ⇒ không còn công cụ, và model được báo ngay trong kết quả này
+                return f"{ket_qua}\n\n{TOOL_VONG_CUOI_TEXT}" if isinstance(ket_qua, str) else ket_qua
+            return chay
+
+        tools = [function_tool(bao(tool_fn), name_override="tim_kho", failure_error_function=None, **mo(con_luot_fn))]
         extra = {"tool_use_behavior": "stop_on_first_tool"} if stop_on_first_tool else {}
         if nhieu_y:  # cờ `cau_nhieu_y`: lời dặn theo ý; không truyền ⇒ hai bản cũ (chuỗi gửi model giống byte)
             base = self.assistant_history_agent_nhieu_y if history else self.assistant_agent_nhieu_y
         else:
             base = self.assistant_history_agent if history else self.assistant_agent
         if lich_trinh_fn is not None:  # B5 D1: công cụ thứ hai; mô tả ngắn, không đổi lời dặn (D7); dừng lượt chỉ khi code trả thẻ hỏi lại (D15)
-            tools.append(function_tool(lich_trinh_fn, name_override="lich_trinh", description_override=LICH_TRINH_MO_TA, failure_error_function=None))
+            tools.append(function_tool(bao(lich_trinh_fn), name_override="lich_trinh", description_override=LICH_TRINH_MO_TA, failure_error_function=None, **mo()))
             extra = {**extra, "tool_use_behavior": _dung_khi_hoi_lai}
         if thoi_tiet_fn is not None:  # B5b D4: chỉ khi code thấy từ khoá thời tiết (lượt khác ⇒ danh sách công cụ như trước)
-            tools.append(function_tool(thoi_tiet_fn, name_override="thoi_tiet", description_override=getattr(thoi_tiet_fn, "mo_ta", THOI_TIET_MO_TA),
-                                       failure_error_function=None))  # bản cờ `bao_lu_cong_cu` gắn `mo_ta` riêng
+            tools.append(function_tool(bao(thoi_tiet_fn), name_override="thoi_tiet", description_override=getattr(thoi_tiet_fn, "mo_ta", THOI_TIET_MO_TA),
+                                       failure_error_function=None, **mo()))  # bản cờ `bao_lu_cong_cu` gắn `mo_ta` riêng
         if ngay_lich_fn is not None:  # Phase 9 T1: chỉ khi code thấy từ chỉ ngày (lượt khác ⇒ danh sách công cụ như trước)
-            tools.append(function_tool(ngay_lich_fn, name_override="ngay_lich", description_override=NGAY_LICH_MO_TA, failure_error_function=None))
+            tools.append(function_tool(bao(ngay_lich_fn), name_override="ngay_lich", description_override=NGAY_LICH_MO_TA, failure_error_function=None, **mo()))
         if khoang_cach_fn is not None:  # 16/11: chỉ khi code thấy từ khoá khoảng cách; mô tả (luật + danh sách mã) nằm ở docstring của hàm
-            tools.append(function_tool(khoang_cach_fn, name_override="khoang_cach", failure_error_function=None))
-        if liet_ke_fn is not None:  # cờ `liet_ke_bai` (21/11): liệt kê bài theo nhóm / cụm từ, code trả lời; cờ tắt ⇒ danh sách công cụ như cũ
-            con_liet_ke = {} if state["liet_ke_con_luot"] is None else {"is_enabled": lambda _context, _agent: state["liet_ke_con_luot"]()}
-            tools.append(function_tool(liet_ke_fn, name_override="liet_ke_bai", description_override=LIET_KE_MO_TA, failure_error_function=None, **con_liet_ke))
+            tools.append(function_tool(bao(khoang_cach_fn), name_override="khoang_cach", failure_error_function=None, **mo()))
+        if liet_ke_fn is not None:  # cờ `liet_ke_bai` (21/11): liệt kê bài theo nhóm / cụm từ, code trả lời; cờ tắt ⇒ danh sách công cụ như cũ. Ẩn khi đã dùng đủ số
+            # lần (`con_luot` của chính công cụ) HOẶC ở vòng cuối chỉ viết — cùng hàm gom điều kiện `mo` với mọi công cụ khác
+            tools.append(function_tool(bao(liet_ke_fn), name_override="liet_ke_bai", description_override=LIET_KE_MO_TA, failure_error_function=None,
+                                       **mo(state["liet_ke_con_luot"])))
         return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
     async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
-                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None) -> GeneratedText:
+                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None,
+                                  vong_cuoi_chi_viet: bool = False) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
+        so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn)  # cùng con số với `max_turns` của lần chạy — lệch một vòng là nhận nhầm vòng cuối
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
-                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn)
+                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn,
+                                                     vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None)
         try:
-            result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn),
+            result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=so_vong,
                                      error_handlers=handlers)
         except GenerationError as exc:
             if not self.xin_cong_cu_da_an(exc.__cause__, state):
@@ -579,9 +614,14 @@ class OpenAIFullCorpusGenerator:
         """Model xin `tim_kho` ở lượt công cụ đã ẩn vì hết lượt tìm ⇒ SDK ném `ModelBehaviorError` ("Tool tim_kho not found"; probe 12/11, cả đường
         thường lẫn stream). Đúng ca đó ⇒ đánh dấu lượt và trả True: nơi gọi không coi là lỗi, `_tools_result` trả câu từ chối cố định như nhánh chạm
         `max_turns`. Lỗi hành vi model khác, hoặc công cụ chưa bị ẩn ⇒ False (vẫn là lỗi)."""
+        con_vong_fn = state.get("con_vong_fn")
         da_an = any(fn is not None and not fn() and ten in str(exc)  # `liet_ke_bai` cũng bị ẩn khi dùng đủ số lần (cờ `liet_ke_bai`)
                     for fn, ten in ((state.get("con_luot_fn"), "tim_kho"), (state.get("liet_ke_con_luot"), "liet_ke_bai")))
         if isinstance(exc, ModelBehaviorError) and da_an:
+            state["xin_cong_cu_da_an"] = True
+            return True
+        # vòng cuối chỉ viết: model vẫn xin một công cụ (bất kỳ) đã ẩn ở vòng cuối ⇒ như chạm trần vòng hôm nay (câu từ chối cố định), không thành lỗi
+        if isinstance(exc, ModelBehaviorError) and con_vong_fn is not None and not con_vong_fn() and str(exc).startswith("Tool "):  # "… not found" / "… is currently disabled"
             state["xin_cong_cu_da_an"] = True
             return True
         return False
@@ -598,12 +638,15 @@ class OpenAIFullCorpusGenerator:
         return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"])
 
     def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                           con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
+                           con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None,
+                           vong_cuoi_chi_viet: bool = False) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
+        so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn)  # cùng con số với `max_turns` của lần chạy — lệch một vòng là nhận nhầm vòng cuối
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
-                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn)
-        result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn), run_config=_run_config(), hooks=call_log,
+                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn,
+                                                     vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None)
+        result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=so_vong, run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state
 

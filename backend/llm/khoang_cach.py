@@ -15,6 +15,10 @@ TIEU_DE_NGUON = "Khoảng cách ước tính (bản đồ)"
 MUC_NGUON = "Ước theo đường ô tô / xe máy"
 NGUON_SOURCE = "osrm-khoang-cach"  # `source` của nguồn — không thuộc tiền tố bài kho
 CAU_CHUA_CO = "Mình chưa có số khoảng cách cho nơi này."
+# Cờ `khoang_cach_trang_thai` (21/11): dòng mở đầu kết quả công cụ khi KHÔNG có số cho cặp nơi (đứng ngoài khối nguồn). Người dùng mô phỏng: câu nhiều ý có
+# "bao xa" + nơi không có trong bảng ⇒ model gọi công cụ này 3 lần liền cho cùng nơi rồi hết vòng.
+TRANG_THAI_KHONG_CO = ("Trạng thái: không có số liệu khoảng cách cho cặp nơi này. Đừng gọi lại công cụ này cho cùng cặp nơi; vẫn trả lời các ý khác của câu hỏi, "
+                       "và nói rõ là chưa có số khoảng cách cho ý này.")
 CAU_GHI_CHU = "Số ước theo đường đi trên bản đồ, chưa tính kẹt xe hay dừng nghỉ."
 # Phút hiện = 1,25 × phút OSRM + 5 (review 16/11 M1; đối chiếu 6 cặp có nguồn công khai — report `c_khoang_cach_implementation.md`): OSRM (hồ sơ ô tô)
 # tính theo tốc độ giới hạn ⇒ chặng nội thành nhanh quá (Đại Nội → Tự Đức OSRM 12 phút, nguồn 20 phút), còn sàn 40 km/h làm chặng dài chậm quá
