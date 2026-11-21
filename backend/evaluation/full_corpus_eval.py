@@ -53,6 +53,7 @@ JUDGE_PROMPT_PATH = Path(__file__).resolve().parent / "full_corpus_judge_prompt.
 RETRIEVAL_K = 10
 CONCURRENCY = 4
 JUDGE_MAX_OUTPUT_TOKENS = 1024
+JUDGE_PROVIDERS = ("openai", "bedrock")  # model chấm: luna (mặc định) hoặc Claude trên Bedrock — `judge_settings`
 ANSWER_METRICS = ("accuracy", "completeness", "relevance")
 RETRIEVAL_METRICS = ("mrr", "ndcg", "keyword_coverage")
 OUT_OF_SCOPE = "out_of_scope"
@@ -559,9 +560,11 @@ def build_judge_message(question: str, reference_answer: str, answer: str) -> st
     )
 
 
-async def judge_case_luna(agent: Agent, case: dict, answer_row: dict) -> dict:
+async def judge_case_luna(agent: Agent, case: dict, answer_row: dict, judge_model: str = "gpt-6-luna", provider: str = "openai") -> dict:
+    """`judge_model` / `provider`: tên model chấm ghi vào dòng và bảng giá tính `usd` của dòng (mặc định = luna như trước)."""
     row = {
         "case_index": case["case_index"],
+        "judge_model": judge_model,
         "accuracy": None,
         "completeness": None,
         "relevance": None,
@@ -570,6 +573,7 @@ async def judge_case_luna(agent: Agent, case: dict, answer_row: dict) -> dict:
         "output_tokens": None,
         "cache_write_tokens": None,
         "cached_tokens": None,
+        "usd": None,
         "error": None,
     }
     message = build_judge_message(case["question"], case["reference_answer"], answer_row["answer"])
@@ -584,7 +588,8 @@ async def judge_case_luna(agent: Agent, case: dict, answer_row: dict) -> dict:
         if usage is not None:
             cached_tokens, cache_write_tokens = input_cache_tokens(usage)
             row.update(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens,
-                       cache_write_tokens=cache_write_tokens, cached_tokens=cached_tokens)
+                       cache_write_tokens=cache_write_tokens, cached_tokens=cached_tokens,
+                       usd=cost_usd(usage.input_tokens, usage.output_tokens, cache_write_tokens or 0, cached_tokens or 0, provider=provider))
         scores = result.final_output
         if not isinstance(scores, JudgeScores):
             scores = JudgeScores.model_validate_json(str(scores))
@@ -594,12 +599,22 @@ async def judge_case_luna(agent: Agent, case: dict, answer_row: dict) -> dict:
     return row
 
 
-async def run_judge_luna(cases: list[dict], answer_rows: list[dict]) -> list[dict]:
-    """Judge phụ: model OpenAI ghi ở `full_corpus_generation.model`, không tham số sampling. Người chấm LUÔN là model đó, kể cả khi sản phẩm
-    đang chạy `provider: bedrock` (User 21/11/2026) — điểm so được với mọi mốc cũ."""
-    settings = load_settings(validate_private_paths=False)
-    generator = OpenAIFullCorpusGenerator.from_environment(
-        {**settings, "full_corpus_generation": {**settings["full_corpus_generation"], "provider": "openai"}})
+def judge_settings(settings: dict, provider: str) -> dict:
+    """Cấu hình dựng model CHẤM, không phụ thuộc dòng công tắc model viết: `openai` ⇒ model ghi ở `full_corpus_generation.model` (luna — mặc
+    định, điểm so được với mọi mốc cũ); `bedrock` ⇒ Claude ở khối `bedrock` với mức suy luận `high` (User 21/11/2026: thử người chấm Sonnet,
+    không giới hạn khả năng model). Lớp dịch Bedrock luôn gửi `max_tokens` của cấu hình ⇒ `JUDGE_MAX_OUTPUT_TOKENS` không cắt phía Claude."""
+    if provider not in JUDGE_PROVIDERS:
+        raise ValueError(f"Invalid judge provider: {provider!r}")
+    generation = {**settings["full_corpus_generation"], "provider": provider}
+    if provider == "bedrock":
+        generation["bedrock"] = {**generation["bedrock"], "reasoning_default": "high"}
+    return {**settings, "full_corpus_generation": generation}
+
+
+async def run_judge_luna(cases: list[dict], answer_rows: list[dict], provider: str = "openai") -> list[dict]:
+    """Judge phụ: không tham số sampling, cùng file lời dặn cho mọi model chấm. `provider` mặc định `openai` = luna như trước nay, kể cả khi sản
+    phẩm đang chạy `provider: bedrock`; `bedrock` = chấm bằng Claude (`judge_settings`). Mỗi dòng ghi `judge_model` + `usd` theo giá model chấm."""
+    generator = OpenAIFullCorpusGenerator.from_environment(judge_settings(load_settings(validate_private_paths=False), provider))
     agent = Agent(
         name="hue_full_corpus_answer_judge",
         instructions=JUDGE_PROMPT_PATH.read_text(encoding="utf-8"),
@@ -614,7 +629,7 @@ async def run_judge_luna(cases: list[dict], answer_rows: list[dict]) -> list[dic
 
     async def one(case: dict) -> dict:
         async with semaphore:
-            return await judge_case_luna(agent, case, answers[case["case_index"]])
+            return await judge_case_luna(agent, case, answers[case["case_index"]], generator.model, provider)
 
     try:
         return list(await asyncio.gather(*(one(case) for case in cases)))
@@ -670,7 +685,7 @@ def summarize_retrieval(rows: list[dict]) -> dict:
     return mean_by_category(rows, RETRIEVAL_METRICS)
 
 
-def summarize_answers(answer_rows: list[dict], score_rows: list[dict] | None) -> dict:
+def summarize_answers(answer_rows: list[dict], score_rows: list[dict] | None, judge_provider: str = "openai") -> dict:
     ok = [row for row in answer_rows if not row["error"]]
     summary = {
         "cases": len(answer_rows),
@@ -689,7 +704,7 @@ def summarize_answers(answer_rows: list[dict], score_rows: list[dict] | None) ->
         ]
         summary["scores"] = mean_by_category(scored, ANSWER_METRICS)
         summary["score_errors"] = validate_score_rows(score_rows)
-        summary["judge_usage"] = usage_totals(score_rows)
+        summary["judge_usage"] = usage_totals(score_rows, judge_provider)
     return summary
 
 
@@ -1000,10 +1015,12 @@ def main(argv: list[str] | None = None) -> int:
     judge.add_argument("--answers", required=True)
     judge.add_argument("--cases", type=int, nargs="*", help="case_index cần chấm")
     judge.add_argument("--out", required=True)
+    judge.add_argument("--provider", choices=JUDGE_PROVIDERS, default="openai", help="model chấm: openai = gpt-6-luna (mặc định); bedrock = Claude, suy luận high")
 
     retry = commands.add_parser("retry", help="chạy lại các dòng có error, ghi đè vào file")
     retry.add_argument("kind", choices=["generate", "judge-luna"])
     retry.add_argument("--file", required=True)
+    retry.add_argument("--provider", choices=JUDGE_PROVIDERS, default="openai", help="chỉ với judge-luna: model chấm của file đang chạy lại")
     retry.add_argument("--answers", help="file câu trả lời (bắt buộc với judge-luna)")
 
     export = commands.add_parser("export-judge-input", help="file đầu vào cho judge Claude")
@@ -1085,9 +1102,9 @@ def main(argv: list[str] | None = None) -> int:
         if not selected:
             print("no case to judge")
             return 0
-        rows = asyncio.run(run_judge_luna(selected, answer_rows))
+        rows = asyncio.run(run_judge_luna(selected, answer_rows, args.provider))
         write_jsonl(_path(args.out), rows)
-        print(json.dumps(summarize_answers(answer_rows, rows), ensure_ascii=False, indent=2))
+        print(json.dumps(summarize_answers(answer_rows, rows, args.provider), ensure_ascii=False, indent=2))
     elif args.command == "retry":
         existing = read_jsonl(_path(args.file))
         failed_indexes = error_case_indexes(existing)
@@ -1098,11 +1115,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.kind == "generate":
             retried = asyncio.run(run_generation(failed))
         else:
-            retried = asyncio.run(run_judge_luna(failed, read_jsonl(_path(args.answers))))
+            retried = asyncio.run(run_judge_luna(failed, read_jsonl(_path(args.answers)), args.provider))
         merged = merge_retried(existing, retried)
         write_jsonl(_path(args.file), merged)
         print(json.dumps({"retried": len(failed), "still_error": sum(bool(r["error"]) for r in merged),
-                          "retry_usage": usage_totals(retried)}, ensure_ascii=False, indent=2))
+                          "retry_usage": usage_totals(retried, args.provider if args.kind == "judge-luna" else "openai")}, ensure_ascii=False, indent=2))
     elif args.command == "export-judge-input":
         answer_rows = read_jsonl(_path(args.answers))
         rows = judge_input_rows(answered_cases(cases, answer_rows, args.cases), answer_rows, args.seed)
