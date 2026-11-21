@@ -5,10 +5,9 @@ description: Vòng lặp cải tiến chính SẢN PHẨM của một dự án c
 
 # Cải tiến dự án theo vòng
 
-**Vì sao.** Agent giỏi tối ưu thứ thước đang đo và làm đúng việc được giao; hai việc đó không trả lời "đây có phải bài toán đúng không". Lỗi "không nhìn ra
-hướng" không để lại sự cố nào để đếm, nên vòng cải tiến cách làm không bao giờ thấy nó.
+Lỗi "không nhìn ra hướng" không để lại sự cố nào để đếm, nên vòng cải tiến cách làm không thấy nó — vòng này dành cho nó.
 
-**Ai chạy, khi nào.** Nhóm tự chạy ở mốc hoặc khi có dấu hiệu ở phần mô tả — không theo lịch, không sinh việc đều đặn cho người chủ. Một phiên làm, một phiên
+**Ai chạy, khi nào.** Nhóm tự chạy ở mốc hoặc khi có dấu hiệu ở phần mô tả; không sinh việc đều đặn cho người chủ. Một phiên làm, một phiên
 khác đọc (làm một mình: mở phiên mới ngữ cảnh sạch để đọc). Bản nhanh (15–30 phút, 0 đồng): bước 0–3 trên dữ liệu đã có. Skill không tự xây: việc xây đi
 đường làm việc thường của dự án (quyền, review).
 
@@ -21,8 +20,8 @@ sai — đó là dữ liệu về chính cách chọn hướng.
 những gì. Thiếu thì hỏi — mỗi lần một câu, chỉ thứ CHỈ người chủ biết; không soạn lại thành khung của agent. Chưa có đích khi không ai nói được trong một câu
 "ngày sản phẩm được dùng / được chấm, chuyện gì diễn ra".
 
-**2. Một con số sát đích — và thước có đo đúng không.** Chọn MỘT con số sản phẩm gần đích nhất (ví dụ: bao nhiêu phiên người dùng làm xong việc họ đến để
-làm); ghi giá trị hôm nay và chạy lại y nguyên thì lệch bao nhiêu — một lần chạy chỉ là một mẫu. Thước (= cách đang đo: bộ câu, bộ test, con số theo dõi) đo
+**2. Một con số sát đích — và thước có đo đúng không.** Chọn MỘT con số sản phẩm gần đích nhất (kiểu "bao nhiêu phiên người dùng làm xong việc họ đến để
+làm"); ghi giá trị hôm nay và chạy lại y nguyên thì lệch bao nhiêu — một lần chạy chỉ là một mẫu. Thước (= cách đang đo: bộ câu, bộ test, con số theo dõi) đo
 thứ người dùng GẶP (nhiều lượt, câu tự nhiên, việc phổ thông) hay thứ DỄ ĐO (một lượt, câu do nhóm đặt)? Tín hiệu thước lệch: người chủ tự thử thấy lỗi mà
 thước không thấy · số tăng mà người chủ vẫn thấy chưa tới đâu · câu đo do chính người viết code đặt.
 
@@ -52,14 +51,14 @@ kiện, đủ lượt lặp để biết nhiễu; không hơn rõ ngoài nhiễu
 (đích và thước có đúng không) và bước 4 (nền có đúng không).
 
 **9. Kết vòng — sửa chính skill này, và chia ranh.** Một dòng: bước nào của skill vòng này không dùng tới · thiếu bước nào. Bước hai vòng liền không ai dùng ⇒
-gỡ; skill phải nhỏ dần, không dài ra. Vòng này cho thấy nút thắt nằm ở CÁCH LÀM (ví dụ phần lớn commit không chạm sản phẩm, việc báo xong hay bị lật lại) ⇒
+gỡ; skill phải nhỏ dần. Vòng này cho thấy nút thắt nằm ở CÁCH LÀM ⇒
 chuyển sang `improve-workflow`; skill kia thấy ý về hướng sản phẩm thì ghi vào danh sách ý chưa thử cho vòng này đọc.
 
 ## Giới hạn
 
 - Skill không sinh luật, sổ hay bước kiểm mới, không lật điều đã chốt: nó ra hướng, phép đếm và một trang.
-- Nhiều phiên cùng một model đồng ý với nhau là bằng chứng yếu (chung điểm mù); thông tin KHÁC nhau đáng tin hơn số phiếu [kinh nghiệm dự án gốc: lượt đọc
-  của model khác hãng tìm ra điểm các phiên cùng model không thấy; nghiên cứu nêu cùng chiều chưa ai trong nhóm tự mở].
+- Nhiều phiên cùng một model đồng ý với nhau là bằng chứng yếu (chung điểm mù); thông tin KHÁC nhau đáng tin hơn số phiếu [kinh nghiệm dự án gốc; nghiên cứu
+  nêu cùng chiều chưa ai trong nhóm tự mở].
 - Người dùng do model đóng vai có thể dễ tính hơn người thật: dùng để LỘ lớp lỗi, không thay người thật thử [arXiv 2603.11245 và 2601.17087 nêu cùng chiều —
   phiên điều phối mở phần tóm tắt hai bài; đo trên trợ lý dịch vụ khách hàng tiếng Anh ⇒ là hướng, chưa là bằng chứng cho loại sản phẩm khác].
 - "Ba lần thử", "hai vòng liền", "nhiều nhất hai hướng" là mốc kinh nghiệm, chưa nguồn nào cho con số. Bảng phân loại do một người làm thì ghi nhãn "một
