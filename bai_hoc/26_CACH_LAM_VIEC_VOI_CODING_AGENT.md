@@ -8,7 +8,7 @@ Từ đánh dấu **mới** là lần đầu gặp; các từ còn lại đã c�
 
 | Tên trong bài | Tên gốc | Nghĩa ngắn |
 |---|---|---|
-| Coding agent | coding agent (Claude Code, Codex, Antigravity) | Chương trình AI tự đọc code, sửa code, chạy lệnh theo lời giao. Nhóm làm đồ án này gồm bốn phiên như vậy, và từ 21/11 thêm một phiên giảng viết giáo trình. |
+| Coding agent | coding agent (Claude Code, Codex, Antigravity) | Chương trình AI tự đọc code, sửa code, chạy lệnh theo lời giao. Nhóm làm đồ án này gồm bốn phiên như vậy, và từ 21/11 anh giao thêm một phiên giảng viết giáo trình. |
 | Phiên — **mới** | session | Một lần mở một coding agent. "Phiên mới, ngữ cảnh sạch" = mở cuộc trò chuyện mới, chỉ đưa thứ cần xem, không mang theo lịch sử cũ. |
 | Agent con | sub-agent | Agent do một phiên tạo ra để làm một phần việc. Nó chỉ biết đúng những gì ghi trong lời giao. |
 | Bảng quyền — **mới** | mục "Quyền thường trực" trong `AGENTS.md` | Ba nhóm: việc agent tự làm · việc phải hỏi anh trước · việc không bao giờ làm. |
