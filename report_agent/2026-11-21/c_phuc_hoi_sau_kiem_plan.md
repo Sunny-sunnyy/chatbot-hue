@@ -13,7 +13,7 @@ một câu trả lời tốt. Không lượt nào thiếu trích dẫn thật.
 
 ## 2. Đổi gì
 
-1. **Tập số được phép** của hai phép kiểm thêm: mọi con số trong câu hỏi của lượt này và trong CÂU HỎI LIỀN TRƯỚC (không lấy câu hỏi xa hơn, không lấy câu trả lời cũ — phiên điều phối duyệt mức này). Cách so số giữ nguyên (2 ≠ 2,1).
+1. **Tập số được phép** của hai phép kiểm thêm: con số ĐỨNG KÈM ĐƠN VỊ của đúng phép kiểm trong câu hỏi của lượt này và trong CÂU HỎI LIỀN TRƯỚC (không lấy câu hỏi xa hơn, không lấy câu trả lời cũ; thu hẹp "kèm đơn vị" là sửa sau review của phiên B, phiên điều phối chốt). Cách so số giữ nguyên (2 ≠ 2,1).
 2. **Kiểm vẫn trượt ⇒ gỡ câu, không ném lỗi:** tìm đúng chỗ con số trượt nằm; gỡ đơn vị nhỏ nhất chứa nó (một câu trong đoạn văn, hoặc cả dòng nếu là dòng gạch đầu dòng / tiêu đề).
    Phần còn lại còn ít nhất một trích dẫn [n] và qua bộ kiểm trích dẫn ⇒ đó là câu trả lời (nấc 1). Không còn gì dùng được ⇒ câu từ chối cố định (nấc 2). Khối dự báo / câu bản tin
    chính thức do code nối vẫn nối như cũ ở cả hai nấc. Không còn kết cục "rút lại" cho hai phép kiểm này.

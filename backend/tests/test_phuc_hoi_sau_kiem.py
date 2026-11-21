@@ -42,7 +42,14 @@ def test_remove_sentence_or_list_line_keeps_the_rest_verbatim():
     assert at.go_cau_chua(van, [(a, a + 2)]) == "Câu một [1]. Câu ba [1]."
     ds = "Mở đầu [1]:\n- dòng một [1]\n- dòng hai 50 mm [2]. Thêm ý.\n- dòng ba [1]\n\nKết [1]."
     a = ds.index("50")
-    assert at.go_cau_chua(ds, [(a, a + 2)]) == "Mở đầu [1]:\n- dòng một [1]\n- dòng ba [1]\n\nKết [1]."  # dòng gạch đầu dòng: gỡ CẢ dòng
+    # gạch đầu dòng nhiều câu: chỉ mất câu có số lạ, ký hiệu đầu dòng + câu còn lại ở lại; gạch đầu dòng một câu: mất cả dòng
+    assert at.go_cau_chua(ds, [(a, a + 2)]) == "Mở đầu [1]:\n- dòng một [1]\n- Thêm ý.\n- dòng ba [1]\n\nKết [1]."
+    mot_cau = "Mở đầu [1]:\n- dòng một [1]\n- dòng hai 50 mm [2]\n- dòng ba [1]"
+    a = mot_cau.index("50")
+    assert at.go_cau_chua(mot_cau, [(a, a + 2)]) == "Mở đầu [1]:\n- dòng một [1]\n- dòng ba [1]"
+    that = "- Lăng nên xem 1,5–2 giờ. [4] Như vậy bạn xong khoảng 17h20, trước giờ đóng cửa. Mức dự phòng chỉ còn khoảng 10–40 phút."
+    a = that.index("10–40")
+    assert at.go_cau_chua(that, [(a, a + 10)]) == "- Lăng nên xem 1,5–2 giờ. [4] Như vậy bạn xong khoảng 17h20, trước giờ đóng cửa."  # dạng của lượt thật 21/11
     assert at.go_cau_chua(van, []) == van
     # trích dẫn đứng SAU dấu chấm: không cắt giữa câu và "[2]" của nó ⇒ câu kế (không có dấu chấm ngăn) đi theo — gỡ rộng hơn, không để sót số
     sau_cham = "Trời 35 độ. [2] Chùa mở cửa buổi sáng [1]. Câu ba [1]."
@@ -170,3 +177,48 @@ def test_stream_sends_replace_text_before_sources_when_a_sentence_was_removed():
     events = parse_sse([stream.delta(cuoi)] + stream.finish(trace))
     _copy_trace_metrics(trace, stream.metrics)
     assert "thay_chu" not in dict(events) and stream.metrics["thay_chu"] is None and stream.metrics["kiem_so_go"] is None
+
+
+# ---------- review phiên B 21/11/2026 (M1 + m1 + m2 + m3) ----------
+
+@pytest.mark.parametrize("text, query, kw, so_la", [
+    # M1: số trong câu hỏi KHÔNG kèm đơn vị của phép kiểm (ngày tháng, số người) không mở cửa cho số model tự thêm trùng giá trị
+    ("Ngày đó trời khoảng 30 °C [2].", "Ngày 30/11 mình tới Huế, trời thế nào?", {"thoi_tiet": True}, ["30"]),
+    ("Quãng đường khoảng 15 km [2].", "Đoàn mình 15 người, từ A sang B bao xa?", {"khoang_cach": True}, ["15"]),
+    ("Đi xe mất khoảng 15 phút [2].", "Mình nghe nói cách 15 km, đi mất bao lâu?", {"khoang_cach": True}, ["15"]),  # km của câu hỏi không mở cho phút
+    ("Khả năng mưa khoảng 50 % [2].", "Vé giảm 50 % thì còn bao nhiêu, mai trời thế nào?", {"thoi_tiet": True}, ["50"]),  # "%" không phải về mưa
+])
+def test_question_number_without_the_checks_unit_does_not_widen_the_allowed_set(text, query, kw, so_la):
+    trace = luot(text, query, **kw)
+    assert (trace.thoi_tiet_kiem or trace.khoang_cach_kiem) == so_la and so_la[0] not in at.chu_cua_model(trace) and trace.kiem_so_go["nac"] == 2
+
+
+def test_question_number_with_unit_is_allowed_wherever_the_rain_word_stands():
+    assert tt.so_kem_don_vi("63% thì mưa nhiều k? 2mm là mưa phùn hay sao, mai nóng 45 độ à") == {"63", "2", "45"}
+    assert tt.so_kem_don_vi("Ngày 30/11 đoàn 15 người, vé giảm 50 %") == set()
+    trace = luot("Đi 2 tiếng là vừa, quãng đường khoảng 4,0 km [2].", "Mình định đi 2 tiếng, từ A sang B bao xa?", khoang_cach=True)
+    assert trace.kiem_so_go is None
+
+
+def test_abbreviation_is_not_a_sentence_end_and_orphan_lead_line_is_removed():
+    van = "Chùa mở cửa buổi sáng [1]. Từ TP. Huế sang Điểm B chừng 7 km [2]."
+    a = van.index("7 km")
+    assert at.go_cau_chua(van, [(a, a + 4)]) == "Chùa mở cửa buổi sáng [1]."  # m1: không còn mảnh "Từ TP."
+    ket_o_hue = "Chùa ở Huế. Đi mất 45 phút [2]."
+    a = ket_o_hue.index("45")
+    assert at.go_cau_chua(ket_o_hue, [(a, a + 7)]) == "Chùa ở Huế."  # "Huế." vẫn là hết câu
+    ds = "Chùa mở cửa buổi sáng [1].\n\nHai cách đi [2]:\n- Xe đạp: khoảng 25 phút [2]\n- Đi bộ: khoảng 45 phút [2]"
+    assert at.go_cau_chua(ds, [(ds.index("25"), ds.index("25") + 2), (ds.index("45"), ds.index("45") + 2)]) == "Chùa mở cửa buổi sáng [1]."  # m2
+    con_mot = at.go_cau_chua(ds, [(ds.index("45"), ds.index("45") + 2)])
+    assert con_mot == "Chùa mở cửa buổi sáng [1].\n\nHai cách đi [2]:\n- Xe đạp: khoảng 25 phút [2]"  # còn một dòng danh sách ⇒ dòng dẫn ở lại
+    khong_ds = "Lưu ý:\nĐi bộ mất 45 phút [2].\nChùa mở cửa buổi sáng [1]."
+    a = khong_ds.index("45")
+    assert at.go_cau_chua(khong_ds, [(a, a + 2)]) == "Lưu ý:\nChùa mở cửa buổi sáng [1]."  # dòng dẫn vốn không đứng trước danh sách ⇒ không đụng
+    trace = luot("Hai cách đi [2]:\n- Xe đạp: khoảng 25 phút [2]\n- Đi bộ: khoảng 45 phút [2]", "Từ A sang B bao xa?", khoang_cach=True)
+    assert trace.answer == INSUFFICIENT_ANSWER and trace.kiem_so_go["nac"] == 2
+
+
+def test_turn_with_a_removed_sentence_is_not_saved_to_the_answer_cache():
+    from api.cache_tra_loi import luot_luu_duoc
+    assert luot_luu_duoc(luot("Chùa nằm bên sông [1].", "Chùa ở đâu?"), False) is True  # đối chứng: lượt kho thường vẫn lưu được
+    assert luot_luu_duoc(luot("Chùa nằm bên sông [1]. Mùa này trời khoảng 30 °C [1].", "Chùa ở đâu?"), False) is False  # m3

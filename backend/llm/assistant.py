@@ -1055,49 +1055,71 @@ def _noi_that_lam_thay(trace: AnswerTrace, text: str) -> bool:
 
 _DONG_DANH_SACH = re.compile(r"^\s*(?:[-*•–]|\d+[.)]|#{1,6})\s")  # dòng gạch đầu dòng / đánh số / tiêu đề: gỡ là gỡ cả dòng
 _RANH_CAU = re.compile(r"(?<=[.!?…])\s+(?!\[)")  # ranh giữa hai câu trong một dòng; không tách trước "[n]" đứng sau dấu chấm (trích dẫn của câu vừa xong)
+_VIET_TAT_CUOI = re.compile(r"(?:^|[\s(])(?:[A-ZĐ]{1,3}|Tp|Th)\.$")  # "TP.", "Q.", "TT.", "Tp." — không phải hết câu ("Huế." vẫn là hết câu)
+_DONG_DAN = re.compile(r":\s*(?:\[(?:Nguồn\s*)?\d+\]\s*)*$")  # dòng kết thúc bằng ":" (có thể kèm [n] sau dấu hai chấm)
 
 
 def go_cau_chua(text: str, vi_tri: list[tuple[int, int]]) -> str:
-    """Gỡ khỏi `text` đơn vị nhỏ nhất chứa mỗi khoảng ký tự trong `vi_tri`: cả dòng nếu là dòng gạch đầu dòng / tiêu đề, không thì đúng câu đó của
-    dòng. Phần còn lại giữ nguyên chữ và thứ tự. Hàm thuần — không biết gì về loại kiểm."""
-    out, pos = [], 0
-    for dong in text.split("\n"):
+    """Gỡ khỏi `text` CÂU chứa mỗi khoảng ký tự trong `vi_tri` (dòng gạch đầu dòng / tiêu đề: câu trong phần thân; thân không còn gì ⇒ mất cả dòng;
+    dòng dẫn "…:" không còn danh sách theo sau ⇒ gỡ luôn). Phần còn lại giữ nguyên chữ và thứ tự. Hàm thuần — không biết gì về loại kiểm."""
+    if not vi_tri:
+        return text
+    cac_dong = text.split("\n")
+    out: list[tuple[int, str]] = []  # (số thứ tự dòng gốc, chữ còn lại)
+    pos = 0
+    for i, dong in enumerate(cac_dong):
         dau = pos
         pos += len(dong) + 1
         if not any(a < dau + len(dong) and b > dau for a, b in vi_tri):
-            out.append(dong)
+            out.append((i, dong))
             continue
-        if _DONG_DANH_SACH.match(dong):
-            continue
-        moc = [0] + [m.end() for m in _RANH_CAU.finditer(dong)] + [len(dong)]
+        # dòng gạch đầu dòng / tiêu đề: giữ ký hiệu đầu dòng, gỡ câu trong phần thân như dòng văn thường; thân không còn gì ⇒ mất cả dòng. (Lượt thật
+        # 21/11: một gạch đầu dòng ba câu của Sonnet chỉ có câu cuối chứa số tự tính — gỡ cả dòng làm mất hai câu có nguồn đứng trước.)
+        dau_dong = _DONG_DANH_SACH.match(dong)
+        than = dau_dong.end() if dau_dong else 0
+        # ranh câu = sau dấu kết câu + khoảng trắng; KHÔNG cắt sau chữ viết tắt ("TP. Huế" — review phiên B: phần còn lại cụt thành "Từ TP.")
+        moc = [than] + [m.end() for m in _RANH_CAU.finditer(dong, than) if not _VIET_TAT_CUOI.search(dong[:m.start()])] + [len(dong)]
         con = "".join(dong[x:y] for x, y in zip(moc, moc[1:]) if not any(a < dau + y and b > dau + x for a, b in vi_tri)).strip()
         if con:
-            out.append(con)
-    return re.sub(r"\n{3,}", "\n\n", "\n".join(out)).strip()
+            out.append((i, dong[:than] + con))
+
+    def dong_ke(dongs: list[str]) -> str:
+        return next((d for d in dongs if d.strip()), "")
+
+    giu = []
+    for k, (i, dong) in enumerate(out):
+        # dòng dẫn "…:" mà trong chữ gốc đứng trước một danh sách, nay không còn dòng danh sách nào theo sau ⇒ gỡ luôn (không để "Hai cách đi [2]:" trơ trọi)
+        if (_DONG_DAN.search(dong) and _DONG_DANH_SACH.match(dong_ke(cac_dong[i + 1:]))
+                and not _DONG_DANH_SACH.match(dong_ke([d for _, d in out[k + 1:]]))):
+            continue
+        giu.append(dong)
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(giu)).strip()
 
 
 def _so_la(trace: AnswerTrace, text: str, flags: AssistantFlags | None, query: str) -> list[tuple[str, str, int, int]]:
     """Phép kiểm số (D8): (loại kiểm, số, đầu, cuối) của mọi số thời tiết / khoảng cách trong chữ model nằm NGOÀI tập cho phép. Tập cho phép = số code
-    in (khối dự báo, dòng khoảng cách) ∪ số trong đoạn kho được trích ∪ — từ 21/11/2026 — số có trong câu hỏi của lượt này và câu hỏi liền trước:
-    người dùng nhắc lại con số ("63 % thì mưa nhiều không", "2 mm là mưa phùn à") thì model được nhắc theo (5 / 7 lượt bị rút oan ở lượt người dùng mô
-    phỏng). Cách so số không đổi: 2 khác 2,1."""
-    cau_hoi = " ".join([query] + [cau for cau, _ in trace.history[-1:]])
+    in (khối dự báo, dòng khoảng cách) ∪ số trong đoạn kho được trích ∪ — từ 21/11/2026 — số ĐỨNG KÈM ĐƠN VỊ của đúng phép kiểm đó trong câu hỏi của
+    lượt này và câu hỏi liền trước: người dùng nhắc một con số ("63 % thì mưa nhiều không", "2 mm là mưa phùn à") thì model được nhắc theo (5 / 7 lượt
+    bị rút oan ở lượt người dùng mô phỏng). Số KHÔNG kèm đơn vị trong câu hỏi (ngày tháng, số người, số tiền) không vào tập. Cách so số không đổi:
+    2 khác 2,1."""
+    cau_hoi = [query] + [cau for cau, _ in trace.history[-1:]]
     out: list[tuple[str, str, int, int]] = []
     if flags is not None and flags.thoi_tiet:
         tool = trace.thoi_tiet
         cho_phep = tt.tap_so(tool["khoi"]) if tool and tool["khoi"] else set()
         cho_phep |= tt.tap_so(" ".join(e for src in (trace.cited or ()) if src.source != lt2.NGUON_LICH_SOURCE for e in src.excerpts))  # nguồn lịch (giờ, phút) không mở rộng số thời tiết
-        cho_phep |= tt.tap_so(cau_hoi)
+        cho_phep |= {s for cau in cau_hoi for s in tt.so_kem_don_vi(cau)}
         out += [("thoi_tiet", s, a, b) for s, a, b in tt.vi_tri_so_thoi_tiet(text) if s not in cho_phep]
-    if trace.khoang_cach:  # số km / phút trong chữ model ⊂ số code dựng ∪ số trong đoạn kho được trích ∪ số trong câu hỏi
+    if trace.khoang_cach:  # số km / phút trong chữ model ⊂ số code dựng ∪ số trong đoạn kho được trích ∪ số kèm đơn vị cùng loại trong câu hỏi
         theo_loai = kc.tap_so_theo_loai(" ".join(d for k in trace.khoang_cach for d in k["dong"]))  # số code dựng: km ↔ thời gian tách riêng
         chung = kc.tap_so(" ".join(e for src in (trace.cited or ()) if src.source not in (kc.NGUON_SOURCE, lt2.NGUON_LICH_SOURCE)
-                                   for e in src.excerpts)) | kc.tap_so(cau_hoi)  # đoạn kho + câu hỏi: mọi số
+                                   for e in src.excerpts))  # đoạn kho: mọi số
+        hoi = [kc.tap_so_theo_loai(cau) for cau in cau_hoi]  # câu hỏi: chỉ số kèm đơn vị, tách km ↔ thời gian ("đoàn 15 người" không mở "15 km")
         # Nguồn lịch (cờ `lich_vao_hoi_thuong`): chỉ nhận số CÓ ĐƠN VỊ thời gian do code in ("8 giờ", "15 phút") vào tập thời gian — phép này xét mọi
         # số kèm đơn vị thời gian trong chữ model nên thiếu thì câu nêu đúng số giờ của lịch bị rút (review B M1); không nhận mọi số của nguồn lịch
         # (giờ đồng hồ "10:30" sẽ cho qua "30 phút" bịa), không nới tập km
         lich_tg = kc.tap_so_theo_loai(" ".join(e for src in (trace.cited or ()) if src.source == lt2.NGUON_LICH_SOURCE for e in src.excerpts))["tg"]
-        cho_phep_kc = {loai: tap | chung | (lich_tg if loai == "tg" else set()) for loai, tap in theo_loai.items()}
+        cho_phep_kc = {loai: tap | chung | (lich_tg if loai == "tg" else set()) | {s for h in hoi for s in h[loai]} for loai, tap in theo_loai.items()}
         out += [("khoang_cach", s, a, b) for loai, s, a, b in kc.vi_tri_so_khoang_cach(text) if s not in cho_phep_kc[loai]]
     return out
 
@@ -1127,6 +1149,12 @@ def _vet_go_so_la(trace: AnswerTrace, text: str) -> None:
         trace.vet["kiem_so_go"] = {**trace.kiem_so_go, "chu_model": text}
 
 
+def _la_luot_thuong(trace: AnswerTrace) -> bool:
+    """Lượt hỏi đáp thường — không dựng lịch bằng công cụ, không biểu mẫu "Lên kế hoạch", không lịch bản 2 (cùng điều kiện `set_notice` dùng). Chỉ lượt
+    thường mới được phục hồi sau khi kiểm trượt (gỡ câu / câu từ chối cố định); lượt lịch giữ kết cục rút lại như trước."""
+    return not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None
+
+
 def kiem_so_sau_khi_viet(trace: AnswerTrace, text: str, flags: AssistantFlags | None, query: str = "") -> None:
     """Phép kiểm số của một lượt, sau bộ kiểm trích dẫn và trước phần code nối: ghi số lạ theo loại vào `trace.thoi_tiet_kiem` / `khoang_cach_kiem`
     (như trước); có số lạ ⇒ lượt có lịch vẫn bị rút lại như cũ, lượt thường thì gỡ câu / xuống câu từ chối cố định (`_go_so_la`)."""
@@ -1137,7 +1165,7 @@ def kiem_so_sau_khi_viet(trace: AnswerTrace, text: str, flags: AssistantFlags | 
         trace.khoang_cach_kiem = [s for loai, s, _, _ in la if loai == "khoang_cach"]
     if not la or trace.citation_error is not None:
         return
-    if trace.lich is not None:  # lượt có lịch: chữ do code ghép với khung ⇒ giữ cách cũ (rút lại), không gỡ từng câu
+    if not _la_luot_thuong(trace):  # lượt có lịch: chữ do code ghép với khung ⇒ giữ cách cũ (rút lại), không gỡ từng câu
         loai, kiem = ("weather", trace.thoi_tiet_kiem) if trace.thoi_tiet_kiem else ("distance", trace.khoang_cach_kiem)
         trace.citation_error = CitationIntegrityError(f"{loai} numbers without source: {len(kiem)}")
     else:

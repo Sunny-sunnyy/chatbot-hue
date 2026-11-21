@@ -12,14 +12,15 @@ giao diện thay ô chữ đang hiện.
 
 | Tình huống | Trước | Sau |
 |---|---|---|
-| Người dùng tự nêu một con số ("63 % thì mưa nhiều không", "25 mm là mưa to à") và model nhắc lại con số đó | Cả câu trả lời bị rút, hiện lỗi | Trả lời bình thường |
+| Người dùng tự nêu một con số KÈM ĐƠN VỊ ("63 % thì mưa nhiều không", "25 mm là mưa to à", "đi 2 tiếng") và model nhắc lại con số đó | Cả câu trả lời bị rút, hiện lỗi | Trả lời bình thường |
 | Người dùng nêu một con số SAI ("mai nóng 45 độ phải không") và model đính chính "không phải 45 °C, dự báo là 21–26 °C" | Cả câu trả lời (đúng) bị rút | Trả lời bình thường |
 | Model viết giờ đồng hồ ("bạn vào từ 13h") trong lượt có khoảng cách | Bị đếm là thời lượng lạ ⇒ rút | Không tính là thời lượng |
 | Model TỰ THÊM một con số không có ở nguồn nào ("buổi trưa lên tới 35 độ") | Cả câu trả lời bị rút | Chỉ câu / dòng chứa con số đó bị gỡ; phần còn lại + khối dự báo vẫn tới người dùng. Trên màn hình: chữ hiện xong rồi câu sai biến mất |
 | Như trên nhưng không còn câu nào dùng được | Rút | Câu từ chối cố định (có dự báo: câu dẫn + khối số liệu hệ thống) — không còn màn hình lỗi |
 | Lượt DỰNG / SỬA lịch trình có số lạ | Rút | **Không đổi** — vẫn rút (chữ lịch do code ghép với khung, không gỡ từng câu được) |
 
-Con số model tự thêm vẫn KHÔNG tới người dùng ở mọi trường hợp; mỗi lần phép kiểm trượt vẫn được ghi để đếm (mục 4).
+Con số model tự thêm vẫn không tới người dùng, TRỪ một lỗ đã biết và đã thu hẹp sau review (mục 8): model tự thêm đúng con số mà người dùng vừa gõ kèm cùng loại đơn vị. Mỗi lần phép kiểm
+trượt vẫn được ghi để đếm (mục 4).
 
 ## 2. Đổi gì trong code
 
@@ -105,3 +106,27 @@ dòng tham số là bốn cặp "chữ model ⇒ chữ gửi người dùng".
 | Lượt thật 15 lượt × hai model | Xong | xem `phat_lai_nhanh.jsonl` |
 | Phần (iii) trích dẫn | Tự hoãn — chờ nhánh phiên B | — |
 | Cả bộ test, dựng lại `dist`, đo bộ câu khó / an toàn / ngoài phạm vi | Chưa — thuộc lúc gộp và phiên đo | — |
+
+## 8. Cập nhật 14:12 21/11/2026 (giờ `date`) — sửa theo review của phiên B trên `5936d16` (1 điểm lớn + 3 điểm nhỏ) và một điều thấy ở lượt thật
+
+Cả bốn điểm của phiên B đều tái hiện được trên nhánh trước khi sửa (`gỡ=None` ở hai ca lớn; mảnh "Từ TP."; dòng "Hai cách đi [2]:" trơ trọi).
+
+| Điểm | Lỗi | Sửa |
+|---|---|---|
+| Lớn | Tập số được phép nhận MỌI con số của câu hỏi ⇒ "Ngày 30/11 … trời thế nào?" mở cửa cho "khoảng 30 °C" model tự thêm; "đoàn 15 người" mở cửa cho "15 km". Main chặn được hai ca này | Phiên điều phối chốt THU HẸP: chỉ nhận số đứng kèm đơn vị của đúng phép kiểm. Thời tiết: `tt.so_kem_don_vi` (°C / độ / mm luôn nhận; "%" chỉ khi câu hỏi có chữ mưa / ẩm / khả năng / xác suất ở bất kỳ đâu). Khoảng cách: `kc.tap_so_theo_loai` trên câu hỏi, km và thời gian tách riêng |
+| Nhỏ 1 | Cắt câu sau chữ viết tắt ⇒ còn mảnh "Từ TP." | Không cắt sau từ 1–3 chữ IN HOA + dấu chấm (và "Tp.", "Th."); "Huế." vẫn là hết câu |
+| Nhỏ 2 | Mọi gạch đầu dòng bị gỡ ⇒ dòng dẫn "…:" còn một mình | Dòng dẫn vốn đứng trước danh sách mà không còn dòng danh sách theo sau ⇒ gỡ luôn |
+| Nhỏ 3 | Lượt chỉ tìm kho bị gỡ câu nay là "success" ⇒ bản đã gỡ được LƯU vào bộ nhớ câu trả lời cho người sau | `luot_luu_duoc` thêm điều kiện `kiem_so_go is None` |
+
+**Thêm ngoài review, từ lượt thật:** lần chạy lại 15 lượt sau khi thu hẹp, nấc 1 BẬT lần đầu trên chữ model thật (Sonnet, phiên V03 lượt 2): model tự tính "mức dự phòng chỉ còn khoảng
+10–40 phút" (17h30 trừ giờ tham quan xong) — phép tính đúng nhưng "40" không có ở nguồn nào ⇒ bị gỡ. Lúc đó code gỡ CẢ gạch đầu dòng ba câu, mất hai câu có nguồn đứng trước. Đã
+sửa: gạch đầu dòng nhiều câu chỉ mất đúng câu có số lạ (ký hiệu đầu dòng + các câu còn lại ở lại); gạch đầu dòng một câu vẫn mất cả dòng. Trên main lượt này bị rút cả câu trả lời.
+Giới hạn nói thẳng: phép kiểm không kiểm được phép tính, nên một con số model TÍNH ĐÚNG từ số có nguồn vẫn bị gỡ.
+
+**Chạy lại sau khi sửa:**
+- [máy kiểm] `R pytest tests/test_phuc_hoi_sau_kiem.py -q` ⇒ đạt hết (có 4 ca "số không kèm đơn vị trong câu hỏi" phải bị gỡ, gồm hai ca của phiên B; ca "TP."; ca dòng dẫn; ca bộ nhớ câu
+  trả lời); chín file test chạm đường này đạt.
+- [lượt thật, C đọc tay — chạy 14:05, TRƯỚC bản sửa gạch đầu dòng] 15 lượt × hai model: 0 lỗi; 6 / 6 lượt từng bị rút vì phép kiểm số vẫn giữ câu trả lời (5 lượt nguyên chữ model, 1
+  lượt mất một gạch đầu dòng như kể trên); lượt thứ 7 (V10 lượt 2) lần này model tự trả câu từ chối khuôn; 4 câu số sai × 2 model: model xác nhận số sai 0 / 8 (7 đính chính bằng số
+  hệ thống, 1 nói không xác nhận được). Dữ liệu: `phat_lai_nhanh_2.jsonl` cùng thư mục riêng tư.
+- Lỗ còn lại sau thu hẹp (chấp nhận, ghi để đếm): người dùng gõ "45 độ", model tự khẳng định "mai 45 độ" ⇒ qua phép kiểm. 0 / 8 lượt thật model làm vậy.
