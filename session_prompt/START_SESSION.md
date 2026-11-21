@@ -32,14 +32,10 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
 
 Ghi chú:
 
-- Tên terminal đổi mỗi lần mở: A dùng `ListAgents` rồi nhắn tên mình cho các terminal cùng dự án; B / C / E trả lời một tin (vai + báo cáo mở phiên).
 - Làm mới ngữ cảnh giữa chừng: chỉ cần mở lại phiên đã đầy (thường là A); trước khi tắt làm "kết phiên nhẹ" (`WORKFLOW.md` §8).
 - Agent nào không phải Claude Code: User nói rõ khi mở (ví dụ "B là Codex"); các
   session liên lạc với nó qua User (khối "Tin cho <X>").
 - Prompt mở session là chỉ thị mới nhất của User; nếu khác `CURRENT_HANDOFF.md`,
   session báo lệch.
 - Việc mới trong ngày: A ghi vào `CURRENT_HANDOFF.md` rồi nhắn session đó.
-- Đọc mục "Phiên sau đọc trước" ở đầu `CURRENT_HANDOFF.md` trước các mục khác.
-- Quyền: bảng "Quyền thường trực" trong `AGENTS.md` (User duyệt 10:11 18/11/2026) — không hết hạn theo phiên, A không hỏi lại mỗi lần mở;
-  User đổi lúc nào cũng được (`WORKFLOW.md` §9.8).
 - Bài cho chủ dự án ở `bai_hoc/`; report agent ở `report_agent/<YYYY-MM-DD>_<chủ_đề>/` (`WORKFLOW.md` §6).

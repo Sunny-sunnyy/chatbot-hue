@@ -1,11 +1,11 @@
 # Ý chưa thử — MỘT danh sách chung, xếp theo thứ tự đáng thử (tạo 16:12 21/11/2026)
 
 Là gì: nơi duy nhất ghi hướng rộng hơn / cơ hội mà một phiên thấy nhưng chưa ai giao — thay cho các dòng rải trong sổ riêng (chín "ý chờ" cũ nằm chết vì không ai giữ).
-Cách dùng: phiên nào cũng tự thêm một dòng (ý · ai nêu, ngày · phép đếm / phép thử RẺ NHẤT cho biết ý đúng hay sai · trạng thái). Đếm 0 đồng thì tự làm rồi ghi số vào dòng đó. XÂY chỉ khi phép đếm ra số và máy còn làn đo. Ý đã thử (kể cả ra âm) thì xoá khỏi đây, kết quả ghi ở báo cáo của việc đó. Phiên điều phối xếp lại thứ tự khi có số mới.
+Cách dùng: phiên nào cũng NÊU được (dòng cuối báo cáo hoặc một tin cho phiên điều phối); phiên điều phối chép vào đây: ý · ai nêu, ngày · phép đếm / phép thử RẺ NHẤT cho biết ý đúng hay sai · trạng thái. Đếm 0 đồng thì tự làm rồi ghi số vào dòng đó. XÂY chỉ khi phép đếm ra số và máy còn làn đo. Ý đã thử (kể cả ra âm) thì xoá khỏi đây, kết quả ghi ở báo cáo của việc đó. Phiên điều phối xếp lại thứ tự khi có số mới.
 
 | # | Ý | Ai nêu | Phép đếm / thử rẻ nhất | Trạng thái |
 |---|---|---|---|---|
-| 1 | Chạy một phiên + agent con (hoặc hai phiên: một làm, một kiểm) thay cho bốn phiên + điều phối — tầng phối hợp có thể đang tốn hơn lợi (72 % commit một tháng chỉ chạm tài liệu / sổ) | C, E 21/11 | một ngày chạy kiểu đó, đếm việc đóng được + ba con số cách làm | chưa hỏi chủ dự án |
+| 1 | Chạy một phiên + agent con (hoặc hai phiên: một làm, một kiểm) thay cho bốn phiên + điều phối — tầng phối hợp có thể đang tốn hơn lợi (72 % commit một tháng không chạm code sản phẩm [máy đếm thô theo đường dẫn]) | C, E 21/11 | một ngày chạy kiểu đó, đếm việc đóng được + ba con số cách làm | chưa hỏi chủ dự án |
 | 2 | Hỏi chủ dự án "tới đâu đó" nghĩa là gì: bao giờ bảo vệ, phải chạy được gì trước hội đồng, ai bấm thử | B 21/11 | một câu hỏi | chưa hỏi |
 | 3 | Sàn "câu ngoài tỉnh bị từ chối" đang dựa vào việc model tự chọn từ chối sau khi tìm; sửa ở bước định tuyến có thể bền hơn sửa chữ từng cờ | E 21/11 | đếm trên các lượt thước + câu khó đã có: bao nhiêu câu ngoài tỉnh lọt định tuyến, kiểu nào lọt | đã duyệt đếm, gác |
 | 4 | Dời MỘT điểm trong lịch chỉ làm được 24 / 176 lần — nới luật xếp thay vì chỉ viết câu từ chối cho rõ | E 20/11 | chạy lại 176 ca với luật khu nới, đếm số dời được | chưa đếm |
