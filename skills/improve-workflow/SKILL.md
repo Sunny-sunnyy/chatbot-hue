@@ -71,5 +71,5 @@ và tổng hợp ngày.
 File luật, bảy luật cứng, bảng quyền: `AGENTS.md`, `session_prompt/Session_Prompt.md`, `session_prompt/WORKFLOW.md` · trang hiện trạng + các con số:
 `session_prompt/HIEN_TRANG.md` mục 4 · sổ cải tiến: `session_prompt/SO_CAI_TIEN_CACH_LAM.md` · ý chưa thử: `session_prompt/Y_CHUA_THU.md` · sổ riêng của phiên:
 `session_prompt/sessions/STATUS_<X>.md` · lời User: `data/loi_user/` · sổ việc, tổng hợp ngày: `session_prompt/CURRENT_HANDOFF.md`,
-`report_agent/<ngày>/TONG_HOP.md` · người chạy: phiên điều phối (A) · skill đi kèm: `propose-options`, `giao-viec-agent-con`.
+`report_agent/<ngày>/TONG_HOP.md` · skill đi kèm: `propose-options`, `giao-viec-agent-con`.
 "Agent tự giữ luật cách làm" đang THỬ ba ngày làm việc từ 21/11/2026; User đổi lại lúc nào cũng được.
