@@ -38,6 +38,22 @@ cổng công cụ còn hai lưới vẫn không nhận, và bộ dò của phiê
 | [chưa kiểm] Chế độ `luon` trên model thật (chọn công cụ, gọi thừa, an toàn, ngoài phạm vi, thời gian) | thước của phiên đo, cả hai model | chưa chạy — tiêu chí ghi trước ở file riêng tư `c_cong_tu_khoa/TIEU_CHI.md` |
 | [chưa kiểm] Cả bộ test · lượt qua giao diện | để mốc | không chạy |
 
+## 3b. Sửa sau bộ dò LƯỢT HAI của phiên B (12:37 21/11/2026, giờ `date`)
+
+Phiên B đọc mẫu rồi đặt 12 câu phải nhận + 12 câu giống-mà-không-phải (script riêng tư `b_do_luot_hai_cong_thoi_tiet.py`, mong đợi ghi trước). Trên bản `59038a4`: nhận đúng câu
+nguy hiểm 4 / 12, nhận nhầm 8 / 12 (bốn ca "nước lên" nghĩa khác: giá nước lên, nước lên men, đun nước lên, đưa nước lên chùa; con dông; "chạy dông"; "sét đánh ngang tai"; tên bài hát có "sấm chớp").
+Bản này viết lại danh sách thành mỗi dòng một họ từ kèm các nghĩa KHÁC phải loại (dông · sấm · sét · nước lên / dâng / về · mực nước sông · nước sông … lên / dâng · sông … dâng):
+
+| Bộ | Trên `59038a4` | Trên bản này |
+|---|---|---|
+| Lượt hai — phải nhận (12) | 4 / 12 | **10 / 12** — còn sót: câu gõ KHÔNG DẤU ("Nuoc song len chua ban") và câu chen hơn 6 chữ giữa "nước sông" và "lên" (công cụ vẫn được đưa nhờ chữ "mưa") |
+| Lượt hai — không phải (12) | nhận nhầm 8 / 12 | **nhận nhầm 0 / 12** |
+| Lượt một (46 câu) | 20 / 20 · nhận nhầm 0 / 20 | 20 / 20 · nhận nhầm 0 / 20 |
+
+⚠ Cả hai bộ nay đều là bộ ĐÃ THẤY với người viết mẫu: hai con số trên chỉ nói "không còn lệch ở các câu đã biết". Người khác (phiên đo hoặc phiên điều phối) đặt lượt ba nếu cần.
+**Ý của nhánh, để người review đọc đúng:** lưới chữ này chỉ giữ các cụm CHẮC và là lớp phụ. Độ PHỦ các cách nói nguy hiểm thời tiết (gõ không dấu, câu dài, cách nói địa phương chưa gặp) phải đến từ việc model
+tự chọn loại bão / lũ khi luôn có công cụ thời tiết — tức chế độ `cong_cong_cu: luon`, phần CHƯA đo và là phần quyết của bậc 5. Test của nhánh: `test_cong_cong_cu.py` nay 23 ca.
+
 ## 4. Giới hạn và điều người đo cần biết
 
 - Bốn câu ranh giới của bộ dò lệch mong đợi của người soạn: "Mùa nào ở Huế hay có dông?" (câu khí hậu chung) và "… khi nước lên hay nước ròng" (câu lễ hội) NAY bị coi là câu nguy hiểm thời tiết ⇒ có thêm câu bản tin chính thức (thừa, không hại); "con nước lớn … có nguy hiểm không" KHÔNG được nhận; "xây kè chống nước dâng từ khi nào" đã bị nhận từ trước nhánh này.

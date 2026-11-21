@@ -52,10 +52,19 @@ _BAO_LU = re.compile(r"\b(?:bão|lũ|ngập)\b", re.IGNORECASE)
 # `tra_web._THIEN_TAI` + giông / lốc / mưa đá / nước dâng) — chỉ làm LƯỚI code; đường chính là model chọn `loai` của công cụ
 _BAO_LU_RONG = re.compile(r"\b(?:bão|lũ|lụt|ngập|sạt\s+lở|triều\s+cường|áp\s+thấp|giông|lốc|mưa\s+đá|nước\s+dâng)\b", re.IGNORECASE)
 # 21/11/2026 (bậc 5; đếm 310 câu sổ vết: 3 / 17 câu thời tiết không được đưa công cụ, cả ba là câu nguy hiểm thời tiết; câu "nước sông … có lên cao không"
-# nhận câu từ chối trống, không có câu bản tin chính thức + 112): từ nguy hiểm thời tiết mà danh sách đóng trên chưa có — "dông" (trừ "dông dài" và lỗi gõ
-# "Dông Ba"), sấm sét, nước (sông) lên / dâng. Dùng CÙNG chỗ với `_BAO_LU_RONG`: cổng đưa công cụ, lưới bão / lũ của lượt, lưới cuối của route.
-_BAO_LU_THEM = re.compile(r"\bdông\b(?!\s+(?:dài|ba)\b)|\bsấm\s+(?:sét|chớp)\b|\bsét\s+đánh\b|\bnước\s+(?:lên|dâng)\b"
-                          r"|\bnước\s+sông(?:\s+\S+){0,6}?\s+(?:lên|dâng)\b", re.IGNORECASE)
+# nhận câu từ chối trống, không có câu bản tin chính thức + 112): từ nguy hiểm thời tiết mà danh sách đóng trên chưa có. Dùng CÙNG chỗ với
+# `_BAO_LU_RONG`: cổng đưa công cụ, lưới bão / lũ của lượt, lưới cuối của route. Mỗi dòng một họ từ + các nghĩa KHÁC đã gặp ở hai lượt dò của phiên B
+# (lượt mù + lượt sau khi đọc mẫu). Đây chỉ là LƯỚI: cách nói lạ hơn (gõ không dấu, câu dài chen nhiều chữ) dựa vào việc model tự chọn `loai` của công cụ.
+_BAO_LU_THEM = re.compile("|".join((
+    r"(?<!chạy )(?<!món )(?<!con )\bdông\b(?!\s+(?:dài|ba|nướng)\b)",   # dông — trừ "dông dài", lỗi gõ "Dông Ba", con dông (món ăn), "chạy dông"
+    r"\bsấm\b(?!\s+(?:truyền|trạng|ký|chớp\s+mưa\s+rơi)\b)",           # sấm, sấm sét, sấm chớp — trừ sấm truyền / sấm Trạng, tên bài hát
+    r"(?<!đất )(?<!gỉ )(?<!rỉ )\bsét\b(?!\s+đánh\s+ngang\s+tai)",       # sét — trừ đất sét, gỉ sét, thành ngữ
+    # nước lên / dâng / về (lũ về) — trừ "giá nước lên", "đun / đưa / bưng / mang / lấy nước …", "cho nước lên men", "lên màu"
+    r"(?<!giá )(?<!đun )(?<!đưa )(?<!bưng )(?<!cho )(?<!mang )(?<!lấy )\bnước\s+(?:(?:đang|sắp|đã|cứ|lại)\s+)?(?:lên|dâng|về)\b(?!\s+(?:men|màu|giá)\b)",
+    r"\bmực\s+nước\s+sông\b",
+    r"\bnước\s+sông(?:\s+\S+){0,6}?\s+(?:lên|dâng)\b(?!\s+(?:màu|men)\b)",  # "nước sông Hương mấy hôm nay có lên cao không"
+    r"\bsông(?:\s+\S+){0,2}?\s+(?:đang\s+)?dâng\b(?!\s+(?:hương|lễ|cúng)\b)",  # "sông Hương đang dâng" — trừ "dâng hương"
+)), re.IGNORECASE)
 CAU_KHONG_PHAI_TIN_BAO = "Dự báo dưới đây chỉ có nhiệt độ và mưa, không có thông tin bão hay áp thấp."
 # như CAU_DAN_DU_BAO: thay câu từ chối ở lượt bão / lũ. Đọc tay 17/11: bản đầu "Mình không có tin bão / lũ" đọc được thành "không có bão" (tự trấn an)
 CAU_DAN_BAO_LU = "Mình không theo dõi được tin bão / lũ — bạn xem bản tin chính thức dưới đây."
