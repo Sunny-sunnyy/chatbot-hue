@@ -62,8 +62,9 @@ def _cuoi_thang_am(dau: dt.date) -> dt.date:
 
 
 def _cac_khoang(c: str, hom: dt.date) -> list[tuple[int, dt.date, dt.date, str, bool]]:
-    """Mọi khoảng ngày chữ `c` (đã chuẩn hoá) nêu ⇒ [(vị trí trong chữ, từ, đến, nhãn, là MỘT ngày ghi bằng số)]. Danh sách dạng ĐÓNG, xét theo thứ tự ưu
-    tiên cũ; chỗ chữ đã được một luật đứng trước nhận thì luật sau không nhận lại ("cuối tuần này" không thành thêm "tuần này"). Tuần tính từ thứ Hai."""
+    """Mọi khoảng ngày chữ `c` (đã chuẩn hoá) nêu ⇒ [(vị trí trong chữ, từ, đến, nhãn, là MỘT ngày ghi bằng số)], xếp theo THỨ TỰ ƯU TIÊN của các luật
+    (danh sách dạng ĐÓNG, như trước 21/11: ngày ghi số · hôm nay · mai · cuối tuần · tuần · tháng âm · tháng này / sau · tháng dương) ⇒ phần tử đầu là đáp
+    án của bản cũ. Chỗ chữ đã được một luật đứng trước nhận thì luật sau không nhận lại ("cuối tuần này" không thành thêm "tuần này"). Tuần tính từ thứ Hai."""
     mot = dt.timedelta(days=1)
     dau_tuan = hom - dt.timedelta(days=hom.weekday())
     ra, da_nhan = [], []
@@ -127,7 +128,7 @@ def _cac_khoang(c: str, hom: dt.date) -> list[tuple[int, dt.date, dt.date, str, 
         nam = int(m.group(2)) if m.group(2) else (hom.year if thang >= hom.month else hom.year + 1)
         dau = dt.date(nam, thang, 1)
         them(m, dau, (dau + dt.timedelta(days=32)).replace(day=1) - mot, f"tháng {thang}/{nam}")
-    return sorted(ra, key=lambda x: x[0])
+    return ra
 
 
 def _mot_khoang(ds: list) -> tuple[dt.date, dt.date, str] | None:
@@ -148,13 +149,15 @@ def khoang_hoi(cau: str, hom: dt.date) -> tuple[dt.date, dt.date, str] | None:
     """Khoảng ngày câu gõ nêu ⇒ (từ, đến, nhãn); không nêu / không đọc được ⇒ None.
     21/11/2026 (tin của người dùng mô phỏng: "ok thứ 2 23/11 nhé. Thế tuần này với tháng này ở Huế có lễ hội gì không?" từng ra "ngày 23/11" — con số
     ngày ở câu đệm thắng khoảng ngày ở câu hỏi): đọc khoảng ngày trong CÂU có từ hỏi sự kiện trước; câu đó không nêu khoảng nào mới đọc cả tin (như
-    cũ). Trong một đoạn chữ nêu nhiều khoảng: xem `_mot_khoang`."""
+    cũ, theo thứ tự ưu tiên cũ — luật "khoảng rộng nhất" KHÔNG áp cho cả tin: tin dài lẫn nhiều mốc ngày không thuộc câu hỏi, ví dụ một tin thật có
+    "rằm tháng 10" ở câu khác từng bị kéo sang cả tháng 10 năm sau). Trong CÂU HỎI nêu nhiều khoảng: xem `_mot_khoang`."""
     chu = unicodedata.normalize("NFC", cau).casefold()
     cau_con = [" ".join(x.split()) for x in re.split(r"(?<=[.?!…])\s+|\n+", chu) if x.strip()]
     for x in cau_con:
         if _HOI.search(x) and (k := _mot_khoang(_cac_khoang(x, hom))) is not None:
             return k
-    return _mot_khoang(_cac_khoang(" ".join(chu.split()), hom))
+    ca_tin = _cac_khoang(" ".join(chu.split()), hom)
+    return ca_tin[0][1:4] if ca_tin else None
 
 
 def _ngay(lich: str, ngay: int, thang: int, nam: int) -> dt.date | None:

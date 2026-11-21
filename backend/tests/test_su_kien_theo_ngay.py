@@ -156,6 +156,9 @@ THU_BAY = dt.date(2026, 11, 21)
     ("Mình tới ngày 23/11. Ở đó có lễ hội gì không?", dt.date(2026, 11, 23), dt.date(2026, 11, 23)),             # câu hỏi không nêu khoảng ⇒ đọc cả tin như cũ
     ("cuối tuần này ở Huế có sự kiện gì", dt.date(2026, 11, 21), dt.date(2026, 11, 22)),                         # "cuối tuần này" KHÔNG bị nới thành "tuần này"
     ("cuối tuần sau có lễ hội gì", dt.date(2026, 11, 28), dt.date(2026, 11, 29)),                                # … và không thành "tuần sau"
+    # câu hỏi sự kiện KHÔNG nêu khoảng ⇒ đọc cả tin theo thứ tự ưu tiên CŨ (ngày ghi số trước), không lấy "khoảng rộng nhất" của cả tin: một tin thật có
+    # "rằm tháng 10" ở câu khác từng bị kéo sang cả tháng 10 năm sau khi luật rộng nhất áp cho cả tin
+    ("Ok rằm thứ hai 23/11 rồi. Nhưng lễ hội thì chưa thấy gì cụ thể. Thế rằm tháng 10 ở chùa có nghi lễ nào không?", dt.date(2026, 11, 23), dt.date(2026, 11, 23)),
 ])
 def test_range_is_read_from_the_asking_sentence_and_widened_not_narrowed(cau, tu, den):
     assert sk.hoi_su_kien(cau) and sk.khoang_hoi(cau, THU_BAY)[:2] == (tu, den)
