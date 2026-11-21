@@ -1341,10 +1341,10 @@ def _con_la_y_thieu(giu: str) -> bool:
 
 
 # 21/11/2026 (phiên đo đếm, 0 đồng): "bao xa" chưa được coi là từ hỏi ⇒ câu "A đến B bao xa, vào đó có mất vé không" đếm MỘT ý ⇒ không dùng lời dặn theo ý
-# ⇒ cả hai model từ chối cả câu. Thêm "bao xa" vào từ hỏi; thêm "ai" / "sao" vào nhóm đứng CUỐI vế ("thờ ai", "thì sao") — chỉ ở cuối vế để chữ "ai" /
-# "sao" giữa câu ("ai cũng khen", "ngôi sao") không thành vế hỏi.
-_VE_HOI = re.compile(r"(?<!\w)(bao nhiêu|gì|nào|đâu|mấy|bao lâu|bao xa|bao giờ|khi nào|tại sao|vì sao|thế nào|ra sao)(?!\w)", re.IGNORECASE)
-_CUOI_HOI = re.compile(r"(?<!\w)(không|chưa|nhỉ|vậy|hả|ai|sao)\s*$", re.IGNORECASE)
+# ⇒ cả hai model từ chối cả câu. Thêm "bao xa", "thì sao" và "ai" CHỈ trong cụm hỏi hẹp ("thờ ai", "do ai", "là ai", "của ai"). KHÔNG nhận "ai" / "sao" trần,
+# kể cả ở cuối vế: review cùng ngày đặt 12 câu một ý sau khi đọc khuôn ⇒ 7 câu bị đếm nhầm ("khách sạn 4 sao, …", "nhà không có ai, …").
+_VE_HOI = re.compile(r"(?<!\w)(bao nhiêu|gì|nào|đâu|mấy|bao lâu|bao xa|bao giờ|khi nào|tại sao|vì sao|thế nào|ra sao|thì sao|(?:là|do|thờ|của) ai)(?!\w)", re.IGNORECASE)
+_CUOI_HOI = re.compile(r"(?<!\w)(không|chưa|nhỉ|vậy|hả)\s*$", re.IGNORECASE)
 _LIEN_TU = re.compile(r"\s+(?:và|còn|với)\s+", re.IGNORECASE)
 
 
