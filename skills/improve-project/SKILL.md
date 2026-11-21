@@ -1,6 +1,6 @@
 ---
 name: improve-project
-description: Vòng lặp cải tiến chính SẢN PHẨM của một dự án có một người chủ + coding agent — anh em của improve-workflow (skill kia cải tiến CÁCH LÀM của nhóm, skill này cải tiến dự án). Mỗi vòng — đích bằng lời người chủ, một con số sát đích, bảng lỗi theo nguyên nhân, đổi chỗ đứng nhìn, chọn nhiều nhất hai hướng, làm, đo lại, giữ hoặc gỡ, rồi sửa chính skill. Dùng khi mở dự án / giai đoạn mới · tới một mốc · ba lần thử liền không vượt nhiễu · người chủ nói "chưa tới đâu" hoặc phải tự gợi hướng · phần lớn commit gần đây không chạm sản phẩm · trước một việc xây lớn. Đầu ra mỗi vòng là MỘT trang cho người chủ.
+description: Vòng lặp cải tiến chính SẢN PHẨM của một dự án có một người chủ + coding agent — anh em của improve-workflow (skill kia cải tiến CÁCH LÀM của nhóm, skill này cải tiến dự án). Mỗi vòng: đích · một con số · nguyên nhân lỗi · chỗ đứng khác · ≤ hai hướng · đo lại · giữ / gỡ. Dùng khi mở dự án / giai đoạn mới · tới một mốc · ba lần thử liền không vượt nhiễu · người chủ nói "chưa tới đâu" hoặc phải tự gợi hướng · phần lớn commit gần đây không chạm sản phẩm · trước một việc xây lớn. Vòng đủ ra MỘT trang cho người chủ.
 ---
 
 # Cải tiến dự án theo vòng
@@ -8,7 +8,8 @@ description: Vòng lặp cải tiến chính SẢN PHẨM của một dự án c
 Lỗi "không nhìn ra hướng" không để lại sự cố nào để đếm, nên vòng cải tiến cách làm không thấy nó — vòng này dành cho nó.
 
 **Ai chạy, khi nào.** Nhóm tự chạy ở mốc hoặc khi có dấu hiệu ở phần mô tả; không sinh việc đều đặn cho người chủ. Một phiên làm, một phiên
-khác đọc (làm một mình: mở phiên mới ngữ cảnh sạch để đọc). Bản nhanh (15–30 phút, 0 đồng): bước 0–3 trên dữ liệu đã có. Skill không tự xây: việc xây đi
+khác đọc (làm một mình: mở phiên mới ngữ cảnh sạch để đọc). Bản nhanh (15–30 phút, 0 đồng): bước 0–3 trên dữ liệu đã có, KHÔNG ra trang
+cho người chủ trừ khi lộ ra việc thuộc quyền người chủ. Skill không tự xây: việc xây đi
 đường làm việc thường của dự án (quyền, review).
 
 ## Một vòng
@@ -44,14 +45,16 @@ văn) · đang ở đâu (con số + ba nhóm lỗi lớn nhất) · nhiều nh�
 số đã đếm, tốn gì, khi nào sai, DỰ ĐOÁN con số sẽ đổi bao nhiêu · việc cần người chủ quyết — chỉ thứ thuộc quyền người chủ (mục tiêu, tiền, dữ liệu, hướng
 sản phẩm, đưa ra dùng), mỗi lần một câu; phần còn lại nhóm tự quyết, báo sau.
 
-**7. Làm — đo lại — giữ hoặc gỡ.** Nhiều nhất HAI nhóm lỗi / hướng đứng đầu đi vào đường làm việc thường. Xong thì đo lại con số bằng CÙNG thước, cùng điều
-kiện, đủ lượt lặp để biết nhiễu; không hơn rõ ngoài nhiễu ⇒ gỡ. Ý đã thử thì rút khỏi danh sách ý; kết quả ghi vào trang, kể cả kết quả âm.
+**7. Làm — đo lại — giữ hoặc gỡ.** Nhiều nhất HAI nhóm lỗi / hướng đứng đầu (nhóm chọn, ghi lý do một dòng; thứ thuộc quyền người chủ thì theo bước 6) đi
+vào đường làm việc thường, LẦN LƯỢT; đo lại sau TỪNG hướng bằng CÙNG thước, cùng điều kiện, đủ lượt lặp để biết nhiễu; không hơn rõ ngoài nhiễu ⇒ gỡ. Ý đã thử thì rút khỏi danh sách ý; kết quả ghi vào trang, kể cả kết quả âm. Giữ riêng một phần của thước (vài vai / câu) không dùng
+để tìm lỗi, chỉ để đo lại; các SÀN của dự án (điều không được xảy ra) kiểm cùng lượt đo — phạm sàn thì không giữ dù con số tăng; bản sửa một lỗi an toàn / sai
+sự thật đã tái hiện được thì giữ dù con số không nhúc nhích.
 
 **8. Dừng hoặc quay đầu.** Đạt mức người chủ nêu ⇒ dừng, báo. Hai vòng liền con số không nhúc nhích ngoài nhiễu ⇒ KHÔNG tinh chỉnh tiếp: quay về bước 1–2
 (đích và thước có đúng không) và bước 4 (nền có đúng không).
 
-**9. Kết vòng — sửa chính skill này, và chia ranh.** Một dòng: bước nào của skill vòng này không dùng tới · thiếu bước nào. Bước hai vòng liền không ai dùng ⇒
-gỡ; skill phải nhỏ dần. Vòng này cho thấy nút thắt nằm ở CÁCH LÀM ⇒
+**9. Kết vòng — ĐỀ XUẤT sửa chính skill này (diff do một phiên khác đọc, theo đường của `improve-workflow`), và chia ranh.** Một dòng: bước nào của skill vòng này không dùng tới · thiếu bước nào. Bước hai vòng liền không ai dùng ⇒
+đề nghị gỡ; skill phải nhỏ dần. Vòng này cho thấy nút thắt nằm ở CÁCH LÀM ⇒
 chuyển sang `improve-workflow`; skill kia thấy ý về hướng sản phẩm thì ghi vào danh sách ý chưa thử cho vòng này đọc.
 
 ## Giới hạn
