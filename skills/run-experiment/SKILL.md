@@ -24,7 +24,7 @@ Kế hoạch có tiêu chí ghi trước được một phiên khác đọc trư
      nguyên);
    - **mức tụt cho phép** của từng chỉ số còn lại, ghi bằng **số câu** khi bộ nhỏ (lỗi citation, từ chối nhầm);
    - **1–2 chỉ số quyết** (phải tốt lên vượt nhiễu) tách khỏi **chỉ số theo dõi** (chỉ báo, không quyết) — tiền / câu và
-     độ trễ p50 / p95 thuộc nhóm này: đo và báo, không làm sàn (chủ dự án 19/11/2026).
+     độ trễ p50 / p95 thuộc nhóm này: đo và báo, không làm sàn (19/11/2026).
    Mỗi chỉ số định nghĩa chính xác: hàm nào tính, đếm gì, không đếm gì, trên tập nào, n bao nhiêu. Sàn / mức tụt đo
    một hành vi production thì trỏ `file:dòng` hành vi đó, và kiểm hai dòng tiêu chí không đếm cùng một lỗi. Không đổi tiêu chí sau khi thấy số.
 4. **Hợp đồng kiểm:** ai review chéo; người làm nộp bằng chứng gì; người kiểm tự chạy lại phần nào.
@@ -81,7 +81,7 @@ Khuôn ghi trước (một khối trong plan): `experiment_id` · `baseline` (c�
 5. **Chạy thật.** Không mock, không kết quả giả, không giá trị mong đợi làm PASS. Được phát lại câu trả lời
    của model đã ghi thật để đo các khâu *sau* bước sinh (ví dụ chính sách validator citation). Không dùng
    lượt phát lại làm bằng chứng cho thay đổi ở chính bước sinh (prompt, context, reasoning effort).
-6. **Judge:** ghi model id của người chấm (mặc định hiện tại: trang hiện trạng); baseline và biến thể chấm **cùng model judge**; đổi judge thì
+6. **Judge:** ghi model id của người chấm (mặc định: trang hiện trạng); baseline và biến thể chấm **cùng model judge**; đổi judge thì
    chấm lại baseline.
 7. Lỗi provider, mạng hay GPU là kết quả quan sát được. Ghi lại, không che bằng fallback.
 8. Harness ghi kết quả **từ chối ghi đè** file đã có (`raise SystemExit('exists')`) — đặt nhầm tên lượt không được đè
@@ -97,7 +97,7 @@ Khuôn ghi trước (một khối trong plan): `experiment_id` · `baseline` (c�
   từ chối đúng giảm).
 - **Luật giữ / gỡ** — đủ cả ba mới là "tốt hơn": (1) không vi phạm sàn; (2) không chỉ số nào xấu quá mức tụt
   cho phép (đã trừ nhiễu); (3) ít nhất một chỉ số quyết tốt lên **vượt nhiễu và CI 95% > 0**. Câu chỉ đổi ở
-  một lượt không tính. Luật CI áp cho bộ câu mẫu so THEO CẶP; thước nhỏ / nhiều lượt (vài chục mục, người dùng do model đóng vai): "tốt hơn" = vượt mức nhiễu đo bằng
+  một lượt không tính. Luật CI áp cho bộ câu mẫu so THEO CẶP; thước nhỏ / nhiều lượt (vài chục mục): "tốt hơn" = vượt mức nhiễu đo bằng
   lượt lặp cùng điều kiện — ghi rõ là bằng chứng yếu hơn. Đây là ngưỡng thực dụng, không viết "đã chứng minh". Chỉ số theo dõi tụt mạnh ⇒ báo
   dù luật nói giữ.
 - **Báo kết quả bộ an toàn (hue_rag: 32 câu) luôn đủ 4 số**, kể cả số đạt: đảo cảnh báo · sai điều kiện (mới / hết) · thiếu cảnh báo (mới / hết)
