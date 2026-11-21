@@ -121,6 +121,10 @@ class AssistantFlags:
     so_vet: bool = False  # sổ vết debug có nội dung, chỉ máy local (`core/so_vet.py`); bật bằng `HUE_SO_VET=true`
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
+    # 21/11/2026 (lượt mốc 12 vai: hai tin 4–5 ý gõ tắt "ko", "bn" bị đếm 0–1 ý ⇒ model đang chạy từ chối cả lượt; số ở chỗ khai `_CUOI_HOI_TAT`): bộ đếm ý
+    # hỏi nhận thêm từ hỏi gõ tắt. CHỈ đổi phép đếm (lượt nào dùng lời dặn theo ý) — không đổi chữ gửi model của từng lời dặn, không đổi câu tìm kho. TẮT tới
+    # khi đo trên cả hai model; cần cờ cau_nhieu_y. Tắt ⇒ đếm y như trước.
+    dem_y_go_tat: bool = False
     # 19/11 (plan private `data/phase_9/s09_code/PLAN.md`): CODE nối vào dòng ghi chú một câu "tạm ngừng khi lũ / lệnh cấm / thời tiết xấu" chép
     # nguyên văn từ nguồn câu trả lời ĐÃ TRÍCH khi câu trả lời chưa nêu (`llm/luu_y_nguon.py`). Không model, không đổi chuỗi gửi model. TẮT tới khi đạt.
     noi_dong_tam_ngung: bool = False
@@ -250,6 +254,8 @@ class AssistantFlags:
             raise ValueError("assistant.sua_lich_buoi_toi needs assistant.sua_lich_chua_ho_tro: true")
         if self.sua_lich_kem_hoi and not self.sua_lich_chua_ho_tro:
             raise ValueError("assistant.sua_lich_kem_hoi needs assistant.sua_lich_chua_ho_tro: true")
+        if self.dem_y_go_tat and not self.cau_nhieu_y:
+            raise ValueError("assistant.dem_y_go_tat needs assistant.cau_nhieu_y: true")
         if self.lich_vao_hoi_thuong and not (self.sua_lich_v2 and self.tim_them):
             raise ValueError("assistant.lich_vao_hoi_thuong needs assistant.sua_lich_v2: true and assistant.tim_them: true")
         if self.anh_lich and (not self.len_ke_hoach_v2 or self.anh_lich_bang is None):
@@ -1094,7 +1100,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
                         flags: AssistantFlags) -> str | None:
     """Phần trước lần gọi model của tuyến `tro_ly_hue`. Trả tin nhắn user cho trợ lý có công cụ (None = đường sinh một lần như B1).
     V2: không tìm trước (chỉ cần generator). Còn lại: `prepare_answer` (có thể đặt câu từ chối khi ngữ cảnh rỗng ⇒ `fixed_outcome`)."""
-    trace.nhieu_y = flags.cau_nhieu_y and so_y(query) >= 2
+    trace.nhieu_y = flags.cau_nhieu_y and so_y(query, flags.dem_y_go_tat) >= 2
     trace.lam_thay = nho_lam_thay(query) if flags.noi_that_lam_thay else None
     trace.xin_danh_sach = query if flags.danh_sach_noi_that and xin_danh_sach(query) else None
     trace.nho_len_lich = flags.len_lich_dan_trang and flags.lich_trinh_bieu_mau and nho_len_lich(query)
@@ -1543,15 +1549,38 @@ _CUOI_HOI = re.compile(r"(?<!\w)(không|chưa|nhỉ|vậy|hả)\s*$", re.IGNOREC
 _LIEN_TU = re.compile(r"\s+(?:và|còn|với)\s+", re.IGNORECASE)
 
 
-def _la_ve_hoi(v: str) -> bool:
-    return bool(_VE_HOI.search(v) or _CUOI_HOI.search(v))
+# Cờ `dem_y_go_tat` (21/11/2026): người dùng gõ tắt ("vé bn, bà có giảm ko?") ⇒ bộ đếm chỉ nhận chữ viết đủ nên đếm thiếu ý ⇒ tin nhiều ý rơi về luật
+# cũ "thiếu bằng chứng ⇒ từ chối cả câu". Đếm trên mọi lượt đã ghi (mốc r1, r2, 24 phiên trưa): model đang chạy bị từ chối cả lượt 0 / 65 khi bộ đếm ra
+# ≥ 2 ý, 5 / 24 khi bộ đếm đếm thiếu vì chữ tắt; model cũ 1 / 69 ↔ 5 / 20. Các khuôn dưới CHỈ dùng cho phép đếm: không đổi chữ gửi model, không đổi câu
+# tìm kho. Nhận hẹp có chủ ý (đếm thiếu ⇒ về luật cũ, an toàn; đếm thừa ⇒ một câu một ý nhận lời dặn theo ý):
+#   · "không" gõ tắt chỉ tính ở CUỐI vế và phải đứng sau một chữ (không sau con số: "150 k" là 150 nghìn; không sau từ chỉ lượng: "vài chục k");
+#   · "bn" = "bao nhiêu" chỉ khi đứng cuối vế hoặc trước từ chỉ lượng / tiểu từ ("bn tiền", "bn 1 vé", "bn vậy"); "bn ơi", "bn có…" là "bạn";
+#   · "j" = "gì", "ntn" = "thế nào", "bnhiu / bao nhiu" = "bao nhiêu".
+_CUOI_HOI_TAT = re.compile(r"(?<!\w)(\w+)\s+(?:ko|kô|k|kh|hok|hk|hông|hong|hem|khum)\s*[.!…]*\s*$", re.IGNORECASE)
+_TRUOC_K_LA_LUONG = {"trăm", "chục", "vài", "mấy", "tr", "triệu", "nghìn", "ngàn", "củ", "lít", "xị", "tầm", "khoảng", "hơn", "gần"}
+_VE_HOI_TAT = re.compile(
+    r"(?<!\w)(?:j|ji|ntn|bnhiu|bnhiêu|bnhieu|bao nhiu|bao nhieu)(?!\w)"
+    r"|(?<!\w)bn(?=\s*(?:$|[.!…]|(?:tiền|đ|đồng|k|km|cây|phút|p|tiếng|giờ|h|lâu|ngày|người|ng|vé|1|một|vậy|thế|ạ|nhỉ|ta|z|v|nè|á|hả)(?!\w)|/))",
+    re.IGNORECASE)
 
 
-def so_y(cau: str) -> int:
+def _la_ve_hoi(v: str, go_tat: bool = False) -> bool:
+    if _VE_HOI.search(v) or _CUOI_HOI.search(v):
+        return True
+    if not go_tat:
+        return False
+    if _VE_HOI_TAT.search(v):
+        return True
+    m = _CUOI_HOI_TAT.search(v)
+    return bool(m) and not m.group(1)[-1].isdigit() and m.group(1).lower() not in _TRUOC_K_LA_LUONG
+
+
+def so_y(cau: str, go_tat: bool = False) -> int:
     """Vòng 2 (b): số vế hỏi của câu người dùng — tách theo , ; ? rồi theo "và / còn / với"; một vế là ý hỏi khi có từ hỏi hoặc kết thúc bằng
     tiểu từ hỏi. Tách theo liên từ (14/11 chiều: câu "… mấy giờ và gần đó có … nào không?" đếm 1 ⇒ bị từ chối cả câu) chỉ thêm vế khi chính
-    phần đó có từ hỏi ⇒ "bún bò và bánh khoái giá bao nhiêu" vẫn là 1. Đếm thiếu ⇒ về luật cũ (an toàn)."""
-    return sum(_la_ve_hoi(p) for v in re.split(r"[,;?]", cau) if v.strip() for p in _LIEN_TU.split(v))
+    phần đó có từ hỏi ⇒ "bún bò và bánh khoái giá bao nhiêu" vẫn là 1. Đếm thiếu ⇒ về luật cũ (an toàn).
+    `go_tat` (cờ `dem_y_go_tat`): nhận thêm từ hỏi GÕ TẮT; tắt ⇒ đếm y như trước."""
+    return sum(_la_ve_hoi(p, go_tat) for v in re.split(r"[,;?]", cau) if v.strip() for p in _LIEN_TU.split(v))
 
 
 def cau_cho_web(query: str, trace: AnswerTrace, flags: AssistantFlags | None) -> str:
