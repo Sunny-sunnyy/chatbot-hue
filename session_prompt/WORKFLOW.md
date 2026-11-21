@@ -16,8 +16,8 @@ Thiết kế gốc: `docs/superpowers/specs/2026-10-24-governance-v2-design.md`.
 - **Review chéo:** ai làm thì người khác kiểm. A kiểm B/C; A tự sửa code hoặc dữ
   liệu thì B hoặc C kiểm A.
 - B, C được tự hoàn thiện và tối ưu trong phạm vi việc (đặt tên, tổ chức hàm, sửa
-  lỗi gặp trong phạm vi) mà không hỏi từng chi tiết. Ngoài phạm vi: ghi vào report
-  hoặc nhắn A, không tự mở rộng.
+  lỗi gặp trong phạm vi) mà không hỏi từng chi tiết. Ngoài phạm vi: không tự XÂY thêm;
+  thấy việc được giao thiếu gì / có hướng tốt hơn thì nói A trước khi làm (`AGENTS.md` mục "Cách nhìn việc").
 
 ## 2. Mở session
 
@@ -105,30 +105,18 @@ Học từ một dự án khác của User (User 2026-10-24; bản mô tả các
 | Implementation report | `report_agent/<đợt>/phase_<x>_<gate>_<chủ_đề>_implementation.md` | người làm | xong một việc/gate (`TEMPLATE_IMPLEMENTATION_REPORT.md`) |
 | Review | `report_agent/<đợt>/phase_<x>_<gate>_review.md` | người kiểm | sau review (`TEMPLATE_REVIEW.md`) |
 | Tổng hợp đợt | `report_agent/<đợt>/TONG_HOP.md` | A | đóng đợt: mục tiêu, quyết định theo giờ, kết quả, giới hạn, bước tiếp |
-| Báo cáo khâu cho User | `bao_cao_he_thong/<số>_BAO_CAO_<KHÂU>.md` (số = thứ tự đọc ở `README.md`: 01 luồng, 02–10 khâu theo dòng chảy dữ liệu, 9x hồ sơ tra) | A (B/C khi được giao, A review) | khâu đó đổi hành vi hoặc có thử nghiệm mới (`TEMPLATE_USER_REPORT.md`) |
-| Luồng hệ thống | `bao_cao_he_thong/01_LUONG_HOAT_DONG_HE_THONG.md` | A | mỗi lần hành vi hệ thống đổi (chunker, index, retrieval, prompt, model, API) |
-| Nhật ký cho User | `bao_cao_he_thong/nhat_ky/<YYYY-MM-DD>_<chủ_đề>.md` | A | đóng đợt / cuối ngày làm việc (`TEMPLATE_NHAT_KY.md`) |
 | STATUS | `session_prompt/sessions/STATUS_<X>.md` | session X | ngay sau mỗi việc + kết phiên |
 
 - **Đợt (`<đợt>` = `<YYYY-MM-DD>_<chủ_đề>`):** mở khi User chọn mục tiêu mới (một Phase/gate, một
   việc dọn, một thí nghiệm); ngày là ngày mở; đợt kéo nhiều ngày giữ một folder. A thêm một dòng vào
   bảng "Các đợt" của `report_agent/README.md`. Dữ liệu chạy (kết quả, trace) để ở `data/` hoặc `/tmp`,
   report chỉ trỏ đường dẫn. `reports/` là lịch sử tới 2026-10-24, không thêm file.
-- **Sổ ghi việc `bao_cao_he_thong/`** (mục lục `bao_cao_he_thong/README.md`; User đọc `bai_hoc/`, không đọc sổ này). Mỗi thay đổi vào
-  hệ thống đang chạy ⇒ A sửa **ngay trong đợt** (rút gọn 05/11 từ "5 chỗ"): `BAO_CAO_<KHÂU>.md` của đúng khâu (sửa cả Tóm tắt + checklist,
-  không chỉ thêm mục cuối) + `nhat_ky/` của ngày + bảng `bao_cao_he_thong/README.md`; `01_LUONG_HOAT_DONG_HE_THONG.md` **chỉ khi hành vi người
-  dùng thấy đổi**. `Project_Status.md` sửa ở kết phiên; mục "Hiện hành" của guide (`guides/…`) sửa khi đóng Phase.
+- **Sổ `bao_cao_he_thong/` ngừng cập nhật từ 20/11/2026** (giữ làm hồ sơ cũ — chủ dự án chọn "bớt sổ"): mỗi việc xong chỉ viết một mục `bai_hoc/` + một dòng giới hạn (nếu có) + một dòng sổ việc; báo cáo kỹ thuật riêng chỉ khi có số đo.
 - **Bài học cho User** (User 10–11/11/2026; User không đọc code, **chỉ đọc `bai_hoc/`**): `bai_hoc/` ở gốc repo = đường đọc duy nhất của User (`README.md` = dàn bài + trạng thái); **phạm vi = mọi việc đã làm**, không chỉ khái niệm: xây dựng, triển khai, phát triển, so sánh, tối ưu, đóng gói — việc mới vào hệ thống (kể cả thử rồi bỏ) ⇒ có chỗ trong một bài hoặc bảng tổng (bài 19); **chỉ việc đã làm xong** (đang chạy, hoặc thử xong rồi bỏ) — phần đang xây / chưa xong / chưa làm **không đưa vào**, làm xong mới viết bổ sung (User 14:48 11/11/2026); **độ dài** mỗi bài như bộ 0–19 (User 14:32 11/11/2026: "ổn rồi") — dễ hiểu, trọng tâm, không cắt ý quan trọng cho ngắn; `bao_cao_he_thong/` = **sổ ghi việc** (quá khứ) của agent — giữ, không dời / xoá, vẫn cập nhật theo các luật dưới. Khuôn mỗi bài: tiêu đề → "Cập nhật lần cuối" (giờ `date`) → **bảng từ** (tên trong bài · tên gốc tiếng Anh dò lại trong code · nghĩa ngắn; từ User chưa gặp ghi "mới") → 1 câu nối bài trước → thân **bám sơ đồ RAG hai giai đoạn User đã biết** (bước này hue_rag làm gì → vì sao, đã thử gì → đo ra sao → khi nào hỏng; kể thẳng, không so "bản cơ bản ↔ hue_rag"), một ý, vì sao trước, hình ảnh nền xuyên suốt (người hướng dẫn viên tra sổ tay), ≤ 3 từ mới; **mỗi con số kèm: đo gì, đo thế nào, so với mốc nào, vì sao ổn / chưa ổn** (User chưa tự đánh giá được số); một **"chuyện thật"** đã chạy → "Ba điều chính" → "Bài sau" → `<details>` Nguồn (đường dẫn + nhãn [code] / [đã chạy] / ví dụ tự đặt). Xưng "mình", gọi User "anh"; sơ đồ khi cần bằng mermaid (≤ 6 ô). Thân bài không mã việc / sha / đường dẫn; không câu hỏi kiểm tra, "nói lại bằng lời", áp lực sếp / hội đồng. Kiểm từng ý trên code / số đo trước khi viết; ý chưa đủ bằng chứng ⇒ viết nhẹ đúng mức đã biết; thấy câu sai ở bài User đã đọc ⇒ sửa ngay, ghi ở Nguồn, báo User. Chỉ thêm 1–2 dòng số ⇒ người viết đối chiếu số mới với report, không gọi agent con. **Bài mới hoặc sửa nhiều ⇒ trước commit một agent con ngữ cảnh mới đối chiếu từng số / khẳng định với nguồn gốc** (biên bản ở `data/`, mình sửa theo rồi mới commit). Hệ thống đổi ⇒ sửa bài bị chạm cùng đợt với sổ ghi việc.
 - **Văn phong cho User:** lời thường, không mã nội bộ khi chưa giải nghĩa (mã dồn xuống cuối file),
   số đo kèm ý nghĩa, tiền thật từ log (1 USD ≈ 25.000 đồng), tách quan sát / giả thuyết / nguyên nhân
   đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
-- **Mức nhẹ (User 11:20 08/11/2026):** mỗi merge chỉ ghi **1 dòng nhật ký** ngày đó + bảng `README.md`; `BAO_CAO_<KHÂU>.md` + `01_LUONG_HOAT_DONG_HE_THONG.md` sửa **lúc đóng đợt / kết phiên** (gộp mọi thay đổi trong đợt). Luật "luôn mới nhất" dưới đây áp ở mốc đóng đợt; chỗ sai vẫn xoá.
-- **Báo cáo cho User luôn đúng thông tin mới nhất** (User 31/10/2026; áp cho sổ ghi việc và cả `bai_hoc/` — với `bai_hoc/` chỉ khi việc đã xong): (1) **mọi** thay đổi hoặc thử nghiệm
-  chạm hệ thống — kể cả thử rồi **không áp dụng**, sửa kho, build lại chỉ mục, đổi thước đo — ⇒ cập nhật `BAO_CAO_<KHÂU>.md` của mọi khâu bị chạm
-  (cả Tóm tắt, sơ đồ bản đang chạy, checklist) + bảng `README.md` **ngay trong đợt đó**, không đợi kết phiên; (2) chỗ **không còn đúng** thì **xoá**
-  hoặc viết lại — không để số / trạng thái cũ đứng như hiện tại; phương án đã thử và bỏ giữ gọn 1–3 dòng (thử gì, kết quả, vì sao bỏ, link
-  `report_agent/`) — chi tiết từng bước để ở `report_agent/` và git; (3) viết đủ, chính xác, dễ hiểu: số nào cũng có nguồn, không chắc ⇒ ghi
-  "chưa đo" (31/10: 4 báo cáo khâu còn số trước sửa kho ≥ 3 ngày — S61).
+- **`bai_hoc/` luôn đúng thông tin mới nhất** (User 31/10/2026): chỗ không còn đúng thì xoá hoặc viết lại, không để số / trạng thái cũ đứng như hiện tại; phương án đã thử và bỏ giữ gọn 1–3 dòng; số nào cũng có nguồn, không chắc ⇒ ghi "chưa đo".
 - **Giờ ghi trong file lấy bằng lệnh `date`** ngay trước khi ghi, không ước, không gõ tay: `T=$(date '+%H:%M %d/%m/%Y')` rồi truyền `$T` vào script sửa tài liệu (hook git và hook của công cụ cảnh báo giờ dạng ước). Giờ quyết định của User: giờ A ghi nhận bằng `date`. Tin nhắn giữa các session không cần ghi giờ.
 - **Trạng thái:** mỗi session tự cập nhật `sessions/STATUS_<X>.md` ngay sau mỗi việc (không đợi
   kết phiên) và dòng của mình trong `CURRENT_HANDOFF.md`.
@@ -162,7 +150,7 @@ này; A thêm: khối đầu `CURRENT_HANDOFF.md` + `HIEN_TRANG.md` mục 2–3.
 lần kết phiên cuối ngày. Phiên thấy công cụ báo đang nén ngữ cảnh ⇒ báo A một dòng. Sổ `STATUS_<X>.md` quá ~200 KB ⇒ dời phần cũ sang `archive/` (chép nguyên văn).
 
 Mỗi session: cập nhật `STATUS_<X>.md` (đang làm, dở gì, bẫy đã gặp, câu hỏi, tiền paid đã dùng).
-A: `TONG_HOP.md` của đợt nếu đóng; `nhat_ky/` + bảng `bao_cao_he_thong/README.md`;
+A: `TONG_HOP.md` của đợt nếu đóng;
 `CURRENT_HANDOFF.md` (mục đầu ghi "Phiên sau đọc trước": việc tiếp, câu hỏi cho User; **không giới hạn số
 dòng cố định** — User 31/10: ngày nhiều việc thì dài; chỉ dời khối **đã đóng** / lịch sử sang `archive/`, giữ đủ mọi việc còn mở); `Project_Status.md` nếu hiện trạng đổi; một mục ngắn `PROJECT_HISTORY.md` trỏ tới `TONG_HOP`;
 vòng cải tiến cách làm (skill `improve-workflow`, sổ `SO_CAI_TIEN_CACH_LAM.md`); commit/push. Dọn
@@ -184,7 +172,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
    trước khi dựng bộ (05/11: bộ kín B5c + ảnh dựng xong rồi bỏ). A chọn một session khác người viết review chỉ dựa trên gói đó (được chạy lệnh chỉ đọc /
    tính lại từ dữ liệu; không đọc STATUS / tin nhắn của người viết; thiếu căn cứ ⇒ finding), ghi `<plan>_review.md` (§6),
    trước khi A ghi "duyệt bản sha"; sửa sau review thì người review kiểm phần sửa (25/10: A tự duyệt plan G3, B tìm 3 lỗi sau).
-2. **Giao việc:** mỗi session một mục trong `CURRENT_HANDOFF.md` (mục tiêu, đọc gì
+2. **Giao việc:** mỗi session một mục trong `CURRENT_HANDOFF.md` (mở đầu bằng quyết định nào đang chờ kết quả này; mục tiêu, đọc gì
    với mức đọc, làm gì, không làm gì, tiêu chí, quyền/giới hạn tiền, điều kiện dừng,
    đầu ra) rồi nhắn session đó. Giao việc song song chỉ khi file không chồng nhau.
    **A tự kiểm B/C/E có đang làm không — không đợi User hỏi:** mỗi tin giao việc gửi kèm `notify_when_idle: true`; trước khi
@@ -230,7 +218,7 @@ phải nhắc lại) mỗi session ghi ngay vào mục "Đã học / bẫy gặp
 Mở bằng `START_SESSION.md` với `<X>` = D khi User muốn tự hiểu một việc vừa xong (một gate, một thí nghiệm,
 một khái niệm). Mục tiêu: User tự giải thích lại được bằng lời của mình, không phải nghe giảng.
 
-- **Chỉ đọc** repo, report, code, `bao_cao_he_thong/`. Không sửa file dự án, không chạy việc nặng, không gọi
+- **Chỉ đọc** repo, report, code, `bai_hoc/`. Không sửa file dự án, không chạy việc nặng, không gọi
   API trả phí, không commit. Chỉ ghi vào sổ học private `data/hoc_cung_D/` (và `sessions/STATUS_D.md`).
 - **Không mở câu kín**, không đọc nhóm `test` theo từng câu. **Không ghi memory Claude** — memory dùng chung mọi
   session, điều D ghi sẽ lọt sang B/C (người đề xuất biến thể).
