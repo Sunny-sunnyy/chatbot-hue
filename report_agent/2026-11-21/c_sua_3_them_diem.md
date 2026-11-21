@@ -17,8 +17,8 @@ Lượt mốc 12 vai tối 21/11, vai sửa lịch, CẢ HAI model: người dù
 Lịch mới lập gần như luôn kín ⇒ "thêm" trên thực tế là "thay", và code chọn điểm bị mất — phần lớn là điểm chính.
 
 ## Đã làm (cờ bật)
-- Lệnh thêm chỉ làm được bằng cách thế chỗ ⇒ KHÔNG áp, lịch giữ nguyên, một dòng do code viết, ví dụ: "Chưa làm: thêm Đàn Nam Giao — buổi sáng ngày 1 đang có Đại Nội Huế; thêm vào đó thì lịch sẽ có buổi quá kín hoặc quá giờ. Muốn đổi, bạn nhắn: thay Đại Nội Huế bằng Đàn Nam Giao." Nêu tối đa hai điểm, và chỉ điểm mà code đã thử thay được.
-- Lệnh thêm bị luật xếp chặn ⇒ lý do cụ thể + tối đa hai cách làm được, ví dụ: "Chưa làm: thêm Lăng Khải Định vào buổi sáng ngày 2 — vì lịch sẽ có buổi quá kín hoặc quá giờ. Làm được: bạn nhắn thay Lăng Tự Đức bằng Lăng Khải Định (buổi chiều ngày 2)."; không còn cách nào ⇒ "Lịch này hiện không còn chỗ nào xếp được X."
+- Lệnh thêm chỉ làm được bằng cách thế chỗ ⇒ KHÔNG áp, lịch giữ nguyên, một dòng do code viết, ví dụ: "Chưa làm: thêm Đàn Nam Giao — buổi sáng ngày 1 đang có Đại Nội Huế; thêm vào đó thì lịch sẽ có buổi quá kín hoặc quá giờ. Muốn đổi, bạn nhắn đủ câu: thay Đại Nội Huế bằng Đàn Nam Giao." Nêu tối đa hai điểm, và chỉ điểm mà code đã thử thay được.
+- Lệnh thêm bị luật xếp chặn ⇒ lý do cụ thể + tối đa hai cách làm được, ví dụ: "Chưa làm: thêm Lăng Khải Định vào buổi sáng ngày 2 — vì lịch sẽ có buổi quá kín hoặc quá giờ. Làm được, bạn nhắn đủ câu: thay Lăng Tự Đức bằng Lăng Khải Định (buổi chiều ngày 2)."; không còn cách nào ⇒ "Lịch này hiện không còn chỗ nào xếp được X."
 - Lệnh thêm làm được mà không mất gì ⇒ y như cũ. Lời dặn và khuôn của lần hiểu ý sửa KHÔNG đổi (chỉ đổi phần code sau đó).
 - Phạm vi: chỉ nhánh "thêm điểm" của `sua_lich_v2.ap`; lượt lập lịch, lệnh dời, lệnh thay, phần tự lấp sau khi bỏ điểm không đổi.
 
@@ -43,3 +43,25 @@ Lịch mới lập gần như luôn kín ⇒ "thêm" trên thực tế là "thay
 - Chưa nhìn giao diện; chưa chạy các file test dựng cả app.
 - Trong một tin có nhiều hành động, cách gợi ý được tính trên lịch tại lúc xét lệnh thêm; hành động đứng SAU nó trong cùng tin có thể làm một gợi ý hết đúng (chưa thấy ca nào; mỗi lượt áp tối đa hai hành động).
 - Phép này KHÔNG cho biết người thật muốn "thêm mà giữ hết" hay chấp nhận "thêm = thay" (số lượt là của một vai mô phỏng) · hướng rộng hơn: lịch luôn kín là do bộ xếp lấp đủ quỹ giờ mỗi buổi — cho buổi dày hơn khi người dùng tự xin là đổi luật xếp, việc của chủ dự án · đếm rẻ nhất kế: khi cờ bật, đếm trên log bao nhiêu lượt có dòng "Chưa làm: thêm" được nối bằng một lệnh "thay" ở lượt sau.
+
+## Thêm 19:37 21/11/2026 — số đo lần hiểu ý + phần lệnh THAY (phiên điều phối chốt sau khi thấy số)
+**Ô "câu trả lời sau dòng gợi ý có được hiểu không"** — bộ mù 10 câu của phiên điều phối × 2 model × 3 lượt = 60 lời gọi lần hiểu ý, 0 lỗi gọi; luật chấm ghi trước (plan mục 8); 0,352 USD (model đang chạy) + 0,0025 USD (model cũ):
+
+| Tiêu chí ghi trước | Model cũ | Model đang chạy |
+|---|---|---|
+| 7 câu nói rõ tên điểm: hiểu đúng ≥ 19 / 21 | 21 / 21 | 21 / 21 |
+| hai câu không được đổi lịch ("thôi khỏi…", "sao lại không thêm được?"): 0 lượt đổi | 0 / 6 | 0 / 6 |
+| 3 câu chỉ hiểu được khi thấy lượt trước (báo riêng; ngưỡng xét lại 6 / 9) | 2 / 9 | 3 / 9 |
+
+- Trong ba câu cuối: "ok thay đi" và "ừ đổi luôn nhé" 0 / 6 mỗi model (lần hiểu ý không thấy lượt trước ⇒ trả danh sách rỗng ⇒ lượt đi đường hỏi đáp thường). **Giới hạn ghi nhận:** câu đồng ý cụt không được hiểu ⇒ dòng gợi ý đổi chữ thành "bạn nhắn đủ câu: thay Y bằng X". Nút bấm / đưa lượt trước vào lần hiểu ý: chỉ xét sau khi thấy người dùng nhận gì ở lượt đó trên đường chat thật.
+- Các câu của bộ mù nhắc tới điểm mà code KHÔNG gợi ý (người dùng tự chọn điểm khác): hiểu đúng nhưng bộ áp từ chối bằng câu chung cũ của lệnh THAY (0 / 3 áp được) ⇒ thêm phần dưới.
+
+**Lệnh THAY bị luật xếp chặn** (cùng cờ, cùng cách chữa, khoảng 10 dòng): "Chưa làm: thay Y bằng X — vì <lý do>. Làm được, bạn nhắn đủ câu: …" thay cho câu chung. Lệnh thay làm được ⇒ không đổi gì.
+
+| Tiêu chí | Đầu ra sau phần thêm (mô phỏng 53.189 lệnh: ba hàng lệnh thêm + 13.680 lệnh thay) |
+|---|---|
+| S0 cờ tắt giống từng byte cây gốc ↔ nhánh | khác 0 / 53.189 |
+| S1 lệnh thêm làm mất điểm · S2 lệnh thêm thật | 0 · 0 · 0 · như cũ 27 · 27 · 1.049 |
+| S3 mọi cách nêu ra đều làm được | 4.941 / 4.941 · 21.074 / 21.074 · 12.194 / 12.194 · lệnh thay 9.504 / 9.504 |
+| Lệnh thay: 13.680 lệnh | thay được 3.388 (như cờ tắt) · bị chặn 10.292 — có lý do 10.292 / 10.292 (trước: 0), kèm cách làm được 5.490 |
+| test | `pytest tests/test_sua_lich_them.py -q` ⇒ `6 passed`; cố ý tắt nhánh lệnh thay ⇒ `1 failed, 5 passed` ⇒ trả lại ⇒ `6 passed`; `test_sua_lich_v2` 13 · `test_sua_lich_kem_hoi` 7 · `test_doi_cho_ngay` 26 passed |

@@ -59,11 +59,11 @@ def test_add_never_removes_a_point_and_every_suggestion_really_works():
             if the_cu:
                 n_the += 1
                 assert kd["ma_luat"] == "them_can_thay" and 1 <= len(kd["cach"]) <= 2 and all(g["thay"] is not None for g in kd["cach"])
-                assert "Muốn đổi, bạn nhắn: thay " in cau["cau"]
+                assert "Muốn đổi, bạn nhắn đủ câu: thay " in cau["cau"]
             else:
                 n_chan += 1
                 assert kd["ma_luat"] == "them_bi_chan" and len(kd["cach"]) <= 2
-                assert ("Làm được: bạn nhắn " in cau["cau"]) == bool(kd["cach"]) and ("không còn chỗ nào" in cau["cau"]) == (not kd["cach"])
+                assert ("Làm được, bạn nhắn đủ câu: " in cau["cau"]) == bool(kd["cach"]) and ("không còn chỗ nào" in cau["cau"]) == (not kd["cach"])
             for g in kd["cach"]:  # mỗi cách = một lệnh người dùng nhắn lại ⇒ áp thật phải làm được, và X vào đúng buổi được nêu
                 n_cach += 1
                 if g["thay"] is None:
@@ -90,7 +90,7 @@ def test_named_slot_line_says_what_is_there_and_who_can_be_swapped():
     y = B.theo_id[moi["khong_doi"][0]["cach"][0]["thay"]]["ten"]
     ly_do = moi["khong_doi"][0]["ly_do"]
     vi = f"thêm vào đó thì {s.CAU_LY_DO[ly_do]}" if ly_do else "không xếp thêm được một điểm nữa"
-    assert cau.startswith(f"Chưa làm: thêm {x} — buổi {s.NHAN_BUOI[b]} ngày {ng} đang có {' và '.join(dang_co)}; {vi}. Muốn đổi, bạn nhắn: thay {y} bằng {x}")
+    assert cau.startswith(f"Chưa làm: thêm {x} — buổi {s.NHAN_BUOI[b]} ngày {ng} đang có {' và '.join(dang_co)}; {vi}. Muốn đổi, bạn nhắn đủ câu: thay {y} bằng {x}")
     assert y in dang_co
 
 
@@ -109,6 +109,34 @@ def test_add_after_a_removal_in_the_same_message_is_judged_on_the_new_itinerary(
                 assert a not in sau and sau[i] == vt[a] and not kq["khong_doi"] and not kq["da_ap"][1].get("the_cho")
                 return
     raise AssertionError("không tìm được ca bỏ rồi thêm thẳng")
+
+
+def test_replace_blocked_by_the_rules_gives_the_reason_and_ways_that_work():
+    """Cùng cờ: lệnh THAY bị luật xếp chặn (người dùng chọn thay một điểm khác điểm được gợi ý). Cờ tắt: câu chung như cũ. Cờ bật: lý do cụ thể hoặc ít nhất
+    câu mở đầu "Chưa làm: thay Y bằng X", lịch giữ nguyên, và mọi cách nêu ra đều làm được. Lệnh thay làm được thì hai cờ cho cùng kết quả."""
+    k, luu = _lich(2)
+    vt = s._vi_tri(k)
+    n_chan = n_duoc = 0
+    for y in sorted(vt):
+        for i in NGAY_DIEM:
+            if i in vt or vt[y][1] not in B.theo_id[i]["buoi"]:
+                continue
+            hd = [s.HanhDong(loai="thay_diem", ten=B.theo_id[y]["ten"], ten_moi=B.theo_id[i]["ten"])]
+            cu, moi = s.ap(B, luu, hd), s.ap(B, luu, hd, them_khong_the=True)
+            if cu["da_ap"]:
+                n_duoc += 1
+                assert moi == cu
+                continue
+            n_chan += 1
+            assert cu["khong_doi"][0]["ma_luat"] == "khong_hop_luat" and "phạm luật xếp" in s.thay_doi(B, cu)[0]["cau"]
+            kd, cau = moi["khong_doi"][0], s.thay_doi(B, moi)[0]["cau"]
+            assert not moi["da_ap"] and moi["khung"] == k and kd["ma_luat"] == "thay_bi_chan"
+            assert cau.startswith(f"Chưa làm: thay {B.theo_id[y]['ten']} bằng {B.theo_id[i]['ten']} — vì ")
+            for g in kd["cach"]:
+                sau = (s.ap(B, luu, [s.HanhDong(loai="them_diem", ten=B.theo_id[i]["ten"], ngay=g["ngay"], buoi=g["buoi"])], them_khong_the=True) if g["thay"] is None
+                       else s.ap(B, luu, [s.HanhDong(loai="thay_diem", ten=B.theo_id[g["thay"]]["ten"], ten_moi=B.theo_id[i]["ten"])], them_khong_the=True))
+                assert g["thay"] != y and sau["da_ap"] and s._vi_tri(sau["khung"])[i] == (g["ngay"], g["buoi"])
+    assert n_chan > 10 and n_duoc > 10
 
 
 def _chay(ra, flags):

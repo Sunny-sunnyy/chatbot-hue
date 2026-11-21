@@ -698,7 +698,16 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             if j in vt:
                 khong(ten_cua_diem(bang, j), "da_co_trong_lich")
                 continue
-            k = _thu_giu(bang, luu, ts, {**{x: v for x, v in vt.items() if x != i}, j: vt[i]}, [x for x in loai if x != j] + [i], can=j)
+            giu_thay, loai_thay = {**{x: v for x, v in vt.items() if x != i}, j: vt[i]}, [x for x in loai if x != j] + [i]
+            k = _thu_giu(bang, luu, ts, giu_thay, loai_thay, can=j)
+            if k is None and them_khong_the and vt[i][1] in bang.theo_id[j]["buoi"]:
+                # cùng cờ: lệnh THAY bị luật xếp chặn nằm ngay trên đường người dùng đi sau dòng gợi ý của lệnh thêm (chọn thay một điểm KHÁC điểm được
+                # gợi ý: 0 / 3 áp được, chỉ nhận câu chung) ⇒ lý do cụ thể + tối đa hai cách có được điểm mới, như lệnh thêm bị chặn
+                ma = set(v2.kiem_khung_v2(bang, _xep(bang, luu, ts, giu_thay, loai_thay)))
+                kq["khong_doi"].append({"diem": ten_cua_diem(bang, j), "ma_luat": "thay_bi_chan", "cu": ten_cua_diem(bang, i), "dich": list(vt[i]),
+                                        "ly_do": "khu" if ma & MA_LUAT_KHU else "kin" if ma & MA_LUAT_KIN else "gio_mo" if "ngoai_gio_mo" in ma else None,
+                                        "cach": _cach_them(bang, luu, ts, khung, vt, loai, j, None, None)[:2]})
+                continue
             if k is None:
                 khong(ten_cua_diem(bang, j), "khong_buoi_hop_le" if vt[i][1] not in bang.theo_id[j]["buoi"] else "khong_hop_luat")
                 continue
@@ -758,12 +767,14 @@ def _cau_them(bang: v2.BangV2, k: dict) -> str:
         vi = f"thêm vào đó thì {CAU_LY_DO[k['ly_do']]}" if k["ly_do"] else "không xếp thêm được một điểm nữa"  # lý do chỉ chắc khi nói rõ một buổi
         o = (f"{noi} đang có {' và '.join(k['dang_co'])}; {vi}" if ro and k["dang_co"]
              else f"{noi or 'lịch'} đang kín, không xếp thêm được một điểm nữa")
-        return f"Chưa làm: thêm {x} — {o}. Muốn đổi, bạn nhắn: {' hoặc '.join(cach(g, not ro) for g in k['cach'])}."
+        # "đủ câu": lần hiểu ý không thấy lượt trước ⇒ câu đồng ý cụt ("ok thay đi") không được hiểu (đo 21/11: 0 / 6 lượt mỗi model)
+        return f"Chưa làm: thêm {x} — {o}. Muốn đổi, bạn nhắn đủ câu: {' hoặc '.join(cach(g, not ro) for g in k['cach'])}."
     vi = f"vì {CAU_LY_DO[k['ly_do']]}" if k["ly_do"] else "vì lịch sẽ phạm luật xếp (giờ mở cửa / cụm xa / quá dày)"
-    dau = f"Chưa làm: thêm {x}" + (f" vào {noi}" if noi else "") + f" — {vi}."
+    dau = (f"Chưa làm: thay {k['cu']} bằng {x} — {vi}." if k["ma_luat"] == "thay_bi_chan"
+           else f"Chưa làm: thêm {x}" + (f" vào {noi}" if noi else "") + f" — {vi}.")
     if not k["cach"]:
         return f"{dau} Lịch này hiện không còn chỗ nào xếp được {x}."
-    return f"{dau} Làm được: bạn nhắn {' hoặc '.join(cach(g, True) for g in k['cach'])}."
+    return f"{dau} Làm được, bạn nhắn đủ câu: {' hoặc '.join(cach(g, True) for g in k['cach'])}."
 
 
 def _cau_khong_doi(bang: v2.BangV2, k: dict) -> str:
@@ -771,7 +782,7 @@ def _cau_khong_doi(bang: v2.BangV2, k: dict) -> str:
     if k["ma_luat"] == "ngay_khong_doi_cho":  # cờ `sua_lich_doi_cho_ngay`: hoán đổi hai ngày bị luật xếp chặn ⇒ lý do lời thường, lịch giữ nguyên
         vi = f"vì {(CAU_LY_DO | CAU_LY_DO_NGAY)[k['ly_do']]}" if k["ly_do"] else "vì lịch sẽ phạm luật xếp (giờ mở cửa / cụm xa / quá dày)"
         return f"Chưa đổi chỗ {k['diem']} được {vi} — lịch giữ nguyên."
-    if k["ma_luat"] in ("them_can_thay", "them_bi_chan"):  # cờ `sua_lich_them_khong_the`; mở đầu "Chưa làm" ⇒ giao diện không gắn "Không đổi được"
+    if k["ma_luat"] in ("them_can_thay", "them_bi_chan", "thay_bi_chan"):  # cờ `sua_lich_them_khong_the`; mở đầu "Chưa làm" ⇒ giao diện không gắn "Không đổi được"
         return _cau_them(bang, k)
     if "goi_y" not in k:
         return CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"], ngay=k.get("ngay"))
