@@ -18,7 +18,7 @@ Từ dùng trong trang: <5–8 từ riêng của dự án mà một agent mới 
 <Bảng bước theo thứ tự + điều kiện đạt (ngày chỉ là ghi chép). Một câu "trước mốc X thì không được làm gì". Việc đang mở KHÔNG chép ở đây: một dòng trỏ sang mục lục việc
  (`VIEC_DANG_MO.mau.md`) — hai nơi cùng ghi thì sẽ lệch nhau. Dự án nhỏ chưa có mục lục việc: ghi thẳng ai · việc · trạng thái · nhánh ở đây.>
 
-<Các con số đo cách làm (trang cách làm việc mục 7) ghi ở tổng hợp ngày / sổ cải tiến, không ghi ở trang này.>
+<Các con số đo cách làm (trang cách làm việc mục 7) ghi ở MỘT nơi là sổ cải tiến; trang này chỉ trỏ.>
 
 ## 3. Đang chờ chủ dự án
 <Gom MỘT chỗ mọi thứ đang chờ người quyết / người làm. Mục nào chưa chắc còn hiệu lực thì ghi "chưa kiểm". Thứ không có ở đây thì agent không hỏi lại.>
@@ -46,7 +46,7 @@ thiếu chỗ đó, sửa trang rồi hỏi lại đúng câu ấy.
 
 1. Dự án này là gì, cho ai dùng, đang chạy ở đâu?
 2. Kể ba việc hệ thống đang làm được và một tính năng đang tắt (kèm lý do tắt); danh sách đủ các tính năng bật / tắt nằm ở file nào?
-3. Mốc gần nhất là gì, vào thứ mấy ngày nào, và trước mốc đó không được làm gì?
+3. Mốc gần nhất là gì, điều kiện đạt là gì, và trước mốc đó không được làm gì?
 4. Ai đang làm việc gì? Việc nào chưa ai nhận?
 5. Bạn được tự làm những gì mà không cần hỏi, việc gì phải hỏi trước, việc gì không bao giờ làm?
 6. Muốn bật hệ thống và chạy test thì mở tài liệu nào, mục nào? Điều gì hay vấp?

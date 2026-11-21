@@ -1,30 +1,19 @@
-# Ngữ cảnh riêng của từng session
+# Sổ riêng của từng session
 
-Mỗi session giữ một file `STATUS_<X>.md` (A, B, C…). Chính session đó ghi đè,
-giữ ngắn (**≤ ~30 dòng**, trỏ tới report thay vì chép số; 05/11), cập nhật khi xong một việc và trước khi kết phiên. Session
-mới mở với vai `<X>` đọc file này để nối tiếp. Việc được giao nằm ở
-`CURRENT_HANDOFF.md`; lịch sử ở `PROJECT_HISTORY.md`; ở đây chỉ giữ ngữ cảnh làm
-việc của riêng session.
+Mỗi session giữ một file `STATUS_<X>.md` (A, B, C…). Chính session đó GHI ĐÈ cả file (không nối, không chồng khối mới lên khối cũ) khi xong một việc và
+trước khi kết phiên; session mới mở với vai `<X>` đọc file này để nối tiếp. Việc được giao và bước kế nằm ở sổ việc `VIEC_DANG_MO.md` — ở đây chỉ trỏ tên
+khối, không chép lại. Số đo để ở report, ở đây chỉ trỏ.
 
-Mẫu:
+Khuôn bảy mục (`guides/CACH_LAM_VIEC.md` mục 5):
 
 ```markdown
-# STATUS <X> — cập nhật <YYYY-MM-DD HH:MM>
+# STATUS_<X> — ghi đè <giờ lấy bằng `date`>
 
-Terminal: <tên trong ListAgents> · Agent: <Claude Opus 5.5 / Codex / …>
-
-## Đang làm
-- <việc, link mục trong CURRENT_HANDOFF>
-
-## Đang khai báo sửa
-- <đường dẫn> (hoặc "không")
-
-## Vừa xong
-- <việc — kết quả — report/commit>
-
-## Đã học / bẫy gặp
-- <điều session sau cần biết; bẫy chung thì báo A ghi vào Project_Status §8>
-
-## Việc dở / câu hỏi cho A
-- <…>
+1. Đang dở: <việc — khối nào của sổ việc — nhánh / mã commit>
+2. Đã soạn / đã review, chưa gộp: <nhánh — chờ ai>
+3. Việc kế + "xong khi": <trỏ khối của sổ việc>
+4. Ai chờ mình ↔ mình chờ ai: <…>
+5. Câu treo: <…>
+6. Thứ đang chạy / rác: <đầu ra `git worktree list`, tiến trình, cổng, file tạm>
+7. Bẫy của phiên: <điều phiên sau cần biết>
 ```

@@ -24,6 +24,5 @@ Viết: <giờ lấy bằng lệnh `date`>, <ai>.
 ## 3. Đang mở khi viết file này
 - <việc chưa xong — mỗi việc một dòng trỏ mục lục việc>.
 
-## 4. Ba con số của ngày + tiền
-- Việc đã báo "xong" bị lật lại: <n> · chủ dự án phải nhắc lại điều đã nói: <n> · chủ dự án phải tự gợi hướng: <n>.
+## 4. Tiền (ba con số cách làm ghi ở sổ cải tiến, không ghi ở đây)
 - Tiền API: <từng khoản, số đọc từ log; chỗ nào là số từng phiên báo thì ghi rõ>.

@@ -23,7 +23,7 @@ Nhãn: **[đã chạy]** = cách làm / lệnh đã chạy thật ở repo gốc
 ## 1. "Xong" ghi TRƯỚC khi làm; bằng chứng là thứ máy in ra
 
 - Trước khi bắt đầu, ghi một dòng: `xong khi: <lệnh> in ra <kết quả>` (hoặc "người dùng làm X thì thấy Y"). Việc đọc / nghiên cứu: `xong khi` là bảng độ phủ.
-- Báo "xong" khi đã tự chạy lệnh đó và dán đầu ra thật, kết bằng bảng bốn cột **đã làm · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra** và MỘT dòng:
+- Báo "xong" khi đã tự chạy lệnh đó và dán đầu ra thật, kết bằng bảng **người dùng làm được / chưa làm được · chưa làm · tự hoãn + lý do · lệnh kiểm + đầu ra** và MỘT dòng:
   phép này KHÔNG cho biết gì · hướng rộng hơn tôi thấy · đếm rẻ nhất bằng gì. (Phần viết cho chủ dự án dùng khuôn bốn ý ở mục 4.)
 - **Việc LỚN — đề bài lấy từ LỜI chủ dự án** (không áp cho việc nhỏ và sửa lỗi): chép nguyên văn điều chủ dự án đã nói; chủ dự án nêu KẾT QUẢ muốn có và giới
   hạn — hướng kỹ thuật chủ dự án nêu là một gợi ý để xét, và một danh sách ý cách nhau bằng dấu phẩy hay kết bằng "..." là "nhớ gì nêu đó", chưa phải ranh giới
@@ -106,9 +106,9 @@ File agent luôn đọc (`AGENTS.md`) giữ ngắn, **dưới 24.000 byte** (có
 treo · thứ đang chạy / rác · bẫy của phiên. Báo cáo từng việc để ở **thư mục ngày** (tên = `date +%F`, tên file mở đầu bằng vai) — để tra, không bắt đọc; báo cáo
 đã đặt vào ngày nào thì không dời, bản cập nhật là file mới ở ngày mới. Dữ liệu riêng, bản nháp và lời chủ dự án nguyên văn để ngoài git.
 
-**Mở lại phiên cho nhẹ:** mở phiên đọc file luật ngắn (công cụ tự nạp) + trang hiện trạng + mục lục việc + sổ riêng của phiên; luật chi tiết đọc **đúng mục khi
-NHẬN việc** chạm mục đó. Kết phiên nhẹ (tắt / mở lại để làm mới ngữ cảnh): THAY — không nối — sổ riêng bằng khuôn bảy mục. Chỉ mở lại phiên đã đầy. Phiên thực
-thi đợi tin mở phiên của phiên điều phối rồi trả lời MỘT tin (vai + báo cáo mở phiên).
+**Mở lại phiên cho nhẹ:** mở phiên đọc file luật ngắn + trang hiện trạng + mục lục việc + sổ riêng của phiên; luật chi tiết đọc **đúng mục khi NHẬN việc**.
+Kết phiên nhẹ: GHI ĐÈ sổ riêng theo khuôn bảy mục. Chỉ mở lại phiên đã đầy. Phiên thực thi đợi tin mở phiên của phiên điều phối rồi trả lời MỘT tin — chỉ là
+cách tìm nhau; nghĩ, đọc, đếm thì không chờ tin đó.
 
 **Kiểm bằng gì** — `wc -c AGENTS.md`; công cụ mới: hỏi nó "bạn đã nạp file hướng dẫn và skill nào, trích dòng đầu mỗi file" — không trích được là chưa nạp.
 
@@ -133,7 +133,7 @@ thi đợi tin mở phiên của phiên điều phối rồi trả lời MỘT t
 
 ## 7. Đo chính cách làm việc bằng ba con số + một con số sản phẩm
 
-Ghi vào tổng hợp ngày: **(a) số việc đã báo "xong" bị lật lại** (chủ dự án, reviewer hoặc máy tìm ra chưa xong) · **(b) số lần chủ dự án phải nhắc lại một điều
+Ghi ở MỘT nơi (ở repo này: mục 9): **(a) số việc đã báo "xong" bị lật lại** (chủ dự án, reviewer hoặc máy tìm ra chưa xong) · **(b) số lần chủ dự án phải nhắc lại một điều
 đã nói** · **(c) số lần chủ dự án phải tự gợi một hướng mà nhóm lẽ ra phải nêu**. (a), (b) đo lỗi làm sai / làm thừa; (c) đo lỗi nhìn hẹp — thiếu nó thì "hẹp"
 luôn trông như an toàn. Kèm **một con số của sản phẩm** mà người dùng cảm được (ở repo này: mục 9). Muốn đổi cách làm (thêm phiên, thêm luật, đổi công cụ, đổi
 kiểu điều phối) ⇒ so các số trước và sau, không quyết theo cảm giác; mẫu nhỏ ⇒ chỉ tin chênh rõ.
@@ -161,7 +161,7 @@ xong trước, và có đủ làn đo cho tất cả — lợi thật của nhi�
 | "đã đẩy lên" lấy từ máy | `scripts/commit_push.sh "<lời commit>" <file>…` in `ĐÃ PUSH <sha> origin/<nhánh>` [đã chạy] |
 | rào bằng máy mọi agent đều qua | `.githooks/pre-commit`, `pre-push`; kiểm đã bật: `git config --get core.hooksPath` ⇒ `.githooks` [đã chạy] |
 | tài liệu viết cho người · báo cáo bốn ý của việc vừa xong | `bai_hoc/` · `bai_hoc/VIEC_MOI_XONG.md` |
-| con số sản phẩm đang đuổi · ba con số cách làm | `session_prompt/HIEN_TRANG.md` mục 4 |
+| con số sản phẩm đang đuổi · ba con số cách làm | `session_prompt/HIEN_TRANG.md` mục 4 · `session_prompt/SO_CAI_TIEN_CACH_LAM.md` (trang hiện trạng chỉ trỏ) |
 | làm một mình · mở phiên · kết phiên nhẹ | `guides/KHI_CHI_CO_MOT_AGENT.md` · `session_prompt/START_SESSION.md` · `session_prompt/WORKFLOW.md` §8 |
 
 **Sở thích đã chốt của chủ dự án (agent nào cũng theo):**
@@ -169,6 +169,7 @@ xong trước, và có đủ làn đo cho tất cả — lợi thật của nhi�
 - Chủ dự án nêu kết quả và giới hạn; hướng chủ dự án nêu là gợi ý để xét; danh sách ý bằng dấu phẩy hay "..." là "nhớ gì nêu đó" (mục 1).
 - Việc thật sự của chủ dự án (mục tiêu, tiền, xoá dữ liệu, hướng sản phẩm, deploy): **mỗi lần một câu**, có sẵn đáp án; mỗi đáp án kèm hệ quả, khi nào sai, chọn
   khác thì mất gì; bộ đáp án có cả hướng agent tự thêm, ghi rõ cái nào của ai.
+- Rào riêng tư MỚI hỏi chủ dự án trước; rào đang có giữ nguyên. Review khác hãng: ở mốc chốt, chủ dự án gửi khi nhóm yêu cầu rõ.
 - Không làm quá tay: cách nhỏ nhất đủ nhu cầu thật; rào, lớp, bước kiểm "phòng xa" chỉ thêm khi có sự cố đã thấy thật; công sức tương xứng với tuổi thọ của
   phần đang làm.
 - Việc đã chốt thì không hỏi lại, không trình lại như lỗi. Số của người khác / agent con gắn "chưa kiểm" tới khi có người thứ hai tính lại. Giờ ghi vào tài

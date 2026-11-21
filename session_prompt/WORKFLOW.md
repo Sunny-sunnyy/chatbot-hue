@@ -1,7 +1,7 @@
 # Workflow — cách làm và phối hợp A / B / C / E
 
 Áp dụng cho mọi session. Luật chung: `Session_Prompt.md`; cách nhìn việc + bảng quyền: `AGENTS.md` (không lặp lại ở đây).
-Bản gọt 21/11/2026 — SỐ MỤC giữ nguyên để chỗ trỏ cũ còn đúng; bản trước khi gọt: `git show 708c987d:session_prompt/WORKFLOW.md`.
+Bản trước lượt gọt 21/11/2026 (số mục giữ nguyên): `git show 708c987d:session_prompt/WORKFLOW.md`.
 
 ## 1. Vai trò
 
@@ -27,23 +27,19 @@ Bản gọt 21/11/2026 — SỐ MỤC giữ nguyên để chỗ trỏ cũ còn �
    curl -s http://127.0.0.1:6335/collections   # so với HIEN_TRANG.md mục 1
    curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 | grep -o '"points_count":[0-9]*'
    ```
-3. Tên terminal: A dùng `ListAgents` rồi nhắn tên mình; B / C / E đợi tin đó, trả lời MỘT tin (vai + báo cáo mở phiên). Agent khác: "qua User" (§7).
-4. Báo ngắn: mình là ai, việc đang ở đâu, việc của mình, chỗ lệch giữa tài liệu và thực tế, thắc mắc — báo User trong terminal **và** báo A.
-5. Bắt đầu làm: A giao ngay mọi việc đã có trong sổ việc theo bảng "Quyền thường trực" (việc thuộc hàng "hỏi User trước" thì chờ User); B / C / E: việc
-   XÂY bắt đầu khi A giao (tin của A = "làm đi"); nghĩ, đếm 0 đồng, nêu hướng thì không chờ.
+3. Tên terminal, báo ngắn, lúc nào bắt đầu làm: bước 3 của `START_SESSION.md` (tin của A giao việc XÂY = "làm đi"; nghĩ, đếm 0 đồng, nêu hướng thì không chờ).
 
 ## 3. Nhận và làm việc
 
 1. Đọc mục việc của mình và các input được ghi trong đó.
 2. **Khai báo trước khi sửa:** ghi file sắp sửa vào `sessions/STATUS_<X>.md`; không sửa file session khác đang khai báo. Governance (`session_prompt/`,
-   `skills/`, `AGENTS.md`, `.githooks/`, `.claude/settings.json`, `.claude/hooks/`) do A sửa — trừ mục việc / trạng thái của chính mình trong
-   `CURRENT_HANDOFF.md` và `sessions/STATUS_<X>.md`. Code làm trong `git worktree` riêng (lệnh + luật máy dùng chung: `AGENTS.md` mục "Hay vấp").
+   `skills/`, `AGENTS.md`, `.githooks/`, `.claude/settings.json`, `.claude/hooks/`) do A sửa — trừ sổ riêng `sessions/STATUS_<X>.md` của mình. Code làm trong `git worktree` riêng (lệnh + luật máy dùng chung: `AGENTS.md` mục "Hay vấp").
    Thêm cho máy dùng chung: cổng hue_rag là Qdrant 6335 / 6336, server 8010 + cổng tạm 8011–8099 / 8887 (`ss -ltn | grep <cổng>` trước khi mở); việc
    ≥ ~2 GB RAM hoặc ≥ 10 phút CPU ⇒ báo A trước (A nhắn phiên điều phối dự án kia). File nhiều session cùng ghi: đọc lại ngay trước khi sửa, sửa từng đoạn.
 3. Làm theo mức rủi ro (bảng "sai thì mất gì": `guides/CACH_LAM_VIEC.md` mục 2). Việc CAO — Phase mới, sửa dữ liệu curated, xóa collection, provider /
    model mới, gửi dữ liệu ra ngoài — cần **một** tài liệu thiết kế User duyệt một lần, rồi report + review chéo độc lập + User đóng. Việc trong Phase đã
    duyệt: mục việc A ghi, report ngắn + review chéo, A đóng. Sửa chữ, cập nhật status, kiểm tra chỉ đọc: tự làm.
-4. **Giảm rủi ro:** đích mới rồi mới cutover; commit trước sửa lớn; thứ nằm ngoài git (Qdrant collection còn giá trị, `data/`) sao lưu trước khi sửa / xóa;
+4. **Giảm rủi ro:** đích mới rồi mới cutover; commit trước sửa lớn; thứ nằm ngoài git còn giá trị (Qdrant collection) sao lưu trước khi sửa / xóa;
    liệt kê đích thật trước khi xóa, khác danh sách duyệt thì dừng; giới hạn tiền ghi trong việc. Đổi bảng dữ liệu mà bộ đo phụ thuộc (điểm lịch, lưu trú,
    quán…) ⇒ trước gộp quét tên / id mới trong nhãn mọi bộ đo đó và chạy mô phỏng nhãn không model (0 USD), ghi nhãn lệch vào report.
 5. Thay đổi có đo trước–sau: ghi tiêu chí → đo hiện tại → sửa một thứ → đo lại cùng cách → kết luận tốt hơn / không đổi / kém hơn / chưa rõ (`run-experiment`).
@@ -118,14 +114,14 @@ Cách làm việc giống nhau cho mọi agent; chỉ **kênh gửi tin** khác 
 
 ## 8. Kết phiên
 
-**Kết phiên nhẹ** — khi User tắt / mở lại một phiên chỉ để làm mới ngữ cảnh: phiên đó THAY (không nối) mục đầu `STATUS_<X>.md` bằng ba dòng — việc dở
-(tới đâu, file / nhánh nào) · thứ đang chạy + file tạm (dán đầu ra `git worktree list; ls -d /tmp/hr_<x>_* 2>/dev/null; ss -ltn | grep -E ':80[0-9][0-9]'`
-+ agent con còn chạy) · bẫy phiên này; A thêm: khối đầu `CURRENT_HANDOFF.md` + `HIEN_TRANG.md` mục 2–3. Phiên thấy công cụ báo đang nén ngữ cảnh ⇒ báo A
+**Kết phiên nhẹ** — khi User tắt / mở lại một phiên chỉ để làm mới ngữ cảnh: phiên đó GHI ĐÈ (không nối, không chồng khối) `STATUS_<X>.md` theo khuôn bảy mục
+(`sessions/README.md`), ít nhất có ba ý — việc dở (tới đâu, file / nhánh nào) · thứ đang chạy + file tạm (dán đầu ra `git worktree list; ls -d /tmp/hr_<x>_* 2>/dev/null; ss -ltn | grep -E ':80[0-9][0-9]'`
++ agent con còn chạy) · bẫy phiên này; A thêm: khối đầu `VIEC_DANG_MO.md` + `HIEN_TRANG.md` mục 2–3. Phiên thấy công cụ báo đang nén ngữ cảnh ⇒ báo A
 một dòng. Sổ `STATUS_<X>.md` quá ~200 KB ⇒ dời phần cũ sang `archive/` (chép nguyên văn).
 
 **Kết phiên cuối ngày** — mỗi session: `STATUS_<X>.md` (đang làm, dở gì, bẫy đã gặp, câu hỏi, tiền paid đã dùng; sự cố quy trình ghi ngay vào mục bẫy);
-dọn worktree, file tạm, collection thử của phiên. A: viết lại `HIEN_TRANG.md` + `VIEC_DANG_MO.md`; khối "Phiên sau đọc trước" của `CURRENT_HANDOFF.md`
-(giữ đủ mọi việc còn mở); `TONG_HOP.md` của ngày; vòng cải tiến cách làm (skill `improve-workflow`).
+dọn worktree, file tạm, collection thử của phiên. A: viết lại `HIEN_TRANG.md` + `VIEC_DANG_MO.md` (giữ đủ mọi việc còn mở); một dòng nhật ký ở
+`CURRENT_HANDOFF.md`; `TONG_HOP.md` của ngày; vòng cải tiến cách làm (skill `improve-workflow`).
 
 ## 9. Việc thêm của A
 
