@@ -57,6 +57,12 @@ def validate_phase6_settings(settings: dict) -> None:
     if runtime.get("reranker") != "none":
         raise ValueError(f"Invalid full_corpus_runtime.reranker: {runtime.get('reranker')!r}")
 
+    # Bậc 1b (21/11/2026): hai con số của vòng công cụ là khoá cấu hình ⇒ kiểm kiểu ở rìa (thiếu khoá = dùng giá trị mặc định trong code)
+    for key in ("so_vong_cong_cu", "so_lan_tim_kho"):
+        value = (settings.get("assistant") or {}).get(key)
+        if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value < 1):
+            raise ValueError(f"Invalid assistant.{key}: {value!r}")
+
     generation = settings.get("full_corpus_generation")
     if not isinstance(generation, dict):
         raise ValueError("full_corpus_generation configuration must be a dictionary")

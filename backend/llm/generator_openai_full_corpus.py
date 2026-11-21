@@ -595,7 +595,7 @@ class OpenAIFullCorpusGenerator:
         """Harness tầng tìm V2 (plan D6): trợ lý chạy tới lần gọi `tim_kho` đầu rồi dừng (`stop_on_first_tool`), không viết câu trả lời.
         Kết quả tìm nằm ở trace mà công cụ ghi; model không gọi ⇒ trace không có lần tìm nào."""
         agent, handlers, _ = self._assistant_for(tool_fn, stop_on_first_tool=True)
-        await self._run(agent, user_prompt, call_log, self.timeout, max_turns=ASSISTANT_MAX_TURNS, error_handlers=handlers)
+        await self._run(agent, user_prompt, call_log, self.timeout, max_turns=self.max_turns, error_handlers=handlers)
 
     async def generate_chat(self, query: str, call_log: "CallLog | None" = None, history=()) -> GeneratedText:
         """Trò chuyện (B1 D4): lời dặn riêng, không ngữ cảnh kho."""

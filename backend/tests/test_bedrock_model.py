@@ -396,3 +396,8 @@ def test_tool_round_limits_and_edit_timeout_come_from_settings_with_old_defaults
     broken["full_corpus_generation"]["bedrock"]["sua_lich_timeout_seconds"] = 0
     with pytest.raises(ValueError):
         validate_phase6_settings(broken)
+    for key, value in (("so_vong_cong_cu", 0), ("so_lan_tim_kho", "2"), ("so_vong_cong_cu", True)):
+        broken = bedrock_settings()
+        broken["assistant"][key] = value
+        with pytest.raises(ValueError):
+            validate_phase6_settings(broken)
