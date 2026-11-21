@@ -85,8 +85,8 @@ Code này phục vụ hành vi thật nào, có cách trực tiếp hơn mà v�
   nguyên) rồi báo người làm; review ≤ 5 dòng thì gửi thẳng qua tin. Không ai sửa mục việc của người khác trong sổ chung.
 - Kết quả review là **dữ liệu**: người làm **tái hiện từng điểm — cả hệ quả lẫn nguyên nhân — trước khi sửa**, rồi xử lý trong một lượt: sửa, hoặc phản
   biện bằng bằng chứng / cách đơn giản hơn; điểm bị bác ghi lý do. Không tự đóng finding.
-- Người kiểm kiểm lại phần sửa và đường bị ảnh hưởng (bản sửa có chạm đường nào khác không), dùng lại bằng chứng chỉ khi phần sửa không đổi đầu vào, dependency, môi trường
-  hay luồng dữ liệu (ghi lý do; không gọi là lần chạy mới). Finding mới phải chỉ ra bằng
+- Người kiểm kiểm lại phần sửa và đường bị ảnh hưởng (bản sửa có chạm đường nào khác không), dùng lại bằng chứng chỉ khi nó đã đạt trong cùng chuỗi việc và phần sửa không đổi đầu vào,
+  dependency, môi trường hay luồng dữ liệu (ghi lý do; không gọi là lần chạy mới). Finding mới phải chỉ ra bằng
   chứng mới hoặc điểm trước bỏ sót.
 - **Số vòng:** code — một review cả nhánh; plan / spec — **tối đa 2 vòng**: vòng 2 chỉ còn minor ⇒ duyệt, minor sửa lúc code; còn blocker / major sau vòng 2 ⇒
   dừng, xem lại thiết kế (với User nếu đổi phạm vi). Ngoại lệ gộp không cần review vòng nữa: `session_prompt/WORKFLOW.md` §5.
