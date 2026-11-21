@@ -39,6 +39,9 @@ def dua(query: str, flags: AssistantFlags, history=(), khoang_cach_san=None) -> 
     ("Sông Bồ đang dâng nhanh, đường về Quảng Điền có đi được không?", None),
     ("Nghe tiếng sấm rền, có nên rời đồi Thiên An không?", None),
     ("Nước đang lên ở khu phố cổ Bao Vinh phải không?", None),
+    # review phiên đo 21/11: sau khi dòng "nước lên / dâng / về" đổi sang điều kiện dương, các cách nói thật vẫn phải được nhận
+    ("Mấy hôm nay nước lên chưa bà con?", None), ("Sông Hương nước lên rồi, đi thuyền rồng được không?", None), ("Nước về tới Hương Sơ chưa?", None),
+    ("Bà con ơi nước lên!", None), ("Huế có dông ba ngày nay rồi, mai ra Lăng Cô được không?", None),  # "dông ba ngày" ≠ lỗi gõ "Dông Ba"
     ("Vậy có nên ra biển không?", "Chiều nay ở Thuận An có dông không?"),  # câu hỏi tiếp: xét cả câu hỏi liền trước
 ])
 def test_new_weather_hazard_phrases_open_the_tool_gate_and_both_safety_nets(cau, truoc, flags):
@@ -52,7 +55,14 @@ def test_new_weather_hazard_phrases_open_the_tool_gate_and_both_safety_nets(cau,
                                  "Anh hướng dẫn viên nói dông dài quá, lăng này xây năm nào?", "Chợ Dông Ba mở cửa mấy giờ?", "Nước sông Hương có sạch không?",
                                  "Vé thuyền rồng trên sông Hương có lên giá không?", "Ấm đất sét nung ở làng gốm Phước Tích giá bao nhiêu?",
                                  "Ở Phong Điền có quán nào bán con dông xào lăn không?", "Đun nước lên pha trà rồi ăn chè gì ngon?",
-                                 "Đi thuyền ra điện Hòn Chén trên sông Hương dâng hương cần chuẩn bị gì?"])
+                                 "Đi thuyền ra điện Hòn Chén trên sông Hương dâng hương cần chuẩn bị gì?",
+                                 # review phiên đo 21/11 — chữ "nước" trong từ ghép / nghĩa khác, và ba câu gài còn lại
+                                 "Vua Gia Long thống nhất đất nước lên ngôi năm nào?", "Ngắm sông Hương non nước về đêm ở đâu đẹp nhất?",
+                                 "Mua nước về khách sạn ở đâu gần Đại Nội?", "Nhạc nước lên đèn lúc mấy giờ ở công viên Tứ Tượng?",
+                                 "Múc nước lên từ giếng cổ làng Phước Tích có uống được không?", "Việt kiều về nước lên Huế chơi mấy ngày thì đủ?",
+                                 "Đun  nước lên pha trà kiểu Huế thế nào?",  # hai dấu cách liền nhau không làm hỏng phép loại trừ
+                                 "Sét cơm vua ở nhà hàng cung đình giá bao nhiêu?", "Lời sấm về kinh đô Phú Xuân trong sử nhà Nguyễn có thật không?",
+                                 "Bác tài bảo xe dông thẳng ra bến, không ghé quán nào hả?", "Thuyền rồng sông Hương dâng trà chiều giá vé bao nhiêu?"])
 def test_look_alike_questions_keep_the_gate_and_the_nets_closed(cau, flags):
     assert not tt.co_tu_khoa_luot_rong(cau, ()) and not _luot_bao_lu(cau, ())
     assert not BA_CONG_CU & set(dua(cau, flags))

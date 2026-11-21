@@ -65,6 +65,32 @@ Chạy lại trên cây đã gộp [máy kiểm]: `test_cong_cong_cu.py` 23 đ�
 `d71894d0e7265323` = main · bộ dò lượt một 20 / 20, nhận nhầm 0 / 20 · bộ dò lượt hai 10 / 12, nhận nhầm 0 / 12 — không đổi so với trước khi gộp. Lượt thật ba câu × hai model
 (mục 3) KHÔNG chạy lại sau khi gộp: phần đổi của nhánh là hàm chữ thuần, kết quả hai bộ dò trên cây đã gộp giống hệt.
 
+## 3d. Sửa sau review của phiên đo (15:00 21/11/2026, giờ `date`) — một điểm phải sửa + hai điểm nhỏ
+
+Phiên đo review `0816eeb` (bộ mù 12 + 12 viết trước khi mở diff; bộ gài 10 + 10 sau khi đọc mẫu; 582 câu thật đã có: nhận nhầm 0 / 582). Điểm phải sửa: dòng mẫu "nước lên /
+dâng / về" loại trừ theo TỪNG CHỮ ĐỨNG TRƯỚC không hội tụ với chữ "nước" — nhận nhầm "đất nước lên ngôi", "non nước về đêm", "mua nước về khách sạn", "nhạc nước lên đèn", "múc nước
+lên từ giếng", "về nước lên Huế"; hai dấu cách liền nhau cũng làm hỏng phép loại trừ. Hệ quả người dùng thấy (phiên đo chạy hàm thật): một câu LỊCH SỬ mở đầu bằng "Mình không theo
+dõi được tin bão / lũ hiện tại…" và kết bằng câu bản tin chính thức + 112. C tái hiện đủ 8 câu trên nhánh trước khi sửa.
+
+| Sửa | Cách |
+|---|---|
+| Dòng "nước lên / dâng / về" | Đổi sang điều kiện DƯƠNG: chỉ nhận khi có chữ đang diễn ra đứng giữa ("nước đang / sắp / đã / cứ / lại lên"), hoặc ngay sau là chữ mức độ / chữ hỏi ("lên cao", "về chưa", "lên rồi") hoặc hết câu ("nước lên!"); vẫn giữ các loại trừ đã gặp, thêm đất / non / nhạc / mua / múc / về |
+| Hai dấu cách | Hàm mới `co_bao_lu_them` gộp khoảng trắng trước khi so; hai nơi dùng mẫu gọi hàm này |
+| "Dông Ba" (nhỏ) | Chỉ loại khi chữ Ba VIẾT HOA hoặc có "chợ" đứng trước ⇒ "Huế có dông ba ngày nay rồi" nay được nhận |
+| Câu gài (nhỏ) | Thêm loại trừ: "sét cơm / sét trà", "lời sấm", "xe dông thẳng", "dâng trà" |
+
+Chạy lại [máy kiểm, hàm thật, 0 đồng]:
+
+| Bộ | Trước khi sửa (`0816eeb`) | Sau khi sửa |
+|---|---|---|
+| Bộ mù của phiên đo (12 + 12) | phải nhận 11 / 12 · nhận nhầm 2 / 12 | 11 / 12 (sót: câu gõ không dấu) · **0 / 12** |
+| Bộ gài của phiên đo (10 + 10) | phải nhận 5 / 10 · nhận nhầm 9 / 10 | 5 / 10 (năm câu sót là họ từ nhánh không nhận làm) · **0 / 10** |
+| Bộ lượt một của phiên B (46) | 20 / 20 · nhận nhầm 0 / 20 | 20 / 20 · 0 / 20 |
+| Bộ lượt hai của phiên B (12 + 12) | 10 / 12 · 0 / 12 | 10 / 12 · 0 / 12 |
+
+`test_cong_cong_cu.py` nay 39 ca (thêm 5 câu phải nhận + 11 câu không phải của phiên đo); đã thấy đỏ: cùng file test với danh sách trước khi sửa ⇒ `12 failed`. Bảy file chạm đường này
+đạt (+ 1 ca cần khoá OpenAI khi không nạp `.env`); mã băm đường OpenAI trùng main. ⚠ Cả bốn bộ nay đều là bộ ĐÃ THẤY với người viết mẫu ⇒ phiên đo đặt 6 câu mới sau bản sửa.
+
 ## 4. Giới hạn và điều người đo cần biết
 
 - Bốn câu ranh giới của bộ dò lệch mong đợi của người soạn: "Mùa nào ở Huế hay có dông?" (câu khí hậu chung) và "… khi nước lên hay nước ròng" (câu lễ hội) NAY bị coi là câu nguy hiểm thời tiết ⇒ có thêm câu bản tin chính thức (thừa, không hại); "con nước lớn … có nguy hiểm không" KHÔNG được nhận; "xây kè chống nước dâng từ khi nào" đã bị nhận từ trước nhánh này.
