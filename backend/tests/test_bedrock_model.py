@@ -192,6 +192,43 @@ def test_403_error_names_the_bedrock_key_and_hides_the_response_body(tmp_path):
     assert "khoá Bedrock" in str(error.value) and "123456789012" not in str(error.value) and "ten-vai" not in str(error.value.__cause__)
 
 
+@pytest.mark.parametrize("fault", [httpx.Response(403, text="arn:aws:sts::123456789012:assumed-role/ten-vai/x"), httpx.Response(429, text="too many"),
+                                   httpx.ReadTimeout("t"), httpx.ConnectError("c"), "khong_co_file_khoa"])
+def test_stream_path_failures_are_generation_errors(tmp_path, fault):
+    """Review C 21/11 (M1): trên đường STREAM lỗi của Bedrock đi thẳng tới nơi đọc (`chat.py`, `len_ke_hoach.py`), nơi chỉ nhận nhóm lỗi model
+    (`GenerationError`…) ⇒ mọi lỗi của lớp dịch phải thuộc nhóm đó, không thì lịch mất câu dự phòng và ô chat báo sai loại lỗi."""
+    model, _ = scripted_model(tmp_path, [])
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if isinstance(fault, Exception):
+            raise fault
+        return fault
+
+    model.http = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    if fault == "khong_co_file_khoa":
+        model.creds_file = tmp_path / "khong_co.json"
+    generator = OpenAIFullCorpusGenerator(client=None, model="claude-test", bedrock_model=model)
+
+    async def read_stream():
+        result, _ = generator.start_chat_stream("chào")
+        async for _ in result.stream_events():
+            pass
+
+    with pytest.raises(GenerationError) as error:
+        asyncio.run(read_stream())
+    assert "123456789012" not in str(error.value) and "khong_co.json" not in str(error.value)
+
+
+def test_error_text_masks_account_numbers_before_truncating(tmp_path):
+    """Review C m1: che ARN / mã tài khoản TRƯỚC khi cắt 300 ký tự (mã vắt qua mốc cắt từng còn lại một phần)."""
+    model, _ = scripted_model(tmp_path, [])
+    body = "x" * 292 + "123456789012 het"
+    model.http = httpx.AsyncClient(transport=httpx.MockTransport(lambda request: httpx.Response(400, text=body)))
+    with pytest.raises(GenerationError) as error:
+        asyncio.run(OpenAIFullCorpusGenerator(client=None, model="claude-test", bedrock_model=model).generate_chat("chào"))
+    assert "12345678" not in str(error.value) and "<aws>" in str(error.value)
+
+
 def test_provider_switch_picks_the_model_class_and_openai_stays_openai(monkeypatch):
     """`provider: openai` (mặc định trong repo) ⇒ vẫn `OpenAIResponsesModel` với model luna; `bedrock` ⇒ lớp dịch, không cần khoá OpenAI."""
     settings = load_settings(validate_private_paths=False)

@@ -453,8 +453,8 @@ class OpenAIFullCorpusGenerator:
             raise GenerationError(f"OpenAI generation timed out after {timeout}s") from exc
         except (AgentsException, OpenAIError) as exc:
             raise GenerationError("OpenAI generation failed") from exc
-        except BedrockError as exc:  # lời lỗi của lớp dịch đã che thân 403 / ARN ⇒ đưa thẳng ra (403: có chữ "khoá Bedrock")
-            raise GenerationError(str(exc)) from exc
+        except BedrockError:  # đã là `GenerationError`, lời lỗi đã che thân 403 / ARN ⇒ đưa thẳng ra (403: có chữ "khoá Bedrock")
+            raise
         except Exception as exc:
             raise GenerationError("OpenAI generation encountered unexpected failure") from exc
 

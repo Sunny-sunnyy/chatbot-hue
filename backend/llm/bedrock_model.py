@@ -31,18 +31,22 @@ from agents.usage import Usage
 from openai.types.responses import Response, ResponseCompletedEvent, ResponseTextDeltaEvent
 from openai.types.responses.response_usage import InputTokensDetails, OutputTokensDetails
 
+from core.schema import GenerationError
+
 ANTHROPIC_VERSION = "bedrock-2023-05-31"
 # Từ khoá ràng buộc Bedrock từ chối trong khuôn (đo 21/11: `maxItems`, `minimum` / `maximum` ⇒ 400; cả nhóm dưới đã gỡ ở lượt đo đạt).
 UNSUPPORTED_SCHEMA_KEYS = frozenset({"maxItems", "minItems", "minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum",
                                      "minLength", "maxLength", "pattern", "default"})
 # Khoá mà GIÁ TRỊ là bảng tên ⇒ tên trong bảng không phải từ khoá schema (trường tên `default`, `pattern`… vẫn phải giữ).
 NAME_MAP_KEYS = frozenset({"properties", "$defs", "definitions"})
-AWS_IDENTIFIER = re.compile(r"arn:aws\S*|\b\d{12}\b")  # không để ARN / mã tài khoản lọt vào lời lỗi ⇒ log
+AWS_IDENTIFIER = re.compile(r"arn:aws\S*|(?<!\d)\d{12}(?!\d)")  # không để ARN / mã tài khoản lọt vào lời lỗi ⇒ log
 DATA_URL = re.compile(r"^data:(?P<media>[\w/+.-]+);base64,(?P<data>.+)$", re.DOTALL)
 
 
-class BedrockError(RuntimeError):
-    """Bedrock trả mã khác 200. Lời lỗi KHÔNG chứa thân phản hồi 403 (thân đó có mã tài khoản / tên vai AWS — repo public, log không được có)."""
+class BedrockError(GenerationError):
+    """Lời gọi Bedrock hỏng: mã khác 200, lỗi mạng / hết giờ, hoặc không đọc được file khoá. Là `GenerationError` để MỌI nơi đọc (đường thường,
+    đường stream của ô chat, lần viết câu của lịch) xếp nó vào nhóm "lỗi model" như `OpenAIError` — review C 21/11: lỗi trần trên đường stream
+    làm lịch mất đường câu dự phòng. Lời lỗi KHÔNG chứa thân phản hồi 403 (thân đó có mã tài khoản / tên vai AWS — log không được có)."""
 
 
 def strip_constraints(schema: Any) -> Any:
@@ -204,13 +208,19 @@ class BedrockClaudeModel(Model):
     async def _invoke(self, body: dict) -> Response:
         raw = json.dumps(body, ensure_ascii=False).encode()
         path = f"/model/{self.model}/invoke"
-        creds = json.loads(self.creds_file.read_text(encoding="utf-8"))
-        headers = sign_headers("POST", self.host, path, raw, self.region, creds, dt.datetime.now(dt.timezone.utc))
-        reply = await self.http.post(f"https://{self.host}{path}", content=raw, headers=headers)
+        try:
+            creds = json.loads(self.creds_file.read_text(encoding="utf-8"))
+            headers = sign_headers("POST", self.host, path, raw, self.region, creds, dt.datetime.now(dt.timezone.utc))
+        except (OSError, ValueError, KeyError) as exc:  # chỉ tên lớp lỗi — lời lỗi gốc có thể mang đường dẫn file khoá
+            raise BedrockError(f"Không đọc được file khoá Bedrock: {type(exc).__name__}") from None
+        try:
+            reply = await self.http.post(f"https://{self.host}{path}", content=raw, headers=headers)
+        except httpx.HTTPError as exc:  # hết giờ, rớt mạng
+            raise BedrockError(f"Bedrock request failed: {type(exc).__name__}") from exc
         if reply.status_code == 403:
             raise BedrockError("Bedrock HTTP 403: khoá Bedrock bị từ chối hoặc đã hết hạn")
         if reply.status_code != 200:
-            raise BedrockError(f"Bedrock HTTP {reply.status_code}: {AWS_IDENTIFIER.sub('<aws>', reply.text[:300])}")
+            raise BedrockError(f"Bedrock HTTP {reply.status_code}: {AWS_IDENTIFIER.sub('<aws>', reply.text)[:300]}")
         return to_response(reply.json(), self.model)
 
     async def get_response(self, system_instructions, input, model_settings, tools, output_schema, handoffs, tracing, *,

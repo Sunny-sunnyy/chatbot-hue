@@ -1,7 +1,7 @@
 # Đổi tạm model viết sang Claude Sonnet 5.5 trên Amazon Bedrock — phần code (nhánh `p9-b-bedrock-sonnet`)
 
 Viết: 09:55 21/11/2026, sửa 09:56 21/11/2026 sau phần bổ sung thiết kế (giờ `date`), phiên B. Giao việc: `session_prompt/VIEC_DANG_MO.md` khối 0a (bản giao việc đủ ở thư mục riêng tư ghi tại đó).
-Trạng thái: **code + test xong, chờ review của phiên C; CHƯA có lượt thật qua giao diện** (cần bật server — xin lượt máy qua phiên điều phối).
+Trạng thái (10:07 21/11/2026, giờ `date`): **code + test xong; lượt thật qua giao diện ĐÃ chạy (mục 3b); phiên C review vòng 1 trả một điểm lớn + hai điểm nhỏ — đã sửa (mục 5), chờ C xác nhận.**
 
 Từ dùng: *lớp dịch* = file mới đổi qua lại giữa kiểu gọi của OpenAI Agents SDK và kiểu gọi gốc của Claude · *provider* = dòng công tắc chọn nơi gọi model viết ·
 *stream giả* = gọi trọn câu trả lời rồi mới phát chữ một lần (bộ khoá đang dùng không có quyền stream thật) · *người chấm* = model chấm điểm câu trả lời trong bộ đo.
@@ -34,19 +34,48 @@ Từ dùng: *lớp dịch* = file mới đổi qua lại giữa kiểu gọi c�
 
 | Kiểm | Lệnh (từ `backend/` của worktree; `R` = `uv run --no-sync --project /home/minhhieu/hue_rag --env-file /home/minhhieu/hue_rag/.env`) | Kết quả |
 |---|---|---|
-| [máy kiểm] Test lớp dịch — phản hồi Claude DỰNG SẴN, vòng chạy SDK thật | `R pytest tests/test_bedrock_model.py -q` | 10 đạt. Đã thấy đỏ một lần: bỏ phép cộng phần đệm vào token vào ⇒ 3 ca hỏng. |
+| [máy kiểm] Test lớp dịch — phản hồi Claude DỰNG SẴN, vòng chạy SDK thật | `R pytest tests/test_bedrock_model.py -q` | 16 đạt (10 ca đầu + 6 ca thêm sau review). Đã thấy đỏ một lần: bỏ phép cộng phần đệm vào token vào ⇒ 3 ca hỏng. |
 | [máy kiểm] Đường OpenAI không đổi — test cũ chạm đường đổi, từng file | `R pytest tests/<file>.py -q` với `test_openai_full_corpus_generator` · `test_phase6_settings` · `test_full_corpus_eval` · `test_input_cache_tokens` · `test_b2_tool_loop` | 9 · 5 · 21 · 3 · 11 đạt |
 | [máy kiểm] LƯỢT THẬT qua code sản phẩm, provider bedrock (không qua server): 4 câu × (không stream + đường stream của `/api/chat/stream`) + 1 lần hiểu ý sửa lịch | script riêng tư `b_goi_that.py` (thư mục lượt thử Bedrock trong `data/`) | 9 / 9 không lỗi. Câu giá vé: trả lời có nguồn, 0 lỗi citation, 4,8 s (không stream) / 5,6 s (stream). Câu chào: tuyến trò chuyện 2,2–2,5 s. Câu ngoài Huế: từ chối cố định 0,65 s. Câu so sánh hai lăng: 7,9–9,4 s. Hiểu ý sửa lịch (khuôn có `maxItems`): ra đúng một hành động dời buổi, 1,3 s. |
 | [máy kiểm] VÒNG CÔNG CỤ thật trên Bedrock (model xin `tim_kho` ⇒ nhận kết quả ⇒ viết), cả hai đường | script riêng tư `b_vong_cong_cu.py` | 2 / 2 đạt: 2 lần gọi model mỗi lượt, 2,1–2,7 s; đường stream phát đúng: công cụ được gọi ⇒ kết quả ⇒ một mảnh chữ ⇒ xong. |
 | [máy kiểm] Bốn generator bốn mức suy luận (`none`, `low`, `medium`, `high`) trong MỘT tiến trình, `max_tokens` 128000: mỗi mức một lượt có công cụ + một lần định tuyến | script riêng tư `b_muc_suy_luan.py` | 4 / 4 mức chạy, 0 lỗi; 2,7–8,0 s mỗi lượt (mức `none` lượt này gọi công cụ hai lần). Câu thử dễ ⇒ 0 token suy luận ở cả bốn mức — KHÔNG phải số so sánh các mức. |
-| [chưa kiểm] Lượt thật qua GIAO DIỆN (hỏi thường có công cụ, hỏi tiếp, lên lịch, sửa lịch, ảnh) | cần server | chưa chạy |
 | [chưa kiểm] Cả bộ test | để mốc (theo cách làm 20/11) | không chạy |
 
 Tiền thật các lượt trên (giá ghi sổ, chưa đối chiếu hoá đơn): ≈ 0,16 USD Bedrock. So để biết cỡ: một câu trả lời có nguồn ≈ 0,018 USD trên Sonnet 5.5, cùng loại câu trên luna ≈ 0,0007 USD (≈ 25 lần).
 
+## 3b. Lượt thật qua giao diện (viết 10:07 21/11/2026) — server tạm trong worktree, provider bedrock, mức suy luận mặc định `low`, trình duyệt tự động
+
+14 lượt, 14 thành công, 0 lỗi trang. Lời gọi model dài nhất 11,6 giây; không lượt nào tới 35 giây (hạn giờ mỗi lượt là 45 giây). Tiền thật 0,30 USD.
+Phiên E đã tự đếm lại từ log và ra cùng các con số thời gian. Hồ sơ riêng tư (chữ từng lượt + 13 ảnh chụp màn hình): thư mục `ket_qua/b_giao_dien/` của lượt thử Bedrock trong `data/`.
+
+| Người dùng làm gì | Thấy gì | Thời gian |
+|---|---|---|
+| Hỏi thường (giá vé Đại Nội) | câu trả lời có 3 nguồn + dòng "có thể đã thay đổi" | 3,7 s |
+| Hỏi tiếp ("thế còn lăng Minh Mạng?") | hiểu đúng ý nối câu trước; model tự tìm kho thêm 2 lần rồi mới viết | 5,7 s (4 lần gọi model) |
+| Xin danh sách (quán bún bò) | danh sách + dòng "có thể chưa đủ" | 5,0 s |
+| Câu so sánh hai chùa | trả lời từ kho 2 nguồn + mục "Từ web" | 11,5 s |
+| Lên lịch bằng biểu mẫu (3 ngày · cân bằng · di tích), hai lần | thẻ lịch đủ 3 ngày, câu mô tả từng điểm, quán ăn gần | 9,3 s và 9,1 s |
+| Sửa lịch — lệnh làm được ("dời Đại Nội sang sáng ngày 3") | "Đã dời…", lịch đổi đúng | 1,6 s |
+| Sửa lịch — hai lệnh code từ chối | nói lý do, gợi ý chỗ dời được | 2,7–2,9 s |
+| Hỏi về lịch đang có ("ngày 1 đi hết mấy tiếng?") | trả lời theo lịch; lần gọi này có 483 token suy luận | 11,6 s |
+| Hỏi bằng ảnh (ảnh chùa Thiên Mụ) | nhận đúng tên ⇒ tự hỏi ⇒ câu giới thiệu có nguồn | nhận tên 1,2–1,7 s; cả lượt 11,3 s |
+
+Khác với luna mà người dùng thấy: chữ hiện MỘT lần sau khi model viết xong — mọi lượt trên là chờ 4–12 giây rồi thấy cả câu.
+Chưa thử qua giao diện: lịch 1 ngày / kiểu gấp / nhiều sở thích · ảnh ra 2–3 tên · câu bão lũ · màn hẹp · hai người hỏi cùng lúc · khoá hết hạn giữa chừng.
+
 ## 4. Giới hạn đã biết của nhánh
 
 - Chữ hiện MỘT lần sau khi model viết xong (stream giả), không chạy dần như luna.
-- Token suy luận ghi 0 ở mọi lần gọi B đã chạy (câu thử dễ, model không suy luận). Tên trường đọc (`output_tokens_details.thinking_tokens`) khớp sổ lượt thử của phiên điều phối; chưa có lần gọi nào QUA lớp dịch ra số khác 0. Không ảnh hưởng tiền: token ra đã gồm phần suy luận.
+- Token suy luận: ở lượt giao diện đã có hai lần gọi ra số khác 0 (122 và 483) ⇒ trường này đọc đúng; token ra đã gồm phần suy luận nên tiền không đổi.
 - Hạn giờ 45 giây mỗi lượt giữ nguyên; lượt lên lịch dài trên Sonnet chưa đo ở nhánh này (phiên đo sẽ đọc thời gian từng lần gọi).
 - Tổng tiền phần sinh trong bảng tổng hợp của bộ đo (`generation_usage`) tính theo provider trong `settings.yaml` lúc tổng hợp; tiền từng dòng (`usd`, `llm_calls`) luôn đúng theo model của lần gọi.
+
+## 5. Review vòng 1 của phiên C trên `a463292` và cách sửa (10:07 21/11/2026)
+
+Phiên C đã kiểm đạt: đường OpenAI giống từng byte (10 loại lời gọi chụp ở main và ở nhánh ra cùng một mã băm) · không có khoá / đường dẫn khoá / mã tài khoản trong diff · dịch lịch sử và vòng công cụ (6 ca biên + 2 lời gọi thật) · số token ⇒ tiền khớp số tính tay.
+
+| Điểm | Nội dung | Sửa |
+|---|---|---|
+| Lớn | Trên đường stream, lỗi của Bedrock (403, 429, hết giờ, rớt mạng) đi tới nơi đọc dưới dạng lỗi lạ ⇒ lịch mất đường "câu dự phòng, lịch vẫn hiện", ô chat báo "lỗi hệ thống" thay cho "không tạo được câu trả lời" | `BedrockError` nay là một `GenerationError`; lỗi mạng / hết giờ / không đọc được file khoá đều được đổi thành lỗi này ngay trong lớp dịch. Test mới 5 ca trên đường stream: ĐỎ trên code cũ, xanh sau sửa. |
+| Nhỏ 1 | Che mã tài khoản SAU khi cắt 300 ký tự ⇒ mã vắt qua mốc cắt còn sót một phần | Che trước rồi cắt. Ca test mới còn bắt thêm một lỗi của chính mẫu che (mã đứng liền sau chữ cái không được nhận) — đã sửa mẫu. |
+| Nhỏ 2 | Lời lỗi chung vẫn ghi chữ "OpenAI generation…" khi chạy Bedrock | Không sửa (chỉ là chữ trong log; đổi sẽ chạm đường OpenAI). |
