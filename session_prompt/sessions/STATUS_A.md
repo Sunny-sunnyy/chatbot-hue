@@ -1,3 +1,13 @@
+# STATUS A — CẬP NHẬT CUỐI PHIÊN 16:57 21/11/2026 (giờ `date`; đọc khối này TRƯỚC, khối 16:25 ngay dưới vẫn đúng trừ các điểm nêu ở đây)
+
+- **Đã xong sau 16:25:** ba nhánh luật đã ở main — mục "Cách nhìn việc" trong `AGENTS.md`, bản gọt `Session_Prompt.md` + `WORKFLOW.md` (B viết, C soi theo lịch sử), đoạn cho phiên D viết giáo trình (B soi). Bốn file đọc lúc mở phiên: 73.237 ⇒ 53.842 byte. Skill và `guides/` CHƯA gọt (`guides/CACH_LAM_VIEC.md` mục 1, 4 và skill `propose-options` còn kiểu "agent soạn, chủ dự án tick").
+- **Chủ dự án đã trả lời / dặn (chữ đủ ở `HIEN_TRANG.md` mục 4, ba dòng 21/11 trên cùng):** ĐÍCH của đồ án = tự demo trên máy mình + tự trình bày cả bức tranh + trả lời câu hỏi giảng viên, deploy là điểm cộng · tra web đã chạy lại (một lời gọi thử đạt; chưa thử qua route chat) · danh sách ý cách nhau bằng dấu phẩy / "..." là "nhớ gì nêu đó", phải tự mở rộng · CHƯA MUỐN BÀN chuyện mình nắm hệ thống tới đâu ⇒ không hỏi lại · giao phiên D viết GIÁO TRÌNH (`sessions/STATUS_D.md`, bản giao riêng tư `data/hoc_cung_D/KHOI_DAU_GIAO_TRINH.md`).
+- **Còn mở với chủ dự án:** ba ngày thử mở hai phiên hay bốn (A nghiêng hai; ghi chép khoá học: mặc định một phiên + agent con) · quyền AWS cho chữ chạy dần · hai câu trong file luật riêng của chủ dự án ("chỉ làm khi nói làm đi", "câu có đáp án để tick") kéo ngược cách nhìn mới — đã nêu một lần, chủ dự án chưa trả lời, không tự sửa.
+- **Việc đầu phiên sau** (`CURRENT_HANDOFF.md` mục 00): xếp lượt hỏng của người dùng mô phỏng theo nguyên nhân + chạy kèm thước "một kịch bản demo lặp 10 lần"; đưa chủ dự án hai con số cạnh nhau. Dấu hiệu cách làm mới có chạy không, xem ngay giờ đầu: tin giao việc có mở bằng quyết định đang chờ không · người nhận có nói "thiếu gì / đường khác" không · báo cáo có dòng cuối "không cho biết gì · hướng rộng hơn · đếm rẻ nhất" không.
+- **Lúc ghi:** 0 server, 0 tiến trình đo, Qdrant bật, main = origin. Worktree của A: không còn. Nhánh chưa gộp của các phiên: xem `STATUS_B.md`, `STATUS_C.md`, `STATUS_E.md`.
+
+---
+
 # STATUS A — ĐIỂM DỪNG 16:25 21/11/2026 (giờ `date`; khối này MỚI NHẤT, khối 15:30 bên dưới chỉ còn đúng ở phần hàng đo và chín câu chờ chủ dự án). Terminal phiên này: A `hue-rag-bf` · B `hue-rag-3f` · C `hue-rag-50` · E `hue-rag-31` — đổi khi mở lại
 
 Chiều 21/11 không làm hue_rag: chủ dự án cho cả nhóm bàn "nghĩ rộng, không chờ chỉ hướng". Phiên A mới đọc: `AGENTS.md` mục "Cách nhìn việc" (đã ở main) ⇒ `HIEN_TRANG.md` mục 4 hai dòng 21/11 trên cùng ⇒ `CURRENT_HANDOFF.md` mục 00 ⇒ trang này.
