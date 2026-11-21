@@ -43,6 +43,7 @@ Từ dùng: **dist** = bản dựng giao diện `frontend/dist` (ngoài git; ser
 
 ## 7. Bẫy của phiên chiều + bản tự soi của E
 **Bẫy (thấy thật hôm nay):**
+- **(thêm 11:47 21/11/2026, giờ `date`) Một tiến trình đo dựng lõi trợ lý chiếm ≈ 1,5 GB RAM** (model vector + chỉ mục từ khoá) — đo bằng `ps`, không phải "nhỏ": sáng 21/11 phiên E chạy 13 tiến trình đo cùng lúc (hai lượt bộ thước song song + phần lịch + 85 câu) ≈ 19 GB trên máy 17 GB ⇒ hệ thống tự dừng lệnh nền vì cạn RAM, mất một lượt đo. Từ đó: tối đa HAI tiến trình dựng lõi một lúc mỗi phiên, `free -g` trước khi chạy, lượt > 3 GB hoặc > 10 phút báo phiên điều phối trước; launcher bộ thước tự từ chối khi RAM khả dụng < 5 GB hoặc khi một lượt thước khác đang chạy. Sửa file `.sh` đang có tiến trình bash chạy thì ghi file mới rồi đổi tên (bash đọc script theo từng dòng).
 - **Lỡ xoá ba ca dò** `/tmp/hr_e_rv_probe*.py` khi dọn `/tmp` dù đã nhắn điều phối là giữ ⇒ thứ còn dùng lại để ở `data/test_cuoi/tools/`, không để `/tmp`; trước khi `rm` theo mẫu tên thì `ls` đúng mẫu đó.
 - **Log số đo nằm theo thư mục chạy server:** server bật từ worktree ghi `backend/logs/application.log` CỦA WORKTREE; gỡ worktree là mất log ⇒ đếm tiền trước khi gỡ. Log cây chính hôm nay chỉ có lượt test (145 lượt không phải bộ thử, 104 lỗi) ⇒ trang theo dõi ở máy phát triển không phản ánh lượt thật.
 - **Ảnh chụp CẢ TRANG ở bề rộng điện thoại đánh lừa:** vùng trắng lớn giữa trang (nội dung hiện khi cuộn tới) và thanh dưới nằm giữa ảnh là do cách chụp ⇒ cuộn từng nấc, chụp đúng khung nhìn rồi mới kết luận.
