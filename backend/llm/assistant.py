@@ -21,7 +21,6 @@ from pathlib import Path
 import json
 import logging
 import re
-import unicodedata
 from typing import Literal
 
 import anyio
@@ -768,9 +767,6 @@ def chu_cua_model(trace: AnswerTrace) -> str:
     return answer[len(dau) + 2:] if dau and answer.startswith(f"{dau}\n\n") else answer
 
 
-_DONG = re.compile(r"\bdông\b", re.IGNORECASE)  # "dông" = cách viết khác của "giông"; chỉ lưới cuối dùng (không đổi việc đưa công cụ cho model)
-
-
 def _khop_luoi_cuoi(query: str, flags: "AssistantFlags | None", history=()) -> bool:
     """Chính câu người dùng HOẶC câu hỏi liền trước khớp lưới bão / lũ (như `tt.la_luot_bao_lu` của đường thường — câu hỏi tiếp "thế có nên đi không"
     sau một câu bão vẫn là lượt bão; thừa hơn sót)."""
@@ -782,8 +778,7 @@ def _khop_luoi_cuoi(query: str, flags: "AssistantFlags | None", history=()) -> b
 def _luot_bao_lu(query: str, history=()) -> bool:
     """Câu này HOẶC câu hỏi liền trước là câu bão / lũ: danh sách rộng của `tt`, "cảnh báo" + một từ thời tiết, hoặc "dông". MỘT chỗ xét cho lưới cuối
     (`_khop_luoi_cuoi`) và cho mục web (`cong_web`) — hai nơi lệch nhau thì mục web để model viết ngay cạnh câu 112 (soát khác hãng 18/11, hai lần)."""
-    cau = [query] + ([history[-1][0]] if history else [])
-    return tt.la_luot_bao_lu(query, history) or any(_DONG.search(unicodedata.normalize("NFC", c)) for c in cau)
+    return tt.la_luot_bao_lu(query, history)  # 21/11: "dông" nay nằm trong danh sách của `tt` (kèm loại trừ "dông dài", "Dông Ba") — không còn mẫu riêng ở đây
 
 
 def luoi_cuoi_bao(query: str, trace: AnswerTrace, flags: "AssistantFlags | None") -> bool:

@@ -1,4 +1,4 @@
-"""Bậc 5 (21/11/2026) — cổng ĐƯA công cụ thời tiết / ngày / khoảng cách cho trợ lý: hai cụm từ thêm vào cổng thời tiết + khoá chế độ `cong_cong_cu`.
+"""Bậc 5 (21/11/2026) — cổng ĐƯA công cụ thời tiết / ngày / khoảng cách cho trợ lý: từ nguy hiểm thời tiết mới (dông, sấm sét, nước sông lên) + khoá chế độ `cong_cong_cu`.
 0 USD, không mạng: hàm cổng thật, `_lich_extra` thật, agent dựng thật (`_assistant_for`) — chỉ bảng khoảng cách và hàm dự báo là đồ dựng để có điều kiện.
 Không phải bằng chứng model gọi công cụ đúng lúc — phần đó ở lượt đo có phí."""
 import dataclasses
@@ -8,7 +8,7 @@ import pytest
 
 from llm import khoang_cach as kc
 from llm import thoi_tiet as tt
-from llm.assistant import AnswerTrace, AssistantFlags, _lich_extra
+from llm.assistant import AnswerTrace, AssistantFlags, _lich_extra, _luot_bao_lu
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
 
 BA_CONG_CU = {"thoi_tiet_fn", "ngay_lich_fn", "khoang_cach_fn"}
@@ -35,19 +35,21 @@ def dua(query: str, flags: AssistantFlags, history=(), khoang_cach_san=None) -> 
 @pytest.mark.parametrize("cau, truoc", [
     ("Chiều nay ở Thuận An có dông không?", None),
     ("Nước sông Hương mấy hôm nay có lên cao không?", None),
+    ("Đang sấm sét ầm ầm, có nên lên đồi Vọng Cảnh không?", None),
     ("Vậy có nên ra biển không?", "Chiều nay ở Thuận An có dông không?"),  # câu hỏi tiếp: xét cả câu hỏi liền trước
 ])
-def test_two_new_phrases_open_the_weather_tool_gate_only(cau, truoc, flags):
+def test_new_weather_hazard_phrases_open_the_tool_gate_and_both_safety_nets(cau, truoc, flags):
     history = ((truoc, ""),) if truoc else ()
-    assert tt.co_tu_khoa_luot_rong(cau, history)
-    assert "thoi_tiet_fn" in dua(cau, flags, history)
-    # chỉ là cổng ĐƯA công cụ: lưới bão / lũ và cổng của bản cờ `bao_lu_cong_cu` tắt không đổi
-    assert not tt.la_luot_bao_lu(cau, history) and not tt.co_tu_khoa_luot(cau, history)
+    assert tt.co_tu_khoa_luot_rong(cau, history) and "thoi_tiet_fn" in dua(cau, flags, history)  # công cụ được đưa
+    assert tt.la_luot_bao_lu(cau, history) and _luot_bao_lu(cau, history)  # lượt bão / lũ: câu bản tin chính thức + 112 đi kèm
+    assert not tt.co_tu_khoa_luot(cau, history)  # cổng của bản cờ `bao_lu_cong_cu` TẮT không đổi
 
 
-@pytest.mark.parametrize("cau", ["Chợ Đông Ba bán nước mía ở đâu?", "Mùa đông ở Huế nên ăn gì?", "Sông Hương dài bao nhiêu?", "Lăng Tự Đức có gì đặc biệt?"])
-def test_look_alike_questions_keep_the_gate_closed(cau, flags):
-    assert not tt.co_tu_khoa_luot_rong(cau, ())
+@pytest.mark.parametrize("cau", ["Chợ Đông Ba bán nước mía ở đâu?", "Mùa đông ở Huế nên ăn gì?", "Sông Hương dài bao nhiêu?", "Lăng Tự Đức có gì đặc biệt?",
+                                 "Anh hướng dẫn viên nói dông dài quá, lăng này xây năm nào?", "Chợ Dông Ba mở cửa mấy giờ?", "Nước sông Hương có sạch không?",
+                                 "Vé thuyền rồng trên sông Hương có lên giá không?"])
+def test_look_alike_questions_keep_the_gate_and_the_nets_closed(cau, flags):
+    assert not tt.co_tu_khoa_luot_rong(cau, ()) and not _luot_bao_lu(cau, ())
     assert not BA_CONG_CU & set(dua(cau, flags))
 
 
