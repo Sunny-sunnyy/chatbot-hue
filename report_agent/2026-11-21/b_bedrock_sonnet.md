@@ -1,6 +1,6 @@
 # Đổi tạm model viết sang Claude Sonnet 5.5 trên Amazon Bedrock — phần code (nhánh `p9-b-bedrock-sonnet`)
 
-Viết: 09:55 21/11/2026, sửa 10:05 21/11/2026 sau phần bổ sung thiết kế (giờ `date`), phiên B. Giao việc: `session_prompt/VIEC_DANG_MO.md` khối 0a (bản giao việc đủ ở thư mục riêng tư ghi tại đó).
+Viết: 09:55 21/11/2026, sửa 09:56 21/11/2026 sau phần bổ sung thiết kế (giờ `date`), phiên B. Giao việc: `session_prompt/VIEC_DANG_MO.md` khối 0a (bản giao việc đủ ở thư mục riêng tư ghi tại đó).
 Trạng thái: **code + test xong, chờ review của phiên C; CHƯA có lượt thật qua giao diện** (cần bật server — xin lượt máy qua phiên điều phối).
 
 Từ dùng: *lớp dịch* = file mới đổi qua lại giữa kiểu gọi của OpenAI Agents SDK và kiểu gọi gốc của Claude · *provider* = dòng công tắc chọn nơi gọi model viết ·
