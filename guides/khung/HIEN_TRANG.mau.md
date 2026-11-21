@@ -18,7 +18,7 @@ Từ dùng trong trang: <5–8 từ riêng của dự án mà một agent mới 
 <Bảng bước theo thứ tự + điều kiện đạt (ngày chỉ là ghi chép). Một câu "trước mốc X thì không được làm gì". Việc đang mở KHÔNG chép ở đây: một dòng trỏ sang mục lục việc
  (`VIEC_DANG_MO.mau.md`) — hai nơi cùng ghi thì sẽ lệch nhau. Dự án nhỏ chưa có mục lục việc: ghi thẳng ai · việc · trạng thái · nhánh ở đây.>
 
-<Hai con số đo cách làm (trang cách làm việc mục 7) ghi ở tổng hợp ngày / sổ cải tiến, không ghi ở trang này.>
+<Các con số đo cách làm (trang cách làm việc mục 7) ghi ở tổng hợp ngày / sổ cải tiến, không ghi ở trang này.>
 
 ## 3. Đang chờ chủ dự án
 <Gom MỘT chỗ mọi thứ đang chờ người quyết / người làm. Mục nào chưa chắc còn hiệu lực thì ghi "chưa kiểm". Thứ không có ở đây thì agent không hỏi lại.>
