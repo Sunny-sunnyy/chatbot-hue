@@ -57,6 +57,7 @@ full_corpus_generation:
     sua_lich_timeout_seconds: 10 # hạn giờ RIÊNG của lời gọi hiểu ý sửa lịch trên đường Bedrock (đường OpenAI dùng chung router_timeout_seconds); lâu nhất đã đo ở high 7,1 s
     reasoning_sua_lich: high     # none | low | medium | high — RIÊNG lời gọi hiểu ý sửa lịch (đo 21/11: lệnh khó đúng 5 / 6 ở high, 2 / 6 low, 0 / 6 medium); viết câu lịch + lượt biểu mẫu giữ "low" trong code
     reasoning_default: high      # none | low | medium | high — mức suy luận cho lời gọi KHÔNG tự đặt mức (nhóm lịch tự đặt "low"); TẠM `low`, chọn lại sau lượt đo
+    reasoning_dinh_tuyen: high   # none | low | medium | high — RIÊNG lời gọi định tuyến + trò chuyện (đầu ra một nhãn / một câu xã giao; trước 21/11 dùng chung reasoning_default). Để `high` = hành vi không đổi; chọn lại sau lượt đo của phiên đo
     cong_cong_cu: tu_khoa        # tu_khoa | luon — cổng đưa công cụ thời tiết / ngày / khoảng cách khi provider là bedrock (xem `assistant.cong_cong_cu`); đổi sau lượt đo bậc 5
     creds_file_env: HUE_BEDROCK_CREDS_FILE  # TÊN biến môi trường trỏ tới file khoá tạm (JSON) — đường dẫn không ghi vào repo
 

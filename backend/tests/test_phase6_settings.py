@@ -14,7 +14,7 @@ def test_phase6_settings_are_exact():
     # `provider` là công tắc đổi qua / đổi về model viết (21/11/2026) ⇒ không khoá giá trị ở đây; mọi dòng còn lại vẫn khoá đúng từng chữ
     assert settings["full_corpus_generation"].pop("provider") in ("openai", "bedrock")
     # Hai mức suy luận của đường Bedrock cũng là giá trị CHỌN SAU KHI ĐO (21/11/2026: mặc định low ⇒ high khi bật) ⇒ chỉ khoá tập giá trị hợp lệ
-    for khoa in ("reasoning_default", "reasoning_sua_lich"):
+    for khoa in ("reasoning_default", "reasoning_sua_lich", "reasoning_dinh_tuyen"):
         assert settings["full_corpus_generation"]["bedrock"].pop(khoa) in ("none", "low", "medium", "high")
     assert settings["full_corpus_generation"] == {
         "model": "gpt-6-luna",

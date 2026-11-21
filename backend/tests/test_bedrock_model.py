@@ -306,6 +306,36 @@ def test_provider_switch_picks_the_model_class_and_openai_stays_openai(monkeypat
         bedrock_generator.bieu_mau_agent, bedrock_generator.lich_v2_agent, bedrock_generator.sua_lich_agent, bedrock_generator.web_agent))
 
 
+@pytest.mark.parametrize("muc", ["none", "low", "medium", "high"])
+def test_router_and_chat_agents_run_at_their_own_reasoning_level(monkeypatch, muc):
+    """Đường Bedrock: mọi agent định tuyến (thường, có lịch sử, ba bản viết câu tìm) + agent trò chuyện gửi mức `bedrock.reasoning_dinh_tuyen`; lời gọi
+    trả lời vẫn theo `reasoning_default`; nhóm lịch giữ mức riêng. Đường OpenAI: định tuyến + trò chuyện KHÔNG gửi mức suy luận, như trước."""
+    monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    settings = bedrock_settings()
+    settings["full_corpus_generation"]["bedrock"].update(reasoning_dinh_tuyen=muc, reasoning_default="medium", reasoning_sua_lich="high")
+    generator = OpenAIFullCorpusGenerator.from_environment(settings)
+
+    def body(agent) -> dict:
+        return build_body(agent.instructions, "câu", agent.model_settings, [], AgentOutputSchema(agent.output_type), 1000, generator.responses_model.reasoning_default)
+
+    nhe = [generator.router_agent, generator.router_history_agent, generator.chat_agent, *generator.router_search_agents.values()]
+    assert len(nhe) >= 5
+    for agent in nhe:
+        if muc == "none":  # lớp dịch: "none" = không gửi effort, thinking chỉ giữa các lần gọi công cụ
+            assert "effort" not in body(agent)["output_config"] and body(agent)["thinking"] == {"type": "between_tools"}
+        else:
+            assert body(agent)["output_config"]["effort"] == muc and body(agent)["thinking"] == {"type": "adaptive"}
+    assert body(generator.answer_agent)["output_config"]["effort"] == "medium" and body(generator.assistant_agent)["output_config"]["effort"] == "medium"
+    assert body(generator.sua_lich_agent)["output_config"]["effort"] == "high" and body(generator.lich_v2_agent)["output_config"]["effort"] == "low"
+
+    openai_settings = copy.deepcopy(settings)
+    openai_settings["full_corpus_generation"]["provider"] = "openai"
+    openai_generator = OpenAIFullCorpusGenerator.from_environment(openai_settings)
+    assert all(a.model_settings.reasoning is None for a in (openai_generator.router_agent, openai_generator.router_history_agent, openai_generator.chat_agent,
+                                                              *openai_generator.router_search_agents.values()))
+
+
 def test_edit_understanding_agents_run_at_their_own_reasoning_level(monkeypatch):
     """Đường Bedrock: hai agent hiểu ý sửa lịch gửi mức `bedrock.reasoning_sua_lich` (high); viết câu lịch + lượt biểu mẫu giữ "low" của code; lời gọi
     không tự đặt mức (trả lời) theo `reasoning_default`. Đường OpenAI: agent sửa lịch vẫn "low" như trước."""
@@ -378,7 +408,7 @@ def test_settings_loader_accepts_bedrock_and_rejects_a_broken_block():
         broken["full_corpus_generation"]["provider"] = provider
         with pytest.raises(ValueError):
             validate_phase6_settings(broken)
-    for key, value in (("region", None), ("reasoning_default", "minimal"), ("reasoning_sua_lich", None), ("max_tokens", 0)):
+    for key, value in (("region", None), ("reasoning_default", "minimal"), ("reasoning_sua_lich", None), ("reasoning_dinh_tuyen", "minimal"), ("reasoning_dinh_tuyen", None), ("max_tokens", 0)):
         broken = copy.deepcopy(settings)
         broken["full_corpus_generation"]["bedrock"][key] = value
         with pytest.raises(ValueError):

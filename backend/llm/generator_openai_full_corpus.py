@@ -288,6 +288,7 @@ class OpenAIFullCorpusGenerator:
         router_timeout: float = 10,
         bedrock_model: BedrockClaudeModel | None = None,
         sua_lich_reasoning: str = BIEU_MAU_REASONING,
+        dinh_tuyen_reasoning: str | None = None,
         max_turns: int = ASSISTANT_MAX_TURNS,
         sua_lich_timeout: float | None = None,
     ) -> None:
@@ -297,6 +298,9 @@ class OpenAIFullCorpusGenerator:
         # đúng đường OpenAI như trước. `model` vẫn là tên ghi log / dấu phiên bản cache.
         # `sua_lich_reasoning`: mức suy luận của RIÊNG hai agent hiểu ý sửa lịch. Mặc định = mức nhóm lịch như trước (đường OpenAI không đổi);
         # đường Bedrock truyền `bedrock.reasoning_sua_lich` (đo 21/11/2026, 9 lệnh × 3 lượt: lệnh khó đúng 5 / 6 ở high, 2 / 6 ở low, 0 / 6 ở medium).
+        # `dinh_tuyen_reasoning` (21/11/2026): mức suy luận của RIÊNG các agent định tuyến + agent trò chuyện. None (mặc định, đường OpenAI) ⇒ không gửi
+        # mức nào, đúng như trước. Đường Bedrock truyền `bedrock.reasoning_dinh_tuyen`: trước đó các lời gọi này dùng chung `reasoning_default` (high) dù
+        # đầu ra chỉ là một nhãn tuyến / một câu xã giao — thời gian chờ ở MỌI lượt. Giá trị chọn sau khi đo; mặc định trong repo = high (không đổi).
         self.client = client
         self.model = model
         self.provider = "openai" if bedrock_model is None else bedrock_model.provider
@@ -333,18 +337,19 @@ class OpenAIFullCorpusGenerator:
         )
         # Phase 9 B1: định tuyến (D3) — không công cụ, không stream, không lịch sử; trò chuyện (D4) — không ngữ cảnh kho, đầu ra {answer}.
         router_instructions = kem(ROUTER_INSTRUCTIONS, SONNET_DINH_TUYEN)  # đường OpenAI: đúng `ROUTER_INSTRUCTIONS`
+        nhe = ModelSettings(include_usage=True, store=False, reasoning=Reasoning(effort=dinh_tuyen_reasoning) if dinh_tuyen_reasoning else None)
         self.router_agent = Agent(
             name="hue_router",
             instructions=router_instructions,
             model=self.responses_model,
-            model_settings=ModelSettings(include_usage=True, store=False),
+            model_settings=nhe,  # các bản sao bên dưới (định tuyến viết câu tìm, định tuyến có lịch sử) thừa hưởng cùng mức
             output_type=RouteOutput,
         )
         self.chat_agent = Agent(
             name="hue_chat",
             instructions=CHAT_INSTRUCTIONS,
             model=self.responses_model,
-            model_settings=ModelSettings(include_usage=True, store=False),
+            model_settings=nhe,
             output_type=AnswerOutput,
         )
         # Phase 9 B2 (plan D2): định tuyến viết câu tìm — cùng agent định tuyến B1, lời dặn thêm một đoạn, kiểu đầu ra theo biến.
@@ -446,6 +451,7 @@ class OpenAIFullCorpusGenerator:
                 bedrock_model=BedrockClaudeModel(model=bedrock["model"], region=bedrock["region"], creds_file=creds_file, timeout=timeout,
                                                  max_tokens=bedrock["max_tokens"], reasoning_default=bedrock["reasoning_default"]),
                 sua_lich_reasoning=bedrock["reasoning_sua_lich"],
+                dinh_tuyen_reasoning=bedrock["reasoning_dinh_tuyen"],
             )
         api_key_env = config.get("api_key_env", "OPENAI_API_KEY")
         api_key = os.getenv(api_key_env, "").strip()

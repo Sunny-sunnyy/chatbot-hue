@@ -97,7 +97,7 @@ def validate_phase6_settings(settings: dict) -> None:
         timeout = bedrock.get("sua_lich_timeout_seconds")
         if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or timeout <= 0:
             raise ValueError(f"Invalid full_corpus_generation.bedrock.sua_lich_timeout_seconds: {timeout!r}")
-        for key in ("reasoning_default", "reasoning_sua_lich"):
+        for key in ("reasoning_default", "reasoning_sua_lich", "reasoning_dinh_tuyen"):
             if bedrock.get(key) not in ("none", "low", "medium", "high"):
                 raise ValueError(f"Invalid full_corpus_generation.bedrock.{key}: {bedrock.get(key)!r}")
     if generation.get("model") != "gpt-6-luna":
