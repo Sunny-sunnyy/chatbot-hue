@@ -54,6 +54,10 @@ METRIC_FIELDS = (
     # 21/11/2026: phép kiểm số (thời tiết / khoảng cách) trượt ở lượt không có lịch ⇒ gỡ câu thay vì rút cả lượt — chỉ số đếm: nấc 1 (gỡ câu) / 2 (câu
     # từ chối cố định), số con số lạ theo loại, số ký tự bị gỡ; None = phép kiểm không trượt
     "kiem_so_go",
+    # 21/11/2026: lượt bị RÚT LẠI vì phép kiểm nào — mã cố định: khong_trich_dan (chữ model không có [n] nào) / tu_choi_kem_trich_dan / ma_nguon_la /
+    # kiem_lich (kiểm cuối của lịch) / so_thoi_tiet / so_khoang_cach (hai loại số chỉ còn ở lượt có lịch) / khac; None = lượt không bị rút. Chỉ GHI —
+    # kết cục của lượt không đổi. Để đếm từng loại sau mỗi bản sửa gốc.
+    "loi_kiem",
     # B2 D9: ms của lần gọi định tuyến (đã có trong `llm_calls`, tách riêng để theo dõi tốc độ theo tuyến)
     "routing_ms",
     # B3 D4: chỉ số đếm của lịch sử đưa vào lượt này (không chữ, không mã cuộc)
@@ -490,6 +494,18 @@ def _thoi_tiet_metrics(trace: AnswerTrace) -> dict | None:
             "n_ngay": (trace.thoi_tiet or {}).get("n_ngay"), "so_ngoai_tap": None if trace.thoi_tiet_kiem is None else len(trace.thoi_tiet_kiem)}
 
 
+_LOAI_LOI_KIEM = (("Grounded answer has no citation", "khong_trich_dan"), ("Fallback answer must not contain citations", "tu_choi_kem_trich_dan"),
+                  ("Unknown citation IDs", "ma_nguon_la"), ("itinerary check failed", "kiem_lich"), ("weather numbers without source", "so_thoi_tiet"),
+                  ("distance numbers without source", "so_khoang_cach"))
+
+
+def loai_loi_kiem(exc: Exception | None) -> str | None:
+    """Mã loại của lỗi kiểm sau khi viết (`trace.citation_error`) — đọc từ đầu lời lỗi do chính code mình đặt; lời lạ ⇒ "khac"; không lỗi ⇒ None."""
+    if exc is None:
+        return None
+    return next((ma for dau, ma in _LOAI_LOI_KIEM if str(exc).startswith(dau)), "khac")
+
+
 def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
     if trace.sua is not None:  # sửa lịch bản 2: chỉ số đếm (số hành động, áp được, không đổi được, có thẻ chọn) — không chữ
         metrics["sua_lich"] = trace.sua
@@ -508,7 +524,7 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         has_web_section=trace.web is not None and trace.web["outcome"] == "co_muc",
         web_outcome=None if trace.web is None else trace.web["outcome"], web_n_ket_qua=None if trace.web is None else trace.web["n_ket_qua"],
         web_n_ma=None if trace.web is None else trace.web["n_ma"], web_kiem=None if trace.web is None else trace.web["kiem"],
-        thoi_tiet=_thoi_tiet_metrics(trace),
+        thoi_tiet=_thoi_tiet_metrics(trace), loi_kiem=loai_loi_kiem(trace.citation_error),
         kiem_so_go=None if trace.kiem_so_go is None else {
             "nac": trace.kiem_so_go["nac"], "n_thoi_tiet": len(trace.kiem_so_go["thoi_tiet"]), "n_khoang_cach": len(trace.kiem_so_go["khoang_cach"]),
             "so_ky_tu_go": trace.kiem_so_go["so_ky_tu_go"]},
