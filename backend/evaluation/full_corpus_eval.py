@@ -225,13 +225,13 @@ def citation_error_rates(rows: list[dict]) -> dict:
     return {"overall": rate(rows), **{c: rate(g) for c, g in sorted(groups.items())}} if rows else {}
 
 
-def usage_totals(rows: list[dict]) -> dict:
+def usage_totals(rows: list[dict], provider: str = "openai") -> dict:
     totals = {field: sum(row.get(field) or 0 for row in rows)
               for field in ("input_tokens", "output_tokens", "cache_write_tokens", "cached_tokens")}
     return {
         "calls": sum(1 for row in rows if row.get("input_tokens") is not None),
         **totals,
-        "cost_usd": cost_usd(**totals),
+        "cost_usd": cost_usd(**totals, provider=provider),
     }
 
 
@@ -595,9 +595,11 @@ async def judge_case_luna(agent: Agent, case: dict, answer_row: dict) -> dict:
 
 
 async def run_judge_luna(cases: list[dict], answer_rows: list[dict]) -> list[dict]:
-    """Judge phụ: cùng model/provider/client như generation, không tham số sampling."""
+    """Judge phụ: model OpenAI ghi ở `full_corpus_generation.model`, không tham số sampling. Người chấm LUÔN là model đó, kể cả khi sản phẩm
+    đang chạy `provider: bedrock` (User 21/11/2026) — điểm so được với mọi mốc cũ."""
     settings = load_settings(validate_private_paths=False)
-    generator = OpenAIFullCorpusGenerator.from_environment(settings)
+    generator = OpenAIFullCorpusGenerator.from_environment(
+        {**settings, "full_corpus_generation": {**settings["full_corpus_generation"], "provider": "openai"}})
     agent = Agent(
         name="hue_full_corpus_answer_judge",
         instructions=JUDGE_PROMPT_PATH.read_text(encoding="utf-8"),
@@ -676,7 +678,8 @@ def summarize_answers(answer_rows: list[dict], score_rows: list[dict] | None) ->
         "complete": len(ok) == len(answer_rows),
         "refusal": refusal_rates(ok),
         "citation_error": citation_error_rates(ok),
-        "generation_usage": usage_totals(answer_rows),
+        # tiền phần sinh theo bảng giá của provider đang cấu hình; phần chấm (`judge_usage` dưới) luôn là giá OpenAI
+        "generation_usage": usage_totals(answer_rows, load_settings(validate_private_paths=False)["full_corpus_generation"]["provider"]),
     }
     if score_rows is not None:
         category = {row["case_index"]: row["category"] for row in answer_rows}
