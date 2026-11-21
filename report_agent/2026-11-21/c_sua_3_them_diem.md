@@ -80,3 +80,26 @@ Người đọc (phiên B, mô phỏng độc lập 81 lịch có cả ngày đi
 |---|---|
 | Mất (cả hai model) | 36 % lệnh "thêm X" không nói chỗ kết thúc bằng "lịch này hiện không còn chỗ nào xếp được X" (1.637 / 4.489; mẫu của người đọc: 42 %) — hôm nay các lệnh đó cũng không thêm được, chỉ khác là nay nói thẳng |
 | Rủi ro mới (model đang chạy), ĐANG CHỮA | câu khẳng định đã sửa lịch ở đường hỏi đáp thường: 0 / 451 lượt sổ thật, 0 / 290 lượt của ba lượt mốc, nhưng 1 / 1 ở lượt "ok thay đi" ngay sau dòng gợi ý ⇒ dòng gợi ý mời một câu trả lời mà lần hiểu ý không hiểu. Chưa chữa xong thì KHÔNG đề nghị bật cho model đang chạy. Cách chữa đã chọn: đưa câu gợi ý của lượt trước vào lần hiểu ý ở đúng lượt kế — làm ở commit sau, số ghi tiếp vào file này |
+
+## Thêm 20:01 21/11/2026 — chữa lượt "đồng ý cụt": câu gợi ý của lượt trước vào lần hiểu ý (cùng cờ)
+**Cách làm:** câu code gợi ý ở một lượt ("thay Y bằng X") được nhớ cho ĐÚNG MỘT lượt kế (một ô trong kho cuộc trò chuyện, đọc là xoá; chỉ chữ do code dựng) và được đưa vào tin nhắn của lần hiểu ý ở lượt đó: một câu gợi ý + lời đồng ý ⇒ đúng hành động của câu đó; hai câu mà không rõ chọn câu nào ⇒ không tự chọn; từ chối / phân vân / hỏi chuyện khác ⇒ không coi là đồng ý. Lượt khác gửi model giống từng byte; bộ áp không đổi (53.189 lệnh mô phỏng, cờ tắt và cờ bật: khác 0).
+Test: `pytest tests/test_sua_lich_them.py -q` ⇒ `9 passed`; cố ý không đưa câu gợi ý vào lần hiểu ý ⇒ `1 failed, 8 passed` ⇒ trả lại ⇒ `9 passed`; `test_nho_ten_goi_y` 19 · `test_cong_dot_1` 22 · `test_sua_lich_v2` 13 · `test_sua_lich_kem_hoi` 7 · `test_doi_cho_ngay` 26 passed.
+
+**Ô hiểu ý, ngưỡng ghi trước** (bộ mù 10 câu + hai câu mặt trái của phiên điều phối = 12 câu × 2 model × 3 lượt = 72 lời gọi, 0 lỗi gọi; 0,416 USD + 0,0032 USD):
+
+| Tiêu chí | Model cũ: trước ⇒ sau | Model đang chạy: trước ⇒ sau |
+|---|---|---|
+| 3 câu đồng ý cụt / dùng đại từ: hiểu đúng ≥ 6 / 9 | 2 / 9 ⇒ **9 / 9** | 3 / 9 ⇒ **9 / 9** |
+| 7 câu nói rõ tên điểm: không tụt, ≥ 19 / 21 | 21 / 21 ⇒ 20 / 21 | 21 / 21 ⇒ 21 / 21 |
+| "thôi khỏi…", "sao lại không thêm được?": 0 lượt đổi lịch | 0 / 6 ⇒ 0 / 6 | 0 / 6 ⇒ 0 / 6 |
+| mặt trái: "ok để mình nghĩ đã", "ừ, mà … có gì hay vậy?": 0 lượt đổi lịch | 0 / 6 | 0 / 6 |
+
+**Chuỗi tám lượt qua đường chat thật, BA lần mỗi model** (0,0085 USD + 0,506 USD):
+
+| | Model cũ | Model đang chạy |
+|---|---|---|
+| "ok thay đi" NGAY SAU dòng gợi ý ⇒ thành lệnh thay thật ("Đã thay Đại Nội Huế bằng Đàn Nam Giao.") | 3 / 3 | 3 / 3 (bản trước: 0 / 1, viết "Mình đã thêm…" khi lịch không đổi) |
+| "ok để mình nghĩ đã" / một câu hỏi khác ngay sau dòng gợi ý ⇒ lịch đổi | 0 / 6 | 0 / 6 |
+| lượt đi đường hỏi đáp thường có câu "mình đã thêm / bỏ / thay / dời…" | 0 / 8 | 0 / 7 |
+
+**Giới hạn còn lại (ghi nhận, chưa chữa):** câu gợi ý chỉ sống MỘT lượt. Người dùng hỏi một câu khác rồi mới nhắn "ok thay đi" (lượt 8 của chuỗi) thì lần hiểu ý không còn thấy câu gợi ý: model đang chạy 3 / 3 nói thật (hỏi lại "bạn muốn thay mục nào…", hoặc dòng "việc này mình chưa sửa được trên lịch… bạn nói cụ thể nhé"); model cũ 1 / 3 viết "Được, mình thay Lăng Đồng Khánh bằng Lăng Khải Định vào khung 9:45–11:00…" trong khi lịch không đổi — câu đó bị phép kiểm trích dẫn rút lại, người dùng thấy dòng lỗi "không đáp ứng yêu cầu trích dẫn" (không thấy câu sai), 2 / 3 còn lại hỏi lại / nói thật.
