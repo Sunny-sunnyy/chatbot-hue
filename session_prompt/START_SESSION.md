@@ -26,7 +26,7 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
    khối "Tin cho A" để User chuyển (WORKFLOW.md §7).
    Mọi session (cả A): vòng tự soi một lần / ngày, hỏi hai chiều — làm thừa ↔ nhìn hẹp (Session_Prompt.md §7).
    Rồi: A KHÔNG hỏi quyền phiên — theo bảng "Quyền thường trực" trong `AGENTS.md`, báo xong là A giao ngay B/C/E mọi việc đã có trong
-   sổ việc; chỉ việc thuộc hàng "hỏi User trước" mới chờ User; B/C/E: việc XÂY chờ A giao (việc A giao = User nói "làm đi"), còn nghĩ, đếm 0 đồng, nêu hướng khác — và một bản thử sau cờ tắt cho ý của chính mình khi phép đếm đã ra số (báo phiên điều phối một dòng trước khi sửa code) — thì không chờ (AGENTS.md mục "Cách nhìn việc"); D chờ User nói muốn hiểu việc gì. Trước khi báo xong bước 3: không sửa file (trừ tạo
+   sổ việc; chỉ việc thuộc hàng "hỏi User trước" mới chờ User; B/C/E: việc XÂY chờ A giao (việc A giao = User nói "làm đi"), còn nghĩ, đếm 0 đồng, nêu hướng khác thì không chờ (AGENTS.md mục "Cách nhìn việc"); D chờ User nói muốn hiểu việc gì. Trước khi báo xong bước 3: không sửa file (trừ tạo
    `sessions/STATUS_<X>.md` của mình), không chạy việc nặng, không gọi API trả phí.
 ```
 
