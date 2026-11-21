@@ -56,6 +56,7 @@ full_corpus_generation:
     max_tokens: 128000           # trường BẮT BUỘC của kiểu gọi Claude ⇒ để mức tối đa của model = coi như không trần (User 21/11/2026); không đặt nhỏ hơn
     reasoning_sua_lich: high     # none | low | medium | high — RIÊNG lời gọi hiểu ý sửa lịch (đo 21/11: lệnh khó đúng 5 / 6 ở high, 2 / 6 low, 0 / 6 medium); viết câu lịch + lượt biểu mẫu giữ "low" trong code
     reasoning_default: low       # none | low | medium | high — mức suy luận cho lời gọi KHÔNG tự đặt mức (nhóm lịch tự đặt "low"); TẠM `low`, chọn lại sau lượt đo
+    cong_cong_cu: tu_khoa        # tu_khoa | luon — cổng đưa công cụ thời tiết / ngày / khoảng cách khi provider là bedrock (xem `assistant.cong_cong_cu`); đổi sau lượt đo bậc 5
     creds_file_env: HUE_BEDROCK_CREDS_FILE  # TÊN biến môi trường trỏ tới file khoá tạm (JSON) — đường dẫn không ghi vào repo
 
 # Phase 9 B1 (plan docs/superpowers/plans/2026-11-02-phase-9-b1-plan.md D9): mỗi phần một cờ, gỡ độc lập; tắt cả 4 ⇒ chuỗi gửi model như B0.
@@ -77,6 +78,7 @@ assistant:
   tra_web: true                  # B6 (plan B6 bản 3 D10): cổng web (Serper) sau câu từ chối của kho — BẬT 05/11/2026 tối (đạt luật ghi trước + kín ×2 + review; User duyệt); cần router + tim_them
   tra_web_timeout_seconds: 5     # B6 D3: một lần gọi Serper, không thử lại
   thoi_tiet: true                # B5b (plan B5b bản 2 D11): dự báo Huế (Open-Meteo) + dòng dự báo trong lịch — BẬT 07/11/2026 (User Q-U4 spec cổng đợt 1: bật khi merge đợt 1; B5b đạt luật ghi trước); cần tim_them
+  cong_cong_cu: tu_khoa          # 21/11 (bậc 5): tu_khoa = chỉ đưa công cụ thời tiết / ngày / khoảng cách khi câu có từ khoá (như trước) | luon = mọi lượt trợ lý Huế. Đường OpenAI đọc khoá này; đường Bedrock đọc `full_corpus_generation.bedrock.cong_cong_cu`
   bao_lu_cong_cu: true           # BẬT 17/11 (User chọn bật, ghi giới hạn — report b_cau_bao_implementation.md; plan 2026-11-17-cau-bao-plan.md): câu bão / lũ — công cụ thời tiết khi câu cuối / câu liền trước có từ thời tiết HOẶC từ nguy hiểm thời tiết (danh sách đóng; bản "mọi lượt" đã lùi vì Golden), thêm `loai` model chọn; lượt bão / lũ ⇒ model không nhận số, code nối khối cố định
   khoang_cach: true              # 16/11 (plan 2026-11-16-khoang-cach-plan.md): công cụ km / phút giữa hai điểm bảng lịch (tra bảng dựng sẵn từ OSRM, runtime không gọi mạng) — BẬT 16/11 (User chọn bật cho lượt thử tối; đo đạt + review 2 vòng); cần tim_them
   khoang_cach_bang: ../data/phase_9/lich_trinh/khoang_cach_v1.json  # C 16/11, md5 cb76ab72199c (private); 40 điểm có toạ độ × 39 chiều; tên điểm lấy từ lich_trinh_bang_v2

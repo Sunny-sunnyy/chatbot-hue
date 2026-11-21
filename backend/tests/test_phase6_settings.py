@@ -25,6 +25,7 @@ def test_phase6_settings_are_exact():
             "max_tokens": 128000,
             "reasoning_default": "low",
             "reasoning_sua_lich": "high",
+            "cong_cong_cu": "tu_khoa",
             "creds_file_env": "HUE_BEDROCK_CREDS_FILE",
         },
     }

@@ -86,6 +86,8 @@ def validate_phase6_settings(settings: dict) -> None:
                 raise ValueError(f"Invalid full_corpus_generation.bedrock.{key}: {bedrock.get(key)!r}")
         if not isinstance(bedrock.get("max_tokens"), int) or bedrock["max_tokens"] <= 0:
             raise ValueError(f"Invalid full_corpus_generation.bedrock.max_tokens: {bedrock.get('max_tokens')!r}")
+        if bedrock.get("cong_cong_cu", "tu_khoa") not in ("tu_khoa", "luon"):
+            raise ValueError(f"Invalid full_corpus_generation.bedrock.cong_cong_cu: {bedrock.get('cong_cong_cu')!r}")
         for key in ("reasoning_default", "reasoning_sua_lich"):
             if bedrock.get(key) not in ("none", "low", "medium", "high"):
                 raise ValueError(f"Invalid full_corpus_generation.bedrock.{key}: {bedrock.get(key)!r}")
