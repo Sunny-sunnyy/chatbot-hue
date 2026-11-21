@@ -51,6 +51,9 @@ METRIC_FIELDS = (
     "route", "usd", "n_llm_calls", "llm_calls", "tools",
     # B1: định tuyến lỗi ⇒ đường cũ; câu khẩn cấp do luật / định tuyến bắt; ngày đã đưa model (chỉ ngày, không giờ)
     "route_error", "emergency_by", "today",
+    # 21/11/2026: phép kiểm số (thời tiết / khoảng cách) trượt ở lượt không có lịch ⇒ gỡ câu thay vì rút cả lượt — chỉ số đếm: nấc 1 (gỡ câu) / 2 (câu
+    # từ chối cố định), số con số lạ theo loại, số ký tự bị gỡ; None = phép kiểm không trượt
+    "kiem_so_go",
     # B2 D9: ms của lần gọi định tuyến (đã có trong `llm_calls`, tách riêng để theo dõi tốc độ theo tuyến)
     "routing_ms",
     # B3 D4: chỉ số đếm của lịch sử đưa vào lượt này (không chữ, không mã cuộc)
@@ -94,6 +97,8 @@ def _so_do_moi(fields) -> dict:
 # Route stream thêm: ms từ lúc nhận request tới lúc gửi sự kiện đầu / mảnh chữ đầu (spec §4.6); chữ ghép từ các `delta` có trùng chữ cuối
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
 STREAM_METRIC_FIELDS = METRIC_FIELDS + ("first_event_ms", "first_text_ms", "delta_matches_final",
+                                        # 21/11/2026: lượt đã gửi sự kiện `thay_chu` (chữ đã hiện khác chữ cuối ⇒ thay cả ô chữ); None = không
+                                        "thay_chu",
                                         # thí nghiệm tốc độ #6 (plan D2): phần `tro_ly_hue` chạy trước rồi bị bỏ — số lần, USD, bị huỷ giữa chừng
                                         "n_tra_loi_bo", "usd_bo", "bo_huy_giua")
 
@@ -504,6 +509,9 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
         web_outcome=None if trace.web is None else trace.web["outcome"], web_n_ket_qua=None if trace.web is None else trace.web["n_ket_qua"],
         web_n_ma=None if trace.web is None else trace.web["n_ma"], web_kiem=None if trace.web is None else trace.web["kiem"],
         thoi_tiet=_thoi_tiet_metrics(trace),
+        kiem_so_go=None if trace.kiem_so_go is None else {
+            "nac": trace.kiem_so_go["nac"], "n_thoi_tiet": len(trace.kiem_so_go["thoi_tiet"]), "n_khoang_cach": len(trace.kiem_so_go["khoang_cach"]),
+            "so_ky_tu_go": trace.kiem_so_go["so_ky_tu_go"]},
     )
     if trace.nhieu_y:  # cờ `cau_nhieu_y` + câu ≥ 2 vế hỏi ⇒ luật theo ý đã chạy; chi_y_thieu = chỉ còn dòng ý thiếu ⇒ đổi thành câu từ chối.
         # Khoá chỉ có khi luật chạy (câu một ý / cờ tắt ⇒ dòng log như cũ) — đọc log là biết câu có đi luật mới không (review E m-3).
@@ -644,6 +652,13 @@ class StreamEvents:
         self.seq += 1
         return sse_event("delta", {"seq": self.seq, "text": text})
 
+    def thay_chu(self, text: str) -> bytes:
+        """Chữ đã hiện KHÔNG phải phần đầu của chữ cuối (code gỡ một câu sau khi kiểm) ⇒ một sự kiện mang CẢ chữ cuối; giao diện thay ô chữ bằng
+        nó. Dùng chung cho mọi chỗ code sửa chữ model sau khi đã phát — không riêng phép kiểm số."""
+        self.shown = [text]
+        self.metrics["thay_chu"] = True
+        return sse_event("thay_chu", {"text": text})
+
     def lich_v2(self, kind: str, data: dict) -> bytes:
         """"Lên kế hoạch" bản 2: `lich_khung` / `lich_cau` / `lich_xong` — mốc ms của khung hiện và đủ câu (plan đợt 1 §5: đo bằng hai mốc mới)."""
         if kind in ("lich_khung", "lich_xong"):
@@ -681,14 +696,17 @@ class StreamEvents:
         # Lưới cuối (19/11): model phát nhiều khối chữ trong một lần trả lời mà khối đầu không phải `{"answer":"…"}` (hoặc answer rỗng) ⇒ bộ bóc
         # chữ không ra mảnh nào dù chữ cuối hợp lệ ⇒ lượt "success" không có chữ. Chưa phát mảnh nào ⇒ phát cả câu một lần, trước `sources`.
         # Soát khác hãng 20/11: khối đầu là một `{"answer":"…"}` NGẮN đã đóng, chữ cuối dài hơn ⇒ người dùng chỉ thấy khúc đầu (phần thiếu có thể là câu
-        # cảnh báo của nguồn). Chữ đã phát là TIỀN TỐ của chữ cuối ⇒ phát nốt phần đuôi; không phải tiền tố ⇒ như cũ (chỉ ghi `delta_matches_final`).
+        # cảnh báo của nguồn). Chữ đã phát là TIỀN TỐ của chữ cuối ⇒ phát nốt phần đuôi; không phải tiền tố ⇒ từ 21/11/2026 gửi `thay_chu` mang cả chữ
+        # cuối (trước đó: không gửi gì, người dùng giữ bản đã hiện — 0 / 303 lượt thật 19–21/11 rơi vào đây; nay code có đường gỡ câu sau khi kiểm).
         da_phat = "".join(self.shown).strip()
         if trace.citation_error is not None or not final.strip():
             bu = []
         elif not da_phat:  # chưa phát mảnh nào, HOẶC mới phát toàn khoảng trắng (soát đợt sửa 20/11: khối đầu `{"answer":" "}` ⇒ ô trả lời trống mà lượt "success")
             bu = [self.delta(final)]
+        elif final.startswith(da_phat):
+            bu = [self.delta(final[len(da_phat):])] if len(final) > len(da_phat) else []
         else:
-            bu = [self.delta(final[len(da_phat):])] if da_phat and final.startswith(da_phat) and len(final) > len(da_phat) else []
+            bu = [self.thay_chu(final)]
         self.metrics["delta_matches_final"] = "".join(self.shown).strip() == final
         if trace.citation_error is not None:
             logger.error("Citation integrity failed")

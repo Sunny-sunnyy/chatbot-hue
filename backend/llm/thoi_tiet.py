@@ -274,16 +274,21 @@ def chuan_so(s: str) -> str:
     return s.replace(".", ",")
 
 
-def so_thoi_tiet(text: str) -> list[str]:
-    """Mọi chuỗi số dạng thời tiết trong `text` (đã chuẩn `.` ⇒ `,`), theo thứ tự xuất hiện."""
+def vi_tri_so_thoi_tiet(text: str) -> list[tuple[str, int, int]]:
+    """(số đã chuẩn, đầu, cuối) của mọi chuỗi số dạng thời tiết trong `text` — vị trí tính trên chữ đã chuẩn NFC, là cả cụm "số + đơn vị"."""
     t = _nfc(text)
     out = []
     for m in _DON_VI_LUON.finditer(t):
-        out += [chuan_so(g) for g in m.groups() if g]
+        out += [(chuan_so(g), m.start(), m.end()) for g in m.groups() if g]
     for m in _DON_VI_CANH_MUA.finditer(t):
         if _CANH_MUA.search(t[max(0, m.start() - 30):m.start()]):
-            out += [chuan_so(g) for g in m.groups() if g]
+            out += [(chuan_so(g), m.start(), m.end()) for g in m.groups() if g]
     return out
+
+
+def so_thoi_tiet(text: str) -> list[str]:
+    """Mọi chuỗi số dạng thời tiết trong `text` (đã chuẩn `.` ⇒ `,`), theo thứ tự xuất hiện."""
+    return [s for s, _, _ in vi_tri_so_thoi_tiet(text)]
 
 
 def tap_so(text: str) -> set[str]:

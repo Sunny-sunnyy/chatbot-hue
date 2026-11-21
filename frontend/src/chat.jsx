@@ -149,6 +149,11 @@ export function useChat() {
                 update({ text: bufferRef.current });
               });
             }
+          } else if (name === "thay_chu") {
+            // Sau khi kiểm, code đã gỡ một câu khỏi chữ model (ví dụ câu có con số không có nguồn) ⇒ thay CẢ ô chữ bằng bản cuối, không nối thêm.
+            stopFrame();
+            bufferRef.current = data.text;
+            update({ text: data.text });
           } else if (name === "sources") {
             // Chữ đã qua bộ kiểm trích dẫn: vẽ bản cuối rồi mới hiện dòng Nguồn (yêu cầu 9; cổng D1).
             stopFrame();
