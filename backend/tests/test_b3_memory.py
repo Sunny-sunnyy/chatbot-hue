@@ -191,7 +191,7 @@ def test_api_cookie_carries_history_and_new_conversation_clears_it(caplog):
     assert "HttpOnly" in cookie and "SameSite=strict" in cookie and "Path=/api" in cookie and "Secure" not in cookie
     assert gen.seen[0] == () and gen.seen[1] == (("Mình tên là Lan, Đại Nội mở cửa mấy giờ?", "Mở cửa từ 7 giờ."),) and gen.seen[2] == ()
     conversation_id = cookie.split(";")[0].split("=", 1)[1]
-    assert [m["n_history_turns"] for m in metrics] == [0, 1, 0] and set(metrics[0]) == set(METRIC_FIELDS)
+    assert [m["n_history_turns"] for m in metrics] == [0, 1, 0] and set(metrics[0]) - {"cache"} == set(METRIC_FIELDS)  # `cache`: khoá tuỳ chọn của lượt đầu khi bộ nhớ đệm câu trả lời bật
     assert metrics[1]["history_tokens"] > 0 and all(conversation_id not in m and "Lan" not in m for m in messages)
 
 
