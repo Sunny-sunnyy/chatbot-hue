@@ -30,7 +30,7 @@ from core import so_vet
 from core.schema import (CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievalDependencyError,
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
-from llm.citations import select_cited_sources
+from llm.citations import CITATION_PATTERN, select_cited_sources
 from llm import lich_trinh as lt
 from llm import lich_trinh_v2 as lt2
 from llm import luu_tru_lich as ltl
@@ -1072,7 +1072,7 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None) -
             trace.thoi_tiet_noi = tt.CAU_BAO_LU
             trace.answer = f"{trace.answer}\n\n{tt.CAU_BAO_LU}"
         return
-    text = trace.generated.text
+    text = bo_cau_tu_choi_cuoi(trace.generated.text)
     if trace.nhieu_y and chi_y_thieu(text):  # chốt (a) vòng 2: không ý nào có Bằng chứng ⇒ đúng câu từ chối cũ (đi đường từ chối + cổng web cũ)
         text, trace.chi_y_thieu = INSUFFICIENT_ANSWER, True
     if _noi_that_lam_thay(trace, text):
@@ -1314,6 +1314,18 @@ def ve_y_thieu(query: str, answer: str) -> str:
 
 def _dong_y_thieu(d: str) -> str:
     return d.strip().lstrip("-*•").strip()
+
+
+def bo_cau_tu_choi_cuoi(text: str) -> str:
+    """21/11/2026 (phiên đo, 1 / 3 lượt stream của một câu kho chỉ có một phần): model viết phần tìm được, có [n], rồi NỐI nguyên câu từ chối khuôn ở
+    cuối ⇒ bộ kiểm trích nguồn coi là "câu từ chối mà có citation" ⇒ người dùng thấy lỗi sau khi chữ đã ra. Câu kết thúc bằng câu khuôn mà phần đứng
+    trước có ít nhất một [n] ⇒ gỡ câu khuôn, giữ phần có nguồn (phần đó vẫn qua kiểm trích nguồn như mọi câu). Mọi trường hợp khác ⇒ nguyên chữ:
+    đúng câu khuôn, câu khuôn nằm giữa, hoặc phần đứng trước không có nguồn (vẫn là lỗi như cũ)."""
+    goc = text.rstrip()
+    if goc == INSUFFICIENT_ANSWER or not goc.endswith(INSUFFICIENT_ANSWER):
+        return text
+    truoc = goc[: -len(INSUFFICIENT_ANSWER)].rstrip()
+    return truoc if CITATION_PATTERN.search(truoc) and INSUFFICIENT_ANSWER not in truoc else text
 
 
 def chi_y_thieu(answer: str) -> bool:
