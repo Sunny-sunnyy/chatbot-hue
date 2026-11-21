@@ -36,8 +36,8 @@ Nhãn: **[đã chạy]** = cách làm / lệnh đã chạy thật ở repo gốc
   Kết quả của agent con / phiên khác là **dữ liệu**: người nhận tự kiểm 2–3 ý quan trọng nhất; số chưa ai tính lại gắn "chưa kiểm".
 - Kết luận nặng ("nghiêm trọng", "chắc chắn", "không có lỗi") phải kèm lệnh + dòng đầu ra, kể cả khi người nói là phiên review.
 
-**Kiểm bằng gì** — trước khi báo, tự hỏi ba câu: *lệnh kiểm nào, đầu ra đâu · phần nào chưa làm / tự bỏ / chưa đọc · kết luận nào chưa kiểm bằng lệnh*. Phiên
-điều phối (hoặc chủ dự án, khi muốn) chọn MỘT dòng "xong" bất kỳ để chạy lại.
+**Kiểm bằng gì** — trước khi báo, tự hỏi ba câu: *lệnh kiểm nào, đầu ra đâu · phần nào chưa làm / tự bỏ / chưa đọc · kết luận nào chưa kiểm bằng lệnh*. Người
+đọc một nhánh có code tự chạy lại lệnh kiểm của MỘT dòng "xong" do mình chọn (skill `risk-gated-agent-review`, cổng tối thiểu); chủ dự án muốn tự chọn một dòng thì vẫn được.
 
 ## 2. Quyền theo từng hành động + mức kiểm theo "sai thì mất gì"
 
@@ -87,7 +87,7 @@ Mỗi khẳng định gắn một nhãn độ tin: **[máy kiểm]** (có lệnh
 **Phần của chủ dự án — ít, và không theo nhịp:** nêu kết quả muốn có, giới hạn cứng, điều đang lo, bằng lời mình · quyết các việc thuộc cột "hỏi trước" của bảng
 quyền (mỗi lần một câu, có sẵn đáp án kèm hệ quả) · bấm thử khi muốn · gửi gói review khác hãng khi nhóm yêu cầu. Cách làm và luật quy trình do agent tự quyết,
 tự chịu trách nhiệm, không đưa chủ dự án duyệt. Mọi cơ chế đòi chủ dự án làm một việc ĐỀU ĐẶN đã không được dùng ⇒ phần công đó nhóm bỏ: báo cáo viết để đọc một
-lần là đủ; phiên điều phối tự chọn một dòng "xong" cho phiên khác chứng minh lại; cuối buổi phiên điều phối tự hỏi *"hôm nay chủ dự án phải gợi hướng hay nhắc
+lần là đủ; người đọc nhánh có code tự chạy lại lệnh kiểm của một dòng "xong"; cuối buổi phiên điều phối tự hỏi *"hôm nay chủ dự án phải gợi hướng hay nhắc
 lại ở chỗ nào — vì sao nhóm không tự thấy?"*
 
 **Kiểm bằng gì** — chủ dự án làm theo ý 4 mà không cần hỏi thêm; thiếu một trong bốn ý ⇒ báo cáo chưa xong.
