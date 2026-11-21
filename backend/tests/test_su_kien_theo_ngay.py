@@ -139,3 +139,31 @@ def test_event_source_reaches_the_first_model_call_only_for_gated_questions(deps
     assert sk.TIEU_DE_NGUON not in _gui_model(deps, "cuối tuần này ở Huế có sự kiện gì", TAT)[1][0]
     cau_thuong = "Lăng Tự Đức có gì đáng xem?"
     assert _gui_model(deps, cau_thuong, BAT)[1] == _gui_model(deps, cau_thuong, TAT)[1]
+
+
+# ---------- 21/11/2026: bộ đọc khoảng ngày — câu có từ hỏi sự kiện trước, khoảng rộng hơn, hai ngày ⇒ từ–đến ----------
+THU_BAY = dt.date(2026, 11, 21)
+
+
+@pytest.mark.parametrize("cau, tu, den", [
+    # tin của người dùng mô phỏng (lượt mốc 21/11): con số ngày ở câu đệm từng thắng ⇒ chỉ tra đúng ngày 23/11
+    ("ok thứ 2 23/11 nhé. Thế tuần này với tháng này ở Huế có lễ hội hay sự kiện gì không? Mình muốn sắp xếp đi xem luôn", dt.date(2026, 11, 21), dt.date(2026, 11, 30)),
+    ("Mình tới Huế ngày 23/11. Tháng 12 có lễ hội gì không?", dt.date(2026, 12, 1), dt.date(2026, 12, 31)),   # ngày ở câu kể, khoảng ở câu hỏi
+    ("tuần này với tháng này ở Huế có lễ hội gì không", dt.date(2026, 11, 21), dt.date(2026, 11, 30)),          # hai khoảng ⇒ khoảng rộng hơn
+    ("Mình ở Huế từ 23/11 đến 25/11, có sự kiện gì không?", dt.date(2026, 11, 23), dt.date(2026, 11, 25)),      # hai con số ngày ⇒ từ–đến
+    ("từ 28/12 đến 2/1 có lễ hội gì", dt.date(2026, 12, 28), dt.date(2027, 1, 2)),                               # vắt qua năm
+    ("hôm nay với ngày mai có sự kiện gì", dt.date(2026, 11, 21), dt.date(2026, 11, 22)),                        # hai ngày đơn ⇒ từ–đến
+    ("Mình tới ngày 23/11. Ở đó có lễ hội gì không?", dt.date(2026, 11, 23), dt.date(2026, 11, 23)),             # câu hỏi không nêu khoảng ⇒ đọc cả tin như cũ
+    ("cuối tuần này ở Huế có sự kiện gì", dt.date(2026, 11, 21), dt.date(2026, 11, 22)),                         # "cuối tuần này" KHÔNG bị nới thành "tuần này"
+    ("cuối tuần sau có lễ hội gì", dt.date(2026, 11, 28), dt.date(2026, 11, 29)),                                # … và không thành "tuần sau"
+    # câu hỏi sự kiện KHÔNG nêu khoảng ⇒ đọc cả tin theo thứ tự ưu tiên CŨ (ngày ghi số trước), không lấy "khoảng rộng nhất" của cả tin: một tin thật có
+    # "rằm tháng 10" ở câu khác từng bị kéo sang cả tháng 10 năm sau khi luật rộng nhất áp cho cả tin
+    ("Ok rằm thứ hai 23/11 rồi. Nhưng lễ hội thì chưa thấy gì cụ thể. Thế rằm tháng 10 ở chùa có nghi lễ nào không?", dt.date(2026, 11, 23), dt.date(2026, 11, 23)),
+])
+def test_range_is_read_from_the_asking_sentence_and_widened_not_narrowed(cau, tu, den):
+    assert sk.hoi_su_kien(cau) and sk.khoang_hoi(cau, THU_BAY)[:2] == (tu, den)
+
+
+def test_impossible_date_and_out_of_range_month_still_give_no_range():
+    assert sk.khoang_hoi("ngày 31/2 có lễ hội gì", THU_BAY) is None
+    assert sk.khoang_hoi("tháng 13 âm lịch có lễ hội gì", THU_BAY) is None
