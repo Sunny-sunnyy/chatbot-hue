@@ -158,7 +158,8 @@ Giới hạn đã đo của Sonnet ở nhóm lịch (21/11, chưa sửa — sử
 - Lệnh sửa lịch MƠ HỒ ("ngày 2 hơi nặng, làm nhẹ bớt"): Sonnet hay TỰ bỏ một điểm người dùng không nêu — low 3 / 3 lần, medium 3 / 3, high 3 / 6 (ba lần còn lại đổi kiểu đi sang "nhẹ nhàng");
   luna 3 / 3 giữ nguyên lịch và bảo người dùng nói cụ thể.
 - Câu mô tả điểm trong lịch: Sonnet chép nhiều chi tiết hơn luna và không lấy gì ngoài đoạn nguồn (đối chiếu 17 câu: 0 chi tiết bịa), nhưng có thể GỘP ý làm đổi nghĩa — một câu đã viết
-  tháp Phước Duyên, chuông và bia "đều là Bảo vật quốc gia" trong khi nguồn chỉ ghi chuông và bia. Bộ kiểm câu của code không bắt được loại lỗi này.
+  tháp Phước Duyên, chuông và bia "đều là Bảo vật quốc gia" trong khi nguồn chỉ ghi chuông và bia. Gặp ở 1 mục trên 5 mục đã đối chiếu. Bộ kiểm câu của code không bắt được loại lỗi này.
+  Ở ô hỏi đáp thường thì CHƯA thấy: một phiên khác đọc tay 36 câu trả lời (12 câu × luna, Sonnet medium, Sonnet high), soi riêng chỗ dễ gộp: 0 / 36. Chủ trương 21/11: ghi giới hạn, chưa sửa lời dặn.
 
 Chưa thử qua giao diện với Sonnet: lịch 1 ngày / kiểu gấp / nhiều sở thích · ảnh ra 2–3 tên · câu bão lũ · màn hẹp điện thoại · hai người hỏi cùng lúc ·
 khoá hết hạn giữa một lượt · cả bộ test với `provider: bedrock`.

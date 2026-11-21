@@ -105,4 +105,4 @@ một lỗi GỘP Ý của Sonnet (tháp Phước Duyên bị xếp chung vào "
 đường OpenAI không đổi (tham số mới của generator mặc định bằng mức cũ). Lượt thật trên cấu hình của nhánh [máy kiểm]: lệnh bị luật chặn đúng 3 / 3; lệnh dễ đúng 1 / 1.
 
 **Giới hạn ghi lại, CHƯA sửa:** lệnh sửa lịch mơ hồ — Sonnet high vẫn tự bỏ một điểm người dùng không nêu 3 / 6 lần (1 / 3 ở lượt đo + 2 / 3 ở lượt thật của nhánh); low và medium 3 / 3.
-Sửa việc này cần đổi lời dặn và đo lại — không làm ở nhánh này. Lỗi gộp ý trong câu mô tả điểm cũng chưa sửa.
+Sửa việc này cần đổi lời dặn và đo lại — không làm ở nhánh này. Lỗi gộp ý trong câu mô tả điểm của thẻ lịch (1 mục / 5 đã đối chiếu, 0 chi tiết bịa hẳn, bộ kiểm của code không bắt) cũng chưa sửa: phiên điều phối chốt GHI GIỚI HẠN sau khi một phiên khác đọc tay 36 câu trả lời ở ô hỏi đáp và thấy 0 / 36 lần lặp lại.
