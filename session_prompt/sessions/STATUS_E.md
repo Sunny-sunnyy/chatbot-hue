@@ -1,4 +1,10 @@
 # STATUS E — GHI ĐÈ theo khuôn bảy mục (KẾT PHIÊN CHIỀU 16:36 20/11/2026, giờ `date`; phiên E chiều 20/11 là terminal `hue-rag-18`) · vai: người kiểm / đọc tay + viết bốn việc của đợt hoàn thiện
+> **CẬP NHẬT 15:27 21/11/2026 (giờ `date`) — phiên E ngày 21/11 làm PHIÊN ĐO của đợt đổi model viết + cải thiện harness; chủ dự án tắt mọi phiên để làm mới ngữ cảnh.**
+> Phiên E mới đọc TRƯỚC file riêng tư `data/thu_bedrock_2026-11-21/do/E_DANG_LAM.md` (việc đầu tiên, script chạy tiếp, hàng việc), rồi ~15 dòng cuối của `data/thu_bedrock_2026-11-21/TIEU_CHI_DO.md`.
+> Đang dở: ô đo riêng cờ `bao_het_luot_tim` (cờ bật trên nhánh vòng-cuối ↔ cờ tắt trên main, cả hai model) — phần 41 câu khó đã đủ, phần thước chạy dở; chạy tiếp bằng `do/o_co_2b.sh` trong thư mục trên. Chưa kết luận READY.
+> Bẫy thêm hôm nay: lượt đo chạy nền là con của phiên Claude ⇒ tắt phiên là mất lượt đang chạy (file kết quả ghi từng dòng nên phần đã xong còn); probe nhiều lượt chỉ dùng bộ chạy chuỗi hoặc route thật.
+> Các mục 1–7 bên dưới là trạng thái việc CŨ của E (kết phiên chiều 20/11), vẫn đứng yên.
+
 
 **Phiên E mới đọc trang này là đủ để làm tiếp.** Trạng thái chung: `session_prompt/HIEN_TRANG.md`, `session_prompt/VIEC_DANG_MO.md` khối 0 (đợt hoàn thiện Phase 9–12 — chủ dự án chốt 15:25 20/11: mọi tính năng đã chốt phải xong ở local trước buổi test). Buổi sáng 20/11 của E: `report_agent/2026-11-20/e_nhat_ky.md` (vẫn đúng: cách bật server cổng 8018, script trình duyệt, bẫy).
 Từ dùng: **dist** = bản dựng giao diện `frontend/dist` (ngoài git; server đọc từ đây) · **lượt máy** = lượt được bật server (máy dùng chung ba dự án, phiên điều phối xin "ok?" trước) · **bộ dò mù** = bộ câu thử do phiên KHÁC người viết soạn khi chưa đọc code.
