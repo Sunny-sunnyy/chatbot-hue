@@ -44,7 +44,7 @@ full_corpus_runtime:
   reranker: none
 
 full_corpus_generation:
-  provider: openai               # openai | bedrock — ĐỔI QUA / ĐỔI VỀ model viết chỉ sửa dòng này. `bedrock` = Claude trên Amazon Bedrock theo khối `bedrock` dưới (đổi TẠM, User 21/11/2026); người chấm của bộ đo luôn là `model` dưới
+  provider: bedrock              # openai | bedrock — ĐỔI QUA / ĐỔI VỀ model viết chỉ sửa dòng này. `bedrock` = Claude trên Amazon Bedrock theo khối `bedrock` dưới (đổi TẠM, User 21/11/2026); người chấm của bộ đo luôn là `model` dưới
   model: gpt-6-luna
   api_key_env: OPENAI_API_KEY
   token_encoding: o200k_base
@@ -54,7 +54,9 @@ full_corpus_generation:
     model: global.anthropic.claude-sonnet-5-5
     region: ap-southeast-1
     max_tokens: 128000           # trường BẮT BUỘC của kiểu gọi Claude ⇒ để mức tối đa của model = coi như không trần (User 21/11/2026); không đặt nhỏ hơn
-    reasoning_default: low       # none | low | medium | high — mức suy luận cho lời gọi KHÔNG tự đặt mức (nhóm lịch tự đặt "low"); TẠM `low`, chọn lại sau lượt đo
+    sua_lich_timeout_seconds: 10 # hạn giờ RIÊNG của lời gọi hiểu ý sửa lịch trên đường Bedrock (đường OpenAI dùng chung router_timeout_seconds); lâu nhất đã đo ở high 7,1 s
+    reasoning_sua_lich: high     # none | low | medium | high — RIÊNG lời gọi hiểu ý sửa lịch (đo 21/11: lệnh khó đúng 5 / 6 ở high, 2 / 6 low, 0 / 6 medium); viết câu lịch + lượt biểu mẫu giữ "low" trong code
+    reasoning_default: high      # none | low | medium | high — mức suy luận cho lời gọi KHÔNG tự đặt mức (nhóm lịch tự đặt "low"); TẠM `low`, chọn lại sau lượt đo
     creds_file_env: HUE_BEDROCK_CREDS_FILE  # TÊN biến môi trường trỏ tới file khoá tạm (JSON) — đường dẫn không ghi vào repo
 
 # Phase 9 B1 (plan docs/superpowers/plans/2026-11-02-phase-9-b1-plan.md D9): mỗi phần một cờ, gỡ độc lập; tắt cả 4 ⇒ chuỗi gửi model như B0.
@@ -63,6 +65,8 @@ assistant:
   today_line: false              # TẮT (B1 P2: từ chối nhầm không giảm). Dòng ngày hôm nay đầu tin nhắn gửi model trả lời (D7)
   may_have_changed_notice: true  # BẬT (B1). Dòng H4c dưới câu trả lời có nguồn vé / điểm đến / lễ hội (D8)
   router_timeout_seconds: 10
+  so_vong_cong_cu: 4             # trần vòng gốc của lượt trợ lý có công cụ (+1 khi có công cụ ngày, +1 khi có công cụ khoảng cách) — giá trị cũ; mở thành khoá 21/11 để bộ đo thử nới
+  so_lan_tim_kho: 2              # số lần model được tìm kho thật trong một lượt (lần tìm đầu của code không tính) — giá trị cũ; mở thành khoá 21/11 để bộ đo thử nới
   song_song_tra_loi: true         # BẬT (User duyệt 05/11; #6 đạt: chữ đầu câu về Huế −1,37 s [0,34; 2,14], an toàn 90 lượt 0 vi phạm): đường stream chạy phần tro_ly_hue cùng lúc định tuyến
   lan_tim_dau: v0                # B2 (plan D1): v0 câu gốc · v1 / v3 câu tìm do định tuyến viết · v2 trợ lý tự gọi tim_kho
   tim_them: true                 # BẬT (B2b Q8: 18 câu nhiều nguồn +1,17 [+0,44; +2,00]; User giữ 03/11). Sau lần tìm đầu, trợ lý được gọi tim_kho thêm ≤ 2 lần
