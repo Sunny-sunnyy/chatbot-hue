@@ -4,7 +4,8 @@ Việc đang mở, ai làm, bước kế: sổ việc `session_prompt/VIEC_DANG_
 
 ## Việc đầu của phiên điều phối khi mở lại
 - Nhắn tên terminal; giao việc theo khối đầu của sổ việc — tin giao việc mở đầu bằng "quyết định nào đang chờ kết quả này", không giao danh sách bước. KHÔNG giao lại hàng đo cờ và các mục Phase 9–12: chúng đứng chờ.
-- Prompt mở phiên không nói mục đích buổi ⇒ hỏi chủ dự án MỘT câu trước khi giao (lỗi mở phiên chiều 21/11).
+- Mặc định: giao NGAY theo sổ việc. Chỉ khi prompt mở phiên hoặc lời chủ dự án nêu một mục đích KHÁC sổ việc (như buổi bàn chiều 21/11) thì hỏi MỘT câu trước khi giao.
+- Khởi động bước 2 của khối A ngay lúc mở: một agent con ngữ cảnh mới soát tích hợp chỉ đọc (skill `soat-tich-hop`), vai đo đọc kết quả. Báo chủ dự án con số ước của bước 0 (8–10 USD Bedrock, khoảng 100 phút máy) trước khi chạy.
 - Hỏi chủ dự án khi việc cần tới: mở hai phiên hay bốn cho ba ngày thử; các câu còn chờ ở `HIEN_TRANG.md` mục 3 (mỗi lần một câu).
 - Ghi ba con số cách làm của ngày vào `session_prompt/SO_CAI_TIEN_CACH_LAM.md`; chép ý mới các phiên nêu vào `session_prompt/Y_CHUA_THU.md`.
 
