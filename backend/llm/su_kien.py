@@ -61,56 +61,100 @@ def _cuoi_thang_am(dau: dt.date) -> dt.date:
     return d
 
 
-def khoang_hoi(cau: str, hom: dt.date) -> tuple[dt.date, dt.date, str] | None:
-    """Khoảng ngày câu gõ nêu ⇒ (từ, đến, nhãn); không nêu / không đọc được ⇒ None. Danh sách dạng ĐÓNG; tuần tính từ thứ Hai (như `ngay_lich`)."""
-    c = " ".join(unicodedata.normalize("NFC", cau).casefold().split())
+def _cac_khoang(c: str, hom: dt.date) -> list[tuple[int, dt.date, dt.date, str, bool]]:
+    """Mọi khoảng ngày chữ `c` (đã chuẩn hoá) nêu ⇒ [(vị trí trong chữ, từ, đến, nhãn, là MỘT ngày ghi bằng số)]. Danh sách dạng ĐÓNG, xét theo thứ tự ưu
+    tiên cũ; chỗ chữ đã được một luật đứng trước nhận thì luật sau không nhận lại ("cuối tuần này" không thành thêm "tuần này"). Tuần tính từ thứ Hai."""
     mot = dt.timedelta(days=1)
     dau_tuan = hom - dt.timedelta(days=hom.weekday())
-    if m := (_NGAY_SO.search(c) or _NGAY_CHU.search(c)):
-        nam = int(m.group(3)) if m.group(3) else hom.year
-        try:
-            d = dt.date(nam, int(m.group(2)), int(m.group(1)))
-        except ValueError:
-            return None
-        if not m.group(3) and d < hom:  # không nêu năm, ngày đã qua ⇒ lần tới
-            d = dt.date(nam + 1, d.month, d.day)
-        return d, d, f"ngày {d:%d/%m/%Y}"
-    if re.search(r"(?<!\w)(?:hôm nay|bữa nay|(?:sáng|trưa|chiều|tối|đêm) nay)(?!\w)", c):
-        return hom, hom, "hôm nay"
-    if re.search(r"(?<!\w)(?:ngày mai|(?:sáng|trưa|chiều|tối|đêm) mai)(?!\w)", c):
-        return hom + mot, hom + mot, "ngày mai"
-    if re.search(r"(?<!\w)cuối tuần (?:sau|tới)(?!\w)", c):
-        return dau_tuan + 12 * mot, dau_tuan + 13 * mot, "cuối tuần sau"
-    if re.search(r"(?<!\w)cuối tuần(?!\w)", c):
-        return max(hom, dau_tuan + 5 * mot), dau_tuan + 6 * mot, "cuối tuần này"
-    if re.search(r"(?<!\w)tuần (?:sau|tới)(?!\w)", c):
-        return dau_tuan + 7 * mot, dau_tuan + 13 * mot, "tuần sau"
-    if re.search(r"(?<!\w)tuần này(?!\w)", c):
-        return hom, dau_tuan + 6 * mot, "tuần này (từ hôm nay)"
-    if m := _THANG_AM.search(c):
+    ra, da_nhan = [], []
+
+    def trong(m) -> bool:
+        return any(m.start() < b and a < m.end() for a, b in da_nhan)
+
+    def them(m, tu, den, nhan, ngay_so=False):
+        da_nhan.append((m.start(), m.end()))
+        ra.append((m.start(), tu, den, nhan, ngay_so))
+
+    for mau in (_NGAY_SO, _NGAY_CHU):
+        for m in mau.finditer(c):
+            if trong(m):
+                continue
+            nam = int(m.group(3)) if m.group(3) else hom.year
+            try:
+                d = dt.date(nam, int(m.group(2)), int(m.group(1)))
+            except ValueError:
+                da_nhan.append((m.start(), m.end()))  # ngày không có thật ("31/2"): giữ chỗ để luật sau không đọc nhầm, không ra khoảng
+                continue
+            if not m.group(3) and d < hom:  # không nêu năm, ngày đã qua ⇒ lần tới
+                d = dt.date(nam + 1, d.month, d.day)
+            them(m, d, d, f"ngày {d:%d/%m/%Y}", True)
+    cuoi_thang = (hom.replace(day=1) + dt.timedelta(days=32)).replace(day=1) - mot
+    dau_thang_sau = (hom.replace(day=1) + dt.timedelta(days=32)).replace(day=1)
+    for mau, tu, den, nhan in (
+            (r"(?<!\w)(?:hôm nay|bữa nay|(?:sáng|trưa|chiều|tối|đêm) nay)(?!\w)", hom, hom, "hôm nay"),
+            (r"(?<!\w)(?:ngày mai|(?:sáng|trưa|chiều|tối|đêm) mai)(?!\w)", hom + mot, hom + mot, "ngày mai"),
+            (r"(?<!\w)cuối tuần (?:sau|tới)(?!\w)", dau_tuan + 12 * mot, dau_tuan + 13 * mot, "cuối tuần sau"),
+            (r"(?<!\w)cuối tuần(?!\w)", max(hom, dau_tuan + 5 * mot), dau_tuan + 6 * mot, "cuối tuần này"),
+            (r"(?<!\w)tuần (?:sau|tới)(?!\w)", dau_tuan + 7 * mot, dau_tuan + 13 * mot, "tuần sau"),
+            (r"(?<!\w)tuần này(?!\w)", hom, dau_tuan + 6 * mot, "tuần này (từ hôm nay)")):
+        for m in re.finditer(mau, c):
+            if not trong(m):
+                them(m, tu, den, nhan)
+    for m in _THANG_AM.finditer(c):
+        if trong(m):
+            continue
         thang = _THANG_CHU.get(m.group(1)) or int(m.group(1))
+        da_nhan.append((m.start(), m.end()))  # "tháng 13 âm": không ra khoảng, và không để luật tháng dương đọc lại
         if not 1 <= thang <= 12:
-            return None
+            continue
         nam_am = nl.solar_to_lunar(hom).year
         for nam in (nam_am, nam_am + 1):
             dau = nl.ngay_duong(1, thang, nam, "am")
             if isinstance(dau, dt.date) and (cuoi := _cuoi_thang_am(dau)) >= hom:
-                return dau, cuoi, f"tháng {m.group(1)} âm lịch"
-        return None
-    if re.search(r"(?<!\w)tháng này(?!\w)", c):
-        cuoi = (hom.replace(day=1) + dt.timedelta(days=32)).replace(day=1) - mot
-        return hom, cuoi, "tháng này (từ hôm nay)"
-    if re.search(r"(?<!\w)tháng (?:sau|tới)(?!\w)", c):
-        dau = (hom.replace(day=1) + dt.timedelta(days=32)).replace(day=1)
-        return dau, (dau + dt.timedelta(days=32)).replace(day=1) - mot, "tháng sau"
-    if m := _THANG_DUONG.search(c):
+                ra.append((m.start(), dau, cuoi, f"tháng {m.group(1)} âm lịch", False))
+                break
+    for mau, tu, den, nhan in ((r"(?<!\w)tháng này(?!\w)", hom, cuoi_thang, "tháng này (từ hôm nay)"),
+                               (r"(?<!\w)tháng (?:sau|tới)(?!\w)", dau_thang_sau, (dau_thang_sau + dt.timedelta(days=32)).replace(day=1) - mot, "tháng sau")):
+        for m in re.finditer(mau, c):
+            if not trong(m):
+                them(m, tu, den, nhan)
+    for m in _THANG_DUONG.finditer(c):
+        if trong(m):
+            continue
         thang = int(m.group(1))
         if not 1 <= thang <= 12:
-            return None
+            continue
         nam = int(m.group(2)) if m.group(2) else (hom.year if thang >= hom.month else hom.year + 1)
         dau = dt.date(nam, thang, 1)
-        return dau, (dau + dt.timedelta(days=32)).replace(day=1) - mot, f"tháng {thang}/{nam}"
-    return None
+        them(m, dau, (dau + dt.timedelta(days=32)).replace(day=1) - mot, f"tháng {thang}/{nam}")
+    return sorted(ra, key=lambda x: x[0])
+
+
+def _mot_khoang(ds: list) -> tuple[dt.date, dt.date, str] | None:
+    """Một khoảng từ các khoảng một đoạn chữ nêu: không có ⇒ None; một ⇒ nó; mọi khoảng đều là MỘT ngày ("từ 23/11 đến 25/11", "hôm nay với ngày mai")
+    ⇒ từ ngày sớm nhất tới ngày muộn nhất; còn lại ("tuần này với tháng này") ⇒ khoảng RỘNG nhất (hẹp hơn sẽ bỏ sót sự kiện người dùng hỏi tới), bằng
+    nhau thì khoảng nêu trước."""
+    if not ds:
+        return None
+    if len(ds) >= 2 and all(x[1] == x[2] for x in ds):
+        tu, den = min(x[1] for x in ds), max(x[1] for x in ds)
+        if tu != den:
+            return tu, den, f"từ {tu:%d/%m/%Y} đến {den:%d/%m/%Y}"
+    _, tu, den, nhan, _ = max(ds, key=lambda x: ((x[2] - x[1]).days, -x[0]))
+    return tu, den, nhan
+
+
+def khoang_hoi(cau: str, hom: dt.date) -> tuple[dt.date, dt.date, str] | None:
+    """Khoảng ngày câu gõ nêu ⇒ (từ, đến, nhãn); không nêu / không đọc được ⇒ None.
+    21/11/2026 (tin của người dùng mô phỏng: "ok thứ 2 23/11 nhé. Thế tuần này với tháng này ở Huế có lễ hội gì không?" từng ra "ngày 23/11" — con số
+    ngày ở câu đệm thắng khoảng ngày ở câu hỏi): đọc khoảng ngày trong CÂU có từ hỏi sự kiện trước; câu đó không nêu khoảng nào mới đọc cả tin (như
+    cũ). Trong một đoạn chữ nêu nhiều khoảng: xem `_mot_khoang`."""
+    chu = unicodedata.normalize("NFC", cau).casefold()
+    cau_con = [" ".join(x.split()) for x in re.split(r"(?<=[.?!…])\s+|\n+", chu) if x.strip()]
+    for x in cau_con:
+        if _HOI.search(x) and (k := _mot_khoang(_cac_khoang(x, hom))) is not None:
+            return k
+    return _mot_khoang(_cac_khoang(" ".join(chu.split()), hom))
 
 
 def _ngay(lich: str, ngay: int, thang: int, nam: int) -> dt.date | None:
