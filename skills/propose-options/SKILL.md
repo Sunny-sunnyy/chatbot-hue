@@ -20,7 +20,7 @@ LẠI, kèm thông tin mới.
 
 - **Câu User nói hiểu được nhiều cách** ("đồng ý" áp cho một hay nhiều câu; dữ liệu / code / tài liệu): khi cách hiểu làm đổi kết quả thì nhắc lại một câu "ý bạn là … đúng không?" và chờ trả lời rồi mới làm (khác việc phiên điều phối giao: nói lại một hai dòng rồi làm luôn).
 - **User liệt kê vài ý bằng dấu phẩy hoặc kết bằng "..."** = "nhớ gì nêu đó": tự nghĩ thêm các ý cùng loại, nói rõ ý nào của User, ý nào mình thêm.
-- **Hướng kỹ thuật User nêu là một gợi ý để xét:** thấy nó chưa phải hướng tốt nhất thì nói TRƯỚC khi làm, kèm căn cứ; User vẫn chọn hướng đó thì làm theo. Chi tiết kỹ thuật User không nêu thì agent tự quyết.
+- **Hướng kỹ thuật User nêu là một gợi ý để xét:** thấy nó chưa phải hướng tốt nhất thì nói TRƯỚC khi làm, kèm căn cứ; User vẫn chọn hướng đó thì làm theo. Chi tiết kỹ thuật User không nêu thì agent tự quyết và ghi lý do một dòng, trừ thứ thuộc hàng "Hỏi User trước" của bảng quyền.
 - **Khuyên bỏ / đóng một hướng chưa từng đo:** không có số chất lượng ⇒ đề xuất phép đo rẻ trước, hoặc ghi rõ "chưa đo, lý do bỏ chỉ là vận hành".
 - **Trước khi đưa một phương án XÂY**, người đề xuất tự trả lời ngay trong đề xuất: "lỗi / cơ hội này đã thấy ở người dùng thật hoặc lượt đo thật chưa — dẫn số /
   file · không làm thì mất gì". Chưa có số ⇒ làm phép đếm rẻ trước (0 đồng thì tự làm, không chờ ai), ý nêu cho `session_prompt/Y_CHUA_THU.md` (dòng cuối báo cáo; phiên điều phối chép vào file); có số rồi mới
