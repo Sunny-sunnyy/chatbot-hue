@@ -174,6 +174,11 @@ class AssistantFlags:
     # hành động `hoi_them`; code thêm một dòng cố định "phần câu hỏi chưa trả lời, bạn gửi riêng" vào khối thay đổi của lịch. Lượt sửa vẫn KHÔNG trả lời
     # câu hỏi đó. TẮT tới khi đo trên cả hai model; cần cờ sua_lich_chua_ho_tro. Tắt ⇒ chuỗi gửi model giống byte.
     sua_lich_kem_hoi: bool = False
+    # 21/11/2026 (bản hẹp của "hỏi lại khi thiếu thông tin"; người dùng mô phỏng, vai sửa lịch, cả hai model: nhờ "thêm X" ⇒ code tự thế chỗ một điểm đang
+    # có, 5 / 8 lượt sửa lịch của lượt mốc; bộ áp trên 144 lịch mẫu: 33–63 % lệnh thêm rơi vào thế chỗ): lệnh THÊM chỉ làm được bằng cách thế chỗ ⇒ lịch
+    # giữ nguyên + dòng nói điểm nào thay được ("bạn nhắn: thay Y bằng X"); lệnh thêm bị luật xếp chặn ⇒ lý do + chỗ làm được. TẮT tới khi đo và chủ dự
+    # án chọn (đổi thứ người dùng thấy); cần cờ sua_lich_v2. Tắt ⇒ bộ áp chạy y như cũ.
+    sua_lich_them_khong_the: bool = False
     # Lịch đã lưu của cuộc vào LƯỢT HỎI THƯỜNG (plan private data/lich_da_luu_2026-11-19/PLAN.md): cuộc có lịch + tuyến `tro_ly_hue` ⇒ code nối một nguồn
     # "Lịch bạn đang có" (lịch + số giờ do code tính) sau ngữ cảnh kho; lượt biểu mẫu / lượt sửa / trò chuyện / câu cố định không nhận. TẮT tới khi
     # đo đạt; cần cờ sua_lich_v2 (route chỉ nạp lịch khi cờ đó bật) + tim_them. Tắt ⇒ chuỗi gửi model giống byte.
@@ -250,6 +255,8 @@ class AssistantFlags:
             raise ValueError("assistant.sua_lich_buoi_toi needs assistant.sua_lich_chua_ho_tro: true")
         if self.sua_lich_kem_hoi and not self.sua_lich_chua_ho_tro:
             raise ValueError("assistant.sua_lich_kem_hoi needs assistant.sua_lich_chua_ho_tro: true")
+        if self.sua_lich_them_khong_the and not self.sua_lich_v2:
+            raise ValueError("assistant.sua_lich_them_khong_the needs assistant.sua_lich_v2: true")
         if self.lich_vao_hoi_thuong and not (self.sua_lich_v2 and self.tim_them):
             raise ValueError("assistant.lich_vao_hoi_thuong needs assistant.sua_lich_v2: true and assistant.tim_them: true")
         if self.anh_lich and (not self.len_ke_hoach_v2 or self.anh_lich_bang is None):
@@ -380,6 +387,9 @@ class AnswerTrace:
     # `sua` = kết quả áp của lượt (số đếm cho log — không chữ)
     lich_luu: dict | None = None
     sua_chon: dict | None = None
+    # cờ `sua_lich_them_khong_the`: câu code đã gợi ý ở lượt ngay trước (route nạp) · câu code gợi ý ở lượt này (route nhớ cho đúng một lượt kế)
+    goi_y_sua: tuple = ()
+    goi_y_moi: tuple = ()
     sua: dict | None = None
     # #6 (plan D2): phần `tro_ly_hue` chạy trước định tuyến rồi bị bỏ vì tuyến khác — số lần, USD (lần gọi xong = usage thật; lần bị huỷ
     # giữa chừng không có usage ⇒ cộng token vào bộ dựng đếm × giá vào = cận dưới), cờ bị huỷ giữa chừng. Chỉ số đếm, không chữ.

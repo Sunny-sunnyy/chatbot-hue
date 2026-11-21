@@ -32,6 +32,7 @@ class Conversation:
     turns: list[tuple[str, str]] = field(default_factory=list)  # (câu hỏi, câu trả lời đã cắt) — chỉ nhớ câu hỏi ⇒ "" hoặc dòng ghi chú tên nơi do code dựng
     expires_at: float = 0.0
     lich: dict | None = None  # sửa lịch bản 2: lịch đã lưu của cuộc (chỉ dữ liệu code dựng — khung, ngày đi, điểm đã bỏ, câu đã kiểm)
+    goi_y_sua: tuple = ()  # cờ `sua_lich_them_khong_the`: câu sửa lịch code vừa gợi ý ("thay Y bằng X") — sống đúng MỘT lượt, không chữ người dùng / model
 
 
 class ConversationStore:
@@ -88,6 +89,19 @@ class ConversationStore:
         """Lịch đã lưu của cuộc CÒN HẠN (cuộc đã quá hạn mà chưa bị dọn ⇒ None — đường tải file không gọi `ensure`, phải tự xét hạn)."""
         conversation = self._items.get(conversation_id)
         return None if conversation is None or conversation.expires_at <= self._clock() else conversation.lich
+
+    def lay_goi_y_sua(self, conversation_id: str | None) -> tuple:
+        """Câu sửa lịch code đã gợi ý ở lượt trước — ĐỌC LÀ XOÁ: lượt này dùng xong (hoặc lỗi giữa chừng) thì lượt sau không còn thấy."""
+        conversation = self._items.get(conversation_id)
+        if conversation is None or conversation.expires_at <= self._clock():
+            return ()
+        goi_y, conversation.goi_y_sua = conversation.goi_y_sua, ()
+        return goi_y
+
+    def luu_goi_y_sua(self, conversation_id: str | None, goi_y: tuple) -> None:
+        conversation = self._items.get(conversation_id)
+        if conversation is not None:
+            conversation.goi_y_sua = tuple(goi_y)
 
     def luu_lich(self, conversation_id: str | None, lich: dict) -> None:
         """Ghi lịch mới nhất của cuộc (thay lịch cũ); cuộc hết hạn ⇒ không ghi. Cùng hạn với lịch sử (30 phút từ lượt cuối)."""

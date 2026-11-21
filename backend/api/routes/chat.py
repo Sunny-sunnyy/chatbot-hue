@@ -583,6 +583,8 @@ async def chat_stream(body: ChatRequest, request: Request):
         if _flags(state).sua_lich_v2 and conversation_id is not None:  # sửa lịch bản 2: lịch đã lưu của cuộc + lựa chọn của thẻ
             trace.lich_luu = request.app.state.conversations.lay_lich(conversation_id)
             trace.sua_chon = None if body.sua_chon is None or trace.lich_luu is None else body.sua_chon.model_dump()
+            if _flags(state).sua_lich_them_khong_the:  # câu code gợi ý ở lượt ngay trước (đọc là xoá ⇒ chỉ lượt này thấy)
+                trace.goi_y_sua = request.app.state.conversations.lay_goi_y_sua(conversation_id)
         kho_cache, ban_luu = _tra_cache(state, body, query, trace, metrics)
         turn = _luot_tu_cache() if ban_luu is not None else answer_turn_stream_parallel(
             query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder, _tim_web(state))
@@ -594,6 +596,8 @@ async def chat_stream(body: ChatRequest, request: Request):
                 _luu_cache(kho_cache, query, trace, metrics)
             if _flags(state).sua_lich_v2 and conversation_id is not None and metrics["outcome"] == "success":
                 luu_lich_cua_luot(request.app.state.conversations, conversation_id, trace, _flags(state))
+                if _flags(state).sua_lich_them_khong_the and trace.goi_y_moi:
+                    request.app.state.conversations.luu_goi_y_sua(conversation_id, trace.goi_y_moi)
 
 
         response = StreamingResponse(
