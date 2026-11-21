@@ -43,7 +43,7 @@ một lượt đủ vòng: gọi công cụ ⇒ trích đúng mã nguồn ⇒ qu
 | Xin danh sách (7 — lăng, lễ hội, chùa, bãi biển, ăn chay, chợ, cà phê ven sông) | số câu mà ≥ 80 % bài đúng loại của kho CÓ MẶT trong nguồn đưa cho model | 1 ⇒ 5 | 1 ⇒ 5 |
 | | — từng câu, bài đúng loại trong nguồn / kho có | lăng 4 ⇒ 8 / 8 · lễ hội 5 ⇒ 39 / 39 · chùa 2 ⇒ 6 / 6 · bãi biển 8 ⇒ 8 / 8 · chợ 3 ⇒ 6 / 6 · ăn chay 1 ⇒ 1 / 6 và cà phê 3 ⇒ 3 / 24 (hai câu này luna KHÔNG gọi công cụ) | lăng 2 ⇒ 8 / 8 · chùa 1 ⇒ 6 / 6 · bãi biển 7 ⇒ 8 / 8 · ăn chay 1 ⇒ 6 / 6 · chợ 3 ⇒ 6 / 6 · lễ hội 0 ⇒ 0 / 39 (không gọi) · cà phê 5 ⇒ 7 / 24 (gọi, lọc theo "ven sông") |
 | | — tên bài đúng loại xuất hiện trong câu trả lời | chùa 2 ⇒ 6 · chợ 4 ⇒ 6 · lễ hội 17 ⇒ 21 · lăng 8 ⇒ 8 | chùa 2 ⇒ 6 · chợ 4 ⇒ 6 · lăng 7 ⇒ 8 · lễ hội 22 ⇒ 22 |
-| "Nơi nào có đặc điểm X" (3, tự đặt lời) | có câu trả lời · có gọi công cụ | 3 ⇒ 3 trả lời; gọi ở 1 câu | 3 ⇒ 3 trả lời; gọi ở 1 câu — câu "hút chân không": 1 quán ⇒ 3 quán + 2 thương hiệu |
+| "Nơi nào có đặc điểm X" (3, tự đặt lời) | có câu trả lời · có gọi công cụ | 3 ⇒ 2 trả lời ở bản đầu (câu "gà rán" chạm trần vòng — xem đoạn dưới bảng); bản cuối, lặp lại 3 lần: 9 / 9 lượt trả lời; gọi công cụ ở 1 câu | 3 ⇒ 3 trả lời; gọi ở 1 câu — câu "hút chân không": 1 quán ⇒ 3 quán + 2 thương hiệu |
 | Kho chỉ nhắc thoáng (3 — sân golf, hồ bơi công cộng, rạp chiếu phim; KHÔNG có mong đợi ghi trước) | số câu được trả lời | 0 ⇒ 2 | 2 ⇒ 3 |
 | Kho không có (4 — sòng bạc, bowling, karaoke, sở thú) | câu từ chối cố định | 4 ⇒ 4 | 4 ⇒ 4 |
 | Một dữ kiện (5) | số câu gọi `liet_ke_bai` | — ⇒ 0 / 5 | — ⇒ 0 / 5 |
@@ -72,7 +72,7 @@ Tiền thật: 160 lượt, 2,33 USD (gần hết là Sonnet) — vượt mốc 
 | 7 câu danh sách: ≥ 80 % bài đúng loại trong nguồn | **Không đạt đủ:** 5 / 7 mỗi model (trước: 1 / 7) |
 | 5 câu "đặc điểm X" của bộ câu mẫu: Đủ ý ≥ 4 ở ≥ 4 / 5 câu | **Chưa đo** — cần người chấm của phiên đo (tôi chỉ chạy 3 câu tự đặt, không chấm điểm) |
 | Sàn: thứ kho không có vẫn bị từ chối | Đạt 4 / 4 mỗi model (bộ 4 câu của tôi). An toàn 10 + ngoài phạm vi 10 của thước: **chưa chạy** |
-| Sàn: chạm trần vòng 0, lỗi trích nguồn 0, lỗi kỹ thuật 0 | Lỗi 0 / 160. Chạm trần: Sonnet 0; luna có (3 / 7 lượt của một câu) TRƯỚC khi ẩn công cụ, 0 / 21 sau — mẫu nhỏ |
+| Sàn: chạm trần vòng 0, lỗi trích nguồn 0, lỗi kỹ thuật 0 | Lỗi 0 / 160. Chạm trần: Sonnet 0; luna có (3 / 7 lượt của một câu) TRƯỚC khi ẩn công cụ; sau khi ẩn 0 / 18 lượt lặp lại (trong đó 3 lượt của câu đó) — mẫu nhỏ |
 | Câu một dữ kiện gọi thừa ≤ 1 / 10 | 0 / 5 mỗi model |
 | Người thứ hai đọc 12 câu trả lời danh sách (tên nào cũng có trong nguồn; dòng làm chứng không bị đọc ngược nghĩa) | **Chưa làm** — thuộc lượt review |
 | Thước + 85 câu không tụt quá nhiễu | **Chưa chạy** — phiên đo |
