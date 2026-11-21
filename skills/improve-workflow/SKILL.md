@@ -1,19 +1,20 @@
 ---
 name: improve-workflow
-description: Tự cải tiến CÁCH LÀM của agent (một agent hay nhiều phiên) — dùng cuối mỗi ngày làm việc, lúc kết phiên / đóng đợt, khi User phải nhắc một điều lần thứ hai hoặc phải tự gợi một hướng agent lẽ ra phải nêu, khi một sự cố quy trình làm mất giờ / tiền / dữ liệu, hoặc khi User xin "rút kinh nghiệm", "cải tiến cách làm". Biến sự cố có bằng chứng thành ≤ 3 thay đổi luật / skill / rào bằng máy do agent tự quyết (một phiên khác đọc), gỡ luật cũ, sửa trí nhớ sai; Không TỰ đổi mục tiêu, tiêu chí đo, luật cứng, quyền, trần tiền hay code sản phẩm — thấy cần đổi thì nêu cho User quyết.
+description: Tự cải tiến CÁCH LÀM của agent (một agent hay nhiều phiên) — dùng cuối mỗi ngày làm việc, lúc kết phiên / đóng đợt, khi User phải nhắc một điều lần thứ hai hoặc phải tự gợi một hướng agent lẽ ra phải nêu, khi một sự cố quy trình làm mất giờ / tiền / dữ liệu, hoặc khi User xin "rút kinh nghiệm", "cải tiến cách làm". Biến sự cố có bằng chứng thành ≤ 3 thay đổi luật / skill / rào bằng máy do agent tự quyết (một phiên khác đọc), gỡ luật cũ, sửa trí nhớ sai. Không TỰ đổi mục tiêu, tiêu chí đo, luật cứng, quyền, trần tiền hay code sản phẩm — thấy cần đổi thì nêu cho User quyết.
 ---
 
 # Tự cải tiến cách làm
 
-Chép sang dự án khác chỉ viết lại khối **"Ở dự án này"** cuối file — tên file của mọi thứ nhắc trong thân tra ở đó. Mặc định: luật về
-CÁCH LÀM do agent tự giữ và tự gọt; User giữ mục tiêu, luật cứng, bảng quyền. Người chạy: phiên điều phối; làm một mình thì chính bạn, "phiên khác" = phiên
+Chép sang dự án khác chỉ viết lại khối **"Ở dự án này"** cuối file — tên file của mọi thứ nhắc trong thân tra ở đó. Luật về CÁCH LÀM
+do agent tự giữ và tự gọt KHI User đã giao việc đó (ngày + lời ghi ở khối cuối); chưa giao thì mọi thay đổi luật trình User. User giữ mục tiêu, luật cứng,
+bảng quyền. Người chạy: phiên điều phối; làm một mình thì chính bạn, "phiên khác" = phiên
 mới ngữ cảnh sạch. File luật của dự án thắng skill này. **Harness** = file luật, skill, hook git, cấu hình từng công cụ, trí nhớ riêng
 của agent.
 
 ## 0. Nhịp — cuối MỖI ngày làm việc, bốn bước; kết phiên / đóng đợt chạy đủ mục 1–5
 
 1. **Đọc các con số:** (a) việc đã báo "xong" bị lật lại · (b) lần User phải nhắc lại · (c) lần User phải tự gợi một hướng agent lẽ ra phải nêu ·
-   con số sản phẩm đang đuổi. Đếm bằng lệnh trên file sẵn có; số chưa ai soát gắn "chưa soát". Các số này, không phải cảm giác, cho biết cách làm tốt lên hay xấu đi.
+   con số sản phẩm đang đuổi. Đếm bằng lệnh trên file sẵn có; số chưa ai soát gắn "chưa soát".
 2. **Hỏi hai chiều:** có làm THỪA không (rào, nghi thức, bước kiểm không bắt lỗi thật) · có NHÌN HẸP không (thước đang đo có đúng thứ người dùng gặp, hướng tốt
    hơn nào chưa ai nêu).
 3. **Lỗi lặp lần HAI** hôm nay ⇒ xử theo nấc ở mục 2 (máy trước, chữ sau). Lỗi gặp lần đầu: sửa việc đó, ghi một dòng bẫy, chưa thành luật.
@@ -28,12 +29,12 @@ của agent.
 
 ## 2. Thay đổi — tối đa 3 mỗi vòng; gỡ trước, rồi máy trước chữ sau
 
-0. **Gỡ / gộp / dời** trước khi thêm: luật trùng, hết hiệu lực, lời dè dặt đã hết lý do, bài học nằm sai chỗ (sổ riêng / trí nhớ của một agent ⇒ về tài liệu
+0. **Gỡ / gộp / dời** trước khi thêm: luật trùng, hết hiệu lực, lời dè dặt đã hết lý do, điều kiện dừng không còn cần, bài học nằm sai chỗ (sổ riêng / trí nhớ của một agent ⇒ về tài liệu
    chung để mọi agent đọc được).
 1. **Bỏ hẳn khả năng sai:** đổi thiết kế, để script làm thay bước người / agent hay làm sai.
 2. **Máy kiểm:** test, hook git, phép kiểm trong script — ưu tiên tầng **mọi agent đều đi qua** (hook git); cấu hình riêng của một công cụ chỉ là lớp thêm. Rào
    mới phải **thử một lần bằng ca cố ý hỏng** trước khi tin; chưa thử ⇒ ghi "chưa thử".
-3. **Cuối cùng mới chữ:** sửa câu của luật có sẵn mà vẫn bị làm sai, hoặc thêm 1–3 dòng vào đúng MỘT chỗ — viết thành việc làm được ngay, nói điều NÊN làm kèm phạm vi và lý do; không kèm chuyện sự cố / mã trong câu luật (chuyện để ở sổ cải tiến).
+3. **Cuối cùng mới chữ:** sửa câu của luật có sẵn mà vẫn bị làm sai, hoặc thêm 1–3 dòng vào đúng MỘT chỗ — viết thành việc làm được ngay, nói điều NÊN làm kèm phạm vi và lý do; chữ "không bao giờ" chỉ dùng cho thứ tuyệt đối, muốn giữ quyền quyết thì viết "hỏi trước khi…"; không kèm chuyện sự cố / mã trong câu luật (chuyện để ở sổ cải tiến).
 
 Hậu quả **không đảo ngược được** (lộ dữ liệu lên repo công khai, xoá dữ liệu, mở dữ liệu cất riêng) ⇒ rào bằng máy ngay lần đầu, không chờ lặp. Rào chỉ một công
 cụ chịu ⇒ luôn giữ dòng chữ tương ứng cho agent khác.
@@ -44,7 +45,7 @@ cứng, quyền, trần tiền, code sản phẩm — thấy cần đổi thì n
 
 ## 3. Quyết → thử → giữ / gỡ — người xét KHÁC người đề xuất
 
-- **Agent tự quyết luật cách làm:** phiên nào cũng đề xuất được; người đề xuất viết diff trên nhánh riêng, một phiên KHÁC người viết đọc; ai gộp theo luật
+- **Agent tự quyết luật cách làm** (khi User đã giao): phiên nào cũng đề xuất được; người đề xuất viết diff trên nhánh riêng, một phiên KHÁC người viết đọc; ai gộp theo luật
   của dự án. Thay đổi chạm luật cứng hoặc bảng quyền, hoặc gỡ / đảo một câu ghi là lựa chọn của chính User ⇒ **hỏi User** một câu, có đáp án kèm hệ quả. Gộp = **cho thử**: ghi sổ `đang thử` (ngày, file đổi,
   theo dõi gì, **ai sẽ xét**). Người đề xuất không tự kết luận luật của mình có hiệu quả; người xét kết luận theo các con số + sự cố có lặp không.
 - **Mỗi vòng, trước khi thêm thay đổi mới,** xét lại **mọi** mục `đang thử`: không lặp và luật được dùng ⇒ `đang dùng`; lặp ⇒ lên một nấc ở mục 2; qua 2 phiên
@@ -63,14 +64,19 @@ cứng, quyền, trần tiền, code sản phẩm — thấy cần đổi thì n
 Vòng nào sửa file bắt đọc lúc mở phiên: giao một agent con ngữ cảnh mới chỉ đọc đúng các file đó, báo lại vai / việc / luật cứng nó nắm được và chỗ khó hiểu —
 sửa chỗ thiếu rồi mới kết vòng.
 
-3–5 dòng lời thường cho User (báo, không xin duyệt): các con số ở mục 0, sự cố nào, đã đổi gì, **đã gỡ gì**, phiên sau theo dõi gì. Một dòng vào sổ việc
-và tổng hợp ngày.
+Vòng nào CÓ đổi gì: 3–5 dòng lời thường cho User (báo, không xin duyệt) — các con số ở mục 0, sự cố nào, đã đổi gì, **đã gỡ gì**, phiên sau theo dõi gì;
+không đổi gì thì không báo. Một dòng vào nơi dự án ghi việc trong ngày.
 
 ## Ở dự án này (hue_rag)
 
-File luật, bảy luật cứng, bảng quyền: `AGENTS.md`, `session_prompt/Session_Prompt.md`, `session_prompt/WORKFLOW.md` · trang hiện trạng + các con số:
-`session_prompt/HIEN_TRANG.md` mục 4 · sổ cải tiến: `session_prompt/SO_CAI_TIEN_CACH_LAM.md` · ý chưa thử: `session_prompt/Y_CHUA_THU.md` · sổ riêng của phiên:
-`session_prompt/sessions/STATUS_<X>.md` · lời User: `data/loi_user/` · sổ việc, tổng hợp ngày: `session_prompt/CURRENT_HANDOFF.md`,
-`report_agent/<ngày>/TONG_HOP.md` · skill đi kèm: `propose-options`, `giao-viec-agent-con`.
-"Agent tự giữ luật cách làm" đang THỬ ba ngày làm việc từ 21/11/2026 — lúc xét lại và số để xét: `session_prompt/HIEN_TRANG.md` mục 4;
-User đổi lại lúc nào cũng được.
+Chép sang dự án khác thì viết lại từng mục dưới; thứ nào dự án không có (sổ riêng của phiên, tổng hợp ngày…) ghi "không có" và bỏ qua bước nhắc tới nó — không
+lập mới chỉ để khớp skill; tối thiểu cần MỘT file sổ cải tiến.
+- User đã giao agent giữ luật cách làm chưa: CÓ, đang THỬ ba ngày làm việc từ 21/11/2026 ("nhóm tự giữ luật cách làm"); lúc xét lại và số để xét:
+  `session_prompt/HIEN_TRANG.md` mục 4; User đổi lại lúc nào cũng được.
+- File luật, bảy luật cứng, bảng quyền: `AGENTS.md`, `session_prompt/Session_Prompt.md`, `session_prompt/WORKFLOW.md` · file bắt đọc lúc mở phiên: danh sách ở
+  `session_prompt/START_SESSION.md` · trang hiện trạng + các con số: `session_prompt/HIEN_TRANG.md` mục 4.
+- Sổ cải tiến: `session_prompt/SO_CAI_TIEN_CACH_LAM.md` · ý chưa thử: `session_prompt/Y_CHUA_THU.md` · sổ riêng của phiên:
+  `session_prompt/sessions/STATUS_<X>.md` · lời User: `data/loi_user/` · nơi ghi việc trong ngày: `session_prompt/CURRENT_HANDOFF.md` và
+  `report_agent/<ngày>/TONG_HOP.md` · trí nhớ riêng của công cụ: thư mục trí nhớ của từng công cụ, ngoài repo.
+- Riêng dự án này: rào riêng tư MỚI hỏi User trước (User 14/11/2026: không thêm rào riêng tư mới — `session_prompt/HIEN_TRANG.md` mục 4). Skill đi kèm:
+  `propose-options`, `giao-viec-agent-con`.
