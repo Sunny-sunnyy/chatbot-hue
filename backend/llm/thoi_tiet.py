@@ -51,6 +51,26 @@ _BAO_LU = re.compile(r"\b(?:bão|lũ|ngập)\b", re.IGNORECASE)
 # 17/11 (plan `2026-11-17-cau-bao-plan.md`, cờ `bao_lu_cong_cu`): danh sách ĐÓNG các từ nguy hiểm thời tiết (nhóm cảnh báo của trang khí tượng, khớp
 # `tra_web._THIEN_TAI` + giông / lốc / mưa đá / nước dâng) — chỉ làm LƯỚI code; đường chính là model chọn `loai` của công cụ
 _BAO_LU_RONG = re.compile(r"\b(?:bão|lũ|lụt|ngập|sạt\s+lở|triều\s+cường|áp\s+thấp|giông|lốc|mưa\s+đá|nước\s+dâng)\b", re.IGNORECASE)
+# 21/11/2026 (bậc 5; đếm 310 câu sổ vết: 3 / 17 câu thời tiết không được đưa công cụ, cả ba là câu nguy hiểm thời tiết; câu "nước sông … có lên cao không"
+# nhận câu từ chối trống, không có câu bản tin chính thức + 112): từ nguy hiểm thời tiết mà danh sách đóng trên chưa có. Dùng CÙNG chỗ với
+# `_BAO_LU_RONG`: cổng đưa công cụ, lưới bão / lũ của lượt, lưới cuối của route. Mỗi dòng một họ từ + các nghĩa KHÁC đã gặp ở hai lượt dò của phiên B
+# (lượt mù + lượt sau khi đọc mẫu). Đây chỉ là LƯỚI: cách nói lạ hơn (gõ không dấu, câu dài chen nhiều chữ) dựa vào việc model tự chọn `loai` của công cụ.
+_TRUOC_NUOC = "".join(f"(?<!{chu} )" for chu in ("giá", "đun", "đưa", "bưng", "cho", "mang", "lấy", "đất", "non", "nhạc", "mua", "múc", "về"))
+_BAO_LU_THEM = re.compile("|".join((
+    # dông — trừ "dông dài", con dông (món ăn), "chạy dông", lỗi gõ tên chợ "Dông Ba" (chỉ khi chữ Ba VIẾT HOA hoặc có "chợ" đứng trước: "dông ba ngày
+    # nay" vẫn là câu thời tiết — review phiên đo 21/11)
+    r"(?<!chạy )(?<!món )(?<!con )(?<!chợ )(?<!xe )\bdông\b(?!\s+(?:dài|nướng|thẳng)\b)(?!\s+(?-i:Ba)\b)",
+    r"(?<!lời )\bsấm\b(?!\s+(?:truyền|trạng|ký|chớp\s+mưa\s+rơi)\b)",  # sấm, sấm sét, sấm chớp — trừ sấm truyền / sấm Trạng / lời sấm, tên bài hát
+    r"(?<!đất )(?<!gỉ )(?<!rỉ )\bsét\b(?!\s+(?:đánh\s+ngang\s+tai|cơm|trà)\b)",  # sét — trừ đất sét, gỉ sét, thành ngữ, "sét cơm / sét trà" (cách viết "set")
+    # nước lên / dâng / về (lũ về). Review phiên đo 21/11: loại trừ từng chữ đứng trước không hội tụ với chữ "nước" ("đất nước lên ngôi", "non nước về
+    # đêm", "mua nước về", "nhạc nước lên đèn", "về nước lên Huế"…) ⇒ điều kiện DƯƠNG: chỉ nhận khi có chữ chỉ đang diễn ra ĐỨNG GIỮA ("nước đang lên"),
+    # hoặc ngay SAU là chữ mức độ / chữ hỏi ("nước lên cao", "nước về chưa") hoặc hết câu ("nước lên!"). Vẫn giữ các loại trừ đã gặp.
+    _TRUOC_NUOC + r"\bnước\s+(?:đang|sắp|đã|cứ|lại)\s+(?:lên|dâng|về)\b(?!\s+(?:men|màu|giá|ngôi|đèn)\b)",
+    _TRUOC_NUOC + r"\bnước\s+(?:lên|dâng|về)(?:\s+(?:cao|nhanh|to|lớn|mạnh|dữ|nhiều|quá|chưa|rồi|tới|đến|không|ko|hả|à|hông)\b|\s*(?:[?!.,;:…]|$))",
+    r"\bmực\s+nước\s+sông\b",
+    r"\bnước\s+sông(?:\s+\S+){0,6}?\s+(?:lên|dâng)\b(?!\s+(?:màu|men)\b)",  # "nước sông Hương mấy hôm nay có lên cao không"
+    r"\bsông(?:\s+\S+){0,2}?\s+(?:đang\s+)?dâng\b(?!\s+(?:hương|lễ|cúng|trà)\b)",  # "sông Hương đang dâng" — trừ "dâng hương", "dâng trà"
+)), re.IGNORECASE)
 CAU_KHONG_PHAI_TIN_BAO = "Dự báo dưới đây chỉ có nhiệt độ và mưa, không có thông tin bão hay áp thấp."
 # như CAU_DAN_DU_BAO: thay câu từ chối ở lượt bão / lũ. Đọc tay 17/11: bản đầu "Mình không có tin bão / lũ" đọc được thành "không có bão" (tự trấn an)
 CAU_DAN_BAO_LU = "Mình không theo dõi được tin bão / lũ — bạn xem bản tin chính thức dưới đây."
@@ -89,17 +109,22 @@ def la_cau_bao_lu(text: str) -> bool:
     return bool(_BAO_LU.search(t) or (_CANH_BAO.search(t) and co_tu_khoa(_CANH_BAO.sub(" ", t))))
 
 
+def co_bao_lu_them(text: str) -> bool:
+    """Câu có một cụm của `_BAO_LU_THEM`. Gộp khoảng trắng trước khi so: các phép loại trừ "chữ đứng trước" đòi đúng MỘT dấu cách."""
+    return bool(_BAO_LU_THEM.search(" ".join(_nfc(text).split())))
+
+
 def la_cau_bao_lu_rong(text: str) -> bool:
     """Lưới của cờ `bao_lu_cong_cu`: danh sách từ rộng, hoặc "cảnh báo" cùng một từ thời tiết (như `la_cau_bao_lu`)."""
     t = _nfc(text)
-    return bool(_BAO_LU_RONG.search(t) or (_CANH_BAO.search(t) and co_tu_khoa(_CANH_BAO.sub(" ", t))))
+    return bool(_BAO_LU_RONG.search(t) or co_bao_lu_them(t) or (_CANH_BAO.search(t) and co_tu_khoa(_CANH_BAO.sub(" ", t))))
 
 
 # Lùi theo luật 2.5 của plan (Golden 17/11: câu taxi không từ thời tiết ⇒ model gọi công cụ rồi từ chối ⇒ bảng mưa thay câu từ chối): công cụ chỉ
 # đưa khi câu cuối / câu liền trước có từ thời tiết HOẶC từ nguy hiểm thời tiết (danh sách đóng `_BAO_LU_RONG`)
 def co_tu_khoa_luot_rong(query: str, history) -> bool:
     def co(t: str) -> bool:
-        return co_tu_khoa(t) or bool(_BAO_LU_RONG.search(_nfc(t)))
+        return co_tu_khoa(t) or bool(_BAO_LU_RONG.search(_nfc(t)) or co_bao_lu_them(t))
     return co(query) or bool(history and co(history[-1][0]))
 
 

@@ -79,6 +79,10 @@ class AssistantFlags:
     today_line: bool = False
     may_have_changed_notice: bool = False
     lan_tim_dau: str = "v0"
+    # 21/11/2026 (bậc 5, đếm sổ vết: cổng từ khoá bỏ sót 4 / 60 câu cần công cụ): chế độ ĐƯA ba công cụ thời tiết / ngày / khoảng cách cho trợ lý —
+    # "tu_khoa" (mặc định, như trước: chỉ khi câu cuối / câu liền trước có từ khoá) | "luon" (mọi lượt của tuyến trợ lý Huế; model tự quyết có gọi không).
+    # Chọn theo provider: `assistant.cong_cong_cu` cho đường OpenAI, `full_corpus_generation.bedrock.cong_cong_cu` khi provider là bedrock.
+    cong_cong_cu: str = "tu_khoa"
     # Bậc 1b (21/11/2026): số lần MODEL được tìm kho thật trong một lượt — khoá `assistant.so_lan_tim_kho`, mặc định = `MODEL_SEARCH_LIMIT` như trước;
     # mở thành cấu hình để bộ đo thử nới. (Số vòng công cụ: `assistant.so_vong_cong_cu`, generator đọc.)
     so_lan_tim_kho: int = MODEL_SEARCH_LIMIT
@@ -236,6 +240,8 @@ class AssistantFlags:
             raise ValueError("assistant.luu_tru_lich needs assistant.len_ke_hoach_v2: true and the lodging table (assistant.lich_trinh_bang_luu_tru)")
         if self.quan_lich and (not self.len_ke_hoach_v2 or self.quan_bang is None):
             raise ValueError("assistant.quan_lich needs assistant.len_ke_hoach_v2: true and the restaurant table (assistant.lich_trinh_bang_quan)")
+        if self.cong_cong_cu not in ("tu_khoa", "luon"):
+            raise ValueError(f"cong_cong_cu must be 'tu_khoa' or 'luon', got {self.cong_cong_cu!r}")
         if not set(self.len_ke_hoach_o_hien) <= set(O_BIEU_MAU_V2):
             raise ValueError(f"assistant.len_ke_hoach_o_hien must be a subset of {O_BIEU_MAU_V2}")
 
@@ -249,7 +255,9 @@ class AssistantFlags:
         # toạ độ nạp theo bảng rộng nhất đang dùng: bảng v8 (bản 2, chứa mọi id của v3) khi cờ bản 2 bật, không thì bảng v3 — một dict theo id
         bang_toa_do = bang_v2 or bang
         toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang_toa_do) if values["ban_do_lich"] and bang_toa_do is not None else None
-        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), so_lan_tim_kho=int(config.get("so_lan_tim_kho", MODEL_SEARCH_LIMIT)),
+        sinh = settings.get("full_corpus_generation") or {}
+        cong = (sinh.get("bedrock") or {}) if sinh.get("provider") == "bedrock" else config  # cổng công cụ chọn theo provider đang chạy
+        return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), cong_cong_cu=str(cong.get("cong_cong_cu", "tu_khoa")), so_lan_tim_kho=int(config.get("so_lan_tim_kho", MODEL_SEARCH_LIMIT)),
                    bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
                    khoang_cach_bang=kc.nap_bang(BACKEND_DIR / config["khoang_cach_bang"], BACKEND_DIR / config["lich_trinh_bang_v2"])
@@ -286,7 +294,7 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 
 
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
-                    if name not in ("lan_tim_dau", "so_lan_tim_kho", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
+                    if name not in ("lan_tim_dau", "cong_cong_cu", "so_lan_tim_kho", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
                                      "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do",
                                      "khoang_cach_bang", "su_kien_bang"))
 
@@ -773,9 +781,6 @@ def chu_cua_model(trace: AnswerTrace) -> str:
     return answer[len(dau) + 2:] if dau and answer.startswith(f"{dau}\n\n") else answer
 
 
-_DONG = re.compile(r"\bdông\b", re.IGNORECASE)  # "dông" = cách viết khác của "giông"; chỉ lưới cuối dùng (không đổi việc đưa công cụ cho model)
-
-
 def _khop_luoi_cuoi(query: str, flags: "AssistantFlags | None", history=()) -> bool:
     """Chính câu người dùng HOẶC câu hỏi liền trước khớp lưới bão / lũ (như `tt.la_luot_bao_lu` của đường thường — câu hỏi tiếp "thế có nên đi không"
     sau một câu bão vẫn là lượt bão; thừa hơn sót)."""
@@ -787,8 +792,7 @@ def _khop_luoi_cuoi(query: str, flags: "AssistantFlags | None", history=()) -> b
 def _luot_bao_lu(query: str, history=()) -> bool:
     """Câu này HOẶC câu hỏi liền trước là câu bão / lũ: danh sách rộng của `tt`, "cảnh báo" + một từ thời tiết, hoặc "dông". MỘT chỗ xét cho lưới cuối
     (`_khop_luoi_cuoi`) và cho mục web (`cong_web`) — hai nơi lệch nhau thì mục web để model viết ngay cạnh câu 112 (soát khác hãng 18/11, hai lần)."""
-    cau = [query] + ([history[-1][0]] if history else [])
-    return tt.la_luot_bao_lu(query, history) or any(_DONG.search(unicodedata.normalize("NFC", c)) for c in cau)
+    return tt.la_luot_bao_lu(query, history)  # 21/11: "dông" nay nằm trong danh sách của `tt` (kèm loại trừ "dông dài", "Dông Ba") — không còn mẫu riêng ở đây
 
 
 def luoi_cuoi_bao(query: str, trace: AnswerTrace, flags: "AssistantFlags | None") -> bool:
@@ -1277,6 +1281,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
     """Cờ `lich_trinh` bật ⇒ công cụ thứ hai cho generator; B5b: cờ `thoi_tiet` bật ⇒ code dò ngữ cảnh thời tiết của câu, và **chỉ khi** câu cuối /
     câu hỏi liền trước có từ khoá ⇒ thêm công cụ `thoi_tiet` (D4). Cờ tắt ⇒ {} (generator gọi y như trước — Q1)."""
     extra = {}
+    luon = flags.cong_cong_cu == "luon"  # đưa ba công cụ ở mọi lượt, không xét từ khoá; hai ngoại lệ dưới (ngoài 7 ngày, số tính sẵn) giữ nguyên
     if flags.lich_trinh:
         extra["lich_trinh_fn"] = lich_trinh_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.bang_lich,
                                                      flags.du_bao if flags.thoi_tiet else None)
@@ -1284,21 +1289,21 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         tu_khoa, ngoai_7 = tt.co_tu_khoa_luot(query, trace.history), tt.ngoai_7_ngay(query, hom_nay_vn())
         # vòng chỉnh 1 (A duyệt, sửa D3): câu ngoài 7 ngày ⇒ KHÔNG đưa công cụ (không số dự báo nào để model chép) — code nối câu cố định
         trace.thoi_tiet_ctx = {"bao_lu": tt.la_cau_bao_lu(query), "ngoai_7": ngoai_7, "buoi": tt.co_buoi(query), "tu_khoa": tu_khoa,
-                               "co_cong_cu": tu_khoa and not ngoai_7}
+                               "co_cong_cu": (tu_khoa or luon) and not ngoai_7}
         if flags.bao_lu_cong_cu:  # plan 17/11 (đã lùi theo luật 2.5): cổng = từ thời tiết + từ nguy hiểm thời tiết (câu cuối / câu liền trước); lưới rộng
             tu_khoa = tt.co_tu_khoa_luot_rong(query, trace.history)
             trace.thoi_tiet_ctx.update(bao_lu=tt.la_luot_bao_lu(query, trace.history), bao_lu_cau=tt.la_cau_bao_lu_rong(query),
                                        bao_lu_cong_cu=True, bao_lu_model=False, luoi_cuoi=_luot_bao_lu(query, trace.history),
-                                       tu_khoa=tu_khoa, co_cong_cu=tu_khoa and not ngoai_7)
+                                       tu_khoa=tu_khoa, co_cong_cu=(tu_khoa or luon) and not ngoai_7)
         tuan_sau = tt.ngay_tuan_sau(query, hom_nay_vn())
         if tuan_sau and not ngoai_7:  # rà nợ 15/11: "tuần sau" có phần trong 7 ngày ⇒ code đặt khoảng ngày (không có ⇒ khoá vắng, như trước)
             trace.thoi_tiet_ctx["tuan_sau"] = tuan_sau
         if trace.thoi_tiet_ctx["co_cong_cu"]:
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
     # như thời tiết — lượt không có từ khoá ⇒ danh sách công cụ như cũ (Q1); số đã tính sẵn trước lần gọi đầu (`trace.khoang_cach`) ⇒ không đưa công cụ
-    if flags.khoang_cach and trace.khoang_cach is None and kc.co_tu_khoa_luot(query, trace.history):
+    if flags.khoang_cach and trace.khoang_cach is None and (luon or kc.co_tu_khoa_luot(query, trace.history)):
         extra["khoang_cach_fn"] = khoang_cach_for_turn(trace, flags.khoang_cach_bang)
-    if flags.ngay_lich and nl.co_tu_ngay_luot(query, trace.history):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
+    if flags.ngay_lich and (luon or nl.co_tu_ngay_luot(query, trace.history)):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
         extra["con_luot_fn"] = lambda: trace.model_searches < flags.so_lan_tim_kho
