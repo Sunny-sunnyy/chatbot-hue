@@ -28,8 +28,18 @@ kèm yêu cầu: nói "chuyển về luna" là về được ngay.
 | Người chấm | `backend/evaluation/full_corpus_eval.py`, hàm `run_judge_luna` | Ép `provider: openai` cho riêng người chấm. |
 | Test của lớp dịch | `backend/tests/test_bedrock_model.py` | 16 ca, không gọi mạng. |
 
-**Không bị đụng khi đổi provider:** kho, chỉ mục Qdrant, cách tìm (10 đoạn), mọi lời dặn (prompt), mọi cờ ở mục `assistant:`, công cụ của trợ lý, bộ kiểm trích nguồn,
-giao diện, bộ đếm token dựng ngữ cảnh, người chấm. Chín loại lời gọi model dùng chung MỘT đối tượng model nên đổi là đổi cả chín, không đổi lẻ được.
+**Không bị đụng khi đổi provider:** kho, chỉ mục Qdrant, cách tìm (10 đoạn), mọi cờ ở mục `assistant:`, công cụ của trợ lý, bộ kiểm trích nguồn,
+giao diện, bộ đếm token dựng ngữ cảnh, người chấm. Lời dặn (prompt) gửi luna không đổi một ký tự.
+
+**Riêng đường Sonnet có thêm bốn đoạn dặn** (sửa 11:26 21/11/2026; chủ dự án cho chỉnh lời dặn cho hợp model). Chữ nằm ở cuối `backend/llm/full_corpus_prompt.py`, các hằng `SONNET_*`;
+`generator_openai_full_corpus.py` chỉ nối chúng khi đang chạy lớp dịch Bedrock. Mỗi đoạn có một ca đã đo làm lý do:
+
+| Hằng | Nối vào lời gọi nào | Vì sao (số đo 21/11) |
+|---|---|---|
+| `SONNET_TRA_LOI` | trả lời không công cụ, trợ lý có công cụ (cả bản có lịch sử, bản nhiều ý) | 34–42 / 66 câu của Sonnet bị người chấm trừ "Trọng tâm", có câu nhắc một con số bốn lần. Đoạn dặn: nói điều được hỏi trước, không nhắc lại; KHÔNG dặn viết ngắn. Hiệu quả: chờ lượt đo của phiên đo. |
+| `LICH_V2_LOI_DAN_SONNET` (+ `SONNET_GIU_DUNG_VAT` cho lượt biểu mẫu cũ) | viết câu cho thẻ lịch | Bản luna ép "đúng một câu, 30 từ"; Sonnet dồn ý làm đổi nghĩa (nguồn ghi HAI bảo vật, viết thành ba). Bản Sonnet: một đến hai câu, khoảng 50 từ, kèm dặn giữ danh hiệu / con số đi đúng vật. Mục thử: sai hoặc lỏng 3 / 4 lần trước ⇒ sai 1 / 12 lần sau. Thử 40 từ: sai 2 / 6 ⇒ giữ 50. |
+| `SONNET_SUA_LICH` | hai lời gọi hiểu ý sửa lịch | Lệnh mơ hồ ("ngày 2 hơi nặng, làm nhẹ bớt"): Sonnet tự bỏ một điểm (high 3 / 6). Lệnh dời cụ thể bị luật chặn: medium trả "chưa hỗ trợ" 3 / 3. Sau đoạn dặn (ở high): 9 lệnh × 3 lượt đúng ý 27 / 27, lâu nhất 3,8 giây. |
+| `SONNET_DINH_TUYEN` | định tuyến (cả bản có lịch sử, bản viết câu tìm) | Sonnet đẩy câu về nơi ở rìa Huế sang "ngoài phạm vi" (lượt phải trả lời bị từ chối: luna 1 / 43, medium 6, high 4). Trên 14 câu tự đặt × 2: low 14 / 16 ⇒ 16 / 16 nơi rìa; high vốn 16 / 16; câu nơi tỉnh khác vẫn bị từ chối 8 / 8. Bộ câu mù của phiên đo mới là phép thử chính. | Chín loại lời gọi model dùng chung MỘT đối tượng model nên đổi là đổi cả chín, không đổi lẻ được.
 
 **Đường luna giống từng byte so với trước khi có lớp dịch** — một phiên khác đã chụp 10 loại lời gọi gửi OpenAI ở bản trước và bản sau, ra cùng một mã băm [người thứ hai kiểm].
 
@@ -124,6 +134,7 @@ không có trường `model` trong thân. Yêu cầu được ký AWS SigV4 (tê
 | Lịch sử + vòng công cụ | các mục `function_call`, `function_call_output` rời | `tool_use` nằm trong tin assistant, `tool_result` ở tin user ngay sau | gộp các mục liền nhau cùng vai vào một tin; `call_id` = `id` của `tool_use` |
 | Khối suy luận giữa các vòng công cụ | SDK tự giữ | **bỏ** khối suy luận ở lượt kế vẫn 200 (4 / 4 cách thử) | bỏ luôn, không cất chữ ký |
 | Ảnh | `input_image` dạng data URL | khối `image` với `source.type: base64` | tách kiểu ảnh + dữ liệu từ data URL |
+| **Khuôn JSON + công cụ trong CÙNG một lời gọi** (bẫy đắt nhất 21/11) | gửi cả hai, luna gọi công cụ rồi viết | gửi `output_config.format` cùng `tools` ⇒ sau khi đã có kết quả công cụ, Claude gọi công cụ TIẾP thay vì viết, tới hết vòng rồi lượt thành câu từ chối. Phát lại một thân yêu cầu đã đủ dữ liệu: viết 0 / 8 ở low, 0 / 8 medium, 0 / 8 high, 0 / 8 không suy luận; thêm câu "hãy viết" vào kết quả công cụ: 1 / 8; ẩn công cụ đó: quay sang gọi công cụ khác 8 / 8. Chỉ BỎ khuôn thì viết 8 / 8. | lời gọi vừa có công cụ vừa có khuôn ⇒ không gửi khuôn; thêm một công cụ nội bộ `tra_loi` mang đúng khuôn đó. Claude gọi nó để nộp câu trả lời (hoặc viết chữ thường ⇒ lớp dịch bọc vào khuôn một trường); SDK không bao giờ thấy công cụ này. Cùng thân yêu cầu sau sửa: nộp câu trả lời 8 / 8 ở low và 8 / 8 ở high. Lời gọi chỉ có khuôn (định tuyến, viết câu lịch, hiểu ý sửa lịch, ảnh, chấm) vẫn ép khuôn như cũ. |
 | Stream | stream thật, chữ chạy dần | `invoke-with-response-stream` ⇒ **403**: bộ khoá đang dùng không có quyền | stream giả: gọi trọn, phát MỘT mảnh chữ rồi sự kiện kết thúc; lượt model xin công cụ không phát chữ |
 | Nhiệt độ / top_p | không gửi | không gửi | không gửi |
 | `store`, `prompt_cache_key`, `include_usage` | có | không có nghĩa | bỏ qua |
@@ -154,12 +165,14 @@ khoảng 2.000 token: 15–20 giây; 0 lần bị giới hạn tần suất (429
 - **Tiền mỗi câu:** một câu trả lời có nguồn khoảng 0,018 USD trên Sonnet, cùng loại câu trên luna khoảng 0,0007 USD (khoảng 25 lần). Lượt hỏi tiếp có model tự tìm thêm: 0,048 USD.
 - Hạn giờ mỗi lượt vẫn là 45 giây; chưa lượt nào tới 35 giây.
 
-Giới hạn đã đo của Sonnet ở nhóm lịch (21/11, chưa sửa — sửa cần đổi lời dặn và đo lại):
-- Lệnh sửa lịch MƠ HỒ ("ngày 2 hơi nặng, làm nhẹ bớt"): Sonnet hay TỰ bỏ một điểm người dùng không nêu — low 3 / 3 lần, medium 3 / 3, high 3 / 6 (ba lần còn lại đổi kiểu đi sang "nhẹ nhàng");
-  luna 3 / 3 giữ nguyên lịch và bảo người dùng nói cụ thể.
-- Câu mô tả điểm trong lịch: Sonnet chép nhiều chi tiết hơn luna và không lấy gì ngoài đoạn nguồn (đối chiếu 17 câu: 0 chi tiết bịa), nhưng có thể GỘP ý làm đổi nghĩa — một câu đã viết
-  tháp Phước Duyên, chuông và bia "đều là Bảo vật quốc gia" trong khi nguồn chỉ ghi chuông và bia. Gặp ở 1 mục trên 5 mục đã đối chiếu. Bộ kiểm câu của code không bắt được loại lỗi này.
-  Ở ô hỏi đáp thường thì CHƯA thấy: một phiên khác đọc tay 36 câu trả lời (12 câu × luna, Sonnet medium, Sonnet high), soi riêng chỗ dễ gộp: 0 / 36. Chủ trương 21/11: ghi giới hạn, chưa sửa lời dặn.
+Giới hạn đã đo của Sonnet ở nhóm lịch (viết lại 11:26 21/11/2026, sau bốn đoạn dặn):
+- Câu mô tả trong thẻ lịch: Sonnet chép nhiều chi tiết hơn luna và không lấy gì ngoài đoạn nguồn (đối chiếu 17 câu: 0 chi tiết bịa), nhưng có thể ghép sai ý của một câu nguồn dài.
+  Sau khi nới (một đến hai câu, ~50 từ) + đoạn dặn: mục đã thấy lỗi viết đúng 11 / 12 lần, còn 1 / 12 lần vẫn gán danh hiệu cho cả ba vật. Bộ kiểm câu của code không bắt được loại lỗi này.
+  Ở ô hỏi đáp thường thì chưa thấy (một phiên khác đọc tay 36 câu: 0 / 36).
+- Câu dài hơn có hai giá phải trả: (i) file PowerPoint cắt câu quá 170 ký tự bằng "…" — 13 / 51 mục ở lượt đo (trước khi nới: 0 / 27); không nâng trần cắt vì trang 5 điểm chỉ đủ ba dòng chữ;
+  (ii) câu nhắc tên điểm khác bị bộ kiểm thay bằng câu dự phòng — 4 / 102 mục (trước khi nới: Sonnet 0 / 27, luna 0 / 27).
+- Lời gọi hiểu ý sửa lịch chạy dưới hạn 10 giây (hạn của định tuyến). Ở high trước đoạn dặn, lần lâu nhất là 7,0 giây; sau đoạn dặn 3,8 giây (27 lần). Quá hạn ⇒ câu đó đi như câu hỏi thường, không sửa lịch.
+- Thẻ lịch trên màn hẹp 390 px và bản in với câu dài gấp rưỡi: CHƯA thử (đọc code: ô chữ tự xuống dòng, không cắt).
 
 Chưa thử qua giao diện với Sonnet: lịch 1 ngày / kiểu gấp / nhiều sở thích · ảnh ra 2–3 tên · câu bão lũ · màn hẹp điện thoại · hai người hỏi cùng lúc ·
 khoá hết hạn giữa một lượt · cả bộ test với `provider: bedrock`.
