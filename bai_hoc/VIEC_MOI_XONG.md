@@ -1,6 +1,6 @@
 # Việc mới xong — báo cáo bốn ý (việc mới nhất ở trên)
 
-*Cập nhật lần cuối: 13:48 21/11/2026 · thêm mục 23 (model viết đổi tạm sang Claude Sonnet 5.5 mức high; kèm số so với luna và các bước đã đo mà không đưa vào) · thêm mục 22 (câu xin danh sách: trợ lý nói thật "danh sách có thể chưa đủ"; đã bật) và mục 21 (người sau gõ đúng câu người trước đã hỏi thì nhận lại câu trả lời cũ gần như ngay; đã bật sau một lượt thật trên trình duyệt) · trước đó 16:11 20/11/2026 · thêm mục 20 (trang "Bản đồ" riêng trong menu: 40 điểm tham quan, lọc theo loại; đã thử trên trình duyệt ở màn rộng và bề rộng điện thoại; ĐÃ gộp vào bản chính `b2f27d78`, giao diện bản chính đã dựng lại 16:17 20/11/2026) · trước đó 16:08 20/11/2026 · thêm mục 19 (sửa lịch bằng lời: khi KHÔNG dời được một điểm, trợ lý nói vì sao và gợi ý chỗ dời được; đã có một lượt thật trên giao diện và một phiên khác kiểm lại) · trước đó 13:45 20/11/2026 · thêm mục 18 (bản sửa "báo đã dời khi lịch không đổi" — việc mục 17 ý 5 ghi "được duyệt nhưng không làm được" nay đã làm; cả bộ test trên bản đã có sửa này (chạy 13:44–14:04 20/11/2026): 55 / 55 file, 1.555 ca đạt, 0 hỏng) · trước đó 11:40 20/11/2026 · mục 17 thêm ý 5 (lượt soát lần hai riêng cho các bản sửa: ba bản sửa nhỏ đã gộp, một bản không làm được, phần còn lại ghi giới hạn; cả bộ test trên bản cuối CHƯA chạy lúc viết) · trước đó 10:02, ngày 20/11/2026 · mục 17 thêm đợt hai (hai model Gemini: 16 phát hiện, 6 điểm mới; hai sửa của đợt hai đã gộp vào bản chính 10:10 20/11/2026) · trước đó 09:39, ngày 20/11/2026 · thêm mục 17 (một AI khác hãng soát code: 13 điểm, sửa bốn, ghi giới hạn tám, kèm một lỗi nhóm tự tìm; ba thay đổi của mục này đã gộp vào bản chính 09:41 20/11/2026) · trước đó 08:49, ngày 20/11/2026 thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; đã gộp vào bản chính 08:58 20/11/2026) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
+*Cập nhật lần cuối: 19:47 21/11/2026 · thêm mục 24 (thước người dùng mô phỏng: mốc ba lượt trên hai model, mức nhiễu, và cái trần do kho thiếu) · 13:48 21/11/2026 thêm mục 23 (model viết đổi tạm sang Claude Sonnet 5.5 mức high; kèm số so với luna và các bước đã đo mà không đưa vào) · thêm mục 22 (câu xin danh sách: trợ lý nói thật "danh sách có thể chưa đủ"; đã bật) và mục 21 (người sau gõ đúng câu người trước đã hỏi thì nhận lại câu trả lời cũ gần như ngay; đã bật sau một lượt thật trên trình duyệt) · trước đó 16:11 20/11/2026 · thêm mục 20 (trang "Bản đồ" riêng trong menu: 40 điểm tham quan, lọc theo loại; đã thử trên trình duyệt ở màn rộng và bề rộng điện thoại; ĐÃ gộp vào bản chính `b2f27d78`, giao diện bản chính đã dựng lại 16:17 20/11/2026) · trước đó 16:08 20/11/2026 · thêm mục 19 (sửa lịch bằng lời: khi KHÔNG dời được một điểm, trợ lý nói vì sao và gợi ý chỗ dời được; đã có một lượt thật trên giao diện và một phiên khác kiểm lại) · trước đó 13:45 20/11/2026 · thêm mục 18 (bản sửa "báo đã dời khi lịch không đổi" — việc mục 17 ý 5 ghi "được duyệt nhưng không làm được" nay đã làm; cả bộ test trên bản đã có sửa này (chạy 13:44–14:04 20/11/2026): 55 / 55 file, 1.555 ca đạt, 0 hỏng) · trước đó 11:40 20/11/2026 · mục 17 thêm ý 5 (lượt soát lần hai riêng cho các bản sửa: ba bản sửa nhỏ đã gộp, một bản không làm được, phần còn lại ghi giới hạn; cả bộ test trên bản cuối CHƯA chạy lúc viết) · trước đó 10:02, ngày 20/11/2026 · mục 17 thêm đợt hai (hai model Gemini: 16 phát hiện, 6 điểm mới; hai sửa của đợt hai đã gộp vào bản chính 10:10 20/11/2026) · trước đó 09:39, ngày 20/11/2026 · thêm mục 17 (một AI khác hãng soát code: 13 điểm, sửa bốn, ghi giới hạn tám, kèm một lỗi nhóm tự tìm; ba thay đổi của mục này đã gộp vào bản chính 09:41 20/11/2026) · trước đó 08:49, ngày 20/11/2026 thêm mục 16 (sửa nhỏ cho mục 15: câu "kể hết các chỗ vừa nêu"; đã gộp vào bản chính 08:58 20/11/2026) · trước đó 21:29 ngày 19/11 thêm mục 15 (hỏi tiếp về nơi vừa được nhắc tới; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 19:20 thêm mục 14 (thử đưa nhiều chữ nguồn hơn cho model; số trong báo cáo kỹ thuật đã qua một lượt đối chiếu độc lập) · trước đó 15:53 thêm mục 13 (hỏi tiếp về lịch vừa lập; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó 14:49 thêm mục 12 (thử mức suy luận của model viết; đã qua một lượt đối chiếu độc lập trước khi đưa vào) · trước đó thêm dòng **Đã thử** ở mục 7, 8, 9 (thử trên giao diện thật trưa 19/11 — cả ba cách thử không ra đúng như bài viết lúc đầu, đã sửa cách thử và ghi thêm giới hạn) · trước đó: thêm mục 7–11 (các việc xong sáng 19/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) và ghi chú "(19/11: …)" vào những dòng của mục 6 nay đã đổi · trước đó 09:12, ngày 19/11/2026: thêm mục 6 (lượt đo cuối tối 18/11; đã sửa theo một lượt đối chiếu độc lập trước khi đưa vào) · bản đầu: các việc xong ngày 18/11; đã sửa theo một lượt kiểm độc lập trước khi đưa vào. Tối 18/11 một phiên đã tự chạy cả năm mục "cách thử" trên hệ thống thật — kết quả ghi ở dòng **Đã thử** cuối mỗi mục.*
 
 - **File này là gì:** mỗi việc vừa xong mà người dùng trợ lý — hoặc chính anh — thấy khác, nhóm ghi ở đây đúng bốn ý: thấy gì khác · bằng chứng · chưa làm / giới hạn · cách anh thử trong 2 phút. Mục giữ khoảng 2 tuần rồi gỡ (phần đáng giữ lâu đã nằm trong các bài học).
 - **Cách đọc:** đọc ý 1 và ý 3 của từng mục là đủ biết hôm đó có gì; ý 2 để biết tin tới đâu; ý 4 làm khi anh rảnh, sau khi bật hệ thống theo sổ tay bàn giao (`guides/RUNBOOK_BAN_GIAO.md`) mục 1–2 rồi mở `http://127.0.0.1:8010/`.
@@ -13,6 +13,98 @@
 **Từ dùng chung cho các mục 19/11:** **cờ** = một dòng bật / tắt trong file cấu hình, tắt là hệ thống chạy như trước khi có tính năng · **lời dặn** = đoạn chữ cố định gửi kèm mọi
 câu hỏi để bảo model cách trả lời (tên gốc: system prompt) · **token** = đơn vị đếm chữ của model (một mẩu của từ; model tính tiền và đặt giới hạn theo đơn vị này) · **bộ câu mẫu**, **bộ an toàn**,
 **sàn**, **người chấm**: như ở mục 6 bên dưới.
+
+## 21/11 — 24. Thước "người dùng mô phỏng": mốc ba lượt trên hai model — và vì sao thước này sắp chạm trần của kho
+
+*Viết 19:57 21/11/2026 (giờ `date`). Đây là một việc ĐO, không đổi gì người dùng trợ lý thấy. Số trong mục là của tối 21/11.*
+
+**Từ dùng ở mục này:** **người dùng mô phỏng** (mới) = một model thứ ba (Claude Opus 5.5) được giao đóng vai một du khách có MỤC TIÊU, tự gõ từng tin, đọc câu trả lời rồi hỏi tiếp — như một người dùng thật ngồi chat ·
+**vai** = một nhân vật cho người dùng mô phỏng đóng, kèm hoàn cảnh và thứ người đó cần có sau cuộc trò chuyện · **phiên** = một cuộc trò chuyện của một vai, nhiều nhất năm lượt hỏi · **ý** = một phần của mục tiêu (mỗi vai có 3–4 ý; 12 vai cộng lại 38 ý) ·
+**phiên đạt** = MỌI ý của vai đó đều được trợ lý đáp cụ thể · **đọc mù** (mới) = người chấm đọc bản ghi cuộc trò chuyện đã giấu tên model (chỉ còn "hệ X", "hệ Y") nên không thể thiên vị bên nào ·
+**mức nhiễu** (mới) = chạy lại y nguyên, không đổi gì, mà con số vẫn lệch bao nhiêu — chênh nhỏ hơn mức này thì chưa nói được là hơn hay kém · **mốc** = con số "trước khi sửa", để sau này so ·
+**lượt hỏng** = một lượt hỏi mà người dùng không nhận được thứ họ hỏi ở lượt đó (bị từ chối, bị bỏ im, bị làm sai, hoặc lỗi) · **hết vòng công cụ** = model gọi công cụ (tìm kho, tra khoảng cách…) hết số lần cho phép mà chưa viết được câu trả lời, người dùng nhận một câu từ chối ·
+**câu bị rút** = model đã viết nhưng bước kiểm trích nguồn của code không cho qua, người dùng thấy lỗi và nút thử lại · **model cũ** = gpt-6-luna · **model đang chạy** = Claude Sonnet 5.5 (đổi tạm từ 21/11, mục 23) · **kho** = bộ bài mà trợ lý được phép trả lời từ đó.
+
+**Vì sao có việc này.** Chiều 21/11 anh chọn cho ba ngày tới "đuổi một con số sản phẩm": số phiên người dùng mô phỏng đạt mục tiêu. Con số lúc đó (model cũ 6 / 12, model đang chạy 9 / 12) mới là MỘT lượt mỗi model, một người đọc —
+chưa biết chạy lại thì lệch bao nhiêu, nên chưa dùng để so trước ↔ sau được. Việc tối 21/11 là lấy mốc cho đàng hoàng.
+
+**Thước này là gì, khác bộ 176 câu mẫu thế nào.** Bộ 176 câu mẫu hỏi MỖI CÂU MỘT LƯỢT, có đáp án viết sẵn, một model chấm đúng / đủ ý. Nó đo tốt "một câu hỏi rõ ràng có được trả lời đúng không", nhưng không thấy được chuyện xảy ra
+khi một người hỏi tiếp, hỏi cụt, hỏi ba ý một lúc, hay nhờ sửa lịch rồi hỏi thêm. Thước mới gồm 12 vai, ví dụ: một gia đình có người lớn tuổi đau gối cần điểm ít leo bậc và tổng tiền vé; hai sinh viên có một khoản tiền nhỏ;
+người muốn ăn ba bữa ở ba quán; người đi vùng ven bằng xe máy; cặp vợ chồng lập lịch hai ngày rồi sửa bằng lời; người chỉ hỏi cộc lốc; người nhờ trợ lý đặt phòng, gọi xe hộ; người dân Huế tìm quán ngồi làm việc có chỗ đậu ô tô;
+người đi lễ chùa hỏi theo âm lịch. Mỗi vai hỏi qua đúng đường mà giao diện web dùng, nên mọi thứ người dùng thật gặp (thẻ lịch, mục "Từ web", dòng ghi chú, lỗi) đều có trong bản ghi.
+
+**Đo thế nào.**
+- Ba lượt chạy liền nhau (18:36–19:35), cùng một bản code, cả hai model, tắt bộ nhớ đệm câu trả lời (thứ cho người sau gõ đúng câu người trước đã hỏi nhận lại câu trả lời cũ — mục 21) để lượt sau không ăn theo lượt trước. Mỗi lượt là 12 phiên mỗi model: model cũ 56 · 55 · 54 lượt hỏi, model đang chạy 52 · 52 · 52.
+- Chấm bằng đọc mù: bản ghi được xuất ra với tên model thay bằng "hệ X / hệ Y" (lượt thứ ba còn đảo X với Y), mỗi lượt giao cho một agent mới chưa biết gì về dự án đọc trọn từng phiên. Người đọc không nhìn lời "cảm ơn, đủ rồi" của người dùng mô phỏng;
+  chỉ xét từng ý có được đáp CỤ THỂ trong phần trả lời chính hay không. Thông tin chỉ nằm ở mục "Từ web (chưa kiểm)" không được tính. Trợ lý nói thật "tư liệu không có" cho một ý thì ý đó không đạt. Riêng khi đếm lượt hỏng: lượt đáp được một phần và nói thật phần kia không có thì KHÔNG tính là hỏng; lượt chỉ có câu "không có" thì vẫn tính là hỏng.
+- Bảng 38 ý và các quy ước cho chỗ khó phân xử được ghi thành một file luật sau lần đọc đầu của lượt 1, rồi mọi lần đọc sau dùng nguyên file đó. Lượt 1 được HAI agent đọc độc lập: kết quả khớp nhau ở cả 12 vai của cả hai model.
+  Sau lượt 2 và lượt 3 có thêm vài quy ước cho chỗ sát ranh mới gặp (mỗi chỗ lệch nhiều nhất một ý); chúng được ghi lại để các lần đo sau chấm cùng một mức.
+
+**Kết quả** [agent đọc mù chấm; lượt 1 có người thứ hai đọc lại]:
+
+| | Lượt 1 | Lượt 2 | Lượt 3 | Mức nhiễu (chênh lớn nhất giữa hai lượt) |
+|---|---|---|---|---|
+| Model cũ — phiên đạt / 12 | 6 | 5 | 6 | 1 phiên |
+| Model đang chạy — phiên đạt / 12 | 7 | 7 | 8 | 1 phiên |
+| Model cũ — ý đạt / 38 | 29 | 28 | 30 | 2 ý |
+| Model đang chạy — ý đạt / 38 | 31 | 32 | 32 | 1 ý |
+| Model cũ — số lượt hỏng | 22 | 19 | 13 | 9 lượt |
+| Model đang chạy — số lượt hỏng | 11 | 10 | 6 | 5 lượt |
+
+Cách đọc bảng:
+- **Mốc:** model đang chạy 7–8 phiên đạt trên 12, model cũ 5–6. Không đổi gì mà chạy lại thì mỗi model lệch tới 1 phiên ⇒ sau này một bản sửa chỉ được gọi là có tác dụng khi ở cả ba lượt con số sau sửa đều cao hơn lượt mốc tương ứng (mỗi lượt thêm một phiên là đủ) và cộng ba lượt lại chênh nhiều hơn mức nhiễu.
+- **So hai model:** ở cả ba lượt model đang chạy đều hơn (7 > 6, 7 > 5, 8 > 6); cộng ba lượt là 22 so với 17 phiên trên 36, chênh 5 — lớn hơn mức nhiễu. Luật nhóm đang dùng để đọc số đo nhỏ là: mọi lượt cùng chiều VÀ chênh gộp lớn hơn mức nhiễu thì mới nói "hơn".
+  Hai điều kiện đều thoả ⇒ nói được: trên thước này model đang chạy hơn model cũ khoảng một phiên rưỡi mỗi lượt (5 phiên chia ba lượt).
+- **Số lượt hỏng** dao động mạnh giữa các lượt (model cũ 22 rồi 13); mức nhiễu 5–9 lượt là quá lớn để dùng dòng này làm thước chính. Chưa tách được vì sao nó dao động (người dùng mô phỏng mỗi lượt gõ một khác; luật chấm cũng được ghi thêm vài quy ước sau lượt 2). Nhóm dùng dòng này để biết LỖI GÌ hay gặp, không dùng để so hơn kém.
+- Phần máy đếm (không cần người đọc) cho thấy hai model hỏng theo hai cách khác nhau: model cũ có 13 · 13 · 7 lượt kết thúc bằng một câu từ chối, trong đó 7 · 8 · 3 lượt là do hết vòng công cụ;
+  model đang chạy chỉ 2 · 1 · 0 lượt từ chối và 0 lượt hết vòng, nhưng có 1 · 2 · 0 lượt lỗi kỹ thuật (một lượt hết hạn 45 giây, hai lượt câu bị rút).
+- Ngoài 12 vai còn bốn vai "để riêng" do một người khác trong nhóm soạn mà không nhìn bảng lỗi, máy tự chấm: cả hai model gần như đạt hết ở cả ba lượt (model đang chạy 12 / 12 ý cả ba lượt; model cũ 12 · 12 · 11). Bốn vai này đã ở trần nên chỉ dùng để phát hiện TỤT sau một bản sửa.
+
+**Con số này KHÔNG nói gì.**
+- Không phải tỉ lệ với người thật. Người dùng do model đóng kiên nhẫn hơn, hỏi rõ hơn và dễ chấp nhận câu trả lời hơn người thật; nhóm gọi con số là "tỉ lệ đạt trong mô phỏng". Nó dùng để tìm lỗi và so trước ↔ sau trên cùng điều kiện.
+- 12 vai là ít: một vai đổi kết quả đã là 1 / 12. Vì thế mới cần ba lượt và mức nhiễu.
+- Người chấm không có kho trong tay nên không kiểm được câu trả lời ĐÚNG SỰ THẬT hay không; chỉ kiểm có đáp cụ thể, và đánh dấu khi câu trả lời tự mâu thuẫn. Độ đúng vẫn do bộ 176 câu mẫu và phần kiểm trích nguồn giữ.
+- Ba lượt chạy lúc hai model cùng chạy song song ⇒ số giây chờ của các lượt này không dùng để nói nhanh chậm.
+
+**Cái trần do kho thiếu — điều đáng biết nhất của lượt đo này.** Nhìn từng ý qua cả sáu lần đo (hai model × ba lượt), có bốn ý KHÔNG lần nào đạt. Ba ý là do kho không có:
+- gia đình có người đau gối cần 3–4 điểm được xác nhận ít leo bậc — kho chỉ ghi số bậc cụ thể ở khoảng mười bài, phần lớn bài điểm đến không nói;
+- người muốn đi tiếp Hội An cần biết đi thế nào — kho là kho về Huế, không có dòng nào tả đường hay xe đi Hội An;
+- người đi lễ hỏi được chụp ảnh trong chùa không — kho có vài bài nói luật chụp ảnh, không bài nào nói về ngôi chùa được hỏi;
+
+Ý thứ tư thì nửa nọ nửa kia: lễ hội, sự kiện "tuần này, tháng này" có ngày cụ thể. Ở các lượt đo trợ lý chỉ nêu được chương trình theo mùa, không có ngày. Nhóm đã dựng một bảng lễ hội – sự kiện theo ngày, nhưng tính năng dùng bảng đó còn tắt và phần đọc "tuần này / tháng này" của nó còn một lỗi đã thấy — nên chưa nói được ý này trượt vì kho hay vì trợ lý.
+Thêm một ý trượt 5 / 6 lần: quán yên tĩnh để ngồi làm việc mà CHÍNH quán đó có chỗ đậu ô tô — kho chỉ ghi chỗ đậu ô tô ở vài bài quán.
+
+Ba ý do kho thiếu thì trợ lý KHÔNG thể đạt nếu kho không được bổ sung, vì trợ lý chỉ trả lời từ kho — và nó đã làm đúng: nói thật là tư liệu không có. Hệ quả: ba vai chứa các ý đó không bao giờ thành "phiên đạt", nên với model đang chạy con số cao nhất có thể chỉ khoảng 8–9 / 12,
+trong khi mốc đã là 7–8 và mức nhiễu là 1. Nói cách khác, ở model đang chạy thước "số phiên đạt" còn rất ít chỗ: nhiều nhất thêm được khoảng một phiên, đúng bằng mức nhiễu — một bản sửa tốt cũng khó hiện ra trên con số này. Từ đây nhóm đo từng bản sửa bằng thứ sát hơn: các ý của đúng vai mà bản sửa nhắm tới,
+số lượt hỏng theo từng nguyên nhân, bộ câu khó, và một kịch bản demo chạy lặp. Bổ sung kho (số bậc, chỗ đậu xe, luật chụp ảnh, đường đi tỉnh bạn) là việc của anh quyết — nhóm đã ghi vào danh sách chờ anh, chưa tự làm.
+Với model cũ thì thước còn chỗ: nhóm lỗi lớn nhất của nó (hết vòng công cụ, 3–8 lượt mỗi lượt đo) nằm ở phía trợ lý, không ở kho; nhóm đang thử sửa, chưa có số.
+
+Còn ba ý hay trượt mà KHÔNG do kho. Hai ý của vai sửa lịch (thêm một điểm mà không mất điểm khác; hỏi "ngày 1 đi hết mấy tiếng" trong cùng tin nhờ sửa lịch): model cũ trượt cả ba lượt, model đang chạy trượt hai trong ba. Và ý "từ Huế lên Bạch Mã đi thế nào" của vai đi vùng ven: model cũ trượt cả ba lượt, model đang chạy trượt một trong ba — đây là chỗ hai model khác nhau rõ nhất. Cả ba là lỗi của trợ lý, không phải của kho; nhóm đang sửa phần sửa lịch, làm xong sẽ có mục riêng.
+
+**Hai lỗi của chính phép đo, đã bắt và sửa.** Một phép đo cũng là code, cũng sai được:
+- Bộ chạy (chương trình thay người gõ từng tin và ghi lại thứ người dùng thấy) chưa biết một loại sự kiện mới có từ chiều 21/11: khi bước kiểm số gỡ một câu khỏi câu trả lời, giao diện THAY cả ô chữ bằng bản đã gỡ. Bộ chạy cũ sẽ ghi lại bản CHƯA gỡ — tức thứ người dùng không hề thấy.
+  Lỗi này được sửa trước lượt đo đầu; trong ba lượt, sự kiện đó xảy ra ở một lượt hỏi của mỗi model (lượt 1).
+- Bản xuất cho người đọc mù in nhầm dòng đánh dấu "người dùng mô phỏng báo xong" thành một lượt hỏi có nội dung "None". Người đọc lượt 1 đếm các dòng đó là lượt hỏng (2 ở model cũ, 4 ở model đang chạy) và ghi rõ là "hỏng ở phía người mô phỏng";
+  nhóm sửa bản xuất và trừ chúng khỏi bảng (số lượt hỏng lượt 1: 24 ⇒ 22 và 15 ⇒ 11). Số phiên đạt và ý đạt không bị ảnh hưởng.
+
+**Tiền thật.** Ba lượt, tính cả bốn vai để riêng: phía trợ lý 11,18 USD cho model đang chạy và 0,39 USD cho model cũ; người dùng mô phỏng 2,55 USD theo bảng giá trong công cụ đo (bảng đó tính theo giá của Sonnet trong khi người đóng vai là Opus, nên số thật cao hơn).
+Cộng khoảng 14 USD (khoảng 350 nghìn đồng) cho một mốc ba lượt trên hai model. Công đọc của các agent đọc mù không nằm trong số này.
+
+**Ba điều chính.** (1) Đã có mốc đo được: model đang chạy 7–8 / 12 phiên đạt, model cũ 5–6, mức nhiễu 1 phiên; model đang chạy hơn khoảng một phiên rưỡi mỗi lượt. (2) Đây là tỉ lệ trong mô phỏng, không phải với người thật.
+(3) Ba vai không thể đạt vì kho thiếu thông tin ⇒ với model đang chạy, thước "số phiên đạt" chỉ còn chỗ cho khoảng một phiên; muốn con số này lên nữa thì phải bổ sung kho, còn các bản sửa trợ lý sẽ được đo bằng thước sát hơn.
+
+<details><summary>Nguồn</summary>
+
+- Bảng kết quả, chuỗi từng ý của từng vai, cách đọc theo luật ba lượt: `data/thu_bedrock_2026-11-21/do/moc_12vai/doc_mu/TONG_HOP_MOC.md` [đã chạy; riêng tư].
+- Luật chấm + bảng 38 ý + quy ước chỗ sát ranh: `data/thu_bedrock_2026-11-21/do/moc_12vai/doc_mu/LUAT_CHAM.md`; bản đọc từng lượt: `…/doc_mu/r1/DOC_MU_r1.md`, `DOC_MU_r1_nguoi_2.md`, `…/r2/`, `…/r3/` [đã chạy; riêng tư].
+- Cột máy (số lượt hỏi, từ chối, hết vòng, lỗi kỹ thuật, thay chữ), bốn vai để riêng, tiền: `data/thu_bedrock_2026-11-21/do/moc_12vai/KET_QUA_MOC.md` [đã chạy; riêng tư].
+- Ý nào do kho thiếu (đếm bằng `scripts/grep_kb.sh`): `data/thu_bedrock_2026-11-21/b_buoc_4/NHOM_LOI_MOC_r1.md` mục 3 [đã chạy; riêng tư].
+- Bộ chạy: `data/thu_bedrock_2026-11-21/c_nguoi_dung_mo_phong/chay.py` [code, riêng tư]; luật đọc số đo nhỏ: `skills/run-experiment/SKILL.md` mục 4. Thành phần của các lượt "từ chối" (hết vòng / tự từ chối / nói thật không làm thay): đếm lại trên `…/do/moc_12vai/r{1,2,3}/luot_luna.jsonl` [đã chạy].
+- Bản xuất cho người đọc mù trước và sau khi sửa lỗi in dòng "None": `…/doc_mu/r1/he_X_ban_dau_co_luot_None.md` ↔ `he_X.md` (và hai file `he_Y…`) [riêng tư].
+- Bốn thứ kho thiếu đã nằm trong danh sách chờ anh quyết: `session_prompt/HIEN_TRANG.md` mục 3 (ghi 19:10 21/11/2026). Bộ 176 câu mẫu và người chấm của nó: cùng file, phần "Từ dùng" và mục 1.
+- Biên bản đối chiếu số của mục này: `data/kiem_bai_hoc_2026-11-21/muc_24_moc_12_vai.md` [riêng tư].
+
+</details>
 
 ## 21/11 — 23. Model viết đổi TẠM sang Claude Sonnet 5.5 (Amazon Bedrock), mức suy luận high — gpt-6-luna vẫn nằm sẵn, đổi về bằng một dòng
 
