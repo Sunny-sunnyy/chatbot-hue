@@ -313,3 +313,13 @@ def test_judge_model_defaults_to_openai_and_can_be_claude_at_high_reasoning(monk
     assert settings["full_corpus_generation"]["bedrock"]["reasoning_default"] == "low"  # dict gốc không bị sửa
     with pytest.raises(ValueError):
         judge_settings(settings, "anthropic")
+
+
+def test_judge_agent_sends_no_output_token_cap():
+    """Người chấm không bị đặt trần token đầu ra (trần cũ 1024 gồm cả token suy luận ⇒ phiếu chấm có thể bị cắt)."""
+    from evaluation.full_corpus_eval import JudgeScores, judge_agent
+
+    agent = judge_agent("gpt-6-luna")
+    assert agent.model_settings.max_tokens is None and agent.output_type is JudgeScores
+    assert (agent.model_settings.include_usage, agent.model_settings.store) == (True, False)
+
