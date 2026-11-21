@@ -3,7 +3,7 @@
 Chatbot RAG về văn hóa / du lịch Huế. File này dành cho **mọi agent** (Claude Code, Codex, AGY, sub-agent):
 chỉ trỏ đường và nêu luật cứng; luật đầy đủ ở `session_prompt/`.
 
-- **Mở phiên:** làm theo `session_prompt/START_SESSION.md` (thứ tự đọc, kiểm nhanh, báo; rồi làm ngay việc thuộc hàng "tự làm" của bảng quyền bên dưới — phiên thực thi trong nhóm nhiều phiên thì chờ phiên điều phối giao). Luật chung:
+- **Mở phiên:** làm theo `session_prompt/START_SESSION.md` (thứ tự đọc, kiểm nhanh, báo; rồi làm ngay việc thuộc hàng "tự làm" của bảng quyền bên dưới — phiên thực thi trong nhóm nhiều phiên: việc XÂY chờ phiên điều phối giao; nghĩ, đếm, nêu hướng thì không chờ — mục "Cách nhìn việc" dưới). Luật chung:
   `session_prompt/Session_Prompt.md`; cách làm A/B/C/D: `session_prompt/WORKFLOW.md`.
 - **Skill** là file Markdown thường ở `skills/<tên>/SKILL.md` (Claude Code thấy qua `.claude/skills/`; agent
   khác mở file khi việc cần): `practical-project-coding`, `run-experiment`, `risk-gated-agent-review`,
@@ -14,6 +14,13 @@ chỉ trỏ đường và nêu luật cứng; luật đầy đủ ở `session_p
 
 - **Cách làm việc chung cho mọi agent** ("xong" ghi trước, mức kiểm, báo cáo cho User, review khác hãng): `guides/CACH_LAM_VIEC.md`.
   **Hiện trạng** (đang chạy gì, việc đang mở, quyết định còn hiệu lực): `session_prompt/HIEN_TRANG.md`. Bộ khung chép sang dự án khác: `guides/khung/`.
+
+**Cách nhìn việc** (đang THỬ ba ngày làm việc từ 21/11/2026 — chủ dự án chọn: nhóm tự giữ luật về cách làm; số đo và lúc xét lại ở `session_prompt/HIEN_TRANG.md` mục 4):
+- Chủ dự án nêu KẾT QUẢ muốn có và giới hạn cứng. Hướng kỹ thuật chủ dự án nêu là một gợi ý để xét, không phải đề bài đóng (chủ dự án 21/11: "các bạn phải tự suy nghĩ rộng ra, đúng khả năng của các bạn, chứ không phải là đi theo hướng của tôi mà để tôi dắt các bạn đi vào ngõ cụt"). Agent là bên có chuyên môn: trước một việc lớn tự vẽ đủ bài toán — ai dùng, đo bằng gì, hai ba hướng kể cả hướng chưa ai nhắc, chọn hướng nào, phép đếm nào làm đổi ý — rồi mới làm; thấy hướng được nêu (của chủ dự án hay của phiên điều phối) không phải hướng tốt nhất thì nói TRƯỚC khi làm, kèm căn cứ. Đã nêu căn cứ mà chủ dự án vẫn chọn hướng đó thì làm theo, ghi một dòng.
+- **Mọi phiên tự làm, không chờ ai giao** (câu kín và `.env` vẫn theo luật cứng 1, 3; việc nặng máy vẫn báo trước): nêu hướng khác / nói việc được giao thiếu gì · đếm 0 đồng trên dữ liệu, log, code đã có · đọc thêm code, sổ, tài liệu · phản đối đề bài · nêu ý cho `session_prompt/Y_CHUA_THU.md` (ghi ở dòng cuối báo cáo, phiên điều phối chép vào file).
+- **XÂY** (sửa code, bản thử gọi model): theo việc được giao hoặc bảng quyền dưới. Riêng ý của chính mình: được dựng MỘT bản thử sau cờ tắt khi phép đếm đã ra số, báo phiên điều phối một dòng trước lượt gọi model đầu (máy chỉ có một làn đo); mỗi phiên nhiều nhất một bản thử như vậy đang sống.
+- **Thêm luật, rào, file sổ, vòng review** — kể cả việc TRÌNH chủ dự án một trong các thứ đó — chỉ khi có sự cố đã thấy thật. Câu hỏi thuộc hàng "Hỏi User trước" của bảng quyền vẫn phải hỏi. Câu thử trước khi thêm một việc: nó đổi thứ người dùng THẤY, thứ ta BIẾT về người dùng, hay thứ chủ dự án HIỂU để tự giải thích? Không cái nào ⇒ là rào / nghi thức ⇒ áp dòng này.
+- **Giao việc** mở đầu bằng "quyết định nào đang chờ kết quả này" và kết quả cần có; bước chỉ ghi khi thứ tự là bắt buộc. Việc cỡ vừa trở lên: người nhận nói lại một hai dòng (hiểu cần đạt gì · thiếu gì / đường nào khác) rồi làm luôn — chỉ chờ trả lời khi đề nghị đổi hướng. **Báo xong** kết bằng MỘT dòng: phép này KHÔNG cho biết gì · hướng rộng hơn tôi thấy · đếm rẻ nhất bằng gì (không thấy thì ghi "không").
 
 Luật cứng (chi tiết ở mục ghi trong ngoặc của `session_prompt/Session_Prompt.md`):
 1. Không đọc / in / log `.env` hay secret; nạp env bằng `uv run --env-file .env …` (§5).
