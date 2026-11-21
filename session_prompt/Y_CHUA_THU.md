@@ -6,7 +6,7 @@ Cách dùng: phiên nào cũng NÊU được (dòng cuối báo cáo hoặc mộ
 | # | Ý | Ai nêu | Phép đếm / thử rẻ nhất | Trạng thái |
 |---|---|---|---|---|
 | 1 | Chạy một phiên + agent con (hoặc hai phiên: một làm, một kiểm) thay cho bốn phiên + điều phối — tầng phối hợp có thể đang tốn hơn lợi (72 % commit một tháng không chạm code sản phẩm [máy đếm thô theo đường dẫn]) | C, E 21/11 | một ngày chạy kiểu đó, đếm việc đóng được + ba con số cách làm | chưa hỏi chủ dự án |
-| 2 | Hỏi chủ dự án "tới đâu đó" nghĩa là gì: bao giờ bảo vệ, phải chạy được gì trước hội đồng, ai bấm thử | B 21/11 | một câu hỏi | chưa hỏi |
+| 2 | Từ đích của đồ án (chủ dự án tự demo + tự trình bày cả bức tranh + trả lời câu hỏi vặn — `HIEN_TRANG.md` mục 4, 16:41 21/11/2026): gọn hệ thống về thứ chủ dự án giải thích được — mỗi cờ đang bật nói được trong một câu kèm một con số, cờ chỉ để bù model yếu thì xét gỡ (trùng ý 5) | A 21/11/2026 | bảng: mỗi cờ bật · một câu "để làm gì" · một số đo · chủ dự án đã đọc mục `bai_hoc/` của nó chưa | chưa đếm |
 | 3 | Sàn "câu ngoài tỉnh bị từ chối" đang dựa vào việc model tự chọn từ chối sau khi tìm; sửa ở bước định tuyến có thể bền hơn sửa chữ từng cờ | E 21/11 | đếm trên các lượt thước + câu khó đã có: bao nhiêu câu ngoài tỉnh lọt định tuyến, kiểu nào lọt | đã duyệt đếm, gác |
 | 4 | Dời MỘT điểm trong lịch chỉ làm được 24 / 176 lần — nới luật xếp thay vì chỉ viết câu từ chối cho rõ | E 20/11 | chạy lại 176 ca với luật khu nới, đếm số dời được | chưa đếm |
 | 5 | Bao nhiêu cờ đang bật chỉ để bù cho model yếu (một cờ đã đo: giúp model cũ rõ, model mới không đổi) | C 21/11 | bảng bật / tắt từng cờ trên thước, cả hai model | chưa đếm |
