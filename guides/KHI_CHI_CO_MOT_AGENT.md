@@ -57,7 +57,7 @@ mục 6 (sửa lỗi bốn bước: tái hiện ⇒ nguyên nhân gốc ⇒ mộ
   bảo Codex mở thẳng `skills/<tên>/SKILL.md`.
 
 **Vẫn còn cho mọi agent** (tầng git / script): `.githooks/pre-commit` + `pre-push` (vùng riêng, dạng khoá bí mật, trùng Golden) · `scripts/commit_push.sh` ·
-`scripts/grep_kb.sh` · server từ chối khởi động khi chỉ mục lệch kho hoặc bảng lịch sai.
+`scripts/grep_kb.sh` · bảng lịch sai ⇒ server không khởi động được; chỉ mục lệch kho ⇒ server VẪN bật nhưng mọi câu hỏi nhận 409 "Dữ liệu tra cứu cần được lập chỉ mục lại" (`api/app.py`).
 
 **Còn mở:** (a) một bản luật chung cho Antigravity / Codex thay `Session_Prompt.md` — thuộc luật cách làm, agent tự giữ trong phép thử từ 21/11/2026 (`HIEN_TRANG.md` mục 4);
 chưa ai làm · (b) [chờ User] phần nào của bàn giao **không** ghi vào repo public (để ở `data/`).
