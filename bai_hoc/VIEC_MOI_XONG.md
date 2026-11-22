@@ -60,7 +60,7 @@ Tin dùng để đo, gọi là "tin của gia đình" (do người dùng mô ph�
 3. **Chưa làm / giới hạn.**
    - **Lợi mới đo trên MỘT tin dài.** Chính bản đang chạy, cùng tin đó, hôm nay ra 3, 4 rồi 5 màn hình lỗi trong 6 lần ở ba lượt đo khác nhau — tự dao động 2 lần. Vì vậy căn cứ để mở hai bản về khâu tìm là CƠ CHẾ (đưa đúng đoạn vào bằng chứng: 2 lên 6 trong 6; bằng chứng gọn hơn: 20 xuống 16 đoạn; không kém ở điều nào), nhóm không ghi nó là "giảm lỗi". Các tin dài khác trong lượt đo không có câu tìm gộp nên chưa cho thấy gì.
    - Điều kiện mới của lưới ("đã tìm ít nhất một lần") chưa gặp trên lượt thật nào — mới có ca test.
-   - Cuộc trò chuyện ĐÃ lập lịch: lưới cố ý không chạy; tin dài trong cuộc đó vẫn có thể ra màn hình lỗi. Chưa đo trên model cũ; 3 lần tìm áp cho cả hai model.
+   - Cuộc trò chuyện ĐÃ lập lịch: cả bộ này chưa được đo ở đó — chương trình không loại cuộc có lịch khỏi lưới, nhưng chưa có ca test hay lượt thật nào đi qua đường đó **[chưa kiểm]**. Chưa đo trên model cũ; 3 lần tìm áp cho cả hai model.
    - Thời gian: lượt có viết lại lâu hơn khoảng 10 giây so với lượt trả lời thường.
    - Một ô của phép đo sáng nay (mục 38) hoá ra được cứu nhờ may: dữ kiện "17h30" của tin này đến từ một bài không liên quan do vế cụt "giờ mở cửa ko?" kéo về; lọc vế cụt thì mất ô đó, đúng như đã lường.
    - Hai thứ cùng họ chưa mở: một bản cho vế là lời nhờ không có từ hỏi ("chọn giúp 1–2 điểm ít bậc") đã viết nhưng để tắt — nó chỉ chạm 4 trong 364 tin; một bảng từ xưng hô ("bà", "ông" ⇒ "người cao tuổi") cho lần tìm đầu chưa viết — lần tìm thứ ba đã đóng chỗ đó ở tin đo.
