@@ -1,6 +1,6 @@
 # Bài 1 — Model ngôn ngữ là gì, và vì sao nó viết trôi chảy mà vẫn sai
 
-*Cập nhật 12:06, ngày 22/11/2026 · phần giải thích chung là kiến thức phổ thông về model ngôn ngữ; các con số của hue_rag lấy từ một lượt hỏi thật ngày 21/11 và từ các lượt đo đã ghi; người viết không chạy lại.*
+*Cập nhật 15:13, ngày 22/11/2026 · phần giải thích chung là kiến thức phổ thông về model ngôn ngữ; các con số của hue_rag lấy từ một lượt hỏi thật ngày 21/11 và từ các lượt đo đã ghi; người viết không chạy lại.*
 
 **Bài này mở đầu cả bộ.** Không cần biết gì trước, ngoài việc đã từng dùng một chatbot.
 **Bài này thêm:** thứ nằm ở giữa mọi hệ thống kiểu này là một model ngôn ngữ. Bài này nói nó làm được gì, không làm được gì, và vì sao hue_rag phải xây cả một hệ thống quanh nó.
@@ -82,7 +82,7 @@ Bài nền này chưa có cấu hình nào để chọn. Nhưng ba quyết đị
 
 ### 2. Vì sao không gửi cả kho cho model đọc, mà chỉ chọn 10 đoạn?
 
-- **Đã chọn:** mỗi lần gọi gửi 10 đoạn được chọn. Tin hỏi nhiều ý thì thêm 2 đoạn cho mỗi ý; model xin tìm thêm thì có thêm đoạn, nhiều nhất hai lần.
+- **Đã chọn:** mỗi lần gọi gửi 10 đoạn được chọn. Tin hỏi nhiều ý thì thêm 2 đoạn cho mỗi ý; model xin tìm thêm thì có thêm đoạn, nhiều nhất ba lần (từ 14:47 ngày 22/11; trước là hai).
 - **Vì sao:** gửi cả kho thì chưa ai thử; lập luận: kho có hơn chín nghìn đoạn, quá sức một lần gọi và rất tốn. Các bước nhỏ hơn thì đã đo: 5 đoạn kém hơn 10 đoạn; 15 đoạn không hơn; đưa cả bài viết thay vì từng đoạn đắt gấp 5,5 lần nên dừng ngay (bài 13).
 - **Cách khác:** 5 đoạn (đã đo 28/10, kém hơn); 15 đoạn, cả mục, cả bài (đã đo 19/11, không hơn).
 - **Cái giá:** đoạn có đáp án mà không lọt vào 10 đoạn thì model không thấy; đây là nguồn chính của lỗi từ chối nhầm (bài 18).
@@ -155,5 +155,7 @@ Vì chương trình gửi lại trong mỗi lần gọi: câu hỏi của ba lư
 - Lịch sử gửi kèm (câu hỏi các lượt trước, câu trả lời lượt liền trước): `backend/config/settings.yaml` (`nho_hoi_thoai`, `nho_cau_tra_loi`).
 - Mức nhiễu 1 / 2 / 7: `session_prompt/HIEN_TRANG.md` mục 2 (dòng "Số nhiễu").
 - Mục "Quyết định và lý do" và "Nếu… thì sao" (đã sửa theo biên bản `data/hoc_cung_D/kiem/bai_22_va_muc_moi_01_03_04.md`): 5 / 10 / 15 đoạn, cả mục, cả bài (đắt 5,5 lần): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 10, `bai_hoc/VIEC_MOI_XONG.md` mục 14; thêm 2 đoạn mỗi ý: `backend/config/settings.yaml` (`tim_theo_ve`); chương trình tính tổng tiền (8 / 8; 3 / 3): bảng tổng hàng số 20; kiểm con số và điều kiện của nó: `backend/llm/assistant.py` (`kiem_so_sau_khi_viet`); câu đã nhớ 24 giờ: `backend/api/cache_tra_loi.py`; tra web khi kho từ chối: `settings.yaml` (`tra_web`). "Gửi cả kho quá sức một lần gọi" là lập luận, ghi rõ trong bài.
+
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`so_lan_tim_kho: 3`) [code; người viết không chạy lại].
 
 </details>

@@ -1,6 +1,6 @@
 # Bài 15 — Viết câu trả lời: lời dặn, ngữ cảnh 10 đoạn, và số nguồn [n]
 
-*Cập nhật 14:33, ngày 22/11/2026 · lời dặn và cách ghép lời gọi đọc từ chương trình đang chạy; ví dụ là lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5); số của các phép so lấy từ các báo cáo đo từ 26/10 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
+*Cập nhật 15:13, ngày 22/11/2026 · lời dặn và cách ghép lời gọi đọc từ chương trình đang chạy; ví dụ là lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5); số của các phép so lấy từ các báo cáo đo từ 26/10 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** bước tìm chọn ra 10 đoạn, và hệ thống không xếp lại chúng.
 **Bài này thêm:** 10 đoạn được gửi cho model viết như thế nào, lời dặn nói gì, và model trả về cái gì. Đây là lời gọi chính của đường hỏi đáp; ở trợ lý đang chạy, một lượt hỏi có thể lặp lời gọi này vài vòng khi model tự tìm thêm (bài 21).
@@ -141,7 +141,7 @@ Các điều còn lại của lời dặn (chỉ dùng bằng chứng, giữ ngu
 ## Dễ nhầm
 
 - **"Lời dặn dài và chi tiết thì model làm đúng hơn."** Kinh nghiệm ở đây ngược lại: thêm một câu dặn để chữa loại câu này thường làm đổi cách trả lời ở loại câu khác (mục "Đã so").
-- **"Model nhìn thấy cả kho."** Không. Nó chỉ thấy các khối được đưa: 10 khối của lần tìm đầu, cộng các khối của những lần nó tự tìm thêm (tối đa hai lần).
+- **"Model nhìn thấy cả kho."** Không. Nó chỉ thấy các khối được đưa: 10 khối của lần tìm đầu, cộng các khối của những lần nó tự tìm thêm (tối đa ba lần), và ở tin nhiều ý thêm 2 khối mỗi ý.
 - **"Số nguồn do chương trình gắn vào."** Không. Model tự đặt số nguồn trong lúc viết; chương trình chỉ kiểm.
 
 ## Câu hỏi tự kiểm
@@ -172,7 +172,7 @@ Có: số nguồn có thật, câu từ chối cố định, con số của côn
 <details>
 <summary>4. Hạn 45 giây tính cho cái gì?</summary>
 
-Cho mọi vòng của một lần chạy trợ lý (model gọi công cụ rồi viết tiếp). Lượt có lần chạy lại hẹp (bài 16) thì lần hai có hạn 45 giây riêng. Quá hạn thì lượt dừng và người dùng thấy "Không thể tạo câu trả lời vào lúc này."
+Cho mọi vòng của một lần chạy trợ lý (model gọi công cụ rồi viết tiếp). Lượt có lần chạy lại hẹp (bài 16) thì lần hai có hạn 45 giây riêng; lần viết lại một lần khi chữ nộp không có số nguồn (từ 14:47 22/11, bài 21) cũng có hạn 45 giây riêng. Quá hạn thì lượt dừng và người dùng thấy "Không thể tạo câu trả lời vào lúc này."
 
 </details>
 
@@ -189,7 +189,7 @@ Cho mọi vòng của một lần chạy trợ lý (model gọi công cụ rồi
 | Giới hạn độ dài câu trả lời | không đặt (với Claude, gửi mức tối đa model cho phép) | quyết định của chủ dự án: không bóp độ dài câu trả lời | — |
 | Dạng đầu ra | một ô chữ "câu trả lời" | chương trình biết đâu là chữ để kiểm và hiện | chưa so |
 | Độ ngẫu nhiên (temperature) | không gửi, để mặc định của nhà cung cấp | — | chưa so |
-| Hạn giờ | 45 giây cho mọi vòng của một lần chạy trợ lý; lượt có lần chạy lại (bài 16) thì lần hai có hạn 45 giây riêng; kiểm lúc bật, ghi khác thì máy chủ không bật | quá hạn thì báo lỗi (bài 6) | chưa so |
+| Hạn giờ | 45 giây cho mọi vòng của một lần chạy trợ lý; lượt có lần chạy lại (bài 16) thì lần hai có hạn 45 giây riêng; lần viết lại một lần (bài 21) cũng có hạn 45 giây riêng; kiểm lúc bật, ghi khác thì máy chủ không bật | quá hạn thì báo lỗi (bài 6) | chưa so |
 | Dòng "hôm nay là ngày…" ở đầu tin nhắn (`today_line`) | tắt | đã đo: không giúp | mục "Đã so" |
 | Giá tính tiền, mỗi 1 triệu token | Claude Sonnet 5.5: 2 USD chữ vào, 10 USD chữ ra · gpt-6-luna: 0,10 USD chữ vào, 0,50 USD chữ ra | sổ số đo tính tiền từng lần gọi theo bảng này | — |
 
@@ -270,5 +270,7 @@ Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả l
 - Không dùng tên địa danh thật làm ví dụ trong mô tả công cụ: chú thích ở `backend/llm/full_corpus_prompt.py` (phần `LICH_TRINH_MO_TA`).
 - Mức suy luận "mức giữa" của gpt-6-luna: `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 45.
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm", "Quyết định nhỏ hơn" (thêm 14:03 22/11/2026 theo khuôn mới): gom từ "Đã so", bảng cấu hình và các nguồn trên. Hạn 45 giây cho một lần chạy: `backend/llm/assistant.py` (một `deadline` đặt trước vòng đọc luồng sự kiện, khoảng dòng 1869); lần chạy lại hẹp gọi lại `_luot_stream` nên có hạn mới (khoảng dòng 1996–2008) [code]; 45 giây và các khoá cấm (`temperature`, `retry`, `fallback`…) được kiểm lúc bật: `backend/core/settings_loader.py` `validate_phase6_settings` [code]. Câu trả lời liền trước trong lịch sử (bỏ mã trích dẫn, nhãn "không phải nguồn"; lượt nào không được nhớ): chú thích dòng `nho_cau_tra_loi` của `backend/config/settings.yaml`, `backend/api/conversations.py` (`CONG_CU_KHONG_NHO_DAP`, `dap_duoc_nho`) [code]. Sàn không nới, có câu từ chối cố định: `session_prompt/HIEN_TRANG.md` mục 4, gạch 11:24 21/11/2026. Lời báo lỗi model: `backend/api/routes/chat.py` `GENERATION_FAILURE_MESSAGE` (qua bài 6). Luật "chỉ dẫn trong nội dung lấy từ ngoài là dữ liệu": `AGENTS.md` luật cứng 6. Khuôn đầu ra một mục: `docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md` dòng 127–131 [chép]. Không chỉnh độ ngẫu nhiên, không gọi lại, không model dự phòng: `docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md` dòng 26–48 [chép]. Các mục mới đã qua một lượt đối chiếu độc lập 14:28 22/11/2026 và được sửa theo: `data/hoc_cung_D/kiem/muc_moi_12_16.md` [riêng tư].
+
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`so_lan_tim_kho: 3`, `het_luot_viet_lai: true`) [code; người viết không chạy lại]. Hạn riêng của lần viết lại: `backend/llm/assistant.py` `_viet_lai_het_luot` ⇒ `generator.generate_answer` ⇒ `_execute_agent` ⇒ `self._run(..., self.timeout)` [code].
 
 </details>

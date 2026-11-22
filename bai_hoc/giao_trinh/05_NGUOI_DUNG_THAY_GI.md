@@ -1,6 +1,6 @@
 # Bài 5 — Người dùng thấy gì: các trang của ứng dụng
 
-*Cập nhật 14:13, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
+*Cập nhật 15:15, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
 
 **Bài trước đã biết:** sản phẩm làm ba loại việc: hỏi đáp có nguồn, việc cần tính, và lên kế hoạch.
 **Bài này thêm:** ba loại việc đó nằm ở đâu trên màn hình. Đi một vòng qua các trang, rồi nhìn một lượt hỏi và một lượt lập lịch diễn ra thế nào trước mắt người dùng. Cuối nửa đầu là hai mục mới: vì sao giao diện được làm như vậy, và khi có thứ hỏng thì người dùng thấy gì.
@@ -106,7 +106,7 @@ Bốn quyết định nhỏ hơn ở nửa để tra.
 
 ## Nếu… thì sao
 
-Sáu tình huống của ô chat; bảng đủ ở nửa để tra. Tất cả **đọc từ chương trình**, chưa thử thật. Lời báo trong ngoặc kép là nguyên văn.
+Sáu tình huống của ô chat; bảng đủ ở nửa để tra. Tất cả **đọc từ chương trình**, chưa thử thật, trừ dòng ghi **(đã đo 22/11)**. Lời báo trong ngoặc kép là nguyên văn.
 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa |
 |---|---|---|---|
@@ -114,7 +114,7 @@ Sáu tình huống của ô chat; bảng đủ ở nửa để tra. Tất cả *
 | đang nhận câu trả lời thì đứt kết nối | xoá chữ và nguồn đã hiện | "Kết nối bị gián đoạn. Vui lòng thử lại." và nút "Thử lại" | đã có |
 | máy chủ báo lỗi giữa lượt (model lỗi, kho không tìm được) | xoá chữ đã hiện, hiện lời báo của máy chủ | lời báo tương ứng (bài 6) và nút "Thử lại" | đã có |
 | bước kiểm số nguồn hỏng sau khi chữ đã hiện | rút lại chữ đã hiện | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" (bài 16) | đã có |
-| như dòng trên, nhưng ở tin hỏi tiếp ngay sau một câu trả lời mà cuộc trò chuyện đang nhớ (ví dụ "sửa lại thứ bạn vừa viết") | máy chủ gỡ chữ đã hiện, chạy lại cả lượt một lần mà không đưa câu trả lời cũ cho model | chữ biến mất, dòng trạng thái hiện lại, rồi câu trả lời mới; lần hai vẫn hỏng thì như dòng trên | đã có từ 22/11; trước đó 3 trong 7 lần đo ra màn hình lỗi |
+| như dòng trên, nhưng ở tin hỏi tiếp ngay sau một câu trả lời mà cuộc trò chuyện đang nhớ (ví dụ "sửa lại thứ bạn vừa viết") **(đã đo 22/11)** | máy chủ gỡ chữ đã hiện, chạy lại cả lượt một lần mà không đưa câu trả lời cũ cho model | với model đang chạy: dòng trạng thái lặp lại một nhịp, câu trả lời ra chậm hơn khoảng 5 giây, không thấy chữ nào hiện rồi mất (chữ lần đầu chưa kịp vẽ); lần hai vẫn hỏng thì như dòng trên | đã có từ 22/11; trước đó 3 trong 7 lần đo ra màn hình lỗi, sau 0 trong 5 (chạy lại thật 2 lần) |
 | người dùng bấm "Dừng" | cắt đường nối; máy chủ bỏ lần gọi model đang chờ, không nhớ lượt đó | "Đã dừng. Phần trả lời chưa xong nên không hiện (chưa kiểm nguồn)." và nút "Hỏi lại" | đã có |
 
 ## Dễ nhầm
@@ -247,5 +247,7 @@ Nút "Thử lại" khi không nối được máy chủ gửi lại đúng câu 
 - Mục "Quyết định và lý do", "Quyết định nhỏ hơn", "Nếu… thì sao", "Mọi tình huống hỏng" (sửa theo biên bản `data/hoc_cung_D/kiem/muc_moi_05_06_17_20.md` phần bài 05 [riêng tư]): nhiều trang, chủ dự án chọn "mức 2" và bỏ số [n] ngày 06/11: `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md` (D1, D2) [quyết định đã ghi]; xoá chữ khi lỗi / rút lại (chủ dự án 31/10 11:48), cách quay về "chỉ tiến độ" khi rút > 1 %: `docs/superpowers/specs/2026-10-31-streaming-design.md` (D3, D5), lý do "chưa qua kiểm trích dẫn": `frontend/src/chat.jsx` (chú thích ở nhánh `AbortError`); chữ hiện một lần với Bedrock: `backend/llm/bedrock_model.py` (`stream_response` "stream giả"), thiếu quyền gọi trả chữ dần và AWS gác 22/11: `session_prompt/HIEN_TRANG.md` mục 3; ba hướng công nghệ 01–02/11: `bai_hoc/17_GIAO_DIEN_VA_TOC_DO.md` phần 1; máy chủ gửi file đóng gói: `backend/api/app.py` (`FRONTEND_DIR = frontend/dist`) [code]; tính năng đang mở, nút ảnh theo `app.state.anh`: `backend/api/routes/cong.py` (`tinh_nang`), xô lệch 0,22: chú thích `App.jsx` (`daCoTinhNang`); một cuộc trò chuyện qua các trang (D8): spec cổng đợt 1 và chú thích đầu `App.jsx`; dòng chỉ dẫn sửa lịch: `LenKeHoach.jsx`; tải lại trang là cuộc mới (lỗi 15/11): chú thích `chat.jsx` trước lời gọi `/api/conversation/new`; chạy lại một lần (từ 10:50 22/11; 3 / 7; không áp cuộc có lịch đã lưu; tiền tính cả hai lần): `backend/llm/assistant.py` (`answer_turn_stream_parallel`), giao diện gỡ chữ qua sự kiện `thay_chu` ở `chat.jsx` [code, chưa thử trên trình duyệt]; Dừng không nhớ lượt: chú thích `chat.jsx` nhánh `AbortError`, `routes/chat.py` (`client_disconnected`).
 
 - Phần "Huế qua các thời kỳ" (sáu mốc, chữ viết lại từ bài trong kho, nằm trong trang Giới thiệu; chủ dự án chọn làm ngày 14/11): `frontend/src/HueQuaCacThoiKy.jsx` (chú thích đầu file), `frontend/src/GioiThieu.jsx` [code].
+
+- Dòng chạy lại sau câu trả lời được nhớ đổi nhãn "đọc từ chương trình" ⇒ "đã đo 22/11" (sửa chỗ lệch với bài 16): `report_agent/2026-11-22/b_nho_dap_chay_lai.md` dòng 32 (0 / 5, trước 3 / 7, chạy lại thật 2 / 5) và dòng 36 (đã nhìn trên trình duyệt: dòng tiến độ lặp một nhịp, chậm khoảng 5 giây); `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 ("KHÔNG có chữ nào hiện rồi mất", lý do đọc code giao diện) [đã chạy, phiên đo; người thứ hai kiểm; người viết không chạy lại]. Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml`.
 
 </details>
