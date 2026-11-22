@@ -87,7 +87,10 @@ html .nav-a:hover { background: var(--color-accent-soft); }
 html .nav-a[aria-current="page"] { background: var(--color-river); color: #fff; }
 html .brand svg, html .brand img { color: var(--color-river); }
 
-.h1-hero { position: relative; min-height: 800px; overflow: hidden; background: radial-gradient(900px 520px at 18% 8%, #fff 0%, rgba(255, 255, 255, 0) 70%), var(--color-page); }
+/* Màn rộng: màn đầu cao đúng phần khung nhìn nằm dưới thanh trên, kẹp 520–800 px ⇒ sáu bến, ô hỏi và dòng thời tiết nằm trọn màn đầu của máy xách tay
+   (đo ở 1536 × 695, 1366 × 650, 1280 × 620; trước đó cố định 800 px: bến cuối và dòng thời tiết bị cắt ở đáy). Hình sông co giãn theo ô chứa; cột chữ co khoảng cách
+   và cỡ tiêu đề theo `--cao` (ở 800 px mọi số bằng đúng bản trước). `--h1-tren` = mép trên của màn đầu, `Song.jsx` đo; 69 px = thanh trên ở màn rộng. */
+.h1-hero { --cao: clamp(520px, calc(100vh - var(--h1-tren, 69px)), 800px); position: relative; min-height: var(--cao); overflow: hidden; background: radial-gradient(900px 520px at 18% 8%, #fff 0%, rgba(255, 255, 255, 0) 70%), var(--color-page); }
 .h1-song { position: absolute; inset: 0 0 0 auto; width: min(100%, 1536px); }  /* màn rất rộng: hình sông giữ cỡ của màn 1536 px, neo mép phải — kéo giãn thêm thì bờ sông thoải ra, nhãn bến dưới đè lên ảnh (thấy ở 1920 px) */
 .h1-ve { position: absolute; inset: 0; width: 100%; height: 100%; }
 .h1-ve.hep { display: none; }
@@ -106,27 +109,27 @@ html .brand svg, html .brand img { color: var(--color-river); }
 .h1-nhan { position: absolute; right: 44px; top: -22px; width: max-content; max-width: 240px; display: flex; flex-direction: column; text-align: right; line-height: 1.25; }
 .h1-nhan-phai .h1-nhan { right: auto; left: 44px; text-align: left; max-width: min(240px, var(--cho, 240px)); }
 .h1-nhan-duoi .h1-nhan { right: -32px; top: 42px; max-width: 190px; }  /* bến đầu: nhãn hẹp, nằm trong khoảng nền dưới bờ sông — không đè lên ảnh */
-.h1-nhan-tren .h1-nhan { top: -46px; }  /* bến cuối: nhãn nằm trên tầm bến, trọn trên nền sương */
-.h1-ben-4 .h1-nhan { right: 70px; top: -30px; }      /* bến thứ năm đứng ở mũi nhọn của bờ: nhãn lùi ra xa mũi, nơi dải nền đủ cao cho hai dòng chữ (đo tương phản: sát bến thì cuối dòng chạm ảnh) */
+.h1-nhan-tren .h1-nhan { top: calc(var(--cao) * -.0575); }  /* bến cuối: nhãn nằm trên tầm bến, trọn trên nền sương */
+.h1-ben-4 .h1-nhan { right: 70px; top: calc(var(--cao) * -.0375); }      /* bến thứ năm đứng ở mũi nhọn của bờ: nhãn lùi ra xa mũi, nơi dải nền đủ cao cho hai dòng chữ (đo tương phản: sát bến thì cuối dòng chạm ảnh) */
 .h1-nhan b { font-size: var(--text-dan); font-weight: 600; white-space: nowrap; }
 .h1-ben:hover .h1-nhan b, .h1-ben:focus-visible .h1-nhan b { text-decoration: underline; text-decoration-color: var(--color-sun); text-decoration-thickness: 3px; text-underline-offset: 4px; }
 .h1-nhan small { font-size: var(--text-nho); color: var(--color-muted); }
 .hieu-ung .h1-ben { animation: h1-ben .6s var(--ease-song) both; animation-delay: calc(var(--n) * 150ms + 900ms); }
 @keyframes h1-ben { from { opacity: 0; transform: scale(.4); } }
-.h1-chu { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 60px 32px 0; pointer-events: none; }
+.h1-chu { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: calc(var(--cao) * .075) 32px 0; pointer-events: none; }
 .h1-chu > * { max-width: 620px; pointer-events: auto; }
-.h1-chu .hero-h { font-size: var(--text-h1); line-height: 1.12; color: var(--color-ink); margin: 0 0 18px; max-width: 13ch; }
-.h1-chu .hero-p { margin: 0 0 26px; max-width: 38ch; color: var(--color-muted); font-size: var(--text-dan); }
+.h1-chu .hero-h { font-size: min(var(--text-h1), calc(var(--cao) * .0775)); line-height: 1.12; color: var(--color-ink); margin: 0 0 calc(var(--cao) * .0225); max-width: 6.7em; }  /* ba dòng ở mọi cỡ chữ (13ch = 6,5em sát bề rộng dòng cuối: ở vài cỡ chữ "xứ" rơi xuống dòng thứ tư) */
+.h1-chu .hero-p { margin: 0 0 calc(var(--cao) * .0325); max-width: 38ch; color: var(--color-muted); font-size: var(--text-dan); }
 .h1-chu .hoi { margin-top: 0; border: 1.5px solid var(--color-line); box-shadow: 0 14px 34px rgba(8, 53, 56, .14); }
 .h1-chu .goi-y { justify-content: flex-start; max-width: 620px; }
 .h1-chu .goi-y .chip { background: #fff; color: var(--color-ink); border-color: #B7CFCA; font-size: var(--text-nho); padding: 6px 13px; }
 .h1-chu .goi-y { gap: 6px; margin-top: 14px; }
-.h1-dung { position: absolute; left: 24px; bottom: 16px; z-index: 3; border: 1px solid rgba(255, 255, 255, .6); background: rgba(8, 53, 56, .82); color: #fff; border-radius: 999px;
+.h1-dung { position: absolute; right: 16px; top: 12px; z-index: 3; border: 1px solid rgba(255, 255, 255, .6); background: rgba(8, 53, 56, .82); color: #fff; border-radius: 999px;
   padding: 6px 14px; font-size: var(--text-nho); cursor: pointer; }
 .h1-dung-lai .h1-tam { animation-play-state: paused; }
 .h1-chu .goi-y .chip:hover { border-color: var(--color-accent); }
 /* thời tiết: một dòng neo dưới các câu gợi ý (không còn là thẻ trôi ở góc) */
-html .h1-chu .tt-hop { position: static; width: auto; max-width: 620px; margin-top: 26px; padding: 12px 0 0; background: none; border-radius: 0; border-top: 1px solid var(--color-line);
+html .h1-chu .tt-hop { position: static; width: auto; max-width: 620px; margin-top: calc(var(--cao) * .0325); padding: 12px 0 0; background: none; border-radius: 0; border-top: 1px solid var(--color-line);
   display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
 html .h1-chu .tt-h { font-size: var(--text-phu); color: var(--color-muted); font-weight: 400; }
 html .h1-chu .tt-so { color: var(--color-ink); font-size: var(--text-than); font-variant-numeric: tabular-nums; }
@@ -140,6 +143,20 @@ html .do-song .do-mai { fill: #fff; stroke: var(--color-sun-deep); stroke-width:
 html .nguon { border-top: 0; position: relative; }
 html .nguon::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 8px;
   background: url("/static/hoa_tiet/song_nguon.svg") repeat-x; }
+@media (min-width: 1141px) and (max-height: 868px), (min-width: 1141px) and (max-width: 1360px) {
+  /* Bến chỉ còn tên (như ở điện thoại) khi không đủ chỗ cho dòng mô tả; màn rộng và cao hơn giữ tên + mô tả.
+     · khung nhìn thấp hơn 869 px = hình sông bị nén dọc (màn đầu dưới 800 px): khoảng nền giữa hai khúc sông không đủ cho tên + mô tả của hai bến cuối, dòng mô tả
+       chạm ảnh sông hoặc chạm dòng thời tiết (đo tương phản ở 1536 × 695: 1,8 : 1);
+     · cửa sổ hẹp hơn 1361 px: sông sát mép phải, dòng mô tả của bến bên phải xuống dòng và chạm ảnh / viền bờ (đo ở 1141 × 900: 3,0 : 1; 1341 × 900: 4,48 : 1). */
+  .h1-nhan small { display: none; }
+}
+@media (min-width: 1141px) and (max-height: 720px) {
+  /* máy xách tay (khung nhìn cao tới 720 px): bốn câu gợi ý trong hai hàng (câu thứ năm ở hàng ba) ⇒ dòng thời tiết kết thúc trên mép đáy */
+  .h1-chu .goi-y .chip:nth-child(n+5) { display: none; }
+}
+@media (min-width: 1141px) and (max-height: 668px) {
+  .h1-chu { padding-top: calc(var(--cao) * .055); }
+}
 @media (max-width: 1140px) {
   /* điện thoại + máy tính bảng + cửa sổ hẹp (mốc trùng MAN_DOC của Song.jsx): tiêu đề ⇒ ô hỏi ⇒ CON SÔNG với sáu bến (thấy ngay ở màn đầu) ⇒ câu gợi ý ⇒ thời tiết */
   .h1-hero { min-height: 0; display: flex; flex-direction: column; padding-bottom: 20px; }

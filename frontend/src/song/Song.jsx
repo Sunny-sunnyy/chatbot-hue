@@ -41,7 +41,7 @@ const RONG = 250, RONG_HEP = 84;
 const TAM_HEP = SONG_DOC;
 // Sáu bến ở màn rộng, đặt tay theo hình sông: vị trí dọc dòng (0–1), bờ nào ("a" = bờ trái theo chiều chảy, "b" = bờ phải) và nhãn nằm phía nào của bến —
 // chọn sao cho chữ luôn nằm trên nền sương, không đè ảnh và không đè cột chữ bên trái.
-const T_RONG = [.06, .37, .435, .60, .80, .95], BO = ["b", "a", "a", "b", "a", "a"], NHAN = ["duoi", "trai", "trai", "phai", "trai", "tren"];  // "tren" = bên trái nhưng nhích LÊN: ở bến cuối bờ sông chạy chéo xuống trái, nhãn ngang tầm bến sẽ chạm vào ảnh (đo tương phản: 1,0 : 1 ở cuối dòng)
+const T_RONG = [.06, .37, .435, .60, .80, .99], BO = ["b", "a", "a", "b", "a", "a"], NHAN = ["duoi", "trai", "trai", "phai", "trai", "tren"];  // "tren" = bên trái nhưng nhích LÊN: ở bến cuối bờ sông chạy chéo xuống trái, nhãn ngang tầm bến sẽ chạm vào ảnh (đo tương phản: 1,0 : 1 ở cuối dòng)
 const T_HEP = [.1, .26, .42, .58, .74, .9];
 // Dưới 1140 px cột chữ và con sông chữ S không còn đủ chỗ đứng cạnh nhau (đếm: 1024 px nhãn đè câu dẫn, 768 px ô hỏi đè sông) ⇒ bố cục DỌC như điện thoại.
 // Mốc này phải trùng mốc của khối màn đầu trong song.css.
@@ -50,6 +50,7 @@ const MAN_DOC = "(max-width: 1140px)";
 export function HeroSong({ nhanh, thoiTiet, ...hoi }) {
   const ref = useRef(null);
   const [vt, setVt] = useState([]);
+  const [rong, setRong] = useState(RONG);  // bề dày nét sông ở màn rộng: co theo chiều cao màn đầu (màn thấp mà giữ 250 px thì hai khúc uốn dồn vào nhau)
   // Con đò + nét chạy là chuyển động tự chạy quá 5 giây ⇒ có nút dừng (như nút "Dừng ảnh" của bản cũ); máy bật giảm chuyển động ⇒ dừng sẵn.
   const [dung, setDung] = useState(() => giamChuyenDong());
   useEffect(() => {
@@ -60,15 +61,18 @@ export function HeroSong({ nhanh, thoiTiet, ...hoi }) {
       const goc = ref.current;
       if (!goc) return;
       const hep = window.matchMedia(MAN_DOC).matches;
+      goc.style.setProperty("--h1-tren", `${Math.round(goc.getBoundingClientRect().top + window.scrollY)}px`);  // song.css: chiều cao màn đầu = khung nhìn trừ phần này
       const duong = goc.querySelector(hep ? ".h1-tam-hep" : ".h1-tam-rong");
       const vb = duong.ownerSVGElement.viewBox.baseVal, dai = duong.getTotalLength();
       const hop = goc.querySelector(".h1-song").getBoundingClientRect();
       const px = q => ({ x: (q.x / vb.width) * hop.width, y: (q.y / vb.height) * hop.height });
+      const rongThat = RONG * Math.min(1, hop.height / 800);  // hình vẽ trong ô cao 800 px
+      setRong(rongThat);
       setVt(nhanh.map((_, i) => {
         const d = (hep ? T_HEP : T_RONG)[i] * dai, p = px(duong.getPointAtLength(d)), q = px(duong.getPointAtLength(Math.min(d + 2, dai)));
         if (hep) return { x: p.x, y: p.y };  // điện thoại: bến nằm giữa dòng, nhãn so le hai bên
         // màn rộng: bến nằm ở MÉP BỜ (đúng nghĩa bến) — lùi nửa bề rộng sông theo pháp tuyến, chọn bờ trái (hoặc bờ dưới khi sông chảy ngang) ⇒ chữ nằm trên nền, không đè ảnh
-        const dai2 = Math.hypot(q.x - p.x, q.y - p.y) || 1, tx = (q.x - p.x) / dai2, ty = (q.y - p.y) / dai2, h = RONG / 2;
+        const dai2 = Math.hypot(q.x - p.x, q.y - p.y) || 1, tx = (q.x - p.x) / dai2, ty = (q.y - p.y) / dai2, h = rongThat / 2;
         const v = BO[i] === "a" ? { x: p.x - ty * h, y: p.y + tx * h } : { x: p.x + ty * h, y: p.y - tx * h };
         v.x = Math.min(v.x, hop.width - 44);            // bến tròn (bán kính 32) luôn nằm trọn trong màn
         v.cho = Math.max(120, hop.width - v.x - 58);    // chỗ còn lại bên PHẢI bến cho nhãn nằm bên phải (màn 1101–1340 px: dòng mô tả tự xuống dòng thay vì bị cắt)
@@ -101,7 +105,7 @@ export function HeroSong({ nhanh, thoiTiet, ...hoi }) {
   return (
     <section className={`h1-hero ${dung ? "h1-dung-lai" : ""}`} aria-labelledby="hero-h" ref={ref}>
       <div className="h1-song">
-        {song("rong", TAM_RONG, "0 0 1440 800", RONG)}
+        {song("rong", TAM_RONG, "0 0 1440 800", rong)}
         {song("hep", TAM_HEP, "0 0 390 640", RONG_HEP)}
         <nav className="h1-ben-ds" aria-label="Lối vào nhanh">
           {nhanh.map((n, i) => (
