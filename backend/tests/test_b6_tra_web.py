@@ -687,3 +687,17 @@ def test_warning_without_weather_word_or_weather_word_without_warning_still_gets
     assert luoi_cuoi_bao(query, refused(), BAO_WEB) is False
     _, sent, trace = _web_noi_tiep(BAO_WEB, (), [], query=query, text=TRAN_AN)
     assert sent != "" and trace.web["outcome"] == "co_muc"
+
+
+def test_model_chosen_storm_turn_gets_the_fixed_sentence_not_model_text():
+    """Soát khác hãng 22/11 (Gemini Carbon 3b): câu gõ không có từ nào của hai lưới (thiên tai, bão / lũ) nhưng model đã tự gọi công cụ thời tiết loại
+    bão / lũ trong lượt (`thoi_tiet_ctx["bao_lu_model"]`) rồi từ chối ⇒ mục web từng để model tự tóm tắt kết quả tìm cho một câu thiên tai."""
+    from llm import thoi_tiet as tt
+    cau, calls = "Mai đi biển Thuận An thời tiết có nguy hiểm gì không?", []
+    assert not tw.la_cau_thien_tai(cau) and not tt.la_luot_bao_lu(cau, ())
+    gen = generator(lambda n, kw: (calls.append(kw), [answer("Biển êm, sóng 0,5 m [w1].")])[1])
+    trace = refused()
+    trace.thoi_tiet_ctx = {"bao_lu": True, "bao_lu_model": True}
+    asyncio.run(cong_web(cau, gen, trace, serper()))
+    assert calls == [] and (trace.web["outcome"], trace.web["text"]) == ("thien_tai", tw.THIEN_TAI_TEXT)
+    assert [s["id"] for s in trace.web["nguon"]][:2] == ["nchmf", "lu_quet"]

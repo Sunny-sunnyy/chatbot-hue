@@ -33,6 +33,13 @@ def test_search_clauses_are_wider_than_the_multi_part_counter_and_capped():
     assert len(cac_ve_tim(nhieu)) == TRAN_SO_VE_TIM and so_y(nhieu) == 10
 
 
+def test_search_clauses_do_not_cut_inside_a_number():
+    """Soát khác hãng 22/11 (Gemini Carbon 11): cắt ở MỌI dấu chấm / phẩy làm câu tìm cụt ngay giữa con số ("200.000" ⇒ "000 có gồm …")."""
+    tin = "Vé Đại Nội 200.000 có gồm Bảo tàng Cổ vật không, lăng Tự Đức 150.000 mở cửa mấy giờ?"
+    assert cac_ve_tim(tin) == ["Vé Đại Nội 200.000 có gồm Bảo tàng Cổ vật không", "lăng Tự Đức 150.000 mở cửa mấy giờ?"]
+    assert cac_ve_tim("Đi 1,5 km thì mất bao lâu? Vé 200,000 có đắt không?") == ["Đi 1,5 km thì mất bao lâu?", "Vé 200,000 có đắt không?"]
+
+
 def _chay(deps, flags, cau, text="Vé lẻ người lớn 200.000 đồng [1]."):
     """Một lượt qua lõi thật. Trả trace + lời gọi TRẢ LỜI (lời gọi model có ngữ cảnh kho trong đầu vào — không phải lời gọi định tuyến)."""
     client, trace = Client(text), AnswerTrace()

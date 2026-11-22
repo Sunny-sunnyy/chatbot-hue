@@ -120,3 +120,16 @@ def test_su_kien_notice_tach_cau_an_toan_khoi_ghi_chu_thuong():
     assert luoi_cuoi_bao("Mai có bão, bỏ giúp mình lăng Tự Đức khỏi lịch", trace, BAT)
     events = parse_sse(StreamEvents(dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter()).finish(trace))
     assert ("notice", {"text": MAY_HAVE_CHANGED_NOTICE, "an_toan": tt.CAU_BAO_LU}) in events
+
+
+def test_luot_model_tu_chon_loai_bao_lu_ma_ket_thuc_khong_co_cau_112_thi_luoi_cuoi_them():
+    """Soát khác hãng 22/11 (Gemini Carbon 3b): câu gõ KHÔNG khớp lưới từ khoá nhưng model đã tự gọi công cụ thời tiết loại bão / lũ; lượt kết thúc ở chỗ
+    không nối câu 112 (từ chối, hoặc lần chạy lại không gọi lại công cụ) ⇒ lưới cuối cũng phải nhìn dấu `bao_lu_model`, như lời báo lỗi đã nhìn."""
+    cau = "Mai đi biển Thuận An thời tiết có nguy hiểm gì không?"
+    assert not tt.la_luot_bao_lu(cau, ())
+    trace = AnswerTrace(answer=INSUFFICIENT_ANSWER, cited=(), thoi_tiet_ctx={"bao_lu": False, "bao_lu_model": True})
+    assert luoi_cuoi_bao(cau, trace, BAT) is True and trace.notice == tt.CAU_BAO_LU
+    khong = AnswerTrace(answer=INSUFFICIENT_ANSWER, cited=(), thoi_tiet_ctx={"bao_lu": False, "bao_lu_model": False})
+    assert luoi_cuoi_bao(cau, khong, BAT) is False and khong.notice is None  # model không chọn loại bão / lũ ⇒ như trước
+    da_co = AnswerTrace(answer=f"Biển động [1].\n\n{tt.CAU_BAO_LU}", cited=(), thoi_tiet_ctx={"bao_lu": True, "bao_lu_model": True})
+    assert luoi_cuoi_bao(cau, da_co, BAT) is False and da_co.notice is None  # lượt thường: câu 112 đã nằm trong câu trả lời ⇒ không lặp
