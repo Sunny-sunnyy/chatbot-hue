@@ -1,25 +1,23 @@
-# STATUS D — ghi đè 20:31 22/11/2026 (giờ `date`), KẾT PHIÊN NHẸ (chủ dự án tắt rồi mở lại cả năm phiên sau cổng gộp giao diện mới). Vai: phiên giảng, viết giáo trình; làm việc trực tiếp với chủ dự án.
+# STATUS D — ghi đè 22:02 22/11/2026 (giờ `date`), phiên D mở lại tối 22/11 sau khi máy khởi động lại 21:25. Vai: phiên giảng, viết giáo trình; làm việc trực tiếp với chủ dự án.
 
-Nhánh `p9-d-giao-trinh`, worktree `/tmp/hr_d_giaotrinh` (mất khi máy khởi động lại ⇒ `git worktree add /tmp/hr_d_giaotrinh origin/p9-d-giao-trinh` rồi `git merge origin/main`). Phiên điều phối tối 22/11: terminal `hue-rag-5a` (phiên mới sẽ có tên khác — đợi tin mở phiên của phiên điều phối, hoặc `ListAgents`).
+Nhánh `p9-d-giao-trinh`, worktree `/tmp/hr_d_giaotrinh` (mất khi máy khởi động lại ⇒ `git worktree remove --force /tmp/hr_d_giaotrinh; git branch -f p9-d-giao-trinh origin/main; git worktree add /tmp/hr_d_giaotrinh p9-d-giao-trinh; git branch --set-upstream-to=origin/p9-d-giao-trinh p9-d-giao-trinh` — chỉ gỡ bản ghi cây của CHÍNH MÌNH). Terminal phiên này: `hue-rag-62`; phiên điều phối: `hue-rag-ea`.
 
 ## 1. Đang dở
-KHÔNG có việc viết nào dở, không agent con nào còn chạy. Bốn commit tối 22/11 đều ĐÃ GỘP main (`98ec1b1` đợt sửa gom · `ec8ca7e` hai phiếu · `774f451` thẻ nơi · `73ec0e3` kết quả cổng tối); lúc ghi sổ này nhánh trùng main `e42ef3f2`.
-Giáo trình `bai_hoc/giao_trinh/` (41 bài + 9 phụ lục + mục lục) đúng với hệ thống lúc **18:17 22/11**: 48 tính năng mở (thứ 47: nhớ câu trả lời liền trước cả trong cuộc đã lập lịch; thứ 48: thẻ nơi — bài 23 là bài chính), kho 267 bài / 9.479 đoạn / 5.960 từ, cả bộ test 78 file chạy / 2.196 ca đạt (bài 38). Đếm lại lúc 20:31 trên main: vẫn 48 tính năng, Qdrant 9.479 điểm.
-Mục "Có gì mới" ở đầu `00_GIAO_TRINH.md`: 8 dòng (mới nhất ở trên; mỗi dòng: ngày · người dùng thấy gì khác · bài + mục). Số đếm phụ lục ghi ở mục lục: C 156 · E 211 · F 96 · G 279 (tám bảng theo chặng) · H 142 · I 130 — thêm / bớt dòng phụ lục thì sửa cả ở đó.
+KHÔNG có việc viết nào dở, không agent con nào còn chạy. Đợt viết bù tối 22/11 đã đẩy lên nhánh (16 file), chờ phiên điều phối đọc diff và gộp.
+Giáo trình `bai_hoc/giao_trinh/` (41 bài + 9 phụ lục + mục lục) đúng với hệ thống lúc **21:45 22/11**: 48 tính năng mở, kho 267 bài / 9.479 đoạn, cả bộ test lần mới nhất 20:48–21:07 — 78 file chạy / 2.197 ca đạt (bài 38); giao diện CŨ (giao diện mới chưa gộp).
+Đợt này thêm: hai phép thử làm nhanh tin dài đã đo rồi bỏ (mức suy luận vừa — bài 33 "Đã so"; vế tìm cố định về miễn giảm vé — bài 23 "Đã so" dòng 14; lượt chậm là lượt có lần tìm thứ hai — bài 34) · lệnh thêm vào buổi tối một điểm ban ngày đang có + giới hạn "lịch đã xếp thì gần như không thêm được điểm" kèm lối ra (bài 31) · phép quét trùng chữ lúc lưu code chỉ còn so với câu kín (bài 37, 39) · lần chạy đủ bộ test mới nhất (bài 38, 40).
+Mục "Có gì mới" ở đầu `00_GIAO_TRINH.md`: 12 dòng (mới nhất ở trên). Số đếm phụ lục ghi ở mục lục: C 159 · E 211 · F 99 · G 279 · H 144 · I 133 — thêm / bớt dòng phụ lục thì sửa cả ở đó (và bảng đếm cuối phụ lục C: 79 giữ · 69 bỏ · 11 chưa rõ).
 
 ## 2. Đã soạn / đã review, chưa gộp
-Không có.
+Đợt viết bù tối 22/11 trên `origin/p9-d-giao-trinh` (sha ở dòng "ĐÃ PUSH" của tin nhắn gửi phiên điều phối). Đã qua một agent con kiểm độc lập trên diff: 166 dòng kiểm, 141 đúng, 0 sai, 25 lệch — đã áp cả 25 (`data/hoc_cung_D/kiem/dot_toi_2211_kiem.md` [riêng tư]). Các câu sửa sau biên bản CHƯA có người thứ hai đọc lại (D tự mở code xác nhận bốn điểm nặng: nhóm có trẻ em / người lớn tuổi luôn mỗi buổi một điểm; chữ "Không đổi được: " giao diện gắn trước; 25 lượt tìm về người cao tuổi / 12 lượt tìm cả trẻ dưới 7 tuổi; câu kín 15–43 ký tự dò nguyên câu).
 
-## 3. Việc đầu của phiên D mới (theo thứ tự; mỗi thứ đi theo cách làm ở mục "Cách làm đã dùng")
-Phiên điều phối nhắn tối 22/11 (sau 20 giờ): bốn thứ dưới CHƯA có trong giáo trình. Viết khi phiên điều phối báo đã gộp + gửi phiếu bốn ý (thấy gì khác · bằng chứng + đường dẫn · giới hạn · cách thử 2 phút); thứ đã ở main thì viết ngay.
-1. **GIAO DIỆN MỚI, hướng "Dòng sông dẫn đường"** (sổ việc X13; lúc ghi sổ CHƯA gộp — cổng gộp đang chạy). Khi gộp: sửa bài 5 (người dùng thấy gì), bài 35 (trang web và máy chủ), có thể bài 27 / 30 (trang Lên kế hoạch, bản in), phụ lục G / H / I, một dòng "Có gì mới". Chất liệu để giảng "vì sao chọn, cách khác, cái giá, hỏng thì sao" đã có: `data/giao_dien_2026-11-22/KIEM_KE.md`, `HUONG_DE_XUAT.md` (ba hướng), `THAM_KHAO.md`, `TUONG_PHAN.md`, ba phiếu chọn hướng, và hai lỗi bắt được TRƯỚC khi gộp (màn đầu vỡ ở khổ 1280 / 1024 / 768; bản in đổi tỉ lệ vì thanh menu ngắn lại). Ảnh chụp màn hình trong bài 5 (nếu có) phải chụp lại.
-2. **Hai phép thử harness đo rồi BỎ theo tiêu chí ghi trước** (hạ mức suy luận; thêm vế miễn giảm vào lần tìm đầu) + bài học "tin dài chậm do lần tìm thứ hai": `session_prompt/Y_CHUA_THU.md` ý 56, 57, 61 ⇒ bài 21 "Đã so" (kể cả phương án bị bỏ), bài 33 / 34 nếu chạm mức suy luận và thời gian chờ, phụ lục C (sổ phép so, đếm lại số 156), G.
-3. **Sửa lỗi "thêm vào buổi tối một điểm đã có ⇒ đã có trong lịch"** (main `dcd9ecdb`) + giới hạn "sau khi lịch đã xếp gần như không thêm được điểm": `guides/RUNBOOK_BAN_GIAO.md` mục 10.2 ⇒ bài 31 (bảng lệnh, "Nếu… thì sao", Giới hạn), phụ lục H, I.
-4. **Bộ kiểm lúc lưu code chỉ còn chặn chữ câu kín** (main từ khoảng 17 giờ, chủ dự án chọn 16:44) ⇒ bài 39 (đồ án được làm thế nào) và bài 37 nếu có câu nói rào chặn chữ chép từ kho / bộ câu mẫu; grep "40 ký tự" trong cả bộ (bài 39 dòng Nguồn có nhắc).
-5. Ngày 23/11 chủ dự án tự thử hệ thống: mỗi bản sửa người dùng thấy khác ⇒ phiếu bốn ý ⇒ sửa bài gốc, thêm MỘT dòng "Có gì mới", gom dòng phụ lục liên quan. Có thay đổi về cơ chế (không chỉ đổi số / nhãn) thì cho một agent con KHÁC kiểm độc lập trên file diff trước khi đẩy — hai lượt kiểm tối 22/11 đều bắt được lỗi thật (20 / 309 và 19 / 67 dòng).
+## 3. Việc kế của phiên D (theo thứ tự)
+1. **GIAO DIỆN MỚI, hướng "Dòng sông dẫn đường"** (sổ việc X13; lúc ghi sổ CHƯA gộp): viết khi phiên điều phối báo đã gộp + gửi phiếu bốn ý. Sửa bài 5, bài 35, có thể bài 27 / 30, phụ lục G / H / I, một dòng "Có gì mới". Chất liệu: `data/giao_dien_2026-11-22/KIEM_KE.md`, `HUONG_DE_XUAT.md`, `THAM_KHAO.md`, `TUONG_PHAN.md`, ba phiếu chọn hướng, các lỗi bắt được TRƯỚC khi gộp (màn đầu vỡ ở khổ 1280 / 1024 / 768; bản in đổi tỉ lệ; màn đầu không vừa một khung nhìn máy xách tay). Ảnh chụp trong bài 5 (nếu có) phải chụp lại.
+2. **Đề bài cho AI khác hãng** (chủ dự án dặn ba lần tối 22/11: dùng hết khả năng · đủ thông tin, ngữ cảnh, trạng thái · danh sách file nên đọc + tự do khám phá; mẫu mới ĐÃ ở main `327e48d6`; chữ ở `HIEN_TRANG.md` mục 4 gạch đầu): xem bài 39 (và bài 20 nếu có) chỗ nói về gói soát khác hãng, sửa cho khớp mẫu mới.
+3. Ngày 23/11 chủ dự án tự thử hệ thống: mỗi bản sửa người dùng thấy khác ⇒ phiếu bốn ý ⇒ sửa bài gốc, thêm MỘT dòng "Có gì mới", gom dòng phụ lục liên quan. Có thay đổi về cơ chế thì cho một agent con KHÁC kiểm độc lập trên file diff trước khi đẩy — ba lượt kiểm tối 22/11 đều bắt được lỗi thật (20 / 309 · 19 / 67 · 25 / 166 dòng).
 
 ## 4. Ai chờ mình ↔ mình chờ ai
-Không ai chờ D. D chờ: tin "đã gộp giao diện mới" + phiếu của phiên điều phối; chủ dự án nói muốn D giảng phần nào (chưa nêu; anh ấy chưa nhận xét bài nào ngoài bài 6).
+Phiên điều phối chờ: không. D chờ: phiên điều phối gộp nhánh; phiếu "giao diện mới" khi gộp; chủ dự án nói muốn D giảng phần nào (chưa nêu).
 
 ## 5. Câu treo (nợ nhẹ, không chặn gì)
 - Phụ lục B, F, G, H, I của đợt sửa gom do một agent gom rồi tự soát, CHƯA có người thứ hai đối chiếu (D đếm lại số hàng và dò mẫu); các dòng phụ lục chép từ bài KHÔNG đổi tối 22/11 chưa được dò lại. Hai commit nhỏ (`ec8ca7e`, `73ec0e3`) cũng không qua người thứ hai — chỉ đổi nhãn + chép số D tự đọc.
@@ -29,15 +27,19 @@ Không ai chờ D. D chờ: tin "đã gộp giao diện mới" + phiếu của p
 - Dòng "Cập nhật" của khoảng mười bài còn ghi "khớp hệ thống 16:35 22/11 (47 tính năng…)" — câu có giờ, đúng với lúc bài được soát; lần sửa bài kế thì đổi.
 - Thẻ nơi: mới nhìn MỘT lần trên trình duyệt, chưa đo tin nhiều ý kiểu khác, chưa đo model cũ (bài 23 đã ghi).
 - Từ trước: 19 chỗ phân xử của commit `be20fa7` mới đọc lướt · chưa ai đọc lại TOÀN VĂN bài 21 và 16 sau các lượt cắt · phụ lục D: hệ thống đổi lời dặn thì chạy lại `cd backend && PYTHONPATH=$PWD uv run --no-sync python ../data/hoc_cung_D/tools/chep_loi_dan.py` (tối 22/11 CHƯA chạy lại — thẻ nơi không đổi lời dặn theo báo cáo của agent viết, nhưng chưa ai so phụ lục D với chương trình sau 15:51).
+- Độ dài nửa để hiểu sau đợt tối 22/11 (đo bằng lệnh awk): bài 31: 13.226 · 33: 13.313 · 23: 13.485 · 37: 13.304 · 39: 13.187 · 34: 13.164 — vượt đích 13.000 vài trăm ký tự; D tự hoãn như dòng trên.
+- Lời giao chung `data/hoc_cung_D/LOI_GIAO_VIET_BAI.md` còn hai chỗ cũ (mục 4.5 "47 tính năng"; mục 5 "không chép dòng ≥ 40 ký tự của kho") — lời giao đợt (`LOI_GIAO_DOT_TOI_2211.md`) đã ghi đè; sửa file gốc khi dùng lần tới.
 
-## 6. Thứ đang chạy / rác (lúc 20:31 22/11/2026)
-- Tiến trình, container, server của D: KHÔNG có. Cổng 8012 đang mở là của phiên khác (không phải D).
-- `git worktree list`: D chỉ có `/tmp/hr_d_giaotrinh  e42ef3f2 [p9-d-giao-trinh]` (các cây `/tmp/hr_b_*`, `/tmp/hr_c_*`, `/tmp/hr_e_*` là của phiên khác).
-- File tạm của D: `/tmp/hr_d_pl_scratch/` (các script sửa một lần của tối 22/11: `sua_tay_1.py`, `sua_00.py`, `sua_x11.py`, `ap_kiem.py`, `phieu_2.py`, `ap_kiem_the_noi.py`, `cong_toi.py` — mẫu cho cách "thay đúng một chỗ, không khớp thì báo"; xoá được), `/tmp/hr_d_agent_tools/`, `/tmp/hr_d_giaotrinh_move.py` (của phiên D trước; không dùng tối nay).
+## 6. Thứ đang chạy / rác (lúc 22:02 22/11/2026)
+- Tiến trình, container, server của D: KHÔNG có. D không bật Qdrant (phiên điều phối bật sau khi máy khởi động lại).
+- Worktree của D: chỉ `/tmp/hr_d_giaotrinh [p9-d-giao-trinh]`. File tạm cũ ở `/tmp` đã mất theo máy.
+- Agent con đã dùng trong đợt (đều đã xong): hai agent viết (báo cáo `data/hoc_cung_D/viet/dot_toi_v1_harness.md`, `dot_toi_v2_lich_rao_test.md`), một agent kiểm (`data/hoc_cung_D/kiem/dot_toi_2211_kiem.md`, diff đầu vào `dot_toi_2211.diff`).
 
 ## 7. Bẫy của phiên (điều phiên sau cần biết)
 - **Sổ này ghi trong worktree của nhánh** rồi đẩy; phiên điều phối gộp thì mới lên main. Mở phiên mới: nếu máy chưa khởi động lại thì worktree còn, chỉ cần `git fetch && git merge origin/main`.
-- **Hai lượt kiểm độc lập đều bắt lỗi do CHÉP TỪ SỔ thay vì từ nguồn gốc:** số "16 lượt" của rào bỏ / thay (bản chấm ghi 12); tráo tên Dục Đức / An Định (file tiêu chí xếp sai thứ tự, bảng gốc đúng); "8 / 9 ⇒ 0 / 12" so hai cách đếm khác nhau; giá vé lẻ "chép từ bài riêng" (thật ra là nguồn riêng mở bài vé). ⇒ con số nào vào bài cũng mở file đo gốc; "trước ⇒ sau" phải cùng một cách đếm; số của MỘT tin thì viết là một tin.
+- **Sổ tóm (`Y_CHUA_THU.md`, runbook) có thể lệch nguồn gốc:** tối 22/11 ba chỗ (ý 61 "vé gộp chỉ từ 3 điểm"; ý 57 "không phải mức suy luận"; lối ra "bỏ trước rồi thêm" của runbook 10.2) — đã báo phiên điều phối, đã sửa trên main `80bf168c`. Lời giao cho agent viết đừng chép "điều rút ra" từ sổ; chỉ đường tới file đo.
+- **Câu "lối ra cho người dùng" phải thử với MỌI nhóm người dùng** (đợt tối 22/11: "điền lại biểu mẫu với kiểu đi nhiều điểm hơn" sai cho nhóm có trẻ em / người lớn tuổi — người kiểm bắt được).
+- **Hai lượt kiểm độc lập trước đó đều bắt lỗi do CHÉP TỪ SỔ thay vì từ nguồn gốc:** số "16 lượt" của rào bỏ / thay (bản chấm ghi 12); tráo tên Dục Đức / An Định (file tiêu chí xếp sai thứ tự, bảng gốc đúng); "8 / 9 ⇒ 0 / 12" so hai cách đếm khác nhau; giá vé lẻ "chép từ bài riêng" (thật ra là nguồn riêng mở bài vé). ⇒ con số nào vào bài cũng mở file đo gốc; "trước ⇒ sau" phải cùng một cách đếm; số của MỘT tin thì viết là một tin.
 - **Nhãn "đã nhìn trên trình duyệt" gắn theo CA**, không theo tính năng: giữ chữ đã nhìn ở lượt thường, ca "chữ giữ chỗ ⇒ viết lại" và ca bị rút vẫn chưa.
 - **`date` chứ không ước:** tối nay D từng ghi một giờ ước vào file riêng tư rồi phải sửa; rào commit cảnh báo (không chặn) chữ kiểu "17:1x".
 - `grep -o` với khoảng `.\{0,200\}` trên dòng tiếng Việt dài báo lỗi "exceeds complexity limits" ⇒ in cửa sổ quanh một chuỗi bằng một đoạn python ngắn.
@@ -59,12 +61,13 @@ Không ai chờ D. D chờ: tin "đã gộp giao diện mới" + phiếu của p
 5. Mỗi con số ghi model, bộ câu, ngày; số đo cũ giữ nguyên kèm "lúc đó…"; phép đo gộp thì nói là gộp.
 6. Không tra ra lý do ⇒ "chưa thấy ghi lý do. Điều thấy được: …" (không đoán); "chủ dự án đã quyết" chỉ khi hồ sơ ghi lời chủ dự án; "cách khác" phải là cách khác của đúng câu hỏi đó; trước khi viết "chưa thử" phải grep cả `docs/superpowers/plans/`.
 7. Lời báo trong ngoặc kép chỉ khi chép từng chữ từ code; ca hỏng chưa ai thử ghi "đọc từ chương trình".
-8. Từ tối 22/11 (main `2fc5c3fb`, chủ dự án chọn 16:44) rào pre-commit THÔI chặn chữ chép từ kho và bộ câu mẫu ⇒ giáo trình trích được ví dụ kho nguyên văn; chữ chỉ có ở câu kín vẫn bị chặn.
+8. Từ tối 22/11 (main, commit rào `5047c2c1` + `36f9016f`, chủ dự án chọn 16:44) rào pre-commit THÔI chặn chữ chép từ kho và bộ câu mẫu ⇒ giáo trình trích được ví dụ kho nguyên văn; chữ chỉ có ở câu kín vẫn bị chặn.
 9. Hệ thống đổi nhiều lần mỗi buổi ⇒ câu tuyệt đối ("không bao giờ", "luôn") kiểm lại sát giờ đẩy; sau mỗi lượt cập nhật grep các cụm cũ trong cả thư mục.
 10. Bài tổng hợp (40, 41) và phụ lục gom dùng ĐÚNG số của bài gốc; hai bài nói khác nhau thì mở nguồn gốc mà phân xử, không tự chọn.
 
 ## Ghi chép riêng tư (không commit)
 - `data/hoc_cung_D/BAN_VOI_A_VA_D_BEN_KIA.md` — lời chủ dự án (các câu tick 22/11), mọi tin của phiên điều phối kèm số đo, các lượt phản biện về hình thức của một phiên giảng khác.
+- `data/hoc_cung_D/LOI_GIAO_DOT_TOI_2211.md` — lời giao của đợt viết bù tối 22/11 (mẫu mới nhất cho đợt "thêm vài sự việc vào đúng bài").
 - `data/hoc_cung_D/LOI_GIAO_DOT_GOM_2211.md` — lời giao của đợt sửa gom tối 22/11 (dùng lại làm mẫu cho đợt gom sau); `data/hoc_cung_D/viet/dot_gom_v1.md`, `dot_gom_v2.md`, `dot_gom_v3_phu_luc.md` — báo cáo ba agent sửa; `data/hoc_cung_D/kiem/dot_gom_2211_kiem.md` — biên bản kiểm độc lập (309 dòng mới: 289 đúng, 1 sai, 19 lệch — đã áp).
 - `data/hoc_cung_D/viet/*.md` — báo cáo của từng agent viết / chuyển / cập nhật (kể cả `phan_xu_cho_khac_nhau.md`, `cap_nhat_14h47.md`); `data/hoc_cung_D/kiem/*.md` — biên bản đối chiếu; `data/hoc_cung_D/vi_du_*_vet.json` — năm lượt thật làm ví dụ.
 

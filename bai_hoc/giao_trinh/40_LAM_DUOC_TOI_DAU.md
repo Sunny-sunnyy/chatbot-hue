@@ -1,6 +1,6 @@
 # Bài 40 — Làm được tới đâu, còn yếu ở đâu, hướng phát triển
 
-*Cập nhật 18:17, ngày 22/11/2026 · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): thêm thẻ nơi; bộ câu cất riêng đã có lúc chạy, giữ chữ đã nhìn trên trình duyệt · số chép từ bài gốc (ghi "bài N"), không đo mới.*
+*Cập nhật 21:43, ngày 22/11/2026 · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): lần chạy đủ bộ test mới nhất 20:48–21:07; lệnh "thêm" khi lịch đã xếp vào cột chưa làm được · số chép từ bài gốc (ghi "bài N"), không đo mới.*
 
 **Bài trước đã biết:** hệ thống được làm ra thế nào, ai kiểm ai (bài 39).
 **Bài này thêm:** theo từng mảng: làm được gì, chưa làm được gì, chỗ yếu nào nặng nhất, thứ gì chưa đo, hướng phát triển nào có căn cứ.
@@ -32,7 +32,7 @@ Mỗi dòng một mảng, kèm **một con số chính** lấy từ bài giảng
 | Tra web | kho từ chối thì có mục riêng "Từ web (chưa kiểm)" | mục web chỉ được kiểm con số, không kiểm địa chỉ hay ý | 2 trên 44 câu ngoài phạm vi bị gửi đi tra web vì xếp loại nhầm (bài 25) |
 | Hỏi bằng ảnh | gửi ảnh, hệ thống đoán trong 42 tên nơi và món, người dùng xác nhận rồi hỏi | hỏi chi tiết trong ảnh; phân biệt các lăng giống nhau | khi cho trả lời thẳng, model gán tên Huế cho 2 trên 5 ảnh không phải Huế (05/11) (bài 26) |
 | Lên kế hoạch | bấm nút, nhận lịch theo buổi kèm chỗ ở, quán ăn, bản đồ; tải về | điểm ngoài bảng 41 điểm; giờ tới, giờ về; xếp lịch từ câu gõ tự do | ở ví dụ: khung lịch sau 0,2 giây, đủ câu mô tả sau 9,3 giây (Claude, 21/11) (bài 27) |
-| Sửa lịch bằng lời | bỏ, thêm, thay, dời buổi, đổi số ngày, đổi chỗ hai ngày | thay hoạt động buổi tối; ngày tương đối ("dời 2 hôm") | bộ 10 chuỗi sửa lịch đạt 9 trên 10, đo trước khi đổi sang Claude (bài 31) |
+| Sửa lịch bằng lời | bỏ, thêm, thay, dời buổi, đổi số ngày, đổi chỗ hai ngày | thay hoạt động buổi tối; ngày tương đối ("dời 2 hôm"); thêm một điểm vào lịch đã xếp mà giữ đủ điểm cũ (lịch kín giờ) | bộ 10 chuỗi sửa lịch đạt 9 trên 10, đo trước khi đổi sang Claude (bài 31) |
 | Giao diện | sáu trang, khung trợ lý ở mọi trang, chạy được ở bề rộng điện thoại | mở ở tab thứ hai thì mất cuộc của tab thứ nhất; chưa thử điện thoại thật | lượt kiểm chốt trưa 22/11: 41 tin qua trình duyệt, 0 màn hình lỗi (bài 34) |
 | Máy móc | bật cả hệ thống bằng một lệnh; bộ test tự động | chưa đưa lên mạng; một máy, một bản máy chủ, một hãng model | từ lúc Qdrant tắt, lệnh bật ra "SẴN SÀNG" sau 34 giây (bài 36) |
 
@@ -51,7 +51,7 @@ Xếp theo thứ tự lỗi của bài 4, từ nặng tới nhẹ.
 
 ## Những thứ chưa đo
 
-- **Chưa có người dùng thật.** Bộ câu do AI soạn hoặc do nhóm gõ; người dùng mô phỏng thường dễ hơn người thật. Trên một bộ cất riêng, điểm "đủ ý" thấp hơn bộ quen khoảng 0,4 trên thang 5 (bài 17).
+- **Chưa có người dùng thật.** Bộ câu do AI soạn hoặc do nhóm gõ; người dùng mô phỏng thường dễ hơn người thật (số của bộ cất riêng ở "Chi tiết để tra").
 - **Bộ 176 câu chưa chạy đủ trên model đang chạy:** mới 85 câu đầu và 54 câu so sánh (bài 32).
 - **Bộ câu cất riêng của phần trợ lý chưa dùng** cho lượt so sánh cuối (khác hai bộ cất riêng của bộ 176 câu, đã dùng 28/10 và 01/11 — bài 17). Chủ dự án đã chọn (15:57 22/11): chạy đúng một lần sau buổi tự thử hệ thống và các bản sửa của buổi đó, trên model sẽ dùng lúc bảo vệ.
 - **Mới bốn ca hỏng được thử thật,** mỗi ca một lượt (bài 6).
@@ -162,7 +162,9 @@ Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đ
 
 - **Tính năng đang mở / tắt:** 48 mở, 3 tắt (đếm 17:21 22/11, sau khi mở thẻ nơi lúc 17:15; lúc 16:13 là 47, sau khi mở việc nhớ câu trả lời liền trước trong cuộc đã lập lịch; lúc 15:51 là 46, sau khi mở việc giữ chữ tới khi qua bước kiểm nguồn; lúc 14:52 là 45, đếm bằng lệnh của phụ lục B; phụ lục B đếm 13:20 ra 42, trước khi ba tính năng khâu tìm được mở). Ba cái tắt: xếp lịch từ câu gõ tự do (đo không đạt), dòng "hôm nay là ngày…" (vô ích), sổ vết từng lượt (chỉ dùng ở máy phát triển).
 - **Kho:** 267 bài, 9.479 đoạn (bài 7).
-- **Bộ test:** lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca đạt (bài 38, Chi tiết để tra). Sau khi bốn thay đổi được mở, cả bộ test chạy lại 14:48–15:03 22/11: 78 file, 2.119 ca đạt, 2 ca hỏng — đều là ca test cũ so nguyên một bảng nay có thêm tên nhà cung cấp model của trang Giới thiệu, không phải sản phẩm sai (bài 38). Lần chạy đủ mới nhất, 17:16–17:34 22/11, trên bản 48 tính năng: 78 file chạy, 2.196 ca đạt, 0 ca hỏng, 4 file bỏ vì cần khoá OpenAI.
+- **Bộ test:** lần chạy đủ mới nhất, 20:48–21:07 22/11, trên bản 48 tính năng đã có bản sửa lệnh thêm vào buổi tối của sửa lịch (bài 31): 78 file chạy, 2.197 ca đạt, 0 ca hỏng, 4 file bỏ vì cần khoá OpenAI; đây là bản chủ dự án tự thử sáng 23/11 (bài 38). Các lần trước cùng ngày: lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca đạt; sau khi bốn thay đổi được mở, 14:48–15:03: 78 file, 2.119 ca đạt, 2 ca hỏng — đều là ca test cũ so nguyên một bảng nay có thêm tên nhà cung cấp model của trang Giới thiệu, không phải sản phẩm sai; 17:16–17:34: 78 file, 2.196 ca đạt, 0 ca hỏng.
+- **Bộ cất riêng của bộ 176 câu** (chuyển từ nửa để hiểu tối 22/11): điểm "đủ ý" thấp hơn bộ quen khoảng 0,4 trên thang 5 (bài 17).
+- **Lệnh "thêm" khi lịch đã xếp:** gần như không làm được mà giữ đủ điểm cũ; phép liệt kê tối 22/11 trên 108 lịch mẫu: 0 trên 14.725 lệnh; lối ra và số đủ ở bài 31 "Giới hạn đã biết".
 - **Thời gian chờ:** 13 giây là 49 lượt hỏi đáp của người dùng mô phỏng trưa 21/11, tin dài hơn và còn mục web; 6,9 giây là 41 tin phần lớn ngắn ở lượt kiểm chốt trưa 22/11, lúc máy rảnh; 95 % dưới 13,1 giây (bài 34).
 - **Phân loại 19 lần trượt:** 12 kho thiếu (đi Hội An, quy định chụp ảnh, sự kiện có ngày, điểm ít leo bậc; nay đi Hội An và điểm ít leo bậc đã có bài, sự kiện có ngày đã có công cụ; còn quy định chụp ảnh), 4 sửa lịch (đã sửa), 2 model không ghép hai dữ kiện có sẵn, 1 tìm không ra; một phiên đếm chiều 22/11, khâu tìm chạy lại trên chỉ mục hôm đó. Lượt đo lại: 5 ý trượt — kho thiếu 2, model không ghép 1, hai ý sửa lịch thước không đọc được, tìm không ra 0.
 - **Bốn thay đổi cho tin dài nhiều ý (mở 14:47 22/11):** ba ở khâu tìm, một là bước viết lại — bỏ tìm riêng vế cụt; tách câu tìm model gộp hai nơi; cho tìm thêm 3 lần thay vì 2; viết lại một lần khi chữ nộp không có nguồn. Trước đó, ở một tin 4 ý, màn hình "Thử lại" hiện 3 trên 6 lần (bài 16). Trên chính tin đó, 6 lần: 0 màn hình lỗi, nêu đúng cả hai ý kho có 6 trên 6. Lợi mới đo trên một tin, nên nhóm mở theo cơ chế (đưa đúng đoạn vào), không ghi là "giảm lỗi".
@@ -196,6 +198,8 @@ Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đ
 - Đưa lên mạng: lời chủ dự án 08:55 22/11 (`HIEN_TRANG.md` mục 3 gạch 1, nguyên văn); thứ tự đóng 19/11, "không bắt buộc, là điểm cộng" 21/11: `HIEN_TRANG.md` mục 2 bước 8, mục 4 [lời chủ dự án]. Chốt đang tắt: bài 37; gói Docker cũ: bài 36.
 - Quyết định 2: `HIEN_TRANG.md` mục 4 "Cách làm" điều (2) của tám điều 15:56 20/11 [lời chủ dự án]. Quyết định 3: `Y_CHUA_THU.md` ý 33. Quyết định 4: `bai_hoc/VIEC_MOI_XONG.md` mục 40 ý 3 và mục 42. Quyết định 5: `Y_CHUA_THU.md` ý 34 (nhận định của phiên điều phối).
 - Bộ test 2.060 ca: bài 38 "Chi tiết để tra"; `HIEN_TRANG.md` dòng 20 [máy kiểm, phiên đo].
+- Lần chạy đủ mới nhất 20:48–21:07 22/11 (78 file chạy, 4 bỏ, 2.197 ca đạt, 0 hỏng; bản chủ dự án tự thử 23/11; có bản sửa `950bb55`): `data/test_rong_2026-11-22/KET_QUA_6b685c43.tsv`, `chay_6b685c43.log` [riêng tư; đã chạy, phiên đo; người viết tự cộng lại 21:35 22/11]; `session_prompt/HIEN_TRANG.md` mục 1 gạch "Bản sửa sau cổng tối" [chép]. Lần 17:16–17:34 (2.196): `KET_QUA_2a9c9e9c.tsv` [riêng tư]. Chi tiết: bài 38 "Chi tiết để tra" và khối Nguồn.
+- Lệnh "thêm" khi lịch đã xếp (108 lịch, 0 / 14.725): `data/thu_bedrock_2026-11-21/harness/dem_them_khong_ten_2211/LIET_KE_LICH_MAU.md` bảng "(2)" [riêng tư; đã chạy, phiên khác]; `guides/RUNBOOK_BAN_GIAO.md` mục 10.2 hàng 'Sửa lịch bằng lời: "thêm X" SAU KHI lịch đã xếp' [chép]; bài 31.
 - Số khác ở "Chi tiết để tra": bài 16 (3 / 48, 4 / 53), bài 37 (1 / 3 ảnh), bài 34 (72 %, 0,3 giây, dòng 29 "49 lượt … chạy một mình").
 - Bài đã qua một lượt đối chiếu độc lập (14:43 22/11/2026): `data/hoc_cung_D/kiem/bai_39_41.md` [riêng tư]; các dòng đã áp và không áp ghi ở báo cáo của người viết.
 

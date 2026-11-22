@@ -1,6 +1,6 @@
 # Phụ lục I — Mọi giới hạn đã biết trên một trang
 
-*Cập nhật 18:17, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (48 tính năng, kho 267 bài): năm giới hạn của thẻ nơi (17:15) · trước đó: giới hạn mới của việc nhớ trong cuộc đã lập lịch, của dòng trạng thái ở tin dài, của công cụ liệt kê bài, trang Giới thiệu · trước đó: phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42); rào bỏ / thay của lịch; gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 21:47, ngày 22/11/2026 · khớp các bài lúc 21:45 22/11: ba giới hạn mới (lệnh thêm khi lịch đã xếp; lần tìm thứ hai ở tin dài; dữ kiện miễn giảm ở lần tìm đầu) và một dòng sửa về mức suy luận (133 dòng) · trước đó (18:17): khớp các bài lúc tối 22/11 (48 tính năng, kho 267 bài): năm giới hạn của thẻ nơi (17:15) · trước đó: giới hạn mới của việc nhớ trong cuộc đã lập lịch, của dòng trạng thái ở tin dài, của công cụ liệt kê bài, trang Giới thiệu · trước đó: phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42); rào bỏ / thay của lịch; gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Giới hạn đã biết khác với thứ cố ý không làm (bài 4).** Giới hạn đã biết là chỗ hệ thống làm chưa tốt trong chính phạm vi của nó: kho có mà tìm không ra, chờ lâu, bước kiểm chưa kiểm nghĩa. Thứ cố ý không làm là một ranh giới đã được chọn, không phải một lỗi còn nợ: câu gõ không dấu, tiếng Anh, tình huống khẩn cấp, giá phòng, đặt chỗ thay người dùng. Trang này liệt kê loại thứ nhất, nhóm theo chặng; loại thứ hai nằm ở bảng nhỏ riêng cuối trang.
 
@@ -92,6 +92,8 @@
 | Lưới từ nguy hiểm thời tiết vẫn sót vài cách nói tự nhiên và nhận thừa vài câu. | — | "nước có lên nữa không" bị sót; "bão giá", tên phim bị nhận thừa | 24, 40 |
 | Mỗi công cụ ăn một vòng, gọi lần lượt. | câu cần ba công cụ mất ba vòng | ba lần chờ model | 21 |
 | Tin dài nhiều ý chờ lâu hơn; lần viết lại và lần chạy lại mỗi lần có hạn 45 giây riêng. | 25–34 giây (trước khoảng 20), viết lại lâu thêm khoảng 10 giây; mới đo trên một tin, 6 lần | chờ lâu; một lượt có thể chờ quá 45 giây | 21, 34 |
+| Ở tin dài, lượt chậm là lượt model tự tìm thêm lần thứ hai; hai cách làm nhanh (hạ mức suy luận cả lượt, bớt lần tìm thứ hai) đã đo 22/11 và bỏ. | lượt tìm một lần 23,4 giây, hai lần 29,1 giây ở trung vị (19 lượt của một tin, mức cao, nhiều bản chương trình trong buổi) | có lượt chờ 27–35 giây | 34, 23, 33 |
+| Tin hỏi vé cho cả nhà: lần tìm đầu chưa có hai dữ kiện miễn giảm (người từ đủ 60 tuổi, trẻ dưới 7 tuổi); lượt nào model cũng tự tìm thêm một lần về người cao tuổi. | 25 trên 25 lượt đã ghi của một tin (12 trong đó tìm cả trẻ dưới 7 tuổi) | lượt đó lâu hơn; câu trả lời vẫn đủ ý ở mức suy luận đang chạy | 23 |
 | Lúc chờ ở tin dài chỉ có một dòng trạng thái đứng yên (giá của việc giữ chữ tới khi kiểm); ý "đổi dòng theo từng lần tìm" đã ghi, chưa làm. | khoảng 20–30 giây | nhìn một dòng chữ không đổi suốt lúc chờ (chỉ số đoạn đã tìm ghi trong ngoặc tăng dần) | 16, 21, 23 |
 | Bước viết lại còn ba chỗ chưa đo: điều kiện "đã tìm ít nhất một lần" mới có ca test; cuộc đã có lịch lưu (bước này vẫn chạy ở đó theo chương trình, chỉ chưa đo; lần chạy lại trong cuộc có lịch mới có ca test, chưa có lượt thật); model cũ. | — | đọc từ chương trình, chưa thử thật | 21, 34 |
 | Đổi model thì chỗ nối harness có thể hỏng. | với Claude cách cũ: 0 trên 8 lần viết được (đã chữa) | — | 21 |
@@ -148,6 +150,7 @@
 | Vài lệnh sửa lịch bị trả "chưa hỗ trợ" dù làm được; câu dời hai điểm kết bằng dấu hỏi có thể nghe như đã đổi; câu giả định có lần bị làm như lệnh thật. | câu giả định: 1 lượt (19/11) | lịch không đổi như ý, hoặc đổi khi chỉ hỏi | 31 |
 | Không thay được hoạt động buổi tối, không xếp tay một điểm vào buổi tối; ngày tương đối và ngày âm không đọc được. | — | chương trình nói thật hai điều đầu | 31, 40 |
 | Câu gợi ý "thay Y bằng X" chỉ được nhớ đúng một lượt kế; đổi chỗ với ngày không có trong lịch nhận câu chung dễ hiểu nhầm. | — | — | 31 |
+| Sau khi lịch đã xếp, lệnh "thêm X" gần như không làm được mà giữ đủ các điểm đang có (lịch xếp kín giờ, chương trình không tự thế chỗ). Đổi luật xếp lịch là hướng sản phẩm chưa quyết. | 0 trên 14.725 lệnh trên 108 lịch vừa xếp; 377 trên 72.249 trên 477 lịch vừa bỏ một điểm (liệt kê bằng chương trình 22/11, không phải lượt người dùng thật) | nhận "Chưa làm: thêm X…"; lối ra: nhắn đúng câu "thay Y bằng X" (mất Y), hoặc điền lại biểu mẫu với kiểu đi nhiều điểm hơn (không áp cho nhóm có trẻ em hay người lớn tuổi: lịch luôn mỗi buổi một điểm) | 31, 40 |
 | Lệnh bỏ / thay không tên điểm, không mốc lịch ("Bỏ điểm này", "Bớt lăng đi", "Bỏ điểm đầu tiên đi", "ngày 2-3 bỏ điểm đầu") không sửa lịch mà thành câu hỏi thường (từ 22/11). Còn hở: tin có đủ tên một điểm của lịch mà nói về danh sách vừa kể. | chỗ hở: chưa thấy thật | lịch không đổi; phải nhắn kèm tên điểm, "ngày N" hoặc "khỏi lịch" | 31, 23 |
 | Ba trong bốn vai chưa đạt ở 12 vai vướng ý kho thiếu; người mô phỏng hay tự kết sớm. | trần thước khoảng 8–9 trên 12; kết trước lượt 5: 6 trên 12 (gpt-6-luna), 5 trên 12 (Claude) | giới hạn của phép đo | 32 |
 | Thước 12 vai có một điểm mù: người mô phỏng không thấy dòng báo của lượt sửa lịch; công cụ đã chữa, chưa đo lại. | 26 lượt, thuộc một vai | giới hạn của phép đo | 32, 40 |
@@ -158,7 +161,7 @@
 | Giới hạn (một câu) | Con số kèm theo | Người dùng gặp gì | Bài |
 |---|---|---|---|
 | Đổi sang Claude là đổi tạm; đường gpt-6-luna nguyên vẹn nhưng tài khoản đang ngừng dùng; các tính năng mở từ tối 21/11 chưa đo trên gpt-6-luna. | — | — | 33, 40 |
-| Chưa đo lại mức suy luận vừa và thấp ở lượt có công cụ sau khi sửa lớp nối. | — | giới hạn của phép đo | 33 |
+| Mức suy luận thấp ở lượt có công cụ chưa đo lại sau khi sửa lớp nối; mức vừa mới đo lại trên một tin dài nhiều ý (bỏ sót dữ kiện kho có, đã bỏ). | một tin, 6 lượt, 22/11 | giới hạn của phép đo | 33 |
 | Phụ thuộc một khoá Bedrock tạm do chủ dự án giữ; bản đưa lên mạng chưa có cách cấp khoá lâu dài. | — | khoá hết hạn là ô hỏi đáp ngừng cho tới khi làm mới | 33, 37 |
 | Số chờ tới chữ đầu đo khi hai model chạy cùng lúc trên một máy. | khoảng 13,0 giây trên 153 lượt; dài hơn chạy một mình khoảng 2,5 tới 4,5 giây | giới hạn của phép đo | 34 |
 | Chưa đo lại với Claude lợi của chạy song song và của tính sẵn ngày. | — | giới hạn của phép đo | 34 |

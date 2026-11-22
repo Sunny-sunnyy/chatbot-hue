@@ -1,6 +1,6 @@
 # Bài 33 — Model viết, mức suy luận, và đổi model bằng một dòng cấu hình
 
-*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài); sửa câu tiền "qua giao diện" · cơ chế đọc từ chương trình và cấu hình 22/11; số đo từ các báo cáo 19/11 (gpt-6-luna) và 21/11 (cả hai model); người viết không chạy lại phép đo nào.*
+*Cập nhật 21:37, ngày 22/11/2026 · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài); thêm phép thử mức vừa cho tin nhiều ý (đo 22/11, bỏ) · cơ chế đọc từ chương trình và cấu hình 22/11; số đo từ các báo cáo 19/11 (gpt-6-luna) và 21/11 (cả hai model); người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** một câu hỏi đi qua sáu bước, gần như toàn bộ thời gian chờ là model viết (bài 6); model viết được gọi nhiều lần trong một lượt: xếp loại câu, tìm thêm, viết (bài 21, 22).
 **Bài này thêm:** hai model đã dùng khác nhau ở đâu, mức suy luận là gì và vì sao để mức cao, vì sao đổi model chỉ sửa một dòng mà vẫn phải viết một lớp nối và đo lại.
@@ -10,7 +10,7 @@
 - **Một model viết làm mọi việc có model** (xếp loại câu, trả lời, mục web, câu thẻ lịch, hiểu lệnh sửa lịch, nhận ảnh…; hồ sơ đếm là chín loại lời gọi). Đổi model là đổi tất cả cùng lúc.
 - **Hai model đã chạy.** gpt-6-luna của OpenAI tới trưa 21/11; từ 21/11 là Claude Sonnet 5.5 qua Amazon Bedrock, **đổi tạm**. Đường quay về gpt-6-luna vẫn là một dòng cấu hình, nhưng tài khoản OpenAI đang ngừng dùng vì hết tiền.
 - Claude **viết dài hơn khoảng ba lần**, **đắt hơn 20 lần mỗi token**, và **chữ tới một lần** khi viết xong thay vì chạy dần. Chất lượng: đúng ngang, đủ ý nhỉnh hơn, gọn kém hơn.
-- **Mức suy luận để cao.** Ở câu hỏi một lượt, bốn mức ngang nhau và mức cao chỉ chậm hơn khoảng 0,3 giây; ở lệnh sửa lịch khó và lượt có công cụ, mức thấp hỏng rõ.
+- **Mức suy luận để cao.** Ở câu hỏi một lượt, bốn mức ngang nhau và mức cao chỉ chậm hơn khoảng 0,3 giây; ở lệnh sửa lịch khó, lượt có công cụ và tin dài nhiều ý, mức thấp hơn hỏng rõ (tin dài: mức vừa nhanh hơn 8 giây mà bỏ sót dữ kiện kho có).
 - **Đổi model không chỉ là đổi tên.** Thư viện gọi model giữ nguyên; Claude đi qua một lớp nối tự viết. Lỗi lớn nhất nằm ở chỗ nối: Claude xin công cụ mãi không viết (0 trên 8 lần ở mỗi mức, bốn mức); sửa xong, câu chạm trần vòng từ 6 xuống 0 trên 29.
 
 ## Từ dùng trong bài
@@ -32,7 +32,7 @@ Chương trình dựng nhiều vai có model: xếp loại câu, trả lời, tr
 
 ## Hai model đã chạy, khác nhau ở bốn chỗ người dùng thấy
 
-Sáng 21/11 chủ dự án đổi tạm model viết từ gpt-6-luna (OpenAI) sang Claude Sonnet 5.5 qua Amazon Bedrock, với điều kiện giữ nguyên thư viện đang dùng và nói "chuyển về luna" là về được ngay. Tối 21/11 chủ dự án gác hẳn gpt-6-luna vì tài khoản OpenAI hết tiền; từ đó mọi phép đo chỉ chạy trên Claude.
+Sáng 21/11 chủ dự án đổi tạm model viết từ gpt-6-luna (OpenAI) sang Claude Sonnet 5.5 qua Amazon Bedrock, với điều kiện giữ nguyên thư viện đang dùng và nói "chuyển về luna" là về được ngay.
 
 | Người dùng thấy | gpt-6-luna | Claude Sonnet 5.5 (mức cao) |
 |---|---|---|
@@ -44,7 +44,7 @@ Sáng 21/11 chủ dự án đổi tạm model viết từ gpt-6-luna (OpenAI) sa
 Đọc bảng:
 
 - **Chậm hơn vì viết dài hơn**, không phải vì sinh chữ chậm: khoảng 114 và 101 token mỗi giây (bài 34).
-- **Đắt hơn ở hai tầng:** giá mỗi token gấp 20 lần (bảng ở nửa để tra), câu lại dài hơn, nên tiền mỗi câu gấp khoảng 37 lần (66 câu, mức cao: 0,0146 so với 0,00039 USD).
+- **Đắt hơn ở hai tầng:** giá mỗi token gấp 20 lần, câu lại dài hơn (số ở nửa để tra).
 - **Chất lượng** (66 câu tính điểm, thang 1–5, 21/11): "đúng" ngang nhau (4,97 và 4,94), "đủ ý" Claude nhỉnh hơn (4,83 và 4,88), "trọng tâm" Claude thấp hơn rõ (4,94 và 4,39) vì thêm chi tiết sau câu trả lời chính. Chủ dự án đã nhận độ dài đó.
 
 ## Mức suy luận đang để cao, vì mức thấp hỏng ở việc khó
@@ -62,7 +62,7 @@ Claude được gọi theo cách riêng của Claude, khác OpenAI ở nhiều c
 
 **Lỗi đắt nhất: Claude xin công cụ mãi, không viết.** Ở lượt trợ lý có công cụ, thư viện gửi cùng lúc danh sách công cụ và khuôn đầu ra bắt buộc; Claude đã có đủ kết quả mà vẫn xin công cụ tiếp, tới hết số vòng, và người dùng nhận câu từ chối (**viết được 0 trên 8 lần** ở mỗi mức suy luận). Sửa: lớp nối thay khuôn bằng một công cụ nội bộ "trả lời"; số câu chạm trần vòng **6 xuống 0** trên 29 câu (diễn biến ở "Chi tiết để tra").
 
-**Lỗi thứ hai: câu hỏi cũ dính vào câu đang hỏi.** Lịch sử lúc đó chỉ giữ câu hỏi, nên nhiều tin của người dùng đứng liền nhau. Claude đòi tin của người dùng và tin của trợ lý xen kẽ nhau, nên bản nối đầu gộp hai câu hỏi liền nhau làm một, nên câu "bạn còn nhớ tôi tên gì" dính vào câu giá vé lượt trước. Sửa: chèn một tin giữ chỗ giữa hai câu hỏi; sau sửa 0 lỗi trên 18 lượt đo.
+**Lỗi thứ hai: câu hỏi cũ dính vào câu đang hỏi.** Lúc đó lịch sử chỉ giữ câu hỏi, nên hai tin của người dùng đứng liền nhau. Claude đòi tin của người dùng và tin của trợ lý xen kẽ nhau, nên bản nối đầu gộp hai câu hỏi liền nhau làm một, nên câu "bạn còn nhớ tôi tên gì" dính vào câu giá vé lượt trước. Sửa: chèn một tin giữ chỗ giữa hai câu hỏi; sau sửa 0 lỗi trên 18 lượt đo.
 
 Cả hai lỗi đều do Claude hiểu cùng một yêu cầu khác gpt-6-luna, không phải do model kém.
 
@@ -71,16 +71,16 @@ Cả hai lỗi đều do Claude hiểu cùng một yêu cầu khác gpt-6-luna, 
 ### 1. Vì sao giữ thư viện của OpenAI mà chạy Claude qua một lớp nối tự viết?
 
 - **Đã chọn:** giữ thư viện OpenAI Agents SDK; viết một lớp nối khoảng 300 dòng, không thêm thư viện nào.
-- **Vì sao:** chủ dự án đặt điều kiện "giữ nguyên bộ khung đang dùng" khi đổi tạm; vì sao chủ dự án đặt điều kiện này: chưa thấy ghi lý do. Điều thấy được: chín vai, vòng công cụ, phần ghi sổ tiền và test cũ không phải sửa; mọi loại lời gọi gửi OpenAI (mười loại, vì vài vai có hai biến thể) chụp trước và sau khi có lớp nối giống nhau từng byte, nên đường về gpt-6-luna không bị đụng.
+- **Vì sao:** chủ dự án đặt điều kiện "giữ nguyên bộ khung đang dùng" khi đổi tạm; vì sao chủ dự án đặt điều kiện này: chưa thấy ghi lý do. Điều thấy được: chín vai, vòng công cụ, phần ghi sổ tiền và test cũ không phải sửa; mọi loại lời gọi gửi OpenAI chụp trước và sau khi có lớp nối giống nhau từng byte, nên đường về gpt-6-luna không bị đụng.
 - **Cách khác:** trỏ thư viện sang địa chỉ của Bedrock nhận yêu cầu viết theo kiểu OpenAI, khỏi cần lớp nối: đã thử, Bedrock trả "không có" cho model này ở địa chỉ đó. Viết lại chín vai bằng thư viện của Anthropic, hoặc dùng một thư viện trung gian gọi được nhiều hãng: không làm (quyết định đã ghi: giữ bộ khung).
 - **Cái giá:** mọi khác biệt giữa hai hãng dồn vào lớp nối và chỉ lộ ra khi chạy thật; hai lỗi lớn ở mục trên đều nằm ở đây. Thêm hãng thứ ba thì viết thêm một lớp nối.
 
 ### 2. Vì sao mức suy luận để cao, khi ở câu thường bốn mức ngang nhau?
 
 - **Đã chọn:** mức cao cho mọi vai không tự đặt mức và cho hiểu lệnh sửa lịch; mức thấp cho lượt biểu mẫu và câu thẻ lịch.
-- **Vì sao:** đo ngày 21/11. Ở hỏi đáp một lượt (66 câu), bốn mức ngang nhau và mức cao chỉ chậm hơn mức vừa khoảng 0,3 giây; chủ dự án chọn mức cao "vì không mất gì đáng kể". Ở lệnh sửa lịch khó (3 lượt mỗi lệnh), mức cao đúng 5 trên 6, mức thấp 2, mức vừa 0. Ở lượt có công cụ thời tiết, ngày (12 lượt), mức vừa và thấp chạm trần vòng 8–9 lượt, mức cao 1. Nhóm lịch giữ mức thấp: đo trên 4 kiểu lịch, ba mức cho cùng kết quả.
-- **Cách khác:** mức vừa hoặc thấp cho câu trả lời: đã đo ở câu một lượt (ngang nhau). Đo lại mức vừa và thấp ở lượt có công cụ sau khi sửa lớp nối: chưa làm, đang nằm trong hàng đo.
-- **Cái giá:** chậm hơn một chút và tốn token suy luận ở mọi lượt; lợi của mức cao ở lượt có công cụ là số đo **trước** khi sửa lớp nối, có thể đã không còn đúng.
+- **Vì sao:** đo ngày 21/11. Ở hỏi đáp một lượt (66 câu), bốn mức ngang nhau và mức cao chỉ chậm hơn mức vừa khoảng 0,3 giây; chủ dự án chọn mức cao "vì không mất gì đáng kể". Ở lệnh sửa lịch khó (3 lượt mỗi lệnh), mức cao đúng 5 trên 6, mức thấp 2, mức vừa 0. Ở lượt có công cụ thời tiết, ngày (12 lượt), mức vừa và thấp chạm trần vòng 8–9 lượt, mức cao 1. Nhóm lịch giữ mức thấp (đo ở "Chi tiết để tra").
+- **Cách khác:** mức vừa hoặc thấp cho câu trả lời: đã đo ở câu một lượt (ngang nhau). Mức vừa cho lượt tin nhiều ý, sau khi sửa lớp nối: đã đo 22/11 trên một tin, nhanh hơn 8 giây nhưng trượt một điều ghi trước, và ngoài tiêu chí 3 trên 6 lượt nói kho không có vé cho bé dưới 7 tuổi ⇒ bỏ ("Đã so"). Mức thấp ở lượt có công cụ, và mức vừa ở lượt có công cụ thời tiết, ngày, sau khi sửa lớp nối: chưa đo.
+- **Cái giá:** chậm hơn một chút và tốn token suy luận ở mọi lượt; ở tin dài nhiều ý chậm hơn mức vừa khoảng 8 giây. Lợi của mức cao ở lượt có công cụ thời tiết, ngày là số đo **trước** khi sửa lớp nối, có thể đã không còn đúng.
 
 ### 3. Vì sao chấp nhận chữ tới một lần với Claude?
 
@@ -132,7 +132,7 @@ Gửi cùng lúc công cụ và khuôn đầu ra bắt buộc thì Claude cứ x
 <details>
 <summary>3. Vì sao mức suy luận để cao dù ở câu thường bốn mức ngang nhau?</summary>
 
-Mức cao chỉ chậm hơn khoảng 0,3 giây, mà ở lệnh sửa lịch khó đúng 5 trên 6 (mức thấp 2); chủ dự án chọn mức cao.
+Ở câu thường mức cao chỉ chậm hơn khoảng 0,3 giây, mà ở lệnh sửa lịch khó đúng 5 trên 6 (mức thấp 2); chủ dự án chọn mức cao.
 
 </details>
 
@@ -153,7 +153,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 | `full_corpus_generation.model` | `gpt-6-luna` | model của đường OpenAI; chỉ đọc khi chọn `openai` | khoá cứng trong chương trình kiểm cấu hình: có 8 giá trị cấu hình chương trình chỉ nhận đúng một giá trị, ghi khác thì máy chủ không bật (phụ lục A, B) |
 | `bedrock.model` · `bedrock.region` | Claude Sonnet 5.5 · Singapore | model và vùng của Bedrock | — |
 | `bedrock.max_tokens` | 128.000 | trường bắt buộc của Claude; để mức tối đa = coi như không trần | không đặt nhỏ hơn (quyết định 3) |
-| `bedrock.reasoning_default` | cao | mức suy luận cho vai không tự đặt mức | đã đo bốn mức ở câu một lượt |
+| `bedrock.reasoning_default` | cao | mức suy luận cho vai không tự đặt mức | đã đo bốn mức ở câu một lượt; mức vừa cho cả lượt tin nhiều ý (22/11, một tin): bỏ |
 | `bedrock.reasoning_sua_lich` | cao | riêng hiểu lệnh sửa lịch | đã đo ba mức: cao 5/6, thấp 2/6, vừa 0/6 |
 | Mức của lượt biểu mẫu và câu thẻ lịch | thấp, đặt cứng | không cần nghĩ ở việc này | đã đo ba mức: cùng kết quả |
 | `bedrock.sua_lich_timeout_seconds` | 10 giây | hạn riêng của lời gọi hiểu lệnh sửa lịch trên Claude | lâu nhất đã thấy 7,1 giây |
@@ -197,6 +197,22 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 
 Đọc bảng: chênh giữa các mức nằm trong 1–2 câu; hai lượt gpt-6-luna giống hệt nhau đã lệch 0–1 câu ở "đúng", 1–3 câu ở "đủ ý". Theo luật ghi trước, cả bốn mức đều phạm mức tụt ở "trọng tâm" (vì dài), nên tập ứng viên rỗng; chủ dự án quyết nhận độ dài và chọn mức cao. Giới hạn: một lượt mỗi mức, câu một lượt không có công cụ.
 
+**Mức vừa cho cả lượt tin nhiều ý** (22/11, Claude Sonnet 5.5, sau khi sửa lớp nối). Vấn đề thật: tin dài nhiều ý chờ 25–34 giây (bài 34). Cách thử: không sửa chương trình; trong tiến trình đo, mọi lời gọi model của lượt tin nhiều ý (kể cả lời gọi quyết định tìm thêm) chạy mức vừa, lượt một ý không đổi. Bộ câu: MỘT tin gia đình bốn ý (tổng vé Đại Nội + Lăng Tự Đức cho cả nhà, bà có được giảm không, điểm nào khác ít bậc kèm giá và giờ), 6 lượt. Mốc: 6 lượt mức cao của đúng tin đó, cùng bản chương trình, chạy trước khoảng một giờ (lượt 2 của phép đo thẻ nơi, bài 23). Tiêu chí ghi trước khi chạy; phiên đo chấm chữ.
+
+| Điều ghi trước | Mức cao (mốc) | Mức vừa | Kết |
+|---|---|---|---|
+| trung vị thời gian cả lượt ≤ 23,3 giây (giảm ít nhất 4 giây) | 27,3 (21,7–29,4) | 19,3 (17,7–21,3) | đạt |
+| tổng tiền vé đúng | 6 / 6 | 6 / 6 | đạt |
+| nêu vé lẻ Đại Nội và mức giảm 50 % cho người từ đủ 60 tuổi | 6 / 6 | 6 / 6 | đạt |
+| 0 dòng "chưa có" sai về giờ, vé lẻ của Cung An Định, Lăng Dục Đức, Bảo tàng Cổ vật | 0 / 6 | 1 / 6 | **trượt** |
+| tổng số lần model tự tìm của 6 lượt ≤ 10 | 8 | 6 (mỗi lượt đúng 1) | đạt |
+| 0 màn hình lỗi · nêu ít nhất 1 điểm ít bậc khác kèm giá và giờ | 0 · 6 / 6 | 0 · 6 / 6 | đạt |
+| *(ngoài tiêu chí)* nêu "trẻ dưới 7 tuổi miễn phí" (kho có) | 6 / 6 | 3 / 6 | — |
+
+Đọc bảng: mức vừa nhanh thật — cả 6 lượt nhanh hơn trung vị 26,9 giây của 12 lượt mức cao cùng tin trong ngày, nên khoảng 8 giây không phải dao động. Nó trượt một điều ghi trước: một lượt ghi chưa có giá vé riêng của Bảo tàng Cổ vật rồi tự nêu giá ngay trong ngoặc. Chỗ nặng hơn nằm ngoài tiêu chí: ba lượt nói kho không có vé cho bé dưới 7 tuổi, trong khi kho có và tin hỏi thẳng tổng tiền cho nhà có bé. Gốc đọc từ sổ vết: ở mức vừa model chỉ tự tìm đúng một lần; lượt nào câu tìm đó không nhắc trẻ em thì đoạn "dưới 7 tuổi miễn phí" không vào ngữ cảnh, và model không tìm bù. Điều "số lần tìm không tăng" đạt chính vì model tìm ít hơn mức cần. Khoảng 8 giây bớt được gồm ba phần không tách được: bớt lần tìm thứ hai ở các lượt mức cao có tìm hai lần, viết ngắn hơn (trung vị 2.028 so với 2.257 ký tự), và ít token suy luận hơn.
+
+Đã chọn: bỏ hẳn theo tiêu chí ghi trước, không thử lại (nhóm đã chốt). Giới hạn: một tin, 6 lượt mỗi bên; mốc không chạy xen kẽ; chưa đo tin nhiều ý kiểu khác, mức thấp, hạ mức chỉ ở lần viết cuối, hay mức vừa kèm một vế tìm bù cho dữ kiện còn thiếu (bài 23, "Đã so" dòng 14).
+
 **Các thứ đã thử với Claude ngày 21/11 mà không đưa vào:** đoạn dặn "nói thẳng" (gỡ, xem quyết định 5); cho gọi công cụ 8 vòng thay 4, tìm kho 4 lần thay 2 (thước 28 và 28 trên 29, không đổi; lúc đó trần là 2 lần tìm, 4 vòng — từ 14:47 ngày 22/11 là 3 và 5, mở cùng hai thay đổi ở khâu tìm, bài 21); trả lại phần suy nghĩ giữa các vòng công cụ (24 trên 24 cả hai bên); đệm lời dặn (không nhanh hơn).
 
 ## Quyết định nhỏ hơn
@@ -213,7 +229,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 ## Giới hạn đã biết
 
 - **Đổi tạm, chưa có quyết định giữ lâu dài.** Đường gpt-6-luna nguyên vẹn nhưng tài khoản đang ngừng dùng; các tính năng mở từ tối 21/11 chưa đo trên gpt-6-luna.
-- **Chưa đo lại mức vừa và thấp ở lượt có công cụ** sau khi sửa lớp nối.
+- **Mức thấp ở lượt có công cụ chưa đo lại** sau khi sửa lớp nối; mức vừa mới đo lại trên MỘT tin dài nhiều ý (bỏ sót dữ kiện, "Đã so"), các lượt có công cụ khác chưa đo lại.
 - **Chữ tới một lần**, chờ trắng có lượt quá 15 giây (bài 34).
 - **Câu thẻ lịch của Claude** có thể ghép sai ý của một câu nguồn dài (một mục, 12 lượt: sai 1, nói lỏng 4); bộ kiểm của chương trình không bắt được loại lỗi này (bài 29).
 - **Phụ thuộc một khoá tạm** do chủ dự án giữ; hết hạn là ô hỏi đáp ngừng cho tới khi làm mới. Vì gpt-6-luna đang gác, không có model dự phòng.
@@ -226,6 +242,11 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - Ép model gọi đúng một công cụ: Claude chỉ nhận "tự chọn" hoặc "không công cụ", nên lớp nối không ép.
 - Ở vòng mà mọi công cụ đã bị ẩn (hết lượt tìm), ép khuôn làm Claude viết rác vào khuôn (tên công cụ, chữ giữ chỗ, rỗng) 14 trên 22 lần; chỉ đưa công cụ "trả lời": đúng câu từ chối 20 trên 22, 0 rác.
 - Lời lỗi của lớp nối không mang thân phản hồi của Amazon (thân đó có mã tài khoản); chỗ đọc file khoá lỗi chỉ ghi tên loại lỗi, không ghi đường dẫn.
+- Tối 21/11 chủ dự án gác hẳn gpt-6-luna vì tài khoản OpenAI hết tiền; từ đó mọi phép đo chỉ chạy trên Claude.
+- Tiền mỗi câu của Claude gấp khoảng 37 lần gpt-6-luna (66 câu, mức cao: 0,0146 so với 0,00039 USD): giá mỗi token gấp 20 lần, câu lại dài hơn.
+- Lỗi thứ hai (câu hỏi cũ dính vào câu đang hỏi) lộ ra vì lịch sử lúc đó chỉ giữ câu hỏi, nên nhiều tin của người dùng đứng liền nhau.
+- Quyết định 2, nhóm lịch giữ mức thấp: đo trên 4 kiểu lịch, ba mức cho cùng kết quả.
+- Quyết định 1: phép chụp "giống từng byte" gồm mười loại lời gọi gửi OpenAI, vì vài vai có hai biến thể.
 - Tiền một câu ví dụ chạy thẳng qua code sản phẩm (không qua máy chủ, 21/11): khoảng 0,018 USD trên Claude so với khoảng 0,0007 USD trên gpt-6-luna (khoảng 25 lần); lượt hỏi tiếp có tìm thêm 0,048 USD. Mức suy luận của các lượt đó: báo cáo gốc không ghi; hướng dẫn đổi model ghi "mức thấp".
 - Quyết định 3, dòng trạng thái với Claude: ở lượt có công cụ, "Đang viết câu trả lời…" chỉ được gửi ngay trước chữ đầu, nên với Claude gần như không thấy (đã nhìn trên trình duyệt 22/11: lúc chờ chỉ một dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời…", tin bốn ý 29,5 giây); trừ lượt phải viết lại: dòng đó đứng suốt lần viết lại (bài 21).
 - Lớp nối, ví dụ một chỗ khác nhau: khuôn có ràng buộc kiểu "nhiều nhất 3 mục" bị Bedrock từ chối, nên lớp nối gỡ ràng buộc khỏi khuôn gửi đi; chương trình vẫn kiểm đủ khi nhận về.
@@ -261,6 +282,8 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - Lượt chạm 45 giây: `data/thu_bedrock_2026-11-21/do/moc_12vai/KET_QUA_MOC.md` (r1, V01 lượt 3) [riêng tư]. Dòng trạng thái ở lượt có công cụ: `backend/llm/assistant.py` (`pending_generating`, "đang viết" phát ngay trước chữ đầu) [code].
 - Bài đã qua một lượt đối chiếu độc lập 22/11: `data/hoc_cung_D/kiem/bai_33_38.md` [riêng tư]; dòng không áp ghi ở `data/hoc_cung_D/viet/viet_33_38.md` mục "Sau lượt kiểm".
 
+- Phép thử mức vừa cho cả lượt tin nhiều ý (đợt 21:37 22/11/2026): tiêu chí ghi trước (sáu điều + bổ sung E1–E4, mốc lượt 2 thẻ nơi 17:10 = 27,3 giây, trung vị gộp 26,9 của 12 lượt high, cách thay hai agent `assistant_agent_nhieu_y` / `assistant_history_agent_nhieu_y` trong tiến trình đo): `data/thu_bedrock_2026-11-21/b_medium_nhieu_y/luot_1/TIEU_CHI.md` dòng 4–24; số máy (19,3 giây, 1 / 6 ở điều 4, 6 lần tìm, 2.028 ↔ 2.257 ký tự, token suy luận): `KET_QUA_SO_MAY.md` dòng 3–21; bản chấm (điều 4 TRƯỢT, "dưới 7 tuổi" 3 / 6, gốc là chỉ một lần tìm): `CHAM_E.md` dòng 5–21 [riêng tư; đã chạy, phiên khác, 22/11; Claude Sonnet 5.5]. Trung vị 19,3 · 27,3, khoảng thời gian, số lần tìm 1×6 ↔ 2·1·2·1·1·1: người viết đếm lại từ `tho.jsonl` của `b_medium_nhieu_y/luot_1` và `b_x10_the_noi/luot_2` [tự đếm, 0 đồng]. "Bỏ hẳn, không thử lại": `session_prompt/Y_CHUA_THU.md` hàng ý 56 [chép]. Hai agent tin nhiều ý có thật trong code: `backend/llm/generator_openai_full_corpus.py` dòng 388–389, 568–569; mức đang chạy `reasoning_default: high`: `backend/config/settings.yaml` dòng 59 [code]. Mức thấp sau khi sửa lớp nối chưa đo: không thấy trong `Y_CHUA_THU.md`, `VIEC_DANG_MO.md`, `HIEN_TRANG.md` (grep "low", "medium", "mức thấp") [đã grep].
+- Để giữ độ dài nửa để hiểu: chuyển xuống "Chi tiết để tra" câu "37 lần", câu "lịch sử lúc đó chỉ giữ câu hỏi", "mười loại lời gọi", "4 kiểu lịch", câu "tối 21/11 gác hẳn gpt-6-luna" (21:37 22/11/2026).
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 (hàng "Trần tìm 3 lần / 5 vòng là khoá CHUNG cho cả hai đường model"); `backend/config/settings.yaml` [code; người viết không chạy lại]. Người chấm 24/10–19/11 là Claude (chính), gpt-6-luna phụ: `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` dòng 34 ("Judge chính là Claude (xem E1)") [chép; sửa theo bài 19]. 8 giá trị khoá: `backend/core/settings_loader.py` `validate_phase6_settings` [code, đọc 22/11].
 
 </details>
