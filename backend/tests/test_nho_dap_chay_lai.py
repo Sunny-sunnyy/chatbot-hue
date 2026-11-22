@@ -208,3 +208,40 @@ def test_storm_signal_the_model_found_in_the_first_run_survives_a_rerun_that_als
     loi = [d for k, d in asyncio.run(go()) if k == "error"]
     assert goi_bao and trace.tools[-1]["name"] == TEN_CHAY_LAI and trace.citation_error is not None  # đúng chuỗi: gọi bão / lũ ⇒ rút ⇒ chạy lại ⇒ rút
     assert len(loi) == 1 and tt.CAU_BAO_LU in loi[0]["message"]
+
+
+@pytest.mark.parametrize("parallel", [False, True])
+def test_storm_signal_of_the_first_run_reaches_the_user_when_the_rerun_succeeds_without_the_tool(deps, parallel):
+    """Soát khác hãng 22/11 (Gemini Carbon 3b): lần đầu model tự gọi công cụ loại bão / lũ rồi bị rút; lần chạy lại KHÔNG gọi lại công cụ và trả lời được ⇒
+    trước bản sửa người dùng nhận câu trả lời không kèm câu bản tin chính thức + 112. Nay dấu của lần đầu đi VÀO lần chạy lại ⇒ lưới cuối thêm dòng an toàn."""
+    import asyncio
+
+    from llm import thoi_tiet as tt
+    from llm.assistant import luoi_cuoi_bao
+    from test_b5b_thoi_tiet import bao_call, nguon
+
+    cau, co_trich = "Mai đi biển Thuận An thời tiết có nguy hiểm gì không?", "Biển Thuận An cách trung tâm Huế không xa [1]."
+    flags = dataclasses.replace(CO, song_song_tra_loi=parallel, thoi_tiet=True, bao_lu_cong_cu=True, du_bao=nguon())
+    goi_bao = []
+
+    def script(n, kw):
+        if "ngoai_pham_vi" in (kw.get("instructions") or ""):
+            return [{"type": "message", "id": f"r{n}", "role": "assistant", "status": "completed",
+                     "content": [{"type": "output_text", "text": json.dumps({"route": "tro_ly_hue"}), "annotations": []}]}]
+        if NHAN_LOI_TRUOC not in json.dumps(kw["input"], ensure_ascii=False):
+            return [answer(co_trich)]                                          # lần chạy lại: trả lời có nguồn, không gọi công cụ thời tiết
+        if not goi_bao:
+            goi_bao.append(n)
+            return [bao_call()]
+        return [answer(KHONG_TRICH)]
+
+    trace = AnswerTrace(history=CO_DAP, lich_su_khong_dap=KHONG_DAP)
+
+    async def go():
+        turn = answer_turn_stream_parallel(cau, *deps, generator(script), trace, flags, None, None)
+        return parse_sse([e async for e in _answer_events(turn, trace, dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter(),
+                                                          luoi_cuoi=lambda: luoi_cuoi_bao(cau, trace, flags))])
+    events = asyncio.run(go())
+    assert goi_bao and trace.tools[-1]["name"] == TEN_CHAY_LAI and trace.citation_error is None and "error" not in [k for k, _ in events]
+    thay = "".join(d.get("text", "") for k, d in events if k == "delta") + " ".join(str(v) for k, d in events if k == "notice" for v in d.values())
+    assert tt.CAU_BAO_LU in thay

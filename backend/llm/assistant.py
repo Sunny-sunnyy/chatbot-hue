@@ -434,6 +434,7 @@ class AnswerTrace:
     # B5b: ngữ cảnh code dò ở câu này (bão / lũ, ngoài 7 ngày, có buổi, có đưa công cụ) · kết quả công cụ `thoi_tiet` (trạng thái, khối số liệu code
     # in) · phần code nối sau chữ model · số thời tiết ngoài tập cho phép (D8). KHÔNG log chữ.
     thoi_tiet_ctx: dict | None = None
+    bao_lu_lan_dau: bool = False  # lần chạy lại (`answer_turn_stream_parallel`): lần đầu của lượt model đã tự gọi công cụ thời tiết loại bão / lũ
     thoi_tiet: dict | None = None
     thoi_tiet_noi: str | None = None
     thoi_tiet_dau: str | None = None  # cờ `bao_lu_cong_cu`: câu cố định code đặt TRƯỚC chữ model (lưới khớp, model không gọi công cụ)
@@ -961,7 +962,8 @@ def luoi_cuoi_bao(query: str, trace: AnswerTrace, flags: "AssistantFlags | None"
     đều chưa có câu bản tin chính thức + 112 ⇒ đặt câu đó vào dòng ghi chú (`notice`). Vì sao ở đây: câu 112 chỉ được nối trong `_thoi_tiet_cuoi`;
     lượt kết thúc sớm / đi đường khác (xếp ngoài phạm vi, trò chuyện, ngữ cảnh rỗng, sửa lịch) không tới đó. Dùng `notice` chứ không nối vào chữ:
     lượt có lịch giao diện không vẽ chữ trả lời, và chữ không đổi thì cờ từ chối / bộ đếm / lịch sử giữ nguyên. Trả True khi đã thêm."""
-    if not _khop_luoi_cuoi(query, flags, trace.history) or trace.clarify is not None:
+    # 22/11 (soát khác hãng): cả lượt mà MODEL đã tự gọi công cụ loại bão / lũ (câu gõ không khớp lưới) — như `loi_bao_luoi_cuoi` đã nhìn
+    if not (_khop_luoi_cuoi(query, flags, trace.history) or (trace.thoi_tiet_ctx or {}).get("bao_lu_model")) or trace.clarify is not None:
         return False
     da_co = (trace.answer or "") + ((trace.web or {}).get("text") or "") + (trace.notice or "")
     if tt.CAU_BAO_LU in da_co or tw.THIEN_TAI_TEXT in da_co:
@@ -1469,7 +1471,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         if flags.bao_lu_cong_cu:  # plan 17/11 (đã lùi theo luật 2.5): cổng = từ thời tiết + từ nguy hiểm thời tiết (câu cuối / câu liền trước); lưới rộng
             tu_khoa = tt.co_tu_khoa_luot_rong(query, trace.history)
             trace.thoi_tiet_ctx.update(bao_lu=tt.la_luot_bao_lu(query, trace.history), bao_lu_cau=tt.la_cau_bao_lu_rong(query),
-                                       bao_lu_cong_cu=True, bao_lu_model=False, luoi_cuoi=_luot_bao_lu(query, trace.history),
+                                       bao_lu_cong_cu=True, bao_lu_model=trace.bao_lu_lan_dau, luoi_cuoi=_luot_bao_lu(query, trace.history),
                                        tu_khoa=tu_khoa, co_cong_cu=(tu_khoa or luon) and not ngoai_7)
         tuan_sau = tt.ngay_tuan_sau(query, hom_nay_vn())
         if tuan_sau and not ngoai_7:  # rà nợ 15/11: "tuần sau" có phần trong 7 ngày ⇒ code đặt khoảng ngày (không có ⇒ khoá vắng, như trước)
@@ -1675,10 +1677,11 @@ _TU_HOI_TIM = re.compile(r"(?<!\w)(không|ko|k|hok|bao nhiêu|bn|mấy|nào|gì|
 
 def cac_ve_tim(cau: str) -> list[str]:
     """Các vế của một tin nhiều ý dùng làm CÂU TÌM riêng (cờ `tim_theo_ve`); bỏ vế trùng, nhiều nhất `TRAN_SO_VE_TIM` vế.
-    KHÁC `so_y` có chủ ý — hàm này không quyết tin có nhiều ý hay không: cắt cả ở dấu chấm / chấm than / xuống dòng (giữ dấu ? ở cuối vế), nhận từ
+    KHÁC `so_y` có chủ ý — hàm này không quyết tin có nhiều ý hay không: cắt cả ở dấu chấm / chấm than / xuống dòng (giữ dấu ? ở cuối vế; dấu chấm /
+    phẩy nằm NGAY TRƯỚC một chữ số thì không cắt — "200.000", "1,5 km"; soát khác hãng 22/11: câu tìm từng cụt thành "000 có gồm …"), nhận từ
     hỏi gõ tắt. Lý do: nhận nhầm một vế chỉ tốn hai đoạn thừa, còn bỏ sót một vế là mất đoạn kho của vế đó. Đếm 0 đồng 22/11/2026 trên 8 dòng
     "Tư liệu chưa có thông tin về…" SAI của model đang chạy: đoạn kho đúng vào ngữ cảnh 1 / 8 (tắt) ⇒ 3 / 8 nếu tách như `so_y` ⇒ 5 / 8 với cách này."""
-    ve = [p.strip(" ,;.!\n") for v in re.split(r"(?<=[,;?.!\n])", cau) if v.strip() for p in _LIEN_TU.split(v) if len(p.strip(" ,;?.!\n")) >= 8]
+    ve = [p.strip(" ,;.!\n") for v in re.split(r"(?<=[;?!\n])|(?<=[,.])(?!\d)", cau) if v.strip() for p in _LIEN_TU.split(v) if len(p.strip(" ,;?.!\n")) >= 8]
     return list(dict.fromkeys(v for v in ve if _TU_HOI_TIM.search(v)))[:TRAN_SO_VE_TIM]
 
 
@@ -1725,7 +1728,8 @@ async def cong_web(query: str, generator, trace: AnswerTrace, tim_web, flags: As
     # 18/11 (soát khác hãng): thêm MỌI lượt mà lưới cuối coi là lượt bão / lũ — cùng hàm `_luot_bao_lu` (câu này hoặc câu hỏi LIỀN TRƯỚC; cả "cảnh báo" +
     # từ thời tiết) — "vậy có nên ra biển không" sau một câu bão là lượt bão; thừa hơn sót. Luật này của mục web không theo cờ (như trước).
     # Hai địa chỉ chính thức do code đặt lên đầu danh sách link — câu cố định chỉ có tên cơ quan + 112, link Serper có thể toàn báo thường.
-    if tw.la_cau_thien_tai(xet) or _luot_bao_lu(xet, trace.history):
+    # 22/11 (soát khác hãng): cả lượt mà model đã tự gọi công cụ thời tiết loại bão / lũ rồi từ chối — câu gõ không có từ nào của hai lưới trên.
+    if tw.la_cau_thien_tai(xet) or _luot_bao_lu(xet, trace.history) or (trace.thoi_tiet_ctx or {}).get("bao_lu_model"):
         web.update(outcome="thien_tai", text=tw.THIEN_TAI_TEXT, nguon=NGUON_CHINH_THUC + list(kq.so_web))
         return
     call_log = CallLog()
@@ -1974,7 +1978,7 @@ def _chu_giu_lai(trace: AnswerTrace, giu: str, da_noi_dau: bool) -> str:
 
 _SPEC_END = object()  # dấu hết hàng đợi của phần chạy trước (#6)
 # Trường của trace do route đặt **trước** khi gọi lõi (chat.py `_start_conversation`, `_model_query`) — phần chạy trước phải nhận đủ (B161 M-1)
-ROUTE_INPUTS = ("history", "truong", "search_query")
+ROUTE_INPUTS = ("history", "truong", "search_query", "bao_lu_lan_dau")
 
 
 TEN_CHAY_LAI = "chay_lai_khong_dap"  # tên mục `trace.tools` của lượt đã chạy lại (sổ số đo: chỉ tên + đầu lời lỗi của lần đầu do code đặt, không chữ)
@@ -1996,6 +2000,7 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     lai = AnswerTrace(**{name: getattr(trace, name) for name in ROUTE_INPUTS})
     lai.history = khong_dap
     ctx_lan_dau = trace.thoi_tiet_ctx if (trace.thoi_tiet_ctx or {}).get("bao_lu_model") else None  # lần đầu model đã tự gọi công cụ loại bão / lũ
+    lai.bao_lu_lan_dau = ctx_lan_dau is not None  # dấu đi VÀO lần hai: lưới cuối và cổng web của lần hai coi đây là lượt bão / lũ dù model không gọi lại
     goi_lan_dau, loi_lan_dau = list(trace.llm_calls), str(trace.citation_error).split(":", 1)[0]
     yield "thay_chu", ""  # chữ chưa trích nguồn của lần đầu đã hiện ⇒ gỡ ngay, người dùng thấy lại các dòng tiến độ
     try:
