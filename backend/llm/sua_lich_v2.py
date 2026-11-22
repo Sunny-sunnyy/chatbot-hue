@@ -238,10 +238,12 @@ _VE_CON_Y_SUA = re.compile(r"(?<!\w)(?:bỏ|thêm|thay|dời|chuyển|giữ|gộ
 _VE_RUT_LOI = re.compile(r"(?<!\w)(?:thôi|khỏi|không cần|ko cần|k cần|đừng|khoan|huỷ|hủy|nhầm|lộn|quên|không phải|ko phải|bỏ qua)(?!\w)", re.I)
 _MOC_HOM = re.compile(r"(?<!\w)hôm\s+(?:thứ\s+)?(?:\d|một|nhất|hai|ba|bốn|tư|năm|đầu|cuối)(?!\w)", re.I)
 # Soát khác hãng 22/11 (#8): "à không" đứng riêng một vế vẫn ra cặp ngày; đếm cùng ngày 68 / 153 tin có lời rút lại ("để sau", "từ từ", "kệ đi"…) lọt
-# qua danh sách chữ cấm ở trên ⇒ thêm DANH SÁCH CHO PHÉP: vế KHÁC vế đổi chỗ phải là một CÂU HỎI — có từ hỏi, hoặc khuôn "có / đã / được / phải / nên …
+# qua danh sách chữ cấm ở trên ⇒ thêm DANH SÁCH CHO PHÉP: vế KHÁC vế đổi chỗ phải là một CÂU HỎI — có từ hỏi, có lời nhờ trả lời ("gợi ý giúp
+# mình quán bún bò", "cho mình biết giờ mở cửa" — phiên điều phối nêu: kiểu tin này dễ gặp hơn lời rút), hoặc khuôn "có / đã / được / phải / nên …
 # không / chưa" ở cuối vế, hoặc kết bằng dấu "?" — và không mở đầu bằng lời phủ định ("à không", "chưa", "hông"; "không sao", "không đâu" có từ hỏi mà
 # vẫn là lời rút; riêng "không biết / chưa rõ … bao nhiêu" là cách hỏi thường gặp ⇒ không tính là phủ định). Vế nào không phải câu hỏi ⇒ None.
 _VE_HOI = re.compile(r"(?<!\w)(?:bao nhiêu|bao lâu|bao xa|bao giờ|mấy|gì|nào|đâu|sao|ai|hỏi|hả|nhỉ"
+                     r"|gợi ý|tư vấn|giới thiệu|đề xuất|kể|(?:chỉ|tìm|xem)\s+(?:giúp|giùm|dùm|hộ|cho)|cho\s+(?:mình|em|tôi|anh|chị)\s+(?:biết|xin)"  # lời NHỜ trả lời
                      r"|(?:có|đã|được|phải|nên)(?!\w)(?!\s+lẽ).*(?<!\w)(?:không|ko|chưa)(?:\s+(?:ạ|vậy|thế|bạn))*\s*$)(?!\w)", re.I)
 _VE_MO_DAU_PHU_DINH = re.compile(r"^\W*(?:(?:à|ờ|ơ|ừ|ừm|ấy|ý|ui|úi|ôi|ủa|hm+)\W+)*(?:không|ko|k|hông|hem|khum|chưa)(?!\w)(?!\s+(?:biết|rõ)(?!\w))", re.I)
 

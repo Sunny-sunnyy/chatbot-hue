@@ -167,7 +167,7 @@ def test_swap_clause_reader_refuses_anything_that_is_not_one_plain_swap_plus_que
     "không", "ờ không", "à ko", "hông", "à không đâu", "không nha", "không sao", "à chưa", "chưa cần", "tạm thời chưa",      # phủ định trần
     "để sau", "để sau đi", "lát nữa", "tí nữa tính", "từ từ đã", "chờ đã", "đợi chút", "gượm đã",                            # hoãn
     "dừng lại", "ngưng", "hoãn", "rút lại", "cancel", "stop",                                                                # dừng
-    "để như cũ", "y như cũ nhé", "kệ đi", "mình đùa đấy", "à sai", "gõ sai rồi", "nghĩ lại rồi", "có lẽ chưa", "có lẽ không", "không biết nữa",  # đổi ý
+    "để như cũ", "y như cũ nhé", "kệ đi", "mình đùa đấy", "à sai", "gõ sai rồi", "nghĩ lại rồi", "có lẽ chưa", "có lẽ không", "không biết nữa", "cho mình để sau nhé", "giúp mình giữ y vậy",  # đổi ý
 ])
 def test_swap_is_not_applied_when_another_clause_is_not_a_question(rut):
     for cau in (f"Đổi chỗ ngày 1 với ngày 2, {rut}, vé vào Đại Nội bao nhiêu?", f"đổi chỗ ngày 1 với ngày 2 {rut}, vé vào Đại Nội bao nhiêu?",
@@ -179,6 +179,7 @@ def test_swap_is_not_applied_when_another_clause_is_not_a_question(rut):
     "Đại Nội có mở cửa buổi tối không?", "lăng Tự Đức có xa không?", "vé đã gồm thuyền chưa?", "xe buýt dừng ở đâu?", "quán nào không cay?",
     "giờ mở cửa Đại Nội?", "gợi ý giúp mình quán bún bò?", "đi Đại Nội có phải chờ lâu không ạ", "mình muốn hỏi vé lăng Minh Mạng",
     "không biết vé Đại Nội bao nhiêu nhỉ?", "chưa rõ lăng Tự Đức mở cửa mấy giờ",
+    "gợi ý giúp mình quán bún bò", "tư vấn chỗ ăn tối gần Đại Nội nhé", "cho mình biết giờ mở cửa lăng Tự Đức", "chỉ giúp mình đường ra chợ Đông Ba",  # lời nhờ, không từ hỏi, không dấu "?"
 ])
 def test_swap_is_still_read_next_to_ordinary_questions(hoi):
     assert s.cap_ngay_doi_cho_kem_hoi(f"đổi chỗ ngày 1 với ngày 2, {hoi}", 2) == (1, 2)
