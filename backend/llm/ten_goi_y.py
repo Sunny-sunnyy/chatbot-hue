@@ -99,7 +99,9 @@ def la_cau_go_lai(lich_su: Sequence, cau: str) -> bool:
     dòng ghi chú. Đo 20/11: hỏi A (có ghi chú) ⇒ hỏi B (không ghi chú) ⇒ gõ lại A thì model trả lời câu B 3 / 3 lần — lượt có ghi chú trông như đã
     đáp, lượt rỗng trông như còn treo; cờ tắt đúng 3 / 3. Lượt liền trước CÓ ghi chú thì không lệch dạng (đúng 3 / 3) ⇒ để nguyên."""
     chu = _chuan(cau)
-    if not chu or not lich_su or _TU_TRO.search(chu) or lich_su[-1][1].startswith(TIEN_TO_GHI_CHU):
+    # Soát khác hãng 22/11 (G10): "lượt liền trước có ghi chú" nay là "lượt liền trước KHÔNG rỗng" — khi nhớ cả câu trả lời liền trước (cờ
+    # `nho_cau_tra_loi`) lượt đó mở đầu bằng nhãn lời trợ lý chứ không phải tiền tố ghi chú, và hàm từng trả ngược: gỡ ghi chú của lượt cũ, tự tạo lịch sử lệch dạng.
+    if not chu or not lich_su or _TU_TRO.search(chu) or lich_su[-1][1]:
         return False
     # Soát đợt sửa 20/11 (ba AI cùng nêu): chỉ gỡ khi lượt CŨ trùng nguyên văn tự nó TỪNG CÓ ghi chú (đúng ca đã đo: A có ghi chú ⇒ B rỗng ⇒ gõ lại A).
     # Câu hỏi tiếp lược tên nơi ("Địa chỉ ở đâu?") mà lượt cũ không có ghi chú thì gõ lại vẫn CẦN dòng tên nơi của lượt trước nữa ⇒ không gỡ.

@@ -818,7 +818,8 @@ def khoang_cach_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach"):
     return khoang_cach
 
 
-def gan_diem_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach", quan_theo_cum: dict, toa_do: dict):
+def gan_diem_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach", quan_theo_cum: dict, toa_do: dict, bai_theo_rel: dict | None = None,
+                      bai_diem: dict | None = None):
     """Hàm `gan_diem` của **một lượt** (cờ `gan_diem`): model chỉ gửi MÃ một điểm (enum của bảng khoảng cách, `khac` = nơi ngoài danh sách) + loại; code
     tính (`llm/gan_diem.py`), đăng thành **một nguồn** trong sổ nguồn (như `khoang_cach_for_turn`). ≤ 3 lần / câu; lần thứ 4 ⇒ câu nhắc. Các dòng code
     dựng vào `trace.gan_diem` ⇒ số km / phút trong đó thuộc tập "số code dựng" của phép kiểm số sau khi viết."""
@@ -836,6 +837,11 @@ def gan_diem_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach", quan_theo_c
         trace.gan_diem = (trace.gan_diem or []) + [{"diem": diem, "loai": loai, "dong": dong}]
         src = PackedSource(id=len(trace.so_nguon) + 1, title=gd.tieu_de(bang, diem, loai), heading_path=(gd.MUC_NGUON,), excerpts=dong, source=gd.NGUON_SOURCE)
         trace.so_nguon.append(src)
+        # K5 (soát khác hãng 22/11): bài kho của từng nơi vừa kể, mang TÊN NƠI như nguồn in ⇒ `set_notice` nối câu an toàn / dòng "có thể đã thay đổi"
+        # của bài khi câu trả lời nêu tên nơi đó — đúng cách của công cụ liệt kê (`muc_luc_bai`). Không có mục lục (cờ `liet_ke_bai` tắt) ⇒ như cũ.
+        if bai_theo_rel:
+            trace.muc_luc_bai[src.id] = tuple(dataclasses.replace(bai_theo_rel[rel], tieu_de=ten)
+                                              for ten, rel in gd.noi_co_bai(bang, quan_theo_cum, toa_do, bai_diem or {}, diem, loai) if rel in bai_theo_rel)
         chu = FullCorpusContextBuilder._block(src)
         trace.context_parts.append(chu)
         return chu
@@ -1137,7 +1143,8 @@ def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
     # cờ `liet_ke_bai`: câu trả lời trích nguồn "mục lục" ⇒ bài nào của mục lục đó CÓ TÊN trong câu trả lời được coi như bài đã trích khi xét hai dòng ghi chú
     # dưới (rỗng khi cờ tắt / không trích mục lục ⇒ `notice` y như trước)
     tra_loi = (trace.answer or "").casefold()
-    bai_neu = [bai for src in (trace.cited or ()) if src.source == lk.NGUON_SOURCE for bai in trace.muc_luc_bai.get(src.id, ()) if bai.tieu_de.casefold() in tra_loi]
+    bai_neu = [bai for src in (trace.cited or ()) if src.source in (lk.NGUON_SOURCE, gd.NGUON_SOURCE)  # nguồn "gần một điểm": bài của từng nơi nó kể (K5)
+               for bai in trace.muc_luc_bai.get(src.id, ()) if bai.tieu_de.casefold() in tra_loi]
     # câu an toàn của nguồn đã trích đứng TRƯỚC các ghi chú thường; cờ tắt ⇒ `notice` y như trước. Lượt có lịch (biểu mẫu, sửa lịch, công cụ lịch) KHÔNG
     # nhận: chưa có dữ liệu đo, và "một dòng mỗi câu trả lời" là tuỳ tiện với lịch nhiều điểm (review E 19/11)
     if flags.noi_dong_tam_ngung and trace.cited and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None:
@@ -1145,7 +1152,10 @@ def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
                                            + [(bai.tieu_de, bai.dong) for bai in bai_neu])
         if trace.luu_y_nguon:
             dong.append(trace.luu_y_nguon)
-    if trace.cited and any(src.source == kc.NGUON_SOURCE for src in trace.cited) and "kẹt xe" not in (trace.answer or "").casefold():
+    # Soát khác hãng 22/11 (G7): nguồn "gần một điểm" loại ĐIỂM THAM QUAN cũng in km + phút theo đường đi (dòng cuối của nó là chính câu ghi chú này) ⇒
+    # cùng luật; đếm trên lượt thật: 5 / 14 lượt nêu km + phút mà bỏ ý "chưa tính kẹt xe". Loại quán (đường chim bay) không có dòng đó ⇒ không nối.
+    if (trace.cited and "kẹt xe" not in (trace.answer or "").casefold()
+            and any(src.source == kc.NGUON_SOURCE or (src.source == gd.NGUON_SOURCE and kc.CAU_GHI_CHU in src.excerpts) for src in trace.cited)):
         dong.append(kc.CAU_GHI_CHU)
     # câu xin danh sách: chỉ lượt hỏi đáp thường có nguồn kho — không lượt lịch, không câu có dòng ý thiếu (lượt mở mục web), không câu về MỘT nơi.
     # Lượt sửa lịch / biểu mẫu không qua `_before_model` ⇒ `xin_danh_sach` luôn None ở đó
@@ -1472,7 +1482,9 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
     if flags.ngay_lich and (luon or nl.co_tu_ngay_luot(query, trace.history)):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     if flags.gan_diem and (luon or gd.co_tu_khoa_luot(query, trace.history)):  # cờ tắt / lượt không có từ "gần…" ⇒ không truyền, danh sách công cụ như cũ
-        extra["gan_diem_fn"] = gan_diem_for_turn(trace, flags.khoang_cach_bang, flags.quan_bang, flags.quan_toa_do or {})
+        extra["gan_diem_fn"] = gan_diem_for_turn(trace, flags.khoang_cach_bang, flags.quan_bang, flags.quan_toa_do or {},
+                                                 {bai.rel: bai for bai in flags.muc_luc or ()},
+                                                 {i: d["nguon"] for i, d in flags.bang_lich_v2.theo_id.items()} if flags.bang_lich_v2 else {})
     if flags.liet_ke_bai and flags.muc_luc is not None:  # cờ tắt ⇒ không truyền, danh sách công cụ như cũ
         extra["liet_ke_fn"] = liet_ke_for_turn(trace, flags.muc_luc)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)

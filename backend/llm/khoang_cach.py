@@ -198,7 +198,9 @@ def _loai(don_vi: str) -> str:
 
 # 21/11/2026 (lượt người dùng mô phỏng: câu "bạn vào từ 13h thì không vướng giờ này" làm cả câu trả lời bị rút): GIỜ ĐỒNG HỒ không phải thời lượng.
 # Hẹp có chủ ý: chỉ "<lúc | từ | vào | trước | sau> N h / giờ" với N từ 5 tới 23; "mất tới 2h", "khoảng 3 giờ" vẫn là thời lượng và vẫn bị kiểm.
-_TRUOC_GIO_DONG_HO = re.compile(r"\b(?:lúc|từ|vào|trước|sau)\s+$", re.IGNORECASE)
+# Soát khác hãng 22/11 (G9): thêm "đến / tới" — "Quán mở cửa từ 6h đến 21h" từng bị coi "21h" là thời lượng 21 giờ và cả câu giờ mở cửa bị gỡ (lượt có
+# công cụ "gần một điểm" bật phép kiểm này cho câu hỏi về quán). "mất tới 9h", "hết đến 6 giờ" vẫn là thời lượng.
+_TRUOC_GIO_DONG_HO = re.compile(r"\b(?:lúc|từ|vào|trước|sau|(?<!mất )(?<!hết )(?:đến|tới))\s+$", re.IGNORECASE)
 
 
 def _la_gio_dong_ho(t: str, m: re.Match) -> bool:

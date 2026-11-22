@@ -117,6 +117,9 @@ def test_invented_distance_number_is_removed_not_retracted(text, so_la, nac, con
     ("Mưa 2 mm chỉ là mưa nhỏ [2].", "Vậy có cần áo mưa không?", (("Lượng mưa 2 mm là sao?", "…"),), {"thoi_tiet": True}),
     # giờ đồng hồ ("lúc 13h") không phải thời lượng đi đường
     ("Bạn nên xuất phát lúc 13h cho kịp [1]. Quãng đường khoảng 4,0 km [2].", "Từ A sang B bao xa?", (), {"khoang_cach": True}),
+    # soát khác hãng 22/11 (G9): "từ 6h đến 21h" là giờ mở cửa — "21h" đứng sau "đến" từng bị coi là thời lượng và cả câu bị gỡ
+    ("Quán mở cửa từ 6h đến 21h [1]. Quãng đường khoảng 4,0 km [2].", "Từ A sang B bao xa?", (), {"khoang_cach": True}),
+    ("Chợ đêm mở tới 23 giờ [1]. Quãng đường khoảng 4,0 km [2].", "Từ A sang B bao xa?", (), {"khoang_cach": True}),
 ])
 def test_control_answer_without_unknown_number_is_untouched(text, query, history, kw):
     trace = luot(text, query, history, **kw)
@@ -142,6 +145,7 @@ def test_clock_time_rule_applies_to_model_text_only_not_to_the_allowed_set():
     assert kc.tap_so_theo_loai(nguon)["tg"] >= {"8", "15"}  # tập số được phép không hẹp đi vì luật giờ đồng hồ
     assert kc.kiem_so("Khởi hành 8 giờ, đi xe 15 phút.", kc.tap_so_theo_loai(nguon)) == []  # model viết lại không có "lúc" vẫn qua như trước
     assert kc.kiem_so("Bạn đến lúc 9h, đi xe mất 9h.", kc.tap_so_theo_loai(nguon)) == ["9"]  # "lúc 9h" bỏ qua; "mất 9h" là thời lượng ⇒ vẫn bắt
+    assert kc.kiem_so("Mở cửa đến 21h. Đi xe mất tới 9h.", kc.tap_so_theo_loai(nguon)) == ["9"]  # "đến 21h" là giờ đồng hồ; "mất tới 9h" vẫn là thời lượng
 
 
 def test_itinerary_turn_keeps_old_retraction():
