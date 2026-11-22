@@ -1,6 +1,6 @@
 # Phụ lục I — Mọi giới hạn đã biết trên một trang
 
-*Cập nhật 17:11, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (47 tính năng, kho 267 bài): giới hạn mới của việc nhớ trong cuộc đã lập lịch, của dòng trạng thái ở tin dài, của công cụ liệt kê bài, trang Giới thiệu · trước đó: phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42); rào bỏ / thay của lịch; gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 17:14, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (47 tính năng, kho 267 bài): giới hạn mới của việc nhớ trong cuộc đã lập lịch, của dòng trạng thái ở tin dài, của công cụ liệt kê bài, trang Giới thiệu · trước đó: phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42); rào bỏ / thay của lịch; gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Giới hạn đã biết khác với thứ cố ý không làm (bài 4).** Giới hạn đã biết là chỗ hệ thống làm chưa tốt trong chính phạm vi của nó: kho có mà tìm không ra, chờ lâu, bước kiểm chưa kiểm nghĩa. Thứ cố ý không làm là một ranh giới đã được chọn, không phải một lỗi còn nợ: câu gõ không dấu, tiếng Anh, tình huống khẩn cấp, giá phòng, đặt chỗ thay người dùng. Trang này liệt kê loại thứ nhất, nhóm theo chặng; loại thứ hai nằm ở bảng nhỏ riêng cuối trang.
 
@@ -157,6 +157,7 @@
 | Phụ thuộc một khoá Bedrock tạm do chủ dự án giữ; bản đưa lên mạng chưa có cách cấp khoá lâu dài. | — | khoá hết hạn là ô hỏi đáp ngừng cho tới khi làm mới | 33, 37 |
 | Số chờ tới chữ đầu đo khi hai model chạy cùng lúc trên một máy. | khoảng 13,0 giây trên 153 lượt; dài hơn chạy một mình khoảng 2,5 tới 4,5 giây | giới hạn của phép đo | 34 |
 | Chưa đo lại với Claude lợi của chạy song song và của tính sẵn ngày. | — | giới hạn của phép đo | 34 |
+| Gõ lại đúng một câu chưa chắc về ngay: câu trả lời nhiều ý còn dòng "Tư liệu chưa có thông tin về…" không được lưu (chủ ý từ tối 21/11); bỏ dấu hỏi cuối câu cũng là một câu khác. | thử trên trình duyệt 22/11: câu một ý lần hai 0,2 giây, chữ y hệt; câu hai ý lần hai 9,4 giây, chữ khác | gõ lại câu nhiều ý thì có lúc về ngay, có lúc chờ như lượt thường và nhận chữ khác lần đầu | 34 |
 | Bộ nhớ câu trả lời chỉ nằm trong đúng một máy chủ đang chạy; trúng thì không hiện dòng tiến độ; tỉ lệ trúng ngoài đời chưa có số. | — | — | 34 |
 | Tiền ghi sổ của Claude chưa đối chiếu hoá đơn; trang theo dõi trên máy phát triển lẫn lượt thử của nhóm. | — | — | 34, 33 |
 | Hai tab cùng trình duyệt dùng chung một cuộc; tab mở sau xoá cuộc cùng lịch của tab trước. | đã xác nhận bằng một lượt thử thật trưa 22/11 | mở tab thứ hai là mất cuộc của tab thứ nhất | 35, 40 |

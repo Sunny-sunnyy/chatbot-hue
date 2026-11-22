@@ -1,6 +1,6 @@
 # Bài 31 — Sửa lịch bằng lời: model hiểu ý, chương trình áp và kiểm
 
-*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài): rào bỏ / thay đã nhìn trên trình duyệt, cuộc có lịch nhớ câu trả lời liền trước · số đo chép từ báo cáo, không chạy lại.*
+*Cập nhật 17:14, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài): rào bỏ / thay đã nhìn trên trình duyệt, cuộc có lịch nhớ câu trả lời liền trước · số đo chép từ báo cáo, không chạy lại.*
 
 **Bài trước đã biết:** lịch được xếp từ biểu mẫu, kiểm khung, rồi lưu trong cuộc trò chuyện (bài 27–30).
 **Bài này thêm:** người dùng nhắn trợ lý "bỏ chợ Đông Ba đi" hay "đổi chỗ ngày 1 với ngày 2" thì điều gì xảy ra. Một lần gọi model hẹp đọc tin thành một lệnh có khuôn; chương trình áp lệnh lên lịch đã lưu bằng chính bộ xếp, kiểm lại, rồi tự viết câu báo. Bài nói cả khi lệnh không làm được: người dùng đọc thấy gì.
@@ -199,6 +199,7 @@ Lịch giữ nguyên. Chương trình nói lý do (ở lịch ví dụ: một ng
 
 ## Chi tiết để tra
 
+- Lần đầu bấm trên giao diện với bản đang chạy, tối 22/11 (Claude Sonnet 5.5, mỗi lệnh một lần, khoảng 1,9 tới 4,1 giây một lệnh): "đổi chỗ ngày 1 với ngày 2" trên lịch 2 ngày thì các điểm ban ngày của hai ngày đổi cho nhau, hai hoạt động tối đứng yên; bốn lệnh dời trên lịch 3 ngày ra đúng bốn kết quả mong đợi (một lệnh được áp, hai lệnh nhận lời "Không đổi được…" kèm lý do, một lệnh xin dời tới đúng chỗ đang đứng thì lịch đứng yên).
 - Hai lệnh về buổi tối trên lịch ví dụ (câu thật, như bảng "Từng loại lệnh"): "Dời Đại Nội sang buổi tối ngày 1" ⇒ không xếp, "Đại Nội Huế chưa dời sang buổi tối ngày 1 được vì đây là điểm tham quan ban ngày, còn buổi tối lịch chỉ xếp hoạt động buổi tối. Dời được sang: buổi sáng ngày 3 (đổi chỗ với Phố cổ và chợ Bao Vinh)." · "Thêm Ca Huế vào lịch" (không nói buổi) ⇒ "Mình chưa đặt được Ca Huế trên sông Hương vào buổi tối theo ý bạn — hoạt động buổi tối do lịch tự chọn. Bạn có thể bỏ hoạt động tối đang có, lịch sẽ tự chọn một hoạt động khác."
 - Lý do "không đổi được" chọn theo mã lỗi của bước kiểm khung, ví dụ "một ngày sẽ phải đi hai khu không liền nhau" hay "điểm sẽ rơi ngoài giờ mở cửa".
 - Lời dặn của lần hiểu ý có câu: "Câu KHÔNG yêu cầu sửa lịch (hỏi thông tin, chào, cảm ơn, hỏi về một điểm, việc khẩn cấp, an toàn) ⇒ trả danh sách rỗng."
@@ -241,5 +242,6 @@ Lịch giữ nguyên. Chương trình nói lý do (ở lịch ví dụ: một ng
 
 - Số lượt thật của rào bỏ / thay là 12: bản chấm của phiên đo `data/thu_bedrock_2026-11-21/k10_cuoc_co_lich_2026-11-22/rao_CHAM_E.md` [riêng tư] và `guides/RUNBOOK_BAN_GIAO.md` mục 10.2 đều ghi 12; mục 44 của `bai_hoc/VIEC_MOI_XONG.md` ghi 16, bài không dùng số đó.
 - Cập nhật khớp hệ thống 16:35 22/11/2026 (đợt sửa gom): nhớ câu trả lời liền trước trong cuộc có lịch, không nhớ lượt sửa / câu trích nguồn lịch: `backend/config/settings.yaml` dòng 76 (`nho_dap_cuoc_co_lich`, chú thích "MỞ 16:08", 9 lượt, 3 / 3), `backend/api/conversations.py` `dap_duoc_nho` dòng 53–70 [code]; chạy lại một lần trong cuộc có lịch, trừ lượt sửa, lần hai đi thẳng đường thường: `backend/llm/assistant.py` dòng 2114–2140 [code]; 47 tính năng: `guides/RUNBOOK_BAN_GIAO.md` mục 0 dòng 26 (đếm 16:13) — người sửa chạy lại lệnh đếm 22/11 ra `47` [đã chạy]. Lệnh bị bỏ ⇒ "Chưa làm: bỏ điểm / thay điểm — bạn nhắn tiếp nhé.": `backend/llm/len_ke_hoach.py` dòng 291 (`kq["chua_lam"] += … khong_neo`), `backend/llm/sua_lich_v2.py` dòng 74 (`NHAN_HANH_DONG`) và 987 (`f"Chưa làm: {NHAN_HANH_DONG[t]} — bạn nhắn tiếp nhé."`) [code; hàm thuần đã chạy bởi người kiểm chéo 22/11]. Có mốc ⇒ mọi lệnh giữ; "lịch sự", "dương lịch": `sua_lich_v2.py` `loc_bo_thay`, `_MOC_LICH` dòng 318–321, 349–350 [code]. 16 lượt thật trước bản chính, lần nhìn trình duyệt sáu tin 16:17–16:21, giới hạn 17–24 giây / 17,3 và 24,1 giây / 8 còn 4 / chỉ nhớ liền trước: `bai_hoc/VIEC_MOI_XONG.md` mục 44 (dòng 19–45) [chép]; runbook mục 10.2 hàng lỗi "bỏ … đi" đã sửa 15:57 (12 lượt đo rào; lời trả trước 16:08) và 374 (9 lượt, giới hạn a–d) [chép]; `data/test_cuoi/chay_2026-11-22_e_nhin_gom/KET_QUA.md` [riêng tư, không mở].
+- Đổi chỗ ngày và bốn lệnh dời trên giao diện tối 22/11 (dòng B24, B29): `data/test_cuoi/chay_2026-11-22_e_sau_dong/KET_QUA.md` [riêng tư; đã chạy qua trình duyệt 17:04–17:08 22/11, phiên đo; mỗi dòng một lần; người viết đã đọc bảng kết quả].
 
 </details>

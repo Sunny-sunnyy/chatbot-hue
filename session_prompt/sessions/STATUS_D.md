@@ -1,12 +1,12 @@
-# STATUS D — ghi đè 17:11 22/11/2026 (giờ `date`), sau ĐỢT SỬA GOM tối 22/11. Vai: phiên giảng, viết giáo trình; làm việc trực tiếp với chủ dự án.
+# STATUS D — ghi đè 17:14 22/11/2026 (giờ `date`), sau ĐỢT SỬA GOM tối 22/11 (đã gộp main `95cff8a1`) và commit thứ hai cho hai phiếu 17:1x. Vai: phiên giảng, viết giáo trình; làm việc trực tiếp với chủ dự án.
 
 Nhánh `p9-d-giao-trinh`, worktree `/tmp/hr_d_giaotrinh` (mất khi máy khởi động lại ⇒ `git worktree add /tmp/hr_d_giaotrinh origin/p9-d-giao-trinh` rồi `git merge origin/main`). Phiên điều phối tối 22/11: terminal `hue-rag-5a` (phiên mới sẽ có tên khác — xem `ListAgents`).
 
 ## Giáo trình đang ở đâu
 - `bai_hoc/giao_trinh/`: **đủ 41 bài + 9 phụ lục (A–I)** + mục lục `00_GIAO_TRINH.md`. Khuôn bài không đổi (bài mẫu `06_KIEN_TRUC.md`; bài 41 cấu trúc riêng).
-- Giáo trình nay đúng với hệ thống lúc **17:10 22/11**: 47 tính năng mở (cái thứ 47: nhớ câu trả lời liền trước cả trong cuộc đã lập lịch); kho 267 bài / 9.479 đoạn / 5.960 từ (có bài đường đi Hội An; đã sửa dòng tự mâu thuẫn về Hải Vân Quan); giữ chữ đã nhìn trên trình duyệt ở lượt thường; trang Giới thiệu đã sửa trong mã nguồn (main `49bff6d2`), CHƯA dựng lại giao diện, chưa ai nhìn.
-- **Mục "Có gì mới" ở đầu `00_GIAO_TRINH.md`** (chủ dự án 16:28 22/11: việc mới chỉ ghi vào giáo trình): bảng ngày · người dùng thấy gì khác · đọc ở bài nào, mục nào; mới nhất ở trên; đang có 5 dòng. Mỗi phiếu bốn ý của phiên điều phối ⇒ sửa bài gốc, thêm MỘT dòng ở đây, gom lại dòng phụ lục liên quan.
-- Phụ lục G, H, C, E, F, I là GOM từ các bài ⇒ bài gốc đổi thì gom lại dòng liên quan. Số đếm ghi ở mục lục: C 156 · E 211 · F 93 · G 278 (tám bảng theo chặng) · H 142 · I 124 — thêm / bớt dòng thì sửa cả ở `00_GIAO_TRINH.md`.
+- Giáo trình nay đúng với hệ thống lúc **17:14 22/11**: 47 tính năng mở (cái thứ 47: nhớ câu trả lời liền trước cả trong cuộc đã lập lịch); kho 267 bài / 9.479 đoạn / 5.960 từ (có bài đường đi Hội An; đã sửa dòng tự mâu thuẫn về Hải Vân Quan); giữ chữ đã nhìn trên trình duyệt ở lượt thường; trang Giới thiệu đã sửa trong mã nguồn (main `49bff6d2`), CHƯA dựng lại giao diện, chưa ai nhìn.
+- **Mục "Có gì mới" ở đầu `00_GIAO_TRINH.md`** (chủ dự án 16:28 22/11: việc mới chỉ ghi vào giáo trình): bảng ngày · người dùng thấy gì khác · đọc ở bài nào, mục nào; mới nhất ở trên; đang có 7 dòng. Mỗi phiếu bốn ý của phiên điều phối ⇒ sửa bài gốc, thêm MỘT dòng ở đây, gom lại dòng phụ lục liên quan.
+- Phụ lục G, H, C, E, F, I là GOM từ các bài ⇒ bài gốc đổi thì gom lại dòng liên quan. Số đếm ghi ở mục lục: C 156 · E 211 · F 93 · G 278 (tám bảng theo chặng) · H 142 · I 125 — thêm / bớt dòng thì sửa cả ở `00_GIAO_TRINH.md`.
 
 ## CÒN NỢ
 1. **Chờ tin phiên điều phối:** (a) phiên đo dựng lại giao diện và nhìn trang Giới thiệu ⇒ đổi nhãn ở bài 37 gạch "Trang Giới thiệu vừa được sửa…" và dòng tương ứng ở phụ lục I; phiên C đang soát thêm dòng "Chưa có lịch sự kiện theo ngày" ở mục Giới hạn của trang đó. (b) X10 "thẻ nơi" (chữa dòng "tư liệu chưa có" sai) đang dựng, còn TẮT — khi mở sẽ là tính năng thứ 48: phiếu bốn ý ⇒ bài 16 / 23, phụ lục B, F, số "47" ở bài 4, 40, phụ lục B, F. (c) ngày 23/11 chủ dự án tự thử hệ thống ⇒ mỗi bản sửa người dùng thấy khác đều đi theo phiếu bốn ý.
@@ -19,6 +19,7 @@ Nhánh `p9-d-giao-trinh`, worktree `/tmp/hr_d_giaotrinh` (mất khi máy khởi 
 ## Đợt sửa gom tối 22/11 đã làm gì (để phiên sau khỏi làm lại)
 - Số kho đổi bằng `data/hoc_cung_D/tools/doi_so_kho.py` (danh sách dòng lịch sử được giữ đã thêm ba mục) + sửa tay bảng theo thư mục của bài 7 (Du lịch 62, dịch vụ 12), từ điển 5.960, độ dài trung bình 66,59 — đọc từ bản ghi chỉ mục 16:35.
 - Ba agent sửa (hai nhóm bài song song, rồi phụ lục) + một agent kiểm độc lập trên file diff; D tự mở nguồn phân xử: số lượt thật của rào bỏ / thay là 12 (bản chấm của phiên đo + runbook), không phải 16 như mục 44 bộ cũ.
+- Commit thứ hai (hai phiếu 17:1x): "gõ lại đúng câu cũ" vào bài 34 (Giới hạn, câu tự kiểm, Nguồn) + phụ lục I; mục "Giới hạn" của trang Giới thiệu vào bài 37; các thứ lần đầu được nhìn trên giao diện tối 22/11 (ảnh, sự kiện theo ngày, đổi chỗ ngày, bốn lệnh dời) thành một gạch ở "Chi tiết để tra" của bài 26, 24, 31 — nguồn `data/test_cuoi/chay_2026-11-22_e_sau_dong/KET_QUA.md`.
 - Hai phiếu của phiên điều phối đã vào bài: Hải Vân Quan (bài 7, 24, phụ lục I), trang Giới thiệu (bài 37, phụ lục I); thêm dòng "câu ngoài tỉnh về Hội An vẫn bị từ chối đúng" ở bài 22.
 
 ## Cách làm đã dùng (giữ nguyên)
