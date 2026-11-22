@@ -35,6 +35,8 @@ SETTINGS = load_settings(validate_private_paths=False)
 # Thêm một cờ mới cần `sua_lich_v2` ⇒ thêm vào ĐÂY; `test_cong_dot_1.flags_from` nhập hằng này từ đây (chiều ngược lại là nhập vòng) (19/11: chép tay ở hai file ⇒ vấp hai lần khi bật cờ).
 CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lich_doi_cho_code": False, "luu_tru_lich": False, "quan_lich": False, "ban_do_lich": False,
                    "lich_vao_hoi_thuong": False,
+                   # 21/11/2026: bốn cờ sửa lịch thêm ngày 20–21/11 chưa được ghi vào đây ⇒ lúc mở `sua_lich_kem_hoi` trong settings, 13 file test hỏng ngay khi nạp
+                   "sua_lich_buoi_toi": False, "sua_lich_kem_hoi": False, "sua_lich_them_khong_the": False, "sua_lich_doi_cho_ngay": False,
                    "xuat_pptx": False}  # xuất PowerPoint cần `sua_lich_v2` ⇒ tắt theo (không thì lúc bật cờ trong settings hai file test ném lỗi)
 BANG = nap_bang_lich(SETTINGS)
 ON = AssistantFlags(tim_them=True, lich_trinh=True, bang_lich=BANG)

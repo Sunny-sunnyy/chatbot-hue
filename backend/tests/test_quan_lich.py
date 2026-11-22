@@ -139,3 +139,22 @@ def test_restaurant_photo_field_is_checked_at_load_and_every_photo_file_exists(t
     with pytest.raises(ValueError):
         ql.nap_bang_quan(p, BANG_V2.cum)
     assert ql._hien(mau)["anh"] == mau["anh"] and ql._hien(kho)["anh"] is None
+
+
+KHO = BACKEND.parent / "knowledge-base-hue"
+
+
+@pytest.mark.skipif(not KHO.is_dir(), reason="bản chép không có kho")
+def test_no_kb_place_in_the_table_is_marked_closed_in_its_own_article():
+    """21/11/2026: bảng bản 1 còn một quán mà chính bài kho của nó ghi trạng thái đã đóng cửa ⇒ mục ăn uống của thẻ lịch có thể gợi ý nó. Mọi quán nguồn
+    kho trong bảng: bài phải còn trong kho và dòng "Trạng thái" của bài (nếu có) không nói đóng cửa / ngừng hoạt động. Kho đổi ⇒ test này báo để dựng lại bảng."""
+    kho = [q for ds in QUAN.values() for q in ds if q["nguon"] == "kho"]
+    assert len(kho) >= 40
+    da_dong = []
+    for q in kho:
+        bai = KHO / q["bai_id"]
+        assert bai.is_file(), q["bai_id"]
+        trang_thai = [d for d in bai.read_text(encoding="utf-8").splitlines() if d.lstrip("-* ").lower().startswith("trạng thái")]
+        if any(tu in d.lower() for d in trang_thai for tu in ("đóng cửa", "ngừng hoạt động", "ngưng hoạt động")):
+            da_dong.append(q["bai_id"])
+    assert da_dong == []
