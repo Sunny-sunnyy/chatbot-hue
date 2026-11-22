@@ -18,9 +18,10 @@ BAT = dataclasses.replace(TAT, tim_theo_ve=True)
 CAU_MOT_Y = "Vé lẻ vào Đại Nội giá bao nhiêu?"
 
 
-def test_flag_defaults_off_in_code_and_settings():
+def test_flag_defaults_off_in_code_and_is_on_in_settings():
+    """Mặc định của code là tắt (cấu hình thiếu dòng ⇒ chạy như cũ); settings đang chạy: MỞ từ 22/11/2026."""
     assert AssistantFlags().tim_theo_ve is False
-    assert load_settings(validate_private_paths=False)["assistant"]["tim_theo_ve"] is False
+    assert load_settings(validate_private_paths=False)["assistant"]["tim_theo_ve"] is True
 
 
 def test_search_clauses_are_wider_than_the_multi_part_counter_and_capped():
