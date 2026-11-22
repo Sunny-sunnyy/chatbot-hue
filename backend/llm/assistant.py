@@ -126,8 +126,8 @@ class AssistantFlags:
     # hiện nay, mỗi phần được tìm riêng và 2 đoạn đầu của nó được NỐI THÊM (đúng cơ chế `tim_theo_ve`). Không đổi chữ gửi model ngoài kết quả công cụ dài
     # hơn; câu tìm một phần và công tắc tắt ⇒ y như trước. Lý do + số đếm: `tests/test_tach_cau_tim_model.py`.
     tach_cau_tim_model: bool = False
-    # 22/11/2026: model đã dùng hết lượt tìm kho mà chữ nó nộp KHÔNG có mã nguồn nào (chữ giữ chỗ: "placeholder", "tìm kho", "Tôi cần tìm thêm…" — nó còn
-    # muốn tìm tiếp trong khi công cụ đã bị cất) ⇒ thay cho màn hình lỗi: gọi MỘT lần viết không công cụ trên mọi Bằng chứng lượt đã gom; vẫn không có
+    # 22/11/2026: model đã tự tìm kho (ít nhất một lần) mà chữ nó nộp KHÔNG có mã nguồn nào (chữ giữ chỗ: "placeholder", "tìm kho", "Tôi cần tìm thêm…" —
+    # nó còn muốn tìm tiếp trong khi công cụ đã bị cất; hoặc dòng "chưa có" kèm lời giải thích không nguồn) ⇒ thay cho màn hình lỗi: gọi MỘT lần viết không công cụ trên mọi Bằng chứng lượt đã gom; vẫn không có
     # mã ⇒ câu từ chối cố định. Không chạm lượt nào đang qua kiểm. Lý do + số đo: `tests/test_het_luot_viet_lai.py`. TẮT ⇒ như trước.
     het_luot_viet_lai: bool = False
     so_vet: bool = False  # sổ vết debug có nội dung, chỉ máy local (`core/so_vet.py`); bật bằng `HUE_SO_VET=true`
@@ -1172,12 +1172,14 @@ _LOI_KHONG_MA_NGUON = "Grounded answer has no citation"  # đầu lời lỗi c�
 
 
 async def _viet_lai_het_luot(query: str, generator, trace: AnswerTrace, flags: AssistantFlags, today: str | None, call_log: "CallLog | None") -> bool:
-    """Công tắc `het_luot_viet_lai`, gọi ngay sau `_finish_generated` của lượt có công cụ. Chỉ khi: lỗi kiểm là "không có mã nguồn nào" VÀ model đã dùng
-    hết lượt tìm kho VÀ lượt không phải câu cố định / lượt có lịch. Viết MỘT lần bằng đường không công cụ (`generate_answer`) trên mọi khối Bằng chứng
+    """Công tắc `het_luot_viet_lai`, gọi ngay sau `_finish_generated` của lượt có công cụ. Chỉ khi: lỗi kiểm là "không có mã nguồn nào" VÀ model đã tự
+    tìm kho ÍT NHẤT MỘT lần VÀ lượt không phải câu cố định / lượt có lịch. (Bản đầu đòi "đã dùng HẾT lượt tìm"; lượt thật 22/11 với trần 3 lần: model
+    tìm 2 lần rồi tự dừng, viết hai dòng "chưa có" kèm một đoạn giải thích không nguồn ⇒ lọt lưới ⇒ màn hình lỗi. Lượt model KHÔNG tìm lần nào — kiểu
+    chép lại câu trả lời nhớ — vẫn không thuộc lưới này: đã có bản chạy lại của `answer_turn_stream_parallel`.) Viết MỘT lần bằng đường không công cụ (`generate_answer`) trên mọi khối Bằng chứng
     lượt đã gom (`trace.context_parts` — số nguồn giữ nguyên), kiểm lại như thường; vẫn không có mã ⇒ câu từ chối cố định. Trả True khi đã viết lại
     (đường stream phải thay chữ đã hiện). `call_log` None ⇒ tự ghi tiền của lần gọi thêm (đường không stream đã ghi sổ trước đó)."""
     if not (flags.het_luot_viet_lai and trace.citation_error is not None and str(trace.citation_error).startswith(_LOI_KHONG_MA_NGUON)
-            and trace.model_searches >= flags.so_lan_tim_kho and trace.fixed_outcome is None and trace.lich is None):
+            and trace.model_searches >= 1 and trace.fixed_outcome is None and trace.lich is None):
         return False
     started, rieng = time.perf_counter(), CallLog() if call_log is None else None
     context = "\n\n".join(trace.context_parts) + (f"\n\n{VIET_LAI_NHIEU_Y_TEXT}" if trace.nhieu_y else "")

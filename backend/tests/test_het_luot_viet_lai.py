@@ -64,16 +64,32 @@ def test_rewrite_that_still_has_no_citation_ends_as_the_fixed_refusal_not_an_err
     assert len(gen.client.responses.calls) == 4  # đúng một lần viết lại, không lặp
 
 
-def test_not_triggered_while_search_budget_remains_or_when_the_answer_passes(deps):
-    gen = generator(kich_ban(so_lan_tim=1))  # mới tìm một lần đã nộp chữ không mã nguồn ⇒ không phải ca "hết lượt tìm": lỗi như cũ
+def test_not_triggered_when_the_model_never_searched_or_when_the_answer_passes(deps):
+    gen = generator(kich_ban(so_lan_tim=0))  # model không tìm lần nào mà nộp chữ không mã nguồn (kiểu chép lại lời cũ) ⇒ không thuộc lưới này: lỗi như cũ
     trace, _ = chay(deps, MOT_Y, gen, MO)
-    assert trace.citation_error is not None and len(gen.client.responses.calls) == 2
-    gen = generator(lambda n, kw: [tool_call(f"câu tìm {n}")] if n <= 2 else [answer(CO_NGUON)])  # hết lượt tìm rồi trả lời có nguồn ⇒ không gọi thêm
+    assert trace.citation_error is not None and len(gen.client.responses.calls) == 1
+    gen = generator(lambda n, kw: [tool_call(f"câu tìm {n}")] if n <= 2 else [answer(CO_NGUON)])  # tìm rồi trả lời có nguồn ⇒ không gọi thêm
     trace, _ = chay(deps, MOT_Y, gen, MO)
     assert trace.citation_error is None and len(gen.client.responses.calls) == 3 and all(t["name"] != TEN_VIET_LAI for t in trace.tools)
     gen = generator(lambda n, kw: [tool_call(f"câu tìm {n}")] if n <= 2 else [answer(INSUFFICIENT_ANSWER)])  # câu từ chối đúng khuôn ⇒ không gọi thêm
     trace, _ = chay(deps, MOT_Y, gen, MO)
     assert trace.answer == INSUFFICIENT_ANSWER and len(gen.client.responses.calls) == 3
+
+
+def test_model_that_stops_searching_below_the_cap_and_writes_uncited_text_is_caught_too(deps):
+    """Lượt thật 22/11 (trần tìm 3 lần, tin hai ý kho thiếu): model tìm 2 lần rồi tự dừng, viết hai dòng "chưa có" kèm một đoạn giải thích không mã nguồn
+    ⇒ bản đầu của lưới (đòi "đã hết lượt tìm") không kích hoạt ⇒ màn hình lỗi. Nay: đã tìm ít nhất một lần là đủ; lần viết lại ra câu từ chối ⇒ câu từ
+    chối cố định, không lỗi."""
+    chu = f"{CAU_Y_THIEU} phòng gym nào ở Huế mở cửa sớm.\n{CAU_Y_THIEU} giá vé tập một ngày.\n\nTôi đã tìm trong tư liệu nhưng không thấy phòng gym nào."
+    tran_3 = dataclasses.replace(MO, so_lan_tim_kho=3)
+    kich = lambda n, kw: [tool_call(f"câu tìm {n}")] if n <= 2 else [answer(chu if n == 3 else INSUFFICIENT_ANSWER)]  # noqa: E731
+    gen = generator(kich)
+    trace, _ = chay(deps, NHIEU_Y, gen, tran_3)
+    assert trace.model_searches == 2 and trace.citation_error is None and trace.answer == INSUFFICIENT_ANSWER
+    assert trace.tools[-1]["name"] == TEN_VIET_LAI and len(gen.client.responses.calls) == 4
+    gen = generator(kich)
+    tat, _ = chay(deps, NHIEU_Y, gen, dataclasses.replace(TAT, so_lan_tim_kho=3))
+    assert tat.citation_error is not None and len(gen.client.responses.calls) == 3      # công tắc tắt: đúng lỗi đã thấy ở lượt thật
 
 
 def test_multi_part_turn_rewrite_may_answer_part_and_mark_the_missing_part(deps):
