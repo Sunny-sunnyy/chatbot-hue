@@ -1,6 +1,6 @@
 # Bài 12 — Cất vào Qdrant, cập nhật khi kho đổi, và vì sao kho lệch chỉ mục thì không câu hỏi nào được trả lời
 
-*Cập nhật 14:33, ngày 22/11/2026 · cơ chế đọc từ chương trình và cấu hình đang chạy; số của lần cập nhật chỉ mục lấy từ lần chạy thật sáng 22/11 và phép kiểm độc lập của một phiên khác; ba tình huống Qdrant tắt / ngừng lấy từ lần thử thật trưa 22/11 (bài 6); người viết không chạy lại.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình và cấu hình đang chạy; số của lần cập nhật chỉ mục lấy từ lần chạy thật sáng 22/11 và phép kiểm độc lập của một phiên khác; ba tình huống Qdrant tắt / ngừng lấy từ lần thử thật trưa 22/11 (bài 6); người viết không chạy lại.*
 
 **Bài trước đã biết:** mỗi đoạn có chữ, thông tin gắn kèm, một vector, và phần từ khoá.
 **Bài này thêm:** 9.458 đoạn được cất ở đâu; bài trong kho đổi thì cập nhật thế nào; và bước kiểm khiến hệ thống thà không trả lời còn hơn trả lời bằng dữ liệu cũ.
@@ -22,7 +22,7 @@
 | chỉ mục | **index** | toàn bộ dạng đã xử lý của kho để tìm: collection, file thống kê từ khoá, bản ghi chỉ mục |
 | bản ghi chỉ mục | **build record** | file ghi lần lập chỉ mục: những bài nào, dấu vân tay từng bài, bao nhiêu đoạn, model nào |
 | dấu vân tay | **hash** (SHA-256) | chuỗi ký tự tính từ nội dung một file; sửa một chữ là chuỗi đổi |
-| hộp | **Docker container** | cách đóng một chương trình cùng mọi thứ nó cần để chạy giống nhau trên mọi máy (bài 36) |
+| hộp | **container** (của Docker) | một chương trình đang chạy cách ly trong Docker, mang sẵn mọi thứ nó cần; bản đóng gói để dựng ra hộp gọi là ảnh đóng gói (bài 36) |
 | bản chụp | **snapshot** | bản sao của cả collection ở một thời điểm, để khôi phục khi cần |
 
 ## Mỗi đoạn là một điểm trong một collection của Qdrant
@@ -59,7 +59,7 @@ Hai điều đáng nhớ về lệnh này:
 - **Đơn vị là đoạn, không phải bài.** Đổi 7 con số giá ở 7 đoạn thì đúng 7 đoạn được tính lại. Nhưng đoạn đánh số theo thứ tự trong bài, nên thêm dòng vào giữa bài làm các đoạn phía sau đổi số, và chúng cũng được tính lại.
 - **Phần từ khoá của cả kho được ghi lại**, vì điểm từ khoá của mỗi đoạn phụ thuộc hai con số của cả kho: mỗi từ hiếm tới đâu, và một đoạn trung bình dài bao nhiêu. Ở một ca sửa giá, 69 điểm đổi phần từ khoá; ở ca thêm một bài mới, mọi điểm đổi.
 
-Lần chạy thật đầu tiên, sáng 22/11, sau khi sửa hai bài về vé: lệnh nhận ra đúng 2 bài, tính lại vector cho 105 đoạn, giữ nguyên 9.337 đoạn, mất 37,7 giây; kho từ 9.436 lên 9.442 đoạn (sau đó thêm một bài, thành 9.458).
+Lần chạy thật đầu tiên, sáng 22/11, sau khi sửa hai bài về giá (giá thuê thuyền, vé cho người địa phương; bài 7): lệnh nhận ra đúng 2 bài, tính lại vector cho 105 đoạn, giữ nguyên 9.337 đoạn, mất 37,7 giây; kho từ 9.436 lên 9.442 đoạn (sau đó thêm một bài, thành 9.458).
 
 Sau lệnh phải khởi động lại máy chủ; lúc bật nó nạp thống kê mới và bỏ các câu trả lời đang nhớ sẵn, trong đó có thể còn giá cũ.
 

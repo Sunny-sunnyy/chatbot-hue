@@ -1,6 +1,6 @@
 # Bài 33 — Model viết, mức suy luận, và đổi model bằng một dòng cấu hình
 
-*Cập nhật 15:13, ngày 22/11/2026 · cơ chế đọc từ chương trình và cấu hình trưa 22/11; số đo lấy từ các báo cáo đo ngày 19/11 (gpt-6-luna) và 21/11 (cả hai model), ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào; đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: cơ chế đọc từ chương trình và cấu hình trưa 22/11; số đo lấy từ các báo cáo đo ngày 19/11 (gpt-6-luna) và 21/11 (cả hai model), ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào; đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** một câu hỏi đi qua sáu bước, gần như toàn bộ thời gian chờ là model viết (bài 6); model viết được gọi nhiều lần trong một lượt: xếp loại câu, tìm thêm, viết (bài 21, 22).
 **Bài này thêm:** hai model đã dùng khác nhau ở đâu, mức suy luận là gì và vì sao để mức cao, vì sao đổi model chỉ sửa một dòng mà vẫn phải viết một lớp nối và đo lại.
@@ -36,7 +36,7 @@ Sáng 21/11 chủ dự án đổi tạm model viết từ gpt-6-luna (OpenAI) sa
 
 | Người dùng thấy | gpt-6-luna | Claude Sonnet 5.5 (mức cao) |
 |---|---|---|
-| Độ dài câu trả lời một dữ kiện (ký tự, câu đứng giữa; 85 câu đầu bộ câu mẫu, 21/11) | 90 | 236–258 |
+| Độ dài câu trả lời (ký tự, câu đứng giữa; 85 câu đầu bộ câu mẫu, đủ các loại câu, 21/11) | 90 | 236–258 |
 | Chữ hiện thế nào | chạy dần | **một lần**, khi model viết xong |
 | Lên lịch 3 ngày bằng biểu mẫu (một lượt qua trình duyệt, 21/11) | 5,6 giây | 11,2 giây |
 | Tiền một câu trả lời có nguồn (66 câu, 21/11) | 0,0004 USD | 0,0146 USD |
@@ -85,13 +85,13 @@ Cả hai lỗi đều do Claude hiểu cùng một yêu cầu khác gpt-6-luna, 
 ### 3. Vì sao chấp nhận chữ tới một lần với Claude?
 
 - **Đã chọn:** gọi Claude trọn một lần, gửi cả câu trả lời một lần. Trong lúc chờ, dòng trạng thái đổi qua "Đang hiểu câu hỏi…", "Đang tìm trong kho…", rồi đứng ở "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" cho tới khi cả câu hiện ra (ở lượt có công cụ, "Đang viết câu trả lời…" chỉ được gửi ngay trước chữ đầu, nên với Claude gần như không thấy).
-- **Vì sao:** bộ khoá Bedrock bị từ chối khi xin chữ chạy dần; khi đổi tạm, chủ dự án ghi "không cần stream thật".
+- **Vì sao:** bộ khoá Bedrock bị từ chối khi xin chữ chạy dần; khi đổi tạm, chủ dự án ghi "không cần stream thật"; ngày 22/11 chủ dự án gác việc cấp quyền AWS tới khi tự xem lại (bài 5).
 - **Cách khác:** xin thêm quyền và viết đường chữ chạy dần: chưa làm; ước (chưa đo) chờ tới chữ đầu từ khoảng 13 giây còn 5,5–6 giây.
-- **Cái giá:** người dùng nhìn dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" khoảng 10 giây ở lượt đứng giữa (bài 34); lợi của "hiện trước, kiểm sau" (bài 6) mất, cái giá của nó còn.
+- **Cái giá:** người dùng nhìn dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" khoảng 10 giây ở lượt đứng giữa (bài 34); lợi của "hiện trước, kiểm sau" (bài 6) mất, nên từ 15:42 22/11 ở lượt có công cụ chữ được giữ tới khi qua bước kiểm nguồn (bài 6, quyết định 4).
 
 ### 4. Vì sao Claude có những đoạn dặn riêng, và đổi model thì phải đo lại những gì?
 
-- **Đã chọn:** lời dặn gửi gpt-6-luna không đổi một chữ. Khi chạy Claude, chương trình nối thêm ba đoạn dặn ngắn: cho xếp loại câu (địa bàn Huế gồm cả vùng ven, bài 22), cho câu thẻ lịch (một hai câu, giữ con số đi đúng vật), cho hiểu lệnh sửa lịch.
+- **Đã chọn:** lời dặn gửi gpt-6-luna không đổi một chữ. Khi chạy Claude, chương trình nối thêm ba đoạn dặn ngắn: cho xếp loại câu (địa bàn Huế gồm cả vùng ven, bài 22), cho câu thẻ lịch (một hai câu, giữ con số đi đúng vật), cho hiểu lệnh sửa lịch. Claude còn đọc hai thứ gpt-6-luna không đọc: mô tả của công cụ nộp câu trả lời (ở mọi lượt có công cụ; xem đoạn "Lỗi đắt nhất" ở trên) và một câu giữ chỗ trong lịch sử, đặt giữa hai câu hỏi liền nhau khi câu trả lời lượt trước không được lưu (nguyên văn ở phụ lục D).
 - **Vì sao:** mỗi đoạn có một ca đo làm lý do. Ví dụ ở bước xếp loại câu: cùng lời dặn, gpt-6-luna xếp nhầm 0 trên 56 lượt, Claude 2 trên 56 ở mức cao và 4 trên 56 ở mức vừa. Ở lệnh sửa lịch sau đoạn dặn: 27 trên 27 lượt đúng ý.
 - **Cách khác:** đoạn dặn thứ tư "nói thẳng, không lặp ý": đã thử trên 85 câu, câu dài thêm, trọng tâm 4,39 xuống 4,26 ⇒ gỡ.
 - **Cái giá:** mỗi lần đổi model phải đo lại ít nhất bước xếp loại câu, lệnh sửa lịch khó, lượt có công cụ, độ dài và điểm câu trả lời; nếu là hãng mới thì thêm năm chỗ cách gọi hay khác nhau: khuôn có ràng buộc, ép gọi công cụ, quyền chữ chạy dần, cách tắt suy luận, cách đếm token.

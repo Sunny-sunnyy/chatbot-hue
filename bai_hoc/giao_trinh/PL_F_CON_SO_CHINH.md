@@ -1,6 +1,6 @@
 # Phụ lục F — Các con số chính trên một trang
 
-*Cập nhật 15:32, ngày 22/11/2026 · gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một con số quan trọng của hệ thống, chép từ mục "Ý chính", bảng "Cấu hình đang chạy" hoặc bảng số chính của một bài. Cột thứ ba ghi điều kiện mà bài gốc ghi kèm: đếm trên bộ nào, model viết nào, ngày nào. Một con số không có điều kiện thì không so được với con số khác, nên đừng đọc cột hai mà bỏ cột ba. Dòng ghi "cấu hình" là giá trị đặt sẵn trong hệ thống, không phải kết quả đo. Dòng ghi "lúc đó" hay "đã cũ" là số của một thời điểm đã qua, giữ lại để so. Hai model viết: gpt-6-luna (tới trưa 21/11) và Claude Sonnet 5.5 (từ 21/11, đổi tạm).
 
@@ -26,10 +26,10 @@
 | 10 đoạn | số đoạn ở lần tìm đầu; chương trình kiểm lúc bật | cấu hình, sáng 22/11; 5 đoạn kém hơn, 15 đoạn không khá hơn | 1, 2, 13 |
 | 2 đoạn mỗi vế, nhiều nhất 6 vế | phần nối thêm cho tin nhiều ý | bật 09:47 22/11 | 13, 23 |
 | 16 trên 40 câu khó | số câu thiếu đoạn đúng trong 10 đoạn (9 vì đứng dưới hạng 10, 7 vì không lọt 30 ứng viên) | 40 câu khó, kho cuối tháng 10 | 13, 40 |
-| 33 / 24 trên 40 câu khó | số câu có đủ đoạn đúng trong 30 ứng viên / trong 10 đoạn | 40 câu khó, kho cuối tháng 10 | 18 |
+| 33 / 24 trên 40 câu khó | số câu có đủ đoạn đúng trong 30 ứng viên / trong 10 đoạn | 40 câu khó, kho cuối tháng 10, bản nhãn thứ năm (30/10) | 13, 18 |
 | 22 trên 38 câu | số câu có đủ đoạn đúng trong 10 đoạn, lần đo gần nhất | 19/11, 38 câu | 18 |
 | 158 câu / 55 câu | thước nhanh chạy trên 158 câu có đáp án trong kho; thước chính xác (nhãn đoạn đúng) chỉ có cho 55 câu khó (40 để thử, 15 để kiểm lại) | cấu hình đo, sáng 22/11 | 18 |
-| 22 lên 31 trên 40; 5 câu tệ đi (cho phép 4) | để gpt-6-luna tự chọn 10 trong 30 ứng viên: bước tìm tốt hơn, nhưng bị gác; cả câu 6,5 giây, đắt gần gấp 4 | gpt-6-luna, 40 câu khó (lúc đó) | 14 |
+| 22 lên 31 trên 40; 5 câu tệ đi (cho phép 4) | để gpt-6-luna tự chọn 10 trong 30 ứng viên: bước tìm tốt hơn, nhưng bị gác; cả câu 6,5 giây, đắt gần gấp 4 | gpt-6-luna, 40 câu khó, bản nhãn đầu tiên (27/10; theo bản nhãn thứ năm mốc là 24) | 14 |
 
 ## 3. Viết câu trả lời và kiểm nguồn
 
@@ -61,7 +61,7 @@
 | Con số | Đếm cái gì | Đo trên gì, model nào, ngày nào | Bài |
 |---|---|---|---|
 | 1 lần, 5 giây, 5 kết quả | một lần gọi dịch vụ tìm web, không gọi lại | cấu hình, trưa 22/11 | 6, 25 |
-| 2 trên 44 câu | câu ngoài phạm vi bị gửi đi tra web vì xếp loại nhầm | 12/11 | 25, 40 |
+| 2 trên 44 câu | câu ngoài phạm vi bị gửi đi tra web vì xếp loại nhầm, ở hệ thống đang chạy; người dùng chỉ thấy câu từ chối (phương án "hai nhóm" đã bỏ 09/11 cũng ra 2 trên 44, nhưng là câu có mục web — bài 22) | 12/11 | 22, 25, 40 |
 | 42 tên | danh sách nơi và món dễ nhận ra bằng ảnh; model trả tối đa 3 mã | cấu hình, trưa 22/11 | 26 |
 | 20 giây | hạn của lần nhìn ảnh | cấu hình, trưa 22/11 (bản đầu 15 giây) | 6, 26 |
 | 2 trên 5 ảnh | ảnh không phải Huế bị model gán tên Huế khi cho trả lời thẳng (ngưỡng ghi trước: nhiều nhất 1) | gpt-6-luna, 05/11 | 26, 40 |
@@ -122,7 +122,7 @@
 | 6,9 giây; 95 % dưới 13,1 giây | thời gian cả câu ở lượt đứng giữa, 0 màn hình lỗi | 41 tin phần lớn ngắn qua trình duyệt, lượt kiểm chốt trưa 22/11, lúc máy rảnh | 34, 40 |
 | 25–34 giây | thời gian chờ của tin dài nhiều ý (trước khoảng 20 giây); lượt phải viết lại một lần lâu thêm khoảng 10 giây | một tin 4 ý, 6 lần, từ 14:47 22/11 | 23, 34, 40 |
 | 0,018 USD | tiền ví dụ chính | Claude, lượt thật đầu tiên qua giao diện, 21/11 | 4, 33, 34 |
-| 0,0004 USD · 0,0146 USD | tiền một câu trả lời có nguồn: gpt-6-luna · Claude mức cao (gấp khoảng 37 lần); bài 34 gọi số 0,0004 là tiền "câu một dữ kiện" | 66 câu, 21/11 | 33, 34 |
+| 0,0004 USD · 0,0146 USD | tiền một câu trả lời có nguồn: gpt-6-luna · Claude mức cao (gấp khoảng 37 lần) (trung bình trên 66 câu tính điểm, đủ các loại câu; câu ví dụ ở giao diện, mức thấp: khoảng 0,0007 USD trên gpt-6-luna, bài 33) | 66 câu, 21/11 | 33, 34 |
 | đúng 4,97 ↔ 4,94 · đủ ý 4,83 ↔ 4,88 | điểm thang 1–5 của gpt-6-luna ↔ Claude; trọng tâm Claude thấp hơn rõ | 66 câu tính điểm, 21/11 | 33 |
 | 24 giờ, 500 câu, khoảng 0,1 giây | bộ nhớ câu trả lời: hạn, trần, thời gian trả lại câu đã nhớ | cấu hình (bật từ 20/11) | 6, 34 |
 
@@ -130,7 +130,7 @@
 
 | Con số | Đếm cái gì | Đo trên gì, model nào, ngày nào | Bài |
 |---|---|---|---|
-| 45 mở, 3 tắt | số tính năng đang mở / đang tắt (lúc 10:25 là 42 mở; từ 14:47 thêm ba) | đếm 15:11 22/11 | 4, 40 |
+| 46 mở, 3 tắt | số tính năng đang mở / đang tắt (lúc 10:25 là 42 mở; từ 14:47 thêm ba; từ 15:42 thêm một) | đếm 15:51 22/11 | 4, 40, phụ lục B |
 | 5 khối · 6 bước · 4 thứ gửi ra ngoài | khối của hệ thống; bước của một câu hỏi; thứ rời máy (lời gọi model, ảnh, dự báo thời tiết, câu tra web) | kiến trúc, sáng 22/11 | 6 |
 | khoảng 18 đường gọi | số đường gọi giữa giao diện và máy chủ; 3 đường gọi model | chương trình, trưa 22/11 | 35 |
 | khoảng 14 giây · 34 giây | lệnh bật ra "SẴN SÀNG" khi mọi thứ đủ · khi bắt đầu từ lúc Qdrant đang tắt | 14 giây: bốn ca chạy thật ở cổng tạm; 34 giây: lượt kiểm chốt trưa 22/11 | 36, 40 |

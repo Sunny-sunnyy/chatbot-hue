@@ -1,6 +1,6 @@
 # Bài 35 — Trang web và máy chủ: ai gửi gì cho ai
 
-*Cập nhật 13:58, ngày 22/11/2026 · các đường gọi, loại tin và cách giao diện xử lý đọc từ chương trình trưa 22/11 (gồm bản sửa "tải trang không chiếm chỗ" vào cây chính trưa 22/11); kết quả thử thật đường báo tình trạng lấy từ bài 6 (thử 22/11); người viết không chạy máy chủ; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: các đường gọi, loại tin và cách giao diện xử lý đọc từ chương trình trưa 22/11 (gồm bản sửa "tải trang không chiếm chỗ" vào cây chính trưa 22/11); kết quả thử thật đường báo tình trạng lấy từ bài 6 (thử 22/11); người viết không chạy máy chủ; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** giao diện chạy trong trình duyệt, máy chủ chạy trên máy của dự án, chữ được gửi dần, cuộc trò chuyện nằm trong bộ nhớ của máy chủ (bài 6); model viết gửi chữ một lần (bài 33).
 **Bài này thêm:** giao diện gọi máy chủ qua những đường nào; trên đường gửi dần có những loại tin gì và giao diện làm gì với từng loại; máy chủ nhận ra "cùng một cuộc trò chuyện" bằng cách nào; và hai lớp chặn để chữ model viết không làm trang tải thứ lạ.
@@ -8,7 +8,7 @@
 ## Ý chính
 
 - Giao diện nói chuyện với máy chủ qua **khoảng 18 đường gọi**; chỉ ba đường gọi model (hai cho ô chat, một cho ảnh), còn lại chỉ đọc dữ liệu đã có.
-- Trên đường gửi dần, máy chủ gửi **từng loại tin có tên**: trạng thái, chữ, thay chữ, nguồn, ghi chú, mục web, các tin của lịch, thẻ hỏi lại, lỗi, xong. Tin "lỗi" làm giao diện xoá chữ đã hiện và hiện nút "Thử lại".
+- Trên đường gửi dần, máy chủ gửi **từng loại tin có tên**: trạng thái, chữ, thay chữ, nguồn, ghi chú, mục web, các tin của lịch, thẻ hỏi lại, lỗi, xong. Tin "lỗi" làm giao diện xoá chữ đã hiện (nếu có; với model đang chạy, ở lượt có công cụ, chữ được giữ tới khi qua kiểm nên thường chưa có chữ nào) và hiện nút "Thử lại".
 - Máy chủ nhận ra một cuộc trò chuyện nhờ **một mã ngẫu nhiên trong cookie** mà chương trình của trang không đọc được. Lịch sử nằm ở máy chủ, không ở trình duyệt. Mỗi lần tải trang, giao diện xin một cuộc mới.
 - Chữ model viết đi qua **hai lớp chặn**: giao diện lọc chữ theo một danh sách nhãn HTML cho phép trước khi vẽ, và trang có một chính sách cấm tải bất cứ thứ gì từ máy khác (trừ ô nền bản đồ).
 - Đường báo tình trạng **chỉ biết tình trạng lúc bật**. Đã thử: Qdrant ngừng giữa chừng thì nó vẫn báo đủ.

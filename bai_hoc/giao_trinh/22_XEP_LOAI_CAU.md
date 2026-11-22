@@ -1,6 +1,6 @@
 # Bài 22 — Xếp loại câu trước khi tìm: bốn tuyến
 
-*Cập nhật 15:15, ngày 22/11/2026 · cơ chế và lời dặn đọc từ chương trình đang chạy; số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cơ chế và lời dặn đọc từ chương trình đang chạy; số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** harness: chương trình đi trước và đi sau model; model chỉ quyết có xin công cụ không và viết gì.
 **Bài này thêm:** việc đầu tiên của mọi lượt hỏi, trước cả lần tìm đầu. Không phải câu nào cũng cần tìm trong kho. Một lần gọi model rất ngắn xếp câu vào một trong bốn tuyến, và mỗi tuyến được xử lý khác nhau.
@@ -196,7 +196,7 @@ Lời dặn của bộ xếp loại, một câu nguyên văn cho mỗi phần (b
 | # | Thử gì | So với | Kết quả | Giữ / bỏ |
 |---|---|---|---|---|
 | 1 | Xếp loại bốn tuyến | không xếp loại | xếp đúng 253 trên 253 câu đã thấy và 20 trên 20 câu chưa thấy | **giữ** |
-| 2 | Gom còn hai nhóm (bỏ tuyến khẩn cấp và ngoài phạm vi) | bốn tuyến | 2 trên 44 câu ngoài phạm vi có mục web, vỡ điều kiện | bỏ; giữ bốn tuyến, chỉ bỏ câu soạn sẵn của tuyến khẩn cấp |
+| 2 | Gom còn hai nhóm (bỏ tuyến khẩn cấp và ngoài phạm vi) | bốn tuyến | 2 trên 44 câu ngoài phạm vi có mục web, vỡ điều kiện (09/11; khác lượt 12/11 ở "Giới hạn đã biết") | bỏ; giữ bốn tuyến, chỉ bỏ câu soạn sẵn của tuyến khẩn cấp |
 | 3 | Chạy song song với việc trả lời | chạy lần lượt | chữ đầu tiên của câu về Huế tới sớm hơn 1,37 giây (khoảng tin cậy từ 0,34 tới 2,14); 90 lượt chạy bộ an toàn không có lỗi nào | **giữ** |
 | 4 | Tắt phần suy luận của model ở bước xếp loại, cho nhanh | mức mặc định | nhanh hơn 0,2 tới 0,35 giây; nhưng 2 câu an toàn bị xếp "ngoài phạm vi" | bỏ |
 | 5 | Luật từ khoá cho câu khẩn cấp | chỉ model xếp loại | 14 trên 14 câu đã thấy; 0 trên 8 câu chưa thấy; chặn nhầm 2 trên 8 | bỏ |
@@ -205,7 +205,7 @@ Lời dặn của bộ xếp loại, một câu nguyên văn cho mỗi phần (b
 **Đọc bảng này thế nào.**
 - Dòng 1 cho biết bước này xếp đúng tới đâu. Lúc mới có, nó làm mỗi câu chậm thêm khoảng 1,5 giây; dòng 3 là cách gỡ phần chậm đó.
 - Dòng 4 là một cách làm bước này nhanh hơn. Dòng 5 là một lớp luật đứng trước nó, để câu khẩn cấp khỏi phải vào model. Cả hai bị bỏ vì làm sai ở câu an toàn hoặc ở câu chưa thấy.
-- "Mức suy luận" ở dòng 4 và 6: model cho chọn mức nghĩ trước khi đáp (thấp, vừa, cao); hệ thống đang chạy mức cao (bài 33).
+- "Mức suy luận" ở dòng 4 và 6: model cho chọn mức nghĩ trước khi đáp (với Claude có bốn nấc: không, thấp, vừa, cao; dòng 4 là tắt hẳn phần này ở bước xếp loại, dòng 6 so mức vừa với mức cao); hệ thống đang chạy mức cao (bài 33).
 - Dòng 6: cùng một lời dặn, model khác xếp khác. Bài học giống dòng 4 của bài 21.
 
 **Giới hạn của các phép đo.** Dòng 1 đo đầu tháng 11; lời dặn đã sửa vài lần từ đó. Dòng 6: lượt đo sau khi thêm đoạn dặn đổi cùng lúc vài thứ khác, nên không tách được riêng phần của đoạn dặn này; mẫu nhỏ (6 câu, 25 chuỗi hội thoại).

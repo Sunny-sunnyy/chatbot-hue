@@ -1,6 +1,6 @@
 # Bài 2 — RAG là gì: cho model đọc tài liệu trước khi trả lời
 
-*Cập nhật 15:43, ngày 22/11/2026 · ví dụ là ba lượt hỏi thật lấy từ sổ ghi từng lượt của hệ thống (ngày 20 và 21/11); số của kho đếm lại theo bản ghi hiện trạng lúc 13:33 22/11 (266 bài, 9.458 đoạn); người viết không chạy lại.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: ví dụ là ba lượt hỏi thật lấy từ sổ ghi từng lượt của hệ thống (ngày 20 và 21/11); số của kho đếm lại theo bản ghi hiện trạng lúc 13:33 22/11 (266 bài, 9.458 đoạn); người viết không chạy lại.*
 
 **Bài trước đã biết:** model ngôn ngữ viết ra chữ tiếp theo có khả năng cao nhất. Nó viết trôi chảy cả khi không biết, và không tự nói được nó lấy thông tin từ đâu.
 **Bài này thêm:** cách hue_rag xử lý chuyện đó. Cách này có tên là RAG, và nó là tên của chính đề tài. Bài này cũng nói vì sao chọn cách này thay cho các cách khác.
@@ -20,7 +20,7 @@
 | RAG | **Retrieval-Augmented Generation** | sinh câu trả lời (generation) có bổ sung (augmented) bằng bước tìm tài liệu (retrieval) |
 | kho | **knowledge base**, **corpus** | 266 bài viết về Huế do nhóm soạn; mọi thứ hệ thống được phép nói đều nằm ở đây |
 | đoạn | **chunk** | một mẩu cắt ra từ một bài; kho có 9.458 đoạn |
-| tìm | **retrieval** | chọn ra 10 đoạn hợp câu hỏi nhất trong 9.458 đoạn |
+| tìm | **retrieval** | chọn ra các đoạn hợp câu hỏi nhất trong 9.458 đoạn (10 đoạn ở lần tìm đầu) để đưa cho model viết |
 | ngữ cảnh | **context** | phần chữ gửi cho model cùng câu hỏi: các đoạn vừa tìm được, kèm lời dặn |
 | chỉ mục | **index** | dạng đã xử lý sẵn của kho để tìm nhanh (bài 10–12) |
 | số nguồn | **citation** | dấu [1], [2]… đặt sau mỗi ý, chỉ ý đó lấy từ đoạn nào |
@@ -57,7 +57,7 @@ flowchart LR
 
 Số [1] trỏ tới một đoạn của bài về vé các điểm tham quan. Số [4] trỏ tới một đoạn của bài cẩm nang nghệ thuật biểu diễn, đoạn này nhắc giá vé vào cổng khi nói về vé xem biểu diễn trong Đại Nội. Cả câu trả lời dùng 5 trong 10 đoạn. Bước viết mất 3,6 giây.
 
-Ô hỏi đáp cho chữ hiện trước, kiểm sau; kiểm hỏng thì rút lại. Phép kiểm: mọi số nguồn trong câu trả lời phải là số của một đoạn đã thật sự được đưa cho model. Có số lạ thì chữ đã hiện bị xoá và thay bằng một lời báo (bài 6, 16).
+Phép kiểm: mọi số nguồn trong câu trả lời phải là số của một đoạn đã thật sự được đưa cho model. Với model đang chạy (trả cả câu một lần), ở lượt có công cụ, chữ được giữ tới khi qua bước kiểm nguồn rồi mới hiện; kiểm hỏng thì người dùng không thấy chữ đó mà thấy một lời báo. Với model trả chữ dần (đường cũ), chữ hiện trước, kiểm sau, kiểm hỏng thì rút lại (bài 6, 16).
 
 Điểm cần nắm: con số 200.000 đồng không đến từ trí nhớ của model; nó nằm trong đoạn số 1, bấm vào nguồn là đọc được.
 
@@ -96,7 +96,7 @@ Vì mọi thông tin nằm trong kho chứ không nằm trong model, cập nhậ
 ### 2. Vì sao chỉ đưa cho model vài đoạn, và vì sao là 10?
 
 - **Đã chọn:** 10 đoạn ở lần tìm đầu, cộng phần tìm thêm của trợ lý và phần nối thêm cho tin nhiều ý.
-- **Vì sao 10 chứ không 5:** đã đo (gpt-6-luna): cùng cách tìm, giữ 10 đoạn thay vì 5 làm điểm "đủ ý" tăng 0,26 trên thang 5, và câu từ chối nhầm giảm từ 13 xuống 7 trên 88 câu (bài 13). Đưa vào hệ thống từ 28/10; ngày 01/11, một lần so lại cho kết quả gần như ngang nhau, chủ dự án chọn giữ 10.
+- **Vì sao 10 chứ không 5:** đã đo (gpt-6-luna): cùng cách tìm, giữ 10 đoạn thay vì 5 làm điểm "đủ ý" tăng 0,26 trên thang 5, và câu từ chối nhầm giảm từ 13 xuống 7 trên 88 câu (bài 13). Đưa vào hệ thống từ 28/10; ngày 01/11, chủ dự án tự chấm mù 20 cặp câu trả lời: 3 cặp bản 5 đoạn từ chối nhầm, còn lại như nhau; chủ dự án chọn giữ 10.
 - **Cách khác:** 15 đoạn: đã đo, không khá hơn (bài 13). Dán cả kho vào mỗi lời gọi: chưa thử; lập luận, không phải số đo: 10 đoạn, lời dặn và phần mô tả công cụ đã khoảng 5.100 token (đơn vị model dùng để đếm chữ, bài 1), nên tiền và thời gian chờ sẽ tăng theo cỡ kho.
 - **Cái giá:** tiền mỗi câu tăng khoảng một nửa so với 5 đoạn (bài 13).
 
@@ -116,10 +116,10 @@ Vì mọi thông tin nằm trong kho chứ không nằm trong model, cập nhậ
 
 ### 5. Vì sao chương trình còn kiểm số nguồn, khi model đã được dặn chỉ dùng các đoạn được đưa?
 
-- **Đã chọn:** chương trình kiểm mọi số nguồn sau khi model viết; chữ hiện trước, kiểm sau.
-- **Vì sao:** lời dặn là lời nhờ, model có thể không theo; luật quan trọng thì cần một bước chương trình đếm được (bài 16, 21). Hiện trước: để người dùng đọc sớm, đã đo ngày 01/11 (bài 6).
+- **Đã chọn:** chương trình kiểm mọi số nguồn sau khi model viết. Với model đang chạy, chữ được giữ tới khi qua kiểm (từ 15:42 22/11); với model trả chữ dần, chữ hiện trước, kiểm sau.
+- **Vì sao:** lời dặn là lời nhờ, model có thể không theo; luật quan trọng thì cần một bước chương trình đếm được (bài 16, 21). Hiện trước ở model trả chữ dần: để người dùng đọc sớm, đã đo ngày 01/11; với model trả cả câu một lần thì không còn lợi đó, nên giữ chữ (bài 6).
 - **Cách khác:** kiểm xong mới hiện (bản trước 01/11). Chỉ dựa vào lời dặn: không làm; bước kiểm có từ bản đầu.
-- **Cái giá:** có lượt người dùng thấy chữ rồi mất (bài 16). Và phép kiểm mới biết số [4] có thật, chưa biết đoạn 4 có nói đúng điều câu trả lời viết.
+- **Cái giá:** với model trả chữ dần, có lượt người dùng thấy chữ rồi mất (bài 16); với model đang chạy, dòng trạng thái đứng lâu hơn ở lượt phải viết lại. Và phép kiểm mới biết số [4] có thật, chưa biết đoạn 4 có nói đúng điều câu trả lời viết.
 
 ## Nếu… thì sao
 
@@ -156,7 +156,7 @@ Tìm các đoạn hợp câu hỏi, đưa cho model đọc, model viết kèm s�
 <details>
 <summary>3. Vì sao chương trình phải kiểm số nguồn, khi đã dặn model rồi?</summary>
 
-Lời dặn là lời nhờ, model có thể không theo. Chương trình kiểm mọi số nguồn có thật; sai thì chữ đã hiện bị rút lại. Phép kiểm chưa biết đoạn được trích có nói đúng điều câu trả lời viết.
+Lời dặn là lời nhờ, model có thể không theo. Chương trình kiểm mọi số nguồn có thật; sai thì người dùng không nhận câu trả lời đó (bài 16). Phép kiểm chưa biết đoạn được trích có nói đúng điều câu trả lời viết.
 
 </details>
 

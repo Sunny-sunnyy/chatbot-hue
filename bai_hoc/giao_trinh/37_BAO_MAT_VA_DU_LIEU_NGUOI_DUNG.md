@@ -1,6 +1,6 @@
 # Bài 37 — Bảo mật: khoá bí mật, dữ liệu người dùng, và chữ lạ chen vào lời dặn
 
-*Cập nhật 13:54, ngày 22/11/2026 · cơ chế đọc từ chương trình trưa 22/11 (gồm các chốt trước khi đưa lên mạng vào cây chính 12:54 22/11); các đợt rà rủi ro lấy từ báo cáo 01/11, 02/11, 05/11, 20/11, bảng rủi ro 22/11 và đợt soát khác hãng 22/11; người viết không chạy máy chủ, không thử tấn công; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình trưa 22/11 (gồm các chốt trước khi đưa lên mạng vào cây chính 12:54 22/11); các đợt rà rủi ro lấy từ báo cáo 01/11, 02/11, 05/11, 20/11, bảng rủi ro 22/11 và đợt soát khác hãng 22/11; người viết không chạy máy chủ, không thử tấn công; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** khoá chỉ nằm ở máy chủ, bốn thứ được gửi ra ngoài (bài 6); cookie chỉ mang mã cuộc, chữ model qua hai lớp chặn trước khi lên màn hình (bài 35).
 **Bài này thêm:** khoá nằm ở đâu và rào nào giữ nó khỏi repo công khai; chữ người dùng đi đâu, giữ bao lâu; "chữ lạ chen vào lời dặn" là gì và hệ thống chặn bằng những lớp nào; những gì đã có sẵn nhưng đang tắt, và những gì chưa làm trước khi đưa lên mạng.
@@ -18,7 +18,7 @@
 |---|---|---|
 | repo công khai | **public repository** | kho mã trên GitHub mà ai cũng đọc được, kể cả toàn bộ lịch sử các lần lưu |
 | lần lưu code | **commit** | một lần ghi thay đổi vào lịch sử repo; đã đẩy lên mạng thì coi như không xoá được |
-| rào trước khi lưu | **git hook** (pre-commit, pre-push) | chương trình nhỏ git tự chạy trước mỗi lần lưu hoặc đẩy; thấy vi phạm thì chặn |
+| rào bằng máy | **git hook** (pre-commit, pre-push) | chương trình nhỏ git tự chạy trước mỗi lần lưu hoặc đẩy; thấy vi phạm thì chặn |
 | thiết lập lúc chạy | **environment variable** | một giá trị đặt cho máy chủ lúc bật, nằm ngoài file chương trình; dùng cho khoá và các công tắc của bản đưa lên mạng |
 | chữ lạ chen vào lời dặn | **prompt injection** | một câu ra lệnh giấu trong dữ liệu (câu hỏi, trang web, ảnh) để model làm theo thay cho lời dặn thật |
 | bộ ba nguy hiểm | **lethal trifecta** | trợ lý vừa đọc dữ liệu riêng tư, vừa đọc chữ không tin được, vừa có đường gửi ra ngoài; đủ cả ba thì chữ lạ có thể lừa nó gửi dữ liệu đi |

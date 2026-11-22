@@ -1,16 +1,16 @@
 # Bài 40 — Làm được tới đâu, còn yếu ở đâu, hướng phát triển
 
-*Cập nhật 15:43, ngày 22/11/2026 · mỗi con số chép từ bài gốc của nó (ghi "bài N") hoặc từ sổ việc, trang hiện trạng, cấu hình đọc lúc 14:48 22/11; model của từng phép đo ghi cạnh số; đã sửa theo một lượt đối chiếu độc lập; không có phép đo mới.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: mỗi con số chép từ bài gốc của nó (ghi "bài N") hoặc từ sổ việc, trang hiện trạng, cấu hình đọc lúc 14:48 22/11; model của từng phép đo ghi cạnh số; đã sửa theo một lượt đối chiếu độc lập; không có phép đo mới.*
 
 **Bài trước đã biết:** hệ thống được làm ra thế nào, ai kiểm ai (bài 39).
 **Bài này thêm:** theo từng mảng: làm được gì, chưa làm được gì, chỗ yếu nào nặng nhất, thứ gì chưa đo, hướng phát triển nào có căn cứ.
 
 ## Ý chính
 
-- Trên một máy, người dùng làm được trọn **ba loại việc**: hỏi đáp có nguồn từ kho 266 bài; vài việc cần tính (ngày âm lịch, thời tiết, khoảng cách, lễ hội theo ngày); lên một lịch rồi sửa lịch bằng lời. Lúc viết có 45 tính năng đang mở.
-- **Chỗ yếu nặng nhất** xếp theo thứ tự lỗi của bài 4: bước kiểm chỉ kiểm số nguồn có thật, chưa kiểm nghĩa; tin dài nhiều ý dễ thiếu ý; kho có mà tìm không ra thì từ chối nhầm. Ngoài chất lượng, người dùng chờ khoảng 13 giây ở tin dài.
+- Trên một máy, người dùng làm được trọn **ba loại việc**: hỏi đáp có nguồn từ kho 266 bài; vài việc cần tính (ngày âm lịch, thời tiết, khoảng cách, lễ hội theo ngày); lên một lịch rồi sửa lịch bằng lời. Lúc viết có 46 tính năng đang mở.
+- **Chỗ yếu nặng nhất** xếp theo thứ tự lỗi của bài 4: bước kiểm chỉ kiểm số nguồn có thật, chưa kiểm nghĩa; tin dài nhiều ý dễ thiếu ý; kho có mà tìm không ra thì từ chối nhầm. Ngoài chất lượng là thời gian chờ: lượt hỏi đáp đứng giữa khoảng 13 giây, tin dài nhiều ý 25–34 giây (bài 34).
 - **Kho là trần.** Ở ba lượt đo mốc ngày 21/11 với 12 người dùng mô phỏng, mỗi người một mục tiêu (bài 32), một phiên phân loại 19 lần một ý bị trượt: 12 do kho thiếu, 1 do tìm không ra. Lượt đo lại 22/11 còn 5 ý trượt, 2 do kho thiếu, 0 do tìm.
-- **Nhiều thứ chưa đo:** chưa có người dùng thật, bộ 176 câu chưa chạy đủ trên model đang chạy, bộ câu cất riêng chưa dùng lần cuối, mới bốn ca hỏng được thử thật.
+- **Nhiều thứ chưa đo:** chưa có người dùng thật, bộ 176 câu chưa chạy đủ trên model đang chạy, bộ câu cất riêng của phần trợ lý chưa dùng (hai bộ cất riêng của bộ 176 câu đã dùng từ tháng 10, bài 17), mới bốn ca hỏng được thử thật.
 - **Hướng phát triển** chỉ ghi những hướng có trong hồ sơ, mỗi hướng kèm chỗ yếu nó nhằm tới và phép đếm rẻ nhất. Đưa lên mạng chưa làm: chủ dự án dặn tập trung hoàn thành ở máy trước.
 
 ## Từ dùng trong bài
@@ -18,7 +18,7 @@
 | Tên trong bài | Tên gốc | Nghĩa |
 |---|---|---|
 | vế cụt | — | một vế của tin nhiều ý bị tách ra mà mất tên đối tượng, ví dụ "mấy giờ mở cửa?" |
-| chữ chạy dần thật | **streaming** | model gửi từng mẩu chữ ngay khi viết; hiện nay với Claude, chữ tới một lần khi viết xong (bài 33) |
+| chữ chạy dần | **streaming** | model gửi từng mẩu chữ ngay khi viết; hiện nay với Claude, chữ tới một lần khi viết xong (bài 33) |
 
 ## Người dùng làm được ba loại việc, trên một máy
 
@@ -55,7 +55,7 @@ Bảng đặt mỗi chỗ yếu vào đúng nấc của thứ tự lỗi, từ n
 
 - **Chưa có người dùng thật.** Bộ câu do AI soạn hoặc do nhóm gõ; người dùng mô phỏng thường dễ hơn người thật. Trên một bộ cất riêng, điểm "đủ ý" thấp hơn bộ quen khoảng 0,4 trên thang 5 (bài 17).
 - **Bộ 176 câu chưa chạy đủ trên model đang chạy:** mới 85 câu đầu và 54 câu so sánh (bài 32).
-- **Bộ câu cất riêng chưa dùng lần cuối;** lệnh đã chuẩn bị, chạy lúc nào và trên model nào là việc chủ dự án quyết.
+- **Bộ câu cất riêng của phần trợ lý chưa dùng** cho lượt so sánh cuối (khác hai bộ cất riêng của bộ 176 câu, đã dùng 28/10 và 01/11 — bài 17); lệnh đã chuẩn bị, chạy lúc nào và trên model nào là việc chủ dự án quyết.
 - **Mới bốn ca hỏng được thử thật,** mỗi ca một lượt (bài 6).
 - **Các tính năng mở 21–22/11 chưa đo trên gpt-6-luna.** Trên Claude, lượt 12 vai đo lại 22/11 ra 8 trên 12 phiên, 33 trên 38 ý, trong khoảng nhiễu của mốc, chạy trước bốn thay đổi cho tin dài. Thước có một điểm mù: người mô phỏng không thấy dòng báo của lượt sửa lịch; công cụ đã chữa, chưa đo lại.
 - **Nhiều người hỏi cùng lúc** mới đo một lần, ngày 27/10 (bài 6). Điện thoại thật, in bằng tay: chưa ai thử.
@@ -71,7 +71,7 @@ Chỉ ghi hướng đã có trong sổ việc, danh sách ý chưa thử hoặc 
 | Chữ chạy dần thật | chờ trắng 10–17 giây | ước, chưa đo: chờ tới chữ đầu từ khoảng 13 xuống khoảng 6 giây | cần một quyền ở tài khoản AWS; chủ dự án gác chuyện AWS tới khi tự xem lại |
 | Chạy riêng bước tìm cho câu bị từ chối mà kho có đáp án | từ chối nhầm | câu "cởi giày" trên chỉ mục hiện tại; đếm trên 176 câu | chưa đếm |
 | Mỗi tab một mã cuộc trò chuyện | tab thứ hai xoá cuộc của tab thứ nhất | đã xác nhận thật một lần | chưa làm |
-| Đo bù trên gpt-6-luna; lượt cuối trên bộ câu cất riêng | thứ chưa đo | 12 vai, 41 câu khó và các sàn | chờ chủ dự án |
+| Đo bù trên gpt-6-luna; lượt cuối trên bộ câu cất riêng của phần trợ lý | thứ chưa đo | 12 vai, 41 câu khó và các sàn | chờ chủ dự án |
 
 **Đưa lên mạng.** Chưa làm. Lời chủ dự án sáng 22/11: "giờ tập trung hoàn thành ở local đi nhé". Các chốt cần cho lúc đó đã có trong chương trình nhưng đang tắt (bài 37); gói ba hộp Docker đã cũ (bài 36).
 
@@ -156,19 +156,19 @@ Do kho thiếu (12 trong 19 lần ở ba lượt mốc; 0 lần do tìm ở lư�
 <details>
 <summary>4. Kể hai thứ chưa đo.</summary>
 
-Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đang chạy. Ngoài ra: bộ câu cất riêng chưa dùng, mới bốn ca hỏng được thử thật.
+Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đang chạy. Ngoài ra: bộ câu cất riêng của phần trợ lý chưa dùng, mới bốn ca hỏng được thử thật.
 
 </details>
 
 ## Chi tiết để tra
 
-- **Tính năng đang mở / tắt:** 45 mở, 3 tắt (đếm 14:52 22/11 bằng lệnh của phụ lục B; phụ lục B đếm 13:20 ra 42, trước khi ba tính năng khâu tìm được mở). Ba cái tắt: xếp lịch từ câu gõ tự do (đo không đạt), dòng "hôm nay là ngày…" (vô ích), sổ vết từng lượt (chỉ dùng ở máy phát triển).
+- **Tính năng đang mở / tắt:** 46 mở, 3 tắt (đếm 15:51 22/11, sau khi mở việc giữ chữ tới khi qua bước kiểm nguồn; lúc 14:52 là 45, đếm bằng lệnh của phụ lục B; phụ lục B đếm 13:20 ra 42, trước khi ba tính năng khâu tìm được mở). Ba cái tắt: xếp lịch từ câu gõ tự do (đo không đạt), dòng "hôm nay là ngày…" (vô ích), sổ vết từng lượt (chỉ dùng ở máy phát triển).
 - **Kho:** 266 bài, 9.458 đoạn (bài 7).
 - **Bộ test:** lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca đạt (bài 38, Chi tiết để tra). Sau khi bốn thay đổi được mở, cả bộ test chạy lại 14:48–15:03 22/11: 78 file, 2.119 ca đạt, 2 ca hỏng — đều là ca test cũ so nguyên một bảng nay có thêm tên nhà cung cấp model của trang Giới thiệu, không phải sản phẩm sai (bài 38).
 - **Thời gian chờ:** 13 giây là 49 lượt hỏi đáp của người dùng mô phỏng trưa 21/11, tin dài hơn và còn mục web; 6,9 giây là 41 tin phần lớn ngắn ở lượt kiểm chốt trưa 22/11, lúc máy rảnh; 95 % dưới 13,1 giây (bài 34).
 - **Phân loại 19 lần trượt:** 12 kho thiếu (đi Hội An, quy định chụp ảnh, sự kiện có ngày, điểm ít leo bậc; hai chủ đề sau nay đã có bài hoặc công cụ), 4 sửa lịch (đã sửa), 2 model không ghép hai dữ kiện có sẵn, 1 tìm không ra; một phiên đếm chiều 22/11, khâu tìm chạy lại trên chỉ mục hôm đó. Lượt đo lại: 5 ý trượt — kho thiếu 2, model không ghép 1, hai ý sửa lịch thước không đọc được, tìm không ra 0.
 - **Lượt đo bốn thay đổi cho tin dài:** một tin 4 ý, 6 lần mỗi bên; màn hình lỗi bản cũ 5 · lọc và tách 3 · thêm viết lại 0 · thêm lần tìm thứ ba 0; nêu đúng cả hai ý 0 · 1 · 1 · 6 trên 6.
-- **Câu bị rút lại sau khi đã hiện:** 3 trên 48 và 4 trên 53 lượt ở một lần đo ngày 21/11 (bài 16).
+- **Câu bị rút lại sau khi đã hiện:** 3 trên 48 và 4 trên 53 lượt ở một lần đo ngày 21/11 (bài 16). Từ 15:42 22/11, với model đang chạy, ở lượt có công cụ, chữ được giữ tới khi qua kiểm nên không còn cảnh chữ hiện rồi mất; chưa đo lại, chưa nhìn trên trình duyệt.
 - **Ảnh có chữ ra lệnh:** 1 trên 3 ảnh lừa được model (05/11), hậu quả bị chặn (bài 37).
 - **Dời một điểm trong lịch:** làm được 24 trên 176 lần thử; hướng "nới luật xếp" có trong danh sách ý chưa thử, chưa đếm.
 - **Vế cụt:** trên 364 tin nhiều ý đã ghi, 236 tin (65 %) có ít nhất một vế cụt; đọc tay 28 đoạn chúng kéo về, 20 không liên quan. Trên 8 dữ kiện kho có của phép đo sáng 22/11: tắt tìm theo vế thì 1 có trong đoạn tìm về, đang chạy 5, lọc vế cụt 4.
@@ -181,7 +181,7 @@ Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đ
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
 - Số trong bảng "làm được": bài 4 quyết định 1 (3 / 158, 0 / 78); bài 32 "Ý chính" (7 · 7 · 8); bài 24 mục "Đã so" dòng 2; bài 25 "Ý chính" (2 / 44); bài 26 "Ý chính" (2 / 5, 42 tên); bài 27 "Ý chính" (0,2 và 9,3 giây); bài 31 "Ý chính" và mục "Đã so" (9 / 10, 14–19/11, trước khi đổi sang Claude); bài 34 "Chi tiết để tra" (41 tin, 6,9 giây, 13,1 giây, 0 lỗi); bài 36 "Chi tiết để tra" (34 giây) [chép từ giáo trình].
-- 45 tính năng mở, 3 tắt: `sed -n '/^assistant:/,$p' backend/config/settings.yaml | grep -cE '^  [a-z_0-9]+: true'` ra 45 (lệnh của phụ lục B) [đã chạy 14:52 22/11]; ba tính năng tắt: `HIEN_TRANG.md` dòng 19.
+- 46 tính năng mở, 3 tắt: `sed -n '/^assistant:/,$p' backend/config/settings.yaml | grep -cE '^  [a-z_0-9]+: true'` ra 46 lúc 15:51 22/11 trên main `15cd5985`, sau khi mở `giu_chu_toi_kiem` (`guides/RUNBOOK_BAN_GIAO.md` mục 0) [chép]; người viết chạy lúc 14:52 ra 45; ba tính năng tắt: `HIEN_TRANG.md` dòng 19.
 - Thứ tự lỗi: bài 4. Chỗ yếu: bài 24, 16, 26, 33, 13, 34, 6, 35 mục "Giới hạn đã biết" [chép]. Một hãng model, không dự phòng: `HIEN_TRANG.md` mục 4 gạch 21:43 21/11 điểm (5); bài 6.
 - "Model tự nhận ra thiên tai" chưa có lượt model thật: `bai_hoc/VIEC_MOI_XONG.md` mục 40 ý 2 [chép].
 - Nấc 3: nhận xét của một phiên `session_prompt/Y_CHUA_THU.md` ý 3 [chưa đếm]; câu Hội An 20 / 20 bị chặn ở bước xếp loại: `data/thu_bedrock_2026-11-21/do/demo/KET_QUA_DEMO.md` [riêng tư; đã chạy 21/11].

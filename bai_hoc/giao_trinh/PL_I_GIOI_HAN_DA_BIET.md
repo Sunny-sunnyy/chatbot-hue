@@ -1,6 +1,6 @@
 # Phụ lục I — Mọi giới hạn đã biết trên một trang
 
-*Cập nhật 15:33, ngày 22/11/2026 · gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42); rào bỏ / thay của lịch · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Giới hạn đã biết khác với thứ cố ý không làm (bài 4).** Giới hạn đã biết là chỗ hệ thống làm chưa tốt trong chính phạm vi của nó: kho có mà tìm không ra, chờ lâu, bước kiểm chưa kiểm nghĩa. Thứ cố ý không làm là một ranh giới đã được chọn, không phải một lỗi còn nợ: câu gõ không dấu, tiếng Anh, tình huống khẩn cấp, giá phòng, đặt chỗ thay người dùng. Trang này liệt kê loại thứ nhất, nhóm theo chặng; loại thứ hai nằm ở bảng nhỏ riêng cuối trang.
 
@@ -13,9 +13,9 @@
 | Bước kiểm chỉ kiểm số nguồn có thật, chưa kiểm đoạn được trích có nói đúng điều câu trả lời viết. | — | model có thể viết sai nghĩa kèm một số nguồn có thật | 15, 16, 21, 40 |
 | Một hãng model tại một thời điểm, không có dự phòng tự động. | — | hãng chậm hay lỗi thì hệ thống chậm hay lỗi theo | 6, 15, 33 |
 | Với Claude, chữ hiện ra một lần sau khi model viết xong, không hiện dần (bộ khoá đang dùng không có quyền nhận chữ dần). | lượt đứng giữa khoảng 13 giây, một phần ba số lượt quá 15 giây | có lượt phần chữ trống hơn 15 giây, chỉ có dòng trạng thái | 5, 15, 33, 34 |
-| Cuộc trò chuyện, lịch đang giữ và câu trả lời được nhớ chỉ nằm trong bộ nhớ của máy chủ. | cuộc và lịch hết sau 30 phút; câu trả lời nhớ 24 giờ | khởi động lại máy chủ, tải lại trang hay quá 30 phút là mất, không có lời báo; màn hình vẫn hiện thẻ lịch cũ tới khi tải lại | 6, 23, 27, 35, 36 |
+| Cuộc trò chuyện, lịch đang giữ và câu trả lời đã nhớ 24 giờ chỉ nằm trong bộ nhớ của máy chủ. | cuộc và lịch hết sau 30 phút; câu trả lời nhớ 24 giờ | khởi động lại máy chủ, tải lại trang hay quá 30 phút là mất, không có lời báo; màn hình vẫn hiện thẻ lịch cũ tới khi tải lại | 6, 23, 27, 35, 36 |
 | Một máy, một bản máy chủ, chưa đưa lên mạng; các chốt để đưa lên mạng đang tắt, chưa thử trên bản thật. | nhiều người hỏi cùng lúc mới đo một lần (27/10) | — | 6, 37, 40 |
-| Đường báo tình trạng chỉ biết tình trạng lúc bật, và không gọi ra ngoài. | đã thử: Qdrant ngừng giữa chừng thì nó vẫn báo "đủ" | có thể báo "đủ" trong khi hãng model đang từ chối mọi lần gọi | 6, 35 |
+| Đường báo tình trạng chỉ biết tình trạng lúc bật, và không gọi ra ngoài. | đã thử: Qdrant ngừng giữa chừng thì nó vẫn báo đủ (trả "ok") | có thể báo đủ trong khi hãng model đang từ chối mọi lần gọi | 6, 35 |
 | Mới bốn tình huống hỏng được thử thật, mỗi ca một lượt; các dòng "hỏng thì thấy gì" còn lại đọc từ chương trình. | 4 ca (22/11) | — (giới hạn của phép đo) | 6, 40 |
 
 ## Chặng 1 — Bức tranh
@@ -25,7 +25,7 @@
 | Chưa thử trên điện thoại thật, mới thử ở bề rộng màn hình điện thoại trên máy tính; chưa có ứng dụng điện thoại riêng. | — | trang web chạy được trong trình duyệt của điện thoại; chưa ai xác nhận trên máy thật | 5, 40 |
 | Số [n] không hiện trong chữ; dòng "Nguồn:" chỉ cho biết cả câu trả lời dựa vào những bài nào (lựa chọn của chủ dự án về giao diện). | — | không thấy ý nào đến từ nguồn nào | 5, 16 |
 | Trang Bản đồ chỉ có điểm tham quan. | — | chưa có quán ăn hay chỗ ở trên trang Bản đồ | 5 |
-| Số lượt tải file lịch và PowerPoint chưa bị giới hạn; phải làm trước khi đưa lên mạng. | — | — (rủi ro khi đưa lên mạng) | 5, 30 |
+| Số lượt tải PowerPoint chỉ bị giới hạn (30 mỗi địa chỉ mỗi ngày) khi bộ giới hạn lượt được bật; mặc định tắt, nên trên máy phát triển chưa giới hạn. | 30 mỗi ngày khi bật | — (phải bật trước khi đưa lên mạng) | 5, 30, 37 |
 
 ## Chặng 2 — Chuẩn bị kho
 
@@ -62,7 +62,7 @@
 | Không có bước xếp lại, nên đoạn đúng đứng hạng 11 tới 30 thì model không thấy ở lần tìm đầu; kết luận "không dùng" đứng trên phép đo cũ. | 9 trên 40 câu khó | model viết không thấy đoạn đó ở lần tìm đầu | 14 |
 | Model có thể bỏ sót ý nằm trong 10 đoạn; chỉ thấy khi chấm. | — | câu trả lời thiếu ý | 15 |
 | Câu trả lời của Claude dài hơn gpt-6-luna; chủ dự án nhận độ dài này. | khoảng 2,6 tới 3,6 lần tuỳ loại câu | câu trả lời dài, chờ lâu hơn | 15, 33 |
-| Thiếu số nguồn chỉ bị phát hiện ở cuối, sau khi chữ đã hiện; câu đúng mà quên số nguồn cũng bị rút. | 3 trên 48 lượt (gpt-6-luna), 4 trên 53 lượt (Claude) có câu bị rút, 21/11, trước bản sửa 13:51 | thấy chữ rồi thấy nó bị rút, kèm nút "Thử lại" | 16 |
+| Thiếu số nguồn chỉ bị phát hiện ở cuối; câu đúng mà quên số nguồn cũng bị rút. | 3 trên 48 lượt (gpt-6-luna), 4 trên 53 lượt (Claude) có câu bị rút, 21/11, trước bản sửa 13:51 | model trả chữ dần: thấy chữ rồi thấy nó bị rút, kèm nút "Thử lại"; model đang chạy, từ 15:42 22/11: chỉ thấy lời báo và nút "Thử lại" (chữ được giữ tới khi kiểm) | 16 |
 
 ## Chặng 4 — Đo
 
@@ -124,7 +124,7 @@
 | Thời lượng của nhiều điểm dựa vào web hoặc là ước. | 31 điểm dựa vào web, 2 điểm ước | giờ gợi ý có thể sai | 27 |
 | Ô số người lớn chưa làm đổi lịch, và không sửa được bằng lời. | — | đổi số người lớn không đổi gì | 27, 31 |
 | Chưa có ô giờ tới, giờ về. | — | ngày đầu và ngày cuối vẫn xếp đủ buổi | 27, 28, 40 |
-| Ca "đi rồi quay lại cùng khu" còn; nhóm giữ giới hạn từ 20/11. | 104 trên 960 cách điền | có lịch đi Đại Nội, sang Thiên Mụ, rồi quay lại Ngọ Môn | 28 |
+| Ca "đi rồi quay lại cùng khu" còn; nhóm giữ giới hạn từ 20/11. | 104 trên 960 cách điền có ít nhất một ngày như vậy, tính cả buổi tối (đếm theo ngày, chỉ ban ngày: 65) | có lịch đi Đại Nội, sang Thiên Mụ, rồi quay lại Ngọ Môn | 28 |
 | Phút đi tính theo cụm, không theo đường thật. | — | giờ in ra là phép cộng số cố định | 28 |
 | Ngày mưa to vẫn có thể toàn điểm ngoài trời. | 181 trên 300 ngày mưa không chọn sở thích (17/11) | lịch ngày mưa vẫn ngoài trời | 28 |
 | Lịch mặc định 1 ngày có điểm đầm phá buổi chiều, trong khi bảng ghi đẹp nhất lúc hoàng hôn; chủ dự án chọn giữ (17/11). | 13:30 – 16:00 | — | 28 |
@@ -140,6 +140,7 @@
 | Vài lệnh sửa lịch bị trả "chưa hỗ trợ" dù làm được; câu dời hai điểm kết bằng dấu hỏi có thể nghe như đã đổi; câu giả định có lần bị làm như lệnh thật. | câu giả định: 1 lượt (19/11) | lịch không đổi như ý, hoặc đổi khi chỉ hỏi | 31 |
 | Không thay được hoạt động buổi tối, không xếp tay một điểm vào buổi tối; ngày tương đối và ngày âm không đọc được. | — | chương trình nói thật hai điều đầu | 31, 40 |
 | Câu gợi ý "thay Y bằng X" chỉ được nhớ đúng một lượt kế; đổi chỗ với ngày không có trong lịch nhận câu chung dễ hiểu nhầm. | — | — | 31 |
+| Lệnh bỏ / thay không tên điểm, không mốc lịch ("Bỏ điểm này", "Bớt lăng đi", "Bỏ điểm đầu tiên đi", "ngày 2-3 bỏ điểm đầu") không sửa lịch mà thành câu hỏi thường (từ 22/11). Còn hở: tin có đủ tên một điểm của lịch mà nói về danh sách vừa kể. | chỗ hở: chưa thấy thật | lịch không đổi; phải nhắn kèm tên điểm hoặc "ngày N" | 31 |
 | Ba trong bốn vai chưa đạt ở 12 vai vướng ý kho thiếu; người mô phỏng hay tự kết sớm. | trần thước khoảng 8–9 trên 12; kết trước lượt 5: 6 trên 12 (gpt-6-luna), 5 trên 12 (Claude) | giới hạn của phép đo | 32 |
 | Thước 12 vai có một điểm mù: người mô phỏng không thấy dòng báo của lượt sửa lịch; công cụ đã chữa, chưa đo lại. | 26 lượt, thuộc một vai | giới hạn của phép đo | 32, 40 |
 | Lượt 12 vai đo lại 22/11 chạy trước bốn thay đổi khâu tìm mở 14:47, nên chưa đo bộ đó; luật "ba lượt" chưa sửa chữ cho khớp lựa chọn tối 21/11. | 8 trên 12 phiên, 33 trên 38 ý | giới hạn của phép đo | 32 |

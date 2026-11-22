@@ -1,6 +1,6 @@
 # Bài 25 — Khi kho không có: tra web một lần, để riêng mục "chưa kiểm"
 
-*Cập nhật 12:54, ngày 22/11/2026 · sửa theo một lượt đối chiếu độc lập · cơ chế đọc từ chương trình và cấu hình trưa 22/11; ví dụ là một lượt hỏi thật ngày 20/11 (gpt-6-luna); số đo chép từ báo cáo 05/11 – 21/11, ghi rõ model ở từng con số; người viết không chạy lại phép đo nào và không gọi dịch vụ tìm web.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: sửa theo một lượt đối chiếu độc lập · cơ chế đọc từ chương trình và cấu hình trưa 22/11; ví dụ là một lượt hỏi thật ngày 20/11 (gpt-6-luna); số đo chép từ báo cáo 05/11 – 21/11, ghi rõ model ở từng con số; người viết không chạy lại phép đo nào và không gọi dịch vụ tìm web.*
 
 **Bài trước đã biết:** kho không đủ bằng chứng thì trợ lý trả đúng một câu từ chối cố định (bài 16); tin nối tiếp được hiểu nhờ lịch sử (bài 23).
 **Bài này thêm:** sau câu từ chối, hệ thống tra web một lần và viết mục riêng "Từ web (chưa kiểm)": khi nào được tra, câu nào ra ngoài, chương trình kiểm gì, dịch vụ hỏng thì người dùng thấy gì, và cái giá riêng tư.
@@ -86,7 +86,7 @@ Một luật duy nhất, dùng chung cho cả kiểu hiện chữ dần lẫn ki
 ### 3. Vì sao một lần gọi Serper, hạn 5 giây, không gọi lại?
 
 - **Đã chọn:** đúng một lần; lỗi mạng, quá hạn, hết hạn mức, dữ liệu sai dạng, thiếu khoá đều thành "lỗi"; không có kết quả nào là "rỗng", tách riêng với lỗi.
-- **Vì sao:** kế hoạch ghi lỗi hạ tầng khác với không có kết quả, nên hai dòng báo khác nhau. Không gọi lại: chưa thấy ghi lý do. Điều thấy được: log 05–12/11, Serper không lỗi lần nào trong 73 lượt tra.
+- **Vì sao:** kế hoạch ghi lỗi hạ tầng khác với không có kết quả, nên hai dòng báo khác nhau. Không gọi lại: quyết định đã ghi trong kế hoạch của tính năng (một lần gọi, không thử lại), chưa thấy ghi lý do. Điều thấy được: log 05–12/11, Serper không lỗi lần nào trong 73 lượt tra.
 - **Cách khác:** Exa trước, Serper dự phòng: đã đo, không đổi (mục "Đã so", dòng 3).
 - **Cái giá:** Serper hết lượt là mọi lượt mở mục web đều ra "Mình chưa tra được web lúc này." (đã xảy ra trưa 21/11).
 
@@ -257,5 +257,7 @@ Câu từ chối của kho, rồi khối "Từ web (chưa kiểm)" với dòng "
 - Một phần ba = 19 % bỏ cả mục + 18 % "chưa xác minh" trên 73 lượt log 05–12/11; 15 giây cả câu có web, 4 / 5 kết quả không ngày: `bai_hoc/15_…` "Khi nào hỏng", "Chuyện thật thứ hai", runbook 10.1 [chép].
 - Mục web tới một lần vì phải kiểm cuối: `assistant.py` `_web_stream` (chú thích); bão ở mục web theo lưới, soát khác hãng 18/11: `cong_web` (chú thích); giao diện kiểm gốc link: `chat.jsx` `WEB_LINK`; 45 giây riêng: `generator_openai_full_corpus.py` `_execute_agent` ⇒ `_run(…, self.timeout)`; mức cao trên Bedrock: `settings.yaml` `reasoning_default` [code]. 1 / 66 là trên ba lượt mốc của cả hai model: `report_agent/2026-11-21/b_web_chi_khi_tu_choi.md` [chép].
 - Bài đã qua một lượt đối chiếu độc lập với chương trình và số đo ngày 22/11 (32 dòng: 4 lệch, đã sửa; vết của ví dụ người kiểm không mở): `data/hoc_cung_D/kiem/bai_23_26.md` [riêng tư].
+
+- "Không gọi lại" của tìm web là quyết định đã ghi: `docs/superpowers/plans/2026-11-05-phase-9-b6-plan.md` hàng D3 ("timeout 5 s; không thử lại"; cột lý do chỉ nói lỗi hạ tầng khác kết quả rỗng) và `2026-11-15-toc-do-web-som-gop-tim-plan.md` dòng 32 ("một lần gọi / lượt không thử lại"); `backend/llm/tra_web.py` dòng 6, 148 [code; phân xử 22/11].
 
 </details>

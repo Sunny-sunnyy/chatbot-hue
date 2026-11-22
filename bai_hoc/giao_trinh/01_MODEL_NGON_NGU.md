@@ -1,6 +1,6 @@
 # Bài 1 — Model ngôn ngữ là gì, và vì sao nó viết trôi chảy mà vẫn sai
 
-*Cập nhật 15:13, ngày 22/11/2026 · phần giải thích chung là kiến thức phổ thông về model ngôn ngữ; các con số của hue_rag lấy từ một lượt hỏi thật ngày 21/11 và từ các lượt đo đã ghi; người viết không chạy lại.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: phần giải thích chung là kiến thức phổ thông về model ngôn ngữ; các con số của hue_rag lấy từ một lượt hỏi thật ngày 21/11 và từ các lượt đo đã ghi; người viết không chạy lại.*
 
 **Bài này mở đầu cả bộ.** Không cần biết gì trước, ngoài việc đã từng dùng một chatbot.
 **Bài này thêm:** thứ nằm ở giữa mọi hệ thống kiểu này là một model ngôn ngữ. Bài này nói nó làm được gì, không làm được gì, và vì sao hue_rag phải xây cả một hệ thống quanh nó.
@@ -22,7 +22,7 @@
 | token | **token** | mẩu chữ model dùng để đếm; một âm tiết tiếng Việt thường là một tới vài token |
 | viết chắc điều không có | **hallucination** | model viết ra một điều sai hoặc không có căn cứ bằng giọng chắc chắn |
 | mốc kiến thức | **knowledge cutoff** | thời điểm dữ liệu huấn luyện dừng lại; model không biết gì xảy ra sau đó |
-| lời gọi | **API call**, **request** | một lần chương trình gửi chữ cho model và nhận chữ về |
+| lời gọi | **API call** | một lần chương trình gửi chữ cho model và nhận chữ về |
 
 ## Model ngôn ngữ viết tiếp chữ, nó không tra cứu
 

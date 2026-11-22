@@ -1,6 +1,6 @@
 # Bài 34 — Người dùng chờ bao lâu, một câu tốn bao nhiêu tiền
 
-*Cập nhật 15:45, ngày 22/11/2026 · thêm thời gian chờ của tin dài nhiều ý sau bộ thay đổi mở 14:47 22/11 (một tin, 6 lần, Claude Sonnet 5.5) · thời gian từng lời gọi lấy từ một lượt người dùng mô phỏng chạy đơn trưa 21/11 (Claude Sonnet 5.5, mức suy luận cao, 49 lượt hỏi đáp; so với gpt-6-luna 43 lượt); thời gian chờ tới chữ đầu lấy từ ba lượt tối 21/11 (153 lượt trả lời xong); lịch sử làm nhanh đo với gpt-6-luna từ 01/11 tới 10/11; cơ chế đọc từ chương trình trưa 22/11. Người viết không chạy lại phép đo nào; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: thêm thời gian chờ của tin dài nhiều ý sau bộ thay đổi mở 14:47 22/11 (một tin, 6 lần, Claude Sonnet 5.5) · thời gian từng lời gọi lấy từ một lượt người dùng mô phỏng chạy đơn trưa 21/11 (Claude Sonnet 5.5, mức suy luận cao, 49 lượt hỏi đáp; so với gpt-6-luna 43 lượt); thời gian chờ tới chữ đầu lấy từ ba lượt tối 21/11 (153 lượt trả lời xong); lịch sử làm nhanh đo với gpt-6-luna từ 01/11 tới 10/11; cơ chế đọc từ chương trình trưa 22/11. Người viết không chạy lại phép đo nào; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** ở ví dụ chính, gần như toàn bộ 3,7 giây là model viết (bài 6); Claude viết dài hơn gpt-6-luna khoảng ba lần, chữ tới một lần, giá mỗi token gấp 20 lần (bài 33).
 **Bài này thêm:** thời gian chờ của một lượt đi vào những phần nào và phần nào đáng cắt; các lần làm nhanh đã có; một câu tốn bao nhiêu tiền và tiền được ghi ở đâu; trang theo dõi; và bộ nhớ câu trả lời 24 giờ, thứ duy nhất làm một câu vừa nhanh vừa không tốn tiền.
@@ -11,7 +11,7 @@
 - **Lượt chậm là lượt có câu trả lời dài**, không phải lượt gọi nhiều công cụ: 15 trên 16 lượt quá 15 giây có phần lớn thời gian nằm ở lần viết cuối.
 - **Tin dài nhiều ý chờ 25–34 giây** từ 14:47 ngày 22/11 (trước khoảng 20 giây), đổi lấy hết màn hình "Thử lại" và đủ ý hơn (bài 21, 23); lượt phải viết lại một lần lâu thêm khoảng 10 giây. Số đo trên một tin 4 ý, 6 lần hỏi.
 - **Hạ mức suy luận chỉ mua khoảng 0,3 giây.** Hai cách lợi lớn (chữ chạy dần, câu trả lời ngắn hơn) đều là thứ chủ dự án đã quyết, nên nhóm không mở.
-- **Tiền theo model:** ví dụ chính 0,018 USD trên Claude; câu một dữ kiện khoảng 0,0004 USD trên gpt-6-luna. Mỗi lượt một dòng số trong sổ số đo.
+- **Tiền theo model:** ví dụ chính 0,018 USD trên Claude; trung bình một câu trả lời có nguồn (66 câu tính điểm, 21/11) 0,0146 USD trên Claude, khoảng 0,0004 USD trên gpt-6-luna. Mỗi lượt một dòng số trong sổ số đo.
 - **Bộ nhớ câu trả lời 24 giờ:** người sau gõ đúng câu người trước đã hỏi, ở lượt đầu một cuộc mới, thì nhận lại câu trả lời cũ trong khoảng 0,1 giây, không gọi model. Khớp đúng chữ, không khớp theo nghĩa.
 
 ## Từ dùng trong bài
@@ -57,7 +57,7 @@ Tiền một lần gọi = token vào nhân giá vào, cộng token viết ra (k
 | Lượt | Model | Tiền |
 |---|---|---|
 | ví dụ chính (2 lần gọi) | Claude, mức cao | 0,0178 USD |
-| câu một dữ kiện, trung bình 66 câu | Claude, mức cao · gpt-6-luna | 0,0146 USD · 0,00039 USD |
+| trung bình một câu có nguồn, 66 câu tính điểm của 85 câu đầu bộ mẫu (đủ các loại câu) | Claude, mức cao · gpt-6-luna | 0,0146 USD · 0,00039 USD |
 | lượt của người dùng mô phỏng (phần lớn tin hai ý), 156 lượt, tối 21/11 | Claude, mức cao | khoảng 0,057 USD một lượt |
 | lượt trúng bộ nhớ câu trả lời | — | 0 USD |
 
@@ -105,7 +105,7 @@ Lời báo là nguyên văn; các dòng đọc từ chương trình, trừ dòng
 
 | Nếu | Người dùng thấy gì | Đã có chưa / ai làm gì |
 |---|---|---|
-| tin dài nhiều ý (ba bốn việc trong một tin) **(đã thử, một tin, 6 lần)** | chờ khoảng 25–34 giây; lượt phải viết lại tới 25–37 giây: khoảng 14 giây đầu chỉ có dòng tiến độ, rồi có thể hiện một đoạn chữ ngắn chưa phải câu trả lời ("cần tìm thêm về…") khoảng 15–17 giây trước khi bị thay bằng câu trả lời thật (suy từ chương trình và sổ máy chủ, chưa chụp màn hình) | đúng thiết kế từ 14:47 22/11: đổi thời gian lấy câu trả lời đủ ý (bài 21) |
+| tin dài nhiều ý (ba bốn việc trong một tin) **(đã thử, một tin, 6 lần)** | chờ khoảng 25–34 giây; lượt phải viết lại tới 25–37 giây: từ 15:42 22/11 suốt lúc đó chỉ có dòng tiến độ, rồi câu trả lời thật (theo test và một lượt thật, chưa nhìn trên trình duyệt; trước 15:42 có một đoạn chữ giữ chỗ hiện khoảng 15–17 giây rồi bị thay) | đúng thiết kế từ 14:47 22/11: đổi thời gian lấy câu trả lời đủ ý (bài 21) |
 | câu trả lời rất dài | chờ lâu hơn, chữ tới một lần; quá 45 giây thì "Không thể tạo câu trả lời vào lúc này." | lượt chạy một mình lâu nhất 28 giây; trong ba lượt tối 21/11 (hai model chạy cùng lúc) có 1 lượt chạm 45 giây |
 | Qdrant ngừng, câu đã nhớ **(đã thử)** | câu đã nhớ vẫn được trả lại; câu mới nhận "Hệ thống tra cứu tạm thời không khả dụng." | bật lại Qdrant (bài 6) |
 | câu trả lời đầu tiên kém mà được nhớ | người sau gõ đúng câu nhận lại bản kém trong 24 giờ | khởi động lại máy chủ, hoặc tắt tính năng bộ nhớ câu trả lời |
@@ -222,7 +222,7 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 - Lượt người dùng mô phỏng chạy một mình: cả lượt 90 % số lượt dưới 20,8 giây, lâu nhất 28,0 giây (Claude); 21,1 và 37,0 giây (gpt-6-luna). Lượt quá 15 giây: 16 trên 49 (33 %) và 11 trên 43 (26 %). Với gpt-6-luna, 4 trên 11 lượt chậm là do vòng công cụ (chạm trần vòng).
 - Tiền ba lượt người dùng mô phỏng tối 21/11, phía sản phẩm: Claude 11,18 USD (gồm cả 4 vai để riêng), gpt-6-luna 0,39 USD.
 - Lượt trúng bộ nhớ: phía máy chủ khoảng 1 phần nghìn giây. Trên gpt-6-luna mỗi lần trúng tiết kiệm khoảng 0,0008 USD; trên Claude, cỡ một câu có nguồn [ước của người viết] (khoảng 0,015 USD).
-- Câu một dữ kiện trên Claude: cả câu trung vị 2,6 giây không qua giao diện (66 câu, mức cao); qua giao diện có thêm dòng trạng thái và lượt có lịch sử dài hơn.
+- Câu hỏi đáp thường trên Claude: cả câu trung vị 2,6 giây không qua giao diện (66 câu tính điểm của 85 câu đầu bộ mẫu, đủ các loại câu, mức cao); qua giao diện có thêm dòng trạng thái và lượt có lịch sử dài hơn.
 - Lượt người dùng bấm "Dừng": tiền ghi sổ là cận dưới, vì không có số token cuối.
 - Tiền mỗi lần gọi tính theo hãng của đúng lần gọi đó, nên bộ đo có thể chạy hai model trong một tiến trình mà tiền không lẫn.
 
