@@ -29,7 +29,7 @@ Thứ tự việc, KHÔNG gắn ngày — bước trước đạt và máy rản
 | Bước | Việc | Trạng thái |
 |---|---|---|
 | 1–4 | Cả bộ test · soát tích hợp · code đứng yên · lượt đo cuối phần đã thấy (18/11) · sửa câu thiếu cảnh báo bằng code (19/11) | XONG; bộ kín NOT RUN |
-| 5 | **Ba ngày thử — đuổi một con số sản phẩm** (User chọn 16:14 21/11; chữ ở mục 4) | ĐÃ CÓ MỐC hai thước (12 vai: model đang chạy 7 · 7 · 8 / 12; demo 0 / 10 lần hỏng); đang sửa theo nhóm lỗi — sổ việc, khối đầu |
+| 5 | **Ba ngày thử — đuổi một con số sản phẩm** (User chọn 16:14 21/11; chữ ở mục 4) | ĐÃ CÓ MỐC hai thước (12 vai: model đang chạy 7 · 7 · 8 / 12; demo 0 / 10 lần hỏng). **ĐO LẠI 14:13 22/11/2026 sau mọi thứ mở và sửa 21–22/11: 8 / 12 phiên, 33 / 38 ý — TRONG khoảng nhiễu của mốc** (lợi chắc ở mức ý: "điểm ít leo bậc" 0 / 3 lượt mốc ⇒ đạt nhờ bài kho mới). Thứ đang giữ con số: kho thiếu (đường đi Hội An, quy định chụp ảnh) và một điểm mù của chính thước (người mô phỏng không thấy dòng báo của lượt sửa lịch — đang chữa công cụ). Chi tiết: sổ việc khối A, việc X3 |
 | 6 | **Đợt hoàn thiện Phase 9–12** — phạm vi "xong ở local" User nói rõ 20/11 (mục 4) | ĐI TIẾP song song từ tối 21/11: bốn mục đã mở cho người dùng, hai mục chờ bước cuối, mục lớn nhất (đề xuất sửa kho + cập nhật riêng bài đã sửa) ĐÃ Ở MAIN và ĐÃ CHẠY THẬT lần đầu sáng 22/11 (main `2b5583df`); đường phụ "tự tra web phát hiện giá đổi" KHÔNG làm (chủ dự án 09:25 22/11 — mục 4); phần XÂY đã xong ở local, còn đợt soát khác hãng đang chạy trưa 22/11 — sổ việc khối A |
 | 7 | **User test TOÀN BỘ một lần, trên máy LOCAL** (`data/test_cuoi/DANH_SACH.md`) | chưa; KHÔNG nhắc |
 | 8 | Deploy — không bắt buộc, là điểm cộng (User 21/11); nếu làm thì SAU buổi test ở máy (User 19/11) | chưa |
