@@ -1,6 +1,6 @@
 # Bài 32 — Đo một trợ lý: hội thoại nhiều lượt, người dùng mô phỏng, kịch bản chạy lặp
 
-*Cập nhật 14:48, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập · các thước, cách chấm và số chép từ hồ sơ đo các ngày 14–22/11 (phần lớn ngày 21/11, hai model: gpt-6-luna và Claude Sonnet 5.5 mức suy luận cao); số đếm loại câu của bộ 41 câu đếm lại bằng máy, không đọc câu; người viết không chạy lại phép đo nào.*
+*Cập nhật 15:12, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập; khớp lại với lượt đo 12 vai 14:13 22/11 (`VIEC_MOI_XONG` mục 43) · các thước, cách chấm và số chép từ hồ sơ đo các ngày 14–22/11 (phần lớn ngày 21/11, hai model: gpt-6-luna và Claude Sonnet 5.5 mức suy luận cao); số đếm loại câu của bộ 41 câu đếm lại bằng máy, không đọc câu; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** bộ 176 câu mẫu đo bước tìm và câu trả lời, mỗi câu một lượt (bài 17–19); một thí nghiệm đổi một thứ, đo theo cặp, so với nhiễu (bài 20); trợ lý tự tìm thêm, gọi công cụ, nhớ cuộc trò chuyện, sửa lịch (bài 21–31).
 **Bài này thêm:** những thứ trợ lý làm qua nhiều lượt thì bộ 176 câu không thấy. Bài giảng năm thước của phần trợ lý (chuỗi hội thoại, người dùng mô phỏng, bộ câu khó, kịch bản demo, bộ dò mù), ai chấm từng thước, mức nhiễu của thước nhỏ, luật "ít nhất ba lượt mỗi bên", và các số chính hiện có.
@@ -11,7 +11,7 @@
 - **Người dùng mô phỏng**: một model thứ ba (Claude Opus 5.5) đóng 12 vai du khách, mỗi vai nói chuyện với hệ thống tối đa 5 lượt qua đường chat thật. Thước này tìm ra các lỗi mà mọi thước cũ đều sạch, ví dụ phần hỏi trong một tin "vừa sửa lịch vừa hỏi" bị bỏ im 4 trên 4 lần.
 - Người chấm **đọc mù**: một agent con ngữ cảnh mới đọc bản ghi đã giấu tên model (gọi là hệ X, hệ Y). Bộ 41 câu khó và kịch bản demo thì chấm bằng luật máy.
 - Thước nhỏ **nhiễu lớn**: cùng một hệ thống chạy hai lần, bộ 41 câu lệch tới 3 mục, 12 vai lệch 1 phiên. Vì vậy luật của nhóm: thước nhỏ cần ít nhất ba lượt mỗi bên, và chỉ gọi là "tốt hơn" khi mọi cặp lượt cùng chiều và chênh lớn hơn nhiễu.
-- Số chính (21/11): 12 vai, phiên đạt 7 · 7 · 8 trên 12 với Claude Sonnet 5.5, so với 6 · 5 · 6 với gpt-6-luna; bộ 41 câu khó, lượt mới nhất 39 trên 41 đạt máy; kịch bản demo 0 trên 10 lần hỏng ở cả hai model.
+- Số chính (21/11): 12 vai, phiên đạt 7 · 7 · 8 trên 12 với Claude Sonnet 5.5, so với 6 · 5 · 6 với gpt-6-luna (đo lại 14:13 ngày 22/11: 8 trên 12, 33 trên 38 ý, trong khoảng nhiễu); bộ 41 câu khó, lượt mới nhất 39 trên 41 đạt máy; kịch bản demo 0 trên 10 lần hỏng ở cả hai model.
 
 ## Từ dùng trong bài
 
@@ -118,7 +118,7 @@ Bài này về cách đo, không có thứ hỏng ở phía người dùng. Ba �
 
 ## Dễ nhầm
 
-- **"12 vai đạt 8 / 12 nghĩa là 4 vai lỗi hệ thống."** Trong bốn vai chưa đạt, ba vai vướng một ý mà kho chưa có thông tin (một ý khác vì tính năng đang tắt); vai còn lại vướng phần sửa lịch. Trần của thước với Claude khoảng 8–9 trên 12.
+- **"12 vai đạt 8 / 12 nghĩa là 4 vai lỗi hệ thống."** Không hẳn. Ở mốc 21/11, ba trong bốn vai chưa đạt vướng một ý mà kho chưa có (một ý khác vì tính năng đang tắt), vai còn lại vướng phần sửa lịch. Ở lượt 14:13 ngày 22/11, năm ý còn trượt: kho thiếu 2, kho có mà model không ghép được 1, 2 ý của vai sửa lịch mà thước không đọc được; kho có mà tìm không ra 0. Trần của thước với Claude khoảng 8–9 trên 12.
 - **"Bộ dò mù là người chấm không biết bên nào."** Đó là đọc mù. Bộ dò mù là bộ câu do người khác người làm soạn, chưa đọc chương trình.
 
 ## Câu hỏi tự kiểm
@@ -206,7 +206,7 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 - Ba trong bốn vai chưa đạt ở 12 vai vướng ý kho thiếu; trần thước với Claude khoảng 8–9 / 12.
 - Người mô phỏng hay tự kết sớm (6 / 12 phiên gpt-6-luna, 5 / 12 phiên Claude kết trước lượt 5), nên phiên ngắn có thể đạt dễ hơn; chưa ai tách số này.
 - Bộ 176 câu chưa chạy đủ trên Claude (mới 85 câu đầu và 54 câu so sánh, nhiều nguồn).
-- Lượt 12 vai đo lại sau các sửa buổi sáng 22/11 (một lượt, 14:13): 8 trên 12 phiên, 33 trên 38 ý, vẫn trong khoảng nhiễu của mốc ba lượt (7, 7, 8). Thước có một điểm mù vừa lộ ra: người dùng mô phỏng không thấy dòng báo của lượt sửa lịch; công cụ đã được chữa, chưa đo lại.
+- Lượt 12 vai đo lại sau các sửa buổi sáng 22/11 (một lượt, chạy 13:50–14:04, ghi 14:13; model đang chạy): 8 trên 12 phiên, 33 trên 38 ý (mốc 31 · 32 · 32), vẫn trong khoảng nhiễu của mốc ba lượt (7, 7, 8); số ý hơn lượt mốc cao nhất đúng 1. Lượt này chạy TRƯỚC khi bộ thay đổi ở khâu tìm của tin dài nhiều ý mở lúc 14:47, nên chưa đo bộ đó. Hai ý nói chắc được: vai hỏi điểm ít leo bậc đạt nhờ một bài kho mới; vai hỏi lễ hội có ngày đạt sát ranh. Thước có một điểm mù vừa lộ ra: bộ chạy người dùng mô phỏng không đưa cho "người dùng" các dòng báo của lượt sửa lịch ("Đã bỏ…", "Chưa làm…"), nên người mô phỏng tưởng trợ lý im lặng — 26 lượt ở cả ba lượt mốc lẫn lượt này, cả hai model, đều thuộc một vai; công cụ đã được chữa, chưa đo lại, và lượt sau của vai đó sẽ không so thẳng được với mốc.
 - Luật "ba lượt" chưa được sửa chữ cho khớp lựa chọn tối 21/11 (chỉ khi phải chọn giữa hai bản chênh nhỏ).
 
 ## Chi tiết để tra
@@ -240,5 +240,7 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 - Bài này chủ yếu dựa vào bảng sự thật của một agent con đọc-chỉ; người viết đã tự mở `skills/run-experiment/SKILL.md`, `TONG_HOP_MOC.md`, `TIEU_CHI_DO.md` mục 21–23 để đối chiếu.
 
 - Bài đã qua một lượt đối chiếu độc lập (người kiểm chỉ đọc, tự chạy lại bộ xếp và phần áp lệnh), trưa 22/11/2026: `data/hoc_cung_D/kiem/bai_27_32.md` [riêng tư]; các dòng SAI / LỆCH đã áp, dòng không áp ghi ở `data/hoc_cung_D/viet/viet_27_32.md` mục "Sau lượt kiểm" [riêng tư].
+
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43 (8 / 12, 33 / 38, mốc 31 · 32 · 32, năm ý trượt theo loại, 26 lượt điểm mù, chạy trước 14:47); `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` [đã chạy, phiên đo; người viết không chạy lại].
 
 </details>

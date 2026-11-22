@@ -1,6 +1,6 @@
 # Bài 41 — Kể lại toàn bộ trong một phút, trong năm phút, và kịch bản chạy thử
 
-*Cập nhật 14:49, ngày 22/11/2026 · mọi con số chép từ bài gốc của nó, ghi "bài N" ngay cạnh, hoặc từ cấu hình và sổ việc lúc 14:48 22/11; kịch bản chạy thử lấy từ kịch bản 10 bước nhóm đã chạy lặp ngày 21–22/11 và từ lượt kiểm chốt trưa 22/11 (Claude Sonnet 5.5); đã sửa theo một lượt đối chiếu độc lập; người viết không chạy lại lượt nào.*
+*Cập nhật 15:21, ngày 22/11/2026 · mọi con số chép từ bài gốc của nó, ghi "bài N" ngay cạnh, hoặc từ cấu hình và sổ việc lúc 14:48 22/11; kịch bản chạy thử lấy từ kịch bản 10 bước nhóm đã chạy lặp ngày 21–22/11 và từ lượt kiểm chốt trưa 22/11 (Claude Sonnet 5.5); đã sửa theo một lượt đối chiếu độc lập; người viết không chạy lại lượt nào.*
 
 **Bài trước đã biết:** hệ thống làm được tới đâu, còn yếu ở đâu (bài 40).
 **Bài này thêm:** bốn thứ để dùng ngay: một bản kể một phút, một bản kể năm phút, một kịch bản chạy thử từng bước, và mười câu hỏi hay gặp kèm câu trả lời ngắn.
@@ -19,7 +19,7 @@ hue_rag là một ứng dụng web giúp du khách và người dân hỏi về 
 
 **Khi kho không có.** Với câu "Chùa Thiên Mụ có chỗ đậu ô tô không?", model trả đúng câu từ chối cố định. Chương trình nhận ra, tra web một lần, viết một mục riêng "Từ web (chưa kiểm)" chỉ từ các đoạn trích tìm được, và kiểm con số trong đó (bài 25). Kho luôn thắng: câu đã trả lời được từ kho thì không tra web.
 
-**Trợ lý.** Tìm một lần có khi chưa đủ. Model được xin tìm thêm, từ chiều 22/11 tối đa 3 lần (bài 21 kể theo trần cũ là 2); số vòng gọi model có trần, cả phần viết có hạn 45 giây (bài 21). Máy chủ nhớ 3 lượt gần nhất trong 30 phút, nên hiểu được "vé vào đó bao nhiêu" (bài 23). Câu có ngày, thời tiết, khoảng cách thì chương trình tính, dựng thành một nguồn có số riêng cho model trích (bài 24). Model chỉ xin; chương trình mới là thứ chạy (bài 3).
+**Trợ lý.** Tìm một lần có khi chưa đủ. Model được xin tìm thêm, từ chiều 22/11 tối đa 3 lần (trước đó là 2; bài 21); số vòng gọi model có trần, cả phần viết có hạn 45 giây (bài 21). Máy chủ nhớ 3 lượt gần nhất trong 30 phút, nên hiểu được "vé vào đó bao nhiêu" (bài 23). Câu có ngày, thời tiết, khoảng cách thì chương trình tính, dựng thành một nguồn có số riêng cho model trích (bài 24). Model chỉ xin; chương trình mới là thứ chạy (bài 3).
 
 **Lên kế hoạch.** Người dùng chọn số ngày, người đi cùng, sở thích bằng nút. Chương trình xếp lịch từ một bảng 41 điểm tham quan, theo luật có thứ tự ưu tiên: an toàn, giờ mở cửa, gom điểm gần nhau, sở thích (bài 27, 28). Một bước kiểm viết riêng đối chiếu lịch với 23 luật (bài 29). Model chỉ viết câu mô tả mỗi điểm. Ở ví dụ 3 ngày, 2 người lớn, thích di tích, chương trình xếp 11 điểm; khung lịch hiện sau 0,2 giây, đủ câu mô tả sau 9,3 giây (bài 27). Muốn sửa thì nhắn "bỏ lăng Tự Đức": model chỉ trả một danh sách lệnh, chương trình áp và kiểm; bộ 10 chuỗi sửa lịch đạt 9 trên 10, đo trước khi đổi sang Claude (bài 31).
 

@@ -1,6 +1,6 @@
 # Phụ lục A — Mọi tham số cấu hình: giá trị đang chạy, dùng để làm gì, bài nào giảng
 
-*Cập nhật 14:17, ngày 22/11/2026 · chép từ cấu hình và chương trình lúc đó; hệ thống đổi thì phụ lục phải chép lại.*
+*Cập nhật 15:09, ngày 22/11/2026 · chép từ cấu hình và chương trình lúc đó (sau bộ thay đổi mở 14:47 22/11: hai tham số của vòng công cụ đổi, thêm hằng số tách câu tìm gộp); hệ thống đổi thì phụ lục phải chép lại.*
 
 **Phụ lục này có gì.** Mọi tham số có giá trị số hoặc chữ trong file cấu hình của máy chủ, và các hằng số trong chương trình mà các bài đã nhắc. Dòng bật / tắt và bảy dòng chọn chế độ (model viết, cách tìm, xếp lại, bản chỉ mục, câu cho lần tìm đầu, cổng đưa công cụ) nằm ở phụ lục B.
 
@@ -43,6 +43,7 @@
 | Số đoạn đưa model ở lần tìm đầu | `full_corpus_generation.max_context_documents` **[khoá]** | 10 | model thấy nhiều chỗ của kho hơn | đã so 5 với 10 (10 thắng); đã thử 15 đoạn, cả mục, cả bài: không khá hơn | 13, 15 |
 | Đoạn thêm mỗi vế hỏi (tin nhiều ý) | `SO_DOAN_MOI_VE` | 2 | vế phụ có đoạn của nó trong ngữ cảnh | đếm 0 đồng 2, 3, 4 đoạn: cùng kết quả | 13, 23 |
 | Số vế được tìm riêng tối đa | `TRAN_SO_VE_TIM` | 6 (thêm nhiều nhất 12 đoạn) | 65 tin nhiều ý của ba lượt mốc: nhiều nhất 6 vế | chưa so | 23 |
+| Số phần tối đa của một câu tìm gộp do model viết | `TRAN_PHAN_CAU_TIM` | 3 (mỗi phần 2 đoạn ⇒ thêm nhiều nhất 6 đoạn mỗi lần tìm của model; phần dưới 6 ký tự bỏ); từ 14:47 22/11 | câu tìm "A và B" kéo được đoạn của từng nơi | chưa so | 23 |
 | Hạn giờ phần viết của một lượt | `full_corpus_generation.timeout_seconds` **[khoá]** | 45 giây | quá hạn thì báo lỗi, không treo | chưa so | 6, 15, 33 |
 | Giới hạn độ dài ngữ cảnh | (không có) | không có; mọi đoạn vào nguyên vẹn | — | trần 16.384 token có tới 19/11, bỏ vì chưa lần nào chạm (dài nhất 6.233) | 15 |
 | Bộ đếm token | `full_corpus_generation.token_encoding` **[khoá]** | `o200k_base` | bộ đếm token của OpenAI, nạp lúc khởi động cho bước dựng ngữ cảnh | — | **chưa có bài** |
@@ -55,8 +56,8 @@
 
 | Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
 |---|---|---|---|---|---|
-| Số lần model được tự tìm kho | `assistant.so_lan_tim_kho` (mặc định `MODEL_SEARCH_LIMIT`) | 2 (lần tìm đầu của chương trình không tính) | đủ cho câu cần hai ba nguồn, không kéo dài câu kho không có | đã đo 1: bỏ; đã đo 3 (21/11, hai model): như cũ, không lượt nào dùng lần thứ ba | 21, 23 |
-| Trần vòng gốc của lượt có công cụ | `assistant.so_vong_cong_cu` (mặc định `ASSISTANT_MAX_TURNS`) | 4; +1 cho mỗi công cụ ngày, khoảng cách, gần một điểm, liệt kê bài được đưa ở lượt đó. Công cụ liệt kê bài được đưa ở mọi lượt, nên trần thực tế mỗi lượt là từ 5 vòng trở lên | 2 lần tìm + 1 lần bị nhắc + 1 vòng viết (đặt từ khi còn dòng nhắc) | đã thử 8 vòng (bài 21) | 21 |
+| Số lần model được tự tìm kho | `assistant.so_lan_tim_kho` (mặc định `MODEL_SEARCH_LIMIT` = 2 khi cấu hình không ghi) | 3 từ 14:47 22/11; trước là 2 (lần tìm đầu của chương trình không tính) | ở tin dài nhiều ý, khi câu tìm gộp đã được tách, lần thứ ba tới được ý còn lại; tin thường, tin kho thiếu không dùng tới | đã đo 1: bỏ; đã đo 3 đứng riêng (21/11 hai model: như cũ; trưa 22/11: không có ích); 3 cùng tách câu tìm (22/11, một tin 4 ý: đủ hai ý 1 ⇒ 6 trên 6): mở. Áp chung cả hai model, model cũ chưa đo | 21, 23 |
+| Trần vòng gốc của lượt có công cụ | `assistant.so_vong_cong_cu` (mặc định `ASSISTANT_MAX_TURNS`) | 5 từ 14:47 22/11 (trước là 4); +1 cho mỗi công cụ ngày, khoảng cách, gần một điểm, liệt kê bài được đưa ở lượt đó. Công cụ liệt kê bài được đưa ở mọi lượt, nên trần thực tế mỗi lượt là từ 6 vòng trở lên | mỗi lần tìm thêm ăn một vòng nên nâng cùng số lần tìm (số 4 cũ: 2 lần tìm + 1 lần bị nhắc + 1 vòng viết, đặt từ khi còn dòng nhắc) | đã thử 8 vòng (bài 21) | 21 |
 | Hạn giờ bước xếp loại câu | `assistant.router_timeout_seconds` | 10 giây; quá hạn hoặc lỗi ⇒ coi là "về Huế" | không để tin bị treo ở bước đầu | chưa so | 22 |
 | Đọc nốt khi người dùng bấm Dừng | `STREAM_DRAIN_SECONDS` | 0,5 giây | sau lệnh huỷ, đọc nốt chừng này rồi thôi | chưa so | **chưa có bài** |
 | Số lượt giữ mỗi cuộc trò chuyện | `api/conversations.MAX_TURNS` | 3 | trợ lý nhớ 3 câu hỏi gần nhất | chưa so | 23 |
@@ -204,7 +205,8 @@ Soát bằng cách tìm tên dòng, tên hằng và con số trong các bài đ�
 <details>
 <summary>Nguồn (để giữ phụ lục đúng — anh không cần đọc)</summary>
 
-- Giá trị trong file cấu hình: `backend/config/settings.yaml`, đọc 13:20 22/11/2026 trên cây chính (HEAD `f359d89f`; lần sửa cuối của file `e4e06f9d`) [code].
+- Giá trị trong file cấu hình: `backend/config/settings.yaml`, đọc 13:20 22/11/2026 trên cây chính (HEAD `f359d89f`; lần sửa cuối của file `e4e06f9d`) [code]. Hai dòng `so_lan_tim_kho` (3), `so_vong_cong_cu` (5) đọc lại 15:09 22/11/2026 trên main `2ddd6dc2` (lần sửa cuối của file `ca25c4fe`) [code]. Hai khoá này chỉ bị kiểm KIỂU (số nguyên ≥ 1) trong `validate_phase6_settings`, không bị khoá giá trị ⇒ 8 giá trị [khoá] vẫn đúng (đọc lại cùng giờ) [code].
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml`; hằng `TRAN_PHAN_CAU_TIM` trong `backend/llm/assistant.py` [code; số đo: đã chạy, phiên đo; người viết không chạy lại].
 - Dấu [khoá]: `backend/core/settings_loader.py` hàm `validate_phase6_settings` (`model`, `api_key_env`, `token_encoding`, `timeout_seconds`, `max_context_documents`; cùng hàm khoá `candidate_id`, `retrieval_treatment`, `reranker` ở phụ lục B) [code].
 - Hằng số: `backend/retrieval/full_corpus.py` (`candidate_pool=30`, `rrf_k=60`, `fused[:10]`); `backend/scoring/bm25.py` (`K1`, `B`); `backend/embedding/full_corpus.py` (`DENSE_MODEL_SPECS`, `prepare_query`); `backend/vectorstore/points.py`; `backend/ingestion/full_corpus_pipeline.py`, `kiem_cap_nhat_rieng.py`, `cap_nhat_rieng.py`; `backend/ingestion/chunking/full_corpus_chunker.py` (`ConditionManager`); `backend/llm/assistant.py` (`MODEL_SEARCH_LIMIT`, `STREAM_DRAIN_SECONDS`, `NOTICE_SOURCE_PREFIXES`, `SO_DOAN_MOI_VE`, `TRAN_SO_VE_TIM`, ngưỡng 2 / 3 lần ở các công cụ ngày, khoảng cách, gần một điểm); `generator_openai_full_corpus.py` (`ASSISTANT_MAX_TURNS`, `BIEU_MAU_REASONING`); `pricing.py`; `ngay_lich.py`; `thoi_tiet.py`; `khoang_cach.py`; `gan_diem.py`; `su_kien.py`; `liet_ke.py`; `tra_web.py`; `nhan_anh.py` (JPEG 85); `lich_trinh_v2.py`; `len_ke_hoach.py`; `hoi_lai.py` (các trần biểu mẫu, dùng ở `api/routes/cong.py`); `luu_tru_lich.py`; `quan_lich.py`; `luu_y_nguon.py`; `ten_goi_y.py`; `sua_lich_v2.py`; `backend/api/conversations.py`; `cache_tra_loi.py`; `feedback.py`; `theo_doi.py`; `gioi_han.py`; `lich_pptx.py`; `routes/chat.py` (`ChatRequest`); `backend/config/logging.yaml` [code].
 - Cột "Đã thử giá trị khác chưa": các bảng "Cấu hình đang chạy" của bài 8, 10–16, 21–31, 33–35, 37 (đã qua lượt đối chiếu riêng của từng bài) và `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` dòng 6–7 (100 ứng viên) [chép]. Các dòng ghi "chưa so" không có trong các bảng đó: người viết phụ lục đã tìm tên hằng và con số trong các bài và bảng tổng, không thấy phép thử [đã chạy grep].
