@@ -37,7 +37,8 @@ from llm.ten_goi_y import ghi_chu_goi_y, lich_su_cho_luot
 from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_moi, ghep_cau, ghep_cau_v2, loi_v2
 from api.conversations import TTL_SECONDS, dap_duoc_nho
 from api.cache_tra_loi import BanLuu, luot_luu_duoc
-from llm.assistant import AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, loi_bao_luoi_cuoi, luoi_cuoi_bao, elapsed_ms, lich_cho_giao_dien, turn_usd
+from llm.assistant import (AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, co_y_thieu, loi_bao_luoi_cuoi, luoi_cuoi_bao, elapsed_ms,
+                           lich_cho_giao_dien, so_y_thieu, turn_usd)
 
 logger = logging.getLogger("chat")
 router = APIRouter()
@@ -276,8 +277,13 @@ def _tra_cache(state, body: "ChatRequest", query: str, trace: AnswerTrace, metri
     return kho, ban
 
 
-def _luu_cache(kho, query: str, trace: AnswerTrace, metrics: dict) -> None:
-    """Sau một lượt "success" được tra mà trượt: lưu nếu là lượt trả lời từ kho thuần (`luot_luu_duoc`)."""
+def _luu_cache(kho, query: str, trace: AnswerTrace, metrics: dict, khong_luu_y_thieu: bool = False) -> None:
+    """Sau một lượt "success" được tra mà trượt: lưu nếu là lượt trả lời từ kho thuần (`luot_luu_duoc`).
+    `khong_luu_y_thieu` (cờ `web_chi_khi_tu_choi`): lượt nhiều ý còn dòng "Tư liệu chưa có thông tin về…" trước đây có mục web (khi dịch vụ tìm web
+    sẵn sàng) nên không được lưu — dịch vụ web không có / hết lượt thì lượt đó TỪNG được lưu (review C 21/11); cờ bật thì lượt đó không còn mục web ⇒ KHÔNG lưu
+    trong mọi trường hợp (không để một câu trả lời thiếu ý thành bản lưu cho người sau)."""
+    if khong_luu_y_thieu and trace.nhieu_y and co_y_thieu(trace.answer or ""):
+        return
     if kho is not None and luot_luu_duoc(trace, bool(metrics["refusal"])):
         kho.luu(query, BanLuu(answer=trace.answer, cited=tuple(trace.cited), notice=trace.notice, route=trace.route))
 
@@ -411,7 +417,7 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
     _remember(request, conversation_id, query, trace, "success")
     metrics["refusal"] = normalize_citations(chu_cua_model(trace)).strip() in REFUSAL_ANSWERS
     if ban_luu is None:
-        _luu_cache(kho_cache, query, trace, metrics)
+        _luu_cache(kho_cache, query, trace, metrics, _flags(state).web_chi_khi_tu_choi)
     return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited, _bai_ids(state)), notice=trace.notice,
                         turn_id=_new_turn_id(request, trace, "success"),
                         lich_trinh=lich_cho_giao_dien(trace, _flags(state), trace.search_query or query), web=_web_payload(trace)), conversation_id
@@ -533,7 +539,8 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
     )
     if trace.nhieu_y:  # cờ `cau_nhieu_y` + câu ≥ 2 vế hỏi ⇒ luật theo ý đã chạy; chi_y_thieu = chỉ còn dòng ý thiếu ⇒ đổi thành câu từ chối.
         # Khoá chỉ có khi luật chạy (câu một ý / cờ tắt ⇒ dòng log như cũ) — đọc log là biết câu có đi luật mới không (review E m-3).
-        metrics.update(nhieu_y=True, chi_y_thieu=trace.chi_y_thieu)
+        # n_y_thieu (21/11/2026): số dòng "Tư liệu chưa có thông tin về…" người dùng thấy ở lượt này — một con số, không chữ
+        metrics.update(nhieu_y=True, chi_y_thieu=trace.chi_y_thieu, n_y_thieu=so_y_thieu(trace.answer or ""))
     if trace.lich_v2 is not None:  # "Lên kế hoạch" bản 2: khoá chỉ có ở lượt bản 2 (cờ tắt ⇒ dòng log như cũ); chỉ số đếm, không chữ
         v = trace.lich_v2
         metrics.update(lich_trinh_ok=not v["loi_khung"] and trace.citation_error is None, lich_trinh_so_diem=len(lt2.moi_muc(v["lich"])),
@@ -585,6 +592,8 @@ async def chat_stream(body: ChatRequest, request: Request):
         if _flags(state).sua_lich_v2 and conversation_id is not None:  # sửa lịch bản 2: lịch đã lưu của cuộc + lựa chọn của thẻ
             trace.lich_luu = request.app.state.conversations.lay_lich(conversation_id)
             trace.sua_chon = None if body.sua_chon is None or trace.lich_luu is None else body.sua_chon.model_dump()
+            if _flags(state).sua_lich_them_khong_the:  # câu code gợi ý ở lượt ngay trước (đọc là xoá ⇒ chỉ lượt này thấy)
+                trace.goi_y_sua = request.app.state.conversations.lay_goi_y_sua(conversation_id)
         kho_cache, ban_luu = _tra_cache(state, body, query, trace, metrics)
         turn = _luot_tu_cache() if ban_luu is not None else answer_turn_stream_parallel(
             query, state.retrieval_service, state.context_builder, generator, trace, _flags(state), recorder, _tim_web(state))
@@ -593,9 +602,11 @@ async def chat_stream(body: ChatRequest, request: Request):
         def remember() -> None:  # gọi ở `finally` của luồng, sau khi outcome đã có
             _remember(request, conversation_id, query, trace, metrics["outcome"])
             if ban_luu is None and metrics["outcome"] == "success":
-                _luu_cache(kho_cache, query, trace, metrics)
+                _luu_cache(kho_cache, query, trace, metrics, _flags(state).web_chi_khi_tu_choi)
             if _flags(state).sua_lich_v2 and conversation_id is not None and metrics["outcome"] == "success":
                 luu_lich_cua_luot(request.app.state.conversations, conversation_id, trace, _flags(state))
+                if _flags(state).sua_lich_them_khong_the and trace.goi_y_moi:
+                    request.app.state.conversations.luu_goi_y_sua(conversation_id, trace.goi_y_moi)
 
 
         response = StreamingResponse(

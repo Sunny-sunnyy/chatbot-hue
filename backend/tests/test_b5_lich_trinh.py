@@ -35,7 +35,12 @@ SETTINGS = load_settings(validate_private_paths=False)
 # Thêm một cờ mới cần `sua_lich_v2` ⇒ thêm vào ĐÂY; `test_cong_dot_1.flags_from` nhập hằng này từ đây (chiều ngược lại là nhập vòng) (19/11: chép tay ở hai file ⇒ vấp hai lần khi bật cờ).
 CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lich_doi_cho_code": False, "luu_tru_lich": False, "quan_lich": False, "ban_do_lich": False,
                    "lich_vao_hoi_thuong": False,
-                   "xuat_pptx": False}  # xuất PowerPoint cần `sua_lich_v2` ⇒ tắt theo (không thì lúc bật cờ trong settings hai file test ném lỗi)
+                   # 21/11/2026: bốn cờ sửa lịch thêm ngày 20–21/11 chưa được ghi vào đây ⇒ lúc mở `sua_lich_kem_hoi` trong settings, 13 file test hỏng ngay khi nạp
+                   "sua_lich_buoi_toi": False, "sua_lich_kem_hoi": False, "sua_lich_them_khong_the": False, "sua_lich_doi_cho_ngay": False,
+                   "xuat_pptx": False,  # xuất PowerPoint cần `sua_lich_v2` ⇒ tắt theo (không thì lúc bật cờ trong settings hai file test ném lỗi)
+                   # 22/11/2026: công cụ "gần một điểm có gì" cần bảng quán + toạ độ điểm, hai bảng chỉ được nạp khi `len_ke_hoach_v2` bật ⇒ test tắt
+                   # `len_ke_hoach_v2` phải tắt theo (thử bật `gan_diem` trong settings: `test_quan_lich` hỏng ngay khi nạp)
+                   "gan_diem": False}
 BANG = nap_bang_lich(SETTINGS)
 ON = AssistantFlags(tim_them=True, lich_trinh=True, bang_lich=BANG)
 OFF = AssistantFlags(tim_them=True)

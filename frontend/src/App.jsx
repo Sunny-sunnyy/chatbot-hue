@@ -78,10 +78,18 @@ export default function App() {
   // không trùng id của cùng lượt đang vẽ trong khung trợ lý.
   const viTriGoc = chat.turns.findLastIndex(t => t.bieuMau);
   const gocTurn = viTriGoc >= 0 ? chat.turns[viTriGoc] : null;
-  const suaTurn = gocTurn && chat.turns.slice(viTriGoc + 1).findLast(t => t.phase === "done" && t.lichV2 && (t.lichV2.thay_doi || []).some(d => d.duoc));
+  const sauGoc = gocTurn ? chat.turns.slice(viTriGoc + 1) : [];
+  const suaTurn = gocTurn && sauGoc.findLast(t => t.phase === "done" && t.lichV2 && (t.lichV2.thay_doi || []).some(d => d.duoc));
+  // Lượt sửa XONG mới nhất mà KHÔNG áp được gì (mọi dòng là "Chưa làm…" / "Không đổi được…") đứng sau bản lịch đang hiện: lịch giữ nguyên nhưng cột
+  // phải nói điều đó — khối báo của cột = các dòng "Đã…" của bản lịch đang hiện + dòng báo của lượt mới này (thay dòng "Chưa làm" đã cũ của lượt trước;
+  // lượt đo trình duyệt 21/11: người chỉ nhìn trang không biết lệnh "thêm…" chưa được làm).
+  const cuoiTurn = sauGoc.findLast(t => t.phase === "done" && t.lichV2 && (t.lichV2.thay_doi || []).length > 0);
+  const baoMoi = cuoiTurn && cuoiTurn !== suaTurn ? cuoiTurn.lichV2.thay_doi : null;
+  const voiBao = t => (baoMoi ? { ...t, lichV2: { ...t.lichV2, thay_doi: [...(t.lichV2.thay_doi || []).filter(d => d.duoc), ...baoMoi] } } : t);
   // `question` + `summary` cũng của lượt biểu mẫu: dòng đầu của "Sao chép lịch" / "Tải về (.txt)" là tóm tắt biểu mẫu, không phải câu chat của lượt sửa
   const lichTurn = suaTurn
-    ? { ...suaTurn, key: `${suaTurn.key}-cot`, truong: gocTurn.truong, question: gocTurn.question, summary: gocTurn.summary, daSua: true } : gocTurn;
+    ? voiBao({ ...suaTurn, key: `${suaTurn.key}-cot`, truong: gocTurn.truong, question: gocTurn.question, summary: gocTurn.summary, daSua: true })
+    : gocTurn && gocTurn.lichV2 ? voiBao(gocTurn) : gocTurn;
 
   // `chon` = lựa chọn bộ xếp đã dùng (biểu mẫu cũ); `truong` = giá trị đã gửi — biểu mẫu bản 2 điền lại từ đây (server đổi giá trị mới về trường cũ)
   function editPlan(chon, truong) {

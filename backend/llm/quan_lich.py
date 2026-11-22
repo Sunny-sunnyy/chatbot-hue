@@ -6,7 +6,8 @@ Mọi thứ do code: mỗi ngày, bữa trưa gần điểm cuối buổi sáng 
 không lặp quán trong cả chuyến.
 Model không chọn, không thấy tên quán (khối này không vào tin nhắn gửi model; an toàn này dựa cả vào `nho_cau_tra_loi: false` — bật nhớ câu trả
 lời thì chữ lịch, kể cả tên quán OSM, sẽ vào lịch sử gửi model ⇒ xem lại trước khi bật, review B m-2). Không giờ / giá / điện thoại (nguồn mở không có ngày kiểm).
-Bảng: `data/phase_9/lich_trinh/bang_quan_lich_v1.json` (quán kho + dữ liệu mở thành phố + OpenStreetMap; dựng bằng script, private).
+Bảng: `data/phase_9/lich_trinh/bang_quan_lich_v2.json` (quán kho + dữ liệu mở thành phố + OpenStreetMap; dựng bằng script, private; bản 2 = bản 1
+bỏ một quán mà bài kho ghi đã đóng cửa vĩnh viễn — `tests/test_quan_lich.py` kiểm điều này với kho).
 Cụm thiếu quán ⇒ không có dòng (không đoán, không lấy cụm khác).
 """
 import json

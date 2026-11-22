@@ -1,23 +1,23 @@
-# STATUS A — ghi đè 17:47 21/11/2026 (giờ `date`; kết phiên chiều 21/11), sửa dòng này 18:22 21/11/2026 khi mở phiên tối. Vai: phiên điều phối. Terminal phiên này: `hue-rag-55` (đổi khi mở lại); phiên tối: B `hue-rag-bb` · C `hue-rag-62` · E `hue-rag-b6`; chủ dự án vắng tới 21:30
+# STATUS A — MỞ PHIÊN SÁNG 22/11 (ghi 08:20 22/11/2026, giờ `date`). Vai: phiên điều phối. Terminal phiên này: `hue-rag-7a`; B `hue-rag-b1` · C `hue-rag-4f` · E `hue-rag-67`. Đã giao việc lúc mở phiên — ai làm gì: sổ việc khối A, gạch đầu "CHIA VIỆC SÁNG 22/11". Phần dưới là sổ lúc kết phiên tối 21/11 (22:26), còn dùng làm danh sách việc riêng của phiên điều phối.
 
-Việc đang mở, ai làm, bước kế: sổ việc `session_prompt/VIEC_DANG_MO.md` (khối đầu = ba ngày thử đuổi một con số). Quyết định của chủ dự án + câu đang chờ: `session_prompt/HIEN_TRANG.md` mục 3, 4. Trang này chỉ ghi phần riêng của phiên điều phối.
+Việc đang mở, ai làm, bước kế: sổ việc `session_prompt/VIEC_DANG_MO.md` (khối A viết lại lúc kết phiên). Quyết định của chủ dự án + việc đang chờ chủ dự án: `session_prompt/HIEN_TRANG.md` mục 3 (gạch 0) và mục 4 (sáu gạch đầu là của tối 21/11). Trang này chỉ ghi phần riêng của phiên điều phối.
 
 ## Việc đầu của phiên điều phối khi mở lại
-- (ghi 18:12 21/11/2026) Phiên sau chủ dự án ĐI VẮNG (tự nói lúc kết phiên 21/11): câu thuộc quyền chủ dự án thì gác vào `HIEN_TRANG.md` mục 3, không mở hộp hỏi, không chờ; mở bốn phiên cho bước 0–3, tới bước sửa rút còn hai. Việc gác lúc kết phiên (nhánh bỏ dòng ghi nguồn bản đồ, đề xuất hook chờ lời chủ dự án…): sổ việc khối A, gạch "Việc GÁC".
-- Nhắn tên terminal; giao việc theo khối đầu của sổ việc — tin giao việc mở đầu bằng "quyết định nào đang chờ kết quả này", không giao danh sách bước. KHÔNG giao lại hàng đo cờ và các mục Phase 9–12: chúng đứng chờ.
-- Mặc định: giao NGAY theo sổ việc. Chỉ khi prompt mở phiên hoặc lời chủ dự án nêu một mục đích KHÁC sổ việc (như buổi bàn chiều 21/11) thì hỏi MỘT câu trước khi giao.
-- Khởi động bước 2 của khối A ngay lúc mở: một agent con ngữ cảnh mới soát tích hợp chỉ đọc (skill `soat-tich-hop`), vai đo đọc kết quả. Báo chủ dự án con số ước của bước 0 (8–10 USD Bedrock, khoảng 100 phút máy) trước khi chạy.
-- Hỏi chủ dự án khi việc cần tới: mở hai phiên hay bốn cho ba ngày thử; các câu còn chờ ở `HIEN_TRANG.md` mục 3 (mỗi lần một câu).
-- Ghi ba con số cách làm của ngày vào `session_prompt/SO_CAI_TIEN_CACH_LAM.md`; chép ý mới các phiên nêu vào `session_prompt/Y_CHUA_THU.md`.
-
-- (ghi 18:14 21/11/2026) Chủ dự án muốn TIẾP TỤC buổi trò chuyện bàn hướng khi về ("khi nào tôi đi về có thể tiếp tục trò chuyện trao đổi brainstorming"): chuẩn bị sẵn để bàn — con số trước ↔ sau của việc chính, đề xuất hook đang chờ, danh sách `Y_CHUA_THU.md` (các ý cải tiến sản phẩm 13–17), số phiên.
+- Đọc `HIEN_TRANG.md` mục 4 sáu gạch đầu TRƯỚC khi giao việc: model cũ đang GÁC (không gọi OpenAI; test không nạp env) · một harness, chỉ đo trên model đang chạy · không hỏi chủ dự án bật / tắt, không nói chữ "cờ" với chủ dự án · LUẬT ĐO GỌN (sổ việc khối A gạch thứ hai) — chủ dự án đã nhắc lần thứ mười về đo / test quá nhiều; đếm tiến độ bằng số tính năng tới được người dùng, không bằng số ô đo.
+- Giao theo thứ tự "NHÁNH CHỜ" của sổ việc khối A: mở bản sửa "mục web chỉ khi cả câu bị từ chối" (B) ⇒ một phiên đọc nhánh công cụ "gần một điểm có gì" rồi mở (C viết) ⇒ sửa hai chỗ giao diện để mở "thêm điểm không tự thế chỗ" + chữ sai nghĩa của tin "đổi chỗ ngày + hỏi" (C) ⇒ tìm kho theo từng vế (B). VIỆC LỚN của ngày: mục [7] đề xuất sửa kho bằng lệnh chạy tay + cập nhật riêng bài đã sửa — bắt đầu bằng một trang thiết kế gọn cho phần cập nhật riêng (chủ dự án: "mai rồi triển khai").
+- Gửi chủ dự án hướng dẫn từng bước cấp quyền chữ chạy dần (tra tài liệu AWS trước — tên quyền mới nêu theo trí nhớ); nhắc MỘT lần việc đọc bài nháp "Huế → Hội An".
+- Viết lại TOÀN TRANG `HIEN_TRANG.md` (mục 4 đã dài thêm sáu gạch trong một tối) và làm vòng cải tiến cách làm (skill `improve-workflow`): ứng viên số một là gọt luật ba lượt trong skill `run-experiment` cho khớp LUẬT ĐO GỌN; ý của các phiên ở `SO_CAI_TIEN_CACH_LAM.md` (khối "Phiên tối 21/11").
+- Chưa làm lúc kết phiên: `report_agent/2026-11-21/TONG_HOP.md` của ngày (dòng theo giờ đang nằm ở `CURRENT_HANDOFF.md`); chép các ý mới của tối 21/11 vào `Y_CHUA_THU.md` cho đủ (lọc điểm tham quan theo loại cho công cụ "gần một điểm"; bật sổ vết ở một lượt đo để thấy câu tìm model viết).
 
 ## Đang khai báo sửa
-- không (các nhánh của lượt soát 21/11: xem `git branch -r --no-merged origin/main`).
+- không.
 
 ## Đang chạy / file tạm lúc ghi
-- 0 server, 0 tiến trình đo, Qdrant bật. Worktree của A: `/tmp/hr_a_trang_thai` (nhánh viết lại trang trạng thái — gỡ sau khi gộp). File tạm: `/tmp/hr_a_tra_*.md` (xoá được).
+- Agent con của phiên điều phối: 0 đang chạy. Tiến trình nền của phiên điều phối: 0 (đồng hồ hẹn đã hết). File riêng tư phiên điều phối tạo tối 21/11 (GIỮ): `data/thu_bedrock_2026-11-21/soat_tich_hop/`, `…/do/moc_12vai/doc_mu/` (bản xuất giấu tên model, luật chấm, bảng gom), `…/b_buoc_4/kem_hoi/bo_mu*`, `…/b_buoc_4/go_tat/bo_mu*`, `…/c_sua_3/bo_mu_tra_loi*`, `…/c_muc_5/bo_mu_gan_x*`, `data/su_kien_theo_ngay_2026-11-20/luot_that/kiem_ngay_duong_A.py` + `bo_do_khoang_ngay_A_2111*`, `data/phase_12_agent_sua_kho_2026-11-21/`, `data/bo_sung_kho_2026-11-21/`. `/tmp/hr_a_khoi_A.md` xoá được.
 
-## Đã học / bẫy của phiên 21/11
-- Giao lại việc theo sổ khi chủ dự án muốn cả nhóm bàn chuyện khác · đưa chủ dự án một con số trước khi có người thứ hai kiểm · chủ dự án hỏi về KẾT QUẢ mà chuyển xuống nhóm câu hỏi về ĐẦU VÀO · bàn nhiều vòng mà chưa sửa file nào · báo số byte trước khi áp bản đọc của người khác · nối bảy dòng vào trang hiện trạng mà không viết lại ⇒ bốn chỗ cùng xưng "việc đầu" · viết luật trái một quyết định còn hiệu lực (người đọc bắt) · sửa file luật riêng của chủ dự án rộng quá phạm vi một dự án (người đọc bắt) · chỉ giao agent con soát khi chủ dự án muốn các phiên cùng soát.
-- Làm đúng, giữ: mỗi phiên một góc khác nhau (luật / lịch sử / nguồn ngoài) cho ra phát hiện không trùng · agent ngữ cảnh mới đọc như phiên vừa mở bắt được chỗ hai nghĩa mà người viết không thấy, phiên có lịch sử bắt được chỗ trái quyết định cũ — cần cả hai · tự mở nguồn chính trước khi đưa chủ dự án · đề nghị trước, cả nhóm chốt, rồi mới sửa.
+## Đã học / bẫy của phiên tối 21/11
+- Áp nguyên bộ "ba lượt lặp + tiêu chí ghi trước + bộ mù + người đọc thứ hai" cho gần như mọi thay đổi ⇒ chủ dự án nhắc lần thứ mười; tới 22:00 mới có tính năng tới người dùng. Dấu hiệu sớm lẽ ra phải thấy: hàng làn đo dài hơn hàng việc xây.
+- Hỏi chủ dự án ba lần một câu bật / tắt bằng chữ nội bộ ("cờ") · nói "gác luna" không rõ là gác ĐO chứ không tách harness · báo chủ dự án một điều mới suy từ code ("thẻ lịch có thể gợi ý quán đã đóng") rồi phải đính chính sau phép đếm.
+- Bản xuất cho người đọc mù do chính mình viết in nhầm dòng đánh dấu thành lượt "None" — người đọc bắt; script kiểm ngày của mình có ba chỗ sót — E bắt. Việc phiên điều phối tự làm vẫn cần người khác đọc.
+- Máy ngủ 80 phút khi chủ dự án đi vắng: không biết được từ bên trong; lần sau chủ dự án nói đi vắng thì nhắc MỘT dòng tắt chế độ ngủ.
+- Làm đúng, giữ: người soạn bộ câu thử khác người viết code (bắt câu đồng ý cụt, "bn" = bạn) · đếm 0 đồng trước khi xây (ba hướng không xây, hai hướng đổi hẳn nhờ số đếm) · đọc diff thay người đọc đang bận để không chặn việc · một lượt thật trước khi mở (bắt một bản sửa làm hỏng mọi lượt).

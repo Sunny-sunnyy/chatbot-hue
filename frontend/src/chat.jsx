@@ -306,6 +306,14 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
   useEffect(() => {
     lastTurnRef.current?.scrollIntoView({ block: "start", behavior: reducedMotion() ? "auto" : "smooth" });
   }, [turns.length]);
+  // Lượt SỬA LỊCH vừa xong ⇒ cuộn lại tới đầu lượt đó. Lúc gửi, lượt còn ngắn nên câu hỏi chỉ lên được lưng chừng khung; khối "Đã đổi / Chưa làm"
+  // về sau một nhịp (không chạy chữ dần) và rơi xuống dưới mép — lượt nhìn trình duyệt 22/11: câu gợi ý "thay Y bằng X" bị cắt ở khung nổi.
+  // Chỉ lượt sửa lịch: lượt trả lời thường có thể đang chạy chữ dần, cuộn lại sẽ giật khỏi chỗ người dùng đang đọc.
+  const cuoi = turns[turns.length - 1];
+  const suaXong = cuoi?.phase === "done" && (cuoi.lichV2?.thay_doi || []).length > 0;
+  useEffect(() => {
+    if (suaXong) lastTurnRef.current?.scrollIntoView({ block: "start", behavior: reducedMotion() ? "auto" : "smooth" });
+  }, [cuoi?.key, suaXong]);
 
   function submit(event) {
     event.preventDefault();
@@ -420,7 +428,10 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
         </div>
       )}
       {turn.lichV2 && turn.phase !== "error" && (
-        <LichV2 turn={turn} onEditPlan={turn.bieuMau ? onEditPlan : null} gon={gon} />
+        /* lượt sửa không áp được gì (không dòng nào `duoc`): lịch y như lượt trước ⇒ chỉ khối báo + nút "Xem cả lịch", ở CẢ trang trợ lý — vẽ lại cả
+           tấm lịch đẩy dòng "Chưa làm" ra khỏi màn hình (lượt đo trình duyệt 21/11) */
+        <LichV2 turn={turn} onEditPlan={turn.bieuMau ? onEditPlan : null}
+                gon={gon || ((turn.lichV2.thay_doi || []).length > 0 && !turn.lichV2.thay_doi.some(d => d.duoc))} />
       )}
       {turn.text && !turn.lichV2 && !turn.suaThe && turn.phase !== "error" && (  /* thẻ chọn đã hỏi đúng câu đó — không vẽ lần hai */
         <div className="bubble">
