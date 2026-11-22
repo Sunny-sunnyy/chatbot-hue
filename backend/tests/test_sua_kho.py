@@ -1,6 +1,7 @@
 """Lệnh đề xuất / duyệt sửa kho khi một giá đổi (`ops/`). Model ở đây là phản hồi DỰNG SẴN (chỉ để dựng điều kiện) — các test này kiểm phần
 code: tìm theo giá trị, thay đúng chuỗi số, file vá áp được bằng git, lệnh duyệt. Model phán đúng tới đâu trên kho thật: xem report của việc."""
 import re
+import socket
 import subprocess
 from types import SimpleNamespace
 
@@ -190,3 +191,19 @@ def test_duyet_dung_khi_bai_dang_co_thay_doi_chua_luu_ban_ghi_git(repo, monkeypa
     assert "200.000 | 40.000" in bai.read_text(encoding="utf-8")       # chưa áp gì
     assert git(repo, "log", "--oneline").count("\n") == 1              # không có bản ghi git mới
     assert "chưa lưu bản ghi git" in capsys.readouterr().err
+
+
+def test_duyet_dung_truoc_khi_ap_khi_cong_server_con_mo(repo, monkeypatch, capsys):
+    """Soát khác hãng 22/11 (điểm 4): đường duyệt gọi thẳng lệnh cập nhật chỉ mục nên từng bỏ qua cả lời cảnh báo cổng; server còn chạy thì trả
+    lời trên chỉ mục đang ghi dở. Nay: dò cổng TRƯỚC khi áp — kho chưa đổi, chỉ mục chưa bị đọc hay ghi."""
+    from ingestion import cap_nhat_rieng
+    _, ra, _ = de_xuat(repo, monkeypatch)
+    monkeypatch.setattr(duyet_sua_kho, "GOC_REPO", repo)  # coi repo tạm là repo của server ⇒ đường duyệt THẬT (không collection thử)
+    monkeypatch.setattr(cap_nhat_rieng, "dong_bo", lambda **k: pytest.fail("không được chạm chỉ mục khi server còn chạy"))
+    with socket.socket() as o:  # một cổng thật đang nghe đóng vai cổng server
+        o.bind(("127.0.0.1", 0))
+        o.listen()
+        monkeypatch.setattr(cap_nhat_rieng, "CONG_SERVER", o.getsockname()[1])
+        assert duyet_sua_kho.main([str(ra)]) == 3
+    assert git(repo, "status", "--porcelain", "--", "knowledge-base-hue") == "" and git(repo, "log", "--oneline").count("\n") == 1
+    assert "server đang chạy" in capsys.readouterr().err

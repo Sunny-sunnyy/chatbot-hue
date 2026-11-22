@@ -5,11 +5,14 @@ Lệnh này: chia đoạn cả kho như lúc dựng ⇒ so payload từng điể
 ghi lại vector từ khoá của mọi điểm (nó phụ thuộc thống kê của cả kho — `embedding/sparse.py`; chỉ CPU) ⇒ kiểm cả collection bằng hàm kiểm của
 lúc dựng ⇒ ghi file thống kê từ khoá rồi bản ghi dựng SAU CÙNG. Kết quả phải giống dựng lại toàn bộ (vector nghĩa lệch cỡ 1e-7 do thành phần lô).
 
-Lệnh chết giữa chừng: bản ghi dựng đã bị dời sang tên `….dang_cap_nhat` trước lần ghi Qdrant đầu tiên ⇒ server vẫn bật nhưng phần tìm kho không sẵn
-sàng (phép kiểm sẵn có "Build record does not exist" ⇒ mọi câu hỏi nhận 409 "Dữ liệu tra cứu cần được lập chỉ mục lại") thay vì trả lời lệch; chạy lại lệnh là kéo về đúng, vì bước so là so với CHÍNH collection chứ không tin sổ.
+Lệnh chết giữa chừng: bản ghi dựng đã bị dời sang tên `….dang_cap_nhat` trước lần ghi Qdrant đầu tiên ⇒ server KHỞI ĐỘNG sau lúc đó vẫn bật nhưng phần
+tìm kho không sẵn sàng (phép kiểm sẵn có "Build record does not exist" ⇒ mọi câu hỏi nhận 409 "Dữ liệu tra cứu cần được lập chỉ mục lại") thay vì trả
+lời lệch; chạy lại lệnh là kéo về đúng, vì bước so là so với chính collection. Server ĐANG CHẠY từ trước thì KHÔNG nhận 409: nó chỉ kiểm bản ghi dựng
+một lần lúc khởi động (`api/app.py`), nên vẫn trả lời trên collection đang ghi dở + thống kê cũ + câu trả lời đã nhớ (soát khác hãng 22/11, điểm 4) ⇒
+lệnh ghi thật DỪNG ngay từ đầu khi cổng server đang mở (`ServerDangChay`), chưa đọc hay ghi gì.
 Lùi một lần sửa kho: `git revert` bài rồi chạy lại chính lệnh này.
 
-Chạy (từ `backend/`, TẮT server trước, bật lại sau khi xong — server đọc thống kê và xoá câu trả lời đã nhớ lúc khởi động):
+Chạy (từ `backend/`, TẮT server trước — cổng 8010 còn mở thì lệnh ghi thật dừng; bật lại sau khi xong: server đọc thống kê và xoá câu trả lời đã nhớ lúc khởi động):
     uv run python -m ingestion.cap_nhat_rieng --chi-xem     # chỉ in bài nào khác chỉ mục, không ghi gì
     uv run python -m ingestion.cap_nhat_rieng               # chạy thật
 Thử trên bản chép (ba tham số đi cùng nhau): --kho <thư mục kho chép> --collection <tên thử> --thu-muc-ban-ghi <thư mục>.
@@ -45,6 +48,18 @@ from vectorstore.upsert import FULL_CORPUS_SCROLL_LIMIT, upsert_full_corpus_batc
 
 DUOI_DANG_CAP_NHAT = ".dang_cap_nhat"
 CONG_SERVER = 8010
+
+
+class ServerDangChay(RuntimeError):
+    """Cổng server đang mở lúc lệnh sắp ghi chỉ mục đang chạy — chưa có gì được đọc hay ghi."""
+
+
+def server_dang_chay() -> bool:
+    try:
+        with socket.create_connection(("127.0.0.1", CONG_SERVER), timeout=0.3):
+            return True
+    except OSError:
+        return False
 
 
 def settings_voi_kho(settings: dict[str, Any], kho: Path) -> dict[str, Any]:
@@ -95,7 +110,9 @@ def _ghi_lai_vector_tu_khoa(client: QdrantClient, collection: str, chunks: list[
 def dong_bo(*, chi_xem: bool = False, kho: Path | None = None, collection: str | None = None, thu_muc_ban_ghi: Path | None = None,
             client: QdrantClient | None = None) -> dict[str, Any]:
     """Kéo collection về khớp kho. Trả: `da_khop`, `bai_doi` (bài có đoạn đổi HOẶC đổi mã băm, đã xếp), `so_doan_tinh_lai`, `so_diem_xoa`,
-    `so_diem`, `giay`, … `chi_xem=True` ⇒ không ghi gì. Ba tham số `kho` / `collection` / `thu_muc_ban_ghi` chỉ để chạy thử trên bản chép."""
+    `so_diem`, `giay`, … `chi_xem=True` ⇒ không ghi gì. Ba tham số `kho` / `collection` / `thu_muc_ban_ghi` chỉ để chạy thử trên bản chép.
+    `da_khop` nói đúng những thứ ĐÃ SO: mã điểm + payload (chữ) của mọi điểm, bản ghi dựng, mã băm file thống kê từ khoá. Vector KHÔNG được đọc lại:
+    một vector bị sửa tay / hỏng trong Qdrant mà payload còn nguyên thì lệnh vẫn báo khớp (soát khác hãng 22/11, điểm 5) — nghi thì dựng lại toàn bộ."""
     bat_dau = time.perf_counter()
     settings = _phase4_settings()
     candidate = candidate_by_id(settings["full_corpus_runtime"]["candidate_id"])
@@ -111,6 +128,8 @@ def dong_bo(*, chi_xem: bool = False, kho: Path | None = None, collection: str |
         settings = settings_voi_kho(settings, kho)
         ten, goc_ghi = collection, Path(thu_muc_ban_ghi)
     else:
+        if not chi_xem and server_dang_chay():  # chỉ mục ĐANG CHẠY: dừng trước khi đọc kho hay Qdrant
+            raise ServerDangChay(f"cổng {CONG_SERVER} đang mở — server đang chạy sẽ trả lời trên chỉ mục đang ghi dở. Tắt server rồi chạy lại; chưa ghi gì.")
         ten, goc_ghi = candidate.collection_name, BUILD_RECORD_ROOT
     duong_ban_ghi = goc_ghi / f"{ten}.json"
     duong_tam = duong_ban_ghi.with_name(duong_ban_ghi.name + DUOI_DANG_CAP_NHAT)
@@ -162,7 +181,7 @@ def dong_bo(*, chi_xem: bool = False, kho: Path | None = None, collection: str |
                 shutil.copy2(file, sao_luu / file.name)
         kq["sao_luu"] = str(sao_luu)
 
-        # 5. Từ đây tới lúc xong: không có bản ghi dựng ⇒ server có bật thì cũng không tìm kho được (409 cho mọi câu hỏi), không trả lời lệch
+        # 5. Từ đây tới lúc xong: không có bản ghi dựng ⇒ server KHỞI ĐỘNG trong khoảng này không tìm kho được (409 cho mọi câu hỏi), không trả lời lệch
         if duong_ban_ghi.is_file():
             duong_ban_ghi.replace(duong_tam)
 
@@ -213,14 +232,6 @@ def dong_bo(*, chi_xem: bool = False, kho: Path | None = None, collection: str |
             client.close()
 
 
-def _server_dang_chay() -> bool:
-    try:
-        with socket.create_connection(("127.0.0.1", CONG_SERVER), timeout=0.3):
-            return True
-    except OSError:
-        return False
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="Cập nhật riêng phần chỉ mục của bài đã sửa (kéo collection về khớp kho)")
     parser.add_argument("--chi-xem", action="store_true", help="chỉ in bài nào khác chỉ mục, không ghi gì")
@@ -229,21 +240,20 @@ def main() -> None:
     parser.add_argument("--thu-muc-ban-ghi", type=Path, help="[chạy thử] nơi để file thống kê + bản ghi dựng thử")
     parser.add_argument("--ghi-ket-qua", type=Path, help="ghi kết quả (JSON) ra file này")
     args = parser.parse_args()
-    if not args.chi_xem:
-        print("TẮT server trước khi chạy lệnh này, BẬT lại sau khi xong (server đọc thống kê từ khoá và xoá câu trả lời đã nhớ lúc khởi động).")
-        if args.collection is None and _server_dang_chay():
-            print(f"CẢNH BÁO: cổng {CONG_SERVER} đang mở — server đang chạy sẽ còn dùng thống kê cũ và câu trả lời đã nhớ cho tới khi khởi động lại.")
-    kq = dong_bo(chi_xem=args.chi_xem, kho=args.kho, collection=args.collection, thu_muc_ban_ghi=args.thu_muc_ban_ghi)
+    try:
+        kq = dong_bo(chi_xem=args.chi_xem, kho=args.kho, collection=args.collection, thu_muc_ban_ghi=args.thu_muc_ban_ghi)
+    except ServerDangChay as loi:
+        raise SystemExit(f"DỪNG: {loi}")
     if args.ghi_ket_qua:
         args.ghi_ket_qua.write_text(json.dumps(kq, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     print(json.dumps(kq, ensure_ascii=False, indent=1))
     if kq["da_khop"]:
-        print("Chỉ mục ĐÃ KHỚP kho — không ghi gì.")
+        print("Chỉ mục ĐÃ KHỚP kho theo những thứ lệnh so (mã điểm + chữ của mọi điểm, bản ghi dựng, file thống kê từ khoá; vector không được đọc lại) — không ghi gì.")
     elif args.chi_xem:
         print(f"CHƯA khớp: {len(kq['bai_doi'])} bài đổi, {kq['so_doan_tinh_lai']} đoạn phải tính lại, {kq['so_diem_xoa']} điểm thừa. Chưa ghi gì.")
     else:
         print(f"XONG trong {kq['giay']} giây: {len(kq['bai_doi'])} bài đổi, tính lại {kq['so_doan_tinh_lai']} đoạn, xoá {kq['so_diem_xoa']} điểm; "
-              f"collection có {kq['so_diem']} điểm. Bản chụp trước khi ghi: {kq['ban_chup']}. Khởi động lại server để dùng chỉ mục mới.")
+              f"collection có {kq['so_diem']} điểm. Bản chụp trước khi ghi: {kq['ban_chup']}. Bật lại server để dùng chỉ mục mới.")
 
 
 if __name__ == "__main__":
