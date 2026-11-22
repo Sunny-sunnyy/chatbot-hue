@@ -1,13 +1,13 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 10:30, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11 · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 11:18, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11; khuôn thêm hai mục "Quyết định và lý do" và "Nếu… thì sao" theo yêu cầu của anh trưa 22/11, bài 6 là bài mẫu · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
 **Đọc thế nào.** Đọc theo đúng số thứ tự: bài sau dựa trên bài trước, khái niệm mới luôn được giảng trước khi dùng. Mỗi bài chia hai nửa:
 
-- **Nửa để hiểu** (từ đầu bài tới mục "Những điều cần nhớ"): đọc lần đầu chỉ cần nửa này.
-- **Nửa để tra** (từ mục "Cấu hình đang chạy" trở xuống): model nào, tham số nào, đã thử phương án nào, ra số bao nhiêu, hỏng ở đâu. Không cần đọc để hiểu bài, nhưng đây là chỗ trả lời các câu "cụ thể là bao nhiêu" và "vì sao không làm cách khác".
+- **Nửa để hiểu** (từ đầu bài tới mục "Những điều cần nhớ"): đọc lần đầu chỉ cần nửa này. Trong đó có hai mục để anh giải thích lại được chứ không chỉ kể lại được: **"Quyết định và lý do"** (vì sao làm thế này mà không làm thế khác, và cái giá của lựa chọn) và **"Nếu… thì sao"** (một thứ hỏng, hoặc điều kiện đổi, thì hệ thống làm gì).
+- **Nửa để tra** (từ mục "Cấu hình đang chạy" trở xuống): model nào, tham số nào, đã thử phương án nào, ra số bao nhiêu, hỏng ở đâu. Không cần đọc để hiểu bài, nhưng đây là chỗ trả lời các câu "cụ thể là bao nhiêu" và "đã thử cách nào, ra số nào".
 
 **Con số của hệ thống trong bộ này** (số bài, số đoạn, tính năng nào đang mở) là số lúc bài được viết, ghi ở dòng cập nhật của từng bài. Hệ thống vẫn đang được làm tiếp nên vài con số có thể đã lớn hơn khi anh đọc; cách hoạt động thì không đổi theo.
 
@@ -39,7 +39,7 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 |---|---|---|
 | 4 | Bài toán: ai dùng, hỏi gì, nhận gì, và những thứ cố ý không làm | ⬜ |
 | 5 | Người dùng thấy gì: các trang của ứng dụng | ⬜ |
-| 6 | Kiến trúc: các khối, công nghệ, và đường đi của một câu hỏi | ⬜ |
+| 6 | [Kiến trúc: các khối, vì sao đặt như vậy, và khi một khối hỏng thì sao](06_KIEN_TRUC.md) — **bài mẫu theo khuôn mới** | ✅ |
 
 ### Chặng 2 — Chuẩn bị kho: làm một lần, trước khi có câu hỏi nào
 
@@ -132,19 +132,22 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 4. **Ý chính:** 3–5 gạch; đọc riêng mục này cũng nắm được bài.
 5. **Từ dùng trong bài:** chỉ các từ mới của bài; tên dùng trong bài · tên gốc tiếng Anh · nghĩa.
 6. **Thân bài:** 3–5 mục, tên mỗi mục là một câu khẳng định (đọc riêng các tên mục là ra dàn ý của bài). Nói thẳng cơ chế, không dùng ẩn dụ; ví dụ lấy từ lượt chạy thật; mỗi hình tối đa 6 ô.
-7. **Dễ nhầm:** 1–3 câu người mới hay nói, kèm câu sửa.
-8. **Những điều cần nhớ:** 3–5 câu.
+7. **Quyết định và lý do:** mỗi quyết định thiết kế của phần này viết thành một câu hỏi "Vì sao…?". Mở bằng hai ba câu kể tình huống bằng lời thường (giảng luôn khái niệm mới nếu có), rồi chốt bằng bốn gạch: **đã chọn** gì · **vì sao** · **cách khác** (ghi rõ là "đã đo", "chưa thử" hay "quyết định đã ghi") · **cái giá** phải trả cho lựa chọn đó. Chỗ nào không tìm thấy lý do được ghi lại thì viết đúng một dạng: "chưa thấy ghi lý do; điều thấy được là…", không thêm câu đoán. Mỗi bài giữ bốn tới sáu quyết định quan trọng ở đây; quyết định nhỏ nằm ở nửa để tra. Chỉ viết về thứ hệ thống thật sự có. Có ba loại câu hỏi: *vì sao đặt ở đây* (việc này làm ở máy chủ hay ở giao diện; chương trình làm hay giao cho model; tính sẵn hay tính lúc hỏi) · *vì sao làm cách này* (gọi thẳng hay xếp hàng chờ; một lần hay nhiều lần; tự viết hay dùng đồ có sẵn) · *vì sao là con số này*.
+8. **Nếu… thì sao:** hai loại tình huống. *Khi có thứ hỏng:* dịch vụ bên ngoài sập hoặc chậm, quá hạn giờ, dữ liệu lệch nhau, người dùng làm điều không ngờ. *Khi điều kiện đổi:* kho lớn gấp mười, nhiều người dùng cùng lúc, đổi model. Mỗi tình huống ghi: hệ thống làm gì · người dùng thấy gì · đã có hay chưa có. Chỗ nào chưa xử lý thì ghi thẳng "chưa có". Lời báo cho người dùng chép nguyên văn từ chương trình; tình huống nào chưa được thử thật thì ghi rõ là đọc từ chương trình.
+9. **Dễ nhầm:** 1–3 câu người mới hay nói, kèm câu sửa.
+10. **Những điều cần nhớ:** 3–5 câu.
 
 **Nửa để tra** (bài nào có mục nào thì ghi mục đó; bài nền thường chỉ có hai mục cuối)
 
-9. **Cấu hình đang chạy:** bảng mục · giá trị · dùng để làm gì và vì sao là giá trị đó · đã thử giá trị khác chưa.
-10. **Đã so:** vấn đề thật đã gặp · so cái gì với cái gì, trên bộ câu nào · bảng kết quả kể cả phương án bị bỏ · đọc bảng thế nào · đã chọn gì · giới hạn của phép đo. Mỗi con số ghi rõ đo với model viết nào.
+*Hai mục 7 và 8 thêm trưa 22/11/2026 theo yêu cầu của anh: đọc xong phải giải thích được từng quyết định và nói được "hỏng thì sao", không chỉ kể được hệ thống gồm những gì. Mục "Vì sao không làm cách khác" của khuôn cũ nhập vào mục 7. **Bài 6 (kiến trúc) là bài mẫu đầu tiên theo khuôn mới**, viết để anh đọc và nhận xét trước. Các bài đã viết trước đó (2, 7–16, 21) vẫn theo khuôn cũ, còn mục "Vì sao không làm cách khác" ở nửa để tra, và sẽ được bổ sung sau khi anh đọc bài mẫu.*
+
+11. **Cấu hình đang chạy:** bảng mục · giá trị · dùng để làm gì và vì sao là giá trị đó · đã thử giá trị khác chưa.
+12. **Đã so:** vấn đề thật đã gặp · so cái gì với cái gì, trên bộ câu nào · bảng kết quả kể cả phương án bị bỏ · đọc bảng thế nào · đã chọn gì · giới hạn của phép đo. Mỗi con số ghi rõ đo với model viết nào.
     Bài nào giảng lời dặn thì có thêm bảng **lời dặn**: từng phần, một câu nguyên văn.
-11. **Giới hạn đã biết:** khi nào hỏng, người dùng thấy gì.
-12. **Vì sao không làm cách khác:** vài câu người ngoài hay đặt ra về một thiết kế khác, trả lời thẳng, mở bằng "Đã đo", "Chưa thử" hoặc "Quyết định đã ghi".
-13. **Chi tiết để tra:** con số phụ, ngoại lệ, ngày đo.
-14. **Bài sau.**
-15. **Nguồn** (thu gọn, anh không cần đọc): mỗi con số và mỗi khẳng định trỏ về file code hoặc file số đo.
+13. **Giới hạn đã biết:** chỗ hệ thống còn yếu, kèm con số.
+14. **Chi tiết để tra:** con số phụ, ngoại lệ, ngày đo.
+15. **Bài sau.**
+16. **Nguồn** (thu gọn, anh không cần đọc): mỗi con số và mỗi khẳng định trỏ về file code hoặc file số đo.
 
 Luật viết: thân bài không có tên file, tên hàm, mã bản code, ngày giờ phép thử, tên phiên làm việc. Mỗi chữ "vì" trong bài phải có căn cứ ở code, ở số đo hoặc ở một quyết định đã ghi; không có thì viết "chưa rõ vì sao". Mỗi con số đi kèm thứ nó đếm và mốc để so.
 
