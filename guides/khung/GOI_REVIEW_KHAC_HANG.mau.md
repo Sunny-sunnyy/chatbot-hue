@@ -13,6 +13,11 @@ Soạn <giờ lấy bằng `date`> bởi <ai>. Người gửi file này cho bạ
 Ưu tiên theo hậu quả với người dùng: <thứ tự lỗi của dự án, nặng → nhẹ>.
 Gợi ý chỗ soi (không giới hạn): <3–6 gợi ý>. File chính: <danh sách>.
 
+**Dùng hết khả năng của bạn** (chủ dự án dặn 22/11/2026 — dòng này luôn có trong đề bài): bạn được và NÊN dùng mọi công cụ mạnh nhất mình có để làm việc
+này tốt nhất và toàn diện nhất — agent con chạy song song, chế độ nghiên cứu chuyên sâu (deep research), tìm web nhiều vòng, đọc rộng, tự kiểm chéo kết quả
+của chính mình trước khi viết — miễn ở trong ranh giới mục 3. Không cần làm nhanh; cần làm kỹ. Cuối file kết quả ghi bạn đã dùng những gì (bao nhiêu agent
+con, bao nhiêu vòng tìm, mở bao nhiêu trang).
+
 ## 3. Ranh giới (bắt buộc)
 - **Chỉ đọc.** Không sửa file nào của repo, không commit, không đẩy, không cài gói. File DUY NHẤT bạn được ghi là file kết quả ở mục 4.
 - **Không mở, không in:** file khoá; <các thư mục dữ liệu riêng>.

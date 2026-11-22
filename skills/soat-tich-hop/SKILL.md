@@ -38,6 +38,8 @@ Cuối file kết quả bắt buộc có mục **"CHƯA đọc / CHƯA chạy"**
 
 - Soạn MỘT file `.md` tự đủ ngữ cảnh theo mẫu `guides/khung/GOI_REVIEW_KHAC_HANG.mau.md`: bối cảnh sản phẩm 5–10 dòng · commit · đề bài ba bước ở mục 2 ·
   ranh giới · khuôn trả về · **lệnh chạy thử 0 đồng cho từng công cụ review hãng khác**. KHÔNG ghi danh sách điểm đã có, KHÔNG chép dữ liệu riêng.
+- Đề bài cho model khác (soát code, nghiên cứu, phê bình giao diện… — mọi loại) LUÔN có đoạn "dùng hết khả năng của bạn": được và nên dùng agent con, nghiên cứu
+  chuyên sâu, tìm web nhiều vòng, tự kiểm chéo, để ra kết quả tốt và toàn diện nhất, trong ranh giới chỉ-đọc của đề bài (chủ dự án 22/11/2026; chữ mẫu ở file mẫu).
 - Chủ dự án tự mở công cụ hãng khác và gửi file; agent **không** tự gọi công cụ hãng khác. Chỉ nhờ gửi khi nhóm đã soạn xong và nêu rõ là cần gửi.
 - Lưu cả đề bài lẫn file kết quả của từng model cạnh nhau (hue_rag: `data/review_khac_hang/<ngày>_<chủ đề>/`, riêng tư).
 
