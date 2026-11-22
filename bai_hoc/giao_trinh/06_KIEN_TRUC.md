@@ -1,6 +1,6 @@
 # Bài 6 — Kiến trúc: các khối, vì sao đặt như vậy, và khi một khối hỏng thì sao
 
-*Cập nhật 12:18, ngày 22/11/2026 · các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Bốn tình huống hỏng (Qdrant ngừng giữa chừng, Qdrant tắt lúc bật máy chủ, thiếu khoá model lúc bật, khởi động lại máy chủ giữa một cuộc) đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt; các tình huống hỏng còn lại là đọc từ chương trình, chưa thử.*
+*Cập nhật 12:34, ngày 22/11/2026 · các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Bốn tình huống hỏng (Qdrant ngừng giữa chừng, Qdrant tắt lúc bật máy chủ, thiếu khoá model lúc bật, khởi động lại máy chủ giữa một cuộc) đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt; các tình huống hỏng còn lại là đọc từ chương trình, chưa thử.*
 
 **Bài trước đã biết:** người dùng thấy sáu trang; ở khung Trợ lý họ gõ câu hỏi và nhận câu trả lời có nguồn.
 **Bài này thêm:** phía sau màn hình có những khối nào, một câu hỏi đi qua chúng theo thứ tự nào, **vì sao** các khối được đặt như vậy, và **một khối hỏng thì sao**. Bài mở bằng vài khái niệm về trang web và máy chủ, giảng từ đầu.
@@ -100,10 +100,10 @@ Mỗi quyết định có bốn gạch: đã chọn gì, vì sao, cách khác, c
 
 Khối chính là thứ thiếu thì không thể có câu trả lời: model viết, Qdrant. Khối phụ chỉ thêm một phần: dự báo thời tiết, mục tìm web, bước xếp loại câu.
 
-- **Đã chọn:** khối chính lỗi thì lượt hỏi dừng, người dùng thấy một lời báo và nút "Thử lại". Thời tiết lỗi: câu trả lời vẫn được viết, và nói rõ là không lấy được dự báo. Tìm web lỗi: lượt đó không có mục web. Xếp loại câu lỗi: câu được coi là "về Huế" và đi tiếp.
+- **Đã chọn:** khối chính lỗi thì lượt hỏi dừng, người dùng thấy một lời báo và nút "Thử lại". Thời tiết lỗi: câu trả lời vẫn được viết, và nói rõ là không lấy được dự báo. Tìm web lỗi: mục web chỉ còn một dòng báo chưa tra được. Xếp loại câu lỗi: câu được coi là "về Huế" và đi tiếp.
 - **Vì sao:** với bước xếp loại, lý do có ghi: xếp nhầm một câu lạ vào "về Huế" thì phía sau vẫn còn các bước kiểm, còn chặn nhầm một câu về Huế thì không bước nào sửa được (bài 22). Với thời tiết, luật ghi trong chương trình là "lỗi thì không bao giờ đưa ra con số". Với tìm web, và với việc dừng hẳn khi model lỗi: chưa thấy ghi lý do.
 - **Cách khác:** báo lỗi cả lượt khi một khối phụ hỏng: chưa thử.
-- **Cái giá:** khối phụ hỏng thì người dùng không biết có thứ vừa hỏng; lượt đó chỉ thiếu đi một phần.
+- **Cái giá:** câu trả lời thiếu phần của khối đó. Với thời tiết và tìm web, người dùng được báo một dòng là chưa lấy được; với bước xếp loại câu thì không có dấu hiệu gì.
 
 ### 3. Vì sao dịch vụ bên ngoài lỗi thì máy chủ không âm thầm gọi lại, và không tự đổi sang model khác?
 
@@ -153,7 +153,7 @@ Sáu tình huống đáng nhớ nhất (bảng đủ ở nửa để tra, mục 
 | Qdrant ngừng giữa lúc máy chủ đang chạy **(đã thử)** | "Hệ thống tra cứu tạm thời không khả dụng." và nút "Thử lại" ở mọi câu hỏi mới, sau khoảng 2 giây; câu đã nhớ vẫn được trả lại | người vận hành bật lại Qdrant; máy chủ dùng tiếp được ngay |
 | Qdrant chưa chạy lúc máy chủ được bật **(đã thử)** | cùng lời báo trên; trang Khám phá không có danh sách bài | bật Qdrant, rồi **khởi động lại máy chủ**. Đã thử: chỉ bật Qdrant thì máy chủ không tự hồi, vì việc nối tới Qdrant chỉ làm lúc bật |
 | kho đã sửa, chỉ mục chưa cập nhật, rồi máy chủ khởi động lại | "Dữ liệu tra cứu cần được lập chỉ mục lại." ở mọi câu hỏi | người vận hành chạy lệnh cập nhật chỉ mục (bài 12), rồi khởi động lại máy chủ |
-| một khối phụ hỏng: thời tiết, tìm web, hoặc bước xếp loại câu | vẫn có câu trả lời; thiếu phần của khối đó | không ai phải làm gì; dịch vụ chạy lại thì lượt sau có lại |
+| một khối phụ hỏng: thời tiết, tìm web, hoặc bước xếp loại câu | vẫn có câu trả lời; thiếu phần của khối đó, kèm một dòng báo chưa lấy được (với thời tiết và tìm web) | không ai phải làm gì; dịch vụ chạy lại thì lượt sau có lại |
 | máy chủ khởi động lại giữa một cuộc **(đã thử)** | màn hình không báo gì. Thẻ lịch vẫn còn hiện, nhưng lệnh sửa lịch bị coi như một câu hỏi thường và lịch không đổi; câu hỏi nối tiếp được trả lời lạc mạch | người dùng tải lại trang và làm lại từ đầu; **chưa có** cách giữ qua lần khởi động |
 
 Khi điều kiện đổi (nhiều người hỏi cùng lúc, kho lớn gấp mười, đổi model, đưa lên mạng): bảng ở cùng mục trên. Tóm tắt: chưa có giới hạn số lượt chạy cùng lúc và mới đo một lần với nhiều người hỏi; có sẵn một bộ đếm số lượt mỗi ngày cho từng người nhưng đang tắt.
@@ -162,7 +162,7 @@ Khi điều kiện đổi (nhiều người hỏi cùng lúc, kho lớn gấp m�
 
 - **"Hệ thống chậm vì tìm trong kho lâu."** Không. Tìm mất khoảng 0,04 giây; chờ là chờ model viết.
 - **"Lỗi thì hệ thống tự thử lại cho tới khi được."** Không. Dịch vụ bên ngoài lỗi thì nó không gọi lại.
-- **"Hỏng gì cũng hiện lỗi."** Không. Chỉ khối chính hỏng mới hiện lời báo; khối phụ hỏng thì câu trả lời chỉ thiếu đi một phần.
+- **"Hỏng gì cũng dừng cả lượt hỏi."** Không. Chỉ khối chính hỏng mới dừng và hiện lời báo lỗi; khối phụ hỏng thì vẫn có câu trả lời, chỉ thiếu đi một phần.
 
 ## Câu hỏi tự kiểm
 
@@ -216,7 +216,7 @@ Tắt giữa chừng: câu hỏi nào cũng lỗi cho tới khi Qdrant chạy l�
 | Ngày âm lịch | thư viện tính lịch Việt Nam, chạy trên máy | bài 24 | — |
 | Xếp loại câu và trả lời chạy song song | bật | chữ đầu tiên của câu về Huế tới sớm hơn | đã so với chạy lần lượt: sớm hơn 1,37 giây (khoảng tin cậy 0,34 tới 2,14; đo với gpt-6-luna, chưa đo lại với Claude; bài 22) |
 | Các hạn giờ chính | 45 giây cho cả phần viết của một lượt · 10 giây cho xếp loại câu · 10 giây cho lần gọi hiểu lệnh sửa lịch · 20 giây cho hỏi bằng ảnh · 30 giây cho Qdrant · 5 giây cho tìm web · 3 giây cho thời tiết | không để một lượt hỏi bị treo | chưa so |
-| Cuộc trò chuyện giữ trong bộ nhớ | 3 lượt gần nhất (không quá 1.500 token); hết hạn sau 30 phút; nhiều nhất 500 cuộc | bài 23 | bài 23 |
+| Cuộc trò chuyện giữ trong bộ nhớ | 3 lượt gần nhất; hết hạn sau 30 phút; nhiều nhất 500 cuộc | bài 23 | trước 19/11 còn một trần 1.500 token cho lịch sử; chủ dự án cho bỏ (bài 23) |
 | Câu trả lời đã nhớ | 24 giờ; nhiều nhất 500 câu; chỉ khớp khi ai đó gõ lại đúng câu đó (không tính khoảng trắng thừa, chữ hoa thường) ở lượt đầu của một cuộc mới | bài 34 | bài 34 |
 | Giới hạn số lượt mỗi ngày theo địa chỉ mạng | có sẵn, đang tắt | để bật khi đưa lên mạng | — |
 | Tài khoản người dùng, đăng nhập | không có | — | — |
@@ -276,7 +276,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì |
 |---|---|---|---|
 | dịch vụ thời tiết lỗi, hoặc chậm quá 3 giây | công cụ thời tiết trả về "lỗi"; không đưa ra con số nào | câu trả lời nói rõ không lấy được dự báo (bài 24); ở Trang chủ, ô thời tiết ẩn đi | không ai; dịch vụ chạy lại thì có lại |
-| dịch vụ tìm web lỗi, chậm quá 5 giây, hoặc thiếu khoá | lượt đó không có mục web | câu từ chối của kho, kèm gợi ý cách hỏi | không ai; thiếu khoá thì người vận hành đặt khoá |
+| dịch vụ tìm web lỗi, chậm quá 5 giây, hoặc thiếu khoá | mục web không có nội dung tìm được | câu từ chối của kho; mục "Từ web (chưa kiểm)" chỉ có dòng "Mình chưa tra được web lúc này."; kèm gợi ý cách hỏi | không ai; thiếu khoá thì người vận hành đặt khoá |
 | bước xếp loại câu lỗi, hoặc chậm quá 10 giây | coi câu là "về Huế", đi tiếp (bài 22) | câu trả lời như bình thường | không ai |
 | hỏi bằng ảnh mà model lỗi hoặc quá 20 giây | coi như không nhận ra ảnh | "Mình chưa nhận ra ảnh này — bạn gõ tên nơi / món bạn muốn hỏi nhé."; không phân biệt được với lúc model thật sự không nhận ra | người dùng gõ tên; chưa tách hai trường hợp |
 
@@ -328,7 +328,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Quyết định 1: khoá chỉ ở máy chủ `backend/api/app.py` (chú thích ở `_tim_web_server`), `backend/llm/generator_openai_full_corpus.py` (`from_environment`).
 - Quyết định 3 (không gọi lại, không dự phòng): hạn 45 giây chung cho cả phần viết `generator_openai_full_corpus.py` (`_run`, `asyncio.wait_for`), `assistant.py` (`deadline`); tắt việc tự gọi lại của thư viện OpenAI (`max_retries=0`); đường Bedrock gọi một lần `backend/llm/bedrock_model.py`. Không tìm thấy lý do được ghi: đã dò `guides/`, `bai_hoc/08_GENERATION.md`, chú thích quanh các dòng đó. Lần chạy lại hẹp, 3 trên 7: `assistant.py` (`answer_turn_stream_parallel`, `TEN_CHAY_LAI`, chú thích đầu hàm).
 - Quyết định 3, phần hai model cư xử khác nhau: 0 / 56 (gpt-6-luna), 2 / 56 ở mức suy luận cao và 4 / 56 ở mức vừa (Claude): `data/thu_bedrock_2026-11-21/c_harness/RA_HARNESS.md` dòng 13 [riêng tư]. Tài khoản OpenAI đang ngừng dùng: `session_prompt/HIEN_TRANG.md` mục 4 (gạch 21:43 21/11/2026).
-- Quyết định 5 (cuộc trò chuyện trong bộ nhớ): `backend/api/conversations.py` (chú thích đầu file: 3 lượt, 1.500 token, 30 phút, 500 cuộc; máy chủ giữ lịch sử để trình duyệt không gửi lại lời trợ lý); không lưu ra đĩa: `docs/superpowers/plans/2026-11-03-phase-9-b3-plan.md` (mục D4 và mục "Không làm"). Câu trả lời đã nhớ: `backend/api/cache_tra_loi.py`.
+- Quyết định 5 (cuộc trò chuyện trong bộ nhớ): `backend/api/conversations.py` (3 lượt, 30 phút, 500 cuộc; trần 1.500 token đã bỏ từ 19/11 theo chú thích ở hàm ghi lượt; máy chủ giữ lịch sử để trình duyệt không gửi lại lời trợ lý); không lưu ra đĩa: `docs/superpowers/plans/2026-11-03-phase-9-b3-plan.md` (mục D4 và mục "Không làm"). Câu trả lời đã nhớ: `backend/api/cache_tra_loi.py`.
 - Tìm trong kho chạy trên máy (mục "Quyết định nhỏ hơn"): model embedding lớn gọi qua mạng (giúp 2, hỏng 3 trên 40; 0,02 lên 2,2 giây): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` (hàng về Qwen3-Embedding-8B) và bài 10 của giáo trình.
 - Quyết định 6: `backend/api/app.py` (khối `lifespan`: lệch kho và chỉ mục ⇒ lời báo "Dữ liệu tra cứu cần được lập chỉ mục lại."; chỉ kiểm lúc khởi động); lý do: bài 12 của giáo trình, mục "Vì sao không làm cách khác".
 - Quyết định 2 (hai tầng): lý do của bước xếp loại câu `backend/llm/full_corpus_prompt.py` (`ROUTER_INSTRUCTIONS`) và `backend/llm/assistant.py` (`_pick_route`); luật "không bao giờ đưa số" của thời tiết `backend/llm/thoi_tiet.py` (chú thích đầu file). Cách chia "khối chính, khối phụ" là cách người viết gom các nhánh lỗi lại để giảng; chương trình không dùng hai chữ đó.
@@ -343,5 +343,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Ba hộp của gói đóng sẵn: `bai_hoc/BAN_DO_DU_AN.md`. 1.900 ca test (09:23–09:38 22/11): `session_prompt/HIEN_TRANG.md` mục 1.
 
 - Bốn ca thử thật trưa 22/11 (12:07–12:16, qua trình duyệt, máy chủ trên bản main lúc đó, model đang chạy, mỗi ca một lượt): Qdrant ngừng giữa chừng (lỗi sau khoảng 2 giây; câu đã nhớ vẫn trả; đường báo tình trạng vẫn "ok"; bật lại là hỏi được ngay, 2,9 giây), bật máy chủ khi Qdrant tắt (lên sau khoảng 8 giây; "degraded"; không tự hồi), bật thiếu biến trỏ file khoá model ("degraded"; lời báo lỗi tạo câu trả lời), khởi động lại giữa một cuộc: báo cáo của phiên đo, `data/test_cuoi/chay_2026-11-22_e_khoi_hong/KET_QUA.md` [riêng tư; đã chạy; người viết chép từ tin của phiên đo, chưa tự mở file]. Ba ca phiên đo ghi là chưa thử: Qdrant ngừng đúng lúc đang trả lời, mất mạng tới hãng model giữa chừng, dịch vụ tìm web hỏng.
+
+- Tìm web lỗi thì mục web hiện dòng "Mình chưa tra được web lúc này.": `backend/llm/tra_web.py` (`WEB_LOI_TEXT`), `backend/llm/assistant.py` [code; sửa 22/11 sau khi agent viết bài 25 đối chiếu].
 
 </details>
