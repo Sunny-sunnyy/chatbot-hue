@@ -210,7 +210,7 @@ cd backend
 HF_HUB_OFFLINE=1 uv run python -m pytest tests/test_citations.py -q     # từng tệp một
 ```
 
-74 tệp test. Lần chạy đủ ngày 22/11/2026 (từng tệp, không nạp `.env`): 1.951 ca đạt, không tệp nào hỏng — không gồm bốn tệp gọi model
+75 tệp test. Lần chạy đủ ngày 22/11/2026 (từng tệp, không nạp `.env`): 1.961 ca đạt, không tệp nào hỏng — không gồm bốn tệp gọi model
 thật; bốn tệp đó cần `OPENAI_API_KEY` và báo lỗi (không tự bỏ qua) khi thiếu khoá. Nhiều tệp dựng cả ứng dụng nên cần Qdrant đang chạy, kho tri thức và thư mục `data/`.
 
 ## Cấu trúc thư mục
