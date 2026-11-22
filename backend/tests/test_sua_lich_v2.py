@@ -320,6 +320,65 @@ def test_every_removal_names_each_evening_that_moved_and_stays_as_before_otherwi
     assert co > 0 and khong > 0
 
 
+# ---------- soát khác hãng 22/11: K7 (báo giả ở lịch 5 ngày), G5 (thêm / dời làm buổi tối đổi mà không báo), K8a (thêm hoạt động tối không nói "tối") ----------
+def test_five_day_schedule_with_a_repeated_evening_does_not_report_evenings_that_did_not_change():
+    """Lịch 5 ngày lặp một hoạt động tối ở hai ngày; bảng tra ngược `mã ⇒ một ngày` từng bị ghi đè ⇒ mọi lệnh bỏ / thay báo "Buổi tối xếp lại" dù không tối
+    nào đổi (kể cả so một lịch với chính nó)."""
+    lap = thay = 0
+    for kieu in ("nhe_nhang", "can_bang", "kham_pha"):
+        for st in ((), ("di_tich",), ("am_thuc",), ("thien_nhien",)):
+            k, luu = _lich(5, kieu, st)
+            truoc = _toi(k)
+            if len({j for v in truoc.values() for j in v}) == sum(len(v) for v in truoc.values()):
+                continue  # lịch này không lặp hoạt động tối nào
+            lap += 1
+            assert s._toi_xep_lai(k, k) is None  # lịch so với chính nó ⇒ không tối nào đổi
+            for j in sorted(s._vi_tri(k)):
+                kq = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=B.theo_id[j]["ten"])])
+                if kq["da_ap"] and _toi(kq["khung"]) == truoc:
+                    thay += 1
+                    assert "Buổi tối xếp lại" not in s.thay_doi(B, kq)[0]["cau"]
+    assert lap > 0 and thay > 0  # bảng điểm thật phải có lịch lặp hoạt động tối, không thì test không kiểm gì
+
+
+def test_adding_or_moving_an_evening_place_into_the_day_reports_the_evenings_that_moved():
+    """Thêm / dời một nơi lịch đang dùng làm hoạt động TỐI sang ban ngày ⇒ bộ xếp chọn lại buổi tối; dòng báo từng chỉ nói "Đã thêm…" / "Đã dời…"."""
+    ten = lambda j: B.theo_id[j]["ten"]
+    co = 0
+    for n in (3, 4, 5):
+        k, luu = _lich(n, "can_bang", ("di_tich",))
+        truoc = _toi(k)
+        for x in sorted({j for v in truoc.values() for j in v if set(B.theo_id[j]["buoi"]) - {"toi"}}):
+            for loai in ("them_diem", "doi_buoi"):
+                for ngay in range(1, n + 1):
+                    for buoi in ("sang", "chieu"):
+                        kq = s.ap(B, luu, [s.HanhDong(loai=loai, ten=ten(x), ngay=ngay, buoi=buoi)], them_khong_the=True)
+                        if not kq["da_ap"]:
+                            continue
+                        sau, cau = _toi(kq["khung"]), s.thay_doi(B, kq)[0]["cau"]
+                        cu = s._ngay_toi(k)
+                        if any(j in cu and d not in cu[j] for d, v in sau.items() for j in v):  # một hoạt động tối đứng ở ngày nó chưa từng đứng
+                            co += 1
+                            assert " Buổi tối xếp lại: " in cau and all(f"ngày {d} " in cau and ten(j) in cau for d, v in sau.items() for j in v), cau
+                        else:
+                            assert "Buổi tối xếp lại" not in cau, cau
+    assert co > 0
+
+
+def test_adding_an_evening_only_activity_without_saying_evening_gets_the_evening_answer():
+    """"Thêm Ca Huế trên sông Hương vào lịch" (không gõ chữ "tối") từng ra "đặt vào buổi nào cũng phạm luật xếp… không còn chỗ nào" — sai, kể cả khi hoạt động
+    đó đang nằm ở buổi tối của lịch. Nơi CHỈ có buổi tối ⇒ đi nhánh buổi tối sẵn có: đang ở trong lịch ⇒ nói đang ở tối ngày nào; chưa ⇒ câu nói thật."""
+    k, luu = _lich(2, "can_bang", ("di_tich",))
+    chi_toi = [d["id"] for d in B.diem if set(d["buoi"]) == {"toi"}]
+    dang_o = [j for v in _toi(k).values() for j in v if j in chi_toi]
+    chua_co = [j for j in chi_toi if j not in dang_o]
+    assert dang_o and chua_co  # bảng điểm thật phải có cả hai ca, không thì test không kiểm gì
+    for j, ma in ((dang_o[0], "toi_dang_o"), (chua_co[0], "toi_chua_xep")):
+        kq = s.ap(B, luu, [s.HanhDong(loai="them_diem", ten=B.theo_id[j]["ten"])], them_khong_the=True)
+        assert not kq["da_ap"] and [d["ma_luat"] for d in kq["khong_doi"]] == [ma], kq["khong_doi"]
+        assert "phạm luật xếp" not in " ".join(d["cau"] for d in s.thay_doi(B, kq))
+
+
 def test_replacing_a_daytime_stop_with_an_evening_place_reports_the_evenings_that_moved():
     """Thay một điểm ban ngày bằng nơi lịch đang dùng làm hoạt động TỐI (chợ, phố đi bộ…) ⇒ các buổi tối bị chọn lại; dòng báo phải nói."""
     co = khong = 0
