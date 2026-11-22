@@ -122,6 +122,10 @@ class AssistantFlags:
     # 12/11 (plan `2026-11-12-het-luot-tim-plan.md`): model đã dùng hết `MODEL_SEARCH_LIMIT` lần tìm thật ⇒ lượt gọi model kế tiếp không còn công cụ
     # `tim_kho` (bớt một lượt gọi chỉ để nhận chữ "đã hết lượt"). TẮT tới khi đo đạt; tắt ⇒ gọi generator y như trước.
     het_luot_bo_cong_cu: bool = False
+    # 22/11/2026: câu tìm do MODEL viết gộp nhiều nơi / nhiều ý ("giá vé Đại Nội và Lăng Tự Đức…", "…; người cao tuổi giảm…") ⇒ ngoài lần tìm cả câu như
+    # hiện nay, mỗi phần được tìm riêng và 2 đoạn đầu của nó được NỐI THÊM (đúng cơ chế `tim_theo_ve`). Không đổi chữ gửi model ngoài kết quả công cụ dài
+    # hơn; câu tìm một phần và công tắc tắt ⇒ y như trước. Lý do + số đếm: `tests/test_tach_cau_tim_model.py`.
+    tach_cau_tim_model: bool = False
     so_vet: bool = False  # sổ vết debug có nội dung, chỉ máy local (`core/so_vet.py`); bật bằng `HUE_SO_VET=true`
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
@@ -463,7 +467,7 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
     """Một lần tìm của lượt: tìm `queries` (1 câu ⇒ `search`; nhiều ⇒ `search_many`, B2 V3) → dựng ngữ cảnh → nối sổ nguồn.
     Ngân sách token đếm bằng `cau_hoi` (câu thật gửi model — B2 D3) + ngữ cảnh các lần trước (`trace.context_parts`) + `instructions` của
     đường trợ lý (B2 D5); lần sau đánh số tiếp, bỏ đoạn đã có. Lần đầu điền `trace.documents` / `trace.packed` (như B1); thời gian cộng dồn.
-    `ve_them` (cờ `tim_theo_ve`, chỉ lần tìm ĐẦU): mỗi vế hỏi tìm riêng một lần, lấy `SO_DOAN_MOI_VE` đoạn đầu, đoạn nào chưa có thì NỐI SAU các
+    `ve_them` (cờ `tim_theo_ve` ở lần tìm ĐẦU; cờ `tach_cau_tim_model` ở lần tìm của model — các phần của câu tìm gộp): mỗi vế tìm riêng một lần, lấy `SO_DOAN_MOI_VE` đoạn đầu, đoạn nào chưa có thì NỐI SAU các
     đoạn của lần tìm chính — các đoạn của lần tìm chính giữ nguyên chữ, thứ tự và số nguồn. Rỗng ⇒ đúng như trước.
     Lỗi đi ra nguyên kiểu: `RetrievalDependencyError` (tìm)."""
     tool_started = time.perf_counter()
@@ -492,22 +496,28 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
                                        n_tool_items=2 * trace.model_searches if by == "model" else 0,
                                        extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD if trace.lich_offered else 0)
         context_ms = elapsed_ms(started)
-        if first and ve_them and packed.sources:  # lần tìm chính không ra nguồn nào ⇒ giữ đường từ chối cũ, không tìm theo vế
+        # lần tìm ĐẦU: lần tìm chính không ra nguồn nào ⇒ giữ đường từ chối cũ, không tìm theo vế. Lần tìm của MODEL (cờ `tach_cau_tim_model`): các phần
+        # của câu tìm gộp vẫn được tìm kể cả khi cả câu không mang về đoạn mới nào.
+        if ve_them and (packed.sources if first else by == "model"):
             started = time.perf_counter()
             theo_ve = await asyncio.to_thread(lambda: [retrieval_service.search(ve).documents[:SO_DOAN_MOI_VE] for ve in ve_them])
-            search_ms = round(search_ms + elapsed_ms(started), 1)
-            trace.search_ms = search_ms
+            if first:
+                search_ms = round(search_ms + elapsed_ms(started), 1)
+                trace.search_ms = search_ms
+            else:
+                trace.search_ms = round((trace.search_ms or 0) + elapsed_ms(started), 1)
             # xoay vòng theo hạng: đoạn đứng đầu của mọi vế trước, rồi tới đoạn thứ hai — vế nào cũng có phần trước khi vế khác lấy thêm
             ung_vien = list({doan.id: doan for hang in zip_longest(*theo_ve) for doan in hang if doan is not None}.values())  # hai vế ra cùng một đoạn ⇒ một lần
             started = time.perf_counter()
             phu = context_builder.build(cau_hoi, ung_vien, today=today, first_id=len(trace.so_nguon) + len(packed.sources) + 1,
                                         prior_context="\n\n".join([*trace.context_parts, packed.text]),
                                         skip_ids=frozenset([*trace.seen_ids, *packed.document_ids]), instructions=instructions, history=trace.history,
+                                        n_tool_items=2 * trace.model_searches if by == "model" else 0,
                                         extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD if trace.lich_offered else 0, max_documents=len(ung_vien))
             context_ms = round(context_ms + elapsed_ms(started), 1)
             n_them = len(phu.sources)
             if phu.sources:
-                packed = PackedContext(f"{packed.text}\n\n{phu.text}", packed.sources + phu.sources, phu.input_tokens,
+                packed = PackedContext(f"{packed.text}\n\n{phu.text}" if packed.text else phu.text, packed.sources + phu.sources, phu.input_tokens,
                                        packed.document_ids + phu.document_ids)
         if first:
             trace.packed, trace.context_ms = packed, context_ms
@@ -536,8 +546,19 @@ async def tim_kho(cau_tim: str, *, retrieval_service, context_builder, trace: An
                             context_builder=context_builder, trace=trace, today=today)
 
 
+TRAN_PHAN_CAU_TIM = 3  # nhiều nhất bấy nhiêu phần được tìm riêng cho một câu tìm của model ⇒ thêm nhiều nhất 6 đoạn mỗi lần gọi công cụ
+_NOI_CAU_TIM = re.compile(r"\s*;\s*|\s+và\s+|\s*\+\s*")
+
+
+def cac_phan_cau_tim(cau_tim: str) -> tuple[str, ...]:
+    """Cờ `tach_cau_tim_model`: các phần của một câu tìm GỘP do model viết — cắt ở dấu ";", chữ "và", dấu "+"; phần dưới 6 ký tự bỏ. Dưới hai phần ⇒ ()
+    (câu tìm một phần không tìm thêm gì). Cắt hỏng (vị ngữ rơi sang phần kia) chỉ tốn vài đoạn thừa: lần tìm cả câu vẫn chạy nguyên như cũ."""
+    phan = list(dict.fromkeys(p.strip() for p in _NOI_CAU_TIM.split(cau_tim) if len(p.strip()) >= 6))
+    return tuple(phan[:TRAN_PHAN_CAU_TIM]) if len(phan) >= 2 else ()
+
+
 def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str,
-                  search_limit: int = MODEL_SEARCH_LIMIT):
+                  search_limit: int = MODEL_SEARCH_LIMIT, tach_cau_tim: bool = False):
     """Hàm `tim_kho` của **một lượt** cho trợ lý có công cụ (B2 D5): generator bọc thành công cụ SDK (lõi không import SDK — T-3).
     Model chỉ thấy `cau_tim`; trần `MODEL_SEARCH_LIMIT` đếm ở đây; lần vượt ⇒ chữ "đã hết lượt", không tìm. Lỗi tìm / ngữ cảnh: ghi
     `trace.tool_error` rồi ném (lõi ném lại đúng lỗi gốc ⇒ route ra câu lỗi như B1, không đưa lỗi cho model)."""
@@ -557,8 +578,9 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
             trace.tools.append({"name": "tim_kho", "ms": 0.0, "by": "model", "n_queries": 0, "n_new": 0, "het_luot": True})
             return TOOL_LIMIT_TEXT
         try:
+            phan = cac_phan_cau_tim(cau_tim) if tach_cau_tim else ()
             packed = await search_into_trace([cau_tim], cau_hoi=query, retrieval_service=retrieval_service, context_builder=context_builder,
-                                             trace=trace, today=today, instructions=instructions, by="model")
+                                             trace=trace, today=today, instructions=instructions, by="model", **({"ve_them": phan} if phan else {}))
         except RetrievalDependencyError as exc:
             trace.tool_error = exc
             raise
@@ -1439,7 +1461,8 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     try:
         if flags.uses_tools:
             instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
-            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho)
+            tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho,
+                                    tach_cau_tim=flags.tach_cau_tim_model)
             extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
             try:
                 trace.generated = await generator.generate_with_tools(tool_prompt, tool_fn, call_log, **_history_kwargs(trace), **extra)
@@ -1886,7 +1909,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 # B3 D9 (b): vòng công cụ ⇒ "đang viết" phát ngay trước chữ đầu (không trước các lượt `tim_kho`)
                 pending_generating = True
                 instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
-                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho)
+                tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho,
+                                    tach_cau_tim=flags.tach_cau_tim_model)
                 extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
                 result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace), **extra)
             else:
