@@ -1,17 +1,21 @@
 # Đề bài review độc lập — <việc cần soi> (<tên dự án>, bản `<mã commit>`)
 
-Soạn <giờ lấy bằng `date`> bởi <ai>. Người gửi file này cho bạn là chủ dự án. Bạn là **người review khác hãng**: bạn không viết dòng code nào ở đây, và bạn KHÔNG
-được cho biết nhóm đã tìm ra gì — để kết quả của bạn không bị dẫn dắt.
+Soạn <giờ lấy bằng `date`> bởi <ai>. Người gửi file này cho bạn là chủ dự án. Bạn là **người review khác hãng**: bạn không viết dòng code nào ở đây. Người soạn
+đưa cho bạn MỌI thứ quan trọng mình đang nắm về dự án (mục 1) — kể cả những gì nhóm đã tìm ra, ghi dưới nhãn "đã biết": đừng báo lại, hãy đi xa hơn.
+Thứ chủ dự án cần ở bạn là kết quả CHẤT LƯỢNG, không phải kết quả nhanh.
 
 ## 1. Bối cảnh (đủ để làm, không cần đọc tài liệu điều phối)
 - Thư mục làm việc: <gốc repo>, nhánh <…>, commit `<…>`. Sản phẩm là gì, dựng bằng gì, code ở đâu — 3–5 dòng.
 - Điều vừa thay đổi / phạm vi cần soi — 3–5 dòng.
 - Bản đồ để đọc code: <file nào tả từng tính năng> · bẫy đã biết (đừng báo lại như phát hiện mới): <file nào>.
+- **Nên đọc** (chủ dự án 22/11/2026: "các file .md, các file folder code cần đọc, ... và để các model AI của hãng khác tự do khám phá") — danh sách MỞ, mỗi dòng
+  kèm một câu "đọc để biết gì"; ngoài danh sách này bạn TỰ DO khám phá cả repo: tài liệu `.md` <trang hiện trạng · sổ việc đang mở · giới hạn đã biết / runbook ·
+  tài liệu giảng giải hệ thống · danh sách ý đã thử và đã bỏ · luật của dự án> · thư mục và file code <…> · bộ test liên quan <…> · file đo, log <…>.
 - **Trạng thái lúc gửi** (chủ dự án dặn 22/11/2026 — mục này luôn có, viết ĐỦ chứ không viết ngắn): đang chạy bản nào, thứ gì đang bật / tắt, model nào, số đo
   mới nhất kèm đường dẫn file đo · ai dùng sản phẩm và "tốt" được đo bằng gì · đã thử những gì và ra sao, kể cả thứ đo rồi bỏ (để bạn không đề xuất lại) · quyết định
   chủ dự án đã chốt và sàn không được nới · việc đang làm dở · từ riêng của dự án kèm nghĩa. Thứ gì không chép vào đây được thì trỏ đúng file trong repo; file đo
-  nằm ở thư mục riêng (ngoài repo, mục 3 đang cấm mở) ⇒ hoặc chép CON SỐ vào đây, hoặc liệt kê ở mục 3 đúng các đường dẫn được mở. (Đề bài SOÁT ĐỘC LẬP: "đã thử gì /
-  đang dở" = hướng và phép đo đã thử, đã bỏ — KHÔNG kể lỗi nhóm đã thấy trong đúng phạm vi đang hỏi; xem ghi chú cuối file.)
+  nằm ở thư mục riêng (ngoài repo, mục 3 đang cấm mở) ⇒ hoặc chép CON SỐ vào đây, hoặc liệt kê ở mục 3 đúng các đường dẫn được mở. Lỗi / điểm nhóm ĐÃ TÌM RA trong
+  đúng phạm vi đang hỏi cũng ghi ở đây dưới nhãn "đã biết — đừng báo lại" (người soạn nắm gì thì bạn cũng nắm).
 
 ## 2. Việc của bạn
 <Một câu hỏi rõ.> Ví dụ: "Tìm chỗ HAI tính năng gặp nhau mà bộ test hiện có không bắt được." Không chấm phong cách, không đề nghị dọn code.
@@ -50,7 +54,10 @@ Người nhận sẽ **tái hiện từng điểm trước khi sửa** — cả 
 *Ghi chú cho người soạn (xoá trước khi gửi):* file phải tự đủ — người review không có lịch sử trò chuyện. **Đủ thông tin, ngữ cảnh, trạng thái** (chủ dự án
 22/11/2026: "bạn phải cung cấp đầy đủ thông tin, ngữ cảnh, trạng thái, ... để các model AI khác đạt kết quả toàn diện nhất, tốt nhất" — áp cho MỌI đề bài gửi model
 khác: soát code, nghiên cứu, phê bình giao diện…): trước khi gửi tự hỏi "model kia chỉ có file này và repo — nó có biết ta đang ở đâu, đã thử gì, thế nào là tốt,
-không được chạm gì không"; thiếu câu nào thì bổ sung, đủ quan trọng hơn ngắn. Ngoại lệ DUY NHẤT, chỉ ở đề bài SOÁT ĐỘC LẬP: không ghi danh sách điểm nhóm đã tìm ra
-cho đúng câu hỏi đang hỏi (để kết quả không bị dẫn dắt) — mọi thứ khác vẫn đưa đủ, kể cả bẫy đã biết; đề bài nghiên cứu / phê bình thì đưa cả những gì nhóm đã thấy — và bỏ câu "bạn KHÔNG được cho biết nhóm đã tìm ra gì" ở đoạn mở đầu. Chủ dự án tự mở công cụ hãng khác và gửi file; agent không tự gọi
+không được chạm gì không"; thiếu câu nào thì bổ sung, đủ quan trọng hơn ngắn. Nguyên tắc chọn (chủ dự án 22/11/2026): "bạn nắm gì thì các model AI khác cũng vậy,
+những gì bạn thấy quan trọng, thấy cần thiết thì đưa vào, những gì không cần thiết hoặc không đáng đưa vào thì bạn đừng đưa" ⇒ đưa cả danh sách điểm nhóm đã tìm ra
+(nhãn "đã biết"), cả file `.md` và thư mục code nên đọc; không đưa nhật ký theo giờ, chuyện quy trình nội bộ, thứ không giúp trả lời câu hỏi. Chỉ khi MỤC ĐÍCH của
+chính đề bài là lấy ý kiến mù để so với lượt soát của nhóm thì mới giấu danh sách đó — và ghi rõ điều ấy ở đoạn mở đầu. Bí mật (file khoá, bộ câu kín) không bao
+giờ đưa. Chủ dự án tự mở công cụ hãng khác và gửi file; agent không tự gọi
 công cụ đó. Lưu cả đề bài lẫn file kết quả cạnh nhau (ngoài git nếu chứa chi tiết riêng). Mẫu này rút từ một lần dùng thật ngày 18/11/2026: reviewer khác hãng chỉ đọc code ~10 phút, thêm được 3 điểm thật mà lượt cùng hãng bỏ sót, và sót 8 điểm lượt
 cùng hãng thấy — hai lượt bổ sung nhau, không thay nhau; một trong ba điểm đúng hệ quả nhưng sai một nửa nguyên nhân.
