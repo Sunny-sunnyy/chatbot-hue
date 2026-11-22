@@ -144,6 +144,17 @@ def test_reads_the_swap_clause_when_the_message_also_asks_a_question(cau, so_nga
     ("đổi chỗ ngày 1 với ngày 2, gộp ngày 3 vào ngày 2, vé bao nhiêu?", 3),           # hai việc về ngày
     ("đổi chỗ ngày 1 với ngày 2, rồi đổi chỗ ngày 2 với ngày 3, vé bao nhiêu?", 3),   # hai vế đều đọc được cặp
     ("đổi chỗ ngày 1 với ngày 4, mà vé bao nhiêu?", 3),                               # ngày ngoài lịch
+    # review B 22/11 (F1): vế còn lại là lời RÚT LẠI / phủ định ⇒ không được đổi chỗ
+    ("đổi chỗ ngày 1 với ngày 2, à mà thôi, vé Đại Nội bao nhiêu?", 3),
+    ("đổi chỗ ngày 1 với ngày 2. Thôi khỏi, cho mình hỏi vé bao nhiêu?", 3),
+    ("đổi chỗ ngày 1 với ngày 2, không cần nữa, cho hỏi vé bao nhiêu", 3),
+    ("đổi chỗ ngày 1 với ngày 2, à nhầm, vé Đại Nội bao nhiêu?", 3),
+    ("đổi chỗ ngày 1 với ngày 2, mà khoan đã, Đại Nội mở cửa mấy giờ?", 3),
+    ("đừng, đổi chỗ ngày 1 với ngày 2, vé bao nhiêu?", 3),
+    ("đổi chỗ ngày 1 với ngày 2, huỷ đi, vé bao nhiêu?", 3),
+    # review B 22/11 (F2): vế hỏi nhắc một ngày của lịch bằng chữ "hôm"
+    ("đổi chỗ ngày 1 với ngày 2, mà hôm đầu có mưa không?", 3),
+    ("đổi chỗ ngày 1 với ngày 2, mà buổi tối hôm thứ hai có gì chơi?", 3),
 ])
 def test_swap_clause_reader_refuses_anything_that_is_not_one_plain_swap_plus_questions(cau, so_ngay):
     assert s.cap_ngay_doi_cho_kem_hoi(cau, so_ngay) is None

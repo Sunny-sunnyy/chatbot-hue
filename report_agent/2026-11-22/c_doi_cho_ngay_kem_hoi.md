@@ -34,3 +34,13 @@ nào của lịch và không có động từ sửa (bỏ, thêm, thay, dời, g
 
 Phép này KHÔNG cho biết: tỉ lệ model báo đúng "tin có câu hỏi" cho loại tin này (mới một tin, một lượt) · hướng rộng hơn: trả lời luôn câu hỏi trong
 cùng lượt sửa (hiện mọi lượt sửa-kèm-hỏi đều bảo gửi riêng) · đếm rẻ nhất: đếm tin loại này trong sổ lượt thật sau buổi chủ dự án dùng thử.
+
+## Sau review của phiên B (09:21 22/11/2026) — ba điểm, đều nhận
+
+| Điểm | Tái hiện (test thêm TRƯỚC khi sửa) | Sửa |
+|---|---|---|
+| F1 — vế còn lại là lời rút lại / phủ định ("…, à mà thôi, vé Đại Nội bao nhiêu?", "đừng, đổi chỗ…") mà hàm vẫn trả cặp ngày | 7 ca của phiên B: 7 / 7 đỏ trên bản `e23e691` | vế còn lại có từ rút lời / phủ định (thôi, khỏi, không cần, đừng, khoan, huỷ, nhầm, lộn, quên, không phải, bỏ qua) ⇒ không đổi chỗ |
+| F2 — vế hỏi nhắc một ngày của lịch bằng chữ "hôm" ("…, mà hôm đầu có mưa không?") vẫn đổi chỗ | 2 ca: 2 / 2 đỏ | thêm mốc "hôm đầu / hôm thứ hai / hôm cuối…" ("hôm nay", "hôm qua" không tính) |
+| F3 — động từ sửa ngoài danh sách (lùi, cắt, bớt…) | không sửa code | một câu giới hạn ở runbook 10.2 |
+
+`pytest tests/test_doi_cho_ngay.py -q`: thêm 9 ca ⇒ `9 failed, 38 passed` trên code cũ ⇒ `47 passed` sau khi sửa; `test_sua_lich_kem_hoi.py` 7 passed · `test_sua_lich_v2.py` 13 passed. Tin của lượt thật (mục trên) không chạm các từ mới nên không chạy lại lượt có phí.

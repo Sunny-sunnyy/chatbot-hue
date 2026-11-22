@@ -229,17 +229,21 @@ def cap_ngay_doi_cho(cau: str, so_ngay: int) -> tuple[int, int] | None:
 
 # Tin vừa nhờ đổi chỗ hai ngày vừa HỎI ("đổi chỗ ngày 1 với ngày 2, mà vé vào Đại Nội bao nhiêu?" — lượt đo 21/11: hai dòng "Chưa làm", dòng đầu nói
 # như thể trợ lý không đổi chỗ ngày được, trong khi gửi riêng vế sửa thì làm được). Chỉ gọi khi MODEL đã báo tin còn có câu hỏi (`hoi_them`). Cắt tin
-# ở dấu câu / từ nối; ĐÚNG một vế đọc được cặp ngày, mọi vế còn lại không nhắc ngày nào của lịch và không có động từ sửa ⇒ cặp đó; khác ⇒ None
+# ở dấu câu / từ nối; ĐÚNG một vế đọc được cặp ngày, mọi vế còn lại không nhắc ngày nào của lịch, không có động từ sửa, không có lời rút lại ⇒ cặp đó; khác ⇒ None
 # (vẫn giữ nguyên tắc của `cap_ngay_doi_cho`: từ chối nhầm được phép, áp sai thì không).
 _TACH_VE = re.compile(r"[,;.?!\n]+|(?<!\w)(?:à mà|mà|còn|nhân tiện|tiện thể|với lại|cho (?:mình|em|tôi) hỏi|cho hỏi)(?!\w)", re.I)
 _VE_CON_Y_SUA = re.compile(r"(?<!\w)(?:bỏ|thêm|thay|dời|chuyển|giữ|gộp|tách|xoá|xóa|đổi|hoán|tráo|đảo|xếp)(?!\w)", re.I)
+# review B 22/11: vế còn lại là lời RÚT LẠI / phủ định ("à mà thôi", "à nhầm", "khoan đã", "đừng") ⇒ người dùng không còn muốn đổi ⇒ None;
+# vế hỏi nhắc một ngày của lịch bằng chữ "hôm" ("hôm đầu có mưa không") ⇒ như nhắc "ngày 1" ⇒ None ("hôm nay", "hôm qua" không tính).
+_VE_RUT_LOI = re.compile(r"(?<!\w)(?:thôi|khỏi|không cần|ko cần|k cần|đừng|khoan|huỷ|hủy|nhầm|lộn|quên|không phải|ko phải|bỏ qua)(?!\w)", re.I)
+_MOC_HOM = re.compile(r"(?<!\w)hôm\s+(?:thứ\s+)?(?:\d|một|nhất|hai|ba|bốn|tư|năm|đầu|cuối)(?!\w)", re.I)
 
 
 def cap_ngay_doi_cho_kem_hoi(cau: str, so_ngay: int) -> tuple[int, int] | None:
     ve = [v for v in _TACH_VE.split(unicodedata.normalize("NFC", cau)) if v.strip()]
     doc = [(v, cap_ngay_doi_cho(v, so_ngay)) for v in ve]
     cap = [c for _, c in doc if c]
-    if len(ve) < 2 or len(cap) != 1 or any(c is None and (_MOC_NGAY.search(v) or _VE_CON_Y_SUA.search(v)) for v, c in doc):
+    if len(ve) < 2 or len(cap) != 1 or any(c is None and (_MOC_NGAY.search(v) or _MOC_HOM.search(v) or _VE_CON_Y_SUA.search(v) or _VE_RUT_LOI.search(v)) for v, c in doc):
         return None
     return cap[0]
 
