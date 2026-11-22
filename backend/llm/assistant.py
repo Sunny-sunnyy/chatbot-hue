@@ -1261,6 +1261,14 @@ async def _viet_lai_het_luot(query: str, generator, trace: AnswerTrace, flags: A
     return True
 
 
+def _doan_bai(bai) -> tuple[str, ...]:
+    """Các đoạn chữ của một bài mục lục đưa cho `dong_tam_ngung`: từng dòng rời TRƯỚC (như cũ), rồi cả bài nối dòng làm lưới sau. Soát khác hãng
+    22/11/2026: câu an toàn nằm trên HAI dòng vật lý của file ("…thuyền có thể phải dừng chạy khi nước sông dâng cao hoặc có lệnh cấm xuất bến") thì không
+    dòng rời nào tự đủ ý ⇒ bài đi qua công cụ liệt kê / gần một điểm / thẻ nơi mất dòng lưu ý mà đường tìm kho vẫn có. Chỉ dùng bản nối dòng một mình là
+    sai: nó làm đổi câu của các bài đang ra đúng (phiên đo chạy 267 bài: cách này bằng đúng bài gốc 267 / 267)."""
+    return tuple(bai.dong) + ("\n".join(bai.dong),)
+
+
 def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
     """H4c (D8): câu trả lời kho có nguồn được trích thuộc vé / điểm đến / lễ hội ⇒ dòng cố định. Chữ câu trả lời không đổi.
     Khoảng cách (16/11): câu trả lời TRÍCH nguồn khoảng cách mà chữ model không nhắc "kẹt xe" ⇒ code nối câu ghi chú của nguồn vào dòng cố định —
@@ -1275,7 +1283,7 @@ def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
     # nhận: chưa có dữ liệu đo, và "một dòng mỗi câu trả lời" là tuỳ tiện với lịch nhiều điểm (review E 19/11)
     if flags.noi_dong_tam_ngung and trace.cited and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None:
         trace.luu_y_nguon = dong_tam_ngung(trace.answer or "", [(nhan_nguon(src.title, src.heading_path), src.excerpts) for src in trace.cited]
-                                           + [(bai.tieu_de, bai.dong) for bai in bai_neu])
+                                           + [(bai.tieu_de, _doan_bai(bai)) for bai in bai_neu])
         if trace.luu_y_nguon:
             dong.append(trace.luu_y_nguon)
     # Soát khác hãng 22/11 (G7): nguồn "gần một điểm" loại ĐIỂM THAM QUAN cũng in km + phút theo đường đi (dòng cuối của nó là chính câu ghi chú này) ⇒
