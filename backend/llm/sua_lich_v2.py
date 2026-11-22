@@ -243,7 +243,7 @@ _MOC_HOM = re.compile(r"(?<!\w)hôm\s+(?:thứ\s+)?(?:\d|một|nhất|hai|ba|b�
 # không / chưa" ở cuối vế, hoặc kết bằng dấu "?" — và không mở đầu bằng lời phủ định ("à không", "chưa", "hông"; "không sao", "không đâu" có từ hỏi mà
 # vẫn là lời rút; riêng "không biết / chưa rõ … bao nhiêu" là cách hỏi thường gặp ⇒ không tính là phủ định). Vế nào không phải câu hỏi ⇒ None.
 _VE_HOI = re.compile(r"(?<!\w)(?:bao nhiêu|bao lâu|bao xa|bao giờ|mấy|gì|nào|đâu|sao|ai|hỏi|hả|nhỉ"
-                     r"|gợi ý|tư vấn|giới thiệu|đề xuất|kể|(?:chỉ|tìm|xem)\s+(?:giúp|giùm|dùm|hộ|cho)|cho\s+(?:mình|em|tôi|anh|chị)\s+(?:biết|xin)"  # lời NHỜ trả lời
+                     r"|gợi ý|tư vấn|giới thiệu|đề xuất|kể|(?:chỉ|tìm|xem)\s+(?:giúp|giùm|dùm|hộ|cho)|chỉ\s+(?:mình|em|tớ|đường)|cho\s+(?:mình|em|tôi|anh|chị|tớ)\s+(?:biết|xin)"  # lời NHỜ trả lời
                      r"|(?:có|đã|được|phải|nên)(?!\w)(?!\s+lẽ).*(?<!\w)(?:không|ko|chưa)(?:\s+(?:ạ|vậy|thế|bạn))*\s*$)(?!\w)", re.I)
 _VE_MO_DAU_PHU_DINH = re.compile(r"^\W*(?:(?:à|ờ|ơ|ừ|ừm|ấy|ý|ui|úi|ôi|ủa|hm+)\W+)*(?:không|ko|k|hông|hem|khum|chưa)(?!\w)(?!\s+(?:biết|rõ)(?!\w))", re.I)
 
