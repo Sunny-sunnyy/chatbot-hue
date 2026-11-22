@@ -1687,11 +1687,17 @@ cho với và còn hay hoặc ở tại trong ngoài trên dưới ra vào về 
 tớ nhà ta họ nó này đó kia đấy ấy thế nên cần muốn thấy biết xem giúp hộ dùm giùm một hai ba bốn các những vài cái lúc nếu như để vs ủa ừ ờ hỏi nốt tiện""".split())
 _TU_CHUNG_VE = frozenset("""giờ mở cửa đóng giá vé tiền phí địa đường xa gần lâu mất xe km phút tiếng ngày hôm nay mai sáng trưa chiều tối đêm tuần tháng năm điểm nơi chỗ
 tên số thông tin chi tiết cụ thể khác thêm""".split())
+# Chủ thể đi lại / dịch vụ chỉ một hai từ mà từ của nó nằm trong hai tập trên ("xe", "vé", "tiền", "đêm"…) hoặc đứng một mình ("taxi", "wifi") — vế có
+# một cụm này tự tìm được (lượt đọc của phiên khác 22/11: 15 / 25 vế kiểu "vé xe buýt bao nhiêu", "chợ đêm mở mấy giờ", "taxi bao nhiêu tiền" bị coi là cụt).
+_CHU_DE_VE = re.compile(r"(?<!\w)(?:xe buýt|xe bus|xe ôm|xe máy|xe đạp|xe điện|xe khách|xích lô|thuê xe|gửi xe|đỗ xe|đậu xe|vé tàu|tàu hỏa|tàu hoả|máy bay|sân bay|bến xe|nhà ga"
+                        r"|taxi|grab|thuyền|chợ đêm|đổi tiền|atm|wifi|homestay|khách sạn|nhà nghỉ|trong nhà|ngoài trời|ăn chay|ăn khuya|ăn sáng|ăn trưa|ăn tối)(?!\w)", re.IGNORECASE)
 
 
 def _ve_cut(ve: str) -> bool:
     tu = re.findall(r"\w+", unicodedata.normalize("NFC", ve))
     thuong = [w.casefold() for w in tu]
+    if _CHU_DE_VE.search(unicodedata.normalize("NFC", ve)):
+        return False
     khong_noi_dung = lambda w: w in _TU_DEM_VE or w in _TU_CHUNG_VE or w.isdigit()
     ten_dau = (tu and tu[0][0].isupper() and len(tu[0]) >= 3 and not khong_noi_dung(thuong[0])
                and not (len(tu) > 1 and thuong[1] in ("đó", "này", "ấy", "kia", "nào")))  # "Lăng đó…", "Lịch này…" không phải tên

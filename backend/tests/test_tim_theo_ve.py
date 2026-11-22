@@ -125,6 +125,11 @@ def test_subject_less_clause_switch_defaults_off_in_code_and_in_settings():
     # không cụt: có tên riêng (kể cả đứng đầu vế), tên gõ thường, hoặc còn hai từ mang nội dung
     ("Mémoire ở đâu", False), ("quán nào mở khuya nữa ko", False), ("bà có được giảm ko?", False), ("có điểm nào khác ít bậc", False),
     ("đại nội mở cửa mấy giờ", False), ("Vậy đi Đại Nội + Tự Đức thì tổng vé cả nhà bao nhiêu", False), ("xe điện có tính tiền riêng ko?", False),
+    # lượt đọc của phiên khác 22/11: chủ thể đi lại / dịch vụ chỉ một hai từ — vế tự tìm được, không lọc
+    ("vé xe buýt bao nhiêu", False), ("vé tàu bao nhiêu", False), ("taxi bao nhiêu tiền", False), ("chợ đêm mở mấy giờ", False), ("thuê xe ở đâu", False),
+    ("xe ôm giá sao", False), ("homestay giá sao", False), ("đổi tiền ở đâu", False), ("atm ở đâu", False), ("wifi có không", False),
+    ("có chỗ gửi xe ko", False), ("mưa thì đi đâu trong nhà được?", False),
+    ("cách bao xa?", True), ("mua ở đâu?", True), ("giá khoảng bao nhiêu?", True), ("có sđt ko?", True),   # vẫn cụt: không chủ thể
 ])
 def test_subject_less_clause_is_recognised_by_words_only(ve, cut):
     from llm.assistant import _ve_cut
