@@ -22,3 +22,9 @@ Tràn ngang 0, lỗi trang 0 ở cả ba, trước và sau. Chiều cao cả dò
 trong dòng nhắc cùng màu, không gạch chân nên trông như chữ thường — người dùng khó biết là bấm được.
 
 Phép này KHÔNG cho biết dòng nhắc trong khối lịch (`.lich-v2 .notice`) có cùng lỗi không (ở đó dòng nhắc không có link) · đếm rẻ nhất: không.
+
+## Thêm 11:09 22/11/2026 — link trong dòng nhắc có kiểu link (phiên điều phối đồng ý sửa quan sát ở trên)
+Một dòng CSS ở `frontend/src/index.css`: `.notice a` cùng kiểu với link trong câu trả lời (màu nhấn, gạch chân). Đo [máy kiểm, 0 đồng, cùng script, thư mục
+`kieu_truoc/`, `kieu_sau/`] ở 1440 trang Trợ lý · 1440 khung nổi · 390 trang Trợ lý: gạch chân `none` ⇒ `underline`; màu link `rgb(70, 96, 95)` (trùng màu chữ
+dòng nhắc) ⇒ `rgb(14, 107, 102)`; kích thước và số dòng của link không đổi so với bản đã gộp (130 × 18 px một dòng ở 1440; ngắt dòng tự nhiên ở 390); bấm vẫn sang
+`#/len-ke-hoach`; tràn ngang 0, lỗi trang 0. Chưa có lượt nhìn trên lượt trả lời thật.

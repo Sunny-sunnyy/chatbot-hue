@@ -225,6 +225,8 @@ picture { display: contents; }
 .retry:hover { background: var(--color-accent-soft); }
 .notice { display: flex; gap: 8px; align-items: flex-start; margin-top: 12px; font-size: 14px; color: var(--color-muted); }
 .notice svg { flex: none; margin-top: 3px; }
+/* link trong dòng nhắc (câu dẫn sang trang Lên kế hoạch): cùng kiểu link của câu trả lời — trước đó cùng màu chữ, không gạch chân nên không ai biết là bấm được */
+.notice a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 2px; }
 .notice-an-toan { font-size: 15px; font-weight: 600; color: var(--color-ink); }  /* ghi chú an toàn (bão / lũ, 112): không để chữ xám nhỏ */
 .lich-v2 > .notice-an-toan:first-child { margin: 0 0 10px; }  /* ghi chú an toàn ở ĐẦU khung lịch: cách thanh thông tin bên dưới */
 .searching { display: flex; gap: 14px; align-items: center; max-width: 68ch; padding: 14px 16px; border: 1px dashed #8FB5AE; border-radius: 14px;
