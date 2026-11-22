@@ -160,6 +160,32 @@ def test_swap_clause_reader_refuses_anything_that_is_not_one_plain_swap_plus_que
     assert s.cap_ngay_doi_cho_kem_hoi(cau, so_ngay) is None
 
 
+# Soát khác hãng 22/11 (GPT-6.2 Sol #8): "à không" đứng riêng một vế vẫn đọc ra cặp ngày ⇒ lịch đổi trái ý. Đếm rộng cùng ngày: 68 / 153 tin có lời rút
+# lại lọt qua danh sách chữ cấm ⇒ đổi sang DANH SÁCH CHO PHÉP: vế nào không phải vế đổi chỗ thì phải là một CÂU HỎI.
+@pytest.mark.parametrize("rut", [
+    "à không",                                                                          # tin của GPT-6.2 Sol
+    "không", "ờ không", "à ko", "hông", "à không đâu", "không nha", "không sao", "à chưa", "chưa cần", "tạm thời chưa",      # phủ định trần
+    "để sau", "để sau đi", "lát nữa", "tí nữa tính", "từ từ đã", "chờ đã", "đợi chút", "gượm đã",                            # hoãn
+    "dừng lại", "ngưng", "hoãn", "rút lại", "cancel", "stop",                                                                # dừng
+    "để như cũ", "y như cũ nhé", "kệ đi", "mình đùa đấy", "à sai", "gõ sai rồi", "nghĩ lại rồi", "có lẽ chưa", "có lẽ không", "không biết nữa", "cho mình để sau nhé", "giúp mình giữ y vậy", "để như cũ giúp mình", "giúp mình để sau", "mình đổi ý rồi",  # đổi ý
+])
+def test_swap_is_not_applied_when_another_clause_is_not_a_question(rut):
+    for cau in (f"Đổi chỗ ngày 1 với ngày 2, {rut}, vé vào Đại Nội bao nhiêu?", f"đổi chỗ ngày 1 với ngày 2 {rut}, vé vào Đại Nội bao nhiêu?",
+                f"đổi chỗ ngày 1 với ngày 2. {rut.capitalize()}. Vé vào Đại Nội bao nhiêu?"):
+        assert s.cap_ngay_doi_cho_kem_hoi(cau, 2) is None, cau
+
+
+@pytest.mark.parametrize("hoi", [
+    "Đại Nội có mở cửa buổi tối không?", "lăng Tự Đức có xa không?", "vé đã gồm thuyền chưa?", "xe buýt dừng ở đâu?", "quán nào không cay?",
+    "giờ mở cửa Đại Nội?", "gợi ý giúp mình quán bún bò?", "đi Đại Nội có phải chờ lâu không ạ", "mình muốn hỏi vé lăng Minh Mạng",
+    "không biết vé Đại Nội bao nhiêu nhỉ?", "chưa rõ lăng Tự Đức mở cửa mấy giờ",
+    "gợi ý giúp mình quán bún bò", "tư vấn chỗ ăn tối gần Đại Nội nhé", "cho mình biết giờ mở cửa lăng Tự Đức", "chỉ giúp mình đường ra chợ Đông Ba",  # lời nhờ, không từ hỏi, không dấu "?"
+    "cho mình xin giá vé Đại Nội", "chỉ mình đường đi lăng Tự Đức", "kể mình nghe về chùa Thiên Mụ", "tiện thể xem giúp thời tiết mai",  # bộ thử của phiên B
+])
+def test_swap_is_still_read_next_to_ordinary_questions(hoi):
+    assert s.cap_ngay_doi_cho_kem_hoi(f"đổi chỗ ngày 1 với ngày 2, {hoi}", 2) == (1, 2)
+
+
 def test_swap_plus_question_swaps_the_days_and_says_the_question_is_unanswered():
     ra = CHT + [s.HanhDongHoi(loai="hoi_them")]
     cau = "Đổi chỗ ngày 1 với ngày 3, mà vé vào Đại Nội bao nhiêu?"
