@@ -115,7 +115,7 @@ Dùng khi một mức giá trong kho đổi và phải sửa mọi bài còn ghi
 - Lùi: `git revert <mã bản ghi>` rồi cập nhật chỉ mục lại.
 - Sau khi duyệt, lệnh in hai dòng test của các bảng chép từ kho (`tests/test_su_kien_theo_ngay.py`, `tests/test_quan_lich.py`) — chạy không nạp env; đỏ ⇒ sửa bảng, không sửa test.
 - Giới hạn: phải biết giá cũ; mỗi lần một mức giá; con số tính từ giá cũ và con số viết chung cho nhiều nơi chỉ được NHẮC, người sửa tay; số viết bằng chữ / "200–250 nghìn" không được tìm; độ đúng của bước model phán mới đo trên hai mức giá (`report_agent/2026-11-22/b_de_xuat_sua_kho.md`).
-- Cập nhật chỉ mục khi duyệt (cần module `ingestion.cap_nhat_rieng` trong code): TRƯỚC khi áp, lệnh kiểm chỉ mục đang khớp kho (chỉ đọc, khoảng 20 giây) — đang lệch sẵn ⇒ `DỪNG, kho chưa đổi gì`; sau khi áp + lưu bản ghi git, lệnh cập nhật chỉ mục rồi đối chiếu danh sách bài đã xử lý với các bài vừa sửa — khác ⇒ `CẦN XEM` kèm cách lùi. Module chưa có ⇒ in `CHƯA cập nhật chỉ mục` + danh sách bài, mã thoát 3 — lúc đó kho đã sửa mà chỉ mục chưa, server sẽ từ chối khởi động lại cho tới khi chỉ mục được cập nhật (hoặc bản sửa được lùi).
+- Cập nhật chỉ mục khi duyệt (cần module `ingestion.cap_nhat_rieng` trong code): TRƯỚC khi áp, lệnh kiểm chỉ mục đang khớp kho (chỉ đọc, khoảng 20 giây) — đang lệch sẵn ⇒ `DỪNG, kho chưa đổi gì`; sau khi áp + lưu bản ghi git, lệnh cập nhật chỉ mục rồi đối chiếu danh sách bài đã xử lý với các bài vừa sửa — khác ⇒ `CẦN XEM` kèm cách lùi. Module chưa có ⇒ in `CHƯA cập nhật chỉ mục` + danh sách bài, mã thoát 3 — lúc đó kho đã sửa mà chỉ mục chưa: server khởi động lại vẫn bật nhưng mọi câu hỏi nhận 409 "Dữ liệu tra cứu cần được lập chỉ mục lại" cho tới khi chỉ mục được cập nhật (hoặc bản sửa được lùi).
 - File vá bị thêm đoạn chạm file ngoài danh sách bài của đề xuất ⇒ lệnh duyệt dừng, không áp gì. Con số nằm trong TIÊU ĐỀ MỤC được liệt kê ở nhóm "không rõ" và không bao giờ tự sửa.
 
 ### 5b. Cập nhật riêng phần chỉ mục của bài đã sửa (lệnh có từ 22/11/2026; lệnh duyệt ở 5a tự gọi nó)
@@ -123,6 +123,8 @@ Dùng khi một mức giá trong kho đổi và phải sửa mọi bài còn ghi
 Sau khi bài trong kho đã đổi (sửa, thêm, bớt), KHÔNG cần xoá collection rồi dựng lại cả chỉ mục (khoảng 225 giây): lệnh dưới kéo collection về khớp
 kho trong khoảng 25–30 giây — chia đoạn cả kho, so từng đoạn với collection, chỉ tính lại vector nghĩa cho đoạn khác chữ, ghi lại vector từ khoá của
 mọi điểm (phụ thuộc thống kê cả kho, chỉ CPU), kiểm cả collection bằng hàm kiểm của lúc dựng, rồi ghi file thống kê từ khoá và bản ghi dựng mới.
+Cách tìm đang chạy (`dense_bm25_rrf`) KHÔNG đọc vector từ khoá cất trong Qdrant — nó tính điểm từ khoá lúc hỏi từ payload + file thống kê (`retrieval/full_corpus.py`); thứ nó
+cần mới là FILE THỐNG KÊ (nạp lúc khởi động). Ghi lại vector từ khoá của mọi điểm là để collection giống hệt bản dựng lại và cho cách tìm `native_hybrid_rrf` (đang không dùng).
 
 ```bash
 cd backend      # TẮT server trước; bật lại sau khi lệnh xong (server đọc thống kê từ khoá và xoá câu trả lời đã nhớ lúc khởi động)
@@ -138,7 +140,7 @@ HF_HUB_OFFLINE=1 uv run python -m ingestion.cap_nhat_rieng              # chạy
   `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384/snapshots`; xoá một bản: `curl -s -X DELETE
   http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384/snapshots/<tên bản chụp>`. Muốn một bản sao lưu nằm trên ổ đã gắn (không mất khi
   tạo lại container): chép collection sang tên khác trước khi chạy — `data/phase_12_agent_sua_kho_2026-11-21/c_cap_nhat_rieng/chep_collection.py <tên mới>` (7 giây).
-- Lệnh chết giữa chừng: bản ghi dựng đang ở tên `….json.dang_cap_nhat` ⇒ server từ chối khởi động ("Build record does not exist") chứ không trả
+- Lệnh chết giữa chừng: bản ghi dựng đang ở tên `….json.dang_cap_nhat` ⇒ server VẪN bật nhưng phần tìm kho không sẵn sàng: mọi câu hỏi nhận 409 "Dữ liệu tra cứu cần được lập chỉ mục lại", `/health` báo `retrieval: not_ready` (trong log: "Build record does not exist"; `api/app.py:131-136`) chứ không trả
   lời lệch. Cách chữa: chạy lại lệnh (lần chạy nào cũng so với chính collection nên kéo về đúng).
 - Lùi một lần sửa kho: `git revert` bản sửa bài ⇒ chạy lại chính lệnh này. Lùi bằng bản chụp (khi nghi collection hỏng):
   `curl -s -X PUT http://127.0.0.1:6335/collections/<tên>/snapshots/recover -H 'content-type: application/json' -d '{"location":"file:///qdrant/snapshots/<tên>/<tên bản chụp>"}'`

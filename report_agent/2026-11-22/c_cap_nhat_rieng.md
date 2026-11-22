@@ -8,6 +8,8 @@ nhánh: phiên E (viết phép kiểm độc lập). Nhánh `p12-c-cap-nhat-rien
 thời gian) và *vector từ khoá* (code tính từ thống kê cả kho, không cần model) · *file thống kê từ khoá*, *bản ghi dựng*: hai file ở
 `data/full_corpus_builds/` server đọc lúc khởi động · *dựng lại toàn bộ*: cách cũ, xoá collection rồi tính lại mọi vector.
 
+**ĐÍNH CHÍNH 10:30 22/11/2026 (phiên viết giáo trình bắt được, phiên C thử lại trên bản chép):** mọi chỗ dưới đây ghi "server từ chối khởi động" là SAI — khi bản ghi dựng thiếu / lệch kho, server VẪN bật (`api/app.py:131-136` bắt lỗi), `/health` báo `retrieval: not_ready`, mọi câu hỏi nhận 409 "Dữ liệu tra cứu cần được lập chỉ mục lại"; ý an toàn (không trả lời lệch) giữ nguyên. Và: cách tìm đang chạy không đọc vector từ khoá cất trong Qdrant — thứ nó cần mới là file thống kê; ghi lại vector từ khoá của mọi điểm là để collection giống bản dựng lại và cho cách tìm thứ hai.
+
 ## 1. Người dùng (chủ dự án) làm được gì / chưa làm được gì
 
 | | |
