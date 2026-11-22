@@ -1,0 +1,392 @@
+# Phụ lục G — Mọi quyết định của hệ thống trên một trang
+
+*Cập nhật 14:43, ngày 22/11/2026 · gom từ các bài 1–38 của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+
+**Cách dùng trang này.** Mỗi dòng là một quyết định, rút gọn từ mục "Quyết định và lý do" hoặc "Quyết định nhỏ hơn" của một bài; cột cuối chỉ bài để mở khi cần đủ chi tiết. Cột thứ hai bắt đầu bằng nhãn của bài gốc: "đã đo" (có con số), "quyết định đã ghi" (có lời chủ dự án hoặc kế hoạch được ghi lại), "lập luận" (lý lẽ, không phải số đo), "chưa thấy ghi lý do" (kèm điều kiểm được). Muốn ôn nhanh: đọc mục "Những quyết định chạy xuyên cả hệ thống" trước, rồi lướt bảng của chặng cần. Dòng có chữ "nhỏ" ở cột Bài lấy từ mục "Quyết định nhỏ hơn".
+
+## Những quyết định chạy xuyên cả hệ thống
+
+- **Chỉ trả lời từ kho; kho không có thì một câu từ chối cố định, web để riêng ở mục "chưa kiểm".** Bài 1, 2, 4, 6, 7, 12, 15, 16, 25, 26.
+- **Việc phải đúng (ngày, khoảng cách, xếp lịch, chọn quán, áp lệnh sửa) do chương trình làm; model chỉ diễn đạt hoặc hiểu ý.** Bài 1, 3, 24, 27, 29, 30, 31. Ngoại lệ đã đo: cộng tổng tiền vẫn để model làm (bài 24).
+- **Lời dặn là lời nhờ; luật quan trọng phải có một bước chương trình kiểm sau khi model viết** (số nguồn, con số, link, khung lịch). Bài 2, 16, 21, 25, 29, 37.
+- **Luật và khoá nằm ở máy chủ; thứ gửi từ trình duyệt là dữ liệu không tin cậy.** Bài 5, 6, 23, 27, 35, 37.
+- **Hỏng thì nói thật, không đoán, không đưa số:** thời tiết lỗi thì không có con số, phần lịch không xếp được thành ghi chú, lệnh không làm được thì nói "chưa làm", việc không làm thay được thì nói thẳng. Bài 4, 6, 24, 26, 29, 31, 35.
+- **Mỗi dịch vụ bên ngoài chỉ gọi một lần; không âm thầm gọi lại, không tự đổi sang model dự phòng.** Bài 6, 15, 24, 25, 26.
+- **Ghi điều kiện trước khi đo, đổi một thứ mỗi lần, xét từng câu chứ không xét trung bình; vỡ điều kiện thì mặc định bỏ.** Bài 9, 13, 14, 18, 19, 20, 26, 30.
+- **Chất lượng đứng trước tốc độ và tiền:** không bóp độ dài câu trả lời, không đặt trần chữ ra, mức suy luận cao. Bài 4, 15, 33, 34.
+
+## Chặng 0 — Nền
+
+| Câu hỏi | Đã chọn — vì sao | Cái giá | Bài |
+|---|---|---|---|
+| Vì sao không để model trả lời bằng hiểu biết sẵn có? | Quyết định đã ghi của chủ dự án: chỉ dùng tài liệu chương trình đưa; kho không có thì từ chối, rồi tra web để riêng mục "Từ web". | Câu kho không có thì phần từ kho là câu từ chối, kể cả khi model biết đúng. | 1 |
+| Vì sao chỉ gửi 10 đoạn, không gửi cả kho? | Gửi cả kho chưa ai thử (lập luận: hơn chín nghìn đoạn, quá sức một lần gọi). Đã đo: 5 đoạn kém hơn 10; 15 đoạn không hơn; cả bài đắt gấp 5,5 lần nên dừng. | Đoạn có đáp án mà không lọt 10 đoạn thì model không thấy; nguồn chính của từ chối nhầm. | 1 |
+| Vì sao việc tính toán giao cho chương trình? | Đã đo: tính ngày chuyển sang chương trình thì bớt 9 câu từ chối nhầm, không còn câu sai ngày; cả hai model viết đều tính sai một phép tuổi theo năm. | Mỗi loại phép tính cần một phần chương trình riêng; loại chưa có (cộng tổng tiền vé) model vẫn tự làm. | 1 |
+| Vì sao cho model đọc tài liệu, không huấn luyện lại? | Quyết định đã ghi: tên đề tài chốt với giảng viên 01/11 là ứng dụng dựa trên RAG. Huấn luyện lại chưa thử. | Chất lượng bị chặn bởi bước tìm; mỗi câu thêm một bước tìm (khoảng 40 mili giây) và lời gọi dài hơn. | 2 |
+| Vì sao chỉ vài đoạn, và vì sao là 10? | Đã đo (gpt-6-luna): 10 thay 5 làm "đủ ý" tăng 0,26 trên thang 5, từ chối nhầm 13 xuống 7 trên 88 câu; 01/11 so lại gần như ngang, chủ dự án chọn giữ 10. 15 đoạn không khá hơn. | Tiền mỗi câu tăng khoảng một nửa so với 5 đoạn. | 2 |
+| Vì sao chuẩn bị kho làm trước một lần? | Lập luận từ hai số đo: dựng lại chỉ mục khoảng 225 giây; tìm trên chỉ mục có sẵn khoảng 40 mili giây. | Sửa kho xong phải cập nhật chỉ mục, khoảng nửa phút cho vài bài. | 2 |
+| Vì sao kho không có thì một câu từ chối cố định, rồi mới tra web để riêng? | Luật đã ghi: chỉ trả lời từ kho. Câu cố định vì bộ chấm và các sàn đo dựa vào nó; chương trình so đúng từng chữ để miễn kiểm số nguồn và mở bước tra web. | Câu kho có mà tìm không ra (lượt "cởi giày") cũng chỉ nhận câu từ chối và mục web chưa kiểm. | 2 |
+| Vì sao chương trình còn kiểm số nguồn? | Lập luận: lời dặn là lời nhờ, model có thể không theo; luật quan trọng cần một bước chương trình đếm được. Hiện chữ trước: đã đo 01/11. | Có lượt chữ hiện rồi mất; phép kiểm chưa biết đoạn có nói đúng điều câu trả lời viết. | 2 |
+| Vì sao model chỉ quyết ở một chỗ, không làm trợ lý tự do? | Đã đo: tự tìm thêm tối đa hai lần làm "đủ ý" tăng 1,17, từ chối nhầm 12 xuống 4–6 trên 158 câu; nới thêm (8 vòng, 3–4 lần tìm) không hơn. | Câu cần nhiều bước hơn mức trần thì không được trả lời trọn. | 3 |
+| Vì sao lần tìm đầu do chương trình làm ở mọi lượt? | Đã đo (03/11, gpt-6-luna): để model tự tìm từ đầu hoặc viết lại / tách câu tìm đều thêm 0 trên 12 câu có thể đổi. | Câu không cần kho vẫn tốn một lần tìm (0,04–0,34 giây) và vài nghìn token cho 10 đoạn. | 3 |
+| Vì sao ngày, khoảng cách, thời tiết là công cụ của chương trình? | Đã đo ở việc tính ngày: bớt 9 câu từ chối nhầm, 0 câu sai ngày. Thời tiết là dữ liệu của hôm nay, model không thể biết. | Mỗi công cụ là một phần phải viết, phải test, và là một chỗ có thể hỏng. | 3 |
+| Vì sao bốn công cụ chỉ có mặt khi câu có từ khoá? | Đã gặp: ghi chú công cụ ở mọi lượt làm đổi câu không liên quan; bản luôn đưa thời tiết (17/11) bị lùi vì làm xấu kết quả. | Câu cần công cụ mà thiếu từ khoá thì không có công cụ: sót 4 trên 60 câu (đếm 21/11 trên 310 câu). | 3 |
+| Vì sao model chỉ điền vài ô tham số hẹp? | Lập luận về an toàn: chữ model viết có thể bị câu người dùng lái; ô càng hẹp thì thứ bị lái càng ít. | Model không làm được việc nào ngoài các ô đó, kể cả việc có ích. | 3 |
+| Vì sao trang Lên kế hoạch để chương trình xếp cả lịch? | Đã đo: xếp lịch từ câu gõ tự do, cho model tham gia nhiều hơn, thử hai lần, chưa đạt điều kiện ghi trước. | Lịch chỉ gồm các điểm trong bảng điểm (41 điểm). | 3 |
+
+## Chặng 1 — Bức tranh
+
+| Câu hỏi | Đã chọn — vì sao | Cái giá | Bài |
+|---|---|---|---|
+| Vì sao chỉ trả lời từ kho? | Quyết định đã ghi của chủ dự án; câu từ kho có nguồn để người dùng xem lại. Nới luật cho câu hai ý đã đo: 2 câu ngoài kho bị trả lời, bỏ; từ 14/11 có bản hẹp cho tin nhiều ý. | Từ chối nhầm 3 trên 158 câu (12/11, gpt-6-luna), 0 trên 78 (21/11, Claude); câu bị từ chối được gửi ra dịch vụ tìm web. | 4 |
+| Vì sao "từ chối nhầm" là lỗi nhẹ nhất, "sai một cảnh báo an toàn" là nặng nhất? | Quyết định đã ghi của chủ dự án. Lập luận: bị từ chối thì người dùng biết để hỏi nơi khác; câu sai nghe chắc thì không có dấu hiệu nào. | Nhiều thay đổi bớt từ chối nhầm bị bỏ vì làm tăng lỗi nặng hơn. | 4 |
+| Vì sao chất lượng đứng trước tốc độ và tiền? | Quyết định đã ghi của chủ dự án. | Câu lâu nhất lượt đo 21/11 là 17,7 giây; khoảng 0,018 USD mỗi câu ở ví dụ chính. | 4 |
+| Vì sao chỉ nhận tiếng Việt có dấu? | Hai quyết định đã ghi của chủ dự án. Đã đo với câu không dấu: bước tìm gần như không khớp được với kho có dấu. | Du khách không đọc tiếng Việt không dùng được; người gõ không dấu hay nhận câu từ chối. | 4 |
+| Vì sao không xử lý riêng tình huống khẩn cấp? | Quyết định đã ghi: chủ dự án chốt ba lần là ngoài phạm vi. Luật từ khoá đã thử: đúng 14 trên 14 câu đã thấy, 0 trên 8 câu chưa thấy, chặn nhầm 2 trên 8. | Người gặp nạn nhận câu trả lời theo kho, hoặc câu từ chối kèm "Từ web". | 4 |
+| Vì sao không đặt phòng, mua vé thay người dùng? | Hệ thống không nối với dịch vụ đặt chỗ nào; trả một trong ba câu nói thật theo loại việc. Đã đo: 11 trên 12 lượt ra đúng câu của loại việc. | Người dùng phải rời ứng dụng để đặt. | 4 |
+| Vì sao trang web nhiều trang, không chỉ khung chat? | Quyết định đã ghi: chủ dự án chọn hướng "trang du lịch nhiều mục" 06/11; chỉ có khung chat thì người dùng không biết hệ thống làm được gì. | Nhiều màn hình phải giữ đúng; Bản đồ và Lên kế hoạch cần bảng dữ liệu riêng. | 5 |
+| Việc nào làm trong trình duyệt, việc nào ở máy chủ? | Lập luận: việc chỉ đổi cách hiện làm ở trình duyệt; việc quyết nội dung, nguồn, lịch hợp lệ làm ở máy chủ, vì luật đặt ở trình duyệt thì ai cũng tắt được. | Vài giới hạn viết hai lần (ví dụ câu hỏi tối đa 500 ký tự). | 5 |
+| Vì sao lỗi giữa chừng hay bấm Dừng thì xoá hết chữ đã hiện? | Quyết định đã ghi: chủ dự án chọn 31/10; chữ đã hiện chưa qua bước kiểm số nguồn. | Người dùng mất phần đã đọc, phải hỏi lại. | 5 |
+| Vì sao với model đang chạy, chữ hiện một lần? | Quyết định đã ghi: tài khoản AWS chưa có quyền gọi kiểu trả chữ dần; 22/11 chủ dự án gác mọi việc AWS. | Có lượt phần chữ trống hơn 15 giây; việc rút lại vẫn có thể xảy ra mà cái lợi "đọc sớm" không còn. | 5 |
+| Vì sao giao diện làm bằng React, đóng thành file tĩnh? | Đã so ba hướng 01–02/11: JavaScript thuần thì phải làm lại khi nhiều màn hình; file tĩnh thì máy chủ Python gửi luôn. Bộ linh kiện có sẵn: 2 linh kiện vi phạm rào an toàn của trình duyệt. | Linh kiện phải tự viết; sửa giao diện phải đóng gói lại. | 5 |
+| Vì sao giao diện hỏi máy chủ "tính năng nào đang mở"? | Lập luận của người viết (hồ sơ chỉ ghi cách làm): mở / tắt tính năng chỉ sửa một dòng cấu hình, không đóng gói lại giao diện. | Thêm một lần gọi mỗi lần tải trang; Bản đồ và Lên kế hoạch hiện chậm một nhịp. | 5 · nhỏ |
+| Vì sao không hiện số [1], [2] trong chữ? | Quyết định đã ghi: chủ dự án chọn khi duyệt thiết kế (06/11); lý do không được ghi lại. Thay bằng dòng "Nguồn:". | Người đọc không thấy ý nào từ nguồn nào. | 5 · nhỏ |
+| Vì sao sửa lịch bằng lời nhắn ở khung Trợ lý, không có ô chat riêng? | Có ghi một nửa: thiết kế chọn một khung trợ lý chung mọi trang; lịch giữ trong cuộc trò chuyện. Không có hồ sơ cân riêng ô chat trên trang lịch. | Người dùng phải biết bấm "Trợ lý Huế". | 5 · nhỏ |
+| Vì sao tải lại trang là cuộc trò chuyện mới? | Đã gặp thật 15/11: cuộc cũ còn sống, câu đầu bị đọc như câu tiếp; một câu vừa trả lời đúng bị từ chối. | Không xem lại được cuộc cũ. | 5 · nhỏ |
+| Vì sao mọi việc của câu trả lời ở máy chủ? | Lập luận: gọi hãng model phải kèm khoá; khoá ở giao diện thì ai cũng lấy được. Luật sản phẩm phải ở chỗ người dùng không sửa được. | Máy chủ ngừng thì hỏi đáp và lập lịch ngừng theo. | 6 |
+| Vì sao khối chính hỏng thì dừng, khối phụ hỏng thì trả lời tiếp? | Xếp loại câu: lý do có ghi (chặn nhầm câu về Huế thì không bước nào sửa). Thời tiết: luật "lỗi thì không bao giờ đưa ra con số". Tìm web, và việc dừng hẳn khi model lỗi: chưa thấy ghi lý do. | Câu trả lời thiếu phần của khối đó; với bước xếp loại thì không có dấu hiệu gì. | 6 |
+| Vì sao không âm thầm gọi lại, không tự đổi model? | Chưa thấy ghi lý do. Điều thấy được: cả ba chỗ gọi ra ngoài đều gọi một lần; chương trình tắt hẳn việc tự gọi lại của thư viện OpenAI. | Hãng trục trặc chốc lát thì người dùng phải tự bấm "Thử lại"; hãng sập lâu thì hỏi đáp ngừng. | 6 |
+| Vì sao chữ hiện trước rồi mới kiểm? | Đã đo 01/11 (gpt-6-luna, 38 câu): chữ đầu tới sau 1,23 giây, sớm hơn 0,44 giây; dưới mốc 0,5 giây nhóm đặt, chủ dự án chọn giữ. | Có lượt chữ hiện rồi mất (3 trên 48 và 4 trên 53, 21/11); với model đang chạy cái lợi chưa đo lại. | 6 |
+| Vì sao cuộc trò chuyện chỉ giữ trong bộ nhớ máy chủ? | Quyết định đã ghi: kế hoạch phần nhớ cấm ghi chữ người dùng ra đĩa. Không để trình duyệt giữ: lý do ghi trong chương trình, người dùng có thể sửa "trợ lý đã nói" để cài lệnh. | Khởi động lại là mất mọi cuộc; nhiều bản máy chủ không thấy chỗ nhớ của nhau. | 6 |
+| Vì sao kho lệch chỉ mục thì từ chối mọi câu hỏi? | Quyết định đã ghi: có từ lúc dựng hệ thống, theo luật chỉ trả lời từ kho; lập luận: chỉ mục cũ có thể trích đoạn đã sửa giá, giờ. | Quên cập nhật chỉ mục thì từ lần khởi động sau hỏi đáp ngừng; phép so chỉ chạy lúc bật. | 6 |
+| Vì sao khoảng cách tra bảng dựng sẵn, thời tiết hỏi dịch vụ ngoài? | Lập luận: khoảng cách 40 điểm không đổi, tính một lần; thời tiết đổi theo giờ. Đường chim bay nhân 1,3 bị bỏ lúc lập kế hoạch vì ước thô. | Nơi không có trong bảng thì không nói được khoảng cách. | 6 · nhỏ |
+| Vì sao việc tìm chạy trọn trên máy? | Lúc đầu: chưa thấy ghi lý do. Về sau đã đo: model embedding lớn qua dịch vụ ngoài giúp 2, hỏng 3 trên 40 câu, chậm từ khoảng 0,02 lên 2,2 giây. | Máy chủ phải nạp model embedding lúc bật. | 6 · nhỏ |
+| Vì sao tự viết từng bước, không dùng thư viện RAG trọn gói? | Chưa thấy ghi lý do; chưa thử bộ nào. Điều thấy được: mỗi bước có bài test riêng và được thay riêng khi đo. | Không ghi cái giá. | 6 · nhỏ |
+| Vì sao không chạy model viết trên máy? | Chưa thử. Điều thấy được: máy chỉ có card đồ hoạ nhỏ; các lần thử model trên máy ở xếp lại, nhận ảnh đều không được chọn. | Không ghi cái giá. | 6 · nhỏ |
+| Vì sao giao diện và máy chủ chung một chỗ? | Quyết định lúc chọn công nghệ giao diện: file tĩnh do máy chủ gửi, chỉ một thứ phải bật. | Không ghi cái giá. | 6 · nhỏ |
+
+## Chặng 2 — Chuẩn bị kho
+
+| Câu hỏi | Đã chọn — vì sao | Cái giá | Bài |
+|---|---|---|---|
+| Vì sao soạn kho trước, không đọc web lúc hỏi? | Quyết định đã ghi: chỉ trả lời từ kho đã soạn và kiểm; trên mạng một quán có thể có ba giờ mở cửa khác nhau, lẫn quảng cáo và bài cũ. | Công soạn; kho thiếu thì từ chối, cũ thì trả lời cũ. | 7 |
+| Vì sao giữ dạng bài viết, không chuyển giá vé sang bảng dữ liệu? | Đã đo một lần: bảng cho 60 điểm đúng 19 trên 20 câu nhưng trượt điều kiện nêu điều kiện đi kèm (6 trên 10); dùng bảng để kiểm số không bắt được số sai nào trên 52 câu. | Sửa một giá phải dò khắp kho. | 7 |
+| Vì sao thêm bài nào cũng đo lại câu cũ? | Đã đo bù 15/11: 65 câu cũ bị đổi 10 đoạn đầu vì bài mới; không câu nào tệ đi, 1 câu tốt lên. Bài mới có thể đẩy đoạn đúng ra khỏi 10 đoạn. | Công đo mỗi lần thêm bài. | 7 |
+| Vì sao giá đổi thì chương trình thay số, model chỉ phán? | Lý do ghi trong chương trình: phân biệt một con số là vé hay giá quán thì chương trình không làm được; dòng mới do chương trình dựng. Chủ dự án chọn tối 21/11. | Phải biết giá cũ; câu có số tính từ giá cũ chỉ được liệt kê để sửa tay (ca Đại Nội có 13 câu). | 7 |
+| Vì sao không cập nhật giá theo web định kỳ? | Quyết định đã ghi: chủ dự án (09:25 22/11) cho giá chỉ cần tương đối; luật "nguồn đáng tin nói rõ mới đổi" do nhóm chốt cùng buổi. | Giá trong kho cũ dần; chỉ vài loại bài kèm dòng nhắc kiểm lại. | 7 |
+| Vì sao kho được theo dõi lịch sử cùng mã dự án? | Từ 20/11 kho nằm trong kho mã: mọi lần sửa có lịch sử và lùi được. | Không ghi cái giá. | 7 · nhỏ |
+| Vì sao loại 3 file danh mục khỏi chỉ mục? | Đã đo: chỉ là danh sách tên lúc soạn; loại ra thì kết quả tìm không khác. | Không ghi cái giá. | 7 · nhỏ |
+| Vì sao bài mới cần chủ dự án duyệt, chỗ tự mâu thuẫn thì nhóm được sửa? | Quyết định đã ghi: sửa nội dung kho ở hàng "hỏi chủ dự án trước"; 22/11 chủ dự án cho nhóm tra nguồn rồi sửa chỗ sai hoặc chưa khớp. | Không ghi cái giá. | 7 · nhỏ |
+| Vì sao lệnh duyệt và lệnh cập nhật chỉ mục bắt tắt máy chủ? | Lý do ghi trong chương trình: máy chủ chỉ kiểm chỉ mục lúc bật, còn chạy thì sẽ trả lời trên chỉ mục ghi dở. | Không ghi cái giá. | 7 · nhỏ |
+| Vì sao cắt theo khối của bài, không cắt đều có gối đầu? | Lý do thiết kế ghi ở hồ sơ chia đoạn: bài soạn theo mẫu nên ranh giới ý có sẵn; cắt theo ký tự có thể tách con số khỏi tiêu đề bảng. Cắt đều, gối đầu: chưa so. | Gần 1.800 đoạn dưới 50 token, ít chữ để so nghĩa. | 8 |
+| Vì sao giữ đoạn nhỏ, không gộp đoạn to? | Đã đo: gộp tới 256, 384, 512 token mất đáp án ở 4–6 trên 32 câu; mở ra cả mục mất 8 câu; gộp 128 không khác. | Một ý trải nhiều khối phải được tìm từng mảnh. | 8 |
+| Vì sao dòng bảng dài tách riêng, kèm dòng tiêu đề? | Lý do ghi ở hồ sơ chia đoạn: con số phải đi cùng tên cột. Gộp các dòng liền nhau: đã đo, không khác. | Mỗi dòng giá là đoạn rất ngắn, câu viết khác chữ dễ bị bỏ sót. | 8 |
+| Vì sao giới hạn cắt là 256 token khi model đọc được 512? | Đã đo: hai giới hạn kia còn từ thời chọn model; chỉ giữ 512 thì ít đi 61 đoạn, kết quả tìm không khác. Chưa dọn vì phải lập lại chỉ mục. | 61 đoạn ở 14 bài bị tách thêm không cần. | 8 |
+| Vì sao một đoạn sai là dừng cả bước chuẩn bị? | Lý do ghi trong chương trình: model embedding cắt im lặng phần vượt 512 token. Với mảnh bằng chứng không khớp bài gốc: chưa thấy ghi lý do. | Tạo ra một đoạn sai thì không cập nhật chỉ mục được tới khi sửa xong bài. | 8 |
+| Vì sao chương trình cắt theo luật, không nhờ model? | Chưa thấy ghi lý do. Điều thấy được: cắt lại cùng kho ra đúng đoạn và mã cũ, có test kiểm; cập nhật riêng vài bài dựa vào điều này. | Bài đặt mục kém thì đoạn kém. | 8 |
+| Vì sao không mở rộng ra cả mục sau khi tìm? | Đã đo hai lần: lượng chữ nhỏ thì mất 8 câu; 19/11 cả mục không khác chất lượng và phát sinh lỗi. | Không ghi cái giá. | 8 · nhỏ |
+| Vì sao không bỏ ba cặp đoạn lặp một phần? | Đã thử bỏ: không khác. | Không ghi cái giá. | 8 · nhỏ |
+| Vì sao ghép tên bài và tên mục vào chữ để tìm? | Đã đo cuối tháng 10 trên 32 câu: bỏ hẳn thì 3 tốt lên, 8 mất đáp án; chỉ giữ tên mục gần nhất thì 4 tốt lên, 7 mất. Luật ghi trước là không mất câu nào. | Đoạn ngắn cùng bài trông giống nhau vì phần đầu chung chiếm gần hết chữ. | 9 |
+| Vì sao mỗi đoạn đưa model có nhãn "Tiêu đề", "Mục", "Bằng chứng"? | Chưa thấy ghi lý do. Điều thấy được: model chỉ thấy các khối này; số nguồn của khối là thứ chương trình kiểm. | Tên bài và tên mục tính vào số chữ gửi model ở mọi đoạn. | 9 |
+| Vì sao không lọc theo chủ đề khi tìm? | Lập luận: câu hỏi hay chạm nhiều chủ đề, lọc sai một lần là mất đáp án. Lọc: chưa đo. | Không có cách "chỉ tìm trong lễ hội". | 9 |
+| Vì sao hồ sơ đoạn chỉ có 7 trường? | Quyết định đã ghi: 11/09 chủ dự án chốt chỉ thêm trường khi đã có chỗ dùng. | Muốn lọc sau này phải thêm trường và lập lại chỉ mục. | 9 |
+| Vì sao thông tin gắn kèm lấy từ cấu trúc bài, không nhờ model tóm bối cảnh? | Lập luận: tên bài và tiêu đề có sẵn, không tốn lần gọi, không rủi ro model viết sai. Bản model tóm đã gọi thử nhưng chưa lập chỉ mục, chưa đo. | Bài đặt tên mục nghèo thì đoạn mang nhãn kém. | 9 |
+| Vì sao dùng multilingual-e5-small? | Đã đo hai lần: không model nào tìm tốt hơn rõ; e5-small nhanh gấp 2–2,6 lần hai model 768 chiều. | "e5-base có tốt hơn trên toàn kho không" chưa đo. | 10 |
+| Vì sao model embedding chạy trên máy chủ? | Đã đo model lớn qua mạng: từ 21 lên 2.228 mili giây ở câu giữa, có lần treo hơn một phút; câu hỏi phải gửi ra ngoài; thêm tiền. | Máy chủ phải nạp model lúc bật. | 10 |
+| Vì sao vector đoạn tính sẵn, chỉ câu hỏi tính lúc hỏi? | Lập luận từ số đo: cả kho khoảng 195 giây (sáng 22/11); một câu hỏi và tìm khoảng 36 mili giây. | Đổi model embedding là tính lại cả kho. | 10 |
+| Vì sao lấy 30 ứng viên? | Chưa thấy ghi lý do lúc đặt 30. Điều thấy được: 100 ứng viên kém hơn, mất đoạn đúng ở 1 câu. | Đoạn không lọt 30 ứng viên thì không bước nào cứu: 7 trên 40 câu (cuối tháng 10). | 10 |
+| Vì sao không đặt ngưỡng độ gần? | Chưa thấy ghi lý do. Điều thấy được: độ gần dồn dải hẹp (hạng 1 là 0,904, hạng 30 là 0,883, đoạn không liên quan 0,743); việc nhận ra "không đoạn nào trả lời được" giao cho model viết. | Câu kho không có vẫn tốn một lần gọi model trước khi bị từ chối. | 10 |
+| Vì sao không huấn luyện thêm model embedding? | Chưa thử. Đã đo: phần thiếu lớn hơn ở thứ tự xếp (9 trên 16 câu thiếu có đoạn đúng trong 30 nhưng ngoài 10). | Không ghi cái giá. | 10 · nhỏ |
+| Vì sao 384 chiều là đủ? | Chưa đo riêng số chiều; căn cứ gián tiếp: model 768 và 4.096 chiều không tìm tốt hơn. | Không ghi cái giá. | 10 · nhỏ |
+| Vì sao ghim mã phiên bản model? | Để tải lại vẫn ra đúng model đã tính vector; máy chủ so mã đó lúc bật. | Không ghi cái giá. | 10 · nhỏ |
+| Vì sao có thêm bảng xếp hạng theo từ khoá? | Quyết định đã ghi: 11/09 chủ dự án chốt cách "tìm theo nghĩa rồi chấm lại theo từ khoá" làm mốc; các lần so không cách nào hơn. Vì sao cần từ khoá từ đầu: chưa thấy ghi lý do. | Thêm một file thống kê phải khớp kho; có đoạn bị tụt hạng. | 11 |
+| Vì sao BM25 chỉ chấm lại 30 ứng viên? | Đã đo cuối tháng 10: tìm trên cả kho rồi trộn thì điểm thứ hạng gần như không đổi (0,726 so với 0,721) mà mất đoạn đúng ở 1–2 câu. | Đoạn trùng chữ y hệt mà không lọt 30 ứng viên thì không được chấm (lượt "cởi giày"). | 11 |
+| Vì sao điểm từ khoá tính lúc hỏi, không đọc phần cất sẵn trong Qdrant? | Hệ quả của quyết định trên: chỉ cách tìm cả kho mới cần phần cất sẵn. Chấm 30 đoạn khoảng 3,5 mili giây. | Phần cất sẵn vẫn phải ghi lại mỗi lần sửa kho (1,8 giây). | 11 |
+| Vì sao "từ" là âm tiết, không tách từ ghép? | Đã đo trên 32 câu: ghép cặp âm tiết và thư viện tách từ đều mất đoạn đúng ở 1 câu. | "Đại Nội" bị tách đôi; "40.000" thành "40" và "000". | 11 |
+| Vì sao k1 = 1,5 và b = 0,75? | Đã đo: k1 1,2 và 1,8 không hơn; b 0,5 chưa rõ hơn; b 1,0 mất đoạn đúng ở 1 câu. | k1 mới đo trên nhóm món ăn, chưa đo trên toàn kho. | 11 |
+| Vì sao BM25 mà không TF-IDF? | Chưa thấy ghi lý do; hồ sơ không ghi ai chốt. | Không ghi cái giá. | 11 · nhỏ |
+| Vì sao không dùng công cụ tìm toàn văn có sẵn? | Chưa thử. Lập luận: chấm 30 ứng viên mất vài mili giây ngay trong chương trình. | Không ghi cái giá. | 11 · nhỏ |
+| Vì sao không giữ nguyên cụm số? | Đã thử trên 32 câu: không đổi gì. | Không ghi cái giá. | 11 · nhỏ |
+| Vì sao cất chỉ mục trong Qdrant trên cùng máy? | Quyết định đã ghi (12/08, chủ dự án duyệt): hộp riêng, một phiên bản cố định, không nhúng, không bản trên mây. Vì sao Qdrant chứ không cơ sở dữ liệu vector khác: chưa thấy ghi lý do. | Thêm một thứ phải bật; Qdrant tắt lúc máy chủ bật thì phải bật lại cả hai. | 12 |
+| Vì sao kho lệch chỉ mục thì không trả lời câu nào? | Quyết định đã ghi: đặc tả lúc dựng ghi kho đổi thì chưa phục vụ hỏi đáp; máy chủ vẫn chạy ở tình trạng "thiếu". Lập luận: chỉ mục cũ có thể cho giá cũ. | Quên cập nhật chỉ mục thì từ lần khởi động sau hỏi đáp ngừng hẳn. | 12 |
+| Vì sao chỉ kiểm lúc bật, không kiểm mỗi câu? | Chưa thấy ghi lý do. Điều thấy được: phép tính dấu vân tay đọc lại cả 266 bài. | Máy chủ đang chạy không biết kho vừa đổi. | 12 |
+| Vì sao cập nhật riêng sửa tại collection đang dùng? | Đã đo: hai cách chênh khoảng 2,4 giây; lập collection mới phải sửa nhiều chỗ đọc tên collection. Chủ dự án chọn tối 21/11, bù bằng phép kiểm "giống hệt một lần lập lại toàn bộ". | Lệnh bị ngắt giữa chừng thì collection dở dang (máy chủ bật sau đó thấy lệch và báo). | 12 |
+| Vì sao cập nhật là lệnh chạy tay, và dừng khi máy chủ đang chạy? | Quyết định đã ghi: chủ dự án chọn "lệnh chạy tay sau khi duyệt" tối 21/11; việc tự dừng có từ một lần soát của model khác hãng 22/11. | Mỗi lần cập nhật, máy chủ tắt khoảng nửa phút cộng lúc bật lại. | 12 |
+| Vì sao tên collection ghi tên model embedding? | Quyết định đã ghi: chủ dự án chọn từ 12/08; mỗi model ứng viên một collection để không lẫn khi so. | Đổi model là lập collection mới và lập lại toàn bộ. | 12 · nhỏ |
+| Vì sao ghi lại phần từ khoá khi cách tìm đang chạy không đọc nó? | Để collection sau cập nhật giống hệt lập lại toàn bộ (phép kiểm bắt buộc) và để cách tìm thứ hai vẫn đúng nếu được bật. | Tốn khoảng 2 giây. | 12 · nhỏ |
+| Vì sao Qdrant tìm gần đúng? | Đã so cuối tháng 10: giống hệt tìm chính xác ở 108 trên 108 câu. | Không ghi cái giá. | 12 · nhỏ |
+
+## Chặng 3 — Trả lời một câu hỏi
+
+| Câu hỏi | Đã chọn — vì sao | Cái giá | Bài |
+|---|---|---|---|
+| Vì sao lần tìm đầu dùng chính câu người dùng gõ? | Đã đo ba cách để model viết câu tìm đầu: chỉ thêm 0–1 trên 12 câu đủ từ khoá, điều kiện ghi trước là ít nhất 3. | Câu diễn đạt xa chữ của kho dễ hụt ở lần tìm đầu. | 13 |
+| Vì sao trộn theo thứ hạng (RRF, hằng số 60)? | Lập luận: điểm nghĩa gần 0,9, điểm từ khoá vài chục, cộng thẳng thì bên số to lấn át. Hằng số 60: chưa thấy ghi lý do; đã thử 2, 10, 30, không bản nào qua điều kiện. | Đoạn rất cao ở một bảng mà thấp ở bảng kia bị kéo xuống. | 13 |
+| Vì sao từ khoá chỉ chấm lại 30 ứng viên? | Đã đo: tìm cả kho rồi trộn thì 0,726 so với 0,721, mất đoạn đúng ở 1–2 câu. 100 ứng viên: đã đo, bỏ. | Đoạn không lọt 30 ứng viên thì từ khoá không cứu: 7 trên 40 câu khó. | 13 |
+| Vì sao 10 đoạn, và vì sao khoá cứng con số? | Đã đo: 5 lên 10 là lần thắng duy nhất của đợt rà cuối tháng 10; 15 đoạn, cả mục, cả bài không hơn. Khoá cứng: quyết định đã ghi (kế hoạch 01/10, chủ dự án duyệt) để mọi lần đo cùng điều kiện. | Tiền khoảng 1,5 lần so với 5 đoạn; chạy số khác phải sửa cả chương trình kiểm. | 13 |
+| Vì sao tin nhiều ý nối thêm 2 đoạn mỗi ý? | Đã đo sáng 22/11 (Claude Sonnet 5.5, 24 lần hỏi): nêu được dữ kiện kho có 15 trên 24 (khi tắt: 3); chậm thêm khoảng 0,75 giây. Con số 2: chưa thấy ghi lý do. | Ngữ cảnh khoảng 15 đoạn thay cho 10; ý mất tên nơi thì 2 đoạn có thể không liên quan. | 13 |
+| Vì sao không dùng model xếp lại 30 ứng viên? | Đã đo ba cách; không cách nào được giữ. | Không ghi cái giá. | 13 · nhỏ |
+| Vì sao không tăng lên 20 hay 30 đoạn? | Đã đo tới 15 đoạn và các cách đưa nhiều chữ hơn: không hơn, phát sinh lỗi. 20, 30: chưa thử. | Không ghi cái giá. | 13 · nhỏ |
+| Vì sao hai đoạn bằng điểm thì xếp theo mã? | Để chạy lại lần nào cũng ra cùng thứ tự, thấy đúng 10 đoạn model đã đọc. | Không ghi cái giá. | 13 · nhỏ |
+| Vì sao không lọc theo chủ đề trước khi tìm? | Chưa đo (bài 9). | Không ghi cái giá. | 13 · nhỏ |
+| Vì sao không có bước xếp lại? | Đã đo ba cách; không cách nào qua điều kiện ghi trước. | Ở 9 trên 40 câu khó, đoạn đúng đứng hạng 11–30, model không thấy ở lần tìm đầu. | 14 |
+| Vì sao loại model xếp lại trên máy dù điểm thứ hạng tăng khoảng 0,1? | Đã đo: điều kiện là không câu nào mất đoạn đúng; bản tốt nhất mất ở 1 câu, ba bản kia ở 3 câu. | Kết luận đo khi còn đưa 5 đoạn; với 10 đoạn có thể khác. | 14 |
+| Vì sao gác bản để model viết chọn 10 trong 30? | Đã đo: 5 câu tệ đi, điều kiện cho phép nhiều nhất 4. Người dùng gặp câu tệ đi, không gặp trung bình. | Bỏ cách duy nhất đã chữa được chỗ hỏng về thứ tự. | 14 |
+| Vì sao chữa thiếu đoạn bằng "đưa thêm đoạn", không "xếp lại"? | Đã đo: 10 đoạn, tìm thêm 2 lần, 2 đoạn mỗi ý đều giúp mà không làm rơi đoạn đúng; rẻ hơn bản model chọn đoạn. | Chưa đo riêng trên đúng 9 câu hỏng về thứ tự. | 14 |
+| Vì sao hai model xếp lại chạy trên máy? | Quyết định đã ghi (12/08, chủ dự án duyệt): làm trên máy trước, hoãn bản gọi dịch vụ. Lý do sâu hơn: chưa thấy ghi. | Không ghi cái giá. | 14 · nhỏ |
+| Vì sao giữ phần xếp lại trong kho mã khi không dùng? | Để các lần thử sau chạy lại được. | Không ghi cái giá. | 14 · nhỏ |
+| Vì sao lời dặn ngắn? | Đã đo: cho trả lời phần có bằng chứng thì 2 câu ngoài kho bị trả lời; câu dặn chống lời khuyên chung bản rộng làm từ chối nhầm lên 7. Mỗi câu dặn thêm phải qua đo trên cả nhóm không liên quan. | Các điều không kiểm được bằng chương trình chỉ còn trông vào lời nhờ. | 15 |
+| Vì sao thiếu bằng chứng thì trả đúng một câu từ chối cố định? | Quyết định đã ghi: chương trình nhận đúng câu đó để mở tra web và để đếm; 21/11 chủ dự án ghi nó vào các sàn không được nới. | Câu một ý mà kho chỉ có một phần thì nhận từ chối cả câu. | 15 |
+| Vì sao model trả về một ô chữ có dạng cố định? | Quyết định đã ghi: đặc tả khâu viết (14/09) — đúng một mục chữ, nguồn do chương trình dựng từ số [n]. Lý do sâu hơn: chưa thấy ghi. | Model trả sai dạng thì lần gọi hỏng. | 15 |
+| Vì sao không giới hạn độ dài ngữ cảnh và câu trả lời? | Đã đo: trần 16.384 token bỏ 19/11 vì chưa lần nào chạm (dài nhất 6.233). Độ dài câu Claude: quyết định đã ghi, chủ dự án nhận (21/11). | Câu Claude dài gấp khoảng 2,6–3,6 lần gpt-6-luna; chờ lâu và tốn hơn. | 15 |
+| Vì sao mức suy luận "giữa" với gpt-6-luna, "cao" với Claude? | Đã đo với gpt-6-luna: tắt hay hạ mức chỉ rẻ hơn 4–5 %, mỗi lần đổi lại một lỗi. Mức cao của Claude chọn qua các lần thử 21/11. | Chậm và tốn hơn mức thấp. | 15 |
+| Vì sao không đưa ví dụ mẫu vào lời dặn? | Chưa thử ở lời dặn viết. Quyết định đã ghi ở chỗ gần: mô tả công cụ không dùng tên địa danh thật làm ví dụ vì model hay chép ví dụ. | Không ghi cái giá. | 15 · nhỏ |
+| Vì sao dặn coi chữ câu hỏi và bằng chứng là dữ liệu? | Luật của dự án: chỉ dẫn trong nội dung lấy từ ngoài là dữ liệu. Chưa có phép đo riêng. | Không ghi cái giá. | 15 · nhỏ |
+| Vì sao không dùng model nhỏ, rẻ hơn để viết? | Chưa so với model nào khác ngoài hai model đang có. | Không ghi cái giá. | 15 · nhỏ |
+| Vì sao không gửi độ ngẫu nhiên? | Quyết định đã ghi (01/10, chủ dự án duyệt): dùng mặc định của model; cùng quyết định ghi không gọi lại khi hãng lỗi, không model dự phòng. | Không ghi cái giá. | 15 · nhỏ |
+| Vì sao số nguồn sai thì rút cả câu trả lời? | Quyết định đã ghi (đặc tả lúc dựng): số nguồn không khớp là lỗi của cả câu. Lập luận: số không có thật thì không biết ý đó dựa vào đâu. | Câu đúng mà quên số nguồn cũng bị rút (hiếm: 0 trên 489 lần, cuối tháng 10; 0 trên 93 lượt, 21/11). | 16 |
+| Vì sao câu từ chối cố định và so đúng từng chữ? | Quyết định đã ghi: là một phần của điều kiện "chỉ trả lời từ kho", các phép đo dựa vào nó; 21/11 vào danh sách sàn không nới. | Lời từ chối cứng; model viết lệch một chữ thì bị rút như lỗi. | 16 |
+| Vì sao sửa "[Nguồn n]" ở chương trình? | Đã đo trên 1.600 câu: lỗi số nguồn 69 xuống 14, 0 câu đang đúng bị đổi, không tốn lần gọi. | Không đáng kể. | 16 |
+| Vì sao chạy lại cả lượt một lần, chỉ khi đang kèm câu trả lời liền trước? | Đã đo sáng 22/11 (Claude Sonnet 5.5): tin kiểu "bỏ chợ Đông Ba đi" ra màn hình lỗi 3 trên 7 lần; sau sửa 0 trên 5, chạy lại thật xảy ra ở 2 lượt, cả hai ra câu trả lời. | Chờ thêm vài giây, tiền hai lần gọi; lần hai hỏng thì vẫn thấy lỗi. | 16 |
+| Vì sao dòng "danh sách có thể chưa đủ" do chương trình nối? | Lý do ghi trong chương trình: tìm theo đoạn chỉ ra một phần danh sách (6 trên 18 câu mẫu; "kể hết" thiếu 5 trên 6 lần, 20/11); nối bằng chương trình thì chữ gửi model không đổi. | Khuôn chữ hẹp; lượt đã kể theo mục lục kho vẫn nhận dòng này. | 16 |
+| Vì sao không dùng model thứ hai kiểm câu trả lời với nguồn? | Chưa thử trên đường người dùng; chỉ có ở phép đo. | Không ghi cái giá. | 16 · nhỏ |
+| Vì sao chữ hiện trước rồi mới kiểm? | Trỏ bài 6, quyết định 4. | Xem bài 6. | 16 · nhỏ |
+| Vì sao không gọi model khi bước tìm không ra đoạn nào dùng được? | Đặt câu từ chối ngay, đỡ một lần gọi model. | Không ghi cái giá. | 16 · nhỏ |
+
+## Chặng 4 — Đo
+
+| Câu hỏi | Đã chọn — vì sao | Cái giá | Bài |
+|---|---|---|---|
+| Vì sao bộ câu do AI soạn từ chính kho? | Lập luận: bộ có sẵn nơi khác hỏi điều kho không có; câu người thật chưa có vì hệ thống chưa lên mạng. | Phải tự soạn, duyệt, sửa đáp án khi kho đổi; có thể không giống cách người thật hỏi. | 17 |
+| Vì sao bỏ 29 câu không tự nhiên khỏi số chính? | Quyết định đã ghi: chủ dự án quyết 24/10, thước đo phải sát câu người dùng thật. Số chính trên 147 câu (129 có đáp án trong kho). | Lập luận, chưa đo: thước có thể dễ hơn một chút. | 17 |
+| Vì sao có 18 câu kho không có đáp án? | Luật gốc "0 câu ngoài kho được trả lời bằng kho"; không có loại câu này thì không đo được. | 18 câu là ít; trượt 1 câu đã là 1 trên 18 (lượt 18/11). | 17 |
+| Vì sao chia cố định nhóm thử (120) và nhóm kiểm lại (56)? | Lập luận chuẩn của việc đo; bằng chứng về sau: 01/11 trên bộ cất riêng, "đủ ý" thấp hơn bộ quen khoảng 0,4. | Nhóm kiểm lại nhỏ; đã nhìn kết quả thì không còn "chưa ai thấy". | 17 |
+| Vì sao có bộ câu cả coding agent cũng không được đọc? | Lập luận: người và agent đọc được bộ quen nên có thể vô tình sửa cho hợp nó. | Mỗi bộ chỉ "mới" được một lần; hai bộ đã dùng, chưa có bộ mới. | 17 |
+| Vì sao cần riêng một bộ 32 câu an toàn? | Lập luận (hồ sơ chỉ ghi bộ dành cho loại lỗi tệ nhất): lỗi nặng hiếm, bộ chung không đủ câu để thấy. | 0 lỗi trên 28 câu chỉ cho biết tỉ lệ dưới khoảng 10–12 %. | 17 |
+| Vì sao bộ câu chỉ có câu gõ có dấu? | Quyết định đã ghi: chủ dự án quyết 25/10. Đã đo: trên 32 câu, có dấu 13 câu đủ đoạn đúng, bỏ dấu còn 1. | Người gõ không dấu hay nhận từ chối. | 17 · nhỏ |
+| Vì sao mỗi bản bộ câu có dấu vân tay? | Đáp án mẫu đã sửa hai lần (25/10, 30/10); dấu cho biết hai lần chấm cùng bản hay không. Lý do đọc ra từ hồ sơ; chưa thấy dòng ghi riêng. | Không ghi cái giá. | 17 · nhỏ |
+| Vì sao chấm riêng bước tìm? | Đã gặp: 22 câu từ chối nhầm từng được chẩn là "model rụt rè"; chấm bước tìm thì cả 22 thiếu đoạn đúng. | Phải có nhãn đoạn đúng, tốn công và phải làm lại khi kho đổi. | 18 |
+| Vì sao giữ hai thước, một nhanh một chính xác? | Thước từ khoá chạy cả 158 câu, không tốn tiền, nhưng đã chẩn sai 4 câu; thước nhãn sát hơn nhưng chỉ có cho 55 câu khó. | Hai thước có thể nói khác nhau; khi đó tin thước chính xác. | 18 |
+| Vì sao chấm ở hai chỗ: trong 30 và trong 10 đoạn? | Đã đo: 33 trên 40 câu đủ trong 30 ứng viên nhưng chỉ 24 trong 10 đoạn ⇒ chỗ nghẽn là thứ tự xếp. | Thêm một tầng số phải đọc. | 18 |
+| Vì sao điều kiện là "0 câu mất đoạn đúng"? | Lập luận: người dùng gặp từng câu, không gặp trung bình. Ví dụ: model embedding lớn giúp 2, hỏng 3. | Điều kiện rất khắt khe; xếp hạng câu một ý hầu như đứng yên từ cuối tháng 10. | 18 |
+| Vì sao tính "dấu vân tay" cho kết quả tìm? | Cách rẻ chứng minh một thay đổi không đụng bước tìm: không gọi model, không chấm lại. | Dấu chỉ nói "có đổi hay không". | 18 · nhỏ |
+| Vì sao chỉ 55 câu khó có nhãn? | Chưa thấy ghi lý do. Lập luận: đánh dấu tốn công nên làm cho loại câu dễ hỏng nhất. | Không ghi cái giá. | 18 · nhỏ |
+| Vì sao chương trình đo vẫn đọc bản nhãn thứ năm? | Chưa thấy ghi lý do; chưa ai nối bản sáu. | Số 22 trên 38 ngày 19/11 chấm bằng bản năm. | 18 · nhỏ |
+| Vì sao để model chấm, không để người chấm? | Quyết định đã ghi ở hồ sơ đánh giá: cần người chấm tự động, rẻ, lặp lại được; khoảng 350 câu trả lời mỗi lần so, khoảng 45 lần so. | Không có mốc từ người thật; người chấm model có thể lệch theo cách riêng. | 19 |
+| Vì sao người chấm lúc đầu là Claude, nay là chính model đang viết? | Quyết định đã ghi: 24/10 chủ dự án đổi sang Claude vì "tiết kiệm; khác họ với model sinh"; tối 21/11 hết tiền cho gpt-6-luna, chủ dự án hỏi dùng Sonnet chấm luôn. | Đi ngược lý do 24/10; số mới không so thẳng với số cũ. | 19 |
+| Vì sao chấm mù, trộn hai bản? | Lập luận: biết đâu là bản mới thì dễ nghiêng. Đã đo: lệch do người chấm 2 trên 88 câu, nhỏ so với lệch do model viết 10 trên 83. | Phải chấm lại cả hai bản mỗi lần; che tên không che mọi dấu vết. | 19 |
+| Vì sao so theo cặp từng câu? | Luật của bộ đo: hai trung bình gần nhau có thể che câu tốt lên và câu hỏng. | Chỉ so được hai bản trên cùng bộ câu. | 19 |
+| Vì sao đo nhiễu trước khi tin một mức chênh? | Đã đo (19/11, gpt-6-luna): 1, 2 và 7 câu tự đổi điểm ở ba tiêu chí khi chạy lại y nguyên. | Tốn thêm một lượt; số nhiễu là của model cũ, chưa đo lại. | 19 |
+| Vì sao điều kiện không được vỡ đứng trên trung bình? | Quyết định đã ghi: thứ tự lỗi do chủ dự án đặt. Lập luận: trung bình trộn mọi loại lỗi vào một số. | Đã bỏ thay đổi có lợi rõ (từ chối nhầm 13 xuống 1 nhưng 2 câu ngoài kho bị trả lời). | 19 |
+| Vì sao nâng ngưỡng khi thử nhiều bản cùng lúc? | Thử nhiều bản thì dễ có một bản trông như thắng do may; hiệu chỉnh Holm bù. | Cần nhiều câu thắng hơn. | 19 · nhỏ |
+| Vì sao không dùng thước đếm chữ trùng hay thư viện đánh giá RAG có sẵn? | Chưa thử. Lập luận: câu đúng có thể viết chữ khác hẳn đáp án mẫu. Thư viện có sẵn: chưa thấy ghi lý do không xét. | Không ghi cái giá. | 19 · nhỏ |
+| Vì sao ghi điều kiện trước? | Quyết định đã ghi trong cách làm việc: thấy số rồi thì dễ tìm cách đọc cho thắng; hai ví dụ thật bị điều kiện ghi trước loại. | Luật không phân biệt "quá một câu" với "quá mười câu". | 20 |
+| Vì sao mỗi lần chỉ đổi một thứ? | Đã gặp: từ chối nhầm 22 xuống 12 gộp ba thay đổi, không tách được phần của "10 đoạn". | Chậm: ba ý là ba lần đo. | 20 |
+| Vì sao giữ hồ sơ cả lần bỏ, và đếm trước khi xây? | Hồ sơ lần bỏ trả lời "vì sao không làm cách X"; hơn nửa số dòng bảng tổng là lần bỏ. Lập luận: đếm không tốn tiền; 12/11 ba ý dừng ở bước đếm. | Công ghi chép; kết luận "bỏ" có thể cũ khi cấu hình đổi. | 20 |
+| Vì sao có lúc giữ thay đổi dù vỡ điều kiện? | Hai ca thật: 3 câu đổi sang từ chối nhưng bản chưa đổi cũng ra đúng 3 câu đó; hỏi bằng ảnh gán tên Huế 2 trên 5 ảnh lạ, giữ ở dạng bấm xác nhận. | Mỗi ngoại lệ làm luật yếu đi; phải có người kiểm độc lập đồng ý. | 20 |
+| Vì sao từ 21/11 bớt số lượt đo? | Quyết định đã ghi: chủ dự án nhận xét tối 21/11 nhóm đo quá nhiều; dặn không đặt số cố định và không để chất lượng tụt. | Kết luận ở thay đổi nhỏ kém chắc hơn. | 20 |
+| Vì sao không thử trên người dùng thật? | Chưa làm được: chưa lên mạng, chưa có người dùng thật. | Mọi "tốt hơn" là tốt hơn trên bộ câu của nhóm. | 20 · nhỏ |
+| Vì sao không để máy tự dò mọi tổ hợp tham số? | Đã thử 19/11: 15 cấu hình bước tìm, không cách nào hơn vượt nhiễu (bản đang chạy 22 trên 38); 38 câu là quá ít để phân biệt. | Chỉ dò nút chỉnh lúc hỏi. | 20 · nhỏ |
+| Vì sao mốc phải đo cùng buổi ở khâu có model? | Luật của bộ đo: cùng model mỗi lần trả lời hơi khác; khâu chương trình tính ra y hệt. | Tốn gấp đôi lượt chạy. | 20 · nhỏ |
+| Vì sao lần đo đầu khi chọn nhà cung cấp phải qua đường người dùng thật? | Luật thêm sau ca dịch vụ tìm web: thắng khi đo riêng bước tra, hoà khi đi qua máy chủ. | Không ghi cái giá. | 20 · nhỏ |
+
+## Chặng 5 — Trợ lý hỏi đáp
+
+| Câu hỏi | Đã chọn — vì sao | Cái giá | Bài |
+|---|---|---|---|
+| Vì sao cho model tự tìm thêm, trần 2 lần? | Đã đo (gpt-6-luna, 18 câu cần nhiều nguồn): "đủ ý" tăng 1,17 (khoảng tin cậy +0,44 tới +2,00). 1 lần: từ chối nhầm 5 lên 7 trên 30; 3–4 lần: như cũ. | Lúc mới mở có 1 câu an toàn sai mới (chữa bằng câu dặn hẹp); câu kho không có tốn thêm hai vòng. | 21 |
+| Vì sao hết hai lần tìm thì cất hẳn công cụ? | Đã đo: dòng nhắc "hết lượt" làm 8 trên 8 câu kho không có tốn thừa một lần gọi; cất công cụ thì câu giữa từ 22,85 xuống 16,15 giây. | 3 câu đổi sang từ chối (bản chưa đổi cũng ra đúng 3 câu đó). | 21 |
+| Vì sao hết vòng thì trả câu từ chối cố định? | Chưa thấy ghi lý do. Điều thấy được: lúc đó model mới xin công cụ, chưa có câu trả lời qua kiểm. | Nhận từ chối kể cả khi 10 đoạn đầu đã đủ; vẫn tốn tiền các vòng đã chạy. | 21 |
+| Vì sao đã dặn rồi mà chương trình vẫn kiểm sau khi viết? | Lập luận: lời dặn là lời nhờ. Đã gặp: mở quyền tìm thêm làm xuất hiện một câu an toàn sai mới. | Chữ đã hiện có lượt bị rút; chưa biết đoạn có nói đúng điều câu trả lời viết. | 21 |
+| Vì sao mỗi vòng chỉ gọi một công cụ? | Chưa thấy ghi lý do lúc đặt. Đã thử bật gọi nhiều: model gần như không dùng (1 trên 176 câu). | Câu cần ba công cụ mất ba vòng. | 21 |
+| Vì sao không để model tự quyết hết? | Đã đo từng mảnh: ba lần mở thêm quyền đều không thắng; model tự tính thì sai ngày. | Không ghi cái giá. | 21 · nhỏ |
+| Vì sao không dùng nhiều agent? | Chưa thử. Lập luận: đường đi một lượt cố định, một trợ lý cùng vài lần gọi hẹp là đủ. | Không ghi cái giá. | 21 · nhỏ |
+| Vì sao dùng thư viện có sẵn chạy vòng công cụ? | Quyết định đã ghi: dùng OpenAI Agents SDK; đổi sang Claude thì giữ thư viện, viết lớp nối. Lý do chọn đúng thư viện này: chưa thấy ghi. | Không ghi cái giá. | 21 · nhỏ |
+| Vì sao xếp loại câu bằng một lần gọi model, không luật từ khoá? | Lập luận: cần hiểu nghĩa cả câu. Luật từ khoá cho bốn tuyến chưa thử; bằng chứng gần nhất: luật bắt câu khẩn cấp đúng 14/14 đã thấy, 0/8 chưa thấy, chặn nhầm 2/8. | Mỗi lượt thêm một lần gọi (0,0034 USD ở ví dụ chính); đổi model thì cách xếp đổi. | 22 |
+| Vì sao xếp loại chạy song song với trả lời? | Đã đo (gpt-6-luna): chữ đầu sớm hơn 1,37 giây. Song song cả câu chào: đã thử 10/11, bỏ. | Câu không về Huế tốn phần chạy trước bị bỏ (khoảng 0,00023 USD); chương trình phức tạp hơn. | 22 |
+| Vì sao phân vân, lỗi, quá hạn thì coi là "về Huế"? | Lý do ghi trong kế hoạch: câu về Huế bị đẩy ra ngoài thì không bước nào sửa; câu lạ vào đường đầy đủ còn các bước kiểm. | Vài câu ngoài phạm vi lọt vào: 2 trên 44 (12/11) bị đem đi tra web. | 22 |
+| Vì sao câu "ngoài phạm vi" là câu cố định do chương trình trả? | Quyết định đã ghi (02/11): câu cố định được đếm là từ chối; chủ dự án đọc chữ trước khi đưa vào. | Câu giống nhau cho mọi câu ngoài phạm vi. | 22 |
+| Vì sao câu khẩn cấp không có câu soạn sẵn kèm số điện thoại? | Quyết định đã ghi: chủ dự án quyết là ngoài phạm vi. | Người gặp nạn nhận câu trả lời theo kho, hoặc từ chối kèm "Từ web". | 22 |
+| Vì sao dùng chính model viết để xếp loại? | Chưa thấy ghi lý do. Điều thấy được: chỉ giữ một khoá, một hãng. | Khoảng một phần năm tiền của lượt (0,0034 trên 0,0178 USD). | 22 · nhỏ |
+| Vì sao bộ xếp loại trả khuôn một ô, bốn giá trị? | Kế hoạch ghi: đầu ra lạ bị bắt ngay thành lỗi, lỗi thì coi là "về Huế". | Bộ xếp loại không nói được gì thêm. | 22 · nhỏ |
+| Vì sao câu chào tốn hai lần gọi? | Đã cân lúc lập kế hoạch, không chọn gộp: đầu ra dài, khó tách luồng, lẫn hai việc. | Một lần xếp loại và một lần đáp. | 22 · nhỏ |
+| Vì sao lịch sử chỉ mang câu trả lời lượt liền trước? | Đã đo: nhớ cả ba câu (03/11) từng trả lời tin ngoài kho bằng đoạn khác, lợi chưa chắc; đếm 20/11 trên 122 lượt: thiếu câu trả lời cũ hỏng 3 lượt, cả ba trỏ câu vừa rồi. | Lượt dài thêm khoảng 400–500 token. | 23 |
+| Vì sao lần tìm đầu không ghép câu hỏi trước? | Chưa thấy ghi lý do cho riêng lần tìm đầu. Điều thấy được: ghép bằng chương trình ở câu tra web (15/11) hỏng 2 trên 3 cặp đổi chủ đề thật. | Tin nối tiếp tốn thêm một vòng model. | 23 |
+| Vì sao lượt có thời tiết, ngày, khoảng cách không giữ câu trả lời? | Đã đo 21/11 (Claude Sonnet 5.5): có câu cũ thì model tự từ chối 8 trên 10 lần khi hỏi tiếp về con số; không có: 0 trên 6. | Hỏi tiếp phải gọi lại công cụ, chậm một vòng. | 23 |
+| Vì sao chạy lại đúng một lần, chỉ khi mang câu trả lời cũ? | Lập luận: lỗi do câu cũ gây ra; bỏ nó thì lần hai tệ nhất bằng lúc chưa giữ, một lần thì không lặp mãi. | Gấp đôi lần gọi, chờ thêm vài giây. | 23 |
+| Vì sao chương trình đếm vế và chốt kết quả? | Đã đo: đổi lời dặn cho mọi tin thì 3 trên 18 câu ngoài kho bị trả lời; để chương trình quyết thì 10 trên 10 tin nhiều ý, bộ kín 0 trên 10. Chủ dự án chọn bật. | Tin hai ý mà một vế không có từ hỏi riêng bị đếm một vế. | 23 |
+| Vì sao nối thêm 2 đoạn mỗi vế, không chia lại 10 đoạn? | Đã đếm: "4 đoạn của cả tin + 2 đoạn mỗi vế" mất đoạn ở 3 trên 13 tin; 2, 3, 4 đoạn mỗi vế cùng kết quả; lượt thật 3 thành 15 trên 24. | Chờ thêm 0,75 giây; số dòng ý thiếu gần như không đổi (24 xuống 21). | 23 · nhỏ |
+| Vì sao lịch sử nằm ở máy chủ? | Quyết định đã ghi (kế hoạch phần nhớ): trình duyệt gửi lại lịch sử thì thành chỗ cài lệnh. | Khởi động lại là mất. | 23 · nhỏ |
+| Vì sao lượt lỗi, ngắt, rút không vào lịch sử? | Quyết định đã ghi (kế hoạch phần nhớ): bấm "Thử lại" là hỏi lại như chưa từng có. | Lượt bị ngắt mất khỏi ngữ cảnh lượt sau. | 23 · nhỏ |
+| Vì sao ngày, dự báo, khoảng cách do chương trình tính? | Đã đo: trước khi làm, 6 trên 12 câu theo ngày bị từ chối nhầm; có công cụ thì bớt 9 câu, 0 sai ngày. Khoảng cách: 4 trên 6 câu bị từ chối (16/11). | Nơi, ngày, dạng câu ngoài phạm vi chương trình thì không có số. | 24 |
+| Vì sao lịch được tính sẵn trước lần gọi đầu? | Đã đo 10/11 (19 câu, gpt-6-luna): chữ đầu câu giữa 5,60 xuống 2,35 giây; lần gọi model 52 xuống 31. | Chỉ dạng ngày đã liệt kê được tính sẵn. | 24 |
+| Vì sao chỉ đưa công cụ khi câu có từ khoá? | Đã gặp hai lần: 05/11 công cụ tính tiền làm câu miễn vé bỏ điều kiện 3 trên 3; 17/11 bản luôn đưa thời tiết nối bảng mưa vào câu giá đi lại, chủ dự án chọn lùi. | Sót 4 trên 60 câu cần công cụ (21/11). | 24 |
+| Vì sao thời tiết lỗi thì không đưa số, không gọi lại? | Luật ghi trong chương trình: lỗi thì không bao giờ đưa số. Không gọi lại: chưa thấy ghi lý do. | Dịch vụ chậm quá 3 giây là lượt đó không có dự báo. | 24 |
+| Vì sao không giao cộng tổng tiền cho chương trình? | Đã đo hai lần: phép cộng đúng (8/8, 5/5) mà câu trả lời tệ đi (miễn vé bỏ điều kiện 3/3; 6 trên 12 lượt ra từ chối). | Tổng tiền do model tự cộng, không có bước kiểm. | 24 |
+| Vì sao khoảng cách tra bảng dựng sẵn? | Đã đo: phút đổi bằng luật "1,25 × phút + 5", khớp 6 trên 6 cặp đối chiếu; hằng số cũ chọn bằng mắt chỉ khớp 3 trên 6, bỏ. Đường chim bay: quyết định đã ghi, chưa đo. | Nơi ngoài 40 điểm không có số; không có đi bộ, đi thuyền. | 24 · nhỏ |
+| Vì sao câu ngay sau câu bão cũng coi là lượt bão? | Chương trình chọn "thừa hơn sót". | Câu tiếp không liên quan cũng nhận số 112 ở cuối. | 24 · nhỏ |
+| Vì sao kiểm số gỡ câu ở lượt thường, rút cả câu ở lượt lịch? | Ghi trong chương trình: chữ lượt lịch ghép với khung do chương trình dựng, không gỡ từng câu được. | Không ghi cái giá. | 24 · nhỏ |
+| Vì sao tra sẵn khoảng cách chỉ nhận một dạng câu hẹp? | Đã đo: bản đếm "có đúng hai tên điểm" ra sai cặp ở 15 trên 21 câu phá; dạng hẹp: 0 câu sai cặp. | Câu khác dạng đi đường công cụ, chậm hơn. | 24 · nhỏ |
+| Vì sao chỉ tra web khi cả câu bị kho từ chối? | Quyết định đã ghi: kế hoạch ghi "kho luôn thắng". Để trợ lý tự quyết tra web: đã đo, 4 trên 10 bằng mốc (cần 6), bỏ. | Câu trả lời một phần thì phần thiếu không có thông tin web. | 25 |
+| Vì sao câu gửi web dựng từ câu của lượt này? | Quyết định đã ghi: không để lịch sử lộ ra ngoài. Ngoại lệ tin nối tiếp đã đo (15/11): đúng tên nơi 0/10 thành 8/8; chủ dự án chọn bật. | Ở tin nối tiếp, chữ model viết ra ngoài có thể mang chi tiết người dùng không gõ. | 25 |
+| Vì sao một lần gọi dịch vụ tìm web, hạn 5 giây? | Quyết định đã ghi: lỗi hạ tầng khác với không có kết quả. Không gọi lại: chưa thấy ghi lý do; log 05–12/11 không lỗi lần nào trong 73 lượt. | Hết lượt dịch vụ thì mọi mục web báo chưa tra được (đã xảy ra trưa 21/11). | 25 |
+| Vì sao mục web do một lần gọi model riêng viết? | Quyết định đã ghi: chữ web không tin cậy, không có công cụ nào để nó lái; link do chương trình giữ. | Thêm 2–5 giây mỗi lượt có mục web. | 25 |
+| Vì sao chương trình kiểm số và link của mục web? | Đã đo: vòng đầu (05/11) 2 mục web khẳng định như thật mức lũ và lịch cúp điện; có luật: 0 trên 7 khẳng định tin chưa kiểm, 7 trên 7 hữu ích. | Khoảng một phần ba lượt tra không có chữ model (19 % bỏ cả mục, 18 % "chưa xác minh"). | 25 |
+| Vì sao chấp nhận gửi câu hỏi ra dịch vụ ngoài? | Quyết định đã ghi: chủ dự án chấp nhận khi duyệt thiết kế; 22/11 nhóm xét lại và giữ. | 2 trên 44 câu ngoài phạm vi từng bị gửi đi; không có bộ lọc tên riêng. | 25 |
+| Vì sao mục web tới một lần, không hiện dần? | Ghi trong chương trình: phải qua kiểm cuối trước khi hiện. | Người dùng chờ cả mục. | 25 · nhỏ |
+| Vì sao câu bão / lũ ở mục web không cho model viết? | Đã gặp vòng đầu 05/11 (khẳng định mức lũ có số mét); từ 18/11 mọi lượt bão nhận câu cố định, "thừa hơn sót". | Không ghi cái giá. | 25 · nhỏ |
+| Vì sao link do máy chủ dựng mà giao diện còn kiểm lại? | Hai tầng: máy chủ chỉ nhận link http, https; giao diện chỉ vẽ link đó và không tạo link từ chữ model. | Không ghi cái giá. | 25 · nhỏ |
+| Vì sao model chỉ đoán tên ảnh, câu trả lời vẫn đi đường kho? | Ghi trong chương trình và thiết kế: model không viết chữ trả lời từ ảnh; câu từ kho có nguồn để kiểm. | Không hỏi được chi tiết trong ảnh; ngoài 42 tên thì không nhận ra. | 26 |
+| Vì sao có bước xác nhận, và một tên thì hỏi luôn? | Đã đếm 33 ảnh × 2 lượt: một tên thì đúng 31 trên 33; 2–3 tên thì tên đầu đúng 11 trên 17. Chủ dự án chọn cách lai sau khi thử 15/11. | Còn 6 trên 66 lượt trả lời về sai nơi; 19 trên 66 lượt vẫn phải bấm. | 26 |
+| Vì sao không dùng model nhận ảnh chạy trên máy? | Đã đo: SigLIP 2 gán tên Huế cho cả 5 trên 5 ảnh không phải Huế; hai model DINO tên đầu đúng 17 và 19 trên 25 (gpt-6-luna 21), không tách được ảnh lạ. | Ảnh rời máy tới hãng; tốn tiền (khoảng 0,0004 USD với gpt-6-luna) và vài giây. | 26 |
+| Vì sao thu nhỏ 1.024 điểm ảnh, chặn 10 MB và 40 triệu điểm ảnh? | Lập luận: hai mức chặn để file lớn hay ảnh bom giải nén không làm đầy bộ nhớ; 1.024 vì rẻ (khoảng 922 token); bỏ thông tin kèm ảnh để vị trí chụp không ra ngoài. | Chi tiết nhỏ trong ảnh lớn có thể mất. | 26 |
+| Vì sao model lỗi thì hiện "chưa nhận ra ảnh", không gọi lại? | Quyết định đã ghi (kế hoạch): không đoán khi lỗi. Hạn 20 giây nâng từ 15 khi nâng trần chữ ra. Không tách lời báo "lỗi" và "không nhận ra": chưa thấy ghi lý do. | Người dùng không biết hệ thống lỗi hay ảnh lạ. | 26 |
+| Vì sao ảnh gửi dạng dữ liệu thô? | Ghi trong chương trình: buộc trang khác phải hỏi trước, mà máy chủ không cho trang khác. | Không ghi cái giá. | 26 · nhỏ |
+| Vì sao model nhìn ảnh không thấy chữ người dùng gõ? | Chưa thấy ghi lý do. Điều thấy được: kế hoạch ghi "không chữ người dùng, không lịch sử". | Không ghi cái giá. | 26 · nhỏ |
+| Vì sao ảnh là tệp đính kèm, chưa gửi cho tới khi bấm Hỏi? | Quyết định đã ghi: chủ dự án chọn 15/11. | Không ghi cái giá. | 26 · nhỏ |
+
+## Chặng 6 — Lên kế hoạch
+
+| Câu hỏi | Đã chọn — vì sao | Cái giá | Bài |
+|---|---|---|---|
+| Vì sao chọn bằng nút, không gõ câu? | Đã đo: xếp từ câu gõ thử hai lần, cả hai dưới sàn ghi trước. Với nút, máy chủ nhận đúng một giá trị trong tập cho phép. | Điều biểu mẫu không có ô (giờ tới, giờ về) không nói được khi lập lịch. | 27 |
+| Vì sao xếp lịch là việc của chương trình? | Quyết định đã ghi trong thiết kế: phép tính, luật, giờ, chọn quán, ảnh do chương trình; rút từ các lần model tính bị âm. | Lịch chỉ hay bằng luật và bảng; điểm ngoài 41 dòng không bao giờ được xếp. | 27 |
+| Vì sao máy chủ kiểm lại giá trị khi giao diện đã chỉ cho bấm đúng? | Ghi trong chương trình: giá trị từ trình duyệt là dữ liệu không tin cậy. | Giao diện và máy chủ phải khớp tập giá trị. | 27 |
+| Vì sao bảng điểm có một chỗ sai thì máy chủ không bật? | Ghi trong chương trình: bài học 10/11, thiếu file thì tính năng tự tắt mà không ai biết. | Một lỗi nhỏ ở bảng làm cả hệ thống không vào được, kể cả hỏi đáp. | 27 |
+| Vì sao có ô không đổi lịch (số người lớn), và loại sở thích bị ẩn? | Quyết định đã ghi: ngưỡng 4 điểm do chủ dự án chốt; ô số người "có chủ ý" để dành cho phần chi phí. Lý do của con số 4: chưa thấy ghi lý do. | Người dùng có thể nghĩ số người đổi lịch. | 27 · nhỏ |
+| Vì sao ô chat chỉ dẫn sang trang, không tự lập lịch? | Đã đo 20/11 qua giao diện thật: câu nhờ lập lịch nhận lịch chữ chung chung; dòng chỉ đường là bản nhỏ nhất. Khuôn nhận 17/20, nhận nhầm 0/20. | Người dùng phải bấm thêm và chọn lại bằng nút. | 27 · nhỏ |
+| Vì sao hai mức 75 và 150 phút, quỹ 210 hay 240? | Thiết kế ghi kèm phép thử số (hai điểm ngắn cùng cụm 165, ba điểm ngắn 255 không vừa). Lý do của 75 và 150: chưa thấy ghi lý do. | Điểm cần 2 giờ vẫn tính 150 phút; 31 trên 41 điểm có thời lượng dựa vào web. | 28 |
+| Vì sao sáng 8:00, chiều 13:30, điểm thêm buổi sáng xong trước 60 phút? | Giờ chiều để xong trước giờ đóng 30 phút. Mốc 60 phút: đã gặp 17/11, đếm 26 ngày trên 960 cách điền biểu mẫu. | Phút đi chỉ ước theo cụm; lịch không dời theo giờ tới, giờ về. | 28 |
+| Vì sao gom theo cụm, phút đi ước theo cụm? | Luật "một ngày nhiều nhất 2 cụm" có từ thiết kế gốc. Lý do của số 2 và 15, 30 phút: chưa thấy ghi lý do. | Ca "quay lại cùng khu": 104 trên 960 cách điền. | 28 |
+| Vì sao có trẻ em hay người lớn tuổi thì giới hạn chặt? | Nhóm đọc một hệ thống lập lịch khác thấy nó xếp 5–6 điểm một ngày khi có người lớn tuổi, xếp cả điểm sau giờ đóng; luật an toàn đặt lên đầu để tránh hai lỗi đó. | Gia đình khoẻ muốn đi nhiều vẫn bị giữ mức nhẹ. | 28 |
+| Vì sao ngày mưa chỉ đổi điểm khi dự báo từ 6 mm? | Quyết định đã ghi: chủ dự án chốt 15/11, 6 mm là đầu cấp "Mưa" theo quy chuẩn khí tượng Việt Nam. Chỉ mốc 60 %: đã đo, bỏ (222/365 ngày đủ 60 %). | Chỉ 12 trên 41 điểm trong nhà; ngày mưa to vẫn có thể toàn điểm ngoài trời. | 28 · nhỏ |
+| Vì sao cụm "phía nam xa" chỉ khi đi từ 3 ngày, không ở ngày 1? | Quyết định đã ghi: chủ dự án chọn "từ 3 ngày"; "không ở ngày 1" có từ thiết kế bản hiện nay. | Lịch 1–2 ngày không có Bạch Mã, đèo Hải Vân. | 28 · nhỏ |
+| Vì sao điểm lấp đi theo thứ tự dòng trong bảng? | Chưa thấy ghi lý do. Điều thấy được: không có cột xếp hạng nào khác cho điểm lấp. | Không ghi cái giá. | 28 · nhỏ |
+| Vì sao điểm đầu buổi sáng phải còn "bạn chiều" cùng cụm hoặc cụm kề? | Để buổi chiều không lấp bằng điểm ngoài sở thích; có từ lần sửa 06/11. Mô phỏng lần đầu thấy 2 trên 960 khung thiếu điểm ưu tiên số 1. | Không ghi cái giá. | 28 · nhỏ |
+| Vì sao phần không xếp được thành ghi chú? | Quyết định đã ghi trong thiết kế: model không viết lý do, chương trình chọn câu theo mã; định nghĩa chấm đòi dòng ghi chú. | Phải đọc ghi chú mới biết lịch nhân nhượng gì. | 29 |
+| Vì sao có bước kiểm khung viết riêng? | Ghi trong chương trình: cho mô phỏng toàn tổ hợp và test cố tình vi phạm; bộ xếp chỉ biết nó định làm gì. | Mỗi luật viết hai lần, sửa cùng nhau. | 29 |
+| Vì sao model trả danh sách theo mã mục? | Quyết định đã ghi trong thiết kế: hai lần trước, khuôn đổi thì model viết lệch khung, tự thêm giờ. | Câu mô tả không nối ý giữa hai điểm. | 29 |
+| Vì sao câu hỏng chỉ thay câu đó, không rút cả lịch? | Quyết định đã ghi trong thiết kế: phần đúng của lịch không phụ thuộc model; nhánh "rút cả lịch" đã bỏ. | Có mục chỉ có "tên — điểm di tích [n]". | 29 |
+| Vì sao mỗi điểm một đoạn kho, có 18 điểm chọn tay? | Đã gặp: nghiệm thu đầu (13/11) trượt vì câu dự phòng dồn vào điểm có bài kho mỏng. | Đoạn chọn tay gắn mã đoạn; dựng lại chỉ mục mà quên cập nhật bảng thì máy chủ không bật. | 29 |
+| Vì sao câu quá 30 từ không bị cắt? | Ghi trong chương trình: lời dặn đã giới hạn, cắt là sửa chữ người khác viết. | Không ghi cái giá. | 29 · nhỏ |
+| Vì sao luật "câu nói về tài liệu" không bắt chữ "tài liệu" đứng một mình? | Người review chỉ ra ca bảo tàng "trưng bày tài liệu". | Không ghi cái giá. | 29 · nhỏ |
+| Vì sao thiếu khoá model thì không lập lịch? | Chưa thấy ghi lý do. Điều thấy được: máy chủ kiểm "model đã sẵn sàng" đầu mọi yêu cầu. | Không ghi cái giá. | 29 · nhỏ |
+| Vì sao chỗ ở, quán, ảnh, toạ độ do chương trình chọn, model không thấy? | Quyết định đã ghi (luật thiết kế của trang): model không chọn ảnh, không bịa quán, không nói giá phòng; tên quán từ bản đồ mở là chữ người ngoài. | Gợi ý chỉ tốt bằng bảng; trợ lý và lịch có lúc nói khác nhau. | 30 |
+| Vì sao khu ở chọn theo buổi tối trước? | Đã đo: đếm buổi tối như điểm ban ngày 8 trên 10, dưới sàn 9; cách đang dùng 10 trên 10. | Khu phía tây gần như không được gợi ý (0 trên 3.840 khung). | 30 |
+| Vì sao không hiện giá phòng? | Quyết định đã ghi: luật nhóm từ 05/11; 14/11 chủ dự án chọn phương án không có giá. Câu "có nên hiện giá phòng không" chưa hỏi chủ dự án. | Phải bấm sang trang khác mới biết giá. | 30 |
+| Vì sao file chữ, lịch điện thoại, bản in dựng ở trình duyệt, PowerPoint ở máy chủ? | Bốn nút đầu: chưa thấy ghi lý do riêng (chỉ đổi cách hiện). PowerPoint: chủ dự án chọn thư viện Python 19/11, không có số đo. | Chỉ tải được trong 30 phút; chưa giới hạn số lượt tải. | 30 |
+| Vì sao "gần" là 2 km, bữa chính chỉ gợi ý quán ăn? | Đã đo: không giới hạn thì quán "gần" ở mức 95 % là 9,3 km. | Chỉ 75,2 % bữa có tên quán. | 30 · nhỏ |
+| Vì sao ảnh nằm trên máy dự án, không hiện ghi công? | Luật an toàn: chỉ hiện ảnh trên chính máy chủ. Không ghi công: quyết định đã ghi, chủ dự án chọn 14/11. | Một số giấy phép mở đòi ghi công (lập luận). | 30 · nhỏ |
+| Vì sao ô nền bản đồ lấy từ máy chủ ở Đức? | Quyết định đã ghi: 16/11 máy chủ chính lỗi ở mạng đã thử; chủ dự án chọn máy thay. | Máy chủ đó nhận địa chỉ mạng của người xem. | 30 · nhỏ |
+| Vì sao "Thêm vào lịch" chỉ có khi đã chọn ngày? | Ghi trong chương trình: "không đoán ngày". | Không ghi cái giá. | 30 · nhỏ |
+| Vì sao nút in chỉ ở trang Lên kế hoạch? | Đã gặp 20/11: in từ khung trò chuyện ra 5 trang không có ngày nào. | Không ghi cái giá. | 30 · nhỏ |
+| Vì sao model chỉ đọc ý thành lệnh, không tự sửa lịch? | Quyết định đã ghi (kế hoạch 14/11): "Code quyết, model chỉ hiểu ý." Chưa có phép đo so hai cách. | Chỉ làm được lệnh có trong danh sách. | 31 |
+| Vì sao mọi tin trong cuộc có lịch đều qua lần hiểu ý? | Đã đo: cổng từ khoá chỉ qua 3 trên 10 câu sửa lạ (sàn 8). Song song: chữ đầu 2,65 giây so với 4,17 giây chạy lần lượt. | Mỗi tin thêm một lời gọi; một câu giả định từng bị làm như lệnh (19/11). | 31 |
+| Vì sao lệnh không làm được thì nói "Chưa làm…"? | Đã gặp 14/11: đi đường thường thì trả lời lạc đề, có lần viết "đã rút" mà lịch không đổi. Chủ dự án chọn bật 17/11. | Có câu làm được vẫn nhận "chưa hỗ trợ" ("chỉ đi buổi sáng"). | 31 |
+| Vì sao "thêm điểm" không tự thế chỗ? | Đã đo: bản tự thế chỗ, trên 144 lịch mẫu, 33–63 % lệnh thêm tự thế chỗ, điểm bị thế là điểm chính 58–84 %; người dùng mô phỏng 21/11 lộ vòng lặp ba lượt. | Người sẵn lòng đổi phải nhắn thêm một lượt. | 31 |
+| Vì sao "thay X" không nói bằng gì thì hiện thẻ chọn? | Quyết định đã ghi (kế hoạch 05/11): nút chỉ chứa giá trị chương trình đưa. Không tự chọn: chưa thấy ghi lý do. | Thêm một lượt bấm. | 31 · nhỏ |
+| Vì sao để một model đóng vai người dùng? | Chuỗi viết sẵn chỉ hỏi điều người viết nghĩ tới; lượt đầu tìm ra tám loại câu mới. | Cùng họ model với hệ thống; mốc ba lượt tốn khoảng 14 USD. | 32 |
+| Vì sao người chấm 12 vai phải đọc mù? | Lượt đầu đọc tay, biết bên nào là model nào (6 và 9 trên 12), chưa dùng làm mốc được. | Mỗi lượt cần một agent con mới đọc 24 phiên. | 32 |
+| Vì sao thước nhỏ cần ít nhất ba lượt mỗi bên? | Đã đo nhiễu: 3 trên 41 mục, 1 trên 12 phiên. Một tra cứu công khai cũng khuyên ba lượt. | Tốn gấp ba. | 32 |
+| Vì sao giữ kịch bản demo chạy lặp khi đã ở trần? | Kịch bản chạm 23 trên 31 tính năng đang mở; ba lần thử khói sau gộp đều 0 bước hỏng. | Ở trần thì không phân biệt bản tốt với bản tốt hơn. | 32 |
+| Vì sao bộ 41 câu khó chấm bằng luật máy? | Chưa thấy ghi lý do riêng. Điều thấy được: bộ dùng để so nhiều bản trong một buổi; tài liệu ghi máy chấm "thô hơn đọc tay". | Bộ "đã thấy", dễ bị sửa cho vừa. | 32 · nhỏ |
+
+## Chặng 7 — Máy móc bên dưới
+
+| Câu hỏi | Đã chọn — vì sao | Cái giá | Bài |
+|---|---|---|---|
+| Vì sao giữ thư viện OpenAI, chạy Claude qua lớp nối tự viết? | Quyết định đã ghi: chủ dự án đặt điều kiện "giữ nguyên bộ khung"; vì sao đặt điều kiện: chưa thấy ghi lý do. Mười loại lời gọi gửi OpenAI giống nhau từng byte trước và sau. | Khác biệt giữa hai hãng dồn vào lớp nối, chỉ lộ khi chạy thật. | 33 |
+| Vì sao mức suy luận cao? | Đã đo 21/11: câu một lượt bốn mức ngang; lệnh sửa lịch khó: cao 5 trên 6, thấp 2, vừa 0; lượt có công cụ: vừa và thấp chạm trần vòng 8–9 lượt, cao 1. | Chậm hơn một chút; số đo trước khi sửa lớp nối có thể đã cũ. | 33 |
+| Vì sao chấp nhận chữ tới một lần với Claude? | Quyết định đã ghi: bộ khoá Bedrock bị từ chối khi xin chữ chạy dần; chủ dự án ghi "không cần stream thật". | Nhìn dòng trạng thái khoảng 10 giây ở lượt giữa; lợi "hiện trước, kiểm sau" mất. | 33 |
+| Vì sao Claude có đoạn dặn riêng? | Đã đo: ở xếp loại câu gpt-6-luna nhầm 0 trên 56, Claude 2 trên 56 (mức cao), 4 trên 56 (mức vừa); sửa lịch sau đoạn dặn 27 trên 27. | Mỗi lần đổi model phải đo lại ít nhất năm chỗ. | 33 |
+| Vì sao không đặt trần số token model viết ra? | Quyết định đã ghi: chủ dự án quyết 19/11; trần cũ 512 cắt 2 trên 3.974 lần gọi, cả hai ở xếp loại câu. | Chỉ hạn giờ chặn câu quá dài. | 33 · nhỏ |
+| Vì sao người chấm đổi sang chính model đang chạy? | Quyết định đã ghi: chủ dự án quyết tối 21/11 khi gác gpt-6-luna. | Người chấm cùng họ có thể chấm dễ hơn; cần lượt mốc mới. | 33 · nhỏ |
+| Vì sao không cắt thêm thời gian chờ khi lượt giữa vẫn 13 giây? | Quyết định đã ghi: hai hướng lợi lớn (chữ chạy dần, câu ngắn hơn) đều là thứ chủ dự án đã quyết; hạ mức suy luận chỉ mua khoảng 0,3 giây. | Một phần ba số lượt quá 15 giây khi chạy một mình. | 34 |
+| Vì sao xếp loại chạy song song với tìm và viết? | Đã đo 04/11 (gpt-6-luna, 20 cặp): chữ đầu sớm hơn 1,37 giây, 90 lượt an toàn không lỗi; chủ dự án duyệt. | Câu không về Huế cũng đã gửi kèm đoạn kho tới model; với Claude chưa đo lại. | 34 |
+| Vì sao bộ nhớ câu trả lời chỉ khớp đúng chữ? | Đã nghiên cứu 05/11: khớp theo nghĩa trả nhầm khoảng 8 % số lần trúng. | Tỉ lệ trúng ngoài đời có thể thấp; chưa có số. | 34 |
+| Vì sao chỉ nhớ lượt đầu, lượt từ kho, trong 24 giờ? | Quyết định đã ghi: chủ dự án yêu cầu 20/11. Chỉ lượt từ kho: lý do ghi trong chương trình. 24 giờ và 500 câu: chưa thấy ghi lý do. | Câu đầu kém thì mọi người gõ đúng câu đó nhận bản kém trong 24 giờ. | 34 |
+| Vì sao số đo nằm trong file sổ, không cơ sở dữ liệu? | Quyết định đã ghi (kế hoạch trang theo dõi): không thêm gì vào sổ, không cơ sở dữ liệu. | Mỗi lần "Xem" đọc lại tới khoảng 40 MB sổ. | 34 · nhỏ |
+| Vì sao hạn 45 giây cho phần viết? | Chưa thấy ghi lý do. Điều thấy được: chạm một lần trong 156 lượt mô phỏng tối 21/11. | Không ghi cái giá. | 34 · nhỏ |
+| Vì sao mã cuộc trò chuyện trong cookie trang không đọc được? | Lý do ghi trong chương trình cho việc máy chủ giữ lịch sử. Ba giới hạn của cookie: chưa thấy ghi lý do riêng. | Cookie chung mọi tab; mở tab thứ hai thì cuộc của tab thứ nhất bị xoá (suy từ chương trình, chưa thử). | 35 |
+| Vì sao tải lại trang thì máy chủ quên cuộc cũ? | Lý do ghi trong chương trình: chủ dự án gặp 15/11, câu vừa trả lời đúng bị từ chối. | Tải lại là mất cuộc và lịch. | 35 |
+| Vì sao chặn chữ model bằng hai lớp, lớp lọc là danh sách cho phép? | Lý do ghi trong chương trình (vòng rà bảo mật): danh sách cấm dễ sót; chính sách chặn tải bắt cả khi chữ lọt bộ lọc. | Model không chèn ảnh; thêm thứ gì từ ngoài phải sửa chính sách. | 35 |
+| Vì sao đường báo tình trạng chỉ đọc trạng thái lúc bật? | Chưa thấy ghi lý do. Điều thấy được: kế hoạch ghi "không thêm lần gọi thử". | Đã thử 22/11: Qdrant ngừng giữa chừng mà vẫn báo "ok". | 35 |
+| Vì sao hai yêu cầu cùng cuộc không xếp hàng? | Ghi trong chương trình: thiết kế cho một người dùng mỗi cuộc. | Hai tab có thể ghi đè lượt của nhau. | 35 · nhỏ |
+| Vì sao mục web lọc chặt hơn câu trả lời chính? | Link mục web chỉ lấy từ sổ nguồn do chương trình dựng. | Không ghi cái giá. | 35 · nhỏ |
+| Vì sao mở cuộc mới không còn chiếm chỗ trong kho 500 cuộc? | Đã gặp ở đợt rà bảo mật 22/11: 500 lần gọi đẩy mọi cuộc ra khỏi kho. | Không có. | 35 · nhỏ |
+| Vì sao lỗi luôn hiện bằng một câu tiếng Việt cố định? | Ghi trong chương trình: lỗi mạng mang chữ kỹ thuật tiếng Anh của trình duyệt. | Không ghi cái giá. | 35 · nhỏ |
+| Vì sao trang danh sách bài chỉ nhận mã bài trùng nguyên chuỗi? | Ghi trong chương trình: không ghép đường dẫn file từ chữ người dùng. | Không ghi cái giá. | 35 · nhỏ |
+| Vì sao ô thời tiết lỗi thì ẩn? | Cùng luật: lỗi thì không đưa ra con số. | Không ghi cái giá. | 35 · nhỏ |
+| Vì sao gom việc bật thành một lệnh? | Ghi đầu lệnh: các ca thử thật trưa 22/11, máy chủ lên mà mọi câu lỗi, màn hình không nói vì sao. | Chỉ dùng được ở máy phát triển; bật bằng tay vẫn gặp bốn ca cũ. | 36 |
+| Vì sao kiểm khoá trước, rồi Qdrant, rồi máy chủ? | Ghi trong lệnh: kiểm khoá trước để lỗi không lẫn; máy chủ chỉ nối Qdrant và so kho một lần lúc bật. | Mỗi lần chỉ thấy một lỗi. | 36 |
+| Vì sao Qdrant trong hộp Docker, chỉ nhận yêu cầu từ chính máy? | Chưa thấy ghi lý do. Điều thấy được: file mô tả ghim một bản bằng mã băm; mọi thứ nói chuyện qua cổng của chính máy. | Phải bật Docker Desktop trước; bản sao lưu nằm trong hộp. | 36 |
+| Vì sao chưa đưa lên mạng? | Quyết định đã ghi: chủ dự án quyết xong ở máy rồi mới đưa (19/11, 21/11, sáng 22/11). | Các chốt cho bản trên mạng chưa thử trên máy thật. | 36 |
+| Vì sao gói chỉ chép đúng từng file được liệt kê? | Đã gặp 07/11: danh sách chặn lọt 16 file đánh giá và 148 file ghi chú, sao lưu. | Thiếu một file là tính năng tự tắt (10/11, hỏi bằng ảnh). | 36 · nhỏ |
+| Vì sao chỉ chạy một tiến trình máy chủ? | Ghi trong file dựng gói: kho cuộc và mã lượt nằm trong bộ nhớ tiến trình. | Một máy chủ phục vụ mọi người. | 36 · nhỏ |
+| Vì sao khoá chỉ đọc lúc dùng, từ nơi ngoài repo? | Repo công khai; lý do ghi trong chương trình: cách cũ giữ khoá trong biến, lộ khi biến bị in. | Người bật phải tự có file khoá; khoá Bedrock hết hạn thì hỏi đáp ngừng. | 37 |
+| Vì sao sổ số đo không ghi chữ câu hỏi, câu trả lời? | Trang Giới thiệu hứa không lưu chữ; sổ vết có chữ chỉ ở máy phát triển (chủ dự án cho làm 15/11). | Lỗi trên bản lên mạng chỉ thấy bằng số. | 37 |
+| Vì sao chống chữ lạ bằng công cụ chỉ đọc và chương trình kiểm? | Quyết định đã ghi: chủ dự án chọn 01–02/11 không dùng model thứ hai soát chữ web. Lập luận: không có công cụ ghi hay gửi tin. | Chưa có phép đo hai chiều; link trong câu trả lời chính vẫn được phép. | 37 |
+| Vì sao chốt để đưa lên mạng viết sẵn mà để tắt? | Quyết định đã ghi: máy phát triển chỉ một người dùng; chủ dự án dặn đưa lên mạng chỉ làm sau buổi tự thử. | Quên đặt thiết lập lúc đưa lên là không có giới hạn nào. | 37 |
+| Vì sao chặn lộ dữ liệu bằng rào chạy tự động? | Lý do ghi trong rào: lộ lên repo công khai thì không lấy lại được; phép quét trùng thêm sau hai lần agent lưu dù quét báo trùng. | Rào có thể chặn nhầm; khoá dạng lạ thì không bắt được. | 37 · nhỏ |
+| Vì sao cho câu do model viết ra dịch vụ tìm web? | Quyết định đã ghi: chủ dự án chọn bật 15/11 sau khi nghe rủi ro (đo 8 trên 8); xét lại 22/11, giữ. | Tên nơi, chi tiết lượt trước đi tới dịch vụ tìm web. | 37 · nhỏ |
+| Vì sao câu trả lời chính cho link, mục web thì không? | Link mục web chỉ lấy từ sổ nguồn do chương trình dựng. | Chữ lạ trong bài kho có thể làm model chèn link. | 37 · nhỏ |
+| Vì sao ca có model dùng model giả? | Ghi trong file test: kiểm thứ tự, giữ, bỏ, gộp của chương trình, không kiểm hành vi model. | Lỗi "xin công cụ mãi" chỉ lộ khi gọi Claude thật. | 38 |
+| Vì sao một số test dùng Qdrant và model embedding thật? | Ghi đầu bộ test; luật cứng của dự án: bằng chứng từ hệ thống thật. | Phải bật Qdrant và có chỉ mục đúng; tốn bộ nhớ. | 38 |
+| Vì sao chỉ chạy cả bộ test ở mốc? | Quyết định đã ghi: chủ dự án chọn 20/11, "test vừa đủ, cả bộ test chỉ ở mốc". | Một bản sửa có thể làm hỏng file khác mà tới mốc mới thấy. | 38 |
+| Vì sao chạy từng file một? | Đã gặp: 21/11 một phiên bật 13 tiến trình làm cạn bộ nhớ; máy dùng chung khoảng 15 GB. | Cả bộ mất khoảng 16 phút; bốn file cần khoá không chạy được. | 38 |
+| Vì sao bỏ cả file khi file cần khoá model cũ? | Chưa thấy ghi lý do. Điều thấy được: danh sách bốn file bỏ, ghi "cần khoá OpenAI". | Ca không cần khoá trong cùng file không chạy. | 38 · nhỏ |
+
+## Quyết định chưa thấy ghi lý do
+
+Mọi dòng trên có nhãn "chưa thấy ghi lý do" (cả dòng hay một phần dòng):
+
+- Vì sao dừng hẳn khi model lỗi, và tìm web lỗi thì trả lời tiếp — bài 6
+- Vì sao không âm thầm gọi lại, không tự đổi model — bài 6
+- Vì sao việc tìm chạy trên máy (lý do lúc đầu) — bài 6 · nhỏ
+- Vì sao tự viết từng bước, không dùng thư viện RAG trọn gói — bài 6 · nhỏ
+- Vì sao một mảnh bằng chứng không khớp bài gốc là dừng — bài 8
+- Vì sao chương trình cắt theo luật, không nhờ model — bài 8
+- Vì sao mỗi đoạn đưa model có nhãn "Tiêu đề", "Mục", "Bằng chứng" — bài 9
+- Vì sao lấy 30 ứng viên — bài 10
+- Vì sao không đặt ngưỡng độ gần — bài 10
+- Vì sao cần phần từ khoá ngay từ đầu — bài 11
+- Vì sao BM25 mà không TF-IDF — bài 11 · nhỏ
+- Vì sao chọn Qdrant chứ không cơ sở dữ liệu vector khác — bài 12
+- Vì sao chỉ kiểm kho với chỉ mục lúc bật — bài 12
+- Vì sao hằng số trộn là 60 — bài 13
+- Vì sao 2 đoạn mỗi ý — bài 13
+- Vì sao hai model xếp lại chạy trên máy (lý do sâu) — bài 14 · nhỏ
+- Vì sao model trả về một ô chữ có dạng cố định (lý do sâu) — bài 15
+- Vì sao chỉ 55 câu khó có nhãn — bài 18 · nhỏ
+- Vì sao chương trình đo vẫn đọc bản nhãn thứ năm — bài 18 · nhỏ
+- Vì sao không xét thư viện đánh giá RAG có sẵn — bài 19 · nhỏ
+- Vì sao hết vòng thì trả câu từ chối cố định — bài 21
+- Vì sao mỗi vòng chỉ gọi một công cụ (lúc đặt) — bài 21
+- Vì sao chọn đúng thư viện OpenAI Agents SDK lúc đầu — bài 21 · nhỏ
+- Vì sao dùng chính model viết để xếp loại — bài 22 · nhỏ
+- Vì sao lần tìm đầu không ghép câu hỏi trước — bài 23
+- Vì sao thời tiết lỗi không gọi lại — bài 24
+- Vì sao dịch vụ tìm web lỗi không gọi lại — bài 25
+- Vì sao không tách lời báo "lỗi" và "không nhận ra ảnh" — bài 26
+- Vì sao model nhìn ảnh không thấy chữ người dùng gõ — bài 26 · nhỏ
+- Vì sao ngưỡng 4 điểm để hiện một loại sở thích — bài 27 · nhỏ
+- Vì sao hai mức 75 và 150 phút — bài 28
+- Vì sao một ngày nhiều nhất 2 cụm, phút đi 15 và 30 — bài 28
+- Vì sao điểm lấp đi theo thứ tự dòng trong bảng — bài 28 · nhỏ
+- Vì sao thiếu khoá model thì không lập lịch — bài 29 · nhỏ
+- Vì sao bốn nút xuất file dựng ở trình duyệt (lý do riêng) — bài 30
+- Vì sao "thay X" không tự chọn điểm thay — bài 31 · nhỏ
+- Vì sao bộ 41 câu khó chấm bằng luật máy — bài 32 · nhỏ
+- Vì sao chủ dự án đặt điều kiện "giữ nguyên bộ khung" khi đổi sang Claude — bài 33
+- Vì sao nhớ câu trả lời 24 giờ và 500 câu — bài 34
+- Vì sao hạn 45 giây cho phần viết — bài 34 · nhỏ
+- Vì sao ba giới hạn của cookie — bài 35
+- Vì sao đường báo tình trạng chỉ đọc trạng thái lúc bật — bài 35
+- Vì sao Qdrant trong hộp Docker, chỉ nhận yêu cầu từ chính máy — bài 36
+- Vì sao bỏ cả file test khi file cần khoá model cũ — bài 38 · nhỏ
+
+<details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
+
+Gom từ mục "Quyết định và lý do" và "Quyết định nhỏ hơn" của các bài 1–38 trong cùng thư mục, bản lúc 14:43 ngày 22/11/2026; không thêm sự thật mới. Bài 39–41 chưa gom (đang được kiểm). Các chỗ hai bài nói khác nhau về cùng một điều được ghi ở báo cáo gom [riêng tư], không sửa ở đây.
+
+</details>

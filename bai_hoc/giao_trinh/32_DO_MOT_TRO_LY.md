@@ -1,6 +1,6 @@
 # Bài 32 — Đo một trợ lý: hội thoại nhiều lượt, người dùng mô phỏng, kịch bản chạy lặp
 
-*Cập nhật 13:16, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập · các thước, cách chấm và số chép từ hồ sơ đo các ngày 14–22/11 (phần lớn ngày 21/11, hai model: gpt-6-luna và Claude Sonnet 5.5 mức suy luận cao); số đếm loại câu của bộ 41 câu đếm lại bằng máy, không đọc câu; người viết không chạy lại phép đo nào.*
+*Cập nhật 14:48, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập · các thước, cách chấm và số chép từ hồ sơ đo các ngày 14–22/11 (phần lớn ngày 21/11, hai model: gpt-6-luna và Claude Sonnet 5.5 mức suy luận cao); số đếm loại câu của bộ 41 câu đếm lại bằng máy, không đọc câu; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** bộ 176 câu mẫu đo bước tìm và câu trả lời, mỗi câu một lượt (bài 17–19); một thí nghiệm đổi một thứ, đo theo cặp, so với nhiễu (bài 20); trợ lý tự tìm thêm, gọi công cụ, nhớ cuộc trò chuyện, sửa lịch (bài 21–31).
 **Bài này thêm:** những thứ trợ lý làm qua nhiều lượt thì bộ 176 câu không thấy. Bài giảng năm thước của phần trợ lý (chuỗi hội thoại, người dùng mô phỏng, bộ câu khó, kịch bản demo, bộ dò mù), ai chấm từng thước, mức nhiễu của thước nhỏ, luật "ít nhất ba lượt mỗi bên", và các số chính hiện có.
@@ -186,7 +186,7 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 
 **Thước 29 câu:** Claude 29 / 29, gpt-6-luna 28 / 29; nhóm ghép công cụ 8 / 8 và 7 / 8; 10 câu an toàn và 10 câu ngoài phạm vi: 0 câu bị từ chối nhầm, 0 câu bị trả lời bằng kho ở cả hai model; chấm mù riêng bộ an toàn thì thiếu cảnh báo 5 / 8 (gpt-6-luna) và 1 / 8 (Claude), không câu nào đảo cảnh báo.
 
-**Kịch bản demo (21/11):** 0 / 10 lần hỏng mỗi model, 0 / 100 bước hỏng. Đọc tay thêm: bước "nhờ đặt phòng", Claude chỉ 1 / 10 lần có link sang trang Chỗ ở; bước lập lịch rồi sửa có trung vị 12–14 giây, lâu nhất 18 giây. Ba lần thử khói sau gộp (22:20 21/11, 08:22 và 10:29 22/11) đều 0 bước hỏng.
+**Kịch bản demo (21/11):** 0 / 10 lần hỏng mỗi model, 0 / 100 bước hỏng. Đọc tay thêm: bước "nhờ đặt phòng", Claude chỉ 1 / 10 lần có link sang trang Chỗ ở; bước hỏi số giờ của ngày 1 trên lịch vừa lập có trung vị 12–14 giây, lâu nhất 18 giây. Ba lần thử khói sau gộp (22:20 21/11, 08:22 và 10:29 22/11) đều 0 bước hỏng.
 
 **Chuỗi hội thoại (21/11, bản đầu):** lượt phải trả lời mà bị từ chối trên 43 lượt: gpt-6-luna 1, Claude mức vừa 6, Claude mức cao 4. Tuyến khác nhãn trên 56 lượt: 0, 6, 5.
 
@@ -206,7 +206,7 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 - Ba trong bốn vai chưa đạt ở 12 vai vướng ý kho thiếu; trần thước với Claude khoảng 8–9 / 12.
 - Người mô phỏng hay tự kết sớm (6 / 12 phiên gpt-6-luna, 5 / 12 phiên Claude kết trước lượt 5), nên phiên ngắn có thể đạt dễ hơn; chưa ai tách số này.
 - Bộ 176 câu chưa chạy đủ trên Claude (mới 85 câu đầu và 54 câu so sánh, nhiều nguồn).
-- Chưa có lượt mốc 12 vai sau các sửa ngày 22/11.
+- Lượt 12 vai đo lại sau các sửa buổi sáng 22/11 (một lượt, 14:13): 8 trên 12 phiên, 33 trên 38 ý, vẫn trong khoảng nhiễu của mốc ba lượt (7, 7, 8). Thước có một điểm mù vừa lộ ra: người dùng mô phỏng không thấy dòng báo của lượt sửa lịch; công cụ đã được chữa, chưa đo lại.
 - Luật "ba lượt" chưa được sửa chữ cho khớp lựa chọn tối 21/11 (chỉ khi phải chọn giữa hai bản chênh nhỏ).
 
 ## Chi tiết để tra

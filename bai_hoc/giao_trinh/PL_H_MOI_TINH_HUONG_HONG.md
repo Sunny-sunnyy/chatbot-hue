@@ -1,0 +1,220 @@
+# Phụ lục H — Mọi tình huống hỏng trên một trang
+
+*Cập nhật 14:51, ngày 22/11/2026 · gom từ các bài 1–38 của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+
+**Cách dùng trang này.** Mỗi dòng là một tình huống lấy từ các bảng "Nếu… thì sao" và bảng "Mọi tình huống hỏng của bài này" của bài 1–38; tình huống nào nhiều bài cùng nói thì gộp một dòng, cột Bài ghi mọi bài. Lời báo trong ngoặc kép là nguyên văn, chép từ bài gốc. Cột "Đã thử thật chưa" ghi "đã thử 22/11" chỉ khi bài gốc ghi đã thử thật trưa 22/11; ghi "đã gặp" hoặc "đã đo" khi bài gốc kể một lần xảy ra thật; còn lại "đọc từ chương trình". Cuối trang là danh sách các chỗ chưa có cách xử lý.
+
+**Luật hai tầng (bài 6).** Khối chính là thứ thiếu thì không thể có câu trả lời: model viết, Qdrant. Khối chính hỏng thì lượt hỏi dừng, người dùng thấy một lời báo và nút "Thử lại". Khối phụ chỉ thêm một phần: thời tiết, mục tìm web, bước xếp loại câu. Khối phụ hỏng thì hệ thống vẫn trả lời tiếp, thiếu phần của khối đó.
+
+## 1. Hỏng lúc bật máy chủ
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì / đã có chưa | Đã thử thật chưa | Bài |
+|---|---|---|---|---|---|
+| thiếu khoá của hãng model (hoặc thiếu chỗ trỏ tới file khoá lúc bật) | máy chủ vẫn chạy; đường báo tình trạng báo "thiếu" ở phần model viết; mọi câu hỏi và mọi lần lập lịch bị từ chối, kể cả lượt biểu mẫu dù bộ xếp lịch không cần model | "Không thể tạo câu trả lời vào lúc này."; không có nút gửi ảnh; Khám phá, Bản đồ, Chỗ ở vẫn dùng được | người vận hành đặt khoá (hoặc bật lại máy chủ cho đúng chỗ trỏ), khởi động lại máy chủ | đã thử 22/11 | 6, 29, 33 |
+| Qdrant chưa chạy lúc máy chủ được bật | máy chủ vẫn bật (khoảng 8 giây); báo "thiếu" ở phần Qdrant và phần tìm; không nhận câu hỏi, không lập lịch, không nạp danh sách bài. Bật Qdrant sau đó thì máy chủ không tự hồi, vì việc nối tới Qdrant chỉ làm lúc bật | "Hệ thống tra cứu tạm thời không khả dụng."; trang Khám phá báo chưa tải được danh sách bài; Trang chủ, Bản đồ, Chỗ ở, Giới thiệu vẫn chạy | bật Qdrant, rồi khởi động lại máy chủ; lệnh bật một phát làm đúng thứ tự này | đã thử 22/11 | 6, 12 |
+| kho đã sửa mà chỉ mục chưa cập nhật, rồi máy chủ khởi động lại | máy chủ vẫn chạy, không nhận câu hỏi nào; các trang không cần kho vẫn dùng được | "Dữ liệu tra cứu cần được lập chỉ mục lại." ở mọi câu hỏi | tắt máy chủ, chạy lệnh cập nhật chỉ mục (lệnh tự dừng nếu máy chủ còn chạy), rồi bật lại máy chủ | đọc từ chương trình | 2, 6, 7, 8, 12 |
+| bảng điểm của trang Lên kế hoạch sai, hoặc trỏ tới một đoạn không còn trong chỉ mục | máy chủ không bật lên được, báo đúng mã của đoạn thiếu; chương trình chọn dừng hẳn để lỗi lộ ngay lúc bật | không vào được trang nào | người vận hành sửa bảng điểm hoặc chỉ mục; các cách sửa kho làm đổi mã đoạn ở nhóm 5 | đọc từ chương trình | 6, 27 |
+| model embedding không nạp được lúc bật (thiếu bản tải sẵn, lỗi tải) | phần tìm kho không sẵn sàng; trang web vẫn mở | mọi câu hỏi và mọi lần lập lịch: "Hệ thống tra cứu tạm thời không khả dụng."; Khám phá không có danh sách bài | người vận hành sửa chỗ thiếu rồi khởi động lại máy chủ | đọc từ chương trình | 10 |
+| file thống kê từ khoá thiếu, hoặc lệch bản ghi chỉ mục | lúc bật, máy chủ so dấu vân tay của file với bản ghi; lệch thì phần tìm kho không dùng | mọi câu hỏi: "Dữ liệu tra cứu cần được lập chỉ mục lại." | chạy lệnh cập nhật chỉ mục (nó ghi lại file thống kê), rồi khởi động lại | đọc từ chương trình | 11 |
+| ai đó ghi số đoạn khác 10 vào cấu hình | máy chủ không bật | không vào được trang nào | sửa lại thành 10; muốn thử số khác thì dùng bộ đo | đọc từ chương trình | 13 |
+| ai đó ghi một cách xếp lại khác "không" vào cấu hình | máy chủ không bật | không vào được trang nào | muốn thử thì dùng bộ thử; phần chương trình xếp lại chỉ còn cho bộ thử | đọc từ chương trình | 14 |
+| chạy lệnh bật một phát khi Docker Desktop chưa chạy | lệnh dừng: không có lệnh docker, hoặc docker không bật được Qdrant | người bật thấy một dòng báo của lệnh | người bật mở Docker Desktop rồi chạy lại | đọc từ chương trình | 36 |
+| chạy lệnh bật khi chỉ mục lệch kho | lệnh dừng: chỉ mục có N đoạn, bản ghi ghi 9.458 | một dòng báo của lệnh | chạy lệnh cập nhật chỉ mục | đọc từ chương trình | 36 |
+| chạy lệnh bật khi cổng của máy chủ đã có một máy chủ cũ bật lúc Qdrant tắt | lệnh dừng: cổng đang có máy chủ báo chưa sẵn sàng, hãy tắt nó trước | một dòng báo của lệnh | tắt máy chủ cũ, chạy lại | ca gốc đã thử 22/11; lệnh dừng: đọc từ chương trình | 36 |
+
+## 2. Khối chính hỏng giữa lúc chạy (model viết, Qdrant, chỉ mục)
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì / đã có chưa | Đã thử thật chưa | Bài |
+|---|---|---|---|---|---|
+| hãng model lỗi (kể cả sập hẳn), hoặc phần viết quá 45 giây (hạn chung cho mọi vòng của lượt) | dừng lượt hỏi; không gọi lại; ghi kết cục vào sổ số đo. Khi hãng sập hẳn, bước xếp loại cũng lỗi nên tin được coi là "về Huế" rồi lần gọi viết lỗi | "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại"; chữ đã hiện (nếu có) bị xoá; bấm lại vẫn vậy tới khi hãng chạy lại | người dùng bấm "Thử lại"; sập lâu thì người vận hành đổi hãng trong cấu hình rồi khởi động lại máy chủ. Chưa có model dự phòng | đọc từ chương trình; hạn 45 giây đã chạm một lần trong 156 lượt người dùng mô phỏng tối 21/11 (lúc hai model chạy cùng lúc); lượt dài nhất chạy một mình 28 giây | 6, 15, 21, 22, 33, 34 |
+| hãng model lỗi, nhưng câu hỏi trùng một câu đã nhớ trong 24 giờ | trả lại câu đã nhớ, vì việc này không cần gọi model | câu trả lời như bình thường | — | đọc từ chương trình | 6 |
+| khoá của hãng model hết hạn (với model đang chạy: khoá Bedrock là khoá tạm) | mỗi lần gọi model bị từ chối; đường báo tình trạng vẫn báo "đủ" vì nó không gọi ra ngoài; lệnh bật một phát vẫn in "SẴN SÀNG" vì chỉ thấy file khoá có tồn tại. Chương trình đọc lại file khoá ở mỗi lần gọi | "Không thể tạo câu trả lời vào lúc này." ở mọi câu hỏi; bấm lại vẫn vậy | chủ dự án làm mới file khoá; hỏi được ngay, không cần khởi động lại máy chủ. Không có cơ chế tự làm mới khoá. Muốn biết model còn chạy không thì phải hỏi thử một câu thật | đọc từ chương trình | 6, 33, 36 |
+| Qdrant ngừng giữa lúc máy chủ đang chạy | mọi câu hỏi mới lỗi sau khoảng 2 giây; câu đã nhớ vẫn được trả lại; đường báo tình trạng vẫn báo "đủ", vì phần Qdrant chỉ được kiểm lúc bật | "Hệ thống tra cứu tạm thời không khả dụng." và nút "Thử lại" | bật lại Qdrant; hỏi lại được ngay (2,9 giây ở lượt thử), không cần khởi động lại máy chủ; đừng dựa vào đường báo tình trạng | đã thử 22/11 | 6, 12, 13, 34, 35 |
+| tính vector câu hỏi lỗi giữa lúc đang chạy | lượt hỏi đó dừng | "Hệ thống tra cứu tạm thời không khả dụng." kèm nút "Thử lại" | người dùng bấm "Thử lại" | đọc từ chương trình | 10 |
+| một điểm trong Qdrant thiếu trường hoặc sai dạng | bước tìm dừng mỗi khi điểm đó lọt vào ứng viên | "Hệ thống tra cứu tạm thời không khả dụng." và nút "Thử lại" | đã có lời báo; chữa bằng dựng lại chỉ mục (lập luận) | đọc từ chương trình | 9 |
+| một công cụ gặp lỗi trong chính chương trình | lỗi không được biến thành chữ cho model đọc (model đọc chữ lỗi có thể tưởng kho không có rồi từ chối, hoặc viết bừa); lượt hỏi dừng | lời báo lỗi và nút "Thử lại" | đã có | đọc từ chương trình | 3 |
+| một lỗi không lường trước trong chương trình | dừng lượt; ghi tên loại lỗi vào sổ, không ghi chữ của người dùng | "Đã xảy ra lỗi trong hệ thống. Vui lòng thử lại sau." | người làm hệ thống xem sổ | đọc từ chương trình | 6 |
+| máy chủ khởi động lại giữa một cuộc | mất các cuộc trò chuyện đang mở, lịch đang giữ, câu trả lời đã nhớ | màn hình không báo gì. Ở trang Lên kế hoạch thẻ lịch vẫn hiện, nhưng lệnh sửa lịch bị coi như câu hỏi thường và lịch không đổi; tải lại trang thì thẻ lịch biến mất. Ở khung Trợ lý, câu hỏi nối tiếp được trả lời lạc mạch | người dùng tải lại trang, làm lại từ đầu. Chưa có cách giữ qua lần khởi động, và chưa có lời báo cho người dùng | đã thử 22/11 | 6, 23, 27, 34 |
+| máy chủ chưa sẵn sàng khi người dùng hỏi một câu về bão | lượt hỏi dừng như mọi câu khác | "Hệ thống tra cứu tạm thời không khả dụng." hoặc "Không thể tạo câu trả lời vào lúc này.", không có câu 112 | chưa có | đọc từ chương trình | 24 |
+
+## 3. Khối phụ hỏng, hệ thống trả lời tiếp (xếp loại câu, thời tiết, tìm web, ảnh)
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì / đã có chưa | Đã thử thật chưa | Bài |
+|---|---|---|---|---|---|
+| dịch vụ thời tiết lỗi, hoặc chậm quá 3 giây | công cụ thời tiết trả về "lỗi", một nguồn ghi "chưa lấy được", không kèm con số nào; model viết câu không số; chương trình nối một câu báo | câu trả lời nói rõ không lấy được dự báo: "Mình chưa lấy được dự báo thời tiết lúc này — bạn xem bản tin của Trung tâm Dự báo khí tượng thủy văn quốc gia: https://nchmf.gov.vn". Ở Trang chủ, ô thời tiết ẩn đi; không bao giờ hiện số cũ | không ai; dịch vụ chạy lại thì có lại | đọc từ chương trình | 3, 5, 6, 24 |
+| hỏi thời tiết xa hơn 7 ngày | công cụ không có số cho ngày đó | "Mình chỉ có dự báo 7 ngày tới, chưa có dự báo cho ngày bạn hỏi; …" | đã có | đọc từ chương trình | 24 |
+| hỏi khoảng cách tới khách sạn, ga, sân bay | bảng khoảng cách chỉ có 40 điểm | "Mình chưa có số khoảng cách cho nơi này." | chưa có số cho nơi ngoài 40 điểm | đọc từ chương trình | 24 |
+| dịch vụ tìm web lỗi, chậm quá 5 giây, hết hạn mức, hoặc thiếu khoá (thiếu khoá thì không mở kết nối) | không có lần gọi model viết mục web; mục web không có nội dung tìm được | câu từ chối của kho; khối "Từ web (chưa kiểm)" chỉ có "Mình chưa tra được web lúc này." kèm gợi ý cách hỏi | không ai; thiếu khoá hay hết lượt thì người vận hành; có lượt dùng trở lại thì mục web có lại | hết lượt đã xảy ra thật trưa 21/11; còn lại đọc từ chương trình | 6, 25 |
+| dịch vụ tìm web không có kết quả nào | không có gì để viết | "Mình chưa tìm thấy thông tin phù hợp trên web." kèm gợi ý cách hỏi | — | đọc từ chương trình | 4, 25 |
+| lần gọi model viết mục web lỗi | bỏ mục web | "Mình chưa tra được web lúc này." | — | đọc từ chương trình | 25 |
+| mục web trượt bước kiểm số và link | bỏ cả mục (cố ý) | "Mình chưa tra được thông tin đáng tin trên web." | cố ý | đọc từ chương trình | 25 |
+| câu thiên tai (khi dịch vụ tìm web trả được kết quả) | không cho model viết; dùng câu cố định | câu cố định về bản tin chính thức và số 112, hai link chính thức | cố ý; dịch vụ lỗi thì câu 112 nằm ở dòng ghi chú | đọc từ chương trình | 25 |
+| câu "ngay lúc này" mà mục web có số | không khẳng định con số | "Thông tin này thay đổi theo thời gian nên mình chưa xác minh được trên web — …" kèm link | cố ý | đọc từ chương trình | 25 |
+| bước xếp loại câu lỗi, hoặc chậm quá 10 giây | coi tin là "về Huế", đi tiếp đường đầy đủ | câu trả lời như bình thường | không ai | đọc từ chương trình | 6, 22 |
+| hỏi bằng ảnh mà model lỗi, quá 20 giây, mất mạng, hoặc máy chủ từ chối ảnh (sai kiểu, quá cỡ, quá nhiều điểm ảnh) | coi như không nhận ra ảnh; không gọi lại | "Mình chưa nhận ra ảnh này — bạn gõ tên nơi / món bạn muốn hỏi nhé." và nút "Gõ tên"; không phân biệt được với lúc model thật sự không nhận ra | người dùng gõ tên; chưa tách lời báo lỗi với lời báo không nhận ra | đọc từ chương trình | 6, 26 |
+| tính năng hỏi bằng ảnh tắt, hoặc máy chủ chưa có model | ẩn nút | không có nút dấu cộng | — | đọc từ chương trình | 26 |
+| mất mạng tới máy chủ ô nền bản đồ | ghim vẫn vẽ trên nền xám | danh sách đánh số dưới bản đồ vẫn đủ | — | đã gặp nền xám vài giây khi máy chủ đó chậm (16/11) | 30 |
+
+## 4. Model làm sai việc
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì / đã có chưa | Đã thử thật chưa | Bài |
+|---|---|---|---|---|---|
+| model viết một điều tài liệu không nói, hoặc viết sai nghĩa của đoạn nó trích | chương trình kiểm được số nguồn có thật hay không; không kiểm được câu chữ có đúng với đoạn được trích không | có thể thấy một câu sai kèm nguồn thật | mới có một nửa (kiểm số nguồn); phần còn lại chưa có, chỉ thấy khi chấm | đọc từ chương trình | 1, 15 |
+| model quên số nguồn, hoặc ghi số không có | bước kiểm bắt được; rút lại chữ đã hiện | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" | người dùng bấm "Thử lại" | đọc từ chương trình | 5, 6, 15, 16, 21 |
+| như dòng trên, ở tin hỏi tiếp ngay sau một câu trả lời mà cuộc đang nhớ (ví dụ "sửa lại thứ bạn vừa viết") | gỡ chữ đã hiện, tự chạy lại cả lượt một lần không kèm câu trả lời cũ; không áp cho cuộc đang giữ một lịch; tiền tính cả hai lần gọi | chữ biến mất, dòng trạng thái hiện lại, rồi câu trả lời mới; lần hai vẫn hỏng thì như dòng trên | có từ 22/11; trước đó 3 trên 7 lần ra màn hình lỗi. Lần hai cũng bị rút: người dùng bấm "Thử lại" hoặc hỏi lại bằng tên nơi | đã thử 22/11 theo bài 16 (đo lại: 0 trên 5 lần ra màn hình lỗi); bài 5 và 6 ghi đọc từ chương trình | 5, 6, 16, 21, 23 |
+| tin dài nhiều ý: model dùng hết hai lần tìm thêm rồi nộp chữ giữ chỗ không có nguồn | rút lại | lời báo như dòng thứ hai; 3 trên 6 lần ở một tin 4 ý | một bản chữa đã đo, không đưa vào hệ thống (nằm ở một nhánh thử riêng); gốc ở khâu tìm của tin dài nhiều ý | đã đo | 16 |
+| model viết phần có nguồn rồi nối câu từ chối ở cuối | gỡ câu từ chối, kiểm phần còn lại | câu trả lời phần có nguồn | có từ 21/11 | đọc từ chương trình | 16 |
+| model viết một con số thời tiết không có ở công cụ, tài liệu hay câu hỏi; hoặc số km không có nguồn ở lượt dùng công cụ khoảng cách | gỡ câu chứa con số đó; không còn gì đứng được thì trả câu từ chối | câu trả lời thiếu câu đó | đã có từ 21/11; số khoảng cách chỉ được kiểm ở lượt có gọi công cụ khoảng cách | đọc từ chương trình | 1, 16, 24 |
+| model đã tìm đủ hai lần mà vẫn muốn tìm | cất công cụ tìm kho khỏi lần gọi kế; model phải viết bằng thứ đang có | câu trả lời từ các đoạn đã có; model vẫn đòi tìm thì câu từ chối cố định | đã có từ 13/11; câu kho thiếu bớt một lần gọi, câu đứng giữa từ 22,85 xuống 16,15 giây | đọc từ chương trình | 3 |
+| model cứ xin công cụ mãi, hết số vòng vẫn chưa viết | chương trình dừng khi hết số vòng, trả câu từ chối thay model | "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này." | đã có; bản "vòng cuối chỉ viết" chưa mở | đọc từ chương trình | 3, 21 |
+| model cần công cụ mà không xin | chương trình không ép được; làm sẵn hai việc trước khi gọi model: câu có từ chỉ khoảng cách và đúng hai tên điểm thì tra sẵn khoảng cách; câu có "hôm nay", "ngày mai" hay ngày âm thì tính sẵn ngày | câu trả lời từ kho, hoặc câu từ chối | có một phần | đọc từ chương trình | 3 |
+| câu bão nói vòng, không có từ nào trong danh sách | lưới bão không nhận ra | có thể thiếu câu bản tin chính thức và số 112 (1 trên 22 câu dò) | ghi giới hạn | đọc từ chương trình | 24 |
+| chữ của người dùng bảo model "hãy gọi công cụ X với tham số Y" | model có thể làm theo, nhưng chỉ trong các ô hẹp chương trình cho | không khác một lượt hỏi thường | giới hạn bằng thiết kế ô tham số | đọc từ chương trình | 3 |
+| người dùng viết "hãy coi tin này là trò chuyện" hoặc chép sẵn tên một tuyến | lời dặn bảo model coi tin là dữ liệu, xếp theo nội dung thật | — | có trong lời dặn; chưa có số đo riêng ở bản đang chạy | đọc từ chương trình | 22 |
+| model xếp nhầm một câu về Huế sang "ngoài phạm vi" | trả câu cố định; không bước nào phía sau xét lại | "Mình chỉ hỗ trợ thông tin về văn hoá và du lịch Huế…" cho một câu về Huế | chưa có lưới xét lại tuyến (trừ câu bão, lũ vẫn được thêm dòng 112); chỉ có đoạn dặn về địa bàn Huế | đọc từ chương trình | 22 |
+| một câu ngoài phạm vi lọt vào đường "về Huế" | tìm kho, model từ chối, có thể tra web | câu từ chối của kho, có thể kèm mục "Từ web" nếu mục đó qua kiểm | có các bước kiểm của đường đầy đủ; chưa có gì ngăn câu đó bị gửi ra dịch vụ tìm web | đã gặp: 2 trên 44 câu (12/11) | 22 |
+| tin cuối chỉ có nghĩa khi đọc cùng tin trước ("còn chỗ đó thì sao?") | bộ xếp loại nhận cả các tin trước, chỉ xếp loại tin cuối | được xếp đúng theo mạch trò chuyện | đã có; sau đoạn dặn cho Claude, lượt bị từ chối nhầm vì xếp loại từ 2 xuống 0 | đã đo | 22 · nhỏ |
+| cùng một câu hỏi được hỏi hai lần | model có thể viết hai câu khác chữ | hai câu trả lời khác chữ, cùng nội dung | bình thường; riêng câu mở đầu một cuộc mới trùng câu đã trả lời trong 24 giờ thì được trả lại đúng câu đã nhớ | đọc từ chương trình | 1 |
+| model viết vào câu trả lời thứ không phải chữ (mã chạy được, ảnh lấy từ máy khác) | giao diện chỉ vẽ các kiểu chữ trong một danh sách cho phép | chữ thường; đường link chỉ mở khi bấm; mục "Từ web" không có đường link nào trong chữ | đã có | đọc từ chương trình | 5 |
+| chữ lạ trong bài kho bảo model chèn link | link hiện | bấm thì mở trang lạ | chưa chặn; mới ghi giới hạn | đọc từ chương trình | 37 |
+| ảnh không phải Huế | model thường không nhận ra; có lúc vẫn gán một tên Huế | thường "chưa nhận ra"; có lúc bị gán tên Huế | có bước xác nhận khi 2–3 tên; một tên thì hỏi luôn | đã đo: 2 trên 5 ảnh (05/11) | 26 |
+| model đưa một tên ảnh mà sai | hỏi luôn theo tên đó | câu trả lời về sai nơi, kèm dòng "Mình đoán … — có thể sai." | nút "Không đúng — tôi gõ tên" | đọc từ chương trình | 26 |
+| ảnh có dòng chữ dán thêm bảo chọn một mã | lời dặn bảo bỏ qua | đầu ra vẫn chỉ là tên trong danh sách, câu trả lời vẫn từ kho | giới hạn bằng thiết kế | đã đo: 1 trên 3 ảnh kiểu đó vẫn lừa được model (05/11) | 26 |
+
+## 5. Kho và chỉ mục
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì / đã có chưa | Đã thử thật chưa | Bài |
+|---|---|---|---|---|---|
+| giá vé, giờ mở cửa ngoài đời đổi mà kho chưa sửa | trả lời theo kho tới khi bài được sửa | giá cũ, kèm dòng "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi — hãy kiểm lại với nơi đến trước khi đi." | có dòng nhắc; việc sửa kho do người làm | đọc từ chương trình | 2, 4 |
+| một bài ghi sai giá | trả lời đúng theo bài, kèm số nguồn | giá sai. Bài vé, địa điểm, lễ hội hoặc bài "Lưu trú ở Huế": kèm dòng nhắc như trên. Bài quán ăn: không có dòng nhắc nào | người vận hành chạy lệnh đề xuất, đọc, tắt máy chủ, chạy lệnh duyệt, bật lại máy chủ | đọc từ chương trình | 7 |
+| bài có giá không thuộc nhóm vé, địa điểm, lễ hội, và không phải bài "Lưu trú ở Huế" | dòng nhắc "có thể đã thay đổi" không được thêm | giá hiện ra mà không kèm dòng nhắc | đã có; danh sách nhóm ghi cố định trong chương trình | đọc từ chương trình | 9 |
+| hai bài ghi hai giá khác nhau cho cùng một thứ | chương trình không so hai bài; nếu cả hai đoạn cùng được đưa cho model thì lời dặn bảo model giữ chỗ mâu thuẫn | tuỳ đoạn nào được tìm ra: giá này, giá kia, hoặc cả hai | nhóm được tra nguồn rồi sửa; chỗ chưa phân xử được ghi vào một danh sách riêng | đọc từ chương trình (bài ghi chưa thử ca này) | 7 |
+| thêm hay sửa bài trong lúc máy chủ đang chạy, chưa cập nhật chỉ mục | trả lời theo chỉ mục cũ, kể cả câu đã nhớ; từ lần khởi động sau thì dừng trả lời (nhóm 1) | trước khởi động lại: bài mới chưa có mặt, câu trả lời theo bản cũ, không lời báo | tắt máy chủ, cập nhật chỉ mục, bật lại | đọc từ chương trình | 7, 12 |
+| sửa kho làm đổi mã đoạn: thêm một dòng giữa bài, đổi tên file bài, chuyển thư mục | các đoạn bị đổi mã được tính lại vector | thường không thấy gì khác sau khi cập nhật chỉ mục. Bài có điểm trong bảng điểm trang Lên kế hoạch: máy chủ không bật được ở lần bật sau, tới khi sửa bảng (nhóm 1). Bài đổi nhóm thì dòng nhắc "có thể đã thay đổi" có thể mất hoặc thêm | đã có; với bài có điểm trong bảng thì phải sửa bảng điểm cho khớp mã mới. Khi so trước và sau phải so theo nội dung, không theo mã | đọc từ chương trình | 7, 8, 9, 12 |
+| sửa đúng một câu mà file quy tắc gắn lưu ý đang chép nguyên văn (3 câu ở 2 bài) | lệnh duyệt sửa giá dừng, chưa áp gì, in cách sửa tay; lệnh cập nhật chỉ mục dừng ở bước cắt, chưa ghi gì | không đổi gì: giá cũ còn | người vận hành sửa tay ở cả hai nơi (sửa file quy tắc cho khớp) rồi chạy lại; nhóm không làm cho lệnh tự sửa trọn, vì giá chỉ cần tương đối | đọc từ chương trình | 7, 8 |
+| một khối cắt xong vẫn vượt giới hạn, hoặc một mảnh bằng chứng lệch bài gốc | bước chuẩn bị dừng trước khi ghi gì vào chỉ mục | máy chủ đang chạy: không đổi gì. Khởi động lại trước khi sửa xong: lời báo cần lập chỉ mục lại | người sửa bài viết lại khối đó cho ngắn rồi chạy lại | đọc từ chương trình | 8 |
+| chạy lệnh cập nhật chỉ mục trong lúc máy chủ đang chạy | lệnh dừng ngay từ đầu, chưa đọc hay ghi gì (máy chủ đang chạy sẽ trả lời trên chỉ mục ghi dở cùng file thống kê cũ) | không đổi gì | tắt máy chủ, chạy lệnh, bật lại | đọc từ chương trình | 6, 11 |
+| lệnh cập nhật bị ngắt giữa lúc ghi | máy chủ bật sau đó thấy lệch | "Dữ liệu tra cứu cần được lập chỉ mục lại." | chạy lại chính lệnh đó; nó kéo về đúng | đã thử hai ca trên bản chép (bài không ghi ngày) | 12 |
+| bài mới đặt ngoài 7 thư mục được đưa vào kho | bài không vào chỉ mục | hệ thống không biết bài đó | người soạn đặt bài đúng thư mục | đọc từ chương trình | 9 |
+| kho không có điều được hỏi (kể cả tin nhiều ý mà không vế nào kho có) | model trả câu từ chối cố định; chương trình tra web một lần | "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này."; khi mục web có nội dung, câu này được thay bằng "Tư liệu của mình chưa có thông tin này — dưới đây là thông tin từ web (chưa kiểm)." rồi mục web. Mục web không có gì: câu từ chối, một dòng cố định của mục web và gợi ý cách hỏi | đúng thiết kế; bài mới cần chủ dự án duyệt | đọc từ chương trình | 4, 7, 15, 16, 21, 23 |
+| đoạn đúng không lọt 10 đoạn (hoặc không lọt 30 ứng viên theo nghĩa) | model không thấy đáp án; trợ lý có thể tự tìm thêm tối đa 2 lần; đoạn ngoài 30 ứng viên thì phần từ khoá cũng không thấy | câu trả lời có nguồn, chậm hơn vài giây (lượt "áo dài": 7,5 giây); hoặc thiếu ý, hoặc câu từ chối dù kho có (lượt "cởi giày") | lỗi đã biết của bước tìm; chưa có cách chữa chung | đọc từ chương trình | 11, 13, 21 |
+| câu hỏi viết khác chữ với một dòng bảng ngắn | bước tìm dễ bỏ sót dòng đó | có thể nhận câu từ chối dù kho có | gốc ở bước tìm; gộp dòng bảng đã thử, không giúp | đọc từ chương trình | 8 |
+| một bài đặt tên mục chung chung ("Thông tin khác") | các đoạn mang nhãn kém, khó khớp câu hỏi | có thể nhận câu từ chối dù kho có | người soạn đặt tên mục theo mẫu của chủ đề | đọc từ chương trình | 9 |
+| câu hỏi có từ không nằm trong từ điển của kho | từ đó được 0 điểm; không từ nào có trong từ điển thì chỉ còn bảng theo nghĩa | câu trả lời dựa vào tìm theo nghĩa | đã có | đọc từ chương trình | 11 |
+| kho sửa một giá vé hay giờ mở cửa (phần đo) | phải soát và sửa đáp án mẫu của các câu liên quan; sửa đáp án là đổi đề, điểm đề cũ và đề mới không đặt cạnh nhau để so được | — | đã soát hai lần bằng tay (28/10: 0 câu phải sửa; 30/10: sửa 2 câu); sau lần sửa kho 22/11 đã dò các con số cũ trên cả 176 câu: 0 câu lệch giá mới | không áp (việc đo) | 17 |
+| kho thêm bài mới (phần đo) | bộ câu không có câu nào về bài mới, nên không đo được phần đó | — | chưa có: bộ vẫn 176 câu từ khi soạn, kho nay 266 bài | không áp (việc đo) | 17 |
+| kho đổi câu chữ ở một bài (phần đo) | chỗ đánh dấu đoạn đúng cũ có thể không còn khớp; phải làm bản nhãn mới | — | đã làm tới bản thứ sáu (14/11); chương trình đo chưa đọc bản đó; lần sửa kho 22/11 chưa có bản nhãn mới | không áp (việc đo) | 18 |
+| kho thêm bài mới có đáp án tốt hơn cho một câu (phần đo) | nhãn cũ không biết bài mới; hệ thống tìm ra bài mới vẫn bị tính là trượt | — | chưa có: chưa bản nhãn nào xét lại | không áp (việc đo) | 18 |
+
+## 6. Lên kế hoạch và sửa lịch
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì / đã có chưa | Đã thử thật chưa | Bài |
+|---|---|---|---|---|---|
+| một giá trị của biểu mẫu sai khuôn (ngày đi quá 180 ngày, sở thích đang ẩn) | từ chối cả yêu cầu | "Yêu cầu không hợp lệ." | người dùng chọn lại | đọc từ chương trình | 27 |
+| trang Lên kế hoạch đang tắt | giao diện ẩn mục này | mở thẳng địa chỉ trang: "Tính năng này chưa bật." | người vận hành bật lại | đọc từ chương trình | 27 |
+| ngày đi rơi vào thứ một điểm đóng cửa | không xếp điểm đó ngày ấy | điểm khác thay chỗ; không có dòng báo riêng | — | đọc từ chương trình | 28 |
+| ngày đi rơi vào tháng điểm ưu tiên tạm dừng (thác Nhị Hồ, tháng 9 – 2) | không xếp | "… đang tạm dừng đón khách vào thời gian này trong năm (theo kho) nên mình chưa xếp." | — | đọc từ chương trình | 28 |
+| dự báo mưa to cho một ngày trong 7 ngày tới | ngoài điểm ưu tiên, xét điểm trong nhà trước | lịch có thể khác ngày khô; luôn có đúng một dòng "Nếu mưa ngày …" | — | đọc từ chương trình | 28 |
+| sở thích có ít điểm | lấp bằng di tích theo thứ tự bảng | điểm lấp không có nhãn; thiếu điểm ưu tiên thì có dòng "Lịch này chưa xếp được điểm tiêu biểu nhất cho sở thích …" | — | đọc từ chương trình | 28 |
+| model lỗi, quá 45 giây, hoặc trả sai khuôn khi viết câu mô tả lịch | mọi mục chưa có câu dùng câu dự phòng | lịch đủ khung; các mục chỉ có "tên — điểm … [n]"; không có lời báo | đã có; muốn câu đầy đủ thì người dùng xếp lại | đọc từ chương trình | 29 |
+| một câu mô tả có giờ, tiền, link hay tên điểm khác | thay riêng câu đó | một mục chỉ có câu dự phòng | đã có | đọc từ chương trình | 29 |
+| khung lịch trượt bước kiểm | vẫn hiện lịch; không lưu | lịch hiện bình thường; lệnh sửa sau đó áp lên lịch đã lưu trước đó (nếu có), không phải lịch đang thấy; chưa có thì bị coi như câu hỏi thường | chưa gặp trong mô phỏng | đọc từ chương trình | 29 |
+| không có quán nào trong 2 km, cùng cụm | không có dòng cho bữa đó; sáu nơi xa có câu ghi chú từ kho | ví dụ "Chưa có gợi ý quán gần làng (cách trung tâm khoảng 12 km) — nên ăn ở trung tâm trước hoặc sau khi ghé làng." | — | đọc từ chương trình | 30 |
+| khu ven biển phía đó không có cơ sở lưu trú | về khu trung tâm | "Khu trung tâm — ven biển phía này chưa có cơ sở trong danh mục." | — | đọc từ chương trình | 30 |
+| bấm PowerPoint khi lịch đã hết hạn hoặc máy chủ vừa khởi động lại | không dựng file | "Chưa có lịch để tải hoặc lịch đã hết hạn — bấm Lên kế hoạch để tạo lại rồi tải." | — | đọc từ chương trình | 30 |
+| bấm "Thêm vào lịch" khi chưa chọn ngày đi | không tạo file | "Chọn ngày đi ở biểu mẫu để thêm lịch vào lịch điện thoại." | — | đọc từ chương trình | 30 |
+| một tin sửa lịch chứa ba lệnh | áp hai lệnh đầu | lệnh thứ ba nhận "Chưa làm: {loại lệnh} — bạn nhắn tiếp nhé." | — | đọc từ chương trình | 31 |
+
+## 7. Giao diện và phía người dùng
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì / đã có chưa | Đã thử thật chưa | Bài |
+|---|---|---|---|---|---|
+| không nối được tới máy chủ khi gửi câu hỏi (máy chủ tắt) | báo lỗi; câu hỏi vẫn nằm trong khung trò chuyện | "Không kết nối được máy chủ. Vui lòng thử lại." và nút "Thử lại" (gửi lại đúng câu vừa hỏi) | người vận hành bật máy chủ | đọc từ chương trình | 5, 35 |
+| đang nhận câu trả lời thì đứt kết nối, hoặc luồng chữ kết thúc mà thiếu tin báo "xong" | xoá chữ và nguồn đã hiện; máy chủ dừng lần gọi model, không nhớ lượt này | "Kết nối bị gián đoạn. Vui lòng thử lại." và nút "Thử lại"; bấm thì trang gửi lại đúng câu đó, vẫn cùng cuộc | người dùng bấm "Thử lại" | đọc từ chương trình | 5, 35 |
+| máy chủ báo lỗi giữa lượt (model lỗi, kho không tìm được) | xoá chữ đã hiện, hiện lời báo của máy chủ | lời báo tương ứng ở nhóm 2 và nút "Thử lại" | đã có | đọc từ chương trình | 5 |
+| người dùng bấm "Dừng" | cắt đường nối; máy chủ bỏ lần gọi model đang chờ, không nhớ lượt đó | "Đã dừng. Phần trả lời chưa xong nên không hiện (chưa kiểm nguồn)." và nút "Hỏi lại" | đã có | đọc từ chương trình | 5, 35 |
+| người dùng đóng trang giữa lúc chờ | máy chủ thấy đường nối bị ngắt, dừng lần gọi model, ghi kết cục "người dùng ngắt" | — | — | đọc từ chương trình | 6 |
+| lúc tải trang không hỏi được máy chủ "tính năng nào đang mở" | coi các tính năng đó là đang tắt | không có mục Bản đồ, Lên kế hoạch, không biểu mẫu lập lịch; không có nút gửi ảnh; không có ô thời tiết ở Trang chủ | tải lại trang | đọc từ chương trình | 5, 35 |
+| không tải được danh sách bài | báo ngay tại trang Khám phá | "Chưa tải được danh sách bài — thử tải lại trang." | đã có | đọc từ chương trình | 5 |
+| người dùng tải lại trang giữa cuộc trò chuyện | bắt đầu một cuộc mới; giao diện gọi "Cuộc trò chuyện mới" nên máy chủ cũng quên | khung trò chuyện trống | đã có từ 15/11 (trước đó 3 trên 3 lần tái hiện bị từ chối); chưa có cách xem lại cuộc cũ | đọc từ chương trình | 5, 23 |
+| 30 phút không nhắn rồi hỏi tiếp | cuộc và lịch đã hết hạn | tin nối tiếp không được hiểu (hỏi "chỗ đó mở cửa mấy giờ?" thì model từ chối hoặc nói không rõ nơi nào, trong khi màn hình vẫn còn các lượt cũ); câu trả lời không dựa trên lịch; lệnh sửa bị coi như câu hỏi thường, lịch không đổi; không có lời báo | chưa có cách báo hay giữ lâu hơn; muốn có lịch thì xếp lại | đọc từ chương trình | 23, 27, 31 |
+| mở trang ở tab thứ hai | máy chủ xoá cuộc của tab thứ nhất | tab thứ nhất trả lời câu tiếp như câu đầu của cuộc mới, mất lịch đã lập, không có lời báo | người dùng dùng một tab; chưa có cách tách cuộc theo tab | đọc từ chương trình | 35 |
+| người dùng mở trên điện thoại | đổi bố cục theo bề rộng màn hình | thanh năm mục ở cuối màn hình | đã có; chưa thử trên một chiếc điện thoại thật | đọc từ chương trình | 5 |
+| người dùng gõ không dấu | vẫn tìm, nhưng vector và từ khoá lệch xa kho có dấu | hay nhận câu từ chối | không làm: ranh giới đã chọn, ngoài phạm vi | đọc từ chương trình | 4, 10 |
+| câu có dấu ở dạng lưu khác (nhìn giống hệt) | chương trình đưa về dạng chuẩn trước khi tính | không thấy khác | đã có | đọc từ chương trình | 10 |
+| người dùng hỏi một việc không thuộc Huế | bước xếp loại câu đưa vào tuyến "ngoài phạm vi" | "Mình chỉ hỗ trợ thông tin về văn hoá và du lịch Huế. Bạn muốn hỏi gì về Huế không?" | đã có | đọc từ chương trình | 4 |
+| người dùng nhờ đặt phòng, mua vé | trả một câu nói thật theo loại việc | câu nói rõ là chưa làm thay được, kèm cách tự làm | đã có | đọc từ chương trình | 4 |
+
+## 8. Khi điều kiện đổi
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì / đã có chưa | Đã thử thật chưa | Bài |
+|---|---|---|---|---|---|
+| nhiều người hỏi cùng lúc | mỗi câu hỏi giữ một đường nối tới khi trả lời xong; máy chủ gọi model nhiều lần cùng lúc, mỗi lượt gọi riêng | — | chưa có giới hạn số lượt chạy cùng lúc; mới đo một lần (27/10, trước khi có trợ lý), chưa đo với Claude | đọc từ chương trình | 6, 34 |
+| một người (một địa chỉ) gửi rất nhiều câu | bộ đếm số lượt mỗi ngày theo địa chỉ mạng; quá thì không gọi model, trả ngay lời báo | "Bạn đã dùng hết số lượt hỏi hôm nay. Vui lòng quay lại vào ngày mai." | có sẵn nhưng đang tắt; người đưa lên mạng đặt số | đọc từ chương trình | 6, 37 |
+| cả máy chủ hết lượt trong ngày | trần tổng của cả máy chủ chặn | "Hôm nay trợ lý đã nhận đủ số lượt hỏi cho phép. Vui lòng quay lại vào ngày mai." | có sẵn, đang tắt; chủ dự án chọn số lúc đưa lên mạng | đọc từ chương trình | 37 |
+| một yêu cầu có thân rất lớn | máy chủ đọc hết rồi mới kiểm | có thể hết bộ nhớ, mọi người mất cuộc đang mở | chưa có trần kích thước ở lớp nhận kết nối | đọc từ chương trình | 37 |
+| kho lớn gấp mười | lập chỉ mục cả kho hiện mất 225 giây cho 9.458 đoạn; mỗi lần cập nhật vẫn cắt lại cả kho (bước cắt khoảng 21 giây hiện nay thành phần chính); lúc hỏi vẫn chỉ tính một vector, tìm theo nghĩa vẫn lấy 30 ứng viên, chấm từ khoá vẫn chỉ trên 30 đoạn | — | chưa đo ở cỡ đó. Lập luận, chưa đo: dựng lại toàn bộ lâu hơn nhiều; lúc hỏi gần như không chậm thêm; 30 ứng viên có thể thành quá ít. Thước nhanh của bước tìm cho biết đoạn đúng của 158 câu cũ có bị đẩy ra không; phần bài mới thì bộ câu chưa có câu để đo | đọc từ chương trình | 6, 7, 8, 10, 11, 13, 18 |
+| đổi sang model viết khác | sửa một dòng cấu hình; kho, chỉ mục, bước tìm và lời dặn gửi đi giữ nguyên; độ dài, giọng, các ngưỡng đổi theo model | câu trả lời viết khác đi (với model đang chạy: dài hơn, chữ hiện một lần) | lời dặn và các ngưỡng phải đo lại; mốc cũ không so thẳng được, các kết luận "bỏ" cũ có thể không còn đúng; đã đổi một lần (21/11); mốc mới trên cả bộ chưa có, bộ 176 câu chưa chấm lại đủ | không áp | 1, 2, 6, 15, 17, 19, 20, 32 |
+| đổi model viết: chỗ nối giữa phần chương trình bao quanh và model hỏng | với Claude, cách gửi cũ làm model xin công cụ mãi, 0 trên 8 lần viết được | — | đã gặp và đã chữa: số lượt chạm trần vòng từ 6 xuống 0 trên 29 câu | đã gặp 21/11 | 21, 38 |
+| đổi model viết: bước xếp loại câu xếp khác | cùng lời dặn, Claude xếp nhầm 2 trên 56 lượt ở mức suy luận đang chạy, 4 trên 56 ở mức vừa | vài câu về vùng ven Huế bị từ chối | đã chữa bằng một đoạn dặn; lượt đo sau đó 6 trên 6 câu về nơi ở rìa Huế qua; mỗi lần đổi model phải đo lại bước này | đã gặp | 22 |
+| quay về gpt-6-luna | — | chữ lại chạy dần, câu ngắn hơn | sửa một chữ trong cấu hình, khởi động lại máy chủ; chưa làm được lúc này (tài khoản OpenAI ngừng dùng) | đọc từ chương trình | 33 |
+| đổi sang model thứ ba | — | chưa biết | hãng mới thì viết lớp nối mới; đo lại các mục đã liệt kê ở bài 33 | đọc từ chương trình | 33 |
+| đổi sang một model embedding khác | đổi qua file cấu hình: máy chủ không bật, vì chương trình kiểm chỉ nhận model đang dùng; giới hạn lúc cắt lấy theo danh sách ba model trong cấu hình. Sửa trong chương trình mà chưa dựng lại chỉ mục: bản ghi chỉ mục không khớp | lần lượt: không vào được trang nào; "Dữ liệu tra cứu cần được lập chỉ mục lại." | sửa chương trình kiểm, sửa danh sách giới hạn, cắt lại và dựng lại toàn bộ chỉ mục (khoảng 225 giây); chưa ai làm | đọc từ chương trình | 8, 10 |
+| đổi sang máy có card đồ hoạ mạnh hơn, hoặc đổi model xếp lại | thời gian và kết quả có thể khác | — | phải đo lại ở cấu hình 10 đoạn trước khi kết luận | đọc từ chương trình | 14 |
+| đưa lên mạng | có gói đóng sẵn ba hộp, đã chạy thử trên máy | — | chưa đưa lên mạng | đọc từ chương trình | 6 |
+| dựng lại gói ba hộp bằng bản nháp hiện có | ứng dụng có thể không khởi động hoặc không trả lời được: bản nháp chép bảng dữ liệu cũ, thiếu bảng khoảng cách, bảng sự kiện, bảng điểm mới; danh sách bài sinh từ bản ghi chỉ mục 16/11 (263 bài, kho nay 266); không có chỗ đưa file khoá Bedrock vào hộp | mọi câu sẽ nhận "Không thể tạo câu trả lời vào lúc này." | cập nhật gói trước khi dựng | đọc từ file, chưa dựng thử | 36 |
+| đưa gói lên mạng mà tên miền chưa có kết nối mã hoá | cookie bị trình duyệt bỏ | trợ lý mất trí nhớ hội thoại, không báo lỗi | đặt tên miền có kết nối mã hoá trước (ghi trong bản nháp) | đọc từ chương trình | 36 |
+| có người dùng thật, hỏi kiểu câu nhóm chưa từng nghĩ tới | — | — | chưa biết: mọi phép đo dùng câu do nhóm soạn hoặc do model đóng vai du khách; khi có thì lấy câu họ hỏi làm đề, thay dần câu do AI soạn. Chưa có người dùng thật | không áp | 4, 17 |
+
+**Phần đo và bộ test** (không có thứ người dùng thấy; giữ ở đây để đủ các dòng của bài 17–20, 32, 38)
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì / đã có chưa | Đã thử thật chưa | Bài |
+|---|---|---|---|---|---|
+| đổi người chấm | số của người chấm mới không so thẳng với số cũ | — | phải chấm lại bản mốc bằng người chấm mới; chưa làm cho lần đổi tối 21/11 | không áp (việc đo) | 19, 32 |
+| điểm trung bình tăng nhưng một điều kiện vỡ | bỏ thay đổi đó, trừ vài lần giữ ngoại lệ có ghi lý do | — | đã có, đã áp nhiều lần | không áp (việc đo) | 19 |
+| một điều kiện vỡ nhưng nghi không do thay đổi | chạy lại bản chưa đổi; nó cũng ra đúng những câu đó thì chỗ vỡ không do thay đổi | — | đã làm một lần | không áp (việc đo) | 20 |
+| mức chênh nhỏ hơn mức nhiễu, kết quả "chưa rõ" | kết luận "không khác" hoặc "chưa rõ"; không gọi là tốt hơn, không đưa vào vì lý do chất lượng; ghi hồ sơ | — | đã có; muốn biết thì mở rộng bộ câu rồi đo lại; chạy thêm lượt chỉ khi lựa chọn thật sự phụ thuộc vào nó | không áp (việc đo) | 19, 20, 32 |
+| thắng trên nhóm để thử nhưng ngược chiều trên nhóm để kiểm lại | không nhận | — | đã có luật; chưa thấy lần nào bị loại vì lý do này | không áp (việc đo) | 20 |
+| đo riêng một bước thì thắng, đo cả đường của người dùng thì không | theo kết quả của cả đường | — | đã gặp: một dịch vụ tìm web khác thắng khi đo riêng, gần như hoà khi qua máy chủ thật; nay thành luật | đã gặp | 20 |
+| người chấm không được đưa đủ thứ để chấm | một người đọc lại vài mẫu bằng mắt | — | đã gặp ở luật chọn khu ở (bài 30) | đã gặp | 20 |
+| người chấm chấm sai một câu | không có ai soát từng điểm | — | chỉ có kiểm gián tiếp: chấm lại cùng câu ít đổi (2 trên 88), và một lần khớp cao với model khác | không áp (việc đo) | 19 |
+| một lượt đo cuối không đạt một điều kiện | ghi vào danh sách "chưa đạt" đi kèm mốc: sửa, để nguyên làm giới hạn, hay chờ người nhận | — | lượt 18/11: 1 trên 18 câu ngoài kho bị trả lời; mốc 19/11 ghi "để nguyên, chưa ai nhận sửa" | không áp (việc đo) | 19 |
+| người chấm của bộ an toàn không bắt đủ câu đối chứng | bỏ kết quả chấm của lượt đó | — | đã có; chưa lượt nào bị bỏ | không áp (việc đo) | 17 |
+| một người hay agent sửa hệ thống lỡ đọc bộ cất riêng | bộ đó chỉ còn giá trị như bộ quen | — | phải soạn bộ mới; có luật cấm mở, một lệnh tìm chữ riêng bỏ qua các file đề, rào máy chặn đưa các bộ đó lên kho mã công khai | không áp (việc đo) | 17 |
+| một câu trả lời hỏng (khi tìm lỗi) | trước hết xem 10 đoạn của câu đó có chứa đáp án không: thiếu thì sửa bước tìm, đủ thì sửa lời dặn hoặc xem lại model | — | đã có cách làm; câu ngoài 55 câu có nhãn thì phải đọc bằng mắt | không áp (việc đo) | 18 |
+| một thay đổi lẽ ra không đụng bước tìm mà dấu vân tay kết quả tìm lại khác | dừng lại, tìm câu nào đổi 10 đoạn, trước khi đo tiếp | — | đã có | không áp (việc đo) | 18 |
+| trợ lý tự tìm thêm, hoặc tin nhiều ý được nối thêm đoạn | hai thước của bước tìm không thấy; chúng chỉ chấm 10 đoạn của lần tìm đầu | — | chưa đổi thước; phần trợ lý đo bằng thước khác (bài 32) | không áp (việc đo) | 18 |
+| một thước chạm trần (kịch bản demo 0 trên 10 lần hỏng) | nó không còn phân biệt được hai bản | — | chỉ dùng làm phép thử khói | không áp (việc đo) | 32 |
+| câu hỏi cũ dính vào câu đang hỏi trên đường Claude | bộ test không bắt vì chưa có ca hai câu hỏi liền nhau | — | bắt bằng bộ chuỗi nhớ tên chạy với model thật | đã gặp 21/11 | 38 |
+| bản in từ khung trò chuyện ra 5 trang giống nhau | bộ test không bắt vì in là việc của trình duyệt | — | AI khác hãng nêu, nhóm mở file in thật; nút in ở hai chỗ đó đã ẩn (bài 30) | đã gặp 20/11 | 38 |
+| 3 trên 16 ca lọt chính sách chặn tải (đường vào trang thứ hai không có chính sách, bộ lọc thiếu hai thứ) | bộ test không bắt vì thiếu ca cho đường vào thứ hai | — | người kiểm bằng trình duyệt bắt; đã sửa: bộ lọc sang danh sách cho phép, chính sách cho mọi trang, thêm ca test cho cả hai | đã gặp 01/11 | 38 |
+| chạy riêng một ca của bộ test đường chat thì đỏ, chạy cả file thì xanh | ca phụ thuộc thứ tự chạy | — | ghi giới hạn: chạy cả file | đã gặp | 38 |
+
+## Chỗ CHƯA có cách xử lý
+
+Mọi dòng bài gốc ghi "chưa có" (hoặc "chưa chặn", "chưa biết"):
+
+- Model viết sai nghĩa đoạn nó trích, kèm nguồn thật: chưa có bước nào bắt — bài 1, 15
+- Hãng model lỗi: chưa có model dự phòng — bài 6, 22
+- Máy chủ khởi động lại giữa cuộc: chưa có cách giữ qua lần khởi động, chưa có lời báo — bài 6, 23
+- Máy chủ chưa sẵn sàng khi hỏi câu bão: không có câu 112 — bài 24
+- Khoảng cách tới nơi ngoài 40 điểm (khách sạn, ga, sân bay): chưa có số — bài 24
+- Hỏi bằng ảnh: chưa tách lời báo "lỗi" với "không nhận ra" — bài 6, 26
+- Xếp nhầm câu về Huế sang "ngoài phạm vi": chưa có lưới xét lại tuyến — bài 22
+- Câu ngoài phạm vi lọt vào đường "về Huế": chưa có gì ngăn câu đó bị gửi ra dịch vụ tìm web — bài 22
+- Đoạn đúng không lọt 10 đoạn: chưa có cách chữa chung — bài 13
+- Chữ lạ trong bài kho bảo model chèn link: chưa chặn — bài 37
+- 30 phút không nhắn: chưa có cách báo hay giữ lâu hơn; lịch hết hạn không có lời báo — bài 23, 27
+- Tải lại trang: chưa có cách xem lại cuộc cũ — bài 5
+- Mở tab thứ hai: chưa có cách tách cuộc theo tab — bài 35
+- Nhiều người hỏi cùng lúc: chưa có giới hạn số lượt chạy cùng lúc — bài 6, 34
+- Yêu cầu có thân rất lớn: chưa có trần kích thước ở lớp nhận kết nối — bài 37
+- Kho thêm bài mới: bộ câu mẫu chưa có câu về bài mới; chưa bản nhãn nào xét lại bài mới — bài 17, 18
+- Đổi model viết: mốc mới trên cả bộ chưa có — bài 20
+- Có người dùng thật hỏi kiểu câu chưa nghĩ tới: chưa biết, chưa có người dùng thật — bài 4, 17
+
+<details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
+
+Gom từ mục "Nếu… thì sao" của các bài 1–38, mục "Mọi tình huống hỏng của bài này" của bài 5 và bài 6, và dòng bảng thêm ở mục "Quyết định nhỏ hơn" của bài 22; bản lúc 14:51 ngày 22/11/2026; không thêm sự thật mới. Đoạn "tình huống kể trọn" của các bài chỉ dùng để bổ sung lời báo nguyên văn cho dòng cùng tình huống. Dòng trùng giữa nhiều bài đã gộp theo bản của bài 6; chỗ các bài tả khác nhau ghi ở báo cáo gom [riêng tư]. Bài 39–41 chưa gom.
+
+</details>

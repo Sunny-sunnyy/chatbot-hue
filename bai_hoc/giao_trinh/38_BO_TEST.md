@@ -1,6 +1,6 @@
 # Bài 38 — Bộ test: chương trình tự kiểm những gì
 
-*Cập nhật 13:58, ngày 22/11/2026 · số file, số ca và thời gian chạy lấy từ lần chạy đủ gần nhất (10:58–11:14 22/11, phiên đo chạy, người viết không chạy lại); các loại test đọc từ tên và chú thích đầu file trong thư mục test của máy chủ; những lần test không bắt được lỗi lấy từ các báo cáo 01/11, 20/11, 21/11; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 14:48, ngày 22/11/2026 · số file, số ca và thời gian chạy lấy từ lần chạy đủ gần nhất (10:58–11:14 22/11, phiên đo chạy, người viết không chạy lại); các loại test đọc từ tên và chú thích đầu file trong thư mục test của máy chủ; những lần test không bắt được lỗi lấy từ các báo cáo 01/11, 20/11, 21/11; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** các bộ câu và người chấm đo chất lượng câu trả lời (bài 17–20); thước "làm trợ lý" và người dùng mô phỏng (bài 32); hai rào của git trước khi lưu code (bài 37).
 **Bài này thêm:** test tự động là gì; bộ test của máy chủ gồm những loại nào, kiểm gì và không kiểm gì; nó khác các phép đo chất lượng ở đâu; những lỗi thật nó đã không bắt được; và vì sao chạy cả bộ mất khoảng mười lăm phút, từng file một.
@@ -8,7 +8,7 @@
 ## Ý chính
 
 - **Test tự động là một đoạn chương trình kiểm một đoạn chương trình khác**: đưa vào một đầu vào đã biết, so đầu ra với điều phải đúng. Máy chạy được hàng nghìn ca trong vài phút, không cần người ngồi bấm.
-- **Lần chạy đủ gần nhất (sáng 22/11): 75 file, 1.961 ca đạt, 0 file hỏng, 4 file bỏ** cả file vì cần khoá OpenAI, mà tài khoản đó đang gác; trong số đó có file kiểm đường chat chính, nên các ca không cần model của file đó cũng không chạy.
+- **Lần chạy đủ mới nhất, ở lượt kiểm chốt buổi trưa 22/11: 76 file, 2.060 ca.** Các số chi tiết trong bài là của lần chạy cuối buổi sáng: 75 file, 1.961 ca đạt, 0 file hỏng, 4 file bỏ cả file vì cần khoá OpenAI, mà tài khoản đó đang gác; trong số đó có file kiểm đường chat chính, nên các ca không cần model của file đó cũng không chạy.
 - Bộ test kiểm **chương trình làm đúng việc của nó** (cắt đoạn, tìm, kiểm số nguồn, xếp lịch, đường gọi, giao diện). Nó **không** kiểm model viết hay hay dở: các ca có model đều dùng một model giả trả lời theo kịch bản. Chất lượng câu trả lời đo ở chỗ khác, bằng model thật (bài 17–20, 32).
 - Đã có lỗi thật mà bộ test không bắt: lỗi "xin công cụ mãi" của lớp nối Claude (bài 33) chỉ lộ khi gọi model thật.
 - Cả bộ chạy khoảng 16 phút, **từng file một**, không song song: máy phát triển ít bộ nhớ: chạy cả bộ trong một lượt đã tốn khoảng 4,4 GB.
