@@ -445,7 +445,9 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
           {turn.notice && (
             <p className="notice">
               {ICON_GHI_CHU}
-              {ghiChuCoLink(turn.notice)}
+              {/* `.notice` xếp ngang (flex): chữ trước link, link và phần sau link từng là BA cột ⇒ link bị ép thành cột hẹp, xuống 3–4 dòng (phiên đo 22/11).
+                  Gói cả câu vào một khối để link nằm liền trong câu. */}
+              <span>{ghiChuCoLink(turn.notice)}</span>
             </p>
           )}
         </div>
