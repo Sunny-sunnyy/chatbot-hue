@@ -43,6 +43,9 @@ const TAM_HEP = SONG_DOC;
 // chọn sao cho chữ luôn nằm trên nền sương, không đè ảnh và không đè cột chữ bên trái.
 const T_RONG = [.06, .37, .435, .60, .80, .93], BO = ["b", "a", "a", "b", "a", "a"], NHAN = ["duoi", "trai", "trai", "phai", "trai", "trai"];
 const T_HEP = [.1, .26, .42, .58, .74, .9];
+// Dưới 1140 px cột chữ và con sông chữ S không còn đủ chỗ đứng cạnh nhau (đếm: 1024 px nhãn đè câu dẫn, 768 px ô hỏi đè sông) ⇒ bố cục DỌC như điện thoại.
+// Mốc này phải trùng mốc của khối màn đầu trong song.css.
+const MAN_DOC = "(max-width: 1140px)";
 
 export function HeroSong({ nhanh, thoiTiet, ...hoi }) {
   const ref = useRef(null);
@@ -56,7 +59,7 @@ export function HeroSong({ nhanh, thoiTiet, ...hoi }) {
     const tinh = () => {
       const goc = ref.current;
       if (!goc) return;
-      const hep = window.matchMedia("(max-width: 760px)").matches;
+      const hep = window.matchMedia(MAN_DOC).matches;
       const duong = goc.querySelector(hep ? ".h1-tam-hep" : ".h1-tam-rong");
       const vb = duong.ownerSVGElement.viewBox.baseVal, dai = duong.getTotalLength();
       const hop = goc.querySelector(".h1-song").getBoundingClientRect();
@@ -66,7 +69,10 @@ export function HeroSong({ nhanh, thoiTiet, ...hoi }) {
         if (hep) return { x: p.x, y: p.y };  // điện thoại: bến nằm giữa dòng, nhãn so le hai bên
         // màn rộng: bến nằm ở MÉP BỜ (đúng nghĩa bến) — lùi nửa bề rộng sông theo pháp tuyến, chọn bờ trái (hoặc bờ dưới khi sông chảy ngang) ⇒ chữ nằm trên nền, không đè ảnh
         const dai2 = Math.hypot(q.x - p.x, q.y - p.y) || 1, tx = (q.x - p.x) / dai2, ty = (q.y - p.y) / dai2, h = RONG / 2;
-        return BO[i] === "a" ? { x: p.x - ty * h, y: p.y + tx * h } : { x: p.x + ty * h, y: p.y - tx * h };
+        const v = BO[i] === "a" ? { x: p.x - ty * h, y: p.y + tx * h } : { x: p.x + ty * h, y: p.y - tx * h };
+        v.x = Math.min(v.x, hop.width - 44);            // bến tròn (bán kính 32) luôn nằm trọn trong màn
+        v.cho = Math.max(120, hop.width - v.x - 58);    // chỗ còn lại bên PHẢI bến cho nhãn nằm bên phải (màn 1101–1340 px: dòng mô tả tự xuống dòng thay vì bị cắt)
+        return v;
       }));
     };
     tinh();
@@ -100,7 +106,7 @@ export function HeroSong({ nhanh, thoiTiet, ...hoi }) {
         <nav className="h1-ben-ds" aria-label="Lối vào nhanh">
           {nhanh.map((n, i) => (
             <a key={n.href + n.ten} href={n.href} className={`h1-ben h1-ben-${i} h1-nhan-${NHAN[i]} nhan-nut`}
-               style={{ "--x": `${vt[i]?.x ?? 0}px`, "--y": `${vt[i]?.y ?? 0}px`, "--n": i }}>
+               style={{ "--x": `${vt[i]?.x ?? 0}px`, "--y": `${vt[i]?.y ?? 0}px`, "--cho": `${vt[i]?.cho ?? 240}px`, "--n": i }}>
               <span className={`h1-cham tc-bt-${n.mau}`}><Icon d={n.d} /></span>
               <span className="h1-nhan"><b>{n.ten}</b><small>{n.mo}</small></span>
             </a>

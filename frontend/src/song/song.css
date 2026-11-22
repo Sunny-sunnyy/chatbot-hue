@@ -86,7 +86,7 @@ html .nav-a[aria-current="page"] { background: var(--color-river); color: #fff; 
 html .brand svg, html .brand img { color: var(--color-river); }
 
 .h1-hero { position: relative; min-height: 800px; overflow: hidden; background: radial-gradient(900px 520px at 18% 8%, #fff 0%, rgba(255, 255, 255, 0) 70%), var(--color-page); }
-.h1-song { position: absolute; inset: 0; }
+.h1-song { position: absolute; inset: 0 0 0 auto; width: min(100%, 1536px); }  /* màn rất rộng: hình sông giữ cỡ của màn 1536 px, neo mép phải — kéo giãn thêm thì bờ sông thoải ra, nhãn bến dưới đè lên ảnh (thấy ở 1920 px) */
 .h1-ve { position: absolute; inset: 0; width: 100%; height: 100%; }
 .h1-ve.hep { display: none; }
 .h1-bo { stroke: #BFDCD5; }
@@ -102,7 +102,7 @@ html .brand svg, html .brand img { color: var(--color-river); }
   box-shadow: 0 10px 22px rgba(8, 53, 56, .3); transition: transform .3s var(--ease-song); }
 .h1-ben:hover .h1-cham, .h1-ben:focus-visible .h1-cham { transform: scale(1.12); }
 .h1-nhan { position: absolute; right: 44px; top: -22px; width: max-content; max-width: 240px; display: flex; flex-direction: column; text-align: right; line-height: 1.25; }
-.h1-nhan-phai .h1-nhan { right: auto; left: 44px; text-align: left; }
+.h1-nhan-phai .h1-nhan { right: auto; left: 44px; text-align: left; max-width: min(240px, var(--cho, 240px)); }
 .h1-nhan-duoi .h1-nhan { right: -32px; top: 42px; max-width: 190px; }  /* bến đầu: nhãn hẹp, nằm trong khoảng nền dưới bờ sông — không đè lên ảnh */
 .h1-nhan b { font-size: var(--text-dan); font-weight: 600; white-space: nowrap; }
 .h1-ben:hover .h1-nhan b, .h1-ben:focus-visible .h1-nhan b { text-decoration: underline; text-decoration-color: var(--color-sun); text-decoration-thickness: 3px; text-underline-offset: 4px; }
@@ -136,13 +136,13 @@ html .do-song .do-mai { fill: #fff; stroke: var(--color-sun-deep); stroke-width:
 html .nguon { border-top: 0; position: relative; }
 html .nguon::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 8px;
   background: url("/static/hoa_tiet/song_nguon.svg") repeat-x; }
-@media (max-width: 760px) {
-  /* điện thoại: tiêu đề ⇒ ô hỏi ⇒ CON SÔNG với sáu bến (thấy ngay ở màn đầu) ⇒ câu gợi ý ⇒ thời tiết */
+@media (max-width: 1140px) {
+  /* điện thoại + máy tính bảng + cửa sổ hẹp (mốc trùng MAN_DOC của Song.jsx): tiêu đề ⇒ ô hỏi ⇒ CON SÔNG với sáu bến (thấy ngay ở màn đầu) ⇒ câu gợi ý ⇒ thời tiết */
   .h1-hero { min-height: 0; display: flex; flex-direction: column; padding-bottom: 20px; }
   .h1-chu { display: contents; }
   .h1-chu > * { max-width: none; margin-left: 16px; margin-right: 16px; }
   .h1-chu .hero-h { order: 1; font-size: var(--text-h2); line-height: 1.15; max-width: none; margin: 22px 16px 10px; }
-  .h1-chu .hero-p { order: 2; font-size: var(--text-than); margin: 0 16px 16px; max-width: none; }
+  .h1-chu .hero-p { order: 2; font-size: var(--text-than); margin: 0 16px 16px; max-width: none; text-wrap: pretty; }
   .h1-chu .hoi { order: 3; width: auto; }
   .h1-song { order: 4; position: relative; inset: auto; height: 500px; margin-top: 6px; }  /* 500 px: cả sáu bến nằm trong màn đầu 844 px, trên thanh điều hướng đáy */
   .h1-chu .goi-y { order: 5; margin: 6px 16px 0; }
@@ -156,6 +156,14 @@ html .nguon::before { content: ""; position: absolute; left: 0; right: 0; top: 0
   .h1-nhan b { font-size: var(--text-than); }
   .h1-ben-0 .h1-nhan, .h1-ben-3 .h1-nhan, .h1-ben-4 .h1-nhan { left: auto; right: 34px; }
   html .h1-chu .tt-hop { order: 6; margin: 16px 16px 0; }
+}
+@media (min-width: 761px) and (max-width: 1140px) {
+  /* máy tính bảng / cửa sổ hẹp: cùng thứ tự dọc, mọi khối canh giữa trong một cột 680 px, chữ to hơn điện thoại */
+  .h1-hero { align-items: center; padding-bottom: 36px; }
+  .h1-hero .h1-chu > *, .h1-hero .h1-song { width: min(100% - 64px, 680px); margin-left: 0; margin-right: 0; }
+  .h1-hero .h1-chu .hero-h { font-size: var(--text-trang); margin-top: 40px; text-wrap: balance; }
+  .h1-hero .h1-chu .hero-p { font-size: var(--text-dan); }
+  .h1-hero .h1-dung { align-self: center; margin-left: 0; margin-right: 0; }
 }
 
 
