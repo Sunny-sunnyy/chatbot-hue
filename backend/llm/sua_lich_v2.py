@@ -732,7 +732,9 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             if i is None:
                 khong(h.ten, "ngoai_bang")
                 continue
-            if h.loai == "them_diem" and i in vt:
+            # xin thêm vào BUỔI TỐI một điểm đang có trong lịch ban ngày ("thêm Đại Nội về đêm vô tối ngày 1" — bước hiểu ý điền tên điểm ban ngày): câu "đã
+            # có trong lịch" đúng chữ mà sai việc (lượt người dùng mô phỏng 22/11, hai lượt liền) ⇒ để lệnh đi tới nhánh buổi tối bên dưới, nơi có câu nói thật
+            if h.loai == "them_diem" and i in vt and h.buoi != "toi":
                 khong(ten_cua_diem(bang, i), "da_co_trong_lich")
                 continue
             if h.loai == "doi_buoi" and h.buoi is None:
