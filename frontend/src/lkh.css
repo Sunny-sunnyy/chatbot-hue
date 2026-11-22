@@ -3,6 +3,8 @@
 .lkh-dau { position: relative; overflow: hidden; color: var(--color-on-accent); background: var(--color-river) url("/static/anh/dau_trang_song.jpg") center 60% / cover; isolation: isolate; }
 .lkh-dau::before { content: ""; position: absolute; inset: 0; z-index: -1;
   background: linear-gradient(90deg, rgba(10, 61, 64, .95) 0%, rgba(10, 61, 64, .8) 45%, rgba(10, 61, 64, .45) 100%); }
+/* màn hẹp: chữ chạy hết bề ngang, tới cả phần ảnh ít phủ ⇒ phủ đều (đo ở 390 px: câu dẫn chỉ 3,1 : 1 ở điểm sáng nhất) */
+@media (max-width: 1040px) { .lkh-dau::before { background: linear-gradient(90deg, rgba(10, 61, 64, .95) 0%, rgba(10, 61, 64, .86) 100%); } }
 .lkh-dau .khung { min-height: 210px; display: flex; flex-direction: column; justify-content: center; padding-top: 28px; padding-bottom: 28px; }
 .lkh-dau .vet, .lkh-dau .khoi-p { color: var(--color-on-river); }
 .lkh-dau .trang-h { color: var(--color-on-accent); }
@@ -221,7 +223,7 @@
   .lkh-cham-buoi { border-width: 4px; box-shadow: var(--shadow-1); }
   .lkh-muc[class*="lkh-l-"] .lkh-cham-buoi { box-shadow: 0 0 0 3px var(--mau-loai), var(--shadow-1); }
   /* (b) Dải đầu trang: nét sông chạy dọc mép dưới, nối sang thân trang */
-  .lkh-dau-song { display: block; position: absolute; left: 0; right: 0; bottom: -10px; width: 100%; height: 44px; z-index: 0; pointer-events: none; }
+  .lkh-dau-song { display: block; position: absolute; left: 50%; bottom: -10px; width: 100vw; transform: translateX(-50%); height: 44px; z-index: 0; pointer-events: none; }  /* chạy hết bề ngang màn (trước: chỉ rộng bằng khung 1200 px ⇒ màn ≥ 1280 px thấy hai đầu cụt); phần thừa do `.lkh-dau { overflow: hidden }` cắt */
   .lkh-dau-song path { fill: none; stroke-linecap: round; }
   .lkh-dau-song .lkh-song-nen { stroke: var(--color-page); stroke-width: 18; opacity: .9; }
   .lkh-dau-song .lkh-song-chay { display: inline; stroke: var(--color-accent); stroke-width: 2.5; stroke-dasharray: 8 12; }

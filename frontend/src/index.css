@@ -77,13 +77,16 @@ a { color: inherit; }
 .nav-a { text-decoration: none; padding: 8px 12px; border-radius: 999px; font-size: var(--text-than); font-weight: 500; white-space: nowrap; color: var(--color-on-accent); }
 .nav-a:hover { background: rgba(255, 255, 255, .14); }
 .nav-a[aria-current="page"] { background: var(--color-surface); color: var(--color-river); }
-/* Máy tính bảng / cửa sổ hẹp (761–1040 px): thanh trên còn đủ các mục nhưng hẹp ⇒ dùng tên ngắn của trang (như ở điện thoại) và thu lề, khe —
-   để thanh KHÔNG dài hơn màn (trước: ở 768 px thanh dài hơn màn 170 px, cả trang cuộn ngang được; đếm bằng data/…/thu/dem_dong.py). */
-@media (min-width: 761px) and (max-width: 1040px) {
+/* Máy tính bảng / cửa sổ hẹp (761–1100 px): thanh trên còn đủ các mục (sáu mục khi bật Bản đồ) nhưng hẹp ⇒ tên ngắn của trang (như ở điện thoại), thu lề và khe;
+   761–900 px: chỉ còn hình logo (tên vẫn đọc được bằng trình đọc màn hình). Trước: ở 768 px thanh dài hơn màn 170 px, cả trang cuộn ngang được (đếm bằng data/…/thu/dem_dong.py). */
+@media (min-width: 761px) and (max-width: 1100px) {
   .hd-in { padding: 0 20px; gap: 12px; }
   .brand-dai { display: none; }
   .brand-ngan { display: inline; }
   .nav-a { padding: 8px 9px; }
+}
+@media (min-width: 761px) and (max-width: 900px) {
+  .brand-ngan { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
 
 /* Nút, chip */
@@ -98,6 +101,7 @@ a { color: inherit; }
 .chip:hover { border-color: var(--color-accent); }
 .chip-sm { padding: 6px 14px; min-height: 40px; }
 .chip[aria-pressed="true"] { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-on-accent); }
+.chip[aria-pressed="true"] b { opacity: .92; }  /* số đếm trên nút đang chọn: chữ trắng mờ .75 trên nền ngọc chỉ đạt 4,33 : 1 (đo) ⇒ bớt mờ */
 
 /* `<picture>` chỉ để chọn bản ảnh theo khổ màn (ảnh nhỏ cho điện thoại) — không tạo hộp riêng, `img` bên trong giữ bố cục cũ */
 picture { display: contents; }

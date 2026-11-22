@@ -41,7 +41,7 @@ const RONG = 250, RONG_HEP = 84;
 const TAM_HEP = SONG_DOC;
 // Sáu bến ở màn rộng, đặt tay theo hình sông: vị trí dọc dòng (0–1), bờ nào ("a" = bờ trái theo chiều chảy, "b" = bờ phải) và nhãn nằm phía nào của bến —
 // chọn sao cho chữ luôn nằm trên nền sương, không đè ảnh và không đè cột chữ bên trái.
-const T_RONG = [.06, .37, .435, .60, .80, .93], BO = ["b", "a", "a", "b", "a", "a"], NHAN = ["duoi", "trai", "trai", "phai", "trai", "trai"];
+const T_RONG = [.06, .37, .435, .60, .80, .95], BO = ["b", "a", "a", "b", "a", "a"], NHAN = ["duoi", "trai", "trai", "phai", "trai", "tren"];  // "tren" = bên trái nhưng nhích LÊN: ở bến cuối bờ sông chạy chéo xuống trái, nhãn ngang tầm bến sẽ chạm vào ảnh (đo tương phản: 1,0 : 1 ở cuối dòng)
 const T_HEP = [.1, .26, .42, .58, .74, .9];
 // Dưới 1140 px cột chữ và con sông chữ S không còn đủ chỗ đứng cạnh nhau (đếm: 1024 px nhãn đè câu dẫn, 768 px ô hỏi đè sông) ⇒ bố cục DỌC như điện thoại.
 // Mốc này phải trùng mốc của khối màn đầu trong song.css.

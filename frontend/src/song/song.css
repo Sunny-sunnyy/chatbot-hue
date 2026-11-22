@@ -76,10 +76,10 @@ html.hieu-ung .cho-ben li { animation: ben-moc .45s var(--ease-song) both; anima
 }
 
 /* ════════ Thanh trên + màn đầu Trang chủ: con sông ════════ */
-html .hd { background: rgba(242, 247, 245, .97); color: var(--color-ink);
+html .hd { background: var(--color-page); color: var(--color-ink);
   border-bottom: 1px solid var(--color-line); }
 html.hieu-ung .hd-cuon { animation: none; }
-html .hd-cuon.da-cuon { background: rgba(242, 247, 245, .99); box-shadow: 0 8px 24px rgba(8, 53, 56, .1); }
+html .hd-cuon.da-cuon { background: var(--color-page); box-shadow: 0 8px 24px rgba(8, 53, 56, .1); }
 html .nav-a { color: var(--color-ink); }
 html .nav-a:hover { background: var(--color-accent-soft); }
 html .nav-a[aria-current="page"] { background: var(--color-river); color: #fff; }
@@ -104,6 +104,8 @@ html .brand svg, html .brand img { color: var(--color-river); }
 .h1-nhan { position: absolute; right: 44px; top: -22px; width: max-content; max-width: 240px; display: flex; flex-direction: column; text-align: right; line-height: 1.25; }
 .h1-nhan-phai .h1-nhan { right: auto; left: 44px; text-align: left; max-width: min(240px, var(--cho, 240px)); }
 .h1-nhan-duoi .h1-nhan { right: -32px; top: 42px; max-width: 190px; }  /* bến đầu: nhãn hẹp, nằm trong khoảng nền dưới bờ sông — không đè lên ảnh */
+.h1-nhan-tren .h1-nhan { top: -46px; }  /* bến cuối: nhãn nằm trên tầm bến, trọn trên nền sương */
+.h1-ben-4 .h1-nhan { right: 70px; top: -30px; }      /* bến thứ năm đứng ở mũi nhọn của bờ: nhãn lùi ra xa mũi, nơi dải nền đủ cao cho hai dòng chữ (đo tương phản: sát bến thì cuối dòng chạm ảnh) */
 .h1-nhan b { font-size: var(--text-dan); font-weight: 600; white-space: nowrap; }
 .h1-ben:hover .h1-nhan b, .h1-ben:focus-visible .h1-nhan b { text-decoration: underline; text-decoration-color: var(--color-sun); text-decoration-thickness: 3px; text-underline-offset: 4px; }
 .h1-nhan small { font-size: var(--text-nho); color: var(--color-muted); }
@@ -151,7 +153,7 @@ html .nguon::before { content: ""; position: absolute; left: 0; right: 0; top: 0
   .h1-ve.hep { display: block; }
   .h1-cham { left: -27px; top: -27px; width: 54px; height: 54px; }
   /* điện thoại: chỉ tên lối vào, nằm trong một viên trắng cạnh bến (mô tả để ở trang đích) — nhãn so le hai bên dòng */
-  .h1-nhan, .h1-nhan-phai .h1-nhan, .h1-nhan-duoi .h1-nhan { left: 34px; right: auto; top: -19px; padding: 8px 14px; border-radius: 999px; background: #fff; box-shadow: 0 6px 16px rgba(8, 53, 56, .18); text-align: left; }
+  .h1-nhan, .h1-nhan-phai .h1-nhan, .h1-nhan-duoi .h1-nhan, .h1-nhan-tren .h1-nhan { left: 34px; right: auto; top: -19px; padding: 8px 14px; border-radius: 999px; background: #fff; box-shadow: 0 6px 16px rgba(8, 53, 56, .18); text-align: left; }
   .h1-nhan small { display: none; }
   .h1-nhan b { font-size: var(--text-than); }
   .h1-ben-0 .h1-nhan, .h1-ben-3 .h1-nhan, .h1-ben-4 .h1-nhan { left: auto; right: 34px; }

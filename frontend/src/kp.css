@@ -8,6 +8,8 @@
 .kp2-nen img { width: 100%; height: 100%; object-fit: cover; }
 .kp2-dau::before { content: ""; position: absolute; inset: 0; z-index: -1;
   background: linear-gradient(90deg, rgba(10, 61, 64, .95) 0, rgba(10, 61, 64, .86) 45%, rgba(10, 61, 64, .5) 100%); }
+/* màn hẹp: chữ chạy hết bề ngang, tới cả phần ảnh ít phủ ⇒ phủ đều (đo ở 390 px: câu dẫn chỉ 3,5 : 1 ở điểm sáng nhất) */
+@media (max-width: 1040px) { .kp2-dau::before { background: linear-gradient(90deg, rgba(10, 61, 64, .95) 0, rgba(10, 61, 64, .86) 100%); } }
 .kp2-dau .vet { color: var(--color-river-muted); }
 .kp2-dau .vet a { color: var(--color-on-accent); }
 .kp2-h { font-family: var(--font-serif); font-weight: 600; font-size: var(--text-h1); line-height: 1.06; letter-spacing: -.01em; margin-top: 10px; }
@@ -23,6 +25,7 @@
 .kp2-loc-con { margin-top: 12px; }
 .kp2-loc .chip { display: inline-flex; align-items: center; gap: 8px; }
 .kp2-loc .chip b { font-weight: 600; font-size: var(--text-nho); opacity: .75; }
+.kp2-loc .chip[aria-pressed="true"] b { opacity: .92; }  /* số đếm trên nút đang chọn: trắng mờ .75 trên nền ngọc chỉ 4,33 : 1 (đo) */
 .kp-ic { width: 16px; height: 16px; flex: none; }
 .kp-ic-lon { width: 64px; height: 64px; opacity: .85; }
 
