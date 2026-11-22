@@ -17,12 +17,12 @@ session đó điền trước 30/11. Luật cứng của dự án vẫn ở `AGE
   xoá dữ liệu, gửi dữ liệu riêng ra dịch vụ mới, một việc trên 1 USD, deploy; và các việc ở `session_prompt/Session_Prompt.md` §4 cột phải: đổi model / provider /
   dữ liệu mới, sửa bộ câu mẫu), hoặc khi kết quả ngược với quyết định đã ghi ở `session_prompt/HIEN_TRANG.md` mục 4.
 
-**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 265 bài ⇒ 9.442 đoạn, số cờ bật — 31 từ 20/11; kho hoặc cờ đổi thì sửa cả hai nơi):
+**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 266 bài ⇒ 9.458 đoạn, số cờ bật — 31 từ 20/11; kho hoặc cờ đổi thì sửa cả hai nơi):
 
 | Kiểm gì | Lệnh (từ gốc repo) | Phải ra |
 |---|---|---|
-| Số bài / số đoạn của kho | `uv run python -c "import json;d=json.load(open('data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json'))['corpus'];print(d['file_count'],d['chunk_count'])"` | `265 9442` [đã chạy 09:19 22/11/2026 sau lần cập nhật riêng hai bài vé; trước đó `265 9436`, đã chạy 18/11] |
-| Qdrant khớp | `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 \| grep -o '"points_count":[0-9]*'` | `"points_count":9442` [đã chạy 18/11; cần Qdrant bật] |
+| Số bài / số đoạn của kho | `uv run python -c "import json;d=json.load(open('data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json'))['corpus'];print(d['file_count'],d['chunk_count'])"` | `266 9458` [đã chạy 10:04 22/11/2026 sau khi thêm bài "Leo bậc và đi bộ…"; trước đó `265 9442` — đã chạy 09:19 22/11/2026 sau lần cập nhật riêng hai bài vé; trước đó `265 9436`, đã chạy 18/11] |
+| Qdrant khớp | `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 \| grep -o '"points_count":[0-9]*'` | `"points_count":9458` [đã chạy 18/11; cần Qdrant bật] |
 | Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `40` [đã chạy 09:57 22/11/2026 trên main sau khi mở `sua_lich_them_khong_the` + `sua_lich_buoi_toi`; trước đó `38` — đã chạy 09:20 22/11/2026 trên nhánh mở `liet_ke_bai`; trước đó `37` — đã chạy 08:33 22/11/2026 trên main sau khi mở `gan_diem`; trước đó `36` — đã chạy 22:20 21/11/2026 trên nhánh mở `web_chi_khi_tu_choi`; trước đó `35` — đã chạy 22:15 21/11/2026 trên nhánh mở bốn tính năng `sua_lich_kem_hoi`, `len_lich_dan_trang`, `sua_lich_doi_cho_ngay`, `su_kien_theo_ngay`; trước đó `31` — đã chạy 16:17 20/11/2026 trên main `b2f27d78`, sau khi bật `cache_cau_tra_loi` và `danh_sach_noi_that`; trước đó `29` tối 19/11 trên nhánh bật ba cờ `noi_that_lam_thay`, `xuat_pptx`, `nho_ten_goi_y`; trước đó 26 khi bật `lich_vao_hoi_thuong`, 25 trên `55d01a8`] |
 
 ## 1. Bật Qdrant
@@ -32,7 +32,7 @@ cd /home/minhhieu/hue_rag
 docker compose up -d qdrant
 curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 | grep -o '"points_count":[0-9]*'
 ```
-- Mong đợi: `"points_count":9442` (kho 265 bài; từ 09:19 22/11/2026 sau lần cập nhật riêng hai bài vé — trước đó 9436 từ 17/11/2026). Số khác ⇒ kho hoặc chỉ mục đã đổi: đối chiếu
+- Mong đợi: `"points_count":9458` (kho 266 bài, từ 10:04 22/11/2026 sau khi thêm một bài; trước đó 9442 với 265 bài, từ 09:19 22/11/2026 sau lần cập nhật riêng hai bài vé — trước đó 9436 từ 17/11/2026). Số khác ⇒ kho hoặc chỉ mục đã đổi: đối chiếu
   `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`.
 - Dừng nếu: lệnh `docker` không có (Docker Desktop trên Windows tắt) ⇒ nhờ User bật Docker Desktop; cổng 6335 không trả lời sau 30 giây.
 
