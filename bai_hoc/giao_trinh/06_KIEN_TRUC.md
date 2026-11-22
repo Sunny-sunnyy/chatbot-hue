@@ -1,17 +1,17 @@
 # Bài 6 — Kiến trúc: các khối, vì sao đặt như vậy, và khi một khối hỏng thì sao
 
-*Cập nhật 11:29, ngày 22/11/2026 · các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Người viết không chạy lại và không tắt thử dịch vụ nào: mọi dòng "hỏng thì thấy gì" là đọc từ chương trình, chưa thử thật.*
+*Cập nhật 12:02, ngày 22/11/2026 · các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Người viết không chạy lại và không tắt thử dịch vụ nào: mọi dòng "hỏng thì thấy gì" là đọc từ chương trình, chưa thử thật.*
 
 **Bài trước đã biết:** người dùng thấy sáu trang; ở khung Trợ lý họ gõ câu hỏi và nhận câu trả lời có nguồn.
-**Bài này thêm:** phía sau màn hình có những khối nào, câu hỏi về giá vé Đại Nội đi qua chúng theo thứ tự nào, **vì sao** các khối được đặt như vậy, và **một khối hỏng thì chuyện gì xảy ra**. Bài mở đầu bằng vài khái niệm về trang web và máy chủ, giảng từ đầu, và kết nửa đầu bằng sáu câu hỏi tự kiểm.
+**Bài này thêm:** phía sau màn hình có những khối nào, một câu hỏi đi qua chúng theo thứ tự nào, **vì sao** các khối được đặt như vậy, và **một khối hỏng thì sao**. Bài mở bằng vài khái niệm về trang web và máy chủ, giảng từ đầu.
 
 ## Ý chính
 
 - Hệ thống có **năm khối**: giao diện trong trình duyệt, máy chủ, cơ sở dữ liệu tìm kiếm (Qdrant), kho cùng các bảng dữ liệu, và các dịch vụ bên ngoài (model viết, thời tiết, tìm web).
-- **Máy chủ là trung tâm.** Mọi việc của một câu trả lời đi qua nó: nó tìm trong kho, gọi model, chạy công cụ, kiểm. Giao diện không tự gọi model.
-- **Bốn thứ được máy chủ gửi ra ngoài:** lời gọi model viết, ảnh của chức năng hỏi bằng ảnh, yêu cầu lấy dự báo thời tiết, và câu tra web. Việc tìm trong kho chạy hoàn toàn trên máy của dự án.
-- Một câu hỏi đi qua sáu bước: xếp loại câu, tìm, ghép ngữ cảnh, model viết, hiện, kiểm. Ở ví dụ chính cả lượt mất 3,7 giây, trong đó model viết chiếm 3,6 giây.
-- Khi có thứ hỏng, hệ thống xử lý theo **hai tầng**. Khối chính hỏng (model viết, Qdrant, chỉ mục) thì nó dừng và nói thật: một lời báo kèm nút "Thử lại". Khối phụ hỏng (xếp loại câu, thời tiết, tìm web) thì nó bỏ phần đó và trả lời tiếp bằng phần còn lại. Nó không âm thầm gọi lại dịch vụ đang lỗi, và không tự đổi sang model khác.
+- **Máy chủ là trung tâm.** Nó tìm trong kho, gọi model, chạy công cụ, kiểm. Giao diện không tự gọi model.
+- Chỉ **bốn thứ** được gửi ra ngoài: lời gọi model viết, ảnh hỏi bằng ảnh, yêu cầu dự báo thời tiết, câu tra web. Tìm trong kho chạy trọn trên máy của dự án.
+- Một câu hỏi đi qua sáu bước: xếp loại câu, tìm, ghép ngữ cảnh, model viết, hiện, kiểm. Ở ví dụ chính: 3,7 giây, trong đó model viết 3,6 giây.
+- Khi có thứ hỏng, hệ thống xử lý theo **hai tầng**. Khối chính hỏng (model viết, Qdrant, chỉ mục): dừng và nói thật, bằng một lời báo kèm nút "Thử lại". Khối phụ hỏng (xếp loại câu, thời tiết, tìm web): bỏ phần đó và trả lời tiếp. Nó không âm thầm gọi lại dịch vụ đang lỗi, và không tự đổi sang model khác.
 
 ## Từ dùng trong bài
 
@@ -28,7 +28,7 @@
 
 ## Trình duyệt, máy chủ, và dịch vụ bên ngoài: ai ở đâu
 
-Phần này dành cho người chưa làm trang web bao giờ. Năm ý dưới đây là đủ để đọc cả bài. Các số bài ghi trong ngoặc ở bài này (ví dụ "bài 22") là chỗ giảng kỹ hơn; đọc bài này chưa cần mở chúng.
+Phần này dành cho người chưa làm trang web bao giờ. Năm ý dưới đây là đủ để đọc cả bài. Số bài ghi trong ngoặc (ví dụ "bài 22") là chỗ giảng kỹ hơn, chưa cần mở.
 
 **Một ứng dụng web có hai nửa chạy trên hai máy khác nhau.** Nửa thứ nhất là giao diện, chạy trong trình duyệt, trên máy của người dùng. Nửa thứ hai là máy chủ, chạy trên máy của dự án. Người dùng gõ câu hỏi và bấm gửi; giao diện gửi câu hỏi đó qua mạng tới máy chủ, rồi chờ. Máy chủ làm việc và gửi kết quả về; giao diện vẽ kết quả lên màn hình.
 
@@ -61,16 +61,7 @@ flowchart LR
 
 Một model nữa không có trong hình vì nó nằm ngay trong máy chủ: model embedding nhỏ (multilingual-e5-small), dùng để đổi câu hỏi thành vector (bài 10). Nó chạy trên máy của dự án, không gọi ra ngoài.
 
-## Bốn thứ được gửi ra ngoài
-
-| Thứ ra ngoài | Gửi đi đâu | Gửi những gì |
-|---|---|---|
-| lời gọi model viết | hãng cung cấp model | lời dặn; câu hỏi; các câu hỏi trước của cuộc trò chuyện và câu trả lời liền trước; các đoạn của kho được chọn; kết quả của công cụ |
-| ảnh hỏi bằng ảnh | hãng cung cấp model | tấm ảnh người dùng gửi, đã thu nhỏ |
-| yêu cầu dự báo thời tiết | dịch vụ thời tiết | toạ độ cố định của trung tâm Huế, xin dự báo 7 ngày; không có chữ nào của người dùng |
-| câu tra web | dịch vụ tìm web | câu hỏi của người dùng ở lượt đó, đã bỏ số điện thoại và email, cắt ngắn, thêm chữ "Huế"; ở câu hỏi nối tiếp thì là câu tìm do model viết. Chỉ gửi khi kho đã từ chối cả câu hỏi |
-
-Việc tìm trong kho (đổi câu hỏi thành vector, hỏi Qdrant, chấm từ khoá) chạy trọn trên máy của dự án. Ngoài bốn thứ trên, trình duyệt của người dùng tự tải các ô nền của bản đồ từ một máy chủ bản đồ công cộng; việc này không đi qua máy chủ của dự án. Bài 37 nói kỹ phần an toàn và dữ liệu người dùng.
+Máy chủ chỉ gửi ra ngoài bốn thứ: lời gọi model viết, ảnh của chức năng hỏi bằng ảnh, yêu cầu dự báo thời tiết (không kèm chữ nào của người dùng), và câu tra web (chỉ khi kho đã từ chối cả câu hỏi). Việc tìm trong kho chạy trọn trên máy của dự án. Bảng từng thứ gửi những gì nằm ở nửa để tra.
 
 ## Một câu hỏi đi qua sáu bước
 
@@ -92,9 +83,7 @@ Hai điều đọc được từ bảng:
 - **Gần như toàn bộ thời gian chờ là model viết.** Phần của chính hệ thống (tìm, ghép, kiểm) chưa tới 0,1 giây.
 - **Bước xếp loại chạy song song** với việc tìm và viết. Ở lượt này nó xong sau 0,75 giây, trước khi model viết xong, nên không cộng thêm vào thời gian chờ.
 
-Những câu khó hơn đi thêm các nhánh: model xin tìm thêm (bài 21), xin một công cụ (bài 24), hoặc kho từ chối rồi tra web (bài 25). Ví dụ "phải tìm thêm" mất 7,5 giây với 4 lần gọi model; lượt đó chạy ngày 20/11 với gpt-6-luna, chưa có lượt tương đương trên Claude.
-
-Trước mọi câu hỏi còn một giai đoạn chuẩn bị, chạy khi không có người dùng: cắt 266 bài thành 9.458 đoạn, đổi mỗi đoạn thành vector, lập thống kê từ khoá, cất vào Qdrant (chặng 2). Bước 2 nhanh là nhờ việc đó đã làm xong từ trước.
+Câu khó hơn đi thêm các nhánh: model xin tìm thêm (bài 21), xin một công cụ (bài 24), hoặc kho từ chối rồi tra web (bài 25). Bước 2 nhanh là nhờ kho đã được cắt đoạn và cất vào Qdrant từ trước, khi không có người dùng (chặng 2).
 
 ## Quyết định và lý do
 
@@ -102,92 +91,78 @@ Mỗi quyết định có bốn gạch: đã chọn gì, vì sao, cách khác, c
 
 ### 1. Vì sao mọi việc của câu trả lời nằm ở máy chủ, mà giao diện không gọi thẳng model?
 
-Về kỹ thuật, giao diện gọi thẳng hãng model được: trình duyệt cũng gửi được yêu cầu qua mạng, và làm vậy thì bớt một chặng. Nhưng muốn gọi hãng model phải kèm khoá của dự án, mà mọi thứ nằm ở giao diện thì người dùng mở ra xem được.
-
 - **Đã chọn:** giao diện chỉ nói chuyện với máy chủ của dự án. Chỉ máy chủ gọi model, Qdrant và các dịch vụ bên ngoài.
-- **Vì sao:** khoá của hãng model và của dịch vụ tìm web chỉ nằm ở máy chủ; đặt ở giao diện thì ai mở trang cũng lấy được và dùng bằng tiền của dự án. Các luật của sản phẩm ("chỉ trả lời từ kho", "kiểm số nguồn") cũng phải nằm ở nơi người dùng không sửa được. Ý thứ hai là lập luận từ cách trình duyệt hoạt động; chưa có phép thử nào được ghi lại.
-- **Cách khác:** chưa thử cách nào khác.
+- **Vì sao:** gọi hãng model phải kèm khoá của dự án. Khoá đặt ở giao diện thì ai mở trang cũng lấy được và dùng bằng tiền của dự án. Các luật của sản phẩm ("chỉ trả lời từ kho", "kiểm số nguồn") cũng phải nằm ở nơi người dùng không sửa được; ý này là lập luận từ cách trình duyệt hoạt động, chưa có phép thử nào được ghi lại.
+- **Cách khác:** giao diện gọi thẳng hãng model, bớt được một chặng: chưa thử.
 - **Cái giá:** máy chủ ngừng thì ô hỏi đáp và việc lập lịch ngừng theo, dù trang web vẫn mở được.
 
 ### 2. Vì sao khối chính hỏng thì dừng và báo, còn khối phụ hỏng thì trả lời tiếp?
 
-Một lượt hỏi dựa vào nhiều thứ. Có thứ thiếu là không thể có câu trả lời: model viết, Qdrant. Có thứ chỉ thêm một phần: dự báo thời tiết, mục tìm web, bước xếp loại câu.
+Khối chính là thứ thiếu thì không thể có câu trả lời: model viết, Qdrant. Khối phụ chỉ thêm một phần: dự báo thời tiết, mục tìm web, bước xếp loại câu.
 
-- **Đã chọn:** hai tầng. Model viết lỗi hoặc quá hạn, Qdrant không trả lời: lượt hỏi dừng, người dùng thấy một lời báo và nút "Thử lại". Thời tiết lỗi: câu trả lời vẫn được viết, và nói rõ là không lấy được dự báo. Tìm web lỗi: lượt đó không có mục web. Xếp loại câu lỗi: câu được coi là "về Huế" và đi tiếp.
-- **Vì sao:** với bước xếp loại, lý do có ghi: xếp nhầm một câu lạ vào "về Huế" thì phía sau vẫn còn các bước kiểm, còn chặn nhầm một câu về Huế thì không bước nào sửa được (bài 22). Với thời tiết, luật ghi trong chương trình là "lỗi thì không bao giờ đưa ra con số". Với tìm web và với việc dừng hẳn khi model lỗi: chưa thấy ghi lý do.
+- **Đã chọn:** khối chính lỗi thì lượt hỏi dừng, người dùng thấy một lời báo và nút "Thử lại". Thời tiết lỗi: câu trả lời vẫn được viết, và nói rõ là không lấy được dự báo. Tìm web lỗi: lượt đó không có mục web. Xếp loại câu lỗi: câu được coi là "về Huế" và đi tiếp.
+- **Vì sao:** với bước xếp loại, lý do có ghi: xếp nhầm một câu lạ vào "về Huế" thì phía sau vẫn còn các bước kiểm, còn chặn nhầm một câu về Huế thì không bước nào sửa được (bài 22). Với thời tiết, luật ghi trong chương trình là "lỗi thì không bao giờ đưa ra con số". Với tìm web, và với việc dừng hẳn khi model lỗi: chưa thấy ghi lý do.
 - **Cách khác:** báo lỗi cả lượt khi một khối phụ hỏng: chưa thử.
-- **Cái giá:** khi khối phụ hỏng, người dùng không biết có thứ vừa hỏng. Lượt đó chỉ là thiếu mục web, hoặc ô thời tiết ở Trang chủ không hiện.
+- **Cái giá:** khối phụ hỏng thì người dùng không biết có thứ vừa hỏng; lượt đó chỉ thiếu đi một phần.
 
 ### 3. Vì sao dịch vụ bên ngoài lỗi thì máy chủ không âm thầm gọi lại, và không tự đổi sang model khác?
 
-- **Đã chọn:** mỗi dịch vụ bên ngoài chỉ được gọi một lần. Phần viết của một lượt hỏi (kể cả các vòng model xin tìm thêm hay xin công cụ) có chung một hạn 45 giây; lỗi hoặc quá hạn thì dừng. Hãng model đang dùng được ghi ở một dòng cấu hình; đổi hãng là sửa dòng đó rồi khởi động lại máy chủ, do người làm.
-- **Vì sao:** chưa thấy ghi lý do. Điều thấy được trong chương trình: cả ba chỗ gọi ra ngoài đều gọi đúng một lần; với thư viện của OpenAI, chương trình phải tắt hẳn việc tự gọi lại có sẵn của thư viện, tức có người đã chủ ý đặt như vậy.
-- **Cách khác:** tự gọi lại khi lỗi mạng: chưa thử. Tự chuyển sang hãng dự phòng: chưa thử; nếu tự chuyển, model dự phòng sẽ chạy với lời dặn và các ngưỡng chưa được đo cho nó. Đã gặp thật là hai model cư xử khác nhau với cùng một lời dặn: ở bước xếp loại câu, gpt-6-luna không xếp nhầm lượt nào trong 56 lượt, còn Claude xếp nhầm 2 tới 4 trên 56 lượt tuỳ mức suy luận (bài 22).
-- **Cái giá:** hãng model chỉ trục trặc trong chốc lát thì người dùng vẫn thấy lỗi và phải tự bấm "Thử lại". Hãng sập lâu thì ô hỏi đáp ngừng cho tới khi hãng chạy lại hoặc có người đổi cấu hình; đường quay về gpt-6-luna hiện cũng đang tạm dừng.
+- **Đã chọn:** mỗi dịch vụ bên ngoài chỉ được gọi một lần. Phần viết của một lượt hỏi (kể cả các vòng model xin tìm thêm hay xin công cụ) có chung một hạn 45 giây; lỗi hoặc quá hạn thì dừng. Hãng model đang dùng ghi ở một dòng cấu hình; đổi hãng là sửa dòng đó rồi khởi động lại máy chủ, do người làm.
+- **Vì sao:** chưa thấy ghi lý do. Điều thấy được: cả ba chỗ gọi ra ngoài đều gọi đúng một lần; với thư viện của OpenAI, chương trình phải tắt hẳn việc tự gọi lại có sẵn của thư viện, tức có người đã chủ ý đặt như vậy.
+- **Cách khác:** tự gọi lại khi lỗi mạng: chưa thử. Tự chuyển sang hãng dự phòng: chưa thử; model dự phòng sẽ chạy với lời dặn và ngưỡng chưa được đo cho nó, mà hai model cư xử khác nhau với cùng một lời dặn (ở bước xếp loại câu: gpt-6-luna xếp nhầm 0 trên 56 lượt, Claude 2 tới 4 trên 56; bài 22).
+- **Cái giá:** hãng model trục trặc chốc lát thì người dùng vẫn thấy lỗi và phải tự bấm "Thử lại". Hãng sập lâu thì ô hỏi đáp ngừng cho tới khi hãng chạy lại hoặc có người đổi cấu hình; đường quay về gpt-6-luna hiện cũng đang tạm dừng.
 
-Có đúng một trường hợp máy chủ tự chạy lại, và nó không phải lỗi mạng: câu trả lời bị rút vì thiếu số nguồn ở lượt ngay sau một câu trả lời được nhớ. Chi tiết ở mục "Mọi tình huống hỏng" phía dưới.
+Có đúng một trường hợp máy chủ tự chạy lại, và nó không phải lỗi mạng (mục "Mọi tình huống hỏng", dòng "ngay sau một câu trả lời được nhớ").
 
 ### 4. Vì sao cho chữ hiện ra trước, rồi mới kiểm, để có lúc phải rút lại?
 
-Có hai thứ tự. Kiểm xong mới hiện: người dùng không bao giờ thấy một câu rồi mất, nhưng phải chờ tới khi model viết xong hết. Hiện trước, kiểm sau: chữ đầu tiên tới sớm, nhưng có lượt chữ đã hiện bị xoá đi.
-
 - **Đã chọn:** hiện trước, kiểm sau. Kiểm hỏng thì giao diện xoá chữ đã hiện, hiện lời báo "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại".
-- **Vì sao:** để người dùng bắt đầu đọc sớm. Đã đo ngày 01/11 (gpt-6-luna, 38 câu, trên trình duyệt): chữ đầu tiên tới sau 1,23 giây ở câu đứng giữa. So với chờ cả câu, nó sớm hơn 0,44 giây, dưới mốc 0,5 giây nhóm tự đặt; chủ dự án chọn giữ.
-- **Cách khác:** kiểm xong mới hiện (bản trước đó).
-- **Cái giá:** có lượt người dùng thấy chữ rồi mất: 3 trên 48 và 4 trên 53 lượt ở một lần đo ngày 21/11 (bài 16). Với model đang chạy, chữ tới một lần khi model viết xong chứ không tới dần, nên cái lợi "chữ đầu tới sớm" chưa được đo lại, trong khi cái giá vẫn còn.
+- **Vì sao:** để người dùng bắt đầu đọc sớm. Đã đo ngày 01/11 (gpt-6-luna, 38 câu, trên trình duyệt): chữ đầu tiên tới sau 1,23 giây ở câu đứng giữa, sớm hơn 0,44 giây so với chờ cả câu. Mức đó dưới mốc 0,5 giây nhóm tự đặt; chủ dự án chọn giữ.
+- **Cách khác:** kiểm xong mới hiện (bản trước đó): người dùng không bao giờ thấy một câu rồi mất, nhưng phải chờ model viết xong hết.
+- **Cái giá:** có lượt người dùng thấy chữ rồi mất: 3 trên 48 và 4 trên 53 lượt ở một lần đo ngày 21/11 (bài 16). Với model đang chạy, chữ tới một lần chứ không tới dần, nên cái lợi chưa được đo lại, trong khi cái giá vẫn còn.
 
-### 5. Vì sao cuộc trò chuyện chỉ được giữ trong bộ nhớ của máy chủ, không ghi ra đĩa?
+### 5. Vì sao cuộc trò chuyện chỉ được giữ trong bộ nhớ của máy chủ?
 
-Để hiểu câu "còn chỗ đó thì sao?", hệ thống phải nhớ các lượt trước. Có ba chỗ để giữ: trong trình duyệt (rồi gửi lại mỗi lần hỏi), trong bộ nhớ của máy chủ (mất khi máy chủ tắt), hoặc ghi ra đĩa (còn mãi).
+Để hiểu câu "còn chỗ đó thì sao?", hệ thống phải nhớ các lượt trước. Có ba chỗ để giữ: trong trình duyệt (rồi gửi lại mỗi lần hỏi), trong bộ nhớ của máy chủ, hoặc ghi ra đĩa.
 
 - **Đã chọn:** bộ nhớ của máy chủ. Mỗi cuộc giữ 3 lượt gần nhất, hết hạn sau 30 phút không hoạt động, nhiều nhất 500 cuộc.
-- **Vì sao không ghi ra đĩa:** kế hoạch làm phần nhớ hội thoại ghi rõ chữ của người dùng chỉ được nằm trong bộ nhớ và trong lời gọi model, không lưu ra đĩa (bài 37).
-- **Vì sao không để trình duyệt giữ rồi gửi lại:** lý do có ghi trong chương trình. Nếu trình duyệt gửi lại "trợ lý đã nói thế này", người dùng có thể sửa câu đó để cài một mệnh lệnh vào lời gọi model. Máy chủ giữ thì phần đó không sửa được từ ngoài.
-- **Cái giá:** khởi động lại máy chủ là mất hết các cuộc đang mở. Hệ thống hiện chỉ chạy một bản máy chủ trên một máy nên chỗ nhớ của chính bản đó là đủ; nếu sau này chạy nhiều bản cùng lúc, chúng không thấy chỗ nhớ của nhau.
+- **Vì sao không ghi ra đĩa:** kế hoạch làm phần nhớ hội thoại ghi rõ chữ của người dùng chỉ được nằm trong bộ nhớ và trong lời gọi model (bài 37).
+- **Vì sao không để trình duyệt giữ:** lý do có ghi trong chương trình. Nếu trình duyệt gửi lại "trợ lý đã nói thế này", người dùng có thể sửa câu đó để cài một mệnh lệnh vào lời gọi model.
+- **Cái giá:** khởi động lại máy chủ là mất hết các cuộc đang mở. Nếu sau này chạy nhiều bản máy chủ cùng lúc, chúng không thấy chỗ nhớ của nhau.
 
 ### 6. Vì sao khi kho và chỉ mục lệch nhau, máy chủ từ chối mọi câu hỏi?
 
-Kho là các file bài viết; chỉ mục là bản đã cắt đoạn và cất trong Qdrant. Sửa một bài trong kho mà chưa cập nhật chỉ mục thì hai thứ lệch nhau: chỉ mục còn giữ đoạn cũ.
+Kho là các file bài viết; chỉ mục là bản đã cắt đoạn và cất trong Qdrant. Sửa một bài mà chưa cập nhật chỉ mục thì chỉ mục còn giữ đoạn cũ.
 
 - **Đã chọn:** lúc bật, máy chủ so kho với chỉ mục. Lệch thì máy chủ vẫn chạy, nhưng mọi câu hỏi nhận lời báo "Dữ liệu tra cứu cần được lập chỉ mục lại."
 - **Vì sao:** việc dừng khi lệch có từ lúc dựng hệ thống. Luật đã ghi của sản phẩm là chỉ trả lời từ kho; lập luận đứng sau: trả lời từ một chỉ mục không còn khớp kho là trái luật đó, vì có thể trích một đoạn đã bị sửa giá, sửa giờ (bài 12).
 - **Cách khác:** chạy tiếp với chỉ mục cũ rồi báo "dữ liệu có thể đã cũ": không làm.
-- **Cái giá:** sửa kho mà quên cập nhật chỉ mục thì từ lần khởi động sau, ô hỏi đáp ngừng hẳn cho tới khi cập nhật. Phép so chỉ chạy lúc bật: trong lúc máy chủ đang chạy, nó không biết kho vừa đổi.
+- **Cái giá:** sửa kho mà quên cập nhật chỉ mục thì từ lần khởi động sau, ô hỏi đáp ngừng hẳn. Phép so chỉ chạy lúc bật: trong lúc máy chủ đang chạy, nó không biết kho vừa đổi.
 
-Năm quyết định nhỏ hơn (tìm trong kho chạy trên máy, khoảng cách tính sẵn, tự viết từng bước, không chạy model viết trên máy, giao diện và máy chủ chung một chỗ) nằm ở nửa để tra, mục "Quyết định nhỏ hơn".
+Năm quyết định nhỏ hơn nằm ở nửa để tra, mục "Quyết định nhỏ hơn".
 
 ## Nếu… thì sao
 
-Một tình huống kể trọn, để thấy hai tầng chạy thế nào. Giả sử hãng model sập lúc 9 giờ sáng. Người dùng gõ một câu hỏi; máy chủ tìm trong kho xong sau 0,04 giây, gửi lời gọi tới hãng model và không nhận được gì. Nó không gọi lại. Người dùng thấy dòng "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại"; bấm lại thì vẫn vậy cho tới khi hãng chạy lại. Trong lúc đó trang Khám phá, trang Bản đồ vẫn dùng được, và ai gõ đúng một câu đã được trả lời trong 24 giờ qua thì vẫn nhận lại câu trả lời đã nhớ, vì việc đó không cần gọi model. Phía dự án không có gì tự chữa: phải chờ hãng, hoặc có người sửa dòng cấu hình sang hãng khác rồi khởi động lại máy chủ.
+Một tình huống kể trọn. Giả sử hãng model sập. Người dùng gõ một câu hỏi; máy chủ tìm trong kho xong sau 0,04 giây, gửi lời gọi tới hãng model và không nhận được gì. Nó không gọi lại. Người dùng thấy dòng "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại"; bấm lại thì vẫn vậy cho tới khi hãng chạy lại. Trong lúc đó trang Khám phá, trang Bản đồ vẫn dùng được, và ai gõ đúng một câu đã được trả lời trong 24 giờ qua thì vẫn nhận lại câu trả lời đã nhớ, vì việc đó không cần gọi model. Phía dự án không có gì tự chữa: chờ hãng, hoặc có người sửa dòng cấu hình sang hãng khác rồi khởi động lại máy chủ.
 
-Sáu tình huống đáng nhớ nhất. Bảng đủ 17 tình huống nằm ở nửa để tra, mục "Mọi tình huống hỏng của bài này". Tất cả là **đọc từ chương trình**; chưa ai tắt thử từng dịch vụ để xem màn hình. Lời báo trong ngoặc kép là nguyên văn.
+Sáu tình huống đáng nhớ nhất (bảng đủ ở nửa để tra, mục "Mọi tình huống hỏng của bài này"). Tất cả là **đọc từ chương trình**, chưa ai tắt thử từng dịch vụ. Lời báo trong ngoặc kép là nguyên văn.
 
 | Nếu | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì |
 |---|---|---|
-| hãng model lỗi, hoặc phần viết quá 45 giây | "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại" | người dùng bấm "Thử lại"; hãng sập lâu thì người vận hành đổi hãng trong cấu hình rồi khởi động lại máy chủ |
+| hãng model lỗi, hoặc phần viết quá 45 giây | "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại" | người dùng bấm "Thử lại"; sập lâu thì người vận hành đổi hãng trong cấu hình rồi khởi động lại máy chủ |
 | Qdrant ngừng giữa lúc máy chủ đang chạy | "Hệ thống tra cứu tạm thời không khả dụng." ở mọi câu hỏi | người vận hành bật lại Qdrant; máy chủ dùng tiếp được ngay |
-| Qdrant chưa chạy lúc máy chủ được bật | cùng lời báo trên; trang Khám phá không có danh sách bài | bật Qdrant, rồi **khởi động lại máy chủ** (vì việc nối tới Qdrant chỉ làm lúc bật) |
+| Qdrant chưa chạy lúc máy chủ được bật | cùng lời báo trên; trang Khám phá không có danh sách bài | bật Qdrant, rồi **khởi động lại máy chủ** (việc nối tới Qdrant chỉ làm lúc bật) |
 | kho đã sửa, chỉ mục chưa cập nhật, rồi máy chủ khởi động lại | "Dữ liệu tra cứu cần được lập chỉ mục lại." ở mọi câu hỏi | người vận hành chạy lệnh cập nhật chỉ mục (bài 12), rồi khởi động lại máy chủ |
-| một khối phụ hỏng: thời tiết, tìm web, hoặc bước xếp loại câu | vẫn có câu trả lời; thiếu phần của khối đó (không có số dự báo, không có mục web) | không ai phải làm gì; dịch vụ chạy lại thì lượt sau có lại |
-| máy chủ khởi động lại | cuộc trò chuyện đang dở bị quên; tin kế tiếp như mở đầu một cuộc mới | không khôi phục được; **chưa có** cách giữ qua lần khởi động |
+| một khối phụ hỏng: thời tiết, tìm web, hoặc bước xếp loại câu | vẫn có câu trả lời; thiếu phần của khối đó | không ai phải làm gì; dịch vụ chạy lại thì lượt sau có lại |
+| máy chủ khởi động lại | cuộc trò chuyện đang dở bị quên | không khôi phục được; **chưa có** cách giữ qua lần khởi động |
 
-Khi điều kiện đổi (nhiều người hỏi cùng lúc, kho lớn gấp mười, đổi model, đưa lên mạng): bảng ở nửa để tra, cùng mục trên. Tóm tắt: chưa có giới hạn số lượt chạy cùng lúc và mới đo một lần với nhiều người hỏi; có sẵn một bộ đếm số lượt mỗi ngày cho từng người nhưng đang tắt.
+Khi điều kiện đổi (nhiều người hỏi cùng lúc, kho lớn gấp mười, đổi model, đưa lên mạng): bảng ở cùng mục trên. Tóm tắt: chưa có giới hạn số lượt chạy cùng lúc và mới đo một lần với nhiều người hỏi; có sẵn một bộ đếm số lượt mỗi ngày cho từng người nhưng đang tắt.
 
 ## Dễ nhầm
 
-- **"Giao diện gọi thẳng model."** Không. Giao diện chỉ nói chuyện với máy chủ.
 - **"Hệ thống chậm vì tìm trong kho lâu."** Không. Tìm mất khoảng 0,04 giây; chờ là chờ model viết.
-- **"Mọi thứ chạy trên dịch vụ đám mây."** Không. Máy chủ, Qdrant, kho và model embedding chạy trên máy của dự án; chỉ model viết, thời tiết và tìm web là gọi ra ngoài.
 - **"Lỗi thì hệ thống tự thử lại cho tới khi được."** Không. Dịch vụ bên ngoài lỗi thì nó không gọi lại.
 - **"Hỏng gì cũng hiện lỗi."** Không. Chỉ khối chính hỏng mới hiện lời báo; khối phụ hỏng thì câu trả lời chỉ thiếu đi một phần.
-
-## Những điều cần nhớ
-
-- Năm khối: giao diện (React) · máy chủ (Python, FastAPI) · Qdrant · kho và các bảng dữ liệu · dịch vụ bên ngoài (model viết, thời tiết, tìm web).
-- Máy chủ giữ khoá và mọi luật về nội dung câu trả lời; giao diện gửi, vẽ, và chỉ quyết cách hiện.
-- Sáu bước của một câu hỏi: xếp loại, tìm, ghép ngữ cảnh, viết, hiện, kiểm. Chữ hiện trước, kiểm sau; kiểm hỏng thì rút lại. Ví dụ chính: 3,7 giây, trong đó viết 3,6 giây.
-- Hỏng theo hai tầng: khối chính (model viết, Qdrant, chỉ mục) hỏng thì dừng và báo; khối phụ (xếp loại, thời tiết, tìm web) hỏng thì trả lời tiếp, thiếu phần đó. Không gọi lại, không có model dự phòng.
-- Thứ chỉ kiểm lúc bật (nối Qdrant, so kho với chỉ mục) thì đổi giữa chừng máy chủ không biết; cuộc trò chuyện nằm trong bộ nhớ nên mất khi khởi động lại.
 
 ## Câu hỏi tự kiểm
 
@@ -196,42 +171,28 @@ Thử trả lời bằng lời của mình trước khi bấm mở đáp án.
 <details>
 <summary>1. Vì sao giao diện không gọi thẳng model cho nhanh?</summary>
 
-Gọi model phải kèm khoá của dự án. Thứ nằm ở giao diện thì người dùng mở xem được, nên khoá sẽ lộ và bị dùng bằng tiền của dự án. Các luật về nội dung cũng phải nằm ở nơi người dùng không sửa được. Cái giá: máy chủ ngừng là ô hỏi đáp ngừng.
+Gọi model phải kèm khoá của dự án; thứ nằm ở giao diện thì người dùng lấy được. Các luật về nội dung cũng phải ở nơi người dùng không sửa được. Cái giá: máy chủ ngừng là ô hỏi đáp ngừng.
 
 </details>
 
 <details>
 <summary>2. Hãng model sập thì người dùng thấy gì, và ai phải làm gì?</summary>
 
-Thấy "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại". Máy chủ không tự gọi lại và không có model dự phòng. Chờ hãng chạy lại, hoặc người vận hành sửa dòng cấu hình sang hãng khác rồi khởi động lại máy chủ. Câu đã nhớ trong 24 giờ vẫn được trả lại; các trang không cần model vẫn chạy.
+Thấy "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại". Máy chủ không tự gọi lại, không có model dự phòng. Chờ hãng, hoặc người vận hành đổi hãng trong cấu hình rồi khởi động lại máy chủ.
 
 </details>
 
 <details>
 <summary>3. Dịch vụ thời tiết sập thì khác gì với hãng model sập?</summary>
 
-Thời tiết là khối phụ: câu trả lời vẫn được viết, nói rõ không lấy được dự báo, và không đưa ra con số nào. Model viết là khối chính: lượt hỏi dừng và hiện lời báo.
+Thời tiết là khối phụ: câu trả lời vẫn được viết, nói rõ không lấy được dự báo, không đưa ra con số nào. Model viết là khối chính: lượt hỏi dừng và hiện lời báo.
 
 </details>
 
 <details>
 <summary>4. Qdrant tắt lúc máy chủ đang chạy và Qdrant tắt lúc máy chủ được bật khác nhau thế nào?</summary>
 
-Tắt giữa chừng: câu hỏi nào cũng lỗi cho tới khi Qdrant chạy lại, rồi máy chủ dùng tiếp được ngay. Tắt lúc bật: máy chủ chỉ nối tới Qdrant một lần lúc bật, nên sau khi Qdrant chạy lại còn phải khởi động lại máy chủ. (Cả hai là đọc từ chương trình, chưa thử thật.)
-
-</details>
-
-<details>
-<summary>5. Vì sao chữ hiện ra trước khi kiểm xong? Cái giá là gì?</summary>
-
-Để người dùng bắt đầu đọc sớm: đo ngày 01/11 với gpt-6-luna, chữ đầu tới sớm hơn 0,44 giây so với chờ cả câu, và chủ dự án chọn giữ. Cái giá: có lượt người dùng thấy chữ rồi bị rút lại. Với model đang chạy, chữ tới một lần nên cái lợi chưa được đo lại.
-
-</details>
-
-<details>
-<summary>6. Vì sao cuộc trò chuyện không được ghi ra đĩa, và không để trình duyệt giữ?</summary>
-
-Không ghi ra đĩa: kế hoạch ghi rõ chữ của người dùng chỉ nằm trong bộ nhớ và trong lời gọi model. Không để trình duyệt giữ: người dùng có thể sửa "lời trợ lý đã nói" để cài mệnh lệnh vào lời gọi model. Cái giá: khởi động lại máy chủ là mất các cuộc đang mở.
+Tắt giữa chừng: câu hỏi nào cũng lỗi cho tới khi Qdrant chạy lại, rồi máy chủ dùng tiếp được ngay. Tắt lúc bật: máy chủ chỉ nối tới Qdrant một lần lúc bật, nên còn phải khởi động lại máy chủ.
 
 </details>
 
@@ -259,6 +220,17 @@ Không ghi ra đĩa: kế hoạch ghi rõ chữ của người dùng chỉ nằm
 | Câu trả lời đã nhớ | 24 giờ; nhiều nhất 500 câu; chỉ khớp khi ai đó gõ lại đúng câu đó (không tính khoảng trắng thừa, chữ hoa thường) ở lượt đầu của một cuộc mới | bài 34 | bài 34 |
 | Giới hạn số lượt mỗi ngày theo địa chỉ mạng | có sẵn, đang tắt | để bật khi đưa lên mạng | — |
 | Tài khoản người dùng, đăng nhập | không có | — | — |
+
+## Bốn thứ được gửi ra ngoài
+
+| Thứ ra ngoài | Gửi đi đâu | Gửi những gì |
+|---|---|---|
+| lời gọi model viết | hãng cung cấp model | lời dặn; câu hỏi; các câu hỏi trước của cuộc trò chuyện và câu trả lời liền trước; các đoạn của kho được chọn; kết quả của công cụ |
+| ảnh hỏi bằng ảnh | hãng cung cấp model | tấm ảnh người dùng gửi, đã thu nhỏ |
+| yêu cầu dự báo thời tiết | dịch vụ thời tiết | toạ độ cố định của trung tâm Huế, xin dự báo 7 ngày; không có chữ nào của người dùng |
+| câu tra web | dịch vụ tìm web | câu hỏi của người dùng ở lượt đó, đã bỏ số điện thoại và email, cắt ngắn, thêm chữ "Huế"; ở câu hỏi nối tiếp thì là câu tìm do model viết. Chỉ gửi khi kho đã từ chối cả câu hỏi |
+
+Việc tìm trong kho (đổi câu hỏi thành vector, hỏi Qdrant, chấm từ khoá) chạy trọn trên máy của dự án. Ngoài bốn thứ trên, trình duyệt của người dùng tự tải các ô nền của bản đồ từ một máy chủ bản đồ công cộng; việc này không đi qua máy chủ của dự án. Bài 37 nói kỹ phần an toàn và dữ liệu người dùng.
 
 ## Quyết định nhỏ hơn
 
@@ -329,6 +301,10 @@ Tất cả đọc từ chương trình, chưa thử thật. Lời báo trong ngo
 ## Chi tiết để tra
 
 - Lượt ví dụ chính: ngày 21/11/2026; thời gian từng bước theo sổ ghi: lần gọi xếp loại 0,74 giây (cả bước 0,75 giây), tìm 0,040 giây, ghép ngữ cảnh 0,004 giây, viết 3,63 giây, tổng 3,69 giây. Tiền: 0,0034 USD cho lần xếp loại, 0,0144 USD cho lần viết.
+- Ví dụ "phải tìm thêm" mất 7,5 giây với 4 lần gọi model; lượt đó chạy ngày 20/11 với gpt-6-luna, chưa có lượt tương đương trên Claude.
+- Giai đoạn chuẩn bị kho: cắt 266 bài thành 9.458 đoạn, đổi mỗi đoạn thành vector, lập thống kê từ khoá, cất vào Qdrant; khoảng 225 giây cho cả kho, khoảng nửa phút khi chỉ vài bài đổi.
+- Cùng chỗ nhớ với cuộc trò chuyện còn có nhiều nhất 500 câu trả lời đã nhớ, mỗi câu giữ 24 giờ (bài 34). Hệ thống hiện chỉ chạy một bản máy chủ trên một máy, nên chỗ nhớ của chính bản đó là đủ.
+- Các trang không cần model và Qdrant: Trang chủ, Bản đồ, Chỗ ở, Giới thiệu; trang Khám phá cần danh sách bài nạp lúc bật.
 - Lần chạy lại (dòng "ngay sau một câu trả lời được nhớ") có hạn 45 giây riêng, nên ở trường hợp xấu nhất một lượt như vậy có thể chờ khoảng 90 giây. Tiền tính cả hai lần gọi.
 - Trên đường Amazon Bedrock, "khoá" là một file khoá tạm; lúc khởi động máy chủ chỉ kiểm rằng đã được chỉ tới file đó, còn khoá được đọc lại ở mỗi lần gọi.
 - Các đường gọi chính của máy chủ (mỗi đường là một địa chỉ mà giao diện gửi yêu cầu tới): ô chat (một đường trả cả câu, một đường gửi dần từng phần), mở một cuộc trò chuyện mới, hỏi bằng ảnh, tải lịch thành PowerPoint, danh sách bài và nội dung một bài cho trang Khám phá, báo thông tin chưa đúng, thời tiết cho Trang chủ, danh sách tính năng đang mở, lịch mẫu, dữ liệu bản đồ, dữ liệu trang Chỗ ở, trang theo dõi, và một đường báo tình trạng của hệ thống (đủ, hoặc thiếu khối nào).
