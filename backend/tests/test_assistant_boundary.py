@@ -17,6 +17,7 @@ NETWORK_PACKAGES = ("openai", "agents", "httpx", "requests", "aiohttp", "urllib.
                     "huggingface_hub")
 ALLOWED = {
     "llm.generator_openai_full_corpus": {"openai", "agents"},  # OpenAI — mọi lần gọi model
+    "llm.bedrock_model": {"httpx"},  # 21/11/2026: lớp nối Claude trên Amazon Bedrock — tự ký yêu cầu rồi gọi `/model/<mã>/invoke`; mang cùng nội dung như lời gọi model ở dòng trên
     "embedding.full_corpus": {"httpx", "huggingface_hub"},  # OpenRouter (candidate Qwen3) + tải model e5 từ HF Hub (không mang chữ người dùng)
     "llm.tra_web": {"httpx"},  # B6 D3: Serper — module duy nhất gọi web (truy vấn = câu hỏi lượt này, đã bỏ SĐT / email)
     "llm.thoi_tiet": {"httpx"},  # B5b D2: Open-Meteo — module duy nhất gọi dịch vụ thời tiết (chỉ toạ độ cố định + tham số do code, không chữ người dùng)
@@ -25,6 +26,13 @@ ALLOWED = {
 # lần gọi model vẫn qua `generator._run` (hạn giờ, lỗi, tiền) — import thêm `Runner` (gọi model thẳng) phải làm test đỏ.
 ALLOWED_NAMES = {
     "llm.nhan_anh": {"agents": {"Agent", "ModelSettings"}},
+    # Lớp nối Bedrock chỉ mượn KIỂU DỮ LIỆU của Agents SDK / OpenAI để trả kết quả đúng khuôn; lời gọi mạng duy nhất của nó là httpx (ở `ALLOWED`).
+    # Import thêm client của OpenAI hay `Runner` ở file đó phải làm test đỏ.
+    "llm.bedrock_model": {
+        "agents.items": {"ModelResponse"}, "agents.models.interface": {"Model"}, "agents.tool": {"FunctionTool"}, "agents.usage": {"Usage"},
+        "openai.types.responses": {"Response", "ResponseCompletedEvent", "ResponseTextDeltaEvent"},
+        "openai.types.responses.response_usage": {"InputTokensDetails", "OutputTokensDetails"},
+    },
 }
 EXPECTED_TOOLS = {"tim_kho": ("cau_tim",)}
 
