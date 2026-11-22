@@ -209,6 +209,9 @@ def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict, cau
         return None
     conversation_id = store.ensure(request.cookies.get(CONVERSATION_COOKIE))
     trace.history = lich_su_cho_luot(store.history(conversation_id), cau)
+    khong_dap = store.history_khong_dap(conversation_id) if getattr(store, "chi_dap_lien_truoc", False) else None
+    if khong_dap is not None:  # ô cuối đang mang câu trả lời liền trước ⇒ lõi có lịch sử để lùi khi lượt bị rút vì lỗi trích dẫn (chỉ đường stream dùng)
+        trace.lich_su_khong_dap = lich_su_cho_luot(khong_dap, cau)
     metrics["n_history_turns"], metrics["history_tokens"] = len(trace.history), store.tokens_of(trace.history)
     return conversation_id
 
@@ -780,7 +783,9 @@ async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float
     stream = StreamEvents(metrics, started, new_turn_id, lich, bai_ids, sua_loi)
     try:
         async for kind, data in turn:
-            yield stream.status(data) if kind == "status" else stream.delta(data) if kind == "delta" else stream.lich_v2(kind, data)
+            # `thay_chu` từ lõi (lượt chạy lại sau khi bị rút — cờ `nho_cau_tra_loi`): thay cả ô chữ đã hiện; đi qua `stream.thay_chu` để sổ chữ đã phát về đúng
+            yield (stream.status(data) if kind == "status" else stream.delta(data) if kind == "delta" else stream.thay_chu(data) if kind == "thay_chu"
+                   else stream.lich_v2(kind, data))
         if luoi_cuoi is not None:
             luoi_cuoi()  # lưới cuối câu bão: sau khi lõi xong, trước `sources` / `notice` / `done`
         an_toan_vao_ghi_chu(trace)  # lượt sửa lịch làm được thừa hưởng câu an toàn của bản lưu trước — trước khi phát `notice`

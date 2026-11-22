@@ -392,6 +392,9 @@ class AnswerTrace:
     tool_error: Exception | None = None  # lỗi tìm / ngữ cảnh trong công cụ: SDK có thể bọc lại ⇒ lõi ném lại đúng lỗi gốc
     # B3: lịch sử cuộc trò chuyện của lượt này ((câu hỏi, câu trả lời đã cắt), …) — route đọc từ kho; rỗng = không nhớ (B2). KHÔNG log.
     history: tuple[tuple[str, str], ...] = ()
+    # cờ `nho_cau_tra_loi` (22/11/2026): route đặt khi ô cuối của `history` đang mang CÂU TRẢ LỜI liền trước — đây là chính lịch sử đó với ô ấy về dòng ghi
+    # chú / rỗng (như khi cờ tắt). Lượt bị rút vì lỗi trích dẫn thì `answer_turn_stream_parallel` chạy lại MỘT lần bằng lịch sử này. None = không có gì để lùi.
+    lich_su_khong_dap: tuple[tuple[str, str], ...] | None = None
     # B4 D4: lượt ghép mang giá trị trường từ nút (`truong`, `{}` = "Trả lời luôn"); lần tìm đầu dùng câu gốc (m-3) thay vì câu ghép
     truong: dict | None = None
     search_query: str | None = None
@@ -1962,8 +1965,39 @@ _SPEC_END = object()  # dấu hết hàng đợi của phần chạy trước (#
 ROUTE_INPUTS = ("history", "truong", "search_query")
 
 
+TEN_CHAY_LAI = "chay_lai_khong_dap"  # tên mục `trace.tools` của lượt đã chạy lại (sổ số đo: chỉ tên + đầu lời lỗi của lần đầu do code đặt, không chữ)
+
+
 async def answer_turn_stream_parallel(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
                                       recorder=None, tim_web=None):
+    """Đường stream của một lượt (`_luot_stream`) + MỘT lần chạy lại hẹp cho cờ `nho_cau_tra_loi` (22/11/2026).
+    Vì sao: lịch sử mang câu trả lời liền trước ⇒ với tin kiểu "sửa lại thứ bạn vừa viết" model chép lại lời cũ của nó mà không trích nguồn nào ⇒ bộ kiểm
+    trích dẫn rút cả câu ⇒ người dùng thấy màn hình lỗi (lượt đo 22/11: 3 / 7 lần; cờ tắt thì là câu từ chối). Sàn "lịch sử không làm nguồn" vẫn giữ —
+    thứ sửa ở đây chỉ là đoạn kết: lượt bị rút mà lịch sử ĐANG mang câu trả lời (`trace.lich_su_khong_dap` có) ⇒ gỡ chữ đã hiện (`thay_chu` rỗng), chạy lại
+    cả lượt với lịch sử như khi cờ tắt, lấy kết quả lần hai làm kết quả của lượt — tệ nhất là y như bên cờ tắt. Lần hai cũng bị rút ⇒ lỗi như cũ (không
+    lặp). Không chạy lại: lượt không mang câu trả lời nhớ, lượt không bị rút, câu cố định, cuộc có lịch đã lưu (đường sửa lịch — chưa đo, giữ như cũ)."""
+    khong_dap = trace.lich_su_khong_dap  # đọc TRƯỚC khi chạy: bước gộp trace phụ của đường song song ghi đè mọi trường không phải đầu vào của route
+    async for event in _luot_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
+        yield event
+    if khong_dap is None or trace.citation_error is None or trace.fixed_outcome is not None or trace.lich_luu is not None:
+        return
+    lai = AnswerTrace(**{name: getattr(trace, name) for name in ROUTE_INPUTS})
+    lai.history = khong_dap
+    goi_lan_dau, loi_lan_dau = list(trace.llm_calls), str(trace.citation_error).split(":", 1)[0]
+    yield "thay_chu", ""  # chữ chưa trích nguồn của lần đầu đã hiện ⇒ gỡ ngay, người dùng thấy lại các dòng tiến độ
+    try:
+        async for event in _luot_stream(query, retrieval_service, context_builder, generator, lai, flags, recorder, tim_web):
+            yield event
+    finally:  # kể cả khi người dùng ngắt giữa lần hai: trace của lượt nhận mọi thứ lần hai đã làm; tiền = cả hai lần
+        for item in dataclasses.fields(AnswerTrace):
+            if item.name not in (*ROUTE_INPUTS, "lich_su_khong_dap"):
+                setattr(trace, item.name, getattr(lai, item.name))
+        trace.llm_calls = goi_lan_dau + list(lai.llm_calls)
+        trace.tools = [*trace.tools, {"name": TEN_CHAY_LAI, "ms": 0.0, "loi_lan_dau": loi_lan_dau}]
+
+
+async def _luot_stream(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags,
+                       recorder=None, tim_web=None):
     """Thí nghiệm tốc độ #6 (plan `2026-11-04-phase-9-toc-do-song-song-plan.md`). Cờ `song_song_tra_loi` tắt (hoặc định tuyến không chạy /
     câu tìm do định tuyến viết) ⇒ đúng `answer_turn_stream`. Bật ⇒ (i) định tuyến và (ii) phần của tuyến `tro_ly_hue`
     chạy cùng lúc. (ii) chính là `answer_turn_stream` với `router` tắt trên **trace phụ** (đi thẳng lần tìm đầu câu gốc + lần gọi trợ lý —
