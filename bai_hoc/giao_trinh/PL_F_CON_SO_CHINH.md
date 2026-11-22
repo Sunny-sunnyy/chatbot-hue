@@ -1,6 +1,6 @@
 # Phụ lục F — Các con số chính trên một trang
 
-*Cập nhật 17:11, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (47 tính năng, kho 267 bài) · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 18:13, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (48 tính năng, kho 267 bài): thêm hai con số của thẻ nơi · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một con số quan trọng của hệ thống, chép từ mục "Ý chính", bảng "Cấu hình đang chạy" hoặc bảng số chính của một bài. Cột thứ ba ghi điều kiện mà bài gốc ghi kèm: đếm trên bộ nào, model viết nào, ngày nào. Một con số không có điều kiện thì không so được với con số khác, nên đừng đọc cột hai mà bỏ cột ba. Dòng ghi "cấu hình" là giá trị đặt sẵn trong hệ thống, không phải kết quả đo. Dòng ghi "lúc đó" hay "đã cũ" là số của một thời điểm đã qua, giữ lại để so. Hai model viết: gpt-6-luna (tới trưa 21/11) và Claude Sonnet 5.5 (từ 21/11, đổi tạm).
 
@@ -48,6 +48,8 @@
 | 45 giây | hạn cho các vòng của trợ lý cộng lại; lần viết lại, lần chạy lại, lần viết mục web mỗi cái có 45 giây riêng | cấu hình, sau 14:47 22/11 | 6, 15, 21 |
 | +1,17 điểm đủ ý; từ chối nhầm 12 ⇒ 4–6 trên 158 | khi mở cho trợ lý tự tìm thêm (lúc đó trần 2 lần) | gpt-6-luna, 18 câu cần nhiều nguồn và 158 câu (khoảng tin cậy +0,44 tới +2,00) | 3, 21 |
 | 6 trên 6 | số lần nêu đúng cả hai ý kho có ở một tin 4 ý, sau bốn thay đổi khâu tìm mở cùng nhau; 0 màn hình lỗi (trước: 3 trên 6 lần ra "Thử lại") | một tin 4 ý, 6 lần, Claude, chiều 22/11 | 3, 16, 40 |
+| giờ 4, 3, 1 trên 9 ⇒ 0 trên 12 · vé lẻ An Định 7 trên 9 ⇒ 0 trên 12 | câu trả lời có dòng "Tư liệu chưa có thông tin về…" sai về giờ của ba điểm phụ (Lăng Dục Đức, Cung An Định, Bảo tàng Cổ vật) và về vé lẻ Cung An Định, trước ⇒ sau thẻ nơi (trước đó 8 trên 9 câu trả lời có ít nhất một dòng sai); sau: nêu đúng giờ Cung An Định 11 trên 12, vé lẻ An Định 11 trên 12; nơi kho không có giờ, vé 0 trên 12 lượt bịa | một tin 4 ý, Claude Sonnet 5.5, 22/11: trước = 9 câu trả lời đã ghi; sau = hai lượt thật × 6; phiên đo chấm | 23, 40 |
+| 34 trên 34 · 113 trên 174 | cặp (nơi, thuộc tính) bị ghi thiếu sai thuộc loại giờ, địa chỉ, vé có đúng dòng trong thẻ nơi · số bài nơi có dòng để chép thành thẻ | dựng thử bằng chương trình trên ngữ cảnh đã ghi của 54 lượt nhiều ý, 22/11, không qua model · kho 267 bài, đếm 17:22 22/11 | 23 |
 | 4 trên 60 câu | số câu cần công cụ mà cách đưa công cụ theo từ khoá bỏ sót | đếm 21/11 trên 310 câu của sổ ghi lượt hỏi | 3, 21 |
 | 3 lượt, 30 phút, 500 cuộc | máy chủ nhớ 3 lượt gần nhất mỗi cuộc, hết hạn sau 30 phút, nhiều nhất 500 cuộc | cấu hình, sáng 22/11 | 6, 23, 35 |
 | 4.000 ký tự | phần câu trả lời liền trước được gửi kèm (trước là 1.200) | cấu hình, bật 09:40 22/11 | 23 |
@@ -88,7 +90,7 @@
 | 0 trên 10 | số lần kịch bản demo hỏng | cả hai model | 32 |
 | 3 mục · 1 phiên | mức nhiễu: bộ 41 câu lệch tới 3 mục, 12 vai lệch 1 phiên khi chạy cùng một hệ thống hai lần | đo ở bài 32 | 32 |
 | 12 trên 19 · 2 trên 5 | số ý trượt do kho thiếu: 12 trong 19 lần ý trượt (1 do tìm); lượt đo lại còn 5 ý trượt, 2 do kho thiếu, 0 do tìm | ba lượt mốc 21/11; lượt đo lại 22/11 | 40 |
-| khoảng 13 % | dòng "Tư liệu chưa có thông tin về…" sai (kho có) | một phiên đọc tay 30 trong 119 dòng của ba lượt mốc; khoảng tin cậy 4–31 % | 40 |
+| khoảng 13 % | dòng "Tư liệu chưa có thông tin về…" sai (kho có), TRƯỚC khi có thẻ nơi (17:15 22/11); chưa đếm lại | một phiên đọc tay 30 trong 119 dòng của ba lượt mốc; khoảng tin cậy 4–31 % | 40 |
 
 ## 7. Lên kế hoạch và sửa lịch
 
@@ -133,7 +135,7 @@
 
 | Con số | Đếm cái gì | Đo trên gì, model nào, ngày nào | Bài |
 |---|---|---|---|
-| 47 mở, 3 tắt | số tính năng đang mở / đang tắt (lúc 10:25 là 42 mở; từ 14:47 thêm ba; từ 15:42 thêm một; từ 16:08 thêm việc nhớ câu trả lời liền trước cả trong cuộc đã lập lịch) | đếm 16:13 22/11 (đếm lại 16:57: 47) | 4, 40, phụ lục B |
+| 48 mở, 3 tắt | số tính năng đang mở / đang tắt (lúc 10:25 là 42 mở; từ 14:47 thêm ba; từ 15:42 thêm một; từ 16:08 thêm việc nhớ câu trả lời liền trước cả trong cuộc đã lập lịch; từ 17:15 thêm thẻ nơi) | đếm 17:21 22/11 (lúc 16:13: 47) | 4, 40, phụ lục B |
 | 5 khối · 6 bước · 4 thứ gửi ra ngoài | khối của hệ thống; bước của một câu hỏi; thứ rời máy (lời gọi model, ảnh, dự báo thời tiết, câu tra web) | kiến trúc, sáng 22/11 | 6 |
 | khoảng 18 đường gọi | số đường gọi giữa giao diện và máy chủ; 3 đường gọi model | chương trình, trưa 22/11 | 35 |
 | khoảng 14 giây · 34 giây | lệnh bật ra "SẴN SÀNG" khi mọi thứ đủ · khi bắt đầu từ lúc Qdrant đang tắt | 14 giây: bốn ca chạy thật ở cổng tạm; 34 giây: lượt kiểm chốt trưa 22/11 | 36, 40 |
@@ -145,5 +147,7 @@
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
 
 Gom từ mục "Ý chính", bảng "Cấu hình đang chạy", bảng "Các con số chính của đường hỏi đáp" (bài 19), các bảng "Người dùng làm được" và "Chỗ yếu" (bài 40), cùng vài dòng "Chi tiết để tra" có số (bài 12, 34, 36, 40) của các bài 1–40 trong cùng thư mục, bản lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Gom lại 17:00 22/11/2026 theo các bài vừa sửa: số tính năng (bài 4, 40), hai dòng tiền (bài 33 "Chi tiết để tra": câu ví dụ chạy thẳng qua code sản phẩm; bài 34 bảng tiền: "không lọc theo loại câu"), "2 trên 44" (bài 22 quyết định về luật nghiêng về Huế, "Cái giá" và "Cách khác"), tin dài trên trình duyệt (bài 34 bảng "Nếu… thì sao"), hai dòng mới về cuộc đã lập lịch (bài 23 "Đã so" dòng 12 và "Giới hạn đã biết"). Lệnh đếm tính năng chạy lại 16:57 22/11 ra `47` [đã chạy]. Mỗi dòng giữ điều kiện bài gốc ghi; dòng nào bài gốc không ghi model thì không ghi. Chỗ hai bài ghi khác nhau về cùng một con số ghi ở báo cáo gom [riêng tư].
+
+- Hai dòng thẻ nơi và số 48 (thêm 17:30 22/11/2026): bài 23 "Đã so" dòng 13, "Quyết định nhỏ hơn", Nguồn; bài 40 hàng "4. Thiếu ý"; số gốc ở `data/thu_bedrock_2026-11-21/b_dem_chua_co_2211/KET_QUA.md` phép đếm 3 và `…/b_x10_the_noi/luot_1/CHAM_E.md`, `luot_2/CHAM_E.md` [riêng tư; đã chạy, phiên khác]; 113 / 174: chạy `dung_bang` trên mục lục kho thật 17:22 22/11/2026 [tự chạy lệnh đếm]; 48: lệnh runbook mục 0 tự chạy 17:21 [tự chạy lệnh đếm]. Dòng 13 % thêm "trước thẻ nơi" cho khớp bài 40. Bảng từ 93 thành 95 hàng.
 
 </details>
