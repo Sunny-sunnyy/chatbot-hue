@@ -151,6 +151,10 @@ class AssistantFlags:
     # nguyên một tin nhiều vế thì đoạn kho của vế phụ hay không vào ngữ cảnh ⇒ model ghi nhầm "Tư liệu chưa có thông tin về…". Không model,
     # không đổi lời dặn. Tin một ý / cờ `cau_nhieu_y` tắt / câu tìm do định tuyến viết ⇒ chuỗi gửi model y như cũ. TẮT tới khi một lượt thật đạt.
     tim_theo_ve: bool = False
+    # 22/11/2026 (đếm trên 364 tin nhiều ý đã ghi: 26 % số vế tìm là mẩu CỤT không có chủ thể — "mất bao lâu?", "ko phải 5", "giờ mở cửa ko?" — có ở 65 % số
+    # tin; đọc tay 28 đoạn chúng kéo về: 20 không liên quan tới tin): cờ con của `tim_theo_ve` — vế cụt KHÔNG được tìm riêng; lần tìm bằng cả tin và các vế
+    # còn lại giữ nguyên. Tắt ⇒ danh sách vế y như cũ.
+    tim_ve_bo_cut: bool = False
     # 19/11 (plan private `data/hoi_tiep_goi_y_2026-11-19/PLAN.md`): lịch sử chỉ nhớ câu hỏi ⇒ hỏi tiếp "địa chỉ quán đó" model không biết quán nào.
     # Bật: code ghi TÊN BÀI các nguồn đã trích là bài riêng của một nơi vào chỗ tin trợ lý của lịch sử (`llm/ten_goi_y.py`). TẮT tới khi đo đạt.
     nho_ten_goi_y: bool = False
@@ -1203,7 +1207,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
     instructions = _assistant_instructions(generator, trace, trace.nhieu_y) if (flags.tim_them and generator is not None) else None
     # cờ `tim_theo_ve`: chỉ tin nhiều ý, và chỉ khi câu tìm là câu gốc (câu tìm do định tuyến viết đã là câu tách sẵn)
-    ve_them = cac_ve_tim(query) if flags.tim_theo_ve and trace.nhieu_y and not trace.cau_tim else ()
+    ve_them = cac_ve_tim(query, flags.tim_ve_bo_cut) if flags.tim_theo_ve and trace.nhieu_y and not trace.cau_tim else ()
     # chỉ truyền thêm khi có vế để tìm ⇒ tin một ý / cờ tắt gọi `prepare_answer` y như trước (bảng test 22/11: một test thay hàm này bằng hàm
     # dựng sẵn 8 tham số đã đỏ khi tham số mới được truyền theo vị trí ở MỌI lượt)
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions, **({"ve_them": ve_them} if ve_them else {}))
@@ -1675,14 +1679,35 @@ TRAN_SO_VE_TIM = 6  # nhiều nhất bấy nhiêu lần tìm thêm một lượt
 _TU_HOI_TIM = re.compile(r"(?<!\w)(không|ko|k|hok|bao nhiêu|bn|mấy|nào|gì|j|đâu|sao|ai|khi nào|bao lâu|bao xa|bao giờ|chưa|hả|nhỉ|à|vậy)(?!\w)|\?", re.IGNORECASE)
 
 
-def cac_ve_tim(cau: str) -> list[str]:
+# Cờ `tim_ve_bo_cut`: vế CỤT = không có gì để neo lần tìm — không tên riêng viết hoa, và sau khi bỏ từ hỏi / từ đệm (`_TU_DEM_VE`) cùng từ thuộc tính chung
+# (`_TU_CHUNG_VE`: giờ, mở cửa, giá, vé, xa, gần…) còn dưới HAI từ mang nội dung. Tìm riêng một vế như vậy chỉ kéo về "giờ mở cửa" / "giá vé" của một nơi
+# bất kỳ. Tên gõ thường ("đại nội", "bún bò") tự là hai từ mang nội dung ⇒ không cần bảng tên nơi.
+_TU_DEM_VE = frozenset("""không ko k hok kh khong bao nhiêu bn mấy nào gì j đâu sao ai khi chưa hả nhỉ à vậy ạ nha nhé nhe á ơi ok oke okie thì là mà có được đc dc phải của
+cho với và còn hay hoặc ở tại trong ngoài trên dưới ra vào về đi đến tới từ qua lại nữa thôi luôn rồi đã đang sẽ cũng chỉ vẫn rất lắm quá hơn nhất mình tôi em anh chị bạn
+tớ nhà ta họ nó này đó kia đấy ấy thế nên cần muốn thấy biết xem giúp hộ dùm giùm một hai ba bốn các những vài cái lúc nếu như để vs ủa ừ ờ hỏi nốt tiện""".split())
+_TU_CHUNG_VE = frozenset("""giờ mở cửa đóng giá vé tiền phí địa đường xa gần lâu mất xe km phút tiếng ngày hôm nay mai sáng trưa chiều tối đêm tuần tháng năm điểm nơi chỗ
+tên số thông tin chi tiết cụ thể khác thêm""".split())
+
+
+def _ve_cut(ve: str) -> bool:
+    tu = re.findall(r"\w+", unicodedata.normalize("NFC", ve))
+    thuong = [w.casefold() for w in tu]
+    khong_noi_dung = lambda w: w in _TU_DEM_VE or w in _TU_CHUNG_VE or w.isdigit()
+    ten_dau = (tu and tu[0][0].isupper() and len(tu[0]) >= 3 and not khong_noi_dung(thuong[0])
+               and not (len(tu) > 1 and thuong[1] in ("đó", "này", "ấy", "kia", "nào")))  # "Lăng đó…", "Lịch này…" không phải tên
+    if any(w[0].isupper() for w in tu[1:]) or ten_dau:
+        return False  # tên riêng viết hoa; từ ĐẦU vế chỉ tính khi không phải từ đệm / từ chung viết hoa đầu câu ("Trên đó…", "Bao nhiêu km")
+    return sum(not khong_noi_dung(w) for w in thuong) < 2
+
+
+def cac_ve_tim(cau: str, bo_cut: bool = False) -> list[str]:
     """Các vế của một tin nhiều ý dùng làm CÂU TÌM riêng (cờ `tim_theo_ve`); bỏ vế trùng, nhiều nhất `TRAN_SO_VE_TIM` vế.
     KHÁC `so_y` có chủ ý — hàm này không quyết tin có nhiều ý hay không: cắt cả ở dấu chấm / chấm than / xuống dòng (giữ dấu ? ở cuối vế; dấu chấm /
     phẩy nằm NGAY TRƯỚC một chữ số thì không cắt — "200.000", "1,5 km"; soát khác hãng 22/11: câu tìm từng cụt thành "000 có gồm …"), nhận từ
     hỏi gõ tắt. Lý do: nhận nhầm một vế chỉ tốn hai đoạn thừa, còn bỏ sót một vế là mất đoạn kho của vế đó. Đếm 0 đồng 22/11/2026 trên 8 dòng
     "Tư liệu chưa có thông tin về…" SAI của model đang chạy: đoạn kho đúng vào ngữ cảnh 1 / 8 (tắt) ⇒ 3 / 8 nếu tách như `so_y` ⇒ 5 / 8 với cách này."""
     ve = [p.strip(" ,;.!\n") for v in re.split(r"(?<=[;?!\n])|(?<=[,.])(?!\d)", cau) if v.strip() for p in _LIEN_TU.split(v) if len(p.strip(" ,;?.!\n")) >= 8]
-    return list(dict.fromkeys(v for v in ve if _TU_HOI_TIM.search(v)))[:TRAN_SO_VE_TIM]
+    return list(dict.fromkeys(v for v in ve if _TU_HOI_TIM.search(v) and not (bo_cut and _ve_cut(v))))[:TRAN_SO_VE_TIM]
 
 
 def cau_cho_web(query: str, trace: AnswerTrace, flags: AssistantFlags | None) -> str:
