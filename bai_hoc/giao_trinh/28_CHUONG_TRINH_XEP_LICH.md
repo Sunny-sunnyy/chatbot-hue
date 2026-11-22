@@ -1,6 +1,6 @@
 # Bài 28 — Chương trình xếp lịch theo luật nào: một lịch thật được xếp từng bước
 
-*Cập nhật 13:16, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập · luật và hằng số đọc từ chương trình trưa 22/11; lịch ví dụ là lượt thật ngày 21/11 (Claude Sonnet 5.5); các biến thể ở mục "Đổi một ô" do người viết chạy riêng bộ xếp trên bảng điểm đang chạy (chỉ chương trình, không gọi model, không tốn tiền); các con số đo cũ chép từ báo cáo gốc.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: đã sửa theo một lượt đối chiếu độc lập · luật và hằng số đọc từ chương trình trưa 22/11; lịch ví dụ là lượt thật ngày 21/11 (Claude Sonnet 5.5); các biến thể ở mục "Đổi một ô" do người viết chạy riêng bộ xếp trên bảng điểm đang chạy (chỉ chương trình, không gọi model, không tốn tiền); các con số đo cũ chép từ báo cáo gốc.*
 
 **Bài trước đã biết:** người dùng bấm tám ô; chương trình xếp lịch từ bảng 41 điểm; model chỉ viết câu mô tả (bài 27).
 **Bài này thêm:** chương trình chọn điểm và tính giờ theo những luật nào, luật nào thắng khi hai luật kéo ngược nhau, và vì sao các con số là 75, 150, 210, 240 phút. Bài đi từng bước trên chính lịch ví dụ: 3 ngày, 2 người lớn, cân bằng, thích di tích.
@@ -100,7 +100,7 @@ Mỗi điểm trong bảng chỉ mang nhãn "ngắn" hoặc "nửa buổi", khô
 - **Đã chọn:** 8 cụm; một ngày nhiều nhất 2 cụm kề nhau; điểm thêm phải cùng cụm hoặc cụm kề với điểm ngay trước; đi trong cụm 15 phút, sang cụm kề 30 phút.
 - **Vì sao:** luật "một ngày nhiều nhất 2 cụm" có từ thiết kế gốc của lịch; danh sách cụm kề ghi trước theo vị trí kho ghi, nghĩa là "cùng hướng", không phải đường đi. Lý do của số 2 và của 15, 30 phút: chưa thấy ghi lý do. Điều thấy được: bảng khoảng cách có từ 16/11, sau khi bộ xếp đã chạy (14/11); kế hoạch làm bảng ghi rõ "công cụ này KHÔNG đổi lịch", không nêu vì sao.
 - **Cách khác:** dùng số phút thật từ bảng khoảng cách: chưa thử (kế hoạch 16/11 chủ ý để ngoài phạm vi). Bản sửa hẹp cho ca "quay lại": đã đo, ca dễ thấy về 0 nhưng làm đổi một ca mưa và một chuỗi đo sửa lịch ⇒ nhóm chốt giữ giới hạn (20/11).
-- **Cái giá:** ca "quay lại cùng khu" còn nguyên: 104 trên 960 cách điền biểu mẫu có ít nhất một ngày như vậy; ca Đại Nội → Thiên Mụ → Ngọ Môn là 8 trên 960, đúng lịch ví dụ.
+- **Cái giá:** ca "quay lại cùng khu" còn nguyên: 104 trên 960 cách điền biểu mẫu có ít nhất một ngày như vậy (đếm cả buổi tối); ca Đại Nội → Thiên Mụ → Ngọ Môn là 8 trên 960, đúng lịch ví dụ.
 
 ### 4. Vì sao có trẻ em hay người lớn tuổi thì lịch bị giới hạn chặt như vậy?
 
@@ -183,7 +183,7 @@ Bộ xếp chọn điểm đầu của sáng và chiều trước, rồi thêm �
 | ngày mưa, không chọn sở thích: bỏ luật "chiều một điểm thiên nhiên" (17/11) | 100 / 3.880 lịch đổi, đều đúng loại cần đổi; ngày có điểm biển – đầm phá 109 ⇒ 0 / 300; ngày toàn ngoài trời 253 ⇒ 181 / 300 | giữ |
 | mốc mưa 6 mm (15/11, một năm dự báo so với mưa đo lại) | coi nhầm là mưa 106 ⇒ 15 ngày; chuyến 2–5 ngày có ít nhất một ngày xếp kiểu mưa 80 % ⇒ 50 % | giữ |
 | thêm 7 điểm (15/11, 3.840 tổ hợp, đếm điểm ngoài sở thích ở lịch một sở thích) | chụp ảnh 51,7 % ⇒ 36,8 %; ẩm thực 56,4 % ⇒ 44,0 %; thiên nhiên 24,4 % ⇒ 17,6 %; lễ hội 39,0 % ⇒ 39,1 %; 0 lỗi khung | giữ |
-| sửa hẹp ca "quay lại cùng khu" (17/11) | ca hẹp: 8 trên 960 cách điền và 24 trên 3.840 khung ⇒ 0 và 0; ca rộng: 65 trên 960 và 258 trên 3.840 ⇒ 20 và 76; điểm ban ngày giảm khoảng 0,4 %; đổi một ca mưa và một chuỗi sửa lịch | không gộp; giữ giới hạn |
+| sửa hẹp ca "quay lại cùng khu" (17/11) | ca hẹp: 8 trên 960 cách điền và 24 trên 3.840 khung ⇒ 0 và 0; ca rộng (đếm theo ngày, chỉ buổi sáng và chiều — cách đếm khác số 104 ở "Giới hạn"): 65 ngày trong 960 cách điền và 258 trong 3.840 khung ⇒ 20 và 76; điểm ban ngày giảm khoảng 0,4 %; đổi một ca mưa và một chuỗi sửa lịch | không gộp; giữ giới hạn |
 
 **Đọc bảng thế nào:** mọi phép trên chỉ đếm khung lịch do chương trình xếp, không chạy model; chúng kiểm được luật, không kiểm được lịch có hay không. Ba lỗi người review và người chấm mù tìm ra (bài 29) là thứ mô phỏng không bắt.
 
@@ -201,7 +201,7 @@ Bộ xếp chọn điểm đầu của sáng và chiều trước, rồi thêm �
 
 ## Giới hạn đã biết
 
-- Ca "đi rồi quay lại cùng khu": 104 / 960 cách điền biểu mẫu; giữ giới hạn từ 20/11.
+- Ca "đi rồi quay lại cùng khu": 104 trên 960 cách điền biểu mẫu có ít nhất một ngày như vậy, tính cả buổi tối (17/11); bảng "Đã so" đếm theo ngày, chỉ ban ngày, nên ra 65. Giữ giới hạn từ 20/11.
 - Phút đi theo cụm, không phải đường thật; chỉ in giữa hai điểm cùng buổi.
 - Chưa có giờ tới, giờ về; ngày đầu và cuối vẫn đủ buổi.
 - Ngày mưa to vẫn có thể toàn điểm ngoài trời (181 / 300 ngày mưa không chọn sở thích ở phép đếm 17/11).
@@ -236,5 +236,7 @@ Bộ xếp chọn điểm đầu của sáng và chiều trước, rồi thêm �
 - "Chưa thấy ghi lý do" cho 75 / 150, số 2 cụm, 15 / 30 phút: đã dò spec mục 5c.3, plan B5 (D4), chú thích `lich_trinh.py` §2b, bài cũ 23.
 
 - Bài đã qua một lượt đối chiếu độc lập (người kiểm chỉ đọc, tự chạy lại bộ xếp và phần áp lệnh), trưa 22/11/2026: `data/hoc_cung_D/kiem/bai_27_32.md` [riêng tư]; các dòng SAI / LỆCH đã áp, dòng không áp ghi ở `data/hoc_cung_D/viet/viet_27_32.md` mục "Sau lượt kiểm" [riêng tư].
+
+- Hai cách đếm ca "quay lại cùng khu" (phân xử 22/11): 104 là số KHUNG có ít nhất một ngày đi cụm X → cụm khác → X, xét cả sáng, chiều, tối (`data/dem_lich_2026-11-17/dem_quay_lai.py`, vòng `seq` gồm ba buổi) [riêng tư; đọc code đếm, không chạy lại]; 65 là số NGÀY có mẫu X…Y…X chỉ trong sáng + chiều (`data/di_lai_2026-11-17/tools/dem.py`, `ds = sang + chieu`; README bảng main `4195a42`) [riêng tư; đọc code đếm, không chạy lại].
 
 </details>

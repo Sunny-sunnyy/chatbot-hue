@@ -1,6 +1,6 @@
 # Bài 5 — Người dùng thấy gì: các trang của ứng dụng
 
-*Cập nhật 15:42, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
 
 **Bài trước đã biết:** sản phẩm làm ba loại việc: hỏi đáp có nguồn, việc cần tính, và lên kế hoạch.
 **Bài này thêm:** ba loại việc đó nằm ở đâu trên màn hình. Đi một vòng qua các trang, rồi nhìn một lượt hỏi và một lượt lập lịch diễn ra thế nào trước mắt người dùng. Cuối nửa đầu là hai mục mới: vì sao giao diện được làm như vậy, và khi có thứ hỏng thì người dùng thấy gì.
@@ -81,17 +81,17 @@ Muốn sửa, người dùng nhắn ở khung Trợ lý Huế, ví dụ "đổi 
 
 ### 3. Vì sao khi lỗi giữa chừng hay bấm Dừng, chữ đã hiện bị xoá hết, không giữ nửa câu?
 
-- **Đã chọn:** bước kiểm số nguồn ở cuối hỏng thì rút lại chữ đã hiện; lỗi hay đứt kết nối giữa chừng thì xoá hết; cả hai thay bằng một lời báo và nút "Thử lại". Bấm "Dừng" cũng xoá chữ đã hiện.
+- **Đã chọn:** bước kiểm số nguồn ở cuối hỏng thì rút lại chữ đã hiện (với model đang chạy, ở lượt có công cụ, từ 15:42 22/11 chữ được giữ tới khi qua kiểm nên không có gì để rút); lỗi hay đứt kết nối giữa chừng thì xoá hết; cả hai thay bằng một lời báo và nút "Thử lại". Bấm "Dừng" cũng xoá chữ đã hiện.
 - **Vì sao:** chủ dự án chọn ngày 31/10, khi thiết kế phần chữ hiện dần. Lý do ghi trong chương trình: chữ đã hiện chưa qua bước kiểm số nguồn (bài 16).
-- **Cách khác:** không hiện chữ nào trước khi kiểm xong: đã ghi là cách quay về nếu số lần rút lại vượt 1 % số câu mỗi tuần dùng thật; chưa dùng.
+- **Cách khác:** không hiện chữ nào trước khi kiểm xong: đã ghi là cách quay về nếu số lần rút lại vượt 1 % số câu mỗi tuần dùng thật. Từ 15:42 22/11 cách này được dùng cho model đang chạy ở lượt có công cụ (bài 6); với model trả chữ dần thì chưa dùng.
 - **Cái giá:** người dùng mất phần đã đọc, phải hỏi lại.
 
 ### 4. Vì sao với model đang chạy, chữ hiện một lần mà không hiện dần?
 
 - **Đã chọn:** với Claude Sonnet 5.5 qua Amazon Bedrock, máy chủ gọi model trọn một lần rồi gửi cả câu trả lời về giao diện một lần.
-- **Vì sao:** tài khoản AWS đang dùng chưa có quyền gọi model theo kiểu trả chữ dần. Ngày 22/11 chủ dự án gác mọi việc về AWS tới khi tự xem lại, và dặn làm tiếp trên máy như hiện tại.
+- **Vì sao:** tài khoản AWS đang dùng chưa có quyền gọi model theo kiểu trả chữ dần. Khi đổi tạm sang Claude (21/11), chủ dự án ghi "không cần stream thật" (bài 33); ngày 22/11 chủ dự án gác mọi việc về AWS tới khi tự xem lại, và dặn làm tiếp trên máy như hiện tại.
 - **Cách khác:** cấp thêm quyền đó cho tài khoản để chữ hiện dần như với gpt-6-luna: chưa làm, nằm trong phần việc AWS đang gác.
-- **Cái giá:** có lượt phần chữ trống hơn 15 giây, chỉ có dòng trạng thái (bài 34). Việc rút lại chữ vẫn có thể xảy ra, trong khi cái lợi "đọc sớm" không còn (bài 6).
+- **Cái giá:** có lượt phần chữ trống hơn 15 giây, chỉ có dòng trạng thái (bài 34). Cái lợi "đọc sớm" không còn, nên từ 15:42 22/11 chữ được giữ tới khi qua bước kiểm nguồn: người dùng không còn thấy chữ rồi mất, đổi lại dòng trạng thái đứng lâu hơn ở lượt phải viết lại (bài 6).
 
 ### 5. Vì sao giao diện làm bằng React và đóng thành file tĩnh?
 
@@ -113,8 +113,8 @@ Sáu tình huống của ô chat; bảng đủ ở nửa để tra. Tất cả *
 | không nối được tới máy chủ khi gửi câu hỏi | báo lỗi; câu hỏi vẫn nằm trong khung trò chuyện | "Không kết nối được máy chủ. Vui lòng thử lại." và nút "Thử lại" | đã có |
 | đang nhận câu trả lời thì đứt kết nối | xoá chữ và nguồn đã hiện | "Kết nối bị gián đoạn. Vui lòng thử lại." và nút "Thử lại" | đã có |
 | máy chủ báo lỗi giữa lượt (model lỗi, kho không tìm được) | xoá chữ đã hiện, hiện lời báo của máy chủ | lời báo tương ứng (bài 6) và nút "Thử lại" | đã có |
-| bước kiểm số nguồn hỏng sau khi chữ đã hiện | rút lại chữ đã hiện | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" (bài 16) | đã có |
-| như dòng trên, nhưng ở tin hỏi tiếp ngay sau một câu trả lời mà cuộc trò chuyện đang nhớ (ví dụ "sửa lại thứ bạn vừa viết") **(đã đo 22/11)** | máy chủ gỡ chữ đã hiện, chạy lại cả lượt một lần mà không đưa câu trả lời cũ cho model | với model đang chạy: dòng trạng thái lặp lại một nhịp, câu trả lời ra chậm hơn khoảng 5 giây, không thấy chữ nào hiện rồi mất (chữ lần đầu chưa kịp vẽ); lần hai vẫn hỏng thì như dòng trên | đã có từ 22/11; trước đó 3 trong 7 lần đo ra màn hình lỗi, sau 0 trong 5 (chạy lại thật 2 lần) |
+| bước kiểm số nguồn hỏng | model trả chữ dần: rút lại chữ đã hiện; model đang chạy, lượt có công cụ: chữ chưa hề hiện (giữ tới khi kiểm) | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" (bài 16) | đã có |
+| như dòng trên, nhưng ở ô chat, ở lượt hỏi tiếp đang kèm câu trả lời liền trước (ví dụ "sửa lại thứ bạn vừa viết") **(đã đo 22/11)** | máy chủ gỡ chữ đã hiện (nếu có), chạy lại cả lượt một lần mà không đưa câu trả lời cũ cho model | với model đang chạy: dòng trạng thái lặp lại một nhịp, câu trả lời ra chậm hơn khoảng 5 giây, không thấy chữ nào hiện rồi mất (chữ lần đầu chưa kịp vẽ); lần hai vẫn hỏng thì như dòng trên | đã có từ 22/11; trước đó 3 trong 7 lần đo ra màn hình lỗi, sau 0 trong 5 (chạy lại thật 2 lần) |
 | người dùng bấm "Dừng" | cắt đường nối; máy chủ bỏ lần gọi model đang chờ, không nhớ lượt đó | "Đã dừng. Phần trả lời chưa xong nên không hiện (chưa kiểm nguồn)." và nút "Hỏi lại" | đã có |
 
 ## Dễ nhầm
@@ -141,9 +141,9 @@ Giao diện chặn để người dùng thấy ngay; nhưng thứ chạy trong t
 </details>
 
 <details>
-<summary>3. Bước kiểm số nguồn hỏng sau khi chữ đã hiện thì người dùng thấy gì? Có ngoại lệ nào?</summary>
+<summary>3. Bước kiểm số nguồn hỏng thì người dùng thấy gì? Có ngoại lệ nào?</summary>
 
-Chữ bị rút lại, thay bằng "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại". Ngoại lệ từ 22/11: tin hỏi tiếp ngay sau một câu trả lời đang được nhớ thì máy chủ chạy lại cả lượt một lần trước khi báo lỗi.
+Một lời báo "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại". Với model đang chạy, ở lượt có công cụ, chữ hỏng chưa hề hiện; với model trả chữ dần, chữ đã hiện bị rút lại. Ngoại lệ từ 22/11: ở ô chat, lượt hỏi tiếp đang kèm câu trả lời liền trước thì máy chủ chạy lại cả lượt một lần trước khi báo lỗi (trừ cuộc có lịch; bài 16).
 
 </details>
 
@@ -196,7 +196,7 @@ Sáu dòng của ô chat ở nửa để hiểu, cộng các dòng dưới. Tấ
 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa |
 |---|---|---|---|
-| tin dài nhiều ý, model đã tự tìm (thường là đã hết lượt) mà chữ nộp không có số nguồn nào | máy chủ cho model viết lại một lần, không công cụ, từ các đoạn đã gom (bài 21) | khoảng 14 giây đầu chỉ có dòng tiến độ; rồi có thể hiện một đoạn chữ ngắn chưa phải câu trả lời ("cần tìm thêm về…") khoảng 15–17 giây, rồi được thay bằng câu trả lời thật (hoặc câu từ chối) | có từ 14:47 22/11; suy từ chương trình và sổ máy chủ, chưa chụp màn hình; giấu đoạn chữ đó là việc chưa làm |
+| tin dài nhiều ý, model đã tự tìm (thường là đã hết lượt) mà chữ nộp không có số nguồn nào | máy chủ cho model viết lại một lần, không công cụ, từ các đoạn đã gom (bài 21) | từ 15:42 22/11: chỉ dòng "Đang viết câu trả lời…" đứng lâu hơn (17–25 giây ở lượt đo trước khi mở), rồi câu trả lời thật (hoặc câu từ chối); đoạn chữ giữ chỗ không còn hiện | có từ 14:47 22/11; theo test và một lượt thật, chưa nhìn trên trình duyệt. Trước 15:42 đoạn chữ giữ chỗ hiện khoảng 15–17 giây rồi bị thay ("Chi tiết để tra") |
 | lúc tải trang không hỏi được máy chủ "tính năng nào đang mở" | coi các tính năng đó là đang tắt | không có mục Bản đồ, Lên kế hoạch; không có nút gửi ảnh; không có ô thời tiết ở Trang chủ | đã có |
 | không tải được danh sách bài | báo ngay tại trang Khám phá | "Chưa tải được danh sách bài — thử tải lại trang." | đã có |
 | không lấy được số thời tiết cho Trang chủ | ẩn ô thời tiết | không có ô thời tiết; không bao giờ hiện số cũ | đã có |
@@ -213,11 +213,12 @@ Nút "Thử lại" khi không nối được máy chủ gửi lại đúng câu 
 - **Người đọc không thấy ý nào đến từ nguồn nào**, vì số [n] không hiện (bài 16).
 - **Với model đang chạy, có lượt phần chữ trống hơn 15 giây** rồi mới hiện một lần; trong lúc đó chỉ có dòng trạng thái (bài 34).
 - **Trang Bản đồ chỉ có điểm tham quan**, chưa có quán ăn hay chỗ ở.
-- **Số lượt tải file lịch chưa bị giới hạn;** phải làm trước khi đưa lên mạng.
+- **Số lượt tải PowerPoint chỉ bị giới hạn khi bộ giới hạn lượt được bật** (30 lượt mỗi địa chỉ mỗi ngày, bài 37); trên máy phát triển bộ này đang tắt. Các file dựng trong trình duyệt không đi qua máy chủ nên không đếm.
 - **Chưa có ứng dụng điện thoại riêng;** chưa có quyết định nào được ghi về việc này. Trang web chạy được trong trình duyệt của điện thoại.
 
 ## Chi tiết để tra
 
+- Trước 15:42 22/11 (lịch sử): ở lượt phải viết lại một lần, sau khoảng 14 giây chỉ có dòng tiến độ, màn hình có thể hiện một đoạn chữ ngắn chưa phải câu trả lời ("cần tìm thêm về…") khoảng 15–17 giây rồi bị thay bằng câu trả lời thật; ở lượt bị rút, chữ đã hiện bị xoá. Tính năng giữ chữ tới khi kiểm (mở 15:42) bỏ cả hai cảnh đó cho model đang chạy.
 - Dưới một lịch đã lập: ô chỗ ở khi người dùng đã chọn hạng sao (chưa chọn thì là một đường link sang trang Chỗ ở); các nút sao chép lịch, tải về dạng chữ, thêm vào ứng dụng lịch (khi đã chọn ngày đi), in hoặc lưu PDF, tải PowerPoint.
 - Lượt lập lịch ví dụ là lượt thật ngày 21/11/2026 với Claude Sonnet 5.5: khung lịch sau 0,2 giây, xong sau 9,3 giây, một lần gọi model (để viết câu mô tả), 11 điểm trong 3 ngày, trong đó 3 điểm buổi tối (chợ, phố đi bộ); điểm buổi tối cũng có giờ, ví dụ chợ Đông Ba 18:00 – 23:00.
 - Luật chọn ảnh cạnh câu trả lời: một ảnh khi mọi nguồn được trích thuộc cùng một bài về một nơi hoặc một món; trích nhiều bài thì chỉ lấy bài có tên xuất hiện trong câu hỏi hoặc câu trả lời, nhiều nhất 3 ảnh; lượt có mục web hoặc có lịch thì không hiện ảnh.
@@ -243,14 +244,16 @@ Nút "Thử lại" khi không nối được máy chủ gửi lại đúng câu 
 - Việc làm tại trình duyệt: ô tìm trang Khám phá `frontend/src/timBai.js`; file lịch dạng chữ và file cho ứng dụng lịch `frontend/src/lich_ics.js`, `LichV2.jsx`. File PowerPoint dựng ở máy chủ: `backend/api/routes/xuat.py`.
 - Ví dụ chính: `data/hoc_cung_D/vi_du_di_suot_vet.json` (dòng ghi chú; ba bài được trích). Ví dụ lập lịch (3 ngày, 2 người lớn, cân bằng, di tích; 219 ms khung, 9.320 ms xong; 11 điểm): `data/hoc_cung_D/vi_du_lap_lich_vet.json` [đã chạy 21/11].
 - Ba hướng công nghệ, lý do nhiều trang, lựa chọn bỏ số [n]: `bai_hoc/17_GIAO_DIEN_VA_TOC_DO.md` phần 1. Tương phản, độ xô lệch, hai khổ màn hình, 124 KB, 262 / 265 bài có ảnh, 40 / 41 điểm có ảnh: `bai_hoc/24_GIAO_DIEN_H1.md` [đã chạy 14–16/11].
-- Ô nền bản đồ: `backend/api/routes/cong.py` (địa chỉ máy chủ ô) và `session_prompt/HIEN_TRANG.md`. 40 điểm trên trang Bản đồ; chưa thử điện thoại thật; chưa giới hạn lượt tải; nút in chỉ ở trang Lên kế hoạch, nút PowerPoint ở mọi thẻ lịch: `bai_hoc/BAN_DO_DU_AN.md`, `guides/RUNBOOK_BAN_GIAO.md` mục 10.
+- Ô nền bản đồ: `backend/api/routes/cong.py` (địa chỉ máy chủ ô) và `session_prompt/HIEN_TRANG.md`. 40 điểm trên trang Bản đồ; chưa thử điện thoại thật; lượt tải PowerPoint: `TRAN_TAI_FILE = 30` trong `backend/api/gioi_han.py`, chỉ đếm khi đặt `HUE_LUOT_MOI_NGAY` hoặc `HUE_LUOT_TONG_MOI_NGAY` (thêm 12:48 22/11, commit `7024636e`) [code]; nút in chỉ ở trang Lên kế hoạch, nút PowerPoint ở mọi thẻ lịch: `bai_hoc/BAN_DO_DU_AN.md`, `guides/RUNBOOK_BAN_GIAO.md` mục 10.
 - Trang theo dõi: `frontend/src/TheoDoi.jsx`; `bai_hoc/VIEC_MOI_XONG.md` mục 33.
 - Mục "Quyết định và lý do", "Quyết định nhỏ hơn", "Nếu… thì sao", "Mọi tình huống hỏng" (sửa theo biên bản `data/hoc_cung_D/kiem/muc_moi_05_06_17_20.md` phần bài 05 [riêng tư]): nhiều trang, chủ dự án chọn "mức 2" và bỏ số [n] ngày 06/11: `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md` (D1, D2) [quyết định đã ghi]; xoá chữ khi lỗi / rút lại (chủ dự án 31/10 11:48), cách quay về "chỉ tiến độ" khi rút > 1 %: `docs/superpowers/specs/2026-10-31-streaming-design.md` (D3, D5), lý do "chưa qua kiểm trích dẫn": `frontend/src/chat.jsx` (chú thích ở nhánh `AbortError`); chữ hiện một lần với Bedrock: `backend/llm/bedrock_model.py` (`stream_response` "stream giả"), thiếu quyền gọi trả chữ dần và AWS gác 22/11: `session_prompt/HIEN_TRANG.md` mục 3; ba hướng công nghệ 01–02/11: `bai_hoc/17_GIAO_DIEN_VA_TOC_DO.md` phần 1; máy chủ gửi file đóng gói: `backend/api/app.py` (`FRONTEND_DIR = frontend/dist`) [code]; tính năng đang mở, nút ảnh theo `app.state.anh`: `backend/api/routes/cong.py` (`tinh_nang`), xô lệch 0,22: chú thích `App.jsx` (`daCoTinhNang`); một cuộc trò chuyện qua các trang (D8): spec cổng đợt 1 và chú thích đầu `App.jsx`; dòng chỉ dẫn sửa lịch: `LenKeHoach.jsx`; tải lại trang là cuộc mới (lỗi 15/11): chú thích `chat.jsx` trước lời gọi `/api/conversation/new`; chạy lại một lần (từ 10:50 22/11; 3 / 7; không áp cuộc có lịch đã lưu; tiền tính cả hai lần): `backend/llm/assistant.py` (`answer_turn_stream_parallel`), giao diện gỡ chữ qua sự kiện `thay_chu` ở `chat.jsx` [code, chưa thử trên trình duyệt]; Dừng không nhớ lượt: chú thích `chat.jsx` nhánh `AbortError`, `routes/chat.py` (`client_disconnected`).
 
 - Phần "Huế qua các thời kỳ" (sáu mốc, chữ viết lại từ bài trong kho, nằm trong trang Giới thiệu; chủ dự án chọn làm ngày 14/11): `frontend/src/HueQuaCacThoiKy.jsx` (chú thích đầu file), `frontend/src/GioiThieu.jsx` [code].
 
-- Dòng chạy lại sau câu trả lời được nhớ đổi nhãn "đọc từ chương trình" ⇒ "đã đo 22/11" (sửa chỗ lệch với bài 16): `report_agent/2026-11-22/b_nho_dap_chay_lai.md` dòng 32 (0 / 5, trước 3 / 7, chạy lại thật 2 / 5) và dòng 36 (đã nhìn trên trình duyệt: dòng tiến độ lặp một nhịp, chậm khoảng 5 giây); `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 ("KHÔNG có chữ nào hiện rồi mất", lý do đọc code giao diện) [đã chạy, phiên đo; người thứ hai kiểm; người viết không chạy lại]. Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml`.
+- Dòng chạy lại ở lượt đang kèm câu trả lời liền trước đổi nhãn "đọc từ chương trình" ⇒ "đã đo 22/11" (sửa chỗ lệch với bài 16): `report_agent/2026-11-22/b_nho_dap_chay_lai.md` dòng 32 (0 / 5, trước 3 / 7, chạy lại thật 2 / 5) và dòng 36 (đã nhìn trên trình duyệt: dòng tiến độ lặp một nhịp, chậm khoảng 5 giây); `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 ("KHÔNG có chữ nào hiện rồi mất", lý do đọc code giao diện) [đã chạy, phiên đo; người thứ hai kiểm; người viết không chạy lại]. Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml`.
 
 - Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó thêm dòng viết lại một lần vào bảng đủ: `bai_hoc/VIEC_MOI_XONG.md` mục 42, đính chính 15:14 ("khoảng 14 giây đầu chỉ có một dòng trạng thái; rồi có thể hiện một đoạn chữ ngắn CHƯA phải câu trả lời… khoảng 15–17 giây"); `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Lưới viết lại" [suy từ chương trình và sổ máy chủ, chưa chụp màn hình].
+
+- Giữ chữ tới khi qua bước kiểm nguồn (mở 15:42 22/11/2026; chỉ lượt có công cụ trên model trả chữ một lần; đường chữ chạy dần không giữ; đo trước khi mở: viết lại 9 / 114 lượt, chữ giữ chỗ đứng 17–25 giây): `backend/config/settings.yaml` dòng `giu_chu_toi_kiem`, `backend/llm/assistant.py` (chú thích `giu_chu_toi_kiem`, biến `cho_kiem` trong luồng gửi chữ), `backend/tests/test_giu_chu_toi_kiem.py` (tên ca: lượt qua kiểm hiện như cũ, chữ giữ chỗ không bao giờ hiện, chữ bị rút không bao giờ hiện, đường chữ chạy dần không đổi) [code, đọc 22/11; không chạy test]; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Lưới viết lại" ("Đang viết câu trả lời…" đứng 17–25 giây; chưa nhìn trên trình duyệt) [chép].
 
 </details>

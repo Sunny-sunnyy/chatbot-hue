@@ -1,6 +1,6 @@
 # Bài 24 — Việc phải đúng thì chương trình tính: ngày âm lịch làm mẫu, rồi thời tiết, khoảng cách và các công cụ khác
 
-*Cập nhật 12:54, ngày 22/11/2026 · sửa theo một lượt đối chiếu độc lập · cơ chế đọc từ chương trình và cấu hình trưa 22/11; ví dụ ngày âm lịch là kết quả của chính phần tính ngày, người viết chạy lúc 12:15 22/11 (không gọi model); số đo chép từ báo cáo 05/11 – 22/11, ghi rõ model ở từng con số.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: sửa theo một lượt đối chiếu độc lập · cơ chế đọc từ chương trình và cấu hình trưa 22/11; ví dụ ngày âm lịch là kết quả của chính phần tính ngày, người viết chạy lúc 12:15 22/11 (không gọi model); số đo chép từ báo cáo 05/11 – 22/11, ghi rõ model ở từng con số.*
 
 **Bài trước đã biết:** model được xin công cụ (bài 3, bài 21); tin nối tiếp được hiểu nhờ lịch sử (bài 23).
 **Bài này thêm:** việc có đáp án đúng duy nhất (hôm nay là ngày nào, rằm tháng Giêng rơi vào thứ mấy, mai có mưa không, từ A tới B bao xa) do chương trình làm, model chỉ diễn đạt. Bài đi kỹ một việc làm mẫu là ngày và âm lịch, rồi các việc còn lại theo cùng khuôn.
@@ -86,13 +86,13 @@ Dòng ghi chú có vì lỗi thật 09/11: hỏi tháng 11 về "Tết năm nay"
 
 - **Đã chọn:** cổng theo từ khoá của câu gõ và câu hỏi liền trước.
 - **Vì sao:** ghi trong chương trình: công cụ có mặt ở mọi lượt làm đổi cách model trả lời cả câu không liên quan. Đã gặp hai lần: 05/11, thêm công cụ tính tiền làm câu miễn vé bỏ điều kiện 3 trên 3 lần (bản đang chạy 1 trên 3); 17/11, bản "luôn đưa công cụ thời tiết" làm một câu hỏi giá đi lại bị nối bảng mưa, trái luật ghi trước, chủ dự án chọn lùi.
-- **Cách khác:** chế độ "luôn đưa" có sẵn trong cấu hình: chưa đo trên model đang chạy.
-- **Cái giá:** câu cần công cụ mà thiếu từ khoá thì model không thấy công cụ: đếm 21/11 trên 310 câu, sót 4 trên 60 (đã thêm các từ bị sót).
+- **Cách khác:** chế độ "luôn đưa" cả các công cụ có sẵn trong cấu hình từ 21/11: chưa đo trên model nào. Riêng bản luôn đưa công cụ thời tiết đã đo 17/11 với gpt-6-luna và bị lùi (dòng 4b của "Đã so").
+- **Cái giá:** câu cần công cụ mà thiếu từ khoá thì model không thấy công cụ: đếm 21/11 trên 310 câu, sót 4 trên 60 (thời tiết 3, ngày 1). Lần sửa 21/11 thêm từ cho ba câu thời tiết, không nhắc câu về ngày; chưa đếm lại.
 
 ### 4. Vì sao thời tiết lỗi thì không đưa con số nào, và không gọi lại?
 
 - **Đã chọn:** một lần gọi, hạn 3 giây; lỗi, quá hạn, sai dạng, số ngoài khoảng hợp lý đều là "lỗi", model chỉ nhận câu "chưa lấy được dự báo".
-- **Vì sao:** luật ghi trong chương trình: lỗi thì không bao giờ đưa số. Không gọi lại: chưa thấy ghi lý do. Điều thấy được: mọi dịch vụ bên ngoài của hệ thống đều chỉ gọi một lần (bài 6).
+- **Vì sao:** luật ghi trong chương trình: lỗi thì không bao giờ đưa số. Không gọi lại: quyết định đã ghi trong kế hoạch của tính năng (một lần gọi, hạn 3 giây, không thử lại), chưa thấy ghi lý do. Điều thấy được: mọi dịch vụ bên ngoài của hệ thống đều chỉ gọi một lần (bài 6).
 - **Cách khác:** gọi lại khi lỗi; dịch vụ thời tiết thứ hai: chưa thử.
 - **Cái giá:** Open-Meteo chậm quá 3 giây là lượt đó không có dự báo.
 
@@ -208,7 +208,7 @@ Hai lần thử: phép cộng đúng, nhưng model bỏ điều kiện miễn v�
 - **Ngày model viết không bị chương trình kiểm lại.** Bước kiểm số chỉ soi số thời tiết và khoảng cách; ngày chỉ được bảo đảm nhờ nguồn tính sẵn và số nguồn.
 - **Dạng ngày ít gặp** đi đường công cụ, chậm hơn; câu không dấu không bật công cụ.
 - **Thời tiết "tuần sau"** chỉ có số cho phần nằm trong 7 ngày; chương trình ghi rõ dự báo có tới ngày nào.
-- **Khoảng cách và "gần"** chỉ cho 40 điểm và 41 quán có vị trí; "gần" là đường chim bay; công cụ "gần" không biết giờ mở cửa.
+- **Khoảng cách và "gần"** chỉ cho 40 điểm (bảng điểm của lịch có 41; một điểm chưa có toạ độ nên không vào bảng khoảng cách, bài 27) và 41 quán có vị trí; "gần" là đường chim bay; công cụ "gần" không biết giờ mở cửa.
 - **Tổng tiền là số model tự cộng.**
 - **Lưới từ nguy hiểm thời tiết** vẫn sót vài cách nói tự nhiên ("nước có lên nữa không") và nhận thừa vài câu ("bão giá", tên phim).
 
@@ -244,5 +244,7 @@ Hai lần thử: phép cộng đúng, nhưng model bỏ điều kiện miễn v�
 - Câu bão nói vòng 1 / 22; lưới sót "nước có lên nữa không": `guides/RUNBOOK_BAN_GIAO.md` 10.1 [chép].
 - Ba trường hợp không có câu 112: `backend/api/routes/chat.py` (`_retrieval_not_ready`, `_error_response_for(GeneratorNotReadyError…)` trước khi mở luồng, không qua `loi_bao_luoi_cuoi`), `frontend/src/stream.js` (lời báo mạng đứt), `assistant.py` `luoi_cuoi_bao` (bỏ qua khi có thẻ hỏi lại) [suy từ code, chưa thử]. Số km chỉ soi khi có số do chương trình đưa: `_so_la` (`so_code` rỗng ⇒ không soi) [code]. Thừa hơn sót: `thoi_tiet.la_luot_bao_lu`, `assistant._luot_bao_lu`, `_can_dau_bao_lu`; gỡ câu / rút cả câu: `kiem_so_sau_khi_viet`; tra sẵn dạng hẹp, 15 / 21: `report_agent/2026-11-12_ra_khoang_cach/c_kc_tinh_san_implementation.md` (qua `bai_hoc/14_…`) [chép]. Dòng "hôm nay" 5,0 ⇒ 4,5 (bộ đo B1, 02/11) và mức 95 %: `bao_cao_he_thong/07_…` dòng 104–106, 464 [đã chạy]. Chim bay × 1,3 là phương án (b) của kế hoạch, không có phép đo: `docs/superpowers/plans/2026-11-16-khoang-cach-plan.md` mục 2.
 - Bài đã qua một lượt đối chiếu độc lập với chương trình và số đo ngày 22/11 (32 dòng: 7 lệch, đã sửa; người kiểm tự chạy lại hàm tính lịch, ra đúng các số của ví dụ): `data/hoc_cung_D/kiem/bai_23_26.md` [riêng tư].
+
+- "Không gọi lại" của thời tiết là quyết định đã ghi: `docs/superpowers/plans/2026-11-05-phase-9-b5b-plan.md` hàng D7 ("timeout 3 s, không thử lại"; cột lý do chỉ nói lỗi hạ tầng khác kết quả rỗng và hạn mức 10.000 / ngày — không nói vì sao không gọi lại); `backend/llm/thoi_tiet.py` docstring dòng 6 [code; phân xử 22/11].
 
 </details>

@@ -1,6 +1,6 @@
 # Bài 32 — Đo một trợ lý: hội thoại nhiều lượt, người dùng mô phỏng, kịch bản chạy lặp
 
-*Cập nhật 15:12, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập; khớp lại với lượt đo 12 vai 14:13 22/11 (`VIEC_MOI_XONG` mục 43) · các thước, cách chấm và số chép từ hồ sơ đo các ngày 14–22/11 (phần lớn ngày 21/11, hai model: gpt-6-luna và Claude Sonnet 5.5 mức suy luận cao); số đếm loại câu của bộ 41 câu đếm lại bằng máy, không đọc câu; người viết không chạy lại phép đo nào.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: đã sửa theo một lượt đối chiếu độc lập; khớp lại với lượt đo 12 vai 14:13 22/11 (`VIEC_MOI_XONG` mục 43) · các thước, cách chấm và số chép từ hồ sơ đo các ngày 14–22/11 (phần lớn ngày 21/11, hai model: gpt-6-luna và Claude Sonnet 5.5 mức suy luận cao); số đếm loại câu của bộ 41 câu đếm lại bằng máy, không đọc câu; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** bộ 176 câu mẫu đo bước tìm và câu trả lời, mỗi câu một lượt (bài 17–19); một thí nghiệm đổi một thứ, đo theo cặp, so với nhiễu (bài 20); trợ lý tự tìm thêm, gọi công cụ, nhớ cuộc trò chuyện, sửa lịch (bài 21–31).
 **Bài này thêm:** những thứ trợ lý làm qua nhiều lượt thì bộ 176 câu không thấy. Bài giảng năm thước của phần trợ lý (chuỗi hội thoại, người dùng mô phỏng, bộ câu khó, kịch bản demo, bộ dò mù), ai chấm từng thước, mức nhiễu của thước nhỏ, luật "ít nhất ba lượt mỗi bên", và các số chính hiện có.
@@ -9,7 +9,7 @@
 
 - Bộ 176 câu hỏi **mỗi câu một lượt**, nên không thấy chuyện xảy ra khi người dùng hỏi tiếp, hỏi cụt, hỏi ba ý một lúc, hay nhờ sửa lịch rồi hỏi thêm. Phần trợ lý cần thước nhiều lượt.
 - **Người dùng mô phỏng**: một model thứ ba (Claude Opus 5.5) đóng 12 vai du khách, mỗi vai nói chuyện với hệ thống tối đa 5 lượt qua đường chat thật. Thước này tìm ra các lỗi mà mọi thước cũ đều sạch, ví dụ phần hỏi trong một tin "vừa sửa lịch vừa hỏi" bị bỏ im 4 trên 4 lần.
-- Người chấm **đọc mù**: một agent con ngữ cảnh mới đọc bản ghi đã giấu tên model (gọi là hệ X, hệ Y). Bộ 41 câu khó và kịch bản demo thì chấm bằng luật máy.
+- Bản ghi được **chấm mù**: một agent con ngữ cảnh mới đọc bản ghi đã giấu tên model (gọi là hệ X, hệ Y). Bộ 41 câu khó và kịch bản demo thì chấm bằng luật máy.
 - Thước nhỏ **nhiễu lớn**: cùng một hệ thống chạy hai lần, bộ 41 câu lệch tới 3 mục, 12 vai lệch 1 phiên. Vì vậy luật của nhóm: thước nhỏ cần ít nhất ba lượt mỗi bên, và chỉ gọi là "tốt hơn" khi mọi cặp lượt cùng chiều và chênh lớn hơn nhiễu.
 - Số chính (21/11): 12 vai, phiên đạt 7 · 7 · 8 trên 12 với Claude Sonnet 5.5, so với 6 · 5 · 6 với gpt-6-luna (đo lại 14:13 ngày 22/11: 8 trên 12, 33 trên 38 ý, trong khoảng nhiễu); bộ 41 câu khó, lượt mới nhất 39 trên 41 đạt máy; kịch bản demo 0 trên 10 lần hỏng ở cả hai model.
 
@@ -21,7 +21,7 @@
 | chuỗi hội thoại | **multi-turn chain** | một kịch bản nhiều tin liền nhau, mỗi tin có nhãn điều đúng phải xảy ra |
 | người dùng mô phỏng | **simulated user** | một model được dặn đóng vai một du khách và tự nghĩ tin tiếp theo theo câu trả lời nhận được |
 | vai | **persona** | mô tả một kiểu khách: ai đi, muốn gì, hay nói thế nào |
-| đọc mù | **blind grading** | người chấm không biết bản ghi nào của hệ thống nào |
+| chấm mù | **blind grading** | người chấm không biết bản ghi nào của hệ thống nào (cùng ý "chấm mù" ở bài 19) |
 | bộ dò mù | **blind probe set** | bộ câu thử cho một tính năng, do một phiên **khác** người làm soạn theo lời tả, chưa đọc chương trình |
 | đạt máy | **automatic pass** | đạt theo luật máy kiểm (không lỗi, không chạm trần, có đủ chữ phải có); thô hơn đọc tay |
 | phép thử khói | **smoke test** | một lượt chạy ngắn ngay sau khi gộp thay đổi, chỉ để thấy chỗ vỡ rõ ràng |
@@ -41,18 +41,18 @@ Chiều ngược lại cũng đúng: độ đúng sự thật của từng câu 
 | Thước | Đo gì | Cỡ | Ai chấm | Dùng khi nào |
 |---|---|---|---|---|
 | **Chuỗi hội thoại** | hỏi tiếp đúng ngữ cảnh: nhớ tên, hỏi tiếp ý cũ, ý mới, ngoài kho, có điều kiện, đổi chủ đề | 25 chuỗi, 56 lượt (20 chuỗi 2 lượt, 4 chuỗi 3 lượt, 1 chuỗi 4 lượt) | máy đếm (tuyến đúng, trả lời / từ chối đúng nhãn, câu tìm có tên nơi của lượt trước); người đo đọc tay lượt lệch | mỗi khi đổi phần nhớ hội thoại hay lời dặn |
-| **12 vai người dùng mô phỏng** | một du khách thật sự có đạt được việc mình muốn không | 12 vai × tối đa 5 lượt; 38 ý cần đạt | agent con đọc mù | mốc trước / sau một đợt sửa lớn, hoặc đổi model |
+| **12 vai người dùng mô phỏng** | một du khách thật sự có đạt được việc mình muốn không | 12 vai × tối đa 5 lượt; 38 ý cần đạt | agent con chấm mù | mốc trước / sau một đợt sửa lớn, hoặc đổi model |
 | **41 câu khó** | các ca khó rút từ 24 phiên mô phỏng, phát lại cả lịch sử | 41 mục, 17 loại | luật máy | so theo cặp một bản sửa nhỏ, hay hai model |
 | **Kịch bản demo** | 10 việc một người demo sẽ làm, câu cố định: 6 ở ô hỏi đáp, 4 ở trang Lên kế hoạch | 10 bước | luật máy, đọc tay vài bước | phép thử khói sau mỗi lần gộp |
 | **Bộ dò mù** | một tính năng nhận đúng câu cần nhận, không nhận nhầm câu giống mà không phải | thường 20 câu phải nhận + 20 câu đối chứng | máy đếm, người khác người làm soạn | trước khi mở một tính năng dựa vào khuôn chữ |
 
 Ngoài năm thước này còn một **thước 29 câu** cho công cụ (15 câu dùng công cụ, 6 câu ở rìa phạm vi Huế, 8 câu ghép nhiều công cụ), kèm hai bộ sàn: 10 câu an toàn, 10 câu ngoài phạm vi.
 
-## Người dùng mô phỏng: một model đóng vai, một model khác đọc mù
+## Người dùng mô phỏng: một model đóng vai, một model khác chấm mù
 
 **Cách chạy.** Mỗi vai có một đoạn tả và một tin mở đầu cố định. Người mô phỏng nhận câu trả lời của hệ thống, tự viết tin tiếp theo, tối đa 5 lượt; xong việc thì tự dừng. Nó không có kho, không có bộ câu mẫu, không có nhãn. Hệ thống được gọi qua đúng đường chat của người dùng thật, trong cùng tiến trình máy chủ. Mười hai vai, ví dụ: gia đình có bé và bà đau gối; hai sinh viên ít tiền; khách chỉ có một buổi chiều; người mê ăn; người thích lịch sử cố đưa một điều sai; khách mùa mưa; người lên lịch bằng biểu mẫu rồi sửa trong ô chat; người hỏi cụt, hay đổi ý; người nhờ việc ngoài phạm vi; người dân địa phương; người đi lễ.
 
-**Cách chấm.** Mỗi vai có 3–4 ý cần đạt, cả bộ 38 ý. Phiên "đạt" khi người chấm thấy vai đạt được việc mình muốn. Lượt đầu (trưa 21/11), phiên làm việc đọc tay, không mù. Lượt mốc (tối 21/11) đổi sang đọc mù: mỗi lượt một agent con ngữ cảnh mới đọc bản ghi đã đổi tên thành hệ X, hệ Y theo luật chấm ghi trước; lượt thứ nhất của mốc có hai người đọc độc lập, khớp nhau ở mọi vai.
+**Cách chấm.** Mỗi vai có 3–4 ý cần đạt, cả bộ 38 ý. Phiên "đạt" khi người chấm thấy vai đạt được việc mình muốn. Lượt đầu (trưa 21/11), phiên làm việc đọc tay, không mù. Lượt mốc (tối 21/11) đổi sang chấm mù: mỗi lượt một agent con ngữ cảnh mới đọc bản ghi đã đổi tên thành hệ X, hệ Y theo luật chấm ghi trước; lượt thứ nhất của mốc có hai người đọc độc lập, khớp nhau ở mọi vai.
 
 **Thước này tìm ra gì.** Ở lượt đầu, các lỗi mà bộ thước cũ không thấy:
 
@@ -85,7 +85,7 @@ Từ chiều 21/11 luật đo của nhóm ghi: "thước nhỏ / nhiều lượt
 - **Cách khác:** chỉ dùng 25 chuỗi viết sẵn: vẫn giữ, cho phần nhớ hội thoại. Để chủ dự án tự dùng thử 20 phút làm phép đối chiếu với người thật: đã đề xuất, chưa làm.
 - **Cái giá:** người mô phỏng cùng họ model với hệ thống đang chạy (Opus và Sonnet đều là Claude), nên có thể dễ tính với nhau; điều này được ghi trước khi đo. Người dùng do model đóng thường dễ hơn người thật. Mốc ba lượt 12 vai × hai model tốn khoảng 14 USD.
 
-### 2. Vì sao người chấm 12 vai phải đọc mù?
+### 2. Vì sao người chấm 12 vai phải chấm mù?
 
 - **Đã chọn:** bản ghi giấu tên model, gọi hệ X / hệ Y, khoá đổi theo từng lượt; người chấm là agent con ngữ cảnh mới, chấm theo luật ghi trước.
 - **Vì sao:** lượt đầu do phiên làm việc đọc tay, biết bên nào là model nào; số đó (6 và 9 trên 12) mới là một lượt, một người đọc, nên chưa dùng làm mốc được. Đọc mù và nhiều lượt là cách tách ý kiến của người chấm khỏi chênh thật.
@@ -119,7 +119,7 @@ Bài này về cách đo, không có thứ hỏng ở phía người dùng. Ba �
 ## Dễ nhầm
 
 - **"12 vai đạt 8 / 12 nghĩa là 4 vai lỗi hệ thống."** Không hẳn. Ở mốc 21/11, ba trong bốn vai chưa đạt vướng một ý mà kho chưa có (một ý khác vì tính năng đang tắt), vai còn lại vướng phần sửa lịch. Ở lượt 14:13 ngày 22/11, năm ý còn trượt: kho thiếu 2, kho có mà model không ghép được 1, 2 ý của vai sửa lịch mà thước không đọc được; kho có mà tìm không ra 0. Trần của thước với Claude khoảng 8–9 trên 12.
-- **"Bộ dò mù là người chấm không biết bên nào."** Đó là đọc mù. Bộ dò mù là bộ câu do người khác người làm soạn, chưa đọc chương trình.
+- **"Bộ dò mù là người chấm không biết bên nào."** Đó là chấm mù. Bộ dò mù là bộ câu do người khác người làm soạn, chưa đọc chương trình.
 
 ## Câu hỏi tự kiểm
 
@@ -142,7 +142,7 @@ Không: cùng một bản chạy hai lần đã lệch 33 ↔ 30. Chênh 3 mục
 <details>
 <summary>3. Ai đóng vai người dùng, ai chấm, và vì sao phải tách?</summary>
 
-Claude Opus 5.5 đóng vai; agent con ngữ cảnh mới đọc mù chấm. Người chấm biết bên nào là model nào thì ý kiến lẫn vào số; tách và giấu tên để chênh còn lại là chênh của hệ thống.
+Claude Opus 5.5 đóng vai; agent con ngữ cảnh mới chấm mù. Người chấm biết bên nào là model nào thì ý kiến lẫn vào số; tách và giấu tên để chênh còn lại là chênh của hệ thống.
 
 </details>
 
@@ -163,7 +163,7 @@ Bài này không có cấu hình của hệ thống; bảng dưới là cấu h�
 
 ## Đã so
 
-**12 vai, mốc ba lượt (tối 21/11, đọc mù, cùng một bản hệ thống):**
+**12 vai, mốc ba lượt (tối 21/11, chấm mù, cùng một bản hệ thống):**
 
 | | lượt 1 | lượt 2 | lượt 3 | mức nhiễu |
 |---|---|---|---|---|
@@ -218,7 +218,7 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 - Bộ 41 câu khó theo loại: chạm trần số vòng 6 mục, câu bị rút vì nhắc lại số dự báo 5, sửa lịch kèm câu hỏi 4, kho có mà báo chưa có 3, quên câu trả lời trước 3, nói thật năng lực 3, mười một loại còn lại 1–2 mục mỗi loại. Số lượt lịch sử trước câu cuối: 0 lượt 6 mục, 1 lượt 13, 2 lượt 10, 3 lượt 7, 4 lượt 5.
 - Người chấm 176 câu: gpt-6-luna, thêm Claude mức cao từ trưa 21/11, chuyển hẳn sang Claude tối 21/11 (bài 19). Kiểm người chấm bằng phiếu đã biết mức: gpt-6-luna 11 / 12, Claude 12 / 12.
 - Kết quả an toàn: `data/thu_bedrock_2026-11-21/do/agent/KET_QUA_AGENT.md` dòng 40 (thiếu cảnh báo 5 / 8, 1 / 8; người viết đã mở); bị rút 7 lượt, 5 / 6 lượt phát lại vì số dự báo: `c_nguoi_dung_mo_phong/KET_QUA.md` dòng 10, 38 (người viết đã mở).
-- Chấm an toàn của thước: hai agent con đọc mù; phép đối chứng bắt 10 / 10 câu chèn sai, báo nhầm 0 / 5.
+- Chấm an toàn của thước: hai agent con chấm mù; phép đối chứng bắt 10 / 10 câu chèn sai, báo nhầm 0 / 5.
 
 **Bài sau (bài 33):** model viết, mức suy luận, và đổi model bằng một dòng cấu hình.
 
@@ -227,7 +227,7 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 
 - Bộ 176 câu không đủ cho phần trợ lý: `bai_hoc/VIEC_MOI_XONG.md` dòng 363–364; `bai_hoc/giao_trinh/17_BO_CAU_HOI_MAU.md` (dòng "đo bằng các bộ khác (bài 32)"); `data/thu_bedrock_2026-11-21/c_nguoi_dung_mo_phong/THIET_KE.md` dòng 3; `KET_QUA.md` dòng 24–32 (tám loại câu mới); độ đúng sự thật vẫn do bộ 176 câu giữ: `VIEC_MOI_XONG.md` dòng 398 [chép; riêng tư cho `data/`].
 - Người dùng mô phỏng: `THIET_KE.md` (dòng 7–8 đường chat thật, giới hạn cùng họ; 11–23 mười hai vai; 25–27 Opus, không kho, `<XONG>`; 31–32 người chấm), `c_nguoi_dung_mo_phong/chay.py` (`SO_LUOT = 5`, model) [riêng tư; code]. Lỗi tìm ra, 12 / 48, 7 / 53, 6 / 9, Opus không tách được: `KET_QUA.md` dòng 7–22, 36–45 [riêng tư; đã chạy]. Vòng lặp "thêm X": chú thích `backend/llm/sua_lich_v2.py` (người dùng mô phỏng 21/11) [code].
-- Mốc ba lượt, đọc mù, hệ X / Y, r1 hai người đọc khớp: `data/thu_bedrock_2026-11-21/do/moc_12vai/doc_mu/TONG_HOP_MOC.md` dòng 1–11 (người viết đã mở), `LUAT_CHAM.md`; chạm trần 7 · 8 · 3 / 0 · 0 · 0: `do/moc_12vai/KET_QUA_MOC.md` [riêng tư; đã chạy]. 14 USD, trần 8–9 / 12, ba trong bốn ý do kho thiếu: `VIEC_MOI_XONG.md` dòng 401–423 [chép].
+- Mốc ba lượt, chấm mù, hệ X / Y, r1 hai người đọc khớp: `data/thu_bedrock_2026-11-21/do/moc_12vai/doc_mu/TONG_HOP_MOC.md` dòng 1–11 (người viết đã mở), `LUAT_CHAM.md`; chạm trần 7 · 8 · 3 / 0 · 0 · 0: `do/moc_12vai/KET_QUA_MOC.md` [riêng tư; đã chạy]. 14 USD, trần 8–9 / 12, ba trong bốn ý do kho thiếu: `VIEC_MOI_XONG.md` dòng 401–423 [chép].
 - 41 câu khó: `c_nguoi_dung_mo_phong/bo_cau_kho.json` (17 loại, số mục mỗi loại, số lượt lịch sử — agent con đếm bằng máy trường `loai_kho`, không đọc câu) [riêng tư; đã chạy]; luật "đạt máy" và "THÔ hơn đọc tay": `data/thu_bedrock_2026-11-21/tools/e_thuoc_kho.py` dòng 7–8, 182–187 [code]; nhiễu 33 ↔ 30, 32 ↔ 33, 5 ↔ 8, 13,9 ↔ 13,7 và 16,7 ↔ 14,1 giây, kết quả 39 / 41 lúc 15:26: `data/thu_bedrock_2026-11-21/TIEU_CHI_DO.md` mục 21–23 (người viết đã mở) [riêng tư; đã chạy]; lượt đầu 24 / 31, 16 / 8: `VIEC_MOI_XONG.md` dòng 526–527 [chép].
 - Chuỗi hội thoại: `data/phase_9/bo_do_b3/README.md` dòng 10–11, 34–45 (25 / 56; bộ kín 15 / 33, người viết và agent con không mở bộ kín); số theo loại và độ dài đếm bằng máy; kết quả 1 / 6 / 4, 0 / 6 / 5: `data/thu_bedrock_2026-11-21/do/agent/KET_QUA_AGENT.md` dòng 20–29; nhiễu 0 ↔ 2, 1 ↔ 1: `TIEU_CHI_DO.md` dòng 170 [riêng tư; đã chạy].
 - Kịch bản demo: `data/thu_bedrock_2026-11-21/do/TIEU_CHI_BUOC_0_VA_3.md` dòng 19–39 (10 bước, 23 / 31 tính năng), `do/demo/chay_demo.py`, `do/demo/KET_QUA_DEMO.md` dòng 4–19, các file `do/demo/khoi_main_*.log`; lời giao "hỏng do bản gộp ⇒ tắt lại một dòng": `report_agent/2026-11-22/TONG_HOP.md` dòng 18; ba log thử khói đều `so_lap_co_buoc_hong: 0` (người viết đã mở); tự ghi "đo thừa": `session_prompt/SO_CAI_TIEN_CACH_LAM.md` dòng 399 [riêng tư; chép qua agent con].

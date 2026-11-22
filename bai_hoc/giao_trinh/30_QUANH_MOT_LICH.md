@@ -1,6 +1,6 @@
 # Bài 30 — Quanh một lịch: chỗ ở, quán ăn, ảnh, bản đồ, xuất file
 
-*Cập nhật 13:16, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập · luật chọn và lời báo đọc từ chương trình trưa 22/11; số cơ sở, số quán, số ảnh đếm lại từ các bảng đang chạy; số đo cũ chép từ báo cáo các ngày 14–20/11; người viết không chạy lại lượt nào.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: đã sửa theo một lượt đối chiếu độc lập · luật chọn và lời báo đọc từ chương trình trưa 22/11; số cơ sở, số quán, số ảnh đếm lại từ các bảng đang chạy; số đo cũ chép từ báo cáo các ngày 14–20/11; người viết không chạy lại lượt nào.*
 
 **Bài trước đã biết:** chương trình xếp lịch, kiểm khung, model viết mỗi mục một mô tả (bài 27–29).
 **Bài này thêm:** những thứ đi kèm một lịch: khối "Nơi ở", quán cho bữa trưa và bữa tối, ảnh từng điểm, bản đồ có ghim, và năm nút xuất (sao chép, tải chữ, thêm vào lịch điện thoại, in, PowerPoint). Mọi thứ trong bài đều do chương trình chọn; model không thấy tên quán, tên khách sạn hay toạ độ nào.
@@ -94,7 +94,7 @@ Bấm "Tải PowerPoint", trình duyệt chỉ báo "tôi muốn tải lịch c�
 - **Đã chọn:** bốn nút đầu dựng trong trình duyệt từ thứ đang hiện. PowerPoint dựng ở máy chủ bằng một thư viện Python, từ lịch đã lưu.
 - **Vì sao:** bốn nút đầu chỉ đổi cách hiện thứ trình duyệt đã có (bài 5), không cần gửi gì đi (điều thấy được; chưa thấy ghi lý do riêng). Chủ dự án chọn thư viện Python cho PowerPoint ngày 19/11, sau một lần tra cứu công khai, không có số đo. Kế hoạch viết sau đó có bảng so với thư viện chạy trong trình duyệt; lợi được nêu: test bằng Python sẵn có; máy chủ dựng lại từ bản đã lưu nên mọi chữ trong file là chữ của bảng hoặc câu đã kiểm. Bảng so còn nêu "khuôn làm tay, dễ đẹp", nhưng chương trình hiện vẽ bằng toạ độ, không dùng khuôn.
 - **Cách khác:** dựng PowerPoint trong trình duyệt: nêu trong bảng so, không chọn. Bên đó tải được cả khi lịch hết hạn, và máy chủ không tốn gì.
-- **Cái giá:** chỉ tải được trong 30 phút từ lượt cuối; nút ở thẻ lịch cũ vẫn tải lịch mới nhất của cuộc; mỗi lần bấm máy chủ dựng file, chưa giới hạn số lượt tải, phải thêm trước khi đưa lên mạng.
+- **Cái giá:** chỉ tải được trong 30 phút từ lượt cuối; nút ở thẻ lịch cũ vẫn tải lịch mới nhất của cuộc; mỗi lần bấm máy chủ dựng file; số lượt tải chỉ bị giới hạn (30 mỗi địa chỉ mỗi ngày) khi bộ giới hạn lượt được bật, mặc định tắt (bài 37).
 
 Quyết định về ảnh (tự lưu, không ghi công) và về ô nền bản đồ nằm ở nửa để tra.
 
@@ -160,7 +160,7 @@ Chỉ lời "tải lịch của cuộc trò chuyện này", không có nội dun
 | ô nền bản đồ | máy chủ cộng đồng bản đồ mở ở Đức | máy chủ chính lỗi bắt tay ở mạng đã thử (16/11); chủ dự án chọn | — |
 | dòng ghi nguồn bản đồ | tắt | chủ dự án chọn 21/11; phải xem lại trước khi công khai | — |
 | `xuat_pptx` | đang mở (từ 21:30 19/11) | nút in và nút PowerPoint; chủ dự án chọn bật | — |
-| giới hạn số lượt tải PowerPoint | chưa có | phải thêm trước khi đưa lên mạng | — |
+| giới hạn số lượt tải PowerPoint | 30 mỗi địa chỉ mỗi ngày, chỉ khi bộ giới hạn lượt bật (mặc định tắt) | một lịch thường tải một hai lần; chặn vòng lặp tải (bài 37) | — |
 
 ## Đã so
 

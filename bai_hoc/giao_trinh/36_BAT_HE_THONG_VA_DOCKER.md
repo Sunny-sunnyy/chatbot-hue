@@ -1,6 +1,6 @@
 # Bài 36 — Bật hệ thống trên máy, và đóng gói bằng Docker
 
-*Cập nhật 15:15, ngày 22/11/2026 · lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** máy chủ kiểm một số thứ đúng một lần lúc bật, và bật lúc Qdrant tắt thì không tự hồi (bài 6); kho đổi thì phải cập nhật chỉ mục (bài 12); khoá và các thiết lập lúc chạy (bài 37).
 **Bài này thêm:** bật cả hệ thống trên máy phát triển bằng một lệnh, lệnh đó làm gì và báo gì; "hộp Docker" là gì và hệ thống dùng nó ở đâu; gói ba hộp để mang sang máy khác; và những việc còn phải làm trước khi đưa lên mạng.
@@ -41,7 +41,7 @@ Trước trưa 22/11, bật hệ thống là gõ tay ba bốn lệnh: bật Qdra
 
 Đạt hết, lệnh in: "SẴN SÀNG — mở http://127.0.0.1:8010   (Ctrl+C ở cửa sổ này để tắt server · log: …)". Ctrl+C tắt máy chủ, để nguyên Qdrant. Mỗi dòng dừng đều bắt đầu bằng "CHƯA BẬT ĐƯỢC — ".
 
-Đã chạy thật trên máy, ở một cổng tạm, bốn ca: đủ mọi thứ thì 14 giây ra "SẴN SÀNG" và hỏi được qua trình duyệt; thiếu đường tới file khoá, hoặc đường dẫn trỏ tới file không có, thì ra một dòng nói thiếu gì; gõ lại khi máy chủ đang chạy thì báo đã chạy sẵn; Ctrl+C tắt gọn. **Chưa thử** ca quan trọng nhất: gõ lệnh lúc Qdrant đang tắt (máy vừa mở lại). Các dòng báo khác (Docker chưa bật, chỉ mục lệch, giao diện chưa dựng) mới đọc từ lệnh.
+Đã chạy thật trên máy, ở một cổng tạm, bốn ca: đủ mọi thứ thì 14 giây ra "SẴN SÀNG" và hỏi được qua trình duyệt; thiếu đường tới file khoá, hoặc đường dẫn trỏ tới file không có, thì ra một dòng nói thiếu gì; gõ lại khi máy chủ đang chạy thì báo đã chạy sẵn; Ctrl+C tắt gọn. Ca quan trọng nhất — gõ lệnh lúc Qdrant đang tắt, như khi máy vừa mở lại — chạy thật một lần ở lượt kiểm chốt trưa 22/11: sau 34 giây ra "SẴN SÀNG". Các dòng báo khác (Docker chưa bật, chỉ mục lệch, giao diện chưa dựng) mới đọc từ lệnh.
 
 Đường tới file khoá Bedrock được lấy theo thứ tự: thiết lập lúc chạy nếu người bật đặt; không thì dòng đầu của một file riêng tư trong thư mục dữ liệu (thư mục không vào git). File riêng tư đó chỉ chứa một đường dẫn, không chứa khoá. Lệnh không đọc nội dung file bí mật hay file khoá; chỉ xem file có tồn tại.
 
@@ -218,7 +218,7 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
-- Bốn ca chạy thật của lệnh bật (14 giây, cổng tạm), ca Qdrant tắt chưa thử: `bai_hoc/VIEC_MOI_XONG.md` mục 41 [chép; phiên đo chạy, phiên điều phối đọc].
+- Bốn ca chạy thật của lệnh bật (14 giây, cổng tạm): `bai_hoc/VIEC_MOI_XONG.md` mục 41 ý 2 [chép; phiên đo chạy, phiên điều phối đọc]. Ca Qdrant tắt (34 giây ra "SẴN SÀNG", cổng 8010, 13:36 22/11): cùng mục, ý 3 [máy kiểm, một lần; chép] — trước đây dòng này ghi "chưa thử", đã sửa 22/11.
 - Lệnh bật: `scripts/bat_he_thong.sh` (đủ: chú thích "Vì sao có (thử thật 12:07–12:16 22/11/2026)", các hàm `dung`, thứ tự bước, 30 giây, 90 giây, chuỗi "SẴN SÀNG — mở …", "CHƯA BẬT ĐƯỢC — ", file riêng tư chỉ chứa đường dẫn, "KHÔNG đọc nội dung `.env` hay file khoá") [code, đọc ở cây chính 22/11; không chạy, không mở file riêng tư]. Bảng bước là người viết rút gọn chữ của lệnh.
 - Bốn ca thử thật: bài 6 của giáo trình, mục "Mọi tình huống hỏng"; `guides/RUNBOOK_BAN_GIAO.md` mục 2 (gạch "Dừng nếu") [chép; đã chạy 22/11].
 - Cập nhật chỉ mục, tự dừng khi cổng 8010 mở, bản chụp nằm trong hộp: `guides/RUNBOOK_BAN_GIAO.md` mục 5b; bài 12 [chép].

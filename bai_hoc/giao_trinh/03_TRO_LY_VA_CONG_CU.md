@@ -1,6 +1,6 @@
 # Bài 3 — Trợ lý và công cụ: model chỉ "xin", chương trình mới là thứ chạy
 
-*Cập nhật 15:43, ngày 22/11/2026 · phần giải thích chung là kiến thức phổ thông; ví dụ là một lượt hỏi thật ngày 20/11 (gpt-6-luna); danh sách công cụ đọc từ chương trình đang chạy sáng 22/11; các trần đọc từ cấu hình sau 14:47 22/11; người viết không chạy lại.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: phần giải thích chung là kiến thức phổ thông; ví dụ là một lượt hỏi thật ngày 20/11 (gpt-6-luna); danh sách công cụ đọc từ chương trình đang chạy sáng 22/11; các trần đọc từ cấu hình sau 14:47 22/11; người viết không chạy lại.*
 
 **Bài trước đã biết:** RAG cho model đọc tài liệu của kho trước khi viết, và model không tự tính toán đáng tin được.
 **Bài này thêm:** có những câu hỏi mà đọc tài liệu không trả lời được. Bài này giảng cách cho model "nhờ" chương trình làm việc, và hai chữ hay bị dùng lẫn: luồng cố định và trợ lý.
@@ -103,7 +103,7 @@ Công cụ tìm kho và công cụ liệt kê bài có ở mọi lượt hỏi �
 - **Đã chọn:** chương trình tìm 10 đoạn bằng chính câu người dùng gõ, rồi mới gọi model.
 - **Vì sao:** đã đo (03/11, gpt-6-luna). Để model tự gọi công cụ tìm ngay từ đầu, hoặc để model viết lại hay tách câu tìm trước lần tìm đầu, chỉ đưa thêm được 0 tới 1 trên 12 câu đủ thông tin, trong khi luật ghi trước cần ít nhất 3.
 - **Cách khác:** chính ba cách vừa nêu: đã thử, bỏ.
-- **Cái giá:** câu không cần kho (ví dụ chỉ hỏi ngày âm lịch) vẫn tốn một lần tìm (0,04 tới 0,34 giây ở hai lượt ví dụ) và vẫn gửi 10 đoạn cho model đọc, tức vài nghìn token mỗi lượt.
+- **Cái giá:** câu không cần kho (ví dụ chỉ hỏi ngày âm lịch) vẫn tốn một lần tìm (khoảng 0,04 giây ở lượt ví dụ chính; bài 13) và vẫn gửi 10 đoạn cho model đọc, tức vài nghìn token mỗi lượt.
 
 ### 3. Vì sao ngày, khoảng cách, thời tiết là công cụ của chương trình, không để model tự biết?
 
@@ -116,7 +116,7 @@ Công cụ tìm kho và công cụ liệt kê bài có ở mọi lượt hỏi �
 
 - **Đã chọn:** công cụ thời tiết, ngày, khoảng cách, gần một điểm chỉ có mặt khi câu hỏi có từ thuộc việc đó.
 - **Vì sao:** đã gặp. Thêm một ghi chú về công cụ vào lời dặn của mọi lượt làm đổi câu trả lời ở các câu không liên quan; bản đưa công cụ thời tiết ở mọi lượt (17/11) bị lùi vì làm xấu kết quả trên bộ câu mẫu.
-- **Cách khác:** luôn đưa cả các công cụ ở mọi lượt: đã dựng sẵn trong chương trình, chưa đo.
+- **Cách khác:** luôn đưa cả các công cụ ở mọi lượt: có sẵn trong cấu hình từ 21/11, chưa đo. Riêng bản luôn đưa công cụ thời tiết đã đo 17/11 với gpt-6-luna và bị lùi (dòng trên).
 - **Cái giá:** câu cần công cụ mà không có từ khoá thì model chỉ có các đoạn của kho. Lần đếm ngày 21/11 trên 310 câu đã gõ vào hệ thống: sót 4 trên 60 câu cần công cụ; ba câu về thời tiết trong đó đã được chữa bằng cách thêm từ khoá; chưa đếm lại.
 
 ### 5. Vì sao model chỉ được điền vài ô tham số hẹp?

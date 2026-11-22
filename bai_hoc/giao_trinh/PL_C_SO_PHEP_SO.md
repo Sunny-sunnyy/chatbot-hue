@@ -1,6 +1,6 @@
 # Phụ lục C — Sổ mọi phép so sánh đã làm, kể cả phương án bị bỏ
 
-*Cập nhật 15:32, ngày 22/11/2026 · gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Cách đọc trang này (theo bài 20).** Mỗi dòng là một lần thử: thử gì, so với gì, ra số nào, giữ hay bỏ. Điều kiện đạt hay trượt được ghi trước khi chạy; vỡ một điều kiện không được vỡ thì mặc định là bỏ, dù điểm trung bình tốt hơn. Kết quả âm cũng được giữ, vì đó là căn cứ để trả lời "vì sao không làm cách X". Đọc cột thứ ba trước cột thứ tư: phần lớn phép so đo với gpt-6-luna, trên bộ câu nhỏ, ở kho của một thời điểm đã qua; đo riêng một bước có thể cho lợi mà người dùng không nhận được.
 
@@ -157,7 +157,7 @@ Cột "Giữ / bỏ" chép kết luận của bài gốc. Dòng ghi "chưa đo",
 | Ngày mưa, không chọn sở thích: bỏ luật "chiều một điểm thiên nhiên" | giữ luật đó | 3.880 lịch; 17/11 | 100 trên 3.880 lịch đổi, đều đúng loại; ngày có điểm biển – đầm phá 109 ⇒ 0 trên 300; ngày toàn ngoài trời 253 ⇒ 181 trên 300 | giữ | 28 |
 | Mốc mưa: khả năng ≥ 60 % và lượng ≥ 6 mm | chỉ khả năng 60 % | một năm dự báo so với mưa đo lại; 15/11 | coi nhầm là mưa 106 ⇒ 15 ngày; chuyến 2–5 ngày có ít nhất một ngày kiểu mưa 80 % ⇒ 50 % | giữ | 28 |
 | Thêm 7 điểm vào bảng | bảng 34 điểm | 3.840 tổ hợp, đếm điểm ngoài sở thích ở lịch một sở thích; 15/11 | chụp ảnh 51,7 % ⇒ 36,8 %; ẩm thực 56,4 % ⇒ 44,0 %; thiên nhiên 24,4 % ⇒ 17,6 %; lễ hội 39,0 % ⇒ 39,1 %; 0 lỗi khung | giữ | 28 |
-| Sửa hẹp ca "quay lại cùng khu" | không sửa | 960 cách điền, 3.840 khung; 17/11 | ca hẹp 8 trên 960 và 24 trên 3.840 ⇒ 0 và 0; ca rộng 65 và 258 ⇒ 20 và 76; điểm ban ngày giảm khoảng 0,4 %; đổi một ca mưa và một chuỗi sửa lịch | không gộp; giữ giới hạn (nhóm chốt 20/11) | 28 |
+| Sửa hẹp ca "quay lại cùng khu" | không sửa | 960 cách điền, 3.840 khung; 17/11 | ca hẹp 8 trên 960 và 24 trên 3.840 ⇒ 0 và 0; ca rộng (đếm theo ngày, chỉ ban ngày) 65 và 258 ⇒ 20 và 76; điểm ban ngày giảm khoảng 0,4 %; đổi một ca mưa và một chuỗi sửa lịch | không gộp; giữ giới hạn (nhóm chốt 20/11) | 28 |
 | Ẩn loại sở thích dưới sàn ≥ 50 % suất (lễ hội) | — | lịch 2 ngày; 13/11 | lễ hội 43 %; gắn thêm nhãn cho Cung An Định (có căn cứ kho) thì lên 50 % | giữ hiện, danh sách ẩn rỗng | 27 |
 | Nghiệm thu câu mô tả lịch, lần đầu | sàn ≥ 18 trên 20 lịch có ≤ 1 câu dự phòng | bộ 20 yêu cầu + bộ để dành 12 tổ hợp × 2 lượt, hai người chấm mù; gpt-6-luna; 13/11 | 16 và 17 trên 20; lịch > 30 % câu dự phòng: 2 rồi 1; bộ để dành 10 trên 12 mỗi lượt | trượt | 29 |
 | Sửa dữ liệu (chọn tay đoạn kho) và ba sửa nhỏ | lần đầu | như trên; 14/11 | 20 trên 20; 12 trên 12 × 2; chấm lại 6 lịch có đổi 6 trên 6; đủ câu sau 4,06 giây (bản trước 5,12) | giữ | 29 |
@@ -178,7 +178,7 @@ Cột "Giữ / bỏ" chép kết luận của bài gốc. Dòng ghi "chưa đo",
 | Dòng báo cho tin vừa sửa vừa hỏi | — | bộ mù 22 tin; Claude Sonnet 5.5; 21/11 | hiện 24 trên 24 ở tin sửa + hỏi; hiện nhầm 0 trên 24 ở tin chỉ sửa | mở 21/11 | 31, 32 |
 | Dời sang buổi tối | — | 7 tin × 2 khổ màn hình; Claude; 22/11 | đạt tiêu chí ghi trước | mở 22/11 | 31 |
 | Mức suy luận của lần hiểu ý sửa lịch | mức thấp, vừa | 9 lệnh × 3 lượt; Claude Sonnet 5.5; 21/11 | lệnh khó: cao 5 trên 6, thấp 2 trên 6, vừa 0 trên 6 | giữ mức cao | 31, 33 |
-| Claude Sonnet 5.5 với 12 người dùng mô phỏng | gpt-6-luna | 12 vai, ba lượt mỗi model, đọc mù; tối 21/11 | phiên đạt 7 · 7 · 8 so với 6 · 5 · 6 trên 12 (nhiễu 1); ý đạt 31 · 32 · 32 so với 29 · 28 · 30 trên 38; lượt hỏng 11 · 10 · 6 so với 22 · 19 · 13; chạm trần vòng 0 so với 7 · 8 · 3 | tốt hơn theo luật (mọi cặp lượt cùng chiều, chênh lớn hơn nhiễu) | 32, 33 |
+| Claude Sonnet 5.5 với 12 người dùng mô phỏng | gpt-6-luna | 12 vai, ba lượt mỗi model, chấm mù; tối 21/11 | phiên đạt 7 · 7 · 8 so với 6 · 5 · 6 trên 12 (nhiễu 1); ý đạt 31 · 32 · 32 so với 29 · 28 · 30 trên 38; lượt hỏng 11 · 10 · 6 so với 22 · 19 · 13; chạm trần vòng 0 so với 7 · 8 · 3 | tốt hơn theo luật (mọi cặp lượt cùng chiều, chênh lớn hơn nhiễu) | 32, 33 |
 | Claude Sonnet 5.5 trên 41 câu khó | gpt-6-luna | luật máy; 21/11 | lượt đầu đạt máy 31 so với 24 trên 41 (lỗi hoặc từ chối trống 8 so với 16); mới nhất (15:26 21/11) 39 so với 25 | giữ Claude (bộ đã thấy, sau các sửa trong ngày) | 32 |
 | Claude Sonnet 5.5 trên thước 29 câu | gpt-6-luna | 29 câu, 10 câu an toàn, 10 câu ngoài phạm vi; 21/11 | 29 so với 28 trên 29; ghép công cụ 8 so với 7 trên 8; 0 từ chối nhầm, 0 trả lời bằng kho ở cả hai; thiếu cảnh báo khi chấm mù 1 so với 5 trên 8 | giữ Claude | 32 |
 | Kịch bản demo trên hai model | — | 10 lần mỗi model; 21/11; ba lần thử khói sau gộp | 0 trên 10 lần hỏng mỗi model, 0 trên 100 bước; ba lần thử khói 0 bước hỏng | đạt | 32 |

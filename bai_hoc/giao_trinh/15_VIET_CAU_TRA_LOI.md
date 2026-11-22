@@ -1,6 +1,6 @@
 # Bài 15 — Viết câu trả lời: lời dặn, ngữ cảnh 10 đoạn, và số nguồn [n]
 
-*Cập nhật 15:13, ngày 22/11/2026 · lời dặn và cách ghép lời gọi đọc từ chương trình đang chạy; ví dụ là lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5); số của các phép so lấy từ các báo cáo đo từ 26/10 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: lời dặn và cách ghép lời gọi đọc từ chương trình đang chạy; ví dụ là lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5); số của các phép so lấy từ các báo cáo đo từ 26/10 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** bước tìm chọn ra 10 đoạn, và hệ thống không xếp lại chúng.
 **Bài này thêm:** 10 đoạn được gửi cho model viết như thế nào, lời dặn nói gì, và model trả về cái gì. Đây là lời gọi chính của đường hỏi đáp; ở trợ lý đang chạy, một lượt hỏi có thể lặp lời gọi này vài vòng khi model tự tìm thêm (bài 21).
@@ -21,7 +21,7 @@
 | sinh câu trả lời | **generation** | bước model viết câu trả lời từ ngữ cảnh |
 | bám nguồn | **grounding** | mỗi ý trong câu trả lời phải dựa vào một đoạn được đưa |
 | mức suy luận | **reasoning effort** | model "nghĩ" nhiều hay ít trước khi viết; nghĩ nhiều thì chậm và tốn hơn |
-| chữ lạ chen lệnh | **prompt injection** | chữ nằm trong câu hỏi hay trong tài liệu cố tình ra lệnh cho model |
+| chữ lạ chen vào lời dặn | **prompt injection** | chữ nằm trong câu hỏi hay trong tài liệu cố tình ra lệnh cho model |
 
 ## Model nhận ba thứ: lời dặn, câu hỏi, và 10 đoạn đã đánh số
 
@@ -134,7 +134,7 @@ Các điều còn lại của lời dặn (chỉ dùng bằng chứng, giữ ngu
 |---|---|---|---|
 | hãng model lỗi, hoặc một lần chạy trợ lý quá 45 giây (hạn chung cho mọi vòng của lần chạy đó) | dừng lượt; không gọi lại | "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại" | người dùng bấm "Thử lại"; sập lâu thì người vận hành đổi hãng trong cấu hình (bài 6) |
 | model không thấy đủ bằng chứng | trả câu từ chối cố định | câu từ chối, kèm mục tra web (bài 25) | đúng thiết kế |
-| model quên số nguồn hoặc ghi số không có | bước kiểm bắt được | chữ đã hiện bị rút lại (bài 16) | đã có |
+| model quên số nguồn hoặc ghi số không có | bước kiểm bắt được | lời báo thay cho câu trả lời: với model đang chạy, chữ hỏng chưa hề hiện; với model trả chữ dần, chữ đã hiện bị rút lại (bài 6, 16) | đã có |
 | model viết sai nghĩa của đoạn nó trích | không bước nào bắt được | câu trả lời sai mà có số nguồn hẳn hoi | chưa có; chỉ thấy khi chấm (bài 19) |
 | đổi model viết | lời dặn gửi đi giữ nguyên; độ dài, giọng, các ngưỡng đổi theo model | câu trả lời khác hẳn về độ dài | phải đo lại (bài 33) |
 
@@ -193,7 +193,7 @@ Cho mọi vòng của một lần chạy trợ lý (model gọi công cụ rồi
 | Dòng "hôm nay là ngày…" ở đầu tin nhắn (`today_line`) | tắt | đã đo: không giúp | mục "Đã so" |
 | Giá tính tiền, mỗi 1 triệu token | Claude Sonnet 5.5: 2 USD chữ vào, 10 USD chữ ra · gpt-6-luna: 0,10 USD chữ vào, 0,50 USD chữ ra | sổ số đo tính tiền từng lần gọi theo bảng này | — |
 
-Lời dặn nguyên văn (bản dùng khi model không có công cụ; bản của trợ lý nối thêm đoạn về công cụ tìm kho, xem bài 21 và phụ lục D):
+Lời dặn nguyên văn (khung chung của mọi lần viết câu trả lời). Lượt hỏi đáp thường đi đường trợ lý có công cụ: lời dặn này nối thêm đoạn về công cụ tìm kho (bài 21, phụ lục D). Đường không công cụ dùng đúng lời dặn này; ở cấu hình đang chạy, câu trả lời về Huế chỉ đi đường đó ở lần viết lại một lần (bài 21):
 
 ```text
 Bạn là trợ lý cung cấp thông tin về Huế. Chỉ trả lời bằng tiếng Việt và chỉ dùng

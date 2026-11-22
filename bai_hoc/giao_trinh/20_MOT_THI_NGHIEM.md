@@ -1,6 +1,6 @@
 # Bài 20 — Một thí nghiệm được làm thế nào, và nhìn cả bảng các lần so sánh thấy gì
 
-*Cập nhật 15:16, ngày 22/11/2026 · các bước lấy từ quy trình đo của dự án; các ví dụ và con số lấy từ bảng tổng 45 lần so sánh đã ghi (từ cuối tháng 8 tới 19/11), phần lớn đo với gpt-6-luna; người viết không chạy lại phép đo nào.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: các bước lấy từ quy trình đo của dự án; các ví dụ và con số lấy từ bảng tổng 45 lần so sánh đã ghi (từ cuối tháng 8 tới 19/11), phần lớn đo với gpt-6-luna; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** đề (bài 17), cách chấm bước tìm (bài 18), cách chấm câu trả lời và mức nhiễu (bài 19).
 **Bài này thêm:** ghép ba thứ đó thành một cách làm. Mỗi dòng "đã thử, giữ" hay "đã thử, bỏ" trong giáo trình đều đi qua cùng một chuỗi bước. Cuối bài nhìn cả bảng các lần so sánh để thấy điều gì lặp lại.
@@ -68,7 +68,7 @@ Ví dụ thật: trước khi đổi cách đưa công cụ cho model, nhóm ch�
 
 ## Nhìn cả bảng các lần so sánh thấy gì
 
-Dự án giữ một bảng tổng 45 lần so sánh chính, từ kho tới trợ lý (phụ lục C sẽ chép đủ). Bảy điều lặp lại trong bảng đó:
+Dự án giữ một bảng tổng 45 lần so sánh chính, từ kho tới trợ lý (bảng này nằm ở bộ bài cũ; phụ lục C gom các phép so của từng bài giáo trình, 156 dòng, chứ không chép bảng này). Bảy điều lặp lại trong bảng đó:
 
 1. **Phần lớn các lần thắng về chất lượng thuộc hai kiểu.** Đưa model thêm bằng chứng (10 đoạn thay vì 5; cho tìm thêm), hoặc giao việc dễ sai cho chương trình (ngày tháng, xếp lịch, luật tra web). Model embedding lớn hơn và các cách xếp lại thông minh hơn đều chưa thắng. (Ngoài bảng này, việc đổi model viết sang Claude Sonnet 5.5 ngày 21/11 cho số tốt hơn ở một thước nhỏ của phần trợ lý; đó là đổi tạm và chưa so trên cả bộ, bài 33.)
 2. **Phần lớn lần bỏ là vì vỡ một điều kiện**, không phải vì trung bình kém.

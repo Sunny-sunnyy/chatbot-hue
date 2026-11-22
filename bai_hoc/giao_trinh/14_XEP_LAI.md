@@ -1,6 +1,6 @@
 # Bài 14 — Xếp lại bằng model (reranking): đã thử ba cách, không dùng
 
-*Cập nhật 15:13, ngày 22/11/2026 · cấu hình đọc từ hệ thống đang chạy; số của các phép so lấy từ báo cáo đo ngày 25/10 và 27/10, model gpt-6-luna, kho của thời điểm đó; người viết không chạy lại phép đo nào.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cấu hình đọc từ hệ thống đang chạy; số của các phép so lấy từ báo cáo đo ngày 25/10 và 27/10, model gpt-6-luna, kho của thời điểm đó; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** trên 40 câu khó, 9 câu có đoạn đúng nằm trong 30 ứng viên nhưng đứng dưới hạng 10, nên model viết không thấy.
 **Bài này thêm:** cách chữa quen thuộc cho chuyện đó là dùng một model đọc kỹ từng ứng viên rồi xếp lại. Bài này kể ba lần thử, kết quả của từng lần, và vì sao hệ thống đang chạy không xếp lại.
@@ -175,7 +175,7 @@ Phần chương trình của bước xếp lại vẫn còn trong kho mã, chỉ
 - Lần thử 1 và 2 làm ngày 25/10; điểm thứ hạng của kiểu tốt nhất tăng 0,105; thời gian 0,85 tới 1,19 giây cho 10 đoạn.
 - Lần thử 3 làm ngày 27/10: điểm "đủ ý" tăng 0,22 (khoảng tin cậy từ +0,02 tới +0,44), điểm "đúng" tăng 0,25, từ chối nhầm từ 7 xuống 2 trên 88 câu; riêng bước chọn đoạn mất 4,6 giây (câu ở giữa) và 6,9 giây (câu chậm).
 - Trước lần thử 3 có một bản nhỏ hơn: model viết xếp lại 10 đoạn đã chọn; điểm thứ hạng tăng 0,17, không câu nào mất, nhưng bộ câu chỉ có tối đa 3 câu có thể cải thiện nên kết luận là "chưa rõ". Hai biến thể khác của lần thử 3 hỏng vì model trả sai dạng đầu ra.
-- Số 22 trên 40 ở bài này và số 24 trên 40 ở bài 13 là hai lần gắn nhãn đoạn đúng khác nhau trên cùng 40 câu.
+- Số 22 trên 40 ở bài này theo bản nhãn đoạn đúng đầu tiên (đo 26–27/10); số 24 trên 40 ở bài 13 và 18 theo bản nhãn thứ năm (30/10). Cùng 40 câu, khác bản nhãn; so trong cùng một bảng thì luôn cùng một bản.
 
 **Bài sau (bài 15):** 10 đoạn đã chọn xong. Bài 15 giảng lời gọi gửi model viết: lời dặn, cách 10 đoạn được trình bày, và số nguồn.
 

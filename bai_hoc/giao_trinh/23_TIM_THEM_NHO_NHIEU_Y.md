@@ -1,6 +1,6 @@
 # Bài 23 — Tìm thêm, nhớ câu hỏi trước, và câu hỏi nhiều ý
 
-*Cập nhật 15:39, ngày 22/11/2026 · sửa theo một lượt đối chiếu độc lập; thêm hai thay đổi ở khâu tìm mở 14:47 ngày 22/11 (bỏ vế cụt, tách câu tìm gộp của model) · cơ chế đọc từ chương trình và cấu hình đang chạy sau 14:47 22/11; số đo chép từ các báo cáo 03/11 – 22/11, ghi rõ model ở từng con số (tới trưa 21/11 là gpt-6-luna, sau đó là Claude Sonnet 5.5); người viết không chạy lại phép đo nào.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: sửa theo một lượt đối chiếu độc lập; thêm hai thay đổi ở khâu tìm mở 14:47 ngày 22/11 (bỏ vế cụt, tách câu tìm gộp của model) · cơ chế đọc từ chương trình và cấu hình đang chạy sau 14:47 22/11; số đo chép từ các báo cáo 03/11 – 22/11, ghi rõ model ở từng con số (tới trưa 21/11 là gpt-6-luna, sau đó là Claude Sonnet 5.5); người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** harness (bài 21): model được tự tìm kho thêm tối đa 3 lần (trước 14:47 ngày 22/11: 2); bước xếp loại câu (bài 22) chọn tuyến cho từng tin.
 **Bài này thêm:** hai loại tin mà tìm một lần bằng chính tin đó là không đủ: tin nối tiếp ("còn chỗ đó thì sao?") và tin hỏi nhiều điều một lúc. Hệ thống nhớ gì, ai dùng phần nhớ đó, và tin nhiều ý được xử lý ra sao.
@@ -57,7 +57,7 @@ Ví dụ đo 22/11 (Claude Sonnet 5.5): *"Kể cho mình ba quán cơm hến ho�
 
 Vì vậy tin nối tiếp thường cần thêm một lần model xin tìm kho: lần tìm đầu bằng câu cụt thường trượt (dựng lại 15/11, gpt-6-luna: 6 trên 7 cặp), model xin tìm thêm bằng câu có tên nơi (9 trên 9 lần). Luật "lịch sử không làm nguồn" được giữ bằng bước kiểm số nguồn (bài 16): câu trả lời cũ đã mất hết số nguồn.
 
-## Câu trả lời được nhớ có một tác dụng phụ: chạy lại đúng một lần
+## Mang câu trả lời liền trước có một tác dụng phụ: chạy lại đúng một lần
 
 Trợ lý vừa kể một lộ trình bằng chữ, người dùng gõ *"Bỏ Chợ Đông Ba đi"*: model có lúc chép lại lộ trình cũ mà không trích nguồn, câu bị rút (3 trên 7 lần đo sáng 22/11). Nay ở ô chat, lượt như vậy được chạy lại cả lượt **một lần** không kèm câu trả lời cũ; đo lại 0 trên 5 lần ra màn hình lỗi (bài 16, quyết định 4; chi tiết ở "Chi tiết để tra").
 
@@ -114,7 +114,7 @@ Tình huống kể trọn: hỏi về một ngôi chùa, 40 phút sau gõ *"ch�
 | 30 phút không hỏi, hoặc máy chủ khởi động lại | tin nối tiếp không được hiểu | **chưa có** cách báo hay giữ lâu hơn |
 | tải lại trang | màn hình trống; giao diện gọi "Cuộc trò chuyện mới" nên máy chủ cũng quên | đã có từ 15/11 (trước đó 3 trên 3 lần tái hiện bị từ chối) |
 | lượt mang câu trả lời cũ bị rút, lần chạy lại cũng bị rút | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" | người dùng bấm "Thử lại" hoặc hỏi lại bằng tên nơi |
-| tin dài nhiều ý, model đã tự tìm ít nhất một lần (thường là đã hết lượt) mà chữ nộp không có số nguồn | một đoạn chữ ngắn chưa phải câu trả lời hiện khoảng 15–17 giây, rồi được thay bằng câu viết lại từ các đoạn đã gom (bài 21); cả lượt tới 25–37 giây | có từ 14:47 22/11; mới đo trên một tin; thứ người dùng thấy suy từ chương trình và sổ máy chủ, chưa chụp màn hình |
+| tin dài nhiều ý, model đã tự tìm ít nhất một lần (thường là đã hết lượt) mà chữ nộp không có số nguồn | dòng trạng thái đứng lâu hơn, rồi câu viết lại từ các đoạn đã gom (bài 21); cả lượt tới 25–37 giây | có từ 14:47 22/11; mới đo trên một tin; giữ chữ từ 15:42 nên đoạn chữ giữ chỗ không còn hiện (trước đó hiện khoảng 15–17 giây rồi bị thay); theo test và một lượt thật, chưa nhìn trên trình duyệt |
 | tin nhiều ý mà không vế nào kho có | câu dẫn "Tư liệu của mình chưa có thông tin này — dưới đây là thông tin từ web (chưa kiểm)." rồi mục web; mục web không có gì thì câu từ chối chuẩn (bài 25) | đã có |
 
 ## Dễ nhầm
@@ -261,5 +261,7 @@ Tìm cả câu như cũ, rồi tìm riêng "giá vé Đại Nội" và "Lăng T�
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 (hàng "Vế tìm cụt bị lọc…", "Tin DÀI nhiều ý"); `backend/config/settings.yaml` (`tim_ve_bo_cut`, `tach_cau_tim_model`, `so_lan_tim_kho: 3` và chú thích) [code; số đo: đã chạy, phiên đo; người viết không chạy lại]. Luật vế cụt: `backend/llm/assistant.py` `_ve_cut`, `_TU_DEM_VE`, `_TU_CHUNG_VE`, `_CHU_DE_VE`, `cac_ve_tim(query, flags.tim_ve_bo_cut)`; tách câu tìm: `cac_phan_cau_tim`, `_NOI_CAU_TIM`, `TRAN_PHAN_CAU_TIM = 3`, `search_into_trace` (phần của câu tìm model vẫn được tìm khi cả câu không mang đoạn mới) [code]. Số 327 / 1.240, 65 %, 20 / 28, 231 / 396, 16 ⇒ 27 / 32, 1.116 câu (41 %, 6 %), 2 ⇒ 6 / 6, 20 ⇒ 16, ô "17h30", lọc oan dưới 2 %, ghép chủ thể 6 · 12 · 2 / 20: `VIEC_MOI_XONG.md` mục 42 ý 2–3; runbook 10.1; chú thích `tim_ve_bo_cut` trong `assistant.py`; `data/review_khac_hang/2026-11-22_moc_sang/c_dem/KET_QUA_DEM.md` [riêng tư, chưa mở; chép qua runbook].
 
 - "Đường chữ hiện dần" đổi thành "ô chat (đường gửi chữ từng mảnh)" và thêm "lượt có câu cố định" cho khớp bài 16: `backend/llm/assistant.py` `answer_turn_stream_parallel` (điều kiện `trace.fixed_outcome is not None or trace.lich_luu is not None` ⇒ không chạy lại); đường không stream `/api/chat` giao diện không dùng: `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 [code + chép, 15:18 22/11/2026].
+
+- Giữ chữ tới khi qua bước kiểm nguồn (mở 15:42 22/11/2026; đoạn chữ giữ chỗ không còn hiện ở lượt viết lại): `backend/config/settings.yaml` dòng `giu_chu_toi_kiem`; runbook 10.1 hàng "Lưới viết lại" [code + chép; chưa nhìn trên trình duyệt].
 
 </details>

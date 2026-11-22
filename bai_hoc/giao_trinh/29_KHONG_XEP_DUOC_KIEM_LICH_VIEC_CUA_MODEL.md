@@ -1,6 +1,6 @@
 # Bài 29 — Khi không xếp được, bước kiểm lịch, và phần việc của model
 
-*Cập nhật 13:16, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập · cách xử lý và các lời báo đọc từ chương trình trưa 22/11; số nghiệm thu chép từ báo cáo các ngày 13–15/11 (đo với gpt-6-luna); lượt ví dụ ngày 21/11 (Claude Sonnet 5.5); người viết không chạy lại lượt nào có model.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: đã sửa theo một lượt đối chiếu độc lập · cách xử lý và các lời báo đọc từ chương trình trưa 22/11; số nghiệm thu chép từ báo cáo các ngày 13–15/11 (đo với gpt-6-luna); lượt ví dụ ngày 21/11 (Claude Sonnet 5.5); người viết không chạy lại lượt nào có model.*
 
 **Bài trước đã biết:** chương trình xếp lịch theo bảy luật có thứ tự, tính giờ bằng phút cố định (bài 28).
 **Bài này thêm:** ba việc xảy ra sau bộ xếp. Một: khi yêu cầu không xếp được trọn, chương trình làm gì và người dùng đọc thấy gì. Hai: một bước kiểm viết riêng, đối chiếu khung lịch với luật. Ba: lần gọi model duy nhất của lượt, nó nhận gì, viết gì, và câu nó viết được kiểm ra sao.
@@ -95,13 +95,13 @@ Mô phỏng không bắt được mọi thứ. Ngày 14/11, người review và 
 
 ## Nếu… thì sao
 
-Lời báo trong ngoặc kép là nguyên văn. Các dòng đọc từ chương trình, chưa thử thật.
+Lời báo trong ngoặc kép là nguyên văn. Các dòng đọc từ chương trình, chưa thử thật (dòng thiếu khoá: phần câu hỏi đã thử 22/11, bài 6).
 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa / ai làm gì |
 |---|---|---|---|
 | model lỗi, quá 45 giây, hoặc trả sai khuôn khi viết câu | mọi mục chưa có câu dùng câu dự phòng | lịch đủ khung; các mục chỉ có "tên — điểm … [n]"; không có lời báo | đã có; muốn câu đầy đủ thì người dùng xếp lại |
 | một câu có giờ, tiền, link hay tên điểm khác | thay riêng câu đó | một mục chỉ có câu dự phòng | đã có |
-| thiếu khoá model lúc bật máy chủ | máy chủ chặn ngay đầu mọi yêu cầu, kể cả lượt lập lịch dù bộ xếp không cần model | "Không thể tạo câu trả lời vào lúc này." | chưa thấy ghi lý do |
+| thiếu khoá model lúc bật máy chủ | máy chủ chặn ngay đầu mọi yêu cầu, kể cả lượt lập lịch dù bộ xếp không cần model | "Không thể tạo câu trả lời vào lúc này." | vì sao chặn cả lượt lập lịch: chưa thấy ghi lý do. Đã thử 22/11 với câu hỏi; với lượt lập lịch: đọc từ chương trình |
 | khung trượt bước kiểm | vẫn hiện lịch; không lưu | lịch hiện bình thường; lệnh sửa sau đó áp lên lịch đã lưu trước đó (nếu có), không phải lịch đang thấy; chưa có thì bị coi như câu hỏi thường | chưa gặp trong mô phỏng |
 
 ## Dễ nhầm

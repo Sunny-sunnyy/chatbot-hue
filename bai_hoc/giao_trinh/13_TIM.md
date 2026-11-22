@@ -1,6 +1,6 @@
 # Bài 13 — Tìm: lấy 30 ứng viên, trộn hai bảng xếp hạng, giữ 10 đoạn
 
-*Cập nhật 15:18, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** chặng 2: kho được cắt thành 9.458 đoạn, mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
 **Bài này thêm:** chặng 3 bắt đầu. Người dùng gõ một câu; trong vài chục mili giây chương trình chọn ra 10 đoạn. Bài này đi qua bốn bước của việc chọn đó, và chỉ ra bước tìm hỏng ở đâu.
@@ -202,7 +202,7 @@ Công thức trộn: điểm của một đoạn = tổng trên các bảng có 
 
 **Đọc bảng này thế nào.** Cùng cách tìm, chỉ cần cho model thấy thêm 5 đoạn thì câu trả lời đủ ý hơn rõ và số câu bị từ chối nhầm giảm gần một nửa (13 xuống 7 trong chính phép so). Cái giá là tiền mỗi câu tăng khoảng một nửa.
 
-**Đã chọn: 10 đoạn.** Đây là lần thắng duy nhất của đợt rà lại mọi lựa chọn cuối tháng 10.
+**Đã chọn: 10 đoạn.** Đây là lần thắng duy nhất của đợt rà lại mọi lựa chọn cuối tháng 10 (người chấm là model). Lần chủ dự án tự chấm mù 20 cặp ngày 01/11 gần như ngang: 3 cặp bản 5 đoạn từ chối nhầm, còn lại như nhau.
 
 ### Đưa nhiều hơn 10 thì sao
 
@@ -226,7 +226,7 @@ Thử ngày 19/11, trên cả 176 câu mẫu và 32 câu an toàn, model viết 
 
 **Đọc bảng này thế nào.** Thêm ứng viên mà thứ tự không tốt hơn thì ứng viên mới cũng nằm dưới hạng 10. Chỗ cần sửa là thứ tự, hoặc số đoạn model được thấy.
 
-**Giới hạn của các phép đo.** Thước "đoạn đúng" chỉ có cho 55 câu khó (40 để thử, 15 để kiểm lại). Một ý có thể chỉ được đánh dấu ở một chỗ; chỗ khác trong kho nói lại cùng ý mà chưa ai đánh dấu thì không được tính (bài 18). Chênh lệch nhỏ thì chưa đo ra. Phần lớn số trên đo trên kho cuối tháng 10; hai dòng 40 câu của bảng cuối và con số 16 câu thiếu ở thân bài đo ở hai lần gắn nhãn khác nhau nên số câu "đủ" lệch nhau (22 và 24).
+**Giới hạn của các phép đo.** Thước "đoạn đúng" chỉ có cho 55 câu khó (40 để thử, 15 để kiểm lại). Dòng "100 ứng viên" đo 26/10 bằng bản nhãn đầu tiên (22 trên 40 đủ trong 10 đoạn, 31 trong 30 ứng viên); số 24 và 16 ở phần trên theo bản nhãn thứ năm (30/10), cùng 40 câu. Một ý có thể chỉ được đánh dấu ở một chỗ; chỗ khác trong kho nói lại cùng ý mà chưa ai đánh dấu thì không được tính (bài 18). Chênh lệch nhỏ thì chưa đo ra. Phần lớn số trên đo trên kho cuối tháng 10; hai dòng 40 câu của bảng cuối và con số 16 câu thiếu ở thân bài đo ở hai lần gắn nhãn khác nhau nên số câu "đủ" lệch nhau (22 và 24).
 
 ## Quyết định nhỏ hơn
 
@@ -248,6 +248,7 @@ Thử ngày 19/11, trên cả 176 câu mẫu và 32 câu an toàn, model viết 
 
 ## Chi tiết để tra
 
+- Hai loại số thời gian tìm: 26–42 mili giây là MỘT lần tìm, chạy riêng bước tìm (ba câu ví dụ, 22/11). Sổ ghi của lượt thật qua máy chủ cộng MỌI lần tìm trong lượt: 0,04 giây ở ví dụ chính (một lần), 0,08 và 0,20 giây ở hai lượt kho không có, 0,34 giây ở lượt "áo dài" (tìm đầu cộng các lần tìm thêm).
 - Điểm thứ hạng dùng ở bài này là MRR theo từ khoá của đáp án: với mỗi câu, đoạn đầu tiên chứa từ khoá của đáp án đứng hạng mấy; bằng 1 nghĩa là luôn đứng đầu. Trên 158 câu có đáp án trong kho: khoảng 0,72 (đo đầu tháng 11). Thước này gần đúng: đoạn chứa từ khoá chưa chắc đủ ý. Các quyết định quan trọng dùng thước "đoạn đúng" (bài 18).
 - 22 câu từ chối nhầm ban đầu chia gần đều: khoảng một nửa có đoạn đúng trong 30 ứng viên nhưng dưới hạng 5 lúc đó, khoảng một nửa không lọt 30 ứng viên.
 - Ngày 01/11 chủ dự án tự đọc 20 cặp câu trả lời (không biết cặp nào là 5 hay 10 đoạn) và chọn giữ 10.
@@ -269,12 +270,14 @@ Thử ngày 19/11, trên cả 176 câu mẫu và 32 câu an toàn, model viết 
 - 100 ứng viên (31 ⇒ 37; 22 ⇒ 23; mất 1), từ khoá tự tìm trên cả kho (0,726 so 0,721; mất 1–2), 10 cách trộn, hằng số RRF 10 / 30: `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 5, 6 và `bai_hoc/06_RETRIEVAL.md`; 100 và 200: `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` thẻ T3-03 [đã chạy, kho cũ].
 - Model viết lại câu tìm (0–1 / 12): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 34. Tìm riêng từng vế: `backend/config/settings.yaml` (`tim_theo_ve`, mở 09:47 22/11/2026), `report_agent/2026-11-22/b_tim_theo_ve.md`.
 - 13 ⇒ 7 trên 88 câu; đợt đưa vào hệ thống gộp ba thay đổi; hằng số RRF 2 / 10 / 30; 200 ứng viên chỉ đếm ở phép chẩn đoán: `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` thẻ S2, T3-01, T3-02, T3-03 [theo biên bản kiểm độc lập `data/hoc_cung_D/kiem/bai_13_16.md`].
-- Ba câu ví dụ 42,0 · 25,8 · 30,1 mili giây; 27 đoạn ở lượt "áo dài" (10 + 9 + 8): `data/hoc_cung_D/vet_tim_ba_vi_du.json`, `vi_du_tim_them_vet.json`.
+- Ba câu ví dụ 42,0 · 25,8 · 30,1 mili giây; 27 đoạn ở lượt "áo dài" (10 + 9 + 8): `data/hoc_cung_D/vet_tim_ba_vi_du.json`, `vi_du_tim_them_vet.json`. Thời gian tìm của lượt thật (`so_do.search_ms`: 39,8 · 76,6 · 201,5 · 339,0 mili giây): `vi_du_di_suot_vet.json`, `vi_du_kho_khong_co_2_vet.json`, `vi_du_kho_khong_co_vet.json`, `vi_du_tim_them_vet.json` [riêng tư; đọc 22/11, phân xử với bài 3].
 - Ví dụ cởi giày: `data/hoc_cung_D/kiem/bai_02_10.md` dòng 26.
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm", "Quyết định nhỏ hơn" (thêm 13:59 22/11/2026 theo khuôn mới): gom từ "Đã so", bảng cấu hình và các nguồn trên. Phép kiểm 10 đoạn và nhóm dòng kiểm cùng (cách tìm, bộ chỉ mục, không xếp lại, tên model đường về, hạn 45 giây): `backend/core/settings_loader.py` hàm `validate_phase6_settings`, gọi từ `load_settings` lúc bật trong `backend/api/app.py` (ngoài khối bắt lỗi) [code]; phép kiểm có từ commit `151bc538` (01/10/2026, khoá 5), `2fa6f16a` (25/10/2026) đổi 5 ⇒ 10; lý do "đúng giá trị đã duyệt để đo cùng điều kiện": `docs/superpowers/plans/2026-10-01-phase-6-openai-baseline-implementation-plan.md` dòng 185–199 và `docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md` dòng 43–48 [chép]; ba giá trị câu tìm đầu (`lan_tim_dau` v1 / v2 / v3): `report_agent/2026-11-02_phase_9_code/b134_b2_implementation.md` dòng 63–67; bộ đo có tham số `max_context_documents`: `backend/evaluation/full_corpus_eval.py` `run_generation` [code]. 30 ứng viên, hằng số 60 là giá trị mặc định trong `backend/retrieval/full_corpus.py` (`candidate_pool`, `rrf_k`) [code]. Tin nhiều ý (đếm 21/11, 3 / 24 ⇒ 15 / 24, +0,75 giây, bản "4 + 2, trần 12" không làm vì mất đoạn ở 3 / 13 tin, tách vế 3 / 8 ⇒ 5 / 8, vế mất tên nơi): `report_agent/2026-11-22/b_tim_theo_ve.md` mục 1, 2 và dòng 46; chú thích dòng `tim_theo_ve` trong `backend/config/settings.yaml` [đã chạy, phiên khác]. Câu từ chối nguyên văn: `backend/llm/full_corpus_prompt.py` `INSUFFICIENT_ANSWER`. "Chưa thấy ghi lý do" ở hằng số 60, con số 2 mỗi ý: đã dò chú thích code, `settings.yaml`, `b_tim_theo_ve.md`, bảng tổng, kế hoạch khâu tìm 13/09. Phần "NÓI THẬT" của số tin nhiều ý (3 ⇒ 9 trên 18; 24 ⇒ 21): chú thích dòng `tim_theo_ve`. Các mục mới đã qua một lượt đối chiếu độc lập 14:28 22/11/2026 và được sửa theo: `data/hoc_cung_D/kiem/muc_moi_12_16.md` [riêng tư]; một dòng của biên bản không áp (hằng số RRF: `91_BAO_CAO_SO_SANH_PHUONG_AN.md` dòng 661 ghi cách đang chạy đã thử k = 2, 10, 30).
 
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`so_lan_tim_kho: 3`) [code; người viết không chạy lại].
 
 - "3 đoạn mỗi ý" sửa từ "chưa thử" theo bài 23 và chú thích `SO_DOAN_MOI_VE` trong `backend/llm/assistant.py` ("đếm 0 đồng 21/11: 2, 3, 4 đoạn mỗi vế cho cùng kết quả") [code, đọc 15:18 22/11/2026].
+
+- Lần chấm mù của chủ dự án 01/11 (3 cặp bản 5 đoạn từ chối nhầm, còn lại như nhau; luật dừng "chưa rõ", chủ dự án chọn giữ 10): `session_prompt/Project_Status.md` dòng 104, 187 [chép; phân xử 22/11 với bài 2].
 
 </details>

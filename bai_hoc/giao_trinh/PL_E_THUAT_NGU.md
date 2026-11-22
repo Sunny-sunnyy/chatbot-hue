@@ -1,10 +1,10 @@
 # Phụ lục E — Thuật ngữ Việt – Anh
 
-*Cập nhật 15:25, ngày 22/11/2026 · gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một từ lấy từ bảng "Từ dùng trong bài" của bài 1–40, xếp theo thứ tự chữ cái tiếng Việt. Cột "Nghĩa" chép câu giải nghĩa của bài gốc; khi hai bài giảng cùng một từ với hai câu khác nhau, câu chính lấy từ một bài và phần ngoặc ghi điều bài kia nói thêm. Cột cuối ghi bài giảng từ đó lần đầu, trong ngoặc là các bài giảng lại. Từ có dấu "—" ở cột tên gốc là tên do giáo trình đặt, không có tên tiếng Anh quen dùng. Cuối trang là bảng tra ngược, từ tên tiếng Anh ra tên trong giáo trình.
 
-Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở hai bài).
+Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở hai bài; "đọc mù" của bài 32 đã gộp vào "chấm mù" ngày 22/11).
 
 ## Bảng thuật ngữ (Việt → Anh)
 
@@ -37,17 +37,17 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | câu tệ đi | regression | câu mà bản mới trả lời kém hơn bản đang chạy | 14 (cũng ở 20) |
 | câu tìm gộp | — | câu tìm model viết nhắc hai nơi hoặc hai ý cùng lúc ("giá vé Đại Nội và Lăng Tự Đức") | 23 |
 | câu từ chối cố định | fixed refusal, fallback answer | một câu duy nhất, đúng từng chữ, dùng mỗi khi không đủ bằng chứng | 16 |
-| chấm mù | blind evaluation | người chấm không biết câu trả lời đến từ bản nào | 19 |
+| chấm mù | blind evaluation, blind grading | người chấm không biết câu trả lời (hay bản ghi) đến từ bản nào, hệ thống nào | 19 (cũng ở 32) |
 | chỉ mục | index | toàn bộ dạng đã xử lý của kho để tìm: collection, file thống kê từ khoá, bản ghi chỉ mục (bài 2 gọn hơn: dạng đã xử lý sẵn của kho để tìm nhanh) | 2 (cũng ở 12) |
 | chính sách chặn tải | Content-Security-Policy | dòng máy chủ gửi kèm trang, bảo trình duyệt chỉ được tải chương trình, kiểu chữ, ảnh từ những nơi được liệt kê | 35 |
 | chờ tới chữ đầu | time to first text | từ lúc bấm gửi tới lúc chữ đầu tiên của câu trả lời hiện ra | 34 |
 | chủ đề | domain | nhóm lớn của bài: món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch | 9 |
 | chuỗi hội thoại | multi-turn chain | một kịch bản nhiều tin liền nhau, mỗi tin có nhãn điều đúng phải xảy ra | 32 |
 | chuỗi sửa lịch | edit chain | một kịch bản nhiều tin liền nhau trên một lịch, dùng để đo | 31 |
-| chữ chạy dần | streaming | model gửi từng mẩu chữ ngay khi viết, giao diện hiện dần; ngược lại là chờ viết xong mới gửi cả câu (bài 40: hiện nay với Claude, chữ tới một lần khi viết xong) | 33 (cũng ở 40) |
+| chữ chạy dần | streaming | model gửi từng mẩu chữ ngay khi viết, giao diện hiện dần; ngược lại là chờ viết xong mới gửi cả câu (bài 40: hiện nay với Claude, chữ tới một lần khi viết xong). Bài 6, 34 tả cùng việc này trên giao diện là "chữ hiện dần" | 33 (cũng ở 40) |
 | chữ để tìm | search text | tên bài + đường tiêu đề + thân đoạn, ghép lại; đây là thứ được đổi thành vector và từ khoá | 9 |
 | chữ giữ chỗ | — | thứ model nộp vào ô trả lời khi nó còn muốn tìm mà công cụ đã bị cất ("Tôi cần tìm thêm về…"); không có số nguồn nào | 21 |
-| chữ lạ chen lệnh | prompt injection | chữ nằm trong câu hỏi hay trong tài liệu cố tình ra lệnh cho model (bài 37 gọi là "chữ lạ chen vào lời dặn") | 15 (cũng ở 37) |
+| chữ lạ chen vào lời dặn | prompt injection | chữ nằm trong câu hỏi hay trong tài liệu cố tình ra lệnh cho model, thay cho lời dặn thật | 15 (cũng ở 37) |
 | chương trình thuần | deterministic code | chương trình không gọi gì bên ngoài; cùng đầu vào luôn ra cùng kết quả | 28 |
 | collection | collection | một "bảng" của Qdrant; hue_rag dùng đúng một collection | 12 |
 | cookie | cookie | một mẩu chữ nhỏ máy chủ nhờ trình duyệt giữ hộ; trình duyệt tự gửi lại mẩu đó ở mỗi yêu cầu sau tới cùng máy chủ | 35 |
@@ -78,7 +78,6 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | đỏ, xanh | failing, passing | ca hỏng, ca đạt | 38 |
 | đoạn | chunk | một mẩu cắt ra từ một bài; kho có 9.458 đoạn. Bài 8 thêm: đơn vị nhỏ nhất mà hệ thống tìm và đưa cho model viết | 2 (cũng ở 8) |
 | đoạn trích | snippet | vài câu ngắn dịch vụ tìm web cắt từ trang kết quả; model chỉ đọc đoạn này, không đọc cả trang | 25 |
-| đọc mù | blind grading | người chấm không biết bản ghi nào của hệ thống nào | 32 |
 | độ gần | cosine similarity | số từ −1 tới 1 đo hai vector giống nhau tới đâu; càng gần 1 thì hai đoạn chữ càng gần nghĩa | 10 |
 | độ hiếm | IDF (inverse document frequency) | số cho biết một từ có mặt ở ít hay nhiều đoạn; từ có ở ít đoạn thì độ hiếm cao | 11 |
 | đường gọi | endpoint, route | một địa chỉ trên máy chủ, ví dụ địa chỉ của ô chat; mỗi đường làm một việc | 35 |
@@ -97,7 +96,7 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | harness | harness | phần chương trình bao quanh model: cho model thấy gì, đưa công cụ nào, dừng lúc nào, kiểm gì sau khi model viết | 21 |
 | học tủ | overfitting (với bộ đo) | hệ thống được chỉnh cho hợp đúng bộ câu đang dùng, nên điểm cao hơn thực lực | 17 |
 | hồ sơ của đoạn | payload (của Qdrant) | 7 trường cất cùng mỗi đoạn, để khi tìm ra thì lấy lại được đủ thông tin | 9 |
-| hộp | container (bài 12 ghi Docker container) | một ảnh đóng gói đang chạy (bài 12 tả: cách đóng một chương trình cùng mọi thứ nó cần để chạy giống nhau trên mọi máy) | 12 (cũng ở 36) |
+| hộp | container (của Docker) | một ảnh đóng gói đang chạy: chương trình chạy cách ly, mang sẵn mọi thứ nó cần | 12 (cũng ở 36) |
 | HTML, nhãn HTML | HTML, tag | ngôn ngữ trình duyệt dùng để vẽ trang; mỗi phần của trang được đánh dấu bằng một nhãn, ví dụ nhãn đoạn văn, nhãn ảnh, nhãn link | 35 |
 | huấn luyện | training | quá trình cho model đọc văn bản để nó học cách viết tiếp; làm một lần, bởi hãng làm model | 1 |
 | huấn luyện lại | fine-tuning | cho model học thêm trên dữ liệu riêng để chính model đổi; hue_rag không làm việc này | 2 |
@@ -122,11 +121,11 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | lịch sử | history | phần cuộc trò chuyện được gửi kèm cho model ở lượt mới | 23 |
 | lọc chữ | sanitize | bỏ khỏi chữ mọi nhãn HTML không nằm trong danh sách cho phép trước khi đưa lên trang | 35 |
 | lời dặn | system prompt, instructions | đoạn chữ cố định gửi kèm mọi lần gọi, nói model phải làm gì | 15 |
-| lời gọi | API call, request | một lần chương trình gửi chữ cho model và nhận chữ về | 1 |
+| lời gọi | API call | một lần chương trình gửi chữ cho model và nhận chữ về | 1 |
 | lớp nhận kết nối | reverse proxy (Caddy) | chương trình đứng ngoài cùng, nhận mọi kết nối từ mạng, lo kết nối mã hoá, rồi chuyển vào ứng dụng | 36 |
 | lớp nối | adapter | phần chương trình dự án tự viết, đứng giữa thư viện và Claude, đổi cách gọi của bên này sang cách gọi của bên kia ở cả hai chiều | 33 |
 | luồng cố định | workflow | chuỗi bước do chương trình định sẵn; model chỉ làm việc trong từng bước | 3 |
-| lượt hỏi | turn (của cuộc trò chuyện), request | một câu người dùng gửi, cùng mọi việc hệ thống làm để trả lời câu đó | 21 |
+| lượt hỏi | turn (của cuộc trò chuyện) | một câu người dùng gửi, cùng mọi việc hệ thống làm để trả lời câu đó | 21 |
 | mã cuộc trò chuyện | conversation id (cất trong cookie) | chuỗi ngẫu nhiên máy chủ đưa trình duyệt cất; trình duyệt gửi kèm mỗi câu hỏi để máy chủ biết câu đó thuộc cuộc nào | 23 |
 | mã đoạn | chunk_id | tên riêng của mỗi đoạn: đường dẫn file của bài kèm số thứ tự của đoạn trong bài (đếm từ 0) | 8 |
 | mã mục | item id | nhãn của từng mục trong khung, dạng "ngày 1, buổi sáng, mục 1"; model phải trả câu theo đúng nhãn này | 29 |
@@ -163,10 +162,10 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | Qdrant | Qdrant, một vector database | cơ sở dữ liệu cất vector và tìm vector gần nhất | 12 |
 | quỹ phút | time budget | số phút tối đa của một buổi, gồm phút tham quan và phút đi giữa hai điểm | 28 |
 | RAG | Retrieval-Augmented Generation | sinh câu trả lời (generation) có bổ sung (augmented) bằng bước tìm tài liệu (retrieval) | 2 |
-| rào trước khi lưu | git hook (pre-commit, pre-push) | chương trình nhỏ git tự chạy trước mỗi lần lưu hoặc đẩy; thấy vi phạm thì chặn (bài 39 gọi là "rào bằng máy") | 37 (cũng ở 39) |
+| rào bằng máy | git hook (pre-commit, pre-push) | chương trình nhỏ git tự chạy trước mỗi lần lưu hoặc đẩy; thấy vi phạm thì chặn | 37 (cũng ở 39) |
 | repo công khai | public repository | kho mã trên GitHub mà ai cũng đọc được, kể cả toàn bộ lịch sử các lần lưu | 37 |
 | RRF | Reciprocal Rank Fusion | cách trộn nhiều bảng xếp hạng: cộng `1 / (k + hạng)` của đoạn ở từng bảng | 13 |
-| rút lại | retract | xoá câu trả lời đã hiện và thay bằng lời báo lỗi | 16 |
+| rút lại | retract | bỏ câu trả lời hỏng và thay bằng lời báo lỗi; chữ đã hiện (nếu có) bị xoá | 16 |
 | sinh câu trả lời | generation | bước model viết câu trả lời từ ngữ cảnh | 15 |
 | skill | skill | file hướng dẫn một quy trình, agent mở khi cần | 39 |
 | so theo cặp | paired comparison | so điểm của hai bản trên cùng một câu hỏi, rồi mới gộp | 19 |
@@ -193,7 +192,7 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | tỉ lệ tìm thấy | recall | trong những thứ cần tìm, tìm được bao nhiêu phần | 18 |
 | tiền tố | prefix (`query: ` / `passage: `) | chữ thêm vào đầu câu hỏi / đầu đoạn để model e5 biết đang đọc loại nào | 10 |
 | tiến trình | process | một chương trình đang chạy trên máy; máy chủ hue_rag là một tiến trình, tắt là mất mọi thứ nó giữ trong bộ nhớ | 36 (cũng ở 38) |
-| tìm | retrieval | chọn ra 10 đoạn hợp câu hỏi nhất trong 9.458 đoạn (bài 13: bước chọn các đoạn sẽ đưa cho model viết) | 2 (cũng ở 13) |
+| tìm | retrieval | chọn ra các đoạn hợp câu hỏi nhất trong 9.458 đoạn (10 đoạn ở lần tìm đầu) để đưa cho model viết | 2 (cũng ở 13) |
 | tìm lai | hybrid search | dùng cả tìm theo nghĩa lẫn tìm theo từ khoá | 13 |
 | tìm theo nghĩa | dense retrieval, semantic search | tìm các đoạn có vector gần vector câu hỏi nhất | 10 |
 | tìm theo từ khoá | keyword search, lexical search, sparse retrieval | chấm đoạn theo chữ trùng với câu hỏi | 11 |
@@ -233,7 +232,7 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | Amazon Bedrock | nền tảng cho thuê model |
 | anchor | điểm đầu của buổi |
 | answer cache | bộ nhớ câu trả lời |
-| API call, request | lời gọi |
+| API call | lời gọi |
 | API key | khoá |
 | apply | áp lệnh |
 | arguments | tham số |
@@ -243,7 +242,7 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | baseline | mốc |
 | benchmark, eval | thước |
 | blind evaluation | chấm mù |
-| blind grading | đọc mù |
+| blind grading | chấm mù |
 | blind probe set | bộ dò mù |
 | block (của Markdown) | khối |
 | BM25 (Best Matching 25) | BM25 |
@@ -300,7 +299,7 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | frontend, UI | giao diện |
 | generation | sinh câu trả lời |
 | generator, LLM | model viết |
-| git hook (pre-commit, pre-push) | rào trước khi lưu |
+| git hook (pre-commit, pre-push) | rào bằng máy |
 | gold passages, relevance labels | nhãn đoạn đúng |
 | golden set, evaluation set | bộ câu hỏi mẫu |
 | grounding | bám nguồn |
@@ -362,7 +361,7 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | prefix (query:  / passage: ) | tiền tố |
 | priority point | điểm ưu tiên |
 | process | tiến trình |
-| prompt injection | chữ lạ chen lệnh |
+| prompt injection | chữ lạ chen vào lời dặn |
 | public repository | repo công khai |
 | pure function | hàm thuần |
 | pytest | bộ chạy test |
@@ -416,7 +415,7 @@ Có 211 từ, gom từ 228 dòng của các bài (17 từ được giảng ở h
 | tool; cơ chế gọi là tool calling hay function calling | công cụ |
 | top-k; ở đây k = 10 | số đoạn đưa cho model |
 | training | huấn luyện |
-| turn (của cuộc trò chuyện), request | lượt hỏi |
+| turn (của cuộc trò chuyện) | lượt hỏi |
 | turn (của vòng lặp agent) | vòng |
 | validation, schema | kiểm khuôn |
 | variant | biến thể |
