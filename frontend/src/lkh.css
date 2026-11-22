@@ -208,6 +208,45 @@
 .lkh-da-sua ~ .lich-v2 .lkh-doi-duoc { display: none; }
 .lkh-chi-dan { max-width: 68ch; margin: 0; font-size: 14px; color: var(--color-muted); }
 
+/* ===== Hướng "Dòng sông dẫn đường" (22/11/2026, việc X13 bước 3) =====
+   MỌI luật nhìn mới nằm trong `@media screen` ⇒ bản in (khối `@media print` dưới) dùng đúng các luật cũ ở trên, không đổi một điểm ảnh.
+   Ngoài màn hình, hai phần tử mới (nét đứt của sông, nét sông ở dải đầu trang) không vẽ. */
+.lkh-song-chay, .lkh-dau-song { display: none; }
+@media screen {
+  /* (a) Trục ngày – buổi = nét sông dùng chung: dải nước nhạt đi qua từng điểm + nét đứt chạy giữa dòng (đứng yên khi máy bật giảm chuyển động) */
+  .lkh-song-ngay path.lkh-song-nen { stroke: var(--color-river-muted); stroke-width: 16; opacity: .6; }
+  .lkh-song-ngay path.lkh-song-chay { display: inline; stroke: var(--color-accent); stroke-width: 2.5; stroke-dasharray: 8 12; opacity: .85; animation: none; }
+  .hieu-ung .lkh-song-ngay path.lkh-song-chay { animation: lkh-chay 1.3s linear infinite; animation-timeline: auto; }
+  /* chấm buổi thành "bến" nổi trên dòng: viền mặt giấy dày hơn để tách khỏi dải nước */
+  .lkh-cham-buoi { border-width: 4px; box-shadow: var(--shadow-1); }
+  .lkh-muc[class*="lkh-l-"] .lkh-cham-buoi { box-shadow: 0 0 0 3px var(--mau-loai), var(--shadow-1); }
+  /* (b) Dải đầu trang: nét sông chạy dọc mép dưới, nối sang thân trang */
+  .lkh-dau-song { display: block; position: absolute; left: 0; right: 0; bottom: -10px; width: 100%; height: 44px; z-index: 0; pointer-events: none; }
+  .lkh-dau-song path { fill: none; stroke-linecap: round; }
+  .lkh-dau-song .lkh-song-nen { stroke: var(--color-page); stroke-width: 18; opacity: .9; }
+  .lkh-dau-song .lkh-song-chay { display: inline; stroke: var(--color-accent); stroke-width: 2.5; stroke-dasharray: 8 12; }
+  .hieu-ung .lkh-dau-song .lkh-song-chay { animation: lkh-chay 1.3s linear infinite; }
+  .lkh-dau .khung { position: relative; padding-bottom: 44px; }
+  /* dòng "khoảng N phút đi": dấu ⋮ và chữ đi liền nhau (trước: dính luật lưới hai cột của `.lich-ngay li` ⇒ dấu một cột, chữ một cột, cột hẹp thì chữ gãy dòng) */
+  .lich-v2 .lkh-di { display: block; }
+}
+@keyframes lkh-chay { to { stroke-dashoffset: -20; } }
+/* (c) Màn rộng: bản đồ đứng CẠNH lịch và đi theo khi cuộn (trước: nằm dưới ngày cuối); cột biểu mẫu thu hẹp nhường chỗ.
+   Chỉ khi thẻ lịch có bản đồ; thẻ lịch trong khung trợ lý nổi / trang Trợ lý (ngoài `.lkh-cot`) không đổi. */
+@media screen and (min-width: 1200px) {
+  .lkh-cot { grid-template-columns: 300px minmax(0, 1fr); gap: 28px; }
+  .lkh-cot .lc-nhom { padding: 16px 16px 18px; }
+  .lkh-cot .lc-nhom:has(.lkh-kieu) .lc-chip { flex-direction: column; }
+  .lkh-kieu { flex: none; width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 2px 10px; }
+  .lkh-cot .lc-nhom:has(.lkh-thich) .lc-chip { grid-template-columns: repeat(2, 1fr); }
+  .lkh-cot .lkh-lich, .lkh-cot .lkh-mau, .lkh-cot .lich-v2.bubble { max-width: none; width: 100%; }   /* thẻ lịch dùng hết cột (trước: bị giữ ở bề rộng bong bóng chat) */
+  .lkh-cot .lich-v2:has(> .bd) { display: grid; grid-template-columns: minmax(0, 1fr) 310px; column-gap: 20px; align-items: start; }
+  .lkh-cot .lich-v2:has(> .bd) > * { grid-column: 1; min-width: 0; }
+  .lkh-cot .lich-v2:has(> .bd) > .bd { grid-column: 2; grid-row: 1 / span 40; position: sticky; top: 88px; padding: 14px; background: var(--color-surface);
+                                       border: 1px solid var(--color-line); border-radius: var(--radius-l); box-shadow: var(--shadow-1); }
+  .lkh-cot .lich-v2:has(> .bd) > .bd .bd-khung { height: 400px; border-radius: var(--radius-m); }
+}
+
 /* Xuất lịch (19/11): bố cục IN của MỘT thẻ lịch — nút "In / Lưu PDF" gắn lớp `in-lich` lên <html> và `lkh-dang-in` lên thẻ đang in rồi gọi
    window.print(). Chỉ thẻ đó hiện; mỗi ngày bắt đầu một trang; nút, bản đồ nền ẩn; tiêu đề + dòng cuối chỉ hiện khi in. */
 .lkh-chi-in { display: none; }

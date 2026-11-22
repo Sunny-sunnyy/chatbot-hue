@@ -50,7 +50,14 @@ function SongNgay({ dongRef, khoa }) {
     return () => ro.disconnect();
   }, [dongRef, khoa]);
   if (!d) return null;
-  return <svg className="lkh-song-ngay" aria-hidden="true"><path d={d} pathLength="1" /></svg>;
+  // Hướng "Dòng sông dẫn đường" (22/11/2026): hai lớp cùng một đường — dải nước (lớp cũ, vẫn vẽ dần khi cuộn) + nét đứt chạy giữa dòng như
+  // nét sông dùng chung (`song/hinh.jsx`). Lớp nét đứt chỉ hiện trên màn hình (lkh.css `@media screen`) ⇒ bản in y như trước.
+  return (
+    <svg className="lkh-song-ngay" aria-hidden="true">
+      <path className="lkh-song-nen" d={d} pathLength="1" />
+      <path className="lkh-song-chay" d={d} />
+    </svg>
+  );
 }
 
 function NgayLich({ ng, turnKey, cau, xong, theoNgay, i, an }) {
