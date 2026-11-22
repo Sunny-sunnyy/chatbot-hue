@@ -30,6 +30,10 @@ def _bo(ten=TEN):
     "Bỏ quán đầu đi, mình đi du lịch tự túc mà",        # "du lịch" không phải mốc của lịch
     "Bỏ cái đó đi rồi kể lịch sử quán thứ hai",          # "lịch sử" cũng không
     "Bỏ món đầu, tra giúp âm lịch hôm nay",
+    "Bỏ điểm đầu đi rồi viết lại danh sách",           # lượt thật 22/11 sau "Kể các điểm tham quan miễn phí": "điểm + vị trí" trần không phải mốc
+    "Bỏ điểm đầu tiên đi",
+    "mình đi ngày 2/12, bỏ quán đầu đi",                # ngày tháng, không phải ngày 2 của lịch
+    "Bỏ món đầu đi cho lịch sự",
 ])
 def test_remove_without_place_name_or_plan_anchor_is_dropped(cau):
     assert s.loc_bo_thay(B, [_bo()], cau) == ([], [_bo()])
@@ -41,7 +45,7 @@ def test_remove_without_place_name_or_plan_anchor_is_dropped(cau):
     f"Bỏ {TEN} đi",
     f"bỏ {TEN.lower()} giúp mình nhé",
     "Bỏ điểm đầu tiên của ngày 2",
-    "Bỏ điểm đầu tiên đi",
+    "Bỏ điểm cuối ngày 3 nhé",
     "Bỏ cái buổi chiều hôm đầu",
     "Ngày 2 nặng quá, bớt một chỗ đi giúp mình",
     "Bỏ điểm đầu tiên khỏi lịch vì đang có bão",

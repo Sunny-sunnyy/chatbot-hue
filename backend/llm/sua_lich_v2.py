@@ -308,13 +308,16 @@ def loc_hanh_dong(hanh_dong: list, cau: str, luu: dict) -> tuple[list, int]:
 # Lần hiểu ý chỉ thấy lịch + đúng câu này (không thấy lượt trước) nên mọi lời trỏ vào danh sách / câu trả lời vừa rồi ("bỏ cái thứ hai đi", "thay món đó
 # bằng món khác") đều có thể rơi vào một điểm của lịch. Code chỉ nhận hành động bỏ / thay khi câu người dùng có MỘT trong hai:
 #   (a) tên điểm bị chạm (đủ tên / tên khác, hoặc một khúc ≥ 2 chữ mà `khop_ten` nhận đúng điểm đó: "Tự Đức", "Thiên Mụ");
-#   (b) mốc của LỊCH: "ngày 2", "hôm đầu", "buổi chiều", "lịch", "kế hoạch", "chuyến đi", "điểm đầu / cuối / thứ hai".
+#   (b) mốc của LỊCH: "ngày 2", "hôm đầu", "buổi chiều", "lịch", "kế hoạch", "chuyến đi". "điểm đầu / cuối / thứ hai" đứng TRẦN không phải mốc: lượt
+#       thật 22/11 "Kể các điểm tham quan miễn phí" ⇒ "Bỏ điểm đầu đi rồi viết lại danh sách" lại bỏ Đại Nội — danh sách vừa kể rất hay là danh sách
+#       điểm; cả 6 lệnh "không tên nhưng có mốc" của sổ vết đều kèm ngày hoặc "lịch", không lệnh nào chỉ dựa vào "điểm + vị trí".
 # Không có ⇒ hành động bị bỏ (lịch giữ nguyên); lượt không còn hành động nào ⇒ đi đường hỏi đáp thường (đã chạy song song — không tốn thêm).
 # Đếm trước trên sổ vết (60 lượt sửa có hành động, 23 hành động bỏ / thay): 16 có tên trong câu · 6 không tên nhưng có mốc lịch · 1 không có gì — chính
-# là ca lỗi. Chặn nhầm được phép (người dùng nhắn lại kèm tên), áp sai thì không. "du lịch", "lịch sử", "âm lịch" không phải mốc của lịch.
+# là ca lỗi. Chặn nhầm được phép (người dùng nhắn lại kèm tên), áp sai thì không. "du lịch", "lịch sử", "lịch sự", "âm lịch" không phải mốc của lịch;
+# "ngày 2/12" là ngày tháng, không phải ngày 2 của lịch.
 _SO_VI_TRI = r"(?:\d|một|nhất|hai|ba|bốn|tư|năm|đầu|cuối)"
-_MOC_LICH = re.compile(rf"(?<!\w)(?:(?:ngày|hôm)\s*(?:thứ\s+)?{_SO_VI_TRI}|buổi\s+(?:sáng|trưa|chiều|tối)|(?<!du )(?<!âm )(?<!dương )lịch(?!\s+(?:sử|âm|dương))"
-                       rf"|kế hoạch|chuyến đi|điểm\s+(?:thứ\s+|số\s+)?{_SO_VI_TRI})(?!\w)", re.I)
+_MOC_LICH = re.compile(rf"(?<!\w)(?:(?:ngày|hôm)\s*(?:thứ\s+)?{_SO_VI_TRI}(?![/.-]\d)|buổi\s+(?:sáng|trưa|chiều|tối)"
+                       rf"|(?<!du )(?<!âm )(?<!dương )lịch(?!\s+(?:sử|sự|âm|dương))|kế hoạch|chuyến đi)(?!\w)", re.I)
 # tên model điền mà không phải điểm nào của bảng: chỉ gồm các chữ trỏ / vị trí này ⇒ không phải tên riêng ("quán đầu", "cái thứ hai", "món đó")
 _CHU_TRO = frozenset("quán món cái chỗ điểm nơi câu mục dòng ý đầu tiên cuối cùng thứ số đó này kia ấy nãy vừa rồi trên dưới nhất một hai ba bốn tư năm".split())
 
