@@ -1,6 +1,6 @@
 # Phụ lục F — Các con số chính trên một trang
 
-*Cập nhật 18:17, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (48 tính năng, kho 267 bài): thêm hai con số của thẻ nơi · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 21:47, ngày 22/11/2026 · khớp các bài lúc 21:45 22/11: lần chạy đủ bộ test 20:48–21:07 (2.197 ca), ba con số mới về tin dài nhiều ý và lệnh thêm điểm (99 dòng) · trước đó (18:17): khớp các bài lúc tối 22/11 (48 tính năng, kho 267 bài): thêm hai con số của thẻ nơi · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một con số quan trọng của hệ thống, chép từ mục "Ý chính", bảng "Cấu hình đang chạy" hoặc bảng số chính của một bài. Cột thứ ba ghi điều kiện mà bài gốc ghi kèm: đếm trên bộ nào, model viết nào, ngày nào. Một con số không có điều kiện thì không so được với con số khác, nên đừng đọc cột hai mà bỏ cột ba. Dòng ghi "cấu hình" là giá trị đặt sẵn trong hệ thống, không phải kết quả đo. Dòng ghi "lúc đó" hay "đã cũ" là số của một thời điểm đã qua, giữ lại để so. Hai model viết: gpt-6-luna (tới trưa 21/11) và Claude Sonnet 5.5 (từ 21/11, đổi tạm).
 
@@ -109,6 +109,7 @@
 | 9 trên 10 | bộ 10 chuỗi sửa lịch đạt (cả hai lần chạy) | đo 14–19/11, trước khi đổi sang Claude | 31, 40 |
 | 90 % trong 15.360 cặp, 0 lỗi | đổi chỗ hai ngày làm được | đếm bằng chương trình | 31 |
 | 5 / 6 · 2 / 6 · 0 / 6 | lệnh sửa lịch khó làm đúng ở mức suy luận cao / thấp / vừa | Claude Sonnet 5.5, 21/11 | 31, 33 |
+| 0 trên 14.725 lệnh | lệnh thêm một điểm làm được mà giữ đủ điểm cũ, trên lịch vừa xếp (lịch xếp kín giờ, chương trình không tự thế chỗ) | liệt kê bằng chính bộ xếp và phần áp lệnh trên 108 lịch mẫu, tối 22/11; không phải lượt người dùng thật | 31, 40 |
 
 ## 8. Model viết, thời gian chờ, tiền
 
@@ -118,12 +119,14 @@
 | khoảng 3 lần · 20 lần | Claude viết dài hơn khoảng ba lần; đắt hơn 20 lần mỗi token | Claude Sonnet 5.5 so với gpt-6-luna | 33, 34 |
 | 2 / 10 USD · 0,10 / 0,50 USD | giá mỗi 1 triệu token chữ vào / chữ ra: Claude Sonnet 5.5 · gpt-6-luna | cấu hình, sáng 22/11 | 15 |
 | khoảng 0,3 giây | mức cao chậm hơn mức vừa ở câu hỏi một lượt (bốn mức ngang nhau về chất lượng) | Claude, 66 câu | 33, 34 |
+| khoảng 8 giây | mức vừa nhanh hơn mức cao ở tin dài nhiều ý (trung vị 19,3 so với 27,3 giây), nhưng trượt một điều ghi trước, và 3 trên 6 lượt nói kho không có vé cho bé dưới 7 tuổi ⇒ bỏ | một tin gia đình 4 ý, 6 lượt mỗi mức, Claude, 22/11; mốc không chạy xen kẽ | 33 |
 | 6 ⇒ 0 trên 29 | số câu chạm trần vòng trước và sau khi sửa lớp nối Claude (trước đó Claude xin công cụ mãi: 0 trên 8 lần viết được, ở mỗi mức) | Claude, khi đổi model | 33 |
 | 3,7 giây (model viết 3,6 giây) | thời gian cả câu ở ví dụ chính | ví dụ chính, lượt chạy thật | 6 |
 | khoảng 13 giây | thời gian chờ ở lượt hỏi đáp đứng giữa; một phần ba số lượt quá 15 giây | Claude mức cao, 49 lượt của người dùng mô phỏng, 21/11 | 34, 40 |
 | 9,7 giây (72 %) · 3,1 giây (25 %) · 3 % | phần của lần viết cuối · các vòng công cụ (khoảng 2,2 giây một vòng) · phần của chương trình | như trên | 34 |
 | 6,9 giây; 95 % dưới 13,1 giây | thời gian cả câu ở lượt đứng giữa, 0 màn hình lỗi | 41 tin phần lớn ngắn qua trình duyệt, lượt kiểm chốt trưa 22/11, lúc máy rảnh | 34, 40 |
 | 25–34 giây | thời gian chờ của tin dài nhiều ý (trước khoảng 20 giây), suốt lúc đó chỉ một dòng trạng thái rồi cả câu trả lời; lượt phải viết lại một lần lâu thêm khoảng 10 giây (tới 25–37 giây; ca này chưa nhìn trên trình duyệt) | một tin 4 ý, 6 lần, từ 14:47 22/11; trên trình duyệt 22/11 tin gia đình bốn ý 29,5 giây | 23, 34, 40 |
+| 23,4 giây · 29,1 giây | tin dài nhiều ý: trung vị của lượt model tự tìm một lần · hai lần (lần tìm thứ hai làm lượt dài thêm khoảng 5,7 giây) | 19 lượt đã ghi của một tin gia đình, Claude mức cao, 22/11, nhiều bản chương trình trong buổi; đếm trên sổ, không chạy thêm | 34 |
 | 17–24 giây | lượt nhờ "viết lại danh sách" (trợ lý tra kho lại và viết lại từng mục, không chỉ xoá một dòng); bên không nhớ câu trả lời: 10–12 giây cho một câu "không xác định được" | trên trình duyệt 22/11: 17,3 và 24,1 giây; lượt thật: 19–20 giây, khoảng 0,13–0,17 USD; Claude | 23 |
 | 0,018 USD | tiền ví dụ chính (0,0178 USD) | Claude, lượt ví dụ chính 21/11 (bài 2, 6) | 2, 4, 6, 34 |
 | 0,0004 USD · 0,0146 USD | tiền một câu trả lời có nguồn: gpt-6-luna · Claude mức cao (gấp khoảng 37 lần) (trung bình trên 66 câu tính điểm của 85 câu đầu bộ mẫu, không lọc theo loại câu) | 66 câu, 21/11 | 33, 34 |
@@ -139,10 +142,10 @@
 | 5 khối · 6 bước · 4 thứ gửi ra ngoài | khối của hệ thống; bước của một câu hỏi; thứ rời máy (lời gọi model, ảnh, dự báo thời tiết, câu tra web) | kiến trúc, sáng 22/11 | 6 |
 | khoảng 18 đường gọi | số đường gọi giữa giao diện và máy chủ; 3 đường gọi model | chương trình, trưa 22/11 | 35 |
 | khoảng 14 giây · 34 giây | lệnh bật ra "SẴN SÀNG" khi mọi thứ đủ · khi bắt đầu từ lúc Qdrant đang tắt | 14 giây: bốn ca chạy thật ở cổng tạm; 34 giây: lượt kiểm chốt trưa 22/11 | 36, 40 |
-| 76 file, 2.060 ca | lần chạy đủ mới nhất của bộ test | lượt kiểm chốt trưa 22/11 | 38 |
+| 76 file, 2.060 ca | lần chạy đủ của lượt kiểm chốt trưa | trưa 22/11 | 38 |
 | 75 file, 1.961 ca đạt, 4 file bỏ | lần chạy cuối buổi sáng; 4 file bỏ vì cần khoá OpenAI | sáng 22/11 | 38 |
-| 78 file chạy, 2.196 ca đạt, 0 ca hỏng, 4 file bỏ | lần chạy đủ mới nhất của cả bộ test, trên bản 48 tính năng mở | 17:16–17:34 ngày 22/11 | 38 |
-| khoảng 16 phút · khoảng 4,4 GB | cả bộ test chạy từng file một · bộ nhớ khi chạy cả bộ một lượt | hướng dẫn vận hành | 38 |
+| 78 file chạy, 2.197 ca đạt, 0 ca hỏng, 4 file bỏ | lần chạy đủ mới nhất của cả bộ test, trên bản 48 tính năng mở đã có bản sửa lệnh thêm vào buổi tối; đây là bản chủ dự án tự thử ngày 23/11 (lần trước đó, 17:16–17:34: 2.196 ca) | 20:48–21:07 ngày 22/11 | 38, 40 |
+| khoảng 16 tới 19 phút · khoảng 4,4 GB | cả bộ test chạy từng file một · bộ nhớ khi chạy cả bộ một lượt | hướng dẫn vận hành (khoảng 16 phút); lần chạy 20:48–21:07 ngày 22/11 mất khoảng 19 phút | 38 |
 | 5 phiên · 11 skill | số phiên làm việc (điều phối, hai thực thi, đo, giảng) · số file skill | cách làm lúc viết, trưa 22/11 | 39 |
 
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>

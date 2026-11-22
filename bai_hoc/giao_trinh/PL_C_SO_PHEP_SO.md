@@ -1,6 +1,6 @@
 # Phụ lục C — Sổ mọi phép so sánh đã làm, kể cả phương án bị bỏ
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 21:47, ngày 22/11/2026 · khớp các bài lúc 21:45 22/11: thêm ba phép so đã đo rồi bỏ tối 22/11 (159 dòng) · trước đó (16:11): phân xử chỗ lệch giữa các bài · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Cách đọc trang này (theo bài 20).** Mỗi dòng là một lần thử: thử gì, so với gì, ra số nào, giữ hay bỏ. Điều kiện đạt hay trượt được ghi trước khi chạy; vỡ một điều kiện không được vỡ thì mặc định là bỏ, dù điểm trung bình tốt hơn. Kết quả âm cũng được giữ, vì đó là căn cứ để trả lời "vì sao không làm cách X". Đọc cột thứ ba trước cột thứ tư: phần lớn phép so đo với gpt-6-luna, trên bộ câu nhỏ, ở kho của một thời điểm đã qua; đo riêng một bước có thể cho lợi mà người dùng không nhận được.
 
@@ -114,6 +114,7 @@ Cột "Giữ / bỏ" chép kết luận của bài gốc. Dòng ghi "chưa đo",
 | Tin trả lời được một phần thì không tra web | có tra | 11 tin nhiều ý; Claude Sonnet 5.5; 21/11 | đi tra 11 ⇒ 0 trên 11; nhanh hơn ở 11 trên 11 tin, 5,8 giây câu đứng giữa; ba lượt mốc trước: mục web đáp đúng điều thiếu 1 trên 66 dòng | giữ | 23, 25 |
 | Tìm theo vế (nối 2 đoạn mỗi vế) | tìm một lần bằng cả tin | đếm 0 đồng 8 dòng "chưa có" sai + lượt thật 8 tin × 3 lượt; Claude Sonnet 5.5; 21–22/11 | đoạn đúng vào ngữ cảnh 1 ⇒ 5 trên 8 (tách vế như bộ đếm ý: 3 trên 8); nêu được dữ kiện 3 ⇒ 15 trên 24; bỏ hai tin quán ăn: 3 ⇒ 9 trên 18; 2, 3, 4 đoạn mỗi vế cùng kết quả | giữ | 23, 13 |
 | Ghép chủ thể vào vế cụt | không ghép | đếm trên 20 đoạn | chỉ đúng 6 | chưa làm | 23 |
+| Vế tìm cố định về miễn giảm vé nối vào lần tìm đầu (tin nhiều ý có chữ hỏi vé và chữ người đi cùng) | không có vế đó | một tin gia đình 4 ý × 6 lượt mỗi bên, xen kẽ cùng buổi; Claude Sonnet 5.5, mức cao; 22/11 | lần tìm đầu có đủ hai dữ kiện miễn giảm 0 trên 6 ⇒ 6 trên 6; tổng số lần model tự tìm 9 ⇒ 6; không mất ý; trung vị 25,25 ⇒ 23,35 giây (cần thấp hơn ít nhất 3 giây); khoảng 22,9–34,7 ⇒ 23,1–27,2 giây | bỏ (để tắt; bản thử không có ở bản đang chạy) | 23, 34 |
 | Công cụ đổi ngày | không có | bộ câu ngày; gpt-6-luna; 09/11 | bớt 9 câu từ chối nhầm; 0 câu sai ngày | giữ | 24, 1, 3 |
 | Tính sẵn lịch trước lần gọi model đầu | chỉ có công cụ | 19 câu có ngày; gpt-6-luna; 10/11; đo ở máy chủ | chữ đầu 5,60 ⇒ 2,35 giây; mức 95 % 10,14 ⇒ 4,56 giây; lần gọi 52 ⇒ 31; tiền 0,00049 ⇒ 0,00036 USD một câu | giữ | 24, 3, 34 |
 | Câu bão: model không nhận số, chương trình nối khối cố định | model tự nhận định | bộ 31 câu do người khác soạn; gpt-6-luna; 17/11 | model tự nhận định có / không có bão 3 trên 5 (trước) ⇒ không ở câu gốc; câu cần khối 112 có khối 21 trên 22; câu thường vẫn có bảng 3 trên 3 | giữ | 24 |
@@ -174,6 +175,7 @@ Cột "Giữ / bỏ" chép kết luận của bài gốc. Dòng ghi "chưa đo",
 | Đổi chỗ hai ngày | — | đếm bằng chương trình 15.360 cặp; 20/11; 0 USD | đổi được 13.831 (90 %); bị chặn 1.529; 0 lỗi; đổi lại lần hai về đúng lịch cũ; 516 cặp bộ xếp đổi thêm (có câu báo) | bật 21/11 | 31 |
 | Đổi chỗ hai ngày, câu thật | — | bộ dò mù 10 câu; 5 lượt thật; Claude Sonnet 5.5; 21/11 | đọc nhầm 0 trên 10; lượt thật 5 trên 5 | bật | 31, 32 |
 | "Thêm" không tự thế chỗ | tự thế chỗ, ưu tiên điểm ngoài sở thích (bản trước 22/11) | mô phỏng 39.509 lệnh thêm; 144 lịch mẫu; 21/11 | 0 lệnh làm mất điểm (bản cũ 13.162 lệnh tự thế chỗ; 33–63 % lệnh thêm tự thế chỗ, điểm bị thế là điểm chính 58–84 %); "ok thay đi" 3 ⇒ 9 trên 9 | mở 22/11 | 31 |
+| Luôn đưa thêm một cách thêm điểm mà không mất điểm (bản sửa, đếm trước khi dựng) | đang chạy (gợi ý "thay Y bằng X", hoặc không có gợi ý) | liệt kê bằng chính bộ xếp và phần áp lệnh, không gọi model; 108 lịch mẫu 1–3 ngày, rồi 477 lịch vừa bỏ một điểm; tối 22/11 | lịch vừa xếp: 0 trên 14.725 lệnh thêm làm được, bản sửa cứu 0 %; lịch vừa bỏ một điểm: cứu 5,7 % số ca hết đường (3.727 trên 65.702), xin đúng buổi vừa trống 20,7 %; ngưỡng ghi trước: một phần ba | không dựng | 31 |
 | Câu báo khi dời một điểm bị chặn | — | bốn kiểu lịch, mọi lần dời thử; 20/11 | 24 trên 176 lần dời làm được; 92 trên 152 ca bị từ chối không có chỗ nào dời được | giữ (tỉ lệ dời không tăng, chỉ câu báo rõ hơn) | 31 |
 | Dòng báo cho tin vừa sửa vừa hỏi | — | bộ mù 22 tin; Claude Sonnet 5.5; 21/11 | hiện 24 trên 24 ở tin sửa + hỏi; hiện nhầm 0 trên 24 ở tin chỉ sửa | mở 21/11 | 31, 32 |
 | Dời sang buổi tối | — | 7 tin × 2 khổ màn hình; Claude; 22/11 | đạt tiêu chí ghi trước | mở 22/11 | 31 |
@@ -192,6 +194,7 @@ Cột "Giữ / bỏ" chép kết luận của bài gốc. Dòng ghi "chưa đo",
 |---|---|---|---|---|---|
 | Bốn mức suy luận của Claude (không · thấp · vừa · cao) | gpt-6-luna | 85 câu đầu bộ mẫu, 66 câu tính điểm, một lượt mỗi mức, người chấm gpt-6-luna; 21/11, trước khi sửa lớp nối | đúng 4,89 · 4,89 · 4,91 · 4,94 (luna 4,97); đủ ý 4,82 · 4,83 · 4,86 · 4,88 (luna 4,83); trọng tâm 4,44 · 4,39 · 4,36 · 4,39 (luna 4,94); 2,4 · 2,3 · 2,3 · 2,6 giây (luna 3,1); 0,0124 · 0,0137 · 0,0138 · 0,0146 USD (luna 0,00039) | cả bốn phạm mức tụt ở trọng tâm; chủ dự án nhận độ dài, chọn mức cao | 33, 15, 34 |
 | Mức suy luận của lượt biểu mẫu và câu thẻ lịch | ba mức | Claude | cùng kết quả | đặt cứng mức thấp | 33 |
+| Mức suy luận vừa cho cả lượt tin nhiều ý | mức cao | một tin gia đình 4 ý × 6 lượt; mốc là 6 lượt mức cao của đúng tin đó, chạy trước khoảng một giờ (không xen kẽ); Claude Sonnet 5.5, sau khi sửa lớp nối; 22/11 | trung vị 27,3 ⇒ 19,3 giây; một lượt có dòng "chưa có" sai (cần 0) ⇒ trượt; ngoài tiêu chí: nêu "trẻ dưới 7 tuổi miễn phí" 6 trên 6 ⇒ 3 trên 6 | bỏ hẳn | 33, 34 |
 | Trả lại phần suy nghĩ giữa các vòng công cụ | không trả lại | Claude; 21/11 | 24 trên 24 cả hai bên | không đưa vào | 33 |
 | Đệm lời dặn với Claude | không đệm | Claude; 21/11 | 2,72 và 2,69 giây, không nhanh hơn | chưa bật | 33 |
 | Chữ hiện dần | chờ cả câu | 38 câu qua trình duyệt; gpt-6-luna; 01/11 | chữ đầu tới sau 1,23 giây ở câu đứng giữa, sớm hơn 0,44 giây | giữ (chủ dự án chọn) | 34, 2 |
@@ -199,7 +202,7 @@ Cột "Giữ / bỏ" chép kết luận của bài gốc. Dòng ghi "chưa đo",
 | Hướng làm nhanh: hạ mức suy luận, riêng lần viết cuối | mức cao | như trên; đo thật trên 66 câu một lượt | ước tối đa 1,8 giây (đo thật khoảng 0,3 giây); lượt quá 15 giây tối đa 3,8 giây | chưa đo đủ (đã đo một phần) | 34 |
 | Hướng làm nhanh: hạ mức suy luận, riêng các vòng công cụ | mức cao | ước; chưa đo | tối đa 1,1 giây; lượt quá 15 giây tối đa 1,6 giây | chưa đo | 34 |
 | Hướng làm nhanh: hạ mức suy luận, riêng xếp loại câu | mức cao | ước; chưa đo | 0 (vốn không suy luận, chạy song song) | chưa đo | 34 |
-| Hướng làm nhanh: bớt một vòng công cụ | đang chạy | ước; chưa thử | khoảng 2,2 giây; lượt quá 15 giây khoảng 2,4 giây | chưa thử | 34 |
+| Hướng làm nhanh: bớt một vòng công cụ | đang chạy | ước; lượt thường chưa thử | khoảng 2,2 giây; lượt quá 15 giây khoảng 2,4 giây | chưa thử ở lượt thường; ở tin dài nhiều ý đã đo 22/11, bỏ (dòng vế miễn giảm, chặng 5) | 34 |
 | Hướng làm nhanh: câu trả lời ngắn hơn | đang chạy | ước; chưa đo | mỗi 100 token bớt khoảng 0,9 giây; bớt một phần ba ≈ 2,5 giây | không làm (chủ dự án đã chọn nhận độ dài) | 34 |
 | Chạy cả bộ test nhiều tiến trình cùng lúc | từng file một | 21/11 | cạn bộ nhớ (một phiên bật 13 tiến trình) | bỏ, chạy từng file một | 38 |
 
@@ -211,15 +214,15 @@ Cột "Giữ / bỏ" chép kết luận của bài gốc. Dòng ghi "chưa đo",
 | Chặng 2 | 9 | 17 | 1 |
 | Chặng 3 | 4 | 18 | 0 |
 | Chặng 4 | 2 | 0 | 0 |
-| Chặng 5 | 30 | 19 | 2 |
-| Chặng 6 | 29 | 8 | 2 |
-| Chặng 7 | 3 | 3 | 6 |
-| **Cả trang** | **79** | **66** | **11** |
+| Chặng 5 | 30 | 20 | 2 |
+| Chặng 6 | 29 | 9 | 2 |
+| Chặng 7 | 3 | 4 | 6 |
+| **Cả trang** | **79** | **69** | **11** |
 
-Cả trang có 156 phép so. Con số này khác bảng tổng 45 lần so chính mà bài 20 kể: trang này tách mỗi phương án của một bảng thành một dòng, và gồm cả các lần đếm bằng chương trình của phần lên kế hoạch. "Giữ" gồm cả các dòng "mở", "bật", "sửa rồi giữ", "đạt"; "bỏ" gồm cả "gỡ", "gác", "tắt", "không mở đứng riêng", "không gộp", "trượt", "thay".
+Cả trang có 159 phép so. Con số này khác bảng tổng 45 lần so chính mà bài 20 kể: trang này tách mỗi phương án của một bảng thành một dòng, và gồm cả các lần đếm bằng chương trình của phần lên kế hoạch. "Giữ" gồm cả các dòng "mở", "bật", "sửa rồi giữ", "đạt"; "bỏ" gồm cả "gỡ", "gác", "tắt", "không mở đứng riêng", "không gộp", "không dựng", "trượt", "thay".
 
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
 
-Gom từ mục "Đã so" của các bài 5, 7–16, 18, 21–34 (bài 1–4, 6, 17, 19, 20, 35–38 không có mục này hoặc mục không có bảng); thêm các dòng "Cách khác: đã đo…" có số trong mục "Quyết định và lý do" mà không có trong bảng "Đã so" nào (bài 5 bộ linh kiện; bài 22 chạy song song câu chào; bài 23 ghép chủ thể vào vế cụt; bài 24 dặn không tự cộng tổng; bài 31 tự thế chỗ trên 144 lịch); và các dòng có số ở cột "Đã thử giá trị khác chưa" của bảng "Cấu hình đang chạy" (bài 7, 8, 11, 12, 19, 23, 24, 26, 27, 29, 30, 38) cùng bảng ba lần làm nhanh ở "Chi tiết để tra" của bài 34. Bản các bài lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Bảng tổng 45 dòng mà bài 20 hứa "phụ lục C sẽ chép đủ" không được chép ở đây: nó nằm ngoài giáo trình. Chỗ hai bài nói khác nhau ghi ở báo cáo gom [riêng tư].
+Gom từ mục "Đã so" của các bài 5, 7–16, 18, 21–34 (bài 1–4, 6, 17, 19, 20, 35–38 không có mục này hoặc mục không có bảng); thêm các dòng "Cách khác: đã đo…" có số trong mục "Quyết định và lý do" mà không có trong bảng "Đã so" nào (bài 5 bộ linh kiện; bài 22 chạy song song câu chào; bài 23 ghép chủ thể vào vế cụt; bài 24 dặn không tự cộng tổng; bài 31 tự thế chỗ trên 144 lịch); và các dòng có số ở cột "Đã thử giá trị khác chưa" của bảng "Cấu hình đang chạy" (bài 7, 8, 11, 12, 19, 23, 24, 26, 27, 29, 30, 38) cùng bảng ba lần làm nhanh ở "Chi tiết để tra" của bài 34. Bản các bài lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Ba dòng thêm tối 22/11 (mức suy luận vừa cho tin nhiều ý — bài 33; vế tìm cố định về miễn giảm vé — bài 23; luôn đưa một cách thêm điểm không mất điểm — bài 31) và ô sửa ở dòng "bớt một vòng công cụ" chép từ mục "Đã so" của ba bài đó, bản lúc 21:45 ngày 22/11/2026. Bảng tổng 45 dòng mà bài 20 hứa "phụ lục C sẽ chép đủ" không được chép ở đây: nó nằm ngoài giáo trình. Chỗ hai bài nói khác nhau ghi ở báo cáo gom [riêng tư].
 
 </details>

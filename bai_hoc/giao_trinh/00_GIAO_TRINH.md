@@ -1,6 +1,6 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 18:17, ngày 22/11/2026 · đủ 41 bài và 9 phụ lục; mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo · từ chiều 22/11 mọi thứ mới của hệ thống được ghi vào bộ này, liệt kê ở mục "Có gì mới" ngay dưới · mọi con số lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 21:48, ngày 22/11/2026 · đủ 41 bài và 9 phụ lục; mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo · từ chiều 22/11 mọi thứ mới của hệ thống được ghi vào bộ này, liệt kê ở mục "Có gì mới" ngay dưới · mọi con số lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -27,6 +27,10 @@ Hệ thống vẫn đang được làm tiếp. Mỗi khi người dùng thấy m
 
 | Ngày | Người dùng thấy gì khác | Đọc ở |
 |---|---|---|
+| 22/11, tối | Ở cuộc đã có lịch, xin thêm vào buổi tối một điểm ban ngày đang có trong lịch ("thêm Đại Nội về đêm vô tối ngày 1") thì, khi trợ lý hiểu tên điểm là Đại Nội, nhận lý do thật: điểm tham quan ban ngày không xếp được vào buổi tối (trên màn hình dòng này đứng sau chữ "Không đổi được: "). Trước đó nhận câu "… đã có trong lịch." (một ca test; chưa có lượt thật qua trình duyệt). Cùng lúc bài ghi rõ một giới hạn dễ gặp khi thử: lịch vừa xếp thì lệnh "thêm X" gần như luôn bị trả "Chưa làm…", vì lịch kín giờ và chương trình không tự thế chỗ; lối ra là nhắn đúng câu "thay Y bằng X" được gợi ý, hoặc điền lại biểu mẫu với kiểu đi nhiều điểm hơn (với nhóm có trẻ em hay người lớn tuổi, đổi kiểu đi không thêm chỗ: lịch luôn mỗi buổi một điểm). | bài 31, bảng "Nếu… thì sao", quyết định 4, mục "Giới hạn đã biết" và "Chi tiết để tra" |
+| 22/11, tối | Không phải thay đổi mà là hai cách làm nhanh tin dài nhiều ý đã đo rồi bỏ theo tiêu chí ghi trước: hạ mức suy luận xuống vừa (nhanh hơn khoảng 8 giây nhưng trượt một điều ghi trước, và 3 trên 6 lượt nói kho không có vé cho bé dưới 7 tuổi dù kho có) và cho lần tìm đầu phủ luôn chuyện miễn giảm vé (trung vị chỉ nhanh hơn 1,9 giây, cần 3). Điều rút ra: ở tin dài, lượt chậm là lượt model tự tìm thêm lần thứ hai. | bài 33, mục "Đã so"; bài 23, mục "Đã so" dòng 14; bài 34, mục "Giới hạn đã biết" |
+| 22/11, tối | Không phải thứ người dùng thấy: lần chạy đủ bộ test mới nhất (20:48–21:07) trên đúng bản anh tự thử ngày 23/11: 78 file chạy, 2.197 ca đạt, không ca nào hỏng, 4 file bỏ vì cần khoá OpenAI. | bài 38, mục "Ý chính" và "Chi tiết để tra" |
+| 22/11, tối | Không phải thứ người dùng thấy: bộ kiểm mà git tự chạy mỗi khi lưu một thay đổi vào lịch sử dự án: phép quét trùng chữ của nó nay chỉ còn so với bộ câu chấm cất riêng; chữ của kho và của bộ câu mẫu được trích nguyên văn vào tài liệu (anh chọn lúc 16:44). Các phép chặn khác giữ nguyên. | bài 37, mục "Chi tiết để tra"; bài 39, quyết định 5 |
 | 22/11, tối | Với tin hỏi nhiều ý có chữ hỏi giờ, mở cửa, địa chỉ hay "ở đâu", trợ lý thôi ghi "Tư liệu chưa có thông tin về…" cho giờ, địa chỉ mà bài riêng của nơi đó có, và cho giá vé lẻ của những nơi có trong bảng vé lẻ. Chương trình tự gắn thêm cho mỗi nơi được nhắc tên một nguồn nhỏ chép nguyên dòng địa chỉ, giờ từ bài của nơi đó; hàng vé lẻ đi vào một nguồn riêng mở bài vé (gọi chung là thẻ nơi). Không gọi model thêm. Đây là tính năng thứ 48 đang mở. | bài 23, mục "Tin nhiều ý được trả lời theo từng ý", "Đã so" và "Giới hạn đã biết" |
 | 22/11, tối | Trang Giới thiệu được viết lại hai chỗ cho đúng hiện trạng: thứ trợ lý nhớ trong một cuộc trò chuyện, và giới hạn về lễ hội, sự kiện theo ngày. Giao diện đã dựng lại và phiên đo đã nhìn trang này trên trình duyệt tối 22/11. | bài 37, mục "Giới hạn đã biết" |
 | 22/11, tối | Không phải thay đổi mà là điều mới ghi rõ sau một lượt thử: gõ lại đúng một câu ở cuộc mới thì câu một ý về ngay (0,2 giây); câu nhiều ý mà lần đầu còn dòng "Tư liệu chưa có…" thì được tìm và viết lại. | bài 34, mục "Giới hạn đã biết" |
@@ -132,13 +136,13 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 |---|---|---|
 | A | [Mọi tham số cấu hình: giá trị đang chạy, dùng để làm gì, bài nào giảng](PL_A_THAM_SO.md) | ✅ |
 | B | [Mọi tính năng đang mở và đang tắt: làm gì, một con số, bài nào giảng](PL_B_TINH_NANG.md) | ✅ |
-| C | [Sổ mọi phép so sánh đã làm, kể cả phương án bị bỏ: 156 phép so gom từ các bài](PL_C_SO_PHEP_SO.md) | ✅ |
+| C | [Sổ mọi phép so sánh đã làm, kể cả phương án bị bỏ: 159 phép so gom từ các bài](PL_C_SO_PHEP_SO.md) | ✅ |
 | D | [Lời dặn gửi model và mô tả từng công cụ, chép nguyên văn từ chương trình](PL_D_LOI_DAN.md) | ✅ |
 | E | [Thuật ngữ Việt – Anh: 211 từ, có bảng tra ngược Anh – Việt](PL_E_THUAT_NGU.md) | ✅ |
-| F | [Các con số chính trên một trang: 96 con số kèm điều kiện đo](PL_F_CON_SO_CHINH.md) | ✅ |
+| F | [Các con số chính trên một trang: 99 con số kèm điều kiện đo](PL_F_CON_SO_CHINH.md) | ✅ |
 | G | [Mọi quyết định của hệ thống trên một trang: 279 quyết định gom từ bài 1–38](PL_G_MOI_QUYET_DINH.md) | ✅ |
-| H | [Mọi tình huống hỏng trên một trang: 142 tình huống gom từ bài 1–38](PL_H_MOI_TINH_HUONG_HONG.md) | ✅ |
-| I | [Mọi giới hạn đã biết trên một trang: 130 giới hạn, và bảng riêng các thứ cố ý không làm](PL_I_GIOI_HAN_DA_BIET.md) | ✅ |
+| H | [Mọi tình huống hỏng trên một trang: 144 tình huống gom từ bài 1–38](PL_H_MOI_TINH_HUONG_HONG.md) | ✅ |
+| I | [Mọi giới hạn đã biết trên một trang: 133 giới hạn, và bảng riêng các thứ cố ý không làm](PL_I_GIOI_HAN_DA_BIET.md) | ✅ |
 
 ## Khuôn của mỗi bài
 

@@ -1,6 +1,6 @@
 # Bài 39 — Đồ án được làm thế nào: một người quyết định và nhiều coding agent
 
-*Cập nhật 14:55, ngày 22/11/2026 · từ trang hiện trạng, sổ việc, bảng quyền, lịch sử code, ghi chép cách làm; đã sửa theo một lượt đối chiếu độc lập.*
+*Cập nhật 21:38, ngày 22/11/2026 · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): phép quét trùng chữ lúc lưu code chỉ còn so với bộ câu chấm cất riêng · từ trang hiện trạng, sổ việc, bảng quyền, lịch sử code; đã qua một lượt đối chiếu độc lập.*
 
 **Bài trước đã biết:** hệ thống gồm những khối nào, đo bằng gì, và bộ test kiểm những gì (bài 38).
 **Bài này thêm:** ai làm ra hệ thống đó: ai quyết gì, việc ghi ở đâu, ai kiểm ai, và cách làm đã bị sửa ra sao sau từng sự cố.
@@ -10,7 +10,7 @@
 - **Một người quyết, nhiều coding agent làm.** Chủ dự án nêu kết quả muốn có và quyết phạm vi, kho, tiền, model, việc đưa lên mạng. Các phiên chia vai điều phối, thực thi, đo, giảng; agent con làm từng phần việc nhỏ.
 - **Trạng thái nằm trong file, không trong trí nhớ của agent:** trang hiện trạng, sổ việc, danh sách ý chưa thử, file luật chung.
 - **Quyền chia ba cột:** tự làm, hỏi trước, không bao giờ. Mỗi thay đổi đo được là một thí nghiệm (bài 20).
-- **Người viết không tự duyệt.** Phiên khác đọc và chạy lại lệnh kiểm; agent con ngữ cảnh sạch đối chiếu; ở mốc chốt, AI hãng khác soát. Thứ máy nhận ra được (file riêng tư, dòng trông như khoá, chữ trùng bộ câu) thì máy chặn ở mỗi lần lưu code; phần còn lại dựa vào luật chữ.
+- **Người viết không tự duyệt.** Phiên khác đọc và chạy lại lệnh kiểm; agent con ngữ cảnh sạch đối chiếu; ở mốc chốt, AI hãng khác soát. Thứ máy nhận ra được (file riêng tư, dòng trông như khoá, chữ chép từ bộ câu chấm cất riêng) thì máy chặn ở mỗi lần lưu code; phần còn lại dựa vào luật chữ.
 - **Cách làm được sửa theo sự cố có ghi:** báo "xong" sai, kiểm thử quá nhiều, chủ dự án phải tự gợi hướng.
 
 ## Từ dùng trong bài
@@ -58,13 +58,13 @@ Từ 10:11 ngày 18/11, chủ dự án duyệt một bảng quyền dùng lâu d
 
 ## Người viết không tự duyệt: ba lớp kiểm và một lớp máy
 
-**Lớp 1, phiên khác đọc** thay đổi và tự chạy lại lệnh kiểm của ít nhất một dòng "xong" trước khi gộp. Ngày 22/11, người đọc bắt thêm một lỗi ngay trong một bản sửa của lệnh sửa giá (bài 7).
+**Lớp 1, phiên khác đọc** thay đổi và tự chạy lại lệnh kiểm của ít nhất một dòng "xong" trước khi gộp.
 
-**Lớp 2, agent con ngữ cảnh sạch đối chiếu**, ví dụ mỗi bài giáo trình. Lớp này cũng sai: ngày 18/11, một bảng 45 dòng "đính chính" do agent con viết có 4 dòng sai hoặc đúng một nửa.
+**Lớp 2, agent con ngữ cảnh sạch đối chiếu**, ví dụ mỗi bài giáo trình. Lớp này cũng sai (ví dụ ở nửa để tra).
 
-**Lớp 3, soát khác hãng ở mốc chốt.** Nhóm soạn một file đề bài tự đủ; chủ dự án tự mở công cụ hãng khác và đưa file đó. Trưa 22/11, ba bên (GPT-6, Gemini 4 Neon, Gemini 4 Carbon) soát những chỗ hai tính năng mới cùng chạy trong một lượt hỏi, nơi kiểm từng tính năng riêng không thấy lỗi, nêu 33 điểm (9, 12, 12; vài điểm trùng). Cách xử theo luật chủ dự án chọn ngày 20/11: người viết phần code đó tái hiện từng điểm và **đếm trước** số lượt thật gặp nó; lỗi người dùng dễ gặp, lỗi an toàn, lỗi ghi sai kho thì sửa; lỗi hiếm thì ghi một dòng giới hạn kèm con số; không soát vòng hai. Ví dụ: câu "gần X" thiếu dòng "chưa tính kẹt xe" ở 5 trên 14 lượt thật, nên sửa.
+**Lớp 3, soát khác hãng ở mốc chốt.** Nhóm soạn một file đề bài tự đủ; chủ dự án tự mở công cụ hãng khác và đưa file đó. Trưa 22/11, ba bên (GPT-6, Gemini 4 Neon, Gemini 4 Carbon) soát những chỗ hai tính năng mới cùng chạy trong một lượt hỏi, nơi kiểm từng tính năng riêng không thấy lỗi, nêu 33 điểm. Cách xử theo luật chủ dự án chọn ngày 20/11: người viết phần code đó tái hiện từng điểm và **đếm trước** số lượt thật gặp nó; lỗi người dùng dễ gặp, lỗi an toàn, lỗi ghi sai kho thì sửa; lỗi hiếm thì ghi một dòng giới hạn kèm con số; không soát vòng hai (ví dụ ở nửa để tra).
 
-**Rào bằng máy** soát mỗi lần lưu và đẩy code: file vùng riêng tư, dòng trông như khoá, dòng trùng từ 40 ký tự liên tiếp với bộ câu mẫu, với kho, hay với bộ câu chấm cất riêng (bài 37). Nó nằm trong kho code, nên áp cho mọi agent và cả người.
+**Rào bằng máy** soát mỗi lần lưu và đẩy code: file vùng riêng tư, dòng trông như khoá, tên dự án khác của chủ dự án; lúc lưu còn chặn dòng trùng từ 40 ký tự liên tiếp với bộ câu chấm cất riêng (bài 37; quyết định 5 bên dưới). Nó nằm trong kho code, nên áp cho mọi agent và cả người.
 
 ## Cách làm đã bị sửa nhiều lần, mỗi lần vì một sự cố có ghi
 
@@ -117,7 +117,7 @@ Chủ dự án dặn tối 21/11: "phần này cũng nên linh hoạt chứ đ�
 - **Đã chọn:** rào chạy mỗi lần lưu và đẩy code.
 - **Vì sao:** sự cố 25 và 26/10: luật chữ "nhớ quét" đã có mà vẫn lọt. Một dòng riêng tư đã lên lịch sử công khai thì coi như không gỡ được. Sau khi có rào, sổ ghi ít nhất 4 lần chặn đúng.
 - **Cách khác:** dặn bằng chữ: cách cũ, lọt hai lần.
-- **Cái giá:** rào chỉ bắt thứ máy nhận ra (dạng khoá, tên, chuỗi trùng); mô tả quá cụ thể vẫn lọt ít nhất 4 lần. Phép chặn 40 ký tự làm khó viết tài liệu; giữ hay bỏ đang chờ chủ dự án.
+- **Cái giá:** rào chỉ bắt thứ máy nhận ra (dạng khoá, tên, chuỗi trùng); mô tả quá cụ thể vẫn lọt ít nhất 4 lần. Phép chặn 40 ký tự từng chặn cả giáo trình trích ví dụ kho; từ 16:45 22/11 chủ dự án chọn chỉ áp nó cho bộ câu chấm cất riêng (kho và bộ câu mẫu đã công khai từ 20/11). Sau này muốn giấu lại kho hay bộ câu mẫu thì các đoạn đã trích phải gỡ tay.
 
 ### 6. Vì sao chữ "xong" phải kèm lệnh và đầu ra?
 
@@ -211,6 +211,8 @@ Tái hiện, đếm số lượt thật gặp nó. Lỗi người dùng dễ g�
 | 22/11 | phần xây của Phase 9–12 xong ở máy; soát ba hãng; lượt kiểm chốt |
 
 - Lịch sử lưu code: 2.762 lần, từ 05/08 tới trưa 22/11/2026.
+- Chuyển từ nửa để hiểu tối 22/11 (không đổi nội dung): lớp phiên khác đọc — ngày 22/11, người đọc bắt thêm một lỗi ngay trong một bản sửa của lệnh sửa giá (bài 7) · lớp agent con — ngày 18/11, một bảng 45 dòng "đính chính" do agent con viết có 4 dòng sai hoặc đúng một nửa · lớp soát khác hãng — 33 điểm chia 9, 12, 12, vài điểm trùng; ví dụ: câu "gần X" thiếu dòng "chưa tính kẹt xe" ở 5 trên 14 lượt thật, nên sửa.
+- Rào lúc lưu code, đếm từ file rào tối 22/11: bốn phép chặn — file vùng riêng tư (thư mục dữ liệu, thư mục gửi ChatGPT, file bí mật, file bộ câu chấm cất riêng trong kho) · dòng có dạng khoá bí mật · tên dự án khác của chủ dự án · dòng trùng từ 40 ký tự với bộ câu chấm cất riêng (khúc nào có nguyên trong kho hay bộ câu mẫu thì không tính; câu hỏi kín ngắn được dò nguyên câu; phép quét này chạy lỗi thì cũng chặn) — và hai cảnh báo không chặn (giờ ghi kiểu ước lượng, giờ ở tương lai). Rào lúc đẩy code kiểm lại ba phép đầu cho mọi lần lưu sắp đẩy. Lệnh quét cả file cho bài kho nháp vẫn so với kho, bộ câu mẫu và bộ câu chấm cất riêng. Trước 16:45 22/11, rào lúc lưu còn chặn chữ chép từ kho và bộ câu mẫu.
 - Sổ cải tiến cách làm, tới 11/11: 25 vòng, 120 sự cố được ghi (gồm cả việc làm đúng đáng giữ).
 - Bộ 11 skill: chạy thí nghiệm · review theo rủi ro · soát tích hợp · giao việc agent con · đề xuất phương án cho chủ dự án · cải tiến cách làm · cải tiến sản phẩm theo vòng · giảng và hỏi lại · rà thiết kế agent · rà bảo mật agent · viết code thực dụng.
 - Soát ba hãng ngày 18/11: Claude (agent con) 11 điểm, 8 chỉ bên đó thấy; Gemini 6 điểm, 3 chỉ bên đó thấy; GPT 7 điểm và 1 nghi vấn, 6 chỉ bên đó thấy. Ba lượt đọc ba bản code hơi khác nhau, nên cột "chỉ bên đó thấy" không phải bảng xếp hạng.
@@ -235,7 +237,7 @@ Tái hiện, đếm số lượt thật gặp nó. Lỗi người dùng dễ g�
 - Đợt soát 22/11 (33 điểm, 9 + 12 + 12, luật xử, "à không" 0 / 873, "gần X" 5 / 14, hai bản để tắt, cả bộ test bốn lần 0 lỗi mới, lỗi "đồng đồng" bị người đọc bắt): `bai_hoc/VIEC_MOI_XONG.md` mục 40 [chép; người thứ hai kiểm theo nhãn của mục đó]; lượt kiểm chốt 76 file, 2.060 ca, 41 lượt: cùng mục, dòng 32 [máy kiểm, phiên đo].
 - Soát 18/11 (11 / 6 / 7 + 1 nghi vấn; bản sửa câu bão bị Gemini bắt; bảng 45 dòng sai 4; hai agent con đọc một hình ra hai kết luận ngược): `bai_hoc/26_CACH_LAM_VIEC_VOI_CODING_AGENT.md` mục 1, 5 và khối Nguồn (trỏ `data/review_khac_hang/2026-11-18_tich_hop_phase_9/DOI_CHIEU.md` [riêng tư]) [chép].
 - Soát 20/11 (18 phát hiện 0 sai; 16 phát hiện, 3 nói quá): `bai_hoc/VIEC_MOI_XONG.md` mục 17, ý 2 [chép].
-- Rào bằng máy, sự cố 25–26/10, ít nhất 4 lần chặn đúng, mô tả quá cụ thể lọt ít nhất 4 lần: `bai_hoc/20_LAM_DO_AN_THE_NAO.md` mục "Rào bằng máy" và "Một chuyện thật"; lời báo nguyên văn: `.githooks/pre-commit` dòng 19 [code]. Câu A / B về phép chặn 40 ký tự: `HIEN_TRANG.md` mục 3 (ii) [tài liệu].
+- Rào bằng máy, sự cố 25–26/10, ít nhất 4 lần chặn đúng, mô tả quá cụ thể lọt ít nhất 4 lần: `bai_hoc/20_LAM_DO_AN_THE_NAO.md` mục "Rào bằng máy" và "Một chuyện thật"; lời báo nguyên văn: `.githooks/pre-commit` dòng 20 [code; đọc lại cây chính tối 22/11 — chữ không đổi, dòng 20]. Phép chặn 40 ký tự nay chỉ áp cho bộ câu chấm cất riêng: chủ dự án chọn "A" 16:44 22/11, lý do "cả hai đã công khai trên GitHub từ 20/11", cái giá "muốn giấu lại kho / bộ câu mẫu thì các đoạn đã trích phải gỡ tay": `session_prompt/HIEN_TRANG.md` mục 4 gạch "16:44 22/11/2026" [quyết định của chủ dự án, chép]; code: commit `5047c2c1` (16:45) và `36f9016f` (16:49 22/11), `.githooks/overlap_scan.py` dòng 9–10, 128–134 (`--staged` chỉ giữ cửa sổ nhãn `sealed` không nằm trong chữ công khai) [code]; "từng chặn cả giáo trình trích ví dụ kho": docstring `overlap_scan.py` dòng 10 [code].
 - Bảng sự cố: 09/11 → đếm trước khi xây (chủ dự án duyệt 10/11): `bai_hoc/20_LAM_DO_AN_THE_NAO.md` mục "Một ví dụ thật"; 15/11 bốn bản ảnh → năm dòng đề bài, 17–18/11 báo xong sai, bảng quyền, "cách làm phải đúng với bất kỳ agent nào": `bai_hoc/26_CACH_LAM_VIEC_VOI_CODING_AGENT.md` mục 1, 3, 4 và Nguồn (`session_prompt/CURRENT_HANDOFF.md` khối 15/11, 17/11, 18/11) [chép].
 - Lời chủ dự án về test (22:45, 22:48 21/11; 12:04 22/11), "nghĩ rộng" (21/11), "tôi toàn chọn chứ không đọc" (16:05 21/11), ba ngày thử, 12 lần gợi hướng, 9 lần nhắc làm quá tay (7 thuần kiểm soát): `session_prompt/HIEN_TRANG.md` mục 4 [quyết định / lời chủ dự án, chép nguyên văn].
 - Luật lần đầu ghi, lần hai thành luật: `AGENTS.md` mục "Cách nhìn việc", gạch "Thêm luật, rào…"; `HIEN_TRANG.md` mục 4 "Cách làm" [tài liệu].
@@ -247,7 +249,7 @@ Tái hiện, đếm số lượt thật gặp nó. Lỗi người dùng dễ g�
 - Chấm skill chưa kết luận: `bai_hoc/26_CACH_LAM_VIEC_VOI_CODING_AGENT.md` mục 7 [chép].
 - Phiên giảng có từ cuối tháng 10: commit `f34cb7f1` ngày 31/10 ("teach-and-quiz for D"); phiên đo (lúc đầu làm Phase 10) từ 05/11: `bao_cao_he_thong/93_DE_XUAT_TINH_NANG_MO_RONG_PHASE_9.md` dòng 9; ngày 21/11 là ngày chủ dự án giao viết giáo trình (`HIEN_TRANG.md` mục 4 gạch 16:46) [tài liệu].
 - "Cách làm phải đúng với bất kỳ agent nào": chỉ thấy ở dạng lời kể trong `bai_hoc/26_…` mục 3, không có lời nguyên văn và không có ngày ⇒ bài ghi "nhóm ghi" [đối chiếu độc lập].
-- Khoảng 50 ý chưa thử: `Y_CHUA_THU.md` có 50 dòng ý lúc 14:48 22/11. Sổ việc 18/11 đo bằng byte (175.884), không phải ký tự. Rào quét trùng 40 ký tự với bộ câu mẫu, kho và câu kín: `.githooks/pre-commit` dòng 52, `.githooks/overlap_scan.py`.
+- Khoảng 50 ý chưa thử: `Y_CHUA_THU.md` có 50 dòng ý lúc 14:48 22/11. Sổ việc 18/11 đo bằng byte (175.884), không phải ký tự. Rào quét trùng 40 ký tự (từ 16:45 22/11 chỉ với câu kín): `.githooks/pre-commit` dòng 9–10, 48–59, `.githooks/overlap_scan.py` [code]. Bốn phép chặn (+ chặn khi phép quét lỗi) + hai cảnh báo, rào lúc đẩy kiểm lại ba phép đầu, lệnh quét cả file vẫn so với cả ba nguồn, câu hỏi kín ngắn dò nguyên câu: `.githooks/pre-commit` dòng 18–23 (file), 31–36 (khoá), 38–43 (tên dự án khác), 52–58 (trùng câu kín / quét lỗi), 63–72 (hai cảnh báo); `.githooks/pre-push` dòng 5; `overlap_scan.py` dòng 7–8, 70–81, 128–134 [code, người viết đếm tay tối 22/11; "bốn" theo đúng danh sách "Chặn khi: 1.–4." ở đầu `pre-commit`].
 - Bài đã qua một lượt đối chiếu độc lập (14:43 22/11/2026): `data/hoc_cung_D/kiem/bai_39_41.md` [riêng tư]; các dòng đã áp và không áp ghi ở báo cáo của người viết.
 
 </details>

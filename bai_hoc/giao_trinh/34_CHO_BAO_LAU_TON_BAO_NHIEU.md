@@ -1,6 +1,6 @@
 # Bài 34 — Người dùng chờ bao lâu, một câu tốn bao nhiêu tiền
 
-*Cập nhật 17:14, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài); tin dài đã nhìn trên trình duyệt · thời gian từng lời gọi lấy từ một lượt người dùng mô phỏng chạy đơn trưa 21/11 (Claude Sonnet 5.5, mức suy luận cao, 49 lượt hỏi đáp; so với gpt-6-luna 43 lượt); thời gian chờ tới chữ đầu lấy từ ba lượt tối 21/11 (153 lượt trả lời xong); lịch sử làm nhanh đo với gpt-6-luna từ 01/11 tới 10/11; cơ chế đọc từ chương trình trưa 22/11. Người viết không chạy lại phép đo nào; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 21:41, ngày 22/11/2026 · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài); thêm vì sao tin dài chờ lâu (lần tìm thứ hai) · thời gian từng lời gọi lấy từ một lượt người dùng mô phỏng chạy đơn trưa 21/11 (Claude Sonnet 5.5, mức suy luận cao, 49 lượt hỏi đáp; so với gpt-6-luna 43 lượt); thời gian chờ tới chữ đầu lấy từ ba lượt tối 21/11 (153 lượt trả lời xong); lịch sử làm nhanh đo với gpt-6-luna từ 01/11 tới 10/11; cơ chế đọc từ chương trình trưa 22/11. Người viết không chạy lại phép đo nào; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** ở ví dụ chính, gần như toàn bộ 3,7 giây là model viết (bài 6); Claude viết dài hơn gpt-6-luna khoảng ba lần, chữ tới một lần, giá mỗi token gấp 20 lần (bài 33).
 **Bài này thêm:** thời gian chờ của một lượt đi vào những phần nào và phần nào đáng cắt; các lần làm nhanh đã có; một câu tốn bao nhiêu tiền và tiền được ghi ở đâu; trang theo dõi; và bộ nhớ câu trả lời 24 giờ, thứ duy nhất làm một câu vừa nhanh vừa không tốn tiền.
@@ -8,9 +8,9 @@
 ## Ý chính
 
 - **Lượt hỏi đáp đứng giữa chờ khoảng 13 giây** với Claude ở mức cao (49 lượt, 21/11). **Lần viết cuối chiếm 9,7 giây, tức 72 %**; các vòng công cụ 3,1 giây (25 %), khoảng 2,2 giây một vòng; phần của chương trình 3 %. Xếp loại câu chạy song song, không cộng thêm.
-- **Lượt chậm là lượt có câu trả lời dài**, không phải lượt gọi nhiều công cụ: 15 trên 16 lượt quá 15 giây có phần lớn thời gian nằm ở lần viết cuối.
-- **Tin dài nhiều ý chờ 25–34 giây** từ 14:47 ngày 22/11 (trước khoảng 20 giây), đổi lấy hết màn hình "Thử lại" và đủ ý hơn (bài 21, 23); lượt phải viết lại một lần lâu thêm khoảng 10 giây. Số đo trên một tin 4 ý, 6 lần hỏi.
-- **Hạ mức suy luận chỉ mua khoảng 0,3 giây.** Hai cách lợi lớn (chữ chạy dần, câu trả lời ngắn hơn) đều là thứ chủ dự án đã quyết, nên nhóm không mở.
+- **Ở lượt thường, lượt chậm là lượt có câu trả lời dài**, không phải lượt gọi nhiều công cụ: 15 trên 16 lượt quá 15 giây có phần lớn thời gian nằm ở lần viết cuối.
+- **Tin dài nhiều ý chờ 25–34 giây** từ 14:47 ngày 22/11 (trước khoảng 20 giây), đổi lấy hết màn hình "Thử lại" và đủ ý hơn (bài 21, 23); lượt phải viết lại một lần lâu thêm khoảng 10 giây. Số đo trên một tin 4 ý, 6 lần hỏi. Ở tin đó, lượt chậm là lượt model tự tìm thêm lần thứ hai (chậm hơn khoảng 5,7 giây ở trung vị); bản thử bớt lần đó đã đo, bỏ (bài 23).
+- **Hạ mức suy luận chỉ mua khoảng 0,3 giây ở câu thường;** ở tin dài, mức vừa nhanh hơn 8 giây nhưng bỏ sót dữ kiện kho có (bài 33). Hai cách lợi lớn (chữ chạy dần, câu trả lời ngắn hơn) đều là thứ chủ dự án đã quyết, nên nhóm không mở.
 - **Tiền theo model:** ví dụ chính 0,018 USD trên Claude; trung bình một câu trả lời có nguồn (66 câu tính điểm, 21/11) 0,0146 USD trên Claude, khoảng 0,0004 USD trên gpt-6-luna. Mỗi lượt một dòng số trong sổ số đo.
 - **Bộ nhớ câu trả lời 24 giờ:** người sau gõ đúng câu người trước đã hỏi, ở lượt đầu một cuộc mới, thì nhận lại câu trả lời cũ trong khoảng 0,1 giây, không gọi model. Khớp đúng chữ, không khớp theo nghĩa.
 
@@ -44,11 +44,11 @@ Số dưới đây tách từng lời gọi model của 49 lượt hỏi đáp t
 - **Lượt chậm là lượt viết dài.** Ở 16 lượt quá 15 giây, lần viết cuối là phần lớn nhất ở 15 lượt, ra trung vị 1.562 token. Số vòng công cụ của lượt chậm vẫn là 2. Vì vậy đếm "lượt có tìm thêm thì chậm hơn bao nhiêu" là đọc sai: lượt tìm nhiều cũng thường là lượt trả lời dài.
 - **Phần của chương trình không có gì để cắt**: tìm kho, công cụ, xếp loại cộng lại chưa tới 1,5 giây.
 
-**Chờ tới chữ đầu.** Với Claude, chữ tới một lần khi model viết xong (bài 33), nên chờ tới chữ đầu gần bằng thời gian tới lúc câu trả lời xong. Trên 153 lượt trả lời xong của ba lượt tối 21/11: trung vị khoảng 13,0 giây, 56 lượt quá 15 giây; riêng lượt hỏi đáp thường, bỏ 11 lượt sửa lịch (142 lượt): khoảng 13,5 giây. Điều kiện: hai model chạy cùng lúc trên một máy, mỗi lượt dài thêm khoảng 2,5 tới 4,5 giây so với chạy một mình. Tối hôm đó mục "Từ web" còn chạy thêm sau câu trả lời ở 67 trên 153 lượt; từ 22:20 21/11 tin nhiều ý đã trả lời được một phần không còn mục đó.
+**Chờ tới chữ đầu.** Với Claude, chữ tới một lần khi model viết xong (bài 33), nên chờ tới chữ đầu gần bằng thời gian tới lúc câu trả lời xong: trung vị khoảng 13,0 giây trên 153 lượt tối 21/11 (điều kiện đo ở "Chi tiết để tra").
 
 ## Các lần làm nhanh đã giữ đều là bớt một chỗ phải đợi
 
-Với gpt-6-luna (01/11–10/11), ba lần làm nhanh được giữ: chữ hiện dần, chạy xếp loại câu song song với việc tìm và viết (sớm hơn 1,37 giây ở trung vị), và chương trình tính sẵn ngày cho câu có ngày (bảng ở nửa để tra). Với Claude, chữ hiện dần không còn tác dụng vì chữ tới một lần. Lần làm nhanh lớn nhất với Claude là **bỏ mục "Từ web" ở tin nhiều ý đã trả lời được một phần** (bật 22:20 21/11, sau một lượt thật 11 tin): mục web chỉ còn mở khi cả câu bị từ chối; 11 trên 11 tin nhanh hơn, trung vị nhanh hơn 5,8 giây, bớt một lời gọi model mỗi lượt.
+Với gpt-6-luna (01/11–10/11), ba lần làm nhanh được giữ: chữ hiện dần, chạy xếp loại câu song song với việc tìm và viết, và chương trình tính sẵn ngày cho câu có ngày (bảng ở nửa để tra). Với Claude, chữ hiện dần không còn tác dụng vì chữ tới một lần. Lần làm nhanh lớn nhất với Claude là **bỏ mục "Từ web" ở tin nhiều ý đã trả lời được một phần** (bật 22:20 21/11, sau một lượt thật 11 tin): mục web chỉ còn mở khi cả câu bị từ chối; 11 trên 11 tin nhanh hơn, trung vị nhanh hơn 5,8 giây, bớt một lời gọi model mỗi lượt.
 
 ## Một câu tốn bao nhiêu, và tiền được ghi ở đâu
 
@@ -70,9 +70,9 @@ Một người hỏi một câu về Huế và được trả lời từ kho. Tr
 - **"Đúng câu"** nghĩa là giống từng chữ, chỉ bỏ qua chữ hoa thường và khoảng trắng thừa. Khác một dấu thanh, thiếu dấu "?" là không trúng.
 - **Chỉ lượt đầu của một cuộc.** Câu thứ hai trở đi mang nghĩa phụ thuộc câu trước. Lượt bấm nút, gửi biểu mẫu hay chọn thẻ cũng không tra và không lưu.
 - **Chỉ lưu lượt trả lời thuần từ kho.** Không lưu câu từ chối, lượt có mục web, lượt dùng công cụ đổi theo giờ hay theo người (danh sách đủ ở "Chi tiết để tra").
-- **Nhiều nhất 500 câu**, đầy thì bỏ câu lưu sớm nhất; nằm trong bộ nhớ máy chủ, khởi động lại là mất. Kho, lời dặn, model, tính năng hay bản chương trình đổi thì bản cũ không còn trúng (các thứ đó chỉ đổi khi khởi động lại, mà lúc đó bộ nhớ cũng mất).
+- **Nhiều nhất 500 câu**, đầy thì bỏ câu lưu sớm nhất; nằm trong bộ nhớ máy chủ, khởi động lại là mất. Kho, lời dặn, model, tính năng hay bản chương trình đổi thì bản cũ không còn trúng.
 
-Vì việc trả lại không cần model hay Qdrant, nó chạy cả khi hai khối đó hỏng. Đã thử 22/11: Qdrant ngừng, câu mới nhận lời báo lỗi, câu đã nhớ vẫn được trả lại (bài 6).
+Việc trả lại không cần model hay Qdrant, nên chạy cả khi hai khối đó hỏng ("Nếu… thì sao").
 
 ## Quyết định và lý do
 
@@ -80,7 +80,7 @@ Vì việc trả lại không cần model hay Qdrant, nó chạy cả khi hai kh
 
 - **Đã chọn:** không mở thêm hướng làm nhanh nào cho Claude lúc này.
 - **Vì sao:** hai hướng lợi lớn đều là thứ chủ dự án đã quyết. Chữ chạy dần cần thêm quyền cho bộ khoá Bedrock, và khi đổi tạm chủ dự án ghi "không cần stream thật" (ước: chờ tới chữ đầu còn khoảng 5,5 tới 6 giây). Câu trả lời ngắn hơn: chủ dự án đã chọn nhận độ dài (ước: bớt một phần ba chữ được khoảng 2,5 giây). Hạ mức suy luận chỉ mua khoảng 0,3 giây trên 66 câu, một lượt.
-- **Cách khác:** cho công cụ tìm kho nhận hai ba câu tìm trong một lần gọi, bớt một vòng khoảng 2,2 giây ở lượt model tìm thêm hai lần (64 trên 153 lượt, lúc đó trần là 2): chưa thử; phép đếm trưa 22/11 cho thấy tin ngắn gần như không còn vòng tìm thêm để bớt, tin dài lợi dưới 10 %, nên ý này đã hạ xuống hàng thấp. Bớt số lần tìm: không làm, vì 47 trên 49 lượt tìm thêm một lần và 55 trên 61 lượt tìm thêm hai lần có trích đúng đoạn của lần tìm thêm đó.
+- **Cách khác:** cho công cụ tìm kho nhận hai ba câu tìm trong một lần gọi, bớt một vòng khoảng 2,2 giây ở lượt model tìm thêm hai lần (64 trên 153 lượt, lúc đó trần là 2): chưa thử; phép đếm trưa 22/11 cho thấy tin ngắn gần như không còn vòng tìm thêm để bớt, tin dài lợi dưới 10 %, nên ý này đã hạ xuống hàng thấp. Bớt số lần tìm ở lượt thường: không làm, vì 47 trên 49 lượt tìm thêm một lần và 55 trên 61 lượt tìm thêm hai lần có trích đúng đoạn của lần tìm thêm đó. Ở tin dài nhiều ý, bớt lần tìm thứ hai và hạ mức suy luận cả lượt đã đo ngày 22/11, cả hai bỏ theo tiêu chí ghi trước (bài 23, 33).
 - **Cái giá:** người dùng nhìn dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" khoảng 10 giây ở lượt đứng giữa; khi chạy một mình, một phần ba số lượt quá 15 giây.
 
 ### 2. Vì sao xếp loại câu chạy song song với việc tìm và viết?
@@ -113,7 +113,7 @@ Lời báo là nguyên văn; các dòng đọc từ chương trình, trừ dòng
 
 ## Dễ nhầm
 
-- **"Mỗi vòng tìm thêm làm chậm khoảng 5 giây."** Sai cách đọc. Một vòng công cụ khoảng 2,2 giây; lượt tìm nhiều trông chậm hơn hẳn vì nó thường cũng là lượt trả lời dài.
+- **"Mỗi vòng tìm thêm làm chậm khoảng 5 giây."** Ở lượt thường thì sai cách đọc: một vòng công cụ khoảng 2,2 giây; lượt tìm nhiều trông chậm hơn hẳn vì nó thường cũng là lượt trả lời dài. Ở tin dài nhiều ý thì gần đúng (Ý chính, gạch 3).
 - **"Bộ nhớ câu trả lời hiểu câu gần giống."** Không. Khác một chữ là không trúng, cố ý.
 
 ## Câu hỏi tự kiểm
@@ -128,7 +128,7 @@ Lần viết cuối: 9,7 trên khoảng 13 giây (72 %); các vòng công cụ 2
 <details>
 <summary>2. Vì sao không hạ mức suy luận cho nhanh?</summary>
 
-Chỉ mua khoảng 0,3 giây ở câu thường; thời gian chủ yếu là số chữ viết ra.
+Chỉ mua khoảng 0,3 giây ở câu thường; thời gian chủ yếu là số chữ viết ra. Ở tin dài, mức vừa nhanh hơn 8 giây nhưng bỏ sót dữ kiện kho có (bài 33).
 
 </details>
 
@@ -168,10 +168,12 @@ Từ sổ số đo, mỗi lượt một dòng số không có chữ. Trang chỉ
 | hạ mức suy luận, riêng lần viết cuối | tối đa 1,8 giây (đo thật trên 66 câu một lượt: khoảng 0,3 giây) | tối đa 3,8 giây | nhóm; đã đo một phần |
 | hạ mức suy luận, riêng các vòng công cụ | tối đa 1,1 giây | tối đa 1,6 giây | nhóm |
 | hạ mức suy luận, riêng xếp loại câu | 0 (vốn không suy luận, chạy song song) | 0 | — |
-| bớt một vòng công cụ | khoảng 2,2 giây | khoảng 2,4 giây | nhóm; chưa thử |
+| bớt một vòng công cụ | khoảng 2,2 giây | khoảng 2,4 giây | nhóm; lượt thường chưa thử; tin dài nhiều ý đã đo 22/11, bỏ (bài 23) |
 | câu trả lời ngắn hơn | mỗi 100 token bớt khoảng 0,9 giây; bớt một phần ba ≈ 2,5 giây | khoảng 3,3 giây | chủ dự án đã chọn nhận độ dài |
 
 Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, phần lớn tin hai ý nên câu trả lời dài hơn câu một ý; đo trên bản chương trình trưa 21/11.
+
+Sau bảng tính này, hai hướng đã đo thật trên MỘT tin dài nhiều ý ngày 22/11 (Claude, tin gia đình 4 ý, 6 lượt mỗi bên, tiêu chí ghi trước) và đều bỏ: hạ mức suy luận xuống vừa cho cả lượt (bài 33, "Đã so") và bớt lần model tự tìm thứ hai bằng một vế tìm cố định ở lần tìm đầu (bài 23, "Đã so" dòng 14). Hai phép có hai mốc mức cao khác nhau (hai buổi), nên không so số của phép này với phép kia.
 
 ## Quyết định nhỏ hơn
 
@@ -190,6 +192,7 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 
 - **Lượt đứng giữa khoảng 13 giây, một phần ba số lượt quá 15 giây**, chữ tới một lần.
 - **Tin dài nhiều ý 25–34 giây** (từ 14:47 22/11): mới đo trên một tin, 6 lần; chưa đo ở cuộc đã có lịch lưu, chưa đo trên model cũ. Lần viết lại và lần chạy lại mỗi lần có hạn 45 giây riêng, nên một lượt có thể chờ quá 45 giây.
+- **Ở tin dài, thứ làm lượt dài thêm là lần model tự tìm thứ hai.** Trên 19 lượt tin gia đình đã ghi (mức cao, từ 16:55 22/11, cùng tin, nhiều bản chương trình trong buổi): lượt tìm một lần trung vị 23,4 giây, lượt tìm hai lần 29,1 giây; một lần tìm thêm tốn khoảng 3,8 giây cho lời gọi model quyết định tìm, còn việc tìm trong kho chỉ khoảng 0,06 giây; lần viết cuối 17–21 giây ở mọi lượt. Bản thử bớt lần tìm thứ hai cắt được các lượt chậm nhất (bên tắt tới 34,7 giây, bên mở chậm nhất 27,2) nhưng trung vị chỉ thấp hơn 1,9 giây; điều thời gian của tiêu chí ghi trước chỉ đo trung vị, nên bỏ (bài 23). Model vẫn tự tìm ít nhất một lần ở mọi lượt, nay là tìm vé gộp hai điểm Đại Nội – Lăng Tự Đức, thứ kho không có. Nếu mở lại: đo số lượt trên 27 giây thay cho trung vị, và cho chương trình tự gắn vào tư liệu một dòng nói kho không có vé gộp riêng cho Đại Nội và Lăng Tự Đức (giống cách thẻ nơi gắn giờ, địa chỉ), để model khỏi phải tự đi tìm vé gộp (trước đó đếm 0 đồng xem đoạn bảng vé gộp đã có sẵn trong lần tìm đầu chưa). Ý đã ghi, nhóm để xét khi gặp thật lúc tự thử; chưa làm.
 - **Số chờ tới chữ đầu (khoảng 13,0 giây trên 153 lượt; 13,5 giây trên 142 lượt hỏi đáp thường) đo khi hai model chạy cùng lúc trên một máy**, nên dài hơn chạy một mình khoảng 2,5 tới 4,5 giây; lúc đó tin nhiều ý còn mục "Từ web".
 - **Chưa đo lại với Claude** lợi của chạy song song và của chương trình tính sẵn ngày.
 - **Bộ nhớ câu trả lời** chỉ nằm trong bộ nhớ của đúng một máy chủ đang chạy (chạy hai máy chủ thì mỗi cái nhớ riêng); trúng thì không hiện dòng tiến độ; tỉ lệ trúng ngoài đời chưa có số.
@@ -199,8 +202,10 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 
 ## Chi tiết để tra
 
+- **Chờ tới chữ đầu, đủ số.** Trên 153 lượt trả lời xong của ba lượt tối 21/11: trung vị khoảng 13,0 giây, 56 lượt quá 15 giây; riêng lượt hỏi đáp thường, bỏ 11 lượt sửa lịch (142 lượt): khoảng 13,5 giây. Điều kiện: hai model chạy cùng lúc trên một máy, mỗi lượt dài thêm khoảng 2,5 tới 4,5 giây so với chạy một mình. Tối hôm đó mục "Từ web" còn chạy thêm sau câu trả lời ở 67 trên 153 lượt; từ 22:20 21/11 tin nhiều ý đã trả lời được một phần không còn mục đó.
 - **Sổ số đo, mỗi lượt một dòng.** Sau mỗi lượt, máy chủ ghi một dòng số: kết cục, tuyến, model, token, tiền, từng lần gọi model, công cụ, thời gian từng bước, có trúng bộ nhớ không, mã bản chương trình. Không có chữ câu hỏi hay câu trả lời (bài 37). Sổ dùng chung cho mọi bản đã chạy và cho bộ test, nên khi đếm phải chọn đúng các dòng của bản chương trình đang hỏi (mỗi dòng có ghi mã bản).
 - **Trang theo dõi** chỉ dành cho chủ dự án: một địa chỉ không có trong menu, mở bằng một khoá đặt lúc bật máy chủ. Nó cộng sổ số đo theo ngày, tối đa 14 ngày: số lượt theo kết cục, tiền, thời gian chờ. Không có dòng của từng lượt.
+- Bộ nhớ câu trả lời: kho, lời dặn, model, tính năng hay bản chương trình chỉ đổi khi khởi động lại máy chủ, mà lúc đó bộ nhớ cũng mất. Đã thử 22/11: Qdrant ngừng, câu mới nhận lời báo lỗi, câu đã nhớ vẫn được trả lại (bài 6).
 - Bộ nhớ câu trả lời không lưu: câu từ chối, lượt có mục web, lượt dùng thời tiết, ngày, khoảng cách, lịch (đổi theo giờ hay theo người), lượt có câu cảnh báo an toàn, lượt bị chương trình gỡ câu, hỏi bằng ảnh, lượt lỗi, và tin nhiều ý mà câu trả lời còn dòng "Tư liệu chưa có thông tin về…".
 - Ở lượt có công cụ, dòng "Đang viết câu trả lời…" chỉ được gửi ngay trước chữ đầu, nên với Claude gần như không thấy (đã nhìn trên trình duyệt 22/11), trừ lượt phải viết lại: dòng đó đứng suốt lần viết lại (bài 21).
 - Tin dài nhiều ý, lượt phải viết lại, trước 15:42 22/11: một đoạn chữ giữ chỗ hiện khoảng 15–17 giây rồi bị thay. Từ 15:42 chữ được giữ tới khi qua kiểm; lúc chờ chỉ một dòng trạng thái đứng yên 20–30 giây (ý "đổi dòng theo từng lần tìm" đã ghi, chưa làm).
@@ -255,6 +260,7 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42 (ý 1 "từ khoảng 20 giây lên 25–34 giây", ý 3 "lượt có viết lại lâu hơn khoảng 10 giây"), 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Tin DÀI nhiều ý" (25–34 giây, 25–37 giây khi viết lại, khoảng 70 đoạn xấu nhất, trung vị 16 nguồn); `backend/config/settings.yaml` [đã chạy, phiên đo; người viết không chạy lại]. Hạn 45 giây riêng của lần viết lại / chạy lại: `backend/llm/assistant.py` `_viet_lai_het_luot` (gọi `generate_answer` ⇒ `_execute_agent` với `self.timeout`), `answer_turn_stream_parallel` [code].
 
 - Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó: dòng Nếu của tin dài thêm thứ người dùng thấy (14 giây đầu chỉ dòng tiến độ, chữ giữ chỗ khoảng 15–17 giây — `bai_hoc/VIEC_MOI_XONG.md` mục 42, đính chính 15:14; runbook 10.1 hàng "Lưới viết lại"; suy từ chương trình và sổ máy chủ, chưa chụp màn hình); "64 trên 153 lượt" ghi "lúc đó trần là 2". Cắt nửa để hiểu: hai đoạn sổ số đo / trang theo dõi, danh sách "không lưu" và ngoặc về dòng "Đang viết…" chuyển xuống "Chi tiết để tra"; quyết định 3 cũ (khớp đúng chữ) chuyển xuống "Quyết định nhỏ hơn".
+- Thời gian chờ của tin dài và hai phép thử làm nhanh (đợt 21:41 22/11/2026): so lượt tìm một lần ↔ hai lần (19 lượt mức cao từ 16:55 22/11, 7 bản code; 23,4 ↔ 29,1 giây; lời gọi quyết định thứ hai 3,8 giây; tìm của công cụ khoảng 0,06 giây; lần viết cuối 17–21 giây; "bỏ một lần tìm không chắc lấy lại đủ 3,8 giây"): `data/thu_bedrock_2026-11-21/harness/dem_y57_bot_lan_tim_2211/KET_QUA.md` mục (5) dòng 199–222 [riêng tư; đã chạy, phiên khác; 0 đồng]. Bản thử bớt lần tìm thứ hai (25,25 ⇒ 23,35; khoảng 22,9–34,7 ⇒ 23,1–27,2; lần tìm còn lại luôn là vé gộp 2 điểm; hướng (i) "dòng do code gắn về vé gộp", cần đếm trước): `data/thu_bedrock_2026-11-21/b_ve_mien_giam/luot_1/KET_QUA_SO_MAY.md` dòng 7–8, 18–21; `CHAM_E.md` dòng 16 [riêng tư; đã chạy, phiên khác]; ý 61 ("đo số lượt trên 27 giây", "xét khi chủ dự án gặp thật lúc tự test"): `session_prompt/Y_CHUA_THU.md` dòng 67 [chép]. Kho không có vé gộp hai điểm Đại Nội – Lăng Tự Đức (Y_CHUA_THU ghi "bảng vé gộp chỉ có tuyến từ 3 điểm" — không đúng chữ: kho có ba tuyến gộp hai điểm, không tuyến nào có Đại Nội): `scripts/grep_kb.sh --dir travel/tickets -n -E '^\| \*\*Gộp'` [đã mở kho 21:34 22/11/2026]. Mức vừa 8 giây, bỏ sót dữ kiện: bài 33 mục "Đã so" và nguồn ở đó. "0,3 giây" là câu một lượt (66 câu), không phải tin dài: `KET_QUA_2A.md` như dòng trên [chép]. Để giữ độ dài nửa để hiểu: chuyển xuống "Chi tiết để tra" phần số của "Chờ tới chữ đầu" (153 / 142 lượt, điều kiện đo, mục web 67 / 153) và câu Qdrant ngừng / "chỉ đổi khi khởi động lại"; bỏ hai chỗ lặp ("sớm hơn 1,37 giây" đã có ở quyết định 2 và bảng, số 5,7 giây ở "Dễ nhầm" đã có ở Ý chính).
 - Gõ lại đúng câu cũ (câu một ý 1,9 · 0,2 · 1,7 giây; câu "cơm hến" 7,8 · 9,4 · 8,4 giây, ba lần ba bản chữ): `data/test_cuoi/chay_2026-11-22_e_sau_dong/KET_QUA.md` [riêng tư; đã chạy qua trình duyệt 17:04–17:08 22/11, phiên đo; mỗi dòng một lần; người viết đã đọc bảng kết quả]; luật không lưu câu trả lời nhiều ý còn thiếu ý: `backend/api/routes/chat.py` hàm `_luu_cache` [code]; so khớp không bỏ dấu câu: `backend/api/cache_tra_loi.py` `chuan_hoa` [code]; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Gõ lại đúng một câu…".
 
 </details>
