@@ -212,6 +212,29 @@ def test_detector_skips_ordinals_and_fractions(cau, co):
     assert nl.co_tu_ngay(cau) is co
 
 
+@pytest.mark.parametrize("cau, co", [
+    # số thứ tự của một mục trong danh sách vừa kể ⇒ KHÔNG phải thứ trong tuần
+    ("Quán thứ hai bạn vừa kể ở đường nào?", False), ("Quán thứ 2 bạn vừa nói ở đường nào vậy?", False),
+    ("Điểm thứ ba trong danh sách mở cửa mấy giờ?", False), ("Món thứ tư bạn kể là món gì?", False),
+    ("Mình chưa chốt được chỗ thứ 3-4 đây, bà đi được ko?", False), ("Khách sạn thứ hai giá bao nhiêu?", False),
+    # vẫn là chuyện ngày: thứ trong tuần, và "ngày / hôm thứ hai" (thứ Hai hoặc ngày 2 của lịch)
+    ("Thứ hai tuần sau Đại Nội có mở không?", True), ("Ngày thứ hai của lịch đi những đâu?", True), ("Thứ bảy này có ca Huế không?", True),
+    ("Hôm thứ ba mình sợ mệt, giảm tải giúp", True), ("Quán cà phê nào có nhạc sống tối thứ bảy?", True),
+    ("Phố đi bộ mở những tối nào, chỉ thứ 7 hay tối mai CN cũng có?", True),
+    ("Quán thứ hai có mở vào thứ hai không?", True),  # một câu có cả hai nghĩa ⇒ lần "thứ hai" sau mới là thứ trong tuần
+])
+def test_item_number_in_a_list_is_not_a_weekday(cau, co):
+    assert nl.co_tu_ngay(cau) is co
+
+
+def test_follow_up_after_an_item_number_question_does_not_get_the_date_step():
+    """Bộ dò xét cả câu hỏi LIỀN TRƯỚC: "quán thứ hai…" từng làm lượt kế ("viết gọn lại") cũng nhận bước tính ngày và không được nhớ câu trả lời."""
+    truoc = (("Quán thứ hai bạn vừa kể ở đường nào?", ""),)
+    assert nl.co_tu_ngay_luot("Viết gọn lại giúp mình", truoc) is False
+    assert nl.co_tu_ngay_luot("Còn quán thứ ba thì sao?", truoc) is False
+    assert nl.co_tu_ngay_luot("Viết gọn lại giúp mình", (("Thứ hai tuần sau Đại Nội có mở không?", ""),)) is True
+
+
 def test_stream_turn_calling_date_tool_has_no_search_status_and_passes_citation(deps):
     # review nhánh m-6: đường stream có gọi `ngay_lich` thật — không báo "đang tìm kho" cho công cụ này, câu chỉ trích nguồn ngày qua kiểm citation
     def kich_ban(n, kw):
