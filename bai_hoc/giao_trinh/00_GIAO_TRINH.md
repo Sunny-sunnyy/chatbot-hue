@@ -1,6 +1,6 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 22:04, ngày 22/11/2026 · thêm dòng về mẫu đề bài cho AI khác hãng · đủ 41 bài và 9 phụ lục; mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo · từ chiều 22/11 mọi thứ mới của hệ thống được ghi vào bộ này, liệt kê ở mục "Có gì mới" ngay dưới · mọi con số lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 22:43, ngày 22/11/2026 · năm dòng mới về các bản sửa nhỏ tối 22/11 · thêm dòng về mẫu đề bài cho AI khác hãng · đủ 41 bài và 9 phụ lục; mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo · từ chiều 22/11 mọi thứ mới của hệ thống được ghi vào bộ này, liệt kê ở mục "Có gì mới" ngay dưới · mọi con số lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -27,6 +27,11 @@ Hệ thống vẫn đang được làm tiếp. Mỗi khi người dùng thấy m
 
 | Ngày | Người dùng thấy gì khác | Đọc ở |
 |---|---|---|
+| 22/11, tối | Câu trả lời về ngày, lịch âm có trích nguồn "Lịch hệ thống": bấm mở nguồn đó nay chỉ thấy các dòng ngày, không còn thấy dòng "Ghi chú: người dùng không nêu năm…" (một lời dặn dành cho model). Bằng chứng là test, chưa nhìn trên trình duyệt. | bài 24, mục "Chi tiết để tra" |
+| 22/11, tối | Câu trả lời về bão, lũ có trích nguồn "Tin bão / lũ chính thức": bấm mở nguồn đó nay đọc thấy câu bản tin chính thức + 112, không còn thấy lời dặn nội bộ dành cho model. Bằng chứng là test, chưa nhìn trên trình duyệt. | bài 24, mục "Chi tiết để tra" |
+| 22/11, tối | Tin sửa lịch tả thời tiết xấu mà không có chữ "bão", "lũ"… (ví dụ "gió giật mạnh quá, bỏ Đầm Chuồn đi"): nếu trợ lý kịp tự tra cứu bão, lũ trước khi hiểu xong lệnh sửa thì câu bản tin chính thức + 112 nay không mất khi lịch được sửa; thường là không kịp, nên thường vẫn không có câu đó (giới hạn nhóm giữ). Tin có chữ "bão", "lũ"… thì vẫn luôn có câu đó, như trước. Bằng chứng là một ca test, chưa có lượt thật. | bài 24, mục "Giới hạn đã biết" và "Chi tiết để tra" |
+| 22/11, tối | Ở lượt có một câu mang con số lạ bị bước kiểm số gỡ, với model đang chạy: câu trả lời nay hiện thẳng ở dạng đã gỡ câu đó (trước: có thể thấy câu sai rồi thấy nó biến mất). Bản viết lại còn lỗi kiểm thì không hiện, chỉ có lời báo và nút "Thử lại". Chưa người dùng nào gặp cả hai ca; bằng chứng là test. | bài 6, mục "Chi tiết để tra" |
+| 22/11, tối | Ở cuộc đã có lịch, tin có số ngày viết bằng chữ "sáu" ("kéo dài thành sáu ngày") mà lần hiểu ý đọc ra một lệnh đổi số ngày thì cả lượt ra lời báo "Đã xảy ra lỗi trong hệ thống. Vui lòng thử lại sau."; nay được xử như mọi tin đổi số ngày (lịch dài nhất 5 ngày nên lịch không đổi). Chưa người dùng nào gặp; bằng chứng là test. Cùng đợt, bốn giới hạn đã đếm được ghi vào bài: ba cái nhóm chốt giữ, một cái (từ chỉ ngày ở câu hỏi trước) để sửa sau vì hiếm. | bài 31, mục "Chi tiết để tra" và "Giới hạn đã biết"; bài 23, mục "Giới hạn đã biết" |
 | 22/11, tối | Không phải thứ người dùng thấy: đề bài gửi AI khác hãng nay phải nói rõ bên kia được dùng hết công cụ mạnh nhất của mình, mang đủ trạng thái của dự án, có danh sách nên đọc và cả những điểm nhóm đã tìm ra (anh dặn ba lần tối 22/11: "bạn nắm gì thì các model AI khác cũng vậy"). | bài 39, lớp 3 của mục ba lớp kiểm và mục "Chi tiết để tra"; bài 37, mục các đợt rà rủi ro |
 | 22/11, tối | Ở cuộc đã có lịch, xin thêm vào buổi tối một điểm ban ngày đang có trong lịch ("thêm Đại Nội về đêm vô tối ngày 1") thì, khi trợ lý hiểu tên điểm là Đại Nội, nhận lý do thật: điểm tham quan ban ngày không xếp được vào buổi tối (trên màn hình dòng này đứng sau chữ "Không đổi được: "). Trước đó nhận câu "… đã có trong lịch." (một ca test; chưa có lượt thật qua trình duyệt). Cùng lúc bài ghi rõ một giới hạn dễ gặp khi thử: lịch vừa xếp thì lệnh "thêm X" gần như luôn bị trả "Chưa làm…", vì lịch kín giờ và chương trình không tự thế chỗ; lối ra là nhắn đúng câu "thay Y bằng X" được gợi ý, hoặc điền lại biểu mẫu với kiểu đi nhiều điểm hơn (với nhóm có trẻ em hay người lớn tuổi, đổi kiểu đi không thêm chỗ: lịch luôn mỗi buổi một điểm). | bài 31, bảng "Nếu… thì sao", quyết định 4, mục "Giới hạn đã biết" và "Chi tiết để tra" |
 | 22/11, tối | Không phải thay đổi mà là hai cách làm nhanh tin dài nhiều ý đã đo rồi bỏ theo tiêu chí ghi trước: hạ mức suy luận xuống vừa (nhanh hơn khoảng 8 giây nhưng trượt một điều ghi trước, và 3 trên 6 lượt nói kho không có vé cho bé dưới 7 tuổi dù kho có) và cho lần tìm đầu phủ luôn chuyện miễn giảm vé (trung vị chỉ nhanh hơn 1,9 giây, cần 3). Điều rút ra: ở tin dài, lượt chậm là lượt model tự tìm thêm lần thứ hai. | bài 33, mục "Đã so"; bài 23, mục "Đã so" dòng 14; bài 34, mục "Giới hạn đã biết" |
@@ -142,8 +147,8 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 | E | [Thuật ngữ Việt – Anh: 211 từ, có bảng tra ngược Anh – Việt](PL_E_THUAT_NGU.md) | ✅ |
 | F | [Các con số chính trên một trang: 99 con số kèm điều kiện đo](PL_F_CON_SO_CHINH.md) | ✅ |
 | G | [Mọi quyết định của hệ thống trên một trang: 279 quyết định gom từ bài 1–38](PL_G_MOI_QUYET_DINH.md) | ✅ |
-| H | [Mọi tình huống hỏng trên một trang: 144 tình huống gom từ bài 1–38](PL_H_MOI_TINH_HUONG_HONG.md) | ✅ |
-| I | [Mọi giới hạn đã biết trên một trang: 133 giới hạn, và bảng riêng các thứ cố ý không làm](PL_I_GIOI_HAN_DA_BIET.md) | ✅ |
+| H | [Mọi tình huống hỏng trên một trang: 148 tình huống gom từ bài 1–38](PL_H_MOI_TINH_HUONG_HONG.md) | ✅ |
+| I | [Mọi giới hạn đã biết trên một trang: 137 giới hạn, và bảng riêng các thứ cố ý không làm](PL_I_GIOI_HAN_DA_BIET.md) | ✅ |
 
 ## Khuôn của mỗi bài
 
