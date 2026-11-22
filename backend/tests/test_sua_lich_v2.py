@@ -318,3 +318,28 @@ def test_every_removal_names_each_evening_that_moved_and_stays_as_before_otherwi
                         khong += 1
                         assert "Buổi tối xếp lại" not in cau and (cau.endswith("vào chỗ trống.") or cau == f"Đã bỏ {B.theo_id[j]['ten']}."), cau
     assert co > 0 and khong > 0
+
+
+def test_replacing_a_daytime_stop_with_an_evening_place_reports_the_evenings_that_moved():
+    """Thay một điểm ban ngày bằng nơi lịch đang dùng làm hoạt động TỐI (chợ, phố đi bộ…) ⇒ các buổi tối bị chọn lại; dòng báo phải nói."""
+    co = khong = 0
+    ten = lambda j: B.theo_id[j]["ten"]
+    for n in (2, 3):
+        for st in ((), ("di_tich",)):
+            k, luu = _lich(n, "can_bang", st)
+            truoc, vt = _toi(k), s._vi_tri(k)
+            for y, (_, b) in vt.items():
+                for x in [j for v in truoc.values() for j in v] + [j for j in B.theo_id if j not in vt and b in B.theo_id[j]["buoi"]][:6]:
+                    kq = s.ap(B, luu, [s.HanhDong(loai="thay_diem", ten=ten(y), ten_moi=ten(x))])
+                    if not kq["da_ap"]:
+                        continue
+                    sau, cau = _toi(kq["khung"]), s.thay_doi(B, kq)[0]["cau"]
+                    dau = f"Đã thay {ten(y)} bằng {ten(x)}."
+                    cu = {j: d for d, v in truoc.items() for j in v}
+                    if any(cu.get(j, d) != d for d, v in sau.items() for j in v):
+                        co += 1
+                        assert cau.startswith(dau + " Buổi tối xếp lại: ") and all(f"ngày {d} " in cau and ten(j) in cau for d, v in sau.items() for j in v), cau
+                    else:
+                        khong += 1
+                        assert cau == dau, cau
+    assert co > 0 and khong > 0

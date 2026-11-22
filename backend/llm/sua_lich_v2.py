@@ -383,6 +383,24 @@ def _dung_luat(bang, khung: dict) -> bool:
     return not v2.kiem_khung_v2(bang, khung)
 
 
+def _toi_xep_lai(cu: dict, moi: dict) -> list[dict] | None:
+    """Bộ xếp chọn LẠI hoạt động tối cho từng ngày mỗi lần xếp (`lich_trinh_v2._xep_toi`: lấy ứng viên chưa dùng đầu tiên) ⇒ bỏ hoạt động tối ngày 1,
+    hoặc thay một điểm ban ngày bằng nơi lịch đang dùng làm hoạt động tối, kéo các tối sau sang ngày khác — mà dòng báo chỉ kể điểm bị bỏ / thay (lượt
+    trình duyệt 22/11; đếm: 45 / 150 lệnh bỏ hoạt động tối, 145 / 3.036 lệnh thay). Có hoạt động tối nằm ở ngày KHÁC ngày cũ của nó ⇒ trả cả dãy buổi tối
+    SAU khi xếp (`moi_them`: hoạt động tối chưa từng có trong lịch) để dòng báo nói đủ; không thì None. Không đổi cách xếp."""
+    toi_cu = {j: ng["ngay"] for ng in cu["ngay"] for j in ng["buoi"]["toi"]}
+    if not any(toi_cu.get(j, ng["ngay"]) != ng["ngay"] for ng in moi["ngay"] for j in ng["buoi"]["toi"]):
+        return None
+    da_co = {j for ng in cu["ngay"] for b in v2.BUOI for j in ng["buoi"][b]}
+    return [{"ngay": ng["ngay"], "diem": list(ng["buoi"]["toi"]), "moi_them": [j for j in ng["buoi"]["toi"] if j not in da_co]} for ng in moi["ngay"]]
+
+
+def _cau_toi_xep_lai(bang: v2.BangV2, xep_toi: list[dict]) -> str:
+    return " Buổi tối xếp lại: " + ", ".join(
+        f"ngày {x['ngay']} " + (" và ".join(ten_cua_diem(bang, j) + (" (mới thêm)" if j in x["moi_them"] else "") for j in x["diem"])
+                                or "không có hoạt động tối") for x in xep_toi) + "."
+
+
 def _cho_thu(bang, khung: dict, id_: str, ngay: int | None, buoi: str | None) -> list[tuple[int, str]]:
     """Chỗ ứng viên theo ngày / buổi người dùng nói, chỉ buổi điểm đi được; buổi trống trước."""
     d = bang.theo_id[id_]
@@ -636,14 +654,7 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             # "Đã bỏ X." mà lịch có thêm điểm khác; mô phỏng 910 / 960 khung). Cả buổi tối: bỏ hoạt động tối ⇒ bộ xếp chọn hoạt động tối khác.
             truoc = set(vt) | toi
             lap = [{"diem": j, "ngay": ng["ngay"], "buoi": b} for ng in k["ngay"] for b in v2.BUOI for j in ng["buoi"][b] if j not in truoc]
-            # Buổi tối: bộ xếp chọn LẠI hoạt động tối cho từng ngày mỗi lần xếp (`lich_trinh_v2._xep_toi`: lấy ứng viên chưa dùng đầu tiên) ⇒ bỏ hoạt động
-            # tối ngày 1 thì ngày 1 nhận cái vốn của ngày 2, ngày 2 nhận của ngày 3… mà `lap` chỉ kể điểm MỚI (lượt trình duyệt 22/11; đếm: 45 / 150 lệnh
-            # bỏ hoạt động tối). Có hoạt động tối bị chuyển sang ngày khác ⇒ ghi cả dãy buổi tối SAU khi xếp để dòng báo nói đủ. Không đổi cách xếp.
-            toi_cu = {j: ng["ngay"] for ng in khung["ngay"] for j in ng["buoi"]["toi"]}
-            if any(toi_cu.get(j, ng["ngay"]) != ng["ngay"] for ng in k["ngay"] for j in ng["buoi"]["toi"]):
-                xep_toi = [{"ngay": ng["ngay"], "diem": list(ng["buoi"]["toi"])} for ng in k["ngay"]]
-            else:
-                xep_toi = None
+            xep_toi = _toi_xep_lai(khung, k)  # buổi tối của ngày khác cũng đổi ⇒ dòng báo nêu cả dãy buổi tối
             khung, loai = k, loai + [i]
             kq["da_ap"].append({"loai": "bo_diem", "diem": i, **({"lap": lap} if lap else {}), **({"toi_xep_lai": xep_toi} if xep_toi else {})})
         elif h.loai in ("them_diem", "doi_buoi"):
@@ -754,8 +765,9 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             if k is None:
                 khong(ten_cua_diem(bang, j), "khong_buoi_hop_le" if vt[i][1] not in bang.theo_id[j]["buoi"] else "khong_hop_luat")
                 continue
+            xep_toi = _toi_xep_lai(khung, k)  # điểm thay VÀO vốn là hoạt động tối ⇒ các buổi tối bị chọn lại
             khung, loai = k, [x for x in loai if x != j] + [i]
-            kq["da_ap"].append({"loai": "thay_diem", "diem": i, "moi": j})
+            kq["da_ap"].append({"loai": "thay_diem", "diem": i, "moi": j, **({"toi_xep_lai": xep_toi} if xep_toi else {})})
     # điểm "đã dời" mà cuối lượt vẫn ở đúng chỗ cũ (dời về chỗ đang đứng; hai lần dời đổi chỗ ngược nhau) ⇒ không báo "Đã dời" (soát khác hãng 20/11)
     vt_cu, vt_moi = _vi_tri(luu["khung"]), _vi_tri(khung)
     for a in [a for a in kq["da_ap"] if a["loai"] == "doi_buoi" and a["diem"] in vt_moi and vt_cu.get(a["diem"]) == vt_moi[a["diem"]]]:
@@ -860,20 +872,16 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
             xep_toi = a.get("toi_xep_lai")  # có ⇒ buổi tối của ngày khác cũng đổi: nêu cả dãy buổi tối, hoạt động tối mới nằm trong dãy đó
             lap = "; ".join(f"{ten_cua_diem(bang, x['diem'])} (ngày {x['ngay']}, buổi {NHAN_BUOI.get(x['buoi'], 'tối')})"
                             for x in a.get("lap", ()) if not (xep_toi and x["buoi"] == "toi"))
-            cau = f"Đã bỏ {ten_cua_diem(bang, a['diem'])}" + (f", thêm {lap} vào chỗ trống." if lap else ".")
-            if xep_toi:
-                moi = {x["diem"] for x in a.get("lap", ())}
-                cau += " Buổi tối xếp lại: " + ", ".join(
-                    f"ngày {x['ngay']} " + (" và ".join(ten_cua_diem(bang, j) + (" (mới thêm)" if j in moi else "") for j in x["diem"])
-                                            or "không có hoạt động tối") for x in xep_toi) + "."
-            out.append(cau)
+            out.append(f"Đã bỏ {ten_cua_diem(bang, a['diem'])}" + (f", thêm {lap} vào chỗ trống." if lap else ".")
+                       + (_cau_toi_xep_lai(bang, xep_toi) if xep_toi else ""))
         elif t == "them_diem":
             thay = f", thế chỗ {ten_cua_diem(bang, a['the_cho'])}" if a.get("the_cho") else ""
             out.append(f"Đã thêm {ten_cua_diem(bang, a['diem'])} (ngày {a['ngay']}, buổi {NHAN_BUOI[a['buoi']]}{thay}).")
         elif t == "doi_buoi":
             out.append(f"Đã dời {ten_cua_diem(bang, a['diem'])} sang buổi {NHAN_BUOI[a['buoi']]} ngày {a['ngay']}.")
         elif t == "thay_diem":
-            out.append(f"Đã thay {ten_cua_diem(bang, a['diem'])} bằng {ten_cua_diem(bang, a['moi'])}.")
+            out.append(f"Đã thay {ten_cua_diem(bang, a['diem'])} bằng {ten_cua_diem(bang, a['moi'])}."
+                       + (_cau_toi_xep_lai(bang, a["toi_xep_lai"]) if a.get("toi_xep_lai") else ""))
         elif t == "doi_cho_ngay":
             out.append(f"Đã đổi chỗ các điểm buổi sáng và chiều của ngày {a['ngay_a']} với ngày {a['ngay_b']}; hoạt động buổi tối giữ theo từng ngày.")
             if a.get("xep_them"):  # nói thật khi bộ xếp đổi nhiều hơn điều được nhờ
