@@ -11,6 +11,7 @@ from pathlib import Path
 import re
 import unicodedata
 
+from ingestion.chunking.markdown_blocks import EXCLUDED_SECTIONS
 from ingestion.source_state import read_source_lf
 
 # Nhóm = thư mục của bài trong kho ⇒ nhãn hiển thị. Bài cẩm nang nằm ngay ở thư mục lĩnh vực (không thuộc nhóm nào) chỉ có mặt khi chọn `tat_ca`.
@@ -82,7 +83,10 @@ def _tom_tat(dong: list[tuple[str, str]]) -> str:
 
 
 def bai_tu_markdown(rel: str, markdown: str) -> Bai:
-    tieu_de, muc, dong = Path(rel).stem, "", []
+    """Các dòng chữ của một bài — KHÔNG gồm mục bộ chia đoạn bỏ (`EXCLUDED_SECTIONS`: "Nguồn dữ liệu", kể cả mục con). Soát khác hãng 22/11 (K6): mục đó
+    chứa ghi chú đối chiếu nội bộ, URL và dòng giá CŨ mà lệnh sửa kho giữ làm lịch sử ("mục này chatbot không đọc"); công cụ từng đọc cả mục nên các
+    dòng ấy thành căn cứ [n] (cụm "đối chiếu" khớp 29 bài, "https://" khớp 79 bài)."""
+    tieu_de, muc, dong, cap_bo = Path(rel).stem, "", [], 0  # `cap_bo` > 0: đang ở trong một mục bị bỏ, = cấp tiêu đề của mục đó
     for raw in markdown.splitlines():
         line = raw.strip()
         if not line:
@@ -90,7 +94,13 @@ def bai_tu_markdown(rel: str, markdown: str) -> Bai:
         if line.startswith("# ") and tieu_de == Path(rel).stem:
             tieu_de = line[2:].strip()
         elif line.startswith("#"):
-            muc = line.lstrip("#").strip()
+            muc, cap = line.lstrip("#").strip(), len(line) - len(line.lstrip("#"))
+            if cap_bo and cap <= cap_bo:  # tiêu đề cùng cấp hoặc cao hơn ⇒ ra khỏi mục bị bỏ
+                cap_bo = 0
+            if not cap_bo and muc in EXCLUDED_SECTIONS:
+                cap_bo = cap
+        elif cap_bo:
+            continue
         else:
             text = _sach(line)
             if text:
