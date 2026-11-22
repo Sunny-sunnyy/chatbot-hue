@@ -32,7 +32,7 @@ Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm
 
 1. hue_rag là **trợ lý du lịch và văn hoá Huế** trên một trang web: người dùng hỏi bằng tiếng Việt có dấu, trợ lý trả lời **chỉ từ cuốn sổ tay** (kho bài viết
    tự soạn) và ghi nguồn dưới mỗi câu, kho không có thì nói không có, giống người hướng dẫn viên tra sổ tay ở bài 0.
-2. Sổ tay nay có **265 bài, cắt thành 9.442 đoạn** (tới 13/11 là 204 bài / 8.435 đoạn), cất trong **Qdrant**.
+2. Sổ tay nay có **266 bài, cắt thành 9.458 đoạn** (tới 13/11 là 204 bài / 8.435 đoạn), cất trong **Qdrant**.
 3. Mỗi câu hỏi: model **xếp loại câu**, code **tìm 10 đoạn** hợp nhất, model **gpt-6-luna** đọc rồi viết, code **kiểm nguồn** rồi mới hiện; thiếu thì trợ lý
    **tự tìm thêm** tối đa 2 lần, kho vẫn không có thì **tra web một lần** và để riêng mục "chưa kiểm".
 4. Việc dễ nhầm (ngày âm lịch, thời tiết, khoảng cách, xếp lịch, chọn khách sạn / quán) **code làm, model chỉ diễn đạt** — đó là phần "trợ lý".
@@ -43,7 +43,7 @@ Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm
 
 ```mermaid
 flowchart LR
-    K["Sổ tay<br/>265 bài"] --> Q["Chia đoạn + chỉ mục<br/>9.442 đoạn trong Qdrant"]
+    K["Sổ tay<br/>266 bài"] --> Q["Chia đoạn + chỉ mục<br/>9.458 đoạn trong Qdrant"]
     Q --> T["Trợ lý trả lời<br/>xếp loại · tìm · viết · kiểm nguồn"]
     T <--> C["Công cụ của trợ lý<br/>thời tiết · ngày · khoảng cách · web · ảnh"]
     L["Lên kế hoạch<br/>code xếp lịch đi – ăn – ở"] --> G["Giao diện 5 trang"]
@@ -54,7 +54,7 @@ Ngoài hình: **khối đo / chấm** đứng cạnh để kiểm mọi thay đ�
 
 | Khối | Nó làm gì | Đang chạy thế nào (số hôm nay) | Bài nên đọc |
 |---|---|---|---|
-| **Sổ tay** | Tất cả những gì trợ lý được nói: món ăn, di tích, lễ hội, nghệ thuật, đi lại / vé / chỗ ở | **265 bài** Markdown, 5 chủ đề (mốc: 204 bài tới 13/11; thêm 61 bài 14–16/11; mỗi lần ghi đều kiểm câu cũ không tụt — hai lần đầu chấm điểm, các lần sau đọc tay từng câu chạm bài mới) | 1, 22 |
+| **Sổ tay** | Tất cả những gì trợ lý được nói: món ăn, di tích, lễ hội, nghệ thuật, đi lại / vé / chỗ ở | **266 bài** Markdown, 5 chủ đề (mốc: 204 bài tới 13/11; thêm 61 bài 14–16/11; mỗi lần ghi đều kiểm câu cũ không tụt — hai lần đầu chấm điểm, các lần sau đọc tay từng câu chạm bài mới) | 1, 22 |
 | **Chia đoạn + chỉ mục** (*chunking*, *embedding*) | Cắt bài thành đoạn nhỏ, biến mỗi đoạn thành vector nghĩa (dãy số đại diện ý) và bảng từ khoá, cất vào Qdrant | **9.436 đoạn**; mỗi đoạn thành một dãy 384 con số (vector) từ model nhỏ **e5-small** chạy trên máy, 0 đồng; từ khoá **BM25** (chấm theo chữ trùng); lúc khởi động thấy kho lệch chỉ mục thì từ chối chạy | 2, 3, 4, 5 |
 | **Tìm** (*retrieval*) | Chọn đoạn hợp câu hỏi | Theo nghĩa lấy 30 ứng viên ⇒ chấm lại theo từ khoá ⇒ trộn hai bảng xếp hạng (RRF) ⇒ giữ **10 đoạn**; **không xếp lại bằng model** | 6, 7 |
 | **Trợ lý trả lời** | Xếp loại câu (chào hỏi / về Huế / ngoài chủ đề / khẩn cấp — loại cuối đi chung đường câu về Huế), viết bằng **gpt-6-luna**, kiểm số nguồn | Bật: xếp loại; chạy song song xếp loại với trả lời; **tìm thêm ≤ 2 lần** — đã tìm thêm đủ 2 lần thì trợ lý không được tìm nữa, phải trả lời hoặc nói không có; **nhớ 3 câu hỏi gần nhất** (không nhớ câu trả lời); câu nhiều ý | 8, 12, 13, 25 |
@@ -205,7 +205,7 @@ cả bộ test chỉ chạy một lượt ở cuối đợt · lỗi hiếm thì
 
 Bảng đối chiếu từng số / khẳng định ⇒ `file:dòng` và biên bản kiểm độc lập 93 ý (77 đúng, 4 sai, 11 lệch — đã sửa hết vào bản này): `data/ban_do_2026-11-18/NGUON.md`,
 `BIEN_BAN_KIEM.md` (riêng tư). Tóm tắt:
-- 265 bài / 9.442 đoạn: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count`, `corpus.chunk_count`, đọc 18/11) [đã chạy]; `session_prompt/Project_Status.md` mục 4 [Project_Status]
+- 266 bài / 9.458 đoạn: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count`, `corpus.chunk_count`, đọc 18/11) [đã chạy]; `session_prompt/Project_Status.md` mục 4 [Project_Status]
 - Mô hình, cách tìm, 10 đoạn, không xếp lại, mọi cờ trong bảng "đang chạy": `backend/config/settings.yaml` (từng dòng ở NGUON.md) [settings]
 - Bốn loại câu: `backend/llm/assistant.py`; năm trang + Chỗ ở: `frontend/src/route.js` [code]
 - 41 điểm / 136 cơ sở / 468 quán / 42 tên ảnh: đếm các bảng trong `data/phase_9/lich_trinh/`, `data/anh_user_2026-11-15_ghep/`, `data/phase_10/anh/` (18/11) [đã chạy]
