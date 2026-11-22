@@ -23,7 +23,7 @@ session đó điền trước 30/11. Luật cứng của dự án vẫn ở `AGE
 |---|---|---|
 | Số bài / số đoạn của kho | `uv run python -c "import json;d=json.load(open('data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json'))['corpus'];print(d['file_count'],d['chunk_count'])"` | `265 9436` [đã chạy 18/11] |
 | Qdrant khớp | `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 \| grep -o '"points_count":[0-9]*'` | `"points_count":9436` [đã chạy 18/11; cần Qdrant bật] |
-| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `36` [đã chạy 22:20 21/11/2026 trên nhánh mở `web_chi_khi_tu_choi`; trước đó `35` — đã chạy 22:15 21/11/2026 trên nhánh mở bốn tính năng `sua_lich_kem_hoi`, `len_lich_dan_trang`, `sua_lich_doi_cho_ngay`, `su_kien_theo_ngay`; trước đó `31` — đã chạy 16:17 20/11/2026 trên main `b2f27d78`, sau khi bật `cache_cau_tra_loi` và `danh_sach_noi_that`; trước đó `29` tối 19/11 trên nhánh bật ba cờ `noi_that_lam_thay`, `xuat_pptx`, `nho_ten_goi_y`; trước đó 26 khi bật `lich_vao_hoi_thuong`, 25 trên `55d01a8`] |
+| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `37` [đã chạy 08:33 22/11/2026 trên main sau khi mở `gan_diem`; trước đó `36` — đã chạy 22:20 21/11/2026 trên nhánh mở `web_chi_khi_tu_choi`; trước đó `35` — đã chạy 22:15 21/11/2026 trên nhánh mở bốn tính năng `sua_lich_kem_hoi`, `len_lich_dan_trang`, `sua_lich_doi_cho_ngay`, `su_kien_theo_ngay`; trước đó `31` — đã chạy 16:17 20/11/2026 trên main `b2f27d78`, sau khi bật `cache_cau_tra_loi` và `danh_sach_noi_that`; trước đó `29` tối 19/11 trên nhánh bật ba cờ `noi_that_lam_thay`, `xuat_pptx`, `nho_ten_goi_y`; trước đó 26 khi bật `lich_vao_hoi_thuong`, 25 trên `55d01a8`] |
 
 ## 1. Bật Qdrant
 
@@ -98,6 +98,58 @@ cp data/sua_kho_2026-11-16_lap_an/tools/chay.sh data/sua_kho_<…>/tools/chay.sh
 - Sau build: cập nhật số điểm / record ở `session_prompt/Project_Status.md` §4 và mục 1 runbook này; câu chạm có phí (Golden / an toàn) chỉ
   chạy câu có đoạn mới trong top 10 (`Session_Prompt.md` §7 "Đo đúng chỗ đổi").
 - Dừng nếu: bước 0 DỪNG mà không hiểu vì sao; quét trùng ra `golden` / `sealed`; lùi tự động in "LÙI LỖI" ⇒ không thử lại, báo User.
+
+### 5a. Một GIÁ đổi — lệnh đề xuất + lệnh duyệt (22/11/2026; code `backend/ops/`; nửa cập nhật chỉ mục: xem ghi chú cuối khối)
+
+Dùng khi một mức giá trong kho đổi và phải sửa mọi bài còn ghi giá cũ. Chạy từ `backend/`; lệnh đề xuất cần biến môi trường của model đang chạy như lúc bật server (mục 2).
+
+| Bước | Lệnh | Phải thấy |
+|---|---|---|
+| Hỏi kho đang ghi giá nào (0 đồng) | `uv run python -m ops.de_xuat_sua_kho --noi "<tên nơi>"` | bảng số tiền · số lần · một dòng ví dụ |
+| Đề xuất (một lời gọi model, khoảng 0,05 USD, khoảng 20 giây; KHÔNG ghi kho) | `uv run python -m ops.de_xuat_sua_kho --gia "<mô tả mức giá>" --cu <giá cũ> --moi <giá mới> --nguon "<link / nơi lấy giá>"` | `Sẽ sửa N chỗ ở M bài · không rõ … · không phải giá này …` và `Kho CHƯA đổi`; thư mục `data/de_xuat_kho/<ngày_giờ>/` có `DE_XUAT.md`, `de_xuat.patch`, `vet.json` |
+| Đọc | mở `DE_XUAT.md`: mục 1 (sẽ sửa), mục 2 (không rõ), mục 4 (câu có tổng / tiết kiệm phải sửa tay, bảng ngoài kho bị lệch) | — |
+| Duyệt — CHỈ chủ dự án chạy trên kho thật (sửa kho = "Hỏi User trước") | dòng lệnh in ở cuối `DE_XUAT.md` | `Đã áp vào M bài` · `Đã lưu bản ghi git <mã>`; bài đã đổi từ lúc đề xuất ⇒ `DỪNG`, đề xuất lại |
+| Thử trên bản chép (agent được làm) | thêm `--goc <gốc một worktree tạm>` vào CẢ HAI lệnh; lệnh duyệt thêm `--thu` (áp vào bản chép, không lưu bản ghi git, không đụng chỉ mục). `--thu` mà thiếu `--goc` ⇒ lệnh DỪNG, không áp gì (22/11: trước đó nó áp vào kho của chính repo) | `git -C <bản chép> diff --stat` chỉ gồm các bài của đề xuất |
+| Thử đầu–cuối cả cập nhật chỉ mục trên bản chép | lệnh duyệt: `--goc <bản chép> --collection-thu <tên collection thử> --ban-ghi-thu <thư mục bản ghi thử>` (không `--thu`) — hai lựa chọn đi cùng nhau; collection thử không được trùng collection đang chạy | `Đã lưu bản ghi git …` (trên nhánh của bản chép) · `Đã cập nhật chỉ mục cho M bài …` |
+
+- Lùi: `git revert <mã bản ghi>` rồi cập nhật chỉ mục lại.
+- Sau khi duyệt, lệnh in hai dòng test của các bảng chép từ kho (`tests/test_su_kien_theo_ngay.py`, `tests/test_quan_lich.py`) — chạy không nạp env; đỏ ⇒ sửa bảng, không sửa test.
+- Giới hạn: phải biết giá cũ; mỗi lần một mức giá; con số tính từ giá cũ và con số viết chung cho nhiều nơi chỉ được NHẮC, người sửa tay; số viết bằng chữ / "200–250 nghìn" không được tìm; độ đúng của bước model phán mới đo trên hai mức giá (`report_agent/2026-11-22/b_de_xuat_sua_kho.md`).
+- Cập nhật chỉ mục khi duyệt (cần module `ingestion.cap_nhat_rieng` trong code): TRƯỚC khi áp, lệnh kiểm chỉ mục đang khớp kho (chỉ đọc, khoảng 20 giây) — đang lệch sẵn ⇒ `DỪNG, kho chưa đổi gì`; sau khi áp + lưu bản ghi git, lệnh cập nhật chỉ mục rồi đối chiếu danh sách bài đã xử lý với các bài vừa sửa — khác ⇒ `CẦN XEM` kèm cách lùi. Module chưa có ⇒ in `CHƯA cập nhật chỉ mục` + danh sách bài, mã thoát 3 — lúc đó kho đã sửa mà chỉ mục chưa, server sẽ từ chối khởi động lại cho tới khi chỉ mục được cập nhật (hoặc bản sửa được lùi).
+- File vá bị thêm đoạn chạm file ngoài danh sách bài của đề xuất ⇒ lệnh duyệt dừng, không áp gì. Con số nằm trong TIÊU ĐỀ MỤC được liệt kê ở nhóm "không rõ" và không bao giờ tự sửa.
+
+### 5b. Cập nhật riêng phần chỉ mục của bài đã sửa (lệnh có từ 22/11/2026; lệnh duyệt ở 5a tự gọi nó)
+
+Sau khi bài trong kho đã đổi (sửa, thêm, bớt), KHÔNG cần xoá collection rồi dựng lại cả chỉ mục (khoảng 225 giây): lệnh dưới kéo collection về khớp
+kho trong khoảng 25–30 giây — chia đoạn cả kho, so từng đoạn với collection, chỉ tính lại vector nghĩa cho đoạn khác chữ, ghi lại vector từ khoá của
+mọi điểm (phụ thuộc thống kê cả kho, chỉ CPU), kiểm cả collection bằng hàm kiểm của lúc dựng, rồi ghi file thống kê từ khoá và bản ghi dựng mới.
+
+```bash
+cd backend      # TẮT server trước; bật lại sau khi lệnh xong (server đọc thống kê từ khoá và xoá câu trả lời đã nhớ lúc khởi động)
+HF_HUB_OFFLINE=1 uv run python -m ingestion.cap_nhat_rieng --chi-xem    # chỉ in bài nào khác chỉ mục + số đoạn phải tính lại; không ghi gì
+HF_HUB_OFFLINE=1 uv run python -m ingestion.cap_nhat_rieng              # chạy thật; in "XONG trong … giây" hoặc "Chỉ mục ĐÃ KHỚP kho"
+```
+- Lệnh không tham số ghi THẬT theo kho của cây đang đứng ⇒ chỉ chạy từ CÂY CHÍNH (`/home/minhhieu/hue_rag/backend`), `--chi-xem` trước; chạy từ
+  một cây tạm ở commit cũ sẽ kéo chỉ mục thật lùi theo kho cũ.
+- Lệnh không nhận tên bài: tự dò. Khoá `bai_doi` của kết quả = bài có đoạn đổi hoặc đổi mã băm; bài chỉ đổi phần không thành đoạn (mục "Nguồn dữ
+  liệu") vẫn có tên ở đó với 0 đoạn tính lại.
+- Trước khi ghi, lệnh tự chụp collection (bản chụp Qdrant, khoảng 63 MB, nằm TRONG container ở `/qdrant/snapshots/<tên collection>/` — mất nếu
+  container bị tạo lại) và chép file thống kê + bản ghi dựng cũ vào `data/full_corpus_builds/sao_luu/<giờ>/`. Lệnh không tự xoá bản chụp cũ; xem:
+  `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384/snapshots`; xoá một bản: `curl -s -X DELETE
+  http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384/snapshots/<tên bản chụp>`. Muốn một bản sao lưu nằm trên ổ đã gắn (không mất khi
+  tạo lại container): chép collection sang tên khác trước khi chạy — `data/phase_12_agent_sua_kho_2026-11-21/c_cap_nhat_rieng/chep_collection.py <tên mới>` (7 giây).
+- Lệnh chết giữa chừng: bản ghi dựng đang ở tên `….json.dang_cap_nhat` ⇒ server từ chối khởi động ("Build record does not exist") chứ không trả
+  lời lệch. Cách chữa: chạy lại lệnh (lần chạy nào cũng so với chính collection nên kéo về đúng).
+- Lùi một lần sửa kho: `git revert` bản sửa bài ⇒ chạy lại chính lệnh này. Lùi bằng bản chụp (khi nghi collection hỏng):
+  `curl -s -X PUT http://127.0.0.1:6335/collections/<tên>/snapshots/recover -H 'content-type: application/json' -d '{"location":"file:///qdrant/snapshots/<tên>/<tên bản chụp>"}'`
+  rồi chép lại hai file trong `sao_luu/<giờ>/` về `data/full_corpus_builds/`. Đường cuối cùng vẫn là dựng lại toàn bộ (đầu mục này).
+- Sửa một câu mà file điều kiện `knowledge-base-hue/meta/full_corpus_conditions.json` đang ghim nguyên văn (`exact_text`) ⇒ bước chia đoạn báo lỗi
+  và lệnh dừng TRƯỚC khi ghi gì; sửa file điều kiện cho khớp rồi chạy lại.
+- Lệnh chỉ lo chỉ mục. Kho đổi thì vẫn phải tự chạy: `tests/test_su_kien_theo_ngay.py` (bảng sự kiện chép từ kho) và test bảng quán; các bước quét
+  trùng / 10 câu an toàn / T1 ở trên áp cho bài MỚI hoặc sửa nhiều chữ.
+- Chạy thử trên bản chép (không đụng chỉ mục thật): ba tham số đi cùng nhau `--kho <thư mục kho chép> --collection <tên thử> --thu-muc-ban-ghi
+  <thư mục>`; thiếu một trong ba, trùng tên collection đang chạy, hoặc thư mục trùng `data/full_corpus_builds` ⇒ lệnh từ chối.
+- Giới hạn: chưa thử khi server đang phục vụ (luôn tắt server trước) · kho lớn gấp nhiều lần thì bước chia đoạn (21 giây hiện nay) thành phần chính.
 
 ## 6. Bảng dữ liệu của lịch "Lên kế hoạch"
 
@@ -240,6 +292,9 @@ lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 
 | Câu "tốt cho sức khoẻ" về món ăn | Đôi khi gắn thừa câu "nên hỏi dược sĩ / bác sĩ" (đo 3 / 9 câu không cần) | Gắn thừa vô hại; gắn thiếu mới là lỗi (12 / 12 câu cần đều có) | `R/b_suc_khoe_web_implementation.md` |
 | Hỏi khoảng cách có nơi thứ ba đứng SAU từ hỏi | Trả khoảng cách của hai nơi đầu | Hàm chỉ nhận dạng đóng "A <từ nối> B <từ hỏi>"; nới ra thì sai cặp | `R/c_kc_tinh_san_implementation.md` |
 | Từ "bao lâu" + từ di chuyển chung | Công cụ khoảng cách được đưa thừa; model làm tròn giờ thì bước kiểm số rút câu | Không ra số sai tới người dùng | `R/c_khoang_cach_implementation.md` |
+| Hỏi "gần X có quán / điểm gì" (công cụ "gần một điểm có gì", mở 22/11/2026) kèm BỮA hoặc GIỜ ("ăn trưa gần Đại Nội") | Danh sách xếp theo khoảng cách, công cụ không biết giờ mở cửa ⇒ có thể nêu đầu danh sách một quán chỉ mở buổi tối (1 / 5 tin có quán ở lượt thật 22/11; tin hỏi "tối nay" thì model tự tra giờ) | Mới thấy một lần; hướng sửa rẻ nếu lặp: thêm một câu vào mô tả công cụ "người dùng nêu bữa / giờ thì tra giờ mở cửa trong kho trước khi gợi ý" | `data/thu_bedrock_2026-11-21/do/gan_diem_main/luot_1/` |
+| Cùng công cụ: model tự viết khoảng cách bằng MÉT ("cách chừng 500 m") | Bước kiểm số chỉ soi km và phút, không soi mét ⇒ con số mét tự viết lọt tới người dùng | Ca dò của phiên đo; 18 lượt thật (12 của C + 6 của phiên đo) chưa gặp | `report_agent/2026-11-21/c_gan_diem.md` |
+| Cùng công cụ: câu dùng "sát Đại Nội", "đối diện …" thay cho gần / quanh / cạnh / lân cận / kế bên | Bộ dò từ khoá không bắt ⇒ lượt đó đi đường hỏi đáp thường như trước khi có công cụ | Vô hại; chỉ 41 quán có vị trí (16 quán vị trí mức ước); "lăng NÀO gần nhất" theo loại chưa làm được; nơi ngoài bảng (ga, sân bay) không có | `report_agent/2026-11-21/c_gan_diem.md` |
 | Đường "tìm thêm + web" | Chữ đầu ~6 s, cả câu có web ~15 s (sàn tốc độ 3 / 5 s đã gỡ 19/11 — số chỉ để báo) | Hai thử nghiệm tốc độ đều âm; User bỏ "tra web sớm", gác "gộp câu tìm" | `R/b_dem_toc_do.md`; PS §2 (15/11) |
 | Câu ngoài phạm vi bị định tuyến xếp là khẩn cấp (vd y tế) | Trợ lý từ chối, cổng web mở | User nhận từ 09/11 khi gỡ câu soạn sẵn | PS §4 (định tuyến phương án B) |
 | Câu ngoài kho về giá vé đi lại | Có lượt trả lời "nguồn không nêu…" thay vì câu từ chối chuẩn (đo 3 / 5) | User nhận 15/11 | PS §5 dòng 15/11 |
