@@ -136,8 +136,11 @@ def test_request_clause_switch_reaches_the_first_search_and_leaves_other_message
     CON = dataclasses.replace(BAT, tim_ve_loi_nho=True)
     (t_cu, _), (t_moi, _) = _chay(deps, BAT, V01_LUOT_2), _chay(deps, CON, V01_LUOT_2)
     cu, moi = list(t_cu.packed.document_ids), list(t_moi.packed.document_ids)
-    assert t_moi.tools[0]["n_ve"] == t_cu.tools[0]["n_ve"] + 1 and moi[:len(cu)] == cu  # mọi đoạn cũ còn nguyên, đúng thứ tự; đoạn của vế lời nhờ nối sau
-    assert any("Leo bậc" in ma for ma in moi[len(cu):]) and not any("Leo bậc" in ma for ma in cu)  # bài kho trả lời đúng vế đó chỉ vào khi cờ con bật
+    n_chinh = len(t_cu.documents)  # số đoạn của lần tìm bằng cả tin
+    assert t_moi.tools[0]["n_ve"] == t_cu.tools[0]["n_ve"] + 1
+    assert moi[:n_chinh] == cu[:n_chinh] and set(cu) <= set(moi)  # phần tìm bằng cả tin y nguyên; không đoạn cũ nào mất (đoạn theo vế xếp xen kẽ giữa các vế)
+    them = set(moi) - set(cu)
+    assert them and all("Leo bậc" in ma for ma in them) and not any("Leo bậc" in ma for ma in cu)  # thứ thêm vào đúng là bài trả lời vế lời nhờ
     for cau in (CAU_HAI_Y, CAU_MOT_Y):
         (t_a, goi_a), (t_b, goi_b) = _chay(deps, BAT, cau), _chay(deps, CON, cau)
         assert goi_a["input"] == goi_b["input"] and t_a.packed == t_b.packed
