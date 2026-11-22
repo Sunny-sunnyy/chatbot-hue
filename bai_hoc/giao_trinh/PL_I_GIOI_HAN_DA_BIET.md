@@ -1,6 +1,6 @@
 # Phụ lục I — Mọi giới hạn đã biết trên một trang
 
-*Cập nhật 18:13, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (48 tính năng, kho 267 bài): năm giới hạn của thẻ nơi (17:15) · trước đó: giới hạn mới của việc nhớ trong cuộc đã lập lịch, của dòng trạng thái ở tin dài, của công cụ liệt kê bài, trang Giới thiệu · trước đó: phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42); rào bỏ / thay của lịch; gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 18:17, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (48 tính năng, kho 267 bài): năm giới hạn của thẻ nơi (17:15) · trước đó: giới hạn mới của việc nhớ trong cuộc đã lập lịch, của dòng trạng thái ở tin dài, của công cụ liệt kê bài, trang Giới thiệu · trước đó: phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42); rào bỏ / thay của lịch; gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Giới hạn đã biết khác với thứ cố ý không làm (bài 4).** Giới hạn đã biết là chỗ hệ thống làm chưa tốt trong chính phạm vi của nó: kho có mà tìm không ra, chờ lâu, bước kiểm chưa kiểm nghĩa. Thứ cố ý không làm là một ranh giới đã được chọn, không phải một lỗi còn nợ: câu gõ không dấu, tiếng Anh, tình huống khẩn cấp, giá phòng, đặt chỗ thay người dùng. Trang này liệt kê loại thứ nhất, nhóm theo chặng; loại thứ hai nằm ở bảng nhỏ riêng cuối trang.
 
@@ -107,7 +107,7 @@
 | Có lúc không có thẻ dù kho có giờ: bài của nơi đã có mặt bằng một đoạn khác; trợ lý gọi công cụ liệt kê hay "gần một điểm" rồi viết luôn; tin một ý hoặc không có chữ hỏi hẹp; quá 25 nơi một lượt (giữ theo thứ tự chữ cái). | ca đoạn khác: đọc từ chương trình, chưa gặp trong mẫu; công cụ rồi viết luôn: đọc từ chương trình, chưa gặp trong mẫu; trần 25: chưa lượt nào chạm | dòng "Tư liệu chưa có thông tin về…" về giờ, địa chỉ, vé vẫn có thể sai | 23 |
 | Thẻ chỉ chữa giờ, địa chỉ, vé lẻ; số bậc, năm xây không chữa. Nơi bài không ghi giờ, vé không bao giờ có thẻ (đúng ý). | 13 cặp ngoài thẻ trong mẫu | dòng ý thiếu sai về số bậc, năm xây vẫn có thể còn | 23 |
 | Hai bản chữa của thẻ nơi sau khi đọc code (tên lồng "Đầm Chuồn" trong tên quán; câu an toàn "tạm ngừng khi lũ, bão" đi theo thẻ) chưa có lượt thật nào trúng. | 2 trên 113 nơi có thẻ có câu an toàn; chỉ ca test và phép chạy hàm trên kho thật | — (giới hạn của phép đo) | 23 |
-| Thẻ nơi mới đo trên một tin 4 ý và ba tin đối chứng; dòng ý thiếu tự trái với câu trả lời có gặp một lần. | tự trái: 1 trên 6 (lượt 1), 0 trên 6 (lượt 2), mốc bên tắt 0 trên 9; tin nhiều ý kiểu khác, model cũ, trình duyệt chưa đo | — (giới hạn của phép đo) | 23 |
+| Thẻ nơi mới đo trên một tin 4 ý và ba tin đối chứng; dòng ý thiếu tự trái với câu trả lời có gặp một lần. | tự trái: 1 trên 6 (lượt 1), 0 trên 6 (lượt 2), mốc bên tắt 0 trên 9; tin nhiều ý kiểu khác, model cũ chưa đo; trên trình duyệt mới nhìn một lần (tối 22/11, hai tin, đều có giờ và địa chỉ đúng chỗ) | — (giới hạn của phép đo) | 23 |
 | Nhờ "viết lại danh sách" thì trợ lý tra kho lại và viết lại từng mục, không chỉ xoá một dòng; danh sách dài có thể thiếu mục. | 17–24 giây (trình duyệt 22/11: 17,3 và 24,1 giây; lượt thật 19–20 giây, khoảng 0,13–0,17 USD; bên không nhớ 10–12 giây); một lượt thử 8 điểm, bỏ 1, chỉ còn 4 (lần nhìn trên trình duyệt còn đủ 7) | chờ lâu hơn; danh sách mới có thể ngắn hơn, trợ lý nói rõ nó chỉ giữ điểm tìm lại được nguồn — câu đó có thể bị đọc nhầm thành "ba điểm kia chưa chắc miễn phí" | 23, 31 |
 | Lần chạy lại một lần khi câu bị rút, trong cuộc đã lập lịch, mới có ca test. | chưa có lượt thật nào trúng | — (giới hạn của phép đo) | 23, 31 |
 | Ngày model viết không bị chương trình kiểm lại; dạng ngày ít gặp đi đường công cụ, chậm hơn. | — | ngày chỉ được bảo đảm nhờ nguồn tính sẵn và số nguồn | 24 |
@@ -170,7 +170,7 @@
 | Lệnh bật chỉ cho máy phát triển và không gọi thử model. | — | không bắt được khoá hết hạn lúc bật | 36 |
 | Gói ba hộp là bản nháp từ 10–18/11, chưa theo kịp chương trình hiện tại. | lần chạy thử là của gpt-6-luna và kho 204 bài | — | 36 |
 | Trần kích thước yêu cầu và lớp chặn tiền ở phía hãng chưa có. | — | — (rủi ro khi đưa lên mạng) | 37 |
-| Trang Giới thiệu vừa được sửa cho khớp thứ trợ lý thật sự nhớ (ba câu hỏi gần nhất, câu trả lời liền trước, tên nơi vừa gợi ý, lịch đã lập; câu trả lời cho câu mở đầu giữ tới 24 giờ), nhưng chưa ai nhìn trên trình duyệt; bản giao diện dựng sẵn chưa dựng lại. Phần nơi nhận câu hỏi và ảnh đã đúng từ chiều 22/11. | — | máy đang chạy lúc viết còn hiện chữ cũ ("nhớ các câu hỏi") tới khi giao diện được dựng lại | 37 |
+| Trang Giới thiệu ghi "máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký": chỉ đúng ở cấu hình mặc định. Các phần khác của trang (thứ trợ lý nhớ, giới hạn về lễ hội và sự kiện, nơi nhận câu hỏi và ảnh) đã sửa và đã nhìn trên trình duyệt tối 22/11. | — | khi sổ ghi từng lượt được bật trên máy phát triển thì chữ có được ghi vào file | 37 |
 | Hãng model và dịch vụ tìm web giữ dữ liệu bao lâu ở phía họ: chưa kiểm. | — | — | 37 |
 
 ## Chặng 8 — Nhìn lại

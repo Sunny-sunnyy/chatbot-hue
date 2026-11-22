@@ -1,6 +1,6 @@
 # Bài 40 — Làm được tới đâu, còn yếu ở đâu, hướng phát triển
 
-*Cập nhật 18:13, ngày 22/11/2026 · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): thêm thẻ nơi; bộ câu cất riêng đã có lúc chạy, giữ chữ đã nhìn trên trình duyệt · số chép từ bài gốc (ghi "bài N"), không đo mới.*
+*Cập nhật 18:17, ngày 22/11/2026 · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): thêm thẻ nơi; bộ câu cất riêng đã có lúc chạy, giữ chữ đã nhìn trên trình duyệt · số chép từ bài gốc (ghi "bài N"), không đo mới.*
 
 **Bài trước đã biết:** hệ thống được làm ra thế nào, ai kiểm ai (bài 39).
 **Bài này thêm:** theo từng mảng: làm được gì, chưa làm được gì, chỗ yếu nào nặng nhất, thứ gì chưa đo, hướng phát triển nào có căn cứ.
@@ -162,7 +162,7 @@ Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đ
 
 - **Tính năng đang mở / tắt:** 48 mở, 3 tắt (đếm 17:21 22/11, sau khi mở thẻ nơi lúc 17:15; lúc 16:13 là 47, sau khi mở việc nhớ câu trả lời liền trước trong cuộc đã lập lịch; lúc 15:51 là 46, sau khi mở việc giữ chữ tới khi qua bước kiểm nguồn; lúc 14:52 là 45, đếm bằng lệnh của phụ lục B; phụ lục B đếm 13:20 ra 42, trước khi ba tính năng khâu tìm được mở). Ba cái tắt: xếp lịch từ câu gõ tự do (đo không đạt), dòng "hôm nay là ngày…" (vô ích), sổ vết từng lượt (chỉ dùng ở máy phát triển).
 - **Kho:** 267 bài, 9.479 đoạn (bài 7).
-- **Bộ test:** lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca đạt (bài 38, Chi tiết để tra). Sau khi bốn thay đổi được mở, cả bộ test chạy lại 14:48–15:03 22/11: 78 file, 2.119 ca đạt, 2 ca hỏng — đều là ca test cũ so nguyên một bảng nay có thêm tên nhà cung cấp model của trang Giới thiệu, không phải sản phẩm sai (bài 38).
+- **Bộ test:** lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca đạt (bài 38, Chi tiết để tra). Sau khi bốn thay đổi được mở, cả bộ test chạy lại 14:48–15:03 22/11: 78 file, 2.119 ca đạt, 2 ca hỏng — đều là ca test cũ so nguyên một bảng nay có thêm tên nhà cung cấp model của trang Giới thiệu, không phải sản phẩm sai (bài 38). Lần chạy đủ mới nhất, 17:16–17:34 22/11, trên bản 48 tính năng: 78 file chạy, 2.196 ca đạt, 0 ca hỏng, 4 file bỏ vì cần khoá OpenAI.
 - **Thời gian chờ:** 13 giây là 49 lượt hỏi đáp của người dùng mô phỏng trưa 21/11, tin dài hơn và còn mục web; 6,9 giây là 41 tin phần lớn ngắn ở lượt kiểm chốt trưa 22/11, lúc máy rảnh; 95 % dưới 13,1 giây (bài 34).
 - **Phân loại 19 lần trượt:** 12 kho thiếu (đi Hội An, quy định chụp ảnh, sự kiện có ngày, điểm ít leo bậc; nay đi Hội An và điểm ít leo bậc đã có bài, sự kiện có ngày đã có công cụ; còn quy định chụp ảnh), 4 sửa lịch (đã sửa), 2 model không ghép hai dữ kiện có sẵn, 1 tìm không ra; một phiên đếm chiều 22/11, khâu tìm chạy lại trên chỉ mục hôm đó. Lượt đo lại: 5 ý trượt — kho thiếu 2, model không ghép 1, hai ý sửa lịch thước không đọc được, tìm không ra 0.
 - **Bốn thay đổi cho tin dài nhiều ý (mở 14:47 22/11):** ba ở khâu tìm, một là bước viết lại — bỏ tìm riêng vế cụt; tách câu tìm model gộp hai nơi; cho tìm thêm 3 lần thay vì 2; viết lại một lần khi chữ nộp không có nguồn. Trước đó, ở một tin 4 ý, màn hình "Thử lại" hiện 3 trên 6 lần (bài 16). Trên chính tin đó, 6 lần: 0 màn hình lỗi, nêu đúng cả hai ý kho có 6 trên 6. Lợi mới đo trên một tin, nên nhóm mở theo cơ chế (đưa đúng đoạn vào), không ghi là "giảm lỗi".
