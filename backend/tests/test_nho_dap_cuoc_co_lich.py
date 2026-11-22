@@ -31,9 +31,10 @@ LICH = SimpleNamespace(source=v2.NGUON_LICH_SOURCE)
 THUONG_CO_LICH = {"n_hanh_dong": 0, "khan_cap": False}   # thứ đường thường của cuộc có lịch để lại ở `trace.sua`
 
 
-def test_switch_defaults_off_in_code_and_in_settings():
+def test_switch_defaults_off_in_code_and_is_open_in_settings():
+    # Code default stays off; settings.yaml opened it 22/11/2026 after the real-run retry met its pre-written criteria.
     assert AssistantFlags().nho_dap_cuoc_co_lich is False
-    assert load_settings(validate_private_paths=False)["assistant"]["nho_dap_cuoc_co_lich"] is False
+    assert load_settings(validate_private_paths=False)["assistant"]["nho_dap_cuoc_co_lich"] is True
 
 
 @pytest.mark.parametrize("ten, trace, tat, mo", [
