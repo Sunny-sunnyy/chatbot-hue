@@ -94,7 +94,6 @@ html .brand svg, html .brand img { color: var(--color-river); }
 .h1-tam { stroke: rgba(255, 255, 255, .9); stroke-width: 2.5; stroke-dasharray: 10 16; stroke-linecap: round; }
 .hieu-ung .h1-tam { animation: h1-chay 1.6s linear infinite; }
 @keyframes h1-chay { to { stroke-dashoffset: -26; } }
-.h1-do { fill: var(--color-sun); stroke: #fff; stroke-width: 1.5; stroke-linejoin: round; }
 .hieu-ung .h1-mat, .hieu-ung .h1-bo { stroke-dasharray: 1; stroke-dashoffset: 1; animation: h1-ve 2s cubic-bezier(.45, .05, .2, 1) .15s forwards; }
 @keyframes h1-ve { to { stroke-dashoffset: 0; } }
 .h1-ben-ds { position: absolute; inset: 0; }
@@ -132,7 +131,8 @@ html .h1-chu .tt-chu { margin: 0; flex-basis: 100%; }
 html .net-song { fill: none; stroke: var(--color-river-muted); stroke-width: 20; stroke-linecap: round; }
 html .net-song-chay { stroke: var(--color-accent); stroke-width: 3; stroke-dasharray: 10 14; }
 html.hieu-ung .net-song-chay { animation: h1-chay 1.3s linear infinite; }
-html .do-song { fill: var(--color-sun); stroke: #fff; stroke-width: 1.2; }
+html .do-song .do-than { fill: var(--color-sun); stroke: #fff; stroke-width: 1; stroke-linejoin: round; }
+html .do-song .do-mai { fill: #fff; stroke: var(--color-sun-deep); stroke-width: 1; }
 html .nguon { border-top: 0; position: relative; }
 html .nguon::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 8px;
   background: url("/static/hoa_tiet/song_nguon.svg") repeat-x; }

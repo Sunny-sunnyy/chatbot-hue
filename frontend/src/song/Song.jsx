@@ -77,7 +77,7 @@ export function HeroSong({ nhanh, thoiTiet, ...hoi }) {
     <svg className={`h1-ve ${lop}`} viewBox={vb} preserveAspectRatio="none" aria-hidden="true">
       <defs>
         <linearGradient id={`g-${lop}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#0A4E4A" stopOpacity=".28" /><stop offset=".5" stopColor="#0A4E4A" stopOpacity=".12" /><stop offset="1" stopColor="#083538" stopOpacity=".38" />
+          <stop offset="0" stopColor="#0A4E4A" stopOpacity=".28" /><stop offset=".5" stopColor="#0A4E4A" stopOpacity=".1" /><stop offset=".8" stopColor="#0A4E4A" stopOpacity=".22" /><stop offset="1" stopColor="#083538" stopOpacity=".92" />
         </linearGradient>
         <mask id={`m-${lop}`} maskUnits="userSpaceOnUse">
           <path className="h1-mat" d={d} pathLength="1" fill="none" stroke="#fff" strokeWidth={rong} strokeLinecap="round" vectorEffect="non-scaling-stroke" />
@@ -89,10 +89,7 @@ export function HeroSong({ nhanh, thoiTiet, ...hoi }) {
         <rect className="h1-nuoc" x="0" y="0" width="100%" height="100%" fill={`url(#g-${lop})`} />
       </g>
       <path className={`h1-tam ${lop === "rong" ? "h1-tam-rong" : "h1-tam-hep"}`} id={`tam-${lop}`} d={d} fill="none" vectorEffect="non-scaling-stroke" />
-      <g className="h1-do">
-        <g transform="scale(2.1)"><path d="M-15 -4 L15 -4 L10 5 L-10 5 Z" /><path d="M-2 -4 L-2 -17 L9 -4 Z" /></g>
-        <animateMotion dur="44s" begin="-13s" repeatCount="indefinite" rotate="auto-reverse"><mpath href={`#tam-${lop}`} /></animateMotion>
-      </g>
+      <Do duong={`tam-${lop}`} to={lop === "rong" ? 2 : 1.5} giay={44} batDau="-13s" />
     </svg>
   );
   return (
