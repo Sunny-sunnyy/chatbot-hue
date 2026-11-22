@@ -1,6 +1,6 @@
 # Bản đồ dự án hue_rag — đọc trang này trước
 
-*Cập nhật lần cuối: 10:18, ngày 22/11/2026 · sửa cho khớp hệ thống sáng 22/11: model viết đang chạy, 266 bài / 9.458 đoạn, 41 tính năng mở, hai công cụ mới, trợ lý nhớ câu trả lời liền trước, lệnh cập nhật riêng khi sửa kho · trước đó 16:28, ngày 20/11/2026 · mục "Nhóm đang làm gì": sửa hai dòng trạng thái ("lên lịch giúp mình" đã gộp, cờ tắt; "nhớ cả câu trả lời" đã đếm) · trước đó 16:24, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" đủ 31 cờ đang bật (thêm các cờ bật 19–20/11); mục "Nhóm đang làm gì" viết lại theo đợt hoàn thiện Phase 9–12 · trước đó 16:22, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" thêm hai dòng bật 20/11 (lấy lại câu trả lời cũ giữa các cuộc trò chuyện; dòng "danh sách có thể chưa đủ") · trước đó 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
+*Cập nhật lần cuối: 16:16, ngày 22/11/2026 · số kho đổi thành 267 bài / 9.479 đoạn sau khi thêm bài "Đi từ Huế tới Hội An" chiều 22/11 · trước đó (10:18): sửa cho khớp hệ thống sáng 22/11: model viết đang chạy, 41 tính năng mở, hai công cụ mới, trợ lý nhớ câu trả lời liền trước, lệnh cập nhật riêng khi sửa kho · trước đó 16:28, ngày 20/11/2026 · mục "Nhóm đang làm gì": sửa hai dòng trạng thái ("lên lịch giúp mình" đã gộp, cờ tắt; "nhớ cả câu trả lời" đã đếm) · trước đó 16:24, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" đủ 31 cờ đang bật (thêm các cờ bật 19–20/11); mục "Nhóm đang làm gì" viết lại theo đợt hoàn thiện Phase 9–12 · trước đó 16:22, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" thêm hai dòng bật 20/11 (lấy lại câu trả lời cũ giữa các cuộc trò chuyện; dòng "danh sách có thể chưa đủ") · trước đó 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
 
 Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm những khối nào, khối nào đang bật, và muốn hiểu sâu một khối thì mở bài nào. Mọi con số ở đây là
 **số của hệ thống hôm nay**; các bài viết trước ngày 14/11 (bài 0–18) viết lúc kho còn 204 bài, nên anh sẽ gặp số nhỏ hơn ở đó, không phải lỗi.
@@ -32,7 +32,7 @@ Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm
 
 1. hue_rag là **trợ lý du lịch và văn hoá Huế** trên một trang web: người dùng hỏi bằng tiếng Việt có dấu, trợ lý trả lời **chỉ từ cuốn sổ tay** (kho bài viết
    tự soạn) và ghi nguồn dưới mỗi câu, kho không có thì nói không có, giống người hướng dẫn viên tra sổ tay ở bài 0.
-2. Sổ tay nay có **266 bài, cắt thành 9.458 đoạn** (tới 13/11 là 204 bài / 8.435 đoạn), cất trong **Qdrant**.
+2. Sổ tay nay có **267 bài, cắt thành 9.479 đoạn** (tới 13/11 là 204 bài / 8.435 đoạn), cất trong **Qdrant**.
 3. Mỗi câu hỏi: model **xếp loại câu**, code **tìm 10 đoạn** hợp nhất, model viết (từ 21/11 tạm là **Claude Sonnet 5.5** chạy qua Amazon Bedrock; trước đó là **gpt-6-luna**, đổi lại bằng một dòng cấu hình) đọc rồi viết, code **kiểm nguồn** rồi mới hiện; thiếu thì trợ lý
    **tự tìm thêm** tối đa 2 lần, kho vẫn không có thì **tra web một lần** và để riêng mục "chưa kiểm".
 4. Việc dễ nhầm (ngày âm lịch, thời tiết, khoảng cách, xếp lịch, chọn khách sạn / quán) **code làm, model chỉ diễn đạt** — đó là phần "trợ lý".
@@ -43,7 +43,7 @@ Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm
 
 ```mermaid
 flowchart LR
-    K["Sổ tay<br/>266 bài"] --> Q["Chia đoạn + chỉ mục<br/>9.458 đoạn trong Qdrant"]
+    K["Sổ tay<br/>267 bài"] --> Q["Chia đoạn + chỉ mục<br/>9.479 đoạn trong Qdrant"]
     Q --> T["Trợ lý trả lời<br/>xếp loại · tìm · viết · kiểm nguồn"]
     T <--> C["Công cụ của trợ lý<br/>thời tiết · ngày · khoảng cách · web · ảnh"]
     L["Lên kế hoạch<br/>code xếp lịch đi – ăn – ở"] --> G["Giao diện 5 trang"]
@@ -54,8 +54,8 @@ Ngoài hình: **khối đo / chấm** đứng cạnh để kiểm mọi thay đ�
 
 | Khối | Nó làm gì | Đang chạy thế nào (số hôm nay) | Bài nên đọc |
 |---|---|---|---|
-| **Sổ tay** | Tất cả những gì trợ lý được nói: món ăn, di tích, lễ hội, nghệ thuật, đi lại / vé / chỗ ở | **266 bài** Markdown, 5 chủ đề (mốc: 204 bài tới 13/11; thêm 61 bài 14–16/11; mỗi lần ghi đều kiểm câu cũ không tụt — hai lần đầu chấm điểm, các lần sau đọc tay từng câu chạm bài mới) | 1, 22 |
-| **Chia đoạn + chỉ mục** (*chunking*, *embedding*) | Cắt bài thành đoạn nhỏ, biến mỗi đoạn thành vector nghĩa (dãy số đại diện ý) và bảng từ khoá, cất vào Qdrant | **9.458 đoạn**; từ 22/11 sửa một bài thì một lệnh cập nhật riêng khoảng 30 giây là chỉ mục khớp lại, không phải dựng lại cả kho (Việc mới xong, mục 32); mỗi đoạn thành một dãy 384 con số (vector) từ model nhỏ **e5-small** chạy trên máy, 0 đồng; từ khoá **BM25** (chấm theo chữ trùng); lúc khởi động thấy kho lệch chỉ mục thì không nhận câu hỏi (server vẫn bật, mọi câu nhận thông báo "Dữ liệu tra cứu cần được lập chỉ mục lại") | 2, 3, 4, 5 |
+| **Sổ tay** | Tất cả những gì trợ lý được nói: món ăn, di tích, lễ hội, nghệ thuật, đi lại / vé / chỗ ở | **267 bài** Markdown, 5 chủ đề (mốc: 204 bài tới 13/11; thêm 61 bài 14–16/11; mỗi lần ghi đều kiểm câu cũ không tụt — hai lần đầu chấm điểm, các lần sau đọc tay từng câu chạm bài mới) | 1, 22 |
+| **Chia đoạn + chỉ mục** (*chunking*, *embedding*) | Cắt bài thành đoạn nhỏ, biến mỗi đoạn thành vector nghĩa (dãy số đại diện ý) và bảng từ khoá, cất vào Qdrant | **9.479 đoạn**; từ 22/11 sửa một bài thì một lệnh cập nhật riêng khoảng 30 giây là chỉ mục khớp lại, không phải dựng lại cả kho (Việc mới xong, mục 32); mỗi đoạn thành một dãy 384 con số (vector) từ model nhỏ **e5-small** chạy trên máy, 0 đồng; từ khoá **BM25** (chấm theo chữ trùng); lúc khởi động thấy kho lệch chỉ mục thì không nhận câu hỏi (server vẫn bật, mọi câu nhận thông báo "Dữ liệu tra cứu cần được lập chỉ mục lại") | 2, 3, 4, 5 |
 | **Tìm** (*retrieval*) | Chọn đoạn hợp câu hỏi | Theo nghĩa lấy 30 ứng viên ⇒ chấm lại theo từ khoá ⇒ trộn hai bảng xếp hạng (RRF) ⇒ giữ **10 đoạn**; **không xếp lại bằng model** | 6, 7 |
 | **Trợ lý trả lời** | Xếp loại câu (chào hỏi / về Huế / ngoài chủ đề / khẩn cấp — loại cuối đi chung đường câu về Huế), viết bằng **Claude Sonnet 5.5** qua Amazon Bedrock (tạm, từ 21/11; trước là gpt-6-luna), kiểm số nguồn | Bật: xếp loại; chạy song song xếp loại với trả lời; **tìm thêm ≤ 2 lần** — đã tìm thêm đủ 2 lần thì trợ lý không được tìm nữa, phải trả lời hoặc nói không có; **nhớ 3 câu hỏi gần nhất** và, từ 22/11, cả **câu trả lời của lượt liền trước** (để hiểu "quán thứ hai bạn vừa kể") — trừ lượt dùng công cụ có số đổi theo giờ như thời tiết, khoảng cách; câu trả lời dài bị cắt ở 4.000 ký tự; câu nhiều ý | 8, 12, 13, 25 |
 | **Công cụ của trợ lý** | Việc phải đúng thì code làm | Bật cả sáu công cụ dưới đây, cộng hai công cụ mở 22/11 — **gần một điểm có gì** (quán / điểm quanh một nơi, khoảng cách do code tính; Việc mới xong, mục 31) và **liệt kê bài** (kể theo mục lục kho; mục 36): **ngày + âm lịch** (code tính) · **thời tiết** 7 ngày (Open-Meteo) · **câu bão / lũ** (model không nhận con số nào, code nối khối chỉ dẫn cố định) · **khoảng cách** hai điểm (bảng dựng sẵn, lúc chạy không gọi mạng) · **tra web** (Serper, một lần, 5 giây, mục "Từ web (chưa kiểm)") · **hỏi bằng ảnh** (model đoán tên trong danh sách 42 nơi / món, câu trả lời vẫn từ kho) | 14, 15 |
@@ -205,7 +205,7 @@ cả bộ test chỉ chạy một lượt ở cuối đợt · lỗi hiếm thì
 
 Bảng đối chiếu từng số / khẳng định ⇒ `file:dòng` và biên bản kiểm độc lập 93 ý (77 đúng, 4 sai, 11 lệch — đã sửa hết vào bản này): `data/ban_do_2026-11-18/NGUON.md`,
 `BIEN_BAN_KIEM.md` (riêng tư). Tóm tắt:
-- 266 bài / 9.458 đoạn: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count`, `corpus.chunk_count`, đọc 18/11) [đã chạy]; `session_prompt/Project_Status.md` mục 4 [Project_Status]
+- 267 bài / 9.479 đoạn: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count`, `corpus.chunk_count`, đọc 18/11) [đã chạy]; `session_prompt/Project_Status.md` mục 4 [Project_Status]
 - Mô hình, cách tìm, 10 đoạn, không xếp lại, mọi cờ trong bảng "đang chạy": `backend/config/settings.yaml` (từng dòng ở NGUON.md) [settings]
 - Bốn loại câu: `backend/llm/assistant.py`; năm trang + Chỗ ở: `frontend/src/route.js` [code]
 - 41 điểm / 136 cơ sở / 468 quán / 42 tên ảnh: đếm các bảng trong `data/phase_9/lich_trinh/`, `data/anh_user_2026-11-15_ghep/`, `data/phase_10/anh/` (18/11) [đã chạy]

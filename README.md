@@ -1,7 +1,7 @@
 # Hue RAG — Trợ lý văn hóa và du lịch Huế
 
 Ứng dụng hỏi đáp về văn hóa và du lịch Huế dựa trên **Retrieval-Augmented Generation (RAG)**. Hệ thống chỉ trả lời từ một kho tri
-thức tiếng Việt đã biên soạn (266 bài, 5 chủ đề: ẩm thực, di tích, lễ hội, nghệ thuật biểu diễn, du lịch). Câu trả lời kèm
+thức tiếng Việt đã biên soạn (267 bài, 5 chủ đề: ẩm thực, di tích, lễ hội, nghệ thuật biểu diễn, du lịch). Câu trả lời kèm
 trích dẫn tới đoạn nguồn và được code kiểm trước khi hiện. Câu hỏi nằm ngoài kho được từ chối, không suy đoán. Việc phải luôn đúng — phép tính, ngày tháng, khoảng
 cách, xếp lịch — do code làm; model chỉ đọc ý người dùng và diễn đạt.
 
@@ -60,7 +60,7 @@ OpenStreetMap (trình duyệt của người dùng tải trực tiếp).
 
 ```mermaid
 flowchart LR
-    A[Kho Markdown - 266 tệp] --> B[Chia đoạn theo cấu trúc - 9458 đoạn]
+    A[Kho Markdown - 267 tệp] --> B[Chia đoạn theo cấu trúc - 9479 đoạn]
     B --> C[Dense embedding e5-small]
     B --> D[Sparse vector BM25]
     C --> E[Qdrant]

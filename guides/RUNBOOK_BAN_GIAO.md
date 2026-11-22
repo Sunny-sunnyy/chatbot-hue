@@ -17,7 +17,7 @@ session đó điền trước 30/11. Luật cứng của dự án vẫn ở `AGE
   xoá dữ liệu, gửi dữ liệu riêng ra dịch vụ mới, một việc trên 1 USD, deploy; và các việc ở `session_prompt/Session_Prompt.md` §4 cột phải: đổi model / provider /
   dữ liệu mới, sửa bộ câu mẫu), hoặc khi kết quả ngược với quyết định đã ghi ở `session_prompt/HIEN_TRANG.md` mục 4.
 
-**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 266 bài ⇒ 9.458 đoạn, số cờ bật — 31 từ 20/11; kho hoặc cờ đổi thì sửa cả hai nơi):
+**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 267 bài ⇒ 9.479 đoạn, số cờ bật — 31 từ 20/11; kho hoặc cờ đổi thì sửa cả hai nơi):
 
 | Kiểm gì | Lệnh (từ gốc repo) | Phải ra |
 |---|---|---|
@@ -32,7 +32,7 @@ cd /home/minhhieu/hue_rag
 docker compose up -d qdrant
 curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 | grep -o '"points_count":[0-9]*'
 ```
-- Mong đợi: `"points_count":9458` (kho 266 bài, từ 10:04 22/11/2026 sau khi thêm một bài; trước đó 9442 với 265 bài, từ 09:19 22/11/2026 sau lần cập nhật riêng hai bài vé — trước đó 9436 từ 17/11/2026). Số khác ⇒ kho hoặc chỉ mục đã đổi: đối chiếu
+- Mong đợi: `"points_count":9479` (kho 267 bài, từ 16:15 22/11/2026 sau khi thêm bài "Đi từ Huế tới Hội An"; trước đó 9458 với 266 bài, từ 10:04 22/11/2026 sau khi thêm một bài; trước đó 9442 với 265 bài, từ 09:19 22/11/2026 sau lần cập nhật riêng hai bài vé — trước đó 9436 từ 17/11/2026). Số khác ⇒ kho hoặc chỉ mục đã đổi: đối chiếu
   `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`.
 - Dừng nếu: lệnh `docker` không có (Docker Desktop trên Windows tắt) ⇒ nhờ User bật Docker Desktop; cổng 6335 không trả lời sau 30 giây.
 
