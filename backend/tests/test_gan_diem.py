@@ -47,6 +47,47 @@ def test_cafes_are_found_across_clusters_and_other_kinds_are_not_mixed_in():
     assert n == 1 and dong[1] == "- Cà Phê Cụm Khác: cách Điểm A khoảng 1,5 km theo đường chim bay." and "Quán Gần" not in " ".join(dong)
 
 
+def test_code_adds_traffic_note_for_nearby_attractions_but_not_for_nearby_restaurants():
+    """Soát khác hãng 22/11 (G7): câu trả lời trích nguồn "gần một điểm" loại điểm tham quan (km + phút theo đường đi) mà bỏ ý "chưa tính kẹt xe" ⇒ code nối
+    câu ghi chú như với công cụ khoảng cách; loại quán (đường chim bay) không nối; model đã ghi thì không lặp."""
+    from llm.assistant import PackedSource, set_notice
+
+    def notice(loai, chu):
+        trace = AnswerTrace()
+        trace.answer = chu
+        trace.cited = [PackedSource(id=1, title=gd.tieu_de(BANG, "a", loai), heading_path=(gd.MUC_NGUON,), excerpts=gd.ket_qua(BANG, QUAN, TOA, "a", loai)[0],
+                                    source=gd.NGUON_SOURCE)]
+        set_notice(trace, AssistantFlags())
+        return trace.notice
+
+    assert notice("diem_tham_quan", "Gần Điểm A có Điểm B, khoảng 4,0 km đường đi, khoảng 10 phút đi xe [1].") == kc.CAU_GHI_CHU
+    assert notice("diem_tham_quan", "Điểm B cách khoảng 4,0 km, khoảng 10 phút đi xe, chưa tính kẹt xe hay dừng nghỉ [1].") is None
+    assert notice("quan_an", "Quán Gần cách Điểm A khoảng 300 m theo đường chim bay [1].") is None
+
+
+def test_article_notes_of_the_places_the_tool_lists_are_kept_when_only_the_tool_source_is_cited():
+    """Soát khác hãng 22/11 (K5): câu trả lời kể một nơi lấy từ nguồn "gần một điểm" mà không trích bài kho của nơi đó ⇒ câu an toàn của bài (tạm dừng
+    mùa mưa lũ) và dòng "có thể đã thay đổi" từng bị rơi; công cụ liệt kê thì có. Nay nguồn này mang theo bài của từng nơi nó kể."""
+    from llm import liet_ke as lk
+    from llm.assistant import MAY_HAVE_CHANGED_NOTICE, gan_diem_for_turn, set_notice
+
+    bai = lk.bai_tu_markdown("travel/places/diem-b.md", "# Thác B\n\nTrạng thái: mở cửa đón khách; tạm dừng bơi lội trong mùa mưa lũ để bảo đảm an toàn cho du khách.\n")
+    flags = AssistantFlags(noi_dong_tam_ngung=True, may_have_changed_notice=True)
+
+    def notice(chu, **bai_kho):
+        trace = AnswerTrace()
+        asyncio.run(gan_diem_for_turn(trace, BANG, QUAN, TOA, **bai_kho)("a", "diem_tham_quan"))
+        trace.answer, trace.cited = chu, list(trace.so_nguon)
+        set_notice(trace, flags)
+        return trace.notice or ""
+
+    co_bai = {"bai_theo_rel": {bai.rel: bai}, "bai_diem": {"b": bai.rel}}
+    ra = notice("Gần Điểm A có Điểm B, khoảng 4,0 km đường đi [1].", **co_bai)
+    assert "tạm dừng bơi lội trong mùa mưa lũ" in ra and "«Điểm B»" in ra and kc.CAU_GHI_CHU in ra and ra.endswith(MAY_HAVE_CHANGED_NOTICE)
+    assert notice("Gần Điểm A có Điểm B, khoảng 4,0 km đường đi [1].") == kc.CAU_GHI_CHU               # không có mục lục (cờ liệt kê tắt) ⇒ như cũ
+    assert notice("Quanh Điểm A có vài điểm, xa nhất khoảng 4,0 km đường đi [1].", **co_bai) == kc.CAU_GHI_CHU  # không nêu tên nơi ⇒ không nối bài của nơi
+
+
 def test_attractions_come_from_the_distance_table_with_its_numbers():
     dong, n = gd.ket_qua(BANG, QUAN, TOA, "a", "diem_tham_quan")
     assert n == 1 and dong == ("Các điểm tham quan gần Điểm A nhất (theo đường đi):", "- Điểm B: khoảng 4,0 km đường đi, khoảng 10 phút đi xe.", gd.CAU_GHI_CHU_DIEM)

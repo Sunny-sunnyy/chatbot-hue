@@ -86,6 +86,17 @@ def ket_qua(bang: kc.BangKhoangCach, theo_cum: dict, toa_do: dict, diem: str, lo
     return (*dong, CAU_GHI_CHU_QUAN), len(ds)
 
 
+def noi_co_bai(bang: kc.BangKhoangCach, theo_cum: dict, toa_do: dict, bai_diem: dict, diem: str, loai: str) -> tuple[tuple[str, str], ...]:
+    """(tên nơi đúng như `ket_qua` in, đường dẫn bài kho của nơi đó) của từng nơi `ket_qua` trả. `bai_diem` = mã điểm ⇒ bài kho của điểm (cột `nguon` của
+    bảng điểm). Để ghi chú và câu an toàn của BÀI vẫn được nối khi câu trả lời chỉ trích nguồn "gần một điểm" (soát khác hãng 22/11, K5)."""
+    if diem == KHAC or diem not in bang.ten:
+        return ()
+    if loai == "diem_tham_quan":
+        return tuple((bang.ten[j], bai_diem[j]) for j, _, _ in diem_gan(bang, diem) if j in bai_diem)
+    toa = toa_do.get(diem)
+    return tuple((q["ten"], q["bai_id"]) for q, _ in quan_gan(theo_cum, toa, loai)) if toa is not None else ()
+
+
 def mo_ta_cong_cu(bang: kc.BangKhoangCach) -> str:
     """Mô tả công cụ: luật ngắn + danh sách `mã: tên (tên khác)` (cùng danh sách với công cụ khoảng cách) để model ánh xạ tên người dùng gõ ⇒ mã."""
     dong = [f"{i}: {bang.ten[i]}" + (f" ({', '.join(bang.ten_khac[i])})" if bang.ten_khac[i] else "") for i in bang.ids]

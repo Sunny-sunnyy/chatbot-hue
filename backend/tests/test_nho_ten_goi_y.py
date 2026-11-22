@@ -198,6 +198,10 @@ def test_retyped_old_question_gets_history_without_notes_only_in_the_narrow_case
     assert lich_su_cho_luot(tro, "Quán đó ở đâu?") == tro                                       # câu trỏ lại gõ lại nguyên văn ⇒ CẦN ghi chú ⇒ không gỡ
     assert not la_cau_go_lai((), A) and not la_cau_go_lai(lech, "") and la_cau_go_lai(lech, A)
     assert lich_su_cho_luot(((A, ""), (B, "")), A) == ((A, ""), (B, ""))                        # cờ tắt: không có ghi chú ⇒ y như cũ
+    # soát khác hãng 22/11 (G10): nhớ cả câu trả lời liền trước ⇒ lượt B không rỗng (mở đầu bằng nhãn lời trợ lý) ⇒ không lệch dạng ⇒ giữ ghi chú của lượt A
+    from api.conversations import NHAN_LOI_TRUOC
+    nho = ((A, GHI_CHU), (B, f"{NHAN_LOI_TRUOC}\nVé xem ca Huế trên sông Hương có nhiều mức."))
+    assert not la_cau_go_lai(nho, A) and lich_su_cho_luot(nho, A) == nho
     # Soát đợt sửa 20/11: câu hỏi tiếp LƯỢC TÊN NƠI, lượt cũ của nó không có ghi chú ⇒ gõ lại vẫn cần dòng tên nơi của lượt đầu ⇒ KHÔNG gỡ
     luoc = (("Cho mình thông tin về Lăng A", GHI_CHU), ("Có cần mua vé trước không?", ""), ("Có cần mang giấy tờ không?", ""))
     assert not la_cau_go_lai(luoc, "Có cần mua vé trước không?") and lich_su_cho_luot(luoc, "Có cần mua vé trước không?") == luoc
