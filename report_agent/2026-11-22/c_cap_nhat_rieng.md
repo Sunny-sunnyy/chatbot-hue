@@ -2,7 +2,7 @@
 
 Việc: hàng [7] của sổ việc, nửa "sau khi duyệt chỉ tính lại vector cho bài đã sửa" (chủ dự án chọn 22:22 và nhắc lại 22:45 21/11/2026). Người đọc
 nhánh: phiên E (viết phép kiểm độc lập). Nhánh `p12-c-cap-nhat-rieng`: `backend/ingestion/cap_nhat_rieng.py` (mới), `backend/tests/test_cap_nhat_rieng.py`
-(mới), runbook mục 5a, report này. Không sửa file dựng / tìm đang có; server không đổi dòng nào.
+(mới), runbook mục 5b, report này. Không sửa file dựng / tìm đang có; server không đổi dòng nào.
 
 **Từ dùng:** *chỉ mục* = collection Qdrant, mỗi đoạn của kho là một *điểm* gồm chữ của đoạn (payload), *vector nghĩa* (model e5-small tính — phần tốn
 thời gian) và *vector từ khoá* (code tính từ thống kê cả kho, không cần model) · *file thống kê từ khoá*, *bản ghi dựng*: hai file ở
