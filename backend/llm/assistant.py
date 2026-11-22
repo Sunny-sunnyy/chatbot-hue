@@ -91,6 +91,7 @@ class AssistantFlags:
     so_lan_tim_kho: int = MODEL_SEARCH_LIMIT
     tim_them: bool = False
     # B3 (plan B3 D7): nhớ hội thoại trong một cuộc trò chuyện — tắt tới khi giao diện nhiều lượt xong (D8); chỉ nhớ câu hỏi khi `nho_cau_tra_loi` tắt
+    # 20/11/2026: `nho_cau_tra_loi` bật = chỉ câu trả lời của lượt LIỀN TRƯỚC vào lịch sử (`api/conversations.py` `chi_dap_lien_truoc`); lõi không đọc cờ này
     nho_hoi_thoai: bool = False
     nho_cau_tra_loi: bool = True
     # B5 (plan B5 bản 7 D1): công cụ `lich_trinh` — tắt tới khi đạt luật ghi trước; cần bảng điểm User duyệt (`bang_lich`, nạp ở rìa)
