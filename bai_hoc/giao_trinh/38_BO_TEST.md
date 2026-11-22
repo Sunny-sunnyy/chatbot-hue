@@ -1,6 +1,6 @@
 # Bài 38 — Bộ test: chương trình tự kiểm những gì
 
-*Cập nhật 14:48, ngày 22/11/2026 · số file, số ca và thời gian chạy lấy từ lần chạy đủ gần nhất (10:58–11:14 22/11, phiên đo chạy, người viết không chạy lại); các loại test đọc từ tên và chú thích đầu file trong thư mục test của máy chủ; những lần test không bắt được lỗi lấy từ các báo cáo 01/11, 20/11, 21/11; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 15:43, ngày 22/11/2026 · số file, số ca và thời gian chạy lấy từ lần chạy đủ cuối buổi sáng (10:58–11:14 22/11; lần mới nhất 14:48–15:03 ghi ở Ý chính và Chi tiết để tra, phiên đo chạy, người viết không chạy lại); các loại test đọc từ tên và chú thích đầu file trong thư mục test của máy chủ; những lần test không bắt được lỗi lấy từ các báo cáo 01/11, 20/11, 21/11; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** các bộ câu và người chấm đo chất lượng câu trả lời (bài 17–20); thước "làm trợ lý" và người dùng mô phỏng (bài 32); hai rào của git trước khi lưu code (bài 37).
 **Bài này thêm:** test tự động là gì; bộ test của máy chủ gồm những loại nào, kiểm gì và không kiểm gì; nó khác các phép đo chất lượng ở đâu; những lỗi thật nó đã không bắt được; và vì sao chạy cả bộ mất khoảng mười lăm phút, từng file một.
@@ -8,7 +8,7 @@
 ## Ý chính
 
 - **Test tự động là một đoạn chương trình kiểm một đoạn chương trình khác**: đưa vào một đầu vào đã biết, so đầu ra với điều phải đúng. Máy chạy được hàng nghìn ca trong vài phút, không cần người ngồi bấm.
-- **Lần chạy đủ mới nhất, ở lượt kiểm chốt buổi trưa 22/11: 76 file, 2.060 ca.** Các số chi tiết trong bài là của lần chạy cuối buổi sáng: 75 file, 1.961 ca đạt, 0 file hỏng, 4 file bỏ cả file vì cần khoá OpenAI, mà tài khoản đó đang gác; trong số đó có file kiểm đường chat chính, nên các ca không cần model của file đó cũng không chạy.
+- **Lần chạy đủ mới nhất, 14:48–15:03 22/11, trên bản đã mở bộ thay đổi cho tin dài (45 tính năng mở): 78 file, 2.119 ca đạt, 2 ca hỏng** — đều là ca test cũ so nguyên một bảng nay có thêm tên nhà cung cấp model của trang Giới thiệu, không phải sản phẩm sai. Trước đó, lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca. Các số chi tiết trong bài là của lần chạy cuối buổi sáng: 75 file, 1.961 ca đạt, 0 file hỏng, 4 file bỏ cả file vì cần khoá OpenAI, mà tài khoản đó đang gác; trong số đó có file kiểm đường chat chính, nên các ca không cần model của file đó cũng không chạy.
 - Bộ test kiểm **chương trình làm đúng việc của nó** (cắt đoạn, tìm, kiểm số nguồn, xếp lịch, đường gọi, giao diện). Nó **không** kiểm model viết hay hay dở: các ca có model đều dùng một model giả trả lời theo kịch bản. Chất lượng câu trả lời đo ở chỗ khác, bằng model thật (bài 17–20, 32).
 - Đã có lỗi thật mà bộ test không bắt: lỗi "xin công cụ mãi" của lớp nối Claude (bài 33) chỉ lộ khi gọi model thật.
 - Cả bộ chạy khoảng 16 phút, **từng file một**, không song song: máy phát triển ít bộ nhớ: chạy cả bộ trong một lượt đã tốn khoảng 4,4 GB.
@@ -150,8 +150,8 @@ Một ca mới đã thấy đỏ trên code cũ, rồi xanh sau khi sửa. Ca ch
 
 ## Chi tiết để tra
 
-- Lần chạy đủ mới nhất, ở lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca. Các con số 75 file và 1.961 ca trong bài là của lần chạy cuối buổi sáng.
-- Lần chạy đủ gần nhất: 10:58–11:14 22/11, trên cây chính (bản main cuối buổi sáng cho phần máy chủ), 42 tính năng mở, kho 266 bài, 9.458 đoạn, không nạp file khoá: 75 file, 1.961 ca đạt, 0 file hỏng, 4 file bỏ. Bốn file bỏ: đường chat có khoá, bộ sinh câu trả lời OpenAI, lượt thử trực tiếp, kiểm cấu hình có khoá.
+- Lần chạy đủ mới nhất: 14:48–15:03 22/11, trên bản đã mở bộ thay đổi cho tin dài (45 tính năng mở, trần tìm 3): 78 file, 2.119 ca đạt, 4 file bỏ (cần khoá OpenAI), 2 file mỗi file 1 ca hỏng — hai ca test cũ so nguyên bảng tính năng của trang Giới thiệu, lệch đúng một khoá mới (tên nhà cung cấp model) khi người chạy có đặt biến file khoá Bedrock; bỏ biến thì xanh; phiên đo đang sửa hai ca test, không đụng code sản phẩm. Trước đó: lượt kiểm chốt trưa 22/11 (13:19–13:34), 76 file, 2.060 ca. Các con số 75 file và 1.961 ca trong bài là của lần chạy cuối buổi sáng.
+- Lần chạy cuối buổi sáng: 10:58–11:14 22/11, trên cây chính (bản main cuối buổi sáng cho phần máy chủ), 42 tính năng mở, kho 266 bài, 9.458 đoạn, không nạp file khoá: 75 file, 1.961 ca đạt, 0 file hỏng, 4 file bỏ. Bốn file bỏ: đường chat có khoá, bộ sinh câu trả lời OpenAI, lượt thử trực tiếp, kiểm cấu hình có khoá.
 - Tiến qua các lần chạy: 68 file, 1.827 ca, 1 đỏ (tối 21/11) ⇒ 72 file, 1.900 ca (09:23–09:38 22/11) ⇒ 73 / 1.941 ⇒ 74 / 1.951 ⇒ 75 / 1.961, 0 đỏ.
 - Lúc viết bài, thư mục test có 76 file (một file thêm sau lần chạy đủ gần nhất); trong thư mục có 938 hàm test, nhiều hàm chạy thành nhiều ca với các đầu vào khác nhau.
 - Một file test cách bật máy chủ khi thiếu model embedding phải chạy riêng, vì nó đặt một thư mục model rỗng cho tiến trình con.
@@ -178,5 +178,7 @@ Một ca mới đã thấy đỏ trên code cũ, rồi xanh sau khi sửa. Ca ch
 - Test thôi khoá dòng chọn hãng: `report_agent/2026-11-21/b_bedrock_sonnet.md` mục 1 [chép].
 
 - Kết quả lượt kiểm chốt buổi trưa 22/11 (phiên điều phối báo, phiên đo chạy; người viết chép từ tin, chưa tự mở file kết quả) [đã chạy].
+
+- Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Lần chạy đủ mới nhất 14:48–15:03 22/11 (78 file, 2.119 ca đạt, 4 file bỏ, 2 ca hỏng do ca test cũ): `session_prompt/HIEN_TRANG.md` mục 1 gạch "Cả bộ test — lần đủ MỚI NHẤT"; `bai_hoc/VIEC_MOI_XONG.md` mục 42 dòng trạng thái (ghi cả lượt kiểm 14:48–15:05, gồm lần gõ qua trình duyệt) [đã chạy, phiên đo; người viết không chạy lại].
 
 </details>

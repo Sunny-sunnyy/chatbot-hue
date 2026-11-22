@@ -1,6 +1,6 @@
 # Bài 40 — Làm được tới đâu, còn yếu ở đâu, hướng phát triển
 
-*Cập nhật 14:52, ngày 22/11/2026 · mỗi con số chép từ bài gốc của nó (ghi "bài N") hoặc từ sổ việc, trang hiện trạng, cấu hình đọc lúc 14:48 22/11; model của từng phép đo ghi cạnh số; đã sửa theo một lượt đối chiếu độc lập; không có phép đo mới.*
+*Cập nhật 15:43, ngày 22/11/2026 · mỗi con số chép từ bài gốc của nó (ghi "bài N") hoặc từ sổ việc, trang hiện trạng, cấu hình đọc lúc 14:48 22/11; model của từng phép đo ghi cạnh số; đã sửa theo một lượt đối chiếu độc lập; không có phép đo mới.*
 
 **Bài trước đã biết:** hệ thống được làm ra thế nào, ai kiểm ai (bài 39).
 **Bài này thêm:** theo từng mảng: làm được gì, chưa làm được gì, chỗ yếu nào nặng nhất, thứ gì chưa đo, hướng phát triển nào có căn cứ.
@@ -49,7 +49,7 @@ Bảng đặt mỗi chỗ yếu vào đúng nấc của thứ tự lỗi, từ n
 | 5. Từ chối nhầm | kho có mà bước tìm không lấy ra, như câu cởi giày vào chùa (bài 13) | 16 trên 40 câu khó thiếu đoạn đúng trong 10 đoạn (bài 13) |
 | ngoài thứ tự lỗi | **chờ lâu**, chữ tới một lần · khởi động lại máy chủ mất cuộc và lịch, không báo (bài 6) · tab thứ hai xoá cuộc của tab thứ nhất (bài 35) · một hãng model, không dự phòng (bài 6) | khoảng 13 giây ở lượt đứng giữa, một phần ba quá 15 giây (Claude, 49 lượt chạy một mình, 21/11) (bài 34) |
 
-**Tin dài nhiều ý, chiều 22/11.** Ở một tin 4 ý, màn hình "Thử lại" từng hiện 3 trên 6 lần (bài 16). Từ 14:33 có bốn thay đổi ở khâu tìm, mở cùng nhau: bỏ tìm riêng vế cụt; tách câu tìm model gộp hai nơi; cho tìm thêm 3 lần thay vì 2; viết lại một lần khi chữ nộp không có nguồn. Trên chính tin đó, 6 lần: 0 màn hình lỗi, nêu đúng cả hai ý kho có 6 trên 6. Lợi mới đo trên một tin, nên nhóm mở theo cơ chế (đưa đúng đoạn vào), không ghi là "giảm lỗi". Cái giá: tin kiểu này lâu hơn, khoảng 20 lên 25–34 giây.
+**Tin dài nhiều ý, chiều 22/11.** Ở một tin 4 ý, màn hình "Thử lại" từng hiện 3 trên 6 lần (bài 16). Từ 14:47 có bốn thay đổi cho tin dài nhiều ý (ba ở khâu tìm, một là bước viết lại), mở cùng nhau: bỏ tìm riêng vế cụt; tách câu tìm model gộp hai nơi; cho tìm thêm 3 lần thay vì 2; viết lại một lần khi chữ nộp không có nguồn. Trên chính tin đó, 6 lần: 0 màn hình lỗi, nêu đúng cả hai ý kho có 6 trên 6. Lợi mới đo trên một tin, nên nhóm mở theo cơ chế (đưa đúng đoạn vào), không ghi là "giảm lỗi". Cái giá: tin kiểu này lâu hơn, khoảng 20 lên 25–34 giây.
 
 ## Những thứ chưa đo
 
@@ -57,7 +57,7 @@ Bảng đặt mỗi chỗ yếu vào đúng nấc của thứ tự lỗi, từ n
 - **Bộ 176 câu chưa chạy đủ trên model đang chạy:** mới 85 câu đầu và 54 câu so sánh (bài 32).
 - **Bộ câu cất riêng chưa dùng lần cuối;** lệnh đã chuẩn bị, chạy lúc nào và trên model nào là việc chủ dự án quyết.
 - **Mới bốn ca hỏng được thử thật,** mỗi ca một lượt (bài 6).
-- **Các tính năng mở 21–22/11 chưa đo trên gpt-6-luna.** Trên Claude, lượt 12 vai đo lại 22/11 ra 8 trên 12 phiên, 33 trên 38 ý, trong khoảng nhiễu của mốc, chạy trước bốn thay đổi khâu tìm. Thước có một điểm mù: người mô phỏng không thấy dòng báo của lượt sửa lịch; công cụ đã chữa, chưa đo lại.
+- **Các tính năng mở 21–22/11 chưa đo trên gpt-6-luna.** Trên Claude, lượt 12 vai đo lại 22/11 ra 8 trên 12 phiên, 33 trên 38 ý, trong khoảng nhiễu của mốc, chạy trước bốn thay đổi cho tin dài. Thước có một điểm mù: người mô phỏng không thấy dòng báo của lượt sửa lịch; công cụ đã chữa, chưa đo lại.
 - **Nhiều người hỏi cùng lúc** mới đo một lần, ngày 27/10 (bài 6). Điện thoại thật, in bằng tay: chưa ai thử.
 
 ## Hướng phát triển có căn cứ
@@ -67,7 +67,7 @@ Chỉ ghi hướng đã có trong sổ việc, danh sách ý chưa thử hoặc 
 | Hướng | Nhằm chỗ yếu nào | Đếm hay thử rẻ nhất | Đang ở đâu |
 |---|---|---|---|
 | Bổ sung kho: đường Huế – Hội An, quy định chụp ảnh | kho thiếu | gom các lượt "kho thiếu" theo chủ đề, ra mười thứ thiếu nhiều nhất | bài nháp Hội An chờ chủ dự án đọc; quy định chụp ảnh chưa tìm được nguồn công khai nói dứt khoát |
-| Đo bốn thay đổi khâu tìm trên nhiều tin dài | thiếu ý ở tin dài | một lượt nhiều tin dài khác nhau | đã mở 14:33 22/11; mới đo trên một tin |
+| Đo bốn thay đổi cho tin dài trên nhiều tin dài | thiếu ý ở tin dài | một lượt nhiều tin dài khác nhau | đã mở 14:47 22/11; mới đo trên một tin |
 | Chữ chạy dần thật | chờ trắng 10–17 giây | ước, chưa đo: chờ tới chữ đầu từ khoảng 13 xuống khoảng 6 giây | cần một quyền ở tài khoản AWS; chủ dự án gác chuyện AWS tới khi tự xem lại |
 | Chạy riêng bước tìm cho câu bị từ chối mà kho có đáp án | từ chối nhầm | câu "cởi giày" trên chỉ mục hiện tại; đếm trên 176 câu | chưa đếm |
 | Mỗi tab một mã cuộc trò chuyện | tab thứ hai xoá cuộc của tab thứ nhất | đã xác nhận thật một lần | chưa làm |
@@ -104,7 +104,7 @@ Chủ dự án hỏi về bước này sáng 22/11. Nó là một lần gọi mo
 
 ### 4. Vì sao hai bản chữa đứng riêng thì không mở, mà một bản được mở khi ghép với khâu tìm?
 
-- **Đã chọn:** bản chữa tin hỏi hai ý viết tắt kiểu "vé bn, có giảm ko" để tắt. Bản "viết lại một lần khi không có nguồn" mở từ 14:33 22/11, chỉ cùng ba thay đổi ở khâu tìm.
+- **Đã chọn:** bản chữa tin hỏi hai ý viết tắt kiểu "vé bn, có giảm ko" để tắt. Bản "viết lại một lần khi không có nguồn" mở từ 14:47 22/11, chỉ cùng ba thay đổi ở khâu tìm.
 - **Vì sao:** bản viết tắt: 16 tin, mỗi bên đủ hai ý 10 trên 10, mở lên chỉ thêm 2 dòng "chưa có" sai. Bản viết lại đứng riêng: màn hình lỗi 3 trên 6 xuống 0, nhưng 4 trên 5 câu viết lại ghi "chưa có" cho hai ý kho có; thiếu ý nặng hơn một lần "Thử lại". Ghép với khâu tìm thì nêu đúng cả hai ý 6 trên 6.
 - **Cách khác:** mở bản viết lại đứng riêng: đã đo, bỏ.
 - **Cái giá:** tin dài lâu hơn; lợi mới đo trên một tin.
@@ -164,10 +164,10 @@ Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đ
 
 - **Tính năng đang mở / tắt:** 45 mở, 3 tắt (đếm 14:52 22/11 bằng lệnh của phụ lục B; phụ lục B đếm 13:20 ra 42, trước khi ba tính năng khâu tìm được mở). Ba cái tắt: xếp lịch từ câu gõ tự do (đo không đạt), dòng "hôm nay là ngày…" (vô ích), sổ vết từng lượt (chỉ dùng ở máy phát triển).
 - **Kho:** 266 bài, 9.458 đoạn (bài 7).
-- **Bộ test:** lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca đạt (bài 38, Chi tiết để tra). Sau khi bốn thay đổi khâu tìm được gộp, cả bộ test chưa chạy lại lúc viết.
+- **Bộ test:** lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca đạt (bài 38, Chi tiết để tra). Sau khi bốn thay đổi được mở, cả bộ test chạy lại 14:48–15:03 22/11: 78 file, 2.119 ca đạt, 2 ca hỏng — đều là ca test cũ so nguyên một bảng nay có thêm tên nhà cung cấp model của trang Giới thiệu, không phải sản phẩm sai (bài 38).
 - **Thời gian chờ:** 13 giây là 49 lượt hỏi đáp của người dùng mô phỏng trưa 21/11, tin dài hơn và còn mục web; 6,9 giây là 41 tin phần lớn ngắn ở lượt kiểm chốt trưa 22/11, lúc máy rảnh; 95 % dưới 13,1 giây (bài 34).
 - **Phân loại 19 lần trượt:** 12 kho thiếu (đi Hội An, quy định chụp ảnh, sự kiện có ngày, điểm ít leo bậc; hai chủ đề sau nay đã có bài hoặc công cụ), 4 sửa lịch (đã sửa), 2 model không ghép hai dữ kiện có sẵn, 1 tìm không ra; một phiên đếm chiều 22/11, khâu tìm chạy lại trên chỉ mục hôm đó. Lượt đo lại: 5 ý trượt — kho thiếu 2, model không ghép 1, hai ý sửa lịch thước không đọc được, tìm không ra 0.
-- **Lượt đo bốn thay đổi khâu tìm:** một tin 4 ý, 6 lần mỗi bên; màn hình lỗi bản cũ 5 · lọc và tách 3 · thêm viết lại 0 · thêm lần tìm thứ ba 0; nêu đúng cả hai ý 0 · 1 · 1 · 6 trên 6.
+- **Lượt đo bốn thay đổi cho tin dài:** một tin 4 ý, 6 lần mỗi bên; màn hình lỗi bản cũ 5 · lọc và tách 3 · thêm viết lại 0 · thêm lần tìm thứ ba 0; nêu đúng cả hai ý 0 · 1 · 1 · 6 trên 6.
 - **Câu bị rút lại sau khi đã hiện:** 3 trên 48 và 4 trên 53 lượt ở một lần đo ngày 21/11 (bài 16).
 - **Ảnh có chữ ra lệnh:** 1 trên 3 ảnh lừa được model (05/11), hậu quả bị chặn (bài 37).
 - **Dời một điểm trong lịch:** làm được 24 trên 176 lần thử; hướng "nới luật xếp" có trong danh sách ý chưa thử, chưa đếm.
@@ -187,7 +187,7 @@ Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đ
 - Nấc 3: nhận xét của một phiên `session_prompt/Y_CHUA_THU.md` ý 3 [chưa đếm]; câu Hội An 20 / 20 bị chặn ở bước xếp loại: `data/thu_bedrock_2026-11-21/do/demo/KET_QUA_DEMO.md` [riêng tư; đã chạy 21/11].
 - Dòng "chưa có" sai khoảng 13 %: `Y_CHUA_THU.md` ý 44; `data/review_khac_hang/2026-11-22_moc_sang/c_dem/KET_QUA_DEM.md` [riêng tư; một phiên đọc tay].
 - 12 / 19 và phân loại: `HIEN_TRANG.md` mục 3 G-4, `Y_CHUA_THU.md` ý 33, `VIEC_DANG_MO.md` hàng X9; file đếm `KET_QUA_DEM.md` [riêng tư; một phiên, chưa ai tính lại]. Lượt đo lại 12 vai (8 / 12, 33 / 38 ý, 5 ý trượt, điểm mù dòng báo sửa lịch): `VIEC_DANG_MO.md` hàng X3 (14:13 22/11) và `bai_hoc/VIEC_MOI_XONG.md` mục 43 [phiên đo, một lượt; người chấm là agent con].
-- Bốn thay đổi khâu tìm (mở 14:33; số của lượt ba bên và lượt nối; "mở theo cơ chế, không ghi là giảm lỗi"; 20 ⇒ 25–34 giây): `backend/config/settings.yaml` (`tim_ve_bo_cut`, `tach_cau_tim_model`, `het_luot_viet_lai`, `so_lan_tim_kho` 2 ⇒ 3) [code, đọc 14:48]; `VIEC_DANG_MO.md` hàng X7 (14:29); `bai_hoc/VIEC_MOI_XONG.md` mục 42 [người thứ hai kiểm theo nhãn mục đó; phần ghép bốn thứ và cả bộ test sau gộp: chưa kiểm].
+- Bốn thay đổi khâu tìm (mở cho người dùng 14:47 theo `guides/RUNBOOK_BAN_GIAO.md` mục 0 và `bai_hoc/VIEC_MOI_XONG.md` mục 42; chú thích cấu hình ghi 14:33 — giờ nhánh đạt tiêu chí; số của lượt ba bên và lượt nối; "mở theo cơ chế, không ghi là giảm lỗi"; 20 ⇒ 25–34 giây): `backend/config/settings.yaml` (`tim_ve_bo_cut`, `tach_cau_tim_model`, `het_luot_viet_lai`, `so_lan_tim_kho` 2 ⇒ 3) [code, đọc 14:48]; `VIEC_DANG_MO.md` hàng X7 (14:29); `bai_hoc/VIEC_MOI_XONG.md` mục 42 [người thứ hai kiểm theo nhãn mục đó; phần ghép bốn thứ và cả bộ test sau gộp: chưa kiểm].
 - Chưa đo: bài 17 (0,4); bài 32 dòng 208 (85 + 54); `HIEN_TRANG.md` mục 3 G-1, `VIEC_DANG_MO.md` hàng X4 (bộ kín); bài 6 (bốn ca, 27/10); `VIEC_DANG_MO.md` hàng X2 (điện thoại thật, in tay) [tài liệu].
 - Hướng: bổ sung kho `HIEN_TRANG.md` mục 3, `Y_CHUA_THU.md` ý 15; vế cụt 327 / 1.240, 236 tin, 28 đoạn, 8 dữ kiện: `KET_QUA_DEM.md` mục 4 [riêng tư] và `VIEC_DANG_MO.md` hàng X9; chữ chạy dần: `Y_CHUA_THU.md` ý 13, `HIEN_TRANG.md` mục 3 (0 (a), 1); câu cởi giày: `Y_CHUA_THU.md` ý 36; mỗi tab một mã cuộc: `VIEC_DANG_MO.md` hàng X2; đo bù gpt-6-luna: `HIEN_TRANG.md` mục 4 gạch 21:50 21/11; lên lịch từ câu gõ: `Y_CHUA_THU.md` ý 6; dời một điểm: ý 4.
 - Đưa lên mạng: lời chủ dự án 08:55 22/11 (`HIEN_TRANG.md` mục 3 gạch 1, nguyên văn); thứ tự đóng 19/11, "không bắt buộc, là điểm cộng" 21/11: `HIEN_TRANG.md` mục 2 bước 8, mục 4 [lời chủ dự án]. Chốt đang tắt: bài 37; gói Docker cũ: bài 36.
@@ -195,5 +195,7 @@ Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đ
 - Bộ test 2.060 ca: bài 38 "Chi tiết để tra"; `HIEN_TRANG.md` dòng 20 [máy kiểm, phiên đo].
 - Số khác ở "Chi tiết để tra": bài 16 (3 / 48, 4 / 53), bài 37 (1 / 3 ảnh), bài 34 (72 %, 0,3 giây, dòng 29 "49 lượt … chạy một mình").
 - Bài đã qua một lượt đối chiếu độc lập (14:43 22/11/2026): `data/hoc_cung_D/kiem/bai_39_41.md` [riêng tư]; các dòng đã áp và không áp ghi ở báo cáo của người viết.
+
+- Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó: giờ mở thống nhất 14:47 (ghi chú 14:33 chỉ ở khối Nguồn); "bốn thay đổi ở khâu tìm" ⇒ "bốn thay đổi cho tin dài nhiều ý (ba ở khâu tìm, một là bước viết lại)"; bộ test chạy lại 14:48–15:03: `session_prompt/HIEN_TRANG.md` mục 1 gạch "Cả bộ test" và `bai_hoc/VIEC_MOI_XONG.md` mục 42 dòng trạng thái [đã chạy, phiên đo; người viết không chạy lại].
 
 </details>

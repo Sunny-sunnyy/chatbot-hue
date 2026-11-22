@@ -1,6 +1,6 @@
 # Bài 5 — Người dùng thấy gì: các trang của ứng dụng
 
-*Cập nhật 15:15, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
+*Cập nhật 15:42, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
 
 **Bài trước đã biết:** sản phẩm làm ba loại việc: hỏi đáp có nguồn, việc cần tính, và lên kế hoạch.
 **Bài này thêm:** ba loại việc đó nằm ở đâu trên màn hình. Đi một vòng qua các trang, rồi nhìn một lượt hỏi và một lượt lập lịch diễn ra thế nào trước mắt người dùng. Cuối nửa đầu là hai mục mới: vì sao giao diện được làm như vậy, và khi có thứ hỏng thì người dùng thấy gì.
@@ -196,6 +196,7 @@ Sáu dòng của ô chat ở nửa để hiểu, cộng các dòng dưới. Tấ
 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa |
 |---|---|---|---|
+| tin dài nhiều ý, model đã tự tìm (thường là đã hết lượt) mà chữ nộp không có số nguồn nào | máy chủ cho model viết lại một lần, không công cụ, từ các đoạn đã gom (bài 21) | khoảng 14 giây đầu chỉ có dòng tiến độ; rồi có thể hiện một đoạn chữ ngắn chưa phải câu trả lời ("cần tìm thêm về…") khoảng 15–17 giây, rồi được thay bằng câu trả lời thật (hoặc câu từ chối) | có từ 14:47 22/11; suy từ chương trình và sổ máy chủ, chưa chụp màn hình; giấu đoạn chữ đó là việc chưa làm |
 | lúc tải trang không hỏi được máy chủ "tính năng nào đang mở" | coi các tính năng đó là đang tắt | không có mục Bản đồ, Lên kế hoạch; không có nút gửi ảnh; không có ô thời tiết ở Trang chủ | đã có |
 | không tải được danh sách bài | báo ngay tại trang Khám phá | "Chưa tải được danh sách bài — thử tải lại trang." | đã có |
 | không lấy được số thời tiết cho Trang chủ | ẩn ô thời tiết | không có ô thời tiết; không bao giờ hiện số cũ | đã có |
@@ -249,5 +250,7 @@ Nút "Thử lại" khi không nối được máy chủ gửi lại đúng câu 
 - Phần "Huế qua các thời kỳ" (sáu mốc, chữ viết lại từ bài trong kho, nằm trong trang Giới thiệu; chủ dự án chọn làm ngày 14/11): `frontend/src/HueQuaCacThoiKy.jsx` (chú thích đầu file), `frontend/src/GioiThieu.jsx` [code].
 
 - Dòng chạy lại sau câu trả lời được nhớ đổi nhãn "đọc từ chương trình" ⇒ "đã đo 22/11" (sửa chỗ lệch với bài 16): `report_agent/2026-11-22/b_nho_dap_chay_lai.md` dòng 32 (0 / 5, trước 3 / 7, chạy lại thật 2 / 5) và dòng 36 (đã nhìn trên trình duyệt: dòng tiến độ lặp một nhịp, chậm khoảng 5 giây); `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 ("KHÔNG có chữ nào hiện rồi mất", lý do đọc code giao diện) [đã chạy, phiên đo; người thứ hai kiểm; người viết không chạy lại]. Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml`.
+
+- Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó thêm dòng viết lại một lần vào bảng đủ: `bai_hoc/VIEC_MOI_XONG.md` mục 42, đính chính 15:14 ("khoảng 14 giây đầu chỉ có một dòng trạng thái; rồi có thể hiện một đoạn chữ ngắn CHƯA phải câu trả lời… khoảng 15–17 giây"); `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Lưới viết lại" [suy từ chương trình và sổ máy chủ, chưa chụp màn hình].
 
 </details>

@@ -1,6 +1,6 @@
 # Bài 3 — Trợ lý và công cụ: model chỉ "xin", chương trình mới là thứ chạy
 
-*Cập nhật 15:18, ngày 22/11/2026 · phần giải thích chung là kiến thức phổ thông; ví dụ là một lượt hỏi thật ngày 20/11 (gpt-6-luna); danh sách công cụ đọc từ chương trình đang chạy sáng 22/11; các trần đọc từ cấu hình sau 14:47 22/11; người viết không chạy lại.*
+*Cập nhật 15:43, ngày 22/11/2026 · phần giải thích chung là kiến thức phổ thông; ví dụ là một lượt hỏi thật ngày 20/11 (gpt-6-luna); danh sách công cụ đọc từ chương trình đang chạy sáng 22/11; các trần đọc từ cấu hình sau 14:47 22/11; người viết không chạy lại.*
 
 **Bài trước đã biết:** RAG cho model đọc tài liệu của kho trước khi viết, và model không tự tính toán đáng tin được.
 **Bài này thêm:** có những câu hỏi mà đọc tài liệu không trả lời được. Bài này giảng cách cho model "nhờ" chương trình làm việc, và hai chữ hay bị dùng lẫn: luồng cố định và trợ lý.
@@ -93,7 +93,7 @@ Công cụ tìm kho và công cụ liệt kê bài có ở mọi lượt hỏi �
 
 ### 1. Vì sao chỉ mở cho model quyết ở một chỗ, mà không làm một trợ lý tự do quyết mọi bước?
 
-- **Đã chọn:** chương trình quyết thứ tự các bước. Model chỉ được quyết "viết luôn, hay xin thêm một công cụ": nó được tự tìm thêm nhiều nhất ba lần, và cả lượt có nhiều nhất năm lần gọi model (thêm một lần cho mỗi công cụ ngày, khoảng cách, gần một điểm, liệt kê bài). Hai trần này từ 14:47 ngày 22/11; trước đó là hai lần và bốn lần gọi.
+- **Đã chọn:** chương trình quyết thứ tự các bước. Model chỉ được quyết "viết luôn, hay xin thêm một công cụ": nó được tự tìm thêm nhiều nhất ba lần, và các vòng của trợ lý có nhiều nhất năm lần gọi model (thêm một vòng cho mỗi công cụ ngày, khoảng cách, gần một điểm, liệt kê bài); ngoài ra có lần xếp loại câu và, khi cần, một lần viết lại (bài 21). Hai trần này từ 14:47 ngày 22/11; trước đó là hai lần và bốn vòng.
 - **Vì sao:** đã đo. Mở cho model tự tìm thêm tối đa hai lần thì thắng rõ: ở câu cần nhiều nguồn, điểm đủ ý tăng 1,17; từ chối nhầm giảm từ 12 xuống 4 tới 6 trên 158 câu. Nới riêng số lần thì không hơn (đo 21/11): 8 vòng và 4 lần tìm cho 28 so với 28 trên 29; 3 lần tìm cho 15 so với 15 trên 18. Trần 3 chỉ có ích khi đi cùng việc tách câu tìm gộp của model (22/11, một tin 4 ý: đủ hai ý kho có 1 ⇒ 6 trên 6), nên mở cùng nhau (bài 21, 23).
 - **Cách khác:** một trợ lý tự quyết toàn bộ các bước: chưa thử.
 - **Cái giá:** câu cần nhiều bước hơn mức trần thì không được trả lời trọn.
@@ -205,5 +205,7 @@ Công cụ trả về "chưa lấy được", không kèm con số nào. Câu tr
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`so_lan_tim_kho: 3`, `so_vong_cong_cu: 5`, `het_luot_viet_lai: true`) [code; số đo: đã chạy, phiên đo; người viết không chạy lại]. Bước viết lại: `backend/llm/assistant.py` `_viet_lai_het_luot` [code].
 
 - "0 trên 12" sửa thành "0 tới 1 trên 12" cho khớp bài 13, 23: `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` dòng 76 (hàng 34: "chỉ thêm 0–1 / 12 câu đủ từ khoá (cần ít nhất 3)") [chép, mở 15:18 22/11/2026].
+
+- Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó: "năm lần gọi model" là trần VÒNG của trợ lý, không phải số lần gọi của cả lượt (còn lần xếp loại câu, lần viết mục web, lần viết lại): `backend/llm/generator_openai_full_corpus.py` `max_turns_for`; `backend/llm/assistant.py` `_viet_lai_het_luot` [code].
 
 </details>

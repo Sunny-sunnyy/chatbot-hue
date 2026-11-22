@@ -1,6 +1,6 @@
 # Bài 2 — RAG là gì: cho model đọc tài liệu trước khi trả lời
 
-*Cập nhật 14:17, ngày 22/11/2026 · ví dụ là ba lượt hỏi thật lấy từ sổ ghi từng lượt của hệ thống (ngày 20 và 21/11); số của kho đếm lại theo bản ghi hiện trạng lúc 13:33 22/11 (266 bài, 9.458 đoạn); người viết không chạy lại.*
+*Cập nhật 15:43, ngày 22/11/2026 · ví dụ là ba lượt hỏi thật lấy từ sổ ghi từng lượt của hệ thống (ngày 20 và 21/11); số của kho đếm lại theo bản ghi hiện trạng lúc 13:33 22/11 (266 bài, 9.458 đoạn); người viết không chạy lại.*
 
 **Bài trước đã biết:** model ngôn ngữ viết ra chữ tiếp theo có khả năng cao nhất. Nó viết trôi chảy cả khi không biết, và không tự nói được nó lấy thông tin từ đâu.
 **Bài này thêm:** cách hue_rag xử lý chuyện đó. Cách này có tên là RAG, và nó là tên của chính đề tài. Bài này cũng nói vì sao chọn cách này thay cho các cách khác.
@@ -47,7 +47,7 @@ flowchart LR
   E --> F["Câu trả lời<br/>+ danh sách nguồn"]
 ```
 
-**Bước 1, tìm.** Chương trình chọn ra 10 đoạn hợp câu hỏi nhất trong 9.458 đoạn của kho. Ở lượt này 10 đoạn đó nằm trong 3 bài: hai bài về vé và một bài về nghệ thuật biểu diễn. Bước này không gọi model viết (nó chỉ dùng một model nhỏ chạy ngay trên máy, bài 10) và mất khoảng 40 mili giây. Số đoạn nói chung: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 2 lần; tin nhiều ý được nối thêm 2 đoạn mỗi ý (bài 21, 23).
+**Bước 1, tìm.** Chương trình chọn ra 10 đoạn hợp câu hỏi nhất trong 9.458 đoạn của kho. Ở lượt này 10 đoạn đó nằm trong 3 bài: hai bài về vé và một bài về nghệ thuật biểu diễn. Bước này không gọi model viết (nó chỉ dùng một model nhỏ chạy ngay trên máy, bài 10) và mất khoảng 40 mili giây. Số đoạn nói chung: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần (trước 14:47 ngày 22/11 là 2); tin nhiều ý được nối thêm 2 đoạn mỗi ý (bài 21, 23).
 
 **Bước 2, đưa cho model đọc.** Chương trình ghép một lời gọi gồm ba phần: lời dặn (trong đó có câu "chỉ dùng các phần Bằng chứng trong ngữ cảnh"; "Bằng chứng" là nhãn đặt trước chữ của mỗi đoạn; và câu "Đặt citation [n] ngay sau mỗi nhận định được nguồn [n] hỗ trợ"), câu hỏi, và 10 đoạn, mỗi đoạn được đánh số từ 1 tới 10 kèm tên bài và tên mục của nó.
 
@@ -199,5 +199,7 @@ Thường ở bước tìm: đoạn có đáp án không nằm trong các đoạ
 - Tỷ giá quy đổi 1 USD ≈ 25.000 đồng: quy ước của bộ bài học.
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm" (thêm 13:37 22/11/2026 theo khuôn mới; gom từ mục "Vì sao không làm cách khác" cũ và các nguồn trên). Câu chuẩn về số đoạn: `backend/config/settings.yaml` (`tim_theo_ve`), `backend/llm/assistant.py` (`MODEL_SEARCH_LIMIT = 2`, `SO_DOAN_MOI_VE = 2`) [code]. 10 thay vì 5 (đủ ý +0,26; 13 ⇒ 7 trên 88 câu; tiền tăng khoảng một nửa; 15 đoạn không khác): bài 13 mục "Đã so" [chép]; chủ dự án giữ 10 ngày 01/11: `session_prompt/Project_Status.md` dòng "B0 01/11 … User giữ 10" [quyết định đã ghi]. Tên đề tài chốt 01/11: cùng file, dòng 2026-11-01 [quyết định đã ghi]. Câu từ chối được so đúng từng chữ, miễn kiểm số nguồn và là điều kiện mở bước tra web: `backend/llm/citations.py` (`select_cited_sources`), `backend/llm/assistant.py` (`web_gate_open`) [code]; lý do chọn một câu cố định: dòng Nguồn cuối. 225 giây / 40 mili giây: các nguồn trên. Chữ hiện trước, kiểm sau; lời báo rút lại: bài 6 quyết định 4 [chép]. Dòng "có thể đã thay đổi": `backend/llm/full_corpus_prompt.py` (`MAY_HAVE_CHANGED_NOTICE`), áp cho nguồn vé theo `NOTICE_SOURCE_PREFIXES` ở `backend/llm/assistant.py` [code]. Lời báo lập chỉ mục lại: `backend/api/app.py` [code].
 - Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư]. Lý do giữ một câu từ chối cố định ("sàn closed-world, bộ chấm dựa vào nó"): chú thích đầu `frontend/src/moDauWeb.js` [code]; bước kiểm số nguồn có từ bản sinh câu trả lời đầu tiên: `docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md` mục 11 [tài liệu]; 10 đoạn đưa vào hệ thống 28/10: `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng 10.
+
+- Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Câu chuẩn "tối đa 3 lần" theo `backend/config/settings.yaml` `so_lan_tim_kho: 3` [code]; bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42.
 
 </details>

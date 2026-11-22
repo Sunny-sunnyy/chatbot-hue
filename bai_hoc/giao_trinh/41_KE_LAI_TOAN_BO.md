@@ -1,6 +1,6 @@
 # Bài 41 — Kể lại toàn bộ trong một phút, trong năm phút, và kịch bản chạy thử
 
-*Cập nhật 15:21, ngày 22/11/2026 · mọi con số chép từ bài gốc của nó, ghi "bài N" ngay cạnh, hoặc từ cấu hình và sổ việc lúc 14:48 22/11; kịch bản chạy thử lấy từ kịch bản 10 bước nhóm đã chạy lặp ngày 21–22/11 và từ lượt kiểm chốt trưa 22/11 (Claude Sonnet 5.5); đã sửa theo một lượt đối chiếu độc lập; người viết không chạy lại lượt nào.*
+*Cập nhật 15:43, ngày 22/11/2026 · mọi con số chép từ bài gốc của nó, ghi "bài N" ngay cạnh, hoặc từ cấu hình và sổ việc lúc 14:48 22/11; kịch bản chạy thử lấy từ kịch bản 10 bước nhóm đã chạy lặp ngày 21–22/11 và từ lượt kiểm chốt trưa 22/11 (Claude Sonnet 5.5); đã sửa theo một lượt đối chiếu độc lập; người viết không chạy lại lượt nào.*
 
 **Bài trước đã biết:** hệ thống làm được tới đâu, còn yếu ở đâu (bài 40).
 **Bài này thêm:** bốn thứ để dùng ngay: một bản kể một phút, một bản kể năm phút, một kịch bản chạy thử từng bước, và mười câu hỏi hay gặp kèm câu trả lời ngắn.
@@ -71,7 +71,7 @@ Các bước 2–4, 6–8, 12–15 là kịch bản 10 bước nhóm đã chạy
 | lệnh bật in "CHƯA BẬT ĐƯỢC — …" | thiếu một điều kiện (Docker, file khoá, chỉ mục); hệ thống kiểm đủ điều kiện trước khi nhận câu hỏi (bài 36) | làm đúng điều dòng đó nói, rồi chạy lại lệnh |
 | mọi câu ra "Không thể tạo câu trả lời vào lúc này." **(đã thử: máy chủ bật lúc thiếu đường tới file khoá)** | model viết không gọi được. Máy chủ không tự gọi lại, không có model dự phòng (bài 6) | thiếu đường tới file khoá lúc bật: bấm "Thử lại" không hết; tắt máy chủ (Ctrl+C) rồi chạy lại lệnh bật, lệnh này chặn ca đó trước khi bật. Khoá hết hạn: thay file khoá rồi bấm "Thử lại" (đọc từ chương trình, chưa thử). Hãng lỗi: chờ rồi bấm "Thử lại" |
 | "Hệ thống tra cứu tạm thời không khả dụng." **(đã thử)** | Qdrant ngừng; khối chính hỏng thì dừng và nói thật (bài 6) | bật lại Qdrant; hỏi được ngay (2,9 giây ở lượt thử). Nếu Qdrant tắt từ lúc bật máy chủ thì phải khởi động lại máy chủ (bài 6) |
-| "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" | chữ hiện trước, kiểm sau; số nguồn sai thì cả câu bị rút (bài 16). Từng hay gặp ở tin dài 4–5 ý; chiều 22/11 có bốn thay đổi ở khâu tìm cho loại tin này (bài 40) | bấm "Thử lại" |
+| "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" | chữ hiện trước, kiểm sau; số nguồn sai thì cả câu bị rút (bài 16). Từng hay gặp ở tin dài 4–5 ý; từ 14:47 ngày 22/11 có bốn thay đổi cho loại tin này: ba ở khâu tìm, một là bước viết lại (bài 21, 23, 40) | bấm "Thử lại" |
 | thẻ lịch còn, nhưng lệnh sửa lịch bị trả lời như câu hỏi thường **(đã thử)** | máy chủ đã khởi động lại giữa cuộc; lịch chỉ nằm trong bộ nhớ của máy chủ, chưa có cách giữ qua lần khởi động (bài 6) | tải lại trang, lập lịch lại |
 | cuộc trò chuyện và lịch ở tab thứ nhất biến mất, không báo (phiên điều phối báo trưa 22/11) | hai tab của cùng trình duyệt dùng chung một mã cuộc trò chuyện, nên cuộc mới của tab sau thay luôn cuộc của tab trước; cách sửa là mỗi tab một mã cuộc, chưa làm (bài 35) | đóng tab thừa, làm lại trong một tab |
 
@@ -94,7 +94,7 @@ Các bước 2–4, 6–8, 12–15 là kịch bản 10 bước nhóm đã chạy
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
 - **Mọi con số của phần 1, 2, 4** chép từ "Ý chính", "Quyết định và lý do" hoặc "Chi tiết để tra" của bài ghi cạnh số; bảng đối chiếu từng số ở báo cáo của người viết (`data/hoc_cung_D/viet/viet_39_41.md` [riêng tư]). Ví dụ chính (3,7 giây, model viết 3,6 giây, tìm 0,04 giây): bài 6. Ví dụ "kho không có": bài 16 và mục lục giáo trình. Ví dụ lập lịch 3 ngày, 11 điểm, 0,2 / 9,3 giây: bài 27 "Chi tiết để tra" và mục lục giáo trình. 9 / 10 chuỗi sửa lịch đo 14–19/11, trước khi đổi sang Claude: bài 31 mục "Đã so".
-- Trần tìm thêm 3 lần từ 14:33 22/11 (trước là 2): `backend/config/settings.yaml` dòng `so_lan_tim_kho` (chú thích "2 ⇒ 3 lúc 14:33 22/11/2026") và `so_vong_cong_cu` (4 ⇒ 5) [code, đọc 14:48 22/11]. Bài 21 còn viết theo con số cũ.
+- Trần tìm thêm 3 lần từ 14:47 22/11 (giờ mở cho người dùng; chú thích cấu hình ghi 14:33 — giờ nhánh đạt tiêu chí; trước là 2): `backend/config/settings.yaml` dòng `so_lan_tim_kho` (chú thích "2 ⇒ 3 lúc 14:33 22/11/2026") và `so_vong_cong_cu` (4 ⇒ 5) [code, đọc 14:48 22/11].
 - 12 vai đo lại 22/11: 8 / 12, trong khoảng nhiễu: `session_prompt/VIEC_DANG_MO.md` hàng X3 (14:13 22/11) [phiên đo, một lượt]. 13 giây (49 lượt chạy một mình, tin dài hơn) và 6,9 giây (41 tin phần lớn ngắn, máy rảnh): bài 34 dòng 29 và "Chi tiết để tra".
 - **Kịch bản 10 bước** (câu gõ của bước 2, 3, 4, 6, 7, 8, 13, 14; nút ví dụ ở bước 12; tải PowerPoint ở bước 15): `data/thu_bedrock_2026-11-21/do/demo/chay_demo.py` danh sách `BUOC` [riêng tư; code đo đã chạy, người viết chỉ đọc]. Câu ở bước 14 chép đúng câu của kịch bản. Kịch bản chạy trong tiến trình qua đường gửi dần như trình duyệt, tắt bộ nhớ câu trả lời, mở cuộc mới khi chuyển sang phần lịch (dòng 140, 158–159) — vì vậy bước 11 là bắt buộc. 0 / 10 lần hỏng, ba lần chạy lại 0 bước hỏng, 1 / 10 link trang Chỗ ở: bài 32 dòng 14, 189.
 - Ở các lượt chạy lặp, điểm đầu tiên của ngày 2 là lăng Tự Đức (`do/demo/KET_QUA_DEMO.md`) [riêng tư]; bài để dạng "<tên điểm…>" vì lịch có thể khác. Giá vé lăng Tự Đức trong kho: dò bằng `scripts/grep_kb.sh 'Tự Đức'` ngày 22/11 [đã chạy].
@@ -107,5 +107,7 @@ Các bước 2–4, 6–8, 12–15 là kịch bản 10 bước nhóm đã chạy
 - FAQ 2: cách mốc 11/09, các lần so cuối tháng 10: bài 11 quyết định 1; 10 đoạn: bài 13 quyết định 4. FAQ 6 ngoại lệ: bài 20 quyết định 4. FAQ 7: bài 33 "Ý chính" và "Giới hạn đã biết".
 - Lệnh bật nằm trong thân bài vì đây là thứ người chạy thử phải gõ; các bài khác chỉ ghi nó ở khối Nguồn (bài 36).
 - Bài đã qua một lượt đối chiếu độc lập (14:43 22/11/2026): `data/hoc_cung_D/kiem/bai_39_41.md` [riêng tư]; các dòng đã áp và không áp ghi ở báo cáo của người viết.
+
+- Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó: giờ 14:47 thống nhất; bỏ câu "Bài 21 còn viết theo con số cũ" (bài 21 đã sửa theo trần 3 / 5).
 
 </details>
