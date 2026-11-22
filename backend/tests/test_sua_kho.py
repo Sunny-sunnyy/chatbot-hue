@@ -178,3 +178,15 @@ def test_con_so_trong_tieu_de_muc_duoc_liet_ke_va_khong_tu_sua():
     import asyncio
     asyncio.run(sua_kho.phan_doan(model, "vé Thành Mẫu", 200_000, cac_lan, None, 5))
     assert [x.phan_doan for x in cac_lan] == ["khong_ro", "dung"] and model.da_nhan[0].count("⟦") == 1
+
+
+def test_duyet_dung_khi_bai_dang_co_thay_doi_chua_luu_ban_ghi_git(repo, monkeypatch, capsys):
+    """Soát khác hãng 22/11 (điểm 1): bài đã có một sửa đổi CHƯA lưu bản ghi git từ TRƯỚC lúc lập đề xuất ⇒ mã băm vẫn khớp, lệnh duyệt áp giá rồi
+    `git commit -- <bài>` lưu CẢ sửa đổi đó — thứ người duyệt chưa hề đọc. Nay: dừng trước khi áp; chế độ thử (không lưu bản ghi) không bị chặn."""
+    bai = repo / "knowledge-base-hue" / "travel" / "tickets" / "Vé tham quan.md"
+    bai.write_text(VE.replace("Vườn Đông | 150.000", "Vườn Đông | 999.000"), encoding="utf-8")  # sửa dở, chưa commit, có từ trước lúc đề xuất
+    _, ra, _ = de_xuat(repo, monkeypatch)
+    assert duyet_sua_kho.main([str(ra), "--goc", str(repo)]) == 2
+    assert "200.000 | 40.000" in bai.read_text(encoding="utf-8")       # chưa áp gì
+    assert git(repo, "log", "--oneline").count("\n") == 1              # không có bản ghi git mới
+    assert "chưa lưu bản ghi git" in capsys.readouterr().err
