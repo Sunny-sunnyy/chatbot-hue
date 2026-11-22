@@ -1,13 +1,13 @@
-# Bài 7 — Kho dữ liệu: 266 bài viết về Huế, ai soạn, lấy từ đâu, kiểm thế nào
+# Bài 7 — Kho dữ liệu: 267 bài viết về Huế, ai soạn, lấy từ đâu, kiểm thế nào
 
-*Cập nhật 14:17, ngày 22/11/2026 · số bài đếm từ bản ghi chỉ mục sáng 22/11, khớp bản ghi hiện trạng lúc 13:33; các số đo lấy từ báo cáo của những lần sửa và bổ sung kho từ 25/10 tới 22/11; người viết không chạy lại phép đo nào.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống tối 22/11: kho 267 bài (thêm bài đường đi Hội An, sửa một dòng tự mâu thuẫn về Hải Vân Quan) · số bài đếm từ bản ghi chỉ mục; các số đo lấy từ báo cáo của những lần sửa và bổ sung kho từ 25/10 tới 22/11; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** hệ thống gồm những khối nào, và một câu hỏi đi qua chúng ra sao. Mọi câu trả lời chỉ được lấy từ kho.
 **Bài này thêm:** mở chính kho ra xem. Trong đó có gì, bài được viết theo luật nào, kho được giữ đúng bằng cách nào, và vì sao làm như vậy.
 
 ## Ý chính
 
-- Kho là **266 bài viết tiếng Việt**, mỗi bài một file chữ có tiêu đề và các mục, chia theo 5 chủ đề: món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch.
+- Kho là **267 bài viết tiếng Việt**, mỗi bài một file chữ có tiêu đề và các mục, chia theo 5 chủ đề: món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch.
 - Bài được **soạn riêng cho hệ thống**, theo mẫu, từ các nguồn công khai; phần lớn bài ghi nguồn ở cuối bài. Câu trả lời từ kho không đọc trang web; chỉ khi kho từ chối, hệ thống mới tra web một lần và để riêng.
 - Bài phải viết sao cho **từng câu đọc riêng vẫn hiểu**, vì model viết chỉ đọc vài đoạn nhỏ, không đọc cả bài.
 - Mỗi lần thêm bài mới hoặc sửa nhiều là một lần **đo trước và sau** trên cùng bộ câu hỏi, với điều kiện ghi sẵn: câu đang trả lời tốt không được tệ đi. Sửa nhỏ thì hỏi thử các câu chạm chỗ sửa. Khi một giá đổi, có lệnh **đề xuất sửa**: chương trình tìm chỗ và thay số, model chỉ phán chỗ nào đúng là mức giá đó, người duyệt.
@@ -17,12 +17,12 @@
 
 | Tên trong bài | Tên gốc | Nghĩa |
 |---|---|---|
-| kho | **knowledge base**, **corpus** | tập 266 bài viết; thứ duy nhất phần hỏi đáp được trả lời từ đó |
+| kho | **knowledge base**, **corpus** | tập 267 bài viết; thứ duy nhất phần hỏi đáp được trả lời từ đó |
 | file Markdown | **Markdown** | file chữ thường, tiêu đề đánh dấu bằng `#`, bảng và danh sách viết bằng ký hiệu đơn giản |
 | mẫu bài | **template** | khung các mục mà mọi bài cùng chủ đề phải theo |
 | trả lời trong phạm vi kho | **closed-world**, **grounded answering** | chỉ nói điều kho có; kho không có thì từ chối |
 
-## Kho có 266 bài, chia theo 5 chủ đề
+## Kho có 267 bài, chia theo 5 chủ đề
 
 | Chủ đề | Số bài | Gồm |
 |---|---:|---|
@@ -30,11 +30,11 @@
 | Di tích | 39 | Đại Nội, Kinh thành, các lăng, chùa, di sản như Nhã nhạc |
 | Lễ hội | 40 | lễ hội, ngày hội, lễ tế trong năm |
 | Nghệ thuật biểu diễn | 15 | ca Huế, các chương trình biểu diễn |
-| Du lịch | 61 | 45 bài địa điểm (biển, đầm phá, chợ, phố đi bộ…), 11 bài dịch vụ (đi lại, lưu trú…), 5 bài vé |
+| Du lịch | 62 | 45 bài địa điểm (biển, đầm phá, chợ, phố đi bộ…), 12 bài dịch vụ (đi lại, lưu trú…), 5 bài vé |
 
-Cả kho cắt ra thành 9.458 đoạn (bài 8).
+Cả kho cắt ra thành 9.479 đoạn (bài 8).
 
-Phần hỏi đáp không biết gì ngoài 266 bài này. Có bốn thứ không lấy từ kho, và đều được ghi rõ khi hiện ra: ngày tháng và ngày âm lịch (chương trình tính), dự báo thời tiết (lấy từ một dịch vụ thời tiết), khoảng cách và "gần một điểm có gì" (chương trình tính từ một bảng vị trí riêng), và mục "Từ web (chưa kiểm)" (chỉ có khi kho từ chối). Trang Lên kế hoạch dùng thêm vài bảng dữ liệu riêng: bảng điểm tham quan, bảng chỗ ở, bảng quán ăn (chặng 6).
+Phần hỏi đáp không biết gì ngoài 267 bài này. Có bốn thứ không lấy từ kho, và đều được ghi rõ khi hiện ra: ngày tháng và ngày âm lịch (chương trình tính), dự báo thời tiết (lấy từ một dịch vụ thời tiết), khoảng cách và "gần một điểm có gì" (chương trình tính từ một bảng vị trí riêng), và mục "Từ web (chưa kiểm)" (chỉ có khi kho từ chối). Trang Lên kế hoạch dùng thêm vài bảng dữ liệu riêng: bảng điểm tham quan, bảng chỗ ở, bảng quán ăn (chặng 6).
 
 ## Bài được soạn riêng, theo mẫu, có ghi nguồn
 
@@ -126,7 +126,7 @@ Thử trên bản chép với Claude Sonnet 5.5, hai ca: ca Đại Nội chọn 
 
 ## Dễ nhầm
 
-- **"Hệ thống đọc Internet để trả lời."** Không. Nó đọc 266 bài đã soạn. Web chỉ là đường phụ sau khi kho từ chối, và luôn để riêng.
+- **"Hệ thống đọc Internet để trả lời."** Không. Nó đọc 267 bài đã soạn. Web chỉ là đường phụ sau khi kho từ chối, và luôn để riêng.
 - **"Lệnh sửa giá là một agent tự sửa kho."** Không. Đó là một quy trình cố định có một bước model phán đoán và một người duyệt; model không viết chữ nào vào kho.
 
 ## Câu hỏi tự kiểm
@@ -166,7 +166,7 @@ Chủ dự án đã quyết: giá trong kho chỉ cần tương đối. Nhóm ch
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
 | Thư mục kho | `knowledge-base-hue/`, được theo dõi cùng mã của dự án từ 20/11 | mọi lần sửa bài đều có lịch sử và lùi lại được | trước 20/11 thư mục kho nằm cạnh mã nhưng không được theo dõi lịch sử |
-| Các thư mục được đưa vào | món ăn · di tích · lễ hội · nghệ thuật biểu diễn · du lịch / địa điểm · du lịch / dịch vụ · du lịch / vé | 7 thư mục, 266 bài | — |
+| Các thư mục được đưa vào | món ăn · di tích · lễ hội · nghệ thuật biểu diễn · du lịch / địa điểm · du lịch / dịch vụ · du lịch / vé | 7 thư mục, 267 bài | — |
 | Thư mục bị loại | bộ câu hỏi chấm · bản thô tải từ trang nguồn · mẫu bài và ghi chú soạn | không phải nội dung cho người dùng | — |
 | File bị loại đích danh | 3 file danh mục dùng lúc soạn | chỉ là danh sách tên, không phải nội dung để trả lời | hai file loại từ đầu tháng 9, file thứ ba loại cuối tháng 10; phép đo lúc loại: kết quả tìm không khác |
 | Dạng bài | file Markdown, bắt đầu bằng tên bài | đọc thẳng, không cần bước rút chữ | — |
@@ -204,7 +204,7 @@ Chủ dự án đã quyết: giá trong kho chỉ cần tương đối. Nhóm ch
 
 ## Giới hạn đã biết
 
-- **Kho thiếu.** Lượt đo trợ lý ngày 21/11 chỉ ra bốn thứ kho không có: mức phải leo bậc ở các điểm tham quan, đường từ Huế đi Hội An, chỗ đậu ô tô, quy định chụp ảnh ở chùa và lăng. Ví dụ "kho không có" của cả bộ (chỗ đậu ô tô ở chùa Thiên Mụ) thuộc nhóm này. Bài về leo bậc đã vào kho sáng 22/11; ba thứ còn lại chưa có.
+- **Kho thiếu.** Lượt đo trợ lý ngày 21/11 chỉ ra bốn thứ kho không có: mức phải leo bậc ở các điểm tham quan, đường từ Huế đi Hội An, chỗ đậu ô tô, quy định chụp ảnh ở chùa và lăng. Ví dụ "kho không có" của cả bộ (chỗ đậu ô tô ở chùa Thiên Mụ) thuộc nhóm này. Bài về leo bậc vào kho sáng 22/11, bài về đường đi Hội An vào kho chiều 22/11; hai thứ còn lại (chỗ đậu ô tô, quy định chụp ảnh) chưa có.
 - **Kho cũ dần.** Giá và giờ đổi theo thời gian. Câu trả lời trích bài vé, địa điểm, lễ hội hoặc bài "Lưu trú ở Huế" luôn kèm dòng "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi…". Giá trong kho được coi là tương đối. Phần lớn mức giá không ghi ngày; vài bảng ghi tháng khảo sát, và bài sửa từ 22/11 ghi ngày đối chiếu ở mục nguồn.
 - **Kho còn chỗ chưa phân xử được.** Vài con số mà các nguồn nói khác nhau được giữ nguyên và ghi vào một danh sách riêng.
 - **Kho có mà tìm không ra.** Đây là lỗi của bước tìm, và là lỗi hay gặp hơn cả (bài 13).
@@ -218,7 +218,7 @@ Các lần đổi kho chính:
 | cuối tháng 10 | rà mọi dòng có con số hoặc mốc thời gian: 139 điểm đáng ngờ; hai đợt sửa, khoảng 250 chỗ (phần lớn là tên phường xã mới sau lần sắp xếp 01/07/2025) | điểm chấm gần như không đổi (điểm "đủ ý" chênh chưa tới 0,01 trên thang 5); điều kiện "không làm hỏng" đạt ở cả hai đợt |
 | đầu tháng 11 | thêm một dòng giờ mở cửa cho 11 bài điểm tham quan, lấy từ bài vé đã có trong kho | hỏi thử trả đúng giờ, có nguồn; 1 câu của bộ câu mẫu lần đầu bị từ chối, chạy lại hai lần đều đúng |
 | 14–16/11 | thêm 61 bài (204 lên 265): khách sạn, quán ăn, địa điểm, lễ hội, những thứ hệ thống từng từ chối | câu về khách sạn trả lời được 11 trên 12 (trước đó 4); đo bù 65 câu cũ: không câu nào tệ đi |
-| 22/11 | sửa hai bài về giá (giá thuê thuyền ghi theo từng nhà thuyền; vé một điểm tham quan cho người địa phương); thêm một bài gom những gì kho đã nói về bậc thang, dốc và đi bộ ở các điểm tham quan (265 lên 266 bài) | chỉ mục cập nhật riêng trong 37,7 giây cho lần sửa giá (bài 12) |
+| 22/11 | sửa hai bài về giá (giá thuê thuyền ghi theo từng nhà thuyền; vé một điểm tham quan cho người địa phương); thêm một bài gom những gì kho đã nói về bậc thang, dốc và đi bộ ở các điểm tham quan (265 lên 266 bài); buổi chiều thêm một bài về đường đi từ Huế tới Hội An, chủ dự án đọc bản nháp rồi duyệt (266 lên 267 bài); sửa một dòng ở bài về đèo Hải Vân: dòng đó nói Hải Vân Quan đón khách không thu tiền, trái với chính bài đó và với bài vé (thu 70.000 đồng một người từ tháng 6/2026) | chỉ mục cập nhật riêng trong 37,7 giây cho lần sửa giá (bài 12); bài Hội An: thêm 21 đoạn trong 29 giây, hai câu hỏi thử trên trình duyệt đều được trả lời từ bài mới; dòng Hải Vân Quan: 40 đoạn tính lại trong 28,8 giây, hỏi thử một lần trên trình duyệt thì danh sách điểm miễn phí không còn Hải Vân Quan và câu hỏi giá vé nhận 70.000 đồng, không còn lời "hai nguồn không khớp" |
 
 - Số bài theo thư mục, đếm lúc 10:02 ngày 22/11: món ăn 111 · di tích 39 · lễ hội 40 · nghệ thuật biểu diễn 15 · địa điểm 45 · dịch vụ 11 · vé 5. Kho còn được bổ sung nên số có thể lớn hơn khi anh đọc.
 - Hai đợt sửa cuối tháng 10: 123 chỗ ở 65 bài, rồi 123 chỗ ở 40 bài.
@@ -228,12 +228,12 @@ Các lần đổi kho chính:
 - Một phép đếm thô ngày 22/11: khoảng 39 bài không có tiêu đề mục nào mang chữ "Nguồn" (chưa đọc tay từng bài).
 - Trong bốn thứ kho thiếu, phần quy định chụp ảnh chưa soạn được nháp vì chưa tìm ra nguồn.
 
-**Bài sau (bài 8):** bước đầu tiên của giai đoạn chuẩn bị: cắt 266 bài thành 9.458 đoạn.
+**Bài sau (bài 8):** bước đầu tiên của giai đoạn chuẩn bị: cắt 267 bài thành 9.479 đoạn.
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
-- 266 bài và số bài theo thư mục: đếm từ danh sách file của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`, 10:02 22/11/2026 [đã chạy]. Thư mục đưa vào / loại, file loại: `backend/config/settings.yaml` mục `full_corpus.knowledge_base`.
+- 267 bài và số bài theo thư mục: đếm từ danh sách file của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`, 16:35 22/11/2026 [đã chạy]. Bài về đường đi Hội An (chủ dự án duyệt 16:07, vào chỉ mục 16:15 22/11, thêm 21 đoạn trong 29 giây; hai câu hỏi thử trên trình duyệt 16:21): `session_prompt/HIEN_TRANG.md` mục 1, `bai_hoc/VIEC_MOI_XONG.md` mục 44 [đã chạy, phiên khác]. Dòng Hải Vân Quan (22/11, bản kho `68e806b6`; đúng một dòng đổi; 40 đoạn, 28,8 giây; hai câu hỏi thử trên trình duyệt 16:42–16:44): phiếu của phiên điều phối, `data/bo_sung_kho_2026-11-22/c_x11_hai_van/`, `data/test_cuoi/chay_2026-11-22_e_ngoai_tinh/chay_x.out` [riêng tư; đã chạy, phiên khác; người viết đã đọc bản ghi hai lượt hỏi]. Thư mục đưa vào / loại, file loại: `backend/config/settings.yaml` mục `full_corpus.knowledge_base`.
 - Luật viết bài, mẫu bài, "đọc riêng vẫn hiểu", lý do soạn riêng, rà 139 điểm, hai đợt sửa (123 + 123 chỗ; 65 và 40 bài; điểm đủ ý ±0,008; khoảng 1 / 6 câu chạm), giờ mở cửa 11 bài, khoảng 76 trang nguồn: `bai_hoc/01_KHO_DU_LIEU.md` và nguồn gốc `bao_cao_he_thong/02_BAO_CAO_KHO_DU_LIEU.md` [đã chạy; chép qua bài 1 cũ].
 - Các lần bổ sung 14–16/11 (61 bài; khách sạn 4 ⇒ 11 / 12 chấm mù; đi lại 2 ⇒ 4 / 6 tự đọc; bữa có quán 49,3 ⇒ 69,1 %; 65 câu đo bù: 56 cùng ý, 1 tốt lên): `bai_hoc/22_BO_SUNG_SO_TAY.md` mục "Ba điều chính" và mục Nguồn [đã chạy].
 - Sửa hai bài giá ngày 22/11, luật "có nguồn đáng tin nói rõ mới sửa", danh sách "chưa phân xử được": `session_prompt/HIEN_TRANG.md` mục 4, gạch 08:40 22/11/2026; `session_prompt/VIEC_DANG_MO.md` khối A; lần cập nhật 37,7 giây: `bai_hoc/VIEC_MOI_XONG.md` mục 32.

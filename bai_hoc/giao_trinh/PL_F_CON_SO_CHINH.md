@@ -1,6 +1,6 @@
 # Phụ lục F — Các con số chính trên một trang
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (47 tính năng, kho 267 bài) · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một con số quan trọng của hệ thống, chép từ mục "Ý chính", bảng "Cấu hình đang chạy" hoặc bảng số chính của một bài. Cột thứ ba ghi điều kiện mà bài gốc ghi kèm: đếm trên bộ nào, model viết nào, ngày nào. Một con số không có điều kiện thì không so được với con số khác, nên đừng đọc cột hai mà bỏ cột ba. Dòng ghi "cấu hình" là giá trị đặt sẵn trong hệ thống, không phải kết quả đo. Dòng ghi "lúc đó" hay "đã cũ" là số của một thời điểm đã qua, giữ lại để so. Hai model viết: gpt-6-luna (tới trưa 21/11) và Claude Sonnet 5.5 (từ 21/11, đổi tạm).
 
@@ -8,13 +8,13 @@
 
 | Con số | Đếm cái gì | Đo trên gì, model nào, ngày nào | Bài |
 |---|---|---|---|
-| 266 bài | số bài của kho, chia 5 chủ đề, 7 thư mục | đếm từ bản ghi chỉ mục, sáng 22/11 (265 lên 266 bài ngày 22/11) | 2, 7 |
-| 9.458 đoạn | số đoạn sau khi cắt 266 bài; cũng là số điểm trong Qdrant | cấu hình đang chạy, sáng 22/11 | 2, 8, 12 |
+| 267 bài | số bài của kho, chia 5 chủ đề, 7 thư mục | đếm từ bản ghi chỉ mục, 16:35 ngày 22/11 (265 lên 267 bài trong ngày 22/11) | 2, 7 |
+| 9.479 đoạn | số đoạn sau khi cắt 267 bài; cũng là số điểm trong Qdrant | bản ghi chỉ mục và Qdrant, 16:35 ngày 22/11 | 2, 8, 12 |
 | 512 token | độ dài tối đa model embedding đọc được; giới hạn thật lúc cắt còn chặt hơn (256 token của một model ứng viên cũ) | cấu hình, sáng 22/11 | 8, 10 |
 | 4 tới 6 trên 32 câu | số câu mất đáp án khi gộp đoạn to (từ 256 token trở lên); gộp tới 128 token thì không khác | phép so 12 cách cắt, bộ 32 câu (lúc đó) | 8 |
 | 384 con số | số chiều của mỗi vector (model multilingual-e5-small, chạy trên máy) | cấu hình, sáng 22/11 | 10 |
 | 2 câu giúp, 3 câu hỏng trên 40 câu | model embedding lớn hơn khoảng 70 lần, gọi qua mạng, chậm hơn khoảng 100 lần | phép so 5 model khác (lúc đó) | 10 |
-| 5.954 từ | từ điển của kho cho tìm theo từ khoá | kho hiện nay, sáng 22/11 | 11 |
+| 5.960 từ | từ điển của kho cho tìm theo từ khoá | kho hiện nay, 16:35 ngày 22/11 | 11 |
 | khoảng 225 giây | lập lại toàn bộ chỉ mục | số đo ghi trong hướng dẫn vận hành | 2, 12 |
 | 37,7 giây cho 105 đoạn | lần chạy thật đầu tiên của lệnh cập nhật riêng, sau khi sửa 2 bài; kết quả giống lập lại toàn bộ | sáng 22/11 (kho 9.436 lên 9.442 đoạn lúc đó) | 7, 12 |
 
@@ -51,6 +51,7 @@
 | 4 trên 60 câu | số câu cần công cụ mà cách đưa công cụ theo từ khoá bỏ sót | đếm 21/11 trên 310 câu của sổ ghi lượt hỏi | 3, 21 |
 | 3 lượt, 30 phút, 500 cuộc | máy chủ nhớ 3 lượt gần nhất mỗi cuộc, hết hạn sau 30 phút, nhiều nhất 500 cuộc | cấu hình, sáng 22/11 | 6, 23, 35 |
 | 4.000 ký tự | phần câu trả lời liền trước được gửi kèm (trước là 1.200) | cấu hình, bật 09:40 22/11 | 23 |
+| 3 trên 3 · 3 trên 3 | trong cuộc đã lập lịch, nhờ "Bỏ quán đầu đi rồi viết lại danh sách": lịch không đổi · danh sách bỏ đúng quán đầu và đủ các quán còn lại (2 lần khớp đúng, 1 lần thêm một mục có nguồn); bên không nhớ: câu "không xác định được quán đầu" | 9 lượt thật, một chuỗi tin × 3, Claude Sonnet 5.5, 22/11; mở từ 16:08 22/11 | 23, 31 |
 | 10 giây | hạn của bước xếp loại câu; quá hạn thì coi là "về Huế" | cấu hình, sáng 22/11 | 6, 22 |
 | sớm hơn 1,37 giây | chữ đầu tới sớm hơn khi xếp loại câu chạy song song (khoảng tin cậy 0,34 tới 2,14) | gpt-6-luna, 20 cặp, 04–05/11; chưa đo lại với Claude | 6, 22, 34 |
 | 9 câu từ chối nhầm bớt, 0 câu sai ngày | khi chương trình tính ngày thay model | gpt-6-luna, 09/11 | 1, 3, 24, 40 |
@@ -61,7 +62,7 @@
 | Con số | Đếm cái gì | Đo trên gì, model nào, ngày nào | Bài |
 |---|---|---|---|
 | 1 lần, 5 giây, 5 kết quả | một lần gọi dịch vụ tìm web, không gọi lại | cấu hình, trưa 22/11 | 6, 25 |
-| 2 trên 44 câu | câu ngoài phạm vi bị gửi đi tra web vì xếp loại nhầm, ở hệ thống đang chạy; người dùng chỉ thấy câu từ chối (phương án "hai nhóm" đã bỏ 09/11 cũng ra 2 trên 44, nhưng là câu có mục web — bài 22) | 12/11 | 22, 25, 40 |
+| 2 trên 44 câu | câu ngoài phạm vi lọt vào đường "về Huế" vì xếp loại nhầm và bị đem đi tra web, với bốn tuyến như đang chạy; người dùng chỉ thấy câu cố định, nhưng câu hỏi đã bị gửi ra dịch vụ tìm web (phương án "hai nhóm", đo 09/11, đã bỏ, cũng ra 2 trên 44 nhưng là một phép đo khác: câu ra tới người dùng kèm mục web — bài 22) | lượt đo giữa kỳ 12/11 | 22, 25, 40 |
 | 42 tên | danh sách nơi và món dễ nhận ra bằng ảnh; model trả tối đa 3 mã | cấu hình, trưa 22/11 | 26 |
 | 20 giây | hạn của lần nhìn ảnh | cấu hình, trưa 22/11 (bản đầu 15 giây) | 6, 26 |
 | 2 trên 5 ảnh | ảnh không phải Huế bị model gán tên Huế khi cho trả lời thẳng (ngưỡng ghi trước: nhiều nhất 1) | gpt-6-luna, 05/11 | 26, 40 |
@@ -120,9 +121,11 @@
 | khoảng 13 giây | thời gian chờ ở lượt hỏi đáp đứng giữa; một phần ba số lượt quá 15 giây | Claude mức cao, 49 lượt của người dùng mô phỏng, 21/11 | 34, 40 |
 | 9,7 giây (72 %) · 3,1 giây (25 %) · 3 % | phần của lần viết cuối · các vòng công cụ (khoảng 2,2 giây một vòng) · phần của chương trình | như trên | 34 |
 | 6,9 giây; 95 % dưới 13,1 giây | thời gian cả câu ở lượt đứng giữa, 0 màn hình lỗi | 41 tin phần lớn ngắn qua trình duyệt, lượt kiểm chốt trưa 22/11, lúc máy rảnh | 34, 40 |
-| 25–34 giây | thời gian chờ của tin dài nhiều ý (trước khoảng 20 giây); lượt phải viết lại một lần lâu thêm khoảng 10 giây | một tin 4 ý, 6 lần, từ 14:47 22/11 | 23, 34, 40 |
-| 0,018 USD | tiền ví dụ chính | Claude, lượt thật đầu tiên qua giao diện, 21/11 | 4, 33, 34 |
-| 0,0004 USD · 0,0146 USD | tiền một câu trả lời có nguồn: gpt-6-luna · Claude mức cao (gấp khoảng 37 lần) (trung bình trên 66 câu tính điểm, đủ các loại câu; câu ví dụ ở giao diện, mức thấp: khoảng 0,0007 USD trên gpt-6-luna, bài 33) | 66 câu, 21/11 | 33, 34 |
+| 25–34 giây | thời gian chờ của tin dài nhiều ý (trước khoảng 20 giây), suốt lúc đó chỉ một dòng trạng thái rồi cả câu trả lời; lượt phải viết lại một lần lâu thêm khoảng 10 giây (tới 25–37 giây; ca này chưa nhìn trên trình duyệt) | một tin 4 ý, 6 lần, từ 14:47 22/11; trên trình duyệt 22/11 tin gia đình bốn ý 29,5 giây | 23, 34, 40 |
+| 17–24 giây | lượt nhờ "viết lại danh sách" (trợ lý tra kho lại và viết lại từng mục, không chỉ xoá một dòng); bên không nhớ câu trả lời: 10–12 giây cho một câu "không xác định được" | trên trình duyệt 22/11: 17,3 và 24,1 giây; lượt thật: 19–20 giây, khoảng 0,13–0,17 USD; Claude | 23 |
+| 0,018 USD | tiền ví dụ chính (0,0178 USD) | Claude, lượt ví dụ chính 21/11 (bài 2, 6) | 2, 4, 6, 34 |
+| 0,0004 USD · 0,0146 USD | tiền một câu trả lời có nguồn: gpt-6-luna · Claude mức cao (gấp khoảng 37 lần) (trung bình trên 66 câu tính điểm của 85 câu đầu bộ mẫu, không lọc theo loại câu) | 66 câu, 21/11 | 33, 34 |
+| khoảng 0,0007 USD · khoảng 0,018 USD | tiền một câu ví dụ: gpt-6-luna · Claude (khoảng 25 lần) | câu ví dụ chạy thẳng qua code sản phẩm (không qua máy chủ), 21/11; mức suy luận: báo cáo gốc không ghi, hướng dẫn đổi model ghi "mức thấp" | 33 |
 | đúng 4,97 ↔ 4,94 · đủ ý 4,83 ↔ 4,88 | điểm thang 1–5 của gpt-6-luna ↔ Claude; trọng tâm Claude thấp hơn rõ | 66 câu tính điểm, 21/11 | 33 |
 | 24 giờ, 500 câu, khoảng 0,1 giây | bộ nhớ câu trả lời: hạn, trần, thời gian trả lại câu đã nhớ | cấu hình (bật từ 20/11) | 6, 34 |
 
@@ -130,7 +133,7 @@
 
 | Con số | Đếm cái gì | Đo trên gì, model nào, ngày nào | Bài |
 |---|---|---|---|
-| 46 mở, 3 tắt | số tính năng đang mở / đang tắt (lúc 10:25 là 42 mở; từ 14:47 thêm ba; từ 15:42 thêm một) | đếm 15:51 22/11 | 4, 40, phụ lục B |
+| 47 mở, 3 tắt | số tính năng đang mở / đang tắt (lúc 10:25 là 42 mở; từ 14:47 thêm ba; từ 15:42 thêm một; từ 16:08 thêm việc nhớ câu trả lời liền trước cả trong cuộc đã lập lịch) | đếm 16:13 22/11 (đếm lại 16:57: 47) | 4, 40, phụ lục B |
 | 5 khối · 6 bước · 4 thứ gửi ra ngoài | khối của hệ thống; bước của một câu hỏi; thứ rời máy (lời gọi model, ảnh, dự báo thời tiết, câu tra web) | kiến trúc, sáng 22/11 | 6 |
 | khoảng 18 đường gọi | số đường gọi giữa giao diện và máy chủ; 3 đường gọi model | chương trình, trưa 22/11 | 35 |
 | khoảng 14 giây · 34 giây | lệnh bật ra "SẴN SÀNG" khi mọi thứ đủ · khi bắt đầu từ lúc Qdrant đang tắt | 14 giây: bốn ca chạy thật ở cổng tạm; 34 giây: lượt kiểm chốt trưa 22/11 | 36, 40 |
@@ -141,6 +144,6 @@
 
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
 
-Gom từ mục "Ý chính", bảng "Cấu hình đang chạy", bảng "Các con số chính của đường hỏi đáp" (bài 19), các bảng "Người dùng làm được" và "Chỗ yếu" (bài 40), cùng vài dòng "Chi tiết để tra" có số (bài 12, 34, 36, 40) của các bài 1–40 trong cùng thư mục, bản lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Mỗi dòng giữ điều kiện bài gốc ghi; dòng nào bài gốc không ghi model thì không ghi. Chỗ hai bài ghi khác nhau về cùng một con số ghi ở báo cáo gom [riêng tư].
+Gom từ mục "Ý chính", bảng "Cấu hình đang chạy", bảng "Các con số chính của đường hỏi đáp" (bài 19), các bảng "Người dùng làm được" và "Chỗ yếu" (bài 40), cùng vài dòng "Chi tiết để tra" có số (bài 12, 34, 36, 40) của các bài 1–40 trong cùng thư mục, bản lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Gom lại 17:00 22/11/2026 theo các bài vừa sửa: số tính năng (bài 4, 40), hai dòng tiền (bài 33 "Chi tiết để tra": câu ví dụ chạy thẳng qua code sản phẩm; bài 34 bảng tiền: "không lọc theo loại câu"), "2 trên 44" (bài 22 quyết định về luật nghiêng về Huế, "Cái giá" và "Cách khác"), tin dài trên trình duyệt (bài 34 bảng "Nếu… thì sao"), hai dòng mới về cuộc đã lập lịch (bài 23 "Đã so" dòng 12 và "Giới hạn đã biết"). Lệnh đếm tính năng chạy lại 16:57 22/11 ra `47` [đã chạy]. Mỗi dòng giữ điều kiện bài gốc ghi; dòng nào bài gốc không ghi model thì không ghi. Chỗ hai bài ghi khác nhau về cùng một con số ghi ở báo cáo gom [riêng tư].
 
 </details>

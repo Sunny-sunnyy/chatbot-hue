@@ -1,6 +1,6 @@
 # Bài 31 — Sửa lịch bằng lời: model hiểu ý, chương trình áp và kiểm
 
-*Cập nhật 16:11, ngày 22/11/2026 · rào bỏ / thay của lịch · trước đó: đã sửa theo một lượt đối chiếu độc lập · các loại lệnh, cách áp và lời báo đọc từ chương trình và cấu hình trưa 22/11; số đo chép từ báo cáo các ngày 14–22/11 (ghi rõ model ở từng số); người viết không chạy lại lượt nào.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài): rào bỏ / thay đã nhìn trên trình duyệt, cuộc có lịch nhớ câu trả lời liền trước · số đo chép từ báo cáo, không chạy lại.*
 
 **Bài trước đã biết:** lịch được xếp từ biểu mẫu, kiểm khung, rồi lưu trong cuộc trò chuyện (bài 27–30).
 **Bài này thêm:** người dùng nhắn trợ lý "bỏ chợ Đông Ba đi" hay "đổi chỗ ngày 1 với ngày 2" thì điều gì xảy ra. Một lần gọi model hẹp đọc tin thành một lệnh có khuôn; chương trình áp lệnh lên lịch đã lưu bằng chính bộ xếp, kiểm lại, rồi tự viết câu báo. Bài nói cả khi lệnh không làm được: người dùng đọc thấy gì.
@@ -27,11 +27,11 @@
 ## Một tin sửa lịch đi qua bốn bước
 
 
-**1. Lần hiểu ý.** Khi cuộc trò chuyện có lịch đã lưu, mỗi tin đều được gửi cho model kèm lịch hiện tại (ngày, buổi, tên điểm), tham số lịch, và danh sách điểm khác có thể thêm. Lời dặn mở đầu: "Bạn đọc câu người dùng nói về lịch tham quan Huế họ đang có, và chỉ trả danh sách hành động sửa lịch. Không viết câu trả lời." Model trả đúng một khuôn: tối đa 3 lệnh, mỗi lệnh có loại và các ô được phép. Không có công cụ, không có lịch sử trò chuyện; hạn 10 giây; mức suy luận cao. Lời dặn có câu: "Câu KHÔNG yêu cầu sửa lịch (hỏi thông tin, chào, cảm ơn, hỏi về một điểm, việc khẩn cấp, an toàn) ⇒ trả danh sách rỗng."
+**1. Lần hiểu ý.** Khi cuộc trò chuyện có lịch đã lưu, mỗi tin đều được gửi cho model kèm lịch hiện tại (ngày, buổi, tên điểm), tham số lịch, và danh sách điểm khác có thể thêm. Lời dặn mở đầu: "Bạn đọc câu người dùng nói về lịch tham quan Huế họ đang có, và chỉ trả danh sách hành động sửa lịch. Không viết câu trả lời." Model trả đúng một khuôn: tối đa 3 lệnh, mỗi lệnh có loại và các ô được phép. Không có công cụ, không có lịch sử trò chuyện; hạn 10 giây; mức suy luận cao. Câu không nhờ sửa lịch ⇒ danh sách rỗng.
 
-Cùng lúc với lần hiểu ý, hệ thống vẫn soạn câu trả lời thường như mọi câu hỏi. Lần hiểu ý trả rỗng thì gửi câu trả lời thường đó; có lệnh sửa thì bỏ câu trả lời thường, chỉ sửa lịch.
+Cùng lúc với lần hiểu ý, hệ thống vẫn soạn câu trả lời thường như mọi câu hỏi. Lần hiểu ý trả rỗng thì gửi câu trả lời thường đó; có lệnh sửa thì bỏ câu trả lời thường, chỉ sửa lịch. Từ 16:08 22/11, câu trả lời thường trong cuộc có lịch cũng mang câu trả lời liền trước như ở cuộc không có lịch (bài 23); lượt sửa lịch và câu trả lời trích nguồn của lịch thì không được nhớ.
 
-**2. Áp lệnh.** Lệnh bỏ / thay chỉ được áp khi tin nêu tên điểm hoặc chỉ vào lịch ("ngày 2", "lịch"); không thì tin đi như câu hỏi thường (từ 22/11). Mỗi lệnh là một lần xếp lại bằng chính bộ xếp của bài 28. Mọi điểm ban ngày không bị lệnh chạm được giữ đúng ngày, đúng buổi; điểm người dùng đã bỏ không bao giờ được chọn lại. Vì vậy giờ, luật cụm, quỹ phút, mùa, mưa của lịch sửa được tính đúng như lịch mới. Tên điểm khớp với bảng theo tên đầy đủ sau khi chuẩn hoá; tên ngắn chỉ nhận khi khớp đúng một điểm, không đoán gần đúng. Ngày đi mới do chương trình đọc từ chữ người dùng, model không viết ngày. Một lượt áp tối đa 2 lệnh; lệnh thứ 3 nhận "Chưa làm: … — bạn nhắn tiếp nhé."
+**2. Áp lệnh.** Lệnh bỏ / thay chỉ được áp khi tin nêu tên điểm hoặc chỉ vào lịch ("ngày 2", "lịch"); không thì lệnh đó bị bỏ, và nếu tin không còn lệnh nào khác thì tin đi như câu hỏi thường (từ 22/11). Mỗi lệnh là một lần xếp lại bằng chính bộ xếp của bài 28. Mọi điểm ban ngày không bị lệnh chạm được giữ đúng ngày, đúng buổi; điểm người dùng đã bỏ không bao giờ được chọn lại. Vì vậy giờ, luật cụm, quỹ phút, mùa, mưa của lịch sửa được tính đúng như lịch mới. Tên điểm khớp với bảng theo tên đầy đủ sau khi chuẩn hoá; tên ngắn chỉ nhận khi khớp đúng một điểm, không đoán gần đúng. Ngày đi mới do chương trình đọc từ chữ người dùng, model không viết ngày. Một lượt áp tối đa 2 lệnh; lệnh thứ 3 nhận "Chưa làm: … — bạn nhắn tiếp nhé."
 
 **3. Kiểm khung.** Lịch sau khi áp phải qua bước kiểm khung (bài 29) với 0 lỗi mới được nhận. Không qua thì lịch giữ nguyên và lệnh đó thành một dòng "không đổi được" có lý do.
 
@@ -39,7 +39,7 @@ Cùng lúc với lần hiểu ý, hệ thống vẫn soạn câu trả lời th�
 
 ## Từng loại lệnh, và câu người dùng đọc thấy
 
-Ví dụ trên lịch ví dụ (3 ngày, cân bằng, di tích). Năm dòng đầu là câu thật: người viết cho phần áp lệnh chạy trên đúng lịch này, đưa vào lệnh như model sẽ trả (chỉ chương trình, không gọi model).
+Ví dụ trên lịch ví dụ (3 ngày, cân bằng, di tích). Năm dòng đầu là câu thật: phần áp lệnh chạy trên đúng lịch này, lệnh đưa vào bằng tay như model sẽ trả (không gọi model).
 
 | Người dùng nhắn | Chương trình làm gì | Đầu thẻ lịch hiện |
 |---|---|---|
@@ -48,11 +48,9 @@ Ví dụ trên lịch ví dụ (3 ngày, cân bằng, di tích). Năm dòng đ�
 | "Thêm Đàn Nam Giao vào sáng ngày 1" | thử buổi đó; **không** tự bỏ điểm nào | "Chưa làm: thêm Đàn Nam Giao vào buổi sáng ngày 1 — vì một ngày sẽ phải đi hai khu không liền nhau. Làm được, bạn nhắn đủ câu: thay Chùa Thiên Mụ bằng Đàn Nam Giao (buổi chiều ngày 1) hoặc thay Phố cổ và chợ Bao Vinh bằng Đàn Nam Giao (buổi sáng ngày 3)." |
 | "Thay chùa Thiên Mụ" (không nói bằng gì) | thử từng điểm, giữ tối đa 3 điểm hợp luật | thẻ "Bạn muốn thay Chùa Thiên Mụ bằng điểm nào?": Điện Hòn Chén · Nhà vườn An Hiên · Đàn Nam Giao · "Bỏ điểm này, không thay" |
 | "Đổi chỗ ngày 1 với ngày 2" | đọc cặp ngày từ câu, hoán đổi sáng và chiều, giữ buổi tối theo ngày, rồi kiểm | "Đã đổi chỗ các điểm buổi sáng và chiều của ngày 1 với ngày 2; hoạt động buổi tối giữ theo từng ngày." |
-| "Dời Đại Nội sang buổi tối ngày 1" | không xếp; buổi tối chỉ có hoạt động tối | "Đại Nội Huế chưa dời sang buổi tối ngày 1 được vì đây là điểm tham quan ban ngày, còn buổi tối lịch chỉ xếp hoạt động buổi tối. Dời được sang: buổi sáng ngày 3 (đổi chỗ với Phố cổ và chợ Bao Vinh)." |
-| "Thêm Ca Huế vào lịch" (không nói buổi) | không xếp; buổi tối do lịch tự chọn | "Mình chưa đặt được Ca Huế trên sông Hương vào buổi tối theo ý bạn — hoạt động buổi tối do lịch tự chọn. Bạn có thể bỏ hoạt động tối đang có, lịch sẽ tự chọn một hoạt động khác." |
 | "Đi nhẹ nhàng thôi", "ở 3 sao", "đi từ 20/12" | đổi tham số rồi xếp lại, thử giữ chỗ cũ trước | "Đã đổi kiểu đi: …", "Đã đổi ngày đi: … → …" |
 
-Lý do "không đổi được" là một câu cố định chọn theo mã lỗi của bước kiểm khung, ví dụ "một ngày sẽ phải đi hai khu không liền nhau" hay "điểm sẽ rơi ngoài giờ mở cửa".
+Lý do "không đổi được" là một câu cố định theo lỗi của bước kiểm khung. Hai lệnh về buổi tối có câu riêng ("Chi tiết để tra").
 
 **Thẻ chọn.** Các nút là điểm chưa có trong lịch, đã được thử xếp lại đúng luật trước khi hiện. Bấm một nút thì giao diện gửi đúng cặp "điểm cũ, điểm mới"; chương trình áp thẳng, **không qua lần hiểu ý**, vẫn kiểm lại bằng luật; chỉ còn lần viết câu mô tả cho điểm mới (bài 29).
 
@@ -108,7 +106,8 @@ Các tình huống lệnh không làm được ở bảng của mục trên. Th�
 |---|---|---|
 | hơn 30 phút không nhắn | lịch hết hạn cùng cuộc | lệnh sửa bị coi như câu hỏi thường, lịch không đổi, không có lời báo |
 | tin chứa ba lệnh | áp hai lệnh đầu | lệnh thứ ba nhận "Chưa làm: {loại lệnh} — bạn nhắn tiếp nhé." |
-| "bỏ / thay" không tên điểm, không chỉ vào lịch ("Bỏ quán đầu đi…" sau khi trợ lý kể quán) | không áp; lịch giữ nguyên | câu trả lời thường (đã thử 22/11: lịch không đổi 3 trên 3) |
+| "bỏ / thay" không tên điểm, không chỉ vào lịch ("Bỏ quán đầu đi rồi viết lại danh sách" sau khi trợ lý kể quán) | không áp; lịch giữ nguyên | câu trả lời thường; từ 16:08 22/11 là danh sách đã bỏ quán đầu (lượt thật 3 trên 3). Đã nhìn trên trình duyệt 22/11: một cuộc sáu tin, lịch đổi / đứng yên đúng cả sáu |
+| tin có lệnh khác áp được, kèm một lệnh bỏ / thay không tên, không mốc | áp lệnh kia; lệnh bỏ / thay không áp | dòng "Chưa làm: bỏ điểm — bạn nhắn tiếp nhé." (lệnh thay: "Chưa làm: thay điểm — bạn nhắn tiếp nhé.") |
 
 ## Dễ nhầm
 
@@ -141,7 +140,7 @@ Lịch giữ nguyên. Chương trình nói lý do (ở lịch ví dụ: một ng
 
 ## Cấu hình đang chạy
 
-*Theo cấu hình và chương trình trưa 22/11/2026.*
+*Theo cấu hình và chương trình 16:35 22/11/2026.*
 
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
@@ -156,6 +155,7 @@ Lịch giữ nguyên. Chương trình nói lý do (ở lịch ví dụ: một ng
 | `sua_lich_kem_hoi` | đang mở (21/11) | dòng "phần câu hỏi chưa trả lời" | — |
 | `sua_lich_buoi_toi` | đang mở (22/11) | lần hiểu ý ghi được "buổi tối"; chương trình trả lời thật | — |
 | `sua_lich_them_khong_the` | đang mở (22/11) | "thêm" không tự thế chỗ | bản tự thế chỗ: bỏ |
+| `nho_dap_cuoc_co_lich` | đang mở (16:08 22/11) | câu hỏi thường trong cuộc có lịch cũng nhớ câu trả lời liền trước, lượt bị rút được chạy lại một lần; không nhớ / không chạy lại lượt sửa lịch và câu trả lời trích nguồn của lịch | tắt (trước 16:08): cả cuộc có lịch không nhớ câu trả lời |
 | lịch đã lưu | trong bộ nhớ máy chủ, 30 phút từ lượt cuối | bài 27 | — |
 
 ## Đã so
@@ -171,7 +171,8 @@ Lịch giữ nguyên. Chương trình nói lý do (ở lịch ví dụ: một ng
 | tin vừa sửa vừa hỏi | bộ mù 22 tin, Claude Sonnet 5.5 (21/11) | dòng báo hiện 24 / 24 ở tin sửa + hỏi; hiện nhầm 0 / 24 ở tin chỉ sửa | mở 21/11 |
 | dời sang buổi tối | 7 tin × 2 khổ màn hình trên trình duyệt, Claude (22/11) | đạt tiêu chí ghi trước | mở 22/11 |
 | mức suy luận của lần hiểu ý | 9 lệnh × 3 lượt, Claude Sonnet 5.5 (21/11) | lệnh khó: cao 5 / 6, thấp 2 / 6, vừa 0 / 6 | cao |
-| chỉ áp bỏ / thay khi tin có tên điểm hoặc mốc của lịch | sổ ghi 60 lượt sửa có lệnh, 23 lệnh bỏ / thay, phát lại trên chữ model đã ghi (0 USD); rồi 12 lượt thật, Claude Sonnet 5.5 (22/11) | phát lại: chỉ ca lỗi bị bỏ; lượt thật: chuỗi "quán đầu" lịch không đổi 3 / 3, lệnh thật có tên / có "ngày N" vẫn áp đúng | giữ (đã ở cây chính 22/11) |
+| chỉ áp bỏ / thay khi tin có tên điểm hoặc mốc của lịch | sổ ghi 60 lượt sửa có lệnh, 23 lệnh bỏ / thay, phát lại trên chữ model đã ghi (0 USD); rồi lượt thật trên Claude Sonnet 5.5 (22/11) — 12 lượt được chấm trước khi vào bản chính, người viết, người chạy, người chấm là ba phiên khác nhau; rồi một lần nhìn trên trình duyệt 16:17–16:21 22/11 | phát lại: chỉ ca lỗi bị bỏ; lượt thật: chuỗi "quán đầu" lịch không đổi 3 / 3, lệnh thật có tên / có "ngày N" vẫn áp đúng; trình duyệt, một cuộc lịch 2 ngày, sáu tin: hai tin "bỏ … rồi viết lại danh sách" lịch đứng yên (danh sách quán 5 còn đúng 4, danh sách điểm miễn phí bỏ đúng điểm đầu, còn đủ 7), "Bỏ Chùa Thiên Mụ đi" và "Bỏ điểm đầu tiên của ngày 2" lịch đổi đúng | giữ (đã ở cây chính 22/11) |
+| nhớ câu trả lời liền trước trong cuộc có lịch | 9 lượt thật, Claude Sonnet 5.5, tiêu chí ghi trước (22/11) | lịch không đổi 3 / 3; cả ba lần bỏ đúng quán đầu, đủ các quán còn lại (2 lần khớp đúng danh sách cũ, 1 lần thêm một mục có nguồn — người chấm ghi đọc chặt thì lần đó không đạt); lệnh "Bỏ Chùa Thiên Mụ đi" sau đó vẫn áp đúng một lần | mở 16:08 22/11 |
 
 **Đọc bảng thế nào:** số đếm bằng chương trình (15.360 cặp, 39.509 lệnh) kiểm phần áp lệnh trên mọi lịch có thể có; số chuỗi và lượt thật kiểm phần model đọc ý. Hai loại bổ cho nhau, không thay nhau.
 
@@ -181,7 +182,7 @@ Lịch giữ nguyên. Chương trình nói lý do (ở lịch ví dụ: một ng
 
 **Vì sao "thay X" không nói bằng gì thì hiện thẻ chọn, mà chương trình không tự chọn?** **Đã chọn:** thẻ tối đa 3 điểm đã thử hợp luật, cộng nút "Bỏ điểm này, không thay"; bấm nút thì áp thẳng, không qua lần hiểu ý (vẫn có lần viết câu mô tả cho điểm mới). **Vì sao:** kế hoạch 05/11 ghi: nút chỉ chứa giá trị chương trình đưa, như thẻ hỏi lại số ngày đã có. Lý do riêng cho việc không tự chọn: chưa thấy ghi lý do. Điều thấy được: mỗi nút đã được thử bằng chính bước áp và kiểm, nên bấm nút nào cũng làm được. **Cách khác:** chương trình tự chọn điểm thay đầu tiên: chưa thử. **Cái giá:** thêm một lượt bấm. Máy chủ không nhớ danh sách nút đã đưa; một cặp điểm hợp lệ bất kỳ gửi lên vẫn được áp nếu qua luật (đọc từ chương trình).
 
-**Vì sao lệnh bỏ / thay phải có tên điểm hoặc mốc của lịch?** **Đã chọn:** chương trình chỉ giữ lệnh bỏ / thay khi tin có (a) tên điểm bị chạm — đủ tên, tên khác, hoặc một khúc từ hai chữ có chứa chữ tên riêng ("Tự Đức", "Thiên Mụ"); chữ loại đứng đầu tên ("lăng", "bãi biển") không đủ — hoặc (b) mốc của lịch: "ngày 2", "hôm đầu", "buổi chiều", "lịch", "kế hoạch", "chuyến đi". "Điểm đầu / cuối / thứ hai" đứng trơ không tính; "du lịch", "lịch sử", "âm lịch", "ngày 2/12" không phải mốc. Lượt đồng ý với câu gợi ý vừa rồi ("ok thay đi") không qua bước này. **Vì sao:** đã gặp thật: trong cuộc có lịch, sau "Kể các quán chè ở Huế", tin "Bỏ quán đầu đi rồi viết lại danh sách" bị hiểu thành bỏ điểm đầu của lịch, 5 trên 6 lượt; lần hiểu ý chỉ thấy lịch và đúng tin đó, không thấy lượt trước. Đếm trên sổ ghi trước khi làm: 23 lệnh bỏ / thay = 16 có tên, 6 không tên nhưng có mốc, 1 không có gì — chính ca lỗi. Bản đầu còn tính "điểm đầu" là mốc; một lượt thật 22/11 ("Kể các điểm tham quan miễn phí" rồi "Bỏ điểm đầu đi rồi viết lại danh sách") vẫn bỏ Đại Nội, nên bỏ. Chặn nhầm thì người dùng nhắn lại kèm tên; áp sai thì không chấp nhận. **Cái giá:** xem "Giới hạn đã biết".
+**Vì sao lệnh bỏ / thay phải có tên điểm hoặc mốc của lịch?** **Đã chọn:** chương trình chỉ giữ lệnh bỏ / thay khi tin có (a) tên điểm bị chạm — đủ tên, tên khác, hoặc một phần của tên, dài từ hai chữ, có ít nhất một chữ là tên riêng (ví dụ "Tự Đức" của "Lăng Tự Đức", "Thiên Mụ"); chữ chỉ loại như "lăng", "chùa", "bãi biển" không đủ — hoặc (b) mốc của lịch: "ngày 2", "hôm đầu", "buổi chiều", "lịch", "kế hoạch", "chuyến đi". Tin có mốc thì MỌI lệnh của tin được giữ, kể cả lệnh không nêu tên ("Bỏ điểm đầu khỏi lịch" vẫn bỏ điểm đầu). "Điểm đầu / cuối / thứ hai" đứng trơ không tính; "du lịch", "lịch sử", "lịch sự", "âm lịch", "dương lịch", "ngày 2/12" không phải mốc. Lượt đồng ý với câu gợi ý vừa rồi ("ok thay đi") không qua bước này. **Vì sao:** đã gặp thật: trong cuộc có lịch, sau "Kể các quán chè ở Huế", tin "Bỏ quán đầu đi rồi viết lại danh sách" bị hiểu thành bỏ điểm đầu của lịch, 5 trên 6 lượt; lần hiểu ý chỉ thấy lịch và đúng tin đó, không thấy lượt trước. Đếm trên sổ ghi trước khi làm: 23 lệnh bỏ / thay = 16 có tên, 6 không tên nhưng có mốc, 1 không có gì — chính ca lỗi. Bản đầu còn tính "điểm đầu" là mốc; một lượt thật 22/11 ("Kể các điểm tham quan miễn phí" rồi "Bỏ điểm đầu đi rồi viết lại danh sách") vẫn bỏ Đại Nội, nên bỏ. Chặn nhầm thì người dùng nhắn lại kèm tên; áp sai thì không chấp nhận. **Cái giá:** xem "Giới hạn đã biết".
 
 ## Giới hạn đã biết
 
@@ -191,10 +192,17 @@ Lịch giữ nguyên. Chương trình nói lý do (ở lịch ví dụ: một ng
 - Không thay được hoạt động buổi tối, không xếp tay một điểm vào buổi tối; chương trình nói thật hai điều đó.
 - Số người lớn không sửa được bằng lời; ngày tương đối ("dời 2 hôm"), ngày âm không đọc được.
 - Câu gợi ý "thay Y bằng X" chỉ được nhớ đúng một lượt kế.
-- Từ 22/11, lệnh mơ hồ không tên không mốc ("Bỏ điểm này", "Bớt lăng đi", "Bỏ điểm đầu tiên đi", "bỏ bãi biển đi") không sửa lịch mà thành câu hỏi thường; phải nhắn kèm tên điểm, "ngày N" hoặc "khỏi lịch". Khoảng ngày "ngày 2-3 bỏ điểm đầu" cũng không tính là mốc. Còn hở, chưa thấy thật: tin có đủ tên một điểm của lịch mà thật ra nói về danh sách vừa kể ("Bỏ Đại Nội đi rồi viết lại danh sách").
+- Từ 22/11, lệnh mơ hồ không tên không mốc ("Bỏ điểm này", "Bớt lăng đi", "Bỏ điểm đầu tiên đi", "bỏ bãi biển đi") không sửa lịch mà thành câu hỏi thường; phải nhắn kèm tên điểm, "ngày N" hoặc "khỏi lịch". Khoảng ngày "ngày 2-3 bỏ điểm đầu" cũng không tính là mốc. Đây là cái giá nhóm chọn để lịch không bị sửa nhầm. Còn hở, chưa thấy thật: tin có đủ tên một điểm của lịch mà thật ra nói về danh sách vừa kể ("Bỏ Đại Nội đi rồi viết lại danh sách").
+- Nhờ "viết lại danh sách" trong cuộc có lịch thì trợ lý tra kho lại và viết lại từng mục, không chỉ xoá một dòng: lượt đó mất khoảng 17–24 giây (trên trình duyệt 17,3 và 24,1 giây; bản không nhớ mất 10–12 giây) và danh sách dài có lần thiếu mục (một lượt thử: 8 điểm, bỏ 1, chỉ còn 4; trợ lý nói rõ nó chỉ giữ điểm tìm lại được nguồn — câu đó có thể bị đọc nhầm là ba điểm kia chưa chắc miễn phí).
+- Trợ lý chỉ nhớ câu trả lời liền trước, không nhớ câu cách hai lượt (bài 23). Lần chạy lại một lần khi câu bị rút, trong cuộc có lịch, mới có ca test, chưa có lượt thật.
 - Đổi chỗ với một ngày không có trong lịch nhận câu chung "Chưa làm: đổi chỗ, gộp hay tách các ngày…", dễ hiểu nhầm là không đổi chỗ được.
 
 ## Chi tiết để tra
+
+- Hai lệnh về buổi tối trên lịch ví dụ (câu thật, như bảng "Từng loại lệnh"): "Dời Đại Nội sang buổi tối ngày 1" ⇒ không xếp, "Đại Nội Huế chưa dời sang buổi tối ngày 1 được vì đây là điểm tham quan ban ngày, còn buổi tối lịch chỉ xếp hoạt động buổi tối. Dời được sang: buổi sáng ngày 3 (đổi chỗ với Phố cổ và chợ Bao Vinh)." · "Thêm Ca Huế vào lịch" (không nói buổi) ⇒ "Mình chưa đặt được Ca Huế trên sông Hương vào buổi tối theo ý bạn — hoạt động buổi tối do lịch tự chọn. Bạn có thể bỏ hoạt động tối đang có, lịch sẽ tự chọn một hoạt động khác."
+- Lý do "không đổi được" chọn theo mã lỗi của bước kiểm khung, ví dụ "một ngày sẽ phải đi hai khu không liền nhau" hay "điểm sẽ rơi ngoài giờ mở cửa".
+- Lời dặn của lần hiểu ý có câu: "Câu KHÔNG yêu cầu sửa lịch (hỏi thông tin, chào, cảm ơn, hỏi về một điểm, việc khẩn cấp, an toàn) ⇒ trả danh sách rỗng."
+- Bảng "Nếu… thì sao", dòng "Bỏ quán đầu…": lúc đo rào (trước 16:08 22/11), người dùng nhận câu nói thật có nguồn rằng không xác định được quán nào đứng đầu, kèm kể lại quán và mời nêu tên; từ 16:08 nhận danh sách đã bỏ quán đầu.
 
 - Hai đường không qua lần hiểu ý: tin bấm nút thẻ chọn; đường gọi trả cả câu một lần (không phải đường giao diện dùng) không có sửa lịch.
 - Hai nơi vừa là điểm ban ngày vừa là hoạt động tối (chợ Đông Ba, cầu Trường Tiền): thêm hay dời chúng vào ban ngày thì buổi tối các ngày được chọn lại, và khối thay đổi có dòng "Buổi tối xếp lại: …".
@@ -230,5 +238,8 @@ Lịch giữ nguyên. Chương trình nói lý do (ở lịch ví dụ: một ng
 - Bài đã qua một lượt đối chiếu độc lập (người kiểm chỉ đọc, tự chạy lại bộ xếp và phần áp lệnh), trưa 22/11/2026: `data/hoc_cung_D/kiem/bai_27_32.md` [riêng tư]; các dòng SAI / LỆCH đã áp, dòng không áp ghi ở `data/hoc_cung_D/viet/viet_27_32.md` mục "Sau lượt kiểm" [riêng tư].
 
 - Lọc lệnh bỏ / thay theo tên hoặc mốc (22/11/2026): `backend/llm/sua_lich_v2.py` (chú thích trên `_MOC_LICH`: lỗi 5 / 6, đếm 23 = 16 + 6 + 1, "điểm đầu" trần không là mốc, "du lịch / lịch sử / lịch sự / âm lịch", "ngày 2/12"; `_ten_trong_cau`: khúc ≥ 2 chữ có chữ tên riêng, 71 khúc chung; `loc_bo_thay`), `backend/llm/len_ke_hoach.py` dòng 264–266 (lượt đồng ý câu gợi ý không qua rào), 291 (lệnh bị bỏ ⇒ "Chưa làm"); commit `00b2bb19`, `301716b9`, `d23e0231` (gộp ở `37b511aa`); `backend/tests/test_rao_bo_thay.py` [code, đọc 22/11; không chạy test]. Lượt thật 12 lượt, 3 / 3, giới hạn mới, chỗ còn hở, "ngày 2-3": `guides/RUNBOOK_BAN_GIAO.md` mục 10.2, hàng "Trong cuộc ĐÃ lập lịch, tin nhờ sửa lại một DANH SÁCH…" [chép].
+
+- Số lượt thật của rào bỏ / thay là 12: bản chấm của phiên đo `data/thu_bedrock_2026-11-21/k10_cuoc_co_lich_2026-11-22/rao_CHAM_E.md` [riêng tư] và `guides/RUNBOOK_BAN_GIAO.md` mục 10.2 đều ghi 12; mục 44 của `bai_hoc/VIEC_MOI_XONG.md` ghi 16, bài không dùng số đó.
+- Cập nhật khớp hệ thống 16:35 22/11/2026 (đợt sửa gom): nhớ câu trả lời liền trước trong cuộc có lịch, không nhớ lượt sửa / câu trích nguồn lịch: `backend/config/settings.yaml` dòng 76 (`nho_dap_cuoc_co_lich`, chú thích "MỞ 16:08", 9 lượt, 3 / 3), `backend/api/conversations.py` `dap_duoc_nho` dòng 53–70 [code]; chạy lại một lần trong cuộc có lịch, trừ lượt sửa, lần hai đi thẳng đường thường: `backend/llm/assistant.py` dòng 2114–2140 [code]; 47 tính năng: `guides/RUNBOOK_BAN_GIAO.md` mục 0 dòng 26 (đếm 16:13) — người sửa chạy lại lệnh đếm 22/11 ra `47` [đã chạy]. Lệnh bị bỏ ⇒ "Chưa làm: bỏ điểm / thay điểm — bạn nhắn tiếp nhé.": `backend/llm/len_ke_hoach.py` dòng 291 (`kq["chua_lam"] += … khong_neo`), `backend/llm/sua_lich_v2.py` dòng 74 (`NHAN_HANH_DONG`) và 987 (`f"Chưa làm: {NHAN_HANH_DONG[t]} — bạn nhắn tiếp nhé."`) [code; hàm thuần đã chạy bởi người kiểm chéo 22/11]. Có mốc ⇒ mọi lệnh giữ; "lịch sự", "dương lịch": `sua_lich_v2.py` `loc_bo_thay`, `_MOC_LICH` dòng 318–321, 349–350 [code]. 16 lượt thật trước bản chính, lần nhìn trình duyệt sáu tin 16:17–16:21, giới hạn 17–24 giây / 17,3 và 24,1 giây / 8 còn 4 / chỉ nhớ liền trước: `bai_hoc/VIEC_MOI_XONG.md` mục 44 (dòng 19–45) [chép]; runbook mục 10.2 hàng lỗi "bỏ … đi" đã sửa 15:57 (12 lượt đo rào; lời trả trước 16:08) và 374 (9 lượt, giới hạn a–d) [chép]; `data/test_cuoi/chay_2026-11-22_e_nhin_gom/KET_QUA.md` [riêng tư, không mở].
 
 </details>

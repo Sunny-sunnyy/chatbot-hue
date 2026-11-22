@@ -1,6 +1,6 @@
 # Bài 21 — Harness: phần chương trình bao quanh model
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: cơ chế đọc từ chương trình đang chạy sau bộ thay đổi mở 14:47 ngày 22/11 (trần tìm 3 lần, trần vòng gốc 5, bước viết lại một lần); ví dụ là hai lượt hỏi thật ngày 20/11 (model gpt-6-luna, lúc đó trần tìm là 2); số của các phép so lấy từ các báo cáo đo từ 02/11 tới 22/11; người viết không chạy lại phép đo nào.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài); chạy lại cả trong cuộc đã lập lịch, giữ chữ đã nhìn trên trình duyệt · cơ chế đọc từ chương trình đang chạy; ví dụ là hai lượt hỏi thật 20/11 (gpt-6-luna, lúc đó trần tìm là 2); số phép so từ các báo cáo 02/11–22/11; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** đường hỏi đáp cơ bản (chặng 3): chương trình tìm 10 đoạn, model viết một lần, chương trình kiểm số nguồn. Và ở bài 3: model có thể "xin" chương trình chạy một công cụ rồi đọc kết quả.
 **Bài này thêm:** cho model quyền xin công cụ thì hệ thống thành một **trợ lý**. Bài này giảng phần chương trình đứng quanh model (**harness**), vì sao các cái trần được đặt như vậy, và chạm trần thì người dùng thấy gì; các bài còn lại của chặng này đều dựa trên nó.
@@ -28,7 +28,7 @@
 
 Người dùng gõ: *"Mặc áo dài vào Đại Nội có được miễn vé không?"*
 
-Chương trình tìm bằng đúng câu đó và lấy 10 đoạn: chín đoạn về vé xem biểu diễn và nghệ thuật biểu diễn, một đoạn về Lễ hội Áo dài. Không đoạn nào nêu các diện được miễn vé vào Đại Nội. Kho có câu trả lời ở một bài khác, nhưng đoạn đó không lọt vào 10 đoạn. Tìm một lần, viết một lần (chặng 3) thì model không có bằng chứng cho câu được hỏi. (Lượt này chưa được chạy thử với việc tìm thêm bị tắt.)
+Chương trình tìm bằng đúng câu đó và lấy 10 đoạn: chín đoạn về vé xem biểu diễn và nghệ thuật biểu diễn, một đoạn về Lễ hội Áo dài. Không đoạn nào nêu các diện được miễn vé vào Đại Nội. Kho có câu trả lời ở một bài khác, nhưng đoạn đó không lọt vào 10 đoạn. Tìm một lần, viết một lần (chặng 3) thì model không có bằng chứng cho câu được hỏi.
 
 ## Cho model quyền xin tìm thêm thì lượt đó trả lời được
 
@@ -54,20 +54,18 @@ Một lượt hỏi thật khác: *"Vào chùa ở Huế có phải cởi giày 
 Harness chặn bằng ba cái trần:
 
 1. **Tối đa 3 lần model tự tìm kho** trong một lượt hỏi (lần tìm đầu của chương trình không tính). Dùng hết 3 lần thì ở vòng kế tiếp chương trình **cất công cụ tìm kho đi**: model không còn thấy nó, và phải viết bằng những gì đã có, hoặc trả câu từ chối.
-2. **Tối đa 5 vòng** cho một lượt hỏi, cộng thêm 1 vòng cho mỗi công cụ ngày, khoảng cách, gần một điểm, liệt kê bài được đưa ở lượt đó (công cụ thời tiết không cộng vòng). Hết vòng mà model chưa viết thì chương trình trả **câu từ chối cố định** thay cho model.
-3. **Tối đa 45 giây** cho cả các vòng của trợ lý cộng lại. Quá hạn thì lượt hỏi báo lỗi. Lần viết lại (dưới đây) và lần chạy lại ở lượt đang kèm câu trả lời liền trước (bài 16) mỗi lần có hạn 45 giây riêng.
+2. **Tối đa 5 vòng** cho một lượt hỏi, cộng thêm 1 vòng cho mỗi công cụ khác được đưa ở lượt đó (trừ thời tiết; đủ ở bảng "Cấu hình đang chạy"). Hết vòng mà model chưa viết thì chương trình trả **câu từ chối cố định** thay cho model.
+3. **Tối đa 45 giây** cho cả các vòng của trợ lý cộng lại. Quá hạn thì lượt hỏi báo lỗi (hạn riêng của lần viết lại, lần chạy lại: bảng "Cấu hình đang chạy").
 
 Ở lượt "cởi giày", sau hai lần tìm thêm, model trả câu từ chối ở vòng 3; chương trình tra web một lần, để riêng ở mục "chưa kiểm" (bài 25). Kho thật ra có một câu về bỏ giày dép khi vào điện thờ (bài chùa Thiên Mụ), nhưng cả ba lần tìm đều không lấy ra: tìm thêm làm giảm chứ không xoá được chuyện "kho có mà tìm không ra".
 
-Hết vòng thì người dùng nhận một câu nói thật là không đủ thông tin; chương trình không lấy câu trả lời dở dang nào của model để thế vào.
-
-Cất công cụ có một mặt trái, lộ ra ngày 22/11: model còn muốn tìm thì nộp **chữ giữ chỗ** ("Tôi cần tìm thêm về giảm giá cho người cao tuổi"), không số nguồn, bị rút ⇒ màn hình "Thử lại". Từ 14:47 ngày 22/11 có **viết lại một lần**: model đã tự tìm ít nhất một lần mà chữ nộp không có số nguồn nào ⇒ chương trình gọi model viết thêm một lần, không công cụ, trên mọi đoạn đã gom, rồi kiểm như thường; vẫn không có ⇒ câu từ chối cố định. Từ 15:42 ngày 22/11, với model đang chạy, chữ giữ chỗ không còn hiện: người dùng chỉ thấy dòng "Đang viết câu trả lời…" đứng lâu hơn rồi câu trả lời cuối (theo test và một lượt thật, chưa nhìn trên trình duyệt). Số đo ở mục "Đã so", dòng 5–7.
+Cất công cụ có một mặt trái, lộ ra ngày 22/11: model còn muốn tìm thì nộp **chữ giữ chỗ** ("Tôi cần tìm thêm về giảm giá cho người cao tuổi"), không số nguồn, bị rút ⇒ màn hình "Thử lại". Từ 14:47 ngày 22/11 chương trình cho **viết lại một lần** (quyết định 3; số đo ở mục "Đã so", dòng 5–7).
 
 ## Trước khi gọi model và sau khi model viết đều là việc của chương trình
 
 **Trước.** Lần tìm đầu luôn do chương trình làm, bằng chính câu người dùng gõ; model không phải xin. Câu cần tính toán thì chương trình **tính sẵn** rồi đưa kết quả vào cùng 10 đoạn như một nguồn được đánh số (ví dụ ngày dương và ngày âm, bài 24). Chương trình cũng chọn **công cụ nào được đưa**: câu hỏi giá vé thì model không thấy công cụ thời tiết.
 
-**Sau.** Khi model viết xong, chương trình làm ba việc trên chữ đó. Với model đang chạy (trả cả câu một lần), ở lượt có công cụ, chữ được giữ tới khi qua bước kiểm nguồn rồi mới hiện; kiểm hỏng thì người dùng không thấy chữ đó. Với model trả chữ dần (đường cũ), chữ hiện trước, kiểm sau, kiểm hỏng thì rút lại hoặc thay chữ đã hiện.
+**Sau.** Khi model viết xong, chương trình làm ba việc trên chữ đó. Với model đang chạy (trả cả câu một lần), ở lượt hỏi đáp về Huế trong ô chat, chữ được giữ tới khi qua bước kiểm nguồn rồi mới hiện; kiểm hỏng thì người dùng không thấy chữ đó. Với model trả chữ dần (đường cũ), chữ hiện trước, kiểm sau, kiểm hỏng thì rút lại hoặc thay chữ đã hiện.
 
 1. **Kiểm số nguồn.** Mọi số nguồn phải trỏ tới một đoạn đã thật sự được đưa cho model ở lượt này; sai thì câu trả lời bị rút lại, kèm nút "Thử lại" (bài 16).
 2. **Kiểm con số về thời tiết và khoảng cách.** Con số loại này phải có ở kết quả công cụ, đoạn kho đã trích, hoặc chính câu hỏi; câu chứa con số lạ bị gỡ, ô chữ được thay.
@@ -90,7 +88,7 @@ Nguyên tắc: việc cần hiểu ngôn ngữ thì model làm; việc có luậ
 ### 1. Vì sao cho model quyền tự tìm thêm, và vì sao trần là 3 lần?
 
 - **Đã chọn:** model được tự xin tìm kho nhiều nhất 3 lần trong một lượt hỏi (từ 14:47 ngày 22/11; trước đó 2 lần).
-- **Vì sao:** đã đo, hai đợt. Đợt mở quyền (gpt-6-luna, lúc đó trần là 2): trên 18 câu cần nhiều nguồn, điểm "đủ ý" (thang 1–5) tăng 1,17 so với tìm một lần (khoảng tin cậy +0,44 tới +2,00). Đợt nâng lên 3 (Claude Sonnet 5.5, 22/11, tin của gia đình hỏi 6 lần, đã có hai thay đổi ở khâu tìm và bước viết lại): đủ cả hai ý kho có 1 trên 6 ⇒ 6 trên 6.
+- **Vì sao:** đã đo, hai đợt. Đợt mở quyền (gpt-6-luna, lúc đó trần là 2): trên 18 câu cần nhiều nguồn, điểm "đủ ý" (thang 1–5) tăng 1,17 so với tìm một lần (Đã so dòng 1). Đợt nâng lên 3 (Claude Sonnet 5.5, 22/11, tin của gia đình hỏi 6 lần, đã có hai thay đổi ở khâu tìm và bước viết lại): đủ cả hai ý kho có 1 trên 6 ⇒ 6 trên 6.
 - **Cách khác:** 1 lần: bỏ (Đã so dòng 2). Nới riêng lên 3, hay 4 lần cùng 8 vòng, mà không đổi khâu tìm: không hơn (Đã so dòng 5; bảng cấu hình).
 - **Cái giá:** lúc mới mở quyền có 1 câu an toàn sai mới, chữa bằng một câu dặn hẹp. Tin dài chờ thêm khoảng 2 giây. Lợi của trần 3 mới đo trên một tin; trần chung hai model, model cũ chưa đo.
 
@@ -99,14 +97,14 @@ Nguyên tắc: việc cần hiểu ngôn ngữ thì model làm; việc có luậ
 - **Đã chọn:** sau 3 lần tự tìm, ở vòng kế tiếp model không còn thấy công cụ tìm kho.
 - **Vì sao:** đã đo, lúc trần là 2: còn để model xin lần ba rồi nhận một dòng nhắc thì 8 trên 8 câu kho không có tốn thừa một lần gọi model; cất công cụ thì câu đứng giữa từ 22,85 xuống 16,15 giây.
 - **Cách khác:** dòng nhắc "đã hết lượt" (bản trước đó).
-- **Cái giá:** trên bộ câu mẫu có 3 câu đổi sang từ chối; chạy lại bản chưa đổi cũng ra đúng 3 câu đó. Model vẫn đòi tìm thì câu từ chối cố định; nộp chữ giữ chỗ thì nay được viết lại (quyết định 3).
+- **Cái giá:** trên bộ câu mẫu 3 câu đổi sang từ chối, không do thay đổi này (Đã so dòng 3). Model vẫn đòi tìm thì câu từ chối cố định; nộp chữ giữ chỗ thì nay được viết lại (quyết định 3).
 
 ### 3. Vì sao chữ nộp không có số nguồn thì cho viết lại một lần, và chỉ khi model đã tự tìm?
 
-- **Đã chọn:** như đoạn "mặt trái" ở mục trần; mở cùng trần 3 và hai thay đổi ở khâu tìm (bài 23).
+- **Đã chọn:** model đã tự tìm ít nhất một lần mà chữ nộp không có số nguồn nào ⇒ chương trình gọi model viết thêm một lần, không công cụ, trên mọi đoạn đã gom, rồi kiểm như thường; vẫn không có ⇒ câu từ chối cố định. Mở cùng trần 3 và hai thay đổi ở khâu tìm (bài 23).
 - **Vì sao:** đã đo (Claude Sonnet 5.5): 5 câu bị rút sáng 22/11 đều là chữ giữ chỗ; cả bộ đưa tin của gia đình về 0 trên 6 lần "Thử lại" (Đã so dòng 7; đủ ở bài 16, quyết định 5).
-- **Cách khác:** bước viết lại đứng riêng: đo rồi không mở (Đã so dòng 6). Lượt model không tìm lần nào không thuộc bước này; chỉ lượt đang kèm câu trả lời liền trước có lần chạy lại cả lượt, ở ô chat, không ở cuộc đã có lịch (bài 16); các lượt khác vẫn ra màn hình "Thử lại".
-- **Cái giá:** lâu hơn khoảng 10 giây, thêm một lần gọi model; trong lúc đó chỉ có dòng trạng thái (từ 15:42 22/11; trước đó chữ giữ chỗ hiện khoảng 15–17 giây rồi bị thay). Điều kiện "ít nhất một lần" mới có ca test; cuộc đã có lịch lưu chưa đo.
+- **Cách khác:** bước viết lại đứng riêng: đo rồi không mở (Đã so dòng 6). Lượt model không tìm lần nào không thuộc bước này; chỉ lượt đang kèm câu trả lời liền trước có lần chạy lại cả lượt, ở ô chat (từ 16:08 22/11 cả ở cuộc đã có lịch, trừ lượt sửa lịch; bài 16); các lượt khác vẫn ra màn hình "Thử lại".
+- **Cái giá:** lâu hơn khoảng 10 giây, thêm một lần gọi model; trong lúc đó chỉ có dòng trạng thái (từ 15:42 22/11, với model đang chạy; theo test và một lượt thật, ca này chưa nhìn trên trình duyệt). Chỗ chưa đo: "Giới hạn đã biết".
 
 ## Nếu… thì sao
 
@@ -115,7 +113,7 @@ Nguyên tắc: việc cần hiểu ngôn ngữ thì model làm; việc có luậ
 | lần tìm đầu không lấy ra đoạn có đáp án | model xin tìm thêm, nhiều nhất 3 lần | câu trả lời có nguồn, chậm hơn vài giây (lượt "áo dài": 7,5 giây) | đã có |
 | tìm hết các lần vẫn không ra, hoặc kho không có | model trả câu từ chối; sau đó chương trình tra web một lần | câu từ chối, kèm mục "Từ web (chưa kiểm)" nếu web có (bài 25) | đã có; "kho có mà tìm không ra" vẫn xảy ra (lượt "cởi giày") |
 | model cứ xin công cụ, hết số vòng vẫn chưa viết | chương trình trả câu từ chối cố định | "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này." | đã có; bản "vòng cuối chỉ viết" chưa mở |
-| model đã tự tìm mà chữ nộp không có số nguồn nào | viết lại một lần, không công cụ; vẫn không có ⇒ câu từ chối cố định | dòng "Đang viết câu trả lời…" đứng lâu hơn, rồi câu trả lời có nguồn (chậm hơn khoảng 10 giây) hoặc câu từ chối | có từ 14:47 22/11; giữ chữ từ 15:42; theo test và một lượt thật, chưa nhìn trên trình duyệt |
+| model đã tự tìm mà chữ nộp không có số nguồn nào | viết lại một lần, không công cụ; vẫn không có ⇒ câu từ chối cố định | dòng "Đang viết câu trả lời…" đứng lâu hơn, rồi câu trả lời có nguồn (chậm hơn khoảng 10 giây) hoặc câu từ chối | có từ 14:47 22/11; giữ chữ từ 15:42; ca viết lại: theo test và một lượt thật, chưa nhìn trên trình duyệt |
 | model viết một số nguồn không có thật (hoặc không có số nguồn mà chưa tự tìm lần nào) | rút lại (model đang chạy: chữ chưa hề hiện; model trả chữ dần: xoá chữ đã hiện). Riêng lượt đang kèm câu trả lời liền trước, ở ô chat: tự chạy lại cả lượt một lần | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" | đã có (bài 16) |
 
 Quá 45 giây hoặc hãng model lỗi: bài 6.
@@ -219,7 +217,7 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 
 **Vì sao mỗi vòng model chỉ được gọi một công cụ?** Chưa thấy ghi lý do lúc đặt. Điều thấy được: đã thử bật gọi nhiều công cụ cùng lúc, model gần như không dùng (1 trên 176 câu), nên giữ cách cũ. Cái giá: câu cần ba công cụ mất ba vòng.
 
-**Vì sao giữ chữ tới khi qua kiểm, và chỉ với model đang chạy?** Mở 15:42 22/11, nhóm đã chốt. Trước đó chữ giữ chỗ hiện ra rồi mới bị thay (lượt trình duyệt thật 22/11: sổ máy chủ ghi bản viết đầu 6,4 giây rồi viết lại 16,9 giây); phiên đo đếm 9 trên 114 lượt có bước viết lại, chữ giữ chỗ đứng 17–25 giây. Model đang chạy trả chữ một lần nên giữ lại không mất gì; model trả chữ dần thì giữ sẽ mất chữ chạy dần, nên không giữ (bài 6, quyết định 4). Cái giá: dòng trạng thái đứng lâu hơn; chưa nhìn trên trình duyệt.
+**Vì sao giữ chữ tới khi qua kiểm, và chỉ với model đang chạy?** Mở 15:42 22/11, nhóm đã chốt. Trước đó chữ giữ chỗ hiện ra rồi mới bị thay (lượt trình duyệt thật 22/11: sổ máy chủ ghi bản viết đầu 6,4 giây rồi viết lại 16,9 giây); phiên đo đếm 9 trên 114 lượt có bước viết lại, chữ giữ chỗ đứng 17–25 giây. Model đang chạy trả chữ một lần nên giữ lại không mất gì; model trả chữ dần thì giữ sẽ mất chữ chạy dần, nên không giữ (bài 6, quyết định 4). Đã nhìn trên trình duyệt 22/11 ở lượt thường của tin dài: lúc chờ chỉ có MỘT dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời…", rồi cả câu trả lời hiện một lần, không chữ nào hiện rồi bị thay (tin gia đình bốn ý: 29,5 giây). Cái giá: dòng trạng thái đứng yên lâu (20–30 giây ở tin dài), ở lượt viết lại còn lâu hơn; ca viết lại chưa trúng lần nào trên trình duyệt (mới một lượt thật chạy bằng chương trình).
 
 **Vì sao không để model tự quyết hết: tìm gì, tính gì, dừng lúc nào?** Đã đo từng mảnh của ý đó: ba lần mở thêm quyền cho model (xin hai công cụ một lúc, tự viết lại câu tìm đầu, tự quyết lúc nào tra web) đều không thắng (bài 23, 25), và model tự tính thì sai ngày (bài 24).
 
@@ -235,11 +233,17 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 - **Bước kiểm số nguồn chưa kiểm nghĩa.** Chương trình biết nguồn [25] có thật; chưa biết đoạn 25 có nói đúng điều câu trả lời viết (bài 16). Model vẫn có thể viết sai kèm một số nguồn có thật.
 - **Lượt hỏi chạm trần vẫn tốn tiền** cho các vòng đã chạy.
 - **Tin dài chờ lâu hơn.** Từ 14:47 22/11 tin dài nhiều ý trả lời được trong khoảng 25–34 giây (trước khoảng 20); lượt phải viết lại lâu thêm khoảng 10 giây (bài 34).
-- **Bước viết lại còn ba chỗ chưa đo:** điều kiện "đã tìm ít nhất một lần" mới có ca test; cuộc đã có lịch lưu (bước này vẫn chạy ở đó theo chương trình, chỉ chưa đo; thứ KHÔNG chạy ở cuộc có lịch là lần chạy lại ở lượt đang kèm câu trả lời liền trước, bài 16); model cũ.
+- **Bước viết lại còn ba chỗ chưa đo:** điều kiện "đã tìm ít nhất một lần" mới có ca test; cuộc đã có lịch lưu (bước này vẫn chạy ở đó theo chương trình, chỉ chưa đo; lần chạy lại trong cuộc có lịch mới có ca test, chưa có lượt thật — bài 16); model cũ.
+- **Lúc chờ ở tin dài chỉ có một dòng trạng thái đứng yên, 20–30 giây** (giá của việc giữ chữ tới khi kiểm). Ý "đổi dòng theo từng lần tìm" đã ghi, chưa làm.
 - **Đổi model thì chỗ nối harness có thể hỏng.** Với Claude, cách gửi cũ làm model xin công cụ mãi, 0 trên 8 lần viết được; đã chữa (dòng 4 của "Đã so").
 
 ## Chi tiết để tra
 
+- Trần vòng: công cụ được cộng 1 vòng là ngày, khoảng cách, gần một điểm, liệt kê bài (công cụ thời tiết không cộng). Lần viết lại và lần chạy lại ở lượt đang kèm câu trả lời liền trước (bài 16) mỗi lần có hạn 45 giây riêng.
+- Lượt "áo dài" chưa được chạy thử với việc tìm thêm bị tắt.
+- Bước viết lại trước 15:42 22/11: chữ giữ chỗ hiện khoảng 15–17 giây rồi bị thay.
+- Hết vòng thì người dùng nhận một câu nói thật là không đủ thông tin; chương trình không lấy câu trả lời dở dang nào của model để thế vào.
+- Bước viết lại, với model đang chạy từ 15:42 22/11: chữ giữ chỗ không còn hiện; người dùng chỉ thấy dòng "Đang viết câu trả lời…" đứng lâu hơn rồi câu trả lời cuối (theo test và một lượt thật; ca này chưa trúng trên trình duyệt).
 - Lượt "áo dài": dưới câu trả lời có dòng do chương trình nối, nguyên văn "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi — hãy kiểm lại với nơi đến trước khi đi." (nối vì câu trả lời trích một bài về vé).
 - Lượt "cởi giày" trước khi có việc cất công cụ: ở những câu như vậy model thường xin thêm lần thứ ba; một lần đo cho thấy 8 trên 8 câu kho không có đều tốn thừa một lần gọi model (quyết định 2).
 - Bước viết lại: số đo đủ (lượt ba bên, lượt nối, lần thử cuối, tin phòng gym) ở bài 16, quyết định 5 và "Đã so"; điều kiện "đã tự tìm ít nhất một lần" thay bản đầu "đã tìm hết lượt" vì tin phòng gym: model tìm 2 lần rồi tự dừng, chữ không nguồn, lọt lưới.
@@ -266,7 +270,7 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 - Ví dụ "áo dài", "cởi giày" (các vòng, câu tìm do model viết, số đoạn mới 9 và 8, nguồn [25], dòng ghi chú, thời gian, tiền): sổ vết ngày 20/11/2026, bản sao riêng tư `data/hoc_cung_D/vi_du_tim_them_vet.json`, `vi_du_kho_khong_co_vet.json` [đã chạy; người viết không chạy lại]. Ví dụ chính 1 vòng: `vi_du_di_suot_vet.json`.
 - Bảng "Đã so" dòng 1–3: `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 15, 44, 35 của bảng (nguồn gốc ghi ở mục Nguồn của bài đó) [đã chạy; chép qua bài 19]. Ba lần mở thêm quyền: cùng bài, dòng 43, 34, 30; ngày tháng và cộng tiền: dòng 23, 20.
 - Dòng 4 (0 / 8; 6 ⇒ 0 / 29): `bai_hoc/VIEC_MOI_XONG.md` mục 23 [đã chạy 21/11].
-- Chữ hiện trước, kiểm sau, hỏng thì rút lại / thay chữ (đường chữ chạy dần): `backend/api/routes/chat.py` (hàm `finish` của đường stream: sự kiện `error` kèm `after_text`, sự kiện `thay_chu`) [code, đọc 22/11/2026]. Giữ chữ tới khi kiểm (model đang chạy, lượt có công cụ, mở 15:42 22/11/2026; 9 / 114, 17–25 giây): `backend/config/settings.yaml` dòng `giu_chu_toi_kiem`, `backend/llm/assistant.py` (biến `cho_kiem`; viết lại thì phát bản viết lại như mảnh đầu thay vì `thay_chu`), `backend/tests/test_giu_chu_toi_kiem.py`; runbook 10.1 hàng "Lưới viết lại" [code + chép].
+- Chữ hiện trước, kiểm sau, hỏng thì rút lại / thay chữ (đường chữ chạy dần): `backend/api/routes/chat.py` (hàm `finish` của đường stream: sự kiện `error` kèm `after_text`, sự kiện `thay_chu`) [code, đọc 22/11/2026]. Giữ chữ tới khi kiểm (model đang chạy, lượt có công cụ, mở 15:42 22/11/2026; 9 / 114, 17–25 giây): `backend/config/settings.yaml` dòng `giu_chu_toi_kiem`, `backend/llm/assistant.py` (biến `cho_kiem`; viết lại thì phát bản viết lại như mảnh đầu thay vì `thay_chu`), `backend/tests/test_giu_chu_toi_kiem.py`; runbook 10.1 hàng "Lưới viết lại" [code + chép]. Phạm vi "lượt hỏi đáp về Huế trong ô chat": `assistant.py` dòng 352–354, 1979–1988 [code]. Đã nhìn trên trình duyệt 16:17–16:21 22/11/2026 (một dòng trạng thái rồi cả câu một lần; tin gia đình bốn ý 29,5 giây; ca viết lại chưa trúng; dòng trạng thái đứng yên 20–30 giây, ý "đổi dòng theo từng lần tìm" chưa làm): `bai_hoc/VIEC_MOI_XONG.md` mục 44; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Lưới viết lại"; lời trạng thái `frontend/src/chat.jsx` dòng 23 [đã chạy, phiên đo; chép + code]. Lần chạy lại trong cuộc đã lập lịch (từ 16:08 22/11, trừ lượt sửa lịch; mới có ca test, chưa có lượt thật): `settings.yaml` dòng 76 `nho_dap_cuoc_co_lich`; `assistant.py` dòng 2114–2131; runbook dòng 374 mục (c) [code + chép].
 - Thử 8 vòng + 4 lần tìm; thử nhiều câu tìm ở lần đầu; bản "vòng cuối chỉ viết" chưa mở: `bai_hoc/VIEC_MOI_XONG.md` mục 23, bảng các lần thử harness [đã chạy 21/11].
 - Đếm 310 câu, sót 4 / 60: `report_agent/2026-11-21/c_cong_cong_cu.md` mục 1 [đã chạy 21/11].
 - Câu về giày dép ở bài chùa Thiên Mụ và việc ba lần tìm không lấy ra: biên bản kiểm độc lập `data/hoc_cung_D/kiem/bai_02_10.md` dòng 26 [agent kiểm tìm ra].

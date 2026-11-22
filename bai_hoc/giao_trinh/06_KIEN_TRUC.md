@@ -1,6 +1,6 @@
 # Bài 6 — Kiến trúc: các khối, vì sao đặt như vậy, và khi một khối hỏng thì sao
 
-*Cập nhật 16:26, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Bốn tình huống hỏng (Qdrant ngừng giữa chừng, Qdrant tắt lúc bật máy chủ, thiếu khoá model lúc bật, khởi động lại máy chủ giữa một cuộc) đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt; các tình huống hỏng còn lại là đọc từ chương trình, chưa thử.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài); giữ chữ tới khi kiểm đã nhìn trên trình duyệt · các khối, công nghệ, cách xử lý lỗi đọc từ chương trình và cấu hình 22/11; thời gian từng bước từ một lượt hỏi thật 21/11 (Claude Sonnet 5.5).*
 
 **Bài trước đã biết:** người dùng thấy sáu trang; ở khung Trợ lý họ gõ câu hỏi và nhận câu trả lời có nguồn.
 **Bài này thêm:** phía sau màn hình có những khối nào, một câu hỏi đi qua chúng theo thứ tự nào, **vì sao** các khối được đặt như vậy, và **một khối hỏng thì sao**. Bài mở bằng vài khái niệm về trang web và máy chủ, giảng từ đầu.
@@ -45,8 +45,8 @@ Phần này dành cho người chưa làm trang web bao giờ. Năm ý dưới �
 ```mermaid
 flowchart LR
   U["Giao diện<br/>trong trình duyệt"] <--> S["Máy chủ"]
-  S <--> Q["Qdrant<br/>9.458 đoạn đã lập chỉ mục"]
-  K["Kho 266 bài<br/>+ các bảng dữ liệu"] --> S
+  S <--> Q["Qdrant<br/>9.479 đoạn đã lập chỉ mục"]
+  K["Kho 267 bài<br/>+ các bảng dữ liệu"] --> S
   S <--> M["Model viết<br/>(bên ngoài)"]
   S <--> X["Thời tiết, tìm web<br/>(bên ngoài)"]
 ```
@@ -56,7 +56,7 @@ flowchart LR
 | **Giao diện** | sáu trang người dùng thấy (bài 5) | React, đóng gói bằng Vite; bản đồ bằng Leaflet | trình duyệt của người dùng |
 | **Máy chủ** | nhận câu hỏi, tìm, gọi model, chạy công cụ, kiểm, xếp lịch, ghi sổ | Python, FastAPI; phần gọi model và nhận lời xin công cụ dùng thư viện OpenAI Agents SDK | máy của dự án |
 | **Qdrant** | cất vector của mọi đoạn kèm chữ và thông tin của đoạn đó; trả về 30 đoạn gần câu hỏi nhất | Qdrant, chạy trong một hộp Docker | máy của dự án |
-| **Kho và các bảng dữ liệu** | 266 bài viết; các bảng điểm tham quan, khoảng cách, chỗ ở, quán ăn, ảnh (dùng cho trang Lên kế hoạch và cho các công cụ của trợ lý); bảng sự kiện theo ngày (chỉ dùng cho ô hỏi đáp) | file chữ và file bảng | máy của dự án |
+| **Kho và các bảng dữ liệu** | 267 bài viết; các bảng điểm tham quan, khoảng cách, chỗ ở, quán ăn, ảnh (dùng cho trang Lên kế hoạch và cho các công cụ của trợ lý); bảng sự kiện theo ngày (chỉ dùng cho ô hỏi đáp) | file chữ và file bảng | máy của dự án |
 | **Dịch vụ bên ngoài** | model viết; dự báo thời tiết; tìm web | model: Claude Sonnet 5.5 qua Amazon Bedrock (trước đó gpt-6-luna qua OpenAI) · thời tiết: Open-Meteo · tìm web: Serper | máy của các bên đó |
 
 Một model nữa không có trong hình vì nó nằm ngay trong máy chủ: model embedding nhỏ (multilingual-e5-small), dùng để đổi câu hỏi thành vector (bài 10). Nó chạy trên máy của dự án, không gọi ra ngoài.
@@ -76,7 +76,7 @@ Ví dụ chính: *"Giá vé tham quan Đại Nội Huế là bao nhiêu?"*. Th�
 | 5. Kiểm | máy chủ | kiểm số nguồn; đạt thì gửi chữ, rồi dòng nguồn và dòng "có thể đã thay đổi"; hỏng thì chỉ gửi lời báo (bài 16) | dưới 0,01 giây |
 | 6. Hiện | giao diện | vẽ câu trả lời khi máy chủ gửi tới | — |
 
-Cả lượt: **3,7 giây**, 2 lần gọi model, 0,0178 USD (đo 21/11). Với model trả chữ dần, bước 6 chạy trước bước 5 (quyết định 4). Cuối lượt, máy chủ ghi một dòng vào sổ số đo: thời gian từng bước, số token, tiền, kết cục. Dòng đó không chứa chữ của câu hỏi hay câu trả lời.
+Cả lượt: **3,7 giây**, 2 lần gọi model, 0,0178 USD (đo 21/11). Với model trả chữ dần, bước 6 chạy trước bước 5 (quyết định 4). Cuối lượt, máy chủ ghi một dòng vào sổ số đo ("Chi tiết để tra").
 
 Hai điều đọc được từ bảng:
 
@@ -107,17 +107,17 @@ Khối chính là thứ thiếu thì không thể có câu trả lời: model vi
 
 ### 3. Vì sao dịch vụ bên ngoài lỗi thì máy chủ không âm thầm gọi lại, và không tự đổi sang model khác?
 
-- **Đã chọn:** mỗi dịch vụ bên ngoài chỉ được gọi một lần. Phần viết của một lượt hỏi (kể cả các vòng model xin tìm thêm hay xin công cụ) có chung một hạn 45 giây; lỗi hoặc quá hạn thì dừng. Hai trường hợp máy chủ tự gọi model thêm đều không phải lỗi mạng mà là lỗi ở bước kiểm sau khi viết: chạy lại cả lượt ở lượt đang kèm câu trả lời liền trước, và từ 14:47 ngày 22/11 viết lại một lần khi model đã tự tìm mà chữ nộp không có số nguồn (bài 16, 21); mỗi lần có hạn 45 giây riêng. Hãng model đang dùng ghi ở một dòng cấu hình; đổi hãng là sửa dòng đó rồi khởi động lại máy chủ, do người làm.
-- **Vì sao:** quyết định đã ghi (01/10/2026, chủ dự án duyệt, khi chuyển sang model của OpenAI): không gọi lại ở tầng ứng dụng, không có model dự phòng; lỗi của hãng thành lỗi báo rõ, không âm thầm gọi lại. Lý do của quyết định: chưa thấy ghi lý do. Điều thấy được: chương trình kiểm cấu hình từ chối hẳn các dòng "gọi lại" và "model dự phòng"; cả ba chỗ gọi ra ngoài đều gọi đúng một lần; với thư viện của OpenAI, chương trình phải tắt hẳn việc tự gọi lại có sẵn của thư viện.
+- **Đã chọn:** mỗi dịch vụ bên ngoài chỉ được gọi một lần. Phần viết của một lượt hỏi (kể cả các vòng model xin tìm thêm hay xin công cụ) có chung một hạn 45 giây; lỗi hoặc quá hạn thì dừng (hai lần tự gọi thêm khi bước kiểm sau khi viết hỏng, không phải khi lỗi mạng: "Chi tiết để tra"; bài 16, 21). Hãng model đang dùng ghi ở một dòng cấu hình; đổi hãng là sửa dòng đó rồi khởi động lại máy chủ, do người làm.
+- **Vì sao:** quyết định đã ghi (01/10/2026, chủ dự án duyệt, khi chuyển sang model của OpenAI): không gọi lại ở tầng ứng dụng, không có model dự phòng; lỗi của hãng thành lỗi báo rõ, không âm thầm gọi lại. Lý do của quyết định: chưa thấy ghi lý do. Điều thấy được: chương trình từ chối hẳn các dòng cấu hình "gọi lại" và "model dự phòng" (thêm ở "Chi tiết để tra").
 - **Cách khác:** tự gọi lại khi lỗi mạng: chưa thử. Tự chuyển sang hãng dự phòng: chưa thử; model dự phòng sẽ chạy với lời dặn chưa được đo cho nó ("Chi tiết để tra").
 - **Cái giá:** hãng trục trặc chốc lát thì người dùng phải tự bấm "Thử lại"; hãng sập lâu thì ô hỏi đáp ngừng tới khi hãng chạy lại hoặc có người đổi cấu hình (đường về gpt-6-luna cũng đang tạm dừng).
 
 ### 4. Vì sao chữ lúc thì hiện trước rồi mới kiểm, lúc thì được giữ tới khi kiểm xong?
 
-- **Đã chọn:** hai giai đoạn. Model trả chữ dần (gpt-6-luna, từ 01/11): hiện trước, kiểm sau; kiểm hỏng thì xoá chữ đã hiện, hiện "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại". Model đang chạy (trả cả câu một lần), lượt có công cụ, từ 15:42 22/11: giữ chữ tới khi qua kiểm; hỏng thì chỉ thấy lời báo.
+- **Đã chọn:** hai giai đoạn. Model trả chữ dần (gpt-6-luna — model cũ, đang tạm dừng; cách này có từ 01/11): hiện trước, kiểm sau; kiểm hỏng thì xoá chữ đã hiện, hiện "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại". Model đang chạy (trả cả câu một lần), từ 15:42 22/11: ở ô chat, mọi lượt hỏi đáp về Huế (trên cấu hình đang chạy, các lượt này đều đi vòng công cụ) giữ chữ tới khi qua kiểm; hỏng thì chỉ thấy lời báo, phải viết lại thì chỉ thấy bản viết lại (những lượt không thuộc việc này: "Chi tiết để tra").
 - **Vì sao:** giai đoạn một, để đọc sớm: đo 01/11 (gpt-6-luna, 38 câu, trình duyệt), chữ đầu tới sau 1,23 giây ở câu đứng giữa, sớm hơn 0,44 giây; dưới mốc 0,5 giây nhóm tự đặt; chủ dự án chọn giữ. Giai đoạn hai: chữ về một lần thì hiện trước hết lợi, mà cái giá "thấy chữ rồi mất" còn; trước khi mở, bước viết lại chạy ở 9 trên 114 lượt, đoạn chữ giữ chỗ đứng 17–25 giây rồi mới bị thay. Nhóm đã chốt mở.
 - **Cách khác:** hiện trước cho cả model đang chạy: là bản trước 15:42 22/11. Giữ chữ cả ở model trả chữ dần: không làm, sẽ mất chữ chạy dần.
-- **Cái giá:** khi còn hiện trước, kiểm sau, có lượt người dùng thấy chữ rồi mất: ở lần đo 21/11 là 3 trên 48 lượt với gpt-6-luna và 4 trên 53 lượt với Claude (bài 16). Từ 15:42 22/11, với model đang chạy: ở lượt viết lại, dòng trạng thái đứng lâu hơn; theo test và một lượt thật, chưa nhìn trên trình duyệt.
+- **Cái giá:** khi còn hiện trước, kiểm sau, có lượt người dùng thấy chữ rồi mất: ở lần đo 21/11 là 3 trên 48 lượt với gpt-6-luna và 4 trên 53 lượt với Claude (bài 16). Từ 15:42 22/11, với model đang chạy, lúc chờ chỉ có một dòng trạng thái, chữ không đổi, chỉ số đoạn đã tìm ghi trong ngoặc tăng dần (tin bốn ý: 29,5 giây; đã nhìn trên trình duyệt 22/11); lượt phải viết lại thì đứng lâu hơn — ca này theo test và một lượt thật, chưa nhìn trên trình duyệt.
 
 ### 5. Vì sao khi kho và chỉ mục lệch nhau, máy chủ từ chối mọi câu hỏi?
 
@@ -145,7 +145,7 @@ Sáu tình huống đáng nhớ nhất (bảng đủ ở nửa để tra, mục 
 | một khối phụ hỏng: thời tiết, tìm web, hoặc bước xếp loại câu | vẫn có câu trả lời; thiếu phần của khối đó, kèm một dòng báo chưa lấy được (với thời tiết và tìm web) | không ai phải làm gì; dịch vụ chạy lại thì lượt sau có lại |
 | máy chủ khởi động lại giữa một cuộc **(đã thử)** | màn hình không báo gì. Thẻ lịch vẫn còn hiện, nhưng lệnh sửa lịch bị coi như một câu hỏi thường và lịch không đổi; câu hỏi nối tiếp được trả lời lạc mạch | người dùng tải lại trang và làm lại từ đầu; **chưa có** cách giữ qua lần khởi động |
 
-Khi điều kiện đổi (nhiều người hỏi cùng lúc, kho lớn gấp mười, đổi model, đưa lên mạng): bảng ở cùng mục trên. Tóm tắt: chưa có giới hạn số lượt chạy cùng lúc và mới đo một lần với nhiều người hỏi; có sẵn một bộ đếm số lượt mỗi ngày cho từng người nhưng đang tắt.
+Khi điều kiện đổi (nhiều người hỏi cùng lúc, kho lớn gấp mười, đổi model, đưa lên mạng): bảng ở cùng mục trên.
 
 ## Dễ nhầm
 
@@ -187,7 +187,7 @@ Tắt giữa chừng: câu hỏi nào cũng lỗi cho tới khi Qdrant chạy l�
 
 ## Cấu hình đang chạy
 
-*Theo chương trình và cấu hình sáng 22/11/2026.*
+*Theo chương trình và cấu hình 22/11/2026 (dòng giữ chữ: 15:42; dòng chạy lại: 16:08).*
 
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
@@ -198,7 +198,8 @@ Tắt giữa chừng: câu hỏi nào cũng lỗi cho tới khi Qdrant chạy l�
 | Model embedding | multilingual-e5-small, chạy bằng CPU của máy | bài 10 | đã đo một model lớn gọi qua mạng: bỏ (bài 10) |
 | Model viết | Claude Sonnet 5.5 qua Amazon Bedrock (đổi tạm từ 21/11) | bài 33 | bài 33 |
 | Số lần gọi lại khi một dịch vụ bên ngoài lỗi hoặc quá hạn | 0, cho cả model viết, thời tiết, tìm web | quyết định 3 ở trên | chưa thử gọi lại khi lỗi mạng |
-| Chạy lại cả lượt khi câu trả lời bị rút ở bước kiểm sau khi viết | 1 lần, chỉ ở ô chat, ở lượt đang kèm câu trả lời liền trước, trừ lượt có câu cố định và cuộc có lịch (từ 22/11; bài 16) | người dùng khỏi gặp màn hình lỗi ở tin kiểu "sửa lại thứ bạn vừa viết" | trước khi có: 3 trên 7 lần ra màn hình lỗi (đo 22/11) |
+| Chạy lại cả lượt khi câu trả lời bị rút ở bước kiểm sau khi viết | 1 lần, chỉ ở ô chat, ở lượt đang kèm câu trả lời liền trước; không chạy lại lượt có câu cố định và lượt sửa lịch (từ 16:08 22/11 cuộc đã lập lịch cũng được chạy lại cho câu hỏi thường; bài 16) | người dùng khỏi gặp màn hình lỗi ở tin kiểu "sửa lại thứ bạn vừa viết" | trước khi có: 3 trên 7 lần ra màn hình lỗi (đo 22/11) |
+| Giữ chữ tới khi qua bước kiểm nguồn | bật từ 15:42 22/11; chỉ khi model trả cả câu một lần (Claude), ở ô chat | người dùng không thấy chữ rồi mất; lượt qua kiểm hiện như cũ | trước 15:42: hiện trước, kiểm sau (quyết định 4) |
 | Dịch vụ thời tiết | Open-Meteo, dự báo 7 ngày; kết quả giữ 30 phút | không cần khoá | chưa so |
 | Dịch vụ tìm web | Serper; một lần gọi | bài 25 | đã thử một dịch vụ khác, không đổi (bài 25) |
 | Khoảng cách giữa các điểm | bảng dựng sẵn; lúc trả lời không gọi mạng | bài 24 | mục "Quyết định nhỏ hơn" |
@@ -257,7 +258,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 | khoá của hãng model hết hạn | mỗi lần gọi model bị từ chối; đường báo tình trạng của hệ thống vẫn báo đủ (trả "ok") vì nó không gọi ra ngoài | "Không thể tạo câu trả lời vào lúc này." | người vận hành cấp khoá mới (với Claude: làm mới file khoá; không cần khởi động lại máy chủ vì chương trình đọc lại file khoá mỗi lần gọi, bài 33). Muốn biết model còn chạy không thì phải hỏi thử một câu thật |
 | Qdrant ngừng **(đã thử)** | mọi câu hỏi mới lỗi sau khoảng 2 giây; câu đã nhớ vẫn được trả lại; đường báo tình trạng **vẫn báo đủ (trả "ok")**, vì phần Qdrant chỉ được kiểm lúc bật | "Hệ thống tra cứu tạm thời không khả dụng." và nút "Thử lại" | bật lại Qdrant; hỏi lại được ngay (2,9 giây ở lượt thử), không cần khởi động lại máy chủ |
 | bước kiểm số nguồn hỏng | model đang chạy, lượt có công cụ: không gửi chữ (đã giữ tới khi kiểm); model trả chữ dần: rút lại chữ đã hiện | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" (bài 16) | người dùng bấm "Thử lại" |
-| bước kiểm số nguồn hỏng ở lượt đang kèm câu trả lời liền trước, ở ô chat **(đã đo 22/11)** | gỡ chữ đã hiện, tự chạy lại cả lượt **một lần** không kèm câu trả lời cũ; lần hai hỏng thì báo như dòng trên | chờ lâu hơn khoảng 5 giây, rồi câu trả lời hoặc lời báo | — (có từ 22/11; trước đó 3 trên 7 lần ra màn hình lỗi ở tin kiểu "sửa lại thứ bạn vừa viết", sau 0 trên 5) |
+| bước kiểm số nguồn hỏng ở lượt đang kèm câu trả lời liền trước, ở ô chat **(đã đo 22/11)** | gỡ chữ đã hiện (nếu có — với model đang chạy, chữ lần đầu chưa hề hiện), tự chạy lại cả lượt **một lần** không kèm câu trả lời cũ; lần hai hỏng thì báo như dòng trên | chờ lâu hơn khoảng 5 giây, rồi câu trả lời hoặc lời báo | — (có từ 22/11; trước đó 3 trên 7 lần ra màn hình lỗi ở tin kiểu "sửa lại thứ bạn vừa viết", sau 0 trên 5) |
 | model đã tự tìm mà chữ nộp không có số nguồn nào (thường ở tin dài nhiều ý, khi hết lượt tìm) | viết lại **một lần**, không công cụ, từ các đoạn đã gom; vẫn không có ⇒ câu từ chối cố định | từ 15:42 22/11: dòng "Đang viết câu trả lời…" đứng lâu hơn (17–25 giây ở lượt đo trước khi mở), rồi câu trả lời có nguồn (cả lượt chậm hơn khoảng 10 giây; theo test và một lượt thật, chưa nhìn trên trình duyệt); hoặc "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này." | — (có từ 14:47 22/11; trước đó 5 trên 6 lần ra màn hình lỗi ở một tin 4 ý; bài 21) |
 | một lỗi không lường trước trong chương trình | dừng lượt; ghi tên loại lỗi vào sổ, không ghi chữ của người dùng | "Đã xảy ra lỗi trong hệ thống. Vui lòng thử lại sau." | người làm hệ thống xem sổ |
 | người dùng đóng trang giữa lúc chờ | máy chủ thấy đường nối bị ngắt, dừng lần gọi model, ghi kết cục "người dùng ngắt" | — | — |
@@ -278,7 +279,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 |---|---|---|
 | nhiều người hỏi cùng lúc | mỗi câu hỏi giữ một đường nối giữa trình duyệt và máy chủ cho tới khi trả lời xong; nhiều người hỏi thì máy chủ giữ nhiều đường nối và gọi model nhiều lần cùng lúc. Mới đo một lần (27/10, trước khi có trợ lý) | **chưa có** giới hạn số lượt chạy cùng lúc; chưa đo lại |
 | một người gửi rất nhiều câu | có bộ đếm số lượt mỗi ngày theo địa chỉ mạng của người gửi; quá thì nhận "Bạn đã dùng hết số lượt hỏi hôm nay. Vui lòng quay lại vào ngày mai." | có sẵn nhưng **đang tắt**; bật bằng một thiết lập lúc chạy máy chủ, để dành cho khi đưa lên mạng |
-| kho lớn gấp mười | lập chỉ mục cả kho hiện mất 225 giây cho 9.458 đoạn; phần chấm từ khoá chỉ chạy trên 30 ứng viên nên không tăng theo cỡ kho (bài 11) | chưa đo ở cỡ đó |
+| kho lớn gấp mười | lập chỉ mục cả kho hiện mất khoảng 225 giây cho gần 9.500 đoạn; phần chấm từ khoá chỉ chạy trên 30 ứng viên nên không tăng theo cỡ kho (bài 11) | chưa đo ở cỡ đó |
 | đổi model viết | sửa một dòng cấu hình; nhưng lời dặn và các ngưỡng phải đo lại (bài 33) | đã làm một lần (21/11) |
 | đưa lên mạng | có gói đóng sẵn ba hộp, đã chạy thử trên máy (bài 36) | chưa đưa lên mạng |
 
@@ -293,13 +294,17 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 
 ## Chi tiết để tra
 
-- Trước 15:42 22/11 (lịch sử), với model đang chạy, chữ cũng hiện trước rồi mới kiểm: ở lượt phải viết lại, một đoạn chữ ngắn chưa phải câu trả lời ("cần tìm thêm về…") hiện khoảng 15–17 giây rồi bị thay; ở lượt bị rút, chữ đã hiện bị xoá.
+- Trước 15:42 22/11 (lịch sử), với model đang chạy, chữ cũng hiện trước rồi mới kiểm: ở lượt phải viết lại, một đoạn chữ ngắn chưa phải câu trả lời ("cần tìm thêm về…") đứng khoảng 15–17 giây theo sổ máy chủ của một lượt qua trình duyệt 22/11 (chưa ai chụp được chính đoạn chữ đó; phiên đo đếm trên 9 lượt viết lại: 17–25 giây) rồi bị thay; ở lượt bị rút, chữ đã hiện bị xoá.
+- Quyết định 4, những lượt không thuộc việc giữ chữ: câu trò chuyện (không kiểm nguồn) và trang Lên kế hoạch (mỗi câu của thẻ lịch đã được kiểm trước khi gửi); với model trả chữ dần cũng không giữ.
+- Sổ số đo: cuối mỗi lượt, máy chủ ghi một dòng gồm thời gian từng bước, số token, tiền, kết cục. Dòng đó không chứa chữ của câu hỏi hay câu trả lời.
+- Khi điều kiện đổi (tóm tắt bảng ở mục "Mọi tình huống hỏng"): chưa có giới hạn số lượt chạy cùng lúc và mới đo một lần với nhiều người hỏi; có sẵn một bộ đếm số lượt mỗi ngày cho từng người nhưng đang tắt.
 - Lượt ví dụ chính: ngày 21/11/2026; thời gian từng bước theo sổ ghi: lần gọi xếp loại 0,74 giây (cả bước 0,75 giây), tìm 0,040 giây, ghép ngữ cảnh 0,004 giây, viết 3,63 giây, tổng 3,69 giây. Tiền: 0,0034 USD cho lần xếp loại, 0,0144 USD cho lần viết.
 - Ví dụ "phải tìm thêm" mất 7,5 giây với 4 lần gọi model; lượt đó chạy ngày 20/11 với gpt-6-luna, chưa có lượt tương đương trên Claude.
-- Giai đoạn chuẩn bị kho: cắt 266 bài thành 9.458 đoạn, đổi mỗi đoạn thành vector, lập thống kê từ khoá, cất vào Qdrant; khoảng 225 giây cho cả kho, khoảng nửa phút khi chỉ vài bài đổi.
+- Giai đoạn chuẩn bị kho: cắt 267 bài thành 9.479 đoạn, đổi mỗi đoạn thành vector, lập thống kê từ khoá, cất vào Qdrant; khoảng 225 giây cho cả kho, khoảng nửa phút khi chỉ vài bài đổi.
 - Cùng chỗ nhớ với cuộc trò chuyện còn có nhiều nhất 500 câu trả lời đã nhớ, mỗi câu giữ 24 giờ (bài 34). Hệ thống hiện chỉ chạy một bản máy chủ trên một máy, nên chỗ nhớ của chính bản đó là đủ.
 - Các trang không cần model và Qdrant: Trang chủ, Bản đồ, Chỗ ở, Giới thiệu; trang Khám phá cần danh sách bài nạp lúc bật.
-- Lần chạy lại (dòng "lượt đang kèm câu trả lời liền trước") và lần viết lại một lần (từ 14:47 22/11) mỗi lần có hạn 45 giây riêng; bước viết lại chạy trước, và cũng có thể chạy bên trong lần chạy lại. Nên một lượt như vậy có thể chờ khoảng 90 giây (lần đầu + lần chạy lại), khoảng 135 giây nếu lần chạy lại còn phải viết lại, và trên lý thuyết tới khoảng 180 giây nếu cả hai lần đều viết lại mà lần viết lại đầu vẫn hỏng ở một phép kiểm khác (suy từ chương trình, chưa đo). Tiền tính mọi lần gọi.
+- Quyết định 3, phần không gọi lại: chương trình kiểm cấu hình từ chối hẳn các dòng "gọi lại" và "model dự phòng"; cả ba chỗ gọi ra ngoài đều gọi đúng một lần; với thư viện của OpenAI, chương trình phải tắt hẳn việc tự gọi lại có sẵn của thư viện.
+- Hai trường hợp máy chủ tự gọi model thêm (quyết định 3) đều không phải lỗi mạng mà là lỗi ở bước kiểm sau khi viết: chạy lại cả lượt ở lượt đang kèm câu trả lời liền trước, và từ 14:47 ngày 22/11 viết lại một lần khi model đã tự tìm mà chữ nộp không có số nguồn (bài 16, 21). Lần chạy lại và lần viết lại mỗi lần có hạn 45 giây riêng; bước viết lại chạy trước, và cũng có thể chạy bên trong lần chạy lại. Nên một lượt như vậy có thể chờ khoảng 90 giây (lần đầu + lần chạy lại), khoảng 135 giây nếu lần chạy lại còn phải viết lại, và trên lý thuyết tới khoảng 180 giây nếu cả hai lần đều viết lại mà lần viết lại đầu vẫn hỏng ở một phép kiểm khác (suy từ chương trình, chưa đo). Tiền tính mọi lần gọi.
 - Model dự phòng sẽ chạy với lời dặn và ngưỡng chưa được đo cho nó: ở bước xếp loại câu, gpt-6-luna xếp nhầm 0 trên 56 lượt, Claude 2 tới 4 trên 56 (bài 22).
 - Trên đường Amazon Bedrock, "khoá" là một file khoá tạm; lúc khởi động máy chủ chỉ kiểm rằng đã được chỉ tới file đó, còn khoá được đọc lại ở mỗi lần gọi.
 - Các đường gọi chính của máy chủ (mỗi đường là một địa chỉ mà giao diện gửi yêu cầu tới): ô chat (một đường trả cả câu, một đường gửi dần từng phần), mở một cuộc trò chuyện mới, hỏi bằng ảnh, tải lịch thành PowerPoint, danh sách bài và nội dung một bài cho trang Khám phá, báo thông tin chưa đúng, thời tiết cho Trang chủ, danh sách tính năng đang mở, lịch mẫu, dữ liệu bản đồ, dữ liệu trang Chỗ ở, trang theo dõi, và một đường báo tình trạng của hệ thống (đủ, hoặc thiếu khối nào).
@@ -310,7 +315,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Gói đóng sẵn để mang hệ thống sang máy khác gồm ba hộp (cửa nhận kết nối mã hoá, ứng dụng, Qdrant); đã chạy thử trên máy, chưa đưa lên mạng (bài 36).
 - Bộ test của máy chủ: lần chạy đủ gần nhất (lượt kiểm chốt trưa 22/11) có 76 file, 2.060 ca (bài 38).
 
-**Bài sau (bài 7):** bắt đầu chặng 2, giai đoạn chuẩn bị. Khối đầu tiên được mở ra là kho: 266 bài viết về Huế.
+**Bài sau (bài 7):** bắt đầu chặng 2, giai đoạn chuẩn bị. Khối đầu tiên được mở ra là kho: 267 bài viết về Huế.
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
@@ -344,6 +349,8 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 
 - Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó: dòng viết lại ở bảng đủ thêm thứ người dùng thấy (`bai_hoc/VIEC_MOI_XONG.md` mục 42, đính chính 15:14; runbook 10.1 hàng "Lưới viết lại"); câu "hai trường hợp tự gọi thêm" sửa thành "lỗi ở bước kiểm sau khi viết" (lần chạy lại xét `citation_error` bất kỳ, gồm lỗi kiểm con số, kiểm lịch — `answer_turn_stream_parallel`) và gộp vào "Đã chọn" của quyết định 3; thời gian xấu nhất của lượt chạy lại tính lại theo code (`_luot_stream` có `deadline` mới mỗi lần; `_viet_lai_het_luot` chạy trong `_luot_stream`, trước bước chạy lại; viết lại xong mà còn lỗi không phải "không có mã nguồn" thì `citation_error` vẫn còn) [suy từ code, chưa đo]. Cắt nửa để hiểu: quyết định 5 cũ (cuộc trò chuyện trong bộ nhớ) chuyển xuống "Quyết định nhỏ hơn"; số đo xếp loại câu của quyết định 3 chuyển xuống "Chi tiết để tra".
 
-- Quyết định 4, giai đoạn hai (giữ chữ tới khi kiểm, mở 15:42 22/11/2026; 9 / 114 lượt viết lại, 17–25 giây; đường chữ chạy dần không giữ): `backend/config/settings.yaml` dòng `giu_chu_toi_kiem`; `backend/llm/assistant.py` (chú thích `giu_chu_toi_kiem`; trong luồng gửi chữ: chỉ gom khi generator báo `chu_ve_mot_lan`, qua kiểm thì phát, bị rút thì không phát, viết lại thì phát bản viết lại như mảnh đầu); `backend/tests/test_giu_chu_toi_kiem.py` [code, đọc 22/11; không chạy test]; `guides/RUNBOOK_BAN_GIAO.md` mục 0 (46 tính năng, 15:51) và 10.1 hàng "Lưới viết lại" [chép].
+- Quyết định 4, giai đoạn hai (giữ chữ tới khi kiểm, mở 15:42 22/11/2026; 9 / 114 lượt viết lại, 17–25 giây; đường chữ chạy dần không giữ): `backend/config/settings.yaml` dòng `giu_chu_toi_kiem`; `backend/llm/assistant.py` (chú thích `giu_chu_toi_kiem`; trong luồng gửi chữ: chỉ gom khi generator báo `chu_ve_mot_lan`, qua kiểm thì phát, bị rút thì không phát, viết lại thì phát bản viết lại như mảnh đầu); `backend/tests/test_giu_chu_toi_kiem.py` [code, đọc 22/11; không chạy test]; `guides/RUNBOOK_BAN_GIAO.md` mục 0 (47 tính năng, đếm 16:13 22/11; 46 lúc 15:51) và 10.1 hàng "Lưới viết lại" [chép]. Phạm vi giữ chữ (mọi lượt hỏi đáp về Huế ở ô chat vì `tim_them: true` ⇒ `uses_tools`; không ở tuyến trò chuyện, không ở `len_ke_hoach.stream_v2`): `backend/llm/assistant.py:352–354, 1979–1988, 1952` [code, mở 16:39 22/11; câu viết theo biên bản `data/hoc_cung_D/kiem/phan_xu_va_cap_nhat_15h42.md` Phần 1 dòng 4, 5 — riêng tư].
+- Đã nhìn trên trình duyệt 16:17–16:21 22/11/2026 (lượt thường của tin dài: một dòng trạng thái "Đã tìm trong kho, đang chuẩn bị câu trả lời…" rồi cả câu trả lời hiện một lần, tin gia đình bốn ý 29,5 giây; ca "bản đầu là chữ giữ chỗ ⇒ viết lại" chưa trúng trên trình duyệt): `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Lưới viết lại"; `bai_hoc/VIEC_MOI_XONG.md` mục 44 [đã chạy, phiên đo; chép]. Lời trạng thái: `frontend/src/chat.jsx` dòng 23 [code].
+- Chạy lại cả lượt trong cuộc đã lập lịch (từ 16:08 22/11; không chạy lại lượt sửa lịch): `backend/config/settings.yaml` dòng 76 (`nho_dap_cuoc_co_lich`); `backend/llm/assistant.py` dòng 2114–2131 [code].
 
 </details>

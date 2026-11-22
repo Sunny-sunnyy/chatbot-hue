@@ -1,13 +1,13 @@
 # Bài 40 — Làm được tới đâu, còn yếu ở đâu, hướng phát triển
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: mỗi con số chép từ bài gốc của nó (ghi "bài N") hoặc từ sổ việc, trang hiện trạng, cấu hình đọc lúc 14:48 22/11; model của từng phép đo ghi cạnh số; đã sửa theo một lượt đối chiếu độc lập; không có phép đo mới.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài): bộ câu cất riêng đã có lúc chạy, giữ chữ đã nhìn trên trình duyệt · số chép từ bài gốc (ghi "bài N"), không đo mới.*
 
 **Bài trước đã biết:** hệ thống được làm ra thế nào, ai kiểm ai (bài 39).
 **Bài này thêm:** theo từng mảng: làm được gì, chưa làm được gì, chỗ yếu nào nặng nhất, thứ gì chưa đo, hướng phát triển nào có căn cứ.
 
 ## Ý chính
 
-- Trên một máy, người dùng làm được trọn **ba loại việc**: hỏi đáp có nguồn từ kho 266 bài; vài việc cần tính (ngày âm lịch, thời tiết, khoảng cách, lễ hội theo ngày); lên một lịch rồi sửa lịch bằng lời. Lúc viết có 46 tính năng đang mở.
+- Trên một máy, người dùng làm được trọn **ba loại việc**: hỏi đáp có nguồn từ kho 267 bài; vài việc cần tính (ngày âm lịch, thời tiết, khoảng cách, lễ hội theo ngày); lên một lịch rồi sửa lịch bằng lời. Có 47 tính năng đang mở (đếm 16:13 22/11).
 - **Chỗ yếu nặng nhất** xếp theo thứ tự lỗi của bài 4: bước kiểm chỉ kiểm số nguồn có thật, chưa kiểm nghĩa; tin dài nhiều ý dễ thiếu ý; kho có mà tìm không ra thì từ chối nhầm. Ngoài chất lượng là thời gian chờ: lượt hỏi đáp đứng giữa khoảng 13 giây, tin dài nhiều ý 25–34 giây (bài 34).
 - **Kho là trần.** Ở ba lượt đo mốc ngày 21/11 với 12 người dùng mô phỏng, mỗi người một mục tiêu (bài 32), một phiên phân loại 19 lần một ý bị trượt: 12 do kho thiếu, 1 do tìm không ra. Lượt đo lại 22/11 còn 5 ý trượt, 2 do kho thiếu, 0 do tìm.
 - **Nhiều thứ chưa đo:** chưa có người dùng thật, bộ 176 câu chưa chạy đủ trên model đang chạy, bộ câu cất riêng của phần trợ lý chưa dùng (hai bộ cất riêng của bộ 176 câu đã dùng từ tháng 10, bài 17), mới bốn ca hỏng được thử thật.
@@ -27,7 +27,7 @@ Mỗi dòng một mảng, kèm **một con số chính** lấy từ bài giảng
 | Mảng | Người dùng làm được | Chưa làm được | Một con số |
 |---|---|---|---|
 | Hỏi đáp từ kho | hỏi món, di tích, lễ hội, vé, đi lại; câu trả lời có nguồn bấm xem được; kho không có thì nhận câu từ chối cố định | câu kho có mà bước tìm không ra vẫn bị từ chối | từ chối nhầm 3 trên 158 câu kho có (gpt-6-luna, 12/11); 0 trên 78 câu (Claude, 21/11, mẫu nhỏ hơn) (bài 4) |
-| Trợ lý nhiều lượt | hỏi tiếp "còn chỗ đó thì sao", "quán thứ hai bạn vừa kể"; hỏi nhiều ý trong một tin | tin dài 4–5 ý dễ thiếu ý | 12 vai: 7 · 7 · 8 trên 12 phiên đạt (Claude, 21/11) (bài 32); đo lại 22/11: 8 trên 12 |
+| Trợ lý nhiều lượt | hỏi tiếp "còn chỗ đó thì sao", "quán thứ hai bạn vừa kể" (cả trong cuộc đã lập lịch); hỏi nhiều ý trong một tin | tin dài 4–5 ý dễ thiếu ý; chỉ nhớ câu trả lời liền trước (bài 23) | 12 vai: 7 · 7 · 8 trên 12 phiên đạt (Claude, 21/11) (bài 32); đo lại 22/11: 8 trên 12 |
 | Việc chương trình tính | ngày âm ↔ dương, dự báo 7 ngày, khoảng cách giữa 40 điểm, "gần X có gì", lễ hội theo ngày | tổng tiền vé do model tự cộng; khoảng cách ngoài 40 điểm | công cụ đổi ngày bớt 9 câu từ chối nhầm, 0 câu sai ngày (gpt-6-luna, 09/11) (bài 24) |
 | Tra web | kho từ chối thì có mục riêng "Từ web (chưa kiểm)" | mục web chỉ được kiểm con số, không kiểm địa chỉ hay ý | 2 trên 44 câu ngoài phạm vi bị gửi đi tra web vì xếp loại nhầm (bài 25) |
 | Hỏi bằng ảnh | gửi ảnh, hệ thống đoán trong 42 tên nơi và món, người dùng xác nhận rồi hỏi | hỏi chi tiết trong ảnh; phân biệt các lăng giống nhau | khi cho trả lời thẳng, model gán tên Huế cho 2 trên 5 ảnh không phải Huế (05/11) (bài 26) |
@@ -38,26 +38,24 @@ Mỗi dòng một mảng, kèm **một con số chính** lấy từ bài giảng
 
 ## Chỗ yếu đã biết, xếp theo mức nặng
 
-Bảng đặt mỗi chỗ yếu vào đúng nấc của thứ tự lỗi, từ nặng tới nhẹ (bài 4).
+Xếp theo thứ tự lỗi của bài 4, từ nặng tới nhẹ.
 
 | Nấc | Chỗ yếu | Con số hay dấu hiệu |
 |---|---|---|
 | 1. Cảnh báo an toàn | danh sách từ mà chương trình dùng để nhận ra câu về bão, lũ, ngập vẫn sót vài cách nói tự nhiên ("nước có lên nữa không") (bài 24); phần "model tự nhận ra thiên tai" chưa có lượt model thật | không có số |
 | 2. Nói chắc mà sai | bước kiểm chỉ biết số nguồn có thật, chưa biết đoạn được trích có nói đúng điều đó không (bài 16) · ảnh gán nhầm một lăng thì trả lời luôn về sai nơi (bài 26) · câu thẻ lịch của Claude có thể ghép sai ý một câu nguồn dài (bài 33) | câu thẻ lịch: một mục, 12 lượt, sai 1, nói lỏng 4 (bài 33) |
 | 3. Trả lời câu ngoài kho | nhận xét của một phiên, chưa đếm: câu ngoài tỉnh lọt bước xếp loại thì chỉ còn trông vào model tự từ chối | sàn "0 câu" giữ ở các lượt đo |
-| 4. Thiếu ý | tin dài nhiều ý (bài 16, 23) · dòng "Tư liệu chưa có thông tin về…" có lúc sai (kho có) · kho thiếu | dòng "chưa có" sai khoảng 13 % (một phiên đọc tay 30 trong 119 dòng của ba lượt mốc; khoảng tin cậy 4–31 %) |
+| 4. Thiếu ý | tin dài nhiều ý (bài 16, 23) · dòng "Tư liệu chưa có thông tin về…" có lúc sai (kho có) · kho thiếu | dòng "chưa có" sai khoảng 13 % (một phiên đọc tay; "Chi tiết để tra") |
 | 5. Từ chối nhầm | kho có mà bước tìm không lấy ra, như câu cởi giày vào chùa (bài 13) | 16 trên 40 câu khó thiếu đoạn đúng trong 10 đoạn (bài 13) |
 | ngoài thứ tự lỗi | **chờ lâu**, chữ tới một lần · khởi động lại máy chủ mất cuộc và lịch, không báo (bài 6) · tab thứ hai xoá cuộc của tab thứ nhất (bài 35) · một hãng model, không dự phòng (bài 6) | khoảng 13 giây ở lượt đứng giữa, một phần ba quá 15 giây (Claude, 49 lượt chạy một mình, 21/11) (bài 34) |
-
-**Tin dài nhiều ý, chiều 22/11.** Ở một tin 4 ý, màn hình "Thử lại" từng hiện 3 trên 6 lần (bài 16). Từ 14:47 có bốn thay đổi cho tin dài nhiều ý (ba ở khâu tìm, một là bước viết lại), mở cùng nhau: bỏ tìm riêng vế cụt; tách câu tìm model gộp hai nơi; cho tìm thêm 3 lần thay vì 2; viết lại một lần khi chữ nộp không có nguồn. Trên chính tin đó, 6 lần: 0 màn hình lỗi, nêu đúng cả hai ý kho có 6 trên 6. Lợi mới đo trên một tin, nên nhóm mở theo cơ chế (đưa đúng đoạn vào), không ghi là "giảm lỗi". Cái giá: tin kiểu này lâu hơn, khoảng 20 lên 25–34 giây.
 
 ## Những thứ chưa đo
 
 - **Chưa có người dùng thật.** Bộ câu do AI soạn hoặc do nhóm gõ; người dùng mô phỏng thường dễ hơn người thật. Trên một bộ cất riêng, điểm "đủ ý" thấp hơn bộ quen khoảng 0,4 trên thang 5 (bài 17).
 - **Bộ 176 câu chưa chạy đủ trên model đang chạy:** mới 85 câu đầu và 54 câu so sánh (bài 32).
-- **Bộ câu cất riêng của phần trợ lý chưa dùng** cho lượt so sánh cuối (khác hai bộ cất riêng của bộ 176 câu, đã dùng 28/10 và 01/11 — bài 17); lệnh đã chuẩn bị, chạy lúc nào và trên model nào là việc chủ dự án quyết.
+- **Bộ câu cất riêng của phần trợ lý chưa dùng** cho lượt so sánh cuối (khác hai bộ cất riêng của bộ 176 câu, đã dùng 28/10 và 01/11 — bài 17). Chủ dự án đã chọn (15:57 22/11): chạy đúng một lần sau buổi tự thử hệ thống và các bản sửa của buổi đó, trên model sẽ dùng lúc bảo vệ.
 - **Mới bốn ca hỏng được thử thật,** mỗi ca một lượt (bài 6).
-- **Các tính năng mở 21–22/11 chưa đo trên gpt-6-luna.** Trên Claude, lượt 12 vai đo lại 22/11 ra 8 trên 12 phiên, 33 trên 38 ý, trong khoảng nhiễu của mốc, chạy trước bốn thay đổi cho tin dài. Thước có một điểm mù: người mô phỏng không thấy dòng báo của lượt sửa lịch; công cụ đã chữa, chưa đo lại.
+- **Các tính năng mở 21–22/11 chưa đo trên gpt-6-luna.** Trên Claude, lượt 12 vai đo lại 22/11 ra 8 trên 12 phiên, 33 trên 38 ý, trong khoảng nhiễu của mốc, chạy trước bốn thay đổi cho tin dài; thước có một điểm mù ("Chi tiết để tra").
 - **Nhiều người hỏi cùng lúc** mới đo một lần, ngày 27/10 (bài 6). Điện thoại thật, in bằng tay: chưa ai thử.
 
 ## Hướng phát triển có căn cứ
@@ -66,12 +64,12 @@ Chỉ ghi hướng đã có trong sổ việc, danh sách ý chưa thử hoặc 
 
 | Hướng | Nhằm chỗ yếu nào | Đếm hay thử rẻ nhất | Đang ở đâu |
 |---|---|---|---|
-| Bổ sung kho: đường Huế – Hội An, quy định chụp ảnh | kho thiếu | gom các lượt "kho thiếu" theo chủ đề, ra mười thứ thiếu nhiều nhất | bài nháp Hội An chờ chủ dự án đọc; quy định chụp ảnh chưa tìm được nguồn công khai nói dứt khoát |
+| Bổ sung kho: quy định chụp ảnh (đường Huế – Hội An đã có bài từ chiều 22/11) | kho thiếu | gom các lượt "kho thiếu" theo chủ đề, ra mười thứ thiếu nhiều nhất | bài Hội An đã vào kho chiều 22/11 sau khi chủ dự án duyệt bản nháp; quy định chụp ảnh chưa tìm được nguồn công khai nói dứt khoát |
 | Đo bốn thay đổi cho tin dài trên nhiều tin dài | thiếu ý ở tin dài | một lượt nhiều tin dài khác nhau | đã mở 14:47 22/11; mới đo trên một tin |
 | Chữ chạy dần thật | chờ trắng 10–17 giây | ước, chưa đo: chờ tới chữ đầu từ khoảng 13 xuống khoảng 6 giây | cần một quyền ở tài khoản AWS; chủ dự án gác chuyện AWS tới khi tự xem lại |
 | Chạy riêng bước tìm cho câu bị từ chối mà kho có đáp án | từ chối nhầm | câu "cởi giày" trên chỉ mục hiện tại; đếm trên 176 câu | chưa đếm |
 | Mỗi tab một mã cuộc trò chuyện | tab thứ hai xoá cuộc của tab thứ nhất | đã xác nhận thật một lần | chưa làm |
-| Đo bù trên gpt-6-luna; lượt cuối trên bộ câu cất riêng của phần trợ lý | thứ chưa đo | 12 vai, 41 câu khó và các sàn | chờ chủ dự án |
+| Đo bù trên gpt-6-luna; lượt cuối trên bộ câu cất riêng của phần trợ lý | thứ chưa đo | 12 vai, 41 câu khó và các sàn | bộ cất riêng: một lần, sau buổi chủ dự án tự thử (15:57 22/11); gpt-6-luna và phần so với "RAG mốc": cần tiền OpenAI |
 
 **Đưa lên mạng.** Chưa làm. Lời chủ dự án sáng 22/11: "giờ tập trung hoàn thành ở local đi nhé". Các chốt cần cho lúc đó đã có trong chương trình nhưng đang tắt (bài 37); gói ba hộp Docker đã cũ (bài 36).
 
@@ -107,7 +105,7 @@ Chủ dự án hỏi về bước này sáng 22/11. Nó là một lần gọi mo
 - **Đã chọn:** bản chữa tin hỏi hai ý viết tắt kiểu "vé bn, có giảm ko" để tắt. Bản "viết lại một lần khi không có nguồn" mở từ 14:47 22/11, chỉ cùng ba thay đổi ở khâu tìm.
 - **Vì sao:** bản viết tắt: 16 tin, mỗi bên đủ hai ý 10 trên 10, mở lên chỉ thêm 2 dòng "chưa có" sai. Bản viết lại đứng riêng: màn hình lỗi 3 trên 6 xuống 0, nhưng 4 trên 5 câu viết lại ghi "chưa có" cho hai ý kho có; thiếu ý nặng hơn một lần "Thử lại". Ghép với khâu tìm thì nêu đúng cả hai ý 6 trên 6.
 - **Cách khác:** mở bản viết lại đứng riêng: đã đo, bỏ.
-- **Cái giá:** tin dài lâu hơn; lợi mới đo trên một tin.
+- **Cái giá:** tin dài lâu hơn (khoảng 20 lên 25–34 giây); lợi mới đo trên một tin.
 
 ### 5. Vì sao không thêm nhiều agent phối hợp lúc trả lời?
 
@@ -162,13 +160,16 @@ Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đ
 
 ## Chi tiết để tra
 
-- **Tính năng đang mở / tắt:** 46 mở, 3 tắt (đếm 15:51 22/11, sau khi mở việc giữ chữ tới khi qua bước kiểm nguồn; lúc 14:52 là 45, đếm bằng lệnh của phụ lục B; phụ lục B đếm 13:20 ra 42, trước khi ba tính năng khâu tìm được mở). Ba cái tắt: xếp lịch từ câu gõ tự do (đo không đạt), dòng "hôm nay là ngày…" (vô ích), sổ vết từng lượt (chỉ dùng ở máy phát triển).
-- **Kho:** 266 bài, 9.458 đoạn (bài 7).
+- **Tính năng đang mở / tắt:** 47 mở, 3 tắt (đếm 16:13 22/11, sau khi mở việc nhớ câu trả lời liền trước trong cuộc đã lập lịch; lúc 15:51 là 46, sau khi mở việc giữ chữ tới khi qua bước kiểm nguồn; lúc 14:52 là 45, đếm bằng lệnh của phụ lục B; phụ lục B đếm 13:20 ra 42, trước khi ba tính năng khâu tìm được mở). Ba cái tắt: xếp lịch từ câu gõ tự do (đo không đạt), dòng "hôm nay là ngày…" (vô ích), sổ vết từng lượt (chỉ dùng ở máy phát triển).
+- **Kho:** 267 bài, 9.479 đoạn (bài 7).
 - **Bộ test:** lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca đạt (bài 38, Chi tiết để tra). Sau khi bốn thay đổi được mở, cả bộ test chạy lại 14:48–15:03 22/11: 78 file, 2.119 ca đạt, 2 ca hỏng — đều là ca test cũ so nguyên một bảng nay có thêm tên nhà cung cấp model của trang Giới thiệu, không phải sản phẩm sai (bài 38).
 - **Thời gian chờ:** 13 giây là 49 lượt hỏi đáp của người dùng mô phỏng trưa 21/11, tin dài hơn và còn mục web; 6,9 giây là 41 tin phần lớn ngắn ở lượt kiểm chốt trưa 22/11, lúc máy rảnh; 95 % dưới 13,1 giây (bài 34).
-- **Phân loại 19 lần trượt:** 12 kho thiếu (đi Hội An, quy định chụp ảnh, sự kiện có ngày, điểm ít leo bậc; hai chủ đề sau nay đã có bài hoặc công cụ), 4 sửa lịch (đã sửa), 2 model không ghép hai dữ kiện có sẵn, 1 tìm không ra; một phiên đếm chiều 22/11, khâu tìm chạy lại trên chỉ mục hôm đó. Lượt đo lại: 5 ý trượt — kho thiếu 2, model không ghép 1, hai ý sửa lịch thước không đọc được, tìm không ra 0.
+- **Phân loại 19 lần trượt:** 12 kho thiếu (đi Hội An, quy định chụp ảnh, sự kiện có ngày, điểm ít leo bậc; nay đi Hội An và điểm ít leo bậc đã có bài, sự kiện có ngày đã có công cụ; còn quy định chụp ảnh), 4 sửa lịch (đã sửa), 2 model không ghép hai dữ kiện có sẵn, 1 tìm không ra; một phiên đếm chiều 22/11, khâu tìm chạy lại trên chỉ mục hôm đó. Lượt đo lại: 5 ý trượt — kho thiếu 2, model không ghép 1, hai ý sửa lịch thước không đọc được, tìm không ra 0.
+- **Bốn thay đổi cho tin dài nhiều ý (mở 14:47 22/11):** ba ở khâu tìm, một là bước viết lại — bỏ tìm riêng vế cụt; tách câu tìm model gộp hai nơi; cho tìm thêm 3 lần thay vì 2; viết lại một lần khi chữ nộp không có nguồn. Trước đó, ở một tin 4 ý, màn hình "Thử lại" hiện 3 trên 6 lần (bài 16). Trên chính tin đó, 6 lần: 0 màn hình lỗi, nêu đúng cả hai ý kho có 6 trên 6. Lợi mới đo trên một tin, nên nhóm mở theo cơ chế (đưa đúng đoạn vào), không ghi là "giảm lỗi".
+- **Dòng "chưa có" sai khoảng 13 %:** một phiên đọc tay 30 trong 119 dòng của ba lượt mốc; khoảng tin cậy 4–31 %.
+- **Điểm mù của thước 12 vai:** người mô phỏng không thấy dòng báo của lượt sửa lịch; công cụ đã chữa, chưa đo lại.
 - **Lượt đo bốn thay đổi cho tin dài:** một tin 4 ý, 6 lần mỗi bên; màn hình lỗi bản cũ 5 · lọc và tách 3 · thêm viết lại 0 · thêm lần tìm thứ ba 0; nêu đúng cả hai ý 0 · 1 · 1 · 6 trên 6.
-- **Câu bị rút lại sau khi đã hiện:** 3 trên 48 và 4 trên 53 lượt ở một lần đo ngày 21/11 (bài 16). Từ 15:42 22/11, với model đang chạy, ở lượt có công cụ, chữ được giữ tới khi qua kiểm nên không còn cảnh chữ hiện rồi mất; chưa đo lại, chưa nhìn trên trình duyệt.
+- **Câu bị rút lại sau khi đã hiện:** 3 trên 48 và 4 trên 53 lượt ở một lần đo ngày 21/11 (bài 16). Từ 15:42 22/11, với model đang chạy, ở ô chat, mọi lượt hỏi đáp về Huế giữ chữ tới khi qua kiểm nên không còn cảnh chữ hiện rồi mất (bài 6). Đã nhìn trên trình duyệt 16:17–16:20 22/11 (cả lần nhìn gồm 16 lượt hỏi ở năm phần, 0 màn hình lỗi): ở tin gia đình bốn ý, 29,5 giây, máy đọc màn hình mỗi 0,25 giây không thấy chữ nào hiện trước lúc câu trả lời đủ. Ca "bản viết đầu là chữ giữ chỗ nên được viết lại" chưa trúng lần nào trên trình duyệt (mới một lượt thật chạy bằng chương trình). Chưa đo lại tỉ lệ trên nhiều lượt.
 - **Ảnh có chữ ra lệnh:** 1 trên 3 ảnh lừa được model (05/11), hậu quả bị chặn (bài 37).
 - **Dời một điểm trong lịch:** làm được 24 trên 176 lần thử; hướng "nới luật xếp" có trong danh sách ý chưa thử, chưa đếm.
 - **Vế cụt:** trên 364 tin nhiều ý đã ghi, 236 tin (65 %) có ít nhất một vế cụt; đọc tay 28 đoạn chúng kéo về, 20 không liên quan. Trên 8 dữ kiện kho có của phép đo sáng 22/11: tắt tìm theo vế thì 1 có trong đoạn tìm về, đang chạy 5, lọc vế cụt 4.
@@ -181,7 +182,9 @@ Chưa có người dùng thật; bộ 176 câu chưa chạy đủ trên model đ
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
 - Số trong bảng "làm được": bài 4 quyết định 1 (3 / 158, 0 / 78); bài 32 "Ý chính" (7 · 7 · 8); bài 24 mục "Đã so" dòng 2; bài 25 "Ý chính" (2 / 44); bài 26 "Ý chính" (2 / 5, 42 tên); bài 27 "Ý chính" (0,2 và 9,3 giây); bài 31 "Ý chính" và mục "Đã so" (9 / 10, 14–19/11, trước khi đổi sang Claude); bài 34 "Chi tiết để tra" (41 tin, 6,9 giây, 13,1 giây, 0 lỗi); bài 36 "Chi tiết để tra" (34 giây) [chép từ giáo trình].
-- 46 tính năng mở, 3 tắt: `sed -n '/^assistant:/,$p' backend/config/settings.yaml | grep -cE '^  [a-z_0-9]+: true'` ra 46 lúc 15:51 22/11 trên main `15cd5985`, sau khi mở `giu_chu_toi_kiem` (`guides/RUNBOOK_BAN_GIAO.md` mục 0) [chép]; người viết chạy lúc 14:52 ra 45; ba tính năng tắt: `HIEN_TRANG.md` dòng 19.
+- 47 tính năng mở, 3 tắt: `sed -n '/^assistant:/,$p' backend/config/settings.yaml | grep -cE '^  [a-z_0-9]+: true'` ra 47 lúc 16:13 22/11 trên main `2a221e5`, sau khi mở `nho_dap_cuoc_co_lich` (`guides/RUNBOOK_BAN_GIAO.md` mục 0 dòng 26; `backend/config/settings.yaml` dòng 76, "MỞ 16:08") [chép; người sửa chạy lại lệnh 22/11 trên main `0430104e` ra 47 — đã chạy]; trước đó 46 lúc 15:51 trên main `15cd5985` sau khi mở `giu_chu_toi_kiem`; người viết chạy lúc 14:52 ra 45; ba tính năng tắt: `HIEN_TRANG.md` dòng 19.
+- Bộ câu cất riêng của phần trợ lý: quyết định của chủ dự án `session_prompt/HIEN_TRANG.md` mục 4 gạch "15:57 22/11/2026" (dòng 62) và dòng 48 (G-1 "ĐÃ CÓ TRẢ LỜI 15:57") [lời chủ dự án]; đo bù gpt-6-luna khi có tiền OpenAI: mục 4 gạch 21:50 21/11 và gạch 11:29 21/11 [lời chủ dự án].
+- Giữ chữ đã nhìn trên trình duyệt (16 lượt, 0 màn hình lỗi, 29,5 giây, mỗi 0,25 giây) và ca chữ giữ chỗ chưa trúng: `bai_hoc/VIEC_MOI_XONG.md` mục 44 dòng 33, 36, 42 [chép; máy kiểm của phiên đo]; "mọi lượt hỏi đáp về Huế ở ô chat": `backend/llm/assistant.py` 352–354, 1979–1988 theo biên bản kiểm chéo 15:42 Phần 1 [chép biên bản]. Nhớ trong cuộc đã lập lịch, chỉ nhớ câu liền trước: settings dòng 76, mục 44 dòng 40 [code; chép].
 - Thứ tự lỗi: bài 4. Chỗ yếu: bài 24, 16, 26, 33, 13, 34, 6, 35 mục "Giới hạn đã biết" [chép]. Một hãng model, không dự phòng: `HIEN_TRANG.md` mục 4 gạch 21:43 21/11 điểm (5); bài 6.
 - "Model tự nhận ra thiên tai" chưa có lượt model thật: `bai_hoc/VIEC_MOI_XONG.md` mục 40 ý 2 [chép].
 - Nấc 3: nhận xét của một phiên `session_prompt/Y_CHUA_THU.md` ý 3 [chưa đếm]; câu Hội An 20 / 20 bị chặn ở bước xếp loại: `data/thu_bedrock_2026-11-21/do/demo/KET_QUA_DEMO.md` [riêng tư; đã chạy 21/11].

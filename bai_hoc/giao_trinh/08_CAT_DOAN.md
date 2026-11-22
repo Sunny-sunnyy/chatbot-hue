@@ -1,9 +1,9 @@
 # Bài 8 — Cắt bài thành đoạn (chunking)
 
-*Cập nhật 15:13, ngày 22/11/2026 · cách cắt đọc từ chương trình đang chạy; số đoạn đếm sáng 22/11, khớp bản ghi hiện trạng lúc 13:33; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
+*Cập nhật 17:11, ngày 22/11/2026 · cách cắt đọc từ chương trình đang chạy; số đoạn đếm sáng 22/11, khớp bản ghi hiện trạng lúc 13:33; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
 
-**Bài trước đã biết:** kho là 266 bài viết về Huế, mỗi bài là một file chữ có tiêu đề và các mục.
-**Bài này thêm:** bước đầu tiên của giai đoạn chuẩn bị: cắt 266 bài thành 9.458 đoạn. Cắt ở đâu, mỗi đoạn dài bao nhiêu, vì sao đoạn to hơn lại cho kết quả tệ hơn, và một đoạn hỏng thì sao.
+**Bài trước đã biết:** kho là 267 bài viết về Huế, mỗi bài là một file chữ có tiêu đề và các mục.
+**Bài này thêm:** bước đầu tiên của giai đoạn chuẩn bị: cắt 267 bài thành 9.479 đoạn. Cắt ở đâu, mỗi đoạn dài bao nhiêu, vì sao đoạn to hơn lại cho kết quả tệ hơn, và một đoạn hỏng thì sao.
 
 ## Ý chính
 
@@ -176,7 +176,7 @@ Mã là đường dẫn bài kèm số thứ tự đoạn, nên các đoạn ph�
 | Bảng | cả bảng nếu vừa giới hạn; không thì từng dòng kèm dòng tiêu đề | con số luôn đi cùng tên cột | đã thử gộp các dòng liền nhau: không khác |
 | Đoạn văn dài | tách ở ranh giới câu | không cắt giữa câu | — |
 | Giới hạn độ dài | mỗi đoạn phải vừa cả ba: 512 token của model đang dùng, 512 token và 256 token (có tách từ tiếng Việt) của hai model ứng viên cũ | mức chặt nhất (256) khiến một số khối dài bị tách thêm (61 đoạn ở 14 bài, đếm trên kho cuối tháng 10) | đã thử chỉ giữ giới hạn 512 của model đang dùng: ít đi 61 đoạn, kết quả tìm không khác; bỏ được nhưng chưa dọn |
-| Kết quả | 266 bài ⇒ 9.458 đoạn | — | — |
+| Kết quả | 267 bài ⇒ 9.479 đoạn | — | — |
 | Độ dài trung bình một "chữ để tìm" | khoảng 67 âm tiết | số của bộ từ khoá (bài 11) | — |
 | Thư mục của kho không đưa vào | bộ câu hỏi chấm, bản thô tải từ trang nguồn, thư mục mẫu bài và ghi chú soạn | không phải nội dung cho người dùng | — |
 | File bị loại đích danh | 3 file danh mục dùng lúc soạn | chỉ là danh sách tên, không phải nội dung để trả lời | phép đo lúc loại: kết quả tìm không khác |
@@ -221,8 +221,8 @@ Mã là đường dẫn bài kèm số thứ tự đoạn, nên các đoạn ph�
 
 ## Chi tiết để tra
 
-- Số 366 token, "một nửa dưới khoảng 85 token" và "gần 1.800 đoạn dưới 50 token" đếm trên kho cuối tháng 10 (khoảng 8.400 đoạn); chưa đếm lại trên 9.458 đoạn hiện nay.
-- Lần chuẩn bị nào cũng chạy vòng kiểm cuối; bản ghi của lần chuẩn bị đang dùng ghi trạng thái hoàn tất với 9.458 đoạn.
+- Số 366 token, "một nửa dưới khoảng 85 token" và "gần 1.800 đoạn dưới 50 token" đếm trên kho cuối tháng 10 (khoảng 8.400 đoạn); chưa đếm lại trên 9.479 đoạn hiện nay.
+- Lần chuẩn bị nào cũng chạy vòng kiểm cuối; bản ghi của lần chuẩn bị đang dùng ghi trạng thái hoàn tất với 9.479 đoạn.
 - Có một bài test chạy lại việc cắt trên cùng kho và so kết quả với bản ghi, để bảo đảm mã đoạn không đổi giữa hai lần chạy.
 - Bảng dài tách từng dòng chỉ khi cả bảng không vừa giới hạn; bảng vừa thì giữ nguyên một đoạn.
 - Lượng chữ 750 token trong phép so là mức của thời hệ thống còn đưa 5 đoạn cho model viết.
@@ -235,7 +235,7 @@ Mã là đường dẫn bài kèm số thứ tự đoạn, nên các đoạn ph�
 - Bốn luật cắt, không gối đầu, phần bằng chứng kèm vị trí, vòng kiểm cuối: `backend/ingestion/chunking/full_corpus_chunker.py` (hàm `chunk_document`), `markdown_blocks.py` [code]; chép qua `bai_hoc/02_CHUNKING.md` (bài đã qua kiểm độc lập), mình đọc lại phần kiểm giới hạn token ngày 22/11/2026.
 - Ba giới hạn token (512 / 512 / 256 có tách từ): `backend/config/settings.yaml` mục `full_corpus.embedding_models`; hàm kiểm lặp qua cả ba: `full_corpus_chunker.py` [code, đọc 22/11/2026]. Thử chỉ giữ giới hạn của model đang dùng (8.398 đoạn, ít đi 61, không khác): `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` thẻ N2-05 [đã chạy, kho cũ; theo biên bản kiểm độc lập `data/hoc_cung_D/kiem/bai_02_10.md`].
 - Đoạn số 5 và số 6 của ví dụ chính (hai dòng của cùng một bảng, cùng dòng tiêu đề) và câu trả lời về Tuyến A: `data/hoc_cung_D/vi_du_di_suot_vet.json`, trường `ngu_canh`, `tra_loi` [đã chạy, riêng tư]. Khối chữ trong bài là bản rút gọn của đoạn thật: tên các cột và tên các điểm được viết tắt, bỏ dòng kẻ bảng, gạch đầu dòng và dấu in đậm (kho mã của dự án có một bước kiểm tự động không cho chép nguyên một dòng dài của kho vào tài liệu).
-- 266 bài, 9.458 đoạn, trạng thái hoàn tất: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`, đọc 10:02 22/11/2026 [đã chạy]. Độ dài trung bình 66,63: `data/full_corpus_builds/full_corpus_sparse_state.json` (`average_document_length`).
+- 267 bài, 9.479 đoạn, trạng thái hoàn tất: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`, đọc 16:35 22/11/2026 [đã chạy]. Độ dài trung bình 66,59: `data/full_corpus_builds/full_corpus_sparse_state.json` (`average_document_length`).
 - Thư mục và file bị loại, file quy tắc gắn lưu ý: `backend/config/settings.yaml` (`exclude_parts`, `exclude_files`, `conditions_file`) [cấu hình]. "3 quy tắc": `bai_hoc/01_KHO_DU_LIEU.md` [chép; chưa đếm lại ngày 22/11].
 - 366 token, trung vị 85, 1.787 đoạn dưới 50 token, 3 cặp lặp: `bao_cao_he_thong/03_BAO_CAO_CHIA_DOAN.md` qua `bai_hoc/02_CHUNKING.md` [đã chạy, kho cũ].
 - 12 cách cắt, 32 câu, 750 token, bảng kết quả: `bao_cao_he_thong/03_BAO_CAO_CHIA_DOAN.md` mục 4 qua `bai_hoc/02_CHUNKING.md` [đã chạy 25/10].
