@@ -92,6 +92,23 @@ def test_model_that_stops_searching_below_the_cap_and_writes_uncited_text_is_cau
     assert tat.citation_error is not None and len(gen.client.responses.calls) == 3      # công tắc tắt: đúng lỗi đã thấy ở lượt thật
 
 
+@pytest.mark.parametrize("tran, so_lan_tim", [(2, 1), (3, 1), (3, 2)])
+def test_single_part_turn_that_stops_below_the_cap_and_writes_uncited_text_is_rewritten(deps, tran, so_lan_tim):
+    """Tin MỘT Ý (câu hỏi của phiên đo khi đọc lượt thử lại cuối): model tìm 1–2 lần DƯỚI trần rồi nộp chữ không mã nguồn ⇒ lưới kích hoạt, viết lại theo
+    đường viết-một-lần cũ (không có dòng dặn "từng ý"); lần viết lại có nguồn ⇒ câu đó; lần viết lại vẫn không nguồn ⇒ câu từ chối cố định."""
+    flags = dataclasses.replace(MO, so_lan_tim_kho=tran)
+    gen = generator(kich_ban(so_lan_tim=so_lan_tim))
+    trace, _ = chay(deps, MOT_Y, gen, flags)
+    assert trace.model_searches == so_lan_tim < tran and trace.citation_error is None and trace.answer == CO_NGUON and trace.tools[-1]["name"] == TEN_VIET_LAI
+    assert VIET_LAI_NHIEU_Y_TEXT not in str(gen.client.responses.calls[-1]["input"]) and not gen.client.responses.calls[-1].get("tools")
+    gen = generator(kich_ban(lan_viet_lai="Tôi đã tìm nhưng không thấy.", so_lan_tim=so_lan_tim))
+    trace, _ = chay(deps, MOT_Y, gen, flags)
+    assert trace.citation_error is None and trace.answer == INSUFFICIENT_ANSWER and trace.tools[-1]["tu_choi"] is True
+    gen = generator(kich_ban(so_lan_tim=so_lan_tim))
+    tat, _ = chay(deps, MOT_Y, gen, dataclasses.replace(TAT, so_lan_tim_kho=tran))
+    assert tat.citation_error is not None                                           # công tắc tắt: màn hình lỗi như cũ
+
+
 def test_multi_part_turn_rewrite_may_answer_part_and_mark_the_missing_part(deps):
     co_phan = f"Vé vào Đại Nội có bán tại cổng [1].\n- {CAU_Y_THIEU} giờ mở cửa."
     gen = generator(kich_ban(lan_viet_lai=co_phan))
