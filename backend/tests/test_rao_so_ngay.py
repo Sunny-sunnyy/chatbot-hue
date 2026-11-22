@@ -23,6 +23,10 @@ from llm import sua_lich_v2 as sl
     ("Bỏ ngày cuối đi", 2, 3, True),
     ("Bỏ ngày 3 nhé", 2, 3, True),
     ("Bỏ ngày 2 nhé", 2, 3, False),                     # bỏ ngày giữa không phải bớt ngày cuối
+    # soát khác hãng 22/11: bảng chữ số bị một bảng CÙNG TÊN định nghĩa lại ở dưới (thiếu "sáu") ⇒ câu có "sáu ngày" làm cả lượt sửa văng KeyError
+    ("Kéo dài thành sáu ngày giúp mình", 6, 3, True),
+    ("Mình ở Huế sáu ngày, bỏ Đại Nội khỏi ngày 1", 3, 3, False),
+    ("Thêm sáu ngày nữa", 9, 3, True),
 ])
 def test_day_count_needs_a_number_of_days_in_the_text(cau, so_ngay, hien_tai, duoc):
     assert sl.so_ngay_co_trong_cau(cau, so_ngay, hien_tai) is duoc
