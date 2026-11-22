@@ -261,9 +261,12 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             hoi_them = any(h.loai == sl.HOI_THEM for h in ra)
             ra = [h for h in ra if h.loai != sl.HOI_THEM]
             hanh_dong, bi_chan = sl.loc_hanh_dong([h for h in ra if h.loai != sl.CHUA_HO_TRO], query, luu)
+            # rào 22/11: bỏ / thay mà câu không có tên điểm bị chạm lẫn mốc của lịch ("bỏ quán đầu đi rồi viết lại danh sách" — nói về câu trả lời vừa
+            # rồi) ⇒ không áp. Lượt đồng ý với câu code vừa gợi ý ("ok thay đi") không qua rào: tên nằm trong câu gợi ý, không trong câu người dùng.
+            hanh_dong, khong_neo = (hanh_dong, []) if goi_y else sl.loc_bo_thay(bang, hanh_dong, query)
             cht = len(ra) - len([h for h in ra if h.loai != sl.CHUA_HO_TRO])
         except GenerationError:
-            ra, hanh_dong, bi_chan, cht, hoi_them = [], [], 0, 0, False
+            ra, hanh_dong, bi_chan, cht, hoi_them, khong_neo = [], [], 0, 0, False, []
         finally:
             record_llm_calls(trace, call_log.calls, "sua_lich")
         # cờ `sua_lich_doi_cho_code`: model CHỈ trả "chưa hỗ trợ" ⇒ code đọc câu "dời hai điểm"; đọc được ⇒ áp hai lần dời thay cho câu cố định
@@ -272,7 +275,7 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             hanh_dong = doc_cau
         trace.vet["sua"] = {"hanh_dong": [h.model_dump(exclude_none=True) for h in hanh_dong], "bi_chan": bi_chan, "chua_ho_tro": cht, "doc_cau": bool(doc_cau),
                            "model_ra": [h.model_dump(exclude_none=True) for h in ra],  # sổ vết (RAM): `model_ra` = trước khi lọc (review E)
-                           **({"hoi_them": True} if hoi_them else {})}
+                           **({"hoi_them": True} if hoi_them else {}), **({"khong_neo": len(khong_neo)} if khong_neo else {})}
         if not hanh_dong and not bi_chan and not cht:
             trace.sua = {"n_hanh_dong": 0}
             return None
@@ -285,6 +288,7 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
                 ngay_moi.update(mua={k.isoformat(): v for k, v in (ngay_mua_xep(db) or {}).items()}, co_du_bao=db is not None)
         kq = sl.ap(bang, luu, hanh_dong, luu_tru=luu_tru, ngay_moi=ngay_moi,
                    **({"them_khong_the": True} if flags.sua_lich_them_khong_the else {}))  # cờ tắt ⇒ lời gọi như cũ
+        kq["chua_lam"] += [h.loai for h in khong_neo]  # lượt còn ý sửa khác: ý bỏ / thay không neo được nói ra ("Chưa làm: bỏ điểm"), không bỏ lặng
         # (C 17/11) model đã nhận là câu sửa: "đổi chỗ ngày 1 với ngày 2" từng ra "Chưa làm: đổi số ngày"; ý đổi chỗ ngày đi kèm ý làm được từng bị bỏ lặng
         if sl.la_viec_ngay_chua_lam(query) and not any(f == "so_ngay" for f, _, _ in kq["doi_truong"]):  # "gộp…" đã ra đổi số ngày ⇒ không báo ngược
             # cờ `sua_lich_doi_cho_ngay`: câu CHỈ nhờ đổi chỗ hai ngày (code đọc được cặp ngày, lượt không có ý nào khác đã áp / bị chặn) ⇒ hoán đổi thật

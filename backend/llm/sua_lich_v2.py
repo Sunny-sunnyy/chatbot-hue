@@ -303,6 +303,48 @@ def loc_hanh_dong(hanh_dong: list, cau: str, luu: dict) -> tuple[list, int]:
     return giu, len(hanh_dong) - len(giu)
 
 
+# Rào "bỏ / thay phải có chỗ NEO" (C 22/11/2026). Lỗi đã thấy thật (5 / 6 lượt, cả hai trạng thái công tắc nhớ đáp): trong cuộc đã có lịch, sau lượt
+# "Kể các quán chè ở Huế", tin "Bỏ quán đầu đi rồi viết lại danh sách" bị lần hiểu ý gán "quán đầu" cho ĐIỂM ĐẦU CỦA LỊCH ⇒ "Đã bỏ Đại Nội Huế, thêm…".
+# Lần hiểu ý chỉ thấy lịch + đúng câu này (không thấy lượt trước) nên mọi lời trỏ vào danh sách / câu trả lời vừa rồi ("bỏ cái thứ hai đi", "thay món đó
+# bằng món khác") đều có thể rơi vào một điểm của lịch. Code chỉ nhận hành động bỏ / thay khi câu người dùng có MỘT trong hai:
+#   (a) tên điểm bị chạm (đủ tên / tên khác, hoặc một khúc ≥ 2 chữ mà `khop_ten` nhận đúng điểm đó: "Tự Đức", "Thiên Mụ");
+#   (b) mốc của LỊCH: "ngày 2", "hôm đầu", "buổi chiều", "lịch", "kế hoạch", "chuyến đi", "điểm đầu / cuối / thứ hai".
+# Không có ⇒ hành động bị bỏ (lịch giữ nguyên); lượt không còn hành động nào ⇒ đi đường hỏi đáp thường (đã chạy song song — không tốn thêm).
+# Đếm trước trên sổ vết (60 lượt sửa có hành động, 23 hành động bỏ / thay): 16 có tên trong câu · 6 không tên nhưng có mốc lịch · 1 không có gì — chính
+# là ca lỗi. Chặn nhầm được phép (người dùng nhắn lại kèm tên), áp sai thì không. "du lịch", "lịch sử", "âm lịch" không phải mốc của lịch.
+_SO_VI_TRI = r"(?:\d|một|nhất|hai|ba|bốn|tư|năm|đầu|cuối)"
+_MOC_LICH = re.compile(rf"(?<!\w)(?:(?:ngày|hôm)\s*(?:thứ\s+)?{_SO_VI_TRI}|buổi\s+(?:sáng|trưa|chiều|tối)|(?<!du )(?<!âm )(?<!dương )lịch(?!\s+(?:sử|âm|dương))"
+                       rf"|kế hoạch|chuyến đi|điểm\s+(?:thứ\s+|số\s+)?{_SO_VI_TRI})(?!\w)", re.I)
+# tên model điền mà không phải điểm nào của bảng: chỉ gồm các chữ trỏ / vị trí này ⇒ không phải tên riêng ("quán đầu", "cái thứ hai", "món đó")
+_CHU_TRO = frozenset("quán món cái chỗ điểm nơi câu mục dòng ý đầu tiên cuối cùng thứ số đó này kia ấy nãy vừa rồi trên dưới nhất một hai ba bốn tư năm".split())
+
+
+def _ten_trong_cau(bang: v2.BangV2, id_: str | None, ten_model: str | None, cau: str) -> bool:
+    chu = " " + " ".join(re.findall(r"\w+", chuan_ten(cau))) + " "
+    if id_ is None:  # không phải điểm của bảng: giữ khi model chép một TÊN có trong câu ("Hồ Tịnh Tâm") ⇒ `ap` nói thật "không có trong lịch"
+        tu = re.findall(r"\w+", chuan_ten(ten_model or ""))
+        return bool(tu) and f" {' '.join(tu)} " in chu and not all(w in _CHU_TRO or w.isdigit() for w in tu)
+    for ten in v2.ten_cua(bang.theo_id[id_]):
+        tu = re.findall(r"\w+", chuan_ten(ten))
+        if tu and f" {' '.join(tu)} " in chu:
+            return True
+        for n in range(len(tu) - 1, 1, -1):  # khúc ≥ 2 chữ liền nhau của tên, và `khop_ten` nhận khúc đó là ĐÚNG điểm này (khúc chung nhiều điểm ⇒ không)
+            if any(f" {' '.join(tu[i:i + n])} " in chu and khop_ten(bang, " ".join(tu[i:i + n])) == id_ for i in range(len(tu) - n + 1)):
+                return True
+    return False
+
+
+def loc_bo_thay(bang: v2.BangV2, hanh_dong: list, cau: str) -> tuple[list, list]:
+    """(hành động giữ, hành động bỏ / thay bị bỏ vì câu không có tên điểm bị chạm lẫn mốc của lịch). Hành động loại khác giữ nguyên."""
+    if _MOC_LICH.search(unicodedata.normalize("NFC", cau)):
+        return list(hanh_dong), []
+    giu, bo = [], []
+    for h in hanh_dong:
+        co_neo = h.loai not in ("bo_diem", "thay_diem") or _ten_trong_cau(bang, khop_ten(bang, h.ten), h.ten, cau)
+        (giu if co_neo else bo).append(h)
+    return giu, bo
+
+
 # Cờ `sua_lich_doi_cho_code` (lượt đo cuối 18/11: sửa lịch bằng lời 7 / 10 — câu "cho A lên sáng ngày 1, còn B để sáng ngày 3" bị model gắn
 # `chua_ho_tro` ổn định dù `ap` làm được, kể cả đổi chỗ hai điểm). Code chỉ đọc câu SAU khi model đã trả `chua_ho_tro` và không hành động nào khác.
 # Đọc theo DANH SÁCH CHO PHÉP (bộ dò của C + review E 19/11: bản đầu dùng danh sách từ cấm ⇒ áp sai câu hỏi giá, câu tả chỗ đang đứng, câu đổi chỗ
