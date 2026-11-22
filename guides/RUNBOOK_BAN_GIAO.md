@@ -110,6 +110,8 @@ cd backend      # TẮT server trước; bật lại sau khi lệnh xong (server
 uv run python -m ingestion.cap_nhat_rieng --chi-xem    # chỉ in bài nào khác chỉ mục + số đoạn phải tính lại; không ghi gì
 uv run python -m ingestion.cap_nhat_rieng              # chạy thật; in "XONG trong … giây" hoặc "Chỉ mục ĐÃ KHỚP kho"
 ```
+- Lệnh không tham số ghi THẬT theo kho của cây đang đứng ⇒ chỉ chạy từ CÂY CHÍNH (`/home/minhhieu/hue_rag/backend`), `--chi-xem` trước; chạy từ
+  một cây tạm ở commit cũ sẽ kéo chỉ mục thật lùi theo kho cũ.
 - Lệnh không nhận tên bài: tự dò. Khoá `bai_doi` của kết quả = bài có đoạn đổi hoặc đổi mã băm; bài chỉ đổi phần không thành đoạn (mục "Nguồn dữ
   liệu") vẫn có tên ở đó với 0 đoạn tính lại.
 - Trước khi ghi, lệnh tự chụp collection (bản chụp Qdrant, khoảng 63 MB, nằm TRONG container ở `/qdrant/snapshots/<tên collection>/` — mất nếu
@@ -125,7 +127,7 @@ uv run python -m ingestion.cap_nhat_rieng              # chạy thật; in "XONG
 - Lệnh chỉ lo chỉ mục. Kho đổi thì vẫn phải tự chạy: `tests/test_su_kien_theo_ngay.py` (bảng sự kiện chép từ kho) và test bảng quán; các bước quét
   trùng / 10 câu an toàn / T1 ở trên áp cho bài MỚI hoặc sửa nhiều chữ.
 - Chạy thử trên bản chép (không đụng chỉ mục thật): ba tham số đi cùng nhau `--kho <thư mục kho chép> --collection <tên thử> --thu-muc-ban-ghi
-  <thư mục>`; thiếu một trong ba hoặc trùng tên collection đang chạy ⇒ lệnh từ chối.
+  <thư mục>`; thiếu một trong ba, trùng tên collection đang chạy, hoặc thư mục trùng `data/full_corpus_builds` ⇒ lệnh từ chối.
 - Giới hạn: chưa thử khi server đang phục vụ (luôn tắt server trước) · kho lớn gấp nhiều lần thì bước chia đoạn (21 giây hiện nay) thành phần chính.
 
 ## 6. Bảng dữ liệu của lịch "Lên kế hoạch"
