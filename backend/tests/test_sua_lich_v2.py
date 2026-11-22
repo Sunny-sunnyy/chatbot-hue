@@ -269,3 +269,52 @@ def test_refused_move_says_one_reason_and_lists_slots_that_work():
     for loai in ("doi_buoi", "them_diem"):
         kq = s.ap(B, luu, [s.HanhDong(loai=loai, ten=ngoai, ngay=1, buoi="sang")])
         assert all("goi_y" not in d for d in kq["khong_doi"])
+
+
+# ---------- 22/11: bỏ một hoạt động TỐI làm buổi tối của ngày khác đổi theo ⇒ dòng báo phải nói đủ (lượt trình duyệt 22/11: chỉ nói ngày cuối) ----------
+def _toi(khung):
+    return {ng["ngay"]: list(ng["buoi"]["toi"]) for ng in khung["ngay"]}
+
+
+def test_removing_an_evening_activity_reports_every_evening_that_changed():
+    k, luu = _lich(3, "can_bang", ())
+    truoc = _toi(k)
+    assert all(len(v) == 1 for v in truoc.values())  # lịch mẫu: mỗi tối một hoạt động
+    x = truoc[1][0]
+    kq = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=B.theo_id[x]["ten"])])
+    sau = _toi(kq["khung"])
+    assert sau[1] == truoc[2] and sau[2] == truoc[3] and sau[3][0] not in sum(truoc.values(), [])  # bộ xếp dồn các tối lên, ngày cuối nhận cái mới
+    ten = lambda j: B.theo_id[j]["ten"]
+    assert s.thay_doi(B, kq)[0]["cau"] == (f"Đã bỏ {ten(x)}. Buổi tối xếp lại: ngày 1 {ten(sau[1][0])}, ngày 2 {ten(sau[2][0])}, "
+                                           f"ngày 3 {ten(sau[3][0])} (mới thêm).")
+    # bỏ hoạt động tối của NGÀY CUỐI: không tối nào khác đổi ⇒ dòng báo cũ, y nguyên
+    y = truoc[3][0]
+    kq = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=ten(y))])
+    sau = _toi(kq["khung"])
+    assert sau[1] == truoc[1] and sau[2] == truoc[2] and "toi_xep_lai" not in kq["da_ap"][0]
+    assert s.thay_doi(B, kq)[0]["cau"] == f"Đã bỏ {ten(y)}, thêm {ten(sau[3][0])} (ngày 3, buổi tối) vào chỗ trống."
+
+
+def test_every_removal_names_each_evening_that_moved_and_stays_as_before_otherwise():
+    """Mọi lịch mẫu × bỏ từng điểm (ban ngày lẫn tối): tối của ngày nào khác trước mà không phải vì điểm mới lấp vào ⇒ câu báo phải có tên hoạt động tối
+    mới của ngày đó; không tối nào bị chuyển ngày ⇒ câu báo đúng khuôn cũ."""
+    co = khong = 0
+    for n in (2, 3, 4):
+        for kieu in ("nhe_nhang", "can_bang", "kham_pha"):
+            for st in ((), ("di_tich",), ("am_thuc",)):
+                k, luu = _lich(n, kieu, st)
+                truoc = _toi(k)
+                for j in [x for v in truoc.values() for x in v] + sorted(s._vi_tri(k)):
+                    kq = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=B.theo_id[j]["ten"])])
+                    if not kq["da_ap"]:
+                        continue
+                    sau, cau = _toi(kq["khung"]), s.thay_doi(B, kq)[0]["cau"]
+                    moi = {x["diem"] for x in kq["da_ap"][0].get("lap", ())}
+                    doi = [d for d in sau if sau[d] != truoc[d] and not (set(sau[d]) <= moi | set(truoc[d]))]
+                    if doi:
+                        co += 1
+                        assert "Buổi tối xếp lại: " in cau and all(f"ngày {d} " in cau and B.theo_id[x]["ten"] in cau for d in doi for x in sau[d]), cau
+                    else:
+                        khong += 1
+                        assert "Buổi tối xếp lại" not in cau and (cau.endswith("vào chỗ trống.") or cau == f"Đã bỏ {B.theo_id[j]['ten']}."), cau
+    assert co > 0 and khong > 0
