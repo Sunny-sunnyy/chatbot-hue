@@ -166,7 +166,7 @@ Các gói combo tích hợp giúp tiết kiệm đáng kể chi phí so với vi
 - **Vé khách cá nhân tiêu chuẩn (Khách ngoại tỉnh và khách quốc tế):**
   + Giá niêm yết gốc tại quầy và website chính thức: **200.000 đồng/vé**.
   + Giá trên các nền tảng đại lý trực tuyến (OTA như Klook, Traveloka): Hiển thị dao động trong khoảng **269.000 – 290.000 đồng/vé** tùy từng đợt áp dụng (thường bao gồm phí dịch vụ đặt chỗ, phiếu quà tặng hoặc gói tích hợp đồ uống tại quầy café).
-- **Vé ưu đãi dành cho người dân địa phương thành phố Huế:** **120.000 – 150.000 đồng/vé**.
+- **Vé ưu đãi dành cho người dân địa phương thành phố Huế:** **120.000 đồng/vé**.
   + Điều kiện bắt buộc: Xuất trình Căn cước công dân có địa chỉ thường trú tại thành phố Huế (hoặc tỉnh Thừa Thiên Huế cũ).
 - **Vé khách đoàn (Áp dụng cho đoàn từ 30 khách trở lên):** **150.000 đồng/vé**.
 - **Vé học sinh, sinh viên:** Áp dụng mức giá ưu đãi theo từng chương trình chuyên đề học tập hoặc văn bản đăng ký của nhà trường.
@@ -295,7 +295,7 @@ Các dịch vụ dưới đây là sản phẩm gia tăng giá trị trải nghi
 | **Suối khoáng Alba Thanh Tân** | Phường Phong Thái, TP Huế (trước 01/07/2025: xã Phong Sơn, TX Phong Điền) | Cty CP Nước khoáng Thanh Tân / Fusion | 230.000đ (vé vào cổng) | 115.000đ (1m2–1m4); Dưới 1m2 miễn phí | Vé cổng, ngâm tắm khoáng lộ thiên, công viên nước, nông trại | Quầy vé trực tiếp / Website Alba Thanh Tân |
 | **Combo Alba Thanh Tân** | Phường Phong Thái, TP Huế (trước 01/07/2025: xã Phong Sơn, TX Phong Điền) | Cty CP Nước khoáng Thanh Tân / Fusion | 350.000 – 500.000đ | 230.000 – 270.000đ | Tắm khoáng + Ăn trưa (+ Trò chơi Zipline / Xe đón) | Quầy vé trực tiếp / Đại lý lữ hành |
 | **Zipline / Highwire Thanh Tân** | Phường Phong Thái, TP Huế (trước 01/07/2025: xã Phong Sơn, TX Phong Điền) | Cty CP Nước khoáng Thanh Tân / Fusion | Zipline: 130k–150k; Highwire: 150k–240k | Highwire khám phá trẻ em: 75.000đ | Trang thiết bị bảo hộ và 01 lượt chơi mạo hiểm | Quầy vé thể thao mạo hiểm tại khu du lịch |
-| **Không gian lưu niệm Lê Bá Đảng** | Thôn Kim Sơn, phường Thủy Xuân, TP Huế | Ban Quản lý Không gian Lê Bá Đảng | 200.000đ (Người Huế: 120k–150k) | Trẻ em < 6 tuổi (< 1m3) miễn phí; Đoàn ≥ 30 khách: 150k | Tham quan toàn bộ bảo tàng đồi, nhà ngầm, vườn tượng | Quầy vé trực tiếp / Lebadangmemoryspace.com |
+| **Không gian lưu niệm Lê Bá Đảng** | Thôn Kim Sơn, phường Thủy Xuân, TP Huế | Ban Quản lý Không gian Lê Bá Đảng | 200.000đ (Người Huế: 120k) | Trẻ em < 6 tuổi (< 1m3) miễn phí; Đoàn ≥ 30 khách: 150k | Tham quan toàn bộ bảo tàng đồi, nhà ngầm, vườn tượng | Quầy vé trực tiếp / Lebadangmemoryspace.com |
 | **Xe buýt 2 tầng City Sightseeing** | Điểm đón: 49 Lê Lợi (Bến Tòa Khâm), TP Huế | Cty CP Du lịch Việt Nam - Hà Nội | Đêm: 130.000đ; 4h: 150.000đ; 24h: 429.000đ | Đêm: 95.000đ; 4h: 115.000đ; 24h: 320.000đ | Vận chuyển xe 2 tầng mui trần, tai nghe đa ngữ | Kiosk đỏ 49 Lê Lợi / Ticketgo / Traveloka |
 | **Xe điện trong Đại Nội** | Bến Nguyễn Hoàng / Ngọ Môn, Đại Nội Huế | Cty Xe điện Hoàng Thành Huế | 240.000 – 300.000đ/xe (45–60 phút) | Tính trọn gói theo xe 7 chỗ | Vận chuyển tham quan nội bộ Hoàng thành | Quầy dịch vụ bến xe Nguyễn Hoàng / Ngọ Môn |
 | **Audio Guide Đại Nội** | Cổng Ngọ Môn, Đại Nội Huế | Trung tâm Bảo tồn Di tích Cố đô Huế | Khách Việt: 50.000đ; Khách quốc tế: 100.000đ | Theo lượt thuê thiết bị | Máy Audio Guide cầm tay 12 thứ tiếng, tai nghe | Quầy dịch vụ khách hàng Cổng Ngọ Môn |
@@ -323,5 +323,6 @@ Các dịch vụ dưới đây là sản phẩm gia tăng giá trị trải nghi
 
 ## Nguồn dữ liệu
 
+- Giá vé Không gian lưu niệm Lê Bá Đảng (cá nhân 200.000 đồng; đoàn từ 30 khách 150.000 đồng; người dân Thừa Thiên Huế 120.000 đồng; trẻ dưới 6 tuổi, cao dưới 1,3 m miễn phí) (đối chiếu ngày 22/11/2026): https://lebadangmemoryspace.com/language/vi/khong-gian-luu-niem-le-ba-dang/
 - Người thực hiện Không gian lưu niệm Lê Bá Đảng (bà Lê Cẩm Tế, bà Myshu đồng ý) và địa chỉ khu trưng bày Lê Bá Đảng thuộc Bảo tàng Mỹ thuật Huế (số 17 Lê Lợi) (đối chiếu ngày 13/11/2026): https://lebadangmemoryspace.com; https://huetourism.gov.vn/famous-museums-in-hue-that-you-must-visit-once/?pid=MjI3OTZ8Y3NkbGRs0
 - Phường Phong Thái (trước 01/07/2025 là xã Phong Sơn) (đối chiếu ngày 23/10/2026): https://thuvienphapluat.vn/ma-so-thue/phap-luat-thue/danh-sach-40-xa-phuong-moi-tai-thanh-pho-hue-tu-0172025-thanh-pho-hue-co-bao-nhieu-thue-co-so-tu-01-207320.html; https://nhandan.vn/ocop/xay-dung-hue-tro-thanh-trung-tam-du-lich-cham-soc-suc-khoe-post741074.html
