@@ -1,6 +1,6 @@
 # Phụ lục F — Các con số chính trên một trang
 
-*Cập nhật 18:13, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (48 tính năng, kho 267 bài): thêm hai con số của thẻ nơi · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 18:17, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (48 tính năng, kho 267 bài): thêm hai con số của thẻ nơi · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một con số quan trọng của hệ thống, chép từ mục "Ý chính", bảng "Cấu hình đang chạy" hoặc bảng số chính của một bài. Cột thứ ba ghi điều kiện mà bài gốc ghi kèm: đếm trên bộ nào, model viết nào, ngày nào. Một con số không có điều kiện thì không so được với con số khác, nên đừng đọc cột hai mà bỏ cột ba. Dòng ghi "cấu hình" là giá trị đặt sẵn trong hệ thống, không phải kết quả đo. Dòng ghi "lúc đó" hay "đã cũ" là số của một thời điểm đã qua, giữ lại để so. Hai model viết: gpt-6-luna (tới trưa 21/11) và Claude Sonnet 5.5 (từ 21/11, đổi tạm).
 
@@ -141,6 +141,7 @@
 | khoảng 14 giây · 34 giây | lệnh bật ra "SẴN SÀNG" khi mọi thứ đủ · khi bắt đầu từ lúc Qdrant đang tắt | 14 giây: bốn ca chạy thật ở cổng tạm; 34 giây: lượt kiểm chốt trưa 22/11 | 36, 40 |
 | 76 file, 2.060 ca | lần chạy đủ mới nhất của bộ test | lượt kiểm chốt trưa 22/11 | 38 |
 | 75 file, 1.961 ca đạt, 4 file bỏ | lần chạy cuối buổi sáng; 4 file bỏ vì cần khoá OpenAI | sáng 22/11 | 38 |
+| 78 file chạy, 2.196 ca đạt, 0 ca hỏng, 4 file bỏ | lần chạy đủ mới nhất của cả bộ test, trên bản 48 tính năng mở | 17:16–17:34 ngày 22/11 | 38 |
 | khoảng 16 phút · khoảng 4,4 GB | cả bộ test chạy từng file một · bộ nhớ khi chạy cả bộ một lượt | hướng dẫn vận hành | 38 |
 | 5 phiên · 11 skill | số phiên làm việc (điều phối, hai thực thi, đo, giảng) · số file skill | cách làm lúc viết, trưa 22/11 | 39 |
 
