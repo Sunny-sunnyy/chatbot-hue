@@ -114,10 +114,11 @@ ROUTER_OUTPUTS = {"v1": (RouteSearchOutput, ROUTER_SEARCH_V1), "v3": (RouteSplit
 ASSISTANT_MAX_TURNS = 4  # B2 D5 (A quyết (b)): ≤ 2 lần tìm thật + lần 3 "đã hết lượt" + 1 lượt viết
 
 
-def max_turns_for(ngay_lich_fn, khoang_cach_fn=None, base: int = ASSISTANT_MAX_TURNS, liet_ke_fn=None) -> int:
+def max_turns_for(ngay_lich_fn, khoang_cach_fn=None, base: int = ASSISTANT_MAX_TURNS, liet_ke_fn=None, gan_diem_fn=None) -> int:
     """T1 (A chọn 08/11, sau lượt đo: 1 câu chạm trần vì `ngay_lich` ăn một vòng): lượt có đưa công cụ ngày ⇒ thêm 1 vòng; công cụ khoảng cách (16/11)
     cũng ăn một vòng ⇒ thêm 1; lượt khác giữ B2 D5."""
-    return base + (1 if ngay_lich_fn is not None else 0) + (1 if khoang_cach_fn is not None else 0) + (1 if liet_ke_fn is not None else 0)
+    return (base + (1 if ngay_lich_fn is not None else 0) + (1 if khoang_cach_fn is not None else 0) + (1 if liet_ke_fn is not None else 0)
+            + (1 if gan_diem_fn is not None else 0))  # công cụ "gần một điểm" (cờ `gan_diem`) cũng ăn một vòng
 
 
 class SuaLichOutput(BaseModel):
@@ -546,7 +547,7 @@ class OpenAIFullCorpusGenerator:
         return parsed.route, queries
 
     def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                       con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None) -> tuple[Agent, dict, dict]:
+                       con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
@@ -575,20 +576,23 @@ class OpenAIFullCorpusGenerator:
             tools.append(function_tool(ngay_lich_fn, name_override="ngay_lich", description_override=NGAY_LICH_MO_TA, failure_error_function=None))
         if khoang_cach_fn is not None:  # 16/11: chỉ khi code thấy từ khoá khoảng cách; mô tả (luật + danh sách mã) nằm ở docstring của hàm
             tools.append(function_tool(khoang_cach_fn, name_override="khoang_cach", failure_error_function=None))
+        if gan_diem_fn is not None:  # cờ `gan_diem` (21/11): những gì ở gần một điểm, code tính; mô tả nằm ở docstring của hàm; cờ tắt ⇒ danh sách như cũ
+            tools.append(function_tool(gan_diem_fn, name_override="gan_diem", failure_error_function=None))
         if liet_ke_fn is not None:  # cờ `liet_ke_bai` (21/11): liệt kê bài theo nhóm / cụm từ, code trả lời; cờ tắt ⇒ danh sách công cụ như cũ
             con_liet_ke = {} if state["liet_ke_con_luot"] is None else {"is_enabled": lambda _context, _agent: state["liet_ke_con_luot"]()}
             tools.append(function_tool(liet_ke_fn, name_override="liet_ke_bai", description_override=LIET_KE_MO_TA, failure_error_function=None, **con_liet_ke))
         return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
     async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
-                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None) -> GeneratedText:
+                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
-                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn)
+                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn,
+                                                     gan_diem_fn=gan_diem_fn)
         try:
-            result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn),
+            result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn, gan_diem_fn),
                                      error_handlers=handlers)
         except GenerationError as exc:
             if not self.xin_cong_cu_da_an(exc.__cause__, state):
@@ -620,12 +624,13 @@ class OpenAIFullCorpusGenerator:
         return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"])
 
     def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                           con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
+                           con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
-                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn)
-        result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn), run_config=_run_config(), hooks=call_log,
+                                                     con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn,
+                                                     gan_diem_fn=gan_diem_fn)
+        result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn, gan_diem_fn), run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state
 
