@@ -1,6 +1,6 @@
 # Bản đồ dự án hue_rag — đọc trang này trước
 
-*Cập nhật lần cuối: 16:24, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" đủ 31 cờ đang bật (thêm các cờ bật 19–20/11); mục "Nhóm đang làm gì" viết lại theo đợt hoàn thiện Phase 9–12 · trước đó 16:22, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" thêm hai dòng bật 20/11 (lấy lại câu trả lời cũ giữa các cuộc trò chuyện; dòng "danh sách có thể chưa đủ") · trước đó 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
+*Cập nhật lần cuối: 16:28, ngày 20/11/2026 · mục "Nhóm đang làm gì": sửa hai dòng trạng thái ("lên lịch giúp mình" đã gộp, cờ tắt; "nhớ cả câu trả lời" đã đếm) · trước đó 16:24, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" đủ 31 cờ đang bật (thêm các cờ bật 19–20/11); mục "Nhóm đang làm gì" viết lại theo đợt hoàn thiện Phase 9–12 · trước đó 16:22, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" thêm hai dòng bật 20/11 (lấy lại câu trả lời cũ giữa các cuộc trò chuyện; dòng "danh sách có thể chưa đủ") · trước đó 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
 
 Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm những khối nào, khối nào đang bật, và muốn hiểu sâu một khối thì mở bài nào. Mọi con số ở đây là
 **số của hệ thống hôm nay**; các bài viết trước ngày 14/11 (bài 0–18) viết lúc kho còn 204 bài, nên anh sẽ gặp số nhỏ hơn ở đó, không phải lỗi.
@@ -163,9 +163,9 @@ cả bộ test chỉ chạy một lượt ở cuối đợt · lỗi hiếm thì
 | Trang "Bản đồ" riêng trong menu | **xong**, đang chạy | mục 20 |
 | Ứng xử / trang phục | **coi là đã có** qua hỏi đáp thường: 6 câu thật ⇒ 4 trả lời từ kho có nguồn, 2 nói thật kèm mục web; không xây gì thêm. Kho còn thiếu hai ý (chụp ảnh trong lăng, cởi giày vào chùa) | chưa có mục riêng |
 | Sự kiện theo ngày ("cuối tuần này Huế có lễ hội gì") | code xong, **cờ tắt**; bảng 27 dòng đã có người thứ hai đọc đủ (số đúng 27 / 27), code đã có người thứ hai kiểm; còn thiếu lượt thật | chưa viết (xong mới viết) |
-| Gõ "lên lịch giúp mình" trong ô chat ⇒ dẫn sang trang Lên kế hoạch | code xong, **cờ tắt**; chờ bộ câu thử của người khác + lượt thật | chưa viết |
+| Gõ "lên lịch giúp mình" trong ô chat ⇒ dẫn sang trang Lên kế hoạch | code xong, đã gộp, **cờ tắt**; bộ câu thử của phiên khác đạt (nhận 20 / 20, nhận nhầm 0 / 20); chờ một lượt thật trên giao diện rồi mới bật | chưa viết |
 | Sửa lịch "đổi chỗ ngày 1 với ngày 2" | đang viết code (kế hoạch đã duyệt) | — |
-| Nhớ cả câu trả lời trong một cuộc trò chuyện | đang đếm xem có bao nhiêu lượt thật cần tới, rồi mới viết kế hoạch | — |
+| Nhớ cả câu trả lời trong một cuộc trò chuyện | đã đếm: thiếu nó làm 3 / 122 lượt hỏi tiếp bị từ chối (kiểu "quán thứ hai bạn vừa nói…"), 0 lượt trả lời sai; kế hoạch một trang có hai phương án (giữ tắt ↔ bản nhỏ chỉ nhớ câu trả lời liền trước), chờ phiên điều phối quyết | `report_agent/2026-11-20/b_nho_cau_tra_loi_plan.md` |
 | Hỏi lại khi thiếu thông tin · "gần X có gì ăn" trong ô chat · trang theo dõi · agent đề xuất sửa kho có anh duyệt | **chưa bắt đầu** | — |
 | Câu nhiều ý mà kho chỉ có một phần thì bị từ chối cả câu | **giữ giới hạn** — anh chọn theo số đếm (khoảng 1 % lượt) | sổ tay bàn giao mục 10.1 |
 | Bốn việc từng hẹn "sau lượt đo cuối" | **giữ giới hạn** cả bốn (hiếm hoặc chưa có lượt thật nào gặp) | sổ tay bàn giao mục 10 |

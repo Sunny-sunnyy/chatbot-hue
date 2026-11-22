@@ -35,7 +35,7 @@ from llm import ngay_lich as nl
 from llm import thoi_tiet as tt
 from llm.ten_goi_y import ghi_chu_goi_y, lich_su_cho_luot
 from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_moi, ghep_cau, ghep_cau_v2, loi_v2
-from api.conversations import TTL_SECONDS
+from api.conversations import TTL_SECONDS, dap_duoc_nho
 from api.cache_tra_loi import BanLuu, luot_luu_duoc
 from llm.assistant import (AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, co_y_thieu, loi_bao_luoi_cuoi, luoi_cuoi_bao, elapsed_ms,
                            lich_cho_giao_dien, so_y_thieu, turn_usd)
@@ -218,7 +218,9 @@ def _remember(request: Request, conversation_id: str | None, query: str, trace: 
     # B4 D5: lượt hỏi lại không có chữ trả lời nhưng vẫn lưu câu hỏi ⇒ người dùng gõ giá trị bằng chữ ở lượt sau vẫn có câu gốc
     if conversation_id is not None and outcome in REMEMBERED_OUTCOMES and (trace.answer or outcome == "hoi_lai"):
         ghi_chu = ghi_chu_goi_y(trace) if _flags(request.app.state).nho_ten_goi_y and outcome == "success" else ""
-        request.app.state.conversations.append(conversation_id, query, trace.answer, ghi_chu)
+        store = request.app.state.conversations
+        dap = trace.answer if not getattr(store, "chi_dap_lien_truoc", False) or dap_duoc_nho(trace, outcome) else ""
+        store.append(conversation_id, query, dap, ghi_chu)
 
 
 def _kiem_truong_v2(body: "ChatRequest", state) -> None:
