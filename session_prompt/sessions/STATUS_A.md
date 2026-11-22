@@ -1,4 +1,4 @@
-# STATUS A — ghi đè 22:26 21/11/2026 (giờ `date`; KẾT PHIÊN TỐI 21/11). Vai: phiên điều phối. Terminal phiên này: `hue-rag-55` (đổi khi mở lại); phiên tối: B `hue-rag-bb` · C `hue-rag-62` · E `hue-rag-b6`
+# STATUS A — MỞ PHIÊN SÁNG 22/11 (ghi 08:20 22/11/2026, giờ `date`). Vai: phiên điều phối. Terminal phiên này: `hue-rag-7a`; B `hue-rag-b1` · C `hue-rag-4f` · E `hue-rag-67`. Đã giao việc lúc mở phiên — ai làm gì: sổ việc khối A, gạch đầu "CHIA VIỆC SÁNG 22/11". Phần dưới là sổ lúc kết phiên tối 21/11 (22:26), còn dùng làm danh sách việc riêng của phiên điều phối.
 
 Việc đang mở, ai làm, bước kế: sổ việc `session_prompt/VIEC_DANG_MO.md` (khối A viết lại lúc kết phiên). Quyết định của chủ dự án + việc đang chờ chủ dự án: `session_prompt/HIEN_TRANG.md` mục 3 (gạch 0) và mục 4 (sáu gạch đầu là của tối 21/11). Trang này chỉ ghi phần riêng của phiên điều phối.
 
