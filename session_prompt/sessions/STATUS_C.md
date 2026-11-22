@@ -1,4 +1,7 @@
-# STATUS_C — ghi đè 11:19 22/11/2026 (giờ `date`; KẾT PHIÊN sáng 22/11 theo lời phiên điều phối: chủ dự án sẽ tắt và mở lại các phiên)
+# STATUS_C — mục 0 ghi 11:57 22/11/2026 (giờ `date`; MỞ LẠI PHIÊN trưa 22/11); mục 1–7 là bản kết phiên sáng 11:19 22/11/2026
+
+0. **PHIÊN CHIỀU 22/11 — việc phiên điều phối giao 11:57 22/11/2026 (sổ việc khối A, gói soát khác hãng GPT-6.2 Sol):** (a) đọc nhánh phép kiểm của phiên đo `origin/p12-e-kiem-cap-nhat-rieng` — ĐÃ đọc, nhánh ghép `p12-c-doc-kiem-cap-nhat` thêm một dòng runbook 5b, chờ phiên điều phối gộp · (b) điểm #8 "à không" vẫn đổi chỗ ngày · (c) điểm #4, #5 của lệnh cập nhật chỉ mục · (d) 0 đồng: vì sao hai bước demo thiếu dòng nhắc "có thể đã thay đổi" · (e) sơ đồ "Hỏi đáp" của README.
+   **Đang khai báo sửa:** `guides/RUNBOOK_BAN_GIAO.md` mục 5b · `backend/llm/sua_lich_v2.py` + `backend/tests/test_doi_cho_ngay.py` · `backend/ingestion/cap_nhat_rieng.py` + `backend/ops/duyet_sua_kho.py` + test của hai file · `README.md`. Nhánh sổ `p9-c-ket-phien-2211` ĐÃ ở main (mục 4 dưới đã cũ).
 
 Từ dùng: *công tắc* = một dòng bật / tắt trong `backend/config/settings.yaml` · *model đang chạy* = Claude Sonnet 5.5 trên Bedrock · *model cũ* = gpt-6-luna (TẠM GÁC) · *chỉ mục* = collection Qdrant + file thống kê từ khoá + bản ghi dựng.
 

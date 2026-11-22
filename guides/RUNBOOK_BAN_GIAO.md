@@ -151,6 +151,10 @@ HF_HUB_OFFLINE=1 uv run python -m ingestion.cap_nhat_rieng              # chạy
   trùng / 10 câu an toàn / T1 ở trên áp cho bài MỚI hoặc sửa nhiều chữ.
 - Chạy thử trên bản chép (không đụng chỉ mục thật): ba tham số đi cùng nhau `--kho <thư mục kho chép> --collection <tên thử> --thu-muc-ban-ghi
   <thư mục>`; thiếu một trong ba, trùng tên collection đang chạy, hoặc thư mục trùng `data/full_corpus_builds` ⇒ lệnh từ chối.
+- Kiểm "cập nhật riêng GIỐNG dựng lại toàn bộ" (chỉ đọc, bốn phép: điểm + payload + vector · đoạn không đổi chữ giữ nguyên vector nghĩa · file thống kê + bản ghi dựng · kết quả tìm của 176 câu mẫu): từ `backend/`,
+  `HF_HUB_OFFLINE=1 uv run python -m ingestion.kiem_cap_nhat_rieng --truoc <collection trước khi sửa> --sau <collection thử đã cập nhật riêng> --dung-lai <collection thử dựng lại toàn bộ> --bai <bài đã sửa…>
+  --thong-ke-sau <file> --thong-ke-dung-lai <file> --ban-ghi-sau <file> --ban-ghi-dung-lai <file>`; mã thoát 0 = cả bốn phép đạt. KHÔNG truyền cùng một collection cho `--sau` và `--dung-lai`, hay cùng một file
+  cho hai phía: lệnh so một thứ với chính nó và báo ĐẠT giả (lệnh không tự chặn).
 - Giới hạn: chưa thử khi server đang phục vụ (luôn tắt server trước) · kho lớn gấp nhiều lần thì bước chia đoạn (21 giây hiện nay) thành phần chính.
 
 ## 6. Bảng dữ liệu của lịch "Lên kế hoạch"
