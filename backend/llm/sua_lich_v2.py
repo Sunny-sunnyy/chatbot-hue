@@ -200,7 +200,8 @@ def la_viec_ngay_chua_lam(cau: str) -> bool:
 # Đọc câu theo DANH SÁCH CHO PHÉP (như `doi_buoi_tu_cau`): một động từ đổi chỗ + ĐÚNG hai mốc ngày khác nhau + từ đệm; gặp chữ nào khác (tên điểm,
 # gộp / tách, buổi, ngày đi…) ⇒ None ⇒ giữ dòng "Chưa làm" (từ chối nhầm được phép, áp sai thì không).
 _DT_DOI_NGAY = re.compile(r"(?<!\w)(?:đổi chỗ|hoán đổi|hoán vị|hoán|tráo|đảo)(?!\w)", re.I)
-_SO_CHU = {"một": 1, "nhất": 1, "hai": 2, "ba": 3, "bốn": 4, "tư": 4, "năm": 5}
+# tên riêng `_SO_CHU_MOC`: bảng này từng mang tên `_SO_CHU`, đè lên bảng cùng tên của rào đổi số ngày ở trên (bảng đó có "sáu") ⇒ `_so("sáu")` văng KeyError
+_SO_CHU_MOC = {"một": 1, "nhất": 1, "hai": 2, "ba": 3, "bốn": 4, "tư": 4, "năm": 5}
 _MOC_DOI = re.compile(r"(?<!\w)ngày\s+(?:thứ\s+)?(\d|một|nhất|hai|ba|bốn|tư|năm|đầu tiên|đầu|cuối cùng|cuối)(?!\w)", re.I)
 _HAI_NGAY = re.compile(r"(?<!\w)(?:hai|2)\s+ngày(?!\w)", re.I)
 _DEM_DOI_NGAY = {"với", "và", "cho", "nhau", "giúp", "hộ", "dùm", "giùm", "mình", "tôi", "em", "bạn", "ơi", "hãy", "nhé", "nha", "đi", "lại", "thứ", "tự",
@@ -216,7 +217,7 @@ def cap_ngay_doi_cho(cau: str, so_ngay: int) -> tuple[int, int] | None:
     moc = []
     for m in _MOC_DOI.finditer(t):
         chu = m.group(1)
-        moc.append(1 if chu.startswith("đầu") else so_ngay if chu.startswith("cuối") else _SO_CHU.get(chu) or int(chu))
+        moc.append(1 if chu.startswith("đầu") else so_ngay if chu.startswith("cuối") else _SO_CHU_MOC.get(chu) or int(chu))
     con = _DUOC_KHONG.sub(" ", _MOC_DOI.sub(" ", _DT_DOI_NGAY.sub(" ", t)))
     if not moc and so_ngay == 2 and len(_HAI_NGAY.findall(con)) == 1:  # lịch 2 ngày: "đổi chỗ hai ngày cho nhau"
         moc, con = [1, 2], _HAI_NGAY.sub(" ", con)
