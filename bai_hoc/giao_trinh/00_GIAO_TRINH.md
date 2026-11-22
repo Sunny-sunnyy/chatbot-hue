@@ -1,6 +1,6 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 10:21, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11 · đã viết xong chặng 2 (bài 7–12) và hai bài mẫu khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 10:30, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11 · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -56,10 +56,10 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 
 | Số | Bài | |
 |---|---|---|
-| 13 | Tìm: lấy 30 ứng viên, trộn hai bảng xếp hạng, giữ 10 đoạn | ⬜ |
-| 14 | Xếp lại bằng model (reranking): đã thử ba cách, không dùng | ⬜ |
-| 15 | Viết câu trả lời: lời dặn, ngữ cảnh 10 đoạn, và số nguồn [n] | ⬜ |
-| 16 | Kiểm nguồn bằng chương trình, và câu từ chối cố định | ⬜ |
+| 13 | [Tìm: lấy 30 ứng viên, trộn hai bảng xếp hạng, giữ 10 đoạn](13_TIM.md) | ✅ |
+| 14 | [Xếp lại bằng model (reranking): đã thử ba cách, không dùng](14_XEP_LAI.md) | ✅ |
+| 15 | [Viết câu trả lời: lời dặn, ngữ cảnh 10 đoạn, và số nguồn [n]](15_VIET_CAU_TRA_LOI.md) | ✅ |
+| 16 | [Kiểm nguồn bằng chương trình, và câu từ chối cố định](16_KIEM_NGUON_VA_TU_CHOI.md) | ✅ |
 
 ### Chặng 4 — Vì sao tin được: đo
 
