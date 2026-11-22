@@ -66,7 +66,7 @@ Ngoài hình: **khối đo / chấm** đứng cạnh để kiểm mọi thay đ�
 
 ## Cái gì ĐANG chạy, cái gì TẮT hoặc đã bỏ
 
-Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì chỉ phần đó mất, phần khác giữ nguyên. Bảng dưới đúng với file cấu hình chiều 20/11 (lúc đó **31 cờ đang bật**); tới sáng 22/11 là **41** — mười cái mở thêm ngày 21–22/11 chưa có trong bảng, mỗi cái có một mục ở [Việc mới xong](VIEC_MOI_XONG.md) (mục 25–36). Bảng này (đếm bằng lệnh ở sổ tay bàn giao mục 0), mọi cờ bật đều có trong bảng.
+Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì chỉ phần đó mất, phần khác giữ nguyên. Bảng dưới đúng với file cấu hình chiều 20/11 (lúc đó **31 cờ đang bật**); tới sáng 22/11 là **41** — mười cái mở thêm ngày 21–22/11 chưa có trong bảng, mỗi cái có một mục ở [Việc mới xong](VIEC_MOI_XONG.md) (mục 25–36). Con số đếm bằng lệnh ở sổ tay bàn giao mục 0; mọi cờ bật tới chiều 20/11 đều có trong bảng.
 
 | Tên người dùng thấy | Trạng thái | Vì sao (một dòng) |
 |---|---|---|
