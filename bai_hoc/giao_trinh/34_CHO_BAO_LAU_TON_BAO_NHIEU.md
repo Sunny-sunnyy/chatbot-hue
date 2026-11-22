@@ -1,6 +1,6 @@
 # Bài 34 — Người dùng chờ bao lâu, một câu tốn bao nhiêu tiền
 
-*Cập nhật 13:54, ngày 22/11/2026 · thời gian từng lời gọi lấy từ một lượt người dùng mô phỏng chạy đơn trưa 21/11 (Claude Sonnet 5.5, mức suy luận cao, 49 lượt hỏi đáp; so với gpt-6-luna 43 lượt); thời gian chờ tới chữ đầu lấy từ ba lượt tối 21/11 (153 lượt trả lời xong); lịch sử làm nhanh đo với gpt-6-luna từ 01/11 tới 10/11; cơ chế đọc từ chương trình trưa 22/11. Người viết không chạy lại phép đo nào; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 13:58, ngày 22/11/2026 · thời gian từng lời gọi lấy từ một lượt người dùng mô phỏng chạy đơn trưa 21/11 (Claude Sonnet 5.5, mức suy luận cao, 49 lượt hỏi đáp; so với gpt-6-luna 43 lượt); thời gian chờ tới chữ đầu lấy từ ba lượt tối 21/11 (153 lượt trả lời xong); lịch sử làm nhanh đo với gpt-6-luna từ 01/11 tới 10/11; cơ chế đọc từ chương trình trưa 22/11. Người viết không chạy lại phép đo nào; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** ở ví dụ chính, gần như toàn bộ 3,7 giây là model viết (bài 6); Claude viết dài hơn gpt-6-luna khoảng ba lần, chữ tới một lần, giá mỗi token gấp 20 lần (bài 33).
 **Bài này thêm:** thời gian chờ của một lượt đi vào những phần nào và phần nào đáng cắt; các lần làm nhanh đã có; một câu tốn bao nhiêu tiền và tiền được ghi ở đâu; trang theo dõi; và bộ nhớ câu trả lời 24 giờ, thứ duy nhất làm một câu vừa nhanh vừa không tốn tiền.
@@ -202,6 +202,7 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 
 ## Chi tiết để tra
 
+- Số đo mới nhất, lúc máy không chạy việc khác: ở lượt kiểm chốt trưa 22/11, 41 tin gõ qua trình duyệt (phần lớn là tin ngắn) có thời gian cả câu ở lượt đứng giữa là 6,9 giây, 95 % số lượt dưới 13,1 giây, không lượt nào ra màn hình lỗi. Con số này thấp hơn số 13,0 giây ở trên vì hai lý do: máy rảnh, và tin ngắn hơn.
 - **Số vòng tìm thêm đi theo số ý của tin**, đếm trên hai lượt thật trưa 22/11 (Claude, sau khi mở tính năng tìm theo từng ý): tin một ý 10 trên 10 lượt không cần vòng tìm thêm nào, 1,8 tới 3,5 giây; tin hai ý ngắn 13 trên 20 lượt không cần; tin bốn ý dài 17 trên 17 lượt dùng hết 2 lần tìm thêm, trung vị 21,7 giây. Tin dài nhiều ý vừa tìm nhiều vừa viết dài; hai thứ đi cùng nhau.
 - Trang theo dõi: khoá ít nhất 16 ký tự; cột: số lượt, trả lời từ kho, từ chối, ngoài phạm vi, có mục web, lịch, trúng bộ nhớ, người dùng ngắt, lỗi, tiền, thời gian chờ trung vị và lượt chậm, bản chương trình; sai khoá năm lần liền thì địa chỉ đó bị khoá 15 phút (bài 37).
 - Tiền "khoảng 0,057 USD một lượt" của người dùng mô phỏng tối 21/11 gồm cả lời gọi viết mục web ở 67 lượt; bản đang chạy không còn lời gọi đó ở tin nhiều ý.
@@ -244,5 +245,7 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 - Tình huống 9 giờ sáng: [suy từ code, chưa thử thật]; lâu nhất 28 giây khi chạy một mình: `THOI_GIAN_DI_DAU.md` mục 1; 1 lượt chạm 45 giây: `KET_QUA_MOC.md` bảng r1 [riêng tư]. Nhiều người cùng lúc: bài 6.
 
 - Bài đã qua một lượt đối chiếu độc lập 22/11: `data/hoc_cung_D/kiem/bai_33_38.md` [riêng tư]; dòng không áp ở `data/hoc_cung_D/viet/viet_33_38.md` mục "Sau lượt kiểm".
+
+- Kết quả lượt kiểm chốt buổi trưa 22/11 (phiên điều phối báo, phiên đo chạy; người viết chép từ tin, chưa tự mở file kết quả) [đã chạy].
 
 </details>

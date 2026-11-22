@@ -1,6 +1,6 @@
 # Bài 35 — Trang web và máy chủ: ai gửi gì cho ai
 
-*Cập nhật 13:54, ngày 22/11/2026 · các đường gọi, loại tin và cách giao diện xử lý đọc từ chương trình trưa 22/11 (gồm bản sửa "tải trang không chiếm chỗ" vào cây chính trưa 22/11); kết quả thử thật đường báo tình trạng lấy từ bài 6 (thử 22/11); người viết không chạy máy chủ; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 13:58, ngày 22/11/2026 · các đường gọi, loại tin và cách giao diện xử lý đọc từ chương trình trưa 22/11 (gồm bản sửa "tải trang không chiếm chỗ" vào cây chính trưa 22/11); kết quả thử thật đường báo tình trạng lấy từ bài 6 (thử 22/11); người viết không chạy máy chủ; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** giao diện chạy trong trình duyệt, máy chủ chạy trên máy của dự án, chữ được gửi dần, cuộc trò chuyện nằm trong bộ nhớ của máy chủ (bài 6); model viết gửi chữ một lần (bài 33).
 **Bài này thêm:** giao diện gọi máy chủ qua những đường nào; trên đường gửi dần có những loại tin gì và giao diện làm gì với từng loại; máy chủ nhận ra "cùng một cuộc trò chuyện" bằng cách nào; và hai lớp chặn để chữ model viết không làm trang tải thứ lạ.
@@ -198,12 +198,13 @@ Máy chủ xoá cuộc cũ, cấp mã mới; trước đây câu đầu sau khi 
 ## Giới hạn đã biết
 
 - **Đường báo tình trạng không biết hệ thống có đang trả lời được không** (quyết định 4; đã thử với Qdrant).
-- **Hai tab cùng trình duyệt dùng chung một cuộc**, và tab mở sau xoá cuộc của tab trước (suy từ chương trình, chưa thử).
+- **Hai tab cùng trình duyệt dùng chung một cuộc**, và tab mở sau xoá cuộc cùng lịch của tab trước (đã xác nhận bằng một lượt thử thật trưa 22/11).
 - **Tải lại trang là mất cuộc và lịch đang giữ**; không có lời báo.
 - **Đường đánh giá một lượt có ở máy chủ nhưng giao diện chưa dùng.**
 
 ## Chi tiết để tra
 
+- Việc tab mở sau xoá cuộc trò chuyện và lịch của tab mở trước đã được xác nhận bằng một lượt thử thật ở lượt kiểm chốt trưa 22/11.
 - Mã cuộc trò chuyện: 16 byte ngẫu nhiên viết thành chữ; mã lạ hoặc hết hạn thì máy chủ cấp mã mới và đặt lại cookie. Cookie đi theo cả phản hồi lỗi, để lượt đầu lỗi không để lại cuộc mồ côi.
 - Đường ô chat gửi dần: lỗi trước khi mở luồng (bước tìm hay model viết chưa sẵn sàng) thì trả JSON lỗi; từ lúc mở luồng, xếp loại câu và tìm chạy bên trong luồng, nên Qdrant lỗi giữa lượt thành một tin "lỗi" mang câu "Hệ thống tra cứu tạm thời không khả dụng.".
 - Tin "chữ" có số thứ tự; giao diện bỏ mẩu có số cũ hơn mẩu đã nhận. Chữ đang tới có thể dừng giữa một mã nguồn ("… [1"), nên phần mã dở ở cuối cũng bị bỏ khi vẽ.
@@ -230,5 +231,7 @@ Máy chủ xoá cuộc cũ, cấp mã mới; trước đây câu đầu sau khi 
 - Tính năng lỗi ⇒ tắt hết: `frontend/src/App.jsx` dòng 20, 42 (`TINH_NANG_TAT`) [code].
 - Mạng đứt ⇒ máy chủ dừng model, không nhớ lượt: `chat.jsx` chú thích dòng 187–189; `chat.py` (`client_disconnected`, `REMEMBERED_OUTCOMES`) [code]. Tất cả các dòng bảng "Nếu… thì sao" trừ dòng Qdrant: [suy từ code, chưa thử thật].
 - `HUE_TAT_DOCS`: `app.py` (`TAT_DOCS_ENV`) [code].
+
+- Kết quả lượt kiểm chốt buổi trưa 22/11 (phiên điều phối báo, phiên đo chạy; người viết chép từ tin, chưa tự mở file kết quả) [đã chạy].
 
 </details>

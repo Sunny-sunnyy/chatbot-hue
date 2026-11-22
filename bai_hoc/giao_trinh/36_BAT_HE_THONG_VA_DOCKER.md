@@ -1,6 +1,6 @@
 # Bài 36 — Bật hệ thống trên máy, và đóng gói bằng Docker
 
-*Cập nhật 13:54, ngày 22/11/2026 · lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 13:58, ngày 22/11/2026 · lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** máy chủ kiểm một số thứ đúng một lần lúc bật, và bật lúc Qdrant tắt thì không tự hồi (bài 6); kho đổi thì phải cập nhật chỉ mục (bài 12); khoá và các thiết lập lúc chạy (bài 37).
 **Bài này thêm:** bật cả hệ thống trên máy phát triển bằng một lệnh, lệnh đó làm gì và báo gì; "hộp Docker" là gì và hệ thống dùng nó ở đâu; gói ba hộp để mang sang máy khác; và những việc còn phải làm trước khi đưa lên mạng.
@@ -203,6 +203,7 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 
 ## Chi tiết để tra
 
+- Ở lượt kiểm chốt trưa 22/11, lệnh bật được chạy từ lúc Qdrant đang tắt: sau 34 giây ra dòng "SẴN SÀNG". Hai thiết lập đặt lúc bật máy chủ mà bài chưa nhắc ở trên: một thiết lập tắt hẳn việc tra web, và một thiết lập chỉ địa chỉ của Qdrant (phụ lục B liệt kê đủ các thiết lập loại này).
 - Lệnh bật không đọc file bí mật hay file khoá; nó chỉ xem file có tồn tại. Khi model viết là gpt-6-luna, nó không cần file khoá Bedrock.
 - Máy chủ đã chạy sẵn ở cổng 8010 và báo đủ thì lệnh in "SẴN SÀNG (server đã chạy sẵn)" và không bật thêm.
 - Gói: ảnh ứng dụng dùng thư viện học máy bản chạy bằng CPU (máy thuê không có card đồ hoạ); model embedding đóng sẵn đúng bản chương trình kiểm; ảnh không có git nên mã bản chương trình phải truyền lúc chạy, không thì sổ ghi "không rõ".
@@ -229,5 +230,7 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 - Hai lý do thêm gói có thể không trả lời: `data/phase_12/deploy_nhap/Dockerfile.dockerignore` (sinh 16/11, 263 dòng bài kho; kho nay 266 bài — `HIEN_TRANG.md` mục 1), `compose.yml` (chỉ `env_file`, không biến hay thư mục cho file khoá Bedrock) [riêng tư; đọc từ file, chưa dựng thử]. Biên bản kiểm ghi "204 bài" cho danh sách đó; đếm lại ra 263. Một tiến trình: `Dockerfile` dòng 68 [riêng tư]. Ảnh có bảng dữ liệu riêng tư; kho đã ở repo công khai từ 20/11: `Dockerfile` dòng 6, `.githooks/pre-commit` dòng 5–6.
 - Bài đã qua một lượt đối chiếu độc lập 22/11: `data/hoc_cung_D/kiem/bai_33_38.md` [riêng tư]; dòng không áp ở `data/hoc_cung_D/viet/viet_33_38.md` mục "Sau lượt kiểm".
 - Quyết định 3: không tìm thấy lý do chọn Docker cho Qdrant trong `docker-compose.yml`, runbook mục 1, bài cũ 18 [đã dò].
+
+- Kết quả lượt kiểm chốt buổi trưa 22/11 (phiên điều phối báo, phiên đo chạy; người viết chép từ tin, chưa tự mở file kết quả) [đã chạy].
 
 </details>

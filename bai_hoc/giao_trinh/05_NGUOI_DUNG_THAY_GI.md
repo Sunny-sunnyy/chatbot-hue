@@ -1,6 +1,6 @@
 # Bài 5 — Người dùng thấy gì: các trang của ứng dụng
 
-*Cập nhật 13:12, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
+*Cập nhật 14:13, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
 
 **Bài trước đã biết:** sản phẩm làm ba loại việc: hỏi đáp có nguồn, việc cần tính, và lên kế hoạch.
 **Bài này thêm:** ba loại việc đó nằm ở đâu trên màn hình. Đi một vòng qua các trang, rồi nhìn một lượt hỏi và một lượt lập lịch diễn ra thế nào trước mắt người dùng. Cuối nửa đầu là hai mục mới: vì sao giao diện được làm như vậy, và khi có thứ hỏng thì người dùng thấy gì.
@@ -33,7 +33,7 @@
 | **Bản đồ** | xem các điểm tham quan trên một bản đồ, lọc theo loại |
 | **Lên kế hoạch** | chọn bằng nút: số ngày, số người lớn, trẻ em, có người lớn tuổi không, kiểu đi, sở thích, ngày đi, hạng sao của chỗ ở; nhận một lịch theo buổi; tải về. Khi chưa xếp lịch nào, trang có sẵn một lịch ví dụ |
 | **Trợ lý Huế** | gõ câu hỏi, hoặc gửi một tấm ảnh (hệ thống đoán tên nơi hoặc món trong ảnh: đoán ra một tên thì hỏi luôn, kèm dòng báo là có thể đoán sai; đoán ra hai ba tên thì người dùng bấm chọn; bài 26); đọc câu trả lời, nguồn, và mục "Từ web (chưa kiểm)" nếu có |
-| **Giới thiệu** | đọc hệ thống làm được gì, giới hạn ở đâu, dữ liệu của người dùng được giữ thế nào |
+| **Giới thiệu** | đọc hệ thống làm được gì, giới hạn ở đâu, dữ liệu của người dùng được giữ thế nào; xem phần "Huế qua các thời kỳ": sáu mốc lịch sử kể bằng chữ viết lại từ các bài của kho, kèm ảnh |
 
 Trên điện thoại, thanh ở cuối màn hình có năm mục; mục Giới thiệu vào từ chân trang.
 
@@ -245,5 +245,7 @@ Nút "Thử lại" khi không nối được máy chủ gửi lại đúng câu 
 - Ô nền bản đồ: `backend/api/routes/cong.py` (địa chỉ máy chủ ô) và `session_prompt/HIEN_TRANG.md`. 40 điểm trên trang Bản đồ; chưa thử điện thoại thật; chưa giới hạn lượt tải; nút in chỉ ở trang Lên kế hoạch, nút PowerPoint ở mọi thẻ lịch: `bai_hoc/BAN_DO_DU_AN.md`, `guides/RUNBOOK_BAN_GIAO.md` mục 10.
 - Trang theo dõi: `frontend/src/TheoDoi.jsx`; `bai_hoc/VIEC_MOI_XONG.md` mục 33.
 - Mục "Quyết định và lý do", "Quyết định nhỏ hơn", "Nếu… thì sao", "Mọi tình huống hỏng" (sửa theo biên bản `data/hoc_cung_D/kiem/muc_moi_05_06_17_20.md` phần bài 05 [riêng tư]): nhiều trang, chủ dự án chọn "mức 2" và bỏ số [n] ngày 06/11: `docs/superpowers/specs/2026-11-06-giao-dien-cong-dot-1-design.md` (D1, D2) [quyết định đã ghi]; xoá chữ khi lỗi / rút lại (chủ dự án 31/10 11:48), cách quay về "chỉ tiến độ" khi rút > 1 %: `docs/superpowers/specs/2026-10-31-streaming-design.md` (D3, D5), lý do "chưa qua kiểm trích dẫn": `frontend/src/chat.jsx` (chú thích ở nhánh `AbortError`); chữ hiện một lần với Bedrock: `backend/llm/bedrock_model.py` (`stream_response` "stream giả"), thiếu quyền gọi trả chữ dần và AWS gác 22/11: `session_prompt/HIEN_TRANG.md` mục 3; ba hướng công nghệ 01–02/11: `bai_hoc/17_GIAO_DIEN_VA_TOC_DO.md` phần 1; máy chủ gửi file đóng gói: `backend/api/app.py` (`FRONTEND_DIR = frontend/dist`) [code]; tính năng đang mở, nút ảnh theo `app.state.anh`: `backend/api/routes/cong.py` (`tinh_nang`), xô lệch 0,22: chú thích `App.jsx` (`daCoTinhNang`); một cuộc trò chuyện qua các trang (D8): spec cổng đợt 1 và chú thích đầu `App.jsx`; dòng chỉ dẫn sửa lịch: `LenKeHoach.jsx`; tải lại trang là cuộc mới (lỗi 15/11): chú thích `chat.jsx` trước lời gọi `/api/conversation/new`; chạy lại một lần (từ 10:50 22/11; 3 / 7; không áp cuộc có lịch đã lưu; tiền tính cả hai lần): `backend/llm/assistant.py` (`answer_turn_stream_parallel`), giao diện gỡ chữ qua sự kiện `thay_chu` ở `chat.jsx` [code, chưa thử trên trình duyệt]; Dừng không nhớ lượt: chú thích `chat.jsx` nhánh `AbortError`, `routes/chat.py` (`client_disconnected`).
+
+- Phần "Huế qua các thời kỳ" (sáu mốc, chữ viết lại từ bài trong kho, nằm trong trang Giới thiệu; chủ dự án chọn làm ngày 14/11): `frontend/src/HueQuaCacThoiKy.jsx` (chú thích đầu file), `frontend/src/GioiThieu.jsx` [code].
 
 </details>

@@ -1,6 +1,6 @@
 # Bài 38 — Bộ test: chương trình tự kiểm những gì
 
-*Cập nhật 13:54, ngày 22/11/2026 · số file, số ca và thời gian chạy lấy từ lần chạy đủ gần nhất (10:58–11:14 22/11, phiên đo chạy, người viết không chạy lại); các loại test đọc từ tên và chú thích đầu file trong thư mục test của máy chủ; những lần test không bắt được lỗi lấy từ các báo cáo 01/11, 20/11, 21/11; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 13:58, ngày 22/11/2026 · số file, số ca và thời gian chạy lấy từ lần chạy đủ gần nhất (10:58–11:14 22/11, phiên đo chạy, người viết không chạy lại); các loại test đọc từ tên và chú thích đầu file trong thư mục test của máy chủ; những lần test không bắt được lỗi lấy từ các báo cáo 01/11, 20/11, 21/11; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** các bộ câu và người chấm đo chất lượng câu trả lời (bài 17–20); thước "làm trợ lý" và người dùng mô phỏng (bài 32); hai rào của git trước khi lưu code (bài 37).
 **Bài này thêm:** test tự động là gì; bộ test của máy chủ gồm những loại nào, kiểm gì và không kiểm gì; nó khác các phép đo chất lượng ở đâu; những lỗi thật nó đã không bắt được; và vì sao chạy cả bộ mất khoảng mười lăm phút, từng file một.
@@ -150,6 +150,7 @@ Một ca mới đã thấy đỏ trên code cũ, rồi xanh sau khi sửa. Ca ch
 
 ## Chi tiết để tra
 
+- Lần chạy đủ mới nhất, ở lượt kiểm chốt trưa 22/11: 76 file, 2.060 ca. Các con số 75 file và 1.961 ca trong bài là của lần chạy cuối buổi sáng.
 - Lần chạy đủ gần nhất: 10:58–11:14 22/11, trên cây chính (bản main cuối buổi sáng cho phần máy chủ), 42 tính năng mở, kho 266 bài, 9.458 đoạn, không nạp file khoá: 75 file, 1.961 ca đạt, 0 file hỏng, 4 file bỏ. Bốn file bỏ: đường chat có khoá, bộ sinh câu trả lời OpenAI, lượt thử trực tiếp, kiểm cấu hình có khoá.
 - Tiến qua các lần chạy: 68 file, 1.827 ca, 1 đỏ (tối 21/11) ⇒ 72 file, 1.900 ca (09:23–09:38 22/11) ⇒ 73 / 1.941 ⇒ 74 / 1.951 ⇒ 75 / 1.961, 0 đỏ.
 - Lúc viết bài, thư mục test có 76 file (một file thêm sau lần chạy đủ gần nhất); trong thư mục có 938 hàm test, nhiều hàm chạy thành nhiều ca với các đầu vào khác nhau.
@@ -175,5 +176,7 @@ Một ca mới đã thấy đỏ trên code cũ, rồi xanh sau khi sửa. Ca ch
 - Quyết định 4: 4,4 GB `guides/RUNBOOK_BAN_GIAO.md` mục 3; 13 tiến trình 11:44 21/11, không nạp env, từng file: `HIEN_TRANG.md` mục 1 (gạch "Bẫy RAM", "Cả bộ test"); 15 GB: hồ sơ máy của chủ dự án [chép].
 - Bảng "đã gặp": xin công cụ mãi, dính lịch sử `bai_hoc/VIEC_MOI_XONG.md` mục 23; bản in 5 trang `VIEC_MOI_XONG.md` mục 17 ý 3; CSP 3/16 `bai_hoc/21_DU_LIEU_NGUOI_DUNG_VA_BAO_MAT.md` (trỏ `report_agent/2026-10-31_streaming_spec/s3_giao_dien_review.md`); ca phụ thuộc thứ tự `guides/RUNBOOK_BAN_GIAO.md` mục 10.3 [chép].
 - Test thôi khoá dòng chọn hãng: `report_agent/2026-11-21/b_bedrock_sonnet.md` mục 1 [chép].
+
+- Kết quả lượt kiểm chốt buổi trưa 22/11 (phiên điều phối báo, phiên đo chạy; người viết chép từ tin, chưa tự mở file kết quả) [đã chạy].
 
 </details>
