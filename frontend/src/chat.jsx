@@ -340,7 +340,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
     <div className="chat-view">
       <div className="chat-turns">
         {resetError && <p className="mb-4 rounded-md bg-error-soft p-3 text-error" role="alert">{resetError}</p>}
-        {turns.length === 0 && (
+        {turns.length === 0 && !hoiAnh.the && (  /* đang có thẻ "Trong ảnh là…" thì thu lời chào + câu gợi ý: ở điện thoại chúng đẩy ô nhập xuống dưới thanh đáy */
           <div className="chat-chao">
             <p>Hỏi về món ăn, di tích, lễ hội, nghệ thuật hay chuyến đi ở Huế. Mỗi câu trả lời ghi tên tài liệu đã dùng để bạn tự xem lại.</p>
             {suggestions.length > 0 && (

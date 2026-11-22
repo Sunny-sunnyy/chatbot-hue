@@ -147,7 +147,7 @@ export function ChoSong({ dongBuoc, daTim }) {
       <p className="buoc-dang">{dongBuoc}</p>
       {ten.length > 0 && (
         <>
-          <p className="cho-nhan">Đã tìm thấy {tat.length} bài — bấm tên để đọc trong lúc chờ</p>
+          <p className="cho-nhan">Đã tìm thấy {tat.length} bài<span className="cho-nhan-them"> — bấm tên để đọc trong lúc chờ</span></p>
           <ul className="cho-ben">
             {ten.map((b, i) => (
               <li key={b.title} style={{ "--n": i }} data-lv={linhVuc(b.bai_id)}><span className="cho-so" aria-hidden="true" />

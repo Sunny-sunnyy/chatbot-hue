@@ -32,6 +32,7 @@ html .answer:not(.ct-bai) th, html .answer:not(.ct-bai) td { border: 0; border-b
 html .answer:not(.ct-bai) tr:last-child td { border-bottom: 0; }
 /* câu từ chối / ngoài phạm vi: thẻ nền sương, không phải thẻ trả lời */
 html .bubble-tu-choi { background: var(--color-page); border-style: dashed; box-shadow: none; }
+html .bubble.web { margin-top: 12px; }  /* khối "Từ web (chưa kiểm)" không dính sát thẻ từ chối phía trên */
 html .answer:not(.ct-bai) ul.y-thieu-ds > li::before { background: var(--color-muted); opacity: .5; }
 /* cảnh báo an toàn: khối viền đậm, không phải một dòng chữ */
 html .notice-an-toan { padding: 10px 14px; border-radius: 12px; border-left: 5px solid #B45309; background: #FFF4DB; color: #5A3A05; }
@@ -67,6 +68,24 @@ html .cho-ben li[data-lv="heritages"] .cho-so { background: var(--color-lv-herit
 html .cho-ben li[data-lv="festivals"] .cho-so { background: var(--color-lv-festivals); }
 html .cho-ben li[data-lv="travel"] .cho-so { background: var(--color-lv-travel); }
 html .cho-ben li[data-lv="performing_arts"] .cho-so { background: var(--color-lv-arts); }
+/* Điện thoại và khung trợ lý nổi (rộng 400 px): thẻ chờ thấp lại để ô nhập + nút "Dừng" còn trong màn đầu khi câu hỏi dài (trước: sáu tên bài, mỗi tên hai dòng,
+   đẩy ô nhập xuống dưới màn suốt lúc chờ) — ba tên bài, mỗi tên một dòng cắt bằng "…"; tổng số bài vẫn ghi ở dòng nhãn. */
+html .chat .cho-hinh svg { height: 40px; }
+html .chat .cho-nhan-them { display: none; }
+html .chat .cho-ben li { display: block; position: relative; max-width: 100%; padding: 5px 14px 5px 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html .chat .cho-ben li:nth-child(n+4) { display: none; }
+html .chat .cho-ben .cho-so { position: absolute; left: 10px; top: 50%; margin: -6px 0 0; }
+@media (max-width: 760px) {
+  html .cho-hinh svg { height: 40px; }
+  html .cho-nhan-them { display: none; }
+  html .cho-ben li { display: block; position: relative; max-width: 100%; padding: 5px 14px 5px 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  html .cho-ben li:nth-child(n+4) { display: none; }
+  html .cho-ben .cho-so { position: absolute; left: 10px; top: 50%; margin: -6px 0 0; }
+}
+@media (max-height: 700px) {  /* máy xách tay màn thấp: ba tên bài để ô nhập + nút "Dừng" không tụt dưới mép đáy khi câu hỏi dài (đo ở 1280 × 620) */
+  html .cho-hinh svg { height: 44px; }
+  html .cho-ben li:nth-child(n+4) { display: none; }
+}
 html.hieu-ung .cho-ben li { animation: ben-moc .45s var(--ease-song) both; animation-delay: calc(var(--n) * 110ms + 100ms); }
 @keyframes ben-moc { from { opacity: 0; transform: translateY(10px) scale(.92); } }
 @media (max-width: 760px) {

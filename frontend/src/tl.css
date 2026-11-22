@@ -28,7 +28,10 @@
 .tl-chat .chat-turns { flex: 1; padding: 24px 22px; background: var(--color-page); }
 .tro-ly-trang .tl-chat .chat-form { position: sticky; bottom: 0; background: var(--color-surface); border-top: 1px solid var(--color-line); padding: 14px 18px; }
 .tro-ly-trang .tl-chat .chat-turns { margin-top: 0; }
-.tro-ly-trang .turn { scroll-margin-top: 96px; }  /* tự cuộn tới lượt mới: không để thanh menu dính che câu hỏi */
+.tro-ly-trang .turn { scroll-margin-top: 85px; }  /* tự cuộn tới lượt mới: câu hỏi nằm ngay dưới thanh trên (69 px), dải tiêu đề khung chat khuất hẳn sau thanh (trước: 96 px, thò một vệt 3 px).
+   Lề lớn hơn khoảng cách từ mép khung chat tới lượt (110 px) thì trình duyệt bỏ phần dư vì `.tl-chat` cắt nội dung (overflow: hidden) — không giữ được khung chat đứng yên bằng lề cuộn. */
+@media (max-width: 980px) { .tro-ly-trang .turn { scroll-margin-top: 78px; } }  /* một cột: câu hỏi nằm ngay dưới thanh trên, dải tiêu đề khung chat khuất hẳn (trước: thò nửa dưới) */
+@media (max-width: 760px) { .tro-ly-trang .turn { scroll-margin-top: 66px; } }  /* thanh trên của điện thoại cao 57 px */
 /* desktop: câu gợi ý đã ở cột trái ⇒ ẩn bản lặp trong lời chào */
 @media (min-width: 981px) { .tl-cot .chat-chao .suggest { display: none; } }
 
