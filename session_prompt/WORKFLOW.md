@@ -95,7 +95,7 @@ chứng, không tự chứng minh PASS; người làm được phản biện b�
 - **Văn phong cho User:** lời thường, không mã nội bộ khi chưa giải nghĩa, số đo kèm ý nghĩa, tiền thật từ log (1 USD ≈ 25.000 đồng), tách quan sát /
   giả thuyết / nguyên nhân đã chứng minh, ghi cả phương án đã thử và bỏ (NOT RUN nếu chưa đo).
 - **Giờ ghi trong file lấy bằng lệnh `date`** ngay trước khi ghi (`T=$(date '+%H:%M %d/%m/%Y')`), không ước; tin nhắn giữa các session không cần ghi giờ.
-- Mỗi session cập nhật `sessions/STATUS_<X>.md` ngay sau mỗi việc. Report không chép corpus, câu hỏi bộ câu mẫu (Golden), vector, payload hay secret.
+- Mỗi session cập nhật `sessions/STATUS_<X>.md` ngay sau mỗi việc. Report không chép câu kín, dữ liệu `data/`, vector, payload hay secret; chữ của kho và bộ câu mẫu (Golden) thì được trích (chủ dự án 22/11/2026).
 
 ## 7. Trao đổi giữa session
 

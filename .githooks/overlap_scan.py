@@ -4,8 +4,10 @@ Vì sao: repo PUBLIC; báo cáo chép nhầm câu Golden hay đoạn kho thì l�
 tay rồi nối `; git commit` nên commit vẫn chạy dù quét báo trùng ⇒ đưa vào `.githooks/pre-commit` (sổ cải tiến W16).
 File này không chứa dữ liệu: chỉ đọc Golden / kho trên máy; clone không có kho thì báo bỏ qua, exit 0.
 
-  uv run python .githooks/overlap_scan.py <file> …   # quét cả file (A quét file người khác viết trước khi stage)
-  uv run python .githooks/overlap_scan.py --staged    # hook: chỉ dòng THÊM MỚI đã stage (file cũ còn trùng không chặn khi sửa dòng khác)
+  uv run python .githooks/overlap_scan.py <file> …   # quét cả file với Golden + kho + câu kín (bài kho NHÁP trước khi ghi kho)
+  uv run python .githooks/overlap_scan.py --staged    # hook: chỉ dòng THÊM MỚI đã stage, và CHỈ chặn chữ của câu kín
+Từ 22/11/2026 (chủ dự án chọn): hook thôi chặn chữ chép từ kho và bộ câu mẫu (Golden) vào tài liệu — cả hai đã công khai trên
+GitHub từ 20/11, và rào cũ chặn giáo trình trích ví dụ kho, chặn cả sổ việc khi tả một dòng kho. Câu kín vẫn chặn cứng.
 Exit 3 khi có dòng trùng (lỗi chạy — thiếu file, import… — ra mã khác, để hook báo đúng loại).
 """
 import json
@@ -113,11 +115,17 @@ def main() -> int:
     if not GOLDEN.exists():
         print("overlap_scan: không có Golden / kho trên máy — bỏ qua")
         return 0
-    if sys.argv[1:] == ["--staged"]:
+    staged = sys.argv[1:] == ["--staged"]
+    if staged:
         inputs = staged_added_lines()
     else:
         inputs = [(Path(f).name, list(enumerate(Path(f).read_text(encoding="utf-8").splitlines(), 1))) for f in sys.argv[1:]]
     grams, shorts = build_grams(), short_questions()
+    if staged:
+        # Hook chỉ chặn chữ CHỈ CÓ ở câu kín. Cửa sổ chữ mà đáp án kín chép nguyên từ kho / Golden mang nhãn của nguồn công khai (nguồn
+        # công khai được nạp trước) ⇒ không chặn: trích kho là được phép, và chặn nó sẽ làm lộ đoạn kho nào có câu kín dựa vào.
+        grams = {g: tag for g, tag in grams.items() if tag == "sealed"}
+        shorts = {q: tag for q, tag in shorts.items() if tag == "sealed"}
     any_hit = False
     for label, lines in inputs:
         found = hits(lines, grams, shorts)
