@@ -1,6 +1,6 @@
 # Bài 5 — Người dùng thấy gì: các trang của ứng dụng
 
-*Cập nhật 12:10, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
+*Cập nhật 12:49, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
 
 **Bài trước đã biết:** sản phẩm làm ba loại việc: hỏi đáp có nguồn, việc cần tính, và lên kế hoạch.
 **Bài này thêm:** ba loại việc đó nằm ở đâu trên màn hình. Đi một vòng qua các trang, rồi nhìn một lượt hỏi và một lượt lập lịch diễn ra thế nào trước mắt người dùng. Cuối nửa đầu là hai mục mới: vì sao giao diện được làm như vậy, và khi có thứ hỏng thì người dùng thấy gì.
@@ -32,7 +32,7 @@
 | **Khám phá** | chọn một chủ đề, xem danh sách bài dạng thẻ có ảnh, mở một bài để đọc; ở mỗi bài có nút "Hỏi trợ lý về điểm này" (điền sẵn một câu hỏi vào ô, người dùng tự bấm gửi) và nút "Báo thông tin chưa đúng" |
 | **Bản đồ** | xem các điểm tham quan trên một bản đồ, lọc theo loại |
 | **Lên kế hoạch** | chọn bằng nút: số ngày, số người lớn, trẻ em, có người lớn tuổi không, kiểu đi, sở thích, ngày đi, hạng sao của chỗ ở; nhận một lịch theo buổi; tải về. Khi chưa xếp lịch nào, trang có sẵn một lịch ví dụ |
-| **Trợ lý Huế** | gõ câu hỏi, hoặc gửi một tấm ảnh (hệ thống đoán tên nơi trong ảnh, người dùng xác nhận rồi mới hỏi); đọc câu trả lời, nguồn, và mục "Từ web (chưa kiểm)" nếu có |
+| **Trợ lý Huế** | gõ câu hỏi, hoặc gửi một tấm ảnh (hệ thống đoán tên nơi hoặc món trong ảnh: đoán ra một tên thì hỏi luôn, kèm dòng báo là có thể đoán sai; đoán ra hai ba tên thì người dùng bấm chọn; bài 26); đọc câu trả lời, nguồn, và mục "Từ web (chưa kiểm)" nếu có |
 | **Giới thiệu** | đọc hệ thống làm được gì, giới hạn ở đâu, dữ liệu của người dùng được giữ thế nào |
 
 Trên điện thoại, thanh ở cuối màn hình có năm mục; mục Giới thiệu vào từ chân trang.

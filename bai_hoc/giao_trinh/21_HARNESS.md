@@ -1,6 +1,6 @@
 # Bài 21 — Harness: phần chương trình bao quanh model
 
-*Cập nhật 12:11, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy sáng 22/11; ví dụ là hai lượt hỏi thật ngày 20/11 (model gpt-6-luna); số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11; người viết không chạy lại phép đo nào.*
+*Cập nhật 12:49, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy sáng 22/11; ví dụ là hai lượt hỏi thật ngày 20/11 (model gpt-6-luna); số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** đường hỏi đáp cơ bản (chặng 3): chương trình tìm 10 đoạn, model viết một lần, chương trình kiểm số nguồn. Và ở bài 3: model có thể "xin" chương trình chạy một công cụ rồi đọc kết quả.
 **Bài này thêm:** cho model quyền xin công cụ thì hệ thống thành một **trợ lý**. Bài này giảng phần chương trình đứng quanh model để trợ lý đó làm được việc mà không chạy lung tung, vì sao các cái trần được đặt như vậy, và chạm trần thì người dùng thấy gì. Phần chương trình đó tên là **harness**; các bài còn lại của chặng này đều dựa trên nó.
@@ -9,7 +9,7 @@
 
 - **Harness** là phần chương trình bao quanh model. Nó quyết định model được thấy gì, được xin gì, được xin mấy lần, và ai kiểm chữ model viết.
 - Khi trả lời, model chỉ quyết **hai việc**: có xin công cụ không (và xin với tham số gì, trong giới hạn chương trình cho), và viết chữ gì. Tìm lần đầu, tính ngày và khoảng cách, dừng, kiểm đều do chương trình làm.
-- Quyền tự tìm thêm làm trợ lý trả lời được những câu mà tìm một lần thì không đủ bằng chứng. Quyền đó có **trần**: tối đa 2 lần tự tìm; tối đa 4 vòng gọi model, cộng 1 vòng cho mỗi công cụ khác được đưa thêm; 45 giây.
+- Quyền tự tìm thêm làm trợ lý trả lời được những câu mà tìm một lần thì không đủ bằng chứng. Quyền đó có **trần**: tối đa 2 lần tự tìm; tối đa 4 vòng gọi model, cộng 1 vòng cho mỗi công cụ khác được đưa thêm (trừ công cụ thời tiết); 45 giây.
 - Hết số lần tìm hoặc hết vòng thì chương trình trả một **câu từ chối cố định** thay cho model; quá 45 giây thì lượt hỏi báo lỗi.
 - Chương trình còn làm việc **trước** khi gọi model (tìm sẵn, tính sẵn) và **sau** khi model viết (kiểm số nguồn, kiểm con số, nối các dòng bắt buộc). Số nguồn sai thì câu trả lời bị rút lại; câu chứa con số lạ thì bị gỡ.
 
@@ -62,7 +62,7 @@ Một lượt hỏi thật khác: *"Vào chùa ở Huế có phải cởi giày 
 Harness chặn bằng ba cái trần:
 
 1. **Tối đa 2 lần model tự tìm kho** trong một lượt hỏi (lần tìm đầu của chương trình không tính). Dùng hết 2 lần thì ở vòng kế tiếp chương trình **cất công cụ tìm kho đi**: model không còn thấy nó, và phải viết bằng những gì đã có, hoặc trả câu từ chối.
-2. **Tối đa 4 vòng** cho một lượt hỏi, cộng thêm 1 vòng cho mỗi công cụ ngoài tìm kho được đưa ở lượt đó. Hết vòng mà model chưa viết thì chương trình trả **câu từ chối cố định** thay cho model.
+2. **Tối đa 4 vòng** cho một lượt hỏi, cộng thêm 1 vòng cho mỗi công cụ ngày, khoảng cách, gần một điểm, liệt kê bài được đưa ở lượt đó (công cụ thời tiết không cộng vòng). Hết vòng mà model chưa viết thì chương trình trả **câu từ chối cố định** thay cho model.
 3. **Tối đa 45 giây** cho cả các vòng của trợ lý cộng lại. Quá hạn thì lượt hỏi báo lỗi.
 
 Ở lượt "cởi giày", sau hai lần tìm thêm, model trả câu từ chối ở vòng 3. Lúc đó một đường khác của chương trình mới mở: tra web một lần, để riêng ở mục "chưa kiểm" (bài 25). Lượt này còn cho thấy một giới hạn: kho thật ra có một câu về việc bỏ giày dép khi vào điện thờ (bài chùa Thiên Mụ), nhưng cả ba lần tìm đều không lấy ra đoạn đó. Tìm thêm làm giảm chứ không xoá được chuyện "kho có mà tìm không ra".
@@ -159,7 +159,7 @@ Harness là phần chương trình bao quanh model: cho model thấy gì, đưa 
 <details>
 <summary>2. Ba cái trần của một lượt hỏi là gì, và chạm trần thì sao?</summary>
 
-Tối đa 2 lần model tự tìm kho; tối đa 4 vòng gọi model, cộng 1 vòng cho mỗi công cụ khác được đưa thêm; tối đa 45 giây. Hết lần tìm thì công cụ tìm kho bị cất; hết vòng thì chương trình trả câu từ chối cố định; quá 45 giây thì lượt hỏi báo lỗi.
+Tối đa 2 lần model tự tìm kho; tối đa 4 vòng gọi model, cộng 1 vòng cho mỗi công cụ ngày, khoảng cách, gần một điểm, liệt kê bài được đưa thêm (công cụ thời tiết không cộng vòng); tối đa 45 giây. Hết lần tìm thì công cụ tìm kho bị cất; hết vòng thì chương trình trả câu từ chối cố định; quá 45 giây thì lượt hỏi báo lỗi.
 
 </details>
 
@@ -189,9 +189,9 @@ Trước: tìm lần đầu bằng chính câu người dùng gõ, tính sẵn n
 | Dùng hết số lần tìm thì cất công cụ (`het_luot_bo_cong_cu`) | bật | model không còn thấy công cụ tìm kho; nếu vẫn xin thì lượt hỏi nhận câu từ chối cố định | đã so bật / tắt (dòng 3) |
 | Trần vòng gốc (`so_vong_cong_cu`) | 4 | con số đặt từ khi lần xin thứ ba còn được trả một dòng nhắc: 2 lần tìm + 1 lần bị nhắc + 1 vòng viết. Nay công cụ tìm kho bị cất sau 2 lần nên việc tìm thêm dùng tối đa 3 vòng; vòng còn lại là phần dư | đã thử 8 vòng cùng 4 lần tìm (21/11, cả hai model): kết quả như cũ, model hiếm khi dùng phần nới, câu kho không có chờ lâu hơn (câu lâu nhất của gpt-6-luna từ 14 lên 22 giây) ⇒ giữ 4 |
 | Cộng vòng khi đưa thêm công cụ | +1 cho mỗi công cụ: ngày, khoảng cách, gần một điểm, liệt kê bài | mỗi lần gọi công cụ ăn một vòng. Công cụ liệt kê bài được đưa ở mọi lượt hỏi đáp, nên trần thực tế của một lượt hỏi đáp hiện là 5 trở lên | thêm cho công cụ ngày sau khi đo thấy 1 câu chạm trần; các công cụ sau được cộng theo cùng lý lẽ, không đo riêng |
-| Câu dùng cho lần tìm đầu (`lan_tim_dau`) | câu người dùng gõ, giữ nguyên | — | đã thử cho model viết lại câu tìm, 3 cách: bỏ (bài 23). Một lần thử khác ở khâu này (nhiều câu tìm ở lần đầu) đang chờ đo xác nhận, chưa mở |
+| Câu dùng cho lần tìm đầu (`lan_tim_dau`) | câu người dùng gõ, giữ nguyên | — | đã thử cho model viết lại câu tìm, 3 cách: mỗi cách chỉ đưa thêm được 0 tới 1 trên 12 câu đủ từ khoá, trong khi luật ghi trước cần ít nhất 3; bỏ (bài 23). Một lần thử khác ở khâu này (nhiều câu tìm ở lần đầu) đang chờ đo xác nhận, chưa mở |
 | Điều kiện đưa công cụ thời tiết / ngày / khoảng cách / gần một điểm (`cong_cong_cu`) | theo từ khoá của câu hỏi và của câu liền trước. Hai ngoại lệ: hỏi thời tiết xa hơn 7 ngày tới thì không đưa công cụ thời tiết; khoảng cách đã được tính sẵn thì không đưa công cụ khoảng cách | lượt hỏi không cần thì model không thấy công cụ | có sẵn giá trị "luôn đưa", chưa đo. Đã đếm trên 310 câu của sổ ghi lượt hỏi: cách theo từ khoá bỏ sót 4 trên 60 câu cần công cụ; các từ về nguy hiểm thời tiết bị sót (3 câu) đã được thêm vào danh sách |
-| Gọi nhiều công cụ trong cùng một vòng | tắt | chương trình hiện xử lý từng công cụ một | đã thử bật: model gần như không dùng, 1 trên 176 câu (bài 23) |
+| Gọi nhiều công cụ trong cùng một vòng | tắt | chương trình hiện xử lý từng công cụ một | đã thử bật: model gần như không dùng, 1 trên 176 câu; bỏ (bài 23) |
 | Dạng đầu ra bắt buộc của lần viết | một ô chữ duy nhất chứa câu trả lời | chương trình luôn biết đâu là chữ để kiểm và hiện | dạng này chưa so; cách gửi nó cho Claude thì đã so (dòng 4) |
 | Hạn giờ | 45 giây cho các vòng của trợ lý cộng lại; 10 giây riêng cho lần xếp loại câu; 45 giây riêng cho lần viết mục web | quá hạn thì báo lỗi, không treo | chưa so |
 | Số đoạn mỗi lần tìm | 10; tin hỏi nhiều ý được nối thêm 2 đoạn cho mỗi ý ở lần tìm đầu (từ 22/11) | như đường hỏi đáp (bài 13); phần nối thêm ở bài 23 | bài 13, bài 23 |
@@ -233,7 +233,7 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 
 **Đọc bảng này thế nào.**
 - Quyền tự tìm thêm **có trần** là thứ thắng rõ nhất (dòng 1). Siết trần xuống 1 thì mất câu trả lời (dòng 2); để hở trần thì tốn thời gian vô ích (dòng 3).
-- Ba lần thử mở thêm quyền khác cho model (xin hai công cụ một lúc, tự viết lại câu tìm đầu, tự quyết lúc nào tra web) đều không thắng; số của chúng ở bài 23 và bài 25.
+- Ba lần thử mở thêm quyền khác cho model (xin hai công cụ một lúc, tự viết lại câu tìm đầu, tự quyết lúc nào tra web) đều không thắng: xin hai công cụ một lúc thì model chỉ dùng ở 1 trên 176 câu; tự viết lại câu tìm đầu chỉ đưa thêm 0 tới 1 trên 12 câu (cần ít nhất 3); việc tự quyết lúc nào tra web ở bài 25.
 - Giao việc tính cho chương trình thắng ở ngày tháng nhưng thua ở cộng tổng tiền chuyến đi (bài 24). Không phải cứ giao cho chương trình là hơn.
 - Dòng 4: cùng một harness, đổi model thì chỗ nối có thể hỏng. Lỗi ở chỗ nối, không ở model.
 - Mỗi lần thử ở phần trợ lý đều có tầng an toàn: chạy lại bộ câu an toàn, hoặc chứng minh chuỗi chữ gửi model không đổi rồi dùng lại số cũ (bài 20).

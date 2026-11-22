@@ -1,6 +1,6 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 12:22, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11; khuôn thêm hai mục "Quyết định và lý do" và "Nếu… thì sao" theo yêu cầu của anh trưa 22/11, bài 6 là bài mẫu · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 12:55, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11; khuôn thêm hai mục "Quyết định và lý do" và "Nếu… thì sao" theo yêu cầu của anh trưa 22/11, bài 6 là bài mẫu · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -76,10 +76,10 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 |---|---|---|
 | 21 | [Harness: phần chương trình bao quanh model](21_HARNESS.md) | ✅ |
 | 22 | [Xếp loại câu trước khi tìm: bốn tuyến](22_XEP_LOAI_CAU.md) | ✅ |
-| 23 | Tìm thêm, nhớ câu hỏi trước, và câu hỏi nhiều ý | ⬜ |
-| 24 | Việc phải đúng thì chương trình tính: ngày âm lịch làm mẫu, rồi thời tiết, khoảng cách và các công cụ khác | ⬜ |
-| 25 | Khi kho không có: tra web một lần, để riêng mục "chưa kiểm" | ⬜ |
-| 26 | Hỏi bằng ảnh | ⬜ |
+| 23 | [Tìm thêm, nhớ câu hỏi trước, và câu hỏi nhiều ý](23_TIM_THEM_NHO_NHIEU_Y.md) | ✅ |
+| 24 | [Việc phải đúng thì chương trình tính: ngày âm lịch làm mẫu, rồi thời tiết, khoảng cách và các công cụ khác](24_VIEC_PHAI_DUNG_THI_CHUONG_TRINH_TINH.md) | ✅ |
+| 25 | [Khi kho không có: tra web một lần, để riêng mục "chưa kiểm"](25_TRA_WEB.md) | ✅ |
+| 26 | [Hỏi bằng ảnh](26_HOI_BANG_ANH.md) | ✅ |
 
 ### Chặng 6 — Lên kế hoạch: chương trình xếp lịch, model chỉ diễn đạt
 
@@ -141,7 +141,7 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 
 **Nửa để tra** (bài nào có mục nào thì ghi mục đó; bài nền thường chỉ có hai mục cuối)
 
-*Hai mục 7 và 8 thêm trưa 22/11/2026 theo yêu cầu của anh: đọc xong phải giải thích được từng quyết định và nói được "hỏng thì sao", không chỉ kể được hệ thống gồm những gì. Mục "Vì sao không làm cách khác" của khuôn cũ nhập vào mục 7. **Bài 6 (kiến trúc) là bài mẫu đầu tiên theo khuôn mới**; anh đã đọc và duyệt trưa 22/11. Các bài 1, 3, 4, 5, 17–22 đã theo khuôn này. Các bài viết trước đó (2, 7–16) vẫn theo khuôn cũ, còn mục "Vì sao không làm cách khác" ở nửa để tra, và đang được chuyển dần.*
+*Hai mục 7 và 8 thêm trưa 22/11/2026 theo yêu cầu của anh: đọc xong phải giải thích được từng quyết định và nói được "hỏng thì sao", không chỉ kể được hệ thống gồm những gì. Mục "Vì sao không làm cách khác" của khuôn cũ nhập vào mục 7. **Bài 6 (kiến trúc) là bài mẫu đầu tiên theo khuôn mới**; anh đã đọc và duyệt trưa 22/11. Các bài 1, 3, 4, 5, 17–26 đã theo khuôn này. Các bài viết trước đó (2, 7–16) vẫn theo khuôn cũ, còn mục "Vì sao không làm cách khác" ở nửa để tra, và đang được chuyển dần.*
 
 11. **Cấu hình đang chạy:** bảng mục · giá trị · dùng để làm gì và vì sao là giá trị đó · đã thử giá trị khác chưa.
 12. **Đã so:** vấn đề thật đã gặp · so cái gì với cái gì, trên bộ câu nào · bảng kết quả kể cả phương án bị bỏ · đọc bảng thế nào · đã chọn gì · giới hạn của phép đo. Mỗi con số ghi rõ đo với model viết nào.
