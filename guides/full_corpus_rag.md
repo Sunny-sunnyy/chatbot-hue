@@ -162,7 +162,7 @@ và rà lại lựa chọn các Phase trước — đo trên baseline 176 case c
 
 ### Build lại index khi corpus đổi (B26, 2026-10-25; đối chiếu lại với code sau rà code đợt 3, 2026-10-26 — B-18)
 
-Runtime từ chối khởi động khi hash file corpus khác build record (lỗi "stale"), nên **mọi** sửa `knowledge-base-hue/` phải đi
+Khi hash file corpus khác build record (lỗi "stale"), server VẪN khởi động nhưng phần tìm kho không sẵn sàng: mọi câu hỏi nhận 409 `corpus_reingest_required`, `/health` báo `retrieval: not_ready` (`api/app.py`; sửa câu này 22/11/2026 — bản cũ ghi "runtime từ chối khởi động"), nên **mọi** sửa `knowledge-base-hue/` phải đi
 kèm build lại index. Đây là thao tác ghi / xóa dữ liệu đang chạy ⇒ việc rủi ro cao (`session_prompt/WORKFLOW.md` §3): spec / mục việc
 User duyệt, ghi rõ đích ghi / xóa, sao lưu trước.
 

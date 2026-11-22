@@ -5,8 +5,8 @@ Lệnh này: chia đoạn cả kho như lúc dựng ⇒ so payload từng điể
 ghi lại vector từ khoá của mọi điểm (nó phụ thuộc thống kê của cả kho — `embedding/sparse.py`; chỉ CPU) ⇒ kiểm cả collection bằng hàm kiểm của
 lúc dựng ⇒ ghi file thống kê từ khoá rồi bản ghi dựng SAU CÙNG. Kết quả phải giống dựng lại toàn bộ (vector nghĩa lệch cỡ 1e-7 do thành phần lô).
 
-Lệnh chết giữa chừng: bản ghi dựng đã bị dời sang tên `….dang_cap_nhat` trước lần ghi Qdrant đầu tiên ⇒ server từ chối khởi động (phép kiểm sẵn
-có "Build record does not exist") thay vì trả lời lệch; chạy lại lệnh là kéo về đúng, vì bước so là so với CHÍNH collection chứ không tin sổ.
+Lệnh chết giữa chừng: bản ghi dựng đã bị dời sang tên `….dang_cap_nhat` trước lần ghi Qdrant đầu tiên ⇒ server vẫn bật nhưng phần tìm kho không sẵn
+sàng (phép kiểm sẵn có "Build record does not exist" ⇒ mọi câu hỏi nhận 409 "Dữ liệu tra cứu cần được lập chỉ mục lại") thay vì trả lời lệch; chạy lại lệnh là kéo về đúng, vì bước so là so với CHÍNH collection chứ không tin sổ.
 Lùi một lần sửa kho: `git revert` bài rồi chạy lại chính lệnh này.
 
 Chạy (từ `backend/`, TẮT server trước, bật lại sau khi xong — server đọc thống kê và xoá câu trả lời đã nhớ lúc khởi động):
@@ -162,7 +162,7 @@ def dong_bo(*, chi_xem: bool = False, kho: Path | None = None, collection: str |
                 shutil.copy2(file, sao_luu / file.name)
         kq["sao_luu"] = str(sao_luu)
 
-        # 5. Từ đây tới lúc xong: không có bản ghi dựng ⇒ server từ chối khởi động
+        # 5. Từ đây tới lúc xong: không có bản ghi dựng ⇒ server có bật thì cũng không tìm kho được (409 cho mọi câu hỏi), không trả lời lệch
         if duong_ban_ghi.is_file():
             duong_ban_ghi.replace(duong_tam)
 

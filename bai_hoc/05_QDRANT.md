@@ -95,9 +95,9 @@ lần 64 thẻ. Ghi xong, nó đếm lại số thẻ, kiểm hồ sơ của t�
 
 Thời gian: khoảng **4 phút** cho cả kho trên máy anh. Trong lúc đó chatbot ngừng phục vụ.
 
-## Một chuyện thật: sửa 11 bài, chatbot từ chối mở cửa
+## Một chuyện thật: sửa 11 bài, chatbot ngừng nhận câu hỏi
 
-Ngày 05/11, 11 bài điểm tham quan của Quần thể Cố đô được thêm một dòng giờ mở cửa chung (bài 1). Sửa xong, chatbot **từ chối khởi động**: bước 2 phát hiện
+Ngày 05/11, 11 bài điểm tham quan của Quần thể Cố đô được thêm một dòng giờ mở cửa chung (bài 1). Sửa xong, khởi động lại thì chatbot **không nhận câu hỏi nào nữa** (server vẫn bật, nhưng mọi câu nhận thông báo 409 "Dữ liệu tra cứu cần được lập chỉ mục lại"): bước 2 phát hiện
 dấu của 11 file đã đổi. Đây đúng là điều thiết kế muốn: nếu không có bước này, chatbot sẽ tiếp tục trả lời "kho không có giờ mở cửa" trong khi kho đã có.
 
 Phải chuẩn bị lại: xoá ba thứ (anh tự chạy lệnh xoá vì agent bị chặn quyền), chạy lệnh chuẩn bị khoảng 4 phút, số đoạn tăng từ 8.424 lên **8.435** (thêm 11

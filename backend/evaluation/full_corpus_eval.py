@@ -481,7 +481,7 @@ async def run_chains(chains: list[dict], side: str) -> list[dict]:
     nhận lịch sử; `doc_lap` — câu gõ thật của lượt, không lịch sử (mốc quyết 2); `tran` — `dung_mot_minh` (câu viết lại đứng một mình), không
     lịch sử (trần, chỉ báo số; lượt không có `dung_mot_minh` bỏ). Cờ = `settings.yaml` + bật `nho_hoi_thoai` ở bên `nho`. Mỗi lượt một dòng:
     câu trả lời (private), tuyến, câu tìm model viết (private), và `usage − builder` của lần gọi viết (Q8)."""
-    from api.conversations import ConversationStore  # cùng kho với API
+    from api.conversations import ConversationStore, dap_duoc_nho  # cùng kho + cùng luật giữ đáp với API
     from llm.assistant import _assistant_instructions
     settings = load_settings(validate_private_paths=False)
     flags = dataclasses.replace(AssistantFlags.from_settings(settings), nho_hoi_thoai=side == "nho")
@@ -509,6 +509,7 @@ async def run_chains(chains: list[dict], side: str) -> list[dict]:
                 "fixed_outcome": trace.fixed_outcome, "n_history_turns": len(history), "cau_tim_model": trace.model_queries,
                 # cờ `nho_ten_goi_y`: dòng tên nơi do code dựng — `one_chain` đưa vào lịch sử của lượt sau (như route)
                 "ghi_chu_goi_y": ghi_chu_goi_y(trace) if flags.nho_ten_goi_y and error is None else "",
+                "dap_duoc_nho": dap_duoc_nho(trace, None if error or trace.fixed_outcome or trace.citation_error else "success"),  # như route
                 "n_tim_kho_model": trace.model_searches, "usd": turn_usd(trace), "n_llm_calls": len(trace.llm_calls),
                 "viet_input_tokens": writer[-1]["input_tokens"] if writer else None, "builder_tokens": builder,
                 "usage_tru_builder": None if (not writer or builder is None) else writer[-1]["input_tokens"] - builder}
@@ -516,7 +517,7 @@ async def run_chains(chains: list[dict], side: str) -> list[dict]:
     async def one_chain(chain: dict) -> list[dict]:
         rows = []
         async with semaphore:
-            store = ConversationStore(tokens, keep_answers=flags.nho_cau_tra_loi)
+            store = ConversationStore(tokens, keep_answers=False, chi_dap_lien_truoc=flags.nho_cau_tra_loi)  # như `api/app.py`
             conversation_id = store.ensure(None)
             for idx, turn in enumerate(chain["luot"]):
                 if side == "tran" and not turn.get("dung_mot_minh"):
@@ -525,7 +526,8 @@ async def run_chains(chains: list[dict], side: str) -> list[dict]:
                 row = await one_turn(chain, idx, turn, history)
                 rows.append(row)
                 if side == "nho" and row["error"] is None and row["answer"] and (row["fixed_outcome"] or not row["citation_error"]):
-                    store.append(conversation_id, turn["cau"].strip(), row["answer"], row["ghi_chu_goi_y"])
+                    dap = row["answer"] if not store.chi_dap_lien_truoc or row["dap_duoc_nho"] else ""  # như `_remember` của route
+                    store.append(conversation_id, turn["cau"].strip(), dap, row["ghi_chu_goi_y"])
         return rows
 
     try:

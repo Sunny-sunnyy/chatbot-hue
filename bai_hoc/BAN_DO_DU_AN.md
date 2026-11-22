@@ -1,6 +1,6 @@
 # Bản đồ dự án hue_rag — đọc trang này trước
 
-*Cập nhật lần cuối: 16:24, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" đủ 31 cờ đang bật (thêm các cờ bật 19–20/11); mục "Nhóm đang làm gì" viết lại theo đợt hoàn thiện Phase 9–12 · trước đó 16:22, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" thêm hai dòng bật 20/11 (lấy lại câu trả lời cũ giữa các cuộc trò chuyện; dòng "danh sách có thể chưa đủ") · trước đó 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
+*Cập nhật lần cuối: 10:18, ngày 22/11/2026 · sửa cho khớp hệ thống sáng 22/11: model viết đang chạy, 266 bài / 9.458 đoạn, 41 tính năng mở, hai công cụ mới, trợ lý nhớ câu trả lời liền trước, lệnh cập nhật riêng khi sửa kho · trước đó 16:28, ngày 20/11/2026 · mục "Nhóm đang làm gì": sửa hai dòng trạng thái ("lên lịch giúp mình" đã gộp, cờ tắt; "nhớ cả câu trả lời" đã đếm) · trước đó 16:24, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" đủ 31 cờ đang bật (thêm các cờ bật 19–20/11); mục "Nhóm đang làm gì" viết lại theo đợt hoàn thiện Phase 9–12 · trước đó 16:22, ngày 20/11/2026 · bảng "Cái gì ĐANG chạy" thêm hai dòng bật 20/11 (lấy lại câu trả lời cũ giữa các cuộc trò chuyện; dòng "danh sách có thể chưa đủ") · trước đó 16:09, ngày 18/11/2026 · trang mới: các khối hệ thống, cái gì đang chạy, đọc bài nào trước, nhóm đang làm gì.*
 
 Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm những khối nào, khối nào đang bật, và muốn hiểu sâu một khối thì mở bài nào. Mọi con số ở đây là
 **số của hệ thống hôm nay**; các bài viết trước ngày 14/11 (bài 0–18) viết lúc kho còn 204 bài, nên anh sẽ gặp số nhỏ hơn ở đó, không phải lỗi.
@@ -32,18 +32,18 @@ Trang này là **cửa vào**: đọc 5–10 phút là biết hệ thống gồm
 
 1. hue_rag là **trợ lý du lịch và văn hoá Huế** trên một trang web: người dùng hỏi bằng tiếng Việt có dấu, trợ lý trả lời **chỉ từ cuốn sổ tay** (kho bài viết
    tự soạn) và ghi nguồn dưới mỗi câu, kho không có thì nói không có, giống người hướng dẫn viên tra sổ tay ở bài 0.
-2. Sổ tay nay có **265 bài, cắt thành 9.442 đoạn** (tới 13/11 là 204 bài / 8.435 đoạn), cất trong **Qdrant**.
-3. Mỗi câu hỏi: model **xếp loại câu**, code **tìm 10 đoạn** hợp nhất, model **gpt-6-luna** đọc rồi viết, code **kiểm nguồn** rồi mới hiện; thiếu thì trợ lý
+2. Sổ tay nay có **266 bài, cắt thành 9.458 đoạn** (tới 13/11 là 204 bài / 8.435 đoạn), cất trong **Qdrant**.
+3. Mỗi câu hỏi: model **xếp loại câu**, code **tìm 10 đoạn** hợp nhất, model viết (từ 21/11 tạm là **Claude Sonnet 5.5** chạy qua Amazon Bedrock; trước đó là **gpt-6-luna**, đổi lại bằng một dòng cấu hình) đọc rồi viết, code **kiểm nguồn** rồi mới hiện; thiếu thì trợ lý
    **tự tìm thêm** tối đa 2 lần, kho vẫn không có thì **tra web một lần** và để riêng mục "chưa kiểm".
 4. Việc dễ nhầm (ngày âm lịch, thời tiết, khoảng cách, xếp lịch, chọn khách sạn / quán) **code làm, model chỉ diễn đạt** — đó là phần "trợ lý".
-5. Hệ thống chạy **trên máy anh**, chưa đưa lên mạng. Code đứng yên tối thứ Bảy 21/11, lượt đo cuối Chủ nhật 22/11. Trước cuối tháng 11: kế hoạch deploy
-   và sổ bàn giao; **deploy chỉ bàn khi dự án xong**.
+5. Hệ thống chạy **trên máy anh**, chưa đưa lên mạng. Thứ tự còn lại: làm xong các tính năng đã chốt ở máy ⇒ anh tự test
+   một lần ⇒ sau đó không phát triển thêm; **deploy là điểm cộng, chỉ bàn khi dự án xong**.
 
 ## Các khối của hệ thống
 
 ```mermaid
 flowchart LR
-    K["Sổ tay<br/>265 bài"] --> Q["Chia đoạn + chỉ mục<br/>9.442 đoạn trong Qdrant"]
+    K["Sổ tay<br/>266 bài"] --> Q["Chia đoạn + chỉ mục<br/>9.458 đoạn trong Qdrant"]
     Q --> T["Trợ lý trả lời<br/>xếp loại · tìm · viết · kiểm nguồn"]
     T <--> C["Công cụ của trợ lý<br/>thời tiết · ngày · khoảng cách · web · ảnh"]
     L["Lên kế hoạch<br/>code xếp lịch đi – ăn – ở"] --> G["Giao diện 5 trang"]
@@ -54,19 +54,19 @@ Ngoài hình: **khối đo / chấm** đứng cạnh để kiểm mọi thay đ�
 
 | Khối | Nó làm gì | Đang chạy thế nào (số hôm nay) | Bài nên đọc |
 |---|---|---|---|
-| **Sổ tay** | Tất cả những gì trợ lý được nói: món ăn, di tích, lễ hội, nghệ thuật, đi lại / vé / chỗ ở | **265 bài** Markdown, 5 chủ đề (mốc: 204 bài tới 13/11; thêm 61 bài 14–16/11; mỗi lần ghi đều kiểm câu cũ không tụt — hai lần đầu chấm điểm, các lần sau đọc tay từng câu chạm bài mới) | 1, 22 |
-| **Chia đoạn + chỉ mục** (*chunking*, *embedding*) | Cắt bài thành đoạn nhỏ, biến mỗi đoạn thành vector nghĩa (dãy số đại diện ý) và bảng từ khoá, cất vào Qdrant | **9.436 đoạn**; mỗi đoạn thành một dãy 384 con số (vector) từ model nhỏ **e5-small** chạy trên máy, 0 đồng; từ khoá **BM25** (chấm theo chữ trùng); lúc khởi động thấy kho lệch chỉ mục thì từ chối chạy | 2, 3, 4, 5 |
+| **Sổ tay** | Tất cả những gì trợ lý được nói: món ăn, di tích, lễ hội, nghệ thuật, đi lại / vé / chỗ ở | **266 bài** Markdown, 5 chủ đề (mốc: 204 bài tới 13/11; thêm 61 bài 14–16/11; mỗi lần ghi đều kiểm câu cũ không tụt — hai lần đầu chấm điểm, các lần sau đọc tay từng câu chạm bài mới) | 1, 22 |
+| **Chia đoạn + chỉ mục** (*chunking*, *embedding*) | Cắt bài thành đoạn nhỏ, biến mỗi đoạn thành vector nghĩa (dãy số đại diện ý) và bảng từ khoá, cất vào Qdrant | **9.458 đoạn**; từ 22/11 sửa một bài thì một lệnh cập nhật riêng khoảng 30 giây là chỉ mục khớp lại, không phải dựng lại cả kho (Việc mới xong, mục 32); mỗi đoạn thành một dãy 384 con số (vector) từ model nhỏ **e5-small** chạy trên máy, 0 đồng; từ khoá **BM25** (chấm theo chữ trùng); lúc khởi động thấy kho lệch chỉ mục thì không nhận câu hỏi (server vẫn bật, mọi câu nhận thông báo "Dữ liệu tra cứu cần được lập chỉ mục lại") | 2, 3, 4, 5 |
 | **Tìm** (*retrieval*) | Chọn đoạn hợp câu hỏi | Theo nghĩa lấy 30 ứng viên ⇒ chấm lại theo từ khoá ⇒ trộn hai bảng xếp hạng (RRF) ⇒ giữ **10 đoạn**; **không xếp lại bằng model** | 6, 7 |
-| **Trợ lý trả lời** | Xếp loại câu (chào hỏi / về Huế / ngoài chủ đề / khẩn cấp — loại cuối đi chung đường câu về Huế), viết bằng **gpt-6-luna**, kiểm số nguồn | Bật: xếp loại; chạy song song xếp loại với trả lời; **tìm thêm ≤ 2 lần** — đã tìm thêm đủ 2 lần thì trợ lý không được tìm nữa, phải trả lời hoặc nói không có; **nhớ 3 câu hỏi gần nhất** (không nhớ câu trả lời); câu nhiều ý | 8, 12, 13, 25 |
-| **Công cụ của trợ lý** | Việc phải đúng thì code làm | Bật cả sáu: **ngày + âm lịch** (code tính) · **thời tiết** 7 ngày (Open-Meteo) · **câu bão / lũ** (model không nhận con số nào, code nối khối chỉ dẫn cố định) · **khoảng cách** hai điểm (bảng dựng sẵn, lúc chạy không gọi mạng) · **tra web** (Serper, một lần, 5 giây, mục "Từ web (chưa kiểm)") · **hỏi bằng ảnh** (model đoán tên trong danh sách 42 nơi / món, câu trả lời vẫn từ kho) | 14, 15 |
+| **Trợ lý trả lời** | Xếp loại câu (chào hỏi / về Huế / ngoài chủ đề / khẩn cấp — loại cuối đi chung đường câu về Huế), viết bằng **Claude Sonnet 5.5** qua Amazon Bedrock (tạm, từ 21/11; trước là gpt-6-luna), kiểm số nguồn | Bật: xếp loại; chạy song song xếp loại với trả lời; **tìm thêm ≤ 2 lần** — đã tìm thêm đủ 2 lần thì trợ lý không được tìm nữa, phải trả lời hoặc nói không có; **nhớ 3 câu hỏi gần nhất** và, từ 22/11, cả **câu trả lời của lượt liền trước** (để hiểu "quán thứ hai bạn vừa kể") — trừ lượt dùng công cụ có số đổi theo giờ như thời tiết, khoảng cách; câu trả lời dài bị cắt ở 4.000 ký tự; câu nhiều ý | 8, 12, 13, 25 |
+| **Công cụ của trợ lý** | Việc phải đúng thì code làm | Bật cả sáu công cụ dưới đây, cộng hai công cụ mở 22/11 — **gần một điểm có gì** (quán / điểm quanh một nơi, khoảng cách do code tính; Việc mới xong, mục 31) và **liệt kê bài** (kể theo mục lục kho; mục 36): **ngày + âm lịch** (code tính) · **thời tiết** 7 ngày (Open-Meteo) · **câu bão / lũ** (model không nhận con số nào, code nối khối chỉ dẫn cố định) · **khoảng cách** hai điểm (bảng dựng sẵn, lúc chạy không gọi mạng) · **tra web** (Serper, một lần, 5 giây, mục "Từ web (chưa kiểm)") · **hỏi bằng ảnh** (model đoán tên trong danh sách 42 nơi / món, câu trả lời vẫn từ kho) | 14, 15 |
 | **Lên kế hoạch** (lịch trình bản 2) + sửa lịch bằng lời | Biểu mẫu nút ⇒ code xếp lịch theo buổi; người dùng nhắn "đổi…" ⇒ model hiểu ý, code áp và kiểm | Bảng **41 điểm**; chỗ ở **136 cơ sở** (67 có ảnh); **468 quán** cho bữa ăn (phần lớn từ bản đồ mở, chưa kiểm ngoài đời); bản đồ ghim; file lịch .ics (mở được bằng Google Calendar / lịch điện thoại); lịch từ **câu gõ tự do** vẫn TẮT | 14, 23, 25 |
-| **Giao diện 5 trang** | Trang chủ · Khám phá · Lên kế hoạch · Trợ lý · Giới thiệu (thêm trang Chỗ ở, chỉ mở từ ô Nơi ở của lịch) | Giao diện viết bằng React (thư viện làm trang web), dựng sẵn thành file tĩnh rồi server gửi cho trình duyệt; chữ hiện dần; câu thường: chữ đầu tiên **p50 2,10 / p95 4,32 giây** (đếm lại từ sổ số đo ngày 15/11 trên 55 câu, chủ yếu là câu thử của nhóm — chưa có người dùng thật; sàn anh đặt 3 / 5 giây ⇒ đạt) | 17, 24 |
+| **Giao diện 5 trang** | Trang chủ · Khám phá · Lên kế hoạch · Trợ lý · Giới thiệu (thêm trang Chỗ ở, chỉ mở từ ô Nơi ở của lịch) | Giao diện viết bằng React (thư viện làm trang web), dựng sẵn thành file tĩnh rồi server gửi cho trình duyệt; chữ hiện dần với model cũ — với model đang chạy (Sonnet) chữ hiện MỘT lần sau khi model viết xong: câu một ý chờ khoảng 2–8 giây, tin hỏi nhiều ý thường 15–40 giây (đo sáng 22/11); số đo dưới đây là của model cũ: câu thường: chữ đầu tiên **p50 2,10 / p95 4,32 giây** (đếm lại từ sổ số đo ngày 15/11 trên 55 câu, chủ yếu là câu thử của nhóm — chưa có người dùng thật; sàn anh đặt 3 / 5 giây ⇒ đạt) | 17, 24 |
 | **Đo / chấm** | Kiểm mọi thay đổi trước khi bật | Bộ **176 câu mẫu** + bộ câu kín + bộ an toàn; Claude chấm mù, so theo cặp; sổ số đo ghi mỗi câu một dòng, không ghi nội dung | 9, 10, 11, 19 |
 | **Đóng gói / deploy** | Mang hệ thống sang máy chủ thật | Gói Docker (cách đóng phần mềm vào hộp để chạy giống nhau ở mọi máy) gồm ba hộp: cửa HTTPS (nhận kết nối mã hoá từ trình duyệt) · app · Qdrant; đã chạy thử trên máy anh; **chưa deploy** | 18, 21 |
 
 ## Cái gì ĐANG chạy, cái gì TẮT hoặc đã bỏ
 
-Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì chỉ phần đó mất, phần khác giữ nguyên. Bảng dưới đúng với file cấu hình chiều 20/11: **31 cờ đang bật** (đếm bằng lệnh ở sổ tay bàn giao mục 0), mọi cờ bật đều có trong bảng.
+Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì chỉ phần đó mất, phần khác giữ nguyên. Bảng dưới đúng với file cấu hình chiều 20/11 (lúc đó **31 cờ đang bật**); tới sáng 22/11 là **41** — mười cái mở thêm ngày 21–22/11 chưa có trong bảng, phần lớn đã có một mục ở [Việc mới xong](VIEC_MOI_XONG.md) (mục 25–36); mục cho hai cái mở cuối ("nhớ câu trả lời liền trước", "sửa lịch buổi tối") đang viết. Con số đếm bằng lệnh ở sổ tay bàn giao mục 0; mọi cờ bật tới chiều 20/11 đều có trong bảng.
 
 | Tên người dùng thấy | Trạng thái | Vì sao (một dòng) |
 |---|---|---|
@@ -163,9 +163,9 @@ cả bộ test chỉ chạy một lượt ở cuối đợt · lỗi hiếm thì
 | Trang "Bản đồ" riêng trong menu | **xong**, đang chạy | mục 20 |
 | Ứng xử / trang phục | **coi là đã có** qua hỏi đáp thường: 6 câu thật ⇒ 4 trả lời từ kho có nguồn, 2 nói thật kèm mục web; không xây gì thêm. Kho còn thiếu hai ý (chụp ảnh trong lăng, cởi giày vào chùa) | chưa có mục riêng |
 | Sự kiện theo ngày ("cuối tuần này Huế có lễ hội gì") | code xong, **cờ tắt**; bảng 27 dòng đã có người thứ hai đọc đủ (số đúng 27 / 27), code đã có người thứ hai kiểm; còn thiếu lượt thật | chưa viết (xong mới viết) |
-| Gõ "lên lịch giúp mình" trong ô chat ⇒ dẫn sang trang Lên kế hoạch | code xong, **cờ tắt**; chờ bộ câu thử của người khác + lượt thật | chưa viết |
+| Gõ "lên lịch giúp mình" trong ô chat ⇒ dẫn sang trang Lên kế hoạch | code xong, đã gộp, **cờ tắt**; bộ câu thử của phiên khác đạt (nhận 20 / 20, nhận nhầm 0 / 20); chờ một lượt thật trên giao diện rồi mới bật | chưa viết |
 | Sửa lịch "đổi chỗ ngày 1 với ngày 2" | đang viết code (kế hoạch đã duyệt) | — |
-| Nhớ cả câu trả lời trong một cuộc trò chuyện | đang đếm xem có bao nhiêu lượt thật cần tới, rồi mới viết kế hoạch | — |
+| Nhớ cả câu trả lời trong một cuộc trò chuyện | đã đếm: thiếu nó làm 3 / 122 lượt hỏi tiếp bị từ chối (kiểu "quán thứ hai bạn vừa nói…"), 0 lượt trả lời sai; kế hoạch một trang có hai phương án (giữ tắt ↔ bản nhỏ chỉ nhớ câu trả lời liền trước), chờ phiên điều phối quyết | `report_agent/2026-11-20/b_nho_cau_tra_loi_plan.md` |
 | Hỏi lại khi thiếu thông tin · "gần X có gì ăn" trong ô chat · trang theo dõi · agent đề xuất sửa kho có anh duyệt | **chưa bắt đầu** | — |
 | Câu nhiều ý mà kho chỉ có một phần thì bị từ chối cả câu | **giữ giới hạn** — anh chọn theo số đếm (khoảng 1 % lượt) | sổ tay bàn giao mục 10.1 |
 | Bốn việc từng hẹn "sau lượt đo cuối" | **giữ giới hạn** cả bốn (hiếm hoặc chưa có lượt thật nào gặp) | sổ tay bàn giao mục 10 |
@@ -205,7 +205,7 @@ cả bộ test chỉ chạy một lượt ở cuối đợt · lỗi hiếm thì
 
 Bảng đối chiếu từng số / khẳng định ⇒ `file:dòng` và biên bản kiểm độc lập 93 ý (77 đúng, 4 sai, 11 lệch — đã sửa hết vào bản này): `data/ban_do_2026-11-18/NGUON.md`,
 `BIEN_BAN_KIEM.md` (riêng tư). Tóm tắt:
-- 265 bài / 9.442 đoạn: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count`, `corpus.chunk_count`, đọc 18/11) [đã chạy]; `session_prompt/Project_Status.md` mục 4 [Project_Status]
+- 266 bài / 9.458 đoạn: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count`, `corpus.chunk_count`, đọc 18/11) [đã chạy]; `session_prompt/Project_Status.md` mục 4 [Project_Status]
 - Mô hình, cách tìm, 10 đoạn, không xếp lại, mọi cờ trong bảng "đang chạy": `backend/config/settings.yaml` (từng dòng ở NGUON.md) [settings]
 - Bốn loại câu: `backend/llm/assistant.py`; năm trang + Chỗ ở: `frontend/src/route.js` [code]
 - 41 điểm / 136 cơ sở / 468 quán / 42 tên ảnh: đếm các bảng trong `data/phase_9/lich_trinh/`, `data/anh_user_2026-11-15_ghep/`, `data/phase_10/anh/` (18/11) [đã chạy]
