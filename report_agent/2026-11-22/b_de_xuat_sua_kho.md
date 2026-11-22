@@ -109,3 +109,23 @@ Phép này KHÔNG cho biết: model phán đúng tới đâu ở mức giá khô
 | F4: con số trong tiêu đề mục không vào nhóm nào | test `test_con_so_trong_tieu_de…` đỏ | quét cả dòng tiêu đề; code xếp cứng "không rõ" kèm lý do, không hỏi model, không bao giờ tự sửa | test xanh; trên kho: 100.000 có 2 tiêu đề ở bài cẩm nang ẩm thực được liệt kê; 200.000 và 150.000: 0 tiêu đề ⇒ file vá của hai ca đã đo không đổi |
 
 `tests/test_sua_kho.py`: 15 ca đạt (12 cũ + 3 ca của review).
+
+## 10. Lượt ĐẦU–CUỐI nối với lệnh cập nhật chỉ mục của phiên C (09:00–09:02 22/11/2026) — trên bản chép kho + collection thử
+
+Cây chạy: nhánh tạm (không push) = nhánh này `2d0a364` + `origin/p12-c-cap-nhat-rieng` `7bc4462`. Bản chép kho ở `07d3df02`; collection thử `hue_thu_b_duyet` chép từ collection đang chạy (9.436 điểm); thư mục bản ghi thử riêng. Không bật server.
+
+| Bước | Kết quả [máy kiểm] |
+|---|---|
+| Trước khi sửa: hỏi dịch vụ tìm trên collection thử "giá vé vào cổng Đại Nội cho người lớn" và "xem biểu diễn ở Duyệt Thị Đường có cần vé Đại Nội không" | 10 đoạn đầu: 3 và 2 đoạn ghi Đại Nội 200.000; 0 đoạn ghi 250.000 |
+| Lệnh đề xuất (ca Đại Nội 200.000 ⇒ 250.000) | `Sẽ sửa 9 chỗ ở 6 bài · không rõ 1 · không phải giá này 27 · model 0.0508 USD`; kho chưa đổi |
+| Lệnh duyệt kèm `--collection-thu … --ban-ghi-thu …` | kiểm chỉ mục khớp kho (đạt) ⇒ áp 6 bài ⇒ bản ghi git `9e036295` trên nhánh của bản chép ⇒ `Đã cập nhật chỉ mục cho 5 bài: tính lại 8 đoạn, 30.6 giây` (bài thứ sáu là file kiểm kê ngoài chỉ mục); mã thoát 0; cả lệnh khoảng 49 giây |
+| Sau khi sửa: hỏi lại hai câu trên | 0 đoạn còn ghi Đại Nội 200.000; 3 và 2 đoạn ghi 250.000 — đúng các đoạn trước đó ghi giá cũ |
+| Collection đang chạy + kho thật | 9.436 điểm; băm bản ghi dựng và file thống kê từ khoá không đổi (`3622a573e28e`, `ea442226257d`); `git status` của kho thật rỗng |
+
+Sau lượt: đã xoá collection thử và hai bản chụp của nó (57 + 64 MB). Hồ sơ riêng tư: `data/de_xuat_kho/thu_dau_cuoi_2026-11-22/` (`de_xuat/`, `ban_ghi_thu/`, `tim_thu.py`).
+
+Chưa làm ở lượt này: đường lùi (`git revert` rồi cập nhật lại — phiên C đã có test) · hỏi qua ô chat với server bật trên collection thử (mới kiểm tới bước TÌM; bước model viết không đổi theo việc này) · chạy trên chỉ mục thật (chờ lần sửa kho thật đầu tiên, do chủ dự án).
+
+Điều người gộp cần biết: hai nhánh cùng thêm một khối tên "5a" vào mục 5 của sổ tay ⇒ xung đột khi gộp; giữ cả hai khối, đổi số khối sau thành 5b.
+
+Tiền cả việc (Bedrock): 0,20 + 0,05 = **0,25 USD**.
