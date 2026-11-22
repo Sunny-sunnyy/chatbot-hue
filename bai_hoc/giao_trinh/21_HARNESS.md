@@ -1,6 +1,6 @@
 # Bài 21 — Harness: phần chương trình bao quanh model
 
-*Cập nhật 10:05, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy sáng 22/11; ví dụ là hai lượt hỏi thật ngày 20/11 (model gpt-6-luna); số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11; người viết không chạy lại phép đo nào.*
+*Cập nhật 10:21, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy sáng 22/11; ví dụ là hai lượt hỏi thật ngày 20/11 (model gpt-6-luna); số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** đường hỏi đáp cơ bản (chặng 3): chương trình tìm 10 đoạn, model viết một lần, chương trình kiểm số nguồn. Và ở bài 3: model có thể "xin" chương trình chạy một công cụ rồi đọc kết quả.
 **Bài này thêm:** cho model quyền xin công cụ thì hệ thống thành một **trợ lý**. Bài này giảng phần chương trình đứng quanh model để trợ lý đó làm được việc mà không chạy lung tung. Phần đó tên là **harness**; các bài còn lại của chặng này đều dựa trên nó.
@@ -124,7 +124,7 @@ Nguyên tắc đứng sau bảng: việc cần hiểu ngôn ngữ thì model là
 | Hạn giờ | 45 giây cho các vòng của trợ lý cộng lại; 10 giây riêng cho lần xếp loại câu; 45 giây riêng cho lần viết mục web | quá hạn thì báo lỗi, không treo | chưa so |
 | Số đoạn mỗi lần tìm | 10 | như đường hỏi đáp (bài 13) | bài 13 |
 | Độ ngẫu nhiên khi viết (temperature) | không gửi, để mặc định của nhà cung cấp | — | chưa so |
-| Lịch sử gửi kèm | chỉ câu hỏi của các lượt trước; không gửi câu trả lời cũ, không gửi kết quả công cụ cũ | lịch sử để hiểu "đó / này" chỉ nơi nào, không làm nguồn | bài 23 |
+| Lịch sử gửi kèm | câu hỏi của các lượt trước; từ sáng 22/11 thêm câu trả lời của lượt liền trước (bỏ số nguồn, cắt còn 4.000 ký tự, kèm một dòng nhãn nói rõ nó không phải nguồn). Lượt có dùng công cụ đổi theo giờ (thời tiết, khoảng cách) thì câu trả lời không được nhớ. Kết quả công cụ cũ không được gửi lại | lịch sử để hiểu "đó / này" và "quán thứ hai bạn vừa kể" chỉ cái gì; không làm nguồn | bài 23 |
 | Agent con | không có | — | chưa thử |
 
 Công cụ có trong chương trình: tìm kho · thời tiết · ngày và âm lịch · khoảng cách hai điểm · gần một điểm có gì · liệt kê bài của kho (mở từ sáng 22/11, được đưa ở mọi lượt hỏi đáp) · xếp lịch từ câu gõ tự do (đang tắt, bài 27).
@@ -201,7 +201,7 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
 - Thứ tự trước model (tìm lần đầu, tính sẵn ngày / sự kiện / khoảng cách / lịch đang có): `backend/llm/assistant.py`, hàm `_before_model`, `prepare_answer` [code, đọc 22/11/2026].
-- Điều kiện đưa từng công cụ theo từ khoá của câu hỏi và câu liền trước; cất công cụ khi hết số lần tìm: cùng file, hàm `_lich_extra` [code]. Khoá `cong_cong_cu`, `so_lan_tim_kho`, `so_vong_cong_cu`, `het_luot_bo_cong_cu`, `tim_them`, `lan_tim_dau`: `backend/config/settings.yaml` mục `assistant` và `full_corpus_generation.bedrock` [cấu hình, đọc 22/11/2026].
+- Điều kiện đưa từng công cụ theo từ khoá của câu hỏi và câu liền trước; cất công cụ khi hết số lần tìm: cùng file, hàm `_lich_extra` [code]. Khoá `cong_cong_cu`, `so_lan_tim_kho`, `so_vong_cong_cu`, `het_luot_bo_cong_cu`, `tim_them`, `lan_tim_dau`, `nho_hoi_thoai`, `nho_cau_tra_loi` (mở 09:40 22/11/2026), `liet_ke_bai` (mở 09:20 22/11/2026): `backend/config/settings.yaml` mục `assistant` và `full_corpus_generation.bedrock` [cấu hình, đọc 22/11/2026].
 - Công cụ tìm kho của một lượt, trần 2 lần, dòng "đã hết lượt": `assistant.py`, hàm `tool_for_turn`; chữ ở `backend/llm/full_corpus_prompt.py`, hằng `TOOL_LIMIT_TEXT` [code].
 - Trần vòng 4 và chú thích "≤ 2 lần tìm thật + lần 3 'đã hết lượt' + 1 lượt viết"; phần cộng thêm; hàm xử lý khi chạm trần trả câu từ chối; không gọi nhiều công cụ cùng lúc (`parallel_tool_calls=False`); dạng đầu ra `AnswerOutput`; không gửi temperature: `backend/llm/generator_openai_full_corpus.py` (`ASSISTANT_MAX_TURNS`, `max_turns_for`, `_assistant_for`, `on_max_turns`) [code]. Hạn 45 giây / 10 giây: `settings.yaml` (`timeout_seconds`, `router_timeout_seconds`).
 - Các bước sau model: `assistant.py`, hàm `_finish_generated`, `check_citations`, `kiem_so_sau_khi_viet`, `set_notice`; luật số nguồn: `backend/llm/citations.py` [code].

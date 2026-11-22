@@ -1,6 +1,6 @@
 # Bài 2 — RAG là gì: cho model đọc tài liệu trước khi trả lời
 
-*Cập nhật 10:05, ngày 22/11/2026 · ví dụ là ba lượt hỏi thật lấy từ sổ ghi từng lượt của hệ thống (ngày 20 và 21/11); số của kho đếm sáng 22/11; người viết không chạy lại.*
+*Cập nhật 10:21, ngày 22/11/2026 · ví dụ là ba lượt hỏi thật lấy từ sổ ghi từng lượt của hệ thống (ngày 20 và 21/11); số của kho đếm sáng 22/11; người viết không chạy lại.*
 
 **Bài trước đã biết:** model ngôn ngữ viết ra chữ tiếp theo có khả năng cao nhất. Nó viết trôi chảy cả khi không biết, và không tự nói được nó lấy thông tin từ đâu.
 **Bài này thêm:** cách hue_rag xử lý chuyện đó. Cách này có tên là RAG, và nó là tên của chính đề tài.
@@ -113,6 +113,7 @@ Cũng nhờ vậy mà đổi được model viết sang một model của hãng 
 ## Chi tiết để tra
 
 - Ví dụ chính là lượt hỏi ngày 21/11/2026, model viết là Claude Sonnet 5.5. Cả lượt: 3,7 giây, 2 lần gọi model (một lần xếp loại câu 0,74 giây, một lần viết 3,63 giây), tốn 0,0178 USD (khoảng 445 đồng). Lần viết nhận 5.085 token, viết ra 425 token.
+- Trên màn hình, các số [n] không hiện trong chữ; dưới câu trả lời có một dòng "Nguồn:" ghi tên các bài đã được trích, bấm vào là xem được đoạn gốc (bài 16).
 - Ở lượt này chữ hiện ra một lần sau khi model viết xong, vì bộ khoá đang dùng với Claude không có quyền nhận chữ dần (bài 33).
 - Ví dụ "chỗ đậu ô tô" là lượt hỏi ngày 20/11/2026, model viết là gpt-6-luna. Trước khi từ chối, trợ lý đã tự tìm thêm một lần (bài 21) và không ra đoạn mới nào. Cả lượt 8,3 giây, 0,0017 USD (khoảng 41 đồng), gồm cả lần tra web. Mục web của lượt đó viết: chưa xác minh được chùa có chỗ đậu ô tô trong khuôn viên hay không; một nguồn nhắc chỗ gửi xe ở các bến xe, một nguồn nói ô tô bị cấm trên một đoạn đường qua khu vực chùa.
 - "Kho không nói về chỗ đậu xe ở chùa Thiên Mụ" được dò bằng cách tìm các chữ đậu xe, đỗ xe, bãi đỗ, bãi xe, gửi xe, giữ xe, chỗ để xe, dừng xe trong kho (người viết dò, rồi một agent kiểm dò lại rộng hơn): không câu nào nói chỗ đậu xe của chùa. Phép dò theo chữ này không loại trừ được một câu diễn đạt bằng chữ khác.
