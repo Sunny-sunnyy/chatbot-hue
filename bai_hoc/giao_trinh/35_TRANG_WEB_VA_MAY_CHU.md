@@ -1,6 +1,6 @@
 # Bài 35 — Trang web và máy chủ: ai gửi gì cho ai
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: các đường gọi, loại tin và cách giao diện xử lý đọc từ chương trình trưa 22/11 (gồm bản sửa "tải trang không chiếm chỗ" vào cây chính trưa 22/11); kết quả thử thật đường báo tình trạng lấy từ bài 6 (thử 22/11); người viết không chạy máy chủ; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 22:25, ngày 22/11/2026 · hàng "thay chữ" theo bản sửa 22:06 · trước đó (16:11): phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: các đường gọi, loại tin và cách giao diện xử lý đọc từ chương trình trưa 22/11 (gồm bản sửa "tải trang không chiếm chỗ" vào cây chính trưa 22/11); kết quả thử thật đường báo tình trạng lấy từ bài 6 (thử 22/11); người viết không chạy máy chủ; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** giao diện chạy trong trình duyệt, máy chủ chạy trên máy của dự án, chữ được gửi dần, cuộc trò chuyện nằm trong bộ nhớ của máy chủ (bài 6); model viết gửi chữ một lần (bài 33).
 **Bài này thêm:** giao diện gọi máy chủ qua những đường nào; trên đường gửi dần có những loại tin gì và giao diện làm gì với từng loại; máy chủ nhận ra "cùng một cuộc trò chuyện" bằng cách nào; và hai lớp chặn để chữ model viết không làm trang tải thứ lạ.
@@ -40,7 +40,7 @@ Khi người dùng gửi câu hỏi, trang mở một yêu cầu gửi lên đư
 |---|---|---|
 | trạng thái | mỗi bước bắt đầu: xếp loại câu, tìm, tìm xong; ở lượt có công cụ, "đang viết" chỉ gửi ngay trước chữ đầu | đổi dòng trạng thái; với Claude, suốt lúc chờ người dùng nhìn "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" |
 | chữ | model gửi một mẩu chữ (với Claude: một mẩu duy nhất) | nối mẩu vào ô chữ, vẽ lại tối đa mỗi lần màn hình làm mới; bỏ số nguồn [n] khi vẽ |
-| thay chữ | chương trình đã gỡ một câu khỏi chữ model (ví dụ câu có con số không có nguồn, bài 16) | thay cả ô chữ bằng bản cuối |
+| thay chữ | chữ đã hiện cần đổi: model trả chữ dần mà một câu có con số không có nguồn bị gỡ (bài 16), hoặc lượt chạy lại / viết lại; từ 22:06 22/11, với model đang chạy, phép kiểm số (bài 24) không còn làm trang nhận tin này (chữ chỉ được gửi sau khi đã gỡ câu sai; bài 6) | thay cả ô chữ bằng bản cuối |
 | nguồn | chữ đã qua bước kiểm số nguồn | vẽ bản cuối, rồi mới hiện dòng "Nguồn" |
 | ghi chú | có dòng "có thể đã thay đổi", hoặc câu an toàn bão lũ | hiện dưới câu trả lời; câu an toàn in đậm |
 | mục web | kho đã từ chối và đã tra web (bài 25) | hiện mục "Từ web (chưa kiểm)" |
@@ -231,6 +231,7 @@ Máy chủ xoá cuộc cũ, cấp mã mới; trước đây câu đầu sau khi 
 - Tính năng lỗi ⇒ tắt hết: `frontend/src/App.jsx` dòng 20, 42 (`TINH_NANG_TAT`) [code].
 - Mạng đứt ⇒ máy chủ dừng model, không nhớ lượt: `chat.jsx` chú thích dòng 187–189; `chat.py` (`client_disconnected`, `REMEMBERED_OUTCOMES`) [code]. Tất cả các dòng bảng "Nếu… thì sao" trừ dòng Qdrant: [suy từ code, chưa thử thật].
 - `HUE_TAT_DOCS`: `app.py` (`TAT_DOCS_ENV`) [code].
+- Hàng "thay chữ" (sửa 22:25 22/11/2026, bản trước chỉ có ví dụ phép kiểm số): nguồn của tin `thay_chu` — `backend/api/routes/chat.py` `finish` dòng 730–747 (chữ cuối không phải tiền tố của chữ đã phát), dòng 792 (lượt chạy lại sau khi bị rút); `backend/llm/assistant.py` dòng 2110–2116 (bản viết lại khi không gom chữ: `"thay_chu" if cho_kiem is None`), dòng 2121–2125 (từ commit `70ba72d5`, gộp `dc43cc93` 22:06: chữ gom phát ở dạng đã gỡ ⇒ không còn khác chữ cuối) [code, đọc main `404448a8`; không chạy test]. Giao diện thay cả ô: `frontend/src/chat.jsx` dòng 152–156 [code].
 
 - Kết quả lượt kiểm chốt buổi trưa 22/11 (phiên điều phối báo, phiên đo chạy; người viết chép từ tin, chưa tự mở file kết quả) [đã chạy].
 

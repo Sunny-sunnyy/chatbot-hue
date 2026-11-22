@@ -1,6 +1,6 @@
 # Bài 9 — Thông tin gắn kèm mỗi đoạn (metadata) và "chữ để tìm"
 
-*Cập nhật 17:11, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy; số kho khớp bản ghi hiện trạng lúc 13:33; ví dụ lấy từ lượt hỏi thật ngày 21/11; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
+*Cập nhật 22:43, ngày 22/11/2026 · thêm một vế cho dòng "có thể đã thay đổi" (bài chỉ được nêu tên) · cơ chế đọc từ chương trình đang chạy; số kho khớp bản ghi hiện trạng lúc 13:33; ví dụ lấy từ lượt hỏi thật ngày 21/11; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** 267 bài được cắt thành 9.479 đoạn nhỏ, phần lớn chỉ một hai câu.
 **Bài này thêm:** một đoạn nhỏ đứng riêng thì không biết nó nói về cái gì. Bài này giảng những thông tin được gắn kèm mỗi đoạn, chúng được dùng ở đâu, và vì sao chỉ gắn chừng đó.
@@ -198,7 +198,7 @@ Câu hỏi hay chạm nhiều chủ đề. Ở ví dụ chính, giá vé trẻ e
 
 - Phép so làm ngày 25/10/2026, trên kho của thời điểm đó, lượng chữ 750 token (thời còn đưa 5 đoạn). Giá trị p sau hiệu chỉnh của hai cách: 0,457 và 0,317, tức chưa có ý nghĩa thống kê.
 - Trong chữ để tìm, đường tiêu đề giữ nguyên số thứ tự của mục nếu bài có đánh số (như "6. Các dịch vụ…").
-- Dòng "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi…" được thêm khi câu trả lời trích một đoạn có trường nguồn thuộc nhóm vé, địa điểm, lễ hội, hoặc là bài "Lưu trú ở Huế" (bài 21).
+- Dòng "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi…" được thêm khi câu trả lời trích một đoạn có trường nguồn thuộc nhóm vé, địa điểm, lễ hội, hoặc là bài "Lưu trú ở Huế", hoặc nêu đúng tên một bài như thế có trong nguồn liệt kê, nguồn "gần một điểm" hay thẻ nơi (bài 16, 24).
 - Bước tìm kiểm hồ sơ của từng ứng viên (đủ 7 trường, đúng dạng, mã đoạn khớp mã cất trong Qdrant, chủ đề khớp đường dẫn) mỗi lần tìm.
 
 **Bài sau (bài 10):** chữ để tìm của 9.479 đoạn được đổi thành vector như thế nào.
@@ -216,5 +216,7 @@ Câu hỏi hay chạm nhiều chủ đề. Ở ví dụ chính, giá vé trẻ e
 - Điều kiện thêm dòng "có thể đã thay đổi": `backend/llm/assistant.py`, `NOTICE_SOURCE_PREFIXES`, hàm `set_notice` [code].
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm" (thêm 13:46 22/11/2026 theo khuôn mới; gom từ "Đã so", bảng cấu hình, mục "Vì sao không làm cách khác" cũ). Hồ sơ 5 ⇒ 7 trường (29–30/09), chủ đề con / thẻ / lọc "bị loại vì chưa có ai dùng", không có chỉ mục phụ: `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` thẻ N2-16 [quyết định đã ghi, không có số chất lượng]. Lý do của dạng khối "Tiêu đề / Mục / Bằng chứng": người viết dò chú thích trong `backend/retrieval/full_corpus_context.py`, không thấy. Lý do "không tốn model, không rủi ro viết sai" ở quyết định 5 là lập luận, giữ từ bài cũ. Bảy thư mục được đưa vào kho: `include_globs` của `backend/config/settings.yaml` [cấu hình]. Kiểm hồ sơ từng ứng viên lúc tìm, lỗi ⇒ lời báo tra cứu không khả dụng: `backend/retrieval/full_corpus.py` (`validate_point_payload`), `backend/api/routes/chat.py` (`RETRIEVAL_UNAVAILABLE_MESSAGE`) [code, chưa thử]. Mã đoạn theo đường dẫn: `backend/ingestion/chunking/full_corpus_chunker.py` (chú thích `chunk_id`) [code]. Dòng "tên mục chung chung" là ví dụ tự đặt.
 - Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư]. Nguyên tắc "chỉ thêm trường khi có chỗ dùng" chốt 11/09: `docs/superpowers/specs/2026-09-09-full-corpus-context-decisions.md` (Decision Queue #3) [quyết định đã ghi]. Bảng điểm trang Lên kế hoạch: `backend/llm/lich_trinh_v2.py` (`kiem_doan_mo_ta`) [code].
+
+- Dòng "có thể đã thay đổi" cũng hiện khi bài chỉ được nêu tên qua nguồn liệt kê, "gần một điểm" hay thẻ nơi (thêm 22:43 22/11/2026): `backend/llm/assistant.py` hàm `set_notice` (`bai_neu`) [code].
 
 </details>

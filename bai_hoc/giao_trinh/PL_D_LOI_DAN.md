@@ -551,7 +551,7 @@ Mình không gửi thư hay tin nhắn được. Nếu bạn đã có lịch, d�
 Mình không gửi yêu cầu đặt chỗ và không xem được tình trạng phòng; bạn cần hỏi trực tiếp nơi lưu trú.
 ```
 
-**Dòng "có thể đã thay đổi"** (`MAY_HAVE_CHANGED_NOTICE`) — dùng khi: dòng ghi chú khi câu trả lời trích bài vé, địa điểm, lễ hội hoặc bài lưu trú (tính năng đang mở). Bài: 2, 5, 7, 9, 16, 21.
+**Dòng "có thể đã thay đổi"** (`MAY_HAVE_CHANGED_NOTICE`) — dùng khi: dòng ghi chú khi câu trả lời trích bài vé, địa điểm, lễ hội hoặc bài lưu trú — kể cả bài chỉ được nêu tên qua nguồn liệt kê, gần một điểm, thẻ nơi (tính năng đang mở). Bài: 2, 5, 7, 9, 16, 21.
 
 ```text
 Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi — hãy kiểm lại với nơi đến trước khi đi.
