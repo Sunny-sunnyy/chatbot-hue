@@ -1,6 +1,6 @@
 # Bài 2 — RAG là gì: cho model đọc tài liệu trước khi trả lời
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: ví dụ là ba lượt hỏi thật lấy từ sổ ghi từng lượt của hệ thống (ngày 20 và 21/11); số của kho đếm lại theo bản ghi hiện trạng lúc 13:33 22/11 (266 bài, 9.458 đoạn); người viết không chạy lại.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài, 9.479 đoạn); rút độ dài · ví dụ là ba lượt hỏi thật từ sổ ghi từng lượt (20 và 21/11); người viết không chạy lại.*
 
 **Bài trước đã biết:** model ngôn ngữ viết ra chữ tiếp theo có khả năng cao nhất. Nó viết trôi chảy cả khi không biết, và không tự nói được nó lấy thông tin từ đâu.
 **Bài này thêm:** cách hue_rag xử lý chuyện đó. Cách này có tên là RAG, và nó là tên của chính đề tài. Bài này cũng nói vì sao chọn cách này thay cho các cách khác.
@@ -9,7 +9,7 @@
 
 - **RAG** là ba việc nối nhau: **tìm** các đoạn tài liệu hợp câu hỏi, **đưa** các đoạn đó cho model đọc, rồi model **viết** câu trả lời kèm số nguồn.
 - Model được dặn không trả lời theo trí nhớ của nó, chỉ dùng những đoạn vừa được đưa, và ghi số nguồn sau mỗi ý. Chương trình kiểm lại rằng mọi số nguồn đều có thật.
-- Trước khi có câu hỏi đầu tiên, có một **giai đoạn chuẩn bị** làm một lần: cắt 266 bài của kho thành 9.458 đoạn và lập chỉ mục để tìm cho nhanh.
+- Trước khi có câu hỏi đầu tiên, có một **giai đoạn chuẩn bị** làm một lần: cắt 267 bài của kho thành 9.479 đoạn và lập chỉ mục để tìm cho nhanh.
 - Tài liệu không có điều được hỏi thì hệ thống **từ chối bằng một câu cố định**, không đoán; sau đó nó tra web một lần và để kết quả ở một mục riêng. RAG không bảo đảm đúng tuyệt đối: bước tìm bỏ sót đoạn đúng thì hệ thống từ chối cả câu mà kho có.
 - Muốn sửa điều hệ thống "biết" thì sửa bài trong kho. Không phải dạy lại model; đổi model viết cũng không làm mất kiến thức.
 
@@ -18,9 +18,9 @@
 | Tên trong bài | Tên gốc | Nghĩa |
 |---|---|---|
 | RAG | **Retrieval-Augmented Generation** | sinh câu trả lời (generation) có bổ sung (augmented) bằng bước tìm tài liệu (retrieval) |
-| kho | **knowledge base**, **corpus** | 266 bài viết về Huế do nhóm soạn; mọi thứ hệ thống được phép nói đều nằm ở đây |
-| đoạn | **chunk** | một mẩu cắt ra từ một bài; kho có 9.458 đoạn |
-| tìm | **retrieval** | chọn ra các đoạn hợp câu hỏi nhất trong 9.458 đoạn (10 đoạn ở lần tìm đầu) để đưa cho model viết |
+| kho | **knowledge base**, **corpus** | 267 bài viết về Huế do nhóm soạn; mọi thứ hệ thống được phép nói đều nằm ở đây |
+| đoạn | **chunk** | một mẩu cắt ra từ một bài; kho có 9.479 đoạn |
+| tìm | **retrieval** | chọn ra các đoạn hợp câu hỏi nhất trong 9.479 đoạn (10 đoạn ở lần tìm đầu) để đưa cho model viết |
 | ngữ cảnh | **context** | phần chữ gửi cho model cùng câu hỏi: các đoạn vừa tìm được, kèm lời dặn |
 | chỉ mục | **index** | dạng đã xử lý sẵn của kho để tìm nhanh (bài 10–12) |
 | số nguồn | **citation** | dấu [1], [2]… đặt sau mỗi ý, chỉ ý đó lấy từ đoạn nào |
@@ -40,14 +40,14 @@ Với RAG, câu hỏi về vé Đại Nội không đi thẳng tới model. Nó 
 
 ```mermaid
 flowchart LR
-  A["Câu hỏi:<br/>giá vé Đại Nội?"] --> B["1 · Tìm<br/>10 đoạn hợp nhất<br/>trong 9.458 đoạn"]
+  A["Câu hỏi:<br/>giá vé Đại Nội?"] --> B["1 · Tìm<br/>10 đoạn hợp nhất<br/>trong 9.479 đoạn"]
   B --> C["2 · Đưa cho model<br/>câu hỏi + 10 đoạn<br/>+ lời dặn"]
   C --> D["3 · Model viết<br/>mỗi ý kèm số nguồn"]
   D --> E["Chương trình kiểm<br/>số nguồn có thật"]
   E --> F["Câu trả lời<br/>+ danh sách nguồn"]
 ```
 
-**Bước 1, tìm.** Chương trình chọn ra 10 đoạn hợp câu hỏi nhất trong 9.458 đoạn của kho. Ở lượt này 10 đoạn đó nằm trong 3 bài: hai bài về vé và một bài về nghệ thuật biểu diễn. Bước này không gọi model viết (nó chỉ dùng một model nhỏ chạy ngay trên máy, bài 10) và mất khoảng 40 mili giây. Số đoạn nói chung: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần (trước 14:47 ngày 22/11 là 2); tin nhiều ý được nối thêm 2 đoạn mỗi ý (bài 21, 23).
+**Bước 1, tìm.** Chương trình chọn ra 10 đoạn hợp câu hỏi nhất trong 9.479 đoạn của kho. Ở lượt này 10 đoạn đó nằm trong 3 bài: hai bài về vé và một bài về nghệ thuật biểu diễn. Bước này không gọi model viết (nó chỉ dùng một model nhỏ chạy ngay trên máy, bài 10) và mất khoảng 40 mili giây. Số đoạn nói chung: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần (trước 14:47 ngày 22/11 là 2); tin nhiều ý được nối thêm 2 đoạn mỗi ý (bài 21, 23).
 
 **Bước 2, đưa cho model đọc.** Chương trình ghép một lời gọi gồm ba phần: lời dặn (trong đó có câu "chỉ dùng các phần Bằng chứng trong ngữ cảnh"; "Bằng chứng" là nhãn đặt trước chữ của mỗi đoạn; và câu "Đặt citation [n] ngay sau mỗi nhận định được nguồn [n] hỗ trợ"), câu hỏi, và 10 đoạn, mỗi đoạn được đánh số từ 1 tới 10 kèm tên bài và tên mục của nó.
 
@@ -57,7 +57,7 @@ flowchart LR
 
 Số [1] trỏ tới một đoạn của bài về vé các điểm tham quan. Số [4] trỏ tới một đoạn của bài cẩm nang nghệ thuật biểu diễn, đoạn này nhắc giá vé vào cổng khi nói về vé xem biểu diễn trong Đại Nội. Cả câu trả lời dùng 5 trong 10 đoạn. Bước viết mất 3,6 giây.
 
-Phép kiểm: mọi số nguồn trong câu trả lời phải là số của một đoạn đã thật sự được đưa cho model. Với model đang chạy (trả cả câu một lần), ở lượt có công cụ, chữ được giữ tới khi qua bước kiểm nguồn rồi mới hiện; kiểm hỏng thì người dùng không thấy chữ đó mà thấy một lời báo. Với model trả chữ dần (đường cũ), chữ hiện trước, kiểm sau, kiểm hỏng thì rút lại (bài 6, 16).
+Phép kiểm: mọi số nguồn trong câu trả lời phải là số của một đoạn đã thật sự được đưa cho model. Chữ chỉ đến tay người dùng sau khi qua phép kiểm này, trừ đường cũ của model trả chữ dần (bài 6, 16).
 
 Điểm cần nắm: con số 200.000 đồng không đến từ trí nhớ của model; nó nằm trong đoạn số 1, bấm vào nguồn là đọc được.
 
@@ -65,7 +65,7 @@ Phép kiểm: mọi số nguồn trong câu trả lời phải là số của m�
 
 Bước tìm chỉ mất 40 mili giây vì kho đã được xử lý sẵn. Việc xử lý đó là **giai đoạn chuẩn bị**, làm một lần, và làm lại khi kho đổi:
 
-1. Cắt 266 bài thành 9.458 đoạn (bài 8).
+1. Cắt 267 bài thành 9.479 đoạn (bài 8).
 2. Gắn vào mỗi đoạn tên bài và tên các mục chứa nó (bài 9).
 3. Biến mỗi đoạn thành hai dạng máy tìm được: một dãy số mang nghĩa và một bảng từ khoá (bài 10, 11).
 4. Cất tất cả vào một cơ sở dữ liệu chuyên cho việc tìm, tên là Qdrant (bài 12).
@@ -96,7 +96,7 @@ Vì mọi thông tin nằm trong kho chứ không nằm trong model, cập nhậ
 ### 2. Vì sao chỉ đưa cho model vài đoạn, và vì sao là 10?
 
 - **Đã chọn:** 10 đoạn ở lần tìm đầu, cộng phần tìm thêm của trợ lý và phần nối thêm cho tin nhiều ý.
-- **Vì sao 10 chứ không 5:** đã đo (gpt-6-luna): cùng cách tìm, giữ 10 đoạn thay vì 5 làm điểm "đủ ý" tăng 0,26 trên thang 5, và câu từ chối nhầm giảm từ 13 xuống 7 trên 88 câu (bài 13). Đưa vào hệ thống từ 28/10; ngày 01/11, chủ dự án tự chấm mù 20 cặp câu trả lời: 3 cặp bản 5 đoạn từ chối nhầm, còn lại như nhau; chủ dự án chọn giữ 10.
+- **Vì sao 10 chứ không 5:** đã đo (gpt-6-luna): cùng cách tìm, giữ 10 đoạn thay vì 5 làm điểm "đủ ý" tăng 0,26 trên thang 5, và câu từ chối nhầm giảm từ 13 xuống 7 trên 88 câu (bài 13). Đưa vào hệ thống từ 28/10; chủ dự án chấm lại và chọn giữ 10 ("Chi tiết để tra").
 - **Cách khác:** 15 đoạn: đã đo, không khá hơn (bài 13). Dán cả kho vào mỗi lời gọi: chưa thử; lập luận, không phải số đo: 10 đoạn, lời dặn và phần mô tả công cụ đã khoảng 5.100 token (đơn vị model dùng để đếm chữ, bài 1), nên tiền và thời gian chờ sẽ tăng theo cỡ kho.
 - **Cái giá:** tiền mỗi câu tăng khoảng một nửa so với 5 đoạn (bài 13).
 
@@ -116,10 +116,10 @@ Vì mọi thông tin nằm trong kho chứ không nằm trong model, cập nhậ
 
 ### 5. Vì sao chương trình còn kiểm số nguồn, khi model đã được dặn chỉ dùng các đoạn được đưa?
 
-- **Đã chọn:** chương trình kiểm mọi số nguồn sau khi model viết. Với model đang chạy, chữ được giữ tới khi qua kiểm (từ 15:42 22/11); với model trả chữ dần, chữ hiện trước, kiểm sau.
-- **Vì sao:** lời dặn là lời nhờ, model có thể không theo; luật quan trọng thì cần một bước chương trình đếm được (bài 16, 21). Hiện trước ở model trả chữ dần: để người dùng đọc sớm, đã đo ngày 01/11; với model trả cả câu một lần thì không còn lợi đó, nên giữ chữ (bài 6).
+- **Đã chọn:** chương trình kiểm mọi số nguồn sau khi model viết. Với model đang chạy, chữ được giữ tới khi qua kiểm (từ 15:42 22/11; model trả chữ dần: "Chi tiết để tra").
+- **Vì sao:** lời dặn là lời nhờ, model có thể không theo; luật quan trọng thì cần một bước chương trình đếm được (bài 16, 21). Với model trả cả câu một lần, hiện trước không còn lợi đọc sớm mà vẫn còn cảnh thấy chữ rồi mất (đoạn chữ giữ chỗ đứng 17–25 giây ở 9 trên 114 lượt), nên giữ chữ (bài 6, quyết định 4).
 - **Cách khác:** kiểm xong mới hiện (bản trước 01/11). Chỉ dựa vào lời dặn: không làm; bước kiểm có từ bản đầu.
-- **Cái giá:** với model trả chữ dần, có lượt người dùng thấy chữ rồi mất (bài 16); với model đang chạy, dòng trạng thái đứng lâu hơn ở lượt phải viết lại. Và phép kiểm mới biết số [4] có thật, chưa biết đoạn 4 có nói đúng điều câu trả lời viết.
+- **Cái giá:** với model đang chạy, dòng trạng thái đứng lâu hơn ở lượt phải viết lại. Và phép kiểm mới biết số [4] có thật, chưa biết đoạn 4 có nói đúng điều câu trả lời viết.
 
 ## Nếu… thì sao
 
@@ -142,7 +142,7 @@ Bài nền; tình huống hỏng của từng khối ở bài 6. Ba điều ki�
 <details>
 <summary>1. RAG gồm những việc gì, và việc nào làm trước khi có câu hỏi?</summary>
 
-Tìm các đoạn hợp câu hỏi, đưa cho model đọc, model viết kèm số nguồn. Trước đó có giai đoạn chuẩn bị làm một lần: cắt 266 bài thành 9.458 đoạn, gắn tên bài, tính vector và bảng từ khoá, cất vào Qdrant.
+Tìm các đoạn hợp câu hỏi, đưa cho model đọc, model viết kèm số nguồn. Trước đó có giai đoạn chuẩn bị làm một lần: cắt 267 bài thành 9.479 đoạn, gắn tên bài, tính vector và bảng từ khoá, cất vào Qdrant.
 
 </details>
 
@@ -169,6 +169,8 @@ Thường ở bước tìm: đoạn có đáp án không nằm trong các đoạ
 
 ## Chi tiết để tra
 
+- Quyết định 2: ngày 01/11, chủ dự án tự chấm mù 20 cặp câu trả lời (5 đoạn ↔ 10 đoạn): 3 cặp bản 5 đoạn từ chối nhầm, còn lại như nhau; chủ dự án chọn giữ 10.
+- Quyết định 5, model trả chữ dần (gpt-6-luna, đường cũ): chữ hiện trước, kiểm sau, kiểm hỏng thì rút lại; hiện trước để người dùng đọc sớm, đã đo ngày 01/11; cái giá là có lượt người dùng thấy chữ rồi mất (bài 16). Chi tiết hai đường: bài 6, quyết định 4.
 - Ví dụ chính là lượt hỏi ngày 21/11/2026, model viết là Claude Sonnet 5.5. Cả lượt: 3,7 giây, 2 lần gọi model (một lần xếp loại câu 0,74 giây, một lần viết 3,63 giây), tốn 0,0178 USD (khoảng 445 đồng). Lần viết nhận 5.085 token, viết ra 425 token.
 - Trên màn hình, các số [n] không hiện trong chữ; dưới câu trả lời có một dòng "Nguồn:" ghi tên các bài đã được trích, bấm vào là xem được đoạn gốc (bài 16).
 - Ở lượt này chữ hiện ra một lần sau khi model viết xong, vì bộ khoá đang dùng với Claude không có quyền nhận chữ dần (bài 33).
@@ -188,7 +190,7 @@ Thường ở bước tìm: đoạn có đáp án không nằm trong các đoạ
 - Ví dụ "chỗ đậu ô tô" (10 đoạn đều của bài chùa Thiên Mụ, một lần tìm thêm không ra đoạn mới, câu từ chối, mục web, 8,3 giây, 0,0017 USD): sổ vết ngày 20/11/2026, lượt 15:58:44, `data/hoc_cung_D/vi_du_kho_khong_co_2_vet.json` [đã chạy]. Dò kho: `scripts/grep_kb.sh` với các chữ nêu ở "Chi tiết để tra", chạy 22/11/2026 [đã chạy].
 - Ví dụ "cởi giày": sổ vết ngày 20/11/2026, lượt 15:58:10, `data/hoc_cung_D/vi_du_kho_khong_co_vet.json`; câu về giày dép ở bài chùa Thiên Mụ và việc đoạn đó có trong chỉ mục nhưng không được lấy ra: biên bản kiểm độc lập `data/hoc_cung_D/kiem/bai_02_10.md` dòng 26 [agent kiểm tìm ra; người viết chưa tự mở lại đoạn đó].
 - Câu dẫn sang mục web do giao diện thay: `frontend/src/moDauWeb.js` [code].
-- 266 bài, 9.458 đoạn: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count`, `corpus.chunk_count`) và số điểm trong Qdrant, đọc 10:02 22/11/2026 [đã chạy].
+- 267 bài, 9.479 đoạn: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count`, `corpus.chunk_count`) và số điểm trong Qdrant, đọc 16:35 22/11/2026 [đã chạy].
 - Lời dặn và câu từ chối cố định: `backend/llm/full_corpus_prompt.py`, hằng `ANSWER_SYSTEM_INSTRUCTIONS`, `INSUFFICIENT_ANSWER` [code].
 - Kiểm số nguồn: `backend/llm/citations.py`, hàm `select_cited_sources` [code].
 - Tên đề tài có chữ Retrieval-Augmented Generation: `session_prompt/Project_Status.md` (phần quyết định, dòng ghi tên đề tài chốt 01/11) [quyết định đã ghi].

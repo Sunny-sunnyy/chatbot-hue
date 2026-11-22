@@ -1,6 +1,6 @@
 # Phụ lục E — Thuật ngữ Việt – Anh
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 17:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một từ lấy từ bảng "Từ dùng trong bài" của bài 1–40, xếp theo thứ tự chữ cái tiếng Việt. Cột "Nghĩa" chép câu giải nghĩa của bài gốc; khi hai bài giảng cùng một từ với hai câu khác nhau, câu chính lấy từ một bài và phần ngoặc ghi điều bài kia nói thêm. Cột cuối ghi bài giảng từ đó lần đầu, trong ngoặc là các bài giảng lại. Từ có dấu "—" ở cột tên gốc là tên do giáo trình đặt, không có tên tiếng Anh quen dùng. Cuối trang là bảng tra ngược, từ tên tiếng Anh ra tên trong giáo trình.
 
@@ -76,7 +76,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | điều kiện ghi trước | pre-registered criteria | thế nào là đạt, thế nào là trượt, viết ra trước khi thấy con số nào | 20 |
 | điều kiện không được vỡ | — (hồ sơ dự án gọi là "sàn") | một điều ghi trước mà mọi thay đổi phải giữ (bài 16: ở đây là 0 câu ngoài kho được trả lời bằng kho) | 4 (cũng ở 16) |
 | đỏ, xanh | failing, passing | ca hỏng, ca đạt | 38 |
-| đoạn | chunk | một mẩu cắt ra từ một bài; kho có 9.458 đoạn. Bài 8 thêm: đơn vị nhỏ nhất mà hệ thống tìm và đưa cho model viết | 2 (cũng ở 8) |
+| đoạn | chunk | một mẩu cắt ra từ một bài; kho có 9.479 đoạn. Bài 8 thêm: đơn vị nhỏ nhất mà hệ thống tìm và đưa cho model viết | 2 (cũng ở 8) |
 | đoạn trích | snippet | vài câu ngắn dịch vụ tìm web cắt từ trang kết quả; model chỉ đọc đoạn này, không đọc cả trang | 25 |
 | độ gần | cosine similarity | số từ −1 tới 1 đo hai vector giống nhau tới đâu; càng gần 1 thì hai đoạn chữ càng gần nghĩa | 10 |
 | độ hiếm | IDF (inverse document frequency) | số cho biết một từ có mặt ở ít hay nhiều đoạn; từ có ở ít đoạn thì độ hiếm cao | 11 |
@@ -102,7 +102,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | huấn luyện lại | fine-tuning | cho model học thêm trên dữ liệu riêng để chính model đổi; hue_rag không làm việc này | 2 |
 | JSON | JSON | cách viết dữ liệu thành chữ có cấu trúc (tên ô và giá trị) | 35 |
 | kết nối mã hoá | https | trình duyệt và máy chủ nói chuyện bằng chữ đã mã hoá, người ở giữa đường không đọc được; địa chỉ bắt đầu bằng https. Trên máy phát triển trang mở bằng địa chỉ không mã hoá | 35 |
-| kho | knowledge base, corpus | 266 bài viết về Huế do nhóm soạn; mọi thứ hệ thống được phép nói đều nằm ở đây | 2 (cũng ở 7) |
+| kho | knowledge base, corpus | 267 bài viết về Huế do nhóm soạn; mọi thứ hệ thống được phép nói đều nằm ở đây | 2 (cũng ở 7) |
 | kho code | repository | nơi giữ mọi phiên bản của chương trình; kho code của dự án để công khai trên GitHub | 39 |
 | khoá | API key | một chuỗi bí mật, như mật khẩu, mà dịch vụ bên ngoài cấp cho dự án để biết ai đang gọi và tính tiền ai | 6 |
 | khoảng tin cậy 95 % | confidence interval, tính bằng bootstrap | khoảng mà mức chênh thật nhiều khả năng nằm trong; tính bằng cách rút lại bộ câu nhiều lần | 19 |
@@ -192,7 +192,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | tỉ lệ tìm thấy | recall | trong những thứ cần tìm, tìm được bao nhiêu phần | 18 |
 | tiền tố | prefix (`query: ` / `passage: `) | chữ thêm vào đầu câu hỏi / đầu đoạn để model e5 biết đang đọc loại nào | 10 |
 | tiến trình | process | một chương trình đang chạy trên máy; máy chủ hue_rag là một tiến trình, tắt là mất mọi thứ nó giữ trong bộ nhớ | 36 (cũng ở 38) |
-| tìm | retrieval | chọn ra các đoạn hợp câu hỏi nhất trong 9.458 đoạn (10 đoạn ở lần tìm đầu) để đưa cho model viết | 2 (cũng ở 13) |
+| tìm | retrieval | chọn ra các đoạn hợp câu hỏi nhất trong 9.479 đoạn (10 đoạn ở lần tìm đầu) để đưa cho model viết | 2 (cũng ở 13) |
 | tìm lai | hybrid search | dùng cả tìm theo nghĩa lẫn tìm theo từ khoá | 13 |
 | tìm theo nghĩa | dense retrieval, semantic search | tìm các đoạn có vector gần vector câu hỏi nhất | 10 |
 | tìm theo từ khoá | keyword search, lexical search, sparse retrieval | chấm đoạn theo chữ trùng với câu hỏi | 11 |
@@ -209,7 +209,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | trung vị | median, p50 | số đứng giữa khi xếp các lượt từ nhanh tới chậm; một nửa nhanh hơn, một nửa chậm hơn | 34 |
 | tuyến | route | một trong bốn đường xử lý của một tin | 22 |
 | từ chối nhầm | false refusal | kho có câu trả lời mà hệ thống vẫn nói "không đủ thông tin" | 13 |
-| từ điển của kho | vocabulary | danh sách mọi từ khác nhau có trong kho; hiện 5.954 từ | 11 |
+| từ điển của kho | vocabulary | danh sách mọi từ khác nhau có trong kho; hiện 5.960 từ | 11 |
 | vai | persona | mô tả một kiểu khách: ai đi, muốn gì, hay nói thế nào | 32 |
 | vector | embedding, dense vector | dãy 384 con số đại diện cho nghĩa của một đoạn chữ | 10 |
 | vế cụt | — | vế đứng riêng không còn biết hỏi về cái gì ("giờ mở cửa ko?", "mất bao lâu?") | 23 (cũng ở 40) |

@@ -1,6 +1,6 @@
 # Phụ lục A — Mọi tham số cấu hình: giá trị đang chạy, dùng để làm gì, bài nào giảng
 
-*Cập nhật 15:09, ngày 22/11/2026 · chép từ cấu hình và chương trình lúc đó (sau bộ thay đổi mở 14:47 22/11: hai tham số của vòng công cụ đổi, thêm hằng số tách câu tìm gộp); hệ thống đổi thì phụ lục phải chép lại.*
+*Cập nhật 17:11, ngày 22/11/2026 · chép từ cấu hình và chương trình lúc đó (sau bộ thay đổi mở 14:47 22/11: hai tham số của vòng công cụ đổi, thêm hằng số tách câu tìm gộp); hệ thống đổi thì phụ lục phải chép lại.*
 
 **Phụ lục này có gì.** Mọi tham số có giá trị số hoặc chữ trong file cấu hình của máy chủ, và các hằng số trong chương trình mà các bài đã nhắc. Dòng bật / tắt và bảy dòng chọn chế độ (model viết, cách tìm, xếp lại, bản chỉ mục, câu cho lần tìm đầu, cổng đưa công cụ) nằm ở phụ lục B.
 
@@ -21,7 +21,7 @@
 | File quy tắc gắn lưu ý | `full_corpus.conditions_file` | một file JSON trong thư mục ghi chú của kho; 3 quy tắc ở 2 bài | gắn câu lưu ý chung của bài vào đúng các đoạn giá đã khai | — | 7, 8 |
 | Ba model dùng để tính giới hạn độ dài đoạn | `full_corpus.embedding_models` | e5-small (512 token, tiền tố `passage: `) · e5-base (512 token) · một model tiếng Việt cũ (256 token, có tách từ) | mỗi đoạn phải vừa cả ba giới hạn, nên không đoạn nào bị cắt cụt | đã thử chỉ giữ giới hạn 512: ít đi 61 đoạn (bài 10) | 8, 10 |
 | Cách cắt | (chương trình cắt đoạn) | theo khối của bài: đoạn văn, mục danh sách, bảng, đoạn trích; không gối đầu | giữ ranh giới ý người soạn đặt | đã thử 12 cách khác; gối đầu chưa so | 8 |
-| Kết quả cắt | — | 266 bài ⇒ 9.458 đoạn | — | — | 7, 8 |
+| Kết quả cắt | — | 267 bài ⇒ 9.479 đoạn | — | — | 7, 8 |
 | Model embedding | `DENSE_MODEL_SPECS` (mục `e5-small-384`) | `intfloat/multilingual-e5-small`, ghi cố định mã phiên bản | biến đoạn và câu hỏi thành dãy số | đã so 5 model khác (gồm Qwen3-8B 4.096 chiều: bỏ) | 10 |
 | Số chiều vector | như trên | 384 | do model quy định | 768 và 4.096 qua model khác | 10, 12 |
 | Độ dài tối đa model đọc | như trên | 512 token | giới hạn của model | — | 10 |

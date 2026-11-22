@@ -1,6 +1,6 @@
 # Bài 36 — Bật hệ thống trên máy, và đóng gói bằng Docker
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 17:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** máy chủ kiểm một số thứ đúng một lần lúc bật, và bật lúc Qdrant tắt thì không tự hồi (bài 6); kho đổi thì phải cập nhật chỉ mục (bài 12); khoá và các thiết lập lúc chạy (bài 37).
 **Bài này thêm:** bật cả hệ thống trên máy phát triển bằng một lệnh, lệnh đó làm gì và báo gì; "hộp Docker" là gì và hệ thống dùng nó ở đâu; gói ba hộp để mang sang máy khác; và những việc còn phải làm trước khi đưa lên mạng.
@@ -35,7 +35,7 @@ Trước trưa 22/11, bật hệ thống là gõ tay ba bốn lệnh: bật Qdra
 | 2 | giao diện đã được dựng | giao diện chưa được dựng ⇒ chạy lệnh dựng |
 | 3 | có bản ghi chỉ mục (bài 12) | chỉ mục chưa được dựng trên máy này |
 | 4 | nếu model viết là Claude: biết đường tới file khoá Bedrock, và file đó có thật | chưa biết file khoá ở đâu ⇒ ghi đường dẫn vào một file riêng tư, hoặc đặt thiết lập lúc chạy |
-| 5 | bật Qdrant; chờ tối đa khoảng 30 giây cho tới khi Qdrant báo có đủ 9.458 đoạn như bản ghi lúc dựng chỉ mục | không có Docker ⇒ bật Docker Desktop · Qdrant không trả lời · chỉ mục có N đoạn, bản ghi ghi 9.458 ⇒ chỉ mục lệch kho |
+| 5 | bật Qdrant; chờ tối đa khoảng 30 giây cho tới khi Qdrant báo có đủ 9.479 đoạn như bản ghi lúc dựng chỉ mục | không có Docker ⇒ bật Docker Desktop · Qdrant không trả lời · chỉ mục có N đoạn, bản ghi ghi 9.479 ⇒ chỉ mục lệch kho |
 | 6 | cổng 8010 đã có máy chủ chưa: có và báo đủ thì dùng luôn; có mà báo thiếu thì bảo tắt nó trước | cổng đang có một máy chủ báo chưa sẵn sàng ⇒ tắt nó rồi chạy lại |
 | 7 | bật máy chủ; chờ tới 90 giây cho đường báo tình trạng | máy chủ tự thoát · không trả lời sau 90 giây · lên nhưng phần nào "chưa sẵn sàng" |
 
@@ -105,17 +105,17 @@ Gói đã chạy thử trên máy một lần, ngày 10/11, với gpt-6-luna và
 
 ## Nếu… thì sao
 
-Một tình huống kể trọn. Sáng hôm sau, chủ dự án mở lại máy và chạy lệnh bật. Docker Desktop chưa chạy, nên lệnh dừng ngay ở bước 5 với một dòng: docker không bật được Qdrant, hãy bật Docker Desktop rồi chạy lại. Chủ dự án bật Docker Desktop, chạy lại. Lần này Qdrant lên, đủ 9.458 đoạn, đường tới file khoá đã ghi từ hôm trước trong file riêng tư, máy chủ bật và lệnh in "SẴN SÀNG". Nếu khoá Bedrock đã hết hạn qua đêm, lệnh vẫn in "SẴN SÀNG", vì nó chỉ thấy file khoá có tồn tại; câu hỏi đầu tiên mới lộ lỗi (bài 33).
+Một tình huống kể trọn. Sáng hôm sau, chủ dự án mở lại máy và chạy lệnh bật. Docker Desktop chưa chạy, nên lệnh dừng ngay ở bước 5 với một dòng: docker không bật được Qdrant, hãy bật Docker Desktop rồi chạy lại. Chủ dự án bật Docker Desktop, chạy lại. Lần này Qdrant lên, đủ 9.479 đoạn, đường tới file khoá đã ghi từ hôm trước trong file riêng tư, máy chủ bật và lệnh in "SẴN SÀNG". Nếu khoá Bedrock đã hết hạn qua đêm, lệnh vẫn in "SẴN SÀNG", vì nó chỉ thấy file khoá có tồn tại; câu hỏi đầu tiên mới lộ lỗi (bài 33).
 
 Lời báo của người dùng là nguyên văn; các dòng đọc từ chương trình, trừ dòng có chữ **(đã thử)** (bài 6).
 
 | Nếu | Lệnh bật hoặc người dùng thấy gì | Ai làm gì |
 |---|---|---|
 | Docker Desktop chưa chạy | lệnh dừng: không có lệnh docker, hoặc docker không bật được Qdrant (đọc từ lệnh, chưa thử) | người bật mở Docker Desktop |
-| chỉ mục lệch kho | lệnh dừng: chỉ mục có N đoạn, bản ghi ghi 9.458 | chạy lệnh cập nhật chỉ mục (bài 12) |
+| chỉ mục lệch kho | lệnh dừng: chỉ mục có N đoạn, bản ghi ghi 9.479 | chạy lệnh cập nhật chỉ mục (bài 12) |
 | cổng 8010 có một máy chủ cũ bật lúc Qdrant tắt **(đã thử ca gốc)** | lệnh dừng: cổng đang có máy chủ báo chưa sẵn sàng, hãy tắt nó trước | tắt máy chủ cũ, chạy lại |
 | khoá Bedrock hết hạn | lệnh vẫn in "SẴN SÀNG"; câu hỏi nhận "Không thể tạo câu trả lời vào lúc này." | chủ dự án làm mới file khoá; không cần bật lại |
-| dựng lại gói ba hộp bằng bản nháp hiện có | ứng dụng có thể không khởi động hoặc không trả lời được: bản nháp chép bảng dữ liệu cũ, thiếu bảng khoảng cách, bảng sự kiện, bảng điểm mới; danh sách file bài chép vào gói sinh từ bản ghi chỉ mục ngày 16/11 (263 bài, kho nay 266); file mô tả gói không có chỗ đưa file khoá Bedrock vào hộp, nên mọi câu sẽ nhận "Không thể tạo câu trả lời vào lúc này." | cập nhật gói trước khi dựng (đọc từ file, chưa dựng thử) |
+| dựng lại gói ba hộp bằng bản nháp hiện có | ứng dụng có thể không khởi động hoặc không trả lời được: bản nháp chép bảng dữ liệu cũ, thiếu bảng khoảng cách, bảng sự kiện, bảng điểm mới; danh sách file bài chép vào gói sinh từ bản ghi chỉ mục ngày 16/11 (263 bài, kho nay 267); file mô tả gói không có chỗ đưa file khoá Bedrock vào hộp, nên mọi câu sẽ nhận "Không thể tạo câu trả lời vào lúc này." | cập nhật gói trước khi dựng (đọc từ file, chưa dựng thử) |
 | đưa gói lên mạng mà tên miền chưa có kết nối mã hoá | cookie bị trình duyệt bỏ, trợ lý mất trí nhớ hội thoại, không báo lỗi | đặt tên miền có kết nối mã hoá trước (ghi trong bản nháp) |
 
 ## Dễ nhầm
@@ -183,7 +183,7 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 
 | Việc | Trạng thái |
 |---|---|
-| cập nhật danh sách file của gói theo chương trình hiện tại (bảng điểm mới, bảng quán bản 2, bảng khoảng cách, bảng sự kiện; sinh lại danh sách bài theo kho 266 bài) | chưa |
+| cập nhật danh sách file của gói theo chương trình hiện tại (bảng điểm mới, bảng quán bản 2, bảng khoảng cách, bảng sự kiện; sinh lại danh sách bài theo kho 267 bài) | chưa |
 | chỗ đưa file khoá Bedrock vào hộp ứng dụng | chưa có trong file mô tả gói |
 | đặt trần tổng lượt mỗi ngày trong file mô tả gói | chưa |
 | cách cấp khoá cho Bedrock trên máy chủ (khoá tạm hiện nay không dùng lâu được) | chưa; việc của chủ dự án |
@@ -227,7 +227,7 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 - Lần chạy thử 10/11, danh sách cho phép, chuyện 07/11 (16 file đánh giá, 148 file, lệnh in 3 dòng), hỏi bằng ảnh tự tắt: `bai_hoc/18_DONG_GOI_DOCKER.md` (nguồn của bài đó trỏ `report_agent/2026-11-08_phase_9_ban_13/b_deploy_cuc_bo_implementation.md`) [chép, đã chạy 10/11].
 - Quyết định 5: `session_prompt/HIEN_TRANG.md` mục 2 (bước 8), mục 4 (gạch 19/11 "THỨ TỰ ĐÓNG"; "AWS GÁC… 08:55 22/11/2026": "giờ tập trung hoàn thành ở local đi nhé") [chép].
 - Việc trước khi đưa lên mạng: `data/ra_bao_mat_2026-11-22/BANG_RUI_RO.md` (R1, R2, R9, R10) [riêng tư]; `guides/RUNBOOK_BAN_GIAO.md` mục 8 [chép].
-- Hai lý do thêm gói có thể không trả lời: `data/phase_12/deploy_nhap/Dockerfile.dockerignore` (sinh 16/11, 263 dòng bài kho; kho nay 266 bài — `HIEN_TRANG.md` mục 1), `compose.yml` (chỉ `env_file`, không biến hay thư mục cho file khoá Bedrock) [riêng tư; đọc từ file, chưa dựng thử]. Biên bản kiểm ghi "204 bài" cho danh sách đó; đếm lại ra 263. Một tiến trình: `Dockerfile` dòng 68 [riêng tư]. Ảnh có bảng dữ liệu riêng tư; kho đã ở repo công khai từ 20/11: `Dockerfile` dòng 6, `.githooks/pre-commit` dòng 5–6.
+- Hai lý do thêm gói có thể không trả lời: `data/phase_12/deploy_nhap/Dockerfile.dockerignore` (sinh 16/11, 263 dòng bài kho; kho nay 267 bài — `HIEN_TRANG.md` mục 1), `compose.yml` (chỉ `env_file`, không biến hay thư mục cho file khoá Bedrock) [riêng tư; đọc từ file, chưa dựng thử]. Biên bản kiểm ghi "204 bài" cho danh sách đó; đếm lại ra 263. Một tiến trình: `Dockerfile` dòng 68 [riêng tư]. Ảnh có bảng dữ liệu riêng tư; kho đã ở repo công khai từ 20/11: `Dockerfile` dòng 6, `.githooks/pre-commit` dòng 5–6.
 - Bài đã qua một lượt đối chiếu độc lập 22/11: `data/hoc_cung_D/kiem/bai_33_38.md` [riêng tư]; dòng không áp ở `data/hoc_cung_D/viet/viet_33_38.md` mục "Sau lượt kiểm".
 - Quyết định 3: không tìm thấy lý do chọn Docker cho Qdrant trong `docker-compose.yml`, runbook mục 1, bài cũ 18 [đã dò].
 

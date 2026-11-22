@@ -1,6 +1,6 @@
 # Bài 4 — Bài toán: ai dùng, hỏi gì, nhận gì, và những thứ cố ý không làm
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: phạm vi và các luật của sản phẩm chép từ các quyết định đã ghi của chủ dự án; trạng thái tính năng đọc từ cấu hình lúc 10:17 ngày 22/11; người viết không chạy lại gì.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài) · phạm vi và các luật của sản phẩm chép từ các quyết định đã ghi của chủ dự án; người viết không chạy lại gì ngoài lệnh đếm tính năng.*
 
 **Bài trước đã biết:** ba ý nền: model ngôn ngữ viết trôi chảy mà vẫn sai; RAG cho model đọc tài liệu trước khi viết; công cụ cho model nhờ chương trình làm việc phải đúng.
 **Bài này thêm:** chính sản phẩm. hue_rag làm gì, cho ai, theo luật nào, và ranh giới của nó ở đâu.
@@ -32,7 +32,7 @@ Sản phẩm được làm và đo như một sản phẩm thật cho người d
 
 ## Người dùng nhận được ba loại việc
 
-**1. Hỏi đáp có nguồn.** Người dùng hỏi về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, đi lại, vé, chỗ ở. Hệ thống trả lời từ kho 266 bài, dưới câu trả lời có dòng nguồn bấm vào xem được đoạn gốc. Ví dụ chính của cả bộ thuộc loại này: *"Giá vé tham quan Đại Nội Huế là bao nhiêu?"*.
+**1. Hỏi đáp có nguồn.** Người dùng hỏi về món ăn, di tích, lễ hội, nghệ thuật biểu diễn, đi lại, vé, chỗ ở. Hệ thống trả lời từ kho 267 bài, dưới câu trả lời có dòng nguồn bấm vào xem được đoạn gốc. Ví dụ chính của cả bộ thuộc loại này: *"Giá vé tham quan Đại Nội Huế là bao nhiêu?"*.
 
 **2. Việc cần tính hoặc cần dữ liệu của hôm nay.** "Rằm tháng Giêng năm nay là ngày dương nào", "mai có mưa không", "từ Đại Nội tới chùa Thiên Mụ bao xa", "gần chợ Đông Ba có quán gì", "cuối tuần này có lễ hội gì". Những câu này do chương trình tính hoặc tra, rồi model diễn đạt (chặng 5). Người dùng cũng có thể gửi một tấm ảnh để hỏi "đây là đâu, món gì".
 
@@ -163,10 +163,10 @@ Câu gõ không dấu: hay nhận câu từ chối. Tình huống khẩn cấp: 
 ## Chi tiết để tra
 
 - Tên đề tài bằng tiếng Anh: *Developing a Retrieval-Augmented Generation-Based Application for Cultural and Tourism Experiences in Hue*.
-- Chiều 22/11 hệ thống có 46 tính năng đang mở và 3 đang tắt (đếm 15:51; lúc 10:25 là 42 mở, từ 14:47 thêm ba tính năng ở khâu tìm và bước viết lại của tin dài nhiều ý — bài 21, 23; từ 15:42 thêm tính năng giữ chữ tới khi qua bước kiểm nguồn — bài 6). Con số này đổi theo từng buổi làm việc; bảng từng tính năng ở phụ lục B của giáo trình.
+- Chiều 22/11 hệ thống có 47 tính năng đang mở và 3 đang tắt (đếm 16:13; lúc 10:25 là 42 mở, từ 14:47 thêm ba tính năng ở khâu tìm và bước viết lại của tin dài nhiều ý — bài 21, 23; từ 15:42 thêm tính năng giữ chữ tới khi qua bước kiểm nguồn — bài 6; từ 16:08 thêm việc nhớ câu trả lời liền trước cả trong cuộc đã lập lịch — bài 23, 31). Con số này đổi theo từng buổi làm việc; bảng từng tính năng ở phụ lục B của giáo trình.
 - Câu xin lên lịch gõ trong ô hỏi đáp ("lên lịch giúp mình 2 ngày") không ra một lịch; hệ thống trả lời từ kho và thêm một dòng trỏ sang trang Lên kế hoạch. Việc xếp lịch từ câu gõ tự do đã thử hai lần, chưa đạt điều kiện ghi trước, đang tắt (bài 28).
 - Câu nhờ làm thay: đo trên lượt thật ngày 19/11, 11 trên 12 lượt ra đúng câu nói thật của loại việc đó.
-- Kho còn thiếu vài mảng thông tin người dùng hay hỏi (đường từ Huế đi Hội An, chỗ đậu ô tô, quy định chụp ảnh); xem bài 7.
+- Kho còn thiếu vài mảng thông tin người dùng hay hỏi (chỗ đậu ô tô, quy định chụp ảnh); xem bài 7.
 - Mọi phép đo trong giáo trình này dùng câu hỏi do nhóm soạn hoặc do một model đóng vai du khách; chưa có số đo với người dùng thật.
 
 **Bài sau (bài 5):** người dùng nhìn thấy gì khi mở ứng dụng: các trang, và một lượt hỏi trông ra sao trên màn hình.
@@ -180,7 +180,7 @@ Câu gõ không dấu: hay nhận câu từ chối. Tình huống khẩn cấp: 
 - Tuyến khẩn cấp được xử lý như câu về Huế, không có câu soạn sẵn: `backend/llm/assistant.py`, hàm `_pick_route` (chú thích "phương án B") [code]. Luật từ khoá cho câu khẩn cấp (14 / 14; 0 / 8; chặn nhầm 2 / 8): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 32.
 - Câu cố định cho câu ngoài phạm vi và ba câu "không làm thay": `backend/llm/full_corpus_prompt.py` (`OUT_OF_SCOPE_ANSWER`, `CAU_LAM_THAY`); 11 / 12 lượt: `bai_hoc/BAN_DO_DU_AN.md`, bảng "Cái gì ĐANG chạy".
 - Tải lại trang là cuộc trò chuyện mới: `bai_hoc/README.md` (dòng bài 13, thêm 15/11).
-- 46 tính năng mở, 3 tắt (`today_line`, `lich_trinh`, `so_vet`): lệnh đếm ở `guides/RUNBOOK_BAN_GIAO.md` mục 0, kết quả `46` chạy 15:51 22/11/2026 trên main `15cd5985` sau khi mở `giu_chu_toi_kiem` [chép từ runbook; người viết không chạy lại]. Lần đếm 15:11 22/11/2026 của người viết: 45 [đã chạy]. Trước đó: 41 lúc 10:17; 42 lúc 10:25 sau khi `tim_theo_ve` mở; 45 từ 14:47 sau khi mở `tim_ve_bo_cut`, `tach_cau_tim_model`, `het_luot_viet_lai` (runbook mục 0). Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` [code; đã chạy lệnh đếm].
+- 47 tính năng mở, 3 tắt (`today_line`, `lich_trinh`, `so_vet`): lệnh đếm ở `guides/RUNBOOK_BAN_GIAO.md` mục 0 (dòng 26), kết quả `47` chạy 16:13 22/11/2026 trên main `2a221e5` sau khi mở `nho_dap_cuoc_co_lich` (`backend/config/settings.yaml` dòng 76, "MỞ 16:08") [chép từ runbook; người sửa chạy lại lệnh 22/11 trên main `0430104e` ra `47` — đã chạy]. Trước đó `46` lúc 15:51 trên main `15cd5985` sau khi mở `giu_chu_toi_kiem`. Lần đếm 15:11 22/11/2026 của người viết: 45 [đã chạy]. Trước đó: 41 lúc 10:17; 42 lúc 10:25 sau khi `tim_theo_ve` mở; 45 từ 14:47 sau khi mở `tim_ve_bo_cut`, `tach_cau_tim_model`, `het_luot_viet_lai` (runbook mục 0). Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` [code; đã chạy lệnh đếm].
 - Model vẫn tự cộng tổng tiền vé; bản chương trình cộng đã bỏ: chú thích `lich_vao_hoi_thuong` ở `settings.yaml`; `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 20. Giọng nói còn chờ chủ dự án nói rõ: `session_prompt/HIEN_TRANG.md` mục 3.
 - Dòng trỏ sang trang Lên kế hoạch; lịch từ câu gõ tự do tắt: `backend/config/settings.yaml` (`len_lich_dan_trang`, `lich_trinh`) và `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 22.
 - Chưa có số đo với người dùng thật: `bai_hoc/BAN_DO_DU_AN.md` mục "Chỗ còn yếu đã biết" ý 5.

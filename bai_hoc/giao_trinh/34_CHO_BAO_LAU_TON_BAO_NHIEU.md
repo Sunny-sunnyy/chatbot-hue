@@ -1,6 +1,6 @@
 # Bài 34 — Người dùng chờ bao lâu, một câu tốn bao nhiêu tiền
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: thêm thời gian chờ của tin dài nhiều ý sau bộ thay đổi mở 14:47 22/11 (một tin, 6 lần, Claude Sonnet 5.5) · thời gian từng lời gọi lấy từ một lượt người dùng mô phỏng chạy đơn trưa 21/11 (Claude Sonnet 5.5, mức suy luận cao, 49 lượt hỏi đáp; so với gpt-6-luna 43 lượt); thời gian chờ tới chữ đầu lấy từ ba lượt tối 21/11 (153 lượt trả lời xong); lịch sử làm nhanh đo với gpt-6-luna từ 01/11 tới 10/11; cơ chế đọc từ chương trình trưa 22/11. Người viết không chạy lại phép đo nào; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài); tin dài đã nhìn trên trình duyệt · thời gian từng lời gọi lấy từ một lượt người dùng mô phỏng chạy đơn trưa 21/11 (Claude Sonnet 5.5, mức suy luận cao, 49 lượt hỏi đáp; so với gpt-6-luna 43 lượt); thời gian chờ tới chữ đầu lấy từ ba lượt tối 21/11 (153 lượt trả lời xong); lịch sử làm nhanh đo với gpt-6-luna từ 01/11 tới 10/11; cơ chế đọc từ chương trình trưa 22/11. Người viết không chạy lại phép đo nào; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** ở ví dụ chính, gần như toàn bộ 3,7 giây là model viết (bài 6); Claude viết dài hơn gpt-6-luna khoảng ba lần, chữ tới một lần, giá mỗi token gấp 20 lần (bài 33).
 **Bài này thêm:** thời gian chờ của một lượt đi vào những phần nào và phần nào đáng cắt; các lần làm nhanh đã có; một câu tốn bao nhiêu tiền và tiền được ghi ở đâu; trang theo dõi; và bộ nhớ câu trả lời 24 giờ, thứ duy nhất làm một câu vừa nhanh vừa không tốn tiền.
@@ -57,7 +57,7 @@ Tiền một lần gọi = token vào nhân giá vào, cộng token viết ra (k
 | Lượt | Model | Tiền |
 |---|---|---|
 | ví dụ chính (2 lần gọi) | Claude, mức cao | 0,0178 USD |
-| trung bình một câu có nguồn, 66 câu tính điểm của 85 câu đầu bộ mẫu (đủ các loại câu) | Claude, mức cao · gpt-6-luna | 0,0146 USD · 0,00039 USD |
+| trung bình một câu có nguồn, 66 câu tính điểm của 85 câu đầu bộ mẫu (không lọc theo loại câu) | Claude, mức cao · gpt-6-luna | 0,0146 USD · 0,00039 USD |
 | lượt của người dùng mô phỏng (phần lớn tin hai ý), 156 lượt, tối 21/11 | Claude, mức cao | khoảng 0,057 USD một lượt |
 | lượt trúng bộ nhớ câu trả lời | — | 0 USD |
 
@@ -105,7 +105,7 @@ Lời báo là nguyên văn; các dòng đọc từ chương trình, trừ dòng
 
 | Nếu | Người dùng thấy gì | Đã có chưa / ai làm gì |
 |---|---|---|
-| tin dài nhiều ý (ba bốn việc trong một tin) **(đã thử, một tin, 6 lần)** | chờ khoảng 25–34 giây; lượt phải viết lại tới 25–37 giây: từ 15:42 22/11 suốt lúc đó chỉ có dòng tiến độ, rồi câu trả lời thật (theo test và một lượt thật, chưa nhìn trên trình duyệt; trước 15:42 có một đoạn chữ giữ chỗ hiện khoảng 15–17 giây rồi bị thay) | đúng thiết kế từ 14:47 22/11: đổi thời gian lấy câu trả lời đủ ý (bài 21) |
+| tin dài nhiều ý (ba bốn việc trong một tin) **(đã thử, một tin, 6 lần)** | chờ khoảng 25–34 giây, suốt lúc đó chỉ một dòng trạng thái rồi cả câu trả lời (đã nhìn trên trình duyệt 22/11: 29,5 giây); lượt phải viết lại tới 25–37 giây (ca này theo test và một lượt thật, chưa nhìn trên trình duyệt; trước 15:42: "Chi tiết để tra") | đúng thiết kế từ 14:47 22/11: đổi thời gian lấy câu trả lời đủ ý (bài 21) |
 | câu trả lời rất dài | chờ lâu hơn, chữ tới một lần; quá 45 giây thì "Không thể tạo câu trả lời vào lúc này." | lượt chạy một mình lâu nhất 28 giây; trong ba lượt tối 21/11 (hai model chạy cùng lúc) có 1 lượt chạm 45 giây |
 | Qdrant ngừng, câu đã nhớ **(đã thử)** | câu đã nhớ vẫn được trả lại; câu mới nhận "Hệ thống tra cứu tạm thời không khả dụng." | bật lại Qdrant (bài 6) |
 | câu trả lời đầu tiên kém mà được nhớ | người sau gõ đúng câu nhận lại bản kém trong 24 giờ | khởi động lại máy chủ, hoặc tắt tính năng bộ nhớ câu trả lời |
@@ -201,7 +201,8 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 - **Sổ số đo, mỗi lượt một dòng.** Sau mỗi lượt, máy chủ ghi một dòng số: kết cục, tuyến, model, token, tiền, từng lần gọi model, công cụ, thời gian từng bước, có trúng bộ nhớ không, mã bản chương trình. Không có chữ câu hỏi hay câu trả lời (bài 37). Sổ dùng chung cho mọi bản đã chạy và cho bộ test, nên khi đếm phải chọn đúng các dòng của bản chương trình đang hỏi (mỗi dòng có ghi mã bản).
 - **Trang theo dõi** chỉ dành cho chủ dự án: một địa chỉ không có trong menu, mở bằng một khoá đặt lúc bật máy chủ. Nó cộng sổ số đo theo ngày, tối đa 14 ngày: số lượt theo kết cục, tiền, thời gian chờ. Không có dòng của từng lượt.
 - Bộ nhớ câu trả lời không lưu: câu từ chối, lượt có mục web, lượt dùng thời tiết, ngày, khoảng cách, lịch (đổi theo giờ hay theo người), lượt có câu cảnh báo an toàn, lượt bị chương trình gỡ câu, hỏi bằng ảnh, lượt lỗi, và tin nhiều ý mà câu trả lời còn dòng "Tư liệu chưa có thông tin về…".
-- Ở lượt có công cụ, dòng "Đang viết câu trả lời…" chỉ được gửi ngay trước chữ đầu, nên với Claude gần như không thấy.
+- Ở lượt có công cụ, dòng "Đang viết câu trả lời…" chỉ được gửi ngay trước chữ đầu, nên với Claude gần như không thấy (đã nhìn trên trình duyệt 22/11), trừ lượt phải viết lại: dòng đó đứng suốt lần viết lại (bài 21).
+- Tin dài nhiều ý, lượt phải viết lại, trước 15:42 22/11: một đoạn chữ giữ chỗ hiện khoảng 15–17 giây rồi bị thay. Từ 15:42 chữ được giữ tới khi qua kiểm; lúc chờ chỉ một dòng trạng thái đứng yên 20–30 giây (ý "đổi dòng theo từng lần tìm" đã ghi, chưa làm).
 
 - Số đo mới nhất, lúc máy không chạy việc khác: ở lượt kiểm chốt trưa 22/11, 41 tin gõ qua trình duyệt (phần lớn là tin ngắn) có thời gian cả câu ở lượt đứng giữa là 6,9 giây, 95 % số lượt dưới 13,1 giây, không lượt nào ra màn hình lỗi. Con số này thấp hơn số 13,0 giây ở trên vì hai lý do: máy rảnh, và tin ngắn hơn.
 - **Số vòng tìm thêm đi theo số ý của tin**, đếm trên hai lượt thật trưa 22/11 (Claude, sau khi mở tính năng tìm theo từng ý): tin một ý 10 trên 10 lượt không cần vòng tìm thêm nào, 1,8 tới 3,5 giây; tin hai ý ngắn 13 trên 20 lượt không cần; tin bốn ý dài 17 trên 17 lượt dùng hết 2 lần tìm thêm (lúc đó trần là 2), trung vị 21,7 giây. Tin dài nhiều ý vừa tìm nhiều vừa viết dài; hai thứ đi cùng nhau. Từ 14:47 22/11 trần là 3, mở cùng hai thay đổi ở khâu tìm và bước viết lại: tin 4 ý của một gia đình (6 lần) chờ 25–34 giây, lần tìm thứ ba thêm khoảng 2 giây, lượt có viết lại thêm khoảng 10 giây; ngữ cảnh dựng theo cách xấu nhất tới khoảng 70 đoạn, đo được trung vị 16 nguồn.
@@ -222,7 +223,7 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 - Lượt người dùng mô phỏng chạy một mình: cả lượt 90 % số lượt dưới 20,8 giây, lâu nhất 28,0 giây (Claude); 21,1 và 37,0 giây (gpt-6-luna). Lượt quá 15 giây: 16 trên 49 (33 %) và 11 trên 43 (26 %). Với gpt-6-luna, 4 trên 11 lượt chậm là do vòng công cụ (chạm trần vòng).
 - Tiền ba lượt người dùng mô phỏng tối 21/11, phía sản phẩm: Claude 11,18 USD (gồm cả 4 vai để riêng), gpt-6-luna 0,39 USD.
 - Lượt trúng bộ nhớ: phía máy chủ khoảng 1 phần nghìn giây. Trên gpt-6-luna mỗi lần trúng tiết kiệm khoảng 0,0008 USD; trên Claude, cỡ một câu có nguồn [ước của người viết] (khoảng 0,015 USD).
-- Câu hỏi đáp thường trên Claude: cả câu trung vị 2,6 giây không qua giao diện (66 câu tính điểm của 85 câu đầu bộ mẫu, đủ các loại câu, mức cao); qua giao diện có thêm dòng trạng thái và lượt có lịch sử dài hơn.
+- Câu hỏi đáp thường trên Claude: cả câu trung vị 2,6 giây không qua giao diện (66 câu tính điểm của 85 câu đầu bộ mẫu, không lọc theo loại câu, mức cao); qua giao diện có thêm dòng trạng thái và lượt có lịch sử dài hơn.
 - Lượt người dùng bấm "Dừng": tiền ghi sổ là cận dưới, vì không có số token cuối.
 - Tiền mỗi lần gọi tính theo hãng của đúng lần gọi đó, nên bộ đo có thể chạy hai model trong một tiến trình mà tiền không lẫn.
 
@@ -245,6 +246,7 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 - Quyết định 2: `bai_hoc/17_GIAO_DIEN_VA_TOC_DO.md`; `settings.yaml` (`song_song_tra_loi`, chú thích "User duyệt 05/11") [code]; câu không về Huế vẫn gửi đoạn kho: bài cũ `bai_hoc/21_DU_LIEU_NGUOI_DUNG_VA_BAO_MAT.md` bảng dữ liệu [chép].
 - Tình huống 9 giờ sáng: [suy từ code, chưa thử thật]; lâu nhất 28 giây khi chạy một mình: `THOI_GIAN_DI_DAU.md` mục 1; 1 lượt chạm 45 giây: `KET_QUA_MOC.md` bảng r1 [riêng tư]. Nhiều người cùng lúc: bài 6.
 
+- Đợt sửa 16:53 22/11: tin dài trên trình duyệt (16:17–16:21 22/11; tin gia đình bốn ý 29,5 giây; một dòng trạng thái rồi cả câu; ca viết lại chưa trúng): `bai_hoc/VIEC_MOI_XONG.md` mục 44; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Lưới viết lại" [đã chạy, phiên đo; chép]. "Không lọc theo loại câu" thay "đủ các loại câu" (cụm cũ là suy luận của người sửa, file không nói): biên bản `data/hoc_cung_D/kiem/phan_xu_va_cap_nhat_15h42.md` Phần 1 bảng hai dòng 12 [riêng tư; chép biên bản, CHƯA mở `KET_QUA_2A.md`].
 - Bài đã qua một lượt đối chiếu độc lập 22/11: `data/hoc_cung_D/kiem/bai_33_38.md` [riêng tư]; dòng không áp ở `data/hoc_cung_D/viet/viet_33_38.md` mục "Sau lượt kiểm".
 
 - Kết quả lượt kiểm chốt buổi trưa 22/11 (phiên điều phối báo, phiên đo chạy; người viết chép từ tin, chưa tự mở file kết quả) [đã chạy].

@@ -1,12 +1,12 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 16:01, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11; khuôn thêm hai mục "Quyết định và lý do" và "Nếu… thì sao" theo yêu cầu của anh trưa 22/11, bài 6 là bài mẫu · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 17:11, ngày 22/11/2026 · đủ 41 bài và 9 phụ lục; mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo · từ chiều 22/11 mọi thứ mới của hệ thống được ghi vào bộ này, liệt kê ở mục "Có gì mới" ngay dưới · mọi con số lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
 **Đọc thế nào.** Đọc theo đúng số thứ tự: bài sau dựa trên bài trước, khái niệm mới luôn được giảng trước khi dùng. Mỗi bài chia hai nửa:
 
-- **Nửa để hiểu** (từ đầu bài tới mục "Những điều cần nhớ"): đọc lần đầu chỉ cần nửa này. Trong đó có hai mục để anh giải thích lại được chứ không chỉ kể lại được: **"Quyết định và lý do"** (vì sao làm thế này mà không làm thế khác, và cái giá của lựa chọn) và **"Nếu… thì sao"** (một thứ hỏng, hoặc điều kiện đổi, thì hệ thống làm gì).
+- **Nửa để hiểu** (từ đầu bài tới hết mục "Câu hỏi tự kiểm"): đọc lần đầu chỉ cần nửa này. Trong đó có hai mục để anh giải thích lại được chứ không chỉ kể lại được: **"Quyết định và lý do"** (vì sao làm thế này mà không làm thế khác, và cái giá của lựa chọn) và **"Nếu… thì sao"** (một thứ hỏng, hoặc điều kiện đổi, thì hệ thống làm gì).
 - **Nửa để tra** (từ mục "Cấu hình đang chạy" trở xuống): model nào, tham số nào, đã thử phương án nào, ra số bao nhiêu, hỏng ở đâu. Không cần đọc để hiểu bài, nhưng đây là chỗ trả lời các câu "cụ thể là bao nhiêu" và "đã thử cách nào, ra số nào".
 
 **Con số của hệ thống trong bộ này** (số bài, số đoạn, tính năng nào đang mở) là số lúc bài được viết, ghi ở dòng cập nhật của từng bài. Hệ thống vẫn đang được làm tiếp nên vài con số có thể đã lớn hơn khi anh đọc; cách hoạt động thì không đổi theo.
@@ -20,6 +20,18 @@
 | **Ví dụ "phải tìm thêm"** | *"Mặc áo dài vào Đại Nội có được miễn vé không?"* | lần tìm đầu chưa đủ, trợ lý tự tìm thêm hai lần rồi mới trả lời |
 | **Ví dụ "kho có mà tìm không ra"** | *"Vào chùa ở Huế có phải cởi giày không?"* | giới hạn của bước tìm: kho có một câu trả lời nhưng ba lần tìm đều không lấy ra |
 | **Ví dụ lập lịch** | trang Lên kế hoạch: 3 ngày, 2 người lớn, thích di tích | chương trình xếp 11 điểm vào 3 ngày, model chỉ viết câu mô tả |
+
+## Có gì mới
+
+Hệ thống vẫn đang được làm tiếp. Mỗi khi người dùng thấy một thứ khác đi, bài của phần đó được sửa và một dòng được thêm vào đây, mới nhất ở trên. Đã đọc cả bộ rồi thì chỉ cần đọc mục này và các bài nó trỏ tới.
+
+| Ngày | Người dùng thấy gì khác | Đọc ở |
+|---|---|---|
+| 22/11, tối | Hỏi "kể các điểm tham quan miễn phí" thì Hải Vân Quan không còn bị kể; hỏi giá vé Hải Vân Quan thì nhận 70.000 đồng, không còn lời "hai nguồn không khớp". Kho từng có một dòng nói ngược bài vé; dòng đó đã sửa. | bài 7, bảng các lần kho đổi; bài 24, mục "Giới hạn đã biết" (công cụ liệt kê bài) |
+| 22/11, chiều | Hỏi đường từ Huế đi Hội An thì có câu trả lời có nguồn: kho thêm một bài về việc này (kho nay 267 bài, 9.479 đoạn). | bài 7, bảng các lần kho đổi ở mục "Chi tiết để tra" |
+| 22/11, chiều | Trong một cuộc trò chuyện đã lập lịch, trợ lý cũng nhớ câu nó vừa trả lời: nhờ "bỏ quán đầu đi rồi viết lại danh sách" thì nhận danh sách đã bỏ đúng quán đầu. Đây là tính năng thứ 47 đang mở. | bài 23, mục "Máy chủ nhớ ba lượt gần nhất, và chỉ một câu trả lời" và mục "Giới hạn đã biết"; bài 31, mục "Nếu… thì sao" |
+| 22/11, chiều | Lệnh "bỏ … đi" hoặc "thay … đi" chỉ sửa lịch khi tin nêu tên điểm hoặc chỉ vào lịch ("của ngày 2", "khỏi lịch"); không thì lịch đứng yên và tin được trả lời như một câu hỏi thường. | bài 31, bước 2 và mục "Quyết định nhỏ hơn" |
+| 22/11, chiều | Ở ô chat không còn cảnh chữ hiện ra rồi bị thay hoặc bị rút: lúc chờ chỉ có một dòng trạng thái, rồi cả câu trả lời hiện một lần sau khi đã qua bước kiểm nguồn (lượt thường đã nhìn trên trình duyệt; lượt bị rút và lượt phải viết lại: theo chương trình và test). | bài 6, quyết định 4; bài 16 |
 
 ## Đường chính: chín chặng
 
@@ -45,7 +57,7 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 
 | Số | Bài | |
 |---|---|---|
-| 7 | [Kho dữ liệu: 266 bài viết về Huế, ai soạn, lấy từ đâu, kiểm thế nào](07_KHO_DU_LIEU.md) | ✅ |
+| 7 | [Kho dữ liệu: 267 bài viết về Huế, ai soạn, lấy từ đâu, kiểm thế nào](07_KHO_DU_LIEU.md) | ✅ |
 | 8 | [Cắt bài thành đoạn (chunking)](08_CAT_DOAN.md) | ✅ |
 | 9 | [Thông tin gắn kèm mỗi đoạn (metadata) và "chữ để tìm"](09_METADATA.md) | ✅ |
 | 10 | [Biến mỗi đoạn thành một dãy số mang nghĩa: embedding](10_EMBEDDING.md) | ✅ |
@@ -120,10 +132,10 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 | C | [Sổ mọi phép so sánh đã làm, kể cả phương án bị bỏ: 156 phép so gom từ các bài](PL_C_SO_PHEP_SO.md) | ✅ |
 | D | [Lời dặn gửi model và mô tả từng công cụ, chép nguyên văn từ chương trình](PL_D_LOI_DAN.md) | ✅ |
 | E | [Thuật ngữ Việt – Anh: 211 từ, có bảng tra ngược Anh – Việt](PL_E_THUAT_NGU.md) | ✅ |
-| F | [Các con số chính trên một trang: 90 con số kèm điều kiện đo](PL_F_CON_SO_CHINH.md) | ✅ |
-| G | [Mọi quyết định của hệ thống trên một trang: 281 quyết định gom từ bài 1–38](PL_G_MOI_QUYET_DINH.md) | ✅ |
-| H | [Mọi tình huống hỏng trên một trang: 139 tình huống gom từ bài 1–38](PL_H_MOI_TINH_HUONG_HONG.md) | ✅ |
-| I | [Mọi giới hạn đã biết trên một trang: 120 giới hạn, và bảng riêng các thứ cố ý không làm](PL_I_GIOI_HAN_DA_BIET.md) | ✅ |
+| F | [Các con số chính trên một trang: 93 con số kèm điều kiện đo](PL_F_CON_SO_CHINH.md) | ✅ |
+| G | [Mọi quyết định của hệ thống trên một trang: 278 quyết định gom từ bài 1–38](PL_G_MOI_QUYET_DINH.md) | ✅ |
+| H | [Mọi tình huống hỏng trên một trang: 142 tình huống gom từ bài 1–38](PL_H_MOI_TINH_HUONG_HONG.md) | ✅ |
+| I | [Mọi giới hạn đã biết trên một trang: 124 giới hạn, và bảng riêng các thứ cố ý không làm](PL_I_GIOI_HAN_DA_BIET.md) | ✅ |
 
 ## Khuôn của mỗi bài
 
@@ -138,7 +150,7 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 7. **Quyết định và lý do:** mỗi quyết định thiết kế của phần này viết thành một câu hỏi "Vì sao…?". Mở bằng hai ba câu kể tình huống bằng lời thường (giảng luôn khái niệm mới nếu có), rồi chốt bằng bốn gạch: **đã chọn** gì · **vì sao** · **cách khác** (ghi rõ là "đã đo", "chưa thử" hay "quyết định đã ghi") · **cái giá** phải trả cho lựa chọn đó. Chỗ nào không tìm thấy lý do được ghi lại thì viết đúng một dạng: "chưa thấy ghi lý do; điều thấy được là…", không thêm câu đoán. Mỗi bài giữ bốn tới sáu quyết định quan trọng ở đây; quyết định nhỏ nằm ở nửa để tra. Chỉ viết về thứ hệ thống thật sự có. Có ba loại câu hỏi: *vì sao đặt ở đây* (việc này làm ở máy chủ hay ở giao diện; chương trình làm hay giao cho model; tính sẵn hay tính lúc hỏi) · *vì sao làm cách này* (gọi thẳng hay xếp hàng chờ; một lần hay nhiều lần; tự viết hay dùng đồ có sẵn) · *vì sao là con số này*.
 8. **Nếu… thì sao:** kể trọn một tình huống, rồi một bảng ngắn các tình huống đáng nhớ nhất (nếu · người dùng thấy gì · muốn hết lỗi thì ai làm gì); bảng đủ nằm ở nửa để tra. Hai loại tình huống. *Khi có thứ hỏng:* dịch vụ bên ngoài sập hoặc chậm, quá hạn giờ, dữ liệu lệch nhau, người dùng làm điều không ngờ. *Khi điều kiện đổi:* kho lớn gấp mười, nhiều người dùng cùng lúc, đổi model. Mỗi tình huống ghi: hệ thống làm gì · người dùng thấy gì · đã có hay chưa có. Chỗ nào chưa xử lý thì ghi thẳng "chưa có". Lời báo cho người dùng chép nguyên văn từ chương trình; tình huống nào chưa được thử thật thì ghi rõ là đọc từ chương trình.
 9. **Dễ nhầm:** 1–3 câu người mới hay nói, kèm câu sửa.
-10. **Câu hỏi tự kiểm** (anh chọn thêm trưa 22/11): khoảng 4 câu kiểu "vì sao…", "nếu… thì sao", đáp án một hai câu, gập lại, bấm mới hiện. Bài đã có mục này thì không còn mục "Những điều cần nhớ" (nó lặp lại "Ý chính"); các bài viết theo khuôn cũ vẫn còn mục đó.
+10. **Câu hỏi tự kiểm** (anh chọn thêm trưa 22/11): khoảng 4 câu kiểu "vì sao…", "nếu… thì sao", đáp án một hai câu, gập lại, bấm mới hiện. Mục này thay cho mục "Những điều cần nhớ" của khuôn cũ (nó lặp lại "Ý chính").
 
 **Luật về độ dài** (anh duyệt trưa 22/11, sau khi đọc bài 6): nửa để hiểu không nói một điều hai lần. Đoạn dẫn trước một quyết định chỉ có khi phải giảng một khái niệm mới; bảng chi tiết nằm ở nửa để tra; "Dễ nhầm" nhiều nhất 3 gạch. Không bỏ: mục giảng nền, đủ bốn gạch của mỗi quyết định, bảng tình huống hỏng.
 
@@ -158,7 +170,7 @@ Luật viết: thân bài không có tên file, tên hàm, mã bản code, ngày
 
 ## Bộ bài cũ
 
-Bộ 27 bài ở thư mục [`bai_hoc/`](../README.md) giữ nguyên để tra cho tới khi đường chính của giáo trình đủ. Việc mới xong trong lúc giáo trình đang viết vẫn được ghi ở [Việc mới xong](../VIEC_MOI_XONG.md).
+Bộ 27 bài ở thư mục [`bai_hoc/`](../README.md), trang [Việc mới xong](../VIEC_MOI_XONG.md) và trang bản đồ dự án là hồ sơ cũ: giữ nguyên để tra, không ai ghi thêm từ chiều 22/11. Bộ giáo trình này là chỗ đọc duy nhất; thứ gì mới đều vào đây, và được liệt kê ở mục "Có gì mới" đầu trang.
 
 <details>
 <summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
@@ -167,5 +179,6 @@ Bộ 27 bài ở thư mục [`bai_hoc/`](../README.md) giữ nguyên để tra c
 - Năm ví dụ: sổ ghi từng lượt của hệ thống trên máy phát triển, các ngày 20–21/11/2026 [đã chạy; người viết không chạy lại]; bản sao riêng tư ở `data/hoc_cung_D/vi_du_*_vet.json`. "Kho không nói về chỗ đậu xe ở chùa Thiên Mụ": dò bằng `scripts/grep_kb.sh` ngày 22/11/2026. "Kho có câu về giày dép": biên bản kiểm độc lập `data/hoc_cung_D/kiem/bai_02_10.md`.
 - Model viết: hệ thống đang chạy Claude Sonnet 5.5 (đổi tạm từ 21/11/2026); phần lớn phép so cũ đo với gpt-6-luna. Mỗi bài ghi rõ con số nào đo với model nào.
 - Luật nội dung: `session_prompt/WORKFLOW.md` mục 6 và mục 10.
+- Mục "Có gì mới" và việc bộ cũ đứng yên: lời anh lúc 16:28 ngày 22/11/2026 ("những gì mới sẽ ở giáo trình"), ghi ở `session_prompt/HIEN_TRANG.md` mục 4. Dòng Hải Vân Quan: phiếu của phiên điều phối tối 22/11 (nguồn ở bài 7). Bốn dòng của chiều 22/11 chép từ mục 44 của `bai_hoc/VIEC_MOI_XONG.md` (mục cuối của bộ cũ; phiên đo đã nhìn cả bốn thứ trên trình duyệt lúc 16:17–16:20 ngày 22/11; riêng dòng giữ chữ mới nhìn ở lượt thường, ca phải viết lại chưa trúng lần nào) [đã chạy, phiên khác].
 
 </details>

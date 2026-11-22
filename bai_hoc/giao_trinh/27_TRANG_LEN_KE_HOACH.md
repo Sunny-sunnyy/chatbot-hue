@@ -1,6 +1,6 @@
 # Bài 27 — Trang Lên kế hoạch: từ mấy nút chọn tới một lịch, và bảng điểm tham quan đứng sau
 
-*Cập nhật 13:16, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập · các ô, phép kiểm và đường đi của một lượt đọc từ chương trình và cấu hình trưa 22/11; số của bảng điểm đếm lại từ bảng đang chạy trưa 22/11; thời gian lấy từ một lượt lập lịch thật ngày 21/11 (Claude Sonnet 5.5); người viết không chạy lại lượt nào.*
+*Cập nhật 17:11, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập · các ô, phép kiểm và đường đi của một lượt đọc từ chương trình và cấu hình trưa 22/11; số của bảng điểm đếm lại từ bảng đang chạy trưa 22/11; thời gian lấy từ một lượt lập lịch thật ngày 21/11 (Claude Sonnet 5.5); người viết không chạy lại lượt nào.*
 
 **Bài trước đã biết:** trợ lý trả lời câu hỏi từ kho; việc phải đúng (ngày âm lịch, thời tiết, khoảng cách) do chương trình tính (bài 24). Bài 5 đã tả trang Lên kế hoạch trông ra sao.
 **Bài này thêm:** người dùng bấm "Xếp lịch" thì máy chủ nhận gì, kiểm gì, và đi qua những bước nào cho tới khi có một lịch. Bài cũng mở bảng điểm tham quan, thứ mà mọi lịch được xếp từ đó, và nói ô chat liên quan tới trang này ra sao.
@@ -45,7 +45,7 @@ Qua bước kiểm, máy chủ ghép các giá trị thành một câu cố đ�
 
 ## Bảng điểm tham quan: 41 dòng, mỗi ô có căn cứ
 
-Lịch không xếp thẳng từ 266 bài của kho: bài viết là văn xuôi, còn xếp lịch cần con số và nhãn đặt sẵn. Mỗi dòng có tên và tên khác, cụm, loại điểm, thời lượng ("ngắn" 75 phút hoặc "nửa buổi" 150 phút), buổi đi được, giờ mở cửa (21 điểm có khung giờ; 20 điểm kho không ghi giờ thì không ràng buộc), trong nhà hay ngoài trời (29 điểm ngoài trời), có nhiều bậc thang không (11 điểm), thứ tự ưu tiên theo từng sở thích, thứ và mùa hoạt động, giờ của hoạt động buổi tối, và bài nguồn trong kho. 18 điểm có thêm một đoạn kho được chọn tay để model tả. Bảng đủ các cột ở nửa để tra.
+Lịch không xếp thẳng từ 267 bài của kho: bài viết là văn xuôi, còn xếp lịch cần con số và nhãn đặt sẵn. Mỗi dòng có tên và tên khác, cụm, loại điểm, thời lượng ("ngắn" 75 phút hoặc "nửa buổi" 150 phút), buổi đi được, giờ mở cửa (21 điểm có khung giờ; 20 điểm kho không ghi giờ thì không ràng buộc), trong nhà hay ngoài trời (29 điểm ngoài trời), có nhiều bậc thang không (11 điểm), thứ tự ưu tiên theo từng sở thích, thứ và mùa hoạt động, giờ của hoạt động buổi tối, và bài nguồn trong kho. 18 điểm có thêm một đoạn kho được chọn tay để model tả. Bảng đủ các cột ở nửa để tra.
 
 Hầu như mọi ô có thêm một dòng **căn cứ**: câu trích từ bài kho, trang web, hoặc ghi là ước. Ví dụ giờ 7:00 – 17:00 của Đại Nội là phần chung của giờ mùa hè và mùa đông, chủ dự án tra ngày 14/11. Thời lượng là cột dựa vào web nhiều nhất: 31 điểm lấy từ web, 8 từ kho, 2 điểm ước.
 
@@ -126,7 +126,7 @@ Lời báo trong ngoặc kép là nguyên văn trong chương trình. Các dòng
 
 ## Dễ nhầm
 
-- **"Lịch được xếp từ kho 266 bài."** Không. Lịch xếp từ bảng 41 điểm; kho chỉ cho mỗi điểm một đoạn để model tả.
+- **"Lịch được xếp từ kho 267 bài."** Không. Lịch xếp từ bảng 41 điểm; kho chỉ cho mỗi điểm một đoạn để model tả.
 - **"Model đọc ý người dùng rồi lên lịch."** Ở trang này model không đọc ý gì: người dùng bấm nút, chương trình xếp, model chỉ viết câu mô tả.
 
 ## Câu hỏi tự kiểm

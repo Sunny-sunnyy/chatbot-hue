@@ -1,6 +1,6 @@
 # Phụ lục I — Mọi giới hạn đã biết trên một trang
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42); rào bỏ / thay của lịch · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp các bài lúc tối 22/11 (47 tính năng, kho 267 bài): giới hạn mới của việc nhớ trong cuộc đã lập lịch, của dòng trạng thái ở tin dài, của công cụ liệt kê bài, trang Giới thiệu · trước đó: phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42); rào bỏ / thay của lịch; gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
 
 **Giới hạn đã biết khác với thứ cố ý không làm (bài 4).** Giới hạn đã biết là chỗ hệ thống làm chưa tốt trong chính phạm vi của nó: kho có mà tìm không ra, chờ lâu, bước kiểm chưa kiểm nghĩa. Thứ cố ý không làm là một ranh giới đã được chọn, không phải một lỗi còn nợ: câu gõ không dấu, tiếng Anh, tình huống khẩn cấp, giá phòng, đặt chỗ thay người dùng. Trang này liệt kê loại thứ nhất, nhóm theo chặng; loại thứ hai nằm ở bảng nhỏ riêng cuối trang.
 
@@ -31,7 +31,7 @@
 
 | Giới hạn (một câu) | Con số kèm theo | Người dùng gặp gì | Bài |
 |---|---|---|---|
-| Kho thiếu ở vài mảng người dùng hỏi thật: đường Huế đi Hội An, chỗ đậu ô tô, quy định chụp ảnh ở chùa và lăng (bài leo bậc đã vào kho sáng 22/11). | lượt đo trợ lý 21/11 chỉ ra 4 thứ, còn 3 | nhận câu từ chối, rồi mục "Từ web (chưa kiểm)" | 7, 40 |
+| Kho thiếu ở vài mảng người dùng hỏi thật: chỗ đậu ô tô, quy định chụp ảnh ở chùa và lăng (bài leo bậc vào kho sáng 22/11, bài đường đi Hội An chiều 22/11). | lượt đo trợ lý 21/11 chỉ ra 4 thứ, còn 2 | nhận câu từ chối, rồi mục "Từ web (chưa kiểm)" | 7, 40 |
 | Kho cũ dần: giá và giờ đổi theo thời gian; phần lớn mức giá không ghi ngày. | — | câu trích bài vé, địa điểm, lễ hội, lưu trú kèm dòng "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi…"; giá coi là tương đối | 7, 16 |
 | Dòng "có thể đã thay đổi" chỉ áp cho bốn nhóm bài (vé, địa điểm, lễ hội, lưu trú). | 4 nhóm | câu về món ăn, quán không có dòng này | 16 |
 | Kho còn vài con số các nguồn nói khác nhau, giữ nguyên và ghi vào một danh sách riêng. | — | — | 7 |
@@ -62,7 +62,7 @@
 | Không có bước xếp lại, nên đoạn đúng đứng hạng 11 tới 30 thì model không thấy ở lần tìm đầu; kết luận "không dùng" đứng trên phép đo cũ. | 9 trên 40 câu khó | model viết không thấy đoạn đó ở lần tìm đầu | 14 |
 | Model có thể bỏ sót ý nằm trong 10 đoạn; chỉ thấy khi chấm. | — | câu trả lời thiếu ý | 15 |
 | Câu trả lời của Claude dài hơn gpt-6-luna; chủ dự án nhận độ dài này. | khoảng 2,6 tới 3,6 lần tuỳ loại câu | câu trả lời dài, chờ lâu hơn | 15, 33 |
-| Thiếu số nguồn chỉ bị phát hiện ở cuối; câu đúng mà quên số nguồn cũng bị rút. | 3 trên 48 lượt (gpt-6-luna), 4 trên 53 lượt (Claude) có câu bị rút, 21/11, trước bản sửa 13:51 | model trả chữ dần: thấy chữ rồi thấy nó bị rút, kèm nút "Thử lại"; model đang chạy, từ 15:42 22/11: chỉ thấy lời báo và nút "Thử lại" (chữ được giữ tới khi kiểm) | 16 |
+| Thiếu số nguồn chỉ bị phát hiện ở cuối; câu đúng mà quên số nguồn cũng bị rút. | 3 trên 48 lượt (gpt-6-luna), 4 trên 53 lượt (Claude) có câu bị rút, 21/11, trước bản sửa 13:51; trên trình duyệt 22/11: lượt qua kiểm 16 trên 16 thành công, không chữ nào hiện trước khi cả câu hiện; ca bị rút và ca viết lại chưa gặp trên trình duyệt | model trả chữ dần: thấy chữ rồi thấy nó bị rút, kèm nút "Thử lại"; model đang chạy, từ 15:42 22/11: chỉ thấy lời báo và nút "Thử lại" (chữ được giữ tới khi kiểm) | 16 |
 
 ## Chặng 4 — Đo
 
@@ -92,20 +92,23 @@
 | Lưới từ nguy hiểm thời tiết vẫn sót vài cách nói tự nhiên và nhận thừa vài câu. | — | "nước có lên nữa không" bị sót; "bão giá", tên phim bị nhận thừa | 24, 40 |
 | Mỗi công cụ ăn một vòng, gọi lần lượt. | câu cần ba công cụ mất ba vòng | ba lần chờ model | 21 |
 | Tin dài nhiều ý chờ lâu hơn; lần viết lại và lần chạy lại mỗi lần có hạn 45 giây riêng. | 25–34 giây (trước khoảng 20), viết lại lâu thêm khoảng 10 giây; mới đo trên một tin, 6 lần | chờ lâu; một lượt có thể chờ quá 45 giây | 21, 34 |
-| Bước viết lại còn ba chỗ chưa đo: điều kiện "đã tìm ít nhất một lần", cuộc đã có lịch lưu, model cũ. | — | đọc từ chương trình, chưa thử thật | 21, 34 |
+| Lúc chờ ở tin dài chỉ có một dòng trạng thái đứng yên (giá của việc giữ chữ tới khi kiểm); ý "đổi dòng theo từng lần tìm" đã ghi, chưa làm. | khoảng 20–30 giây | nhìn một dòng chữ không đổi suốt lúc chờ (chỉ số đoạn đã tìm ghi trong ngoặc tăng dần) | 16, 21, 23 |
+| Bước viết lại còn ba chỗ chưa đo: điều kiện "đã tìm ít nhất một lần" mới có ca test; cuộc đã có lịch lưu (bước này vẫn chạy ở đó theo chương trình, chỉ chưa đo; lần chạy lại trong cuộc có lịch mới có ca test, chưa có lượt thật); model cũ. | — | đọc từ chương trình, chưa thử thật | 21, 34 |
 | Đổi model thì chỗ nối harness có thể hỏng. | với Claude cách cũ: 0 trên 8 lần viết được (đã chữa) | — | 21 |
 | Mỗi lượt hỏi tốn thêm một lần gọi model để xếp loại; câu chào tốn hai lần gọi; câu không về Huế tốn thêm phần chạy trước bị bỏ. | ví dụ chính: 0,0034 USD xếp loại so với 0,0144 USD lần viết (Claude) | — (tiền) | 22 |
 | Câu chào hỏi không chạy song song nên chậm hơn ở chữ đầu. | câu chậm 5,74 giây khi thử chạy song song | chữ đầu tới chậm hơn câu về Huế | 22 |
 | Ranh giới "Huế hay nơi khác" dựa vào hiểu biết địa lý của model. | — | nơi ở rìa Huế có thể bị xếp "ngoài phạm vi" | 22 |
 | Câu ngoài phạm vi có thể lọt vào đường "về Huế" và bị đem đi tra web; tên riêng trong câu vẫn tới dịch vụ tìm web, chỉ email và số điện thoại bị bỏ. | 2 trên 44 câu (12/11) | chỉ thấy câu cố định, nhưng câu hỏi đã rời máy | 22, 25, 37 |
-| Tin trỏ theo thứ tự vào câu trả lời của hai lượt trước không hiểu được; nơi chỉ nêu qua bài tổng hợp không có trong dòng ghi chú tên nơi. | — | trợ lý không xác định được "cái thứ hai" của lượt cũ | 23 |
+| Chỉ nhớ câu trả lời LIỀN TRƯỚC: tin trỏ theo thứ tự vào câu trả lời của hai lượt trước không hiểu được; nơi chỉ nêu qua bài tổng hợp không có trong dòng ghi chú tên nơi. | chuỗi "kể quán ⇒ quán thứ hai ở đâu ⇒ viết gọn lại ⇒ còn quán thứ ba?": tin cuối đúng chỗ một phần nhờ may | trợ lý không xác định được "cái thứ hai" của lượt cũ | 23, 31 |
 | Vế cụt không được tìm riêng: thứ vế cụt thật sự hỏi không được tìm, và có vế bị lọc oan. | trước khi mở: 327 trên 1.240 vế (26 %) không có chủ thể; lọc oan dưới 2 % | thứ vế đó hỏi không được tìm riêng | 23 |
 | Câu tìm gộp được tách bằng luật chữ ("và", ";", "+"). | 41 % câu tìm của model là câu gộp; 6 % phần tách ra là mẩu cụt (1.116 câu) | cắt hỏng chỉ tốn vài đoạn thừa | 23 |
 | Câu phải gom nhiều bài để so ("lăng nào ít leo bậc") không được tìm theo vế cứu. | 0 ⇒ 1 trên 13 tin | tìm theo vế không cứu được | 23 |
-| Cuộc có lịch lưu không nhớ câu trả lời liền trước và không có lần chạy lại (đọc từ chương trình). | — | "quán thứ hai bạn vừa kể" trong cuộc đó không hiểu được | 23 |
+| Nhờ "viết lại danh sách" thì trợ lý tra kho lại và viết lại từng mục, không chỉ xoá một dòng; danh sách dài có thể thiếu mục. | 17–24 giây (trình duyệt 22/11: 17,3 và 24,1 giây; lượt thật 19–20 giây, khoảng 0,13–0,17 USD; bên không nhớ 10–12 giây); một lượt thử 8 điểm, bỏ 1, chỉ còn 4 (lần nhìn trên trình duyệt còn đủ 7) | chờ lâu hơn; danh sách mới có thể ngắn hơn, trợ lý nói rõ nó chỉ giữ điểm tìm lại được nguồn — câu đó có thể bị đọc nhầm thành "ba điểm kia chưa chắc miễn phí" | 23, 31 |
+| Lần chạy lại một lần khi câu bị rút, trong cuộc đã lập lịch, mới có ca test. | chưa có lượt thật nào trúng | — (giới hạn của phép đo) | 23, 31 |
 | Ngày model viết không bị chương trình kiểm lại; dạng ngày ít gặp đi đường công cụ, chậm hơn. | — | ngày chỉ được bảo đảm nhờ nguồn tính sẵn và số nguồn | 24 |
 | Thời tiết "tuần sau" chỉ có số cho phần nằm trong 7 ngày. | 7 ngày | chương trình ghi rõ dự báo có tới ngày nào | 24 |
 | Khoảng cách và "gần" chỉ cho các điểm có vị trí; "gần" là đường chim bay, không biết giờ mở cửa. | 40 điểm và 41 quán | nơi ngoài bảng không có khoảng cách | 24, 40 |
+| Công cụ liệt kê bài so nguyên cụm từ, không hiểu cụm đó nói về cái gì; chương trình chưa lọc. | cụm "miễn phí", đếm trên cả kho: 31 bài khớp, 19 bài chỉ vì một thứ phụ (wifi, vé trẻ em, gửi xe…), trong đó hai điểm thu vé | trợ lý có thể kể một điểm thu vé là miễn phí; ở hai lượt hỏi thật 22/11 model tự bỏ các bài đó (chưa đủ để nói là luôn bỏ); danh sách đổi giữa các lần gõ cùng một câu (8 điểm rồi 6 điểm) | 24 |
 | Tổng tiền vé là số model tự cộng, không phải số chương trình tính. | lượt thật 19/11: đúng 3 trên 3 | nhận tổng do model tự cộng | 24, 27, 40 |
 | Mục web chỉ được kiểm con số so với đoạn trích, không kiểm địa chỉ hay nội dung; kết quả phần lớn không có ngày đăng. | 4 trên 5 kết quả không có ngày (một lượt đo) | mục web có thể sai hoặc cũ | 25, 40 |
 | Một con số không khớp là mất cả mục web; giờ viết theo buổi vẫn bị bỏ oan. | — | mất cả mục web | 25 |
@@ -140,7 +143,7 @@
 | Vài lệnh sửa lịch bị trả "chưa hỗ trợ" dù làm được; câu dời hai điểm kết bằng dấu hỏi có thể nghe như đã đổi; câu giả định có lần bị làm như lệnh thật. | câu giả định: 1 lượt (19/11) | lịch không đổi như ý, hoặc đổi khi chỉ hỏi | 31 |
 | Không thay được hoạt động buổi tối, không xếp tay một điểm vào buổi tối; ngày tương đối và ngày âm không đọc được. | — | chương trình nói thật hai điều đầu | 31, 40 |
 | Câu gợi ý "thay Y bằng X" chỉ được nhớ đúng một lượt kế; đổi chỗ với ngày không có trong lịch nhận câu chung dễ hiểu nhầm. | — | — | 31 |
-| Lệnh bỏ / thay không tên điểm, không mốc lịch ("Bỏ điểm này", "Bớt lăng đi", "Bỏ điểm đầu tiên đi", "ngày 2-3 bỏ điểm đầu") không sửa lịch mà thành câu hỏi thường (từ 22/11). Còn hở: tin có đủ tên một điểm của lịch mà nói về danh sách vừa kể. | chỗ hở: chưa thấy thật | lịch không đổi; phải nhắn kèm tên điểm hoặc "ngày N" | 31 |
+| Lệnh bỏ / thay không tên điểm, không mốc lịch ("Bỏ điểm này", "Bớt lăng đi", "Bỏ điểm đầu tiên đi", "ngày 2-3 bỏ điểm đầu") không sửa lịch mà thành câu hỏi thường (từ 22/11). Còn hở: tin có đủ tên một điểm của lịch mà nói về danh sách vừa kể. | chỗ hở: chưa thấy thật | lịch không đổi; phải nhắn kèm tên điểm, "ngày N" hoặc "khỏi lịch" | 31, 23 |
 | Ba trong bốn vai chưa đạt ở 12 vai vướng ý kho thiếu; người mô phỏng hay tự kết sớm. | trần thước khoảng 8–9 trên 12; kết trước lượt 5: 6 trên 12 (gpt-6-luna), 5 trên 12 (Claude) | giới hạn của phép đo | 32 |
 | Thước 12 vai có một điểm mù: người mô phỏng không thấy dòng báo của lượt sửa lịch; công cụ đã chữa, chưa đo lại. | 26 lượt, thuộc một vai | giới hạn của phép đo | 32, 40 |
 | Lượt 12 vai đo lại 22/11 chạy trước bốn thay đổi khâu tìm mở 14:47, nên chưa đo bộ đó; luật "ba lượt" chưa sửa chữ cho khớp lựa chọn tối 21/11. | 8 trên 12 phiên, 33 trên 38 ý | giới hạn của phép đo | 32 |
@@ -161,7 +164,7 @@
 | Lệnh bật chỉ cho máy phát triển và không gọi thử model. | — | không bắt được khoá hết hạn lúc bật | 36 |
 | Gói ba hộp là bản nháp từ 10–18/11, chưa theo kịp chương trình hiện tại. | lần chạy thử là của gpt-6-luna và kho 204 bài | — | 36 |
 | Trần kích thước yêu cầu và lớp chặn tiền ở phía hãng chưa có. | — | — (rủi ro khi đưa lên mạng) | 37 |
-| Trang Giới thiệu vẫn ghi câu hỏi và ảnh được gửi tới OpenAI, và vẫn ghi trợ lý chỉ nhớ các câu hỏi (đọc từ chương trình 22/11; đang được sửa). | — | đọc thông tin cũ về nơi dữ liệu được gửi tới | 37 |
+| Trang Giới thiệu vừa được sửa cho khớp thứ trợ lý thật sự nhớ (ba câu hỏi gần nhất, câu trả lời liền trước, tên nơi vừa gợi ý, lịch đã lập; câu trả lời cho câu mở đầu giữ tới 24 giờ), nhưng chưa ai nhìn trên trình duyệt; bản giao diện dựng sẵn chưa dựng lại. Phần nơi nhận câu hỏi và ảnh đã đúng từ chiều 22/11. | — | máy đang chạy lúc viết còn hiện chữ cũ ("nhớ các câu hỏi") tới khi giao diện được dựng lại | 37 |
 | Hãng model và dịch vụ tìm web giữ dữ liệu bao lâu ở phía họ: chưa kiểm. | — | — | 37 |
 
 ## Chặng 8 — Nhìn lại
@@ -192,5 +195,7 @@ Riêng việc đưa lên mạng thì khác loại: chưa làm, không bắt bu�
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
 
 Gom từ mục "Giới hạn đã biết" của các bài 5–37 và 39 trong cùng thư mục (bài 1–4, 38 không có mục này; bài 40 không có mục riêng, các dòng ghi bài 40 lấy từ bảng "Chỗ yếu đã biết" và "Những thứ chưa đo" của bài 40), bản lúc 15:22 ngày 22/11/2026; bảng cuối trang chép từ mục "Những thứ cố ý không làm" của bài 4. Không thêm sự thật mới. Cột "Người dùng gặp gì" ghi "giới hạn của phép đo" khi bài gốc không nói người dùng thấy gì và giới hạn nằm ở cách đo. Chỗ hai bài nói khác nhau ghi ở báo cáo gom [riêng tư].
+
+Gom lại 17:05 22/11/2026 theo các bài vừa sửa (khớp hệ thống 16:35 22/11): bỏ dòng "Cuộc có lịch lưu không nhớ câu trả lời liền trước và không có lần chạy lại" (sai từ 16:08 22/11, khi mở việc nhớ câu trả lời liền trước cả trong cuộc đã lập lịch); thêm dòng "viết lại danh sách", dòng "lần chạy lại trong cuộc đã lập lịch mới có ca test", và đổi dòng "tin trỏ theo thứ tự…" thành "chỉ nhớ câu trả lời LIỀN TRƯỚC" (bài 23 "Giới hạn đã biết" gạch 1, 2, 5; bài 31 "Giới hạn đã biết"); dòng dòng trạng thái đứng yên (bài 16, 21, 23); nhãn trình duyệt của dòng "Thiếu số nguồn…" (bài 16); dòng "Bước viết lại còn ba chỗ chưa đo" (bài 21); dòng liệt kê bài so nguyên cụm từ (bài 24, gạch thứ năm); dòng trang Giới thiệu (bài 37, bản 16:54 22/11) [chép từ bài].
 
 </details>

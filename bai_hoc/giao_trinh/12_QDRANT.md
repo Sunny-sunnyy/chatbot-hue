@@ -1,13 +1,13 @@
 # Bài 12 — Cất vào Qdrant, cập nhật khi kho đổi, và vì sao kho lệch chỉ mục thì không câu hỏi nào được trả lời
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình và cấu hình đang chạy; số của lần cập nhật chỉ mục lấy từ lần chạy thật sáng 22/11 và phép kiểm độc lập của một phiên khác; ba tình huống Qdrant tắt / ngừng lấy từ lần thử thật trưa 22/11 (bài 6); người viết không chạy lại.*
+*Cập nhật 17:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình và cấu hình đang chạy; số của lần cập nhật chỉ mục lấy từ lần chạy thật sáng 22/11 và phép kiểm độc lập của một phiên khác; ba tình huống Qdrant tắt / ngừng lấy từ lần thử thật trưa 22/11 (bài 6); người viết không chạy lại.*
 
 **Bài trước đã biết:** mỗi đoạn có chữ, thông tin gắn kèm, một vector, và phần từ khoá.
-**Bài này thêm:** 9.458 đoạn được cất ở đâu; bài trong kho đổi thì cập nhật thế nào; và bước kiểm khiến hệ thống thà không trả lời còn hơn trả lời bằng dữ liệu cũ.
+**Bài này thêm:** 9.479 đoạn được cất ở đâu; bài trong kho đổi thì cập nhật thế nào; và bước kiểm khiến hệ thống thà không trả lời còn hơn trả lời bằng dữ liệu cũ.
 
 ## Ý chính
 
-- **Qdrant** là cơ sở dữ liệu chuyên tìm vector. hue_rag cất cả 9.458 đoạn vào một **collection** duy nhất của nó; phần này gọi chung là **chỉ mục**.
+- **Qdrant** là cơ sở dữ liệu chuyên tìm vector. hue_rag cất cả 9.479 đoạn vào một **collection** duy nhất của nó; phần này gọi chung là **chỉ mục**.
 - Mỗi lần lập chỉ mục, chương trình ghi một **bản ghi chỉ mục**: danh sách bài của kho kèm "dấu vân tay" của từng bài. Dấu vân tay đổi khi bài đổi dù chỉ một chữ.
 - Mỗi lần bật, máy chủ so bản ghi đó với kho hiện có. **Lệch thì máy chủ vẫn chạy, nhưng mọi câu hỏi nhận lời báo "Dữ liệu tra cứu cần được lập chỉ mục lại."** Phép so chỉ chạy lúc bật: sửa kho khi máy chủ đang chạy thì nó vẫn trả lời theo chỉ mục cũ tới lần khởi động sau.
 - Sửa vài bài thì không phải lập lại cả chỉ mục (khoảng 225 giây). Một lệnh **cập nhật riêng** chỉ tính lại vector cho đoạn có thay đổi: lần chạy thật đầu tiên mất 37,7 giây cho 105 đoạn, kết quả giống một lần lập lại toàn bộ. Lệnh tự dừng nếu máy chủ đang chạy; xong phải bật lại máy chủ.
@@ -29,7 +29,7 @@
 
 Qdrant chạy trên cùng máy với hệ thống, trong một hộp riêng, ở một phiên bản được ghi cố định. Dữ liệu của nó nằm trong một thư mục của dự án, nên tắt rồi bật lại vẫn còn nguyên. Máy tính mở lại thì Qdrant tắt (bài 36).
 
-hue_rag dùng đúng một collection; tên của nó ghi luôn model embedding đã dùng. Collection có 9.458 điểm, bằng đúng số đoạn. Mỗi điểm gồm:
+hue_rag dùng đúng một collection; tên của nó ghi luôn model embedding đã dùng. Collection có 9.479 điểm, bằng đúng số đoạn. Mỗi điểm gồm:
 
 - một **mã** cố định, suy ra từ mã đoạn (bài 8);
 - **vector** 384 con số của đoạn (bài 10);
@@ -40,7 +40,7 @@ Lúc trả lời, hệ thống gửi vector của câu hỏi cho Qdrant và nh�
 
 ## Bản ghi chỉ mục ghi lại kho lúc chỉ mục được lập
 
-Mỗi lần lập chỉ mục, chương trình ghi một file gọi là bản ghi chỉ mục: danh sách 266 bài của kho kèm **dấu vân tay của từng bài**; số đoạn (9.458) và số điểm đã cất; tên, phiên bản, số chiều của model embedding; dấu vân tay của file thống kê từ khoá (bài 11); cách đo độ gần và dạng hồ sơ của collection. Lúc bật máy chủ, file này là căn cứ để trả lời câu hỏi "chỉ mục có khớp với kho không".
+Mỗi lần lập chỉ mục, chương trình ghi một file gọi là bản ghi chỉ mục: danh sách 267 bài của kho kèm **dấu vân tay của từng bài**; số đoạn (9.479) và số điểm đã cất; tên, phiên bản, số chiều của model embedding; dấu vân tay của file thống kê từ khoá (bài 11); cách đo độ gần và dạng hồ sơ của collection. Lúc bật máy chủ, file này là căn cứ để trả lời câu hỏi "chỉ mục có khớp với kho không".
 
 ## Bật máy chủ thì kiểm; lệch thì mọi câu hỏi nhận lời báo
 
@@ -82,7 +82,7 @@ Sau lệnh phải khởi động lại máy chủ; lúc bật nó nạp thống 
 ### 3. Vì sao chỉ kiểm lúc bật, không kiểm ở mỗi câu hỏi?
 
 - **Đã chọn:** năm điều chỉ kiểm một lần, khi máy chủ bật.
-- **Vì sao:** chưa thấy ghi lý do. Điều thấy được: đặc tả ghi phép tính lại dấu vân tay là việc của lúc bật; phép đó đọc lại cả 266 file bài viết.
+- **Vì sao:** chưa thấy ghi lý do. Điều thấy được: đặc tả ghi phép tính lại dấu vân tay là việc của lúc bật; phép đó đọc lại cả 267 file bài viết.
 - **Cách khác:** kiểm ở mỗi câu hỏi, hoặc kiểm theo giờ: chưa thử.
 - **Cái giá:** hai dòng đầu và dòng 4 của bảng "Nếu… thì sao" dưới đây.
 
@@ -118,7 +118,7 @@ Dòng **(đã thử)**: thử thật trưa 22/11 (bài 6); các dòng khác đ�
 ## Dễ nhầm
 
 - **"Sửa bài trong kho là câu trả lời đổi ngay."** Không. Phải tắt máy chủ, cập nhật chỉ mục rồi bật lại.
-- **"Qdrant chứa kho."** Qdrant chứa dạng đã xử lý của kho. Kho gốc là 266 file bài viết; mất Qdrant thì lập lại được từ kho, mất kho thì không.
+- **"Qdrant chứa kho."** Qdrant chứa dạng đã xử lý của kho. Kho gốc là 267 file bài viết; mất Qdrant thì lập lại được từ kho, mất kho thì không.
 - **"Cập nhật riêng chỉ đụng tới bài đã sửa."** Đúng với vector; phần từ khoá thì mọi điểm được ghi lại.
 
 ## Câu hỏi tự kiểm
@@ -161,7 +161,7 @@ Tắt lúc bật: máy chủ chỉ nối tới Qdrant lúc bật, nên phải b�
 | Địa chỉ | chỉ nghe trên chính máy đó, cổng 6335 | máy khác không gọi thẳng vào được | — |
 | Nơi giữ dữ liệu | thư mục `qdrant_storage/` của dự án | tắt hộp không mất dữ liệu | — |
 | Tên collection | `hue_full_corpus_7a2_e5_small_384` | tên ghi luôn model embedding và số chiều | — |
-| Số điểm | 9.458 | bằng số đoạn | — |
+| Số điểm | 9.479 | bằng số đoạn | — |
 | Vector trong mỗi điểm | 384 con số, đo bằng cosine | bài 10 | bài 10 |
 | Cách Qdrant tìm | gần đúng (HNSW), cấu hình mặc định | nhanh | đã so với tìm chính xác: giống hệt ở 108 trên 108 câu (kho cuối tháng 10) |
 | Chỉ mục phụ để lọc theo trường | không có | đường tìm câu trả lời không lọc theo trường (bài 9); riêng trang Lên kế hoạch có lấy đoạn theo mã đoạn | chưa thử |
@@ -237,7 +237,7 @@ Tắt lúc bật: máy chủ chỉ nối tới Qdrant lúc bật, nên phải b�
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
 
 - Qdrant trong Docker, ghi cố định bằng mã băm của ảnh, cổng `127.0.0.1:6335`, thư mục `qdrant_storage/`: `docker-compose.yml` [đọc 22/11/2026]. Địa chỉ và hạn 30 giây: `backend/config/settings.yaml` mục `vector_database`.
-- Tên collection, 9.458 điểm, cosine, tên vector, dạng hồ sơ: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` và số điểm Qdrant, đọc 10:02 22/11/2026 [đã chạy]. Cấu trúc collection (không chỉ mục phụ, HNSW mặc định): `backend/vectorstore/qdrant.py` [code].
+- Tên collection, 9.479 điểm, cosine, tên vector, dạng hồ sơ: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` và số điểm Qdrant, đọc 16:35 22/11/2026 [đã chạy]. Cấu trúc collection (không chỉ mục phụ, HNSW mặc định): `backend/vectorstore/qdrant.py` [code].
 - Hồ sơ nhận về khi tìm và việc chấm từ khoá dùng hồ sơ đó: `backend/retrieval/full_corpus.py`, hàm `search` [code].
 - Năm điều kiểm lúc khởi động, mã 409 `corpus_reingest_required` / 503, trạng thái "degraded": `backend/retrieval/full_corpus.py` (`build_full_corpus_retrieval_service`, `verify_full_corpus_record_freshness`), `backend/api/app.py`, `backend/api/health.py` [code; thứ tự năm điều chép qua `bai_hoc/05_QDRANT.md`, bài đã qua kiểm độc lập].
 - Lệnh cập nhật riêng (sáu việc, sửa tại chỗ, đơn vị là đoạn, ghi lại từ khoá cả kho, bản chụp, ngắt giữa chừng, chế độ chỉ xem): `backend/ingestion/cap_nhat_rieng.py`; `guides/RUNBOOK_BAN_GIAO.md` mục 5b; `report_agent/2026-11-22/c_cap_nhat_rieng.md` [code + đã chạy, phiên khác].

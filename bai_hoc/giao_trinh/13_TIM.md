@@ -1,8 +1,8 @@
 # Bài 13 — Tìm: lấy 30 ứng viên, trộn hai bảng xếp hạng, giữ 10 đoạn
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào.*
+*Cập nhật 17:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào.*
 
-**Bài trước đã biết:** chặng 2: kho được cắt thành 9.458 đoạn, mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
+**Bài trước đã biết:** chặng 2: kho được cắt thành 9.479 đoạn, mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
 **Bài này thêm:** chặng 3 bắt đầu. Người dùng gõ một câu; trong vài chục mili giây chương trình chọn ra 10 đoạn. Bài này đi qua bốn bước của việc chọn đó, và chỉ ra bước tìm hỏng ở đâu.
 
 ## Ý chính

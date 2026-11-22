@@ -1,15 +1,15 @@
 # Bài 10 — Biến mỗi đoạn thành một dãy số mang nghĩa: embedding
 
-*Cập nhật 14:17, ngày 22/11/2026 · cấu hình chép từ hệ thống đang chạy sáng 22/11, đối chiếu lại chương trình lúc 13:47; số của các phép so lấy từ các báo cáo đo ngày 29/08, 24–25/10 và 30/10; người viết không chạy lại phép đo nào; riêng bước tìm của ví dụ chính được chạy lại sáng 22/11 để lấy điểm số từng đoạn (không gọi model viết).*
+*Cập nhật 17:11, ngày 22/11/2026 · cấu hình chép từ hệ thống đang chạy sáng 22/11, đối chiếu lại chương trình lúc 13:47; số của các phép so lấy từ các báo cáo đo ngày 29/08, 24–25/10 và 30/10; người viết không chạy lại phép đo nào; riêng bước tìm của ví dụ chính được chạy lại sáng 22/11 để lấy điểm số từng đoạn (không gọi model viết).*
 
-**Bài trước đã biết:** kho 266 bài đã được cắt thành 9.458 đoạn, và mỗi đoạn có một "chữ để tìm" gồm tên bài, tên các mục chứa nó, và thân đoạn.
-**Bài này thêm:** làm sao để máy, khi nhận một câu hỏi, biết đoạn nào trong 9.458 đoạn nói về cùng một chuyện với câu hỏi, kể cả khi hai bên dùng chữ khác nhau; vì sao chọn model này; và model đó không chạy được thì sao.
+**Bài trước đã biết:** kho 267 bài đã được cắt thành 9.479 đoạn, và mỗi đoạn có một "chữ để tìm" gồm tên bài, tên các mục chứa nó, và thân đoạn.
+**Bài này thêm:** làm sao để máy, khi nhận một câu hỏi, biết đoạn nào trong 9.479 đoạn nói về cùng một chuyện với câu hỏi, kể cả khi hai bên dùng chữ khác nhau; vì sao chọn model này; và model đó không chạy được thì sao.
 
 ## Ý chính
 
 - Một **model embedding** nhận một đoạn chữ và trả về một dãy số có độ dài cố định, gọi là **vector**. Hai đoạn chữ gần nghĩa thì hai vector gần nhau.
 - hue_rag dùng model **multilingual-e5-small**: mỗi đoạn thành một vector 384 con số. Model chạy ngay trên máy chủ, không gọi dịch vụ ngoài, không tốn tiền.
-- Lúc chuẩn bị, cả 9.458 đoạn đi qua model một lần. Lúc trả lời, chỉ câu tìm đi qua model, rồi máy tìm 30 vector gần nhất. Hai phía phải được tính theo cùng một cách: cùng model, cùng phiên bản, đúng tiền tố, cùng dạng chữ có dấu.
+- Lúc chuẩn bị, cả 9.479 đoạn đi qua model một lần. Lúc trả lời, chỉ câu tìm đi qua model, rồi máy tìm 30 vector gần nhất. Hai phía phải được tính theo cùng một cách: cùng model, cùng phiên bản, đúng tiền tố, cùng dạng chữ có dấu.
 - Đã so với năm model khác, trong đó có một model lớn hơn khoảng 70 lần. Không model nào tìm tốt hơn rõ trên các bộ câu đã đo; model lớn giúp 2 câu, làm hỏng 3 câu trên 40 câu, và chậm hơn khoảng 100 lần.
 - Tìm theo nghĩa có chỗ yếu riêng (tên riêng, con số), nên nó không đứng một mình: bài 11 thêm một bước chấm lại 30 ứng viên theo chữ trùng.
 
@@ -48,21 +48,21 @@ Hai điều đọc được từ bảng. Đoạn nói đúng chuyện có độ 
 
 Model này không trả lời câu hỏi, không viết được gì. Nó chỉ cho phép so nghĩa bằng phép tính.
 
-## Lúc chuẩn bị tính cho 9.458 đoạn, lúc trả lời chỉ tính cho câu hỏi
+## Lúc chuẩn bị tính cho 9.479 đoạn, lúc trả lời chỉ tính cho câu hỏi
 
 ```mermaid
 flowchart LR
-  A["9.458 đoạn<br/>(chữ để tìm)"] -->|"lúc chuẩn bị"| M["Model embedding<br/>e5-small"]
-  M --> V["9.458 vector<br/>cất trong Qdrant"]
+  A["9.479 đoạn<br/>(chữ để tìm)"] -->|"lúc chuẩn bị"| M["Model embedding<br/>e5-small"]
+  M --> V["9.479 vector<br/>cất trong Qdrant"]
   Q["Câu hỏi"] -->|"lúc trả lời"| M
   M --> QV["1 vector câu hỏi"]
-  QV --> S["So với 9.458 vector<br/>lấy 30 đoạn gần nhất"]
+  QV --> S["So với 9.479 vector<br/>lấy 30 đoạn gần nhất"]
   V --> S
 ```
 
-**Lúc chuẩn bị.** "Chữ để tìm" của từng đoạn được đưa qua model. Kết quả là 9.458 vector, cất vào Qdrant cùng với chữ của đoạn (bài 12). Việc này làm một lần cho mỗi phiên bản của kho.
+**Lúc chuẩn bị.** "Chữ để tìm" của từng đoạn được đưa qua model. Kết quả là 9.479 vector, cất vào Qdrant cùng với chữ của đoạn (bài 12). Việc này làm một lần cho mỗi phiên bản của kho.
 
-**Lúc trả lời.** Câu hỏi *"Giá vé tham quan Đại Nội Huế là bao nhiêu?"* đi qua đúng model đó và thành một vector. Qdrant so vector này với 9.458 vector đã cất và trả về **30 đoạn gần nhất**, gọi là 30 **ứng viên**. Ở lượt hỏi thật của ví dụ này, việc tính vector câu hỏi cộng với việc tìm trong Qdrant mất 36 mili giây.
+**Lúc trả lời.** Câu hỏi *"Giá vé tham quan Đại Nội Huế là bao nhiêu?"* đi qua đúng model đó và thành một vector. Qdrant so vector này với 9.479 vector đã cất và trả về **30 đoạn gần nhất**, gọi là 30 **ứng viên**. Ở lượt hỏi thật của ví dụ này, việc tính vector câu hỏi cộng với việc tìm trong Qdrant mất 36 mili giây.
 
 30 ứng viên chưa phải kết quả cuối. Chúng còn được chấm lại theo từ khoá; rồi thứ tự theo nghĩa và thứ tự theo từ khoá được trộn lại để giữ 10 đoạn (bài 11, 13). Mỗi lần tìm khác trong một lượt hỏi (trợ lý tìm thêm, hay tìm riêng cho từng ý của tin nhiều ý) cũng đi đúng đường này với câu tìm của nó.
 
@@ -98,7 +98,7 @@ Lần so đáng nhớ nhất: thay nó bằng một model lớn hơn khoảng 70
 
 ### 3. Vì sao vector của các đoạn được tính sẵn lúc chuẩn bị, chỉ câu hỏi mới tính lúc hỏi?
 
-- **Đã chọn:** 9.458 vector tính một lần, cất vào Qdrant; lúc hỏi chỉ tính một vector cho câu tìm.
+- **Đã chọn:** 9.479 vector tính một lần, cất vào Qdrant; lúc hỏi chỉ tính một vector cho câu tìm.
 - **Vì sao:** lập luận từ số đo: tính vector cho cả kho mất khoảng 195 giây (đo sáng 22/11); tính cho một câu hỏi và tìm mất khoảng 36 mili giây.
 - **Cách khác:** chưa thấy ai đề xuất. Khi sửa vài bài, chỉ đoạn đổi chữ được tính lại (bài 12).
 - **Cái giá:** đổi model embedding là phải tính lại vector cho cả kho.
@@ -259,7 +259,7 @@ Trong file cấu hình còn tên hai model ứng viên cũ (multilingual-e5-base
 - Ba độ gần 0,904 / 0,883 / 0,743 lấy bằng cách chạy lại riêng bước tìm cho câu ví dụ chính sáng 22/11, lúc kho có 9.442 đoạn (không gọi model viết); cùng lần chạy đó, 10 đoạn giữ lại trùng với 10 đoạn của lượt hỏi thật ngày 21/11.
 - Số 36 mili giây là của một lượt hỏi ngày 21/11; số 21 / 28 mili giây là số đo trên 40 câu ngày 30/10. Hai số đo ở hai thời điểm, kho khác cỡ, không so thẳng với nhau.
 - Số đo "thứ hạng tụt khi câu hỏi ở dạng chữ có dấu khác": điểm MRR (điểm từ 0 tới 1 theo vị trí của đoạn đúng đầu tiên) giảm 0,20; đưa về dạng chuẩn thì trở lại như cũ.
-- Qdrant tìm 30 vector gần nhất bằng một cách tìm gần đúng (tên là HNSW), không so lần lượt với cả 9.458 vector. Đã đo trên kho cuối tháng 10: kết quả giống hệt cách tìm chính xác ở 108 trên 108 câu.
+- Qdrant tìm 30 vector gần nhất bằng một cách tìm gần đúng (tên là HNSW), không so lần lượt với cả 9.479 vector. Đã đo trên kho cuối tháng 10: kết quả giống hệt cách tìm chính xác ở 108 trên 108 câu.
 - Dựng lại vector cho cả kho nằm trong việc dựng lại chỉ mục, cả việc mất khoảng 225 giây. Khi chỉ sửa vài bài, hệ thống chỉ tính lại vector cho những đoạn đổi chữ (bài 12).
 
 **Bài sau (bài 11):** tìm theo nghĩa yếu ở tên riêng và con số. Bài 11 giảng cách thứ hai, tìm theo chữ trùng (BM25), và vì sao hai cách được dùng cùng nhau.
@@ -272,7 +272,7 @@ Trong file cấu hình còn tên hai model ứng viên cũ (multilingual-e5-base
 - Tìm gần đúng HNSW giống tìm chính xác 108 / 108 câu: `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` thẻ N2-15 = T3-04 [đã chạy, kho cũ]. Chỉ giữ giới hạn 512 ⇒ ít đi 61 đoạn, không khác: thẻ N2-05; 100 ứng viên kém hơn (200 chỉ đếm ở phép chẩn đoán T3-01): thẻ T3-03 [theo biên bản kiểm độc lập `data/hoc_cung_D/kiem/bai_02_10.md`].
 - Chuẩn hoá NFC câu hỏi và số MRR −0,204 (108 câu do máy đổi dạng; số câu đủ đoạn đúng trong 10 đoạn "không khác"): `backend/retrieval/full_corpus.py`, hàm `normalize_query` (chú thích trong code); `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` thẻ T3-05 [đã chạy].
 - 30 ứng viên; từ khoá chỉ chấm lại 30 ứng viên của bước tìm theo nghĩa: `backend/retrieval/full_corpus.py`, hàm `search` (`candidate_pool = 30`, nhánh `dense_bm25_rrf`) [code].
-- 9.458 đoạn, 266 bài: bản ghi chỉ mục và số điểm Qdrant, đọc 10:02 22/11/2026 [đã chạy].
+- 9.479 đoạn, 267 bài: bản ghi chỉ mục và số điểm Qdrant, đọc 16:35 22/11/2026 [đã chạy].
 - 36 mili giây (`dense_ms` của lượt ví dụ chính): `data/hoc_cung_D/vi_du_di_suot_vet.json` [đã chạy, riêng tư].
 - Độ gần 0,904 (hạng 1), 0,883 (hạng 30), 0,743 (đoạn `foods/cafes/…#7`, một dòng ghi fanpage): chạy riêng bước tìm bằng `data/hoc_cung_D/tools/vet_tim.py`, kết quả ở `data/hoc_cung_D/vet_tim_ba_vi_du.json` [người viết chạy 22/11/2026, không gọi model viết, 0 đồng].
 - 16 câu thiếu = 9 (đủ trong 30 ứng viên, ngoài 10) + 7 (thiếu ngay trong 30 ứng viên); 33 ⇒ 31 trên 40 và 11 ⇒ 13 trên 15 câu có đủ đoạn đúng trong 30 ứng viên: `report_agent/2026-10-27_phan_ton_phase_cu/qwen3_8b_implementation.md` (dòng "dev 40: context đủ 24, pool dense 33, thiếu ở context 16, thiếu ngay ở pool dense 7"; dòng `pool_dense_gold_all` 0,825 ⇒ 0,775 và 0,733 ⇒ 0,867) [đã chạy].

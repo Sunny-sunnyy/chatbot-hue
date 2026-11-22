@@ -1,6 +1,6 @@
 # Bài 22 — Xếp loại câu trước khi tìm: bốn tuyến
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cơ chế và lời dặn đọc từ chương trình đang chạy; số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng); mức suy luận tách theo model · cơ chế, lời dặn đọc từ chương trình đang chạy; số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** harness: chương trình đi trước và đi sau model; model chỉ quyết có xin công cụ không và viết gì.
 **Bài này thêm:** việc đầu tiên của mọi lượt hỏi, trước cả lần tìm đầu. Không phải câu nào cũng cần tìm trong kho. Một lần gọi model rất ngắn xếp câu vào một trong bốn tuyến, và mỗi tuyến được xử lý khác nhau.
@@ -205,7 +205,7 @@ Lời dặn của bộ xếp loại, một câu nguyên văn cho mỗi phần (b
 **Đọc bảng này thế nào.**
 - Dòng 1 cho biết bước này xếp đúng tới đâu. Lúc mới có, nó làm mỗi câu chậm thêm khoảng 1,5 giây; dòng 3 là cách gỡ phần chậm đó.
 - Dòng 4 là một cách làm bước này nhanh hơn. Dòng 5 là một lớp luật đứng trước nó, để câu khẩn cấp khỏi phải vào model. Cả hai bị bỏ vì làm sai ở câu an toàn hoặc ở câu chưa thấy.
-- "Mức suy luận" ở dòng 4 và 6: model cho chọn mức nghĩ trước khi đáp (với Claude có bốn nấc: không, thấp, vừa, cao; dòng 4 là tắt hẳn phần này ở bước xếp loại, dòng 6 so mức vừa với mức cao); hệ thống đang chạy mức cao (bài 33).
+- "Mức suy luận" ở dòng 4 và 6: model cho chọn mức nghĩ trước khi đáp. Dòng 4 đo với gpt-6-luna: tắt hẳn phần này ở bước xếp loại. Dòng 6 đo với Claude, model có bốn nấc (không, thấp, vừa, cao): so mức vừa với mức cao. Nấc "không" của Claude trong chương trình là "chỉ nghĩ giữa các lần gọi công cụ", không hẳn là tắt. Hệ thống đang chạy mức cao (bài 33).
 - Dòng 6: cùng một lời dặn, model khác xếp khác. Bài học giống dòng 4 của bài 21.
 
 **Giới hạn của các phép đo.** Dòng 1 đo đầu tháng 11; lời dặn đã sửa vài lần từ đó. Dòng 6: lượt đo sau khi thêm đoạn dặn đổi cùng lúc vài thứ khác, nên không tách được riêng phần của đoạn dặn này; mẫu nhỏ (6 câu, 25 chuỗi hội thoại).
@@ -231,6 +231,7 @@ Một dòng nữa của bảng "Nếu… thì sao": tin cuối chỉ có nghĩa 
 
 ## Chi tiết để tra
 
+- Sau khi kho có bài về đường đi từ Huế tới Hội An (22/11), câu hỏi về chính Hội An vẫn được xếp là ngoài phạm vi, đúng như tiêu chí ghi trước lượt thử: kho chỉ nói cách đi tới Hội An, không nói gì về Hội An. Hỏi thử qua trình duyệt tối 22/11, Claude Sonnet 5.5, mỗi câu một lần: ba câu mở đầu ba cuộc mới (quán cao lầu ở Hội An, vé phố cổ Hội An, đi chơi đâu ở Hội An) đều nhận câu cố định sau 0,8 tới 1,3 giây; trong một cuộc khác, "Từ Huế đi Hội An thế nào?" được trả lời từ bài mới, câu nối "Tới Hội An rồi thì nên ăn gì, ở đâu?" nhận câu cố định, rồi câu về đi xe máy qua đèo Hải Vân lại được trả lời từ kho. Chưa thử nơi ngoài tỉnh khác, chưa thử với gpt-6-luna.
 - Hai loại lượt không qua bước xếp loại: lượt bấm nút trên trang Lên kế hoạch, và câu trùng một câu đã được trả lời trong 24 giờ qua, vì khi đó chương trình trả lại câu đã nhớ.
 - Ở ví dụ chính, lần gọi xếp loại nhận 1.595 token và trả về 17 token.
 - Ở lượt "áo dài" (gpt-6-luna, 20/11), lần gọi xếp loại mất 2,3 giây.
@@ -256,6 +257,8 @@ Một dòng nữa của bảng "Nếu… thì sao": tin cuối chỉ có nghĩa 
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Quyết định nhỏ hơn" (chuyển sang khuôn bài 6 lúc 12:20 22/11/2026; nội dung đã sửa theo biên bản `data/hoc_cung_D/kiem/bai_22_va_muc_moi_01_03_04.md`, thêm hai quyết định nhỏ theo mục (4) của biên bản): gom từ các nguồn trên. Khuôn một ô, đầu ra hỏng ⇒ "về Huế", "lỗi tệ hơn là đưa câu cần thông tin sang trò chuyện; đường cũ đã đo kỹ", không gộp câu chào vào lần xếp loại: `docs/superpowers/plans/2026-11-02-phase-9-b1-plan.md` mục D3. Câu soạn sẵn của tuyến khẩn cấp gỡ 09/11 ("phương án B"): `session_prompt/Project_Status.md`, `bai_hoc/12_VI_SAO_CAN_TRO_LY.md`; "khẩn cấp ngoài phạm vi sản phẩm" là quyết định của chủ dự án ghi ở lời giao viết bài của phiên D (mục luật viết số 12) — người chuyển bài chưa mở được dòng gốc ghi lời chủ dự án. Lời báo khi hãng model lỗi: `backend/api/routes/chat.py` (`GENERATION_FAILURE_MESSAGE`). "Vì sao dùng chính model viết để xếp loại": người viết không tìm thấy quyết định được ghi. Câu "giá vé máy bay đi Đà Lạt" là ví dụ người viết tự đặt để giảng, chưa chạy qua hệ thống.
 - Các sửa sau lượt kiểm độc lập (`data/hoc_cung_D/kiem/bai_22_va_muc_moi_01_03_04.md`): lượt không qua bước xếp loại `backend/api/routes/chat.py` (tra câu đã nhớ trước), `backend/llm/assistant.py` (lượt biểu mẫu, thẻ chọn); hàng chờ của phần chạy trước `assistant.py` (`_luot_stream`); dòng 112 cho câu bão, lũ `assistant.py` (`luoi_cuoi_bao`); khuôn một ô, các cách đã cân cho câu ngoài phạm vi và cho lúc bước xếp loại hỏng, gộp câu chào vào một lần gọi: kế hoạch Phase 9 B1 ở `docs/superpowers/plans/` (mục D1, D3, D5); chạy song song câu chào hỏi (5,74 giây; 0,00056 USD): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 29; ba câu hỏi mẫu dưới câu cố định: `frontend/src/chat.jsx`.
 
+- Câu "Mức suy luận" ở "Đã so" tách theo model (dòng 4 đo với gpt-6-luna, dòng 6 với Claude): `backend/config/settings.yaml` dòng 58–59 (`reasoning_default: high`); bốn nấc và nấc "none" của Claude = `thinking: between_tools`: `backend/llm/bedrock_model.py` dòng 168–173 [code, mở 16:50 22/11]; câu sửa theo biên bản `data/hoc_cung_D/kiem/phan_xu_va_cap_nhat_15h42.md` Phần 3 dòng 7 [riêng tư; chép biên bản, đã mở nguồn].
 - Hai con số "2 trên 44" tách rõ (sửa chỗ một số dùng cho hai tình huống): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` dòng 56 (hàng 14: phương án "2 nhóm" — 2 / 44 câu ngoài phạm vi CÓ mục web ⇒ vỡ sàn; phương án B đang chạy — lượt đo giữa kỳ 12/11 thấy 2 / 44 câu vẫn bị đem đi tra web, người dùng chỉ thấy câu cố định) [chép, mở 15:16 22/11/2026]. Bộ thay đổi mở 14:47 22/11/2026 không chạm bài này.
 
+- Câu ngoài tỉnh về Hội An sau khi kho có bài Hội An (tối 22/11, sáu lượt qua trình duyệt): `data/test_cuoi/chay_2026-11-22_e_ngoai_tinh/TIEU_CHI.md` (tiêu chí ghi trước) và `chay_n.out` [riêng tư; đã chạy, phiên khác; người viết đã đọc bản ghi sáu lượt].
 </details>

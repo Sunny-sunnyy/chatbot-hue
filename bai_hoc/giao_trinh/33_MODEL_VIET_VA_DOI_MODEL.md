@@ -1,6 +1,6 @@
 # Bài 33 — Model viết, mức suy luận, và đổi model bằng một dòng cấu hình
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: cơ chế đọc từ chương trình và cấu hình trưa 22/11; số đo lấy từ các báo cáo đo ngày 19/11 (gpt-6-luna) và 21/11 (cả hai model), ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào; đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài); sửa câu tiền "qua giao diện" · cơ chế đọc từ chương trình và cấu hình 22/11; số đo từ các báo cáo 19/11 (gpt-6-luna) và 21/11 (cả hai model); người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** một câu hỏi đi qua sáu bước, gần như toàn bộ thời gian chờ là model viết (bài 6); model viết được gọi nhiều lần trong một lượt: xếp loại câu, tìm thêm, viết (bài 21, 22).
 **Bài này thêm:** hai model đã dùng khác nhau ở đâu, mức suy luận là gì và vì sao để mức cao, vì sao đổi model chỉ sửa một dòng mà vẫn phải viết một lớp nối và đo lại.
@@ -28,7 +28,7 @@
 
 ## Một model viết làm chín loại việc
 
-Chương trình dựng nhiều vai có model: xếp loại câu, trả lời, trò chuyện, mục web, câu cho thẻ lịch, hai lời gọi hiểu lệnh sửa lịch, nhận ảnh… (hồ sơ đếm là chín loại lời gọi; bảng ở nửa để tra là một cách xếp để dễ nhớ). Mỗi vai có lời dặn, khuôn đầu ra, công cụ riêng, nhưng **tất cả dùng chung một đối tượng model**: một dòng cấu hình đổi được tất cả, và không đổi lẻ được (không có cách cho Claude viết câu trả lời mà gpt-6-luna xếp loại câu).
+Chương trình dựng nhiều vai có model: xếp loại câu, trả lời, trò chuyện, mục web, câu cho thẻ lịch, hai lời gọi hiểu lệnh sửa lịch, nhận ảnh… (bảng ở nửa để tra). Mỗi vai có lời dặn, khuôn đầu ra, công cụ riêng, nhưng **tất cả dùng chung một đối tượng model**: một dòng cấu hình đổi được tất cả, và không đổi lẻ được (không có cách cho Claude viết câu trả lời mà gpt-6-luna xếp loại câu).
 
 ## Hai model đã chạy, khác nhau ở bốn chỗ người dùng thấy
 
@@ -36,7 +36,7 @@ Sáng 21/11 chủ dự án đổi tạm model viết từ gpt-6-luna (OpenAI) sa
 
 | Người dùng thấy | gpt-6-luna | Claude Sonnet 5.5 (mức cao) |
 |---|---|---|
-| Độ dài câu trả lời (ký tự, câu đứng giữa; 85 câu đầu bộ câu mẫu, đủ các loại câu, 21/11) | 90 | 236–258 |
+| Độ dài câu trả lời (ký tự, câu đứng giữa; 85 câu đầu bộ câu mẫu, không lọc theo loại câu, 21/11) | 90 | 236–258 |
 | Chữ hiện thế nào | chạy dần | **một lần**, khi model viết xong |
 | Lên lịch 3 ngày bằng biểu mẫu (một lượt qua trình duyệt, 21/11) | 5,6 giây | 11,2 giây |
 | Tiền một câu trả lời có nguồn (66 câu, 21/11) | 0,0004 USD | 0,0146 USD |
@@ -58,9 +58,9 @@ Số đo và lý do: quyết định 2.
 
 ## Đổi model không chỉ là đổi tên: lớp nối, và lỗi đã gặp ở đó
 
-Claude được gọi theo cách riêng của Claude, khác OpenAI ở nhiều chỗ nhỏ. Lớp nối lo hết các chỗ đó, nên thư viện và chín vai không biết phía sau là ai. Mỗi chỗ đều được đo thật trước khi viết. Ví dụ: khuôn có ràng buộc kiểu "nhiều nhất 3 mục" bị Bedrock từ chối, nên lớp nối gỡ ràng buộc khỏi khuôn gửi đi; chương trình vẫn kiểm đủ khi nhận về.
+Claude được gọi theo cách riêng của Claude, khác OpenAI ở nhiều chỗ nhỏ. Lớp nối lo hết các chỗ đó, nên thư viện và chín vai không biết phía sau là ai. Mỗi chỗ đều được đo thật trước khi viết (ví dụ ở "Chi tiết để tra").
 
-**Lỗi đắt nhất: Claude xin công cụ mãi, không viết.** Ở lượt trợ lý có công cụ, thư viện gửi cùng lúc danh sách công cụ và khuôn đầu ra bắt buộc. gpt-6-luna gọi công cụ xong thì viết vào khuôn. Claude đã có đủ kết quả mà vẫn xin công cụ tiếp, tới hết số vòng, và người dùng nhận câu từ chối. Phát lại một yêu cầu đã đủ dữ liệu: **viết được 0 trên 8 lần** ở mỗi mức suy luận; bỏ khuôn thì 14 trên 14. Sửa: ở lượt có công cụ, lớp nối không gửi khuôn mà thêm một công cụ nội bộ "trả lời" mang đúng khuôn đó; Claude gọi nó để nộp câu trả lời. Trên thước 29 câu làm trợ lý (bài 32): số câu chạm trần vòng **6 xuống 0**; nhóm 8 câu cần nhiều công cụ đạt 2 lên 7.
+**Lỗi đắt nhất: Claude xin công cụ mãi, không viết.** Ở lượt trợ lý có công cụ, thư viện gửi cùng lúc danh sách công cụ và khuôn đầu ra bắt buộc; Claude đã có đủ kết quả mà vẫn xin công cụ tiếp, tới hết số vòng, và người dùng nhận câu từ chối (**viết được 0 trên 8 lần** ở mỗi mức suy luận). Sửa: lớp nối thay khuôn bằng một công cụ nội bộ "trả lời"; số câu chạm trần vòng **6 xuống 0** trên 29 câu (diễn biến ở "Chi tiết để tra").
 
 **Lỗi thứ hai: câu hỏi cũ dính vào câu đang hỏi.** Lịch sử lúc đó chỉ giữ câu hỏi, nên nhiều tin của người dùng đứng liền nhau. Claude đòi tin của người dùng và tin của trợ lý xen kẽ nhau, nên bản nối đầu gộp hai câu hỏi liền nhau làm một, nên câu "bạn còn nhớ tôi tên gì" dính vào câu giá vé lượt trước. Sửa: chèn một tin giữ chỗ giữa hai câu hỏi; sau sửa 0 lỗi trên 18 lượt đo.
 
@@ -71,7 +71,7 @@ Cả hai lỗi đều do Claude hiểu cùng một yêu cầu khác gpt-6-luna, 
 ### 1. Vì sao giữ thư viện của OpenAI mà chạy Claude qua một lớp nối tự viết?
 
 - **Đã chọn:** giữ thư viện OpenAI Agents SDK; viết một lớp nối khoảng 300 dòng, không thêm thư viện nào.
-- **Vì sao:** chủ dự án đặt điều kiện "giữ nguyên bộ khung đang dùng" khi đổi tạm; vì sao chủ dự án đặt điều kiện này: chưa thấy ghi lý do (cùng lời dặn có yêu cầu "nói chuyển về luna là về được ngay"). Điều thấy được: chín vai, vòng công cụ, phần ghi sổ tiền và test cũ không phải sửa; mọi loại lời gọi gửi OpenAI (mười loại, vì vài vai có hai biến thể) chụp trước và sau khi có lớp nối giống nhau từng byte, nên đường về gpt-6-luna không bị đụng.
+- **Vì sao:** chủ dự án đặt điều kiện "giữ nguyên bộ khung đang dùng" khi đổi tạm; vì sao chủ dự án đặt điều kiện này: chưa thấy ghi lý do. Điều thấy được: chín vai, vòng công cụ, phần ghi sổ tiền và test cũ không phải sửa; mọi loại lời gọi gửi OpenAI (mười loại, vì vài vai có hai biến thể) chụp trước và sau khi có lớp nối giống nhau từng byte, nên đường về gpt-6-luna không bị đụng.
 - **Cách khác:** trỏ thư viện sang địa chỉ của Bedrock nhận yêu cầu viết theo kiểu OpenAI, khỏi cần lớp nối: đã thử, Bedrock trả "không có" cho model này ở địa chỉ đó. Viết lại chín vai bằng thư viện của Anthropic, hoặc dùng một thư viện trung gian gọi được nhiều hãng: không làm (quyết định đã ghi: giữ bộ khung).
 - **Cái giá:** mọi khác biệt giữa hai hãng dồn vào lớp nối và chỉ lộ ra khi chạy thật; hai lỗi lớn ở mục trên đều nằm ở đây. Thêm hãng thứ ba thì viết thêm một lớp nối.
 
@@ -84,14 +84,14 @@ Cả hai lỗi đều do Claude hiểu cùng một yêu cầu khác gpt-6-luna, 
 
 ### 3. Vì sao chấp nhận chữ tới một lần với Claude?
 
-- **Đã chọn:** gọi Claude trọn một lần, gửi cả câu trả lời một lần. Trong lúc chờ, dòng trạng thái đổi qua "Đang hiểu câu hỏi…", "Đang tìm trong kho…", rồi đứng ở "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" cho tới khi cả câu hiện ra (ở lượt có công cụ, "Đang viết câu trả lời…" chỉ được gửi ngay trước chữ đầu, nên với Claude gần như không thấy).
+- **Đã chọn:** gọi Claude trọn một lần, gửi cả câu trả lời một lần. Trong lúc chờ, dòng trạng thái đổi qua "Đang hiểu câu hỏi…", "Đang tìm trong kho…", rồi đứng ở "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" cho tới khi cả câu hiện ra ("Chi tiết để tra").
 - **Vì sao:** bộ khoá Bedrock bị từ chối khi xin chữ chạy dần; khi đổi tạm, chủ dự án ghi "không cần stream thật"; ngày 22/11 chủ dự án gác việc cấp quyền AWS tới khi tự xem lại (bài 5).
 - **Cách khác:** xin thêm quyền và viết đường chữ chạy dần: chưa làm; ước (chưa đo) chờ tới chữ đầu từ khoảng 13 giây còn 5,5–6 giây.
-- **Cái giá:** người dùng nhìn dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" khoảng 10 giây ở lượt đứng giữa (bài 34); lợi của "hiện trước, kiểm sau" (bài 6) mất, nên từ 15:42 22/11 ở lượt có công cụ chữ được giữ tới khi qua bước kiểm nguồn (bài 6, quyết định 4).
+- **Cái giá:** người dùng nhìn dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" khoảng 10 giây ở lượt đứng giữa (bài 34); lợi của "hiện trước, kiểm sau" (bài 6) mất, nên từ 15:42 22/11 ở lượt hỏi đáp về Huế trong ô chat chữ được giữ tới khi qua bước kiểm nguồn (bài 6, quyết định 4; đã nhìn trên trình duyệt 22/11).
 
 ### 4. Vì sao Claude có những đoạn dặn riêng, và đổi model thì phải đo lại những gì?
 
-- **Đã chọn:** lời dặn gửi gpt-6-luna không đổi một chữ. Khi chạy Claude, chương trình nối thêm ba đoạn dặn ngắn: cho xếp loại câu (địa bàn Huế gồm cả vùng ven, bài 22), cho câu thẻ lịch (một hai câu, giữ con số đi đúng vật), cho hiểu lệnh sửa lịch. Claude còn đọc hai thứ gpt-6-luna không đọc: mô tả của công cụ nộp câu trả lời (ở mọi lượt có công cụ; xem đoạn "Lỗi đắt nhất" ở trên) và một câu giữ chỗ trong lịch sử, đặt giữa hai câu hỏi liền nhau khi câu trả lời lượt trước không được lưu (nguyên văn ở phụ lục D).
+- **Đã chọn:** lời dặn gửi gpt-6-luna không đổi một chữ. Khi chạy Claude, chương trình nối thêm ba đoạn dặn ngắn: cho xếp loại câu (địa bàn Huế gồm cả vùng ven, bài 22), cho câu thẻ lịch (một hai câu, giữ con số đi đúng vật), cho hiểu lệnh sửa lịch. Claude còn đọc hai thứ riêng ("Chi tiết để tra"; nguyên văn ở phụ lục D).
 - **Vì sao:** mỗi đoạn có một ca đo làm lý do. Ví dụ ở bước xếp loại câu: cùng lời dặn, gpt-6-luna xếp nhầm 0 trên 56 lượt, Claude 2 trên 56 ở mức cao và 4 trên 56 ở mức vừa. Ở lệnh sửa lịch sau đoạn dặn: 27 trên 27 lượt đúng ý.
 - **Cách khác:** đoạn dặn thứ tư "nói thẳng, không lặp ý": đã thử trên 85 câu, câu dài thêm, trọng tâm 4,39 xuống 4,26 ⇒ gỡ.
 - **Cái giá:** mỗi lần đổi model phải đo lại ít nhất bước xếp loại câu, lệnh sửa lịch khó, lượt có công cụ, độ dài và điểm câu trả lời; nếu là hãng mới thì thêm năm chỗ cách gọi hay khác nhau: khuôn có ràng buộc, ép gọi công cụ, quyền chữ chạy dần, cách tắt suy luận, cách đếm token.
@@ -107,7 +107,7 @@ Lời báo là nguyên văn; các dòng đọc từ chương trình, chưa thử
 | khoá Bedrock hết hạn, hoặc thiếu chỗ trỏ tới file khoá lúc bật | "Không thể tạo câu trả lời vào lúc này." ở mọi câu hỏi | hết hạn: chủ dự án làm mới file khoá; thiếu chỗ trỏ: bật lại máy chủ cho đúng (bài 36) |
 | phần viết của một lượt quá 45 giây | cùng lời báo trên | người dùng bấm "Thử lại"; đã gặp một lần trong 156 lượt người dùng mô phỏng của Claude tối 21/11 (lúc hai model chạy cùng lúc trên một máy); lượt dài nhất khi chạy một mình là 28 giây (bài 34) |
 | quay về gpt-6-luna | chữ lại chạy dần, câu ngắn hơn | sửa một chữ trong cấu hình, khởi động lại máy chủ; **chưa làm được lúc này** (tài khoản OpenAI ngừng dùng) |
-| đổi sang model thứ ba | chưa biết | hãng mới thì viết lớp nối mới; đo lại các mục ở quyết định 5 |
+| đổi sang model thứ ba | chưa biết | hãng mới thì viết lớp nối mới; đo lại các mục ở quyết định 4 |
 
 ## Dễ nhầm
 
@@ -226,7 +226,11 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - Ép model gọi đúng một công cụ: Claude chỉ nhận "tự chọn" hoặc "không công cụ", nên lớp nối không ép.
 - Ở vòng mà mọi công cụ đã bị ẩn (hết lượt tìm), ép khuôn làm Claude viết rác vào khuôn (tên công cụ, chữ giữ chỗ, rỗng) 14 trên 22 lần; chỉ đưa công cụ "trả lời": đúng câu từ chối 20 trên 22, 0 rác.
 - Lời lỗi của lớp nối không mang thân phản hồi của Amazon (thân đó có mã tài khoản); chỗ đọc file khoá lỗi chỉ ghi tên loại lỗi, không ghi đường dẫn.
-- Tiền một câu ở mức thấp (lượt thật đầu tiên qua giao diện, 21/11): khoảng 0,018 USD trên Claude so với khoảng 0,0007 USD trên gpt-6-luna; lượt hỏi tiếp có tìm thêm 0,048 USD.
+- Tiền một câu ví dụ chạy thẳng qua code sản phẩm (không qua máy chủ, 21/11): khoảng 0,018 USD trên Claude so với khoảng 0,0007 USD trên gpt-6-luna (khoảng 25 lần); lượt hỏi tiếp có tìm thêm 0,048 USD. Mức suy luận của các lượt đó: báo cáo gốc không ghi; hướng dẫn đổi model ghi "mức thấp".
+- Quyết định 3, dòng trạng thái với Claude: ở lượt có công cụ, "Đang viết câu trả lời…" chỉ được gửi ngay trước chữ đầu, nên với Claude gần như không thấy (đã nhìn trên trình duyệt 22/11: lúc chờ chỉ một dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời…", tin bốn ý 29,5 giây); trừ lượt phải viết lại: dòng đó đứng suốt lần viết lại (bài 21).
+- Lớp nối, ví dụ một chỗ khác nhau: khuôn có ràng buộc kiểu "nhiều nhất 3 mục" bị Bedrock từ chối, nên lớp nối gỡ ràng buộc khỏi khuôn gửi đi; chương trình vẫn kiểm đủ khi nhận về.
+- Lỗi "xin công cụ mãi", diễn biến: gpt-6-luna gọi công cụ xong thì viết vào khuôn; Claude thì không. Phát lại một yêu cầu đã đủ dữ liệu: viết được 0 trên 8 lần ở mỗi mức suy luận; bỏ khuôn thì 14 trên 14. Bản sửa: ở lượt có công cụ, lớp nối không gửi khuôn mà thêm một công cụ nội bộ "trả lời" mang đúng khuôn đó; Claude gọi nó để nộp câu trả lời. Trên thước 29 câu làm trợ lý (bài 32): chạm trần vòng 6 xuống 0; nhóm 8 câu cần nhiều công cụ đạt 2 lên 7.
+- Quyết định 4, hai thứ Claude đọc mà gpt-6-luna không đọc: mô tả của công cụ nộp câu trả lời (ở mọi lượt có công cụ) và một câu giữ chỗ trong lịch sử, đặt giữa hai câu hỏi liền nhau khi câu trả lời lượt trước không được lưu.
 - Người chấm của bộ đo: 24/10–19/11 là Claude (chấm chính, đọc file đã che tên), gpt-6-luna chấm phụ một lần để đối chiếu; ban ngày 21/11, lúc đổi model viết, là gpt-6-luna; từ tối 21/11, khi gác gpt-6-luna, chấm bằng model đang chạy, và số mới không so thẳng với số cũ (bài 19).
 - Lớp nối có khoảng 20 ca test bằng phản hồi dựng sẵn, không gọi mạng (20 ca đếm 21/11; 21 ca đếm 22/11; bài 38).
 - Mức suy luận của gpt-6-luna: chương trình không gửi mức nào (trừ nhóm lịch, kể cả hiểu lệnh sửa lịch), tức model chạy mức vừa mặc định. Ngày 19/11 đã đo mức thấp: chất lượng không khác, nhưng một lần nói trái nguồn ở bộ câu an toàn, nên giữ mức vừa.
@@ -248,7 +252,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - Không trần token: chú thích trong `generator_openai_full_corpus.py` (trên `answer_agent`), `settings.yaml` (`max_tokens`); 3.974 lần gọi, 2 chạm trần 512: `bai_hoc/VIEC_MOI_XONG.md` mục 9 [chép].
 - Chữ tới một lần, "không cần stream thật": `bedrock_model.py` (`stream_response`), `HIEN_TRANG.md` mục 4 gạch 09:41; ước 5,5–6 giây: `THOI_GIAN_DI_DAU.md` mục 3 hàng A [ước, chưa đo]. Bốn dòng trạng thái: `frontend/src/chat.jsx` dòng 21–24 [code].
 - Đoạn dặn riêng Claude: `backend/llm/full_corpus_prompt.py` (hằng `SONNET_*`), hàm `kem` trong `generator_openai_full_corpus.py`; số 0/56, 2/56, 4/56: `data/thu_bedrock_2026-11-21/c_harness/RA_HARNESS.md` dòng 22 [riêng tư]; 27/27: `guides/DOI_MODEL_VIET.md` mục 1; đoạn "nói thẳng" gỡ: cùng chỗ.
-- Bảng giá: `backend/llm/pricing.py` (`PRICES_PER_M`) [code]. Tiền 0,00039 ↔ 0,0146 USD: `KET_QUA_2A.md`; 0,018 ↔ 0,0007: `report_agent/2026-11-21/b_bedrock_sonnet.md` mục 3.
+- Bảng giá: `backend/llm/pricing.py` (`PRICES_PER_M`) [code]. Tiền 0,00039 ↔ 0,0146 USD: `KET_QUA_2A.md`; 0,018 ↔ 0,0007: `report_agent/2026-11-21/b_bedrock_sonnet.md` mục 3 dòng 44 (hàng "LƯỢT THẬT qua code sản phẩm… (không qua server)", không ghi mức suy luận; mục 3b "qua giao diện" là lượt khác, mức `low`, không có số 0,018 ↔ 0,0007); "mức `low`" và 0,048 USD: `guides/DOI_MODEL_VIET.md` dòng 186 [chép, mở 16:52 22/11; sửa theo biên bản `data/hoc_cung_D/kiem/phan_xu_va_cap_nhat_15h42.md` Phần 3 dòng 3 — riêng tư]. "Không lọc theo loại câu" (thay "đủ các loại câu", suy luận của người sửa trước): biên bản cùng file, Phần 1 bảng hai dòng 12. Trình duyệt 22/11: `bai_hoc/VIEC_MOI_XONG.md` mục 44 [chép].
 - Giữ một phiên chụp 10 loại lời gọi giống từng byte: `guides/DOI_MODEL_VIET.md` mục 1; `report_agent/2026-11-21/b_bedrock_sonnet.md` dòng 75 [người thứ hai kiểm].
 - Lời báo "Không thể tạo câu trả lời vào lúc này.": `backend/api/routes/chat.py` (`GENERATION_FAILURE_MESSAGE`); mọi lỗi Bedrock là `GenerationError`: lớp `BedrockError` [code]. Tình huống khoá hết hạn [đọc từ chương trình, chưa thử thật]; đọc lại file khoá mỗi lần gọi: `BedrockClaudeModel._invoke` [code]. 12,6 giây là lời gọi dài nhất trên thước 29 câu (`guides/DOI_MODEL_VIET.md` mục 3), không phải lượt dài nhất.
 - Cách đổi về luna: `guides/DOI_MODEL_VIET.md` mục 2. Đường luna khoá cứng `gpt-6-luna`: cùng trang mục 6.
