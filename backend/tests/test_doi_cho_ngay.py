@@ -123,3 +123,40 @@ def test_flag_on_leaves_other_day_requests_and_mixed_turns_as_before(cau, ra):
     f, k, kq = _luot_sua(cau, ra, sua_lich_doi_cho_ngay=True)
     cau_bao = [d["cau"] for d in s.thay_doi(f.bang_lich_v2, kq)]
     assert s.CAU_VIEC_KHAC in cau_bao and not any(c.startswith("Đã đổi chỗ các điểm") for c in cau_bao)
+
+
+# ---------- Tin vừa nhờ đổi chỗ hai ngày vừa HỎI (22/11; lượt đo 21/11 ra hai dòng "Chưa làm", dòng đầu nói sai là không đổi chỗ ngày được) ----------
+@pytest.mark.parametrize("cau, so_ngay, mong", [
+    ("đổi chỗ ngày 1 với ngày 2, mà vé vào Đại Nội bao nhiêu?", 2, (1, 2)),          # tin của lượt đo
+    ("Hoán đổi ngày đầu với ngày cuối à mà Đại Nội mở cửa mấy giờ", 3, (1, 3)),       # không dấu phẩy, từ nối
+    ("Đổi chỗ ngày 1 với ngày 2 được không? Cho mình hỏi vé lăng Tự Đức bao nhiêu", 3, (1, 2)),
+    ("vé vào Đại Nội bao nhiêu, đổi chỗ hai ngày cho nhau nhé", 2, (1, 2)),            # câu hỏi đứng trước
+])
+def test_reads_the_swap_clause_when_the_message_also_asks_a_question(cau, so_ngay, mong):
+    assert s.cap_ngay_doi_cho(cau, so_ngay) is None and s.cap_ngay_doi_cho_kem_hoi(cau, so_ngay) == mong
+
+
+@pytest.mark.parametrize("cau, so_ngay", [
+    ("đổi chỗ ngày 1 với ngày 2", 3),                                                 # một vế: việc của `cap_ngay_doi_cho`
+    ("đừng đổi chỗ ngày 1 với ngày 2, mà vé vào Đại Nội bao nhiêu?", 3),              # phủ định
+    ("đổi chỗ ngày 1 với ngày 2, bỏ chùa Thiên Mụ, mà vé bao nhiêu?", 3),             # vế khác còn ý sửa
+    ("đổi chỗ ngày 1 với ngày 2, mà ngày 3 có mưa không?", 3),                        # vế hỏi nhắc một ngày của lịch
+    ("đổi chỗ ngày 1 với ngày 2, gộp ngày 3 vào ngày 2, vé bao nhiêu?", 3),           # hai việc về ngày
+    ("đổi chỗ ngày 1 với ngày 2, rồi đổi chỗ ngày 2 với ngày 3, vé bao nhiêu?", 3),   # hai vế đều đọc được cặp
+    ("đổi chỗ ngày 1 với ngày 4, mà vé bao nhiêu?", 3),                               # ngày ngoài lịch
+])
+def test_swap_clause_reader_refuses_anything_that_is_not_one_plain_swap_plus_questions(cau, so_ngay):
+    assert s.cap_ngay_doi_cho_kem_hoi(cau, so_ngay) is None
+
+
+def test_swap_plus_question_swaps_the_days_and_says_the_question_is_unanswered():
+    ra = CHT + [s.HanhDongHoi(loai="hoi_them")]
+    cau = "Đổi chỗ ngày 1 với ngày 3, mà vé vào Đại Nội bao nhiêu?"
+    f, k, kq = _luot_sua(cau, ra, sua_lich_doi_cho_ngay=True, sua_lich_kem_hoi=True)
+    bao = [d["cau"] for d in s.thay_doi(f.bang_lich_v2, kq)]
+    assert bao[0].startswith("Đã đổi chỗ các điểm buổi sáng và chiều của ngày 1 với ngày 3") and s.CAU_VIEC_KHAC not in bao
+    assert sum(c.startswith("Chưa làm: phần câu hỏi") for c in bao) == 1  # nói thật: câu hỏi chưa được trả lời
+    assert s._vi_tri(kq["khung"]) != s._vi_tri(k) and not v2.kiem_khung_v2(f.bang_lich_v2, kq["khung"])
+    # model KHÔNG báo có câu hỏi (chỉ "chưa hỗ trợ") ⇒ đúng như trước: dòng "Chưa làm" cố định, lịch giữ nguyên
+    f, k, kq = _luot_sua(cau, CHT, sua_lich_doi_cho_ngay=True, sua_lich_kem_hoi=True)
+    assert kq["khung"] == k and s.CAU_VIEC_KHAC in [d["cau"] for d in s.thay_doi(f.bang_lich_v2, kq)]
