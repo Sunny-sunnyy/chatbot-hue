@@ -37,7 +37,7 @@ phụ: biểu mẫu "Lên kế hoạch" (code xếp lịch, bài 14) và hỏi b
 >
 > Hệ thống có hai giai đoạn. **Chuẩn bị:** cắt mỗi bài theo đúng cấu trúc, mỗi đoạn văn, mục danh sách hay dòng bảng là một đoạn, được khoảng 8.400 đoạn. Mỗi
 > đoạn mang tên bài và tên mục. Mỗi đoạn được biến thành vector nghĩa bằng model nhỏ e5-small chạy ngay trên máy, cộng một bảng từ khoá BM25, rồi cất vào
-> Qdrant. Mỗi lần khởi động, hệ thống tự so dấu từng file kho với phiếu chuẩn bị; kho đã sửa mà chưa chuẩn bị lại thì nó từ chối chạy. **Trả lời:** câu hỏi được
+> Qdrant. Mỗi lần khởi động, hệ thống tự so dấu từng file kho với phiếu chuẩn bị; kho đã sửa mà chưa chuẩn bị lại thì nó không nhận câu hỏi (server vẫn bật nhưng mọi câu nhận thông báo "Dữ liệu tra cứu cần được lập chỉ mục lại"). **Trả lời:** câu hỏi được
 > xếp loại trước: chào hỏi, về Huế, ngoài chủ đề hay khẩn cấp. Câu về Huế được tìm theo nghĩa lấy 30 ứng viên, chấm lại theo từ khoá, trộn hai bảng xếp hạng,
 > giữ 10 đoạn. Model gpt-6-luna đọc 10 đoạn đó rồi viết, và code kiểm mọi số nguồn trước khi hiện.
 >
