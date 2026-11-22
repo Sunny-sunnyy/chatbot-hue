@@ -107,9 +107,9 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 
 | Số | Bài | |
 |---|---|---|
-| 39 | Đồ án được làm thế nào: một người quyết định và nhiều coding agent | ⬜ |
-| 40 | Làm được tới đâu, còn yếu ở đâu, hướng phát triển | ⬜ |
-| 41 | Kể lại toàn bộ trong một phút, trong năm phút, và kịch bản chạy thử | ⬜ |
+| 39 | [Đồ án được làm thế nào: một người quyết định và nhiều coding agent](39_DO_AN_DUOC_LAM_THE_NAO.md) | ✅ |
+| 40 | [Làm được tới đâu, còn yếu ở đâu, hướng phát triển](40_LAM_DUOC_TOI_DAU.md) | ✅ |
+| 41 | [Kể lại toàn bộ trong một phút, trong năm phút, và kịch bản chạy thử](41_KE_LAI_TOAN_BO.md) | ✅ |
 
 ## Phụ lục để tra (viết sau khi đường chính đủ)
 
@@ -143,7 +143,7 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 
 **Nửa để tra** (bài nào có mục nào thì ghi mục đó; bài nền thường chỉ có hai mục cuối)
 
-*Hai mục 7 và 8 thêm trưa 22/11/2026 theo yêu cầu của anh: đọc xong phải giải thích được từng quyết định và nói được "hỏng thì sao", không chỉ kể được hệ thống gồm những gì. Mục "Vì sao không làm cách khác" của khuôn cũ nhập vào mục 7. **Bài 6 (kiến trúc) là bài mẫu đầu tiên theo khuôn mới**; anh đã đọc và duyệt trưa 22/11. Mọi bài từ 1 tới 38 đã theo khuôn này.*
+*Hai mục 7 và 8 thêm trưa 22/11/2026 theo yêu cầu của anh: đọc xong phải giải thích được từng quyết định và nói được "hỏng thì sao", không chỉ kể được hệ thống gồm những gì. Mục "Vì sao không làm cách khác" của khuôn cũ nhập vào mục 7. **Bài 6 (kiến trúc) là bài mẫu đầu tiên theo khuôn mới**; anh đã đọc và duyệt trưa 22/11. Mọi bài từ 1 tới 40 đã theo khuôn này; bài 41 (kể lại và kịch bản chạy thử) có cấu trúc riêng.*
 
 11. **Cấu hình đang chạy:** bảng mục · giá trị · dùng để làm gì và vì sao là giá trị đó · đã thử giá trị khác chưa.
 12. **Đã so:** vấn đề thật đã gặp · so cái gì với cái gì, trên bộ câu nào · bảng kết quả kể cả phương án bị bỏ · đọc bảng thế nào · đã chọn gì · giới hạn của phép đo. Mỗi con số ghi rõ đo với model viết nào.
