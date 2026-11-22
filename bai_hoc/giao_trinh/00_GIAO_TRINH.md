@@ -141,7 +141,7 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 
 **Nửa để tra** (bài nào có mục nào thì ghi mục đó; bài nền thường chỉ có hai mục cuối)
 
-*Hai mục 7 và 8 thêm trưa 22/11/2026 theo yêu cầu của anh: đọc xong phải giải thích được từng quyết định và nói được "hỏng thì sao", không chỉ kể được hệ thống gồm những gì. Mục "Vì sao không làm cách khác" của khuôn cũ nhập vào mục 7. **Bài 6 (kiến trúc) là bài mẫu đầu tiên theo khuôn mới**; anh đã đọc và duyệt trưa 22/11. Các bài 1, 3, 4 đã theo khuôn này. Các bài viết trước đó (2, 7–16, 21) vẫn theo khuôn cũ, còn mục "Vì sao không làm cách khác" ở nửa để tra, và đang được chuyển dần.*
+*Hai mục 7 và 8 thêm trưa 22/11/2026 theo yêu cầu của anh: đọc xong phải giải thích được từng quyết định và nói được "hỏng thì sao", không chỉ kể được hệ thống gồm những gì. Mục "Vì sao không làm cách khác" của khuôn cũ nhập vào mục 7. **Bài 6 (kiến trúc) là bài mẫu đầu tiên theo khuôn mới**; anh đã đọc và duyệt trưa 22/11. Các bài 1, 3, 4, 21 đã theo khuôn này. Các bài viết trước đó (2, 7–16) vẫn theo khuôn cũ, còn mục "Vì sao không làm cách khác" ở nửa để tra, và đang được chuyển dần.*
 
 11. **Cấu hình đang chạy:** bảng mục · giá trị · dùng để làm gì và vì sao là giá trị đó · đã thử giá trị khác chưa.
 12. **Đã so:** vấn đề thật đã gặp · so cái gì với cái gì, trên bộ câu nào · bảng kết quả kể cả phương án bị bỏ · đọc bảng thế nào · đã chọn gì · giới hạn của phép đo. Mỗi con số ghi rõ đo với model viết nào.
