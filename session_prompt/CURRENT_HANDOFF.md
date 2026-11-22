@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — nhật ký theo giờ của ngày
 
-Cập nhật: 17:47 21/11/2026 (phiên điều phối; viết lại sau lượt cả nhóm soát xung đột 21/11). Sổ việc — việc đang mở, ai làm, bước kế, quyết định đang chờ — là `session_prompt/VIEC_DANG_MO.md`; trang này KHÔNG chép bước kế.
+Cập nhật: 08:24 22/11/2026 (phiên điều phối; mở phiên sáng 22/11, hai dòng tối 21/11 đã dời sang `report_agent/2026-11-21/TONG_HOP.md`). Sổ việc — việc đang mở, ai làm, bước kế, quyết định đang chờ — là `session_prompt/VIEC_DANG_MO.md`; trang này KHÔNG chép bước kế.
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 1. `session_prompt/HIEN_TRANG.md` (đủ) ⇒ `session_prompt/VIEC_DANG_MO.md` khối đầu + khối có tên mình ⇒ `session_prompt/sessions/STATUS_<X>.md` của mình.
@@ -8,5 +8,4 @@ Cập nhật: 17:47 21/11/2026 (phiên điều phối; viết lại sau lượt 
 3. Dòng theo giờ các ngày trước: `report_agent/<ngày>/TONG_HOP.md`; bản tới tối 19/11: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-19.md`.
 
 ## Ghi trong ngày (phiên điều phối nối dòng mới ở đây; cuối ngày dời sang `TONG_HOP.md` của ngày)
-- 18:22 21/11/2026 — mở phiên tối (A, B, C, E; chủ dự án vắng tới 21:30, đã duyệt tiền API). Đã làm: giao theo khối A của sổ việc; khởi động agent con soát tích hợp (bước 2) trên `187cf6e5`; gộp nhánh bỏ dòng ghi nguồn bản đồ ⇒ main `cf1a70c3`; C sửa bộ chạy 12 vai (đặt rõ nhà cung cấp cho cả hai nhánh, tắt bộ nhớ đệm câu trả lời). Chỗ lệch các phiên báo: khối prompt chủ dự án dán lúc mở là bản CŨ của `START_SESSION.md` (các phiên làm theo bản trong repo) — nói với chủ dự án khi về.
-- 22:26 21/11/2026 — KẾT PHIÊN TỐI 21/11 (chủ dự án về 21:34, cho kết phiên 22:2x). Tối nay: mốc hai thước (12 vai đọc mù ba lượt; demo × 10) · bốn tính năng mở cho người dùng (main `d1d5b139`) · bảng quán bản 2, trang theo dõi, bộ đọc khoảng ngày, sửa test đỏ đã gộp · chủ dự án: gác model cũ (hết tiền OpenAI), một harness chỉ đo trên model đang chạy, không hỏi bật / tắt, nhắc lần thứ mười về đo quá nhiều ⇒ luật đo gọn, chọn "đề xuất sửa kho = lệnh chạy tay + cập nhật riêng bài đã sửa" làm từ 22/11, đồng ý bổ sung kho (đọc nháp trước) và cấp quyền chữ chạy dần. Máy ngủ 20:11–21:29. Việc dở + thứ tự phiên sau: sổ việc khối A.
+- 08:24 22/11/2026 — mở phiên sáng 22/11 (phiên điều phối `hue-rag-7a`, B `hue-rag-b1`, C `hue-rag-4f`, phiên đo `hue-rag-67`; chủ dự án có mặt). Máy mở lại 08:13 ⇒ `/tmp` mất, sổ worktree cũ đã gỡ; Qdrant 9.436 điểm. Đã giao: phép thử khói sau bản gộp tối 21/11 (ĐẠT 10 / 10 bước, giữ bản "mục web chỉ mở khi cả câu bị từ chối") · hàng [7] chia hai nửa (C lệnh cập nhật riêng bài đã sửa, B lệnh đề xuất, phiên đo viết phép kiểm) · đọc nhánh công cụ "gần một điểm có gì". Đã gửi chủ dự án hướng dẫn cấp quyền chữ chạy dần và nhắc một lần việc đọc bài nháp "Huế → Hội An". Chi tiết: sổ việc khối A, gạch đầu.
