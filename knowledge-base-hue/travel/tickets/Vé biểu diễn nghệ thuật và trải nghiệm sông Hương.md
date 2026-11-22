@@ -143,12 +143,18 @@ Dịch vụ này chỉ cung cấp phương tiện thuyền rồng di chuyển ng
 - **Thuê thuyền dạo sông Hương 60 phút trọn gói (Khảo sát Lá Quê Travel):**
   + *Thuyền nhỏ:* 650.000 đồng/chuyến.
   + *Thuyền lớn:* 900.000 đồng/chuyến.
-- **Thuê thuyền theo các tuyến tham quan danh lam thắng cảnh di tích (Khởi hành từ Bến Tòa Khâm):**
-  + *Tuyến Bến Tòa Khâm – Chùa Thiên Mụ (1 chiều):* Thuyền đơn 500.000 đồng/thuyền; Thuyền đôi 650.000 đồng/thuyền.
-  + *Tuyến Bến Tòa Khâm – Chùa Thiên Mụ – Bến Tòa Khâm (Khứ hồi, thời gian 90 – 120 phút):* Thuyền đơn 600.000 – 800.000 đồng/thuyền; Thuyền đôi 700.000 – 1.000.000 đồng/thuyền.
-  + *Tuyến Bến Tòa Khâm – Chùa Thiên Mụ – Điện Hòn Chén:* Thuyền đơn 1.100.000 – 1.200.000 đồng/thuyền; Thuyền đôi 1.300.000 – 1.400.000 đồng/thuyền.
-  + *Tuyến Bến Tòa Khâm – Chùa Thiên Mụ – Điện Hòn Chén – Lăng Minh Mạng:* Thuyền đơn 1.400.000 đồng/thuyền; Thuyền đôi 1.600.000 đồng/thuyền.
-  + *Tuyến mở rộng (Nhà vườn An Hiên, Chùa Thiên Mụ, Điện Hòn Chén, Lăng Minh Mạng, Lăng Gia Long):* Thuyền đơn từ 1.700.000 đồng; Thuyền đôi từ 1.900.000 đồng/thuyền.
+- **Thuê thuyền theo các tuyến tham quan di tích (Khởi hành từ Bến Tòa Khâm):** Mỗi nhà thuyền niêm yết một bảng giá riêng, tên tuyến và cách gọi loại thuyền cũng khác nhau, nên không có một mức giá chung cho cả bến. Giá do từng nhà thuyền tự niêm yết, nên hỏi lại trước khi đặt. Hai bảng giá dưới đây đối chiếu ngày 22/11/2026. Thuyền Rồng Huế gọi "thuyền đơn" (tối đa 10 khách) và "thuyền đôi" (tối đa 30 khách); Lá Quê Travel gọi "thuyền rồng nhỏ" (10 khách) và "thuyền rồng lớn" (30 khách).
+  + *Thuyền Rồng Huế, tuyến Bến Tòa Khâm – Chùa Thiên Mụ:* Thuyền đơn 500.000 đồng (1 chiều) hoặc 600.000 đồng (2 chiều); Thuyền đôi 650.000 đồng (1 chiều) hoặc 700.000 đồng (2 chiều).
+  + *Thuyền Rồng Huế, tuyến Bến Tòa Khâm – Nhà vườn An Hiên – Chùa Thiên Mụ:* Thuyền đơn 450.000 đồng (1 chiều) hoặc 550.000 đồng (2 chiều); Thuyền đôi 600.000 đồng (1 chiều) hoặc 700.000 đồng (2 chiều).
+  + *Thuyền Rồng Huế, tuyến Bến Tòa Khâm – Chùa Thiên Mụ – Điện Hòn Chén:* Thuyền đơn 1.200.000 đồng/thuyền; Thuyền đôi 1.400.000 đồng/thuyền.
+  + *Thuyền Rồng Huế, tuyến Chùa Thiên Mụ – Điện Hòn Chén (đón khách tại bến chùa Thiên Mụ, không xuất phát từ Bến Tòa Khâm):* Thuyền đơn 1.100.000 đồng/thuyền; Thuyền đôi 1.300.000 đồng/thuyền.
+  + *Thuyền Rồng Huế, tuyến Bến Tòa Khâm – Chùa Thiên Mụ – Điện Hòn Chén – Lăng Minh Mạng:* Thuyền đơn 1.700.000 đồng/thuyền; Thuyền đôi 2.000.000 đồng/thuyền.
+  + *Thuyền Rồng Huế, tuyến Bến Tòa Khâm – Chùa Thiên Mụ – Điện Hòn Chén – Lăng Minh Mạng – Lăng Gia Long:* Thuyền đơn 1.700.000 đồng/thuyền; Thuyền đôi 1.900.000 đồng/thuyền.
+  + *Lá Quê Travel, tuyến Bến Tòa Khâm – Chùa Thiên Mụ (45 – 60 phút):* Thuyền rồng nhỏ 750.000 đồng; Thuyền rồng lớn 1.000.000 đồng.
+  + *Lá Quê Travel, tuyến Bến Tòa Khâm – Chùa Thiên Mụ – Bến Tòa Khâm (Khứ hồi, 90 – 120 phút):* Thuyền rồng nhỏ 800.000 đồng; Thuyền rồng lớn 1.100.000 đồng.
+  + *Lá Quê Travel, tuyến Bến Tòa Khâm – Nhà vườn An Hiên – Chùa Thiên Mụ (70 – 90 phút):* Thuyền rồng nhỏ 1.000.000 đồng; Thuyền rồng lớn 1.300.000 đồng.
+  + *Lá Quê Travel, tuyến Bến Tòa Khâm – Chùa Thiên Mụ – Nhà vườn An Hiên – Bến Tòa Khâm (Khứ hồi, 150 phút):* Thuyền rồng nhỏ 1.100.000 đồng; Thuyền rồng lớn 1.400.000 đồng.
+  + *Các tuyến xa của Lá Quê Travel:* Lá Quê Travel không niêm yết giá cho các tuyến tới Điện Hòn Chén, Lăng Minh Mạng, Lăng Gia Long; nhà thuyền này cho biết khách thường chọn Chùa Thiên Mụ và Nhà vườn An Hiên vì đường xa và thuyền rồng chạy khá chậm.
 
 *(Lưu ý: Mức giá thuê thuyền tham quan trên chưa bao gồm vé vào cổng các điểm di tích như Điện Hòn Chén, Lăng Minh Mạng, Lăng Gia Long hay Nhà vườn An Hiên).*
 
@@ -229,7 +235,7 @@ Bảng đối chiếu chuẩn hóa thông tin dữ liệu tính đến mốc kh�
 | **Vé Ca Huế khách lẻ ghép thuyền** | Bến Tòa Khâm (P. Thuận Hóa) / Các nhà thuyền & đại lý du lịch | Suất 1: 19h00<br>Suất 2: 20h00<br>Suất 3: 21h00 | Tối thiểu 50 phút | **100.000 – 130.000 / khách Việt**<br>**150.000 / khách quốc tế** | Ghế thuyền rồng lớn, xem Ca Huế 50 phút, ngắm sông Hương, 01 hoa đăng thả sông | Khảo sát thương mại 09/2026<br>(Nguồn Cấp 3) |
 | **Thuê nguyên thuyền đơn nghe Ca Huế** | Bến Tòa Khâm (P. Thuận Hóa) / Đơn vị vận tải & lữ hành | Đặt theo yêu cầu (08h00 – 24h00) | 50 – 60 phút | **1.200.000 – 1.500.000 / thuyền**<br>(Sức chứa tối đa 8 – 15 khách) | Thuyền đơn riêng, dàn nghệ sĩ riêng ít nhất 7 người, hoa đăng thả sông | Khảo sát thương mại 09/2026<br>(Nguồn Cấp 3) |
 | **Thuê nguyên thuyền đôi nghe Ca Huế** | Bến Tòa Khâm (P. Thuận Hóa) / Đơn vị vận tải & lữ hành | Đặt theo yêu cầu (08h00 – 24h00) | 50 – 60 phút | **1.600.000 – 2.500.000 / thuyền**<br>(Sức chứa tối đa 25 – 35 khách) | Thuyền đôi lớn riêng, dàn nghệ sĩ riêng ít nhất 8 người, hoa đăng thả sông | Khảo sát thương mại 09/2026<br>(Nguồn Cấp 3) |
-| **Thuê thuyền dạo ngắm cảnh (không Ca Huế)** | Bến Tòa Khâm (P. Thuận Hóa) / Các nhà thuyền du lịch | Ban ngày & tối (theo yêu cầu) | 60 phút hoặc tính theo giờ | **450.000 – 650.000 (thuyền đơn)**<br>**600.000 – 900.000 (thuyền đôi)** | Phương tiện thuyền rồng di chuyển ngắm cảnh sông Hương, áo phao. *(Không có nghệ sĩ)* | Khảo sát thương mại 09/2026<br>(Nguồn Cấp 3) |
+| **Thuê thuyền dạo ngắm cảnh (không Ca Huế)** | Bến Tòa Khâm (P. Thuận Hóa) / Thuyền Rồng Huế, Lá Quê Travel | Ban ngày & tối (theo yêu cầu) | 60 phút hoặc tính theo giờ | **Thuyền Rồng Huế: 450.000 (thuyền đơn) / 600.000 (thuyền đôi)** cho giờ đầu<br>**Lá Quê Travel: 650.000 (thuyền nhỏ) / 900.000 (thuyền lớn)** cho 60 phút | Phương tiện thuyền rồng di chuyển ngắm cảnh sông Hương, áo phao. *(Không có nghệ sĩ)* | Khảo sát thương mại 09/2026<br>(Nguồn Cấp 3) |
 | **Tour ăn tối & nghe Ca Huế trên thuyền** | Bến Tòa Khâm (P. Thuận Hóa) / Đơn vị du lịch Lá Quê | Buổi chiều tối (theo đặt trước) | 90 – 120 phút | **500.000 – 1.550.000 / khách**<br>(Tùy chọn menu HT01–HT05) | Thực đơn ẩm thực Huế ăn tối trên thuyền, nghe biểu diễn Ca Huế, thả hoa đăng | Khảo sát thương mại 09/2026<br>(Nguồn Cấp 3) |
 | **Du thuyền riêng Azerai La Residence** | Bến riêng Azerai (5 Lê Lợi) / Khách sạn Azerai La Residence | Sáng, chiều hoàng hôn & tối | 60 – 120 phút | Báo giá theo gói resort cao cấp<br>(Đặt trước 6h – 24h) | Du thuyền Moon River/Long Giang riêng, đồ uống trà/cocktail hoặc bữa ăn cao cấp | Hiện hành<br>(Nguồn Cấp 2/3: azerai.com) |
 
@@ -250,3 +256,8 @@ Bảng đối chiếu chuẩn hóa thông tin dữ liệu tính đến mốc kh�
    - Mùa lý tưởng nhất để du thuyền và nghe Ca Huế trên sông Hương là mùa khô (từ tháng 3 đến tháng 9).
    - Vào mùa mưa lũ (thường từ tháng 10 đến tháng 12), nếu mực nước sông Hương dâng cao hoặc có lệnh cấm xuất bến do thời tiết xấu từ Cảng vụ Đường thủy nội địa, toàn bộ hoạt động thuyền rồng sẽ tạm ngừng để đảm bảo an toàn tính mạng cho du khách. Khi đó, du khách nên liên hệ hoàn hủy vé hoặc chuyển sang xem Ca Huế thính phòng trong nhà.
    - Khi bước lên thuyền, 100% hành khách bắt buộc phải mặc áo phao theo đúng quy định an toàn giao thông đường thủy trước khi thuyền nhổ neo rời bến.
+
+## Nguồn dữ liệu
+
+- Giá thuê thuyền rồng theo giờ và theo tuyến của Thuyền Rồng Huế (đối chiếu ngày 22/11/2026): https://thuyenronghue.com/thue-thuyen-rong
+- Giá thuê thuyền rồng theo giờ và theo tuyến của Lá Quê Travel (đối chiếu ngày 22/11/2026): https://cahuetrensonghuong.com/thue-thuyen-rong-dao-song-huong/
