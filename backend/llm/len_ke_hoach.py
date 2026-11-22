@@ -290,6 +290,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             # cờ `sua_lich_doi_cho_ngay`: câu CHỈ nhờ đổi chỗ hai ngày (code đọc được cặp ngày, lượt không có ý nào khác đã áp / bị chặn) ⇒ hoán đổi thật
             sach = not (kq["da_ap"] or kq["khong_doi"] or kq["doi_truong"] or kq["ngay_di"] or kq["the"] or bi_chan)
             cap = sl.cap_ngay_doi_cho(query, luu["khung"]["tham_so"]["so_ngay"]) if flags.sua_lich_doi_cho_ngay and sach else None
+            if cap is None and hoi_them and flags.sua_lich_doi_cho_ngay and sach:  # tin còn kèm câu hỏi (model báo) ⇒ đọc riêng vế nhờ đổi chỗ
+                cap = sl.cap_ngay_doi_cho_kem_hoi(query, luu["khung"]["tham_so"]["so_ngay"])
             if cap:
                 kq = sl.doi_cho_ngay(bang, luu, *cap)
             else:

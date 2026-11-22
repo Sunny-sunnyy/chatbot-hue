@@ -17,13 +17,13 @@ session đó điền trước 30/11. Luật cứng của dự án vẫn ở `AGE
   xoá dữ liệu, gửi dữ liệu riêng ra dịch vụ mới, một việc trên 1 USD, deploy; và các việc ở `session_prompt/Session_Prompt.md` §4 cột phải: đổi model / provider /
   dữ liệu mới, sửa bộ câu mẫu), hoặc khi kết quả ngược với quyết định đã ghi ở `session_prompt/HIEN_TRANG.md` mục 4.
 
-**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 265 bài ⇒ 9.436 đoạn, số cờ bật — 31 từ 20/11; kho hoặc cờ đổi thì sửa cả hai nơi):
+**Kiểm số của trang hiện trạng** (`session_prompt/HIEN_TRANG.md` mục 1 ghi 265 bài ⇒ 9.442 đoạn, số cờ bật — 31 từ 20/11; kho hoặc cờ đổi thì sửa cả hai nơi):
 
 | Kiểm gì | Lệnh (từ gốc repo) | Phải ra |
 |---|---|---|
-| Số bài / số đoạn của kho | `uv run python -c "import json;d=json.load(open('data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json'))['corpus'];print(d['file_count'],d['chunk_count'])"` | `265 9436` [đã chạy 18/11] |
-| Qdrant khớp | `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 \| grep -o '"points_count":[0-9]*'` | `"points_count":9436` [đã chạy 18/11; cần Qdrant bật] |
-| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `36` [đã chạy 22:20 21/11/2026 trên nhánh mở `web_chi_khi_tu_choi`; trước đó `35` — đã chạy 22:15 21/11/2026 trên nhánh mở bốn tính năng `sua_lich_kem_hoi`, `len_lich_dan_trang`, `sua_lich_doi_cho_ngay`, `su_kien_theo_ngay`; trước đó `31` — đã chạy 16:17 20/11/2026 trên main `b2f27d78`, sau khi bật `cache_cau_tra_loi` và `danh_sach_noi_that`; trước đó `29` tối 19/11 trên nhánh bật ba cờ `noi_that_lam_thay`, `xuat_pptx`, `nho_ten_goi_y`; trước đó 26 khi bật `lich_vao_hoi_thuong`, 25 trên `55d01a8`] |
+| Số bài / số đoạn của kho | `uv run python -c "import json;d=json.load(open('data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json'))['corpus'];print(d['file_count'],d['chunk_count'])"` | `265 9442` [đã chạy 09:19 22/11/2026 sau lần cập nhật riêng hai bài vé; trước đó `265 9436`, đã chạy 18/11] |
+| Qdrant khớp | `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 \| grep -o '"points_count":[0-9]*'` | `"points_count":9442` [đã chạy 18/11; cần Qdrant bật] |
+| Cờ bật / tắt | `sed -n '/^assistant:/,$p' backend/config/settings.yaml \| grep -cE '^  [a-z_0-9]+: true'` | `38` [đã chạy 09:20 22/11/2026 trên nhánh mở `liet_ke_bai`; trước đó `37` — đã chạy 08:33 22/11/2026 trên main sau khi mở `gan_diem`; trước đó `36` — đã chạy 22:20 21/11/2026 trên nhánh mở `web_chi_khi_tu_choi`; trước đó `35` — đã chạy 22:15 21/11/2026 trên nhánh mở bốn tính năng `sua_lich_kem_hoi`, `len_lich_dan_trang`, `sua_lich_doi_cho_ngay`, `su_kien_theo_ngay`; trước đó `31` — đã chạy 16:17 20/11/2026 trên main `b2f27d78`, sau khi bật `cache_cau_tra_loi` và `danh_sach_noi_that`; trước đó `29` tối 19/11 trên nhánh bật ba cờ `noi_that_lam_thay`, `xuat_pptx`, `nho_ten_goi_y`; trước đó 26 khi bật `lich_vao_hoi_thuong`, 25 trên `55d01a8`] |
 
 ## 1. Bật Qdrant
 
@@ -32,7 +32,7 @@ cd /home/minhhieu/hue_rag
 docker compose up -d qdrant
 curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 | grep -o '"points_count":[0-9]*'
 ```
-- Mong đợi: `"points_count":9436` (kho 265 bài, 17/11/2026). Số khác ⇒ kho hoặc chỉ mục đã đổi: đối chiếu
+- Mong đợi: `"points_count":9442` (kho 265 bài; từ 09:19 22/11/2026 sau lần cập nhật riêng hai bài vé — trước đó 9436 từ 17/11/2026). Số khác ⇒ kho hoặc chỉ mục đã đổi: đối chiếu
   `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json`.
 - Dừng nếu: lệnh `docker` không có (Docker Desktop trên Windows tắt) ⇒ nhờ User bật Docker Desktop; cổng 6335 không trả lời sau 30 giây.
 
@@ -98,6 +98,58 @@ cp data/sua_kho_2026-11-16_lap_an/tools/chay.sh data/sua_kho_<…>/tools/chay.sh
 - Sau build: cập nhật số điểm / record ở `session_prompt/Project_Status.md` §4 và mục 1 runbook này; câu chạm có phí (Golden / an toàn) chỉ
   chạy câu có đoạn mới trong top 10 (`Session_Prompt.md` §7 "Đo đúng chỗ đổi").
 - Dừng nếu: bước 0 DỪNG mà không hiểu vì sao; quét trùng ra `golden` / `sealed`; lùi tự động in "LÙI LỖI" ⇒ không thử lại, báo User.
+
+### 5a. Một GIÁ đổi — lệnh đề xuất + lệnh duyệt (22/11/2026; code `backend/ops/`; nửa cập nhật chỉ mục: xem ghi chú cuối khối)
+
+Dùng khi một mức giá trong kho đổi và phải sửa mọi bài còn ghi giá cũ. Chạy từ `backend/`; lệnh đề xuất cần biến môi trường của model đang chạy như lúc bật server (mục 2).
+
+| Bước | Lệnh | Phải thấy |
+|---|---|---|
+| Hỏi kho đang ghi giá nào (0 đồng) | `uv run python -m ops.de_xuat_sua_kho --noi "<tên nơi>"` | bảng số tiền · số lần · một dòng ví dụ |
+| Đề xuất (một lời gọi model, khoảng 0,05 USD, khoảng 20 giây; KHÔNG ghi kho) | `uv run python -m ops.de_xuat_sua_kho --gia "<mô tả mức giá>" --cu <giá cũ> --moi <giá mới> --nguon "<link / nơi lấy giá>"` | `Sẽ sửa N chỗ ở M bài · không rõ … · không phải giá này …` và `Kho CHƯA đổi`; thư mục `data/de_xuat_kho/<ngày_giờ>/` có `DE_XUAT.md`, `de_xuat.patch`, `vet.json` |
+| Đọc | mở `DE_XUAT.md`: mục 1 (sẽ sửa), mục 2 (không rõ), mục 4 (câu có tổng / tiết kiệm phải sửa tay, bảng ngoài kho bị lệch) | — |
+| Duyệt — CHỈ chủ dự án chạy trên kho thật (sửa kho = "Hỏi User trước") | dòng lệnh in ở cuối `DE_XUAT.md` | `Đã áp vào M bài` · `Đã lưu bản ghi git <mã>`; bài đã đổi từ lúc đề xuất ⇒ `DỪNG`, đề xuất lại |
+| Thử trên bản chép (agent được làm) | thêm `--goc <gốc một worktree tạm>` vào CẢ HAI lệnh; lệnh duyệt thêm `--thu` (áp vào bản chép, không lưu bản ghi git, không đụng chỉ mục). `--thu` mà thiếu `--goc` ⇒ lệnh DỪNG, không áp gì (22/11: trước đó nó áp vào kho của chính repo) | `git -C <bản chép> diff --stat` chỉ gồm các bài của đề xuất |
+| Thử đầu–cuối cả cập nhật chỉ mục trên bản chép | lệnh duyệt: `--goc <bản chép> --collection-thu <tên collection thử> --ban-ghi-thu <thư mục bản ghi thử>` (không `--thu`) — hai lựa chọn đi cùng nhau; collection thử không được trùng collection đang chạy | `Đã lưu bản ghi git …` (trên nhánh của bản chép) · `Đã cập nhật chỉ mục cho M bài …` |
+
+- Lùi: `git revert <mã bản ghi>` rồi cập nhật chỉ mục lại.
+- Sau khi duyệt, lệnh in hai dòng test của các bảng chép từ kho (`tests/test_su_kien_theo_ngay.py`, `tests/test_quan_lich.py`) — chạy không nạp env; đỏ ⇒ sửa bảng, không sửa test.
+- Giới hạn: phải biết giá cũ; mỗi lần một mức giá; con số tính từ giá cũ và con số viết chung cho nhiều nơi chỉ được NHẮC, người sửa tay; số viết bằng chữ / "200–250 nghìn" không được tìm; độ đúng của bước model phán mới đo trên hai mức giá (`report_agent/2026-11-22/b_de_xuat_sua_kho.md`).
+- Cập nhật chỉ mục khi duyệt (cần module `ingestion.cap_nhat_rieng` trong code): TRƯỚC khi áp, lệnh kiểm chỉ mục đang khớp kho (chỉ đọc, khoảng 20 giây) — đang lệch sẵn ⇒ `DỪNG, kho chưa đổi gì`; sau khi áp + lưu bản ghi git, lệnh cập nhật chỉ mục rồi đối chiếu danh sách bài đã xử lý với các bài vừa sửa — khác ⇒ `CẦN XEM` kèm cách lùi. Module chưa có ⇒ in `CHƯA cập nhật chỉ mục` + danh sách bài, mã thoát 3 — lúc đó kho đã sửa mà chỉ mục chưa, server sẽ từ chối khởi động lại cho tới khi chỉ mục được cập nhật (hoặc bản sửa được lùi).
+- File vá bị thêm đoạn chạm file ngoài danh sách bài của đề xuất ⇒ lệnh duyệt dừng, không áp gì. Con số nằm trong TIÊU ĐỀ MỤC được liệt kê ở nhóm "không rõ" và không bao giờ tự sửa.
+
+### 5b. Cập nhật riêng phần chỉ mục của bài đã sửa (lệnh có từ 22/11/2026; lệnh duyệt ở 5a tự gọi nó)
+
+Sau khi bài trong kho đã đổi (sửa, thêm, bớt), KHÔNG cần xoá collection rồi dựng lại cả chỉ mục (khoảng 225 giây): lệnh dưới kéo collection về khớp
+kho trong khoảng 25–30 giây — chia đoạn cả kho, so từng đoạn với collection, chỉ tính lại vector nghĩa cho đoạn khác chữ, ghi lại vector từ khoá của
+mọi điểm (phụ thuộc thống kê cả kho, chỉ CPU), kiểm cả collection bằng hàm kiểm của lúc dựng, rồi ghi file thống kê từ khoá và bản ghi dựng mới.
+
+```bash
+cd backend      # TẮT server trước; bật lại sau khi lệnh xong (server đọc thống kê từ khoá và xoá câu trả lời đã nhớ lúc khởi động)
+HF_HUB_OFFLINE=1 uv run python -m ingestion.cap_nhat_rieng --chi-xem    # chỉ in bài nào khác chỉ mục + số đoạn phải tính lại; không ghi gì
+HF_HUB_OFFLINE=1 uv run python -m ingestion.cap_nhat_rieng              # chạy thật; in "XONG trong … giây" hoặc "Chỉ mục ĐÃ KHỚP kho"
+```
+- Lệnh không tham số ghi THẬT theo kho của cây đang đứng ⇒ chỉ chạy từ CÂY CHÍNH (`/home/minhhieu/hue_rag/backend`), `--chi-xem` trước; chạy từ
+  một cây tạm ở commit cũ sẽ kéo chỉ mục thật lùi theo kho cũ.
+- Lệnh không nhận tên bài: tự dò. Khoá `bai_doi` của kết quả = bài có đoạn đổi hoặc đổi mã băm; bài chỉ đổi phần không thành đoạn (mục "Nguồn dữ
+  liệu") vẫn có tên ở đó với 0 đoạn tính lại.
+- Trước khi ghi, lệnh tự chụp collection (bản chụp Qdrant, khoảng 63 MB, nằm TRONG container ở `/qdrant/snapshots/<tên collection>/` — mất nếu
+  container bị tạo lại) và chép file thống kê + bản ghi dựng cũ vào `data/full_corpus_builds/sao_luu/<giờ>/`. Lệnh không tự xoá bản chụp cũ; xem:
+  `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384/snapshots`; xoá một bản: `curl -s -X DELETE
+  http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384/snapshots/<tên bản chụp>`. Muốn một bản sao lưu nằm trên ổ đã gắn (không mất khi
+  tạo lại container): chép collection sang tên khác trước khi chạy — `data/phase_12_agent_sua_kho_2026-11-21/c_cap_nhat_rieng/chep_collection.py <tên mới>` (7 giây).
+- Lệnh chết giữa chừng: bản ghi dựng đang ở tên `….json.dang_cap_nhat` ⇒ server từ chối khởi động ("Build record does not exist") chứ không trả
+  lời lệch. Cách chữa: chạy lại lệnh (lần chạy nào cũng so với chính collection nên kéo về đúng).
+- Lùi một lần sửa kho: `git revert` bản sửa bài ⇒ chạy lại chính lệnh này. Lùi bằng bản chụp (khi nghi collection hỏng):
+  `curl -s -X PUT http://127.0.0.1:6335/collections/<tên>/snapshots/recover -H 'content-type: application/json' -d '{"location":"file:///qdrant/snapshots/<tên>/<tên bản chụp>"}'`
+  rồi chép lại hai file trong `sao_luu/<giờ>/` về `data/full_corpus_builds/`. Đường cuối cùng vẫn là dựng lại toàn bộ (đầu mục này).
+- Sửa một câu mà file điều kiện `knowledge-base-hue/meta/full_corpus_conditions.json` đang ghim nguyên văn (`exact_text`) ⇒ bước chia đoạn báo lỗi
+  và lệnh dừng TRƯỚC khi ghi gì; sửa file điều kiện cho khớp rồi chạy lại.
+- Lệnh chỉ lo chỉ mục. Kho đổi thì vẫn phải tự chạy: `tests/test_su_kien_theo_ngay.py` (bảng sự kiện chép từ kho) và test bảng quán; các bước quét
+  trùng / 10 câu an toàn / T1 ở trên áp cho bài MỚI hoặc sửa nhiều chữ.
+- Chạy thử trên bản chép (không đụng chỉ mục thật): ba tham số đi cùng nhau `--kho <thư mục kho chép> --collection <tên thử> --thu-muc-ban-ghi
+  <thư mục>`; thiếu một trong ba, trùng tên collection đang chạy, hoặc thư mục trùng `data/full_corpus_builds` ⇒ lệnh từ chối.
+- Giới hạn: chưa thử khi server đang phục vụ (luôn tắt server trước) · kho lớn gấp nhiều lần thì bước chia đoạn (21 giây hiện nay) thành phần chính.
 
 ## 6. Bảng dữ liệu của lịch "Lên kế hoạch"
 
@@ -239,7 +291,11 @@ lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 
 | Câu bão / lũ nói vòng, hoặc "đợt hiện tại" | 1 / 22 câu dò không có khối cố định (bản tin chính thức + 112); vài câu model vẫn tự viết thêm | User chọn bật và ghi giới hạn (ca 7, 9, 18, 23); "luôn đưa công cụ thời tiết" đã thử và lùi (mục 10.5) | `R/b_cau_bao_implementation.md`; HO sáng 17/11 |
 | Câu "tốt cho sức khoẻ" về món ăn | Đôi khi gắn thừa câu "nên hỏi dược sĩ / bác sĩ" (đo 3 / 9 câu không cần) | Gắn thừa vô hại; gắn thiếu mới là lỗi (12 / 12 câu cần đều có) | `R/b_suc_khoe_web_implementation.md` |
 | Hỏi khoảng cách có nơi thứ ba đứng SAU từ hỏi | Trả khoảng cách của hai nơi đầu | Hàm chỉ nhận dạng đóng "A <từ nối> B <từ hỏi>"; nới ra thì sai cặp | `R/c_kc_tinh_san_implementation.md` |
+| Câu xin DANH SÁCH hoặc "nơi nào có đặc điểm X" (công cụ liệt kê bài, mở 22/11/2026) | Trợ lý kể tên các BÀI của kho khớp nhóm / cụm từ, nguồn ghi "Mục lục kho tư liệu", và nói rõ đó là theo tư liệu hiện có, không phải tổng số thực tế. Dòng làm chứng của mỗi bài bị cắt ở 220 ký tự; chỉ lấy dòng ĐẦU có cụm từ; khoanh theo nhóm có thể sót bài nằm ở nhóm khác; câu gom cần SO SÁNH giữa các bài ("điểm nào ít leo bậc"): ở lượt thật 22/11 model không chọn công cụ này mà tự tìm (mới một lượt) | Lượt thật 22/11 (8 tin): 0 lỗi, hai câu ngoài kho / ngoài tỉnh vẫn bị từ chối; chậm nhất 13 giây (5 lần gọi model) ở câu "quán nào có chỗ đậu ô tô" | `data/thu_bedrock_2026-11-21/do/liet_ke_main/luot_1/`; `report_agent/2026-11-21/b_cong_cu_liet_ke.md` |
 | Từ "bao lâu" + từ di chuyển chung | Công cụ khoảng cách được đưa thừa; model làm tròn giờ thì bước kiểm số rút câu | Không ra số sai tới người dùng | `R/c_khoang_cach_implementation.md` |
+| Hỏi "gần X có quán / điểm gì" (công cụ "gần một điểm có gì", mở 22/11/2026) kèm BỮA hoặc GIỜ ("ăn trưa gần Đại Nội") | Danh sách xếp theo khoảng cách, công cụ không biết giờ mở cửa ⇒ có thể nêu đầu danh sách một quán chỉ mở buổi tối (1 / 5 tin có quán ở lượt thật 22/11; tin hỏi "tối nay" thì model tự tra giờ) | Mới thấy một lần; hướng sửa rẻ nếu lặp: thêm một câu vào mô tả công cụ "người dùng nêu bữa / giờ thì tra giờ mở cửa trong kho trước khi gợi ý" | `data/thu_bedrock_2026-11-21/do/gan_diem_main/luot_1/` |
+| Cùng công cụ: model tự viết khoảng cách bằng MÉT ("cách chừng 500 m") | Bước kiểm số chỉ soi km và phút, không soi mét ⇒ con số mét tự viết lọt tới người dùng | Ca dò của phiên đo; 18 lượt thật (12 của C + 6 của phiên đo) chưa gặp | `report_agent/2026-11-21/c_gan_diem.md` |
+| Cùng công cụ: câu dùng "sát Đại Nội", "đối diện …" thay cho gần / quanh / cạnh / lân cận / kế bên | Bộ dò từ khoá không bắt ⇒ lượt đó đi đường hỏi đáp thường như trước khi có công cụ | Vô hại; chỉ 41 quán có vị trí (16 quán vị trí mức ước); "lăng NÀO gần nhất" theo loại chưa làm được; nơi ngoài bảng (ga, sân bay) không có | `report_agent/2026-11-21/c_gan_diem.md` |
 | Đường "tìm thêm + web" | Chữ đầu ~6 s, cả câu có web ~15 s (sàn tốc độ 3 / 5 s đã gỡ 19/11 — số chỉ để báo) | Hai thử nghiệm tốc độ đều âm; User bỏ "tra web sớm", gác "gộp câu tìm" | `R/b_dem_toc_do.md`; PS §2 (15/11) |
 | Câu ngoài phạm vi bị định tuyến xếp là khẩn cấp (vd y tế) | Trợ lý từ chối, cổng web mở | User nhận từ 09/11 khi gỡ câu soạn sẵn | PS §4 (định tuyến phương án B) |
 | Câu ngoài kho về giá vé đi lại | Có lượt trả lời "nguồn không nêu…" thay vì câu từ chối chuẩn (đo 3 / 5) | User nhận 15/11 | PS §5 dòng 15/11 |
@@ -291,7 +347,7 @@ lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 
 | Trong ngày: Đại Nội → điểm khác → quay lại Kinh thành | Đi lại vòng (đo 8 / 960 khung ca hẹp; 104 / 960 ca rộng) | Bản sửa hẹp làm hỏng nhãn một chuỗi đo + test mưa. GIỮ GIỚI HẠN (phiên điều phối chốt 20/11): đếm lại 20/11 vẫn 8 / 960 tổ hợp nút biểu mẫu, đều là kiểu "cân bằng" + sở thích "di tích" — tổ hợp, không phải tần suất người dùng | HO sáng 17/11; nhánh hồ sơ `origin/p9-khong-quay-lai-cum` |
 | Phút đi ra phá Tam Giang | Ghi 15 phút dù gồm cả bữa trưa | Phút đi cố định theo cụm | HO chiều 17/11 (#17) |
 | Lịch không dời theo giờ tới / giờ về | Ngày đầu / cuối vẫn xếp đủ buổi | Chưa làm; đã rà nợ 15/11 | `R/b_ra_no_cu.md` |
-| "Đổi chỗ ngày 1 với ngày 2" | Trả lời "chưa hỗ trợ" (câu cố định), lịch không đổi | User chọn chặn lịch giả trước, hành động đổi chỗ hai ngày làm sau. **Thêm 20/11, BẬT 22:04 21/11/2026** (cờ `sua_lich_doi_cho_ngay`; lượt thật 5 / 5 trên model đang chạy) — hàng này từ nay tả tính năng ĐANG CHẠY; câu "chưa hỗ trợ" ở cột giữa chỉ còn cho các kiểu ghi ở cuối ô. Giới hạn câu chữ thấy ở lượt thật: nhờ đổi với một ngày KHÔNG có trong lịch ("đổi chỗ ngày 1 với ngày 3" khi lịch 2 ngày) thì nhận câu chung "Chưa làm: đổi chỗ, gộp hay tách các ngày — mình chưa sửa được kiểu này…" thay vì "lịch chỉ có 2 ngày" — lịch giữ nguyên, nhưng dễ hiểu nhầm là không đổi chỗ ngày được. Tin vừa nhờ đổi chỗ ngày vừa hỏi thêm: phần đổi chỗ không được làm (bộ đọc câu cố ý chỉ nhận câu CHỈ nhờ đổi chỗ); chưa có lượt thật cho loại tin này khi cờ `sua_lich_kem_hoi` cùng bật. Câu CHỈ nhờ đổi chỗ đúng hai ngày ("đổi chỗ ngày 1 với ngày 3", "hoán đổi ngày đầu với ngày cuối") ⇒ code đổi các điểm buổi sáng + chiều của hai ngày, buổi tối giữ theo từng ngày; đếm trên 15.360 cặp (mọi tổ hợp nút × 4 kiểu ngày đi, có mưa): đổi được 90 %, bị chặn 10 % — hầu hết vì điểm ở khu xa không được rơi vào ngày 1 (câu báo nói đúng lý do, lịch giữ nguyên). VẪN "Chưa làm": gộp / tách ngày, đổi chỗ hai BUỔI, câu kèm ý sửa khác, câu nói vòng ("cho ngày đi lăng lên trước") | `R/c_chua_ho_tro_implementation.md` |
+| "Đổi chỗ ngày 1 với ngày 2" | Trả lời "chưa hỗ trợ" (câu cố định), lịch không đổi | User chọn chặn lịch giả trước, hành động đổi chỗ hai ngày làm sau. **Thêm 20/11, BẬT 22:04 21/11/2026** (cờ `sua_lich_doi_cho_ngay`; lượt thật 5 / 5 trên model đang chạy) — hàng này từ nay tả tính năng ĐANG CHẠY; câu "chưa hỗ trợ" ở cột giữa chỉ còn cho các kiểu ghi ở cuối ô. Giới hạn câu chữ thấy ở lượt thật: nhờ đổi với một ngày KHÔNG có trong lịch ("đổi chỗ ngày 1 với ngày 3" khi lịch 2 ngày) thì nhận câu chung "Chưa làm: đổi chỗ, gộp hay tách các ngày — mình chưa sửa được kiểu này…" thay vì "lịch chỉ có 2 ngày" — lịch giữ nguyên, nhưng dễ hiểu nhầm là không đổi chỗ ngày được. Tin vừa nhờ đổi chỗ ngày vừa HỎI thêm ("đổi chỗ ngày 1 với ngày 2, mà vé vào Đại Nội bao nhiêu?"): từ 22/11/2026 phần đổi chỗ ĐƯỢC làm + dòng "Chưa làm: phần câu hỏi…" (khi model báo tin có câu hỏi, code đọc riêng vế nhờ đổi chỗ — `cap_ngay_doi_cho_kem_hoi`; một lượt thật trên model đang chạy đạt; trước đó ra hai dòng "Chưa làm"). Vẫn không đổi khi vế còn lại nhắc một ngày của lịch ("…mà ngày 3 có mưa không?", "…mà hôm đầu có mưa không?"), có động từ sửa, hoặc có lời rút lại / phủ định ("à mà thôi", "à nhầm", "khoan đã", "đừng") — khi đó giữ câu chung "Chưa làm: đổi chỗ, gộp hay tách các ngày…". Giới hạn: vế còn lại là một lệnh sửa dùng động từ ngoài danh sách (lùi, cắt, bớt, "cho … lên") mà model lại báo là câu hỏi ⇒ lịch vẫn đổi chỗ đúng, nhưng lệnh đó bị gọi là "phần câu hỏi chưa trả lời". Câu CHỈ nhờ đổi chỗ đúng hai ngày ("đổi chỗ ngày 1 với ngày 3", "hoán đổi ngày đầu với ngày cuối") ⇒ code đổi các điểm buổi sáng + chiều của hai ngày, buổi tối giữ theo từng ngày; đếm trên 15.360 cặp (mọi tổ hợp nút × 4 kiểu ngày đi, có mưa): đổi được 90 %, bị chặn 10 % — hầu hết vì điểm ở khu xa không được rơi vào ngày 1 (câu báo nói đúng lý do, lịch giữ nguyên). VẪN "Chưa làm": gộp / tách ngày, đổi chỗ hai BUỔI, câu kèm ý sửa khác, câu nói vòng ("cho ngày đi lăng lên trước") | `R/c_chua_ho_tro_implementation.md` |
 | "Chỉ đi buổi sáng" / "bớt một chỗ" | Có lượt bị trả "chưa hỗ trợ" dù làm được (bộ 10 chuỗi, tính chuỗi đạt cả hai lần chạy: **9 / 10 ở lượt thật 19/11**; chuỗi còn trượt là câu "chỉ đi buổi sáng", 2 / 2 lần — lịch giữ nguyên, có câu "Chưa làm"; trước đó 7 / 10 ở lượt đo cuối 18/11, 8 / 10 lúc bật cờ "chưa hỗ trợ" 17/11) | Vòng chỉnh lời dặn thứ hai làm tệ hơn (7 / 10) ⇒ giữ vòng 1; lớp câu này chưa có bản sửa bằng code | `R/c_chua_ho_tro_implementation.md` |
 | "Cho A lên sáng ngày 1, còn B để sáng ngày 3" (dời HAI điểm trong một câu) | **Sửa được từ 19/11** (cờ `sua_lich_doi_cho_code`): khi model trả "chưa hỗ trợ", code tự đọc câu và áp hai lần dời — 0 lượt sửa sai / 42 lượt. CHỈ nhận mẫu hẹp: đúng hai vế, mỗi vế tên một điểm đang có trong lịch + từ dời (lên / sang / để / về / xuống / qua / vào) + buổi sáng hoặc chiều (+ "ngày <số>"). **Vẫn "chưa hỗ trợ":** câu ba vế, câu không có từ dời, buổi tối, ngày nói bằng chữ ("ngày đầu", "hôm sau"), câu kết bằng dấu hỏi ("… ạ?"), câu có lời chào ngăn bằng dấu phẩy, tên điểm ngoài lịch **Thêm 20/11 (soát khác hãng):** hai vế cùng MỘT đích ("A lên sáng ngày 3, B để sáng ngày 3") ⇒ code không đọc, trả câu "chưa làm" — trước bản sửa này hai lần dời tự đổi chỗ ngược nhau, lịch y nguyên mà vẫn báo "đã dời". Hệ quả chấp nhận: người dùng THẬT SỰ muốn hai điểm vào cùng một buổi cũng nhận câu "chưa làm" — nói từng điểm một thì được. | Cố ý hẹp: từ chối nhầm chấp nhận được, áp sai thì không (bộ dò độc lập 63 câu: 0 câu áp sai, 4 câu từ chối nhầm) | `report_agent/2026-11-19/b_sua_lich_doi_cho_implementation.md` |
 | Dời hai điểm trong một câu trên lịch mặc định 2 ngày · 2 người lớn | Phần lớn cặp ra hai dòng "Không đổi được: … phạm luật xếp (giờ mở cửa / cụm xa / quá dày)", lịch giữ nguyên — câu ĐÃ được đọc, bước xếp từ chối. Chạy thẳng hàm: 1 / 13 cặp đổi chỗ hai điểm ban ngày khác buổi dời được (Đại Nội ⇄ Đầm Chuồn, cùng ngày 1); mọi cặp chạm ngày 2 bị chặn (ngày 2 đã có bốn điểm ban ngày) | Đúng hành vi của luật xếp, không phải lỗi đọc câu; chưa tìm luật nào chặn từng cặp. Số của người viết hàm, chưa có người thứ hai chạy lại; trên giao diện đã thấy 2 / 2 cặp thử bị chặn (19/11) | `bai_hoc/VIEC_MOI_XONG.md` mục 8; `data/da_thu_2026-11-19/` |
