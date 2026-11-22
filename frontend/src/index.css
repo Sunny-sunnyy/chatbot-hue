@@ -3,15 +3,15 @@
 /* Bản mẫu 2 "Sông Hương" (User chọn Q-U1 07/11; `data/nghien_cuu_giao_dien_2026-11-06/mau/2.html`, C đo 0 cặp chữ / nền < 4,5 : 1).
    Tên token giữ như giao diện trước (`page`, `ink`, `accent`…) để các lớp Tailwind đang dùng không đổi. */
 @theme {
-  --color-page: #EDF4F2;
+  --color-page: #F2F7F5;            /* nền sương (22/11: sáng hơn một chút cho giao diện "Dòng sông dẫn đường") */
   --color-surface: #FFFFFF;
-  --color-ink: #0F2A2B;
+  --color-ink: #0C2426;
   --color-muted: #46605F;
   --color-accent: #0E6B66;          /* xanh ngọc: nút, chữ nhấn */
   --color-accent-deep: #0A4E4A;     /* tiêu đề, nút khi rê chuột */
   --color-on-accent: #FFFFFF;
   --color-accent-soft: #E3F0ED;
-  --color-river: #0A3D40;           /* nước sâu: hero, dải đầu danh sách, đầu khung trợ lý */
+  --color-river: #083538;           /* nước sâu: dải đầu danh sách, đầu khung trợ lý, mục đang chọn ở thanh trên */
   --color-river-muted: #CFE7E2;
   --color-lotus: #9C2A4F;           /* sen: nút trợ lý nổi, "Hỏi trợ lý về điểm này" */
   --color-lotus-deep: #7E1F3E;
@@ -20,6 +20,31 @@
   --color-field-line: #6E8A87;
   --color-error: #A4262C;
   --color-error-soft: #FBEDEE;
+  --color-sun: #F0A63A;             /* nắng chiều: CHỈ cho điểm sáng — con đò, gạch chân bến đang trỏ; không làm chữ trên nền trắng */
+  --color-sun-deep: #8A5A0B;        /* nắng chiều bản đậm: chữ trên nền trắng (≥ 4,5 : 1) */
+  /* Màu theo CHỦ ĐỀ của bài kho (thư mục đầu của mã bài) — chấm nguồn, chấm bài đã tìm thấy, bến; màu mang nghĩa, không trang trí */
+  --color-lv-foods: #B4531A;
+  --color-lv-heritages: #0E6B66;
+  --color-lv-festivals: #9C2A4F;
+  --color-lv-travel: #1E4E8C;
+  --color-lv-arts: #5B2A86;
+  --color-lv-other: #46605F;
+  /* Bo góc, bóng, nhịp chuyển động: một thang cho cả sản phẩm (22/11 — trước đó 20 kiểu bo góc, 18 kiểu bóng gõ tay) */
+  --radius-s: 8px;
+  --radius-m: 14px;
+  --radius-l: 20px;
+  --radius-xl: 28px;
+  --shadow-1: 0 6px 18px rgba(8, 53, 56, .06);
+  --shadow-2: 0 10px 30px rgba(8, 53, 56, .08);
+  --shadow-3: 0 14px 34px rgba(8, 53, 56, .14);
+  --ease-song: cubic-bezier(.16, 1, .3, 1);
+  /* Thang cỡ chữ 6 bậc (thân bài 17 px đặt ở body) */
+  --text-nho: 14px;
+  --text-vua: 16px;
+  --text-nhan: 18px;
+  --text-lon: 24px;
+  --text-h2: 34px;
+  --text-h1: clamp(40px, 4.6vw, 62px);
   --font-sans: "Be Vietnam Pro", system-ui, "Segoe UI", sans-serif;
   --font-serif: "Noto Serif Display", Georgia, serif;   /* H1 "Sông Hương" (User chọn 14/11): chỉ cho tiêu đề, một độ đậm 600 */
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { baiHref } from "./route.js";
 import { gopLatBang, renderExcerptHtml } from "./markdown.js";
+import { linhVuc } from "./song/nhin.js";
 
 // Dòng "Nguồn" bấm mở đoạn gốc — dùng chung cho trợ lý và thẻ lịch (tách từ chat.jsx, đợt 0 giao diện H1; hành vi giữ nguyên).
 export function SourceLine({ turn }) {
@@ -18,12 +19,12 @@ export function SourceLine({ turn }) {
   return (
     <div className="nguon">
       <p className="nguon-dong">
-        <span className="nguon-nhan">Nguồn:</span>{" "}
+        <span className="nguon-nhan">Nguồn đã dùng ({groups.length} bài)</span>{" "}
         {groups.map((group, index) => (
           <span key={group.key}>
-            {index > 0 && <span aria-hidden="true"> · </span>}
             <button type="button" className="nguon-ten" aria-expanded={open === group.key} aria-controls={panelId}
-                    onClick={() => setOpen(open === group.key ? null : group.key)}>{group.title}</button>
+                    data-lv={linhVuc(group.bai_id)}
+                    onClick={() => setOpen(open === group.key ? null : group.key)}><i className="nguon-so" aria-hidden="true" />{group.title}</button>
           </span>
         ))}
       </p>
