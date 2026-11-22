@@ -103,7 +103,7 @@ Quyết định theo ngày tới 19/11: `session_prompt/Project_Status.md` mục
 
 ## 5. Bật hệ thống và kiểm
 
-Lệnh từng bước + kết quả mong đợi: `guides/RUNBOOK_BAN_GIAO.md` mục 1 (Qdrant), 2 (giao diện + server), 3 (test). Hay vấp: lệnh Python chạy từ `backend/` bằng
+**Bật bằng MỘT lệnh (từ 12:25 22/11/2026):** `HUE_BEDROCK_CREDS_FILE=<file khoá Bedrock> scripts/bat_he_thong.sh` — bật Qdrant, chờ đủ điểm, kiểm có file khoá, bật server cổng 8010, in "SẴN SÀNG" hoặc một dòng thiếu gì (vì sao có: bật server lúc Qdrant chưa bật thì mọi câu lỗi và không tự hồi — thử thật trưa 22/11). Lệnh từng bước + kết quả mong đợi: `guides/RUNBOOK_BAN_GIAO.md` mục 1 (Qdrant), 2 (giao diện + server), 3 (test). Hay vấp: lệnh Python chạy từ `backend/` bằng
 `uv run …`; máy dùng chung ⇒ việc nặng (server, cả bộ test, đo) báo phiên điều phối trước; hook git: `git config core.hooksPath .githooks`.
 
 ## 6. Lệnh kiểm các con số của trang này
