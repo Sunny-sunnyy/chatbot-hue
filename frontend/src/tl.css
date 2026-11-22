@@ -6,12 +6,12 @@
 .tro-ly-trang.khung { max-width: 1280px; padding-top: 0; }
 .tl-cot { display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start; padding-top: 28px; }
 .tl-ben { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 14px; }
-.tl-hop { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 20px; padding: 18px 20px; }
+.tl-hop { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-l); padding: 18px 20px; }
 .tl-hop h2 { margin: 0 0 10px; font-family: var(--font-serif); font-weight: 600; font-size: 21px; color: var(--color-ink); }
 .tl-hop p { margin: 0; color: var(--color-muted); font-size: 15px; }
 .tl-chu-de { display: flex; flex-direction: column; gap: 8px; }
 .tl-chu-de button { display: flex; gap: 12px; align-items: center; text-align: left; border: 1px solid var(--color-line); background: var(--color-surface);
-  border-radius: 14px; padding: 10px 12px; cursor: pointer; font-size: 15px; color: var(--color-ink); }
+  border-radius: var(--radius-m); padding: 10px 12px; cursor: pointer; font-size: 15px; color: var(--color-ink); }
 .tl-chu-de button:hover { border-color: var(--color-accent); }
 .tl-chu-de button:disabled { opacity: .6; cursor: not-allowed; }
 .tl-chu-de .bt { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; }
@@ -20,10 +20,10 @@
 
 .tl-chat { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 24px; overflow: hidden; display: flex; flex-direction: column;
   min-height: calc(100vh - 120px); }
-.tl-chat-dau { display: flex; align-items: center; gap: 12px; padding: 16px 22px; background: linear-gradient(90deg, var(--color-river), var(--color-accent)); color: #fff; }
-.tl-chat-dau .tra-av { background: #fff; color: var(--color-river); width: 42px; height: 42px; }
+.tl-chat-dau { display: flex; align-items: center; gap: 12px; padding: 16px 22px; background: linear-gradient(90deg, var(--color-river), var(--color-accent)); color: var(--color-on-accent); }
+.tl-chat-dau .tra-av { background: var(--color-surface); color: var(--color-river); width: 42px; height: 42px; }
 .tl-chat-dau b { display: block; font-size: 17px; }
-.tl-chat-dau small { color: var(--color-river-muted); font-size: 14px; }
+.tl-chat-dau small { color: var(--color-river-muted); font-size: var(--text-nho); }
 .tl-chat .chat-view { flex: 1; display: flex; flex-direction: column; }
 .tl-chat .chat-turns { flex: 1; padding: 24px 22px; background: var(--color-page); }
 .tro-ly-trang .tl-chat .chat-form { position: sticky; bottom: 0; background: var(--color-surface); border-top: 1px solid var(--color-line); padding: 14px 18px; }
@@ -35,7 +35,7 @@
 /* Một lượt: câu hỏi phải, trả lời trái có ảnh đại diện (dùng cả ở khung nổi) */
 .tra { display: flex; gap: 12px; align-items: flex-start; }
 .tra-noi { flex: 1; min-width: 0; }
-.tra-av { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--color-river); color: #fff; display: grid; place-items: center; }
+.tra-av { flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--color-river); color: var(--color-on-accent); display: grid; place-items: center; }
 .bubble { box-shadow: 0 6px 18px rgba(10, 61, 64, .06); }
 .chat .tra-av { display: none; }  /* khung nổi hẹp: bỏ ảnh đại diện */
 
@@ -49,7 +49,7 @@
 .hieu-ung .go i:nth-child(3) { animation-delay: .3s; }
 @keyframes tl-go { 0%, 60%, 100% { opacity: .35; transform: none; } 30% { opacity: 1; transform: translateY(-3px); } }
 /* tin mới trượt vào (chỉ opacity / transform — không làm trễ lúc phần tử vào DOM) */
-.hieu-ung .turn > .ask, .hieu-ung .turn > .tra { animation: tl-tin .32s cubic-bezier(.16, 1, .3, 1) both; }
+.hieu-ung .turn > .ask, .hieu-ung .turn > .tra { animation: tl-tin .32s var(--ease-song) both; }
 @keyframes tl-tin { from { opacity: 0; transform: translateY(8px); } }
 
 /* Mục web tách riêng, màu khác câu kho */
@@ -71,19 +71,19 @@
 
 /* Ảnh dưới câu trả lời (anhTraLoi.js): một ảnh bài nguồn, khung tỉ lệ cố định (không xô lệch), bấm mở bài */
 .anh-tra-loi { display: block; margin: 12px 0 6px; max-width: 360px; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: var(--color-accent-soft); }
-.anh-tra-loi img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.16,1,.3,1); }
+.anh-tra-loi img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease-song); }
 .hieu-ung .anh-tra-loi:hover img, .hieu-ung .anh-tra-loi:focus-visible img { transform: scale(1.05); }
 .chat .anh-tra-loi { max-width: 100%; }
 .anh-tra-loi-hang { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 12px 0 6px; max-width: 540px; }
 .anh-tra-loi-o { display: block; color: var(--color-ink); text-decoration: none; }
-.anh-tra-loi-khung { display: block; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: var(--color-accent-soft); }
-.anh-tra-loi-khung img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.16,1,.3,1); }
+.anh-tra-loi-khung { display: block; aspect-ratio: 4 / 3; border-radius: var(--radius-m); overflow: hidden; background: var(--color-accent-soft); }
+.anh-tra-loi-khung img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease-song); }
 .hieu-ung .anh-tra-loi-o:hover img, .hieu-ung .anh-tra-loi-o:focus-visible img { transform: scale(1.05); }
-.anh-tra-loi-ten { display: block; margin-top: 4px; font-size: 14px; line-height: 1.3; color: var(--color-muted); }
+.anh-tra-loi-ten { display: block; margin-top: 4px; font-size: var(--text-nho); line-height: 1.3; color: var(--color-muted); }
 
 /* Thẻ khách sạn dưới câu trả lời (C 15/11) — cùng kiểu ô với trang Chỗ ở */
 .the-ks-hang { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; margin: 10px 0 6px; }
-.the-ks { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; min-height: 76px; padding: 8px 12px 8px 96px; border-radius: 14px; background: var(--color-accent-soft); font-size: 14.5px; }
+.the-ks { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; min-height: 76px; padding: 8px 12px 8px 96px; border-radius: var(--radius-m); background: var(--color-accent-soft); font-size: 14.5px; }
 .the-ks img, .the-ks-khong-anh { position: absolute; left: 8px; top: 8px; width: 78px; height: 60px; object-fit: cover; border-radius: 10px; }
 .the-ks-khong-anh { background: var(--color-line); }
 .the-ks-ten { font-weight: 600; }

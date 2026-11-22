@@ -5,12 +5,12 @@
 @view-transition { navigation: auto; }
 
 .hieu-ung::view-transition-old(root) { animation: vt-ra .3s ease both; }
-.hieu-ung::view-transition-new(root) { animation: vt-vao .5s cubic-bezier(.16,1,.3,1) both; }
+.hieu-ung::view-transition-new(root) { animation: vt-vao .5s var(--ease-song) both; }
 @keyframes vt-ra { to { opacity: 0; transform: translateY(-12px) scale(.99); } }
 @keyframes vt-vao { from { opacity: 0; transform: translateY(24px); } }
 
 /* 1. Lúc tải: tiêu đề → câu phụ → ô hỏi → từng chip hiện lần lượt */
-.hieu-ung .vao { animation: vao .9s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--n, 0) * 110ms + 150ms); }
+.hieu-ung .vao { animation: vao .9s var(--ease-song) both; animation-delay: calc(var(--n, 0) * 110ms + 150ms); }
 @keyframes vao { from { opacity: 0; transform: translateY(30px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
 
 /* 2. Ảnh đầu trang: phóng rõ (1 ⇒ 1,12, 14 s, một lần) + trôi chậm hơn trang khi cuộn (parallax, chỉ transform) */
@@ -22,7 +22,7 @@
 }
 
 /* Sóng mép hero: hai lớp dâng một lần */
-.hieu-ung .song-lop { animation: dang 2.2s cubic-bezier(.16,1,.3,1) both; }
+.hieu-ung .song-lop { animation: dang 2.2s var(--ease-song) both; }
 .hieu-ung .song-lop.sau { animation-duration: 3s; animation-delay: .2s; }
 @keyframes dang { from { transform: translate3d(-8%, 30px, 0); opacity: 0; } to { transform: none; opacity: 1; } }
 
@@ -39,21 +39,21 @@
   .hieu-ung .hien[style*="--n"] { animation-range: entry calc(var(--n) * 4%) cover calc(30% + var(--n) * 4%); }
 }
 @supports not (animation-timeline: view()) {
-  .hieu-ung .hien { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s cubic-bezier(.16,1,.3,1); transition-delay: calc(var(--n, 0) * 90ms); }
+  .hieu-ung .hien { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s var(--ease-song); transition-delay: calc(var(--n, 0) * 90ms); }
   .hieu-ung .hien.da-hien { opacity: 1; transform: none; }
 }
 @keyframes hien { from { opacity: 0; transform: translateY(40px) scale(.98); } to { opacity: 1; transform: none; } }
 
 /* 5. Thẻ: rê chuột / Tab tới ⇒ nhấc, ảnh phóng 1,08, nhãn nhấc lên, lớp màu trượt từ dưới */
-.hieu-ung .nang { transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease; }
+.hieu-ung .nang { transition: transform .35s var(--ease-song), box-shadow .35s ease; }
 .hieu-ung .nang:hover, .hieu-ung .nang:focus-visible { transform: translateY(-6px); box-shadow: 0 22px 40px rgba(10,61,64,.22); }
-.hieu-ung .nang img { transition: transform .7s cubic-bezier(.16,1,.3,1); }
+.hieu-ung .nang img { transition: transform .7s var(--ease-song); }
 .hieu-ung .nang:hover img, .hieu-ung .nang:focus-visible img { transform: scale(1.08); }
-.hieu-ung .nang .nhan { transition: transform .45s cubic-bezier(.16,1,.3,1); }
+.hieu-ung .nang .nhan { transition: transform .45s var(--ease-song); }
 .hieu-ung .nang:hover .nhan, .hieu-ung .nang:focus-visible .nhan { transform: translateY(-8px); }
 .nang.lop-mau { position: relative; overflow: hidden; }
 .nang.lop-mau::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(14,107,102,.55), rgba(14,107,102,0) 60%); opacity: 0; transform: translateY(30%); pointer-events: none; }
-.hieu-ung .nang.lop-mau::after { transition: opacity .45s ease, transform .6s cubic-bezier(.16,1,.3,1); }
+.hieu-ung .nang.lop-mau::after { transition: opacity .45s ease, transform .6s var(--ease-song); }
 .hieu-ung .nang.lop-mau:hover::after, .hieu-ung .nang.lop-mau:focus-visible::after { opacity: 1; transform: none; }
 .nang.lop-mau .nhan { z-index: 1; }
 
@@ -70,6 +70,6 @@
   @keyframes chu-hien { from { -webkit-mask-position: 0 100%; mask-position: 0 100%; } to { -webkit-mask-position: 0 0; mask-position: 0 0; } }
 }
 @supports not (animation-timeline: view()) {
-  .hieu-ung .chu-hien { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.16,1,.3,1); }
+  .hieu-ung .chu-hien { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s var(--ease-song); }
   .hieu-ung .chu-hien.da-hien { opacity: 1; transform: none; }
 }
