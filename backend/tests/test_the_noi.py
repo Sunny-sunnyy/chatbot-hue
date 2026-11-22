@@ -161,7 +161,7 @@ def test_turns_outside_the_gate_send_the_model_the_same_bytes(deps, mo, cau):
 
 
 def test_switch_off_or_no_table_does_nothing(deps, mo):
-    assert AssistantFlags().the_noi is False and load_settings(validate_private_paths=False)["assistant"]["the_noi"] is False
+    assert AssistantFlags().the_noi is False  # mặc định của code là tắt; giá trị trong settings.yaml thật không khoá ở test (công tắc mở 22/11/2026)
     goc = generator(_tim_roi_trich_the)
     run_turn(deps, NHIEU_Y_HEP, goc, TAT)
     for flags in (dataclasses.replace(mo, the_noi=False), dataclasses.replace(TAT, the_noi=True)):  # tắt dù có bảng · mở mà không có bảng (im lặng, không lỗi)
