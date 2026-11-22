@@ -99,6 +99,35 @@ cp data/sua_kho_2026-11-16_lap_an/tools/chay.sh data/sua_kho_<…>/tools/chay.sh
   chạy câu có đoạn mới trong top 10 (`Session_Prompt.md` §7 "Đo đúng chỗ đổi").
 - Dừng nếu: bước 0 DỪNG mà không hiểu vì sao; quét trùng ra `golden` / `sealed`; lùi tự động in "LÙI LỖI" ⇒ không thử lại, báo User.
 
+### 5a. Cập nhật riêng phần chỉ mục của bài đã sửa (lệnh có từ 22/11/2026)
+
+Sau khi bài trong kho đã đổi (sửa, thêm, bớt), KHÔNG cần xoá collection rồi dựng lại cả chỉ mục (khoảng 225 giây): lệnh dưới kéo collection về khớp
+kho trong khoảng 25–30 giây — chia đoạn cả kho, so từng đoạn với collection, chỉ tính lại vector nghĩa cho đoạn khác chữ, ghi lại vector từ khoá của
+mọi điểm (phụ thuộc thống kê cả kho, chỉ CPU), kiểm cả collection bằng hàm kiểm của lúc dựng, rồi ghi file thống kê từ khoá và bản ghi dựng mới.
+
+```bash
+cd backend      # TẮT server trước; bật lại sau khi lệnh xong (server đọc thống kê từ khoá và xoá câu trả lời đã nhớ lúc khởi động)
+uv run python -m ingestion.cap_nhat_rieng --chi-xem    # chỉ in bài nào khác chỉ mục + số đoạn phải tính lại; không ghi gì
+uv run python -m ingestion.cap_nhat_rieng              # chạy thật; in "XONG trong … giây" hoặc "Chỉ mục ĐÃ KHỚP kho"
+```
+- Lệnh không nhận tên bài: tự dò. Khoá `bai_doi` của kết quả = bài có đoạn đổi hoặc đổi mã băm; bài chỉ đổi phần không thành đoạn (mục "Nguồn dữ
+  liệu") vẫn có tên ở đó với 0 đoạn tính lại.
+- Trước khi ghi, lệnh tự chụp collection (bản chụp Qdrant, khoảng 63 MB, nằm TRONG container ở `/qdrant/snapshots/<tên collection>/` — mất nếu
+  container bị tạo lại) và chép file thống kê + bản ghi dựng cũ vào `data/full_corpus_builds/sao_luu/<giờ>/`. Lệnh không tự xoá bản chụp cũ; xem:
+  `curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384/snapshots`.
+- Lệnh chết giữa chừng: bản ghi dựng đang ở tên `….json.dang_cap_nhat` ⇒ server từ chối khởi động ("Build record does not exist") chứ không trả
+  lời lệch. Cách chữa: chạy lại lệnh (lần chạy nào cũng so với chính collection nên kéo về đúng).
+- Lùi một lần sửa kho: `git revert` bản sửa bài ⇒ chạy lại chính lệnh này. Lùi bằng bản chụp (khi nghi collection hỏng):
+  `curl -s -X PUT http://127.0.0.1:6335/collections/<tên>/snapshots/recover -H 'content-type: application/json' -d '{"location":"file:///qdrant/snapshots/<tên>/<tên bản chụp>"}'`
+  rồi chép lại hai file trong `sao_luu/<giờ>/` về `data/full_corpus_builds/`. Đường cuối cùng vẫn là dựng lại toàn bộ (đầu mục này).
+- Sửa một câu mà file điều kiện `knowledge-base-hue/meta/full_corpus_conditions.json` đang ghim nguyên văn (`exact_text`) ⇒ bước chia đoạn báo lỗi
+  và lệnh dừng TRƯỚC khi ghi gì; sửa file điều kiện cho khớp rồi chạy lại.
+- Lệnh chỉ lo chỉ mục. Kho đổi thì vẫn phải tự chạy: `tests/test_su_kien_theo_ngay.py` (bảng sự kiện chép từ kho) và test bảng quán; các bước quét
+  trùng / 10 câu an toàn / T1 ở trên áp cho bài MỚI hoặc sửa nhiều chữ.
+- Chạy thử trên bản chép (không đụng chỉ mục thật): ba tham số đi cùng nhau `--kho <thư mục kho chép> --collection <tên thử> --thu-muc-ban-ghi
+  <thư mục>`; thiếu một trong ba hoặc trùng tên collection đang chạy ⇒ lệnh từ chối.
+- Giới hạn: chưa thử khi server đang phục vụ (luôn tắt server trước) · kho lớn gấp nhiều lần thì bước chia đoạn (21 giây hiện nay) thành phần chính.
+
 ## 6. Bảng dữ liệu của lịch "Lên kế hoạch"
 
 (C viết chiều 17/11/2026; mọi lệnh dưới đã chạy thử 0 USD trên `main` `0ec3a5e`.)
