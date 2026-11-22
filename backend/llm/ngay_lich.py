@@ -84,7 +84,13 @@ _TU_NGAY = re.compile(
 # review nhánh m-2: "thứ hai / thứ 3…" là ngày trong tuần TRỪ KHI đứng sau danh từ chỉ thứ tự ("vua thứ ba", "lần thứ hai", "mùa thứ hai")
 _THU = re.compile(r"(?:(\w+)\s+)?thứ (?:hai|ba|tư|năm|sáu|bảy|[2-7])(?!\w)", re.IGNORECASE)
 _THU_TU = {"vua", "đời", "lần", "mùa", "người", "con", "bậc", "tầng", "hạng", "giải", "lớp", "phần", "chương", "tập", "vị", "đợt", "kỳ", "khóa",
-           "khoá", "cấp", "hàng", "số", "ngôi", "đứng", "xếp", "thế", "hệ", "chúa", "hoàng", "chiếc", "cái", "điều", "bước", "vòng", "trận"}
+           "khoá", "cấp", "hàng", "số", "ngôi", "đứng", "xếp", "thế", "hệ", "chúa", "hoàng", "chiếc", "cái", "điều", "bước", "vòng", "trận",
+           # 22/11/2026: câu hỏi tiếp trỏ vào MỘT MỤC của danh sách vừa kể ("quán thứ hai bạn vừa kể ở đường nào?") từng bị coi là thứ trong tuần ⇒ bước
+           # tính ngày chạy thừa và lượt đó + lượt kế không được nhớ câu trả lời. Đếm 1.167 tin đã ghi: 52 lần "thứ <hai…bảy>", 47 là thứ trong tuần, 5 là
+           # số thứ tự (4 "quán", 1 "chỗ"). "ngày / hôm / tối / sáng thứ hai" CỐ Ý không ở đây (thứ Hai, hoặc ngày 2 của lịch — đều là chuyện ngày);
+           # "chỉ" cũng không ("chỉ thứ 7 hay tối mai cũng có?").
+           "quán", "điểm", "món", "nơi", "chỗ", "lăng", "chùa", "đền", "tiệm", "sạn", "tàng", "homestay", "câu", "mục", "ý", "dòng", "bài", "chặng",
+           "lượt", "chọn", "án"}
 
 
 def co_tu_ngay(text: str) -> bool:

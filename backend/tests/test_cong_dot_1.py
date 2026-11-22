@@ -287,6 +287,8 @@ def test_weather_and_feature_routes(app_client):
     original = _with(app, dataclasses.replace(OFF, thoi_tiet=False, bao_lu_cong_cu=False))  # cờ tắt đặt rõ (bao_lu_cong_cu cần thoi_tiet): settings.yaml bật thoi_tiet + biểu mẫu từ 07/11
     # `anh` của /api/tinh_nang đọc `app.state.anh`, chỉ có khi có khoá OpenAI + `anh.bat` (bật 08/11) ⇒ đặt rõ "tắt", không phụ thuộc settings / --env-file
     anh_goc, app.state.anh = app.state.anh, None
+    # `mo_hinh` của /api/tinh_nang chỉ có khi model viết sẵn sàng (người chạy có đặt biến trỏ file khoá) ⇒ đặt rõ "chưa sẵn sàng", như `anh`; khoá này có test riêng ở cuối file
+    may_viet_goc, app.state.generator = getattr(app.state, "generator", None), None
     try:
         off = client.get("/api/thoi_tiet")
         features_off = client.get("/api/tinh_nang").json()
@@ -300,6 +302,7 @@ def test_weather_and_feature_routes(app_client):
     finally:
         _restore(app, original)
         app.state.anh = anh_goc
+        app.state.generator = may_viet_goc
     assert off.status_code == 404
     assert ok == {"trang_thai": "ok", "hom_nay": {"tmax": 30, "tmin": 23, "xs_mua": 20}, "cap_nhat": "09:15 06/11",
                   "ghi_cong": "Dữ liệu thời tiết: Open-Meteo.com (CC BY 4.0)"}

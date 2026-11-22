@@ -1,0 +1,225 @@
+# Phụ lục C — Sổ mọi phép so sánh đã làm, kể cả phương án bị bỏ
+
+*Cập nhật 15:32, ngày 22/11/2026 · gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+
+**Cách đọc trang này (theo bài 20).** Mỗi dòng là một lần thử: thử gì, so với gì, ra số nào, giữ hay bỏ. Điều kiện đạt hay trượt được ghi trước khi chạy; vỡ một điều kiện không được vỡ thì mặc định là bỏ, dù điểm trung bình tốt hơn. Kết quả âm cũng được giữ, vì đó là căn cứ để trả lời "vì sao không làm cách X". Đọc cột thứ ba trước cột thứ tư: phần lớn phép so đo với gpt-6-luna, trên bộ câu nhỏ, ở kho của một thời điểm đã qua; đo riêng một bước có thể cho lợi mà người dùng không nhận được.
+
+Cột "Giữ / bỏ" chép kết luận của bài gốc. Dòng ghi "chưa đo", "dừng", "chưa làm" hay "sửa tiếp" được đếm là "chưa rõ" ở cuối trang. Một phép so có ở nhiều bài thì gộp một dòng, cột Bài ghi mọi bài; bài đầu tiên là bài có bảng "Đã so" chứa dòng đó.
+
+## Chặng 1 — Bức tranh
+
+| Thử gì | So với gì | Trên bộ nào, model nào, ngày nào | Con số quyết định | Giữ / bỏ | Bài |
+|---|---|---|---|---|---|
+| Sửa màu chữ của bản mẫu giao diện | bản mẫu lần đầu | trình duyệt tự động, hai khổ màn hình 1440 và 390 điểm ảnh; giữa tháng 11 | tương phản chữ – nền (ngưỡng ít nhất 4,5 : 1): 1,83 tới 2,71 ⇒ thấp nhất 6,07; chương trình thật 0 lần trượt trong 12 lần đo | giữ bản sửa | 5 |
+| Sửa độ xô lệch của trang danh sách bài khi nội dung tải dần | bản lần đầu | như trên | ngưỡng nhiều nhất 0,1: 0,23 tới 0,34 ⇒ nhiều nhất 0,045 | giữ bản sửa | 5 |
+| Thêm một bộ linh kiện giao diện có sẵn | chỉ dùng bộ định dạng | đã thử thật lúc chọn công nghệ giao diện | 2 linh kiện vi phạm rào an toàn của trình duyệt (tự chèn khối định dạng vào trang) | bỏ; chỉ giữ bộ định dạng | 5 |
+
+
+## Chặng 2 — Chuẩn bị kho
+
+| Thử gì | So với gì | Trên bộ nào, model nào, ngày nào | Con số quyết định | Giữ / bỏ | Bài |
+|---|---|---|---|---|---|
+| Thêm bài về khách sạn (sáu lần ghi 14/11, một lần 16/11) | trước khi thêm | câu nhắm vào bài mới, chấm mà không biết bản nào; gpt-6-luna | câu về khách sạn trả lời được 4 ⇒ 11 trên 12 | giữ | 7 |
+| Thêm bài về đi lại | trước khi thêm | người viết báo cáo tự đọc (độ chắc thấp hơn); gpt-6-luna; 14–16/11 | câu trả lời được 2 ⇒ 4 trên 6 | giữ | 7 |
+| Thêm bài quán ăn vào kho | trước khi thêm | chương trình đếm trên 3.840 lịch mô phỏng, không dính model | bữa ăn trong lịch có quán thuộc kho 49,3 % ⇒ 69,1 % | giữ | 7 |
+| Đo bù câu cũ sau khi thêm bài | chữ trả lời trước khi thêm | 65 câu cũ có 10 đoạn đầu bị đổi vì bài mới; gpt-6-luna; 15/11 | 8 câu ra đúng chữ cũ; 57 câu khác chữ, 56 cùng ý, 1 tốt lên (hết bị từ chối); 0 câu tệ đi | giữ (kiểm "không làm hỏng") | 7 |
+| Gộp đoạn ngắn tới 128 token; gộp các dòng bảng liền nhau | cắt theo khối, đoạn nhỏ | 32 câu đã biết đáp án ở đoạn nào, cùng lượng chữ 750 token; kho cuối tháng 10 | tốt lên / mất đáp án: 0 / 0 | bỏ (không khác, đổi không được gì) | 8 |
+| Gộp đoạn tới 256 token | như trên | như trên | 0 / 4 | bỏ | 8 |
+| Gộp đoạn tới 384 token | như trên | như trên; ở lượng chữ 1.500 token vẫn mất 6 câu | 1 / 6 | bỏ | 8 |
+| Gộp đoạn tới 512 token | như trên | như trên | 0 / 6; phép thử thống kê xác nhận mức tụt là thật | bỏ | 8 |
+| Tìm xong thì mở rộng ra cả mục chứa đoạn | như trên | như trên | 0 / 8 (tệ nhất) | bỏ | 8 |
+| Chỉ giữ giới hạn 512 token của model đang dùng | giữ cả ba giới hạn (512, 512, 256) | kho cuối tháng 10 | ít đi 61 đoạn, kết quả tìm không khác | bỏ được nhưng chưa dọn | 8, 10 |
+| Chỉ giữ tên mục gần nhất trong "chữ để tìm" | tên bài + đường tiêu đề đầy đủ | 32 câu, cùng lượng chữ; đợt rà cuối tháng 10 | tốt lên 4 · như cũ 21 · mất đáp án 7 | bỏ | 9, 8 |
+| Bỏ hẳn tên bài và tên mục, chỉ còn thân đoạn | như trên | như trên | tốt lên 3 · như cũ 21 · mất đáp án 8 | bỏ | 9, 8 |
+| Loại 3 file danh mục dùng lúc soạn khỏi kho | giữ các file đó | hai file loại đầu tháng 9, file thứ ba cuối tháng 10 | kết quả tìm không khác | giữ việc loại | 7, 8 |
+| Model embedding multilingual-e5-base (768 chiều) | multilingual-e5-small (mốc) | 45 câu món ăn, 572 đoạn (kho lúc đó chỉ có món ăn); luật "thắng rõ" hơn mốc ít nhất 0,03 nDCG@5 | 41 ⇒ 42 câu có đoạn đúng trong 5 đoạn đầu; nDCG@5 0,7425 ⇒ 0,7061; 27 ⇒ 57 mili giây | bỏ (không thắng rõ), giữ e5-small | 10, 6 |
+| Model embedding tiếng Việt (768 chiều) | multilingual-e5-small | như trên | 41 ⇒ 40 câu; nDCG@5 0,7164; 71 mili giây | bỏ | 10 |
+| Model embedding MiniLM-L12 | multilingual-e5-small | như trên | nDCG@5 0,4709; 83 đoạn (14,5 %) bị cắt cụt vì dài quá giới hạn | loại | 10 |
+| Model embedding Qwen3-Embedding-0.6B | multilingual-e5-small | như trên | nDCG@5 0,6175; tính 572 đoạn trên CPU mất khoảng 765 giây | loại | 10 |
+| Model embedding Qwen3-Embedding-8B (lớn hơn khoảng 70 lần, gọi qua mạng) | multilingual-e5-small | 40 câu có nhãn đoạn đúng, kiểm lại trên 15 câu; toàn kho | 40 câu: tốt lên 2 · như cũ 35 · tụt 3; tỉ lệ đủ đoạn đúng 0,600 ⇒ 0,575; 15 câu: 2 · 10 · 3; 21 ⇒ 2.228 mili giây (chậm khoảng 100 lần); 0,0089 USD cả lượt | bỏ, xoá chỉ mục thử | 10, 6 |
+| Tách từ bằng cách ghép từng cặp âm tiết liền nhau | tách theo âm tiết | 32 câu, kho cuối tháng 10, thời còn đưa 5 đoạn | tốt lên / như cũ / mất: 1 / 30 / 1 | bỏ | 11 |
+| Tách từ bằng thư viện tách từ tiếng Việt | tách theo âm tiết | như trên | 0 / 31 / 1 | bỏ | 11 |
+| Giữ nguyên cụm mã số (không cắt ở dấu chấm trong số) | tách theo âm tiết | như trên | 0 / 32 / 0 | bỏ (không khác) | 11 |
+| Hằng số k1 của BM25 bằng 1,2 và 1,8 | k1 = 1,5 | bản thử chỉ có nhóm món ăn | giữ 1,5 (bài không ghi số kết quả) | bỏ | 11 |
+| Hằng số b của BM25 bằng 0,5 và 1,0 | b = 0,75 | bản thử nhóm món ăn | 0,5 chưa rõ hơn; 1,0 mất đoạn đúng ở 1 câu | bỏ | 11 |
+| BM25 đứng một mình | TF-IDF đứng một mình | bản thử nhóm món ăn, 45 câu; chưa làm lại trên toàn kho | nDCG@5 0,6478 so với 0,6150 | giữ BM25 (lý do suy ra từ con số; hồ sơ không ghi) | 11 |
+| Cập nhật chỉ mục bằng cách sửa tại chỗ | lập sang collection mới rồi chuyển; lập lại toàn bộ | bản chép của collection thật, 9.436 điểm; 22/11 | cả hai cách mới bỏ được khoảng 195 giây tính vector; chênh nhau khoảng 2,4 giây (ghi lại từ khoá 1,8 so với chép điểm 4,2 giây) | giữ sửa tại chỗ (không đụng dòng nào của hệ thống) | 12 |
+| Lần cập nhật riêng thật đầu tiên (2 bài, 105 đoạn) | một bản lập lại toàn bộ từ cùng kho | phiên khác kiểm bằng chương trình riêng; sáng 22/11 | 9.442 điểm, chữ và từ khoá giống hệt, vector lệch lớn nhất 0,00000015; 176 câu mẫu cùng 10 đoạn, cùng thứ tự, 0 câu lệch | giữ | 12 |
+| Qdrant tìm gần đúng (cấu hình mặc định) | tìm chính xác | 108 câu, kho cuối tháng 10 | giống hệt ở 108 trên 108 câu | giữ tìm gần đúng | 12 |
+
+
+## Chặng 3 — Trả lời một câu hỏi
+
+| Thử gì | So với gì | Trên bộ nào, model nào, ngày nào | Con số quyết định | Giữ / bỏ | Bài |
+|---|---|---|---|---|---|
+| Đưa cho model viết 10 đoạn | 5 đoạn | 120 câu nhóm để thử (88 câu tính điểm), kiểm lại trên 56 câu; gpt-6-luna; cuối tháng 10 (đã đo 28/10) | đủ ý +0,26 (khoảng tin cậy +0,08 tới +0,48), nhóm kiểm lại +0,27; từ chối nhầm 13 ⇒ 7 trên 88; trên 158 câu sau khi đưa vào (gộp hai thay đổi nhỏ khác) 22 ⇒ 12; tiền khoảng 1,5 lần | giữ 10 (lần thắng duy nhất của đợt rà cuối tháng 10) | 13, 1, 2, 8 |
+| Đưa 15 đoạn | 10 đoạn, chạy lại cùng buổi | 176 câu mẫu và 32 câu an toàn; gpt-6-luna; 19/11 | đủ ý −0,008 (−0,140 tới +0,116: không khác); 1 câu thiếu số nguồn | bỏ | 13, 1, 2 |
+| Thay mỗi đoạn bằng cả mục chứa nó | 10 đoạn | như trên | đủ ý −0,008 (−0,047 tới +0,031); 1 câu ngoài kho được trả lời; mất một cảnh báo an toàn ở một lượt | bỏ | 13, 1 |
+| Thay mỗi đoạn bằng cả bài | 10 đoạn | dừng sớm, 30 câu chọn sẵn; gpt-6-luna; 19/11 | đắt gấp 5,5 lần; dòng cảnh báo lấy nhầm từ hoạt động khác cùng bài (mới một người đọc) | bỏ | 13, 1 |
+| Lấy 100 ứng viên | 30 ứng viên | 40 câu khó có nhãn đoạn đúng | đủ đoạn đúng trong vòng ứng viên 31 ⇒ 37 trên 40; trong 10 đoạn chỉ 22 ⇒ 23; 1 câu mất đoạn đúng | bỏ | 13, 10 |
+| Để từ khoá tự tìm trên cả kho rồi trộn với kết quả theo nghĩa | BM25 chỉ chấm lại 30 ứng viên | câu có nhãn đoạn đúng (kho cuối tháng 10) | điểm thứ hạng 0,726 so với 0,721; mất đoạn đúng ở 1 tới 2 câu | bỏ | 13, 11 |
+| 10 cách trộn khác (đổi hằng số, đổi trọng số; hằng số RRF 2, 10, 30) | RRF với hằng số 60 | câu có nhãn đoạn đúng | không cách nào thắng rõ; bản 10 làm mất 1 câu | bỏ | 13, 11 |
+| Chuẩn hoá chữ có dấu của câu hỏi (dạng NFC) | không chuẩn hoá | đã đo có và không (bài không ghi số) | giữ (đo gộp cùng 10 đoạn và bộ kiểm số nguồn mới) | giữ | 10, 13 |
+| Ba cách cho bước đầu viết lại câu tìm (bước xếp loại viết lại; tách thành tới ba câu tìm; trợ lý tự tìm từ đầu) | tìm bằng chính câu người dùng gõ | 12 câu; gpt-6-luna; 03/11 | chỉ thêm 0 tới 1 trên 12 câu đủ từ khoá (cần ít nhất 3) | bỏ | 13, 3, 21, 23 |
+| Model xếp lại đa ngữ chạy trên máy (2 kiểu) | không xếp lại | 30 câu khó có nhãn, thời còn đưa 5 đoạn; gpt-6-luna | điểm thứ hạng tăng khoảng 0,1 ở kiểu tốt nhất nhưng mất đoạn đúng ở 1 câu (kiểu kia 3 câu); khoảng 1 giây cho 10 đoạn (kiểu kèm tên mục 2,7 tới 4,8 giây) | bỏ (đáng thử lại với 10 đoạn, chưa đo lại) | 14 |
+| Model xếp lại tiếng Việt chạy trên máy (2 kiểu) | không xếp lại | như trên | mất đoạn đúng ở 3 câu mỗi kiểu | bỏ | 14 |
+| Lấy 100 ứng viên rồi cho model xếp lại chọn 10 | lấy 100 mà không xếp lại | như trên | không khác; 11 tới 14 giây | bỏ | 14 |
+| gpt-6-luna tự chọn 10 trong 30 ứng viên | không xếp lại | 40 câu khó, kiểm lại 15 câu, câu trả lời trên 88 câu; gpt-6-luna | đủ đoạn đúng 22 ⇒ 31 trên 40, kiểm lại 7 ⇒ 10 trên 15, 0 câu mất; đủ ý +0,22 nhưng 5 câu tệ đi (cho phép 4); 6,5 giây câu giữa, 9,1 giây câu chậm; tiền khoảng 3,8 lần | gác, giữ hồ sơ (còn đáng thử lại) | 14, 20 |
+| Cho trả lời phần có bằng chứng khi thiếu một vế, thay vì từ chối cả câu | từ chối cả câu | 88 câu nhóm để thử; gpt-6-luna; cuối tháng 10 | từ chối nhầm 13 ⇒ 1; nhưng 2 câu ngoài kho bị trả lời (điều kiện 0) | bỏ | 15, 4, 16 |
+| Câu dặn chống tự thêm lời khuyên chung: bản rộng | lời dặn trước đó | gpt-6-luna | từ chối nhầm lên 7 (ngưỡng 5) | bỏ | 15, 20 |
+| Câu dặn chống tự thêm lời khuyên chung: bản hẹp | lời dặn trước đó | gpt-6-luna | từ chối nhầm 4; lỗi an toàn hết; thành ý số 5 của lời dặn | giữ | 15 |
+| Thêm dòng "hôm nay là ngày…" vào tin gửi model | không có dòng đó | bộ đo của bước xếp loại câu; gpt-6-luna; 02/11 | từ chối nhầm 5,0 ⇒ 4,5 (cần giảm ít nhất 3) | bỏ; về sau ngày do chương trình tính | 15, 24 |
+| Tắt hẳn phần suy luận của model viết | mức giữa | 88 câu nhóm để thử; gpt-6-luna; cuối tháng 10 | tiền giảm khoảng 5 %; 1 câu lẽ ra phải từ chối bị trả lời vòng vo | bỏ | 15 |
+| Mức suy luận thấp thay cho mức giữa | mức giữa | 176 câu mẫu và 32 câu an toàn; gpt-6-luna | đủ ý chênh 0,000 trên 129 câu; rẻ hơn khoảng 4 %; 1 lần nói trái nguồn về vé trẻ em ở bộ an toàn | bỏ, giữ mức giữa | 15 |
+| Đoạn dặn riêng cho Claude để câu trả lời gọn hơn ("nói thẳng, không lặp ý") | lời dặn chung | 85 câu; Claude Sonnet 5.5; 21/11 | đúng và đủ ý không đổi; trọng tâm 4,39 ⇒ 4,26; câu dài thêm | gỡ; lời dặn của Claude nay giống hệt gpt-6-luna | 15, 33 |
+| Bộ kiểm nhận cả hai dạng số nguồn ([n] và [Nguồn n]) | chỉ nhận [n] | gpt-6-luna; cuối tháng 10 | model ghi dạng [Nguồn n] 24 trên 465 lần viết; lỗi số nguồn trên 1.600 câu 69 ⇒ 14; 0 câu đúng bị đổi | giữ | 16 |
+| Viết lại một lần khi chữ nộp không có số nguồn, đứng riêng (bản đầu: chỉ khi đã tìm hết lượt) | không có bước viết lại | lượt thật 44 câu (3,77 USD), tin 4 ý hỏi 6 lần mỗi bên; Claude Sonnet 5.5; trưa 22/11 | "Thử lại" 3 ⇒ 0 trên 6; 0 trên 5 con số bịa; nhưng 4 trên 5 câu viết lại ghi "tư liệu chưa có" đúng hai ý kho có (ba lượt bình thường trả lời đúng cả hai); lọt một tin hỏi phòng gym | không mở đứng riêng | 16, 21 |
+
+
+## Chặng 4 — Đo
+
+| Thử gì | So với gì | Trên bộ nào, model nào, ngày nào | Con số quyết định | Giữ / bỏ | Bài |
+|---|---|---|---|---|---|
+| Chẩn đoán 22 câu từ chối nhầm bằng nhãn đoạn đúng | thước từ khoá của đáp án | 22 câu; cuối tháng 10, thời còn đưa 5 đoạn; gpt-6-luna | thước từ khoá: 4 câu "đủ từ khoá mà vẫn từ chối" (nghi model rụt rè); nhãn đoạn đúng: 0 câu đủ, cả 22 thiếu (lỗi ở bước tìm) | giữ nhãn đoạn đúng cho chẩn đoán, thước từ khoá để theo dõi | 18 |
+| Người chấm Claude Sonnet 5.5 | người chấm gpt-6-luna | 176 câu; 24/10 | khớp ở mức cao (bài không ghi số) | giữ cả hai làm người chấm được; từ tối 21/11 dùng Claude | 19 |
+
+
+## Chặng 5 — Trợ lý hỏi đáp
+
+| Thử gì | So với gì | Trên bộ nào, model nào, ngày nào | Con số quyết định | Giữ / bỏ | Bài |
+|---|---|---|---|---|---|
+| Cho trợ lý tự tìm thêm tối đa 2 lần | tìm một lần | 18 câu cần nhiều nguồn và 158 câu; gpt-6-luna | đủ ý +1,17 (khoảng tin cậy +0,44 tới +2,00); từ chối nhầm 12 ⇒ 4–6 trên 158; xuất hiện 1 câu an toàn sai mới, chữa bằng một câu dặn hẹp | giữ | 21, 3 |
+| Chỉ cho tìm thêm 1 lần | 2 lần | 30 câu; gpt-6-luna | câu kho có bị từ chối 5 ⇒ 7 trên 30 (luật cho thêm nhiều nhất 1); 7 câu nhanh hơn 2,4 giây | bỏ | 21 |
+| Dùng hết 2 lần tìm thì cất công cụ | để model xin lần ba rồi nhận một dòng nhắc | 8 câu kho không có + bộ câu mẫu; gpt-6-luna | 8 trên 8 câu bớt ít nhất một vòng (luật cần 5); câu giữa 22,85 ⇒ 16,15 giây; 3 câu đổi sang từ chối, chạy lại bản chưa đổi cũng ra đúng 3 câu đó | giữ, kèm theo dõi | 21 |
+| Với Claude: nộp câu trả lời qua một công cụ nội bộ | gửi cùng lúc dạng đầu ra bắt buộc và danh sách công cụ | 29 câu; Claude Sonnet 5.5; 21/11 | cách cũ: 0 trên 8 lần viết được (xin công cụ mãi, ở mỗi mức suy luận); cách mới: lượt chạm trần vòng 6 ⇒ 0 trên 29 | giữ (chỉ đường Claude) | 21, 33 |
+| Nới trần: 8 vòng, 4 lần tìm | 4 vòng, 2 lần tìm | thước 29 câu và 18 câu; cả hai model; 21/11 | 28 và 28 trên 29; 15 và 15 trên 18; model hiếm khi dùng phần nới; câu lâu nhất của gpt-6-luna 14 ⇒ 22 giây | bỏ (lúc đó giữ 4 vòng) | 21, 3, 33 |
+| Trần tìm 3, đứng riêng | trần 2 | 21/11 cả hai model; trưa 22/11 Claude, 26 câu | 21/11: như cũ, không lượt nào dùng tới lần thứ ba; 22/11: "Thử lại" ở tin 4 ý 4 ⇒ 3 trên 6, trong mức dao động | không mở đứng riêng | 21, 23 |
+| Bỏ vế cụt + tách câu tìm gộp, rồi thêm bước viết lại (lượt ba bên) | bản đang chạy | tin 4 ý × 6 mỗi bên + tin nhiều ý khác, tin kho thiếu, tin thường; 57 câu, 4,46 USD; Claude Sonnet 5.5; 22/11 | đoạn giá vé Đại Nội vào bằng chứng 2 · 6 · 6 trên 6; "Thử lại" 5 · 3 · 0; đủ cả hai ý 0 · 1 · 1; nguồn trung vị 20 ⇒ 16; tin khác không lỗi, không bịa | giữ (mở cùng bộ) | 21, 23, 16 |
+| Thêm trần tìm 3 lên trên cả bộ | bộ ba thay đổi | tin 4 ý × 6; 9 câu, 1,09 USD; Claude Sonnet 5.5; 22/11 | đủ cả hai ý 6 trên 6; 0 "Thử lại"; chậm thêm khoảng 2 giây; lần thử cuối trên đúng cấu hình mở (6 câu): tin phòng gym từ chối 3 trên 3, tin gia đình đủ hai ý 2 trên 2 | mở cả bộ 14:47 22/11 | 21, 23, 16, 40 |
+| Cho model gọi hai công cụ (hai lần tìm) trong cùng một vòng | lần lượt | 176 câu mẫu + 32 câu an toàn; gpt-6-luna; ghi vào bảng tổng 15/11 | model gần như không dùng: 1 trên 176 câu; 7 câu nhanh hơn 2,3 giây nhưng vì model tìm 1 lần thay vì 2 | bỏ | 23, 21 |
+| Xếp loại câu bốn tuyến | không xếp loại | bộ câu soạn riêng; gpt-6-luna; đầu tháng 11 | xếp đúng 253 trên 253 câu đã thấy, 20 trên 20 câu chưa thấy; mỗi câu chậm thêm khoảng 1,5 giây | giữ | 22 |
+| Gom còn hai nhóm (bỏ tuyến khẩn cấp và ngoài phạm vi) | bốn tuyến | bộ câu soạn riêng; gpt-6-luna | 2 trên 44 câu ngoài phạm vi có mục web, vỡ điều kiện | bỏ; giữ bốn tuyến, chỉ bỏ câu soạn sẵn của tuyến khẩn cấp | 22 |
+| Xếp loại câu chạy song song với việc trả lời | chạy lần lượt | 20 cặp; 90 lượt bộ an toàn; gpt-6-luna; 04–05/11; chưa đo lại với Claude | chữ đầu sớm hơn 1,37 giây (0,34 tới 2,14); 0 lỗi trên 90 lượt | giữ | 22, 6, 34 |
+| Chạy song song cả câu chào hỏi | chỉ câu về Huế chạy song song | 10/11 | câu chậm vẫn quá 5 giây; câu ngoài chủ đề tốn thêm quá trần tiền | bỏ | 22 |
+| Tắt suy luận ở bước xếp loại cho nhanh | mức mặc định | bộ câu soạn riêng; gpt-6-luna | nhanh hơn 0,2 tới 0,35 giây; 2 câu an toàn bị xếp "ngoài phạm vi" | bỏ | 22 |
+| Luật từ khoá cho câu khẩn cấp | chỉ model xếp loại | bộ câu soạn riêng; gpt-6-luna | 14 trên 14 câu đã thấy; 0 trên 8 câu chưa thấy; chặn nhầm 2 trên 8 | bỏ | 22, 4 |
+| Đoạn dặn riêng cho Claude về địa bàn Huế | lời dặn chung | 56 lượt; bộ câu của phiên đo; Claude Sonnet 5.5 (gpt-6-luna 0 trên 56) | xếp nhầm nơi ở rìa Huế trước: 2 trên 56 ở mức cao, 4 trên 56 ở mức vừa; sau: 5 ⇒ 6 trên 6 câu; từ chối nhầm vì xếp loại 2 ⇒ 0; nơi ở tỉnh khác vẫn bị từ chối 8 trên 8 (lượt sau đổi cùng lúc vài thứ) | giữ (chỉ đường Claude) | 22 |
+| Nhớ câu hỏi của các lượt trước | không nhớ | bộ tin hỏi tiếp; gpt-6-luna; 03/11 | điểm tin hỏi tiếp +0,80 [+0,25; +1,50]; câu bẫy từ chối đúng 3 ⇒ 6 trên 6; từ chối nhầm 5 ⇒ 0 trên 19 | giữ | 23 |
+| Nhớ cả câu trả lời của ba lượt | chỉ nhớ câu hỏi | cùng bộ + bộ câu kín; gpt-6-luna; 03/11 | một lượt kín: tin ngoài kho được trả lời bằng đoạn của đối tượng khác; sau câu dặn thêm +0,50 [−0,15; +1,20], chứa 0 | bỏ | 23 |
+| Nhớ tên nơi đã trích | không nhớ | 17 chuỗi; gpt-6-luna; 19/11 | lượt hỏi tiếp nói đúng nơi 2 ⇒ 15 trên 17; 0 lượt nói chắc về sai nơi | giữ (chủ dự án chọn bật) | 23 |
+| Giữ câu trả lời liền trước | không giữ | 4 chuỗi × 3 lượt, 24 lượt; Claude Sonnet 5.5; 22/11 | chuỗi "quán thứ hai": không giữ thì không xác định được, giữ thì đúng; ba chuỗi còn lại như nhau; 0 lỗi; 0 lượt lấy câu trả lời cũ làm nguồn | giữ (nhóm đã chốt; "lợi nhỏ" theo tiêu chí chặt) | 23 |
+| Cắt câu trả lời liền trước ở 4.000 ký tự | 1.200 ký tự | một lượt tự kiểm; Claude; 21/11 | 2 trên 7 câu trả lời dài hơn 1.200 (dài nhất 2.229) | giữ 4.000 | 23 |
+| Chạy lại cả lượt một lần khi bị rút | không chạy lại | chuỗi "lộ trình ⇒ Bỏ Chợ Đông Ba đi" × 5; Claude Sonnet 5.5; 22/11 | màn hình lỗi 3 trên 7 ⇒ 0 trên 5; chạy lại thật 2 trên 5, cả hai ra câu trả lời | giữ | 23, 16, 6 |
+| Lời dặn theo ý cho mọi tin (vòng 1) | chương trình đếm vế rồi chốt (vòng 2) | 10 tin nhiều ý + 176 câu mẫu + bộ kín 10 câu; gpt-6-luna; 14/11 | vòng 1: 10 trên 10 tin, nhưng 3 trên 18 câu ngoài kho bị trả lời, 2 lỗi trích dẫn; vòng 2: 10 trên 10, kín 0 trên 10, 0 câu của bộ 176 đi vào luật mới | giữ vòng 2 | 23 |
+| Tin trả lời được một phần thì không tra web | có tra | 11 tin nhiều ý; Claude Sonnet 5.5; 21/11 | đi tra 11 ⇒ 0 trên 11; nhanh hơn ở 11 trên 11 tin, 5,8 giây câu đứng giữa; ba lượt mốc trước: mục web đáp đúng điều thiếu 1 trên 66 dòng | giữ | 23, 25 |
+| Tìm theo vế (nối 2 đoạn mỗi vế) | tìm một lần bằng cả tin | đếm 0 đồng 8 dòng "chưa có" sai + lượt thật 8 tin × 3 lượt; Claude Sonnet 5.5; 21–22/11 | đoạn đúng vào ngữ cảnh 1 ⇒ 5 trên 8 (tách vế như bộ đếm ý: 3 trên 8); nêu được dữ kiện 3 ⇒ 15 trên 24; bỏ hai tin quán ăn: 3 ⇒ 9 trên 18; 2, 3, 4 đoạn mỗi vế cùng kết quả | giữ | 23, 13 |
+| Ghép chủ thể vào vế cụt | không ghép | đếm trên 20 đoạn | chỉ đúng 6 | chưa làm | 23 |
+| Công cụ đổi ngày | không có | bộ câu ngày; gpt-6-luna; 09/11 | bớt 9 câu từ chối nhầm; 0 câu sai ngày | giữ | 24, 1, 3 |
+| Tính sẵn lịch trước lần gọi model đầu | chỉ có công cụ | 19 câu có ngày; gpt-6-luna; 10/11; đo ở máy chủ | chữ đầu 5,60 ⇒ 2,35 giây; mức 95 % 10,14 ⇒ 4,56 giây; lần gọi 52 ⇒ 31; tiền 0,00049 ⇒ 0,00036 USD một câu | giữ | 24, 3, 34 |
+| Câu bão: model không nhận số, chương trình nối khối cố định | model tự nhận định | bộ 31 câu do người khác soạn; gpt-6-luna; 17/11 | model tự nhận định có / không có bão 3 trên 5 (trước) ⇒ không ở câu gốc; câu cần khối 112 có khối 21 trên 22; câu thường vẫn có bảng 3 trên 3 | giữ | 24 |
+| Luôn đưa công cụ thời tiết | đưa theo từ khoá | cùng bộ + 176 câu mẫu; gpt-6-luna; 17/11 | 1 câu hỏi giá đi lại bị nối bảng mưa | bỏ (lùi) | 24, 3 |
+| Công cụ khoảng cách; rồi tra sẵn khi câu đúng dạng | không có | 16 câu, hai lần đo; gpt-6-luna; 16/11 | đúng cặp 13 trên 14 (tra sẵn: 14 trên 14); 0 số sai; nơi ngoài bảng ra số 0 trên 2; chữ đầu 3,7 ⇒ 1,9 giây | giữ | 24 |
+| Tra sẵn khoảng cách, bản đầu chỉ đếm hai tên | chỉ nhận dạng câu quen | 21 câu phá của người review | 15 trên 21 ra sai cặp ⇒ 0 sai sau khi đổi | sửa rồi giữ | 24 |
+| Luật số phút sàn 40 km/h | 1,25 × phút của dịch vụ chỉ đường + 5 | 6 cặp đối chiếu | luật đang dùng khớp 6 trên 6 cặp | bỏ sàn 40 km/h | 24 |
+| Sự kiện theo ngày | không có | 10 câu; Claude Sonnet 5.5; 21/11 | bị từ chối 4 ⇒ 0 trên 10; 40 ngày dương trong câu trả lời: 0 sai | giữ | 24 |
+| Công cụ gần một điểm | không có | 12 câu mù; Claude Sonnet 5.5; 21/11 | 0 lỗi; 30 trên 30 số km / phút đúng số chương trình; 0 trên 12 câu bịa "gần" | giữ | 24, 32 |
+| Công cụ liệt kê bài | không có | 7 câu xin danh sách; Claude Sonnet 5.5; 21/11 | bài đúng loại trong ngữ cảnh: lăng 2 ⇒ 8 trên 8, chùa 1 ⇒ 6 trên 6; mức "cả bảy câu đạt" ghi trước không đạt (5 trên 7) | giữ (nhóm đã chốt) | 24 |
+| Chương trình cộng tổng tiền chuyến đi (hai bản) | model tự cộng | 05/11 và 19/11; gpt-6-luna | 8 trên 8 và 5 trên 5 phép cộng đúng; nhưng bỏ điều kiện miễn vé 3 trên 3, và 6 trên 12 lượt từ chối | bỏ cả hai | 24, 1, 3 |
+| Dặn model "không tự cộng tổng" | không dặn | câu kín | 1 trên 2 câu kín vẫn tự viết dòng "Tổng" | bỏ | 24 |
+| Tra web sau câu từ chối, kèm luật chương trình | không tra web | bộ kín 7 câu; gpt-6-luna; 05/11 | vòng đầu 2 câu khẳng định tin chưa kiểm ⇒ thêm luật ⇒ 0 trên 7 khẳng định, 7 trên 7 có mục hữu ích; mục web tới sau khoảng 13 giây; khoảng 0,0018 USD một câu | giữ | 25 |
+| Để trợ lý tự quyết khi nào tra web | tra khi cả câu bị từ chối | 10 câu hỏi kèm; gpt-6-luna; 08–09/11 | có phần web 4 trên 10, bằng mốc (cần 6); 26 trên 29 lần đòi tra rơi vào lượt kho đã từ chối | bỏ | 25, 21 |
+| Dịch vụ Exa trước, Serper dự phòng | chỉ Serper | 42 câu, hai người chấm cùng gắn; gpt-6-luna; 12/11 | đo riêng bước tra: Exa 25, Serper 17 (cần 22), bỏ 5 mục trang tổng hợp của Exa còn 20; qua máy chủ thật: Exa 14, Serper 13 (cần 16); Exa khoảng 0,007 USD một lần | bỏ, giữ Serper | 25, 6, 20 |
+| Câu tra web của tin nối tiếp là câu tìm cuối của model | câu gõ ở lượt này | 8 cặp; gpt-6-luna; 15/11 | đúng tên nơi 0 trên 10 ⇒ 8 trên 8; lạc nơi 2 trên 2 ⇒ 0 trên 8; mục dùng được 2 trên 8; tên người dùng lọt 0 trên 4 (mẫu nhỏ) | giữ (chủ dự án chọn bật) | 25 |
+| Lần viết mục web "nghĩ ít" | mức mặc định | gpt-6-luna; 14/11 | nhanh hơn 0,87 giây (cần 1,5); chất lượng không tụt | bỏ | 25, 20 |
+| So số tiền theo giá trị | so nguyên chuỗi | 76 mục web đã lưu; 0 USD; 14/11 | mục được hiện 43 ⇒ 51; số bịa 220.000 vẫn bị chặn 4 trên 4 | giữ | 25 |
+| Lời dặn "gọn" cho mục web | bản dài | 28 đầu vào đã lưu; gpt-6-luna; 16/11 | kể lể 25 trên 28 ⇒ 0 trên 15 mục có viết; nhưng người đọc độc lập thấy 2 lỗi rõ + 4 ca ranh giới (bản dài: 1 nhẹ + 1) | bỏ (chủ dự án chọn bản dài) | 25 |
+| Model đang chạy gợi 3 tên, người dùng xác nhận | trả lời thẳng | 25 ảnh trong danh sách + 5 ảnh không phải Huế; gpt-6-luna; 05/11 | đúng trong 3 gợi ý 22 trên 25 (ngưỡng 22); gán tên Huế cho 2 trên 5 ảnh lạ (ngưỡng ≤ 1); ảnh có chữ lừa 1 trên 3; khoảng 3 giây ảnh giữa, 6–9 giây ảnh chậm | giữ dạng xác nhận (âm theo thước; chủ dự án quyết) | 26, 20 |
+| SigLIP 2 chạy trên máy | model viết nhìn ảnh | cùng bộ; 05/11 | 20 trên 25; gán tên Huế cho 5 trên 5 ảnh lạ | bỏ | 26 |
+| Một tên thì hỏi luôn (cách lai) | luôn hỏi luôn; luôn bấm chọn | đếm lại 33 ảnh × 2 lượt đã lưu; gpt-6-luna; 15/11; 0 USD | trả lời sai nơi: luôn hỏi luôn 14 trên 66, lai 6 trên 66, luôn bấm 0; phải bấm: lai 19 trên 66; một tên đúng 31 trên 33; tên đầu khi 2–3 tên đúng 11 trên 17 | giữ cách lai (chủ dự án chọn) | 26 |
+| So ảnh với ảnh mẫu (DINOv2, DINOv3) | gpt-6-luna nhìn ảnh | 25 + 5 ảnh, album 172 ảnh mẫu; 15–16/11 | tên đầu đúng 17 và 19 trên 25 (gpt-6-luna 21); không tách được ảnh lạ; album chỉ 76 trên 172 ảnh dùng được | dừng, chưa kết luận | 26 |
+| Lời dặn nhìn ảnh vòng 2 ("chỉ đưa id khi có dấu hiệu riêng") | vòng 1 | 25 + 5 ảnh; gpt-6-luna | ảnh lạ không còn bị gán tên (0 và 0); nhưng đúng trong 3 gợi ý tụt còn 21 và 20 trên 25 (ngưỡng 22) | bỏ (chủ dự án chọn giữ vòng 1) | 26 |
+| Đổi model nhìn ảnh sang Claude | gpt-6-luna | 6 ảnh trong danh sách + 2 ảnh ngoài; Claude ba mức suy luận; 21/11 | đúng trong ≤ 3 tên 6 trên 6 ở cả bốn bên; không ép tên Huế cho ảnh ngoài 2 trên 2 (gpt-6-luna 1 trên 2); 1,5–2,3 giây ở mức đang chạy, gpt-6-luna 3,1–7,8 giây | giữ (theo việc đổi model) | 26 |
+
+
+## Chặng 6 — Lên kế hoạch (và đo trợ lý)
+
+| Thử gì | So với gì | Trên bộ nào, model nào, ngày nào | Con số quyết định | Giữ / bỏ | Bài |
+|---|---|---|---|---|---|
+| Model đọc câu gõ, gọi công cụ xếp lịch (lần 1) | — | bộ câu kín 5 câu; gpt-6-luna; 05–06/11 | 3 trên 5 | tắt | 27, 3 |
+| Như lần 1, sửa ba lỗi bằng chương trình (lần 2) | — | 27 câu, hai người chấm ý "hợp người đi cùng"; gpt-6-luna; 09/11 | 27 trên 27 câu ra lịch; hợp người đi cùng 21 và 15 trên 27 (sàn 26) | đóng hồ sơ; đang tắt | 27, 3 |
+| Biểu mẫu bản đầu: chương trình xếp, model viết lời theo khung | — | sàn chương trình 24 phép; lời khớp khung 12 lịch × 2 lượt; gpt-6-luna; 07/11 | 24 trên 24; 12 trên 12 hai lượt; chữ đầu câu chậm 4,25 giây | bật 07/11 (thay bằng bản hiện nay 14/11) | 27 |
+| Dòng chỉ sang trang Lên kế hoạch trong ô chat | — | bộ câu mù 20 câu phải nhận + 20 câu giống mà không phải; lượt trình duyệt 21/11 | nhận 17 trên 20, nhận nhầm 0 trên 20; đạt ở màn rộng và màn hẹp | mở 21/11 | 27, 32 |
+| Đưa lịch đã lưu vào câu hỏi tiếp | — | 3 kịch bản từng nói chắc mà sai; 57 lượt; gpt-6-luna; 19/11 | cả 3 trả lời trên đúng lịch; 0 trên 57 lượt bị rút | mở 19/11 | 27 |
+| Bộ xếp bản hiện nay | bản đầu (7 trên 28 điểm không bao giờ được xếp; "đi dày" đổi khung 0 trên 120 lần) | mô phỏng 180 lịch trên bảng 34 điểm; 0 USD | 0 điểm lặp, 0 ngày rỗng, 0 ngày quá 2 cụm; ba kiểu đi ra ba khung khác nhau ở 24 trên 30 nhóm (sàn 70 %); 2,00 / 2,76 / 3,24 điểm một ngày; 1 trên 30 điểm ban ngày không bao giờ được xếp | giữ (bật 14/11) | 28 |
+| Luật "đi dày" cũ | "thong thả" | cùng bảng | khác ở 3 trên 120 cặp | bỏ | 28 |
+| Sửa ca sáng tràn sang chiều | trước khi sửa | 3.840 khung; người chấm mù thấy; 14/11 | 52 ⇒ 0 trên 3.840 | sửa | 28 |
+| Chừa 60 phút ăn trưa | không chừa | 960 cách điền; 4.800 lịch cũ ↔ mới; 17/11 | 26 ngày sát giờ trên 960 cách điền; 130 lịch đổi, đều là lịch có ngày như vậy | giữ | 28 |
+| Ngày mưa, không chọn sở thích: bỏ luật "chiều một điểm thiên nhiên" | giữ luật đó | 3.880 lịch; 17/11 | 100 trên 3.880 lịch đổi, đều đúng loại; ngày có điểm biển – đầm phá 109 ⇒ 0 trên 300; ngày toàn ngoài trời 253 ⇒ 181 trên 300 | giữ | 28 |
+| Mốc mưa: khả năng ≥ 60 % và lượng ≥ 6 mm | chỉ khả năng 60 % | một năm dự báo so với mưa đo lại; 15/11 | coi nhầm là mưa 106 ⇒ 15 ngày; chuyến 2–5 ngày có ít nhất một ngày kiểu mưa 80 % ⇒ 50 % | giữ | 28 |
+| Thêm 7 điểm vào bảng | bảng 34 điểm | 3.840 tổ hợp, đếm điểm ngoài sở thích ở lịch một sở thích; 15/11 | chụp ảnh 51,7 % ⇒ 36,8 %; ẩm thực 56,4 % ⇒ 44,0 %; thiên nhiên 24,4 % ⇒ 17,6 %; lễ hội 39,0 % ⇒ 39,1 %; 0 lỗi khung | giữ | 28 |
+| Sửa hẹp ca "quay lại cùng khu" | không sửa | 960 cách điền, 3.840 khung; 17/11 | ca hẹp 8 trên 960 và 24 trên 3.840 ⇒ 0 và 0; ca rộng 65 và 258 ⇒ 20 và 76; điểm ban ngày giảm khoảng 0,4 %; đổi một ca mưa và một chuỗi sửa lịch | không gộp; giữ giới hạn (nhóm chốt 20/11) | 28 |
+| Ẩn loại sở thích dưới sàn ≥ 50 % suất (lễ hội) | — | lịch 2 ngày; 13/11 | lễ hội 43 %; gắn thêm nhãn cho Cung An Định (có căn cứ kho) thì lên 50 % | giữ hiện, danh sách ẩn rỗng | 27 |
+| Nghiệm thu câu mô tả lịch, lần đầu | sàn ≥ 18 trên 20 lịch có ≤ 1 câu dự phòng | bộ 20 yêu cầu + bộ để dành 12 tổ hợp × 2 lượt, hai người chấm mù; gpt-6-luna; 13/11 | 16 và 17 trên 20; lịch > 30 % câu dự phòng: 2 rồi 1; bộ để dành 10 trên 12 mỗi lượt | trượt | 29 |
+| Sửa dữ liệu (chọn tay đoạn kho) và ba sửa nhỏ | lần đầu | như trên; 14/11 | 20 trên 20; 12 trên 12 × 2; chấm lại 6 lịch có đổi 6 trên 6; đủ câu sau 4,06 giây (bản trước 5,12) | giữ | 29 |
+| Thêm 7 điểm, chạy thật 17 yêu cầu có khung đổi | — | 15/11; gpt-6-luna | 17 trên 17 đạt đủ 6 ý bằng chương trình, nhưng 9 mục chỉ có câu dự phòng (cả 9 ở bốn nơi mới), 2 mục chỉ có mã | sửa tiếp | 29 |
+| Chọn lại đoạn tả cho bốn nơi mới; câu chỉ có mã coi là rỗng | — | gpt-6-luna | 11 trên 11 yêu cầu có bốn nơi này đạt; 17 trên 17 mục là câu model viết | giữ | 29 |
+| Luật "câu nói về tài liệu" | không có | 1.068 câu đã lưu; thêm 14/11 | bắt 1 câu lỗi, chặn nhầm 0 | giữ | 29 |
+| Khu ở: đếm cụm điểm ban ngày (bản đầu) | — | cùng 10 lịch (sàn 9 trên 10); 3.840 khung; 14/11; 0 USD | 9 rồi 10 trên 10 (bảng chấm thiếu cột buổi tối); có khung gợi ý phía tây dù tối ở trung tâm | thay | 30, 20 |
+| Khu ở: đếm điểm tối như điểm ngày | — | như trên | 8 trên 10 | bỏ | 30 |
+| Khu ở: buổi tối ở trung tâm ⇒ ở trung tâm | — | như trên | 10 trên 10; trung tâm 3.036 · ven biển 36 · phía tây 0 | giữ | 30 |
+| Xếp cơ sở lưu trú trải theo hạng sao | xếp theo tên trong cả mức | mô phỏng | bản cũ làm 5 sao không bao giờ hiện (0 trên 6.108) | giữ bản trải hạng | 30 |
+| Thêm ghi chú quán cho nơi xa; xét thêm điểm cho bữa trưa | trước khi sửa | mô phỏng mọi tổ hợp; 0 USD; 17/11 | bữa có dòng gợi ý 86,4 % ⇒ 94,5 % (22.752 bữa); ngày không có bữa trưa 52 ⇒ 0 trên 1.890 ngày; 101 trên 960 khung đổi quán bữa tối vì luật không lặp quán | giữ | 30 |
+| Bộ 10 chuỗi sửa lịch (đạt khi cả hai lần chạy đều đạt) | các lần chạy trước | qua máy chủ thật; 14/11 – 19/11, trước khi đổi sang Claude | 14/11: 7 rồi 9 · 15/11: 10 · 17/11: 8 (vòng 1), 7 (vòng 2) · 18/11: 7 · 19/11: 9 trên 10; 0 lượt sửa sai trên 42; 0,0297 USD cho 70 lượt | giữ; vòng lời dặn 2 cho "chưa hỗ trợ" bỏ | 31 |
+| Cổng từ khoá trước lần hiểu ý | không có cổng | bộ chuỗi đã thấy; câu diễn đạt lạ; 14/11 | 17 trên 19 câu sửa qua cổng; câu lạ 3 trên 10 (sàn 8 trên 10) | bỏ cổng | 31 |
+| Đổi chỗ hai ngày | — | đếm bằng chương trình 15.360 cặp; 20/11; 0 USD | đổi được 13.831 (90 %); bị chặn 1.529; 0 lỗi; đổi lại lần hai về đúng lịch cũ; 516 cặp bộ xếp đổi thêm (có câu báo) | bật 21/11 | 31 |
+| Đổi chỗ hai ngày, câu thật | — | bộ dò mù 10 câu; 5 lượt thật; Claude Sonnet 5.5; 21/11 | đọc nhầm 0 trên 10; lượt thật 5 trên 5 | bật | 31, 32 |
+| "Thêm" không tự thế chỗ | tự thế chỗ, ưu tiên điểm ngoài sở thích (bản trước 22/11) | mô phỏng 39.509 lệnh thêm; 144 lịch mẫu; 21/11 | 0 lệnh làm mất điểm (bản cũ 13.162 lệnh tự thế chỗ; 33–63 % lệnh thêm tự thế chỗ, điểm bị thế là điểm chính 58–84 %); "ok thay đi" 3 ⇒ 9 trên 9 | mở 22/11 | 31 |
+| Câu báo khi dời một điểm bị chặn | — | bốn kiểu lịch, mọi lần dời thử; 20/11 | 24 trên 176 lần dời làm được; 92 trên 152 ca bị từ chối không có chỗ nào dời được | giữ (tỉ lệ dời không tăng, chỉ câu báo rõ hơn) | 31 |
+| Dòng báo cho tin vừa sửa vừa hỏi | — | bộ mù 22 tin; Claude Sonnet 5.5; 21/11 | hiện 24 trên 24 ở tin sửa + hỏi; hiện nhầm 0 trên 24 ở tin chỉ sửa | mở 21/11 | 31, 32 |
+| Dời sang buổi tối | — | 7 tin × 2 khổ màn hình; Claude; 22/11 | đạt tiêu chí ghi trước | mở 22/11 | 31 |
+| Mức suy luận của lần hiểu ý sửa lịch | mức thấp, vừa | 9 lệnh × 3 lượt; Claude Sonnet 5.5; 21/11 | lệnh khó: cao 5 trên 6, thấp 2 trên 6, vừa 0 trên 6 | giữ mức cao | 31, 33 |
+| Claude Sonnet 5.5 với 12 người dùng mô phỏng | gpt-6-luna | 12 vai, ba lượt mỗi model, đọc mù; tối 21/11 | phiên đạt 7 · 7 · 8 so với 6 · 5 · 6 trên 12 (nhiễu 1); ý đạt 31 · 32 · 32 so với 29 · 28 · 30 trên 38; lượt hỏng 11 · 10 · 6 so với 22 · 19 · 13; chạm trần vòng 0 so với 7 · 8 · 3 | tốt hơn theo luật (mọi cặp lượt cùng chiều, chênh lớn hơn nhiễu) | 32, 33 |
+| Claude Sonnet 5.5 trên 41 câu khó | gpt-6-luna | luật máy; 21/11 | lượt đầu đạt máy 31 so với 24 trên 41 (lỗi hoặc từ chối trống 8 so với 16); mới nhất (15:26 21/11) 39 so với 25 | giữ Claude (bộ đã thấy, sau các sửa trong ngày) | 32 |
+| Claude Sonnet 5.5 trên thước 29 câu | gpt-6-luna | 29 câu, 10 câu an toàn, 10 câu ngoài phạm vi; 21/11 | 29 so với 28 trên 29; ghép công cụ 8 so với 7 trên 8; 0 từ chối nhầm, 0 trả lời bằng kho ở cả hai; thiếu cảnh báo khi chấm mù 1 so với 5 trên 8 | giữ Claude | 32 |
+| Kịch bản demo trên hai model | — | 10 lần mỗi model; 21/11; ba lần thử khói sau gộp | 0 trên 10 lần hỏng mỗi model, 0 trên 100 bước; ba lần thử khói 0 bước hỏng | đạt | 32 |
+| Chuỗi hội thoại (bản đầu) trên ba bên | — | 43 và 56 lượt; gpt-6-luna, Claude mức vừa, Claude mức cao; 21/11 | bị từ chối khi phải trả lời 1 · 6 · 4 trên 43; tuyến khác nhãn 0 · 6 · 5 trên 56 | chưa rõ (bài không ghi kết luận) | 32 |
+| Bộ dò mù câu xin danh sách | — | 20 câu + 32 câu; Claude | 19 trên 20 nhận đúng, nối nhầm 2 trên 32 | đạt (bài không ghi kết luận riêng) | 32 |
+
+
+## Chặng 7 — Máy móc bên dưới
+
+| Thử gì | So với gì | Trên bộ nào, model nào, ngày nào | Con số quyết định | Giữ / bỏ | Bài |
+|---|---|---|---|---|---|
+| Bốn mức suy luận của Claude (không · thấp · vừa · cao) | gpt-6-luna | 85 câu đầu bộ mẫu, 66 câu tính điểm, một lượt mỗi mức, người chấm gpt-6-luna; 21/11, trước khi sửa lớp nối | đúng 4,89 · 4,89 · 4,91 · 4,94 (luna 4,97); đủ ý 4,82 · 4,83 · 4,86 · 4,88 (luna 4,83); trọng tâm 4,44 · 4,39 · 4,36 · 4,39 (luna 4,94); 2,4 · 2,3 · 2,3 · 2,6 giây (luna 3,1); 0,0124 · 0,0137 · 0,0138 · 0,0146 USD (luna 0,00039) | cả bốn phạm mức tụt ở trọng tâm; chủ dự án nhận độ dài, chọn mức cao | 33, 15, 34 |
+| Mức suy luận của lượt biểu mẫu và câu thẻ lịch | ba mức | Claude | cùng kết quả | đặt cứng mức thấp | 33 |
+| Trả lại phần suy nghĩ giữa các vòng công cụ | không trả lại | Claude; 21/11 | 24 trên 24 cả hai bên | không đưa vào | 33 |
+| Đệm lời dặn với Claude | không đệm | Claude; 21/11 | 2,72 và 2,69 giây, không nhanh hơn | chưa bật | 33 |
+| Chữ hiện dần | chờ cả câu | 38 câu qua trình duyệt; gpt-6-luna; 01/11 | chữ đầu tới sau 1,23 giây ở câu đứng giữa, sớm hơn 0,44 giây | giữ (chủ dự án chọn) | 34, 2 |
+| Hướng làm nhanh: chữ chạy dần thật | đang chạy | ước từ số đã tách, 49 lượt; trưa 21/11; chưa đo | chờ tới chữ đầu 13 ⇒ khoảng 5,5–6 giây; lượt quá 15 giây khoảng 19 ⇒ 9 giây | chưa đo (cần quyền Bedrock; chủ dự án quyết) | 34 |
+| Hướng làm nhanh: hạ mức suy luận, riêng lần viết cuối | mức cao | như trên; đo thật trên 66 câu một lượt | ước tối đa 1,8 giây (đo thật khoảng 0,3 giây); lượt quá 15 giây tối đa 3,8 giây | chưa đo đủ (đã đo một phần) | 34 |
+| Hướng làm nhanh: hạ mức suy luận, riêng các vòng công cụ | mức cao | ước; chưa đo | tối đa 1,1 giây; lượt quá 15 giây tối đa 1,6 giây | chưa đo | 34 |
+| Hướng làm nhanh: hạ mức suy luận, riêng xếp loại câu | mức cao | ước; chưa đo | 0 (vốn không suy luận, chạy song song) | chưa đo | 34 |
+| Hướng làm nhanh: bớt một vòng công cụ | đang chạy | ước; chưa thử | khoảng 2,2 giây; lượt quá 15 giây khoảng 2,4 giây | chưa thử | 34 |
+| Hướng làm nhanh: câu trả lời ngắn hơn | đang chạy | ước; chưa đo | mỗi 100 token bớt khoảng 0,9 giây; bớt một phần ba ≈ 2,5 giây | không làm (chủ dự án đã chọn nhận độ dài) | 34 |
+| Chạy cả bộ test nhiều tiến trình cùng lúc | từng file một | 21/11 | cạn bộ nhớ (một phiên bật 13 tiến trình) | bỏ, chạy từng file một | 38 |
+
+## Đếm theo bảng của trang này
+
+| Chặng | Giữ | Bỏ | Chưa rõ |
+|---|---|---|---|
+| Chặng 1 | 2 | 1 | 0 |
+| Chặng 2 | 9 | 17 | 1 |
+| Chặng 3 | 4 | 18 | 0 |
+| Chặng 4 | 2 | 0 | 0 |
+| Chặng 5 | 30 | 19 | 2 |
+| Chặng 6 | 29 | 8 | 2 |
+| Chặng 7 | 3 | 3 | 6 |
+| **Cả trang** | **79** | **66** | **11** |
+
+Cả trang có 156 phép so. Con số này khác bảng tổng 45 lần so chính mà bài 20 kể: trang này tách mỗi phương án của một bảng thành một dòng, và gồm cả các lần đếm bằng chương trình của phần lên kế hoạch. "Giữ" gồm cả các dòng "mở", "bật", "sửa rồi giữ", "đạt"; "bỏ" gồm cả "gỡ", "gác", "tắt", "không mở đứng riêng", "không gộp", "trượt", "thay".
+
+<details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
+
+Gom từ mục "Đã so" của các bài 5, 7–16, 18, 21–34 (bài 1–4, 6, 17, 19, 20, 35–38 không có mục này hoặc mục không có bảng); thêm các dòng "Cách khác: đã đo…" có số trong mục "Quyết định và lý do" mà không có trong bảng "Đã so" nào (bài 5 bộ linh kiện; bài 22 chạy song song câu chào; bài 23 ghép chủ thể vào vế cụt; bài 24 dặn không tự cộng tổng; bài 31 tự thế chỗ trên 144 lịch); và các dòng có số ở cột "Đã thử giá trị khác chưa" của bảng "Cấu hình đang chạy" (bài 7, 8, 11, 12, 19, 23, 24, 26, 27, 29, 30, 38) cùng bảng ba lần làm nhanh ở "Chi tiết để tra" của bài 34. Bản các bài lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Bảng tổng 45 dòng mà bài 20 hứa "phụ lục C sẽ chép đủ" không được chép ở đây: nó nằm ngoài giáo trình. Chỗ hai bài nói khác nhau ghi ở báo cáo gom [riêng tư].
+
+</details>

@@ -1,6 +1,6 @@
 # Bài 20 — Một thí nghiệm được làm thế nào, và nhìn cả bảng các lần so sánh thấy gì
 
-*Cập nhật 12:18, ngày 22/11/2026 · các bước lấy từ quy trình đo của dự án; các ví dụ và con số lấy từ bảng tổng 45 lần so sánh đã ghi (từ cuối tháng 8 tới 19/11), phần lớn đo với gpt-6-luna; người viết không chạy lại phép đo nào.*
+*Cập nhật 15:16, ngày 22/11/2026 · các bước lấy từ quy trình đo của dự án; các ví dụ và con số lấy từ bảng tổng 45 lần so sánh đã ghi (từ cuối tháng 8 tới 19/11), phần lớn đo với gpt-6-luna; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** đề (bài 17), cách chấm bước tìm (bài 18), cách chấm câu trả lời và mức nhiễu (bài 19).
 **Bài này thêm:** ghép ba thứ đó thành một cách làm. Mỗi dòng "đã thử, giữ" hay "đã thử, bỏ" trong giáo trình đều đi qua cùng một chuỗi bước. Cuối bài nhìn cả bảng các lần so sánh để thấy điều gì lặp lại.
@@ -104,7 +104,7 @@ Dự án giữ một bảng tổng 45 lần so sánh chính, từ kho tới tr�
 ### 4. Vì sao có lúc vẫn giữ một thay đổi dù một điều kiện bị vỡ?
 
 - **Đã chọn:** vỡ điều kiện thì mặc định bỏ; chỉ giữ khi chứng minh được chỗ vỡ không do thay đổi, hoặc khi đổi cách dùng để người dùng chặn được lỗi đó, và luôn ghi lý do.
-- **Vì sao:** hai ca thật. Một thay đổi ở phần trợ lý làm 3 câu đổi sang từ chối, tức vỡ theo chữ; nhưng chạy lại bản chưa đổi cũng ra đúng 3 câu đó (bài 21). Chức năng hỏi bằng ảnh gán tên Huế cho 2 trên 5 ảnh không phải Huế, quá ngưỡng 1; nó được giữ ở dạng người dùng phải bấm xác nhận tên hệ thống đoán (bài 26).
+- **Vì sao:** hai ca thật. Một thay đổi ở phần trợ lý làm 3 câu đổi sang từ chối, tức vỡ theo chữ; nhưng chạy lại bản chưa đổi cũng ra đúng 3 câu đó (bài 21). Chức năng hỏi bằng ảnh gán tên Huế cho 2 trên 5 ảnh không phải Huế, quá ngưỡng 1; nó được giữ ở dạng có bước xác nhận (bài 26): lúc đầu người dùng phải bấm xác nhận mọi tên hệ thống đoán; nay đoán ra một tên thì hỏi luôn kèm dòng báo "có thể sai", hai ba tên mới phải bấm chọn.
 - **Cách khác:** không bao giờ có ngoại lệ: hai thay đổi trên sẽ bị bỏ.
 - **Cái giá:** mỗi ngoại lệ làm luật yếu đi một chút, nên phải có người kiểm độc lập đồng ý.
 
@@ -199,7 +199,7 @@ Một dòng bảng còn lại: thay đổi rất nhỏ, rõ nguyên nhân thì s
 - **Bộ câu nhỏ ở nhiều lần thử.** Nhiều kết luận là "chưa rõ" vì chỉ có vài câu có thể đổi kết quả.
 - **Phần lớn lần thử ở bước tìm và xếp lại** làm cuối tháng 10, trên kho của thời điểm đó và thời còn đưa 5 đoạn. Bảng tổng ghi rõ dòng nào có thể khác đi ở cấu hình hiện nay.
 - **Gần như mọi lần thử đo với gpt-6-luna.** Từ tối 21/11 các phép đo mới chạy và chấm bằng Claude Sonnet 5.5; số của hai giai đoạn không so thẳng với nhau.
-- **Có lần giữ dù một ngưỡng không đạt, và đều ghi lý do.** Rõ nhất: một thay đổi được giữ dù một điều kiện bị vỡ theo chữ, vì chạy lại bản chưa đổi cũng ra đúng những câu đó, tức chỗ vỡ không do thay đổi (bài 21, dòng 3). Chức năng hỏi bằng ảnh cũng không đạt một ngưỡng, và được giữ ở dạng khác: người dùng phải bấm xác nhận tên mà hệ thống đoán (bài 26).
+- **Có lần giữ dù một ngưỡng không đạt, và đều ghi lý do.** Rõ nhất: một thay đổi được giữ dù một điều kiện bị vỡ theo chữ, vì chạy lại bản chưa đổi cũng ra đúng những câu đó, tức chỗ vỡ không do thay đổi (bài 21, dòng 3). Chức năng hỏi bằng ảnh cũng không đạt một ngưỡng, và được giữ ở dạng khác: có bước xác nhận tên mà hệ thống đoán — nay một tên thì hỏi luôn kèm dòng "có thể sai", hai ba tên thì bấm chọn (bài 26).
 - **Liều lượng đo từng bị chủ dự án nhận xét là quá tay.** Từ 21/11 luật là: thay đổi rủi ro cao thì thử nhiều, thay đổi nhỏ thì thử ít, bỏ các lượt đo lặp lại không đổi quyết định nào; chất lượng không được tụt vì bớt đo.
 
 ## Chi tiết để tra
@@ -226,5 +226,7 @@ Một dòng bảng còn lại: thay đổi rất nhỏ, rõ nguyên nhân thì s
 - Nhận xét của chủ dự án về liều lượng đo và luật mới: `session_prompt/HIEN_TRANG.md` mục 4, gạch 22:45 21/11/2026.
 - Mốc cùng buổi chỉ bắt buộc ở khâu có model; mức phải đạt riêng cho thay đổi nhằm tốc độ (hàng số 38 của bảng tổng: 0,87 so với 1,5 giây); xác nhận trên nhóm kiểm lại là "cùng chiều, không làm hỏng"; hàng số 25 giữ ở dạng chờ xác nhận; đếm 25 / 15 / 1 / 4: `skills/run-experiment/SKILL.md`, `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md`, `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` (theo biên bản kiểm `data/hoc_cung_D/kiem/bai_17_20.md`). Số tốt hơn của Claude Sonnet 5.5 ở thước nhỏ: `bai_hoc/VIEC_MOI_XONG.md` mục 23.
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Quyết định nhỏ hơn" (sửa theo biên bản `data/hoc_cung_D/kiem/muc_moi_05_06_17_20.md` phần bài 20 [riêng tư]): bản chọn đoạn 5 câu tụt, ngưỡng 4, chậm và tốn 3,8 lần: bảng tổng hàng số 9; ba thay đổi gộp (10 đoạn, NFC, bộ kiểm trích dẫn v2): `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` (giới hạn của nhóm B1 / B3); hai ngoại lệ: bảng tổng hàng số 35 (3 câu, chạy lại bản cờ tắt, người kiểm độc lập đồng ý) và hàng số 25 (2 / 5 ảnh, ngưỡng ≤ 1, giữ dạng chờ xác nhận); lời chủ dự án về đo / test (22:45 và 22:48 21/11): `session_prompt/HIEN_TRANG.md` mục 4; 310 câu là "câu gõ khác nhau trong sổ vết": `report_agent/2026-11-21/c_cong_cong_cu.md`; máy tự dò (15 cấu hình, 0 hơn, 22 / 38, 0 đồng, chỉ nút chỉnh lúc hỏi): `bai_hoc/VIEC_MOI_XONG.md` mục 10 (19/11) [máy kiểm, chưa ai chạy lại]; mốc cùng buổi, khâu tất định không cần A/A, lượt đầu qua server khi chọn nhà cung cấp: `skills/run-experiment/SKILL.md` (mục 0 và mục mốc); "chưa thấy lần nào bị loại vì ngược chiều trên nhóm kiểm": người kiểm đọc lướt cột kết quả bảng tổng, không đếm hết.
+
+- Hai câu về hỏi bằng ảnh sửa theo bài 26 (cách lai: một tên thì hỏi luôn kèm "có thể sai"; 2–3 tên bấm chọn), bài 26 đọc từ chương trình giao diện [chép qua bài 26; người viết không mở lại code giao diện]. Bộ thay đổi mở 14:47 22/11/2026 không chạm bài này.
 
 </details>

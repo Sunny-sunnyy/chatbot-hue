@@ -1,6 +1,6 @@
 # Bài 6 — Kiến trúc: các khối, vì sao đặt như vậy, và khi một khối hỏng thì sao
 
-*Cập nhật 14:33, ngày 22/11/2026 · các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Bốn tình huống hỏng (Qdrant ngừng giữa chừng, Qdrant tắt lúc bật máy chủ, thiếu khoá model lúc bật, khởi động lại máy chủ giữa một cuộc) đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt; các tình huống hỏng còn lại là đọc từ chương trình, chưa thử.*
+*Cập nhật 15:41, ngày 22/11/2026 · các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Bốn tình huống hỏng (Qdrant ngừng giữa chừng, Qdrant tắt lúc bật máy chủ, thiếu khoá model lúc bật, khởi động lại máy chủ giữa một cuộc) đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt; các tình huống hỏng còn lại là đọc từ chương trình, chưa thử.*
 
 **Bài trước đã biết:** người dùng thấy sáu trang; ở khung Trợ lý họ gõ câu hỏi và nhận câu trả lời có nguồn.
 **Bài này thêm:** phía sau màn hình có những khối nào, một câu hỏi đi qua chúng theo thứ tự nào, **vì sao** các khối được đặt như vậy, và **một khối hỏng thì sao**. Bài mở bằng vài khái niệm về trang web và máy chủ, giảng từ đầu.
@@ -107,39 +107,28 @@ Khối chính là thứ thiếu thì không thể có câu trả lời: model vi
 
 ### 3. Vì sao dịch vụ bên ngoài lỗi thì máy chủ không âm thầm gọi lại, và không tự đổi sang model khác?
 
-- **Đã chọn:** mỗi dịch vụ bên ngoài chỉ được gọi một lần. Phần viết của một lượt hỏi (kể cả các vòng model xin tìm thêm hay xin công cụ) có chung một hạn 45 giây; lỗi hoặc quá hạn thì dừng. Hãng model đang dùng ghi ở một dòng cấu hình; đổi hãng là sửa dòng đó rồi khởi động lại máy chủ, do người làm.
-- **Vì sao:** chưa thấy ghi lý do. Điều thấy được: cả ba chỗ gọi ra ngoài đều gọi đúng một lần; với thư viện của OpenAI, chương trình phải tắt hẳn việc tự gọi lại có sẵn của thư viện, tức có người đã chủ ý đặt như vậy.
-- **Cách khác:** tự gọi lại khi lỗi mạng: chưa thử. Tự chuyển sang hãng dự phòng: chưa thử; model dự phòng sẽ chạy với lời dặn và ngưỡng chưa được đo cho nó, mà hai model cư xử khác nhau với cùng một lời dặn (ở bước xếp loại câu: gpt-6-luna xếp nhầm 0 trên 56 lượt, Claude 2 tới 4 trên 56; bài 22).
-- **Cái giá:** hãng model trục trặc chốc lát thì người dùng vẫn thấy lỗi và phải tự bấm "Thử lại". Hãng sập lâu thì ô hỏi đáp ngừng cho tới khi hãng chạy lại hoặc có người đổi cấu hình; đường quay về gpt-6-luna hiện cũng đang tạm dừng.
-
-Có đúng một trường hợp máy chủ tự chạy lại, và nó không phải lỗi mạng (mục "Mọi tình huống hỏng", dòng "ngay sau một câu trả lời được nhớ").
+- **Đã chọn:** mỗi dịch vụ bên ngoài chỉ được gọi một lần. Phần viết của một lượt hỏi (kể cả các vòng model xin tìm thêm hay xin công cụ) có chung một hạn 45 giây; lỗi hoặc quá hạn thì dừng. Hai trường hợp máy chủ tự gọi model thêm đều không phải lỗi mạng mà là lỗi ở bước kiểm sau khi viết: chạy lại cả lượt ngay sau một câu trả lời được nhớ, và từ 14:47 ngày 22/11 viết lại một lần khi model đã tự tìm mà chữ nộp không có số nguồn (bài 16, 21); mỗi lần có hạn 45 giây riêng. Hãng model đang dùng ghi ở một dòng cấu hình; đổi hãng là sửa dòng đó rồi khởi động lại máy chủ, do người làm.
+- **Vì sao:** quyết định đã ghi (01/10/2026, chủ dự án duyệt, khi chuyển sang model của OpenAI): không gọi lại ở tầng ứng dụng, không có model dự phòng; lỗi của hãng thành lỗi báo rõ, không âm thầm gọi lại. Lý do của quyết định: chưa thấy ghi lý do. Điều thấy được: chương trình kiểm cấu hình từ chối hẳn các dòng "gọi lại" và "model dự phòng"; cả ba chỗ gọi ra ngoài đều gọi đúng một lần; với thư viện của OpenAI, chương trình phải tắt hẳn việc tự gọi lại có sẵn của thư viện.
+- **Cách khác:** tự gọi lại khi lỗi mạng: chưa thử. Tự chuyển sang hãng dự phòng: chưa thử; model dự phòng sẽ chạy với lời dặn chưa được đo cho nó ("Chi tiết để tra").
+- **Cái giá:** hãng trục trặc chốc lát thì người dùng phải tự bấm "Thử lại"; hãng sập lâu thì ô hỏi đáp ngừng tới khi hãng chạy lại hoặc có người đổi cấu hình (đường về gpt-6-luna cũng đang tạm dừng).
 
 ### 4. Vì sao cho chữ hiện ra trước, rồi mới kiểm, để có lúc phải rút lại?
 
 - **Đã chọn:** hiện trước, kiểm sau. Kiểm hỏng thì giao diện xoá chữ đã hiện, hiện lời báo "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại".
 - **Vì sao:** để người dùng bắt đầu đọc sớm. Đã đo ngày 01/11 (gpt-6-luna, 38 câu, trên trình duyệt): chữ đầu tiên tới sau 1,23 giây ở câu đứng giữa, sớm hơn 0,44 giây so với chờ cả câu. Mức đó dưới mốc 0,5 giây nhóm tự đặt; chủ dự án chọn giữ.
-- **Cách khác:** kiểm xong mới hiện (bản trước đó): người dùng không bao giờ thấy một câu rồi mất, nhưng phải chờ model viết xong hết.
+- **Cách khác:** kiểm xong mới hiện (bản trước đó): không bao giờ thấy chữ rồi mất, nhưng phải chờ viết xong hết.
 - **Cái giá:** có lượt người dùng thấy chữ rồi mất: 3 trên 48 và 4 trên 53 lượt ở một lần đo ngày 21/11 (bài 16). Với model đang chạy, chữ tới một lần chứ không tới dần, nên cái lợi chưa được đo lại, trong khi cái giá vẫn còn.
 
-### 5. Vì sao cuộc trò chuyện chỉ được giữ trong bộ nhớ của máy chủ?
+### 5. Vì sao khi kho và chỉ mục lệch nhau, máy chủ từ chối mọi câu hỏi?
 
-Để hiểu câu "còn chỗ đó thì sao?", hệ thống phải nhớ các lượt trước. Có ba chỗ để giữ: trong trình duyệt (rồi gửi lại mỗi lần hỏi), trong bộ nhớ của máy chủ, hoặc ghi ra đĩa.
-
-- **Đã chọn:** bộ nhớ của máy chủ. Mỗi cuộc giữ 3 lượt gần nhất, hết hạn sau 30 phút không hoạt động, nhiều nhất 500 cuộc.
-- **Vì sao không ghi ra đĩa:** kế hoạch làm phần nhớ hội thoại ghi rõ chữ của người dùng chỉ được nằm trong bộ nhớ và trong lời gọi model (bài 37).
-- **Vì sao không để trình duyệt giữ:** lý do có ghi trong chương trình. Nếu trình duyệt gửi lại "trợ lý đã nói thế này", người dùng có thể sửa câu đó để cài một mệnh lệnh vào lời gọi model.
-- **Cái giá:** khởi động lại máy chủ là mất hết các cuộc đang mở. Nếu sau này chạy nhiều bản máy chủ cùng lúc, chúng không thấy chỗ nhớ của nhau.
-
-### 6. Vì sao khi kho và chỉ mục lệch nhau, máy chủ từ chối mọi câu hỏi?
-
-Kho là các file bài viết; chỉ mục là bản đã cắt đoạn và cất trong Qdrant. Sửa một bài mà chưa cập nhật chỉ mục thì chỉ mục còn giữ đoạn cũ.
+Kho là các file bài viết; chỉ mục là bản đã cắt đoạn trong Qdrant. Sửa bài mà chưa cập nhật chỉ mục thì chỉ mục giữ đoạn cũ.
 
 - **Đã chọn:** lúc bật, máy chủ so kho với chỉ mục. Lệch thì máy chủ vẫn chạy, nhưng mọi câu hỏi nhận lời báo "Dữ liệu tra cứu cần được lập chỉ mục lại."
 - **Vì sao:** việc dừng khi lệch có từ lúc dựng hệ thống. Luật đã ghi của sản phẩm là chỉ trả lời từ kho; lập luận đứng sau: trả lời từ một chỉ mục không còn khớp kho là trái luật đó, vì có thể trích một đoạn đã bị sửa giá, sửa giờ (bài 12).
 - **Cách khác:** chạy tiếp với chỉ mục cũ rồi báo "dữ liệu có thể đã cũ": không làm.
 - **Cái giá:** sửa kho mà quên cập nhật chỉ mục thì từ lần khởi động sau, ô hỏi đáp ngừng hẳn. Phép so chỉ chạy lúc bật: trong lúc máy chủ đang chạy, nó không biết kho vừa đổi.
 
-Năm quyết định nhỏ hơn nằm ở nửa để tra, mục "Quyết định nhỏ hơn".
+Sáu quyết định nhỏ hơn nằm ở nửa để tra, mục "Quyết định nhỏ hơn".
 
 ## Nếu… thì sao
 
@@ -234,6 +223,8 @@ Việc tìm trong kho (đổi câu hỏi thành vector, hỏi Qdrant, chấm t�
 
 ## Quyết định nhỏ hơn
 
+**Vì sao cuộc trò chuyện chỉ được giữ trong bộ nhớ của máy chủ?** Để hiểu câu "còn chỗ đó thì sao?", hệ thống phải nhớ các lượt trước; có ba chỗ để giữ: trình duyệt (rồi gửi lại mỗi lần hỏi), bộ nhớ của máy chủ, hoặc đĩa. Đã chọn bộ nhớ của máy chủ: mỗi cuộc giữ 3 lượt gần nhất, hết hạn sau 30 phút không hoạt động, nhiều nhất 500 cuộc. Không ghi ra đĩa: kế hoạch phần nhớ hội thoại ghi rõ chữ của người dùng chỉ được nằm trong bộ nhớ và trong lời gọi model (bài 37). Không để trình duyệt giữ: lý do ghi trong chương trình — trình duyệt gửi lại "trợ lý đã nói thế này" thì người dùng sửa được câu đó để cài mệnh lệnh vào lời gọi model. Cái giá: khởi động lại máy chủ là mất hết các cuộc đang mở; chạy nhiều bản máy chủ cùng lúc thì chúng không thấy chỗ nhớ của nhau (bài 23).
+
 **Vì sao khoảng cách tra trong một bảng dựng sẵn, còn thời tiết thì hỏi dịch vụ bên ngoài?** Khoảng cách giữa 40 điểm tham quan không đổi, nên được tính một lần lúc dựng bảng (nhờ một dịch vụ chỉ đường), rồi lúc trả lời chỉ tra bảng, không gọi mạng. Cách khác đã cân lúc lập kế hoạch: chương trình tự tính theo đường chim bay nhân 1,3; bỏ vì là phép ước thô, sai nhiều với hai điểm cách sông hay phải đi vòng. Thời tiết đổi theo giờ nên không dựng sẵn được; kết quả được giữ 30 phút. Cái giá: nơi không có trong bảng thì hệ thống không nói được khoảng cách (bài 24).
 
 **Vì sao việc tìm trong kho chạy trọn trên máy, không nhờ một dịch vụ bên ngoài?** Model embedding nhỏ chạy bằng CPU ngay trong máy chủ; Qdrant chạy trên cùng máy. Lúc đầu chọn vì gì: chưa thấy ghi lý do. Về sau đã đo cách khác và giữ nguyên: một model embedding lớn hơn khoảng 70 lần, gọi qua một dịch vụ bên ngoài, giúp được 2 câu nhưng làm hỏng 3 câu trên 40 câu, và làm bước tìm chậm từ khoảng 0,02 giây lên khoảng 2,2 giây (bài 10). Điều thấy được: chạy trên máy thì bước tìm không tốn tiền mỗi câu, và câu hỏi của người dùng không rời máy ở bước này. Cái giá: máy chủ phải nạp model embedding lúc bật và giữ nó trong bộ nhớ.
@@ -246,7 +237,7 @@ Việc tìm trong kho (đổi câu hỏi thành vector, hỏi Qdrant, chấm t�
 
 ## Mọi tình huống hỏng của bài này
 
-Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt. Các dòng còn lại đọc từ chương trình, chưa thử; trong đó có ba ca phiên đo ghi rõ là chưa thử: Qdrant ngừng đúng lúc một câu đang được trả lời, mất mạng tới hãng model giữa chừng, dịch vụ tìm web hỏng. Lời báo trong ngoặc kép là nguyên văn.
+Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt; dòng có chữ **(đã đo 22/11)** là đã đo bằng một lượt có tiêu chí. Các dòng còn lại đọc từ chương trình, chưa thử; trong đó có ba ca phiên đo ghi rõ là chưa thử: Qdrant ngừng đúng lúc một câu đang được trả lời, mất mạng tới hãng model giữa chừng, dịch vụ tìm web hỏng. Lời báo trong ngoặc kép là nguyên văn.
 
 **Hỏng lúc máy chủ được bật**
 
@@ -266,7 +257,8 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 | khoá của hãng model hết hạn | mỗi lần gọi model bị từ chối; đường báo tình trạng của hệ thống vẫn báo "đủ" vì nó không gọi ra ngoài | "Không thể tạo câu trả lời vào lúc này." | người vận hành cấp khoá mới. Muốn biết model còn chạy không thì phải hỏi thử một câu thật |
 | Qdrant ngừng **(đã thử)** | mọi câu hỏi mới lỗi sau khoảng 2 giây; câu đã nhớ vẫn được trả lại; đường báo tình trạng **vẫn báo "đủ"**, vì phần Qdrant chỉ được kiểm lúc bật | "Hệ thống tra cứu tạm thời không khả dụng." và nút "Thử lại" | bật lại Qdrant; hỏi lại được ngay (2,9 giây ở lượt thử), không cần khởi động lại máy chủ |
 | bước kiểm số nguồn hỏng sau khi chữ đã hiện | rút lại chữ đã hiện | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" (bài 16) | người dùng bấm "Thử lại" |
-| bước kiểm số nguồn hỏng ở lượt ngay sau một câu trả lời được nhớ | gỡ chữ đã hiện, tự chạy lại cả lượt **một lần** không kèm câu trả lời cũ; lần hai hỏng thì báo như dòng trên | chờ lâu hơn, rồi câu trả lời hoặc lời báo | — (có từ 22/11; trước đó 3 trên 7 lần ra màn hình lỗi ở tin kiểu "sửa lại thứ bạn vừa viết") |
+| bước kiểm số nguồn hỏng ở lượt ngay sau một câu trả lời được nhớ **(đã đo 22/11)** | gỡ chữ đã hiện, tự chạy lại cả lượt **một lần** không kèm câu trả lời cũ; lần hai hỏng thì báo như dòng trên | chờ lâu hơn khoảng 5 giây, rồi câu trả lời hoặc lời báo | — (có từ 22/11; trước đó 3 trên 7 lần ra màn hình lỗi ở tin kiểu "sửa lại thứ bạn vừa viết", sau 0 trên 5) |
+| model đã tự tìm mà chữ nộp không có số nguồn nào (thường ở tin dài nhiều ý, khi hết lượt tìm) | viết lại **một lần**, không công cụ, từ các đoạn đã gom; vẫn không có ⇒ câu từ chối cố định | một đoạn chữ ngắn chưa phải câu trả lời ("cần tìm thêm về…") hiện khoảng 15–17 giây, rồi bị thay bằng câu trả lời có nguồn (cả lượt chậm hơn khoảng 10 giây; suy từ chương trình và sổ máy chủ, chưa chụp màn hình); hoặc "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này." | — (có từ 14:47 22/11; trước đó 5 trên 6 lần ra màn hình lỗi ở một tin 4 ý; bài 21) |
 | một lỗi không lường trước trong chương trình | dừng lượt; ghi tên loại lỗi vào sổ, không ghi chữ của người dùng | "Đã xảy ra lỗi trong hệ thống. Vui lòng thử lại sau." | người làm hệ thống xem sổ |
 | người dùng đóng trang giữa lúc chờ | máy chủ thấy đường nối bị ngắt, dừng lần gọi model, ghi kết cục "người dùng ngắt" | — | — |
 | máy chủ khởi động lại giữa một cuộc **(đã thử)** | mất các cuộc trò chuyện đang mở, lịch đang giữ, câu trả lời đã nhớ | màn hình không báo gì. Ở trang Lên kế hoạch thẻ lịch vẫn hiện, nhưng lệnh "bỏ một điểm khỏi lịch" bị coi như câu hỏi thường và lịch không đổi; tải lại trang thì thẻ lịch biến mất. Ở khung Trợ lý, câu hỏi nối tiếp được trả lời lạc mạch; tải lại trang thì cuộc trò chuyện trống | người dùng tải lại trang, làm lại từ đầu. **Chưa có** cách giữ qua lần khởi động, và chưa có lời báo cho người dùng |
@@ -306,7 +298,8 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Giai đoạn chuẩn bị kho: cắt 266 bài thành 9.458 đoạn, đổi mỗi đoạn thành vector, lập thống kê từ khoá, cất vào Qdrant; khoảng 225 giây cho cả kho, khoảng nửa phút khi chỉ vài bài đổi.
 - Cùng chỗ nhớ với cuộc trò chuyện còn có nhiều nhất 500 câu trả lời đã nhớ, mỗi câu giữ 24 giờ (bài 34). Hệ thống hiện chỉ chạy một bản máy chủ trên một máy, nên chỗ nhớ của chính bản đó là đủ.
 - Các trang không cần model và Qdrant: Trang chủ, Bản đồ, Chỗ ở, Giới thiệu; trang Khám phá cần danh sách bài nạp lúc bật.
-- Lần chạy lại (dòng "ngay sau một câu trả lời được nhớ") có hạn 45 giây riêng, nên ở trường hợp xấu nhất một lượt như vậy có thể chờ khoảng 90 giây. Tiền tính cả hai lần gọi.
+- Lần chạy lại (dòng "ngay sau một câu trả lời được nhớ") và lần viết lại một lần (từ 14:47 22/11) mỗi lần có hạn 45 giây riêng; bước viết lại chạy trước, và cũng có thể chạy bên trong lần chạy lại. Nên một lượt như vậy có thể chờ khoảng 90 giây (lần đầu + lần chạy lại), khoảng 135 giây nếu lần chạy lại còn phải viết lại, và trên lý thuyết tới khoảng 180 giây nếu cả hai lần đều viết lại mà lần viết lại đầu vẫn hỏng ở một phép kiểm khác (suy từ chương trình, chưa đo). Tiền tính mọi lần gọi.
+- Model dự phòng sẽ chạy với lời dặn và ngưỡng chưa được đo cho nó: ở bước xếp loại câu, gpt-6-luna xếp nhầm 0 trên 56 lượt, Claude 2 tới 4 trên 56 (bài 22).
 - Trên đường Amazon Bedrock, "khoá" là một file khoá tạm; lúc khởi động máy chủ chỉ kiểm rằng đã được chỉ tới file đó, còn khoá được đọc lại ở mỗi lần gọi.
 - Các đường gọi chính của máy chủ (mỗi đường là một địa chỉ mà giao diện gửi yêu cầu tới): ô chat (một đường trả cả câu, một đường gửi dần từng phần), mở một cuộc trò chuyện mới, hỏi bằng ảnh, tải lịch thành PowerPoint, danh sách bài và nội dung một bài cho trang Khám phá, báo thông tin chưa đúng, thời tiết cho Trang chủ, danh sách tính năng đang mở, lịch mẫu, dữ liệu bản đồ, dữ liệu trang Chỗ ở, trang theo dõi, và một đường báo tình trạng của hệ thống (đủ, hoặc thiếu khối nào).
 - Trên đường gửi dần, máy chủ gửi cho giao diện các loại tin: trạng thái, chữ, thay chữ, nguồn, ghi chú, mục web, các tin của lịch (khung lịch, câu mô tả, lịch xong), thẻ hỏi lại, thẻ chọn điểm thay, lỗi, xong.
@@ -326,9 +319,9 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Thứ gửi ra ngoài: thời tiết (toạ độ cố định, 7 ngày, giữ 30 phút, hạn 3 giây, một lần gọi) `backend/llm/thoi_tiet.py`; tìm web (dựng câu tìm từ câu hỏi: bỏ số điện thoại, email, cắt, thêm "Huế"; một lần gọi; thiếu khoá thì không mở kết nối) `backend/llm/tra_web.py`, `backend/llm/assistant.py` (`web_cau_noi_tiep`); ảnh thu nhỏ `backend/api/routes/anh.py` + khối `anh` của `settings.yaml`; lịch sử mang câu trả lời liền trước `settings.yaml` (`nho_cau_tra_loi`); ô nền bản đồ do trình duyệt tải `backend/api/routes/cong.py`. Bảng sự kiện chỉ dùng cho ô hỏi đáp: `guides/RUNBOOK_BAN_GIAO.md` dòng 324.
 - Thời gian từng bước, tiền, 2 lần gọi model của ví dụ chính: `data/hoc_cung_D/vi_du_di_suot_vet.json`, trường `so_do` (`routing_ms` 751,5; lần gọi xếp loại 740,8; `search_ms` 39,8; `context_ms` 3,9; `generation_ms` 3.633,1; `total_ms` 3.690,6; `usd` 0,01778) [đã chạy]. Ví dụ "phải tìm thêm" (gpt-6-luna, 20/11): `vi_du_tim_them_vet.json`.
 - Quyết định 1: khoá chỉ ở máy chủ `backend/api/app.py` (chú thích ở `_tim_web_server`), `backend/llm/generator_openai_full_corpus.py` (`from_environment`).
-- Quyết định 3 (không gọi lại, không dự phòng): hạn 45 giây chung cho cả phần viết `generator_openai_full_corpus.py` (`_run`, `asyncio.wait_for`), `assistant.py` (`deadline`); tắt việc tự gọi lại của thư viện OpenAI (`max_retries=0`); đường Bedrock gọi một lần `backend/llm/bedrock_model.py`. Không tìm thấy lý do được ghi: đã dò `guides/`, `bai_hoc/08_GENERATION.md`, chú thích quanh các dòng đó. Lần chạy lại hẹp, 3 trên 7: `assistant.py` (`answer_turn_stream_parallel`, `TEN_CHAY_LAI`, chú thích đầu hàm).
+- Quyết định 3 (không gọi lại, không dự phòng): hạn 45 giây chung cho cả phần viết `generator_openai_full_corpus.py` (`_run`, `asyncio.wait_for`), `assistant.py` (`deadline`); tắt việc tự gọi lại của thư viện OpenAI (`max_retries=0`); đường Bedrock gọi một lần `backend/llm/bedrock_model.py`. Quyết định đã ghi: `docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md` (Status: Approved by User; mục 2 "Application retry: none", "Model fallback: none"; dòng 65 "không silent retry") [chép, mở 15:15 22/11/2026; sửa theo bài 15 — trước đây bài này ghi "chưa thấy ghi lý do" cho cả quyết định]. Lý do của quyết định: không thấy trong file đó; đã dò thêm `guides/`, `bai_hoc/08_GENERATION.md`, chú thích quanh các dòng đó. Khoá cấm `retry`, `fallback` trong `backend/core/settings_loader.py` (`forbidden_keys`) [code]. Lần chạy lại hẹp, 3 trên 7: `assistant.py` (`answer_turn_stream_parallel`, `TEN_CHAY_LAI`, chú thích đầu hàm).
 - Quyết định 3, phần hai model cư xử khác nhau: 0 / 56 (gpt-6-luna), 2 / 56 ở mức suy luận cao và 4 / 56 ở mức vừa (Claude): `data/thu_bedrock_2026-11-21/c_harness/RA_HARNESS.md` dòng 13 [riêng tư]. Tài khoản OpenAI đang ngừng dùng: `session_prompt/HIEN_TRANG.md` mục 4 (gạch 21:43 21/11/2026).
-- Quyết định 5 (cuộc trò chuyện trong bộ nhớ): `backend/api/conversations.py` (3 lượt, 30 phút, 500 cuộc; trần 1.500 token đã bỏ từ 19/11 theo chú thích ở hàm ghi lượt; máy chủ giữ lịch sử để trình duyệt không gửi lại lời trợ lý); không lưu ra đĩa: `docs/superpowers/plans/2026-11-03-phase-9-b3-plan.md` (mục D4 và mục "Không làm"). Câu trả lời đã nhớ: `backend/api/cache_tra_loi.py`.
+- Quyết định nhỏ "cuộc trò chuyện trong bộ nhớ" (trước là quyết định 5): `backend/api/conversations.py` (3 lượt, 30 phút, 500 cuộc; trần 1.500 token đã bỏ từ 19/11 theo chú thích ở hàm ghi lượt; máy chủ giữ lịch sử để trình duyệt không gửi lại lời trợ lý); không lưu ra đĩa: `docs/superpowers/plans/2026-11-03-phase-9-b3-plan.md` (mục D4 và mục "Không làm"). Câu trả lời đã nhớ: `backend/api/cache_tra_loi.py`.
 - Tìm trong kho chạy trên máy (mục "Quyết định nhỏ hơn"): model embedding lớn gọi qua mạng (giúp 2, hỏng 3 trên 40; 0,02 lên 2,2 giây): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` (hàng về Qwen3-Embedding-8B) và bài 10 của giáo trình.
 - Quyết định 6: `backend/api/app.py` (khối `lifespan`: lệch kho và chỉ mục ⇒ lời báo "Dữ liệu tra cứu cần được lập chỉ mục lại."; chỉ kiểm lúc khởi động); lý do: bài 12 của giáo trình, mục "Vì sao không làm cách khác".
 - Quyết định 2 (hai tầng): lý do của bước xếp loại câu `backend/llm/full_corpus_prompt.py` (`ROUTER_INSTRUCTIONS`) và `backend/llm/assistant.py` (`_pick_route`); luật "không bao giờ đưa số" của thời tiết `backend/llm/thoi_tiet.py` (chú thích đầu file). Cách chia "khối chính, khối phụ" là cách người viết gom các nhánh lỗi lại để giảng; chương trình không dùng hai chữ đó.
@@ -345,5 +338,9 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Bốn ca thử thật trưa 22/11 (12:07–12:16, qua trình duyệt, máy chủ trên bản main lúc đó, model đang chạy, mỗi ca một lượt): Qdrant ngừng giữa chừng (lỗi sau khoảng 2 giây; câu đã nhớ vẫn trả; đường báo tình trạng vẫn "ok"; bật lại là hỏi được ngay, 2,9 giây), bật máy chủ khi Qdrant tắt (lên sau khoảng 8 giây; "degraded"; không tự hồi), bật thiếu biến trỏ file khoá model ("degraded"; lời báo lỗi tạo câu trả lời), khởi động lại giữa một cuộc: báo cáo của phiên đo, `data/test_cuoi/chay_2026-11-22_e_khoi_hong/KET_QUA.md` [riêng tư; đã chạy; người viết chép từ tin của phiên đo, chưa tự mở file]. Ba ca phiên đo ghi là chưa thử: Qdrant ngừng đúng lúc đang trả lời, mất mạng tới hãng model giữa chừng, dịch vụ tìm web hỏng.
 
 - Tìm web lỗi thì mục web hiện dòng "Mình chưa tra được web lúc này.": `backend/llm/tra_web.py` (`WEB_LOI_TEXT`), `backend/llm/assistant.py` [code; sửa 22/11 sau khi agent viết bài 25 đối chiếu].
+
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`het_luot_viet_lai: true`) [code; số đo: đã chạy, phiên đo; người viết không chạy lại]. Nhãn "(đã đo 22/11)" của dòng chạy lại: `report_agent/2026-11-22/b_nho_dap_chay_lai.md` dòng 32, 36 [người thứ hai kiểm].
+
+- Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó: dòng viết lại ở bảng đủ thêm thứ người dùng thấy (`bai_hoc/VIEC_MOI_XONG.md` mục 42, đính chính 15:14; runbook 10.1 hàng "Lưới viết lại"); câu "hai trường hợp tự gọi thêm" sửa thành "lỗi ở bước kiểm sau khi viết" (lần chạy lại xét `citation_error` bất kỳ, gồm lỗi kiểm con số, kiểm lịch — `answer_turn_stream_parallel`) và gộp vào "Đã chọn" của quyết định 3; thời gian xấu nhất của lượt chạy lại tính lại theo code (`_luot_stream` có `deadline` mới mỗi lần; `_viet_lai_het_luot` chạy trong `_luot_stream`, trước bước chạy lại; viết lại xong mà còn lỗi không phải "không có mã nguồn" thì `citation_error` vẫn còn) [suy từ code, chưa đo]. Cắt nửa để hiểu: quyết định 5 cũ (cuộc trò chuyện trong bộ nhớ) chuyển xuống "Quyết định nhỏ hơn"; số đo xếp loại câu của quyết định 3 chuyển xuống "Chi tiết để tra".
 
 </details>

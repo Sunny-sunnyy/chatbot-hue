@@ -1,13 +1,13 @@
 # Bài 8 — Cắt bài thành đoạn (chunking)
 
-*Cập nhật 14:17, ngày 22/11/2026 · cách cắt đọc từ chương trình đang chạy; số đoạn đếm sáng 22/11, khớp bản ghi hiện trạng lúc 13:33; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
+*Cập nhật 15:13, ngày 22/11/2026 · cách cắt đọc từ chương trình đang chạy; số đoạn đếm sáng 22/11, khớp bản ghi hiện trạng lúc 13:33; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** kho là 266 bài viết về Huế, mỗi bài là một file chữ có tiêu đề và các mục.
 **Bài này thêm:** bước đầu tiên của giai đoạn chuẩn bị: cắt 266 bài thành 9.458 đoạn. Cắt ở đâu, mỗi đoạn dài bao nhiêu, vì sao đoạn to hơn lại cho kết quả tệ hơn, và một đoạn hỏng thì sao.
 
 ## Ý chính
 
-- Model viết không đọc cả bài, chỉ đọc các **đoạn**: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 2 lần; tin nhiều ý được nối thêm 2 đoạn mỗi ý. Vì vậy bài phải được cắt sẵn thành đoạn, và mỗi đoạn phải tự đủ nghĩa.
+- Model viết không đọc cả bài, chỉ đọc các **đoạn**: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần; tin nhiều ý được nối thêm 2 đoạn mỗi ý. Vì vậy bài phải được cắt sẵn thành đoạn, và mỗi đoạn phải tự đủ nghĩa.
 - hue_rag cắt **theo cấu trúc của bài**: mỗi đoạn văn, mỗi mục danh sách, mỗi bảng ngắn là một đoạn. Không cắt theo số ký tự, không cắt giữa câu.
 - Bảng dài được tách **từng dòng**, và mỗi dòng mang theo **dòng tiêu đề của bảng**, để một con số giá luôn đi cùng tên cột của nó.
 - Không đoạn nào được dài quá giới hạn mà model embedding đọc được (512 token; giới hạn thật lúc cắt còn chặt hơn). Chương trình kiểm mọi đoạn; một đoạn sai là cả bước chuẩn bị dừng.
@@ -243,5 +243,7 @@ Mã là đường dẫn bài kèm số thứ tự đoạn, nên các đoạn ph�
 - Mã đoạn và mã cất trong Qdrant suy ra cố định; test chạy lại: `backend/core/schema.py`, `backend/tests/test_full_corpus_chunker.py` [code].
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Quyết định nhỏ hơn", "Câu hỏi tự kiểm" (thêm 13:44 22/11/2026 theo khuôn mới; gom từ "Đã so", bảng cấu hình, mục "Vì sao không làm cách khác" cũ). Lý do dừng khi đoạn vượt giới hạn ("e5 sẽ cắt im lặng ở 512"): chú thích vòng kiểm cuối trong `backend/ingestion/chunking/full_corpus_chunker.py` [code]. Lý do kiểm mảnh bằng chứng và lý do cắt bằng luật thay vì model: người viết dò chú thích trong cùng file, không thấy. Lý do "cắt theo khối", "con số đi cùng tên cột": `bai_hoc/02_CHUNKING.md` và bảng cấu hình của bài này [chép]. Lệnh cập nhật dừng ở bước cắt khi sửa câu bị quy tắc gắn lưu ý chép nguyên văn; thêm dòng giữa bài làm các đoạn sau đổi số; 21 giây cắt đoạn: `bai_hoc/VIEC_MOI_XONG.md` mục 32 [đã chạy]. Cập nhật riêng dựa vào việc cắt lại ra đúng đoạn cũ: chú thích đầu `backend/ingestion/cap_nhat_rieng.py` [code]. Giới hạn lúc cắt đổi theo danh sách model trong cấu hình: `full_corpus.embedding_models` [cấu hình; dòng "đổi model" là suy từ code, chưa thử].
 - Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư]. Máy chủ không bật khi đoạn mô tả của bảng điểm không còn: `backend/llm/lich_trinh_v2.py` (`kiem_doan_mo_ta`), gọi trong `backend/api/app.py` ngoài khối bắt lỗi [code]. `candidate_id` chỉ nhận `e5-small-384`: `backend/core/settings_loader.py` (`validate_phase6_settings`) [code].
+
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`so_lan_tim_kho: 3`) [code; người viết không chạy lại].
 
 </details>

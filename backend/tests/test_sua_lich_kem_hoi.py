@@ -20,7 +20,9 @@ def _co(**kw):
     return flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=True, sua_lich_chua_ho_tro=True, **kw)
 
 
-def _chay(ra, flags, cau="Bỏ một điểm đi. Mà vé vào cửa bao nhiêu?"):
+# Câu mặc định có mốc của lịch ("ngày 1"): từ 22/11 hành động bỏ / thay chỉ được áp khi câu có tên điểm hoặc mốc lịch (`sua_lich_v2.loc_bo_thay`);
+# câu cũ "Bỏ một điểm đi…" không có cả hai nên hành động giả của các ca dưới sẽ bị rào bỏ — không phải thứ file này kiểm.
+def _chay(ra, flags, cau="Bỏ điểm đầu tiên của ngày 1 đi. Mà vé vào cửa bao nhiêu?"):
     """Chạy `hieu_va_ap` thật trên một lịch 3 ngày thật; chỉ lần gọi model là đồ giả trả `ra` — ghi lại tham số nơi gọi truyền."""
     k, luu = _lich()
     goi = []

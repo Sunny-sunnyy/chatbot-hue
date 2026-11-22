@@ -1,6 +1,6 @@
 # Bài 33 — Model viết, mức suy luận, và đổi model bằng một dòng cấu hình
 
-*Cập nhật 13:54, ngày 22/11/2026 · cơ chế đọc từ chương trình và cấu hình trưa 22/11; số đo lấy từ các báo cáo đo ngày 19/11 (gpt-6-luna) và 21/11 (cả hai model), ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào; đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 15:13, ngày 22/11/2026 · cơ chế đọc từ chương trình và cấu hình trưa 22/11; số đo lấy từ các báo cáo đo ngày 19/11 (gpt-6-luna) và 21/11 (cả hai model), ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào; đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** một câu hỏi đi qua sáu bước, gần như toàn bộ thời gian chờ là model viết (bài 6); model viết được gọi nhiều lần trong một lượt: xếp loại câu, tìm thêm, viết (bài 21, 22).
 **Bài này thêm:** hai model đã dùng khác nhau ở đâu, mức suy luận là gì và vì sao để mức cao, vì sao đổi model chỉ sửa một dòng mà vẫn phải viết một lớp nối và đo lại.
@@ -150,7 +150,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
 | `full_corpus_generation.provider` | `bedrock` | chọn hãng cho cả chín vai; `openai` là gpt-6-luna | đã chạy cả hai |
-| `full_corpus_generation.model` | `gpt-6-luna` | model của đường OpenAI; chỉ đọc khi chọn `openai` | khoá cứng trong chương trình kiểm cấu hình |
+| `full_corpus_generation.model` | `gpt-6-luna` | model của đường OpenAI; chỉ đọc khi chọn `openai` | khoá cứng trong chương trình kiểm cấu hình: có 8 giá trị cấu hình chương trình chỉ nhận đúng một giá trị, ghi khác thì máy chủ không bật (phụ lục A, B) |
 | `bedrock.model` · `bedrock.region` | Claude Sonnet 5.5 · Singapore | model và vùng của Bedrock | — |
 | `bedrock.max_tokens` | 128.000 | trường bắt buộc của Claude; để mức tối đa = coi như không trần | không đặt nhỏ hơn (quyết định 3) |
 | `bedrock.reasoning_default` | cao | mức suy luận cho vai không tự đặt mức | đã đo bốn mức ở câu một lượt |
@@ -197,7 +197,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 
 Đọc bảng: chênh giữa các mức nằm trong 1–2 câu; hai lượt gpt-6-luna giống hệt nhau đã lệch 0–1 câu ở "đúng", 1–3 câu ở "đủ ý". Theo luật ghi trước, cả bốn mức đều phạm mức tụt ở "trọng tâm" (vì dài), nên tập ứng viên rỗng; chủ dự án quyết nhận độ dài và chọn mức cao. Giới hạn: một lượt mỗi mức, câu một lượt không có công cụ.
 
-**Các thứ đã thử với Claude ngày 21/11 mà không đưa vào:** đoạn dặn "nói thẳng" (gỡ, xem quyết định 5); cho gọi công cụ 8 vòng thay 4, tìm kho 4 lần thay 2 (thước 28 và 28 trên 29, không đổi); trả lại phần suy nghĩ giữa các vòng công cụ (24 trên 24 cả hai bên); đệm lời dặn (không nhanh hơn).
+**Các thứ đã thử với Claude ngày 21/11 mà không đưa vào:** đoạn dặn "nói thẳng" (gỡ, xem quyết định 5); cho gọi công cụ 8 vòng thay 4, tìm kho 4 lần thay 2 (thước 28 và 28 trên 29, không đổi; lúc đó trần là 2 lần tìm, 4 vòng — từ 14:47 ngày 22/11 là 3 và 5, mở cùng hai thay đổi ở khâu tìm, bài 21); trả lại phần suy nghĩ giữa các vòng công cụ (24 trên 24 cả hai bên); đệm lời dặn (không nhanh hơn).
 
 ## Quyết định nhỏ hơn
 
@@ -208,7 +208,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - **Cách khác:** trần 512 token như trước 19/11: đã dùng, đếm 3.974 lần gọi thì 2 lần chạm trần, cả hai ở bước xếp loại câu.
 - **Cái giá:** chỉ hạn giờ chặn một câu quá dài. Thực tế lời gọi dài nhất trên 85 câu viết 684 token (21/11).
 
-**Vì sao người chấm của bộ đo đổi sang chính model đang chạy?** Chủ dự án quyết tối 21/11 khi gác gpt-6-luna: mọi phép đo chỉ chạy trên model đang chạy, kể cả người chấm. Cái giá ghi kèm quyết định: người chấm cùng họ với model viết có thể chấm dễ hơn, và số chấm bằng người chấm mới không so thẳng với số cũ chấm bằng gpt-6-luna; cần một lượt mốc mới.
+**Vì sao người chấm của bộ đo đổi sang chính model đang chạy?** Chủ dự án quyết tối 21/11 khi gác gpt-6-luna: mọi phép đo chỉ chạy trên model đang chạy, kể cả người chấm. Cái giá ghi kèm quyết định: người chấm cùng họ với model viết có thể chấm dễ hơn, và số chấm bằng người chấm mới không so thẳng với số cũ (24/10–19/11 Claude chấm chính trên file đã che tên, gpt-6-luna chấm phụ một lần; ban ngày 21/11 gpt-6-luna chấm — bài 19); cần một lượt mốc mới.
 
 ## Giới hạn đã biết
 
@@ -227,7 +227,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - Ở vòng mà mọi công cụ đã bị ẩn (hết lượt tìm), ép khuôn làm Claude viết rác vào khuôn (tên công cụ, chữ giữ chỗ, rỗng) 14 trên 22 lần; chỉ đưa công cụ "trả lời": đúng câu từ chối 20 trên 22, 0 rác.
 - Lời lỗi của lớp nối không mang thân phản hồi của Amazon (thân đó có mã tài khoản); chỗ đọc file khoá lỗi chỉ ghi tên loại lỗi, không ghi đường dẫn.
 - Tiền một câu ở mức thấp (lượt thật đầu tiên qua giao diện, 21/11): khoảng 0,018 USD trên Claude so với khoảng 0,0007 USD trên gpt-6-luna; lượt hỏi tiếp có tìm thêm 0,048 USD.
-- Người chấm của bộ đo: tới tối 21/11 luôn là gpt-6-luna; từ khi gác gpt-6-luna, chấm bằng model đang chạy, và số mới không so thẳng với số cũ.
+- Người chấm của bộ đo: 24/10–19/11 là Claude (chấm chính, đọc file đã che tên), gpt-6-luna chấm phụ một lần để đối chiếu; ban ngày 21/11, lúc đổi model viết, là gpt-6-luna; từ tối 21/11, khi gác gpt-6-luna, chấm bằng model đang chạy, và số mới không so thẳng với số cũ (bài 19).
 - Lớp nối có khoảng 20 ca test bằng phản hồi dựng sẵn, không gọi mạng (20 ca đếm 21/11; 21 ca đếm 22/11; bài 38).
 - Mức suy luận của gpt-6-luna: chương trình không gửi mức nào (trừ nhóm lịch, kể cả hiểu lệnh sửa lịch), tức model chạy mức vừa mặc định. Ngày 19/11 đã đo mức thấp: chất lượng không khác, nhưng một lần nói trái nguồn ở bộ câu an toàn, nên giữ mức vừa.
 
@@ -256,5 +256,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - Người chấm đổi sang model đang chạy, có thể chấm dễ hơn; không model dự phòng: `HIEN_TRANG.md` mục 4 gạch 21:43 [chép].
 - Lượt chạm 45 giây: `data/thu_bedrock_2026-11-21/do/moc_12vai/KET_QUA_MOC.md` (r1, V01 lượt 3) [riêng tư]. Dòng trạng thái ở lượt có công cụ: `backend/llm/assistant.py` (`pending_generating`, "đang viết" phát ngay trước chữ đầu) [code].
 - Bài đã qua một lượt đối chiếu độc lập 22/11: `data/hoc_cung_D/kiem/bai_33_38.md` [riêng tư]; dòng không áp ghi ở `data/hoc_cung_D/viet/viet_33_38.md` mục "Sau lượt kiểm".
+
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 (hàng "Trần tìm 3 lần / 5 vòng là khoá CHUNG cho cả hai đường model"); `backend/config/settings.yaml` [code; người viết không chạy lại]. Người chấm 24/10–19/11 là Claude (chính), gpt-6-luna phụ: `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` dòng 34 ("Judge chính là Claude (xem E1)") [chép; sửa theo bài 19]. 8 giá trị khoá: `backend/core/settings_loader.py` `validate_phase6_settings` [code, đọc 22/11].
 
 </details>

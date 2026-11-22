@@ -1,6 +1,6 @@
 # Bài 36 — Bật hệ thống trên máy, và đóng gói bằng Docker
 
-*Cập nhật 13:58, ngày 22/11/2026 · lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 15:15, ngày 22/11/2026 · lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** máy chủ kiểm một số thứ đúng một lần lúc bật, và bật lúc Qdrant tắt thì không tự hồi (bài 6); kho đổi thì phải cập nhật chỉ mục (bài 12); khoá và các thiết lập lúc chạy (bài 37).
 **Bài này thêm:** bật cả hệ thống trên máy phát triển bằng một lệnh, lệnh đó làm gì và báo gì; "hộp Docker" là gì và hệ thống dùng nó ở đâu; gói ba hộp để mang sang máy khác; và những việc còn phải làm trước khi đưa lên mạng.
@@ -92,8 +92,8 @@ Gói đã chạy thử trên máy một lần, ngày 10/11, với gpt-6-luna và
 ### 3. Vì sao Qdrant chạy trong hộp Docker và chỉ nhận yêu cầu từ chính máy?
 
 - **Đã chọn:** một hộp Qdrant ghim đúng một bản, dữ liệu gắn từ ổ đĩa, cổng chỉ mở cho chính máy.
-- **Vì sao:** chưa thấy ghi lý do. Điều thấy được: file mô tả ghi đúng một bản Qdrant bằng một mã nhận dạng duy nhất (mã băm), nên lần nào tải cũng ra cùng một bản; lệnh bật, bộ test và các phép đo đều nói chuyện với Qdrant qua cổng 6335 của chính máy; gói ba hộp dùng cùng bản Qdrant đó.
-- **Cách khác:** cài Qdrant thẳng lên máy: chưa thử. Một dịch vụ Qdrant thuê trên mạng: không làm.
+- **Vì sao:** quyết định đã ghi (12/08/2026, chủ dự án duyệt; bài 12): Qdrant chạy trong một hộp Docker riêng của dự án, dữ liệu riêng, ghim đúng một bản bằng mã băm; không nhúng thẳng vào chương trình, không dùng bản trên mây, không lấy "bản mới nhất". Phần "cổng chỉ mở cho chính máy": chưa thấy ghi lý do. Điều thấy được: lệnh bật, bộ test và các phép đo đều nói chuyện với Qdrant qua cổng 6335 của chính máy; gói ba hộp dùng cùng bản Qdrant đó.
+- **Cách khác:** cài Qdrant thẳng lên máy: chưa thử. Bản nhúng thẳng trong chương trình, hoặc một dịch vụ Qdrant thuê trên mạng: chủ dự án đã loại ở quyết định 12/08, không đo.
 - **Cái giá:** phải bật Docker Desktop trước; mở lại máy là Qdrant tắt. Lệnh cập nhật chỉ mục chụp bản sao lưu nằm **trong** hộp, hộp bị tạo lại là mất (bài 12).
 
 ### 4. Vì sao chưa đưa lên mạng?
@@ -232,5 +232,7 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 - Quyết định 3: không tìm thấy lý do chọn Docker cho Qdrant trong `docker-compose.yml`, runbook mục 1, bài cũ 18 [đã dò].
 
 - Kết quả lượt kiểm chốt buổi trưa 22/11 (phiên điều phối báo, phiên đo chạy; người viết chép từ tin, chưa tự mở file kết quả) [đã chạy].
+
+- Quyết định 3 sửa theo bài 12: `guides/phase_4_qdrant_ingestion.md` dòng 746–752 ("Decision: Dùng Qdrant Docker Compose riêng … pin image … bằng exact digest; không dùng embedded, Cloud hoặc latest. Approved by: User. Approval date +07: 2026-08-12") [chép, mở 15:16 22/11/2026]; quyết định không nói về việc chỉ mở cổng cho chính máy. Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: không có câu nào của bài này đổi vì bộ đó.
 
 </details>

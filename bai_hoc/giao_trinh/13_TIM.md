@@ -1,6 +1,6 @@
 # Bài 13 — Tìm: lấy 30 ứng viên, trộn hai bảng xếp hạng, giữ 10 đoạn
 
-*Cập nhật 14:33, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào.*
+*Cập nhật 15:18, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** chặng 2: kho được cắt thành 9.458 đoạn, mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
 **Bài này thêm:** chặng 3 bắt đầu. Người dùng gõ một câu; trong vài chục mili giây chương trình chọn ra 10 đoạn. Bài này đi qua bốn bước của việc chọn đó, và chỉ ra bước tìm hỏng ở đâu.
@@ -12,7 +12,7 @@
 - Bước tìm không gọi model viết, và nó nhanh: vài chục mili giây một câu (26 tới 42 mili giây ở ba câu ví dụ).
 - Khi hệ thống từ chối một câu mà kho có, chỗ chính phải xem là bước này: đoạn đúng không lọt vào 10 đoạn. Trên 40 câu khó, 16 câu thiếu đoạn đúng; 9 câu vì đoạn đúng đứng dưới hạng 10, 7 câu vì nó không lọt cả 30 ứng viên.
 - Lấy nhiều ứng viên hơn (100 thay vì 30) không giúp. Đưa cho model viết nhiều đoạn hơn (10 thay vì 5) thì giúp rõ; đưa hơn 10 thì không khá hơn. Con số 10 được chương trình kiểm lúc bật: ghi số khác thì máy chủ không bật.
-- Câu chuẩn của cả bộ: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 2 lần (bài 21); tin nhiều ý được nối thêm 2 đoạn mỗi ý (bài 23).
+- Câu chuẩn của cả bộ: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần (bài 21); tin nhiều ý được nối thêm 2 đoạn mỗi ý (bài 23).
 
 ## Từ dùng trong bài
 
@@ -114,9 +114,9 @@ Còn một đường từ chối không do bước tìm: hết số vòng thì c
 ### 5. Vì sao tin nhiều ý được nối thêm 2 đoạn mỗi ý, mà không chia lại 10 đoạn?
 
 - **Đã chọn:** giữ nguyên 10 đoạn tìm bằng cả tin, nối thêm 2 đoạn đầu của lần tìm riêng từng ý (nhiều nhất 6 ý); không gọi model.
-- **Vì sao:** đếm tối 21/11: ở tin nhiều ý, 10 đoạn tìm bằng cả tin dồn về ý chính, ý phụ không có đoạn nào. Đo sáng 22/11 (Claude Sonnet 5.5): 8 tin, mỗi tin hỏi 3 lần, tức 24 lần hỏi; trợ lý nêu được dữ kiện kho có ở 15 trong 24 lần (khi tắt: 3); chậm thêm khoảng 0,75 giây. Một phần nhờ công cụ khác: bỏ hai tin bên tắt đã khá hơn nhờ công cụ "gần một điểm" thì còn 3 ⇒ 9 trên 18; số dòng "Tư liệu chưa có…" gần như không đổi (24 ⇒ 21). Con số 2: chưa thấy ghi lý do.
-- **Cách khác:** "4 đoạn cả tin cộng 2 đoạn mỗi ý, tối đa 12": không làm, vì đếm thấy nó làm mất đoạn đang có ở 3 trên 13 tin. 3 đoạn mỗi ý: chưa thử.
-- **Cái giá:** ngữ cảnh khoảng 15 đoạn thay cho 10. Ý tách ra mà mất tên nơi (*"có bậc nhiều không?"*) thì 2 đoạn của nó có thể không liên quan.
+- **Vì sao:** đếm tối 21/11: ở tin nhiều ý, 10 đoạn tìm bằng cả tin dồn về ý chính, ý phụ không có đoạn nào. Đo sáng 22/11 (Claude Sonnet 5.5): 8 tin, mỗi tin hỏi 3 lần, tức 24 lần hỏi; trợ lý nêu được dữ kiện kho có ở 15 trong 24 lần (khi tắt: 3); chậm thêm khoảng 0,75 giây. Một phần nhờ công cụ khác: bỏ hai tin bên tắt đã khá hơn nhờ công cụ "gần một điểm" thì còn 3 ⇒ 9 trên 18; số dòng "Tư liệu chưa có…" gần như không đổi (24 ⇒ 21). Con số 2: đếm 0 đồng 21/11 cho 2, 3, 4 đoạn mỗi ý cùng kết quả (bài 23); chưa thấy ghi vì sao chọn số nhỏ nhất. Điều thấy được: 2 đoạn giữ ngữ cảnh gọn nhất trong ba lựa chọn ngang nhau.
+- **Cách khác:** "4 đoạn cả tin cộng 2 đoạn mỗi ý, tối đa 12": không làm, vì đếm thấy nó làm mất đoạn đang có ở 3 trên 13 tin. 3 hay 4 đoạn mỗi ý: đã đếm 0 đồng (21/11), cùng kết quả với 2 đoạn (bài 23).
+- **Cái giá:** ngữ cảnh khoảng 15 đoạn thay cho 10. Ý tách ra mà mất tên nơi (*"có bậc nhiều không?"*) thì 2 đoạn của nó có thể không liên quan; từ 14:47 ngày 22/11 vế cụt như vậy không được tìm riêng (bài 23).
 
 ## Nếu… thì sao
 
@@ -124,7 +124,7 @@ Còn một đường từ chối không do bước tìm: hết số vòng thì c
 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa / ai làm gì |
 |---|---|---|---|
-| đoạn đúng không lọt 10 đoạn | model không thấy đáp án; trợ lý có thể tự tìm thêm tối đa 2 lần | câu trả lời thiếu ý, hoặc "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này." | lỗi đã biết của bước tìm (mục trên); chưa có cách chữa chung |
+| đoạn đúng không lọt 10 đoạn | model không thấy đáp án; trợ lý có thể tự tìm thêm tối đa 3 lần | câu trả lời thiếu ý, hoặc "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này." | lỗi đã biết của bước tìm (mục trên); chưa có cách chữa chung |
 | Qdrant ngừng giữa chừng **(đã thử)** | lần tìm lỗi sau khoảng 2 giây | "Hệ thống tra cứu tạm thời không khả dụng." và nút "Thử lại" | bật lại Qdrant (bài 12) |
 | ai đó ghi số đoạn khác 10 vào cấu hình | máy chủ không bật | không vào được trang nào | sửa lại thành 10; muốn thử số khác thì dùng bộ đo |
 | kho lớn gấp mười | tìm theo nghĩa vẫn lấy 30 ứng viên; chấm từ khoá vẫn chỉ trên 30 đoạn | — | lập luận, chưa đo: thời gian tìm tăng ít; 30 ứng viên có thể thành quá ít |
@@ -133,7 +133,7 @@ Còn một đường từ chối không do bước tìm: hết số vòng thì c
 
 - **"Từ chối nhầm là do model viết kém."** Ở lần rà kỹ nhất (22 câu, thời đưa 5 đoạn) thì không: cả 22 câu đều thiếu đoạn đúng trong phần model được đọc.
 - **"Trộn hai cách tìm là cộng điểm."** Không. Trộn theo thứ hạng, vì hai loại điểm không cùng thước.
-- **"Model chỉ thấy 10 đoạn."** Không hẳn. 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 2 lần, tin nhiều ý được nối thêm 2 đoạn mỗi ý. Ở ví dụ "phải tìm thêm", model đọc 27 đoạn.
+- **"Model chỉ thấy 10 đoạn."** Không hẳn. 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần, tin nhiều ý được nối thêm 2 đoạn mỗi ý. Ở ví dụ "phải tìm thêm", model đọc 27 đoạn.
 
 ## Câu hỏi tự kiểm
 
@@ -161,7 +161,7 @@ Số câu có đoạn đúng trong vòng ứng viên tăng (31 lên 37 trên 40)
 <details>
 <summary>4. Với tin hỏi hai ý, model đọc bao nhiêu đoạn ở lần tìm đầu?</summary>
 
-10 đoạn tìm bằng cả tin, cộng tới 2 đoạn đầu của lần tìm riêng mỗi vế chương trình tách ra, nếu chưa có. Tin tách thành hai vế thì tối đa 14; trần là 6 vế, tức tối đa 22. Tin một ý thì đúng 10.
+10 đoạn tìm bằng cả tin, cộng tới 2 đoạn đầu của lần tìm riêng mỗi vế chương trình tách ra, nếu chưa có. Tin tách thành hai vế thì tối đa 14; trần là 6 vế, tức tối đa 22. Tin một ý thì đúng 10. Từ 14:47 ngày 22/11, vế cụt không có chủ thể ("giờ mở cửa ko?") không được tìm riêng, và câu tìm gộp nhiều nơi của model được tìm thêm theo từng phần (bài 23).
 
 </details>
 
@@ -272,5 +272,9 @@ Thử ngày 19/11, trên cả 176 câu mẫu và 32 câu an toàn, model viết 
 - Ba câu ví dụ 42,0 · 25,8 · 30,1 mili giây; 27 đoạn ở lượt "áo dài" (10 + 9 + 8): `data/hoc_cung_D/vet_tim_ba_vi_du.json`, `vi_du_tim_them_vet.json`.
 - Ví dụ cởi giày: `data/hoc_cung_D/kiem/bai_02_10.md` dòng 26.
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm", "Quyết định nhỏ hơn" (thêm 13:59 22/11/2026 theo khuôn mới): gom từ "Đã so", bảng cấu hình và các nguồn trên. Phép kiểm 10 đoạn và nhóm dòng kiểm cùng (cách tìm, bộ chỉ mục, không xếp lại, tên model đường về, hạn 45 giây): `backend/core/settings_loader.py` hàm `validate_phase6_settings`, gọi từ `load_settings` lúc bật trong `backend/api/app.py` (ngoài khối bắt lỗi) [code]; phép kiểm có từ commit `151bc538` (01/10/2026, khoá 5), `2fa6f16a` (25/10/2026) đổi 5 ⇒ 10; lý do "đúng giá trị đã duyệt để đo cùng điều kiện": `docs/superpowers/plans/2026-10-01-phase-6-openai-baseline-implementation-plan.md` dòng 185–199 và `docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md` dòng 43–48 [chép]; ba giá trị câu tìm đầu (`lan_tim_dau` v1 / v2 / v3): `report_agent/2026-11-02_phase_9_code/b134_b2_implementation.md` dòng 63–67; bộ đo có tham số `max_context_documents`: `backend/evaluation/full_corpus_eval.py` `run_generation` [code]. 30 ứng viên, hằng số 60 là giá trị mặc định trong `backend/retrieval/full_corpus.py` (`candidate_pool`, `rrf_k`) [code]. Tin nhiều ý (đếm 21/11, 3 / 24 ⇒ 15 / 24, +0,75 giây, bản "4 + 2, trần 12" không làm vì mất đoạn ở 3 / 13 tin, tách vế 3 / 8 ⇒ 5 / 8, vế mất tên nơi): `report_agent/2026-11-22/b_tim_theo_ve.md` mục 1, 2 và dòng 46; chú thích dòng `tim_theo_ve` trong `backend/config/settings.yaml` [đã chạy, phiên khác]. Câu từ chối nguyên văn: `backend/llm/full_corpus_prompt.py` `INSUFFICIENT_ANSWER`. "Chưa thấy ghi lý do" ở hằng số 60, con số 2 mỗi ý: đã dò chú thích code, `settings.yaml`, `b_tim_theo_ve.md`, bảng tổng, kế hoạch khâu tìm 13/09. Phần "NÓI THẬT" của số tin nhiều ý (3 ⇒ 9 trên 18; 24 ⇒ 21): chú thích dòng `tim_theo_ve`. Các mục mới đã qua một lượt đối chiếu độc lập 14:28 22/11/2026 và được sửa theo: `data/hoc_cung_D/kiem/muc_moi_12_16.md` [riêng tư]; một dòng của biên bản không áp (hằng số RRF: `91_BAO_CAO_SO_SANH_PHUONG_AN.md` dòng 661 ghi cách đang chạy đã thử k = 2, 10, 30).
+
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`so_lan_tim_kho: 3`) [code; người viết không chạy lại].
+
+- "3 đoạn mỗi ý" sửa từ "chưa thử" theo bài 23 và chú thích `SO_DOAN_MOI_VE` trong `backend/llm/assistant.py` ("đếm 0 đồng 21/11: 2, 3, 4 đoạn mỗi vế cho cùng kết quả") [code, đọc 15:18 22/11/2026].
 
 </details>

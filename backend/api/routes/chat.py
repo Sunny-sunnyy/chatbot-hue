@@ -103,6 +103,9 @@ def _so_do_moi(fields) -> dict:
 # đã chuẩn hóa không (spec §4.3 bước 4, §6 C5 — chỉ là cờ đúng / sai, không ghi chữ).
 STREAM_METRIC_FIELDS = METRIC_FIELDS + ("first_event_ms", "first_text_ms", "delta_matches_final",
                                         # 21/11/2026: lượt đã gửi sự kiện `thay_chu` (chữ đã hiện khác chữ cuối ⇒ thay cả ô chữ); None = không
+                                        # Từ khi công tắc `giu_chu_toi_kiem` mở (22/11/2026) số này KHÔNG còn nghĩa "người dùng thấy chữ bị thay": lượt lưới
+                                        # viết lại không gửi `thay_chu` nữa (chữ giữ chỗ chưa hề hiện ⇒ None), còn lượt "chạy lại một lần" vẫn gửi
+                                        # `thay_chu` rỗng ⇒ True dù màn hình chưa có chữ nào. Đếm lưới viết lại: mục `viet_lai_het_luot` trong `tools`.
                                         "thay_chu",
                                         # thí nghiệm tốc độ #6 (plan D2): phần `tro_ly_hue` chạy trước rồi bị bỏ — số lần, USD, bị huỷ giữa chừng
                                         "n_tra_loi_bo", "usd_bo", "bo_huy_giua")

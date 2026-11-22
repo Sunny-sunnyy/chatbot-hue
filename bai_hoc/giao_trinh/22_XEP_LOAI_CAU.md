@@ -1,6 +1,6 @@
 # Bài 22 — Xếp loại câu trước khi tìm: bốn tuyến
 
-*Cập nhật 12:20, ngày 22/11/2026 · cơ chế và lời dặn đọc từ chương trình đang chạy; số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
+*Cập nhật 15:15, ngày 22/11/2026 · cơ chế và lời dặn đọc từ chương trình đang chạy; số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** harness: chương trình đi trước và đi sau model; model chỉ quyết có xin công cụ không và viết gì.
 **Bài này thêm:** việc đầu tiên của mọi lượt hỏi, trước cả lần tìm đầu. Không phải câu nào cũng cần tìm trong kho. Một lần gọi model rất ngắn xếp câu vào một trong bốn tuyến, và mỗi tuyến được xử lý khác nhau.
@@ -96,13 +96,13 @@ Cả hai cho cùng một bài học: lỗi ở bước đầu tiên không đư�
 - **Đã chọn:** nghiêng về "về Huế" ở cả lời dặn lẫn chương trình.
 - **Vì sao:** lý do ghi trong kế hoạch: lỗi tệ hơn là đưa một câu cần thông tin sang tuyến khác; đường "về Huế" đã đo kỹ. Câu lạ lọt vào đường đầy đủ thì phía sau còn bước tìm, câu từ chối cố định và bước kiểm nguồn; câu về Huế bị đẩy ra "ngoài phạm vi" thì không còn bước nào sửa.
 - **Cách khác:** khi bước xếp loại hỏng thì coi là "trò chuyện": đã cân lúc lập kế hoạch và không chọn, vì lý do trên. Báo lỗi cả lượt: chưa thử.
-- **Cái giá:** vài câu ngoài phạm vi lọt vào đường "về Huế". Đã gặp: 2 trên 44 câu ngoài phạm vi ở lượt đo 12/11 bị đem đi tra web; người dùng chỉ thấy câu cố định, nhưng câu hỏi đã bị gửi ra dịch vụ tìm web. Nối con số này với luật nghiêng về Huế là lập luận.
+- **Cái giá:** vài câu ngoài phạm vi lọt vào đường "về Huế". Đã gặp: 2 trên 44 câu ngoài phạm vi ở lượt đo giữa kỳ 12/11 (với bốn tuyến như đang chạy) bị đem đi tra web; người dùng chỉ thấy câu cố định, nhưng câu hỏi đã bị gửi ra dịch vụ tìm web. Nối con số này với luật nghiêng về Huế là lập luận.
 
 ### 4. Vì sao câu "ngoài phạm vi" là một câu cố định do chương trình trả, không để model tự viết lời từ chối?
 
 - **Đã chọn:** chương trình trả đúng một câu soạn sẵn, không gọi model viết.
 - **Vì sao:** quyết định đã ghi (02/11): câu cố định được tính là một câu từ chối, nên bộ đếm "câu ngoài kho bị trả lời" đếm đúng; chữ của câu do chủ dự án đọc trước khi đưa vào.
-- **Cách khác:** dùng lại câu từ chối của kho: bỏ vì sai nghĩa, người nhờ viết mã sẽ nhận câu "không tìm thấy trong nguồn". Bỏ hẳn tuyến này, để câu ngoài phạm vi đi đường "về Huế": 2 trên 44 câu bị đem đi tra web, bỏ.
+- **Cách khác:** dùng lại câu từ chối của kho: bỏ vì sai nghĩa, người nhờ viết mã sẽ nhận câu "không tìm thấy trong nguồn". Bỏ hẳn tuyến này, để câu ngoài phạm vi đi đường "về Huế" (phương án "hai nhóm", đo trước lượt 12/11): 2 trên 44 câu ngoài phạm vi ra tới người dùng kèm mục web, vỡ điều kiện, bỏ. Đây là một phép đo khác với con số 2 trên 44 ở "Cái giá" của quyết định 3: cùng số, nhưng ở hệ thống đang chạy người dùng chỉ thấy câu cố định.
 - **Cái giá:** câu trả lời giống nhau cho mọi câu ngoài phạm vi, kèm cùng ba câu hỏi mẫu; không gợi ý được gì riêng cho câu người dùng vừa hỏi.
 
 ### 5. Vì sao câu khẩn cấp không có câu trả lời soạn sẵn kèm số điện thoại?
@@ -255,5 +255,7 @@ Một dòng nữa của bảng "Nếu… thì sao": tin cuối chỉ có nghĩa 
 - Hai biến thể bộ xếp loại viết câu tìm: `full_corpus_prompt.py` (`ROUTER_SEARCH_V1`, `ROUTER_SEARCH_V3`); `settings.yaml` (`lan_tim_dau: v0`).
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Quyết định nhỏ hơn" (chuyển sang khuôn bài 6 lúc 12:20 22/11/2026; nội dung đã sửa theo biên bản `data/hoc_cung_D/kiem/bai_22_va_muc_moi_01_03_04.md`, thêm hai quyết định nhỏ theo mục (4) của biên bản): gom từ các nguồn trên. Khuôn một ô, đầu ra hỏng ⇒ "về Huế", "lỗi tệ hơn là đưa câu cần thông tin sang trò chuyện; đường cũ đã đo kỹ", không gộp câu chào vào lần xếp loại: `docs/superpowers/plans/2026-11-02-phase-9-b1-plan.md` mục D3. Câu soạn sẵn của tuyến khẩn cấp gỡ 09/11 ("phương án B"): `session_prompt/Project_Status.md`, `bai_hoc/12_VI_SAO_CAN_TRO_LY.md`; "khẩn cấp ngoài phạm vi sản phẩm" là quyết định của chủ dự án ghi ở lời giao viết bài của phiên D (mục luật viết số 12) — người chuyển bài chưa mở được dòng gốc ghi lời chủ dự án. Lời báo khi hãng model lỗi: `backend/api/routes/chat.py` (`GENERATION_FAILURE_MESSAGE`). "Vì sao dùng chính model viết để xếp loại": người viết không tìm thấy quyết định được ghi. Câu "giá vé máy bay đi Đà Lạt" là ví dụ người viết tự đặt để giảng, chưa chạy qua hệ thống.
 - Các sửa sau lượt kiểm độc lập (`data/hoc_cung_D/kiem/bai_22_va_muc_moi_01_03_04.md`): lượt không qua bước xếp loại `backend/api/routes/chat.py` (tra câu đã nhớ trước), `backend/llm/assistant.py` (lượt biểu mẫu, thẻ chọn); hàng chờ của phần chạy trước `assistant.py` (`_luot_stream`); dòng 112 cho câu bão, lũ `assistant.py` (`luoi_cuoi_bao`); khuôn một ô, các cách đã cân cho câu ngoài phạm vi và cho lúc bước xếp loại hỏng, gộp câu chào vào một lần gọi: kế hoạch Phase 9 B1 ở `docs/superpowers/plans/` (mục D1, D3, D5); chạy song song câu chào hỏi (5,74 giây; 0,00056 USD): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 29; ba câu hỏi mẫu dưới câu cố định: `frontend/src/chat.jsx`.
+
+- Hai con số "2 trên 44" tách rõ (sửa chỗ một số dùng cho hai tình huống): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` dòng 56 (hàng 14: phương án "2 nhóm" — 2 / 44 câu ngoài phạm vi CÓ mục web ⇒ vỡ sàn; phương án B đang chạy — lượt đo giữa kỳ 12/11 thấy 2 / 44 câu vẫn bị đem đi tra web, người dùng chỉ thấy câu cố định) [chép, mở 15:16 22/11/2026]. Bộ thay đổi mở 14:47 22/11/2026 không chạm bài này.
 
 </details>

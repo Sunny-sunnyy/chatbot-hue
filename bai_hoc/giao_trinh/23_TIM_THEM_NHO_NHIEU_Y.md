@@ -1,17 +1,17 @@
 # Bài 23 — Tìm thêm, nhớ câu hỏi trước, và câu hỏi nhiều ý
 
-*Cập nhật 12:54, ngày 22/11/2026 · sửa theo một lượt đối chiếu độc lập · cơ chế đọc từ chương trình và cấu hình đang chạy trưa 22/11; số đo chép từ các báo cáo 03/11 – 22/11, ghi rõ model ở từng con số (tới trưa 21/11 là gpt-6-luna, sau đó là Claude Sonnet 5.5); người viết không chạy lại phép đo nào.*
+*Cập nhật 15:39, ngày 22/11/2026 · sửa theo một lượt đối chiếu độc lập; thêm hai thay đổi ở khâu tìm mở 14:47 ngày 22/11 (bỏ vế cụt, tách câu tìm gộp của model) · cơ chế đọc từ chương trình và cấu hình đang chạy sau 14:47 22/11; số đo chép từ các báo cáo 03/11 – 22/11, ghi rõ model ở từng con số (tới trưa 21/11 là gpt-6-luna, sau đó là Claude Sonnet 5.5); người viết không chạy lại phép đo nào.*
 
-**Bài trước đã biết:** harness (bài 21): model được tự tìm kho thêm tối đa 2 lần; bước xếp loại câu (bài 22) chọn tuyến cho từng tin.
+**Bài trước đã biết:** harness (bài 21): model được tự tìm kho thêm tối đa 3 lần (trước 14:47 ngày 22/11: 2); bước xếp loại câu (bài 22) chọn tuyến cho từng tin.
 **Bài này thêm:** hai loại tin mà tìm một lần bằng chính tin đó là không đủ: tin nối tiếp ("còn chỗ đó thì sao?") và tin hỏi nhiều điều một lúc. Hệ thống nhớ gì, ai dùng phần nhớ đó, và tin nhiều ý được xử lý ra sao.
 
 ## Ý chính
 
-- 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 2 lần bằng câu tìm model tự viết (bài 21). Cả bài dựa trên quyền đó.
+- 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần bằng câu tìm model tự viết (bài 21); tin nhiều ý được nối thêm 2 đoạn mỗi ý. Cả bài dựa trên quyền đó.
 - **Máy chủ nhớ 3 lượt gần nhất** của một cuộc trò chuyện, trong 30 phút. Lượt cũ được gửi lại dưới dạng câu hỏi; riêng lượt liền trước kèm câu trả lời (bỏ số nguồn, cắt 4.000 ký tự, có nhãn "không phải nguồn").
 - **Lịch sử chỉ để hiểu câu hỏi nói về cái gì**, không làm nguồn. Lần tìm đầu vẫn dùng đúng câu gõ; model đọc lịch sử rồi tự viết câu tìm có tên đối tượng.
-- Lượt mà lịch sử gửi kèm có câu trả lời liền trước, nếu bị rút ở bước kiểm sau khi viết, thì **chạy lại đúng một lần** không kèm câu trả lời đó (ở đường chữ hiện dần mà giao diện dùng).
-- **Tin nhiều ý** (chương trình đếm được từ hai vế hỏi): trả lời ý kho có, ghi "Tư liệu chưa có thông tin về: …" cho ý thiếu; từ 22/11 mỗi vế được nối thêm 2 đoạn, nhiều nhất 6 vế.
+- Lượt mà lịch sử gửi kèm có câu trả lời liền trước, nếu bị rút ở bước kiểm sau khi viết, thì **chạy lại đúng một lần** không kèm câu trả lời đó (chỉ ở ô chat; bài 16).
+- **Tin nhiều ý** (chương trình đếm được từ hai vế hỏi): trả lời ý kho có, ghi "Tư liệu chưa có thông tin về: …" cho ý thiếu; từ 22/11 mỗi vế được nối thêm 2 đoạn, nhiều nhất 6 vế. Từ 14:47 ngày 22/11: vế cụt (không có chủ thể) không được tìm riêng; câu tìm gộp nhiều nơi của model được tìm thêm theo từng phần.
 
 ## Từ dùng trong bài
 
@@ -21,10 +21,12 @@
 | lịch sử | **history** | phần cuộc trò chuyện được gửi kèm cho model ở lượt mới |
 | vế hỏi | — | một câu hỏi con trong tin, có từ hỏi riêng ("bao nhiêu", "ở đâu", "không"…) |
 | dòng ý thiếu | — | dòng mở đầu bằng "Tư liệu chưa có thông tin về:" model viết cho vế kho không có |
+| vế cụt | — | vế đứng riêng không còn biết hỏi về cái gì ("giờ mở cửa ko?", "mất bao lâu?") |
+| câu tìm gộp | — | câu tìm model viết nhắc hai nơi hoặc hai ý cùng lúc ("giá vé Đại Nội và Lăng Tự Đức") |
 
 ## Tìm thêm là chỗ dựa: ba điều cần mang theo từ bài 21
 
-Ví dụ "phải tìm thêm" (*"Mặc áo dài vào Đại Nội có được miễn vé không?"*): model xin tìm hai lần bằng câu tự viết rồi trích đoạn số 25, đoạn chỉ có nhờ lần tìm thứ hai (lượt thật 20/11, gpt-6-luna, 7,5 giây). Ba điều dùng lại ở dưới:
+Ví dụ "phải tìm thêm" ở bài 21 cho ba điều dùng lại ở dưới:
 
 1. **Lần tìm đầu luôn bằng đúng câu gõ.** Câu "còn chỗ đó thì sao?" không có tên nơi nào để tìm.
 2. **Câu tìm thêm do model viết**, và model có đọc lịch sử: đó là đường tên của lượt trước đi vào câu tìm.
@@ -42,7 +44,7 @@ Tin đầu tiên làm máy chủ tạo một mã cuộc trò chuyện; các tin 
 
 Cuộc giữ 3 lượt; 30 phút không hỏi thì bị xoá. **Không giữ câu trả lời** của câu cố định (từ chối, ngoài phạm vi, hỏi lại), lượt lịch và sửa lịch, và lượt dùng nguồn đổi theo giờ: thời tiết, ngày và âm lịch, sự kiện theo ngày, khoảng cách. Cuộc đã có lịch lưu từ trang Lên kế hoạch thì mọi lượt hỏi thường đều mang nguồn "lịch bạn đang có", nên cũng không được giữ câu trả lời.
 
-Ví dụ đo 22/11 (Claude Sonnet 5.5): *"Kể cho mình ba quán cơm hến hoặc bún hến ở Huế"* rồi *"quán thứ hai bạn vừa kể ở đường nào, mở mấy giờ?"*. Không có câu trả lời cũ: trợ lý không xác định được quán thứ hai. Có nó: nêu đúng quán và đường, trích nguồn của lượt mới, nhanh hơn (8,8 xuống 3,9 giây).
+Ví dụ đo 22/11 (Claude Sonnet 5.5): *"Kể cho mình ba quán cơm hến hoặc bún hến ở Huế"* rồi *"quán thứ hai bạn vừa kể ở đường nào?"*. Không có câu trả lời cũ: không xác định được quán thứ hai. Có nó: nêu đúng quán và đường, trích nguồn của lượt mới (8,8 xuống 3,9 giây).
 
 ## Lịch sử giúp hiểu câu hỏi, không làm nguồn
 
@@ -53,11 +55,11 @@ Ví dụ đo 22/11 (Claude Sonnet 5.5): *"Kể cho mình ba quán cơm hến ho�
 | chọn công cụ đưa cho model (bài 24) | xét câu gõ **và câu hỏi liền trước**: "còn tuần sau thì sao?" sau một câu thời tiết vẫn có công cụ thời tiết |
 | model trả lời | thấy lịch sử, kèm một đoạn dặn: câu tìm thêm phải nêu đúng tên đối tượng lấy từ các lượt trước; mỗi nhận định phải lấy từ bằng chứng nói đúng về đối tượng đó |
 
-Vì vậy tin nối tiếp thường cần thêm một lần model xin tìm kho, nên chậm hơn tin đầu: lần tìm đầu bằng câu cụt thường trượt (dựng lại 15/11, gpt-6-luna: 6 trên 7 cặp), model xin tìm thêm bằng câu có tên nơi (9 trên 9 lần đúng tên). Luật "lịch sử không làm nguồn" được giữ bằng bước kiểm số nguồn (bài 16): câu trả lời cũ đã mất hết số nguồn.
+Vì vậy tin nối tiếp thường cần thêm một lần model xin tìm kho: lần tìm đầu bằng câu cụt thường trượt (dựng lại 15/11, gpt-6-luna: 6 trên 7 cặp), model xin tìm thêm bằng câu có tên nơi (9 trên 9 lần). Luật "lịch sử không làm nguồn" được giữ bằng bước kiểm số nguồn (bài 16): câu trả lời cũ đã mất hết số nguồn.
 
 ## Câu trả lời được nhớ có một tác dụng phụ: chạy lại đúng một lần
 
-Trợ lý vừa kể một lộ trình hai ngày bằng chữ, người dùng gõ *"Bỏ Chợ Đông Ba đi"*. Từ khi giữ câu trả lời liền trước (sáng 22/11), model có lúc chép lại lộ trình cũ mà không trích nguồn nào. Bước kiểm số nguồn rút câu đó, và người dùng nhận màn hình lỗi ở 3 trên 7 lần đo. Cách sửa không nới bước kiểm: lượt mà lịch sử có câu trả lời cũ, nếu bị rút ở bước kiểm sau khi viết (vì số nguồn hay phép kiểm khác), thì chương trình gỡ chữ vừa hiện, chạy lại cả lượt **một lần** với lịch sử không có câu trả lời cũ, lấy kết quả lần hai; tiền tính cả hai lần. Lần hai cũng bị rút thì báo lỗi như cũ. Đo lại 5 lần (Claude Sonnet 5.5): 0 màn hình lỗi; chạy lại thật 2 lần, cả hai ra câu trả lời; dòng tiến độ lặp lại một nhịp, chờ thêm khoảng 5 giây.
+Trợ lý vừa kể một lộ trình bằng chữ, người dùng gõ *"Bỏ Chợ Đông Ba đi"*: model có lúc chép lại lộ trình cũ mà không trích nguồn, câu bị rút (3 trên 7 lần đo sáng 22/11). Nay ở ô chat, lượt như vậy được chạy lại cả lượt **một lần** không kèm câu trả lời cũ; đo lại 0 trên 5 lần ra màn hình lỗi (bài 16, quyết định 4; chi tiết ở "Chi tiết để tra").
 
 ## Tin nhiều ý được trả lời theo từng ý
 
@@ -66,9 +68,12 @@ Lời dặn gốc: bằng chứng không đủ thì trả một câu từ chối
 1. **Chương trình đếm vế**: tách ở dấu phẩy, chấm phẩy, dấu hỏi, rồi ở "và / còn / với"; một phần là một vế khi chính nó có từ hỏi hoặc kết thúc bằng "không / chưa / nhỉ / vậy / hả". *"Bún bò và bánh khoái giá bao nhiêu"* vẫn là một vế.
 2. **Từ hai vế, model nhận lời dặn theo ý**: ý có bằng chứng thì trả lời; ý không có thì một dòng riêng mở đầu đúng bằng "Tư liệu chưa có thông tin về:", không số nguồn, không đoán.
 3. **Chương trình chốt**: mọi dòng đều là dòng ý thiếu thì đổi cả câu về câu từ chối chuẩn, và chỉ lúc đó mới tra web (bài 25). Trả lời được một phần thì giữ dòng ý thiếu, không tra web.
-4. **Tìm theo vế (từ 22/11)**: 10 đoạn của cả tin giữ nguyên; chương trình tìm riêng từng vế (nhiều nhất 6), nối 2 đoạn đầu mỗi vế vào sau. Model đọc khoảng 15 đoạn (10 cũ + trung vị 6 đoạn thêm); không thêm lần gọi model.
+4. **Tìm theo vế (từ 22/11)**: 10 đoạn của cả tin giữ nguyên; chương trình tìm riêng từng vế (nhiều nhất 6), nối 2 đoạn đầu mỗi vế vào sau. Model đọc khoảng 15 đoạn (10 cũ + trung vị 6 đoạn thêm); không thêm lần gọi model. Từ 14:47 ngày 22/11, vế cụt không được tìm riêng: vế có chủ thể, kể cả một từ như "taxi", "chợ đêm", vẫn được tìm.
+5. **Tách câu tìm gộp của model (từ 14:47 ngày 22/11)**: lần tìm cả câu giữ nguyên; mỗi phần (cắt ở "và", dấu chấm phẩy, dấu cộng; nhiều nhất 3 phần) được tìm riêng, 2 đoạn đầu nối thêm.
 
 Bước 4 có vì một phép đếm tối 21/11 (Claude Sonnet 5.5): 86 % lượt nhiều ý có dòng ý thiếu, khoảng một phần tư tới một phần ba số dòng đó sai (kho có). Ví dụ: vế "con trưởng vua Tự Đức có nối ngôi không" trong một tin hỏi về lăng Khải Định trước nhận dòng ý thiếu, nay được trả lời từ đoạn của chính vế đó.
+
+Hai sửa sau đến từ một tin 4 ý của một gia đình (tổng vé Đại Nội + Tự Đức, bà có được giảm không, điểm nào ít bậc). Câu tìm gộp của model không kéo được đoạn giá vé, nên model tiêu 2–3 lần tìm vào cùng giá vé, hết lượt rồi nộp chữ giữ chỗ (bài 21); còn vế cụt kéo về phần lớn đoạn không liên quan. Số đếm và số đo ở "Đã so" dòng 10–11 và "Giới hạn đã biết".
 
 ## Quyết định và lý do
 
@@ -79,33 +84,26 @@ Bước 4 có vì một phép đếm tối 21/11 (Claude Sonnet 5.5): 86 % lư�
 - **Cách khác:** chỉ nhớ câu hỏi (03/11 – 22/11): đã đo, tin hỏi tiếp +0,80 [+0,25; +1,50] so với không nhớ, nhưng không hiểu "quán thứ hai". Nhớ ba lượt: đã đo, bỏ.
 - **Cái giá:** lượt có lịch sử dài thêm khoảng 400–500 token; câu trả lời của hai lượt trước không còn.
 
-### 2. Vì sao lần tìm đầu không ghép câu hỏi trước?
-
-- **Đã chọn:** lần tìm đầu chỉ dùng câu gõ; tên của lượt trước vào câu tìm qua model, ở lần tìm thêm.
-- **Vì sao:** chưa thấy ghi lý do cho riêng lần tìm đầu. Điều thấy được: khi sửa câu tra web (15/11), cách ghép câu trước với câu sau bằng chương trình làm hỏng 2 trên 3 cặp người dùng đổi chủ đề thật.
-- **Cách khác:** ghép bằng chương trình cho lần tìm đầu trong kho: chưa thử. Cho model viết lại câu tìm trước lần tìm đầu (3 cách): đã đo, chỉ thêm 0–1 trên 12 câu đủ từ khoá (cần ít nhất 3), bỏ.
-- **Cái giá:** tin nối tiếp tốn thêm một vòng model.
-
-### 3. Vì sao lượt có thời tiết, ngày, khoảng cách không được giữ câu trả lời?
+### 2. Vì sao lượt có thời tiết, ngày, khoảng cách không được giữ câu trả lời?
 
 - **Đã chọn:** câu trả lời dùng nguồn đổi theo giờ không vào lịch sử.
 - **Vì sao:** đo 21/11 (Claude Sonnet 5.5): hỏi tiếp về "con số khả năng mưa bạn vừa đưa" khi có câu trả lời cũ thì model tự từ chối 8 trên 10 lần, vì số đã nằm trong phần "không phải nguồn" nên nó không gọi lại công cụ; không có câu trả lời cũ: 0 trên 6. Luật ghi trong chương trình: số dự báo phải đến từ công cụ của lượt này.
-- **Cách khác:** giữ cả câu có số dự báo: đã đo như trên, bỏ.
+- **Cách khác:** giữ cả câu có số dự báo: đã đo, bỏ.
 - **Cái giá:** hỏi tiếp về con số vừa đưa phải gọi lại công cụ, chậm hơn một vòng.
 
-### 4. Vì sao chạy lại đúng một lần, và chỉ ở lượt đang mang câu trả lời cũ?
-
-- **Đã chọn:** chạy lại cả lượt một lần, không kèm câu trả lời cũ, khi lượt bị rút vì bất kỳ phép kiểm nào sau khi viết; chỉ ở đường chữ hiện dần; cuộc có lịch lưu thì không.
-- **Vì sao:** lỗi do chính câu trả lời cũ gây ra; bỏ nó đi thì lần hai tệ nhất cũng bằng lúc chưa giữ câu trả lời, và một lần thì không thể lặp mãi. "Giữ chữ tới khi kiểm xong" không chọn vì nó đổi cách hiện chữ của mọi tin nối tiếp.
-- **Cách khác:** nới bước kiểm cho câu chép lại: không làm (câu không nguồn không được tới người dùng như câu trả lời). Chạy lại mọi lượt bị rút: chưa thử.
-- **Cái giá:** lượt chạy lại tốn gấp đôi lần gọi model, chờ thêm vài giây.
-
-### 5. Vì sao chương trình đếm vế và chốt kết quả, không chỉ đổi lời dặn?
+### 3. Vì sao chương trình đếm vế và chốt kết quả, không chỉ đổi lời dặn?
 
 - **Đã chọn:** chỉ tin từ hai vế mới nhận lời dặn theo ý; câu toàn dòng ý thiếu bị đổi về câu từ chối chuẩn.
 - **Vì sao:** vòng đầu 14/11 đổi lời dặn cho mọi tin (gpt-6-luna): tin nhiều ý được trả lời 10 trên 10, nhưng 3 trên 18 câu ngoài kho của bộ câu mẫu bị trả lời. Vòng hai để chương trình quyết: vẫn 10 trên 10, bộ kín 0 trên 10. Chủ dự án chọn bật.
 - **Cách khác:** lời dặn theo ý cho mọi tin: đã đo, bỏ. Để model tự nói tin có mấy ý: chưa thử.
 - **Cái giá:** tin hai ý mà một vế không có từ hỏi riêng ("… bao xa, rồi ghé chợ nữa") bị đếm là một vế, có lần bị từ chối cả câu.
+
+### 4. Vì sao bỏ vế cụt và tách câu tìm gộp, thay vì chỉ cho model tìm thêm?
+
+- **Đã chọn:** vế cụt không được tìm riêng; câu tìm gộp của model được tìm thêm theo từng phần, giữ lần tìm cả câu. Mở 14:47 ngày 22/11 cùng trần 3 và bước viết lại (bài 21).
+- **Vì sao:** đã đo (đoạn trên): gốc nằm ở câu tìm, không ở số lần tìm. Bằng chứng còn gọn hơn (nguồn trung vị 20 ⇒ 16), không kém ở tin nào khác của lượt đo.
+- **Cách khác:** chỉ nâng trần tìm lên 3: đã đo, không có ích (bài 21). Ghép chủ thể vào vế cụt: đã đếm trên 20 đoạn, chỉ đúng 6; chưa làm. Bảng từ xưng hô ("bà" ⇒ "người cao tuổi"): chưa viết. Vế là lời nhờ không có từ hỏi ("chọn giúp 1–2 điểm ít bậc"): đã viết, để tắt, chỉ chạm 4 trên 364 tin.
+- **Cái giá:** thứ vế cụt thật sự hỏi không được tìm riêng; vài vế bị lọc oan, nhưng tin vẫn được tìm bằng cả câu. Mỗi lần tìm của model dài thêm khoảng 2 đoạn.
 
 ## Nếu… thì sao
 
@@ -116,6 +114,7 @@ Tình huống kể trọn: hỏi về một ngôi chùa, 40 phút sau gõ *"ch�
 | 30 phút không hỏi, hoặc máy chủ khởi động lại | tin nối tiếp không được hiểu | **chưa có** cách báo hay giữ lâu hơn |
 | tải lại trang | màn hình trống; giao diện gọi "Cuộc trò chuyện mới" nên máy chủ cũng quên | đã có từ 15/11 (trước đó 3 trên 3 lần tái hiện bị từ chối) |
 | lượt mang câu trả lời cũ bị rút, lần chạy lại cũng bị rút | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" | người dùng bấm "Thử lại" hoặc hỏi lại bằng tên nơi |
+| tin dài nhiều ý, model đã tự tìm ít nhất một lần (thường là đã hết lượt) mà chữ nộp không có số nguồn | một đoạn chữ ngắn chưa phải câu trả lời hiện khoảng 15–17 giây, rồi được thay bằng câu viết lại từ các đoạn đã gom (bài 21); cả lượt tới 25–37 giây | có từ 14:47 22/11; mới đo trên một tin; thứ người dùng thấy suy từ chương trình và sổ máy chủ, chưa chụp màn hình |
 | tin nhiều ý mà không vế nào kho có | câu dẫn "Tư liệu của mình chưa có thông tin này — dưới đây là thông tin từ web (chưa kiểm)." rồi mục web; mục web không có gì thì câu từ chối chuẩn (bài 25) | đã có |
 
 ## Dễ nhầm
@@ -141,26 +140,26 @@ Số dự báo phải đến từ công cụ của lượt mới. Có câu trả
 </details>
 
 <details>
-<summary>3. Lượt nào được chạy lại, mấy lần, người dùng thấy gì?</summary>
-
-Lượt đang mang câu trả lời cũ mà bị rút vì số nguồn; một lần, không kèm câu trả lời cũ. Dòng tiến độ lặp lại, chờ thêm vài giây.
-
-</details>
-
-<details>
-<summary>4. Tin hai ý, kho có ý đầu. Câu trả lời trông thế nào, có mục web không?</summary>
+<summary>3. Tin hai ý, kho có ý đầu. Câu trả lời trông thế nào, có mục web không?</summary>
 
 Ý đầu có số nguồn; ý sau là dòng "Tư liệu chưa có thông tin về: …". Không có mục web: web chỉ mở khi cả câu bị từ chối.
 
 </details>
 
+<details>
+<summary>4. Model viết câu tìm "giá vé Đại Nội và Lăng Tự Đức". Chương trình tìm những gì?</summary>
+
+Tìm cả câu như cũ, rồi tìm riêng "giá vé Đại Nội" và "Lăng Tự Đức", nối 2 đoạn đầu mỗi phần: câu gộp hay không kéo được đoạn giá của từng nơi.
+
+</details>
+
 ## Cấu hình đang chạy
 
-*Theo chương trình và cấu hình trưa 22/11/2026.*
+*Theo chương trình và cấu hình sau 14:47 ngày 22/11/2026.*
 
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
-| Tự tìm thêm (`tim_them`), số lần (`so_lan_tim_kho`) | bật; 2 | bài 21 | bài 21 |
+| Tự tìm thêm (`tim_them`), số lần (`so_lan_tim_kho`) | bật; 3 (từ 14:47 22/11; trước là 2) | bài 21 | bài 21 |
 | Nhớ cuộc trò chuyện (`nho_hoi_thoai`) | bật (từ 03/11) | hiểu tin nối tiếp | đã so bật / tắt (mục "Đã so", dòng 1) |
 | Số lượt giữ mỗi cuộc | 3 | kế hoạch ghi "6 tin", theo lộ trình đặt 4–6 tin | chưa so |
 | Hết hạn | 30 phút từ lượt cuối | theo bản thiết kế phần nhớ | chưa so |
@@ -169,10 +168,12 @@ Lượt đang mang câu trả lời cũ mà bị rút vì số nguồn; một l�
 | Giữ câu trả lời liền trước (`nho_cau_tra_loi`) | bật 09:40 22/11 | hiểu "quán thứ hai bạn vừa kể" | dòng 3 |
 | Cắt câu trả lời liền trước | 4.000 ký tự | 20/11 đặt 1.200 (gpt-6-luna trả lời ngắn); 21/11 với Claude, 2 trên 7 câu trả lời của một lượt tự kiểm dài hơn 1.200 (dài nhất 2.229) ⇒ nâng lên để mục cuối danh sách không mất | 1.200, bỏ |
 | Nhớ tên nơi đã trích (`nho_ten_goi_y`) | bật 19/11; nhiều nhất 5 tên | lượt cũ biết đã nhắc nơi nào; câu xin "kể lại các nơi vừa nêu" và câu gõ lại nguyên văn một câu cũ thì lượt đó không nhận dòng này | dòng 2 |
-| Lần chạy lại khi bị rút | 1 lần; chỉ khi lịch sử đang mang câu trả lời cũ; mọi lỗi của bước kiểm sau khi viết; chỉ đường chữ hiện dần; không ở cuộc có lịch lưu | tệ nhất bằng lúc không giữ câu trả lời | dòng 4 |
+| Lần chạy lại khi bị rút | 1 lần; chỉ khi lịch sử đang mang câu trả lời cũ; mọi lỗi của bước kiểm sau khi viết; chỉ ở ô chat (đường gửi chữ từng mảnh, kể cả với Claude); không ở lượt có câu cố định, cuộc có lịch lưu | tệ nhất bằng lúc không giữ câu trả lời | dòng 4 |
 | Lời dặn theo ý (`cau_nhieu_y`) | bật 14/11; từ 2 vế | dòng 5 | dòng 5 |
 | Tra web cho tin trả lời được một phần (`web_chi_khi_tu_choi`) | không tra (từ 21/11) | dòng 6 | dòng 6 |
 | Tìm theo vế (`tim_theo_ve`) | bật 09:47 22/11; 2 đoạn mỗi vế; nhiều nhất 6 vế | dòng 7 | 2, 3, 4 đoạn: cùng kết quả (đếm 0 đồng) |
+| Bỏ vế cụt khỏi lần tìm riêng (`tim_ve_bo_cut`) | bật 14:47 22/11 | vế không tên riêng, còn dưới hai từ mang nội dung sau khi bỏ từ hỏi, từ đệm, từ chung (giờ, giá, vé…) thì không tìm riêng; một danh sách chủ thể ngắn ("taxi", "chợ đêm", "vé xe buýt"…) vẫn được tìm | dòng 10 |
+| Tách câu tìm gộp của model (`tach_cau_tim_model`) | bật 14:47 22/11; 2 đoạn mỗi phần; nhiều nhất 3 phần | câu tìm có "và", ";", "+" ⇒ mỗi phần (từ 6 ký tự) tìm riêng, nối sau kết quả cả câu | dòng 10, 11 |
 
 ## Đã so
 
@@ -190,12 +191,20 @@ Lượt đang mang câu trả lời cũ mà bị rút vì số nguồn; một l�
 | 7 | tìm theo vế, so với tìm một lần bằng cả tin | đếm 0 đồng 8 dòng "chưa có" sai + lượt thật 8 tin × 3 lượt; Claude Sonnet 5.5; 21–22/11 | đoạn đúng vào ngữ cảnh 1 / 8 ⇒ 5 / 8 (tách vế như bộ đếm ý: 3 / 8); nêu được dữ kiện 3 / 24 ⇒ 15 / 24; bỏ hai tin quán ăn (bên tắt đã khá hơn nhờ công cụ "gần một điểm"): 3 ⇒ 9 trên 18 | **giữ** |
 | 8 | model viết lại câu tìm trước lần tìm đầu (3 cách), so với tìm bằng câu gốc | 12 câu; gpt-6-luna; 03/11 | chỉ thêm 0–1 / 12 câu đủ từ khoá (cần ít nhất 3) | bỏ |
 | 9 | cho model gọi hai lần tìm cùng một lúc, so với lần lượt | 176 câu mẫu + 32 câu an toàn; gpt-6-luna; ghi vào bảng tổng 15/11 | model gần như không dùng: 1 / 176 câu; 7 câu nhanh hơn 2,3 giây nhưng vì model tìm 1 lần thay vì 2 | bỏ |
+| 10 | bỏ vế cụt + tách câu tìm gộp, so với bản đang chạy (lượt ba bên: ba bản chạy cùng lúc trên cùng bộ tin; bên thứ ba thêm bước viết lại của bài 21, bản đầu của bước viết lại) | tin của gia đình × 6 mỗi bên + tin nhiều ý khác, tin kho thiếu, tin thường (57 câu); Claude Sonnet 5.5; 22/11 | đoạn giá vé Đại Nội vào bằng chứng 2 · 6 · 6 trên 6; "Thử lại" 5 · 3 · 0; đủ cả hai ý 0 · 1 · 1; nguồn trung vị 20 ⇒ 16; tin khác không lỗi, không bịa | **giữ** (mở cùng bộ) |
+| 11 | thêm trần tìm 3 lên trên dòng 10 | tin của gia đình × 6 (9 câu); Claude Sonnet 5.5; 22/11 | đủ cả hai ý 6 / 6, không "Thử lại", chậm thêm khoảng 2 giây | **giữ** (mở 14:47 22/11) |
 
 **Đọc bảng thế nào.** Dòng 1–3 là ba bước nới dần phần nhớ: câu hỏi, rồi tên nơi, rồi một câu trả lời. Mỗi bước chỉ thêm đúng thứ đã thấy thiếu. Dòng 5 và 7 cho cùng một bài học: muốn sửa tin nhiều ý thì sửa ở chỗ chương trình quyết (đếm vế, tìm theo vế), không nới lời dặn cho mọi tin.
 
-**Giới hạn của các phép đo.** Bộ nhỏ (4 tới 17 chuỗi, 8 tới 11 tin), phần lớn do nhóm soạn. Dòng 1, 2, 5 đo với gpt-6-luna, chưa đo lại trên Claude. Dòng 3 và 7 chưa đo trên gpt-6-luna. Dòng 7 mới đo với tin gửi như tin đầu cuộc; lượt giữa cuộc có lịch sử chưa đo.
+**Giới hạn của các phép đo.** Bộ nhỏ (4 tới 17 chuỗi, 8 tới 11 tin), phần lớn do nhóm soạn. Dòng 1, 2, 5 đo với gpt-6-luna, chưa đo lại trên Claude. Dòng 3 và 7 chưa đo trên gpt-6-luna. Dòng 7 mới đo với tin gửi như tin đầu cuộc; lượt giữa cuộc có lịch sử chưa đo. Dòng 10–11: lợi mới đo trên MỘT tin dài; chính bản đang chạy với tin đó trong ngày tự dao động 3, 4, 5 lần "Thử lại" trên 6, nên căn cứ mở là cơ chế (đúng đoạn vào bằng chứng), không phải "giảm lỗi"; các tin dài khác của lượt đo không có câu tìm gộp; cuộc đã có lịch lưu và model cũ chưa đo.
 
 ## Quyết định nhỏ hơn
+
+**Vì sao lần tìm đầu không ghép câu hỏi trước?** Lần tìm đầu chỉ dùng câu gõ; tên của lượt trước vào câu tìm qua model, ở lần tìm thêm. Chưa thấy ghi lý do cho riêng lần tìm đầu. Điều thấy được: khi sửa câu tra web (15/11), cách ghép câu trước với câu sau bằng chương trình làm hỏng 2 trên 3 cặp người dùng đổi chủ đề thật. Cách khác: ghép bằng chương trình cho lần tìm đầu trong kho: chưa thử; cho model viết lại câu tìm trước lần tìm đầu (3 cách): đã đo, chỉ thêm 0–1 trên 12 câu đủ từ khoá (cần ít nhất 3), bỏ. Cái giá: tin nối tiếp tốn thêm một vòng model.
+
+**Vì sao chạy lại đúng một lần, chỉ ở lượt đang mang câu trả lời cũ?** Giảng đủ ở bài 16, quyết định 4. Tóm lại: chạy lại cả lượt một lần, không kèm câu trả lời cũ, khi lượt bị rút vì bất kỳ phép kiểm nào sau khi viết; chỉ ở ô chat (đường gửi chữ từng mảnh mà giao diện dùng, kể cả với Claude, dù cả câu tới trong một mảnh); lượt có câu cố định và cuộc có lịch lưu thì không. Lượt mà bước viết lại của bài 21 đã xử lý (ra câu viết lại hoặc câu từ chối) thì không cần chạy lại, vì bước viết lại chạy trước. Lý do: lỗi do chính câu trả lời cũ gây ra; bỏ nó đi thì lần hai tệ nhất cũng bằng lúc chưa giữ câu trả lời. "Giữ chữ tới khi kiểm xong" không chọn vì nó đổi cách hiện chữ của mọi tin nối tiếp; nới bước kiểm cho câu chép lại: không làm. Cái giá: gấp đôi lần gọi model, chờ thêm khoảng 5 giây (dòng tiến độ lặp lại một nhịp); đo lại 5 lần: 0 màn hình lỗi, chạy lại thật 2 lần, cả hai ra câu trả lời.
+
+**Vì sao tách câu tìm gộp bằng luật chữ, không nhờ model tách hay dặn model viết câu tìm một ý?** Ghi trong chương trình: cắt hỏng (vị ngữ rơi sang phần kia) chỉ tốn vài đoạn thừa, vì lần tìm cả câu vẫn chạy nguyên như cũ; không thêm lần gọi model. Nhờ model tách hay dặn thêm: chưa thử.
 
 **Vì sao nối thêm 2 đoạn mỗi vế, không chia lại 10 đoạn?** Giữ nguyên 10 đoạn của cả tin, nối 2 đoạn đầu của mỗi vế, nhiều nhất 6 vế. Bản được giao ban đầu "4 đoạn của cả tin + 2 đoạn mỗi vế" đã đếm và bỏ: nó làm mất đoạn đang dùng ở 3 trên 13 tin. Đếm 0 đồng: 2, 3 hay 4 đoạn mỗi vế cho cùng kết quả; 6 là số vế nhiều nhất trong 65 tin nhiều ý đã ghi. Lượt thật (dòng 7 của "Đã so"): 3 trên 24 thành 15 trên 24, 6 tin khác không mất dữ kiện đang đúng. Cái giá: chờ thêm 0,75 giây ở câu đứng giữa; tổng số dòng ý thiếu gần như không đổi (24 xuống 21).
 
@@ -207,9 +216,10 @@ Lượt đang mang câu trả lời cũ mà bị rút vì số nguồn; một l�
 
 - **Tin trỏ theo thứ tự vào câu trả lời của hai lượt trước** không hiểu được; dòng ghi chú tên nơi tự khai "không theo thứ tự trong câu trả lời".
 - **Nơi chỉ được nêu qua một bài tổng hợp** (cẩm nang) không có trong dòng ghi chú tên nơi.
-- **Vế bị tách ra có thể mất tên nơi** ("có bậc nhiều không?"): 2 đoạn của vế đó có thể không liên quan.
+- **Vế bị tách ra có thể mất tên nơi** ("có bậc nhiều không?"): đã gặp ⇒ đã chữa. Đếm trưa 22/11: 327 trên 1.240 vế tìm (26 %) không có chủ thể, 65 % tin nhiều ý có ít nhất một vế như vậy, đọc tay 20 trên 28 đoạn chúng kéo về không liên quan. Từ 14:47 ngày 22/11 vế cụt không được tìm riêng (chưa có số đếm lại sau khi mở). Còn lại: thứ vế cụt thật sự hỏi không được tìm riêng; dưới 2 % số vế bị lọc là lọc oan ("mai mưa thì đi đâu trong nhà"); một ô của phép đo sáng 22/11 từng được cứu nhờ một đoạn không liên quan do vế cụt kéo về, lọc thì mất ô đó.
+- **Câu tìm gộp được tách bằng luật chữ** ("và", ";", "+"). Đếm trên các câu tìm model đã viết: 231 trên 396 (58 %) là câu gộp; trong 32 câu gộp về vé Đại Nội, đoạn có giá vào kết quả 16 câu khi để nguyên, 27 câu khi nối thêm theo phần, không câu nào mất; mỗi lần tìm dài thêm khoảng 2 đoạn (10 lên 12). Cắt bằng luật: cắt hỏng chỉ tốn vài đoạn thừa, lần tìm cả câu vẫn chạy như cũ. Một phiên khác đếm trên 1.116 câu tìm của model: 41 % là câu gộp, 6 % số phần tách ra là mẩu cụt.
 - **Câu phải gom nhiều bài để so** ("lăng nào ít leo bậc") không được tìm theo vế cứu: 0 ⇒ 1 trên 13 tin.
-- **Cuộc có lịch lưu không nhớ câu trả lời liền trước.** Mọi lượt hỏi thường của cuộc đó mang nguồn lịch, mà lượt có nguồn lịch không được giữ câu trả lời; hỏi "quán thứ hai bạn vừa kể" trong cuộc đó sẽ không hiểu được. Cuộc đó cũng không có lần chạy lại. Đọc từ chương trình, chưa thử thật.
+- **Cuộc có lịch lưu không nhớ câu trả lời liền trước.** Mọi lượt hỏi thường của cuộc đó mang nguồn lịch, mà lượt có nguồn lịch không được giữ câu trả lời; hỏi "quán thứ hai bạn vừa kể" trong cuộc đó sẽ không hiểu được. Cuộc đó cũng không có lần chạy lại (bước viết lại của bài 21 thì vẫn chạy ở cuộc đó). Đọc từ chương trình, chưa thử thật.
 - **Người dùng không được báo khi máy chủ đã quên** (quá 30 phút, máy chủ khởi động lại).
 
 ## Chi tiết để tra
@@ -247,5 +257,9 @@ Lượt đang mang câu trả lời cũ mà bị rút vì số nguồn; một l�
 - Cuộc có lịch lưu không nhớ câu trả lời: `assistant.py` `_before_model` (`lich_vao_hoi_thuong` ⇒ `_nguon_lich_dang_co` thêm mục `lich_dang_co`), `conversations.py` `CONG_CU_KHONG_NHO_DAP` [suy từ code, chưa thử]. Lần chạy lại chỉ ở đường stream, điều kiện `trace.citation_error`, tiền hai lần: `answer_turn_stream_parallel`; `answer_turn` không có [code].
 - Dòng 8, 9 của "Đã so": `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng 34, 43 [chép]. Lịch sử ở máy chủ, lượt lỗi không lưu: `docs/superpowers/plans/2026-11-03-phase-9-b3-plan.md` D1 (dòng 44), D2 (dòng 47) [kế hoạch]; trần 1.500 chưa từng chạm (lớn nhất 105): `bai_hoc/VIEC_MOI_XONG.md` mục 9 [chép].
 - Bài đã qua một lượt đối chiếu độc lập với chương trình và số đo ngày 22/11 (36 dòng: 3 lệch, đã sửa): `data/hoc_cung_D/kiem/bai_23_26.md` [riêng tư].
+- Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó: dòng Nếu của tin dài sửa điều kiện ("đã tự tìm ít nhất một lần"), thời gian (25–37 giây khi viết lại) và thứ người dùng thấy (chữ giữ chỗ khoảng 15–17 giây — `bai_hoc/VIEC_MOI_XONG.md` mục 42, đính chính 15:14; runbook 10.1 hàng "Lưới viết lại"; suy từ chương trình và sổ máy chủ, chưa chụp màn hình). Cắt nửa để hiểu: quyết định 2 (lần tìm đầu không ghép) và 4 (chạy lại) cũ chuyển xuống "Quyết định nhỏ hơn"; đoạn chạy lại và đoạn "Hai sửa sau…" rút còn cơ chế, số ở "Đã so" dòng 10–11 và "Giới hạn đã biết"; câu hỏi tự kiểm về lần chạy lại bỏ (bài 16 có). Thêm: cách khác "lời nhờ không có từ hỏi" (`VIEC_MOI_XONG.md` mục 42 ý 3: 4 / 364 tin), quyết định nhỏ "tách bằng luật chữ" (chú thích `cac_phan_cau_tim`).
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 (hàng "Vế tìm cụt bị lọc…", "Tin DÀI nhiều ý"); `backend/config/settings.yaml` (`tim_ve_bo_cut`, `tach_cau_tim_model`, `so_lan_tim_kho: 3` và chú thích) [code; số đo: đã chạy, phiên đo; người viết không chạy lại]. Luật vế cụt: `backend/llm/assistant.py` `_ve_cut`, `_TU_DEM_VE`, `_TU_CHUNG_VE`, `_CHU_DE_VE`, `cac_ve_tim(query, flags.tim_ve_bo_cut)`; tách câu tìm: `cac_phan_cau_tim`, `_NOI_CAU_TIM`, `TRAN_PHAN_CAU_TIM = 3`, `search_into_trace` (phần của câu tìm model vẫn được tìm khi cả câu không mang đoạn mới) [code]. Số 327 / 1.240, 65 %, 20 / 28, 231 / 396, 16 ⇒ 27 / 32, 1.116 câu (41 %, 6 %), 2 ⇒ 6 / 6, 20 ⇒ 16, ô "17h30", lọc oan dưới 2 %, ghép chủ thể 6 · 12 · 2 / 20: `VIEC_MOI_XONG.md` mục 42 ý 2–3; runbook 10.1; chú thích `tim_ve_bo_cut` trong `assistant.py`; `data/review_khac_hang/2026-11-22_moc_sang/c_dem/KET_QUA_DEM.md` [riêng tư, chưa mở; chép qua runbook].
+
+- "Đường chữ hiện dần" đổi thành "ô chat (đường gửi chữ từng mảnh)" và thêm "lượt có câu cố định" cho khớp bài 16: `backend/llm/assistant.py` `answer_turn_stream_parallel` (điều kiện `trace.fixed_outcome is not None or trace.lich_luu is not None` ⇒ không chạy lại); đường không stream `/api/chat` giao diện không dùng: `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 [code + chép, 15:18 22/11/2026].
 
 </details>

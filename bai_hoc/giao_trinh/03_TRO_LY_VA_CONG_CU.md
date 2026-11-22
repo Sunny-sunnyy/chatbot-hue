@@ -1,6 +1,6 @@
 # Bài 3 — Trợ lý và công cụ: model chỉ "xin", chương trình mới là thứ chạy
 
-*Cập nhật 12:06, ngày 22/11/2026 · phần giải thích chung là kiến thức phổ thông; ví dụ là một lượt hỏi thật ngày 20/11 (gpt-6-luna); danh sách công cụ đọc từ chương trình đang chạy sáng 22/11; người viết không chạy lại.*
+*Cập nhật 15:43, ngày 22/11/2026 · phần giải thích chung là kiến thức phổ thông; ví dụ là một lượt hỏi thật ngày 20/11 (gpt-6-luna); danh sách công cụ đọc từ chương trình đang chạy sáng 22/11; các trần đọc từ cấu hình sau 14:47 22/11; người viết không chạy lại.*
 
 **Bài trước đã biết:** RAG cho model đọc tài liệu của kho trước khi viết, và model không tự tính toán đáng tin được.
 **Bài này thêm:** có những câu hỏi mà đọc tài liệu không trả lời được. Bài này giảng cách cho model "nhờ" chương trình làm việc, và hai chữ hay bị dùng lẫn: luồng cố định và trợ lý.
@@ -93,15 +93,15 @@ Công cụ tìm kho và công cụ liệt kê bài có ở mọi lượt hỏi �
 
 ### 1. Vì sao chỉ mở cho model quyết ở một chỗ, mà không làm một trợ lý tự do quyết mọi bước?
 
-- **Đã chọn:** chương trình quyết thứ tự các bước. Model chỉ được quyết "viết luôn, hay xin thêm một công cụ": nó được tự tìm thêm nhiều nhất hai lần, và cả lượt có nhiều nhất bốn lần gọi model (thêm một lần cho mỗi công cụ ngày, khoảng cách, gần một điểm, liệt kê bài).
-- **Vì sao:** đã đo. Mở cho model tự tìm thêm tối đa hai lần thì thắng rõ: ở câu cần nhiều nguồn, điểm đủ ý tăng 1,17; từ chối nhầm giảm từ 12 xuống 4 tới 6 trên 158 câu. Nới thêm nữa thì không hơn: 8 vòng và 4 lần tìm cho 28 so với 28 trên 29; 3 lần tìm cho 15 so với 15 trên 18 (bài 21).
+- **Đã chọn:** chương trình quyết thứ tự các bước. Model chỉ được quyết "viết luôn, hay xin thêm một công cụ": nó được tự tìm thêm nhiều nhất ba lần, và các vòng của trợ lý có nhiều nhất năm lần gọi model (thêm một vòng cho mỗi công cụ ngày, khoảng cách, gần một điểm, liệt kê bài); ngoài ra có lần xếp loại câu và, khi cần, một lần viết lại (bài 21). Hai trần này từ 14:47 ngày 22/11; trước đó là hai lần và bốn vòng.
+- **Vì sao:** đã đo. Mở cho model tự tìm thêm tối đa hai lần thì thắng rõ: ở câu cần nhiều nguồn, điểm đủ ý tăng 1,17; từ chối nhầm giảm từ 12 xuống 4 tới 6 trên 158 câu. Nới riêng số lần thì không hơn (đo 21/11): 8 vòng và 4 lần tìm cho 28 so với 28 trên 29; 3 lần tìm cho 15 so với 15 trên 18. Trần 3 chỉ có ích khi đi cùng việc tách câu tìm gộp của model (22/11, một tin 4 ý: đủ hai ý kho có 1 ⇒ 6 trên 6), nên mở cùng nhau (bài 21, 23).
 - **Cách khác:** một trợ lý tự quyết toàn bộ các bước: chưa thử.
 - **Cái giá:** câu cần nhiều bước hơn mức trần thì không được trả lời trọn.
 
 ### 2. Vì sao lần tìm đầu tiên do chương trình làm ở mọi lượt, không chờ model xin?
 
 - **Đã chọn:** chương trình tìm 10 đoạn bằng chính câu người dùng gõ, rồi mới gọi model.
-- **Vì sao:** đã đo (03/11, gpt-6-luna). Để model tự gọi công cụ tìm ngay từ đầu, hoặc để model viết lại hay tách câu tìm trước lần tìm đầu, đều không đưa thêm được câu nào đủ thông tin (0 trên 12 câu có thể đổi).
+- **Vì sao:** đã đo (03/11, gpt-6-luna). Để model tự gọi công cụ tìm ngay từ đầu, hoặc để model viết lại hay tách câu tìm trước lần tìm đầu, chỉ đưa thêm được 0 tới 1 trên 12 câu đủ thông tin, trong khi luật ghi trước cần ít nhất 3.
 - **Cách khác:** chính ba cách vừa nêu: đã thử, bỏ.
 - **Cái giá:** câu không cần kho (ví dụ chỉ hỏi ngày âm lịch) vẫn tốn một lần tìm (0,04 tới 0,34 giây ở hai lượt ví dụ) và vẫn gửi 10 đoạn cho model đọc, tức vài nghìn token mỗi lượt.
 
@@ -136,7 +136,7 @@ Công cụ tìm kho và công cụ liệt kê bài có ở mọi lượt hỏi �
 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa |
 |---|---|---|---|
-| model đã tìm đủ hai lần mà vẫn muốn tìm | chương trình cất công cụ tìm kho khỏi lần gọi kế; model phải viết bằng thứ đang có | câu trả lời từ các đoạn đã có; model vẫn đòi tìm thì câu từ chối cố định | đã có từ 13/11; nhờ vậy câu kho thiếu bớt một lần gọi model, thời gian ở câu đứng giữa từ 22,85 xuống 16,15 giây |
+| model đã tìm đủ số lần (3, trước 14:47 22/11 là 2) mà vẫn muốn tìm | chương trình cất công cụ tìm kho khỏi lần gọi kế; model phải viết bằng thứ đang có. Model nộp chữ giữ chỗ không có số nguồn ⇒ viết lại một lần, không công cụ (từ 14:47 22/11) | câu trả lời từ các đoạn đã có; vẫn không có số nguồn, hoặc model vẫn đòi tìm, thì câu từ chối cố định | cất công cụ có từ 13/11 (câu kho thiếu bớt một lần gọi model, câu đứng giữa 22,85 ⇒ 16,15 giây); viết lại có từ 14:47 22/11 (bài 21) |
 | model cứ xin công cụ mãi, không chịu viết | chương trình dừng khi hết số vòng | câu từ chối cố định | đã có (bài 21) |
 | công cụ thời tiết không lấy được dự báo | công cụ trả về một nguồn ghi "chưa lấy được", không kèm con số nào | một câu do chương trình nối, báo chưa lấy được dự báo và chỉ sang bản tin của cơ quan khí tượng | đã có (bài 24) |
 | một công cụ gặp lỗi trong chính chương trình | lỗi không được biến thành chữ cho model đọc, vì model đọc chữ lỗi có thể tưởng kho không có rồi từ chối, hoặc viết bừa; lượt hỏi dừng | lời báo lỗi và nút "Thử lại" (bài 6) | đã có |
@@ -163,14 +163,14 @@ Không. Model chỉ gửi ra một lời xin gồm tên công cụ và tham số
 <details>
 <summary>2. hue_rag mở cho model quyết ở chỗ nào, và vì sao không mở thêm?</summary>
 
-Ở một chỗ: thấy chưa đủ thì xin tìm thêm (nhiều nhất hai lần) hoặc xin một công cụ. Đã đo: mở tới hai lần tìm thì thắng rõ (điểm đủ ý của câu nhiều nguồn tăng 1,17); nới thêm số lần tìm và số vòng thì không hơn.
+Ở một chỗ: thấy chưa đủ thì xin tìm thêm (nhiều nhất ba lần, từ 14:47 22/11) hoặc xin một công cụ. Đã đo: mở tới hai lần tìm thì thắng rõ (điểm đủ ý của câu nhiều nguồn tăng 1,17); nới riêng số lần tìm và số vòng thì không hơn; trần 3 chỉ được mở cùng việc tách câu tìm gộp, vì chỗ nghẽn là câu tìm.
 
 </details>
 
 <details>
 <summary>3. Vì sao lần tìm đầu do chương trình làm, không để model tự quyết?</summary>
 
-Đã đo ngày 03/11: để model tự tìm từ đầu, hoặc viết lại câu tìm, không đưa thêm được câu nào đủ thông tin (0 trên 12). Cái giá: câu không cần kho vẫn tốn một lần tìm và vẫn gửi 10 đoạn cho model.
+Đã đo ngày 03/11: để model tự tìm từ đầu, hoặc viết lại câu tìm, chỉ đưa thêm được 0 tới 1 trên 12 câu đủ thông tin (cần ít nhất 3). Cái giá: câu không cần kho vẫn tốn một lần tìm và vẫn gửi 10 đoạn cho model.
 
 </details>
 
@@ -201,5 +201,11 @@ Công cụ trả về "chưa lấy được", không kèm con số nào. Câu tr
 - Lệnh đề xuất sửa kho là luồng cố định: `bai_hoc/VIEC_MOI_XONG.md` mục 30, ý cuối của phần "Chưa làm / giới hạn".
 - Bảng "ai quyết": `backend/llm/assistant.py` (`_pick_route`, `_before_model`, `answer_query`, `_finish_generated`) [code].
 - Mục "Quyết định và lý do" và "Nếu… thì sao" (đã sửa theo biên bản `data/hoc_cung_D/kiem/bai_22_va_muc_moi_01_03_04.md`): tự tìm thêm thắng (+1,17; 12 ⇒ 4–6 / 158), nới thêm không hơn (28 so với 28 / 29; 15 so với 15 / 18): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 15, 43, 44 và bài 21; lần tìm đầu (ba cách, 0 / 12): `report_agent/2026-11-02_phase_9_code/b134_b2_implementation.md`, bảng tổng hàng số 34; tính sẵn ngày (5,60 / 10,14 ⇒ 2,35 / 4,56 giây): bảng tổng hàng số 23; công cụ theo từ khoá, bản "mọi lượt" bị lùi 17/11, chế độ luôn đưa chưa đo, đếm 4 / 60 trên 310 câu: `backend/llm/full_corpus_prompt.py` (chú thích ở `ASSISTANT_TOOL_NOTE`), `backend/config/settings.yaml` (`cong_cong_cu`), `report_agent/2026-11-21/c_cong_cong_cu.md`; cất công cụ sau hai lần tìm (22,85 ⇒ 16,15 giây): `settings.yaml` (`het_luot_bo_cong_cu`), bảng tổng hàng số 35; lỗi công cụ không thành chữ cho model: `backend/llm/generator_openai_full_corpus.py` (`failure_error_function=None`); thời tiết không lấy được: `backend/llm/thoi_tiet.py`, `backend/llm/assistant.py`; tra sẵn khoảng cách, tính sẵn ngày: `assistant.py` (`_before_model`). "Ô tham số hẹp" là lập luận, ghi rõ trong bài.
+
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`so_lan_tim_kho: 3`, `so_vong_cong_cu: 5`, `het_luot_viet_lai: true`) [code; số đo: đã chạy, phiên đo; người viết không chạy lại]. Bước viết lại: `backend/llm/assistant.py` `_viet_lai_het_luot` [code].
+
+- "0 trên 12" sửa thành "0 tới 1 trên 12" cho khớp bài 13, 23: `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` dòng 76 (hàng 34: "chỉ thêm 0–1 / 12 câu đủ từ khoá (cần ít nhất 3)") [chép, mở 15:18 22/11/2026].
+
+- Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó: "năm lần gọi model" là trần VÒNG của trợ lý, không phải số lần gọi của cả lượt (còn lần xếp loại câu, lần viết mục web, lần viết lại): `backend/llm/generator_openai_full_corpus.py` `max_turns_for`; `backend/llm/assistant.py` `_viet_lai_het_luot` [code].
 
 </details>

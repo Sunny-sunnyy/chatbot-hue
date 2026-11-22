@@ -1,6 +1,6 @@
 # Bài 14 — Xếp lại bằng model (reranking): đã thử ba cách, không dùng
 
-*Cập nhật 14:33, ngày 22/11/2026 · cấu hình đọc từ hệ thống đang chạy; số của các phép so lấy từ báo cáo đo ngày 25/10 và 27/10, model gpt-6-luna, kho của thời điểm đó; người viết không chạy lại phép đo nào.*
+*Cập nhật 15:13, ngày 22/11/2026 · cấu hình đọc từ hệ thống đang chạy; số của các phép so lấy từ báo cáo đo ngày 25/10 và 27/10, model gpt-6-luna, kho của thời điểm đó; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** trên 40 câu khó, 9 câu có đoạn đúng nằm trong 30 ứng viên nhưng đứng dưới hạng 10, nên model viết không thấy.
 **Bài này thêm:** cách chữa quen thuộc cho chuyện đó là dùng một model đọc kỹ từng ứng viên rồi xếp lại. Bài này kể ba lần thử, kết quả của từng lần, và vì sao hệ thống đang chạy không xếp lại.
@@ -76,7 +76,7 @@ Hệ thống chọn đường khác để model có đủ đoạn hơn: quyết 
 
 ### 4. Vì sao chữa chuyện thiếu đoạn bằng "đưa thêm đoạn" mà không bằng "xếp lại cho đúng"?
 
-- **Đã chọn:** đưa 10 đoạn thay vì 5 (bài 13), cho trợ lý tự tìm thêm tối đa 2 lần (bài 21), nối thêm 2 đoạn mỗi ý cho tin nhiều ý (bài 23).
+- **Đã chọn:** đưa 10 đoạn thay vì 5 (bài 13), cho trợ lý tự tìm thêm tối đa 3 lần (bài 21; trước 14:47 ngày 22/11 là 2), nối thêm 2 đoạn mỗi ý cho tin nhiều ý (bài 23).
 - **Vì sao:** ba đường này đã đo là giúp điểm "đủ ý" hoặc số dữ kiện nêu được, mà không làm rơi đoạn đúng; so với bản để model viết chọn đoạn thì chúng cũng rẻ hơn.
 - **Cách khác:** xếp lại: ba cách đã đo, mục trên.
 - **Cái giá:** ba đường này chưa được đo riêng trên đúng 9 câu hỏng về thứ tự; chưa biết chúng chữa được bao nhiêu câu trong số đó.
@@ -188,5 +188,7 @@ Phần chương trình của bước xếp lại vẫn còn trong kho mã, chỉ
 - "Đáng thử lại": `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` mục "Nhìn cả bảng thấy gì" ý 4.
 - 9 trên 40 câu: bài 13 và nguồn của nó.
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm", "Quyết định nhỏ hơn" (thêm 14:00 22/11/2026 theo khuôn mới): gom từ "Đã so" và thân bài. Máy chủ không bật khi `reranker` khác `none`: `backend/core/settings_loader.py` hàm `validate_phase6_settings` (cùng kiểu với `retrieval_treatment`) [code]. Ba đường "đưa thêm đoạn": bài 13, 21, 23. Quyết định 12/08/2026 "làm trên máy trước, hoãn bản xếp lại qua dịch vụ": `guides/phase_5_retrieval_profiles_reranking.md` dòng 830–836 [chép]. "Còn đáng thử lại" cho bản model viết chọn đoạn: bảng tổng mục "Nhìn cả bảng thấy gì" ý 4. Các mục mới đã qua một lượt đối chiếu độc lập 14:28 22/11/2026 và được sửa theo: `data/hoc_cung_D/kiem/muc_moi_12_16.md` [riêng tư].
+
+- Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`so_lan_tim_kho: 3`) [code; người viết không chạy lại].
 
 </details>
