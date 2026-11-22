@@ -395,8 +395,9 @@ def test_tool_round_limits_and_edit_timeout_come_from_settings_with_old_defaults
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
     settings = bedrock_settings()
     sonnet = OpenAIFullCorpusGenerator.from_environment(settings)
-    assert (sonnet.max_turns, sonnet.sua_lich_timeout, sonnet.router_timeout) == (ASSISTANT_MAX_TURNS, 10, 10) == (4, 10, 10)
-    assert AssistantFlags(so_lan_tim_kho=settings["assistant"]["so_lan_tim_kho"]).so_lan_tim_kho == MODEL_SEARCH_LIMIT == AssistantFlags().so_lan_tim_kho == 2
+    # 22/11/2026: settings đang chạy nới trần — 5 vòng công cụ, 3 lần model tìm kho (đi cùng bản tách câu tìm gộp); mặc định của CODE giữ 4 và 2
+    assert (sonnet.max_turns, sonnet.sua_lich_timeout, sonnet.router_timeout) == (5, 10, 10) and ASSISTANT_MAX_TURNS == 4
+    assert AssistantFlags(so_lan_tim_kho=settings["assistant"]["so_lan_tim_kho"]).so_lan_tim_kho == 3 and MODEL_SEARCH_LIMIT == AssistantFlags().so_lan_tim_kho == 2
     assert max_turns_for(None) == 4 and max_turns_for(object(), object()) == 6 and max_turns_for(object(), None, 6) == 7
 
     settings["assistant"].update(so_vong_cong_cu=6, router_timeout_seconds=10)
