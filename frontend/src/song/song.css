@@ -3,34 +3,36 @@
    Không dùng `url("data:…")` — CSP của server không cho; hình nhỏ để ở `frontend/public/hoa_tiet/`. Chuyển động chỉ chạy dưới `.hieu-ung` (máy không bật giảm chuyển động). */
 
 /* ════════ Màn câu trả lời: nguồn, khối "chưa có", cảnh báo an toàn, lúc chờ ════════ */
+/* Mọi luật `.answer` ở file này CHỈ cho câu trả lời của trợ lý. Trang một bài của Khám phá cũng mang lớp `.answer` (kèm `.ct-bai`) để dùng luật chữ gốc ở index.css —
+   phải loại nó ra, không thì bài bị bó cột 64 ký tự (bảng giá vỡ thành từng ký tự) và mất chấm đầu dòng. */
 html .bubble { border-radius: 6px var(--radius-l) var(--radius-l) var(--radius-l); box-shadow: var(--shadow-2); padding: 20px 24px; }
-html .answer strong { font-weight: 700; }
+html .answer:not(.ct-bai) strong { font-weight: 700; }
 /* dòng "Tư liệu chưa có thông tin về…": một khối riêng, không lẫn với chữ trả lời */
-html .answer .y-thieu { list-style: none; margin-left: -1.4em; padding: 10px 14px 10px 40px; border: 1px dashed var(--color-field-line); border-radius: 12px;
+html .answer:not(.ct-bai) .y-thieu { list-style: none; margin-left: -1.4em; padding: 10px 14px 10px 40px; border: 1px dashed var(--color-field-line); border-radius: 12px;
   background: var(--color-page) url("/static/hoa_tiet/y_thieu.svg") 12px 13px no-repeat;
   font-size: var(--text-phu); color: var(--color-muted); }
-html .answer p.y-thieu { margin-left: 0; }
-html .answer p.y-thieu-dau { border-bottom: 0; border-radius: 12px 12px 0 0; padding-bottom: 2px; font-weight: 600; }
-html .answer ul.y-thieu-ds { margin-top: 0; padding: 2px 14px 10px 38px; border: 1px dashed var(--color-field-line); border-top: 0; border-radius: 0 0 12px 12px;
+html .answer:not(.ct-bai) p.y-thieu { margin-left: 0; }
+html .answer:not(.ct-bai) p.y-thieu-dau { border-bottom: 0; border-radius: 12px 12px 0 0; padding-bottom: 2px; font-weight: 600; }
+html .answer:not(.ct-bai) ul.y-thieu-ds { margin-top: 0; padding: 2px 14px 10px 38px; border: 1px dashed var(--color-field-line); border-top: 0; border-radius: 0 0 12px 12px;
   background: var(--color-page); font-size: var(--text-phu); color: var(--color-muted); }
-/* đoạn chỉ có một cụm in đậm = tiêu đề phần của câu trả lời: cho nó bậc nhìn riêng (chữ không đổi) */
-html .answer > p:has(> strong:only-child) > strong { display: inline-block; font-size: 1.06em; color: var(--color-accent-deep); padding-bottom: 2px;
+/* đoạn chỉ có một cụm in đậm = tiêu đề phần của câu trả lời: cho nó bậc nhìn riêng (chữ không đổi). Lớp `.dau-muc` do `nhin.js` gắn sau khi xét cả chữ thường quanh cụm đậm. */
+html .answer:not(.ct-bai) > p.dau-muc > strong { display: inline-block; font-size: 1.06em; color: var(--color-accent-deep); padding-bottom: 2px;
   border-bottom: 3px solid var(--color-accent-soft); }
 /* Thân câu trả lời: hết là "khối chữ trong thẻ trắng" — dòng ngắn lại, gạch đầu dòng nhẹ, con số giá / giờ đậm và đều cột, bảng có đầu bảng rõ (chữ không đổi) */
-html .answer { max-width: 64ch; }
-html .answer .so { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--color-ink); }
-html .answer ul { list-style: none; padding-left: 0; }
-html .answer ul > li { position: relative; padding-left: 1.5em; }
-html .answer ul > li::before { content: ""; position: absolute; left: .4em; top: .66em; width: .42em; height: .42em; border-radius: 50%; background: var(--color-accent); opacity: .6; }
-html .answer ul ul > li::before { background: none; border: 1.5px solid var(--color-accent); }
-html .answer li + li { margin-top: .45em; }
-html .answer table { border-radius: 12px; border: 1px solid var(--color-line); border-spacing: 0; border-collapse: separate; font-variant-numeric: tabular-nums; }
-html .answer th { background: var(--color-accent-soft); color: var(--color-accent-deep); text-align: left; }
-html .answer th, html .answer td { border: 0; border-bottom: 1px solid var(--color-line); padding: .45em .8em; }
-html .answer tr:last-child td { border-bottom: 0; }
+html .answer:not(.ct-bai) { max-width: 64ch; }
+html .answer:not(.ct-bai) .so { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--color-ink); }
+html .answer:not(.ct-bai) ul { list-style: none; padding-left: 0; }
+html .answer:not(.ct-bai) ul > li { position: relative; padding-left: 1.5em; }
+html .answer:not(.ct-bai) ul > li::before { content: ""; position: absolute; left: .4em; top: .66em; width: .42em; height: .42em; border-radius: 50%; background: var(--color-accent); opacity: .6; }
+html .answer:not(.ct-bai) ul ul > li::before { background: none; border: 1.5px solid var(--color-accent); }
+html .answer:not(.ct-bai) li + li { margin-top: .45em; }
+html .answer:not(.ct-bai) table { border-radius: 12px; border: 1px solid var(--color-line); border-spacing: 0; border-collapse: separate; font-variant-numeric: tabular-nums; }
+html .answer:not(.ct-bai) th { background: var(--color-accent-soft); color: var(--color-accent-deep); text-align: left; }
+html .answer:not(.ct-bai) th, html .answer:not(.ct-bai) td { border: 0; border-bottom: 1px solid var(--color-line); padding: .45em .8em; }
+html .answer:not(.ct-bai) tr:last-child td { border-bottom: 0; }
 /* câu từ chối / ngoài phạm vi: thẻ nền sương, không phải thẻ trả lời */
 html .bubble-tu-choi { background: var(--color-page); border-style: dashed; box-shadow: none; }
-html .answer ul.y-thieu-ds > li::before { background: var(--color-muted); opacity: .5; }
+html .answer:not(.ct-bai) ul.y-thieu-ds > li::before { background: var(--color-muted); opacity: .5; }
 /* cảnh báo an toàn: khối viền đậm, không phải một dòng chữ */
 html .notice-an-toan { padding: 10px 14px; border-radius: 12px; border-left: 5px solid #B45309; background: #FFF4DB; color: #5A3A05; }
 /* Nguồn: hàng "bến" nhìn thấy được — số thứ tự mang màu chủ đề của bài */

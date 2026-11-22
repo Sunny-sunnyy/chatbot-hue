@@ -5,7 +5,7 @@ export const linhVuc = baiId => (typeof baiId === "string" ? baiId.split("/")[0]
 // Con số người ta dò tìm trong câu trả lời: số tiền ("200.000 đồng", "1,2 triệu đồng") và khung giờ ("07:00 – 17:30", "7h30"). Chỉ bọc thẻ để vẽ đậm, chữ số đều cột.
 const SO = /\d{1,3}(?:\.\d{3})+(?:\s*(?:đồng|VNĐ|đ)(?![\p{L}]))?|\d+(?:[.,]\d+)?\s*(?:nghìn|triệu)(?:\s*đồng)?|\d{1,2}(?::|h)\d{2}(?:\s*[–-]\s*\d{1,2}(?::|h)\d{2})?/gu;
 
-// Sau khi chữ trả lời (đã qua bộ lọc) vào trang: gắn lớp cho khối "Tư liệu chưa có thông tin về…" và bọc các con số. Chạy lại được nhiều lần (bỏ qua phần đã bọc).
+// Sau khi chữ trả lời (đã qua bộ lọc) vào trang: gắn lớp cho khối "Tư liệu chưa có thông tin về…", cho đoạn tiêu đề phần, và bọc các con số. Chạy lại được nhiều lần (bỏ qua phần đã bọc).
 export function trangTriTraLoi(el) {
   if (!el) return;
   el.querySelectorAll("p, li").forEach(n => {
@@ -14,6 +14,13 @@ export function trangTriTraLoi(el) {
     const sau = n.nextElementSibling;  // dòng mở đầu + danh sách gạch đầu dòng ngay dưới = MỘT khối
     if (n.tagName === "P" && n.textContent.trim().endsWith(":") && sau?.tagName === "UL") { n.classList.add("y-thieu-dau"); sau.classList.add("y-thieu-ds"); }
   });
+  // Đoạn mà TOÀN BỘ nội dung là một cụm in đậm = tiêu đề phần của câu trả lời. Phải xét cả chữ thường quanh cụm đậm:
+  // CSS `strong:only-child` không thấy chữ thường, nên "Huế nổi tiếng với **X**. Đây là…" từng bị tách cụm đậm thành một khối riêng.
+  for (const d of el.children) {
+    if (d.tagName !== "P") continue;
+    const con = [...d.childNodes].filter(c => c.nodeType !== Node.TEXT_NODE || c.nodeValue.trim());
+    d.classList.toggle("dau-muc", con.length === 1 && con[0].nodeName === "STRONG");
+  }
   const duyet = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   const nut = [];
   while (duyet.nextNode()) {
