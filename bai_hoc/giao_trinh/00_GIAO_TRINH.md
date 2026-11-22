@@ -1,6 +1,6 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 17:11, ngày 22/11/2026 · đủ 41 bài và 9 phụ lục; mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo · từ chiều 22/11 mọi thứ mới của hệ thống được ghi vào bộ này, liệt kê ở mục "Có gì mới" ngay dưới · mọi con số lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 17:14, ngày 22/11/2026 · đủ 41 bài và 9 phụ lục; mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo · từ chiều 22/11 mọi thứ mới của hệ thống được ghi vào bộ này, liệt kê ở mục "Có gì mới" ngay dưới · mọi con số lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -27,6 +27,8 @@ Hệ thống vẫn đang được làm tiếp. Mỗi khi người dùng thấy m
 
 | Ngày | Người dùng thấy gì khác | Đọc ở |
 |---|---|---|
+| 22/11, tối | Trang Giới thiệu được viết lại hai chỗ cho đúng hiện trạng: thứ trợ lý nhớ trong một cuộc trò chuyện, và giới hạn về lễ hội, sự kiện theo ngày. Đã sửa trong mã nguồn; giao diện chưa dựng lại nên máy đang chạy còn hiện chữ cũ. | bài 37, mục "Giới hạn đã biết" |
+| 22/11, tối | Không phải thay đổi mà là điều mới ghi rõ sau một lượt thử: gõ lại đúng một câu ở cuộc mới thì câu một ý về ngay (0,2 giây); câu nhiều ý mà lần đầu còn dòng "Tư liệu chưa có…" thì được tìm và viết lại. | bài 34, mục "Giới hạn đã biết" |
 | 22/11, tối | Hỏi "kể các điểm tham quan miễn phí" thì Hải Vân Quan không còn bị kể; hỏi giá vé Hải Vân Quan thì nhận 70.000 đồng, không còn lời "hai nguồn không khớp". Kho từng có một dòng nói ngược bài vé; dòng đó đã sửa. | bài 7, bảng các lần kho đổi; bài 24, mục "Giới hạn đã biết" (công cụ liệt kê bài) |
 | 22/11, chiều | Hỏi đường từ Huế đi Hội An thì có câu trả lời có nguồn: kho thêm một bài về việc này (kho nay 267 bài, 9.479 đoạn). | bài 7, bảng các lần kho đổi ở mục "Chi tiết để tra" |
 | 22/11, chiều | Trong một cuộc trò chuyện đã lập lịch, trợ lý cũng nhớ câu nó vừa trả lời: nhờ "bỏ quán đầu đi rồi viết lại danh sách" thì nhận danh sách đã bỏ đúng quán đầu. Đây là tính năng thứ 47 đang mở. | bài 23, mục "Máy chủ nhớ ba lượt gần nhất, và chỉ một câu trả lời" và mục "Giới hạn đã biết"; bài 31, mục "Nếu… thì sao" |
@@ -135,7 +137,7 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 | F | [Các con số chính trên một trang: 93 con số kèm điều kiện đo](PL_F_CON_SO_CHINH.md) | ✅ |
 | G | [Mọi quyết định của hệ thống trên một trang: 278 quyết định gom từ bài 1–38](PL_G_MOI_QUYET_DINH.md) | ✅ |
 | H | [Mọi tình huống hỏng trên một trang: 142 tình huống gom từ bài 1–38](PL_H_MOI_TINH_HUONG_HONG.md) | ✅ |
-| I | [Mọi giới hạn đã biết trên một trang: 124 giới hạn, và bảng riêng các thứ cố ý không làm](PL_I_GIOI_HAN_DA_BIET.md) | ✅ |
+| I | [Mọi giới hạn đã biết trên một trang: 125 giới hạn, và bảng riêng các thứ cố ý không làm](PL_I_GIOI_HAN_DA_BIET.md) | ✅ |
 
 ## Khuôn của mỗi bài
 

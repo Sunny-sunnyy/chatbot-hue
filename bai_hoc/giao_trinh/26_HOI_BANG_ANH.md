@@ -1,6 +1,6 @@
 # Bài 26 — Hỏi bằng ảnh
 
-*Cập nhật 12:54, ngày 22/11/2026 · sửa theo một lượt đối chiếu độc lập · cơ chế đọc từ chương trình (máy chủ và giao diện) trưa 22/11; số đo chép từ báo cáo 05/11 – 21/11, ghi rõ model ở từng con số; người viết không chạy lại phép đo nào và không gửi ảnh nào.*
+*Cập nhật 17:14, ngày 22/11/2026 · sửa theo một lượt đối chiếu độc lập · cơ chế đọc từ chương trình (máy chủ và giao diện) trưa 22/11; số đo chép từ báo cáo 05/11 – 21/11, ghi rõ model ở từng con số; người viết không chạy lại phép đo nào và không gửi ảnh nào.*
 
 **Bài trước đã biết:** trợ lý trả lời từ kho, có số nguồn (chặng 3); chương trình chọn công cụ và kiểm sau khi model viết (bài 21–25).
 **Bài này thêm:** người dùng gửi một tấm ảnh chụp ở Huế và hỏi về nó. Ảnh không đi thẳng vào câu trả lời: model chỉ đoán **tên** thứ trong ảnh, chọn trong một danh sách cố định; rồi câu hỏi đi đường hỏi đáp như một câu gõ bằng chữ. Bài giảng vì sao chia hai bước như vậy, vì sao có bước xác nhận, và khi model lỗi thì người dùng thấy gì.
@@ -202,6 +202,7 @@ Một tên đúng 31 trên 33 lượt; khi đưa 2–3 tên thì tên đầu ch�
 
 ## Chi tiết để tra
 
+- Thử trên giao diện tối 22/11 với model đang chạy (Claude Sonnet 5.5), một ảnh Ngọ Môn kèm câu "Đây là gì?": sau 1,5 giây hiện thẻ chọn với hai tên (hai bài của kho cùng nói về khu Ngọ Môn) và nút gõ tên; bấm tên đầu thì có câu trả lời có nguồn, cả lượt 8,5 giây. Một ảnh, một lần; chưa thử ảnh món ăn hay ảnh khó.
 - Kiểm "đúng trang": máy chủ đọc hai dòng thông tin trình duyệt tự gắn vào mỗi yêu cầu, cho biết yêu cầu gửi từ trang nào; ảnh gửi từ trang khác bị từ chối. Ảnh gửi dạng dữ liệu thô, không dạng biểu mẫu, để trình duyệt ở trang lạ phải hỏi trước và bị chặn.
 - Mã lỗi máy chủ trả khi từ chối ảnh: quá cỡ, sai kiểu, ảnh hỏng, gửi từ trang khác; giao diện đều hiện câu "chưa nhận ra".
 - Sổ số đo mỗi lần nhận ảnh một dòng: kết cục, kích thước ảnh, số tên, token, tiền, thời gian xử lý và thời gian model; không có ảnh, tên file, tên đoán ra. Sổ vết gỡ lỗi (chỉ bật trên máy làm, đang tắt) thì có ghi tên đoán ra, không ghi ảnh.
@@ -225,5 +226,6 @@ Một tên đúng 31 trên 33 lượt; khi đưa 2–3 tên thì tên đầu ch�
 - Vòng 2 lời dặn (Q-c ảnh ngoài bị ép tên 0 · 0; Q-a đúng trong 3 gợi ý 21 · 20 / 25, ngưỡng 22), chủ dự án chọn giữ vòng 1: chú thích `NHAN_ANH_INSTRUCTIONS`; `report_agent/2026-11-05_phase_10_anh/e8_a1_implementation.md` bảng v0 / v1 / v2; `bao_cao_he_thong/08_…` dòng 131 [đã chạy; chép]. Ba nấc trần đầu ra (512 ⇒ 1.024 + hạn 20 giây ở v1 ⇒ gỡ 19/11) và lỗi cắt 4 lần ở v0: cùng bảng [đã chạy].
 - Dữ liệu thô thay biểu mẫu: chú thích đầu `backend/api/routes/anh.py`; không chữ người dùng: `nhan_anh.dau_vao`, plan A1 D3; tệp đính kèm: chú thích `HoiBangAnh.jsx` (User 15/11 tối); sổ vết gỡ lỗi ghi tên gợi ý: `anh.py` (`so_vet.ghi`) [code]. 2 / 5 ở lượt 2 (lượt 1: 0 / 5): `e8_a1_implementation.md` [đã chạy].
 - Bài đã qua một lượt đối chiếu độc lập với chương trình và số đo ngày 22/11 (25 dòng: 1 sai, 2 lệch, đã sửa): `data/hoc_cung_D/kiem/bai_23_26.md` [riêng tư].
+- Lượt thử ảnh trên giao diện tối 22/11 (dòng B0-8): `data/test_cuoi/chay_2026-11-22_e_sau_dong/KET_QUA.md` [riêng tư; đã chạy qua trình duyệt 17:04–17:08 22/11, phiên đo; mỗi dòng một lần; người viết đã đọc bảng kết quả].
 
 </details>

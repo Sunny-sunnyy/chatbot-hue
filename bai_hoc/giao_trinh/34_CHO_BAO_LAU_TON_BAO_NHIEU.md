@@ -1,6 +1,6 @@
 # Bài 34 — Người dùng chờ bao lâu, một câu tốn bao nhiêu tiền
 
-*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài); tin dài đã nhìn trên trình duyệt · thời gian từng lời gọi lấy từ một lượt người dùng mô phỏng chạy đơn trưa 21/11 (Claude Sonnet 5.5, mức suy luận cao, 49 lượt hỏi đáp; so với gpt-6-luna 43 lượt); thời gian chờ tới chữ đầu lấy từ ba lượt tối 21/11 (153 lượt trả lời xong); lịch sử làm nhanh đo với gpt-6-luna từ 01/11 tới 10/11; cơ chế đọc từ chương trình trưa 22/11. Người viết không chạy lại phép đo nào; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 17:14, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài); tin dài đã nhìn trên trình duyệt · thời gian từng lời gọi lấy từ một lượt người dùng mô phỏng chạy đơn trưa 21/11 (Claude Sonnet 5.5, mức suy luận cao, 49 lượt hỏi đáp; so với gpt-6-luna 43 lượt); thời gian chờ tới chữ đầu lấy từ ba lượt tối 21/11 (153 lượt trả lời xong); lịch sử làm nhanh đo với gpt-6-luna từ 01/11 tới 10/11; cơ chế đọc từ chương trình trưa 22/11. Người viết không chạy lại phép đo nào; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** ở ví dụ chính, gần như toàn bộ 3,7 giây là model viết (bài 6); Claude viết dài hơn gpt-6-luna khoảng ba lần, chữ tới một lần, giá mỗi token gấp 20 lần (bài 33).
 **Bài này thêm:** thời gian chờ của một lượt đi vào những phần nào và phần nào đáng cắt; các lần làm nhanh đã có; một câu tốn bao nhiêu tiền và tiền được ghi ở đâu; trang theo dõi; và bộ nhớ câu trả lời 24 giờ, thứ duy nhất làm một câu vừa nhanh vừa không tốn tiền.
@@ -135,7 +135,7 @@ Chỉ mua khoảng 0,3 giây ở câu thường; thời gian chủ yếu là s�
 <details>
 <summary>3. Khi nào một câu được trả lại từ bộ nhớ, khi nào không?</summary>
 
-Gõ đúng chữ, ở lượt đầu một cuộc mới, trong 24 giờ, câu gốc là lượt trả lời thuần từ kho. Không: khác một chữ, câu thứ hai của cuộc, lượt có thời tiết, ngày, lịch, web, câu an toàn.
+Gõ đúng chữ, ở lượt đầu một cuộc mới, trong 24 giờ, câu gốc là lượt trả lời thuần từ kho. Không: khác một chữ (kể cả bỏ dấu hỏi cuối câu), câu thứ hai của cuộc, lượt có thời tiết, ngày, lịch, web, câu an toàn, và tin nhiều ý mà câu trả lời đầu còn dòng "Tư liệu chưa có thông tin về…".
 
 </details>
 
@@ -193,6 +193,7 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 - **Số chờ tới chữ đầu (khoảng 13,0 giây trên 153 lượt; 13,5 giây trên 142 lượt hỏi đáp thường) đo khi hai model chạy cùng lúc trên một máy**, nên dài hơn chạy một mình khoảng 2,5 tới 4,5 giây; lúc đó tin nhiều ý còn mục "Từ web".
 - **Chưa đo lại với Claude** lợi của chạy song song và của chương trình tính sẵn ngày.
 - **Bộ nhớ câu trả lời** chỉ nằm trong bộ nhớ của đúng một máy chủ đang chạy (chạy hai máy chủ thì mỗi cái nhớ riêng); trúng thì không hiện dòng tiến độ; tỉ lệ trúng ngoài đời chưa có số.
+- **Gõ lại đúng một câu chưa chắc về ngay.** Câu một ý thì về ngay: thử trên trình duyệt tối 22/11, "Lăng Tự Đức mở cửa mấy giờ?" lần hai về sau 0,2 giây, chữ y hệt; bỏ dấu hỏi thì lại chờ như thường. Câu bị đếm là nhiều ý ("… là món gì, ăn như thế nào?") mà lần đầu còn dòng "Tư liệu chưa có thông tin về…" thì không được lưu, nên lần hai trợ lý tìm và viết lại (9,4 giây, chữ khác lần đầu). Đây là chủ ý từ tối 21/11: không để một câu trả lời còn thiếu ý thành bản trả lại cho người sau. Với câu kiểu đó, lần gõ lại có lúc về ngay, có lúc không.
 - **Tiền ghi sổ của Claude chưa đối chiếu hoá đơn** (bài 33).
 - **Trang theo dõi trên máy phát triển lẫn lượt thử của nhóm.**
 
@@ -254,5 +255,6 @@ Giới hạn của các số: 49 lượt do model đóng vai du khách gõ, ph�
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42 (ý 1 "từ khoảng 20 giây lên 25–34 giây", ý 3 "lượt có viết lại lâu hơn khoảng 10 giây"), 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Tin DÀI nhiều ý" (25–34 giây, 25–37 giây khi viết lại, khoảng 70 đoạn xấu nhất, trung vị 16 nguồn); `backend/config/settings.yaml` [đã chạy, phiên đo; người viết không chạy lại]. Hạn 45 giây riêng của lần viết lại / chạy lại: `backend/llm/assistant.py` `_viet_lai_het_luot` (gọi `generate_answer` ⇒ `_execute_agent` với `self.timeout`), `answer_turn_stream_parallel` [code].
 
 - Đã qua một lượt kiểm chéo sau lượt cập nhật 14:47 (`data/hoc_cung_D/kiem/cap_nhat_14h47.md`) [riêng tư]. Theo đó: dòng Nếu của tin dài thêm thứ người dùng thấy (14 giây đầu chỉ dòng tiến độ, chữ giữ chỗ khoảng 15–17 giây — `bai_hoc/VIEC_MOI_XONG.md` mục 42, đính chính 15:14; runbook 10.1 hàng "Lưới viết lại"; suy từ chương trình và sổ máy chủ, chưa chụp màn hình); "64 trên 153 lượt" ghi "lúc đó trần là 2". Cắt nửa để hiểu: hai đoạn sổ số đo / trang theo dõi, danh sách "không lưu" và ngoặc về dòng "Đang viết…" chuyển xuống "Chi tiết để tra"; quyết định 3 cũ (khớp đúng chữ) chuyển xuống "Quyết định nhỏ hơn".
+- Gõ lại đúng câu cũ (câu một ý 1,9 · 0,2 · 1,7 giây; câu "cơm hến" 7,8 · 9,4 · 8,4 giây, ba lần ba bản chữ): `data/test_cuoi/chay_2026-11-22_e_sau_dong/KET_QUA.md` [riêng tư; đã chạy qua trình duyệt 17:04–17:08 22/11, phiên đo; mỗi dòng một lần; người viết đã đọc bảng kết quả]; luật không lưu câu trả lời nhiều ý còn thiếu ý: `backend/api/routes/chat.py` hàm `_luu_cache` [code]; so khớp không bỏ dấu câu: `backend/api/cache_tra_loi.py` `chuan_hoa` [code]; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Gõ lại đúng một câu…".
 
 </details>

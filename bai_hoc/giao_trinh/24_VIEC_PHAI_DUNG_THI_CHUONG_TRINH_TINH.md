@@ -1,6 +1,6 @@
 # Bài 24 — Việc phải đúng thì chương trình tính: ngày âm lịch làm mẫu, rồi thời tiết, khoảng cách và các công cụ khác
 
-*Cập nhật 17:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: sửa theo một lượt đối chiếu độc lập · cơ chế đọc từ chương trình và cấu hình trưa 22/11; ví dụ ngày âm lịch là kết quả của chính phần tính ngày, người viết chạy lúc 12:15 22/11 (không gọi model); số đo chép từ báo cáo 05/11 – 22/11, ghi rõ model ở từng con số.*
+*Cập nhật 17:14, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: sửa theo một lượt đối chiếu độc lập · cơ chế đọc từ chương trình và cấu hình trưa 22/11; ví dụ ngày âm lịch là kết quả của chính phần tính ngày, người viết chạy lúc 12:15 22/11 (không gọi model); số đo chép từ báo cáo 05/11 – 22/11, ghi rõ model ở từng con số.*
 
 **Bài trước đã biết:** model được xin công cụ (bài 3, bài 21); tin nối tiếp được hiểu nhờ lịch sử (bài 23).
 **Bài này thêm:** việc có đáp án đúng duy nhất (hôm nay là ngày nào, rằm tháng Giêng rơi vào thứ mấy, mai có mưa không, từ A tới B bao xa) do chương trình làm, model chỉ diễn đạt. Bài đi kỹ một việc làm mẫu là ngày và âm lịch, rồi các việc còn lại theo cùng khuôn.
@@ -215,6 +215,7 @@ Hai lần thử: phép cộng đúng, nhưng model bỏ điều kiện miễn v�
 
 ## Chi tiết để tra
 
+- Sự kiện theo ngày, thử trên giao diện tối 22/11 (Claude Sonnet 5.5, gõ vào Chủ nhật 22/11, mỗi câu một lần): câu hỏi về "cuối tuần này" được trả lời rằng phần cuối tuần còn lại là Chủ nhật 22/11, không có lễ hội ngày cố định, kèm bốn hoạt động lặp hằng tuần; câu hỏi về ngày 24/11 được trả lời rằng không thấy lễ hội nào có ngày cố định rơi vào hôm đó (Thứ Ba). Không câu nào bị từ chối; 8,0 và 7,8 giây.
 - Nguồn "Lịch hệ thống" mang tên "Lịch hệ thống — tính theo giờ Việt Nam"; nguồn sự kiện mang tên "Lễ hội và hoạt động theo ngày — code tra từ các bài của kho"; nguồn dự báo "Dự báo thời tiết Huế (Open-Meteo)"; nguồn liệt kê "Mục lục kho tư liệu". Không nguồn nào trong số này kéo theo dòng "có thể đã thay đổi" của bài vé.
 - Bảng sự kiện: 17 lễ hội ngày cố định, 6 lễ hội kho chỉ ghi khoảng, 4 hoạt động theo tuần; không có sự kiện một lần và lễ hội "theo kế hoạch từng năm"; câu hỏi về quá khứ ("tuần trước") không tra; "tháng 7" trần hiểu là tháng dương.
 - Khối dự báo ghi "khả năng mưa cao nhất trong ngày", vì số của Open-Meteo là giờ dễ mưa nhất, không phải cả ngày (tra 15/11). Ghi công "Dữ liệu thời tiết: Open-Meteo.com (CC BY 4.0)" và giờ lấy số. Hỏi theo buổi thì thêm "Đây là dự báo theo cả ngày, không riêng buổi bạn hỏi."
@@ -247,5 +248,6 @@ Hai lần thử: phép cộng đúng, nhưng model bỏ điều kiện miễn v�
 - Bài đã qua một lượt đối chiếu độc lập với chương trình và số đo ngày 22/11 (32 dòng: 7 lệch, đã sửa; người kiểm tự chạy lại hàm tính lịch, ra đúng các số của ví dụ): `data/hoc_cung_D/kiem/bai_23_26.md` [riêng tư].
 
 - "Không gọi lại" của thời tiết là quyết định đã ghi: `docs/superpowers/plans/2026-11-05-phase-9-b5b-plan.md` hàng D7 ("timeout 3 s, không thử lại"; cột lý do chỉ nói lỗi hạ tầng khác kết quả rỗng và hạn mức 10.000 / ngày — không nói vì sao không gọi lại); `backend/llm/thoi_tiet.py` docstring dòng 6 [code; phân xử 22/11].
+- Hai câu sự kiện theo ngày trên giao diện tối 22/11 (dòng B21): `data/test_cuoi/chay_2026-11-22_e_sau_dong/KET_QUA.md` [riêng tư; đã chạy qua trình duyệt 17:04–17:08 22/11, phiên đo; mỗi dòng một lần; người viết đã đọc bảng kết quả].
 
 </details>
