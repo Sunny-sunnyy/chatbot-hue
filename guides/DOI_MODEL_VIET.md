@@ -208,6 +208,9 @@ khoá hết hạn giữa một lượt · cả bộ test với `provider: bedroc
   2. Một nhánh trong `OpenAIFullCorpusGenerator.from_environment` dựng lớp đó khi `provider` mang tên mới.
   3. Tên mới + khối cấu hình của nó trong `validate_phase6_settings` (`core/settings_loader.py`) và `settings.yaml`.
   4. Một dòng giá trong `PRICES_PER_M` (`llm/pricing.py`), khoá là đúng tên `provider`.
+  5. Một dòng tên hiện cho người dùng trong `NHA_CUNG_CAP_MODEL` (`backend/api/routes/cong.py`), khoá là đúng tên `provider`: trang Giới thiệu, mục "Dữ liệu của
+     bạn", in nơi nhận câu hỏi và ảnh theo tên này (server gửi qua `/api/tinh_nang`, khoá `mo_hinh`; từ 22/11/2026 — trước đó trang ghi cứng "OpenAI"). Đổi qua /
+     đổi về giữa `openai` và `bedrock` thì chữ trên trang TỰ đổi theo, không phải sửa gì; thiếu dòng cho nhà cung cấp mới ⇒ trang dùng câu không nêu tên.
 - Trước khi viết: đo thật năm thứ đã làm đổi thiết kế lần này — khuôn JSON có ràng buộc, ép `tool_choice`, quyền stream, cách tắt suy luận, cách đếm token đệm.
 - Sau khi viết: file test riêng như `test_bedrock_model.py`, một lượt thật qua giao diện, rồi mới tới lượt đo chất lượng. Người chấm giữ nguyên luna để điểm so được với mốc cũ.
 

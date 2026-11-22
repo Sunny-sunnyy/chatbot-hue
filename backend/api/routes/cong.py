@@ -122,6 +122,12 @@ BAN_DO = {"tile": "https://tile.openstreetmap.de/{z}/{x}/{y}.png", "nha_cung_cap
           "trang_nha_cung_cap": "https://www.openstreetmap.de/"}
 
 
+# Tên nơi nhận câu hỏi (và ảnh) để model viết trả lời — in ở trang Giới thiệu, mục "Dữ liệu của bạn". Lấy theo đường model ĐANG CHẠY (`provider` của
+# generator: dòng `full_corpus_generation.provider`) ⇒ đổi model bằng một dòng cấu hình thì chữ trên trang tự đúng theo (22/11/2026: trang từng ghi cứng
+# "OpenAI" trong khi mọi lời gọi đã chạy qua Amazon Bedrock từ 21/11).
+NHA_CUNG_CAP_MODEL = {"openai": "OpenAI", "bedrock": "Amazon Bedrock, mô hình Claude của Anthropic"}
+
+
 @router.get("/api/tinh_nang")
 async def tinh_nang(request: Request):
     """Cờ tính năng giao diện cần để ẩn / hiện mục (một lần gọi lúc tải trang). Chỉ boolean — trừ khoá `len_ke_hoach_v2`: **chỉ có khi cờ bật**
@@ -130,6 +136,9 @@ async def tinh_nang(request: Request):
     flags = _flags(state)
     co = {"lich_trinh_bieu_mau": flags.lich_trinh_bieu_mau, "thoi_tiet": flags.thoi_tiet, "anh": getattr(state, "anh", None) is not None,
           "tra_web": flags.tra_web, "ban_do_lich": flags.ban_do_lich}
+    mo_hinh = NHA_CUNG_CAP_MODEL.get(getattr(getattr(state, "generator", None), "provider", None))
+    if mo_hinh:  # generator chưa sẵn sàng / nhà cung cấp lạ ⇒ khoá vắng, trang dùng câu không nêu tên
+        co["mo_hinh"] = mo_hinh
     if flags.ban_do_lich:  # như `len_ke_hoach_v2`: khoá chỉ có khi cờ bật ⇒ cờ tắt phản hồi giống hôm nay
         co["ban_do"] = BAN_DO
     if flags.xuat_pptx:  # khoá chỉ có khi cờ bật ⇒ cờ tắt phản hồi giống hôm nay
