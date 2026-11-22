@@ -29,6 +29,11 @@
 
 /* Thích gì: ô ảnh có nhãn; đang chọn = viền + dấu ✓ */
 .lkh-cot .lc-nhom:has(.lkh-thich) .lc-chip { display: grid; grid-template-columns: repeat(3, 1fr); }
+/* Ba kiểu đi: MỖI kiểu một hàng ở mọi bề rộng (trước: chỉ ở màn ≥ 1200 px; còn lại ba thẻ chia ba cột hẹp ⇒ ở 390 và 1024–1152 px mỗi dòng chỉ một hai chữ). */
+.lkh-cot .lc-nhom:has(.lkh-kieu) .lc-chip { flex-direction: column; }
+.lkh-cot .lkh-kieu { flex: none; width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 2px 10px; }
+/* Ô ngày: nhãn nằm TRÊN ô (trước: nhãn và ô chung một hàng ⇒ trong cột biểu mẫu hẹp nhãn "Ngày đi (không bắt buộc)" bị ép thành ba dòng). */
+.lkh-cot .lc-hop:has(input[type="date"]) { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .lkh-thich { position: relative; display: flex; align-items: flex-end; aspect-ratio: 1; padding: 0; overflow: hidden; border-radius: var(--radius-m); border: 0;
              background: var(--color-river); }
 .lkh-thich img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .9; }
@@ -238,8 +243,6 @@
 @media screen and (min-width: 1200px) {
   .lkh-cot { grid-template-columns: 300px minmax(0, 1fr); gap: 28px; }
   .lkh-cot .lc-nhom { padding: 16px 16px 18px; }
-  .lkh-cot .lc-nhom:has(.lkh-kieu) .lc-chip { flex-direction: column; }
-  .lkh-kieu { flex: none; width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 2px 10px; }
   .lkh-kieu b { font-size: var(--text-than); }   /* mỗi kiểu đi một hàng đủ rộng ⇒ tên kiểu lên một bậc so với dòng giải thích */
   .lkh-cot .lc-nhom:has(.lkh-thich) .lc-chip { grid-template-columns: repeat(2, 1fr); }
   .lkh-cot .lkh-lich, .lkh-cot .lkh-mau, .lkh-cot .lich-v2.bubble { max-width: none; width: 100%; }   /* thẻ lịch dùng hết cột (trước: bị giữ ở bề rộng bong bóng chat) */
