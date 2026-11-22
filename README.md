@@ -179,10 +179,10 @@ cd ../frontend && npm ci && npm run build
 
 # Khởi động (provider bedrock: thêm HUE_BEDROCK_CREDS_FILE=<tệp khoá> trước lệnh)
 cd ../backend
-HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn api.app:app --port 8000
+HF_HUB_OFFLINE=1 uv run --env-file ../.env uvicorn api.app:app --port 8010
 ```
 
-Mở <http://127.0.0.1:8000>.
+Mở <http://127.0.0.1:8010>.
 
 Khi khởi động, API đối chiếu hash từng tệp trong kho với bản ghi của lần lập chỉ mục. Kho đã thay đổi mà chỉ mục chưa cập nhật thì máy
 chủ vẫn bật nhưng mọi câu hỏi nhận mã `409`. Qdrant hoặc model tìm kiếm không sẵn sàng thì nhận `503`; lỗi phía model sinh thì nhận `502`.
