@@ -160,7 +160,7 @@ xong trước, và có đủ làn đo cho tất cả — lợi thật của nhi�
 | lệnh bật hệ thống, chạy test, lấy mốc · sổ giới hạn | `guides/RUNBOOK_BAN_GIAO.md` mục 1–3 · mục 10 |
 | "đã đẩy lên" lấy từ máy | `scripts/commit_push.sh "<lời commit>" <file>…` in `ĐÃ PUSH <sha> origin/<nhánh>` [đã chạy] |
 | rào bằng máy mọi agent đều qua | `.githooks/pre-commit`, `pre-push`; kiểm đã bật: `git config --get core.hooksPath` ⇒ `.githooks` [đã chạy] |
-| tài liệu viết cho người · báo cáo bốn ý của việc vừa xong | `bai_hoc/` · `bai_hoc/VIEC_MOI_XONG.md` |
+| tài liệu viết cho người · thứ mới người dùng thấy khác | `bai_hoc/giao_trinh/` (phiên D viết theo phiếu bốn ý của phiên điều phối; mục "Có gì mới" ở đầu `00_GIAO_TRINH.md`) — bộ bài cũ ở `bai_hoc/` và `VIEC_MOI_XONG.md` đứng yên từ 22/11/2026 |
 | con số sản phẩm đang đuổi · ba con số cách làm | `session_prompt/HIEN_TRANG.md` mục 4 · `session_prompt/SO_CAI_TIEN_CACH_LAM.md` (trang hiện trạng chỉ trỏ) |
 | làm một mình · mở phiên · kết phiên nhẹ | `guides/KHI_CHI_CO_MOT_AGENT.md` · `session_prompt/START_SESSION.md` · `session_prompt/WORKFLOW.md` §8 |
 

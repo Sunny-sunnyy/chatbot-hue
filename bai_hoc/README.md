@@ -2,7 +2,7 @@
 
 **Đọc trang này trước:** [Bản đồ dự án](BAN_DO_DU_AN.md) — các khối hệ thống, cái gì đang chạy, 5 bài nên đọc trước, nhóm đang làm gì (thêm 10:16, ngày 18/11/2026).
 
-**Giáo trình đọc từ đầu (đang viết theo chặng):** [Giáo trình hue_rag](giao_trinh/00_GIAO_TRINH.md) — mục lục chín chặng; đợt đầu có ba bài mẫu: RAG là gì · Embedding · Harness (thêm 10:07, ngày 22/11/2026). Bộ bài dưới đây vẫn giữ để tra cho tới khi giáo trình đủ.
+**ĐỌC Ở ĐÂY: [Giáo trình hue_rag](giao_trinh/00_GIAO_TRINH.md)** — đủ 41 bài + 9 phụ lục từ chiều 22/11/2026; mọi thứ mới từ nay được ghi vào giáo trình. **Bộ 27 bài dưới đây, trang "Bản đồ dự án" và trang "Việc mới xong" ĐỨNG YÊN từ 16:28 22/11/2026: là hồ sơ cũ, không còn được cập nhật — số và trạng thái trong đó có thể đã cũ.**
 
 **Việc vừa xong:** [Việc mới xong](VIEC_MOI_XONG.md) — mỗi việc xong trong khoảng 2 tuần gần nhất viết đúng bốn ý: anh thấy gì khác · bằng chứng · chưa làm / giới hạn · cách thử trong 2 phút (thêm 13:53, ngày 18/11/2026).
 
