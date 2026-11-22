@@ -1,6 +1,6 @@
 # Bài 14 — Xếp lại bằng model (reranking): đã thử ba cách, không dùng
 
-*Cập nhật 10:30, ngày 22/11/2026 · cấu hình đọc từ hệ thống đang chạy; số của các phép so lấy từ báo cáo đo ngày 25/10 và 27/10, model gpt-6-luna, kho của thời điểm đó; người viết không chạy lại phép đo nào.*
+*Cập nhật 14:33, ngày 22/11/2026 · cấu hình đọc từ hệ thống đang chạy; số của các phép so lấy từ báo cáo đo ngày 25/10 và 27/10, model gpt-6-luna, kho của thời điểm đó; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** trên 40 câu khó, 9 câu có đoạn đúng nằm trong 30 ứng viên nhưng đứng dưới hạng 10, nên model viết không thấy.
 **Bài này thêm:** cách chữa quen thuộc cho chuyện đó là dùng một model đọc kỹ từng ứng viên rồi xếp lại. Bài này kể ba lần thử, kết quả của từng lần, và vì sao hệ thống đang chạy không xếp lại.
@@ -49,7 +49,46 @@ Ba điều rút ra từ ba lần thử:
 - **Trung bình tốt lên vẫn có thể giấu vài câu tệ đi.** Người dùng gặp câu tệ đi, không gặp con số trung bình. Điều kiện "không quá mấy câu tệ đi" được ghi trước để bắt đúng chuyện này (bài 20).
 - **Thời gian và tiền cũng là giới hạn.** Một bước thêm 4 tới 7 giây làm cả câu vượt mức chờ 3 giây (mức này được chốt sau phép đo, không phải lý do gác lúc đó).
 
-Hệ thống đi hai đường khác để model có đủ đoạn hơn, rẻ hơn và đã đo là giúp điểm "đủ ý": đưa 10 đoạn thay vì 5 (bài 13), và cho trợ lý tự tìm thêm khi thiếu (bài 21). Hai đường này chưa được đo riêng trên đúng 9 câu hỏng về thứ tự.
+Hệ thống chọn đường khác để model có đủ đoạn hơn: quyết định 4 dưới đây.
+
+## Quyết định và lý do
+
+### 1. Vì sao hệ thống đang chạy không có bước xếp lại?
+
+- **Đã chọn:** 10 đoạn đưa cho model viết theo đúng thứ tự trộn hai bảng xếp hạng (bài 13); không model nào chấm lại. Lúc bật, chương trình kiểm dòng cấu hình này: ghi một cách xếp lại khác "không" thì máy chủ không bật.
+- **Vì sao:** đã đo ba cách (mục "Đã so"); không cách nào qua điều kiện ghi trước.
+- **Cách khác:** hai model xếp lại chạy trên máy, và model viết tự chọn đoạn: đã đo, bỏ. Dịch vụ xếp lại trả tiền của các hãng: chưa thử.
+- **Cái giá:** chỗ hỏng về thứ tự vẫn còn: ở 9 trên 40 câu khó, đoạn đúng đứng hạng 11 tới 30 nên model không thấy ở lần tìm đầu.
+
+### 2. Vì sao loại model xếp lại chạy trên máy, dù điểm thứ hạng của bản tốt nhất tăng khoảng 0,1?
+
+- **Đã chọn:** bỏ cả bốn bản.
+- **Vì sao:** điều kiện ghi trước là không câu nào được mất đoạn đúng. Bản tốt nhất làm mất đoạn đúng ở 1 câu, ba bản kia ở 3 câu. Điểm thứ hạng thưởng cho việc đưa **một** đoạn đúng lên đầu; câu cần ghép nhiều nguồn lại cần đủ mọi mảnh, nên mất một mảnh là hỏng câu đó.
+- **Cách khác:** thử lại ở cấu hình 10 đoạn: chưa thử; bảng tổng các phép so ghi nó vào danh sách "còn đáng thử lại".
+- **Cái giá:** kết luận đứng trên phép đo khi còn đưa 5 đoạn; với 10 đoạn, kết quả có thể khác.
+
+### 3. Vì sao gác bản để model viết chọn 10 trong 30 ứng viên, khi trung bình của nó tốt hơn?
+
+- **Đã chọn:** gác, giữ hồ sơ.
+- **Vì sao:** đã đo: 5 câu tệ đi, trong khi điều kiện ghi trước cho phép nhiều nhất 4. Người dùng gặp câu tệ đi, không gặp con số trung bình (bài 20).
+- **Cách khác:** nhận bản này vì trung bình tăng 0,22 và bước tìm từ 22 lên 31 trên 40: không làm. Thử lại với một cách chọn đoạn nhanh hơn: chưa làm; bảng tổng các phép so ghi nó vào danh sách "còn đáng thử lại".
+- **Cái giá:** bỏ cách duy nhất đã chữa được chỗ hỏng về thứ tự.
+
+### 4. Vì sao chữa chuyện thiếu đoạn bằng "đưa thêm đoạn" mà không bằng "xếp lại cho đúng"?
+
+- **Đã chọn:** đưa 10 đoạn thay vì 5 (bài 13), cho trợ lý tự tìm thêm tối đa 2 lần (bài 21), nối thêm 2 đoạn mỗi ý cho tin nhiều ý (bài 23).
+- **Vì sao:** ba đường này đã đo là giúp điểm "đủ ý" hoặc số dữ kiện nêu được, mà không làm rơi đoạn đúng; so với bản để model viết chọn đoạn thì chúng cũng rẻ hơn.
+- **Cách khác:** xếp lại: ba cách đã đo, mục trên.
+- **Cái giá:** ba đường này chưa được đo riêng trên đúng 9 câu hỏng về thứ tự; chưa biết chúng chữa được bao nhiêu câu trong số đó.
+
+## Nếu… thì sao
+
+Bài này không có tình huống hỏng lúc chạy, vì bước xếp lại không chạy. Hai dòng dưới là khi điều kiện đổi, đọc từ chương trình.
+
+| Nếu | Hệ thống làm gì | Đã có chưa / ai làm gì |
+|---|---|---|
+| ai đó ghi một cách xếp lại khác "không" vào cấu hình | máy chủ không bật | muốn thử thì dùng bộ thử; phần chương trình xếp lại vẫn còn, chỉ cho bộ thử |
+| đổi sang máy có card đồ hoạ mạnh hơn, hoặc đổi model xếp lại | thời gian và kết quả có thể khác | phải đo lại ở cấu hình 10 đoạn trước khi kết luận |
 
 ## Dễ nhầm
 
@@ -57,13 +96,37 @@ Hệ thống đi hai đường khác để model có đủ đoạn hơn, rẻ h�
 - **"Điểm thứ hạng tăng là câu trả lời tốt hơn."** Không hẳn. Lần thử 3 tăng mạnh ở bước tìm mà vẫn không qua được ở tầng câu trả lời.
 - **"Không dùng tức là chưa biết tới."** Bước này đã được thử ba cách và có số đo cho từng cách; nó bị bỏ vì số đo.
 
-## Những điều cần nhớ
+## Câu hỏi tự kiểm
 
-- Hệ thống không xếp lại. Đã thử ba cách: hai model xếp lại chạy trên máy, và để model viết chọn đoạn.
-- Model xếp lại trên máy: mất đoạn đúng ở 1 tới 3 câu ⇒ loại.
-- Model viết chọn 10 trong 30: bước tìm từ 22 lên 31 trên 40 câu đủ đoạn đúng, nhưng 5 câu tệ đi (cho phép 4) ⇒ gác; nó cũng chậm (6,5 giây) và đắt gần gấp 4.
-- Thước của bước tìm khác thước của câu trả lời; trung bình tốt hơn có thể giấu câu tệ đi.
-- Thay cho xếp lại, hệ thống đưa 10 đoạn và cho trợ lý tìm thêm.
+Thử trả lời bằng lời của mình trước khi bấm mở đáp án.
+
+<details>
+<summary>1. Model xếp lại khác bước tìm theo nghĩa ở chỗ nào, và vì sao nó chỉ chạy trên vài chục ứng viên?</summary>
+
+Nó đọc câu hỏi và đoạn cùng một lúc, thay vì tính hai vector riêng rồi so. Vì phải đọc từng cặp, 30 ứng viên là 30 lần đọc, nên không chạy được trên cả kho.
+
+</details>
+
+<details>
+<summary>2. Bản tốt nhất của model xếp lại trên máy làm điểm thứ hạng tăng khoảng 0,1. Vì sao vẫn bị loại?</summary>
+
+Nó làm mất đoạn đúng ở 1 câu, mà điều kiện ghi trước là không câu nào được mất. Câu bị mất đoạn đúng thì model viết không còn cách nào trả lời đúng.
+
+</details>
+
+<details>
+<summary>3. Model viết chọn 10 trong 30 ứng viên làm bước tìm từ 22 lên 31 trên 40. Vì sao bị gác?</summary>
+
+Ở tầng câu trả lời có 5 câu tệ đi, vượt mức 4 ghi trước. Xếp đúng hơn ở bước tìm chưa chắc cho câu trả lời tốt hơn ở từng câu.
+
+</details>
+
+<details>
+<summary>4. Không xếp lại thì 9 câu có đoạn đúng đứng hạng 11 tới 30 được chữa bằng gì?</summary>
+
+Chưa có cách chữa riêng. Hệ thống đưa 10 đoạn thay vì 5, cho trợ lý tự tìm thêm, và nối thêm đoạn cho tin nhiều ý; ba đường này chưa được đo trên đúng 9 câu đó.
+
+</details>
 
 ## Cấu hình đang chạy
 
@@ -96,18 +159,16 @@ Phần chương trình của bước xếp lại vẫn còn trong kho mã, chỉ
 
 **Giới hạn của phép đo.** Hai dòng đầu đo khi hệ thống còn đưa 5 đoạn và trên kho cuối tháng 10; với 10 đoạn như hiện nay, model xếp lại chạy trên máy có thể không còn làm rơi đoạn đúng. **Chưa đo lại.** Không dòng nào được đo với model đang chạy.
 
+## Quyết định nhỏ hơn
+
+**Vì sao hai model xếp lại được chạy trên máy, không gọi dịch vụ qua mạng?** Quyết định đã ghi (12/08/2026, chủ dự án duyệt): làm trên máy trước, hoãn bản xếp lại gọi qua dịch vụ sang giai đoạn đo sau; giai đoạn đó không thử nó. Lý do sâu hơn: chưa thấy ghi. Điều thấy được: cả hai là model mở, chạy trên card đồ hoạ của máy phát triển.
+
+**Vì sao giữ phần chương trình xếp lại trong kho mã khi không dùng?** Để các lần thử sau chạy lại được; hệ thống đang chạy không gọi tới nó.
+
 ## Giới hạn đã biết
 
 - Không có bước xếp lại nên chỗ hỏng về thứ tự vẫn còn: đoạn đúng đứng hạng 11 tới 30 thì model viết không thấy ở lần tìm đầu.
 - Kết luận "không dùng" đứng trên các phép đo cũ. Đổi máy (có card đồ hoạ mạnh hơn) hoặc đổi model thì thời gian và kết quả có thể khác.
-
-## Vì sao không làm cách khác
-
-**Vì sao không dùng dịch vụ xếp lại trả tiền của các hãng?** Chưa thử.
-
-**Vì sao không thử lại model xếp lại ở cấu hình 10 đoạn?** Chưa thử. Nó được ghi trong danh sách "đáng thử lại" của bảng tổng các phép so.
-
-**Vì sao không nhận bản model viết chọn đoạn, khi trung bình của nó tốt hơn?** Đã đo: 5 câu tệ đi, vượt mức 4 ghi trước. Quyết định đã ghi: gác lại vì lý do đó.
 
 ## Chi tiết để tra
 
@@ -126,5 +187,6 @@ Phần chương trình của bước xếp lại vẫn còn trong kho mã, chỉ
 - Lần thử 3 so với mốc "10 đoạn theo thứ hạng": `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 9 và ghi chú sửa 14:41 11/11/2026 ở mục Nguồn của bài đó.
 - "Đáng thử lại": `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` mục "Nhìn cả bảng thấy gì" ý 4.
 - 9 trên 40 câu: bài 13 và nguồn của nó.
+- Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm", "Quyết định nhỏ hơn" (thêm 14:00 22/11/2026 theo khuôn mới): gom từ "Đã so" và thân bài. Máy chủ không bật khi `reranker` khác `none`: `backend/core/settings_loader.py` hàm `validate_phase6_settings` (cùng kiểu với `retrieval_treatment`) [code]. Ba đường "đưa thêm đoạn": bài 13, 21, 23. Quyết định 12/08/2026 "làm trên máy trước, hoãn bản xếp lại qua dịch vụ": `guides/phase_5_retrieval_profiles_reranking.md` dòng 830–836 [chép]. "Còn đáng thử lại" cho bản model viết chọn đoạn: bảng tổng mục "Nhìn cả bảng thấy gì" ý 4. Các mục mới đã qua một lượt đối chiếu độc lập 14:28 22/11/2026 và được sửa theo: `data/hoc_cung_D/kiem/muc_moi_12_16.md` [riêng tư].
 
 </details>

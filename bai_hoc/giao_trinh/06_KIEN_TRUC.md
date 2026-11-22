@@ -1,6 +1,6 @@
 # Bài 6 — Kiến trúc: các khối, vì sao đặt như vậy, và khi một khối hỏng thì sao
 
-*Cập nhật 12:49, ngày 22/11/2026 · các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Bốn tình huống hỏng (Qdrant ngừng giữa chừng, Qdrant tắt lúc bật máy chủ, thiếu khoá model lúc bật, khởi động lại máy chủ giữa một cuộc) đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt; các tình huống hỏng còn lại là đọc từ chương trình, chưa thử.*
+*Cập nhật 14:33, ngày 22/11/2026 · các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Bốn tình huống hỏng (Qdrant ngừng giữa chừng, Qdrant tắt lúc bật máy chủ, thiếu khoá model lúc bật, khởi động lại máy chủ giữa một cuộc) đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt; các tình huống hỏng còn lại là đọc từ chương trình, chưa thử.*
 
 **Bài trước đã biết:** người dùng thấy sáu trang; ở khung Trợ lý họ gõ câu hỏi và nhận câu trả lời có nguồn.
 **Bài này thêm:** phía sau màn hình có những khối nào, một câu hỏi đi qua chúng theo thứ tự nào, **vì sao** các khối được đặt như vậy, và **một khối hỏng thì sao**. Bài mở bằng vài khái niệm về trang web và máy chủ, giảng từ đầu.
@@ -152,7 +152,7 @@ Sáu tình huống đáng nhớ nhất (bảng đủ ở nửa để tra, mục 
 | hãng model lỗi, hoặc phần viết quá 45 giây | "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại" | người dùng bấm "Thử lại"; sập lâu thì người vận hành đổi hãng trong cấu hình rồi khởi động lại máy chủ |
 | Qdrant ngừng giữa lúc máy chủ đang chạy **(đã thử)** | "Hệ thống tra cứu tạm thời không khả dụng." và nút "Thử lại" ở mọi câu hỏi mới, sau khoảng 2 giây; câu đã nhớ vẫn được trả lại | người vận hành bật lại Qdrant; máy chủ dùng tiếp được ngay |
 | Qdrant chưa chạy lúc máy chủ được bật **(đã thử)** | cùng lời báo trên; trang Khám phá không có danh sách bài | bật Qdrant, rồi **khởi động lại máy chủ**. Đã thử: chỉ bật Qdrant thì máy chủ không tự hồi, vì việc nối tới Qdrant chỉ làm lúc bật |
-| kho đã sửa, chỉ mục chưa cập nhật, rồi máy chủ khởi động lại | "Dữ liệu tra cứu cần được lập chỉ mục lại." ở mọi câu hỏi | người vận hành chạy lệnh cập nhật chỉ mục (bài 12), rồi khởi động lại máy chủ |
+| kho đã sửa, chỉ mục chưa cập nhật, rồi máy chủ khởi động lại | "Dữ liệu tra cứu cần được lập chỉ mục lại." ở mọi câu hỏi | người vận hành tắt máy chủ, chạy lệnh cập nhật chỉ mục (bài 12), rồi bật lại máy chủ |
 | một khối phụ hỏng: thời tiết, tìm web, hoặc bước xếp loại câu | vẫn có câu trả lời; thiếu phần của khối đó, kèm một dòng báo chưa lấy được (với thời tiết và tìm web) | không ai phải làm gì; dịch vụ chạy lại thì lượt sau có lại |
 | máy chủ khởi động lại giữa một cuộc **(đã thử)** | màn hình không báo gì. Thẻ lịch vẫn còn hiện, nhưng lệnh sửa lịch bị coi như một câu hỏi thường và lịch không đổi; câu hỏi nối tiếp được trả lời lạc mạch | người dùng tải lại trang và làm lại từ đầu; **chưa có** cách giữ qua lần khởi động |
 
@@ -254,7 +254,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 |---|---|---|---|
 | thiếu khoá của hãng model **(đã thử)** | máy chủ vẫn chạy; đường báo tình trạng báo "thiếu" ở phần model viết; mọi câu hỏi và mọi lần lập lịch bị từ chối | "Không thể tạo câu trả lời vào lúc này."; không có nút gửi ảnh; các trang Khám phá, Bản đồ, Chỗ ở vẫn dùng được | người vận hành đặt khoá, khởi động lại máy chủ |
 | Qdrant chưa chạy **(đã thử)** | máy chủ vẫn bật lên được (khoảng 8 giây); đường báo tình trạng báo "thiếu" ở phần Qdrant và phần tìm; không nhận câu hỏi, không lập lịch, không nạp danh sách bài. Bật Qdrant sau đó thì máy chủ này không tự hồi | "Hệ thống tra cứu tạm thời không khả dụng."; trang Khám phá báo chưa tải được danh sách bài; Trang chủ, Bản đồ, Chỗ ở, Giới thiệu vẫn chạy | bật Qdrant, khởi động lại máy chủ |
-| kho đã sửa mà chỉ mục chưa cập nhật | không nhận câu hỏi nào | "Dữ liệu tra cứu cần được lập chỉ mục lại." | chạy lệnh cập nhật chỉ mục (bài 12), khởi động lại máy chủ |
+| kho đã sửa mà chỉ mục chưa cập nhật | không nhận câu hỏi nào | "Dữ liệu tra cứu cần được lập chỉ mục lại." | tắt máy chủ, chạy lệnh cập nhật chỉ mục (lệnh tự dừng nếu máy chủ còn chạy; bài 12), rồi bật lại máy chủ |
 | bảng điểm của trang Lên kế hoạch trỏ tới một đoạn không còn trong chỉ mục | máy chủ **không bật lên được**, báo đúng mã của đoạn thiếu | không vào được trang nào | người vận hành sửa bảng điểm hoặc chỉ mục. Chương trình chọn dừng hẳn để lỗi lộ ngay lúc bật, không để một trang hỏng âm thầm |
 
 **Hỏng giữa lúc máy chủ đang chạy: khối chính**
@@ -314,7 +314,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Ảnh của chức năng hỏi bằng ảnh được thu nhỏ còn cạnh dài 1.024 điểm ảnh trước khi gửi; ảnh gốc nhiều nhất 10 MB.
 - Khi hãng model lỗi sau khi máy chủ đã bắt đầu gửi dần, sổ số đo phân biệt hai kết cục: lỗi trước khi có chữ, và lỗi sau khi đã có chữ.
 - Gói đóng sẵn để mang hệ thống sang máy khác gồm ba hộp (cửa nhận kết nối mã hoá, ứng dụng, Qdrant); đã chạy thử trên máy, chưa đưa lên mạng (bài 36).
-- Bộ test của máy chủ: lần chạy đủ gần nhất (sáng 22/11) có 1.900 ca đạt (bài 38).
+- Bộ test của máy chủ: lần chạy đủ gần nhất (lượt kiểm chốt trưa 22/11) có 76 file, 2.060 ca (bài 38).
 
 **Bài sau (bài 7):** bắt đầu chặng 2, giai đoạn chuẩn bị. Khối đầu tiên được mở ra là kho: 266 bài viết về Huế.
 
@@ -340,7 +340,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Khoảng cách: `settings.yaml` (`khoang_cach`); hai cách đã cân: `docs/superpowers/plans/2026-11-16-khoang-cach-plan.md`. Model chạy trên máy không được chọn: `bai_hoc/07_RERANKING.md`, `bai_hoc/15_TRA_WEB_VA_HOI_BANG_ANH.md`. Giao diện và máy chủ chung một chỗ: `bai_hoc/17_GIAO_DIEN_VA_TOC_DO.md` phần 1.
 - Các đường gọi của máy chủ: `backend/api/routes/chat.py`, `anh.py`, `cong.py`, `xuat.py`, `backend/api/health.py`, `feedback.py`, `theo_doi.py`. Các loại tin trên đường gửi dần: `chat.py` (các lời gọi `sse_event`).
 - Số của các bảng dữ liệu: chú thích trong `settings.yaml` (khoảng cách 40 điểm, lưu trú 136, quán 467, sự kiện 27 dòng); 41 điểm, 40 có toạ độ: `data/hoc_cung_D/kiem/bai_05_06.md` dòng 52.
-- Ba hộp của gói đóng sẵn: `bai_hoc/BAN_DO_DU_AN.md`. 1.900 ca test (09:23–09:38 22/11): `session_prompt/HIEN_TRANG.md` mục 1.
+- Ba hộp của gói đóng sẵn: `bai_hoc/BAN_DO_DU_AN.md`. 76 file, 2.060 ca test (lượt kiểm chốt trưa 22/11): phiên điều phối báo; bài 38.
 
 - Bốn ca thử thật trưa 22/11 (12:07–12:16, qua trình duyệt, máy chủ trên bản main lúc đó, model đang chạy, mỗi ca một lượt): Qdrant ngừng giữa chừng (lỗi sau khoảng 2 giây; câu đã nhớ vẫn trả; đường báo tình trạng vẫn "ok"; bật lại là hỏi được ngay, 2,9 giây), bật máy chủ khi Qdrant tắt (lên sau khoảng 8 giây; "degraded"; không tự hồi), bật thiếu biến trỏ file khoá model ("degraded"; lời báo lỗi tạo câu trả lời), khởi động lại giữa một cuộc: báo cáo của phiên đo, `data/test_cuoi/chay_2026-11-22_e_khoi_hong/KET_QUA.md` [riêng tư; đã chạy; người viết chép từ tin của phiên đo, chưa tự mở file]. Ba ca phiên đo ghi là chưa thử: Qdrant ngừng đúng lúc đang trả lời, mất mạng tới hãng model giữa chừng, dịch vụ tìm web hỏng.
 

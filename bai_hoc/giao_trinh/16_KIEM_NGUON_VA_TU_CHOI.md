@@ -1,6 +1,6 @@
 # Bài 16 — Kiểm nguồn bằng chương trình, và câu từ chối cố định
 
-*Cập nhật 10:30, ngày 22/11/2026 · luật kiểm đọc từ chương trình đang chạy; số đếm lấy từ các báo cáo từ 25/10 tới 21/11, ghi rõ model ở từng số; người viết không chạy lại phép đo nào.*
+*Cập nhật 14:33, ngày 22/11/2026 · luật kiểm đọc từ chương trình đang chạy; số đếm lấy từ các báo cáo từ 25/10 tới 22/11, ghi rõ model ở từng số; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** model viết nhận lời dặn, câu hỏi, 10 đoạn, và trả về một ô chữ có các số nguồn [n].
 **Bài này thêm:** chương trình làm gì với ô chữ đó trước khi coi lượt hỏi là xong. Hai việc: kiểm số nguồn, và nhận ra câu từ chối.
@@ -8,7 +8,7 @@
 ## Ý chính
 
 - Chương trình kiểm số nguồn theo **ba luật**: câu trả lời phải có ít nhất một số nguồn; mọi số phải là số của một nguồn đã thật sự được đưa cho model (một đoạn của kho, hoặc một nguồn do chương trình dựng như khối dự báo thời tiết); câu từ chối thì không được kèm số nguồn.
-- Phạm luật thì câu trả lời **bị rút lại**: người dùng thấy một lời báo và nút "Thử lại", không thấy câu trả lời có nguồn giả.
+- Phạm luật thì câu trả lời **bị rút lại**: người dùng thấy "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại", không thấy câu trả lời có nguồn giả. Riêng lượt hỏi tiếp đang kèm câu trả lời liền trước, ô chat tự chạy lại cả lượt một lần trước khi báo.
 - Câu từ chối là **một câu cố định, đúng từng chữ**. Nhờ vậy chương trình nhận ra chắc chắn một lượt là từ chối, để mở đường tra web và để đếm khi đo.
 - Bước kiểm này mới kiểm **số nguồn có thật**. Nó chưa kiểm đoạn được trích có nói đúng điều câu trả lời viết không.
 - Lỗi số nguồn hiếm: 0 trên 489 lần viết của gpt-6-luna ở một lần đếm cuối tháng 10; 0 trên 93 lượt ở một lượt rà ngày 21/11 trên cả hai model.
@@ -38,11 +38,14 @@ Chương trình chấp nhận hai cách ghi: [3] và [Nguồn 3]. Lý do ở m�
 
 ## Phạm luật thì câu trả lời bị rút lại
 
-Trong ô chat, chữ của model hiện ra trước, bước kiểm chạy sau (bài 21). Nếu bước kiểm hỏng, giao diện xoá chữ đã hiện, hiện một lời báo bằng tiếng Việt và nút "Thử lại". Lượt đó được ghi trong sổ là "bị rút lại".
+Trong ô chat, chữ hiện trước, kiểm sau; kiểm hỏng thì rút lại (bài 6, 21). Giao diện xoá chữ đã hiện, hiện lời báo "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại". Lượt đó được ghi trong sổ là "bị rút lại".
 
 Lựa chọn ở đây là: thà người dùng phải bấm lại, còn hơn đọc một câu trả lời mang số nguồn không có thật.
 
-Có một trường hợp chương trình sửa thay vì rút. Đôi khi model viết phần trả lời có số nguồn rồi nối thêm nguyên câu từ chối ở cuối. Theo luật 3 thì cả câu hỏng. Chương trình gỡ câu từ chối ở cuối, giữ phần có nguồn, rồi kiểm phần đó như mọi câu.
+Có hai trường hợp chương trình không báo lỗi ngay:
+
+- **Câu từ chối nối ở cuối.** Đôi khi model viết phần trả lời có số nguồn rồi nối thêm nguyên câu từ chối ở cuối. Theo luật 3 thì cả câu hỏng. Chương trình gỡ câu từ chối ở cuối, giữ phần có nguồn, rồi kiểm phần đó như mọi câu.
+- **Lượt hỏi tiếp đang kèm câu trả lời liền trước** (từ 22/11, chỉ ở ô chat). Với tin kiểu "bỏ chợ Đông Ba đi", model đôi khi chép lại câu trả lời liền trước (bài 23) mà không ghi số nguồn. Lượt bị rút ở bất kỳ phép kiểm nào sau khi viết thì gỡ chữ đã hiện và chạy lại cả lượt **một lần**, không kèm câu trả lời cũ; cuộc đã có lịch lưu thì không. Người dùng chờ thêm vài giây (khoảng 5 giây ở hai lượt thử); lần hai cũng hỏng thì mới thấy lời báo lỗi. Tiền tính cả hai lần.
 
 ## Câu từ chối là một câu cố định, đúng từng chữ
 
@@ -50,21 +53,73 @@ Khi các đoạn được đưa không đủ để trả lời, model phải tr�
 
 > Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này.
 
-Nếu để model tự viết lời từ chối, mỗi lần nó viết một kiểu, và dễ có kiểu từ chối nửa vời rồi đoán ("mình không chắc, nhưng có thể là…"). Một câu cố định cho ba thứ:
+Để model tự viết lời từ chối thì mỗi lần một kiểu, dễ thành từ chối nửa vời rồi đoán. Một câu cố định cho ba thứ:
 
 - Chương trình **nhận ra chắc chắn** lượt này là từ chối, bằng cách so chữ. Từ đó nó mở đường tra web (bài 25).
 - Khi đo, **đếm được chính xác** bao nhiêu câu bị từ chối, bao nhiêu câu từ chối nhầm, bao nhiêu câu ngoài kho lọt qua (chặng 4).
 - Người dùng gặp cùng một thông báo mỗi khi kho không đủ (riêng khi có mục web thì giao diện đổi nó thành câu dẫn sang mục web, như ví dụ ngay dưới).
 
-Ở ví dụ "kho không có" (chỗ đậu ô tô ở chùa Thiên Mụ), model trả đúng câu này. Chương trình nhận ra, tra web một lần, và vì mục web có nội dung nên giao diện thay câu từ chối bằng câu dẫn "Tư liệu của mình chưa có thông tin này — dưới đây là thông tin từ web (chưa kiểm)."
+Khi đo, ngoài câu này còn bốn câu cố định khác được tính là từ chối: câu cho câu hỏi ngoài phạm vi (bài 22) và ba câu "chưa làm thay được" (đặt chỗ, gửi tin, xem tình trạng phòng; bài 4).
 
-Có một trường hợp chương trình từ chối mà không gọi model: bước tìm không trả về đoạn nào dùng được. Khi đó câu từ chối được đặt ngay, đỡ một lần gọi model.
+Ở ví dụ "kho không có" (chỗ đậu ô tô ở chùa Thiên Mụ), model trả đúng câu này. Chương trình nhận ra, tra web một lần, và vì mục web có nội dung nên giao diện thay câu từ chối bằng câu dẫn "Tư liệu của mình chưa có thông tin này — dưới đây là thông tin từ web (chưa kiểm)."
 
 ## Điều bước kiểm này chưa làm được
 
 Chương trình biết [4] trỏ tới một đoạn có thật. Nó chưa biết đoạn 4 có thật sự nói điều câu trả lời viết không. Ở ví dụ chính thì có: đoạn 4 ghi đúng giá vé trẻ em. Nhưng đó là do người đọc đối chiếu, không phải do chương trình kiểm.
 
-Vì vậy "có số nguồn" chưa phải "đã kiểm đúng". Phần nghĩa chỉ được đo khi chấm câu trả lời (bài 19), và với hai loại con số dễ sai nhất (thời tiết, khoảng cách) thì có thêm một bước kiểm con số riêng (bài 24).
+Vì vậy "có số nguồn" chưa phải "đã kiểm đúng". Phần nghĩa chỉ được đo khi chấm câu trả lời (bài 19), và với hai loại con số dễ sai nhất (thời tiết, khoảng cách) thì có thêm một bước kiểm con số riêng: câu chứa con số lạ bị gỡ, không rút cả câu trả lời (lượt có lịch thì vẫn rút cả câu; bài 24).
+
+Bước kiểm cũng không biết một danh sách có đủ hay không. Khi người dùng xin một danh sách (*"ở Huế có những quán chay nào"*) và câu trả lời có nguồn kho, chương trình nối vào dòng ghi chú dưới câu trả lời: "Danh sách trên chỉ gồm những nơi có trong các bài tìm được, nên có thể chưa đủ." Việc nhận ra "câu xin danh sách" là một phép so khuôn chữ của chương trình, không gọi model; dòng này không làm danh sách đủ hơn.
+
+## Quyết định và lý do
+
+### 1. Vì sao số nguồn sai thì rút cả câu trả lời, không chỉ gỡ số sai?
+
+- **Đã chọn:** phạm một trong ba luật là rút cả câu, hiện lời báo và nút "Thử lại".
+- **Vì sao:** luật ghi từ đặc tả lúc dựng hệ thống: số nguồn không khớp là lỗi của cả câu trả lời; không trả một phần, không tự sửa, không tự gọi lại. Lập luận đứng sau (không phải số đo): một số nguồn không có thật nghĩa là không biết ý đó dựa vào đâu. Hai chỗ về sau nới luật này, mỗi chỗ có quyết định riêng: gỡ câu từ chối nối ở cuối và lần chạy lại hẹp.
+- **Cách khác:** chỉ gỡ số sai, hoặc gỡ câu chứa số sai: chưa thử. Cách nhẹ đó đang dùng cho con số thời tiết và khoảng cách (bài 24).
+- **Cái giá:** câu trả lời đúng mà quên số nguồn cũng bị rút. Lỗi hiếm (0 trên 489 lần viết của gpt-6-luna cuối tháng 10; 0 trên 93 lượt ngày 21/11), nhưng vẫn có lượt bị rút (mục "Giới hạn đã biết").
+
+### 2. Vì sao câu từ chối là một câu cố định, và chương trình so đúng từng chữ?
+
+- **Đã chọn:** một câu ghi sẵn trong lời dặn; chương trình nhận ra lượt từ chối bằng cách so chữ.
+- **Vì sao:** quyết định đã ghi: câu từ chối cố định là một phần của điều kiện "chỉ trả lời từ kho", và các phép đo dựa vào nó. Ngày 21/11 chủ dự án ghi nó vào danh sách các sàn không được nới.
+- **Cách khác:** để model tự viết lời từ chối cho tự nhiên hơn: không làm. Cho model trả lời phần có bằng chứng: đã đo, bỏ (mục "Đã so").
+- **Cái giá:** lời từ chối cứng, giống nhau mọi lần; model viết lệch một chữ thì chương trình không nhận ra là từ chối, và câu đó (không có số nguồn) bị rút như một lỗi.
+
+### 3. Vì sao sửa chuyện "[Nguồn n]" ở chương trình, không dặn model thêm?
+
+- **Đã chọn:** bộ kiểm nhận cả [n] lẫn [Nguồn n], đưa hết về [n].
+- **Vì sao:** đã đo (mục "Đã so"): lỗi số nguồn trên 1.600 câu từ 69 xuống 14, 0 câu đang đúng bị đổi, không tốn lần gọi nào. Model chép đúng nhãn nó thấy trong ngữ cảnh.
+- **Cách khác:** thêm một câu dặn: không làm; bài 15 cho thấy mỗi câu dặn thêm hay làm hỏng loại câu khác.
+- **Cái giá:** không đáng kể.
+
+### 4. Vì sao chạy lại cả lượt một lần, và chỉ ở lượt đang kèm câu trả lời liền trước?
+
+- **Đã chọn:** lượt bị rút ở bước kiểm sau khi viết (số nguồn hay phép kiểm khác), mà lịch sử đang mang câu trả lời liền trước, thì ô chat gỡ chữ đã hiện và chạy lại một lần không kèm câu trả lời cũ. Lượt có câu cố định hoặc cuộc đã có lịch thì không.
+- **Vì sao:** đo sáng 22/11 (Claude Sonnet 5.5): sau khi mở việc nhớ câu trả lời, tin kiểu "bỏ chợ Đông Ba đi" ra màn hình lỗi 3 trên 7 lần, vì model chép lại lời cũ không ghi số nguồn. Đo lại sau bản sửa: 0 trên 5 lần ra màn hình lỗi; lần chạy lại thật sự xảy ra ở 2 lượt, cả hai ra câu trả lời (người thứ hai kiểm).
+- **Cách khác:** giữ chữ tới khi kiểm xong rồi mới hiện: không chọn, vì đổi cách hiện chữ của mọi lượt. Chạy lại ở mọi lượt bị rút: không làm.
+- **Cái giá:** chờ thêm vài giây và tiền tính cả hai lần gọi model ở các lượt đó; lần hai cũng hỏng thì người dùng vẫn thấy lời báo lỗi.
+
+### 5. Vì sao dòng "danh sách có thể chưa đủ" do chương trình nối, không nhờ model viết?
+
+- **Đã chọn:** câu người dùng khớp khuôn "xin danh sách" (những / các … nào, kể hết, liệt kê) và có nguồn kho thì chương trình nối một câu cố định vào dòng ghi chú. Mở từ 20/11.
+- **Vì sao:** ghi trong chương trình: trợ lý tìm theo đoạn, không lọc cả kho theo đặc điểm, nên câu "những quán nào có X" thường chỉ ra một phần danh sách mà không nói là có thể thiếu (6 trên 18 câu mẫu dạng này; "kể hết các nơi vừa nêu" thiếu 5 trên 6 lần đo 20/11). Nối bằng chương trình thì chữ gửi model không đổi.
+- **Cách khác:** dặn model tự nói "có thể chưa đủ": không làm. Từ 22/11 có thêm công cụ kể theo mục lục của kho (bài 24).
+- **Cái giá:** khuôn chữ hẹp: cách nói lạ không khớp thì không có dòng này; câu xin một gợi ý ("quán nào ngon") cố ý không nhận; câu gõ không dấu không được nhận. Lượt trợ lý đã kể theo mục lục kho vẫn nhận dòng này: hai lời rào chồng nhau (đọc từ chương trình, chưa thử).
+
+## Nếu… thì sao
+
+Đọc từ chương trình, trừ dòng ghi **(đã thử)** hay "đã đo". Lời báo trong ngoặc kép là nguyên văn.
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa / ai làm gì |
+|---|---|---|---|
+| câu trả lời thiếu số nguồn, hoặc ghi số không có | rút lại chữ đã hiện | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" | người dùng bấm "Thử lại" |
+| ca trên, ở lượt đang kèm câu trả lời liền trước **(đã thử)** | ô chat gỡ chữ, chạy lại cả lượt một lần | chờ lâu hơn, rồi câu trả lời hoặc lời báo như dòng trên | có từ 22/11; đo lại: 0 trên 5 lần ra màn hình lỗi |
+| tin dài nhiều ý: model dùng hết hai lần tìm thêm rồi nộp chữ giữ chỗ không có nguồn (đã đo) | rút lại | lời báo như dòng đầu; 3 trên 6 lần ở một tin 4 ý | một bản chữa đã đo, không đưa vào hệ thống (nằm ở một nhánh thử riêng; mục "Đã so"); gốc nằm ở khâu tìm của tin dài nhiều ý |
+| model viết phần có nguồn rồi nối câu từ chối ở cuối | gỡ câu từ chối, kiểm phần còn lại | câu trả lời phần có nguồn | có từ 21/11 |
+| kho không đủ | model trả câu từ chối; chương trình tra web một lần (bài 25) | câu từ chối; có mục web thì thay bằng câu dẫn sang mục web | đúng thiết kế |
+| câu trả lời có con số thời tiết hay khoảng cách không khớp kết quả công cụ | gỡ câu chứa con số đó | câu trả lời thiếu câu đó | có (bài 24) |
 
 ## Dễ nhầm
 
@@ -72,13 +127,35 @@ Vì vậy "có số nguồn" chưa phải "đã kiểm đúng". Phần nghĩa ch
 - **"Câu từ chối là do model tự nghĩ ra lời."** Không. Đó là một câu cố định ghi trong lời dặn; chương trình so đúng từng chữ.
 - **"Kiểm xong mới hiện."** Trong ô chat thì chữ hiện trước, kiểm sau; hỏng thì rút lại.
 
-## Những điều cần nhớ
+## Câu hỏi tự kiểm
 
-- Ba luật: có ít nhất một số nguồn · mọi số có thật · câu từ chối không kèm số nguồn.
-- Phạm luật thì câu trả lời bị rút lại, người dùng thấy lời báo và nút "Thử lại".
-- Câu từ chối cố định giúp chương trình nhận ra lượt từ chối (để tra web) và giúp phép đo đếm đúng.
-- Một điều kiện không được vỡ của sản phẩm: 0 câu ngoài kho được trả lời bằng kho.
-- Chưa kiểm nghĩa: đoạn được trích có nói đúng điều câu trả lời viết hay không thì chương trình chưa biết.
+<details>
+<summary>1. Ba luật kiểm số nguồn là gì, và luật nào bắt câu "Tôi không tìm thấy đủ thông tin… [3]"?</summary>
+
+Có ít nhất một số nguồn · mọi số là của một nguồn đã thật sự đưa cho model · câu từ chối không kèm số nguồn. Câu đó phạm luật thứ ba.
+
+</details>
+
+<details>
+<summary>2. Câu trả lời có số [4] và đoạn 4 có thật. Như vậy đã chắc đúng chưa?</summary>
+
+Chưa. Chương trình chỉ biết đoạn 4 tồn tại và đã được đưa cho model; đoạn đó có nói đúng điều câu trả lời viết không thì chỉ đo được khi chấm (bài 19).
+
+</details>
+
+<details>
+<summary>3. Vì sao "đúng một câu từ chối cố định" quan trọng với phép đo?</summary>
+
+Chương trình nhận ra lượt từ chối bằng cách so chữ, nên đếm được chính xác bao nhiêu câu bị từ chối, từ chối nhầm, hay câu ngoài kho lọt qua. Nó cũng là tín hiệu để mở mục tra web.
+
+</details>
+
+<details>
+<summary>4. Một bản chữa đã hết màn hình "Thử lại" ở tin dài nhiều ý (3 trên 6 xuống 0 trên 6). Vì sao không đưa vào hệ thống?</summary>
+
+4 trong 5 câu viết lại nói "tư liệu chưa có" đúng hai ý kho có, trong khi bản chưa chữa trả lời đúng. Theo thứ tự lỗi chủ dự án đã chốt, thiếu ý nặng hơn một lần "Thử lại".
+
+</details>
 
 ## Cấu hình đang chạy
 
@@ -89,11 +166,13 @@ Vì vậy "có số nguồn" chưa phải "đã kiểm đúng". Phần nghĩa ch
 | Dạng số nguồn được nhận | [n] và [Nguồn n], không phân biệt hoa thường; đưa hết về [n] khi hiện | model đôi khi chép nguyên nhãn của ngữ cảnh | đã đo trước và sau khi nhận cả hai dạng (mục "Đã so") |
 | Câu từ chối khi kho không đủ | "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này." | chương trình so đúng từng chữ | chưa thử câu khác |
 | Câu cho câu hỏi ngoài phạm vi | "Mình chỉ hỗ trợ thông tin về văn hoá và du lịch Huế. Bạn muốn hỏi gì về Huế không?" | do bước xếp loại câu quyết định, không qua model viết (bài 22) | — |
-| Các câu được tính là từ chối khi đo | hai câu trên, cộng ba câu "mình không làm thay được" (đặt chỗ, gửi tin, xem tình trạng phòng; bài 23) | thiếu một câu trong danh sách này thì một câu ngoài kho bị thay chữ sẽ bị đếm nhầm là "được trả lời" | — |
+| Các câu được tính là từ chối khi đo | hai câu trên, cộng ba câu "mình không làm thay được" (đặt chỗ, gửi tin, xem tình trạng phòng; bài 4) | thiếu một câu trong danh sách này thì một câu ngoài kho bị thay chữ sẽ bị đếm nhầm là "được trả lời" | — |
 | Khi bước tìm không ra đoạn nào dùng được | đặt câu từ chối ngay, không gọi model | đỡ một lần gọi model | — |
 | Câu từ chối nối ở cuối một câu trả lời có nguồn | gỡ câu từ chối, giữ phần có nguồn | trước khi có việc này, cả câu bị rút lại | có từ 21/11 |
 | Dòng "có thể đã thay đổi" | nối khi câu trả lời trích bài thuộc nhóm vé, địa điểm, lễ hội, hoặc bài lưu trú | giá và giờ có thể đổi mà kho chưa sửa | — |
 | Nguồn hiện dưới câu trả lời | chỉ các đoạn có số được nhắc trong câu trả lời | — | — |
+| Chạy lại cả lượt khi bị rút ở bước kiểm sau khi viết | 1 lần, chỉ ở ô chat, ở lượt đang kèm câu trả lời liền trước, trừ cuộc có lịch (từ 22/11) | người dùng khỏi gặp màn hình lỗi ở tin kiểu "bỏ X đi" | trước khi có: 3 trên 7 lần ra màn hình lỗi; sau: 0 trên 5 (đo 22/11, Claude Sonnet 5.5) |
+| Dòng "danh sách có thể chưa đủ" (`danh_sach_noi_that`) | mở từ 20/11; câu xin danh sách có nguồn kho, trừ lượt lịch, lượt có dòng "Tư liệu chưa có…", và câu hỏi về một nơi đã có tên trong nguồn | nói thật giới hạn của việc tìm theo đoạn | — |
 
 ## Đã so
 
@@ -117,23 +196,40 @@ Vì vậy "có số nguồn" chưa phải "đã kiểm đúng". Phần nghĩa ch
 
 Đã kể ở bài 15: cho model trả lời một phần làm câu từ chối nhầm giảm từ 13 xuống 1 nhưng để 2 câu ngoài kho được trả lời. Điều kiện "0 câu ngoài kho được trả lời bằng kho" thắng, nên câu từ chối giữ nguyên là từ chối cả câu. Về sau câu hỏi có **nhiều ý** được xử lý bằng một đường riêng (bài 23).
 
-**Giới hạn của các phép đo.** Cả hai phép so đo với gpt-6-luna, cuối tháng 10.
+### Màn hình "Thử lại" ở tin dài nhiều ý: viết lại một lần
+
+**Vấn đề thật đã gặp.** Ở một tin 4 ý của một gia đình, màn hình "Thử lại" hiện ở 3 trên 6 lần. Đọc chữ của 5 câu từng bị gỡ: model đã dùng hết hai lần tìm thêm, vẫn muốn tìm tiếp; công cụ tìm lúc đó đã bị cất nên nó nộp một câu giữ chỗ kiểu "tôi cần tìm thêm về …", không có nguồn, nên bị rút.
+
+**So gì.** Bản chữa: gặp đúng ca đó thì gọi model viết thêm một lần từ những gì đã tìm được. Một lượt thật 44 câu (3,77 USD), tin đó hỏi 6 lần mỗi bên, model Claude Sonnet 5.5, ngày 22/11.
+
+| Đo gì | Chưa chữa | Có bản chữa |
+|---|---|---|
+| Số lần ra màn hình lỗi | 3 trên 6 | 0 trên 6 |
+| Con số bịa trong câu viết lại | — | 0 trên 5 (người thứ hai kiểm) |
+| Câu nói "tư liệu chưa có" hai ý kho có (giá vé lẻ Đại Nội; người từ 60 tuổi được giảm) | 0 (ba lượt bình thường trả lời đúng cả hai) | 4 trên 5 câu viết lại |
+
+**Đọc bảng này thế nào.** Bản chữa đổi một màn hình lỗi lấy một câu trả lời thiếu ý mà người dùng không biết là thiếu. Gốc của lỗi nằm ở khâu tìm: hai dữ kiện đó chỉ về tới ở lần tìm thứ hai, thứ ba do model tự gọi.
+
+**Đã chọn: không đưa vào hệ thống** (bản chữa chỉ nằm ở một nhánh thử riêng), theo tiêu chí ghi trước và thứ tự lỗi chủ dự án đã chốt (thiếu ý nặng hơn một lần "Thử lại").
+
+**Giới hạn của các phép đo.** Hai phép so đầu đo với gpt-6-luna, cuối tháng 10. Phép so cuối chỉ trên một tin, 6 lần mỗi bên.
+
+## Quyết định nhỏ hơn
+
+**Vì sao không dùng một model thứ hai để kiểm câu trả lời có đúng với nguồn không?** Chưa thử trên đường người dùng. Việc đó hiện chỉ có ở phép đo: một model chấm điểm câu trả lời so với đáp án mẫu (bài 19).
+
+**Vì sao chữ hiện trước rồi mới kiểm?** Bài 6, quyết định 4.
+
+**Vì sao không gọi model khi bước tìm không ra đoạn nào dùng được?** Đặt câu từ chối ngay, đỡ một lần gọi model.
 
 ## Giới hạn đã biết
 
 - **Chưa kiểm nghĩa** (đã nói ở trên).
 - **Thiếu số nguồn chỉ bị phát hiện ở cuối**, sau khi chữ đã hiện. Người dùng thấy chữ rồi thấy nó bị rút.
-- **Câu trả lời bị rút lại vẫn xảy ra.** Ở một lượt đo với người dùng mô phỏng ngày 21/11: 3 trên 48 lượt hỏi của gpt-6-luna và 4 trên 53 lượt hỏi của Claude Sonnet 5.5 có câu bị rút. Con số này gồm cả câu bị rút do bước kiểm con số thời tiết, không riêng do số nguồn; mới một người đọc.
+- **Câu trả lời bị rút lại vẫn xảy ra.** Ở một lượt đo với người dùng mô phỏng ngày 21/11: 3 trên 48 lượt hỏi của gpt-6-luna và 4 trên 53 lượt hỏi của Claude Sonnet 5.5 có câu bị rút. Con số này gồm cả câu bị rút do bước kiểm con số thời tiết, không riêng do số nguồn, và đo trước bản sửa 13:51 21/11 (từ đó con số lạ ở lượt thường chỉ bị gỡ câu); mới một người đọc.
+- **Dòng "có thể đã thay đổi" chỉ áp cho bốn nhóm bài:** vé, địa điểm, lễ hội, và bài "Lưu trú ở Huế". Ba nhóm đầu do chủ dự án chọn ngày 02/11: giờ, giá vé, ngày lễ hội đổi theo năm mà kho không ghi ngày nguồn. Bài lưu trú được thêm 14/11 vì hạng cơ sở có thể đã đổi. Nhóm khác (món ăn, quán) không có dòng này.
 - **Một câu trả lời đúng nội dung mà quên số nguồn cũng bị rút**, vì chương trình không phân biệt được với một câu bịa.
 - **Người đọc không thấy ý nào đến từ nguồn nào.** Vì số [n] không hiện trong chữ, dòng "Nguồn:" chỉ cho biết cả câu trả lời dựa vào những bài nào. Đây là lựa chọn của chủ dự án về giao diện.
-
-## Vì sao không làm cách khác
-
-**Vì sao không dùng một model thứ hai để kiểm câu trả lời có đúng với nguồn không?** Chưa thử trên đường người dùng. Việc đó hiện chỉ có ở phép đo: một model chấm điểm câu trả lời so với đáp án mẫu (bài 19).
-
-**Vì sao rút cả câu mà không chỉ gỡ số nguồn sai?** Chương trình được viết để rút cả câu khi số nguồn sai. Lý lẽ của người viết bài, không phải một quyết định đã ghi: một số nguồn không có thật nghĩa là không biết ý đó dựa vào đâu. Với con số về thời tiết và khoảng cách thì có cách nhẹ hơn: chỉ gỡ câu chứa con số lạ (bài 24).
-
-**Vì sao không cho model tự viết lời từ chối cho tự nhiên hơn?** Quyết định đã ghi: câu từ chối cố định là một phần của điều kiện "chỉ trả lời từ kho", và các phép đo dựa vào nó.
 
 ## Chi tiết để tra
 
@@ -142,6 +238,7 @@ Vì vậy "có số nguồn" chưa phải "đã kiểm đúng". Phần nghĩa ch
 - Trường hợp "câu trả lời có nguồn rồi nối câu từ chối ở cuối" được thấy ở 1 trên 3 lượt của một câu mà kho chỉ có một phần, ngày 21/11.
 - Khi mục web có nội dung, máy chủ vẫn giữ nguyên câu từ chối trong kết quả của nó (các phép đo đọc câu này); chỉ giao diện thay bằng câu dẫn sang mục web.
 - Câu hỏi nhiều ý: ý nào kho không có thì model ghi một dòng mở đầu bằng "Tư liệu chưa có thông tin về:"; dòng này không có số nguồn và không bị coi là lỗi (bài 23).
+- Lần chạy lại hẹp: lời gọi model của cả hai lần đều vào sổ tiền; sổ số đo ghi tên lần chạy lại kèm đầu lời lỗi của lần đầu, không ghi chữ.
 
 **Bài sau (bài 17):** hết chặng 3. Đường hỏi đáp đã đủ: tìm, viết, kiểm. Chặng 4 trả lời câu hỏi "lấy gì bảo đảm nó tốt": bộ câu hỏi mẫu và cách chấm.
 
@@ -161,5 +258,6 @@ Vì vậy "có số nguồn" chưa phải "đã kiểm đúng". Phần nghĩa ch
 - Câu bị rút 3 / 48 và 4 / 53 (người dùng mô phỏng, một phiên đọc tay, chưa có người thứ hai): `bai_hoc/VIEC_MOI_XONG.md` mục 23, bảng "Người dùng gặp gì".
 - Trả lời một phần (13 ⇒ 1; 2 câu ngoài kho): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 11.
 - Điều kiện "0 câu ngoài kho được trả lời bằng kho": `session_prompt/HIEN_TRANG.md` mục 4, phần "Sản phẩm".
+- Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm", "Quyết định nhỏ hơn", phần "Đã so" về màn hình "Thử lại" (thêm 14:05 22/11/2026 theo khuôn mới). Lời báo rút lại nguyên văn: `backend/api/routes/chat.py` `_loi_trich_dan` [code]. Lần chạy lại hẹp (điều kiện, không kèm câu trả lời cũ, không chạy lại câu cố định / cuộc có lịch, 3 / 7 trước khi có, chờ thêm khoảng 5 giây, đường "giữ chữ tới khi kiểm xong" không chọn): `backend/llm/assistant.py` `answer_turn_stream_parallel` và `TEN_CHAY_LAI`; `report_agent/2026-11-22/b_nho_dap_chay_lai.md` mục 1–3 [code + đã chạy, phiên khác]. Dòng "danh sách có thể chưa đủ" (khuôn chữ, lý do, 6 / 18, 5 / 6, câu một gợi ý không nhận): `backend/llm/danh_sach.py` (chú thích đầu file, `CAU_DANH_SACH`), điều kiện nối: `backend/llm/assistant.py` khoảng dòng 1162–1166; mở 16:15 20/11/2026: commit `051e954f`; dòng `danh_sach_noi_that: true` trong `backend/config/settings.yaml` (chú thích cạnh dòng còn ghi "TẮT tới khi…", lệch với giá trị) [code]. Ba câu "chưa làm thay được": `CAU_LAM_THAY` trong `backend/llm/full_corpus_prompt.py`. Bản chữa "viết lại một lần" (3 / 6 ⇒ 0 / 6, 0 / 5 con số bịa, 4 / 5 câu thiếu hai ý, 44 câu, 3,77 USD, thứ tự lỗi chủ dự án đã chốt): `bai_hoc/VIEC_MOI_XONG.md` mục 40, gạch "Đo rồi KHÔNG mở" [người thứ hai kiểm]. Sàn câu từ chối: `session_prompt/HIEN_TRANG.md` mục 4, gạch 11:24 21/11/2026. Luật "không trả một phần, không tự sửa, không tự gọi lại" và lỗi `citation_integrity_error`: `docs/superpowers/specs/2026-09-11-full-corpus-rag-written-spec.md` mục 9, dòng 251–273 [chép]. Lần chạy lại: chỉ đường stream (`backend/api/routes/chat.py` khoảng dòng 204–216; đường không stream gọi `answer_turn`), điều kiện `trace.citation_error` bất kỳ (`assistant.py` khoảng dòng 1998), số sau sửa 0 / 5 và 2 / 5 lượt chạy lại thật: `report_agent/2026-11-22/b_nho_dap_chay_lai.md` mục 4 [người thứ hai kiểm]. Bản chữa "viết lại một lần" chỉ ở nhánh `origin/p9-b-het-luot-viet-lai`, chưa gộp vào main (`git merge-base --is-ancestor` ⇒ chưa gộp; `settings.yaml` của main không có công tắc đó) [đã chạy 14:33 22/11/2026]. Dòng chồng nhau với công cụ mục lục: `assistant.py` khoảng dòng 1162–1166 không loại nguồn mục lục [code, chưa thử]. Bốn nhóm bài của dòng "có thể đã thay đổi": `assistant.py` `NOTICE_SOURCE_PREFIXES`; lý do ba nhóm đầu: đặc tả Phase 9 bản 5 (`git show 077e3cb:docs/superpowers/specs/2026-11-02-phase-9-design.md` bảng quyết định Q2 và mục 5.3); bài lưu trú: chú thích cạnh `NOTICE_SOURCE_PREFIXES` [code + chép]. Số 3 / 48 và 4 / 53 đo trước commit `5936d165` (13:51 21/11): `VIEC_MOI_XONG.md` mục 23 ghi lúc 13:48 21/11. Các mục mới đã qua một lượt đối chiếu độc lập 14:28 22/11/2026 và được sửa theo: `data/hoc_cung_D/kiem/muc_moi_12_16.md` [riêng tư].
 
 </details>
