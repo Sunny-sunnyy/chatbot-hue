@@ -114,9 +114,9 @@ K22 = ("Nhà mình có 4 người thôi nha, ko phải 5. Vậy đi Đại Nội
        "chưa rõ bậc với giá vé thì thôi, có điểm nào khác ít bậc, biết giá, giờ mở cửa ko? Bé ngồi lâu là quấy lắm")  # tin của người dùng mô phỏng (lượt mốc 12 vai)
 
 
-def test_subject_less_clause_switch_defaults_off_in_code_and_in_settings():
+def test_subject_less_clause_switch_defaults_off_in_code_and_is_on_in_settings():
     assert AssistantFlags().tim_ve_bo_cut is False
-    assert load_settings(validate_private_paths=False)["assistant"]["tim_ve_bo_cut"] is False
+    assert load_settings(validate_private_paths=False)["assistant"]["tim_ve_bo_cut"] is True  # settings đang chạy: MỞ từ 22/11/2026
 
 
 @pytest.mark.parametrize("ve, cut", [
