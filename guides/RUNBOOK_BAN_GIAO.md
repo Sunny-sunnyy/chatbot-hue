@@ -38,13 +38,16 @@ curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 | gre
 
 ## 2. Build giao diện và chạy server local
 
+**Bật bằng MỘT lệnh (từ 22/11/2026; làm cả mục 1 lẫn mục này):** `HUE_BEDROCK_CREDS_FILE=<đường dẫn file khoá Bedrock> scripts/bat_he_thong.sh` ⇒ bật Qdrant, chờ đủ số điểm theo bản ghi dựng, kiểm file khoá model có tồn tại, bật server cổng 8010 rồi in `SẴN SÀNG — mở http://127.0.0.1:8010`, hoặc ĐÚNG MỘT dòng `CHƯA BẬT ĐƯỢC — thiếu gì ⇒ làm gì`. Ctrl+C ở cửa sổ đó để tắt server (Qdrant để nguyên). Giao diện chưa dựng thì lệnh nói rõ. Các bước gõ tay dưới đây vẫn đúng:
+
 ```bash
 cd /home/minhhieu/hue_rag/frontend && npm ci && npm run build      # chỉ khi clone mới hoặc frontend/src đổi
 cd /home/minhhieu/hue_rag/backend && HF_HUB_OFFLINE=1 uv run --env-file /home/minhhieu/hue_rag/.env uvicorn api.app:app --port 8010
 ```
 - Sổ vết debug có nội dung (chỉ máy local): thêm `HUE_SO_VET=true` trước `uv run` (chỉ nhận `true` / `false`).
 - Kiểm: `curl -s http://127.0.0.1:8010/health` ⇒ đủ 5 mục sẵn sàng; mở `http://127.0.0.1:8010/` ⇒ trang chủ.
-- Dừng nếu: 409 (chỉ mục lệch kho ⇒ mục 5); 503 (Qdrant / model chưa nạp ⇒ mục 1, HF cache); `/` 404 (chưa build giao diện).
+- Dừng nếu: 409 (chỉ mục lệch kho ⇒ mục 5); `/` 404 (chưa build giao diện); `/health` trả `"status":"degraded"` — mã HTTP VẪN 200, server VẪN lên, phải đọc chữ trong JSON [thử thật 22/11/2026, bản `aa8228ce`]: `qdrant` / `retrieval: not_ready` = bật server lúc Qdrant chưa bật ⇒ mọi câu ra "Hệ thống tra cứu tạm thời không khả dụng."; bật Qdrant sau đó server KHÔNG tự hồi ⇒ bật Qdrant (mục 1) RỒI khởi động lại server · `generator: not_ready` = thiếu biến `HUE_BEDROCK_CREDS_FILE` (hoặc khoá model) ⇒ mọi câu ra "Không thể tạo câu trả lời vào lúc này." ⇒ tắt server, bật lại kèm biến.
+- Khởi động lại server giữa lúc đang dùng: lịch đang lập, cuộc trò chuyện đang dở và các câu trả lời đã lưu đều MẤT (nằm trong bộ nhớ của server) ⇒ **tải lại trang rồi lập lại lịch / hỏi lại** (màn hình không tự báo — mục 10.3).
 - Tắt server bằng Ctrl+C / dừng tiến trình theo PID — không `pkill -f` (khớp chính lệnh đang chạy).
 
 ## 3. Test
@@ -386,6 +389,8 @@ lúc đó; nhãn **[C kiểm 18/11]** = C mở file / chạy lệnh lại ngày 
 
 | Tình huống | Hệ quả | Vì sao để nguyên / phải nhớ | Nguồn |
 |---|---|---|---|
+| Khởi động lại server GIỮA một cuộc (thử thật 22/11/2026, một lượt, trình duyệt) | Trang KHÔNG tải lại thì thẻ lịch / các lượt cũ vẫn trên màn hình, nhưng server đã quên: lệnh sửa lịch ("Bỏ Lăng Tự Đức khỏi lịch") bị trả lời như câu hỏi thường — "Tư liệu của mình chưa có thông tin này — dưới đây là thông tin từ web (chưa kiểm)", lịch không đổi; ở trang Trợ lý câu hỏi tiếp trả lời lạc ngữ cảnh. Không có câu nào báo lịch / cuộc trò chuyện đã mất. Tải lại trang ⇒ thẻ lịch và cuộc trò chuyện biến mất | Lịch đã lưu, lịch sử hội thoại, bản lưu câu trả lời đều giữ trong bộ nhớ của tiến trình server (không ghi đĩa); hiếm với người dùng thật, dễ gặp khi tự demo ⇒ sau khi khởi động lại: tải lại trang, làm lại từ đầu | `data/test_cuoi/chay_2026-11-22_e_khoi_hong/KET_QUA.md` (riêng tư) |
+| Qdrant ngừng lúc server ĐANG CHẠY (thử thật 22/11/2026, một lượt) | Câu mới ra "Hệ thống tra cứu tạm thời không khả dụng." + nút "Thử lại" sau khoảng 2 giây; câu đã có người hỏi đúng chữ vẫn được trả từ bản lưu; `/health` VẪN trả `ok` đủ 5 mục | `/health` chỉ đọc trạng thái đã nạp lúc khởi động (như dòng dưới). Bật lại Qdrant là hỏi được ngay, KHÔNG cần khởi động lại server — khác ca bật server lúc Qdrant chưa bật (mục 2). Muốn biết Qdrant còn sống: `curl` cổng 6335 hoặc hỏi một câu mới | cùng file |
 | `/health` | Không gọi ra ngoài ⇒ khoá OpenAI hết hạn mức vẫn trả `ok` | Thiết kế: chỉ đọc trạng thái đã nạp. Muốn biết model còn chạy ⇒ hỏi một câu thật | `backend/api/health.py` **[C kiểm 18/11]** |
 | Mọi lỗi nhà cung cấp model | Người dùng thấy cùng một câu "Không thể tạo câu trả lời vào lúc này." | Chưa tách câu theo loại lỗi; thấy lỗi sinh tăng ⇒ mở trang Usage của nhà cung cấp trước | `backend/api/routes/chat.py` `GENERATION_FAILURE_MESSAGE` **[C kiểm 18/11]** |
 | `HUE_LUOT_MOI_NGAY` không đặt, rỗng, `0` hoặc không phải số | Giới hạn lượt / IP / ngày TẮT (0 ≠ "chặn hết") | Mặc định cho máy local; bản công khai phải đặt số dương | `backend/api/gioi_han.py` `tran_tu_moi_truong` **[C kiểm 18/11]** |
