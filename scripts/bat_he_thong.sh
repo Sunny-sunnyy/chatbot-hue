@@ -6,7 +6,9 @@
 # dụng." và bật Qdrant sau đó cũng KHÔNG tự hết — phải khởi động lại server; thiếu biến trỏ file khoá model thì mọi câu ra "Không thể tạo câu trả
 # lời vào lúc này." mà màn hình không nói vì sao; máy mở lại là Qdrant tắt.
 #
-# Dùng (từ đâu cũng được):   HUE_BEDROCK_CREDS_FILE=<đường dẫn file khoá Bedrock> scripts/bat_he_thong.sh
+# Dùng (từ đâu cũng được):   scripts/bat_he_thong.sh
+#   - File khoá Bedrock lấy theo thứ tự: biến HUE_BEDROCK_CREDS_FILE (đặt trước lệnh) ⇒ dòng đầu của file riêng tư `data/duong_dan_khoa_bedrock.txt`
+#     (file đó CHỈ chứa một đường dẫn, không chứa khoá; `data/` không vào git). Tạo một lần: echo '<đường dẫn file khoá>' > data/duong_dan_khoa_bedrock.txt
 #   - Ctrl+C ở cửa sổ này để tắt server; Qdrant để nguyên. Log server: /tmp/hue_rag_server_8010.log
 #   - Model viết là `openai` (dòng `provider` của `backend/config/settings.yaml`) thì không cần biến file khoá.
 #   - Lệnh KHÔNG đọc nội dung `.env` hay file khoá — chỉ xem file có tồn tại.
@@ -17,6 +19,7 @@ CONG=8010
 QDRANT=http://127.0.0.1:6335
 BAN_GHI=data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json   # bản ghi dựng chỉ mục: tên collection + số điểm phải có
 LOG=/tmp/hue_rag_server_$CONG.log
+TRO_KHOA=data/duong_dan_khoa_bedrock.txt   # file riêng tư chỉ ghi ĐƯỜNG DẪN tới file khoá Bedrock (dùng khi chưa đặt biến)
 
 dung() { echo "CHƯA BẬT ĐƯỢC — $1" >&2; exit 1; }
 
@@ -27,8 +30,10 @@ cd "$GOC" 2>/dev/null || dung "không vào được thư mục dự án $GOC"
 
 # 1. Khoá model — kiểm TRƯỚC khi bật gì, để lỗi này không lẫn với lỗi khác
 if [ "$(grep -m1 -E '^  provider:' backend/config/settings.yaml | awk '{print $2}')" = bedrock ]; then
-  [ -n "${HUE_BEDROCK_CREDS_FILE:-}" ] || dung "thiếu biến HUE_BEDROCK_CREDS_FILE ⇒ chạy lại kèm biến: HUE_BEDROCK_CREDS_FILE=<đường dẫn file khoá Bedrock> scripts/bat_he_thong.sh (guides/DOI_MODEL_VIET.md mục 3)"
-  [ -f "$HUE_BEDROCK_CREDS_FILE" ] || dung "biến HUE_BEDROCK_CREDS_FILE trỏ tới một file không tồn tại ⇒ sửa lại đường dẫn rồi chạy lại"
+  if [ -z "${HUE_BEDROCK_CREDS_FILE:-}" ] && [ -f "$TRO_KHOA" ]; then HUE_BEDROCK_CREDS_FILE=$(head -n 1 "$TRO_KHOA"); fi
+  [ -n "${HUE_BEDROCK_CREDS_FILE:-}" ] || dung "chưa biết file khoá Bedrock ở đâu ⇒ ghi đường dẫn của nó vào $TRO_KHOA (một dòng), hoặc chạy lại kèm biến: HUE_BEDROCK_CREDS_FILE=<đường dẫn> scripts/bat_he_thong.sh (guides/DOI_MODEL_VIET.md mục 3)"
+  [ -f "$HUE_BEDROCK_CREDS_FILE" ] || dung "đường dẫn file khoá Bedrock (biến HUE_BEDROCK_CREDS_FILE hoặc dòng đầu của $TRO_KHOA) trỏ tới một file không tồn tại ⇒ sửa lại đường dẫn rồi chạy lại"
+  export HUE_BEDROCK_CREDS_FILE
 fi
 
 # 2. Qdrant: bật, rồi chờ tới khi số điểm bằng số bản ghi dựng ghi (tối đa 30 giây)

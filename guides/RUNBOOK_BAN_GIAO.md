@@ -38,7 +38,7 @@ curl -s http://127.0.0.1:6335/collections/hue_full_corpus_7a2_e5_small_384 | gre
 
 ## 2. Build giao diện và chạy server local
 
-**Bật bằng MỘT lệnh (từ 22/11/2026; làm cả mục 1 lẫn mục này):** `HUE_BEDROCK_CREDS_FILE=<đường dẫn file khoá Bedrock> scripts/bat_he_thong.sh` ⇒ bật Qdrant, chờ đủ số điểm theo bản ghi dựng, kiểm file khoá model có tồn tại, bật server cổng 8010 rồi in `SẴN SÀNG — mở http://127.0.0.1:8010`, hoặc ĐÚNG MỘT dòng `CHƯA BẬT ĐƯỢC — thiếu gì ⇒ làm gì`. Ctrl+C ở cửa sổ đó để tắt server (Qdrant để nguyên). Giao diện chưa dựng thì lệnh nói rõ. Các bước gõ tay dưới đây vẫn đúng:
+**Bật bằng MỘT lệnh (từ 22/11/2026; làm cả mục 1 lẫn mục này):** `scripts/bat_he_thong.sh` (file khoá Bedrock: đặt biến `HUE_BEDROCK_CREDS_FILE=<đường dẫn>` trước lệnh, hoặc ghi đường dẫn đó một lần vào file riêng tư `data/duong_dan_khoa_bedrock.txt` — file chỉ chứa đường dẫn, không chứa khoá) ⇒ bật Qdrant, chờ đủ số điểm theo bản ghi dựng, kiểm file khoá model có tồn tại, bật server cổng 8010 rồi in `SẴN SÀNG — mở http://127.0.0.1:8010`, hoặc ĐÚNG MỘT dòng `CHƯA BẬT ĐƯỢC — thiếu gì ⇒ làm gì`. Ctrl+C ở cửa sổ đó để tắt server (Qdrant để nguyên). Giao diện chưa dựng thì lệnh nói rõ. Các bước gõ tay dưới đây vẫn đúng:
 
 ```bash
 cd /home/minhhieu/hue_rag/frontend && npm ci && npm run build      # chỉ khi clone mới hoặc frontend/src đổi
