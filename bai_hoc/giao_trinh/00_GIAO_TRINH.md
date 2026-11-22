@@ -1,6 +1,6 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 21:48, ngày 22/11/2026 · đủ 41 bài và 9 phụ lục; mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo · từ chiều 22/11 mọi thứ mới của hệ thống được ghi vào bộ này, liệt kê ở mục "Có gì mới" ngay dưới · mọi con số lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 22:04, ngày 22/11/2026 · thêm dòng về mẫu đề bài cho AI khác hãng · đủ 41 bài và 9 phụ lục; mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo · từ chiều 22/11 mọi thứ mới của hệ thống được ghi vào bộ này, liệt kê ở mục "Có gì mới" ngay dưới · mọi con số lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -27,6 +27,7 @@ Hệ thống vẫn đang được làm tiếp. Mỗi khi người dùng thấy m
 
 | Ngày | Người dùng thấy gì khác | Đọc ở |
 |---|---|---|
+| 22/11, tối | Không phải thứ người dùng thấy: đề bài gửi AI khác hãng nay phải nói rõ bên kia được dùng hết công cụ mạnh nhất của mình, mang đủ trạng thái của dự án, có danh sách nên đọc và cả những điểm nhóm đã tìm ra (anh dặn ba lần tối 22/11: "bạn nắm gì thì các model AI khác cũng vậy"). | bài 39, lớp 3 của mục ba lớp kiểm và mục "Chi tiết để tra"; bài 37, mục các đợt rà rủi ro |
 | 22/11, tối | Ở cuộc đã có lịch, xin thêm vào buổi tối một điểm ban ngày đang có trong lịch ("thêm Đại Nội về đêm vô tối ngày 1") thì, khi trợ lý hiểu tên điểm là Đại Nội, nhận lý do thật: điểm tham quan ban ngày không xếp được vào buổi tối (trên màn hình dòng này đứng sau chữ "Không đổi được: "). Trước đó nhận câu "… đã có trong lịch." (một ca test; chưa có lượt thật qua trình duyệt). Cùng lúc bài ghi rõ một giới hạn dễ gặp khi thử: lịch vừa xếp thì lệnh "thêm X" gần như luôn bị trả "Chưa làm…", vì lịch kín giờ và chương trình không tự thế chỗ; lối ra là nhắn đúng câu "thay Y bằng X" được gợi ý, hoặc điền lại biểu mẫu với kiểu đi nhiều điểm hơn (với nhóm có trẻ em hay người lớn tuổi, đổi kiểu đi không thêm chỗ: lịch luôn mỗi buổi một điểm). | bài 31, bảng "Nếu… thì sao", quyết định 4, mục "Giới hạn đã biết" và "Chi tiết để tra" |
 | 22/11, tối | Không phải thay đổi mà là hai cách làm nhanh tin dài nhiều ý đã đo rồi bỏ theo tiêu chí ghi trước: hạ mức suy luận xuống vừa (nhanh hơn khoảng 8 giây nhưng trượt một điều ghi trước, và 3 trên 6 lượt nói kho không có vé cho bé dưới 7 tuổi dù kho có) và cho lần tìm đầu phủ luôn chuyện miễn giảm vé (trung vị chỉ nhanh hơn 1,9 giây, cần 3). Điều rút ra: ở tin dài, lượt chậm là lượt model tự tìm thêm lần thứ hai. | bài 33, mục "Đã so"; bài 23, mục "Đã so" dòng 14; bài 34, mục "Giới hạn đã biết" |
 | 22/11, tối | Không phải thứ người dùng thấy: lần chạy đủ bộ test mới nhất (20:48–21:07) trên đúng bản anh tự thử ngày 23/11: 78 file chạy, 2.197 ca đạt, không ca nào hỏng, 4 file bỏ vì cần khoá OpenAI. | bài 38, mục "Ý chính" và "Chi tiết để tra" |
