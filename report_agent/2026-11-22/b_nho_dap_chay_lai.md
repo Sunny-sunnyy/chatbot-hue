@@ -7,7 +7,7 @@ Viết 10:49 22/11/2026 (giờ `date`), phiên B. Nhánh `p9-b-nho-dap-chay-lai`
 ## 1. Người dùng thấy gì khác
 | Tình huống | Trước | Sau |
 |---|---|---|
-| "Lên kế hoạch tham quan Huế 2 ngày" (trợ lý trả một lộ trình bằng chữ) ⇒ "Bỏ Chợ Đông Ba đi", và model chép lại lời cũ không trích nguồn (phiên đo 22/11: 3 / 7 lần) | chữ hiện ra rồi bị xoá, màn hình "Câu trả lời không đáp ứng yêu cầu trích dẫn — Thử lại" | chữ hiện ra rồi bị gỡ, các dòng tiến độ hiện lại, khoảng 10 giây sau là kết quả của lần chạy lại: câu trả lời có nguồn, hoặc câu từ chối như khi chưa mở tính năng. Không màn hình lỗi |
+| "Lên kế hoạch tham quan Huế 2 ngày" (trợ lý trả một lộ trình bằng chữ) ⇒ "Bỏ Chợ Đông Ba đi", và model chép lại lời cũ không trích nguồn (phiên đo 22/11: 3 / 7 lần) | chữ hiện ra rồi bị xoá, màn hình "Câu trả lời không đáp ứng yêu cầu trích dẫn — Thử lại" | dòng tiến độ lặp lại một nhịp, câu trả lời ra chậm hơn khoảng 5 giây: câu trả lời có nguồn, hoặc câu từ chối như khi chưa mở tính năng. Không màn hình lỗi. (Người viết đã ĐOÁN SAI là người dùng sẽ thấy chữ hiện rồi mất — xem mục 5) |
 | Lần chạy lại cũng bị rút | — | màn hình lỗi như cũ (chỉ chạy lại một lần) |
 | Mọi lượt khác (không mang câu trả lời nhớ; không bị rút; câu cố định; cuộc có lịch đã lưu) | — | không đổi |
 
@@ -33,7 +33,7 @@ Bẫy đã tránh: đường chạy song song gộp trace phụ vào trace chín
 - **Bảng test từng file [máy kiểm]:** 58 file có dùng lõi / route / kho cuộc trò chuyện, chạy từng file trên cây nhánh, không env: 1.881 ca đạt; 54 file đạt hết; 4 file có ca đỏ vì thiếu khoá OpenAI khi không nạp env (`test_api_chat` 14 + 1 lỗi · `test_openai_full_corpus_generator` 7 + 2 lỗi · `test_phase6_live_smoke` 18 + 1 lỗi · `test_phase6_settings` 4 + 1 đỏ) — đúng bốn file vẫn được ghi là bỏ khi không nạp env. Bảng riêng tư: `data/thu_bedrock_2026-11-21/b_muc_8_chay_lai/test_tung_file.tsv`. Đã gộp vào main `5be861af`; cả bộ test trên main sau gộp là của phiên đo.
 
 ## 5. Chưa làm · giới hạn
-- Chưa ai nhìn trên trình duyệt dáng của lúc chữ lần đầu bị gỡ rồi chữ lần hai hiện lại (mới thấy qua chuỗi sự kiện; phiên đo nhìn ở cổng đóng).
+- ĐÃ nhìn trên trình duyệt (phiên đo, 22/11, server từ main có bản sửa, khổ 1440, 6 cuộc, 2 lượt chạy lại, 6 / 6 kết thúc bình thường): với model đang chạy, ở lượt đó dòng tiến độ lặp lại một nhịp và câu trả lời ra chậm hơn khoảng 5 giây; KHÔNG có chữ nào hiện rồi mất (phiên đo nhìn trình duyệt 22/11, 2 lượt chạy lại trong 6 cuộc). Lý do [đọc code giao diện]: model đang chạy trả cả câu trong một mảnh, bộ kiểm trích dẫn chạy xong trong vài mili giây, nên lệnh gỡ chữ tới ngay sau mảnh chữ và huỷ lần vẽ còn đang chờ — chữ lần đầu chưa kịp được vẽ. Trên đường model cũ (chữ chạy dần từng mảnh) thì chữ lần đầu CÓ thể lên màn hình rồi bị gỡ [đọc code, chưa nhìn]. Lúc viết bản sửa tôi ghi "chữ hiện rồi biến mất, chờ thêm khoảng 10 giây" theo suy luận từ chuỗi sự kiện — sai ở cả hai vế với model đang chạy (18,8 giây cả lượt so với 13–20 giây ở lượt không chạy lại).
 - Tỉ lệ lần chạy lại CŨNG bị rút trên model thật: 0 / 2 ở lượt đo — mẫu quá nhỏ để nói gì.
 - Cuộc có lịch đã lưu và đường `/api/chat` không stream: không có bản sửa.
 - Dòng tiến độ riêng kiểu "đang kiểm lại nguồn" không làm: cần sửa giao diện; người dùng thấy lại các dòng tiến độ thường.
