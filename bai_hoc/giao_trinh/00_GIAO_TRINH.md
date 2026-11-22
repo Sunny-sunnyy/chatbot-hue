@@ -1,6 +1,6 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 14:57, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11; khuôn thêm hai mục "Quyết định và lý do" và "Nếu… thì sao" theo yêu cầu của anh trưa 22/11, bài 6 là bài mẫu · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 15:37, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11; khuôn thêm hai mục "Quyết định và lý do" và "Nếu… thì sao" theo yêu cầu của anh trưa 22/11, bài 6 là bài mẫu · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -117,12 +117,13 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 |---|---|---|
 | A | [Mọi tham số cấu hình: giá trị đang chạy, dùng để làm gì, bài nào giảng](PL_A_THAM_SO.md) | ✅ |
 | B | [Mọi tính năng đang mở và đang tắt: làm gì, một con số, bài nào giảng](PL_B_TINH_NANG.md) | ✅ |
-| C | Sổ mọi phép so sánh đã làm, kể cả phương án bị bỏ; mỗi phép so chỉ có số ở một nơi | ⬜ |
+| C | [Sổ mọi phép so sánh đã làm, kể cả phương án bị bỏ: 156 phép so gom từ các bài](PL_C_SO_PHEP_SO.md) | ✅ |
 | D | Lời dặn gửi model và mô tả từng công cụ, chép nguyên văn từ chương trình | ⬜ |
-| E | Thuật ngữ Việt – Anh | ⬜ |
-| F | Các con số chính trên một trang | ⬜ |
+| E | [Thuật ngữ Việt – Anh: 211 từ, có bảng tra ngược Anh – Việt](PL_E_THUAT_NGU.md) | ✅ |
+| F | [Các con số chính trên một trang: 90 con số kèm điều kiện đo](PL_F_CON_SO_CHINH.md) | ✅ |
 | G | [Mọi quyết định của hệ thống trên một trang: 281 quyết định gom từ bài 1–38](PL_G_MOI_QUYET_DINH.md) | ✅ |
 | H | [Mọi tình huống hỏng trên một trang: 139 tình huống gom từ bài 1–38](PL_H_MOI_TINH_HUONG_HONG.md) | ✅ |
+| I | [Mọi giới hạn đã biết trên một trang: 120 giới hạn, và bảng riêng các thứ cố ý không làm](PL_I_GIOI_HAN_DA_BIET.md) | ✅ |
 
 ## Khuôn của mỗi bài
 
