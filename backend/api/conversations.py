@@ -50,18 +50,19 @@ def stored_answer(answer: str) -> str:
 CONG_CU_KHONG_NHO_DAP = frozenset({"thoi_tiet", "ngay_lich", "lich_san", "su_kien_san", "khoang_cach", "khoang_cach_san", "lich_dang_co"})
 
 
-def dap_duoc_nho(trace, outcome: str | None, *, cuoc_co_lich: bool = False) -> bool:
+def dap_duoc_nho(trace, outcome: str | None, *, mo_cho_cuoc_co_lich: bool = False) -> bool:
     """Lượt này có được giữ câu trả lời cho lượt kế không (`chi_dap_lien_truoc`): chỉ lượt hỏi đáp thường trả lời được. KHÔNG giữ: câu cố định (từ chối,
     ngoài phạm vi, nói thật giới hạn, hỏi lại), lượt lịch / biểu mẫu / sửa lịch — chữ lịch có tên quán lấy từ bản đồ mở, model không được thấy
     (`llm/quan_lich.py`). Chữ mục web vốn không nằm trong `trace.answer`.
-    `cuoc_co_lich` (cờ `nho_dap_cuoc_co_lich`, 22/11/2026): trong cuộc ĐÃ LƯU lịch, đường thường luôn để lại `trace.sua = {n_hanh_dong: 0}` và luôn nối
+    `mo_cho_cuoc_co_lich` = GIÁ TRỊ của cờ `nho_dap_cuoc_co_lich` (22/11/2026), không phải "cuộc này có lịch" — cuộc không có lịch thì hai nhánh dưới cho cùng kết quả. Trong cuộc ĐÃ LƯU lịch, đường thường luôn để lại `trace.sua = {n_hanh_dong: 0}` và luôn nối
     nguồn lịch (`lich_dang_co`) ⇒ luật "lượt DÙNG lịch không giữ đáp" thành "cả cuộc không giữ". Bật ⇒ chỉ chặn lượt THẬT là lượt sửa lịch (có hành động
-    / khẩn cấp) hoặc câu trả lời có TRÍCH nguồn lịch; các công cụ đổi theo giờ khác vẫn chặn. Tắt ⇒ y như trước."""
+    / khẩn cấp) hoặc câu trả lời có TRÍCH nguồn lịch; các công cụ đổi theo giờ khác vẫn chặn. Câu hỏi về lịch mà model chỉ trích bài kho thì VẪN được giữ — không gây đáp cũ sai,
+    vì lịch chỉ đổi qua một lượt sửa đạt và lượt đó làm rơi đáp nhớ. Tắt ⇒ y như trước."""
     # 21/11/2026: KHÔNG giữ đáp của lượt đã dùng công cụ đổi theo giờ (thời tiết, ngày / lịch âm, khoảng cách — cùng luật `luot_luu_duoc` của bộ nhớ câu trả
     # lời giữa các cuộc). Lượt tự kiểm trên Sonnet: hỏi tiếp về "con số khả năng mưa bạn vừa đưa" — có đáp cũ trong lịch sử thì model tự từ chối 8 / 10 lần
     # (số đã nằm trong lời "không phải nguồn" nên nó không gọi lại công cụ), không có thì 0 / 6. Số dự báo phải luôn đến từ công cụ của LƯỢT NÀY.
     thuong = outcome == "success" and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None
-    if not cuoc_co_lich:
+    if not mo_cho_cuoc_co_lich:
         return thuong and trace.sua is None and not any(cong_cu["name"] in CONG_CU_KHONG_NHO_DAP for cong_cu in trace.tools)
     from llm.lich_trinh_v2 import NGUON_LICH_SOURCE  # import muộn: module này chỉ cần hằng đó khi cờ bật
     sua = trace.sua or {}

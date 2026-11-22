@@ -47,8 +47,8 @@ def test_switch_defaults_off_in_code_and_in_settings():
 ])
 def test_which_turns_keep_their_answer(ten, trace, tat, mo):
     assert dap_duoc_nho(trace, "success") is tat, ten
-    assert dap_duoc_nho(trace, "success", cuoc_co_lich=True) is mo, ten
-    assert dap_duoc_nho(trace, "refusal", cuoc_co_lich=True) is False
+    assert dap_duoc_nho(trace, "success", mo_cho_cuoc_co_lich=True) is mo, ten
+    assert dap_duoc_nho(trace, "refusal", mo_cho_cuoc_co_lich=True) is False
 
 
 def test_an_edit_turn_in_between_drops_the_remembered_answer():
@@ -58,7 +58,7 @@ def test_an_edit_turn_in_between_drops_the_remembered_answer():
     kho.append(cid, "Kể các quán chè ở Huế", "Chè Hẻm, chè Mợ Tôn Đích [1].", ghi_chu="[ghi chú tên nơi]")
     assert kho.history(cid)[-1][1].startswith(NHAN_LOI_TRUOC) and kho.history_khong_dap(cid) is not None
     sua = AnswerTrace(sua={"n_hanh_dong": 1, "n_ap": 1}, answer="Đã bỏ Chợ Đông Ba.", cited=())
-    kho.append(cid, "Bỏ Chợ Đông Ba khỏi lịch", "Đã bỏ Chợ Đông Ba." if dap_duoc_nho(sua, "success", cuoc_co_lich=True) else "", ghi_chu="")
+    kho.append(cid, "Bỏ Chợ Đông Ba khỏi lịch", "Đã bỏ Chợ Đông Ba." if dap_duoc_nho(sua, "success", mo_cho_cuoc_co_lich=True) else "", ghi_chu="")
     assert all(NHAN_LOI_TRUOC not in dap for _, dap in kho.history(cid)) and kho.history_khong_dap(cid) is None
     assert kho.history(cid)[0] == ("Kể các quán chè ở Huế", "[ghi chú tên nơi]")
 
@@ -110,7 +110,7 @@ def test_retracted_ordinary_turn_in_a_saved_plan_conversation_is_rerun_once_with
     assert trace.lich_luu == lich_2_ngay() and trace.sua == THUONG_CO_LICH  # lịch của cuộc và số đếm của bước hiểu ý lần đầu: trace chính giữ
     lan_hai = [c for c in r.calls if loai(c) == "khac"][-1]
     assert v2.TIEU_DE_NGUON_LICH in chu_gui(lan_hai)                      # lần hai vẫn thấy lịch đã lưu như mọi câu hỏi thường của cuộc đó
-    assert dap_duoc_nho(trace, "success", cuoc_co_lich=True) is True       # câu trả lời của lần chạy lại (trích bài kho) được giữ cho lượt kế
+    assert dap_duoc_nho(trace, "success", mo_cho_cuoc_co_lich=True) is True       # câu trả lời của lần chạy lại (trích bài kho) được giữ cho lượt kế
 
 
 def test_switch_off_keeps_the_old_error_in_a_saved_plan_conversation(deps):

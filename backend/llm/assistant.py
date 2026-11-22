@@ -2093,7 +2093,7 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     trích dẫn rút cả câu ⇒ người dùng thấy màn hình lỗi (lượt đo 22/11: 3 / 7 lần; cờ tắt thì là câu từ chối). Sàn "lịch sử không làm nguồn" vẫn giữ —
     thứ sửa ở đây chỉ là đoạn kết: lượt bị rút mà lịch sử ĐANG mang câu trả lời (`trace.lich_su_khong_dap` có) ⇒ gỡ chữ đã hiện (`thay_chu` rỗng), chạy lại
     cả lượt với lịch sử như khi cờ tắt, lấy kết quả lần hai làm kết quả của lượt — tệ nhất là y như bên cờ tắt. Lần hai cũng bị rút ⇒ lỗi như cũ (không
-    lặp). Không chạy lại: lượt không mang câu trả lời nhớ, lượt không bị rút, câu cố định, cuộc có lịch đã lưu (đường sửa lịch — chưa đo, giữ như cũ)."""
+    lặp). Không chạy lại: lượt không mang câu trả lời nhớ, lượt không bị rút, câu cố định, lượt SỬA lịch; cuộc có lịch đã lưu thì chỉ chạy lại câu hỏi thường khi cờ `nho_dap_cuoc_co_lich` bật (lần hai đi thẳng đường thường — xem dưới), cờ tắt ⇒ không chạy lại như trước."""
     khong_dap = trace.lich_su_khong_dap  # đọc TRƯỚC khi chạy: bước gộp trace phụ của đường song song ghi đè mọi trường không phải đầu vào của route
     async for event in _luot_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
         yield event
