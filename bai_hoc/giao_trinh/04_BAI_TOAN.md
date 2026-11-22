@@ -1,6 +1,6 @@
 # Bài 4 — Bài toán: ai dùng, hỏi gì, nhận gì, và những thứ cố ý không làm
 
-*Cập nhật 12:06, ngày 22/11/2026 · phạm vi và các luật của sản phẩm chép từ các quyết định đã ghi của chủ dự án; trạng thái tính năng đọc từ cấu hình lúc 10:17 ngày 22/11; người viết không chạy lại gì.*
+*Cập nhật 13:12, ngày 22/11/2026 · phạm vi và các luật của sản phẩm chép từ các quyết định đã ghi của chủ dự án; trạng thái tính năng đọc từ cấu hình lúc 10:17 ngày 22/11; người viết không chạy lại gì.*
 
 **Bài trước đã biết:** ba ý nền: model ngôn ngữ viết trôi chảy mà vẫn sai; RAG cho model đọc tài liệu trước khi viết; công cụ cho model nhờ chương trình làm việc phải đúng.
 **Bài này thêm:** chính sản phẩm. hue_rag làm gì, cho ai, theo luật nào, và ranh giới của nó ở đâu.
@@ -59,7 +59,7 @@ Luật thứ tư giải thích nhiều quyết định "bỏ" ở các bài sau:
 | Tiếng Anh | không hỗ trợ | chủ dự án chốt: người dùng gõ tiếng Việt có dấu |
 | Tình huống khẩn cấp (bị cướp, mất giấy tờ, số điện thoại khẩn cấp) | được xử lý như một câu hỏi thường về Huế; không có phần hướng dẫn riêng | chủ dự án chốt ngoài phạm vi |
 | Đặt phòng, đặt bàn, mua vé, gửi tin thay người dùng | nhận một câu nói thật "mình chưa làm thay được", kèm cách tự làm | hệ thống không nối với dịch vụ đặt chỗ nào |
-| Giá phòng trong phần gợi ý chỗ ở | không hiện | chủ dự án chốt |
+| Giá phòng trong phần gợi ý chỗ ở | không hiện | luật nhóm đặt từ 05/11; ngày 14/11 chủ dự án chọn cách gợi ý chỗ ở không kèm giá (bài 30) |
 | Giọng nói | không có | chủ dự án cho dừng trước mốc cuối tháng 11; còn chờ chủ dự án nói rõ là bỏ hẳn hay làm sau |
 | Nhớ sở thích của từng người giữa các lần dùng | không có; mỗi lần mở lại trang là một cuộc trò chuyện mới | chủ dự án chốt không làm |
 | Câu hỏi không thuộc văn hoá, du lịch Huế | nhận một câu cố định: "Mình chỉ hỗ trợ thông tin về văn hoá và du lịch Huế…" | ngoài phạm vi của sản phẩm |

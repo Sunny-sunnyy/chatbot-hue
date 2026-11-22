@@ -1,6 +1,6 @@
 # Bài 5 — Người dùng thấy gì: các trang của ứng dụng
 
-*Cập nhật 12:49, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
+*Cập nhật 13:12, ngày 22/11/2026 · danh sách trang, chữ trên màn hình và thứ tự các phần đọc từ chương trình giao diện sáng 22/11 (gồm lần chạy lại thêm lúc 10:50 22/11); số đo giao diện lấy từ các lần đo 14–16/11; người viết không mở ứng dụng trên trình duyệt trong buổi viết này, nên câu nào tả "lúc nào thấy gì" là đọc từ chương trình.*
 
 **Bài trước đã biết:** sản phẩm làm ba loại việc: hỏi đáp có nguồn, việc cần tính, và lên kế hoạch.
 **Bài này thêm:** ba loại việc đó nằm ở đâu trên màn hình. Đi một vòng qua các trang, rồi nhìn một lượt hỏi và một lượt lập lịch diễn ra thế nào trước mắt người dùng. Cuối nửa đầu là hai mục mới: vì sao giao diện được làm như vậy, và khi có thứ hỏng thì người dùng thấy gì.
@@ -59,7 +59,7 @@ Trong lúc chờ có nút **Dừng**. Tải lại trang là bắt đầu một c
 
 Ví dụ lập lịch của cả bộ: người dùng chọn 3 ngày, 2 người lớn, đi kiểu cân bằng, sở thích di tích, rồi bấm xếp lịch. Sau khoảng 0,2 giây khung lịch đã hiện: ba ngày, mỗi ngày chia sáng, chiều, tối, các điểm đã có tên và giờ. Ở mỗi điểm lúc đó có một vạch "đang viết…"; khoảng 9 giây sau thì đủ câu mô tả cho mọi điểm. Ngày 1 của lịch thật đó: sáng Đại Nội (8:00 – 10:30), chiều chùa Thiên Mụ rồi Kinh thành, tối chợ Đông Ba.
 
-Mỗi điểm ban ngày có giờ; mỗi điểm có một câu mô tả lấy từ kho và ảnh (40 trên 41 điểm có ảnh). Trong từng ngày có gợi ý quán cho bữa trưa và bữa tối. Dưới lịch có một dòng "Nguồn:" chung, bản đồ ghim các điểm theo thứ tự, ô chỗ ở, và các nút để sao chép, tải về, in, tải PowerPoint (đủ ở mục "Chi tiết để tra").
+Mỗi điểm có giờ và một câu mô tả lấy từ kho và ảnh (40 trên 41 điểm có ảnh). Trong từng ngày có gợi ý quán cho bữa trưa và bữa tối. Dưới lịch có một dòng "Nguồn:" chung, bản đồ ghim các điểm theo thứ tự, ô chỗ ở, và các nút để sao chép, tải về, in, tải PowerPoint (đủ ở mục "Chi tiết để tra").
 
 Muốn sửa, người dùng nhắn ở khung Trợ lý Huế, ví dụ "đổi chỗ ngày 1 với ngày 2". Lịch trên trang đổi theo, hoặc hệ thống nói vì sao không đổi được (bài 31).
 
@@ -218,7 +218,7 @@ Nút "Thử lại" khi không nối được máy chủ gửi lại đúng câu 
 ## Chi tiết để tra
 
 - Dưới một lịch đã lập: ô chỗ ở khi người dùng đã chọn hạng sao (chưa chọn thì là một đường link sang trang Chỗ ở); các nút sao chép lịch, tải về dạng chữ, thêm vào ứng dụng lịch (khi đã chọn ngày đi), in hoặc lưu PDF, tải PowerPoint.
-- Lượt lập lịch ví dụ là lượt thật ngày 21/11/2026 với Claude Sonnet 5.5: khung lịch sau 0,2 giây, xong sau 9,3 giây, một lần gọi model (để viết câu mô tả), 11 điểm trong 3 ngày, trong đó 3 điểm buổi tối (chợ, phố đi bộ) không có giờ.
+- Lượt lập lịch ví dụ là lượt thật ngày 21/11/2026 với Claude Sonnet 5.5: khung lịch sau 0,2 giây, xong sau 9,3 giây, một lần gọi model (để viết câu mô tả), 11 điểm trong 3 ngày, trong đó 3 điểm buổi tối (chợ, phố đi bộ); điểm buổi tối cũng có giờ, ví dụ chợ Đông Ba 18:00 – 23:00.
 - Luật chọn ảnh cạnh câu trả lời: một ảnh khi mọi nguồn được trích thuộc cùng một bài về một nơi hoặc một món; trích nhiều bài thì chỉ lấy bài có tên xuất hiện trong câu hỏi hoặc câu trả lời, nhiều nhất 3 ảnh; lượt có mục web hoặc có lịch thì không hiện ảnh.
 - Dưới câu trả lời có trích bài về chỗ ở còn có thẻ chỗ ở, đứng giữa ảnh và dòng "Nguồn:".
 - Từ tối 21/11, bước kiểm con số (thời tiết, khoảng cách) ở lượt không có lịch không rút cả câu: chương trình gỡ câu chứa số lạ và thay chữ trên màn hình, không có nút "Thử lại" (bài 24).
