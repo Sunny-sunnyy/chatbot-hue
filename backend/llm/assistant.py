@@ -646,6 +646,18 @@ def _the_noi_kwargs(trace: AnswerTrace, flags: "AssistantFlags", query: str) -> 
     return {"the_noi_fn": lambda: the_noi_sau_tim(trace, flags, query)} if flags.the_noi else {}
 
 
+def bai_da_tim(trace: AnswerTrace) -> list[dict]:
+    """Các BÀI kho đã có đoạn thật trong sổ nguồn của lượt — tên hiển thị + đường dẫn bài, không trùng, theo thứ tự vào ngữ cảnh. Đi kèm sự kiện
+    `searched` của lõi stream để giao diện hiện "đã tìm thấy" trong lúc chờ (22/11/2026: tin dài im 17–20 giây sau lần tìm cuối, màn hình chỉ có một dòng).
+    KHÔNG tính nguồn do code dựng: thẻ nơi (16 nơi mỗi lượt ở tin gia đình, phần lớn không ai hỏi), mục lục, gần một điểm, khoảng cách, lịch, thời tiết —
+    chúng không phải "bài vừa tìm thấy". Đây là bài ĐÃ TÌM THẤY, chưa chắc được trích trong câu trả lời: giao diện phải ghi nhãn đúng như vậy."""
+    bai = {}
+    for src in trace.so_nguon:
+        if src.source.endswith(".md") and src.heading_path not in ((thn.MUC_THE,), (thn.MUC_VE,)):
+            bai.setdefault(src.source, src.title)
+    return [{"title": ten, "source": rel} for rel, ten in bai.items()]
+
+
 # Mọi công cụ của trợ lý, một chỗ (test ranh giới khoá tên + tham số; B2 bọc `function_tool` từ đây).
 TOOLS = {"tim_kho": tim_kho}
 
@@ -2017,7 +2029,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             today = _today(flags, trace)
             tool_prompt = await _before_model(query, retrieval_service, context_builder, generator, trace, recorder, today, flags)
             if trace.packed is not None:  # V2 không tìm trước (B2 D5): `searching` / `searched` đến từ lần gọi công cụ
-                yield "status", {"stage": "searched", "n_sources": len(trace.packed.sources)}
+                yield "status", {"stage": "searched", "n_sources": len(trace.packed.sources), "bai": bai_da_tim(trace)}
             if trace.fixed_outcome is not None:  # ngữ cảnh không có nguồn ⇒ từ chối, không gọi model
                 yield "delta", trace.answer
                 async for event in _web_stream(query, generator, trace, flags, tim_web):  # B6: đúng ca "kho không có"
@@ -2084,7 +2096,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                             yield "status", {"stage": "lich_trinh", **buoc}
                         da_phat_buoc = len(trace.buoc_lich)
                     elif cong_cu not in ("thoi_tiet", "ngay_lich", "khoang_cach", "gan_diem"):  # B5b / T1: kết quả dự báo / ngày không phải "đã tìm kho"
-                        yield "status", {"stage": "searched", "n_sources": len(trace.so_nguon)}
+                        yield "status", {"stage": "searched", "n_sources": len(trace.so_nguon), "bai": bai_da_tim(trace)}
         except Exception as exc:
             if trace.tool_error is not None:  # lỗi tìm trong công cụ: SDK có thể bọc lại ⇒ ném đúng lỗi gốc (route ra câu lỗi như B1)
                 raise trace.tool_error from None

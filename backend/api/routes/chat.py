@@ -679,6 +679,8 @@ class StreamEvents:
     def status(self, data: dict) -> bytes:
         if self.metrics["first_event_ms"] is None:
             self.metrics["first_event_ms"] = elapsed_ms(self.started)
+        if "bai" in data:  # sự kiện `searched`: các bài đã tìm thấy ⇒ cùng khuôn với danh sách nguồn (`title`, `bai_id` mở trang Khám phá; không phải bài của cổng ⇒ null)
+            data = {**data, "bai": [{"title": b["title"], "bai_id": b["source"] if b["source"] in self.bai_ids else None} for b in data["bai"]]}
         return sse_event("status", data)
 
     def delta(self, text: str) -> bytes:
