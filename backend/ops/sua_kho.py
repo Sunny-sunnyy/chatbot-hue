@@ -36,6 +36,7 @@ _SO = re.compile(
     r"(?P<dv>\s?(?:triệu|nghìn|ngàn|k|K)(?![\w]))?(?!\d|[.,]\d)"
 )
 _HE_SO = {"triệu": 1_000_000, "nghìn": 1_000, "ngàn": 1_000, "k": 1_000}
+_DA_CO_DON_VI_TIEN = re.compile(r"\s*(?:đồng|đ|vnd|vnđ)(?![\w ]*\bthời\b)(?!\w)", re.I)  # chữ đơn vị tiền đứng ngay sau con số (+ đơn vị nhân)
 _PHU_THUOC = re.compile(r"tổng|tiết kiệm|cộng|chênh|so với|còn lại|giảm|=", re.I)
 _TIEU_DE = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 
@@ -297,6 +298,8 @@ def dong_moi(dong: str, cac_lan: list[LanXuatHien], gia_moi: int) -> str:
     """Dòng sau khi thay đúng các chuỗi số được duyệt (thay từ phải sang trái để vị trí còn đúng); mọi chữ khác giữ nguyên."""
     for lan in sorted(cac_lan, key=lambda x: -x.bat_dau):
         thay, ca_don_vi = viet_lai(lan.so, lan.dv, gia_moi)
+        if ca_don_vi and _DA_CO_DON_VI_TIEN.match(dong, lan.het_don_vi):
+            thay = thay.removesuffix(" đồng")  # "250 nghìn đồng" ⇒ 250.500: chữ "đồng" sẵn có phía sau được giữ, không viết thêm lần nữa
         dong = dong[:lan.bat_dau] + thay + dong[lan.het_don_vi if ca_don_vi else lan.ket_thuc:]
     return dong
 
@@ -402,14 +405,16 @@ def cau_chep_bi_doi(duong: Path, bai_cu: dict[str, str], bai_moi: dict[str, str]
                   for bai in bai_moi if chuoi in bai_cu[bai] and chuoi not in bai_moi[bai])
 
 
-def cham_file_dieu_kien(duong: Path, de_xuat: DeXuat) -> list[str]:
-    """Bài được sửa mà dòng cũ nằm trong chữ nguyên văn của file điều kiện của bộ chia đoạn ⇒ sau khi áp phải sửa cả file đó, không thì chia đoạn
-    báo lỗi (`guides/full_corpus_rag.md`). Trả tên các bài như vậy."""
+def cham_file_dieu_kien(duong: Path, cac_lan: list[LanXuatHien]) -> list[str]:
+    """Bài có dòng sẽ sửa nằm trong chữ NGUYÊN VĂN mà file điều kiện của bộ chia đoạn chép lại — cả câu điều kiện (`condition.exact_text`) lẫn các
+    khối đích (`targets[*].exact_text`, nơi chép cả bảng giá; soát khác hãng 22/11: bản đầu chỉ đọc câu điều kiện nên sót mọi bảng). Bộ chia đoạn
+    so khớp từng ký tự ⇒ bài đổi mà file đó chưa đổi là lỗi lúc cập nhật chỉ mục (`guides/full_corpus_rag.md`). Trả tên các bài như vậy."""
     if not duong.exists():
         return []
-    dieu_kien = [(d.get("source", ""), d.get("condition", {}).get("exact_text", "")) for d in json.loads(duong.read_text(encoding="utf-8"))]
+    dieu_kien = [(d.get("source", ""), khoi.get("exact_text", "")) for d in json.loads(duong.read_text(encoding="utf-8"))
+                 for khoi in (d.get("condition", {}), *d.get("targets", []))]
     ra = []
-    for lan in de_xuat.cac_lan:
+    for lan in cac_lan:
         if lan.phan_doan == "dung" and any(lan.bai in nguon and lan.so in chu and (lan.dong.strip() in chu or chu in lan.dong)
                                            for nguon, chu in dieu_kien if chu):
             ra.append(lan.bai)
@@ -493,7 +498,7 @@ def viet_ban_de_xuat(de_xuat: DeXuat, *, mo_ta: str, gia_cu: int, gia_moi: int, 
         viec.append(f"Bảng dữ liệu `{ten}` chép nguyên văn một câu của bài `{bai}` mà câu đó vừa được sửa ⇒ sau khi duyệt phải sửa bảng cho khớp "
                     f"(không thì trợ lý trả lời theo câu cũ ở chỗ dùng bảng): «{cau[:200]}»")
     for bai in cham_dieu_kien:
-        viec.append(f"Bài `{bai}` có dòng được sửa nằm trong file điều kiện của bộ chia đoạn (`meta/full_corpus_conditions.json`) — phải sửa cả file đó cho khớp trước khi cập nhật chỉ mục.")
+        viec.append(f"Bài `{bai}` có dòng được sửa nằm trong file điều kiện của bộ chia đoạn (`meta/full_corpus_conditions.json`, chép nguyên văn cả khối / bảng) — lệnh duyệt sẽ DỪNG với đề xuất này: bài và file đó phải đổi CÙNG LÚC, lệnh không sửa file đó. Sửa tay con số ở cả hai nơi, lưu bản ghi git, rồi chạy `uv run python -m ingestion.cap_nhat_rieng`.")
     viec += [f"Điều lạ khi model trả lời: {d}." for d in dieu_la]
     ra += [f"- {v}" if not v.startswith("  - ") else v for v in viec] or ["Không có gì thêm."]
     ra += ["", "## 5. Duyệt", "",

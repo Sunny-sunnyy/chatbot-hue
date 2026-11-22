@@ -97,6 +97,21 @@ def test_mot_dong_hai_lan_chi_thay_lan_duoc_duyet():
     assert sua_kho.dong_moi(cac_lan[0].dong, cac_lan[1:], 250_000) == "Lăng A 200.000 đồng, Thành Mẫu 250.000 đồng"
 
 
+@pytest.mark.parametrize("dong, gia_cu, gia_moi, mong", [
+    ("Giá vé là 250 nghìn đồng cho người lớn.", 250_000, 250_500, "Giá vé là 250.500 đồng cho người lớn."),
+    ("Chi phí khoảng 1,5 triệu đồng/người.", 1_500_000, 1_555_000, "Chi phí khoảng 1.555.000 đồng/người."),
+    ("Vé 250k đ một lượt", 250_000, 250_500, "Vé 250.500 đ một lượt"),
+    ("Vé 250k VNĐ", 250_000, 250_500, "Vé 250.500 VNĐ"),
+    ("Vé 250k một lượt", 250_000, 250_500, "Vé 250.500 đồng một lượt"),          # sau số không có chữ đơn vị tiền ⇒ vẫn viết đủ "đồng"
+    ("Vé 250k, đồng thời tặng nước", 250_000, 250_500, "Vé 250.500 đồng, đồng thời tặng nước"),  # "đồng thời" không phải đơn vị tiền
+    ("Chi phí khoảng 1,5 triệu đồng/người.", 1_500_000, 1_800_000, "Chi phí khoảng 1,8 triệu đồng/người."),  # viết được theo kiểu cũ ⇒ như trước
+])
+def test_gia_moi_le_don_vi_khong_lap_chu_dong(dong, gia_cu, gia_moi, mong):
+    """Soát khác hãng 22/11 (Gemini, điểm 2): dòng kho viết "<số> nghìn / triệu đồng", giá mới không tròn theo đơn vị đó ⇒ code viết đủ số kèm
+    "đồng" rồi giữ nguyên chữ "đồng" sẵn có phía sau ⇒ "250.500 đồng đồng" vào kho."""
+    assert sua_kho.dong_moi(dong, sua_kho.quet_bai("a.md", dong, gia_cu), gia_moi) == mong
+
+
 def test_model_bo_sot_bia_ma_hoac_tra_hai_lan_thi_khong_vao_file_va():
     cac_lan = sua_kho.quet_bai("a.md", "# A\n\nThành Mẫu 200.000\n\nLăng B 200.000\n\nQuán C 200.000\n\n## Nguồn dữ liệu\n\n- Vé 200.000 (đối chiếu ngày 1/1/2026): x", 200_000)
     for n, lan in enumerate(cac_lan, 1):
@@ -152,12 +167,17 @@ def test_duyet_thu_ap_dung_va_tu_choi_khi_bai_da_doi(repo, monkeypatch, capsys):
     assert duyet_sua_kho.main([str(ra), "--goc", str(repo), "--thu"]) == 2  # duyệt lần hai: bài đã khác lúc đề xuất ⇒ từ chối
 
 
-def test_thu_ma_quen_goc_thi_khong_cham_kho_cua_repo_chua_code(repo, monkeypatch):
-    """Review E 22/11 (F1): `--thu` không kèm `--goc` từng áp file vá vào kho của chính repo chứa code rồi in "Chế độ thử"."""
+@pytest.mark.parametrize("tham_so_thu", [["--thu"], ["--collection-thu", "thu_col", "--ban-ghi-thu", "ban_ghi_thu"]])
+def test_thu_ma_quen_goc_thi_khong_cham_kho_cua_repo_chua_code(repo, monkeypatch, tham_so_thu):
+    """Review E 22/11 (F1): `--thu` không kèm `--goc` từng áp file vá vào kho của chính repo chứa code rồi in "Chế độ thử". Soát khác hãng 22/11
+    (Gemini, điểm 1): cùng kiểu quên `--goc` với cặp `--collection-thu` / `--ban-ghi-thu` từng áp + LƯU BẢN GHI GIT vào kho của repo chứa code
+    rồi chỉ cập nhật collection thử."""
+    from ingestion import cap_nhat_rieng
     _, ra, _ = de_xuat(repo, monkeypatch)
     monkeypatch.setattr(duyet_sua_kho, "GOC_REPO", repo)  # coi repo tạm là repo chứa code ⇒ `--goc` mặc định trỏ vào nó
-    assert duyet_sua_kho.main([str(ra), "--thu"]) == 2
-    assert git(repo, "status", "--porcelain", "--", "knowledge-base-hue") == ""
+    monkeypatch.setattr(cap_nhat_rieng, "dong_bo", lambda **k: {"da_khop": True, "bai_doi": [], "so_doan_tinh_lai": 0, "giay": 0})  # không chạm Qdrant
+    assert duyet_sua_kho.main([str(ra), *tham_so_thu]) == 2
+    assert git(repo, "status", "--porcelain", "--", "knowledge-base-hue") == "" and git(repo, "log", "--oneline").count("\n") == 1
 
 
 def test_file_va_co_them_file_ngoai_de_xuat_thi_khong_ap(repo, monkeypatch):
@@ -207,3 +227,23 @@ def test_duyet_dung_truoc_khi_ap_khi_cong_server_con_mo(repo, monkeypatch, capsy
         assert duyet_sua_kho.main([str(ra)]) == 3
     assert git(repo, "status", "--porcelain", "--", "knowledge-base-hue") == "" and git(repo, "log", "--oneline").count("\n") == 1
     assert "server đang chạy" in capsys.readouterr().err
+
+
+def test_gia_nam_trong_bang_ma_file_dieu_kien_chep_thi_de_xuat_bao_va_duyet_dung(repo, monkeypatch, capsys):
+    """Soát khác hãng 22/11 (Gemini Carbon, điểm 1): file điều kiện của bộ chia đoạn chép nguyên văn cả BẢNG GIÁ ở `targets[*].exact_text`; phép dò cũ
+    chỉ đọc `condition.exact_text` ⇒ bản đề xuất không báo, lệnh duyệt áp + lưu bản ghi git rồi bước chia đoạn mới báo lỗi (kho đã sửa, chỉ mục cũ).
+    Nay: bản đề xuất nêu tên bài; lệnh duyệt DỪNG trước khi áp (bài và file điều kiện phải đổi cùng lúc — lệnh này không sửa file điều kiện)."""
+    import json
+    bang = "| Điểm | Người lớn | Trẻ em |\n|---|---|---|\n| **Thành Mẫu** | 200.000 | 40.000 |\n| Vườn Đông | 150.000 | 30.000 |"
+    assert bang in VE
+    meta = repo / "knowledge-base-hue" / "meta"
+    meta.mkdir()
+    (meta / "full_corpus_conditions.json").write_text(json.dumps([{
+        "source": "travel/tickets/Vé tham quan.md",
+        "condition": {"heading_path": ["Vé mẫu", "Vé lẻ"], "block_type": "paragraph", "exact_text": "Giá áp dụng cho khách đi lẻ."},
+        "targets": [{"heading_path": ["Vé mẫu", "Vé lẻ"], "block_type": "table", "exact_text": bang}]}], ensure_ascii=False), encoding="utf-8")
+    _, ra, _ = de_xuat(repo, monkeypatch)
+    assert "full_corpus_conditions.json" in (ra / "DE_XUAT.md").read_text(encoding="utf-8").split("## 4.")[1]
+    assert duyet_sua_kho.main([str(ra), "--goc", str(repo)]) == 2
+    assert git(repo, "status", "--porcelain", "--", "knowledge-base-hue/travel") == "" and git(repo, "log", "--oneline").count("\n") == 1
+    assert "file điều kiện" in capsys.readouterr().err
