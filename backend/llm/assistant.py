@@ -46,6 +46,7 @@ from llm.lam_thay import nho_lam_thay
 from llm import gan_diem as gd
 from llm import khoang_cach as kc
 from llm import liet_ke as lk
+from llm import the_noi as thn
 from llm.danh_sach import CAU_DANH_SACH, hoi_ve_mot_noi, xin_danh_sach
 from llm.len_lich import CAU_DAN_TRANG, nho_len_lich
 from llm.luu_y_nguon import dong_tam_ngung, nhan_nguon
@@ -241,6 +242,12 @@ class AssistantFlags:
     # đo đạt; tắt ⇒ danh sách công cụ gửi model giống byte.
     liet_ke_bai: bool = False
     muc_luc: "tuple[lk.Bai, ...] | None" = field(default=None, compare=False, repr=False)
+    # 22/11/2026 (việc X10; lý do + số đếm: `llm/the_noi.py`, test `tests/test_the_noi.py`): THẺ NƠI — ở tin nhiều ý có chữ hỏi hẹp (giờ, địa chỉ…), sau
+    # mỗi lần tìm kho code gắn cho từng nơi được nhắc đúng tên mà bài riêng chưa có trong sổ nguồn một nguồn chép dòng địa chỉ / giờ từ chính bài đó (+ hàng
+    # vé lẻ) ⇒ model thôi ghi "tư liệu chưa có giờ mở cửa…" cho thứ kho có. Không gọi model, không tìm thêm. Bảng thẻ nạp ở rìa từ các file của kho; không có
+    # bảng ⇒ không làm gì. TẮT ⇒ chuỗi gửi model giống byte; tin một ý / tin không có chữ hỏi hẹp ⇒ giống byte cả khi mở.
+    the_noi: bool = False
+    the_noi_bang: "thn.Bang | None" = field(default=None, compare=False, repr=False)
     # 17/11 (plan `2026-11-17-khoang-cach-tinh-san-plan.md`): câu đang gõ có từ khoá + đúng hai tên điểm của bảng ⇒ code tra bảng và nối nguồn khoảng
     # cách TRƯỚC lần gọi model đầu, lượt đó không đưa công cụ `khoang_cach` (bớt một lần gọi model ≈ 1,8 s trên đường chữ đầu). TẮT tới khi đo đạt
     khoang_cach_tinh_san: bool = False
@@ -325,13 +332,15 @@ class AssistantFlags:
         toa_do = lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang_toa_do) if values["ban_do_lich"] and bang_toa_do is not None else None
         sinh = settings.get("full_corpus_generation") or {}
         cong = (sinh.get("bedrock") or {}) if sinh.get("provider") == "bedrock" else config  # cổng công cụ chọn theo provider đang chạy
+        muc_luc = lk.nap_muc_luc(*discover_full_corpus_files(settings)) if values["liet_ke_bai"] or values["the_noi"] else None
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), cong_cong_cu=str(cong.get("cong_cong_cu", "tu_khoa")), so_lan_tim_kho=int(config.get("so_lan_tim_kho", MODEL_SEARCH_LIMIT)),
                    bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
                    khoang_cach_bang=kc.nap_bang(BACKEND_DIR / config["khoang_cach_bang"], BACKEND_DIR / config["lich_trinh_bang_v2"])
                    if values["khoang_cach"] else None,
                    su_kien_bang=sk.nap_bang(BACKEND_DIR / config["su_kien_bang"]) if values["su_kien_theo_ngay"] else None,
-                   muc_luc=lk.nap_muc_luc(*discover_full_corpus_files(settings)) if values["liet_ke_bai"] else None,
+                   muc_luc=muc_luc if values["liet_ke_bai"] else None,
+                   the_noi_bang=thn.dung_bang(muc_luc) if values["the_noi"] else None,
                    len_ke_hoach_o_hien=tuple(config.get("len_ke_hoach_o_hien") or ()),
                    len_ke_hoach_so_thich_an=tuple(config.get("len_ke_hoach_so_thich_an") or ()),
                    bang_lich_v2=bang_v2,
@@ -365,7 +374,7 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
                     if name not in ("lan_tim_dau", "cong_cong_cu", "so_lan_tim_kho", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
                                      "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do",
-                                     "khoang_cach_bang", "su_kien_bang", "muc_luc"))
+                                     "khoang_cach_bang", "su_kien_bang", "muc_luc", "the_noi_bang"))
 
 
 def elapsed_ms(started: float) -> float:
@@ -468,6 +477,7 @@ class AnswerTrace:
     # cờ `liet_ke_bai`: mã nguồn "mục lục" đã đăng ⇒ các bài nó liệt kê (chỉ RAM). `set_notice` dùng để bài CÓ TÊN trong câu trả lời vẫn kéo theo dòng "có thể đã
     # thay đổi" và dòng cảnh báo tạm ngừng của chính bài đó, dù câu trả lời trích mục lục thay cho bài (review 21/11: một lượt mất dòng ghi chú).
     muc_luc_bai: dict = field(default_factory=dict)
+    the_noi: list[str] = field(default_factory=list)  # công tắc `the_noi`: tên các nơi đã được gắn thẻ trong lượt (đếm trần; sổ vết ghi để soát nhầm nơi)
     # Sổ vết debug (`core/so_vet.py`): nội dung chỉ giữ trong RAM của lượt — `tim` (từng lần tìm), `web` (câu gửi tra web + sổ web), `sua`
     # (hành động model hiểu), `loi`. Route ghi ra file CHỈ khi cờ `so_vet` bật; không vào `chat_metrics`, không vào chuỗi gửi model.
     vet: dict = field(default_factory=dict)
@@ -569,11 +579,35 @@ def cac_phan_cau_tim(cau_tim: str) -> tuple[str, ...]:
     return tuple(phan[:TRAN_PHAN_CAU_TIM]) if len(phan) >= 2 else ()
 
 
+def the_noi_sau_tim(trace: AnswerTrace, flags: "AssistantFlags", query: str) -> str:
+    """Công tắc `the_noi`, gọi ngay sau MỖI lần tìm kho của lượt (lần đầu của code lẫn lần của model): đăng thẻ của các nơi vừa có tên trong ngữ cảnh
+    (cả nguồn do công cụ liệt kê / gần-một-điểm dựng trước đó — 22 / 22 cặp ở tin nhiều ý đã ghi có tên tới từ hai công cụ này rồi mới tới một lần tìm)
+    thành nguồn của sổ nguồn, trả chữ các nguồn ấy để nối sau kết quả tìm. "" = không có gì để gắn / không thuộc cổng (tin một ý, tin không có chữ hỏi
+    hẹp, công tắc tắt, không có bảng) ⇒ nơi gọi không nối gì, chuỗi gửi model giữ nguyên."""
+    if not (flags.the_noi and flags.the_noi_bang is not None and trace.nhieu_y and thn.HOI_HEP.search(query)):
+        return ""
+    bang = flags.the_noi_bang
+    noi, ve = thn.the_moi(bang, "\n\n".join(trace.context_parts), frozenset(src.source for src in trace.so_nguon), thn.TRAN_THE - len(trace.the_noi))
+    nguon = [(n.ten, (thn.MUC_THE,), n.dong, n.rel) for n in noi if n.dong]
+    if ve:  # hàng vé lẻ chép từ bài vé ⇒ nguồn của bài vé (mã nguồn mở đúng bài chứa con số)
+        nguon.append((bang.ve_tieu_de, (thn.MUC_VE,), (bang.ve_dau, *ve), bang.ve_rel))
+    if not nguon:
+        return ""
+    dau = len(trace.so_nguon) + 1
+    the = [PackedSource(id=dau + i, title=ten, heading_path=muc, excerpts=dong, source=rel) for i, (ten, muc, dong, rel) in enumerate(nguon)]
+    trace.so_nguon.extend(the)
+    trace.the_noi.extend(n.ten for n in noi)
+    chu = "\n\n".join(FullCorpusContextBuilder._block(src) for src in the)
+    trace.context_parts.append(chu)  # lần tìm sau đếm ngân sách cả chữ thẻ; lần viết lại của lưới (`_viet_lai_het_luot`) mang thẻ theo
+    return chu
+
+
 def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str,
-                  search_limit: int = MODEL_SEARCH_LIMIT, tach_cau_tim: bool = False):
+                  search_limit: int = MODEL_SEARCH_LIMIT, tach_cau_tim: bool = False, the_noi_fn=None):
     """Hàm `tim_kho` của **một lượt** cho trợ lý có công cụ (B2 D5): generator bọc thành công cụ SDK (lõi không import SDK — T-3).
     Model chỉ thấy `cau_tim`; trần `MODEL_SEARCH_LIMIT` đếm ở đây; lần vượt ⇒ chữ "đã hết lượt", không tìm. Lỗi tìm / ngữ cảnh: ghi
-    `trace.tool_error` rồi ném (lõi ném lại đúng lỗi gốc ⇒ route ra câu lỗi như B1, không đưa lỗi cho model)."""
+    `trace.tool_error` rồi ném (lõi ném lại đúng lỗi gốc ⇒ route ra câu lỗi như B1, không đưa lỗi cho model).
+    `the_noi_fn` (công tắc `the_noi`): hàm không tham số trả chữ thẻ nơi mới sau lần tìm này — nối SAU kết quả tìm; None ⇒ y như trước."""
 
     async def tim_kho(cau_tim: str) -> str:
         """Tìm thêm Bằng chứng trong kho tri thức Huế bằng một câu tìm đứng một mình; trả các nguồn mới, đánh số tiếp theo.
@@ -596,9 +630,17 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
         except RetrievalDependencyError as exc:
             trace.tool_error = exc
             raise
+        the = the_noi_fn() if the_noi_fn is not None else ""
+        if the:  # lần tìm không ra đoạn mới vẫn có thể làm lộ tên nơi cần thẻ (tên tới từ công cụ khác) ⇒ chỉ trả thẻ, không kèm câu "không có nguồn mới"
+            return f"{packed.text}\n\n{the}" if packed.text else the
         return packed.text or TOOL_NO_NEW_TEXT
 
     return tim_kho
+
+
+def _the_noi_kwargs(trace: AnswerTrace, flags: "AssistantFlags", query: str) -> dict:
+    """Tham số thêm cho `tool_for_turn` — chỉ truyền khi công tắc `the_noi` mở (tắt ⇒ gọi y như trước; test thay `tool_for_turn` không cần tham số mới)."""
+    return {"the_noi_fn": lambda: the_noi_sau_tim(trace, flags, query)} if flags.the_noi else {}
 
 
 # Mọi công cụ của trợ lý, một chỗ (test ranh giới khoá tên + tham số; B2 bọc `function_tool` từ đây).
@@ -1295,6 +1337,9 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
         context = f"{context}\n\n{_nguon_khoang_cach_san(trace, flags.khoang_cach_bang, cap)}"
     if flags.lich_vao_hoi_thuong and trace.lich_luu is not None and trace.fixed_outcome is None:  # lượt biểu mẫu không qua hàm này
         context = f"{context}\n\n{_nguon_lich_dang_co(trace, flags.bang_lich_v2)}"
+    the = the_noi_sau_tim(trace, flags, query) if trace.fixed_outcome is None else ""  # sau các nguồn code dựng ở trên: bộ dò đọc cả chúng
+    if the:
+        context = f"{context}\n\n{the}"
     return build_assistant_input(query, context, today)
 
 
@@ -1507,7 +1552,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
         if flags.uses_tools:
             instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
             tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho,
-                                    tach_cau_tim=flags.tach_cau_tim_model)
+                                    tach_cau_tim=flags.tach_cau_tim_model, **_the_noi_kwargs(trace, flags, query))
             extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
             try:
                 trace.generated = await generator.generate_with_tools(tool_prompt, tool_fn, call_log, **_history_kwargs(trace), **extra)
@@ -1981,7 +2026,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 pending_generating = True
                 instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
                 tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho,
-                                    tach_cau_tim=flags.tach_cau_tim_model)
+                                    tach_cau_tim=flags.tach_cau_tim_model, **_the_noi_kwargs(trace, flags, query))
                 extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
                 result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace), **extra)
                 if flags.giu_chu_toi_kiem and getattr(generator, "chu_ve_mot_lan", False):

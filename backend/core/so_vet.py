@@ -38,6 +38,7 @@ def ban_ghi(duong: str, metrics: dict, trace=None, cau_go: str | None = None, ca
             tim_kho=vet.get("tim", []),
             cau_tim_model=list(lay("model_queries", [])),
             ngu_canh=list(lay("context_parts", [])),
+            the_noi=list(lay("the_noi", [])),  # công tắc `the_noi`: tên các nơi được gắn thẻ trong lượt (chữ thẻ nằm trong `ngu_canh`)
             cong_cu=list(lay("tools", [])),
             goi_model=list(lay("llm_calls", [])),
             tra_loi={"chu": lay("answer"), "ket_qua_co_dinh": lay("fixed_outcome"), "ghi_chu": lay("notice"),
