@@ -131,8 +131,11 @@ export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
               <li>Trợ lý có thể sai. Giờ mở cửa, giá vé, lịch lễ hội có thể đã đổi — kiểm lại trước khi đi.</li>
               {/* quán gần từng điểm chỉ có trong lịch bản 2 (bảng quán từ bản đồ mở); hỏi đáp chỉ biết quán có trong kho */}
               {tinhNang?.len_ke_hoach_v2 && <li>Quán ăn gần từng điểm chỉ có trong lịch ở trang Lên kế hoạch; khi hỏi đáp, trợ lý chỉ biết các quán có trong kho.</li>}
-              <li>{banDo ? "Chưa có lịch sự kiện theo ngày. Bản đồ lịch trình chỉ ghim các điểm tham quan đã có toạ độ."
-                : "Chưa có bản đồ và lịch sự kiện theo ngày."}</li>
+              {/* khớp `backend/llm/su_kien.py` (công tắc `su_kien_theo_ngay`, mở 21/11/2026): ô hỏi đáp tra được lễ hội có ngày hằng năm + hoạt động lặp theo
+                  tuần; không có sự kiện một lần, không có lễ hội bài kho không ghi ngày, không hiện trong lịch Lên kế hoạch — tắt công tắc đó thì sửa dòng này */}
+              <li>Lễ hội, sự kiện theo ngày: khi hỏi đáp, trợ lý chỉ biết lễ hội có ngày hằng năm và hoạt động lặp theo tuần ghi trong kho — chưa có sự kiện
+                tổ chức một lần; lịch ở trang Lên kế hoạch chưa gồm lễ hội, sự kiện.</li>
+              <li>{banDo ? "Bản đồ lịch trình chỉ ghim các điểm tham quan đã có toạ độ." : "Chưa có bản đồ."}</li>
               <li>Câu hỏi ngoài chủ đề Huế được báo là ngoài phạm vi.</li>
             </ul>
           </div>
