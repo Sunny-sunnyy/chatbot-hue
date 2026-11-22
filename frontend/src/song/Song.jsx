@@ -41,7 +41,7 @@ const RONG = 250, RONG_HEP = 84;
 const TAM_HEP = SONG_DOC;
 // Sáu bến ở màn rộng, đặt tay theo hình sông: vị trí dọc dòng (0–1), bờ nào ("a" = bờ trái theo chiều chảy, "b" = bờ phải) và nhãn nằm phía nào của bến —
 // chọn sao cho chữ luôn nằm trên nền sương, không đè ảnh và không đè cột chữ bên trái.
-const T_RONG = [.10, .37, .435, .60, .80, .93], BO = ["b", "a", "a", "b", "a", "a"], NHAN = ["duoi", "trai", "trai", "phai", "trai", "trai"];
+const T_RONG = [.06, .37, .435, .60, .80, .93], BO = ["b", "a", "a", "b", "a", "a"], NHAN = ["duoi", "trai", "trai", "phai", "trai", "trai"];
 const T_HEP = [.1, .26, .42, .58, .74, .9];
 
 export function HeroSong({ nhanh, thoiTiet, ...hoi }) {

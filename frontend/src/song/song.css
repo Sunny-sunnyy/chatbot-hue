@@ -103,7 +103,7 @@ html .brand svg, html .brand img { color: var(--color-river); }
 .h1-ben:hover .h1-cham, .h1-ben:focus-visible .h1-cham { transform: scale(1.12); }
 .h1-nhan { position: absolute; right: 44px; top: -22px; width: max-content; max-width: 240px; display: flex; flex-direction: column; text-align: right; line-height: 1.25; }
 .h1-nhan-phai .h1-nhan { right: auto; left: 44px; text-align: left; }
-.h1-nhan-duoi .h1-nhan { right: -32px; top: 40px; max-width: 280px; }
+.h1-nhan-duoi .h1-nhan { right: -32px; top: 42px; max-width: 190px; }  /* bến đầu: nhãn hẹp, nằm trong khoảng nền dưới bờ sông — không đè lên ảnh */
 .h1-nhan b { font-size: 18px; font-weight: 600; white-space: nowrap; }
 .h1-ben:hover .h1-nhan b, .h1-ben:focus-visible .h1-nhan b { text-decoration: underline; text-decoration-color: var(--color-sun); text-decoration-thickness: 3px; text-underline-offset: 4px; }
 .h1-nhan small { font-size: 14px; color: var(--color-muted); }
@@ -144,7 +144,7 @@ html .nguon::before { content: ""; position: absolute; left: 0; right: 0; top: 0
   .h1-chu .hero-h { order: 1; font-size: 33px; line-height: 1.15; max-width: none; margin: 22px 16px 10px; }
   .h1-chu .hero-p { order: 2; font-size: 16px; margin: 0 16px 16px; max-width: none; }
   .h1-chu .hoi { order: 3; width: auto; }
-  .h1-song { order: 4; position: relative; inset: auto; height: 600px; margin-top: 6px; }
+  .h1-song { order: 4; position: relative; inset: auto; height: 500px; margin-top: 6px; }  /* 500 px: cả sáu bến nằm trong màn đầu 844 px, trên thanh điều hướng đáy */
   .h1-chu .goi-y { order: 5; margin: 6px 16px 0; }
   .h1-dung { order: 7; position: static; align-self: flex-start; margin: 14px 16px 0; }
   .h1-ve.rong { display: none; }
@@ -155,7 +155,6 @@ html .nguon::before { content: ""; position: absolute; left: 0; right: 0; top: 0
   .h1-nhan small { display: none; }
   .h1-nhan b { font-size: 16px; }
   .h1-ben-0 .h1-nhan, .h1-ben-3 .h1-nhan, .h1-ben-4 .h1-nhan { left: auto; right: 34px; }
-  .h1-song { height: 600px; }
   html .h1-chu .tt-hop { order: 6; margin: 16px 16px 0; }
 }
 
