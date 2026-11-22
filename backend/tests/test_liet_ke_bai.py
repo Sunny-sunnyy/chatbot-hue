@@ -260,3 +260,14 @@ def test_answer_citing_the_index_keeps_the_notes_of_the_articles_it_names():
     chi_quan = luot("Trong tư liệu hiện có Quán Z gần bãi tắm [1].", noi_dong_tam_ngung=True, may_have_changed_notice=True)
     assert chi_quan == ""  # bài được nêu tên không thuộc nhóm có ghi chú và không có câu cảnh báo; bãi không được nêu tên ⇒ không kéo theo
     assert TIEN_TO not in luot("Trong tư liệu hiện có Bãi X [1].", may_have_changed_notice=True)  # cờ dòng tạm ngừng tắt
+
+
+def test_the_data_source_section_the_chunker_skips_is_not_read_by_the_listing_tool():
+    """Soát khác hãng 22/11 (K6): mục "Nguồn dữ liệu" (bộ chia đoạn bỏ; lệnh sửa kho giữ dòng giá CŨ ở đó làm lịch sử) từng được công cụ đọc ⇒ giá đã
+    thay và ghi chú đối chiếu thành căn cứ [n]. Nay bỏ cả mục lẫn mục con; mục cùng cấp đứng SAU vẫn được đọc."""
+    from llm import liet_ke as lk
+    bai = lk.bai_tu_markdown("travel/tickets/ve.md", "# Vé mẫu\n\n## Giá vé\n\nNgười lớn: 210.000 đồng.\n\n## Nguồn dữ liệu\n\n"
+                             "- Giá vé người lớn: 180.000 đồng (đối chiếu ngày 01/02/2026): https://vi-du.example/gia\n\n### Ghi chú\n\nĐối chiếu nội bộ.\n\n"
+                             "## Lưu ý\n\nMang giày đi bộ.\n")
+    assert bai.dong == ("Người lớn: 210.000 đồng.", "Mang giày đi bộ.")
+    assert lk.loc((bai,), "tat_ca", ["180.000"]).tong == 0 and lk.loc((bai,), "tat_ca", ["210.000"]).tong == 1
