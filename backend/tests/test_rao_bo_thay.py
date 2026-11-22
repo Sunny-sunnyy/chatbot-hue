@@ -56,6 +56,8 @@ def test_a_distinctive_part_of_the_name_counts_as_the_name():
     assert tu_duc and thien_mu
     assert s._ten_trong_cau(B, tu_duc, "Lăng Tự Đức", "bỏ tự đức đi") and s._ten_trong_cau(B, thien_mu, "Chùa Thiên Mụ", "Thay Thiên Mụ bằng chỗ khác")
     assert not s._ten_trong_cau(B, tu_duc, "Lăng Tự Đức", "bỏ cái lăng đầu đi")  # chữ loại ("lăng") không đủ: danh sách vừa kể cũng có thể toàn lăng
+    le_ba_dang = s.khop_ten(B, "Trung tâm Nghệ thuật Lê Bá Đảng")
+    assert le_ba_dang and not s._ten_trong_cau(B, le_ba_dang, "Trung tâm Nghệ thuật Lê Bá Đảng", "bỏ quán đầu đi, quán ở trung tâm ấy")  # khúc chung, không tên riêng
 
 
 def test_a_name_outside_the_table_is_kept_only_when_it_is_a_real_name_in_the_message():

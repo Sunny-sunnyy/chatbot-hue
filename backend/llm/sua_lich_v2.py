@@ -328,8 +328,13 @@ def _ten_trong_cau(bang: v2.BangV2, id_: str | None, ten_model: str | None, cau:
         tu = re.findall(r"\w+", chuan_ten(ten))
         if tu and f" {' '.join(tu)} " in chu:
             return True
-        for n in range(len(tu) - 1, 1, -1):  # khúc ≥ 2 chữ liền nhau của tên, và `khop_ten` nhận khúc đó là ĐÚNG điểm này (khúc chung nhiều điểm ⇒ không)
-            if any(f" {' '.join(tu[i:i + n])} " in chu and khop_ten(bang, " ".join(tu[i:i + n])) == id_ for i in range(len(tu) - n + 1)):
+        # khúc ≥ 2 chữ liền nhau của tên: phải chứa một chữ TÊN RIÊNG (viết hoa trong tên, không tính chữ đầu) và `khop_ten` nhận khúc đó là ĐÚNG điểm
+        # này. Đếm trên bảng 41 điểm: không có điều kiện tên riêng thì 71 khúc chung cũng lọt ("trung tâm", "thành phố", "truyền thống", "đường đi").
+        # Chữ loại đứng đầu tên ("bãi biển", "phố cổ", "lăng") cố ý không đủ: danh sách vừa kể cũng có thể toàn bãi biển / lăng.
+        rieng = {w.casefold() for w in re.findall(r"\w+", unicodedata.normalize("NFC", ten))[1:] if w[0].isupper()}
+        for n in range(len(tu) - 1, 1, -1):
+            if any(rieng & set(tu[i:i + n]) and f" {' '.join(tu[i:i + n])} " in chu and khop_ten(bang, " ".join(tu[i:i + n])) == id_
+                   for i in range(len(tu) - n + 1)):
                 return True
     return False
 
