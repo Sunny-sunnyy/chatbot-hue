@@ -104,6 +104,14 @@ class ConversationStore:
         conversation = self._items.get(conversation_id)
         return () if conversation is None else tuple(conversation.turns)
 
+    def history_khong_dap(self, conversation_id: str) -> tuple[tuple[str, str], ...] | None:
+        """Lịch sử của cuộc với ô CUỐI về dòng ghi chú / rỗng — đúng thứ lượt này sẽ thấy nếu không nhớ câu trả lời liền trước. None khi ô cuối
+        không mang câu trả lời (không có gì để lùi). Dùng cho lần chạy lại của lượt bị rút vì lỗi trích dẫn (`llm.assistant.answer_turn_stream_parallel`)."""
+        conversation = self._items.get(conversation_id)
+        if conversation is None or not conversation.turns or conversation.ghi_chu_cuoi is None:
+            return None
+        return (*conversation.turns[:-1], (conversation.turns[-1][0], conversation.ghi_chu_cuoi))
+
     def history_tokens(self, conversation_id: str) -> int:
         """Số token lịch sử của cuộc (chỉ số đếm cho log — không chữ)."""
         return self.tokens_of(self.history(conversation_id))
