@@ -130,6 +130,10 @@ class AssistantFlags:
     # nó còn muốn tìm tiếp trong khi công cụ đã bị cất; hoặc dòng "chưa có" kèm lời giải thích không nguồn) ⇒ thay cho màn hình lỗi: gọi MỘT lần viết không công cụ trên mọi Bằng chứng lượt đã gom; vẫn không có
     # mã ⇒ câu từ chối cố định. Không chạm lượt nào đang qua kiểm. Lý do + số đo: `tests/test_het_luot_viet_lai.py`. TẮT ⇒ như trước.
     het_luot_viet_lai: bool = False
+    # 22/11/2026 — số đo phiên E: lưới viết lại nổ 9 / 114 lượt, chữ giữ chỗ của bản viết đầu đứng 17–25 giây rồi mới được thay. Bật ⇒ lượt có công cụ
+    # mà generator báo chữ về MỘT lần ở cuối (`chu_ve_mot_lan` — lớp dịch Bedrock) giữ chữ tới sau phép kiểm nguồn: qua ⇒ phát y như cũ (muộn cỡ mili
+    # giây); viết lại ⇒ chỉ phát bản viết lại; bị rút ⇒ không phát chữ nào. Đường chữ chạy dần thật (OpenAI) không giữ. Test: `test_giu_chu_toi_kiem.py`.
+    giu_chu_toi_kiem: bool = False
     so_vet: bool = False  # sổ vết debug có nội dung, chỉ máy local (`core/so_vet.py`); bật bằng `HUE_SO_VET=true`
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
@@ -1899,6 +1903,30 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
     dau_bao_lu = False  # cờ `bao_lu_cong_cu`: câu cố định trước chữ model (`_can_dau_bao_lu`)
     giu_chu: str | bool | None = None  # review C M-1: None = chưa có chữ; "" / chuỗi = đang giữ; False = không giữ
     call_route = None
+    cho_kiem: str | None = None  # công tắc `giu_chu_toi_kiem`: chuỗi = chữ model đang gom, chờ phép kiểm nguồn; None = không gom (phát ngay như cũ)
+
+    def chu_phat(text: str) -> str | None:
+        """Một mảnh chữ của model ⇒ chữ phát ra lúc này; None = còn giữ (chừng nào còn có thể là câu từ chối). Dùng cho từng mảnh trong vòng đọc
+        và, khi công tắc `giu_chu_toi_kiem` gom chữ, cho cả chuỗi đã gom sau phép kiểm — cùng một đường nên chữ người dùng thấy không đổi."""
+        nonlocal giu_chu, dau_bao_lu, da_noi_dau
+        if giu_chu is None:  # review C M-1: đã có dự báo / khung lịch (B171 T3) ⇒ giữ chữ chừng nào còn có thể là câu từ chối
+            giu_chu = "" if ((flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"]) or trace.lich is not None
+                             or trace.nhieu_y or _can_dau_bao_lu(trace) or trace.lam_thay is not None) else False
+            dau_bao_lu = _can_dau_bao_lu(trace)  # giữ chữ tới khi biết không phải câu từ chối rồi mới đặt câu đầu
+        if giu_chu is not False:
+            giu_chu += text
+            if (INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()) or (trace.nhieu_y and _con_la_y_thieu(giu_chu))
+                    # câu nhờ làm thay: câu khuôn kèm khoảng trắng cuối vẫn phải giữ — bước sau so bằng `strip()` rồi thay cả câu
+                    or (trace.lam_thay is not None and INSUFFICIENT_ANSWER.startswith(giu_chu.strip()))):
+                return None
+            text, giu_chu = giu_chu, False
+            if dau_bao_lu:
+                text, dau_bao_lu = f"{tt.CAU_DAU_BAO_LU}\n\n{text}", False
+        if trace.lich is not None and not da_noi_dau:
+            da_noi_dau = True
+            text = f"{lt.dong_minh_hieu(trace.lich['khung'])}\n\n{text}"
+        return text
+
     # Việc nhỏ (12) 08/11 — review streaming 31/10 m-1: huỷ theo "luồng model còn sống" thay vì liệt kê lỗi. Mọi cách rời vòng đọc khi luồng chưa
     # hết (hết giờ, người dùng ngắt, lỗi trong code của mình) ⇒ `cancel()`; luồng tự hết hoặc chính luồng báo lỗi (lần chạy đã dừng) ⇒ không.
     stream_live = False
@@ -1952,6 +1980,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                                     tach_cau_tim=flags.tach_cau_tim_model)
                 extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
                 result, call_log, tool_state = generator.start_tools_stream(tool_prompt, tool_fn, **_history_kwargs(trace), **extra)
+                if flags.giu_chu_toi_kiem and getattr(generator, "chu_ve_mot_lan", False):
+                    cho_kiem = ""
             else:
                 yield "status", {"stage": "generating"}
                 result, call_log = generator.start_answer_stream(query, trace.packed.text, trace.today, **_history_kwargs(trace))
@@ -1980,23 +2010,12 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                         if pending_generating:
                             pending_generating = False
                             yield "status", {"stage": "generating"}
-                        if giu_chu is None:  # review C M-1: đã có dự báo / khung lịch (B171 T3) ⇒ giữ chữ chừng nào còn có thể là câu từ chối
-                            giu_chu = "" if ((flags.thoi_tiet and trace.thoi_tiet and trace.thoi_tiet["khoi"]) or trace.lich is not None
-                                             or trace.nhieu_y or _can_dau_bao_lu(trace) or trace.lam_thay is not None) else False
-                            dau_bao_lu = _can_dau_bao_lu(trace)  # giữ chữ tới khi biết không phải câu từ chối rồi mới đặt câu đầu
-                        if giu_chu is not False:
-                            giu_chu += text
-                            if (INSUFFICIENT_ANSWER.startswith(giu_chu.lstrip()) or (trace.nhieu_y and _con_la_y_thieu(giu_chu))
-                                    # câu nhờ làm thay: câu khuôn kèm khoảng trắng cuối vẫn phải giữ — bước sau so bằng `strip()` rồi thay cả câu
-                                    or (trace.lam_thay is not None and INSUFFICIENT_ANSWER.startswith(giu_chu.strip()))):
-                                continue
-                            text, giu_chu = giu_chu, False
-                            if dau_bao_lu:
-                                text, dau_bao_lu = f"{tt.CAU_DAU_BAO_LU}\n\n{text}", False
-                        if trace.lich is not None and not da_noi_dau:
-                            da_noi_dau = True
-                            text = f"{lt.dong_minh_hieu(trace.lich['khung'])}\n\n{text}"
-                        yield "delta", text
+                        if cho_kiem is not None:  # công tắc `giu_chu_toi_kiem`: gom, phát sau phép kiểm nguồn (cuối hàm)
+                            cho_kiem += text
+                            continue
+                        text = chu_phat(text)
+                        if text is not None:
+                            yield "delta", text
                 elif event.type == "run_item_stream_event" and event.name == "tool_called":  # thẻ công cụ (B2 D7): lượt gọi không có chữ
                     cong_cu = getattr(getattr(event.item, "raw_item", None), "name", None)
                     if cong_cu == "lich_trinh":  # D14: "đang xếp lịch…" khi code bắt đầu chạy — không phát "đang tìm" (m-6)
@@ -2029,13 +2048,19 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
         else:
             _finish_generated(trace, flags, query)
             if tool_state is not None and await _viet_lai_het_luot(query, generator, trace, flags, today, call_log):
-                # chữ giữ chỗ của lần đầu đã hiện (hoặc đang bị giữ) ⇒ thay bằng chữ của lần viết lại; khối dự báo code nối vẫn phát riêng ở dưới
+                # chữ giữ chỗ của lần đầu đã hiện (hoặc đang bị giữ) ⇒ thay bằng chữ của lần viết lại; khối dự báo code nối vẫn phát riêng ở dưới.
+                # Công tắc `giu_chu_toi_kiem` đang gom ⇒ chữ giữ chỗ chưa hề hiện ⇒ bản viết lại là chữ đầu tiên, phát như một mảnh thường
                 giu_chu = False
-                yield "thay_chu", trace.answer.removesuffix(f"\n\n{trace.thoi_tiet_noi}") if trace.thoi_tiet_noi else trace.answer
+                yield "thay_chu" if cho_kiem is None else "delta", trace.answer.removesuffix(f"\n\n{trace.thoi_tiet_noi}") if trace.thoi_tiet_noi else trace.answer
+                cho_kiem = None
             if trace.fixed_outcome is not None:  # chạm `max_turns`: không có chữ model nào ⇒ câu từ chối thành một `delta` (B2 D5)
                 if trace.answer:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer
                 return
+            if cho_kiem and trace.citation_error is None:  # chữ đã gom qua phép kiểm ⇒ phát bằng đúng đường của một mảnh chữ; bị rút ⇒ không phát
+                text = chu_phat(cho_kiem)
+                if text is not None:
+                    yield "delta", text
             if giu_chu:  # chữ giữ lại đến hết = câu từ chối (đã thay) hoặc một khúc đầu của nó
                 yield "delta", _chu_giu_lai(trace, giu_chu, da_noi_dau)
             if trace.lich is not None and trace.citation_error is None and trace.lich["ghi_chu"]:

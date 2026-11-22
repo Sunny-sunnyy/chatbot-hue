@@ -314,6 +314,9 @@ class OpenAIFullCorpusGenerator:
         self.client = client
         self.model = model
         self.provider = "openai" if bedrock_model is None else bedrock_model.provider
+        # Lớp dịch Bedrock gọi TRỌN rồi phát chữ một lần ở cuối (`bedrock_model.stream_response`); đường OpenAI chữ chạy dần thật. Nơi đọc
+        # (`assistant.py`, công tắc `giu_chu_toi_kiem`) chỉ giữ chữ tới sau phép kiểm nguồn khi chữ về một lần — giữ ở đường kia là mất chữ chạy.
+        self.chu_ve_mot_lan = bedrock_model is not None
         self.timeout = timeout
         self.router_timeout = router_timeout
         # Bậc 1b (21/11/2026): hai con số mở thành cấu hình để bộ đo thử nới; mặc định = giá trị cũ. `max_turns` = trần vòng gốc của lượt có công cụ
