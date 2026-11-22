@@ -4,7 +4,7 @@ Từ dùng: *bến* = nút tròn mang một lối vào, nằm trên nét sông �
 
 0. **ĐỌC TRƯỚC — đang ở đâu.**
    - **Sha ghép** = `551d02f` + `da8bff0` (màn đầu vừa một khung nhìn máy xách tay) + `ec8fb7a` (thẻ chờ ở điện thoại + bốn chữa nhỏ) + `10c30bc5` (commit `99b74b3` của B về `lkh.css`, C đọc diff rồi cherry-pick). Main vẫn giao diện CŨ.
-   - **Việc đầu của phiên C mở lại:** đọc kết quả cổng của phiên đo trên `10c30bc5` (phiên đo nhắn thẳng; file ở `data/giao_dien_2026-11-22/`) ⇒ có lỗi chặn thuộc `song/*`, `chat.jsx`, `tl.css`, `hieu_ung.css` thì chữa trên nhánh `p13-c-man-dau-cao` (commit mới, không sửa lịch sử), báo sha mới cho phiên đo + B. `lkh.css` là của B đợt này.
+   - **Việc đầu của phiên C mở lại:** đọc kết quả cổng của phiên đo trên `10c30bc5` (phiên đo nhắn thẳng; file ở `data/giao_dien_2026-11-22/`) ⇒ có lỗi chặn thuộc `song/*`, `chat.jsx`, `tl.css`, `hieu_ung.css` thì chữa trên NHÁNH CON MỚI tách từ `10c30bc5` (phiên điều phối đóng băng chuỗi này lúc 22:4x), báo sha mới cho phiên đo + B. `lkh.css` là của B đợt này.
    - **Không file nào đang sửa dở.** Cây `/tmp/hr_c_cao` đứng trên `p13-c-man-dau-cao` `10c30bc5`, sạch (trừ liên kết `frontend/node_modules` và `frontend/dist` chép từ bản dựng tạm — cả hai không vào git).
 
 1. **Phải biết trước khi sửa lớp nhìn (mỗi dòng là một lỗi đã vấp tối nay):**
@@ -31,7 +31,8 @@ Từ dùng: *bến* = nút tròn mang một lối vào, nằm trên nét sông �
    - **CHƯA kiểm:** mọi thứ trên server thật · cảnh A01 (thẻ chọn tên ảnh) — sửa bằng đọc code, bản tĩnh không có đường nhận ảnh · khe thẻ từ chối ↔ khối web (H06) · bản in PDF · `test_anh_tra_loi.py`, `test_ban_do_lich.py` (cần `data/` trong cây) · khối hiện dần trên Giới thiệu / Lên kế hoạch khi cuộn thật · điện thoại nhỏ 360 × 740 lúc chờ (ô nhập còn sát đáy trong bản tĩnh).
 
 3. **Điểm còn mở của làn (đã báo phiên điều phối 22:3x; chưa ai giao):**
-   - Khung chat dính sát thanh trên sau câu hỏi ĐẦU ở màn cao (`so_cap/NHOM_2`, HỎNG-MỚI nhẹ) — xem mục 1 dòng `.tl-chat`.
+   - **Phiên điều phối đã quyết (22:4x):** bến chỉ còn tên ở máy demo — CHƯA nhận, chưa bác, quyết sau khi nhìn ảnh cổng; nếu trông trống thì "vẽ lại vị trí hai bến cuối" là việc đầu sau cổng (không chặn gộp) · đóng khung cảnh báo bão / lũ trong câu trả lời: KHÔNG làm (vùng chữ an toàn) · đưa nguồn lên trước ảnh: không làm đợt này · các điểm thẩm mỹ dưới đây: danh sách sau cổng · ý đổi `overflow` của khung chat: vào `Y_CHUA_THU.md`, làm sau cổng với một lượt nhìn riêng.
+   - Khung chat dính sát thanh trên sau câu hỏi ĐẦU ở màn cao (`so_cap/NHOM_2`, HỎNG-MỚI nhẹ) — đã ghi giới hạn ở `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 (hàng cuối); xem mục 1 dòng `.tl-chat`.
    - Hình sông: mũi nhọn ở khúc uốn trong (nét dày tự cắt) + nét đứt trắng "giống vạch đường" (hai bản Gemini) — thẩm mỹ, phải vẽ lại hình.
    - Thanh trên sáng ghép thẳng vào đầu trang tối ở Khám phá / Giới thiệu / Lên kế hoạch; vòng trắng của logo chìm vào thanh sáng.
    - Cảnh báo bão / lũ trong câu trả lời chưa đóng khung như trên lịch (chạm vùng chữ an toàn ⇒ phiên điều phối quyết) · đưa nguồn lên trước ảnh (đổi thứ tự ⇒ phiên điều phối quyết).
