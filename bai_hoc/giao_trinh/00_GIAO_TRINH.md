@@ -1,6 +1,6 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 12:02, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11; khuôn thêm hai mục "Quyết định và lý do" và "Nếu… thì sao" theo yêu cầu của anh trưa 22/11, bài 6 là bài mẫu · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 12:06, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11; khuôn thêm hai mục "Quyết định và lý do" và "Nếu… thì sao" theo yêu cầu của anh trưa 22/11, bài 6 là bài mẫu · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -29,15 +29,15 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 
 | Số | Bài | |
 |---|---|---|
-| 1 | Model ngôn ngữ là gì, và vì sao nó viết trôi chảy mà vẫn sai | ⬜ |
+| 1 | [Model ngôn ngữ là gì, và vì sao nó viết trôi chảy mà vẫn sai](01_MODEL_NGON_NGU.md) | ✅ |
 | 2 | [RAG là gì: cho model đọc tài liệu trước khi trả lời](02_RAG_LA_GI.md) | ✅ |
-| 3 | Trợ lý và công cụ: model chỉ "xin", chương trình mới là thứ chạy | ⬜ |
+| 3 | [Trợ lý và công cụ: model chỉ "xin", chương trình mới là thứ chạy](03_TRO_LY_VA_CONG_CU.md) | ✅ |
 
 ### Chặng 1 — Bức tranh: hệ thống này làm gì, cho ai, gồm những khối nào?
 
 | Số | Bài | |
 |---|---|---|
-| 4 | Bài toán: ai dùng, hỏi gì, nhận gì, và những thứ cố ý không làm | ⬜ |
+| 4 | [Bài toán: ai dùng, hỏi gì, nhận gì, và những thứ cố ý không làm](04_BAI_TOAN.md) | ✅ |
 | 5 | Người dùng thấy gì: các trang của ứng dụng | ⬜ |
 | 6 | [Kiến trúc: các khối, vì sao đặt như vậy, và khi một khối hỏng thì sao](06_KIEN_TRUC.md) — **bài mẫu theo khuôn mới** | ✅ |
 
@@ -137,11 +137,11 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 9. **Dễ nhầm:** 1–3 câu người mới hay nói, kèm câu sửa.
 10. **Câu hỏi tự kiểm** (anh chọn thêm trưa 22/11): khoảng 4 câu kiểu "vì sao…", "nếu… thì sao", đáp án một hai câu, gập lại, bấm mới hiện. Bài đã có mục này thì không còn mục "Những điều cần nhớ" (nó lặp lại "Ý chính"); các bài viết theo khuôn cũ vẫn còn mục đó.
 
-**Luật về độ dài** (anh duyệt chiều 22/11, sau khi đọc bài 6): nửa để hiểu không nói một điều hai lần. Đoạn dẫn trước một quyết định chỉ có khi phải giảng một khái niệm mới; bảng chi tiết nằm ở nửa để tra; "Dễ nhầm" nhiều nhất 3 gạch. Không bỏ: mục giảng nền, đủ bốn gạch của mỗi quyết định, bảng tình huống hỏng.
+**Luật về độ dài** (anh duyệt trưa 22/11, sau khi đọc bài 6): nửa để hiểu không nói một điều hai lần. Đoạn dẫn trước một quyết định chỉ có khi phải giảng một khái niệm mới; bảng chi tiết nằm ở nửa để tra; "Dễ nhầm" nhiều nhất 3 gạch. Không bỏ: mục giảng nền, đủ bốn gạch của mỗi quyết định, bảng tình huống hỏng.
 
 **Nửa để tra** (bài nào có mục nào thì ghi mục đó; bài nền thường chỉ có hai mục cuối)
 
-*Hai mục 7 và 8 thêm trưa 22/11/2026 theo yêu cầu của anh: đọc xong phải giải thích được từng quyết định và nói được "hỏng thì sao", không chỉ kể được hệ thống gồm những gì. Mục "Vì sao không làm cách khác" của khuôn cũ nhập vào mục 7. **Bài 6 (kiến trúc) là bài mẫu đầu tiên theo khuôn mới**, viết để anh đọc và nhận xét trước. Các bài đã viết trước đó (2, 7–16, 21) vẫn theo khuôn cũ, còn mục "Vì sao không làm cách khác" ở nửa để tra, và sẽ được bổ sung sau khi anh đọc bài mẫu.*
+*Hai mục 7 và 8 thêm trưa 22/11/2026 theo yêu cầu của anh: đọc xong phải giải thích được từng quyết định và nói được "hỏng thì sao", không chỉ kể được hệ thống gồm những gì. Mục "Vì sao không làm cách khác" của khuôn cũ nhập vào mục 7. **Bài 6 (kiến trúc) là bài mẫu đầu tiên theo khuôn mới**; anh đã đọc và duyệt trưa 22/11. Các bài 1, 3, 4 đã theo khuôn này. Các bài viết trước đó (2, 7–16, 21) vẫn theo khuôn cũ, còn mục "Vì sao không làm cách khác" ở nửa để tra, và đang được chuyển dần.*
 
 11. **Cấu hình đang chạy:** bảng mục · giá trị · dùng để làm gì và vì sao là giá trị đó · đã thử giá trị khác chưa.
 12. **Đã so:** vấn đề thật đã gặp · so cái gì với cái gì, trên bộ câu nào · bảng kết quả kể cả phương án bị bỏ · đọc bảng thế nào · đã chọn gì · giới hạn của phép đo. Mỗi con số ghi rõ đo với model viết nào.
