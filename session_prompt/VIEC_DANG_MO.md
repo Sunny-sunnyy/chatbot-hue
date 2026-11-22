@@ -51,7 +51,7 @@ quyết định đang chờ · bước kế · hồ sơ ở đâu.
   | K5 | Công cụ "gần một điểm" không nối bài kho của điểm được nêu ⇒ rơi cảnh báo an toàn của bài (Thác Nhị Hồ mùa mưa lũ) + dòng nhắc [đã chạy] | **ĐÃ SỬA + ĐÃ GỘP** (cùng nhánh G7): dùng lại cơ chế của công cụ liệt kê, khoảng 17 dòng; phiên đo dò bảng thật: 401 / 401 nơi công cụ kể khớp một bài trong mục lục; ví dụ Thác Nhị Hồ ra đúng một câu an toàn + câu kẹt xe + dòng "có thể đã thay đổi". Chưa có lượt thật qua model | C |
   | K7 | "Buổi tối xếp lại" báo GIẢ ở mọi lệnh bỏ / thay trên lịch 5 ngày [đã chạy] | SỬA (một dòng), cùng G5 | C |
   | K8a | "Thêm Ca Huế trên sông Hương vào lịch" (không gõ "buổi tối") ⇒ "không còn chỗ nào xếp được" sai [đã chạy] | SỬA hẹp; K8b = G8 giới hạn | C |
-  | K6 | Công cụ liệt kê bài đọc cả mục "Nguồn dữ liệu" ⇒ ghi chú nội bộ, URL, giá cũ thành căn cứ [n] [đã chạy] | SỬA (bỏ các mục bộ chia đoạn đã bỏ) | C |
+  | K6 | Công cụ liệt kê bài đọc cả mục "Nguồn dữ liệu" ⇒ ghi chú nội bộ, URL, giá cũ thành căn cứ [n] [đã chạy] | **ĐÃ SỬA + ĐÃ GỘP** (nhánh `p9-c-k6-liet-ke-bo-muc-nguon` `c31d36e`; C sửa — công cụ do B viết —, phiên điều phối đọc diff 13 dòng): trên kho thật cụm "đối chiếu" khớp 29 ⇒ 5 bài, "https://" 79 ⇒ 2 bài, hai cụm đối chứng không đổi (54, 24); `test_liet_ke_bai` 18 đạt, bỏ bản sửa thì đúng ca mới đỏ | C |
   | K4, K9 | = G4 (đã gộp), = G6 (một chuỗi thật ở cổng đóng) | — | — |
   | K12 | Ba chỗ lệch log / chữ | GHI GIỚI HẠN | — |
   Ba bên soát cùng nêu ở phần phê bình (ghi để chủ dự án biết, KHÔNG phải câu hỏi): các tính năng mở 21–22/11 chưa có lượt đo nào trên model cũ; chữ đứng im 10–17 giây rồi hiện một lần; cả bộ test chạy lặp bốn lần bắt 0 lỗi mới.
