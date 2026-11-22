@@ -106,6 +106,8 @@ def dong_bo(*, chi_xem: bool = False, kho: Path | None = None, collection: str |
             raise ValueError("Chạy thử cần ĐỦ ba tham số: kho, collection, thu_muc_ban_ghi")
         if collection == candidate.collection_name:
             raise ValueError("Collection thử không được trùng tên collection đang chạy")
+        if Path(thu_muc_ban_ghi).resolve() == BUILD_RECORD_ROOT.resolve():  # tên file thống kê cố định ⇒ trùng thư mục là ghi đè file thật
+            raise ValueError("Thư mục bản ghi thử không được trùng thư mục bản ghi dựng thật")
         settings = settings_voi_kho(settings, kho)
         ten, goc_ghi = collection, Path(thu_muc_ban_ghi)
     else:

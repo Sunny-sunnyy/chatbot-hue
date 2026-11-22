@@ -193,3 +193,5 @@ def test_tham_so_chay_thu_phai_di_cung_nhau_va_khong_trung_collection_dang_chay(
     with pytest.raises(ValueError, match="trùng tên collection đang chạy"):
         cnr.dong_bo(kho=moi_truong["kho"], collection="hue_full_corpus_7a2_e5_small_384", thu_muc_ban_ghi=moi_truong["ghi"],
                     client=moi_truong["client"])
+    with pytest.raises(ValueError, match="trùng thư mục bản ghi dựng thật"):  # kể cả `chi_xem`: dừng trước khi đọc / ghi gì
+        cnr.dong_bo(chi_xem=True, kho=moi_truong["kho"], collection=THU, thu_muc_ban_ghi=cnr.BUILD_RECORD_ROOT, client=moi_truong["client"])
