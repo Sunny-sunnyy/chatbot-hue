@@ -1,0 +1,215 @@
+# Phụ lục A — Mọi tham số cấu hình: giá trị đang chạy, dùng để làm gì, bài nào giảng
+
+*Cập nhật 14:17, ngày 22/11/2026 · chép từ cấu hình và chương trình lúc đó; hệ thống đổi thì phụ lục phải chép lại.*
+
+**Phụ lục này có gì.** Mọi tham số có giá trị số hoặc chữ trong file cấu hình của máy chủ, và các hằng số trong chương trình mà các bài đã nhắc. Dòng bật / tắt và bảy dòng chọn chế độ (model viết, cách tìm, xếp lại, bản chỉ mục, câu cho lần tìm đầu, cổng đưa công cụ) nằm ở phụ lục B.
+
+**Đọc bảng thế nào.**
+- Tên trong dấu `…` là tên dòng cấu hình (dạng `mục.tên`) hoặc tên hằng số trong chương trình, để tra.
+- Cột *Đã thử giá trị khác chưa* chép từ các bài và bảng tổng các lần so sánh: "đã đo" (kèm kết quả ngắn), "chưa so" (đã tìm, không thấy phép thử nào), hoặc "—" (giá trị do quy ước / model quy định, không có gì để thử).
+- Dấu **[khoá]**: chương trình kiểm cấu hình lúc bật và **chỉ nhận đúng giá trị này**; ghi giá trị khác thì máy chủ không bật. Muốn thử giá trị khác phải sửa cả chương trình kiểm. Có tất cả 8 giá trị như vậy: 5 ở phụ lục này, 3 ở phụ lục B (`candidate_id`, `retrieval_treatment`, `reranker`).
+- Phép đo trước 09:41 ngày 21/11/2026 là với gpt-6-luna; sau đó là Claude Sonnet 5.5 (ghi "model đang chạy").
+
+## 1. Chuẩn bị kho (chặng 2, bài 7–12)
+
+| Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
+|---|---|---|---|---|---|
+| Thư mục kho | `full_corpus.knowledge_base.root_dir` | thư mục kho của dự án | nơi đọc các bài | — | 7 |
+| Các nhóm bài được đưa vào | `full_corpus.knowledge_base.include_globs` | 7 nhóm: món ăn, di sản, lễ hội, nghệ thuật trình diễn, địa điểm, dịch vụ, vé | chỉ bài trong các nhóm này mới được cắt đoạn và lập chỉ mục | — | 7, 9 |
+| Thư mục bỏ qua | `full_corpus.knowledge_base.exclude_parts` | bộ câu chấm, bản thô tải về, thư mục mẫu và ghi chú soạn | không phải nội dung cho người dùng | — | 8 |
+| File bỏ đích danh | `full_corpus.knowledge_base.exclude_files` | 3 file danh mục dùng lúc soạn | chỉ là danh sách tên | đã đo lúc loại: kết quả tìm không khác | 8 |
+| File quy tắc gắn lưu ý | `full_corpus.conditions_file` | một file JSON trong thư mục ghi chú của kho; 3 quy tắc ở 2 bài | gắn câu lưu ý chung của bài vào đúng các đoạn giá đã khai | — | 7, 8 |
+| Ba model dùng để tính giới hạn độ dài đoạn | `full_corpus.embedding_models` | e5-small (512 token, tiền tố `passage: `) · e5-base (512 token) · một model tiếng Việt cũ (256 token, có tách từ) | mỗi đoạn phải vừa cả ba giới hạn, nên không đoạn nào bị cắt cụt | đã thử chỉ giữ giới hạn 512: ít đi 61 đoạn (bài 10) | 8, 10 |
+| Cách cắt | (chương trình cắt đoạn) | theo khối của bài: đoạn văn, mục danh sách, bảng, đoạn trích; không gối đầu | giữ ranh giới ý người soạn đặt | đã thử 12 cách khác; gối đầu chưa so | 8 |
+| Kết quả cắt | — | 266 bài ⇒ 9.458 đoạn | — | — | 7, 8 |
+| Model embedding | `DENSE_MODEL_SPECS` (mục `e5-small-384`) | `intfloat/multilingual-e5-small`, ghi cố định mã phiên bản | biến đoạn và câu hỏi thành dãy số | đã so 5 model khác (gồm Qwen3-8B 4.096 chiều: bỏ) | 10 |
+| Số chiều vector | như trên | 384 | do model quy định | 768 và 4.096 qua model khác | 10, 12 |
+| Độ dài tối đa model đọc | như trên | 512 token | giới hạn của model | — | 10 |
+| Tiền tố | `prepare_query`, `full_corpus.embedding_models[].prefix` | `passage: ` cho đoạn, `query: ` cho câu hỏi | quy ước huấn luyện của họ e5 | chưa so việc bỏ tiền tố | 10 |
+| Nơi chạy embedding | như trên | CPU, số thực 32 bit, lô 8 đoạn | không cần card đồ hoạ, không gửi câu hỏi ra ngoài | gọi model qua mạng: đã thử, bỏ; cỡ lô chưa so | 10 |
+| Hằng số BM25 k1 | `scoring/bm25.K1` | 1,5 | mức "bão hoà" khi một từ lặp nhiều lần | đã thử 1,2 và 1,8 trên bản thử nhóm món ăn: giữ 1,5 | 11 |
+| Hằng số BM25 b | `scoring/bm25.B` | 0,75 | mức trừ bớt cho đoạn dài | đã thử 0,5 (chưa rõ hơn) và 1,0 (mất đoạn đúng ở 1 câu) | 11 |
+| Địa chỉ Qdrant | `vector_database.url` | máy này, cổng 6335 (bản Docker đổi bằng biến lúc chạy, phụ lục B mục 12) | nơi giữ vector | — | 12 |
+| Hạn chờ một lời gọi Qdrant | `vector_database.timeout`, `QDRANT_TIMEOUT` (lệnh lập chỉ mục) | 30 giây | — | chưa so | 12 |
+| Số điểm ghi mỗi lô lúc lập chỉ mục | `FULL_CORPUS_BATCH_SIZE` | 64 | chỉ ảnh hưởng tốc độ lập | chưa so | 12 |
+| Ngưỡng coi hai vector là như nhau khi kiểm lệnh cập nhật riêng | `NGUONG_VECTOR_NGHIA` | 0,00001 | lệnh kiểm so vector mới tính với vector đã cất | chưa so | **chưa có bài** (12 giảng lệnh cập nhật riêng) |
+
+## 2. Trả lời một câu hỏi (chặng 3, bài 13–16)
+
+| Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
+|---|---|---|---|---|---|
+| Số ứng viên lấy theo nghĩa | `candidate_pool` (bộ tìm) | 30 | đầu vào cho bước chấm từ khoá và trộn | đã đo 100: mất đoạn đúng ở 1 câu, bỏ | 10, 13 |
+| Hằng số trộn RRF | `rrf_k` (bộ tìm) | 60 | giữ chênh lệch giữa các hạng đầu không quá lớn | đã thử 2, 10, 30: không bản nào qua điều kiện | 13 |
+| Số đoạn đưa model ở lần tìm đầu | `full_corpus_generation.max_context_documents` **[khoá]** | 10 | model thấy nhiều chỗ của kho hơn | đã so 5 với 10 (10 thắng); đã thử 15 đoạn, cả mục, cả bài: không khá hơn | 13, 15 |
+| Đoạn thêm mỗi vế hỏi (tin nhiều ý) | `SO_DOAN_MOI_VE` | 2 | vế phụ có đoạn của nó trong ngữ cảnh | đếm 0 đồng 2, 3, 4 đoạn: cùng kết quả | 13, 23 |
+| Số vế được tìm riêng tối đa | `TRAN_SO_VE_TIM` | 6 (thêm nhiều nhất 12 đoạn) | 65 tin nhiều ý của ba lượt mốc: nhiều nhất 6 vế | chưa so | 23 |
+| Hạn giờ phần viết của một lượt | `full_corpus_generation.timeout_seconds` **[khoá]** | 45 giây | quá hạn thì báo lỗi, không treo | chưa so | 6, 15, 33 |
+| Giới hạn độ dài ngữ cảnh | (không có) | không có; mọi đoạn vào nguyên vẹn | — | trần 16.384 token có tới 19/11, bỏ vì chưa lần nào chạm (dài nhất 6.233) | 15 |
+| Bộ đếm token | `full_corpus_generation.token_encoding` **[khoá]** | `o200k_base` | bộ đếm token của OpenAI, nạp lúc khởi động cho bước dựng ngữ cảnh | — | **chưa có bài** |
+| Tên biến khoá OpenAI | `full_corpus_generation.api_key_env` **[khoá]** | tên một biến môi trường (không phải khoá) | đường gpt-6-luna và người chấm đọc khoá ở đó | — | **chưa có bài** (bài 37 giảng khoá nói chung) |
+| Câu nguồn dài nhất được chép vào dòng "tạm ngừng…" | `luu_y_nguon.MAX_CAU` | 400 ký tự | dài hơn thì không chép (không cắt giữa câu) | chưa so | 15 (chỉ nhắc tính năng) |
+| Nhóm bài nhận dòng "có thể đã thay đổi" | `NOTICE_SOURCE_PREFIXES` | bài vé, bài địa điểm, bài lễ hội, và đúng một bài "Lưu trú ở Huế" | giá và giờ có thể đổi mà kho chưa sửa | — | 16 |
+| Giá model viết (mỗi 1 triệu token) | `llm/pricing.PRICES_PER_M` | Claude Sonnet 5.5: vào 2 · đọc đệm 0,1 · ghi đệm 2,5 · ra 10 USD. gpt-6-luna: vào 0,10 · đọc đệm 0,01 · ghi đệm 0,125 · ra 0,50 USD | sổ số đo tính tiền từng lần gọi; giá Claude "ghi sổ, chưa đối chiếu hoá đơn" | — | 15, 34 |
+
+## 3. Trợ lý hỏi đáp (chặng 5, bài 21–23)
+
+| Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
+|---|---|---|---|---|---|
+| Số lần model được tự tìm kho | `assistant.so_lan_tim_kho` (mặc định `MODEL_SEARCH_LIMIT`) | 2 (lần tìm đầu của chương trình không tính) | đủ cho câu cần hai ba nguồn, không kéo dài câu kho không có | đã đo 1: bỏ; đã đo 3 (21/11, hai model): như cũ, không lượt nào dùng lần thứ ba | 21, 23 |
+| Trần vòng gốc của lượt có công cụ | `assistant.so_vong_cong_cu` (mặc định `ASSISTANT_MAX_TURNS`) | 4; +1 cho mỗi công cụ ngày, khoảng cách, gần một điểm, liệt kê bài được đưa ở lượt đó. Công cụ liệt kê bài được đưa ở mọi lượt, nên trần thực tế mỗi lượt là từ 5 vòng trở lên | 2 lần tìm + 1 lần bị nhắc + 1 vòng viết (đặt từ khi còn dòng nhắc) | đã thử 8 vòng (bài 21) | 21 |
+| Hạn giờ bước xếp loại câu | `assistant.router_timeout_seconds` | 10 giây; quá hạn hoặc lỗi ⇒ coi là "về Huế" | không để tin bị treo ở bước đầu | chưa so | 22 |
+| Đọc nốt khi người dùng bấm Dừng | `STREAM_DRAIN_SECONDS` | 0,5 giây | sau lệnh huỷ, đọc nốt chừng này rồi thôi | chưa so | **chưa có bài** |
+| Số lượt giữ mỗi cuộc trò chuyện | `api/conversations.MAX_TURNS` | 3 | trợ lý nhớ 3 câu hỏi gần nhất | chưa so | 23 |
+| Hết hạn cuộc trò chuyện | `api/conversations.TTL_SECONDS` | 30 phút từ lượt cuối | — | chưa so | 23, 35 |
+| Số cuộc giữ cùng lúc | `api/conversations.MAX_CONVERSATIONS` | 500; quá thì bỏ cuộc cũ nhất | bộ nhớ máy chủ có giới hạn | chưa so | 23, 35 |
+| Cắt câu trả lời liền trước | `api/conversations.CAT_LOI_TRUOC` | 4.000 ký tự | mục cuối của danh sách dài không bị mất | đã dùng 1.200 (20/11); với Claude 2 / 7 câu dài hơn 1.200 ⇒ nâng | 23 |
+| Số tên nơi nhớ từ lượt trước | `ten_goi_y.TOI_DA` | 5 | dòng ghi chú tên nơi đã trích | chưa so | 23 |
+
+## 4. Công cụ do chương trình tính (bài 24)
+
+| Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
+|---|---|---|---|---|---|
+| Năm đổi âm ↔ dương được | `ngay_lich.NAM_MIN`, `NAM_MAX` | 1976–2100 | trước 1976 hai miền dùng lịch âm khác nhau | — | 24 |
+| Số ngày âm tính sẵn mỗi lượt | `ngay_lich.SO_NGAY_AM_TOI_DA` | 6 | — | chưa so | 24 |
+| Số lần gọi công cụ ngày mỗi câu | (lõi trợ lý) | 2 | lần thứ ba nhận dòng "hãy viết câu trả lời" | chưa so | 24 |
+| Số ngày dự báo thời tiết | `thoi_tiet.SO_NGAY` | 7 (hôm nay + 6 ngày) | — | — | 24 |
+| Hạn giờ gọi dịch vụ thời tiết | `thoi_tiet.TIMEOUT_S` | 3 giây | — | chưa so | 24 |
+| Giữ số dự báo | `thoi_tiet.CACHE_S` | 30 phút | dự báo không đổi từng phút | chưa so | 24 |
+| Ngưỡng dòng "nếu mưa" | `thoi_tiet.NGUONG_MUA` | khả năng mưa từ 60 % | — | chưa so | 24, 28 |
+| Luật số phút đi đường | `khoang_cach.HE_SO_OSRM`, `PHUT_CONG` | 1,25 × phút của dịch vụ chỉ đường + 5 | khớp 6 / 6 cặp đối chiếu có nguồn công khai | sàn 40 km/h: bỏ | 24 |
+| Số lần gọi khoảng cách / gần một điểm mỗi câu | (lõi trợ lý) | 3 mỗi loại | — | chưa so | 24 |
+| Bán kính "gần" | `gan_diem.KM_TOI_DA` | 2 km đường chim bay | cùng ngưỡng của mục quán ăn trong thẻ lịch | chưa so | 24 |
+| Số kết quả "gần" tối đa | `gan_diem.SO_TOI_DA` | 5 | — | chưa so | 24 |
+| Khoảng ngày hỏi lễ hội dài nhất | `su_kien.KHOANG_TOI_DA` | 62 ngày | dài hơn thì danh sách thành "cả năm" | chưa so | 24 |
+| Liệt kê bài: số bài tối đa một kết quả | `liet_ke.TOI_DA_DONG` | 40 (nhiều hơn ⇒ dòng "còn k bài nữa") | — | chưa so | **chưa có bài** (24 chỉ nhắc tính năng) |
+| Liệt kê bài: dòng làm chứng | `liet_ke.DONG_DAI_NHAT` | 220 ký tự | — | chưa so | **chưa có bài** |
+| Liệt kê bài: số lần mỗi câu | `liet_ke.SO_LAN_MOI_LUOT` | 2 | — | chưa so | 24 |
+| Liệt kê bài: cụm từ | `liet_ke.TOI_DA_CUM_TU`, `CUM_TU_DAI_NHAT` | tối đa 3 cụm, mỗi cụm ≤ 40 ký tự | — | chưa so | **chưa có bài** |
+| Bảng khoảng cách | `assistant.khoang_cach_bang` | bảng bản 1: 40 điểm có toạ độ, 1.560 cặp (riêng tư) | công cụ khoảng cách và "gần một điểm" tra ở đây | — | 24, 27, 28 |
+| Bảng sự kiện theo ngày | `assistant.su_kien_bang` | bản 2: 27 dòng chép từ kho (riêng tư) | — | — | 24 |
+
+## 5. Tra web (bài 25)
+
+| Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
+|---|---|---|---|---|---|
+| Hạn giờ một lần gọi dịch vụ tìm web | `assistant.tra_web_timeout_seconds` | 5 giây; một lần, không gọi lại | — | chưa so | 25 |
+| Số kết quả lấy về | `tra_web.MAX_RESULTS` | 5 | — | chưa so | 25 |
+| Độ dài câu gửi đi | `tra_web.MAX_QUERY_CHARS` | 120 ký tự | — | chưa so | 25 |
+| Cắt tiêu đề / đoạn trích | `MAX_TITLE_CHARS`, `MAX_SNIPPET_CHARS` | 200 / 400 ký tự | — | chưa so | 25 |
+| Giá một lần tìm web | `SERPER_USD_PER_CALL` | 0,001 USD | sổ số đo tính tiền | dịch vụ Exa: đã thử 12/11, không dùng | 25 |
+| Hạn giờ lần viết mục web | (dùng hạn viết chung) | 45 giây riêng, không chung đồng hồ với các vòng của trợ lý | — | chưa so | 21, 25 |
+
+## 6. Hỏi bằng ảnh (bài 26)
+
+| Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
+|---|---|---|---|---|---|
+| Danh sách tên được đoán | `anh.danh_sach` | 42 nơi / món; chương trình dựng, chủ dự án duyệt (riêng tư) | đầu ra chỉ được là mã trong danh sách | — | 26 |
+| Dung lượng ảnh tối đa | `anh.max_bytes` | 10 MB | chặn trước khi đọc thân ảnh | — | 26, 37 |
+| Số điểm ảnh tối đa | `anh.max_pixels` | 40 triệu | chặn ảnh "bom giải nén" trước khi giải mã | — | 26, 37 |
+| Cạnh dài sau thu nhỏ | `anh.canh_dai` | 1.024 điểm ảnh; JPEG chất lượng 85, bỏ thông tin kèm ảnh | rẻ: khoảng 922 token cho ảnh 1.024 × 768 | chưa so | 26 |
+| Hạn giờ một lần nhìn ảnh | `anh.timeout` | 20 giây; quá ⇒ "không đoán được", không gọi lại | đầu ra dài có thể quá 15 giây | bản đầu 15 giây | 26 |
+| Số tên đoán tối đa | (lời dặn nhìn ảnh) | 1–3 | người dùng tự bấm chọn | vòng đầu model luôn trả 1 tên ⇒ thêm câu dặn | 26 |
+
+## 7. Lên kế hoạch và bộ xếp lịch (chặng 6, bài 27–29)
+
+| Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
+|---|---|---|---|---|---|
+| Bảng điểm bản 2 | `assistant.lich_trinh_bang_v2` | bản 10: 41 điểm (riêng tư); thiếu file hay cột ⇒ máy chủ không bật | bộ xếp lịch đọc bảng này | bản 34 điểm tới 15/11 | 27 |
+| Bảng điểm bản đầu | `assistant.lich_trinh_bang` | bản 3 (riêng tư) | chưa thấy ghi lý do còn giữ. Điều thấy được: chương trình nạp bảng này khi `lich_trinh_bieu_mau` mở; bộ xếp bản 2 đọc `lich_trinh_bang_v2` | — | **chưa có bài** |
+| Ô biểu mẫu đang hiện | `assistant.len_ke_hoach_o_hien` | 8 ô: số ngày, người lớn, trẻ em, người lớn tuổi, kiểu đi, sở thích, ngày đi, hạng chỗ ở | ô dưới sàn mô phỏng thì bỏ khỏi đây | — | 5, 27 |
+| Sở thích bị ẩn | `assistant.len_ke_hoach_so_thich_an` | rỗng | ẩn loại dưới sàn "≥ 50 % suất của từng lịch 2 ngày" | 13/11 lễ hội 43 % ⇒ gắn thêm nhãn có căn cứ kho ⇒ 50 % | 27 |
+| Số ngày tối đa | `lich_trinh_v2.SO_NGAY_TOI_DA`, `hoi_lai.SO_NGAY_TOI_DA` | 5 | chủ dự án chốt khi duyệt thiết kế | bản đầu nhận tới "4+" | 27, 28 |
+| Số sở thích tối đa | `hoi_lai.SO_THICH_TOI_DA` | 2 | hai sở thích được xét xen kẽ | bản đầu nhận 1 | 27 |
+| Ngày đi xa nhất | `hoi_lai.NGAY_DI_TOI_DA` | 180 ngày từ hôm nay | chưa thấy ghi lý do. Điều thấy được: thiết kế ghi con số này | chưa so | 27 |
+| Ngưỡng hiện một loại sở thích | `lich_trinh_v2.NGUONG_LOAI` | ≥ 4 điểm trong bảng | chủ dự án chốt; hiện cả 5 loại đều đủ | — | 27, 28 |
+| Thời lượng tham quan | `lich_trinh_v2.PHUT` | ngắn 75 phút · nửa buổi 150 phút | — | chưa thử số phút riêng từng điểm | 28 |
+| Phút đi giữa hai điểm trong buổi | `DI_CUNG_CUM`, `DI_CUM_KE` | cùng cụm 15 · cụm kề 30 · cụm khác không ghép | — | chưa thử số từ bảng khoảng cách | 28 |
+| Quỹ phút một buổi | `lich_trinh_v2.QUY` | nhẹ nhàng 1 điểm · cân bằng 210 · khám phá nhiều 240 | — | luật "đi dày" cũ: bỏ (3 / 120) | 28 |
+| Điểm tối đa một buổi | `lich_trinh_v2.TOI_DA_BUOI` | 2 (4 một ngày) | ba điểm ngắn đã vượt quỹ 240 | — | 28 |
+| Giờ bắt đầu | `lich_trinh_v2.GIO_BAT_DAU` | sáng 8:00, chiều 13:30; khám phá nhiều 7:30, 13:00 | — | bản nháp: 8:00 – 11:00, 14:00 – 17:00 | 28 |
+| Chừa giờ ăn trưa | `lich_trinh_v2.NGHI_TRUA` | 60 phút | — | không chừa: 26 ngày sát giờ trên 960 cách điền | 28 |
+| Ngày mưa phải xếp lại | `NGUONG_MUA`, `MM_MUA_XEP` | khả năng mưa ≥ 60 % VÀ lượng mưa ≥ 6 mm | 6 mm theo lời chủ dự án 15/11 (đầu cấp "Mưa" của quy chuẩn) | chỉ 60 %: bỏ | 28 |
+| Cụm có hoạt động buổi tối | `lich_trinh_v2.CUM_TOI` | Kinh thành và bờ nam | khách đã về khu trung tâm | — | 28 |
+| Câu mô tả một điểm | `CAU_MUC_TOI_DA` | 30 từ; chỉ đếm để báo, không cắt | cắt chữ model là sửa chữ người khác viết | — | 29 |
+| Số đoạn kho tối đa của lượt lập lịch | `len_ke_hoach.MAX_DOAN` | 25 (một đoạn mỗi điểm, lịch 5 ngày) | — | — | 29 |
+| Mức suy luận lần viết câu lịch | `BIEU_MAU_REASONING` | thấp (đặt cứng) | không cần nghĩ ở việc này | đã đo ba mức: cùng kết quả | 27, 29, 33 |
+
+## 8. Quanh một lịch (bài 30)
+
+| Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
+|---|---|---|---|---|---|
+| Bảng chỗ ở | `assistant.lich_trinh_bang_luu_tru` | bản 6: 136 cơ sở, 67 có ảnh (riêng tư) | khối "Nơi ở" | bản 3: 137 cơ sở | 30 |
+| Ngưỡng chọn khu ven biển / phía tây | `luu_tru_lich.NGUONG_BIEN`, `NGUONG_TAY` | ≥ 60 % / > 50 % điểm ban ngày (phía tây thêm điều kiện không trẻ em, không người lớn tuổi) | ngày ra biển thường là đi trong ngày | — | 30 |
+| Số cơ sở theo hạng | `luu_tru_lich.SO_THEO_MUC` | 2 (4–5 sao) · 2 (2–3 sao) · 1 (1 sao); tối đa 5 | để khách tự chọn hạng | trước: xếp theo tên làm 5 sao không bao giờ hiện (0 / 6.108); đã sửa | 30 |
+| Bảng quán | `assistant.lich_trinh_bang_quan` | bản 2: 467 quán (kho 41, dữ liệu mở 4, bản đồ mở 422; riêng tư) | quán mỗi bữa và công cụ "gần một điểm" | bản 1 còn một quán đã đóng cửa | 24, 30 |
+| Số quán mỗi bữa / bán kính | `quan_lich.SO_QUAN`, `KM_TOI_DA` | ≤ 2 quán; ≤ 2 km chim bay, cùng cụm | — | không giới hạn: bỏ | 30 |
+| Bảng ảnh | `assistant.lich_trinh_bang_anh` | bản 7: 40 / 41 điểm có ảnh (riêng tư) | ảnh từng điểm | bản 6, bản 7 đổi hai ảnh | 30 |
+| Bảng toạ độ | `assistant.lich_trinh_toa_do` | bản 9: 41 dòng, 40 có vị trí (riêng tư) | ghim bản đồ, quán gần, "gần một điểm" | bản cũ 18 điểm | 30 |
+| PowerPoint: điểm tối đa một trang ngày | `lich_pptx.MUC_MOI_TRANG` | 5 | — | chưa so | 30 |
+| PowerPoint: câu tả một điểm | `lich_pptx.CAU_TOI_DA` | 170 ký tự (câu thật dài nhất đã thấy: 109) | — | chưa so | 30 |
+| Lượt tải PowerPoint mỗi địa chỉ mạng | `gioi_han.TRAN_TAI_FILE` | 30 mỗi ngày, chỉ khi bộ giới hạn lượt bật | một lịch thường tải một hai lần | — | 30, 37 |
+| Hạn giữ lịch đã lưu | (theo cuộc trò chuyện) | 30 phút từ lượt cuối | — | — | 27, 31 |
+
+## 9. Sửa lịch bằng lời (bài 31)
+
+| Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
+|---|---|---|---|---|---|
+| Hạn giờ lần hiểu ý sửa lịch (đường Claude) | `full_corpus_generation.bedrock.sua_lich_timeout_seconds` | 10 giây (đường gpt-6-luna dùng chung hạn xếp loại) | lâu nhất đã đo ở mức suy luận cao 7,1 giây | — | 31, 33 |
+| Mức suy luận lần hiểu ý sửa lịch | `full_corpus_generation.bedrock.reasoning_sua_lich` | `high` | — | đã đo 21/11 (model đang chạy): lệnh khó đúng 5 / 6 cao, 2 / 6 thấp, 0 / 6 vừa | 31, 33 |
+| Số lệnh model trả / chương trình áp mỗi lượt | `sua_lich_v2.MAX_HANH_DONG`, `MAX_AP` | ≤ 3 / ≤ 2; lệnh thứ 3 ⇒ "Chưa làm" | — | chưa so | 31 |
+| Số lựa chọn trên thẻ chọn | `sua_lich_v2.MAX_LUA_CHON` | ≤ 3 + "Bỏ điểm này" | — | chưa so | 31 |
+| Số tên nêu trong câu báo xếp lại | `sua_lich_v2.MAX_TEN_XEP_LAI` | 6; nhiều hơn chỉ nêu số điểm | đổi sở thích ở lịch 5 ngày từng ra 27 tên | chưa so | **chưa có bài** |
+
+## 10. Máy móc bên dưới (chặng 7, bài 33–38)
+
+| Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
+|---|---|---|---|---|---|
+| Model của đường OpenAI | `full_corpus_generation.model` **[khoá]** | `gpt-6-luna` | chỉ đọc khi chọn đường OpenAI; người chấm của bộ đo luôn là model này | — | 33 |
+| Model và vùng của Bedrock | `full_corpus_generation.bedrock.model`, `.region` | Claude Sonnet 5.5 · Singapore | model viết đang chạy | đã chạy cả hai model | 33 |
+| Trần chữ đầu ra của Claude | `full_corpus_generation.bedrock.max_tokens` | 128.000 | trường bắt buộc; để mức tối đa = coi như không trần (lời chủ dự án 21/11) | không đặt nhỏ hơn | 15, 33 |
+| Mức suy luận mặc định của Claude | `full_corpus_generation.bedrock.reasoning_default` | `high` (từ 21/11, mức cuối chọn sau lượt đo) | cho mọi lời gọi không tự đặt mức | đã đo bốn mức trên 66 câu | 33, 34 |
+| Tên biến trỏ tới file khoá Bedrock | `full_corpus_generation.bedrock.creds_file_env` | tên một biến môi trường; đường dẫn không ghi vào repo | — | — | 33, 37 |
+| Bộ nhớ câu trả lời: hạn | `api/cache_tra_loi.SONG_GIAY` | 24 giờ | — | chưa so | 34 |
+| Bộ nhớ câu trả lời: trần | `api/cache_tra_loi.TRAN_SO_MUC` | 500 câu | — | chưa so | 34 |
+| Câu hỏi dài nhất | `ChatRequest.query` | 500 ký tự (chặn ở cả giao diện và máy chủ) | — | — | 5, 37 |
+| Sổ số đo | `config/logging.yaml` | 10 MB mỗi file, giữ 3 file cũ | — | — | 34 |
+| Sổ đánh giá lượt (khi được gọi) | `api/feedback.MAX_TURNS` | 2.000 lượt trong bộ nhớ; bỏ lượt cũ nhất | — | chưa so | **chưa có bài** (35 nhắc đường gọi) |
+| Trang theo dõi: số ngày | `api/theo_doi.SO_NGAY` | 14 | — | — | 34 |
+| Trang theo dõi: khoá | `KHOA_DAI_TOI_THIEU`, `SAI_TOI_DA`, `KHOA_TAM_GIAY` | khoá ≥ 16 ký tự; 5 lần sai liền ⇒ khoá 15 phút | dò khoá 16 ký tự ở tốc độ này là vô vọng (lý do ghi trong chương trình) | — | 37 |
+| Cổng của máy chủ | `CONG_SERVER` (lệnh cập nhật riêng) | 8010 | lệnh cập nhật riêng thử nối cổng này; còn nối được (máy chủ đang chạy) thì dừng, chưa ghi gì | — | 12, 36 |
+
+## 11. Tham số KHÔNG bài nào nhắc (để bổ sung)
+
+Soát bằng cách tìm tên dòng, tên hằng và con số trong các bài đã có ở thư mục giáo trình (1–38).
+
+**Có trong file cấu hình:**
+
+| Tham số | Giá trị | Bài hợp nhất để thêm |
+|---|---|---|
+| `full_corpus_generation.token_encoding` | `o200k_base` [khoá] | bài 15 (bộ đếm token, nạp lúc khởi động) |
+| `full_corpus_generation.api_key_env` | tên biến khoá OpenAI [khoá] | bài 33 hoặc 37 |
+| `assistant.lich_trinh_bang` | bảng điểm bản đầu (bản 3) | bài 27 (vì sao còn nạp khi bộ xếp đã dùng bản 2) |
+| `full_corpus.knowledge_base.root_dir` | thư mục kho | bài 7 (nhắc nội dung, không nhắc tên dòng — đủ để tra) |
+
+**Hằng số trong chương trình:**
+
+| Hằng | Giá trị | Bài hợp nhất để thêm |
+|---|---|---|
+| `STREAM_DRAIN_SECONDS` | 0,5 giây đọc nốt khi bấm Dừng | bài 5 hoặc 35 |
+| `liet_ke.TOI_DA_DONG`, `DONG_DAI_NHAT`, `TOI_DA_CUM_TU`, `CUM_TU_DAI_NHAT` | 40 bài · 220 ký tự · 3 cụm · 40 ký tự | bài 24 (mục công cụ liệt kê bài) |
+| `sua_lich_v2.MAX_TEN_XEP_LAI` | 6 tên | bài 31 |
+| `api/feedback.MAX_TURNS` | 2.000 lượt | bài 35 |
+| `NGUONG_VECTOR_NGHIA` | 0,00001 | bài 12 (lệnh kiểm cập nhật riêng) |
+
+<details>
+<summary>Nguồn (để giữ phụ lục đúng — anh không cần đọc)</summary>
+
+- Giá trị trong file cấu hình: `backend/config/settings.yaml`, đọc 13:20 22/11/2026 trên cây chính (HEAD `f359d89f`; lần sửa cuối của file `e4e06f9d`) [code].
+- Dấu [khoá]: `backend/core/settings_loader.py` hàm `validate_phase6_settings` (`model`, `api_key_env`, `token_encoding`, `timeout_seconds`, `max_context_documents`; cùng hàm khoá `candidate_id`, `retrieval_treatment`, `reranker` ở phụ lục B) [code].
+- Hằng số: `backend/retrieval/full_corpus.py` (`candidate_pool=30`, `rrf_k=60`, `fused[:10]`); `backend/scoring/bm25.py` (`K1`, `B`); `backend/embedding/full_corpus.py` (`DENSE_MODEL_SPECS`, `prepare_query`); `backend/vectorstore/points.py`; `backend/ingestion/full_corpus_pipeline.py`, `kiem_cap_nhat_rieng.py`, `cap_nhat_rieng.py`; `backend/ingestion/chunking/full_corpus_chunker.py` (`ConditionManager`); `backend/llm/assistant.py` (`MODEL_SEARCH_LIMIT`, `STREAM_DRAIN_SECONDS`, `NOTICE_SOURCE_PREFIXES`, `SO_DOAN_MOI_VE`, `TRAN_SO_VE_TIM`, ngưỡng 2 / 3 lần ở các công cụ ngày, khoảng cách, gần một điểm); `generator_openai_full_corpus.py` (`ASSISTANT_MAX_TURNS`, `BIEU_MAU_REASONING`); `pricing.py`; `ngay_lich.py`; `thoi_tiet.py`; `khoang_cach.py`; `gan_diem.py`; `su_kien.py`; `liet_ke.py`; `tra_web.py`; `nhan_anh.py` (JPEG 85); `lich_trinh_v2.py`; `len_ke_hoach.py`; `hoi_lai.py` (các trần biểu mẫu, dùng ở `api/routes/cong.py`); `luu_tru_lich.py`; `quan_lich.py`; `luu_y_nguon.py`; `ten_goi_y.py`; `sua_lich_v2.py`; `backend/api/conversations.py`; `cache_tra_loi.py`; `feedback.py`; `theo_doi.py`; `gioi_han.py`; `lich_pptx.py`; `routes/chat.py` (`ChatRequest`); `backend/config/logging.yaml` [code].
+- Cột "Đã thử giá trị khác chưa": các bảng "Cấu hình đang chạy" của bài 8, 10–16, 21–31, 33–35, 37 (đã qua lượt đối chiếu riêng của từng bài) và `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` dòng 6–7 (100 ứng viên) [chép]. Các dòng ghi "chưa so" không có trong các bảng đó: người viết phụ lục đã tìm tên hằng và con số trong các bài và bảng tổng, không thấy phép thử [đã chạy grep].
+- 6 mm theo lời chủ dự án 15/11: chú thích tại `MM_MUA_XEP` trong `lich_trinh_v2.py` [code].
+- Cột "Bài": tìm tên dòng cấu hình, tên hằng và con số trong các bài đã có ở thư mục giáo trình, 13:20–13:28 22/11/2026 [đã chạy].
+- Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư]. Trần vòng cộng 1 cho mỗi công cụ được đưa: `backend/llm/generator_openai_full_corpus.py` (`max_turns_for`); công cụ liệt kê bài đưa ở mọi lượt khi tính năng mở: `backend/llm/assistant.py` (`_lich_extra`) [code].
+
+</details>

@@ -1,9 +1,9 @@
 # Bài 9 — Thông tin gắn kèm mỗi đoạn (metadata) và "chữ để tìm"
 
-*Cập nhật 10:21, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy; ví dụ lấy từ lượt hỏi thật ngày 21/11; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
+*Cập nhật 14:17, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy; số kho khớp bản ghi hiện trạng lúc 13:33; ví dụ lấy từ lượt hỏi thật ngày 21/11; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** 266 bài được cắt thành 9.458 đoạn nhỏ, phần lớn chỉ một hai câu.
-**Bài này thêm:** một đoạn nhỏ đứng riêng thì không biết nó nói về cái gì. Bài này giảng những thông tin được gắn kèm mỗi đoạn, và chúng được dùng ở đâu.
+**Bài này thêm:** một đoạn nhỏ đứng riêng thì không biết nó nói về cái gì. Bài này giảng những thông tin được gắn kèm mỗi đoạn, chúng được dùng ở đâu, và vì sao chỉ gắn chừng đó.
 
 ## Ý chính
 
@@ -70,9 +70,56 @@ Bằng chứng:
 
 Có thể gắn thêm nhiều trường nữa (chủ đề con, khu vực, mức giá…) rồi dùng chúng để lọc trước khi tìm, ví dụ "chỉ tìm trong nhóm món ăn". hue_rag không làm vậy: mọi câu hỏi đều tìm trên cả 9.458 đoạn.
 
-Ví dụ chính cho thấy một hệ quả của lựa chọn này: câu hỏi về giá vé được trả lời bằng đoạn của hai bài vé **và** một đoạn của bài nghệ thuật biểu diễn. Nếu hệ thống lọc "chỉ tìm trong nhóm du lịch" (nhóm chứa các bài vé) thì đoạn số 4, nơi có giá vé trẻ em, đã không được xét.
+Ví dụ chính cho thấy một hệ quả của lựa chọn này: câu hỏi về giá vé được trả lời bằng đoạn của hai bài vé **và** một đoạn của bài nghệ thuật biểu diễn. Nếu hệ thống lọc "chỉ tìm trong nhóm du lịch" (nhóm chứa các bài vé) thì đoạn số 4, nơi có giá vé trẻ em, đã không được xét. Lý do và cái giá: quyết định 3 và 4 dưới đây.
 
-Lựa chọn này là lập luận thiết kế, chưa có phép đo riêng so "có lọc" với "không lọc". Hai trường chủ đề con và thẻ phân loại được nghĩ tới lúc thiết kế hồ sơ nhưng bị loại ngay, vì chưa có chỗ nào dùng: mỗi trường thêm vào là một thứ phải giữ đúng mỗi lần sửa kho.
+## Quyết định và lý do
+
+### 1. Vì sao ghép tên bài và tên các mục vào chữ để tìm, thay vì chỉ dùng thân đoạn?
+
+- **Đã chọn:** chữ để tìm = tên bài + đường tiêu đề đầy đủ + thân đoạn.
+- **Vì sao:** đã đo cuối tháng 10 (mục "Đã so"): bỏ hẳn thì 3 câu tốt lên nhưng 8 câu mất đáp án trên 32 câu; chỉ giữ tên mục gần nhất thì 4 câu tốt lên, 7 câu mất. Luật ghi trước là không mất câu nào.
+- **Cách khác:** hai cách bớt trên: đã đo, bỏ.
+- **Cái giá:** mọi đoạn của một bài có chung phần đầu. Với đoạn rất ngắn, phần chung đó chiếm gần hết chữ để tìm, nên các đoạn cùng bài trông giống nhau.
+
+### 2. Vì sao mỗi đoạn đưa cho model viết có nhãn "Tiêu đề", "Mục", "Bằng chứng"?
+
+- **Đã chọn:** mỗi đoạn là một khối: số nguồn, tên bài, đường tiêu đề, rồi các mảnh bằng chứng.
+- **Vì sao:** chưa thấy ghi lý do. Điều thấy được: model chỉ thấy các khối này, không thấy bài gốc; ở ví dụ chính, giá vé trẻ em được lấy từ khối mang số [4], và số đó là thứ chương trình kiểm sau khi model viết (bài 16).
+- **Cách khác:** dạng khối khác: chưa so.
+- **Cái giá:** tên bài và tên mục được tính vào số chữ gửi model ở mọi đoạn.
+
+### 3. Vì sao không lọc theo chủ đề khi tìm, ví dụ "chỉ tìm trong nhóm món ăn"?
+
+- **Đã chọn:** mọi câu hỏi tìm trên cả 9.458 đoạn.
+- **Vì sao:** lập luận, không phải số đo: câu hỏi hay chạm nhiều chủ đề, và lọc sai một lần là mất đáp án. Ví dụ ở mục trên: đoạn số 4 nằm ngoài nhóm du lịch.
+- **Cách khác:** lọc theo chủ đề: chưa đo.
+- **Cái giá:** không có cách "chỉ tìm trong lễ hội"; một câu hỏi về món ăn vẫn có thể kéo về đoạn của bài di tích.
+
+### 4. Vì sao hồ sơ của đoạn chỉ có 7 trường?
+
+- **Đã chọn:** 7 trường (bảng ở mục trên); không có trường chủ đề con, thẻ phân loại hay trường để lọc.
+- **Vì sao:** quyết định đã ghi: ngày 11/09 chủ dự án chốt nguyên tắc chỉ thêm trường khi đã có chỗ dùng; lúc thiết kế lại hồ sơ (cuối tháng 9), chủ đề con, thẻ và việc lọc bị loại vì chưa có chỗ nào dùng. Lập luận đi kèm, không phải số đo: mỗi trường thêm vào là một thứ phải giữ đúng mỗi lần sửa kho.
+- **Cách khác:** hồ sơ 5 trường (bản trước): thay bằng 7. Thêm trường: không làm.
+- **Cái giá:** muốn lọc sau này thì phải thêm trường và lập lại chỉ mục.
+
+### 5. Vì sao thông tin gắn kèm do chương trình lấy từ cấu trúc bài, mà không nhờ model viết một câu tóm bối cảnh cho mỗi đoạn?
+
+- **Đã chọn:** chương trình đọc tên bài và các tiêu đề lúc cắt đoạn (bài 8), không gọi model.
+- **Vì sao:** lập luận, không phải số đo: tên bài và đường tiêu đề có sẵn trong bài, không tốn lần gọi model nào, và không có rủi ro model viết sai bối cảnh.
+- **Cách khác:** model viết câu tóm bối cảnh: đã gọi thử ở giai đoạn đầu, nhưng chưa từng lập thành chỉ mục và chưa đo; phần chương trình đó đã gỡ cuối tháng 10.
+- **Cái giá:** bài đặt tên mục nghèo thì đoạn mang nhãn kém; nhãn tốt phụ thuộc người soạn theo mẫu (bài 7).
+
+## Nếu… thì sao
+
+Đọc từ chương trình; người viết chưa thử lại.
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa / ai làm gì |
+|---|---|---|---|
+| một bài đặt tên mục chung chung ("Thông tin khác") | các đoạn mang nhãn kém, khó khớp câu hỏi | có thể nhận câu từ chối dù kho có | người soạn đặt tên mục theo mẫu của chủ đề (bài 7) |
+| bài mới đặt ngoài 7 thư mục được đưa vào kho | bài không vào chỉ mục | hệ thống không biết bài đó | người soạn đặt bài đúng thư mục |
+| bài có giá không thuộc nhóm vé, địa điểm, lễ hội, và không phải bài "Lưu trú ở Huế" | dòng nhắc "có thể đã thay đổi" không được thêm | giá hiện ra mà không kèm dòng nhắc kiểm lại | đã có; danh sách nhóm ghi cố định trong chương trình |
+| đổi tên file bài hoặc chuyển thư mục | mã của mọi đoạn bài đó đổi theo, các đoạn được tính lại | thường không thấy gì khác sau khi cập nhật chỉ mục. Riêng bài có điểm trong bảng điểm của trang Lên kế hoạch: máy chủ không bật được ở lần bật sau, tới khi sửa bảng. Bài đổi nhóm thì dòng nhắc "có thể đã thay đổi" có thể mất hoặc thêm | đã có (bài 6, 12) |
+| một điểm trong Qdrant thiếu trường hoặc sai dạng | bước tìm dừng mỗi khi điểm đó lọt vào ứng viên | "Hệ thống tra cứu tạm thời không khả dụng." và nút "Thử lại" | đã có; chữa bằng dựng lại chỉ mục (lập luận) |
 
 ## Dễ nhầm
 
@@ -80,13 +127,35 @@ Lựa chọn này là lập luận thiết kế, chưa có phép đo riêng so "
 - **"Vector được tính từ thân đoạn."** Không. Nó được tính từ chữ để tìm, tức có cả tên bài và tên mục.
 - **"Model viết nhìn thấy cả bài."** Không. Nó chỉ thấy từng khối: số nguồn, tên bài, tên mục, và mảnh bằng chứng.
 
-## Những điều cần nhớ
+## Câu hỏi tự kiểm
 
-- Mỗi đoạn mang tên bài và đường tiêu đề; đó là thứ làm một đoạn nhỏ tự đủ nghĩa.
-- Dùng ở hai chỗ: trong chữ để tìm, và ở đầu mỗi khối đưa cho model viết.
-- Hồ sơ của đoạn có đúng 7 trường.
-- Không lọc theo chủ đề; mọi câu hỏi tìm trên cả kho.
-- Thử bỏ tên bài và tên mục khỏi chữ để tìm: được 3–4 câu, mất 7–8 câu trên 32 câu, nên giữ.
+<details>
+<summary>1. Thông tin gắn kèm được dùng ở hai chỗ nào?</summary>
+
+Lúc tìm: tên bài và đường tiêu đề được ghép vào chữ để tìm, thứ được đổi thành vector và từ khoá. Lúc viết: chúng đứng ở dòng "Tiêu đề", "Mục" đầu mỗi khối đưa cho model.
+
+</details>
+
+<details>
+<summary>2. Đoạn số 3 của ví dụ chính không có chữ "vé" nào. Vì sao nó vẫn khớp câu hỏi về giá vé?</summary>
+
+Chữ "vé" nằm ở tên bài, và tên bài được ghép vào chữ để tìm của mọi đoạn trong bài đó.
+
+</details>
+
+<details>
+<summary>3. Thử bỏ tên bài và tên mục khỏi chữ để tìm thì sao, và nói kết quả đó thế nào cho đúng mức?</summary>
+
+Bỏ hẳn: 3 câu tốt lên, 8 câu mất đáp án trên 32 câu, nên giữ. Nói đúng mức: "bỏ thì mất nhiều hơn được"; chưa phải "đã chứng minh tên bài giúp", vì mức chênh chưa đủ để phép thử thống kê khẳng định.
+
+</details>
+
+<details>
+<summary>4. Vì sao hệ thống không lọc "chỉ tìm trong nhóm du lịch" cho câu hỏi về vé?</summary>
+
+Câu hỏi hay chạm nhiều chủ đề. Ở ví dụ chính, giá vé trẻ em nằm ở bài nghệ thuật biểu diễn; lọc theo nhóm du lịch thì đoạn đó đã không được xét. Việc không lọc là lập luận, chưa đo.
+
+</details>
 
 ## Cấu hình đang chạy
 
@@ -125,17 +194,12 @@ Lựa chọn này là lập luận thiết kế, chưa có phép đo riêng so "
 - **Đoạn rất ngắn:** tên bài và tên mục chiếm phần lớn chữ để tìm, nên các đoạn của cùng một bài trông giống nhau, khó phân biệt đoạn nào đúng.
 - **Không có cách "chỉ tìm trong lễ hội".** Sau này cần lọc thì phải thêm.
 
-## Vì sao không làm cách khác
-
-**Vì sao không dùng model viết cho mỗi đoạn một câu tóm tắt bối cảnh rồi gắn vào?** Đã gọi thử ở giai đoạn đầu nhưng chưa từng lập thành chỉ mục và chưa đo; phần chương trình đó đã gỡ cuối tháng 10. Tên bài và đường tiêu đề lấy được ngay từ cấu trúc của bài, không tốn lần gọi model nào và không có rủi ro model viết sai bối cảnh.
-
-**Vì sao không lọc theo chủ đề để tìm cho gọn?** Chưa đo. Lý do thiết kế ở trên: lọc sai một lần là mất đáp án, và ví dụ chính có một đoạn đúng nằm ở nhóm không ngờ tới.
-
 ## Chi tiết để tra
 
 - Phép so làm ngày 25/10/2026, trên kho của thời điểm đó, lượng chữ 750 token (thời còn đưa 5 đoạn). Giá trị p sau hiệu chỉnh của hai cách: 0,457 và 0,317, tức chưa có ý nghĩa thống kê.
 - Trong chữ để tìm, đường tiêu đề giữ nguyên số thứ tự của mục nếu bài có đánh số (như "6. Các dịch vụ…").
-- Dòng "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi…" được thêm khi câu trả lời trích một đoạn có trường nguồn thuộc nhóm vé, địa điểm, lễ hội, hoặc bài lưu trú (bài 21).
+- Dòng "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi…" được thêm khi câu trả lời trích một đoạn có trường nguồn thuộc nhóm vé, địa điểm, lễ hội, hoặc là bài "Lưu trú ở Huế" (bài 21).
+- Bước tìm kiểm hồ sơ của từng ứng viên (đủ 7 trường, đúng dạng, mã đoạn khớp mã cất trong Qdrant, chủ đề khớp đường dẫn) mỗi lần tìm.
 
 **Bài sau (bài 10):** chữ để tìm của 9.458 đoạn được đổi thành vector như thế nào.
 
@@ -150,5 +214,7 @@ Lựa chọn này là lập luận thiết kế, chưa có phép đo riêng so "
 - Phép so 4 / 21 / 7 và 3 / 21 / 8, p 0,457 và 0,317: `report_agent/2026-10-24_phase_8_1_ra_soat/phase_8_1_g3_implementation.md` mục 3.5 qua `bai_hoc/03_METADATA.md` [đã chạy 25/10].
 - Bảy thư mục nguồn của kho, 5 chủ đề: `backend/config/settings.yaml` (`include_globs`) [cấu hình].
 - Điều kiện thêm dòng "có thể đã thay đổi": `backend/llm/assistant.py`, `NOTICE_SOURCE_PREFIXES`, hàm `set_notice` [code].
+- Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm" (thêm 13:46 22/11/2026 theo khuôn mới; gom từ "Đã so", bảng cấu hình, mục "Vì sao không làm cách khác" cũ). Hồ sơ 5 ⇒ 7 trường (29–30/09), chủ đề con / thẻ / lọc "bị loại vì chưa có ai dùng", không có chỉ mục phụ: `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` thẻ N2-16 [quyết định đã ghi, không có số chất lượng]. Lý do của dạng khối "Tiêu đề / Mục / Bằng chứng": người viết dò chú thích trong `backend/retrieval/full_corpus_context.py`, không thấy. Lý do "không tốn model, không rủi ro viết sai" ở quyết định 5 là lập luận, giữ từ bài cũ. Bảy thư mục được đưa vào kho: `include_globs` của `backend/config/settings.yaml` [cấu hình]. Kiểm hồ sơ từng ứng viên lúc tìm, lỗi ⇒ lời báo tra cứu không khả dụng: `backend/retrieval/full_corpus.py` (`validate_point_payload`), `backend/api/routes/chat.py` (`RETRIEVAL_UNAVAILABLE_MESSAGE`) [code, chưa thử]. Mã đoạn theo đường dẫn: `backend/ingestion/chunking/full_corpus_chunker.py` (chú thích `chunk_id`) [code]. Dòng "tên mục chung chung" là ví dụ tự đặt.
+- Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư]. Nguyên tắc "chỉ thêm trường khi có chỗ dùng" chốt 11/09: `docs/superpowers/specs/2026-09-09-full-corpus-context-decisions.md` (Decision Queue #3) [quyết định đã ghi]. Bảng điểm trang Lên kế hoạch: `backend/llm/lich_trinh_v2.py` (`kiem_doan_mo_ta`) [code].
 
 </details>

@@ -1,17 +1,17 @@
 # Bài 8 — Cắt bài thành đoạn (chunking)
 
-*Cập nhật 10:21, ngày 22/11/2026 · cách cắt đọc từ chương trình đang chạy; số đoạn đếm sáng 22/11; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
+*Cập nhật 14:17, ngày 22/11/2026 · cách cắt đọc từ chương trình đang chạy; số đoạn đếm sáng 22/11, khớp bản ghi hiện trạng lúc 13:33; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** kho là 266 bài viết về Huế, mỗi bài là một file chữ có tiêu đề và các mục.
-**Bài này thêm:** bước đầu tiên của giai đoạn chuẩn bị: cắt 266 bài thành 9.458 đoạn. Cắt ở đâu, mỗi đoạn dài bao nhiêu, và vì sao đoạn to hơn lại cho kết quả tệ hơn.
+**Bài này thêm:** bước đầu tiên của giai đoạn chuẩn bị: cắt 266 bài thành 9.458 đoạn. Cắt ở đâu, mỗi đoạn dài bao nhiêu, vì sao đoạn to hơn lại cho kết quả tệ hơn, và một đoạn hỏng thì sao.
 
 ## Ý chính
 
-- Model viết không đọc cả bài. Mỗi lần tìm đưa cho nó 10 **đoạn** (trợ lý được tìm thêm tối đa hai lần). Vì vậy bài phải được cắt sẵn thành đoạn, và mỗi đoạn phải tự đủ nghĩa.
+- Model viết không đọc cả bài, chỉ đọc các **đoạn**: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 2 lần; tin nhiều ý được nối thêm 2 đoạn mỗi ý. Vì vậy bài phải được cắt sẵn thành đoạn, và mỗi đoạn phải tự đủ nghĩa.
 - hue_rag cắt **theo cấu trúc của bài**: mỗi đoạn văn, mỗi mục danh sách, mỗi bảng ngắn là một đoạn. Không cắt theo số ký tự, không cắt giữa câu.
 - Bảng dài được tách **từng dòng**, và mỗi dòng mang theo **dòng tiêu đề của bảng**, để một con số giá luôn đi cùng tên cột của nó.
 - Không đoạn nào được dài quá giới hạn mà model embedding đọc được (512 token; giới hạn thật lúc cắt còn chặt hơn). Chương trình kiểm mọi đoạn; một đoạn sai là cả bước chuẩn bị dừng.
-- Đã thử 12 cách cắt khác. Gộp thành đoạn to (từ 256 token trở lên) làm mất đáp án ở 4 tới 6 trên 32 câu. Cách giải thích của nhóm, chưa đo riêng: cùng một lượng chữ thì ít đoạn hơn, model viết thấy ít chỗ của kho hơn.
+- Đã thử 12 cách cắt khác. Gộp thành đoạn to (từ 256 token trở lên) làm mất đáp án ở 4 tới 6 trên 32 câu; gộp nhỏ (tới 128 token) thì không khác. Cách giải thích của nhóm, chưa đo riêng: cùng một lượng chữ thì ít đoạn hơn, model viết thấy ít chỗ của kho hơn.
 
 ## Từ dùng trong bài
 
@@ -72,19 +72,98 @@ Mỗi đoạn mang theo ba thứ:
 
 Cắt xong, chương trình kiểm lại **mọi** đoạn: đoạn nào vượt giới hạn, hoặc mảnh bằng chứng nào không khớp từng chữ với bài gốc ở đúng vị trí đã ghi, là lỗi. Chỉ cần một lỗi thì cả bước chuẩn bị dừng lại; không có chuyện bỏ qua đoạn lỗi rồi chạy tiếp.
 
+## Quyết định và lý do
+
+### 1. Vì sao cắt theo các khối của bài, không cắt đều theo số ký tự có gối đầu?
+
+- **Đã chọn:** mỗi khối của bài là một đoạn; khối dài thì tách ở ranh giới dòng bảng, mục con hoặc câu; không gối đầu.
+- **Vì sao:** lý do thiết kế ghi ở hồ sơ chia đoạn: bài trong kho soạn theo mẫu, có mục và bảng rõ ràng, nên ranh giới ý đã có sẵn; cắt theo số ký tự có thể tách con số khỏi dòng tiêu đề bảng. Gối đầu chỉ cần khi có thể cắt ngang một ý.
+- **Cách khác:** cắt đều 400 ký tự (một bản thử hồi tháng 8): chưa so trực tiếp với cách hiện nay. Gối đầu: chưa so.
+- **Cái giá:** nhiều đoạn rất ngắn: gần 1.800 đoạn dưới 50 token (kho cuối tháng 10), ít chữ để so nghĩa.
+
+### 2. Vì sao giữ đoạn nhỏ, không gộp thành đoạn to cho model có đủ ý?
+
+- **Đã chọn:** giữ đoạn nhỏ như khối của bài.
+- **Vì sao:** đã đo (mục "Đã so"): cùng một lượng chữ, gộp tới 256, 384, 512 token làm mất đáp án ở 4 tới 6 trên 32 câu; mở rộng ra cả mục mất 8 câu.
+- **Cách khác:** gộp tới 128 token: không khác, nên không đổi. Đưa cả bài thay cho từng đoạn (19/11): dừng sớm vì đắt gấp 5,5 lần và lấy nhầm dòng cảnh báo của một hoạt động khác trong cùng bài (bài 13).
+- **Cái giá:** một ý trải dài nhiều khối phải được tìm ra từng mảnh.
+
+### 3. Vì sao dòng bảng dài được tách riêng, và mỗi dòng mang theo dòng tiêu đề?
+
+- **Đã chọn:** bảng vừa giới hạn thì là một đoạn; bảng dài thì mỗi dòng một đoạn, kèm dòng tiêu đề của bảng.
+- **Vì sao:** lý do ghi ở hồ sơ chia đoạn: con số phải luôn đi cùng tên cột của nó (ví dụ "420.000" ở mục trên).
+- **Cách khác:** gộp các dòng bảng liền nhau: đã đo, không khác.
+- **Cái giá:** mỗi dòng giá là một đoạn rất ngắn; câu hỏi viết khác chữ với dòng đó thì bước tìm dễ bỏ sót.
+
+### 4. Vì sao giới hạn lúc cắt là 256 token, khi model đang dùng đọc được 512?
+
+- **Đã chọn:** mỗi đoạn phải vừa giới hạn của cả ba model ghi trong cấu hình; chặt nhất là 256 token.
+- **Vì sao:** hai giới hạn kia còn lại từ thời chọn model. Đã thử chỉ giữ 512: ít đi 61 đoạn, kết quả tìm không khác. Chưa dọn, vì dọn là phải lập lại cả chỉ mục.
+- **Cách khác:** chỉ giữ 512: đã đo, bỏ được.
+- **Cái giá:** 61 đoạn ở 14 bài bị tách thêm mà không cần.
+
+### 5. Vì sao một đoạn sai là dừng cả bước chuẩn bị, không bỏ qua đoạn đó mà chạy tiếp?
+
+- **Đã chọn:** cắt xong kiểm mọi đoạn; một đoạn vượt giới hạn, hoặc một mảnh bằng chứng không khớp bài gốc, là dừng.
+- **Vì sao:** lý do ghi trong chương trình: model embedding cắt im lặng phần vượt 512 token, nên một đoạn quá dài sẽ bị tính vector thiếu mà không ai biết. Với mảnh bằng chứng: chưa thấy ghi lý do. Điều thấy được: khi người dùng bấm xem nguồn, hệ thống lấy chữ theo đúng vị trí đã ghi.
+- **Cách khác:** bỏ qua đoạn lỗi: không làm.
+- **Cái giá:** sửa kho mà tạo ra một đoạn sai thì không cập nhật được chỉ mục cho tới khi sửa xong bài.
+
+### 6. Vì sao chương trình cắt theo luật, mà không nhờ model cắt theo nghĩa?
+
+- **Đã chọn:** chương trình cắt theo bốn luật, lúc chuẩn bị kho.
+- **Vì sao:** chưa thấy ghi lý do. Điều thấy được: cắt lại trên cùng một kho thì ra đúng các đoạn cũ với đúng mã cũ, và có một bài test kiểm điều đó; việc cập nhật riêng vài bài (bài 12) dựa vào chính điều này để biết đoạn nào giữ nguyên.
+- **Cách khác:** model cắt theo nghĩa: chưa thử.
+- **Cái giá:** chất lượng đoạn phụ thuộc cách người soạn chia mục; bài đặt mục kém thì đoạn kém.
+
+## Nếu… thì sao
+
+Đọc từ chương trình và hồ sơ; người viết chưa thử lại.
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa / ai làm gì |
+|---|---|---|---|
+| một khối cắt xong vẫn vượt giới hạn, hoặc một mảnh bằng chứng lệch bài gốc | bước chuẩn bị dừng trước khi ghi gì vào chỉ mục | máy chủ đang chạy: không đổi gì. Khởi động lại trước khi sửa xong: lời báo cần lập chỉ mục lại (bài 7) | người sửa bài viết lại khối đó cho ngắn rồi chạy lại |
+| sửa đúng một câu mà quy tắc gắn lưu ý đang chép nguyên văn (3 câu ở 2 bài) | lệnh cập nhật dừng ở bước cắt, chưa ghi gì | không đổi gì | sửa file quy tắc cho khớp rồi chạy lại (bài 12) |
+| thêm một dòng giữa bài | các đoạn phía sau của chính bài đó đổi mã và được tính lại vector | thường không thấy gì khác. Riêng bài có điểm trong bảng điểm của trang Lên kế hoạch: mã đoạn mô tả dịch số thì máy chủ không bật được ở lần bật sau | đã có; với bài có điểm trong bảng thì phải sửa bảng điểm (bài 6). Khi so trước và sau phải so theo nội dung, không theo mã |
+| câu hỏi viết khác chữ với một dòng bảng ngắn | bước tìm dễ bỏ sót dòng đó | có thể nhận câu từ chối dù kho có | gốc ở bước tìm (bài 13); gộp dòng bảng đã thử, không giúp |
+| đổi model embedding | đổi qua file cấu hình: máy chủ không bật, vì chương trình chỉ nhận đúng model đang dùng. Giới hạn lúc cắt lấy theo danh sách ba model trong cấu hình, không theo model đang chạy | — | phải sửa chương trình kiểm, sửa danh sách giới hạn, rồi cắt lại và dựng lại toàn bộ chỉ mục (bài 10); chưa ai làm |
+| kho lớn gấp mười | mỗi lần cập nhật vẫn cắt lại cả kho | — | bước cắt (khoảng 21 giây hiện nay) thành phần chính của lần cập nhật (bài 7) |
+
 ## Dễ nhầm
 
 - **"Đoạn càng to thì model càng có đủ ý."** Không. Đã đo: gộp thành đoạn to làm mất đáp án ở 4 tới 6 trên 32 câu.
 - **"Cắt đoạn thì phải gối đầu."** Không bắt buộc. Gối đầu chỉ cần khi cắt có thể rơi vào giữa một ý. Cắt theo cấu trúc bài thì không.
 - **"Một đoạn là một đoạn văn."** Không hẳn. Một đoạn có thể là một đoạn văn, một mục danh sách, một bảng ngắn, hoặc một dòng bảng kèm dòng tiêu đề.
 
-## Những điều cần nhớ
+## Câu hỏi tự kiểm
 
-- 266 bài được cắt thành 9.458 đoạn, theo cấu trúc của bài; không gối đầu.
-- Bảng dài tách từng dòng kèm dòng tiêu đề; đoạn văn dài tách ở ranh giới câu.
-- Không đoạn nào vượt giới hạn 512 token của model embedding (giới hạn lúc cắt còn chặt hơn); đoạn dài nhất đo được là 366 token.
-- Mỗi đoạn có vị trí chính xác trong bài gốc và một mã cố định; một đoạn lỗi là cả bước chuẩn bị dừng.
-- Giữ đoạn nhỏ vì đã đo: gộp thành đoạn to (từ 256 token) làm mất đáp án ở 4 tới 6 trên 32 câu; gộp nhỏ (128 token) thì không khác.
+<details>
+<summary>1. Bốn luật cắt là gì?</summary>
+
+Mỗi khối là một đoạn nếu vừa giới hạn. Bảng dài tách từng dòng, mỗi dòng kèm dòng tiêu đề. Mục danh sách dài tách từng mục con, giữ nhãn mục cha. Đoạn văn dài tách ở ranh giới câu, không cắt giữa câu.
+
+</details>
+
+<details>
+<summary>2. Vì sao đưa cho model nhiều đoạn nhỏ tốt hơn ít đoạn to, cùng một lượng chữ?</summary>
+
+Đã đo: gộp to làm mất đáp án ở 4 tới 6 trên 32 câu. Cách giải thích của nhóm (chưa đo riêng): đoạn to chiếm chỗ, đẩy đoạn đúng của ý khác ra ngoài; nhiều đoạn nhỏ trỏ tới nhiều chỗ của kho hơn.
+
+</details>
+
+<details>
+<summary>3. Vì sao một đoạn quá dài lại làm dừng cả bước chuẩn bị?</summary>
+
+Model embedding bỏ im lặng phần vượt 512 token, nên vector của đoạn đó sẽ thiếu mà không ai biết. Dừng hẳn thì lỗi lộ ra ngay, trước khi chỉ mục bị ghi gì.
+
+</details>
+
+<details>
+<summary>4. Thêm một dòng vào giữa một bài thì mã đoạn đổi thế nào?</summary>
+
+Mã là đường dẫn bài kèm số thứ tự đoạn, nên các đoạn phía sau của chính bài đó dịch số và được tính lại vector. Bài khác không bị ảnh hưởng.
+
+</details>
 
 ## Cấu hình đang chạy
 
@@ -127,6 +206,12 @@ Cắt xong, chương trình kiểm lại **mọi** đoạn: đoạn nào vượt
 
 **Giới hạn của phép đo.** 32 câu là bộ nhỏ, đo trên kho cuối tháng 10. Kết luận "đoạn to tệ hơn" khá chắc: ba mức gộp to nhất (256, 384, 512) đều làm mất câu, và vẫn mất khi nâng lượng chữ lên cỡ 10 đoạn. Kết luận "gộp nhỏ không khác" chỉ có nghĩa là trên 32 câu này chưa thấy khác.
 
+## Quyết định nhỏ hơn
+
+**Vì sao không mở rộng ra cả mục chứa đoạn sau khi tìm?** Đã đo hai lần: ở lượng chữ nhỏ thì mất 8 câu (bảng trên); ngày 19/11, thay mỗi đoạn bằng cả mục thì không khác về chất lượng và phát sinh lỗi (bài 13).
+
+**Vì sao không bỏ ba cặp đoạn lặp một phần?** Đã thử bỏ: không khác, nên để nguyên.
+
 ## Giới hạn đã biết
 
 - **Dòng bảng là đoạn rất ngắn.** Mỗi dòng giá đứng riêng, ít chữ; câu hỏi viết khác chữ với dòng đó thì bước tìm dễ bỏ sót. Gốc của lỗi ở bước tìm; thử gộp dòng bảng không giúp.
@@ -134,19 +219,12 @@ Cắt xong, chương trình kiểm lại **mọi** đoạn: đoạn nào vượt
 - **Mã đoạn dồn số khi sửa giữa bài.** Mã đánh theo thứ tự trong bài, nên thêm hay bớt một dòng giữa bài thì các đoạn phía sau đổi số. Hệ thống vẫn chạy đúng; nhưng khi so "trước và sau khi sửa kho" phải so theo nội dung, không theo mã.
 - **Ba cặp đoạn lặp một phần** ở 3 bài di tích (đoạn trích nằm trong mục danh sách). Đã thử bỏ phần lặp: không khác, nên để nguyên.
 
-## Vì sao không làm cách khác
-
-**Vì sao không cắt đều mỗi đoạn vài trăm ký tự có gối đầu, như nhiều hướng dẫn RAG?** Chưa so trực tiếp với cách hiện nay (bản thử hồi tháng 8 từng cắt theo 400 ký tự). Lý do thiết kế: bài trong kho được soạn theo mẫu, có mục và bảng rõ ràng, nên ranh giới ý đã có sẵn; cắt theo số ký tự sẽ tách con số khỏi dòng tiêu đề bảng. Phép so gần nhất đã làm là gộp thành đoạn 128 tới 512 token, và nó không thắng.
-
-**Vì sao không dùng model để cắt theo nghĩa?** Chưa thử.
-
-**Vì sao không đưa cả bài cho model viết khi đã tìm ra bài?** Đã đo ngày 19/11: thay mỗi đoạn bằng cả bài bị dừng sớm vì đắt gấp 5,5 lần và dòng cảnh báo bị lấy nhầm từ một hoạt động khác trong cùng bài; thay bằng cả mục thì không khác về chất lượng và phát sinh lỗi (bài 13). Trước đó, mở rộng ra cả mục ở lượng chữ nhỏ làm mất 8 câu (bảng trên).
-
 ## Chi tiết để tra
 
 - Số 366 token, "một nửa dưới khoảng 85 token" và "gần 1.800 đoạn dưới 50 token" đếm trên kho cuối tháng 10 (khoảng 8.400 đoạn); chưa đếm lại trên 9.458 đoạn hiện nay.
 - Lần chuẩn bị nào cũng chạy vòng kiểm cuối; bản ghi của lần chuẩn bị đang dùng ghi trạng thái hoàn tất với 9.458 đoạn.
 - Có một bài test chạy lại việc cắt trên cùng kho và so kết quả với bản ghi, để bảo đảm mã đoạn không đổi giữa hai lần chạy.
+- Bảng dài tách từng dòng chỉ khi cả bảng không vừa giới hạn; bảng vừa thì giữ nguyên một đoạn.
 - Lượng chữ 750 token trong phép so là mức của thời hệ thống còn đưa 5 đoạn cho model viết.
 
 **Bài sau (bài 9):** mỗi đoạn mang theo tên bài và tên các mục chứa nó. Bài 9 giảng phần thông tin gắn kèm này, và chuyện gì xảy ra khi thử bỏ nó đi.
@@ -163,5 +241,7 @@ Cắt xong, chương trình kiểm lại **mọi** đoạn: đoạn nào vượt
 - 12 cách cắt, 32 câu, 750 token, bảng kết quả: `bao_cao_he_thong/03_BAO_CAO_CHIA_DOAN.md` mục 4 qua `bai_hoc/02_CHUNKING.md` [đã chạy 25/10].
 - Lần thử 19/11 đưa nhiều chữ nguồn hơn: `bai_hoc/VIEC_MOI_XONG.md` mục 14 [đã chạy].
 - Mã đoạn và mã cất trong Qdrant suy ra cố định; test chạy lại: `backend/core/schema.py`, `backend/tests/test_full_corpus_chunker.py` [code].
+- Mục "Quyết định và lý do", "Nếu… thì sao", "Quyết định nhỏ hơn", "Câu hỏi tự kiểm" (thêm 13:44 22/11/2026 theo khuôn mới; gom từ "Đã so", bảng cấu hình, mục "Vì sao không làm cách khác" cũ). Lý do dừng khi đoạn vượt giới hạn ("e5 sẽ cắt im lặng ở 512"): chú thích vòng kiểm cuối trong `backend/ingestion/chunking/full_corpus_chunker.py` [code]. Lý do kiểm mảnh bằng chứng và lý do cắt bằng luật thay vì model: người viết dò chú thích trong cùng file, không thấy. Lý do "cắt theo khối", "con số đi cùng tên cột": `bai_hoc/02_CHUNKING.md` và bảng cấu hình của bài này [chép]. Lệnh cập nhật dừng ở bước cắt khi sửa câu bị quy tắc gắn lưu ý chép nguyên văn; thêm dòng giữa bài làm các đoạn sau đổi số; 21 giây cắt đoạn: `bai_hoc/VIEC_MOI_XONG.md` mục 32 [đã chạy]. Cập nhật riêng dựa vào việc cắt lại ra đúng đoạn cũ: chú thích đầu `backend/ingestion/cap_nhat_rieng.py` [code]. Giới hạn lúc cắt đổi theo danh sách model trong cấu hình: `full_corpus.embedding_models` [cấu hình; dòng "đổi model" là suy từ code, chưa thử].
+- Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư]. Máy chủ không bật khi đoạn mô tả của bảng điểm không còn: `backend/llm/lich_trinh_v2.py` (`kiem_doan_mo_ta`), gọi trong `backend/api/app.py` ngoài khối bắt lỗi [code]. `candidate_id` chỉ nhận `e5-small-384`: `backend/core/settings_loader.py` (`validate_phase6_settings`) [code].
 
 </details>
