@@ -7,6 +7,11 @@ Soạn <giờ lấy bằng `date`> bởi <ai>. Người gửi file này cho bạ
 - Thư mục làm việc: <gốc repo>, nhánh <…>, commit `<…>`. Sản phẩm là gì, dựng bằng gì, code ở đâu — 3–5 dòng.
 - Điều vừa thay đổi / phạm vi cần soi — 3–5 dòng.
 - Bản đồ để đọc code: <file nào tả từng tính năng> · bẫy đã biết (đừng báo lại như phát hiện mới): <file nào>.
+- **Trạng thái lúc gửi** (chủ dự án dặn 22/11/2026 — mục này luôn có, viết ĐỦ chứ không viết ngắn): đang chạy bản nào, thứ gì đang bật / tắt, model nào, số đo
+  mới nhất kèm đường dẫn file đo · ai dùng sản phẩm và "tốt" được đo bằng gì · đã thử những gì và ra sao, kể cả thứ đo rồi bỏ (để bạn không đề xuất lại) · quyết định
+  chủ dự án đã chốt và sàn không được nới · việc đang làm dở · từ riêng của dự án kèm nghĩa. Thứ gì không chép vào đây được thì trỏ đúng file trong repo; file đo
+  nằm ở thư mục riêng (ngoài repo, mục 3 đang cấm mở) ⇒ hoặc chép CON SỐ vào đây, hoặc liệt kê ở mục 3 đúng các đường dẫn được mở. (Đề bài SOÁT ĐỘC LẬP: "đã thử gì /
+  đang dở" = hướng và phép đo đã thử, đã bỏ — KHÔNG kể lỗi nhóm đã thấy trong đúng phạm vi đang hỏi; xem ghi chú cuối file.)
 
 ## 2. Việc của bạn
 <Một câu hỏi rõ.> Ví dụ: "Tìm chỗ HAI tính năng gặp nhau mà bộ test hiện có không bắt được." Không chấm phong cách, không đề nghị dọn code.
@@ -42,6 +47,10 @@ Danh sách của bạn sẽ được so với danh sách của một reviewer c�
 Người nhận sẽ **tái hiện từng điểm trước khi sửa** — cả hệ quả lẫn nguyên nhân bạn nêu (hệ quả đúng mà nguyên nhân sai vẫn dẫn tới sửa sai chỗ).
 
 ---
-*Ghi chú cho người soạn (xoá trước khi gửi):* file phải tự đủ — người review không có lịch sử trò chuyện. Chủ dự án tự mở công cụ hãng khác và gửi file; agent không tự gọi
+*Ghi chú cho người soạn (xoá trước khi gửi):* file phải tự đủ — người review không có lịch sử trò chuyện. **Đủ thông tin, ngữ cảnh, trạng thái** (chủ dự án
+22/11/2026: "bạn phải cung cấp đầy đủ thông tin, ngữ cảnh, trạng thái, ... để các model AI khác đạt kết quả toàn diện nhất, tốt nhất" — áp cho MỌI đề bài gửi model
+khác: soát code, nghiên cứu, phê bình giao diện…): trước khi gửi tự hỏi "model kia chỉ có file này và repo — nó có biết ta đang ở đâu, đã thử gì, thế nào là tốt,
+không được chạm gì không"; thiếu câu nào thì bổ sung, đủ quan trọng hơn ngắn. Ngoại lệ DUY NHẤT, chỉ ở đề bài SOÁT ĐỘC LẬP: không ghi danh sách điểm nhóm đã tìm ra
+cho đúng câu hỏi đang hỏi (để kết quả không bị dẫn dắt) — mọi thứ khác vẫn đưa đủ, kể cả bẫy đã biết; đề bài nghiên cứu / phê bình thì đưa cả những gì nhóm đã thấy — và bỏ câu "bạn KHÔNG được cho biết nhóm đã tìm ra gì" ở đoạn mở đầu. Chủ dự án tự mở công cụ hãng khác và gửi file; agent không tự gọi
 công cụ đó. Lưu cả đề bài lẫn file kết quả cạnh nhau (ngoài git nếu chứa chi tiết riêng). Mẫu này rút từ một lần dùng thật ngày 18/11/2026: reviewer khác hãng chỉ đọc code ~10 phút, thêm được 3 điểm thật mà lượt cùng hãng bỏ sót, và sót 8 điểm lượt
 cùng hãng thấy — hai lượt bổ sung nhau, không thay nhau; một trong ba điểm đúng hệ quả nhưng sai một nửa nguyên nhân.

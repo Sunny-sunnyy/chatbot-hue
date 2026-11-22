@@ -40,6 +40,11 @@ Cuối file kết quả bắt buộc có mục **"CHƯA đọc / CHƯA chạy"**
   ranh giới · khuôn trả về · **lệnh chạy thử 0 đồng cho từng công cụ review hãng khác**. KHÔNG ghi danh sách điểm đã có, KHÔNG chép dữ liệu riêng.
 - Đề bài cho model khác (soát code, nghiên cứu, phê bình giao diện… — mọi loại) LUÔN có đoạn "dùng hết khả năng của bạn": được và nên dùng agent con, nghiên cứu
   chuyên sâu, tìm web nhiều vòng, tự kiểm chéo, để ra kết quả tốt và toàn diện nhất, trong ranh giới chỉ-đọc của đề bài (chủ dự án 22/11/2026; chữ mẫu ở file mẫu).
+- Đề bài cho model khác LUÔN đưa ĐỦ thông tin, ngữ cảnh, trạng thái (chủ dự án 22/11/2026): đang chạy bản nào, bật / tắt gì, số đo mới nhất kèm đường dẫn, đã thử
+  gì kể cả thứ đã bỏ, quyết định đã chốt và sàn, việc đang dở, từ riêng kèm nghĩa — model kia chỉ có file đề bài và repo. Riêng đề bài SOÁT ĐỘC LẬP vẫn không ghi
+  danh sách điểm nhóm đã tìm ra cho đúng câu hỏi đang hỏi (dòng đầu mục này); đề bài nghiên cứu / phê bình thì đưa cả. Chữ mẫu ở file mẫu. hue_rag: lấy trạng thái
+  từ `session_prompt/HIEN_TRANG.md` mục 1 + 4, `session_prompt/Y_CHUA_THU.md` (thứ đo rồi bỏ), `guides/RUNBOOK_BAN_GIAO.md` mục 10 (giới hạn); file đo ở `data/` thì
+  chép con số hoặc ghi rõ trong đề bài các đường dẫn model kia được mở.
 - Chủ dự án tự mở công cụ hãng khác và gửi file; agent **không** tự gọi công cụ hãng khác. Chỉ nhờ gửi khi nhóm đã soạn xong và nêu rõ là cần gửi.
 - Lưu cả đề bài lẫn file kết quả của từng model cạnh nhau (hue_rag: `data/review_khac_hang/<ngày>_<chủ đề>/`, riêng tư).
 
