@@ -37,14 +37,17 @@ Cuối file kết quả bắt buộc có mục **"CHƯA đọc / CHƯA chạy"**
 ## 4. Gói review khác hãng (việc mức cao, hoặc trước mốc chốt)
 
 - Soạn MỘT file `.md` tự đủ ngữ cảnh theo mẫu `guides/khung/GOI_REVIEW_KHAC_HANG.mau.md`: bối cảnh sản phẩm 5–10 dòng · commit · đề bài ba bước ở mục 2 ·
-  ranh giới · khuôn trả về · **lệnh chạy thử 0 đồng cho từng công cụ review hãng khác**. KHÔNG ghi danh sách điểm đã có, KHÔNG chép dữ liệu riêng.
+  ranh giới · khuôn trả về · **lệnh chạy thử 0 đồng cho từng công cụ review hãng khác**. Danh sách điểm nhóm đã có: GHI VÀO dưới nhãn "đã biết — đừng báo lại"
+  (chủ dự án 22/11/2026: "bạn nắm gì thì các model AI khác cũng vậy"); chỉ giấu khi mục đích của đề bài là lấy ý kiến mù, và ghi rõ điều đó. KHÔNG chép dữ liệu riêng.
 - Đề bài cho model khác (soát code, nghiên cứu, phê bình giao diện… — mọi loại) LUÔN có đoạn "dùng hết khả năng của bạn": được và nên dùng agent con, nghiên cứu
   chuyên sâu, tìm web nhiều vòng, tự kiểm chéo, để ra kết quả tốt và toàn diện nhất, trong ranh giới chỉ-đọc của đề bài (chủ dự án 22/11/2026; chữ mẫu ở file mẫu).
 - Đề bài cho model khác LUÔN đưa ĐỦ thông tin, ngữ cảnh, trạng thái (chủ dự án 22/11/2026): đang chạy bản nào, bật / tắt gì, số đo mới nhất kèm đường dẫn, đã thử
-  gì kể cả thứ đã bỏ, quyết định đã chốt và sàn, việc đang dở, từ riêng kèm nghĩa — model kia chỉ có file đề bài và repo. Riêng đề bài SOÁT ĐỘC LẬP vẫn không ghi
-  danh sách điểm nhóm đã tìm ra cho đúng câu hỏi đang hỏi (dòng đầu mục này); đề bài nghiên cứu / phê bình thì đưa cả. Chữ mẫu ở file mẫu. hue_rag: lấy trạng thái
+  gì kể cả thứ đã bỏ, quyết định đã chốt và sàn, việc đang dở, từ riêng kèm nghĩa — model kia chỉ có file đề bài và repo. Kèm danh sách NÊN ĐỌC
+  (file `.md`, thư mục / file code, bộ test, file đo — mỗi dòng một câu "đọc để biết gì") và câu cho phép tự do khám phá ngoài danh sách. Chọn theo: thứ người soạn
+  thấy quan trọng thì đưa, thứ không cần thì không đưa; cần kết quả chất lượng, không cần nhanh. Chữ mẫu ở file mẫu. hue_rag: lấy trạng thái
   từ `session_prompt/HIEN_TRANG.md` mục 1 + 4, `session_prompt/Y_CHUA_THU.md` (thứ đo rồi bỏ), `guides/RUNBOOK_BAN_GIAO.md` mục 10 (giới hạn); file đo ở `data/` thì
-  chép con số hoặc ghi rõ trong đề bài các đường dẫn model kia được mở.
+  chép con số hoặc ghi rõ trong đề bài các đường dẫn model kia được mở; mục ranh giới của đề bài ghi tên `.env`, mẫu file câu kín `*sealed*`, `data/` (trừ đường dẫn đã
+  liệt kê), sổ vết `data/debug_trace/`, và lệnh tìm an toàn `scripts/grep_kb.sh` — "tự do khám phá" không nới các ranh giới này.
 - Chủ dự án tự mở công cụ hãng khác và gửi file; agent **không** tự gọi công cụ hãng khác. Chỉ nhờ gửi khi nhóm đã soạn xong và nêu rõ là cần gửi.
 - Lưu cả đề bài lẫn file kết quả của từng model cạnh nhau (hue_rag: `data/review_khac_hang/<ngày>_<chủ đề>/`, riêng tư).
 
@@ -53,6 +56,8 @@ Cuối file kết quả bắt buộc có mục **"CHƯA đọc / CHƯA chạy"**
 | Trùng (cả hai thấy) | Chỉ lượt A thấy | Chỉ lượt B thấy |
 |---|---|---|
 
+- Đề bài ĐÃ ĐƯA danh sách của nhóm cho model kia (mặc định từ 22/11/2026) ⇒ bảng còn hai cột: điểm MỚI · điểm "đã biết" bị bác / sửa nguyên nhân; con số "bên kia sót
+  bao nhiêu điểm của ta" không còn đo được (cần nó thì soạn đề bài mù). Bảng ba cột dưới dùng cho hai lượt soát mù.
 - Mỗi điểm "chỉ một bên thấy" phải được tái hiện trước khi tính là thật; ghi rõ model đó **nói quá / nói thiếu** chỗ nào.
 - Kết bằng ba số: trùng · chỉ A · chỉ B, và số điểm tái hiện được / số điểm báo của từng bên. Hai lượt bổ sung nhau — không lấy lượt này thay lượt kia.
 
