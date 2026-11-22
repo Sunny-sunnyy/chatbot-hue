@@ -96,6 +96,10 @@ class AssistantFlags:
     # 20/11/2026: `nho_cau_tra_loi` bật = chỉ câu trả lời của lượt LIỀN TRƯỚC vào lịch sử (`api/conversations.py` `chi_dap_lien_truoc`); lõi không đọc cờ này
     nho_hoi_thoai: bool = False
     nho_cau_tra_loi: bool = True
+    # 22/11/2026 (soát khác hãng, điểm "cuộc đã lập lịch thì không nhớ câu trả lời"): cuộc ĐÃ LƯU lịch — câu hỏi THƯỜNG cũng được giữ câu trả lời cho
+    # lượt kế (`api/conversations.py` `dap_duoc_nho`: chỉ chặn lượt thật sự sửa lịch hoặc câu trả lời có TRÍCH nguồn lịch), và bản chạy lại khi lượt
+    # bị rút (`answer_turn_stream_parallel`) phủ cả cuộc đó. Tắt ⇒ như trước: cuộc có lịch không giữ đáp, không chạy lại.
+    nho_dap_cuoc_co_lich: bool = False
     # B5 (plan B5 bản 7 D1): công cụ `lich_trinh` — tắt tới khi đạt luật ghi trước; cần bảng điểm User duyệt (`bang_lich`, nạp ở rìa)
     lich_trinh: bool = False
     bang_lich: "lt.Bang | None" = field(default=None, compare=False, repr=False)
@@ -2093,21 +2097,35 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
     khong_dap = trace.lich_su_khong_dap  # đọc TRƯỚC khi chạy: bước gộp trace phụ của đường song song ghi đè mọi trường không phải đầu vào của route
     async for event in _luot_stream(query, retrieval_service, context_builder, generator, trace, flags, recorder, tim_web):
         yield event
-    if khong_dap is None or trace.citation_error is None or trace.fixed_outcome is not None or trace.lich_luu is not None:
+    if khong_dap is None or trace.citation_error is None or trace.fixed_outcome is not None:
+        return
+    co_lich = trace.lich_luu is not None
+    # Cuộc có lịch đã lưu: chỉ chạy lại khi cờ `nho_dap_cuoc_co_lich` bật và lần đầu KHÔNG phải lượt sửa lịch (không bấm thẻ chọn, bước hiểu ý không ra
+    # hành động nào) — lượt sửa có chữ do code dựng, không thuộc bản chạy lại này.
+    if co_lich and not (flags.nho_dap_cuoc_co_lich and trace.sua_chon is None and not (trace.sua or {}).get("n_hanh_dong")):
         return
     lai = AnswerTrace(**{name: getattr(trace, name) for name in ROUTE_INPUTS})
     lai.history = khong_dap
+    if co_lich and flags.lich_vao_hoi_thuong:  # lần hai vẫn thấy lịch đã lưu như đường thường của cuộc đó (`_sua_song_song`)
+        lai.lich_luu = trace.lich_luu
+    # Cuộc có lịch: lần hai đi THẲNG đường trả lời thường — KHÔNG gọi lại bước hiểu ý sửa lịch (lần đầu đã kết luận đây không phải câu sửa; gọi lại là
+    # có thể hiểu / áp một lệnh sửa lần hai). Cuộc không có lịch: như cũ.
+    chay_lai = _answer_core if co_lich else _luot_stream
+    giu_cua_luot = ("sua", "lich_luu", "sua_chon") if co_lich else ()  # phần của bước hiểu ý lần đầu + lịch của cuộc: trace chính giữ (như `_sua_song_song`)
+    vet_sua = trace.vet.get("sua") if co_lich else None
     ctx_lan_dau = trace.thoi_tiet_ctx if (trace.thoi_tiet_ctx or {}).get("bao_lu_model") else None  # lần đầu model đã tự gọi công cụ loại bão / lũ
     lai.bao_lu_lan_dau = ctx_lan_dau is not None  # dấu đi VÀO lần hai: lưới cuối và cổng web của lần hai coi đây là lượt bão / lũ dù model không gọi lại
     goi_lan_dau, loi_lan_dau = list(trace.llm_calls), str(trace.citation_error).split(":", 1)[0]
     yield "thay_chu", ""  # chữ chưa trích nguồn của lần đầu đã hiện ⇒ gỡ ngay, người dùng thấy lại các dòng tiến độ
     try:
-        async for event in _luot_stream(query, retrieval_service, context_builder, generator, lai, flags, recorder, tim_web):
+        async for event in chay_lai(query, retrieval_service, context_builder, generator, lai, flags, recorder, tim_web):
             yield event
     finally:  # kể cả khi người dùng ngắt giữa lần hai: trace của lượt nhận mọi thứ lần hai đã làm; tiền = cả hai lần
         for item in dataclasses.fields(AnswerTrace):
-            if item.name not in (*ROUTE_INPUTS, "lich_su_khong_dap"):
+            if item.name not in (*ROUTE_INPUTS, "lich_su_khong_dap", *giu_cua_luot):
                 setattr(trace, item.name, getattr(lai, item.name))
+        if vet_sua is not None:  # sổ vết: giữ phần hiểu ý sửa lịch của lần đầu
+            trace.vet = {**trace.vet, "sua": vet_sua}
         if ctx_lan_dau is not None:
             # Soát khác hãng 22/11: tín hiệu an toàn model đã thấy ở lần đầu phải sống hết lượt — lần hai không gọi công cụ đó rồi cũng lỗi thì lời báo
             # lỗi (`loi_bao_luoi_cuoi`) vẫn phải có câu bản tin chính thức + 112. Khoá của lần hai thắng; chỉ `bao_lu_model` được giữ từ lần đầu.

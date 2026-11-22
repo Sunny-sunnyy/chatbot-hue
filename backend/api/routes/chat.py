@@ -222,7 +222,8 @@ def _remember(request: Request, conversation_id: str | None, query: str, trace: 
     if conversation_id is not None and outcome in REMEMBERED_OUTCOMES and (trace.answer or outcome == "hoi_lai"):
         ghi_chu = ghi_chu_goi_y(trace) if _flags(request.app.state).nho_ten_goi_y and outcome == "success" else ""
         store = request.app.state.conversations
-        dap = trace.answer if not getattr(store, "chi_dap_lien_truoc", False) or dap_duoc_nho(trace, outcome) else ""
+        dap = (trace.answer if not getattr(store, "chi_dap_lien_truoc", False)
+               or dap_duoc_nho(trace, outcome, cuoc_co_lich=_flags(request.app.state).nho_dap_cuoc_co_lich) else "")
         store.append(conversation_id, query, dap, ghi_chu)
 
 
