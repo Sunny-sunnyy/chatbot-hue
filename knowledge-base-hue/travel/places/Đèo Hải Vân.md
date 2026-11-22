@@ -81,7 +81,7 @@ Ngay tại vị trí trung tâm đỉnh Đèo Hải Vân là quần thể công 
 
 ### Mốc vận hành và chính sách vé tham quan Hải Vân Quan tại Đèo Hải Vân (mốc tháng 09/2026)
 
-Sau dự án bảo tồn, tu bổ và phục hồi di tích liên tỉnh với tổng kinh phí hơn 42 tỷ đồng do thành phố Huế và thành phố Đà Nẵng phối hợp thực hiện (2021–2024), di tích Hải Vân Quan đã mở cửa đón khách tham quan miễn phí từ ngày 01/08/2024.
+Sau dự án bảo tồn, tu bổ và phục hồi di tích liên tỉnh với tổng kinh phí hơn 42 tỷ đồng do thành phố Huế và thành phố Đà Nẵng phối hợp thực hiện (2021–2024), di tích Hải Vân Quan đã mở cửa đón khách tham quan từ ngày 01/08/2024; từ ngày 02/06/2026, di tích áp dụng thu phí tham quan.
 
 Căn cứ Nghị quyết của Hội đồng nhân dân thành phố Huế và Hội đồng nhân dân thành phố Đà Nẵng, kể từ ngày **02/06/2026**, di tích quốc gia Hải Vân Quan chính thức áp dụng chính sách thu phí tham quan:
 - **Mức phí tham quan:** 70.000 VNĐ/người/lượt đối với người lớn (áp dụng thống nhất cho cả du khách Việt Nam và du khách quốc tế; miễn, giảm phí cho các đối tượng ưu tiên theo quy định pháp luật).
