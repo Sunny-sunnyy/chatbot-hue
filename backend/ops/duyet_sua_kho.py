@@ -19,6 +19,7 @@ import sys
 from pathlib import Path
 
 from core.settings_loader import BACKEND_DIR
+from ops import sua_kho
 
 GOC_REPO = BACKEND_DIR.parent
 
@@ -34,9 +35,10 @@ def main(argv: list[str] | None = None) -> int:
     if bool(a.collection_thu) != bool(a.ban_ghi_thu):
         p.error("--collection-thu và --ban-ghi-thu đi cùng nhau")
     thu_muc, goc = Path(a.thu_muc).resolve(), Path(a.goc).resolve()
-    if a.thu and goc == GOC_REPO:
-        # `--thu` vẫn ÁP file vá lên đĩa (chỉ không lưu bản ghi git) ⇒ quên `--goc` là sửa kho của chính repo này trong khi tưởng chạy thử
-        print("DỪNG: --thu chỉ dùng trên một bản chép — thêm --goc <gốc bản chép>. Chưa có gì được áp.", file=sys.stderr)
+    if (a.thu or a.collection_thu) and goc == GOC_REPO:
+        # `--thu` vẫn ÁP file vá lên đĩa (chỉ không lưu bản ghi git) ⇒ quên `--goc` là sửa kho của chính repo này trong khi tưởng chạy thử.
+        # Cặp `--collection-thu` / `--ban-ghi-thu` còn nặng hơn: áp + LƯU BẢN GHI GIT vào kho này rồi chỉ cập nhật collection thử (soát khác hãng 22/11).
+        print("DỪNG: --thu / --collection-thu chỉ dùng trên một bản chép — thêm --goc <gốc bản chép>. Chưa có gì được áp.", file=sys.stderr)
         return 2
     vet = json.loads((thu_muc / "vet.json").read_text(encoding="utf-8"))
     va = thu_muc / "de_xuat.patch"
@@ -67,6 +69,16 @@ def main(argv: list[str] | None = None) -> int:
     if dang_doi:
         print("DỪNG, chưa áp gì: các bài sau đang có thay đổi chưa lưu bản ghi git — duyệt lúc này sẽ lưu luôn cả thay đổi đó.\n  "
               + "\n  ".join(dang_doi) + "\nLưu (git commit) hoặc bỏ thay đổi đó, chạy lại lệnh đề xuất, rồi duyệt.", file=sys.stderr)
+        return 2
+    #    Soát khác hãng 22/11: dòng sẽ sửa nằm trong khối mà file điều kiện của bộ chia đoạn chép nguyên văn ⇒ áp xong là bước cập nhật chỉ mục báo
+    #    lỗi KHI kho đã có bản ghi git. Bài và file đó phải đổi cùng lúc, lệnh này không sửa file đó ⇒ dừng trước khi áp. Dò lại ở đây (không tin
+    #    bản đề xuất): đề xuất lập bằng bản code cũ không có cảnh báo này.
+    cham = sua_kho.cham_file_dieu_kien(goc / vet["ten_kho"] / "meta" / "full_corpus_conditions.json", [sua_kho.LanXuatHien(**x) for x in vet["cac_lan"]])
+    if cham:
+        print(f"DỪNG, chưa áp gì: dòng sẽ sửa nằm trong khối mà file điều kiện của bộ chia đoạn (`{vet['ten_kho']}/meta/full_corpus_conditions.json`) "
+              "chép nguyên văn:\n  " + "\n  ".join(cham)
+              + "\nSửa tay " + f"{vet['gia_cu']:,} ⇒ {vet['gia_moi']:,}".replace(",", ".") + " ở CẢ bài lẫn file điều kiện (cùng một lần), lưu bản ghi "
+              "git, TẮT server, rồi từ `backend/` chạy `uv run python -m ingestion.cap_nhat_rieng`.", file=sys.stderr)
         return 2
     kiem = git("apply", "--check", str(va))
     if kiem.returncode != 0:

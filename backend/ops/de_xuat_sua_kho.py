@@ -128,7 +128,7 @@ def main(argv: list[str] | None = None) -> int:
             if so:
                 ngoai_kho.append((bang.name, so))
             bang_lech += [(bang.name, bai, cau) for bai, cau in sua_kho.cau_chep_bi_doi(bang, bai_cu, de_xuat.bai_moi)]
-    cham = sua_kho.cham_file_dieu_kien(goc_kho / "meta" / "full_corpus_conditions.json", de_xuat)
+    cham = sua_kho.cham_file_dieu_kien(goc_kho / "meta" / "full_corpus_conditions.json", de_xuat.cac_lan)
 
     (ra / "de_xuat.patch").write_text(de_xuat.va, encoding="utf-8")
     (ra / "DE_XUAT.md").write_text(sua_kho.viet_ban_de_xuat(
