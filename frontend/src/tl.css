@@ -64,6 +64,10 @@
   .tl-chat .chat-turns { padding: 18px 14px; }
   .tra-av { display: none; }
 }
+/* ≤ 760 px có thanh điều hướng đáy cao 64 px (`.td`, index.css) ⇒ khung nhập phải dính PHÍA TRÊN thanh đó. Luật `bottom: 0` của trang này ở trên (ba lớp)
+   thắng luật `.tro-ly-trang .chat-form { bottom: 64px }` của index.css (hai lớp) ⇒ dòng nhắc + nút "Cuộc trò chuyện mới" chui dưới thanh đáy, chạm vào là
+   trúng một mục của thanh đáy (phiên đo 22/11, khổ 390 × 844). */
+@media (max-width: 760px) { .tro-ly-trang .tl-chat .chat-form { bottom: 64px; } }
 
 /* Ảnh dưới câu trả lời (anhTraLoi.js): một ảnh bài nguồn, khung tỉ lệ cố định (không xô lệch), bấm mở bài */
 .anh-tra-loi { display: block; margin: 12px 0 6px; max-width: 360px; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: var(--color-accent-soft); }
