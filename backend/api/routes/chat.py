@@ -494,7 +494,9 @@ def _source_responses(cited, bai_ids=()) -> list[SourceResponse]:
             heading_path=list(source.heading_path),
             # soát khác hãng 22/11: đoạn trích của nguồn "Tin bão / lũ chính thức" là chữ DẶN MODEL (`tt.KET_QUA_BAO_LU`) ⇒ người dùng mở nguồn sẽ đọc thấy
             # lời dặn nội bộ. Giao diện nhận câu bản tin chính thức + 112 đang dùng; chữ model đã nhận không đổi.
-            excerpts=[tt.CAU_BAO_LU] if source.title == tt.TIEU_DE_NGUON_BAO_LU and source.source == tt.NGUON_SOURCE else list(source.excerpts),
+            # cùng loại (phiên đo đếm 22/11): dòng `nl.GHI_CHU_NAM` trong nguồn "Lịch hệ thống" là lời dặn model ⇒ không gửi giao diện; các dòng ngày giữ nguyên
+            excerpts=([tt.CAU_BAO_LU] if source.title == tt.TIEU_DE_NGUON_BAO_LU and source.source == tt.NGUON_SOURCE
+                      else [doan for doan in source.excerpts if doan != nl.GHI_CHU_NAM]),
             bai_id=source.source if source.source in bai_ids else None,
         )
         for source in cited
