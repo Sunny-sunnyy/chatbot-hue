@@ -1983,6 +1983,7 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
         return
     lai = AnswerTrace(**{name: getattr(trace, name) for name in ROUTE_INPUTS})
     lai.history = khong_dap
+    ctx_lan_dau = trace.thoi_tiet_ctx if (trace.thoi_tiet_ctx or {}).get("bao_lu_model") else None  # lần đầu model đã tự gọi công cụ loại bão / lũ
     goi_lan_dau, loi_lan_dau = list(trace.llm_calls), str(trace.citation_error).split(":", 1)[0]
     yield "thay_chu", ""  # chữ chưa trích nguồn của lần đầu đã hiện ⇒ gỡ ngay, người dùng thấy lại các dòng tiến độ
     try:
@@ -1992,6 +1993,10 @@ async def answer_turn_stream_parallel(query: str, retrieval_service, context_bui
         for item in dataclasses.fields(AnswerTrace):
             if item.name not in (*ROUTE_INPUTS, "lich_su_khong_dap"):
                 setattr(trace, item.name, getattr(lai, item.name))
+        if ctx_lan_dau is not None:
+            # Soát khác hãng 22/11: tín hiệu an toàn model đã thấy ở lần đầu phải sống hết lượt — lần hai không gọi công cụ đó rồi cũng lỗi thì lời báo
+            # lỗi (`loi_bao_luoi_cuoi`) vẫn phải có câu bản tin chính thức + 112. Khoá của lần hai thắng; chỉ `bao_lu_model` được giữ từ lần đầu.
+            trace.thoi_tiet_ctx = {**ctx_lan_dau, **(trace.thoi_tiet_ctx or {}), "bao_lu_model": True}
         trace.llm_calls = goi_lan_dau + list(lai.llm_calls)
         trace.tools = [*trace.tools, {"name": TEN_CHAY_LAI, "ms": 0.0, "loi_lan_dau": loi_lan_dau}]
 

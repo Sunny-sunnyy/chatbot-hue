@@ -172,3 +172,39 @@ def test_whole_route_reruns_and_the_user_gets_an_answer_instead_of_the_error_scr
     assert {"name": TEN_CHAY_LAI, "ms": 0.0, "loi_lan_dau": "Grounded answer has no citation"} in so_do[1]["tools"]
     assert so_do[1]["n_llm_calls"] == 4                                        # cả hai lần chạy của lượt 2 đều vào sổ tiền
     assert lich_su[-1][0] == CAU and "Trẻ em 40.000 đồng" in lich_su[-1][1]    # lượt 2 được nhớ bằng câu trả lời của lần chạy lại
+
+
+@pytest.mark.parametrize("parallel", [False, True])
+def test_storm_signal_the_model_found_in_the_first_run_survives_a_rerun_that_also_fails(deps, parallel):
+    """Soát khác hãng 22/11 (điểm 6). Câu gõ KHÔNG khớp lưới bão / lũ; lần đầu model tự gọi công cụ thời tiết loại bão / lũ rồi viết chữ không trích
+    nguồn ⇒ bị rút ⇒ chạy lại; lần hai model không gọi công cụ đó và cũng bị rút. Trước bản sửa: trạng thái thời tiết của lần hai thay của lần đầu ⇒
+    lời báo lỗi gửi trình duyệt mất câu bản tin chính thức + 112 mà lượt không chạy lại vẫn có (`test_luoi_cuoi_bao.py`)."""
+    import asyncio
+
+    from llm import thoi_tiet as tt
+    from llm.assistant import loi_bao_luoi_cuoi
+    from test_b5b_thoi_tiet import bao_call, nguon
+
+    cau = "Mai đi biển Thuận An thời tiết có nguy hiểm gì không?"
+    assert not tt.la_luot_bao_lu(cau, CO_DAP)  # đúng ca: lưới từ khoá không khớp, chỉ model nhận ra
+    flags = dataclasses.replace(CO, song_song_tra_loi=parallel, thoi_tiet=True, bao_lu_cong_cu=True, du_bao=nguon())
+    goi_bao = []
+
+    def script(n, kw):
+        if "ngoai_pham_vi" in (kw.get("instructions") or ""):  # lời dặn định tuyến
+            return [{"type": "message", "id": f"r{n}", "role": "assistant", "status": "completed",
+                     "content": [{"type": "output_text", "text": json.dumps({"route": "tro_ly_hue"}), "annotations": []}]}]
+        if NHAN_LOI_TRUOC in json.dumps(kw["input"], ensure_ascii=False) and not goi_bao:  # lần đầu: gọi công cụ loại bão / lũ đúng một lần
+            goi_bao.append(n)
+            return [bao_call()]
+        return [answer(KHONG_TRICH)]
+
+    trace = AnswerTrace(history=CO_DAP, lich_su_khong_dap=KHONG_DAP)
+    sua_loi = lambda m: loi_bao_luoi_cuoi(cau, m, flags, trace.history, trace.thoi_tiet_ctx)  # noqa: E731 — như route dựng `sua_loi`
+
+    async def go():
+        turn = answer_turn_stream_parallel(cau, *deps, generator(script), trace, flags, None, None)
+        return parse_sse([e async for e in _answer_events(turn, trace, dict.fromkeys(STREAM_METRIC_FIELDS), time.perf_counter(), sua_loi=sua_loi)])
+    loi = [d for k, d in asyncio.run(go()) if k == "error"]
+    assert goi_bao and trace.tools[-1]["name"] == TEN_CHAY_LAI and trace.citation_error is not None  # đúng chuỗi: gọi bão / lũ ⇒ rút ⇒ chạy lại ⇒ rút
+    assert len(loi) == 1 and tt.CAU_BAO_LU in loi[0]["message"]
