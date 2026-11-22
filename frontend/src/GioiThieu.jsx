@@ -38,6 +38,7 @@ const VI_DU = {
 
 export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
   const banDo = !!tinhNang?.ban_do_lich, anh = !!tinhNang?.anh;
+  const moHinh = tinhNang?.mo_hinh;  // tên nơi nhận câu hỏi do server gửi theo model ĐANG CHẠY; chưa có ⇒ câu không nêu tên (không ghi cứng tên hãng ở đây)
   // `#/gioi-thieu/<mục>` ⇒ cuộn tới mục có id đó (sau lần `scrollTo(0, 0)` của `useRoute` lúc đổi hash).
   // chưa biết cờ ⇒ chưa vẽ thân trang (thẻ "làm được gì" theo cờ nở ra lúc cờ về ⇒ đẩy cả trang: CLS 0,17–0,66 đo ở 390, 14/11) và chưa cuộn
   useEffect(() => {
@@ -139,11 +140,11 @@ export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
             <h2 className="gt-h2">Dữ liệu của bạn</h2>
             <p>Trợ lý nhớ các câu hỏi trong một cuộc trò chuyện để hiểu câu hỏi tiếp theo: nhớ trong bộ nhớ máy chủ, tối đa 30 phút, qua một cookie chỉ dùng
               cho trò chuyện. Máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký. Nút “Cuộc trò chuyện mới” xoá phần đã nhớ.</p>
-            <p>Để trả lời, câu hỏi được gửi tới dịch vụ mô hình AI (OpenAI); khi tra web, câu hỏi cũng được gửi tới dịch vụ tìm kiếm — ở lượt
+            <p>Để trả lời, câu hỏi được gửi tới dịch vụ mô hình AI bên ngoài{moHinh ? ` (${moHinh})` : ""}; khi tra web, câu hỏi cũng được gửi tới dịch vụ tìm kiếm — ở lượt
               hỏi tiếp, đó có thể là câu trợ lý viết lại từ cuộc trò chuyện. Đừng gõ thông tin cá nhân vào câu hỏi.</p>
             {banDo && <p>Khi lịch có bản đồ, trình duyệt của bạn tải ảnh bản đồ từ máy chủ {tinhNang.ban_do?.nha_cung_cap ?? "bản đồ"} — máy chủ đó nhận địa chỉ IP và vùng bản đồ bạn
               đang xem (không nhận câu hỏi của bạn).</p>}
-            {anh && <p>Ảnh bạn gửi được thu nhỏ, bỏ thông tin vị trí, gửi tới OpenAI để đoán tên, không lưu.</p>}
+            {anh && <p>Ảnh bạn gửi được thu nhỏ, bỏ thông tin vị trí, gửi tới {moHinh ? `dịch vụ mô hình AI đó (${moHinh})` : "dịch vụ mô hình AI bên ngoài"} để đoán tên, không lưu.</p>}
           </div>
         </section>
       </div>}

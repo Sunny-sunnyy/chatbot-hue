@@ -329,3 +329,19 @@ def test_card_summary_skips_label_bullets():
     md = "# Chùa X\n\n## Thông tin chung\n\n- **Tên chính thức:** Chùa X\n- **Loại:** chùa\n\n## Tổng quan\n\n> Chùa X là một **ngôi chùa** cổ.\n"
     assert _tom_tat(md) == "Chùa X là một ngôi chùa cổ."
     assert _tom_tat("# X\n\n- **Tên:** X\n- Mục hai\n") == "Tên: X Mục hai"  # bài chỉ có danh sách ⇒ như trước
+
+
+def test_feature_route_names_the_model_provider_that_is_actually_running(app_client):
+    """Trang Giới thiệu in nơi nhận câu hỏi theo khoá `mo_hinh` (22/11/2026: trang từng ghi cứng "OpenAI" khi model đã chạy qua Amazon Bedrock). Tên lấy
+    theo `provider` của generator đang chạy; generator chưa sẵn sàng hoặc nhà cung cấp lạ ⇒ khoá vắng (trang dùng câu không nêu tên)."""
+    from types import SimpleNamespace
+    app, client = app_client
+    goc = getattr(app.state, "generator", None)
+    try:
+        ra = {}
+        for provider in ("bedrock", "openai", "la", None):
+            app.state.generator = None if provider is None else SimpleNamespace(provider=provider)
+            ra[provider] = client.get("/api/tinh_nang").json().get("mo_hinh")
+    finally:
+        app.state.generator = goc
+    assert ra == {"bedrock": "Amazon Bedrock, mô hình Claude của Anthropic", "openai": "OpenAI", "la": None, None: None}
