@@ -82,6 +82,12 @@ def main(argv: list[str] | None = None) -> int:
     #    này ⇒ dừng khi kho chưa đổi gì.
     if co_cap_nhat:
         from ingestion import cap_nhat_rieng
+        #    Soát khác hãng 22/11 (điểm 4): server chỉ kiểm chỉ mục một lần lúc khởi động ⇒ còn chạy trong lúc cập nhật là trả lời trên chỉ mục dở.
+        #    Dò cổng TRƯỚC khi áp (lệnh cập nhật ở bước 4 cũng tự dò, nhưng lúc đó kho đã đổi); collection thử thì không dò.
+        if not tham_so_thu and cap_nhat_rieng.server_dang_chay():
+            print(f"DỪNG, kho chưa đổi gì: server đang chạy (cổng {cap_nhat_rieng.CONG_SERVER} đang mở). Tắt server rồi duyệt lại; bật lại sau khi "
+                  "lệnh xong.", file=sys.stderr)
+            return 3
         truoc = cap_nhat_rieng.dong_bo(chi_xem=True, **tham_so_thu)
         if not truoc["da_khop"]:
             print("DỪNG, kho chưa đổi gì: chỉ mục đang lệch kho từ TRƯỚC lần sửa này ở các bài:\n  " + "\n  ".join(truoc["bai_doi"])
@@ -121,9 +127,15 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if not co_cap_nhat:
         print("CHƯA cập nhật chỉ mục (lệnh cập nhật riêng bài chưa có ở bản code này, hoặc kho vừa sửa không phải kho của server này).\n"
-              "Tới khi cập nhật, chatbot vẫn trả lời theo giá cũ và server sẽ từ chối khởi động lại. Các bài cần cập nhật:\n  " + "\n  ".join(can_cap_nhat))
+              "Tới khi cập nhật, server đang chạy vẫn trả lời theo giá cũ; server khởi động lại sẽ trả 409 cho mọi câu hỏi. Các bài cần cập nhật:\n  "
+              + "\n  ".join(can_cap_nhat))
         return 3
-    ket_qua = cap_nhat_rieng.dong_bo(**tham_so_thu)
+    try:
+        ket_qua = cap_nhat_rieng.dong_bo(**tham_so_thu)
+    except cap_nhat_rieng.ServerDangChay:  # server vừa được bật giữa bước 1 và bước này
+        print("CHƯA cập nhật chỉ mục: server vừa được bật trong lúc duyệt. Kho ĐÃ sửa và đã có bản ghi git. Tắt server rồi chạy "
+              "`uv run python -m ingestion.cap_nhat_rieng`.", file=sys.stderr)
+        return 3
     #    Lệnh cập nhật TỰ DÒ bài nào khác chỉ mục. Trước khi sửa chỉ mục đã khớp ⇒ danh sách nó vừa xử lý phải đúng bằng các bài vừa sửa.
     if sorted(ket_qua["bai_doi"]) != can_cap_nhat:
         print("CẦN XEM: chỉ mục đã được cập nhật, nhưng danh sách bài nó xử lý KHÁC các bài vừa sửa.\n  vừa sửa: " + ", ".join(can_cap_nhat)

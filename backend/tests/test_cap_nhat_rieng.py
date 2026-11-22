@@ -4,6 +4,7 @@ model embedding thay bằng hàm tất định theo chữ (để so được t�
 import hashlib
 import json
 from pathlib import Path
+import socket
 
 import numpy as np
 import pytest
@@ -195,3 +196,34 @@ def test_tham_so_chay_thu_phai_di_cung_nhau_va_khong_trung_collection_dang_chay(
                     client=moi_truong["client"])
     with pytest.raises(ValueError, match="trùng thư mục bản ghi dựng thật"):  # kể cả `chi_xem`: dừng trước khi đọc / ghi gì
         cnr.dong_bo(chi_xem=True, kho=moi_truong["kho"], collection=THU, thu_muc_ban_ghi=cnr.BUILD_RECORD_ROOT, client=moi_truong["client"])
+
+
+# ---------- Soát khác hãng 22/11 (điểm 4): server chỉ kiểm chỉ mục một lần lúc khởi động ⇒ còn chạy trong lúc cập nhật là trả lời trên chỉ mục dở ----------
+@pytest.fixture
+def cong_dang_mo(monkeypatch):
+    """Một cổng THẬT đang nghe, đóng vai cổng server (không tựa vào server nào đang chạy trên máy)."""
+    with socket.socket() as o:
+        o.bind(("127.0.0.1", 0))
+        o.listen()
+        monkeypatch.setattr(cnr, "CONG_SERVER", o.getsockname()[1])
+        yield
+
+
+def test_real_write_stops_before_reading_anything_while_the_server_port_is_open(monkeypatch, cong_dang_mo):
+    monkeypatch.setattr(cnr, "discover_full_corpus_files", lambda settings: pytest.fail("đã đi quá phép dò cổng"))  # lưới an toàn: không chạm chỉ mục thật
+    assert cnr.server_dang_chay()
+    with pytest.raises(cnr.ServerDangChay, match="Tắt server"):
+        cnr.dong_bo()
+
+
+def test_view_only_and_trial_collection_runs_are_not_blocked_by_the_open_port(moi_truong, cong_dang_mo):
+    assert _chay(moi_truong, chi_xem=True)["da_khop"] is False  # bản thử chưa có bản ghi dựng ⇒ chưa khớp, và không bị chặn
+    assert _chay(moi_truong)["so_doan_tinh_lai"] == 0 and _chay(moi_truong)["da_khop"]
+
+
+def test_closed_port_reads_as_no_server(monkeypatch):
+    with socket.socket() as o:
+        o.bind(("127.0.0.1", 0))
+        cong = o.getsockname()[1]
+    monkeypatch.setattr(cnr, "CONG_SERVER", cong)  # cổng vừa đóng
+    assert not cnr.server_dang_chay()
