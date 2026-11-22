@@ -1,6 +1,6 @@
 # Bài 10 — Biến mỗi đoạn thành một dãy số mang nghĩa: embedding
 
-*Cập nhật 10:05, ngày 22/11/2026 · cấu hình chép từ hệ thống đang chạy sáng 22/11; số của các phép so lấy từ các báo cáo đo ngày 29/08, 24–25/10 và 30/10; người viết không chạy lại phép đo nào; riêng bước tìm của ví dụ chính được chạy lại sáng 22/11 để lấy điểm số từng đoạn (không gọi model viết).*
+*Cập nhật 10:21, ngày 22/11/2026 · cấu hình chép từ hệ thống đang chạy sáng 22/11; số của các phép so lấy từ các báo cáo đo ngày 29/08, 24–25/10 và 30/10; người viết không chạy lại phép đo nào; riêng bước tìm của ví dụ chính được chạy lại sáng 22/11 để lấy điểm số từng đoạn (không gọi model viết).*
 
 **Bài trước đã biết:** kho 266 bài đã được cắt thành 9.458 đoạn, và mỗi đoạn có một "chữ để tìm" gồm tên bài, tên các mục chứa nó, và thân đoạn.
 **Bài này thêm:** làm sao để máy, khi nhận một câu hỏi, biết đoạn nào trong 9.458 đoạn nói về cùng một chuyện với câu hỏi, kể cả khi hai bên dùng chữ khác nhau.

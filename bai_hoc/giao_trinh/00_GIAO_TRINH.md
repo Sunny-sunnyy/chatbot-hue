@@ -1,6 +1,6 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 10:05, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11 · đã viết 3 bài mẫu (bài 2, 10, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 10:21, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11 · đã viết xong chặng 2 (bài 7–12) và hai bài mẫu khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -45,12 +45,12 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 
 | Số | Bài | |
 |---|---|---|
-| 7 | Kho dữ liệu: 266 bài viết về Huế, ai soạn, lấy từ đâu, kiểm thế nào | ⬜ |
-| 8 | Cắt bài thành đoạn (chunking) | ⬜ |
-| 9 | Thông tin gắn kèm mỗi đoạn (metadata) và "chữ để tìm" | ⬜ |
+| 7 | [Kho dữ liệu: 266 bài viết về Huế, ai soạn, lấy từ đâu, kiểm thế nào](07_KHO_DU_LIEU.md) | ✅ |
+| 8 | [Cắt bài thành đoạn (chunking)](08_CAT_DOAN.md) | ✅ |
+| 9 | [Thông tin gắn kèm mỗi đoạn (metadata) và "chữ để tìm"](09_METADATA.md) | ✅ |
 | 10 | [Biến mỗi đoạn thành một dãy số mang nghĩa: embedding](10_EMBEDDING.md) | ✅ |
-| 11 | Tìm theo chữ trùng: từ khoá BM25 | ⬜ |
-| 12 | Cất vào Qdrant, cập nhật khi kho đổi, và vì sao hệ thống không chịu chạy khi kho lệch chỉ mục | ⬜ |
+| 11 | [Tìm theo chữ trùng: từ khoá BM25](11_TU_KHOA_BM25.md) | ✅ |
+| 12 | [Cất vào Qdrant, cập nhật khi kho đổi, và vì sao hệ thống không chịu chạy khi kho lệch chỉ mục](12_QDRANT.md) | ✅ |
 
 ### Chặng 3 — Trả lời một câu hỏi: mỗi lần người dùng gõ
 
