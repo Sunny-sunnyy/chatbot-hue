@@ -61,6 +61,13 @@ def main(argv: list[str] | None = None) -> int:
     if da_doi:
         print("DỪNG: các bài sau đã đổi từ lúc lập đề xuất — chạy lại lệnh đề xuất rồi đọc bản mới:\n  " + "\n  ".join(da_doi), file=sys.stderr)
         return 2
+    #    Soát khác hãng 22/11: bài đang có sửa đổi CHƯA lưu bản ghi git (có từ trước lúc lập đề xuất ⇒ mã băm ở trên vẫn khớp) ⇒ `git commit -- <bài>`
+    #    ở bước 3 sẽ lưu cả sửa đổi đó — thứ người duyệt chưa đọc. Chế độ thử không lưu bản ghi git nên không chặn.
+    dang_doi = [] if a.thu else [muc[3:] for muc in git("status", "--porcelain", "-z", "--", *cac_bai).stdout.split("\0") if muc]
+    if dang_doi:
+        print("DỪNG, chưa áp gì: các bài sau đang có thay đổi chưa lưu bản ghi git — duyệt lúc này sẽ lưu luôn cả thay đổi đó.\n  "
+              + "\n  ".join(dang_doi) + "\nLưu (git commit) hoặc bỏ thay đổi đó, chạy lại lệnh đề xuất, rồi duyệt.", file=sys.stderr)
+        return 2
     kiem = git("apply", "--check", str(va))
     if kiem.returncode != 0:
         print(f"DỪNG: file vá không áp được.\n{kiem.stderr.strip()}", file=sys.stderr)
