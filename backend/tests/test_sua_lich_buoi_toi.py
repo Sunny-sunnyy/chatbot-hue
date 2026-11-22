@@ -108,3 +108,21 @@ def test_daytime_moves_behave_exactly_as_before_with_the_new_schema():
             for b in v2.BUOI_NGAY:
                 kw = dict(loai="doi_buoi", ten=B.theo_id[x]["ten"], ngay=ng["ngay"], buoi=b)
                 assert s.ap(B, luu, [s.HanhDongToi(**kw)]) == s.ap(B, luu, [s.HanhDongCHT(**kw)]), kw
+
+
+def test_adding_a_daytime_place_already_in_the_plan_to_an_evening_is_answered_about_the_evening():
+    """Lượt người dùng mô phỏng 22/11 (hai lượt liền): "thêm Đại Nội về đêm vô tối ngày 1" — bảng điểm không có hoạt động tối nào tên đó, bước hiểu ý điền
+    tên điểm BAN NGÀY đang có trong lịch ⇒ trợ lý trả "… đã có trong lịch." (đúng chữ, sai việc: người dùng xin một buổi TỐI). Nay lệnh thêm xin buổi tối
+    đi tới nhánh buổi tối và nhận câu nói thật về buổi tối; lệnh thêm không xin buổi tối giữ câu cũ."""
+    k, luu = _lich()
+    x, _ = _ban_ngay_va_toi(k)
+    ten = B.theo_id[x]["ten"]
+    cac_ngay = [ng["ngay"] for ng in k["ngay"]]
+    assert len(cac_ngay) >= 2
+    for ngay in cac_ngay:  # tối của ngày điểm đang đứng LẪN tối của ngày khác: đều là câu về buổi tối
+        kq = s.ap(B, luu, [s.HanhDongToi(loai="them_diem", ten=ten, ngay=ngay, buoi="toi")])
+        assert kq["khung"] == k and kq["khong_doi"] == [{"diem": ten, "ma_luat": "ban_ngay_khong_toi"}], ngay
+        assert s.thay_doi(B, kq)[0]["cau"] == f"{ten} không xếp được vào buổi tối vì đây là điểm tham quan ban ngày, còn buổi tối lịch chỉ xếp hoạt động buổi tối."
+    for buoi in (None, "sang"):  # đối chứng: không xin buổi tối ⇒ vẫn "đã có trong lịch"
+        kq = s.ap(B, luu, [s.HanhDongToi(loai="them_diem", ten=ten, ngay=1, buoi=buoi)])
+        assert kq["khung"] == k and kq["khong_doi"][0]["ma_luat"] == "da_co_trong_lich", buoi
