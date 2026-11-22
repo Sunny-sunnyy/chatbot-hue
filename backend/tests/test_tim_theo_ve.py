@@ -107,3 +107,37 @@ def test_live_stream_path_runs_with_the_flag_on(deps, parallel):
         assert trace.answer and trace.packed is not None, ten
         so_nguon[ten] = len(trace.packed.sources)
     assert so_nguon["bat"] > so_nguon["tat"] and so_nguon["bat_mot_y"] <= so_nguon["tat"]  # chỉ lượt nhiều ý có đoạn nối thêm
+
+
+# ---------- cờ con `tim_ve_loi_nho` (việc X9, 22/11/2026): vế là LỜI NHỜ thông tin không có từ hỏi cũng thành một câu tìm riêng ----------
+V01_LUOT_2 = ("Ok lăng Tự Đức được. Còn Đại Nội thì vé bao nhiêu, xe điện có tính tiền riêng ko? Mấy chỗ này mở cửa mấy giờ, trưa nhà mình phải về nghỉ, "
+              "bé cũng mau chán nữa, chọn giúp thêm 1-2 điểm gần đó ít bậc thôi nha")  # tin của người dùng mô phỏng, lượt mốc 12 vai r2
+
+
+def test_request_clause_switch_defaults_off_in_code_and_in_settings():
+    assert AssistantFlags().tim_ve_loi_nho is False
+    assert load_settings(validate_private_paths=False)["assistant"]["tim_ve_loi_nho"] is False
+
+
+def test_request_clause_without_a_question_word_becomes_a_search_clause_only_when_asked():
+    cu = cac_ve_tim(V01_LUOT_2)
+    assert cu == ["Đại Nội thì vé bao nhiêu", "xe điện có tính tiền riêng ko?", "Mấy chỗ này mở cửa mấy giờ"]            # tắt: vế lời nhờ bị bỏ
+    assert cac_ve_tim(V01_LUOT_2, True) == cu + ["chọn giúp thêm 1-2 điểm gần đó ít bậc thôi nha"]                                # bật: thêm đúng vế đó, vế cũ nguyên thứ tự
+    assert cac_ve_tim("Vé Đại Nội bao nhiêu? Gợi ý giúp mình quán bún bò gần đó. Cho mình biết giờ mở cửa lăng Tự Đức", True) == [
+        "Vé Đại Nội bao nhiêu?", "Gợi ý giúp mình quán bún bò gần đó", "Cho mình biết giờ mở cửa lăng Tự Đức"]
+    # vế kể, vế chào / cảm ơn, chữ "liệt kê" dùng để KỂ lại: không thành câu tìm dù cờ bật
+    tin = "Nhà mình có 4 người thôi nha, vé Đại Nội bao nhiêu? Ủa lượt trước bạn vừa liệt kê mà. Cảm ơn bạn nhiều nha, mai mình đi sớm"
+    assert cac_ve_tim(tin, True) == cac_ve_tim(tin) == ["vé Đại Nội bao nhiêu?"]
+
+
+def test_request_clause_switch_reaches_the_first_search_and_leaves_other_messages_alone(deps):
+    """Qua lõi thật: cờ con bật ⇒ tin nhiều ý có vế lời nhờ có thêm một lần tìm riêng (số vế tăng đúng 1, đoạn cũ giữ nguyên); tin nhiều ý KHÔNG có vế lời
+    nhờ và tin một ý ⇒ thứ gửi model giống hệt lúc cờ con tắt."""
+    CON = dataclasses.replace(BAT, tim_ve_loi_nho=True)
+    (t_cu, _), (t_moi, _) = _chay(deps, BAT, V01_LUOT_2), _chay(deps, CON, V01_LUOT_2)
+    cu, moi = list(t_cu.packed.document_ids), list(t_moi.packed.document_ids)
+    assert t_moi.tools[0]["n_ve"] == t_cu.tools[0]["n_ve"] + 1 and moi[:len(cu)] == cu  # mọi đoạn cũ còn nguyên, đúng thứ tự; đoạn của vế lời nhờ nối sau
+    assert any("Leo bậc" in ma for ma in moi[len(cu):]) and not any("Leo bậc" in ma for ma in cu)  # bài kho trả lời đúng vế đó chỉ vào khi cờ con bật
+    for cau in (CAU_HAI_Y, CAU_MOT_Y):
+        (t_a, goi_a), (t_b, goi_b) = _chay(deps, BAT, cau), _chay(deps, CON, cau)
+        assert goi_a["input"] == goi_b["input"] and t_a.packed == t_b.packed

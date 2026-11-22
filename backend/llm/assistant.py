@@ -151,6 +151,10 @@ class AssistantFlags:
     # nguyên một tin nhiều vế thì đoạn kho của vế phụ hay không vào ngữ cảnh ⇒ model ghi nhầm "Tư liệu chưa có thông tin về…". Không model,
     # không đổi lời dặn. Tin một ý / cờ `cau_nhieu_y` tắt / câu tìm do định tuyến viết ⇒ chuỗi gửi model y như cũ. TẮT tới khi một lượt thật đạt.
     tim_theo_ve: bool = False
+    # 22/11/2026 (việc X9; đếm trên lượt mốc 12 vai: ý "điểm ít leo bậc" trượt cả ba lượt, bài kho có rồi mà tin nhiều ý ở lượt 2 không kéo được nó): cờ con
+    # của `tim_theo_ve` — vế là LỜI NHỜ thông tin không có từ hỏi ("chọn giúp 1-2 điểm ít bậc", "gợi ý quán ăn gần đó") cũng thành một câu tìm riêng. Tắt ⇒
+    # danh sách vế y như cũ. Cổng "tin nhiều ý" (`so_y`) không đổi.
+    tim_ve_loi_nho: bool = False
     # 19/11 (plan private `data/hoi_tiep_goi_y_2026-11-19/PLAN.md`): lịch sử chỉ nhớ câu hỏi ⇒ hỏi tiếp "địa chỉ quán đó" model không biết quán nào.
     # Bật: code ghi TÊN BÀI các nguồn đã trích là bài riêng của một nơi vào chỗ tin trợ lý của lịch sử (`llm/ten_goi_y.py`). TẮT tới khi đo đạt.
     nho_ten_goi_y: bool = False
@@ -1203,7 +1207,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
     instructions = _assistant_instructions(generator, trace, trace.nhieu_y) if (flags.tim_them and generator is not None) else None
     # cờ `tim_theo_ve`: chỉ tin nhiều ý, và chỉ khi câu tìm là câu gốc (câu tìm do định tuyến viết đã là câu tách sẵn)
-    ve_them = cac_ve_tim(query) if flags.tim_theo_ve and trace.nhieu_y and not trace.cau_tim else ()
+    ve_them = cac_ve_tim(query, flags.tim_ve_loi_nho) if flags.tim_theo_ve and trace.nhieu_y and not trace.cau_tim else ()
     # chỉ truyền thêm khi có vế để tìm ⇒ tin một ý / cờ tắt gọi `prepare_answer` y như trước (bảng test 22/11: một test thay hàm này bằng hàm
     # dựng sẵn 8 tham số đã đỏ khi tham số mới được truyền theo vị trí ở MỌI lượt)
     await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions, **({"ve_them": ve_them} if ve_them else {}))
@@ -1675,14 +1679,20 @@ TRAN_SO_VE_TIM = 6  # nhiều nhất bấy nhiêu lần tìm thêm một lượt
 _TU_HOI_TIM = re.compile(r"(?<!\w)(không|ko|k|hok|bao nhiêu|bn|mấy|nào|gì|j|đâu|sao|ai|khi nào|bao lâu|bao xa|bao giờ|chưa|hả|nhỉ|à|vậy)(?!\w)|\?", re.IGNORECASE)
 
 
-def cac_ve_tim(cau: str) -> list[str]:
+# Cờ `tim_ve_loi_nho`: vế NHỜ một thông tin mà không có từ hỏi. Động từ nhờ + chữ nhờ ("chọn giúp", "tìm cho", "xếp hộ"), hoặc động từ chỉ dùng để xin
+# thông tin ("gợi ý", "tư vấn", "giới thiệu", "liệt kê", "cho mình biết / xin"). Vế kể ("nhà mình có 4 người"), vế chào / cảm ơn không khớp.
+_VE_NHO_TIM = re.compile(r"(?<!\w)(?:gợi ý|tư vấn|giới thiệu|đề xuất|kể tên|liệt kê\s+(?:thêm|giúp|giùm|cho|vài|các|những|ra)|(?:chọn|tìm|chỉ|xem|xếp|tính|kể|nêu|tóm tắt|so sánh)\s+(?:giúp|giùm|dùm|hộ|cho|thêm)"
+                         r"|chỉ\s+(?:mình|em|tớ|đường)|cho\s+(?:mình|em|tôi|anh|chị|tớ)\s+(?:biết|xin))(?!\w)", re.IGNORECASE)
+
+
+def cac_ve_tim(cau: str, loi_nho: bool = False) -> list[str]:
     """Các vế của một tin nhiều ý dùng làm CÂU TÌM riêng (cờ `tim_theo_ve`); bỏ vế trùng, nhiều nhất `TRAN_SO_VE_TIM` vế.
     KHÁC `so_y` có chủ ý — hàm này không quyết tin có nhiều ý hay không: cắt cả ở dấu chấm / chấm than / xuống dòng (giữ dấu ? ở cuối vế; dấu chấm /
     phẩy nằm NGAY TRƯỚC một chữ số thì không cắt — "200.000", "1,5 km"; soát khác hãng 22/11: câu tìm từng cụt thành "000 có gồm …"), nhận từ
     hỏi gõ tắt. Lý do: nhận nhầm một vế chỉ tốn hai đoạn thừa, còn bỏ sót một vế là mất đoạn kho của vế đó. Đếm 0 đồng 22/11/2026 trên 8 dòng
     "Tư liệu chưa có thông tin về…" SAI của model đang chạy: đoạn kho đúng vào ngữ cảnh 1 / 8 (tắt) ⇒ 3 / 8 nếu tách như `so_y` ⇒ 5 / 8 với cách này."""
     ve = [p.strip(" ,;.!\n") for v in re.split(r"(?<=[;?!\n])|(?<=[,.])(?!\d)", cau) if v.strip() for p in _LIEN_TU.split(v) if len(p.strip(" ,;?.!\n")) >= 8]
-    return list(dict.fromkeys(v for v in ve if _TU_HOI_TIM.search(v)))[:TRAN_SO_VE_TIM]
+    return list(dict.fromkeys(v for v in ve if _TU_HOI_TIM.search(v) or (loi_nho and _VE_NHO_TIM.search(v))))[:TRAN_SO_VE_TIM]
 
 
 def cau_cho_web(query: str, trace: AnswerTrace, flags: AssistantFlags | None) -> str:
