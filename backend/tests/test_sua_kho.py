@@ -105,6 +105,9 @@ def test_mot_dong_hai_lan_chi_thay_lan_duoc_duyet():
     ("Vé 250k một lượt", 250_000, 250_500, "Vé 250.500 đồng một lượt"),          # sau số không có chữ đơn vị tiền ⇒ vẫn viết đủ "đồng"
     ("Vé 250k, đồng thời tặng nước", 250_000, 250_500, "Vé 250.500 đồng, đồng thời tặng nước"),  # "đồng thời" không phải đơn vị tiền
     ("Chi phí khoảng 1,5 triệu đồng/người.", 1_500_000, 1_800_000, "Chi phí khoảng 1,8 triệu đồng/người."),  # viết được theo kiểu cũ ⇒ như trước
+    # người đọc nhánh (C) bắt: bản đầu cấm chữ "thời" ở BẤT KỲ đâu phía sau ⇒ "… đồng trong thời gian lễ hội" vẫn ra "đồng đồng"
+    ("Vé 250 nghìn đồng trong thời gian lễ hội.", 250_000, 250_500, "Vé 250.500 đồng trong thời gian lễ hội."),
+    ("Vé 250 nghìn đồng mỗi người trong thời điểm cao điểm.", 250_000, 250_500, "Vé 250.500 đồng mỗi người trong thời điểm cao điểm."),
 ])
 def test_gia_moi_le_don_vi_khong_lap_chu_dong(dong, gia_cu, gia_moi, mong):
     """Soát khác hãng 22/11 (Gemini, điểm 2): dòng kho viết "<số> nghìn / triệu đồng", giá mới không tròn theo đơn vị đó ⇒ code viết đủ số kèm
@@ -246,4 +249,5 @@ def test_gia_nam_trong_bang_ma_file_dieu_kien_chep_thi_de_xuat_bao_va_duyet_dung
     assert "full_corpus_conditions.json" in (ra / "DE_XUAT.md").read_text(encoding="utf-8").split("## 4.")[1]
     assert duyet_sua_kho.main([str(ra), "--goc", str(repo)]) == 2
     assert git(repo, "status", "--porcelain", "--", "knowledge-base-hue/travel") == "" and git(repo, "log", "--oneline").count("\n") == 1
-    assert "file điều kiện" in capsys.readouterr().err
+    loi = capsys.readouterr().err
+    assert "knowledge-base-hue/meta/full_corpus_conditions.json" in loi and "200.000 ⇒ 250.000" in loi and "TẮT server, rồi từ `backend/`" in loi

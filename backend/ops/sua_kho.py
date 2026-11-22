@@ -36,7 +36,7 @@ _SO = re.compile(
     r"(?P<dv>\s?(?:triệu|nghìn|ngàn|k|K)(?![\w]))?(?!\d|[.,]\d)"
 )
 _HE_SO = {"triệu": 1_000_000, "nghìn": 1_000, "ngàn": 1_000, "k": 1_000}
-_DA_CO_DON_VI_TIEN = re.compile(r"\s*(?:đồng|đ|vnd|vnđ)(?![\w ]*\bthời\b)(?!\w)", re.I)  # chữ đơn vị tiền đứng ngay sau con số (+ đơn vị nhân)
+_DA_CO_DON_VI_TIEN = re.compile(r"\s*(?:đồng(?!\s+thời(?!\w))|đ|vnd|vnđ)(?!\w)", re.I)  # chữ đơn vị tiền đứng ngay sau con số (+ đơn vị nhân)
 _PHU_THUOC = re.compile(r"tổng|tiết kiệm|cộng|chênh|so với|còn lại|giảm|=", re.I)
 _TIEU_DE = re.compile(r"^(#{1,6})\s+(.*?)\s*#*\s*$")
 

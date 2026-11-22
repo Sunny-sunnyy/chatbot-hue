@@ -75,9 +75,10 @@ def main(argv: list[str] | None = None) -> int:
     #    bản đề xuất): đề xuất lập bằng bản code cũ không có cảnh báo này.
     cham = sua_kho.cham_file_dieu_kien(goc / vet["ten_kho"] / "meta" / "full_corpus_conditions.json", [sua_kho.LanXuatHien(**x) for x in vet["cac_lan"]])
     if cham:
-        print("DỪNG, chưa áp gì: dòng sẽ sửa nằm trong khối mà file điều kiện của bộ chia đoạn (`meta/full_corpus_conditions.json`) chép nguyên văn:\n  "
-              + "\n  ".join(cham) + "\nSửa tay con số ở CẢ bài lẫn file điều kiện, lưu bản ghi git, rồi chạy `uv run python -m ingestion.cap_nhat_rieng`.",
-              file=sys.stderr)
+        print(f"DỪNG, chưa áp gì: dòng sẽ sửa nằm trong khối mà file điều kiện của bộ chia đoạn (`{vet['ten_kho']}/meta/full_corpus_conditions.json`) "
+              "chép nguyên văn:\n  " + "\n  ".join(cham)
+              + "\nSửa tay " + f"{vet['gia_cu']:,} ⇒ {vet['gia_moi']:,}".replace(",", ".") + " ở CẢ bài lẫn file điều kiện (cùng một lần), lưu bản ghi "
+              "git, TẮT server, rồi từ `backend/` chạy `uv run python -m ingestion.cap_nhat_rieng`.", file=sys.stderr)
         return 2
     kiem = git("apply", "--check", str(va))
     if kiem.returncode != 0:
