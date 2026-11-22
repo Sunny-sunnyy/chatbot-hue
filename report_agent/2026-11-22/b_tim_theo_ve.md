@@ -1,4 +1,4 @@
-# Tin nhiều ý: lần tìm kho đầu tìm thêm theo từng vế hỏi (công tắc `tim_theo_ve`, đang TẮT)
+# Tin nhiều ý: lần tìm kho đầu tìm thêm theo từng vế hỏi (công tắc `tim_theo_ve` — phiên điều phối quyết MỞ 22/11/2026; nhánh này đã đổi dòng cấu hình thành mở)
 
 Viết 09:45 22/11/2026 (giờ `date`), phiên B. Nhánh `p9-b-tim-theo-ve`. Việc: sổ việc khối A, nhánh chờ số 3 (S2). Chưa ai đọc lại.
 
@@ -38,7 +38,7 @@ Viết 09:45 22/11/2026 (giờ `date`), phiên B. Nhánh `p9-b-tim-theo-ve`. Vi�
 Lệch so với tiêu chí ghi trước, nói rõ: chuỗi đáp án ghi sẵn khớp nhầm một tin và sót một tin ở lượt 1 ⇒ từ đó dùng mẫu chặt hơn + đọc tay; không lường công cụ "gần một điểm" mở cùng ngày làm bên tắt khá hơn mốc tối 21/11 ở hai tin.
 
 ## 4. Kết luận và đề nghị
-Theo luật ghi trước: sàn đạt, chỉ số quyết đạt sau ba lượt, không mất dữ kiện ⇒ **đề nghị mở**. Phiên điều phối quyết; lùi = một dòng cấu hình. Chưa mở trong nhánh này.
+Theo luật ghi trước: sàn đạt, chỉ số quyết đạt sau ba lượt, không mất dữ kiện ⇒ **đề nghị mở**. Phiên điều phối đã quyết mở (báo chủ dự án đúng hai chỗ nói thật ở bảng trên); lùi = một dòng cấu hình.
 
 ## 5. Chưa làm · giới hạn
 - Chưa có phiên khác đọc code; chưa nhìn trình duyệt (không có chữ / khuôn giao diện mới).
@@ -52,3 +52,17 @@ Theo luật ghi trước: sàn đạt, chỉ số quyết đạt sau ba lượt,
 | code sau công tắc tắt · 7 test · đếm bằng code thật · lượt thật ba lượt nhóm chính | người thứ hai đọc · lượt giữa cuộc · model cũ | hàng runbook + mục bài học: viết khi phiên điều phối quyết mở (chưa mở thì người dùng chưa thấy gì khác) | `cd backend && HF_HUB_OFFLINE=1 uv run pytest tests/test_tim_theo_ve.py -q` ⇒ `7 passed` · `python3 data/thu_bedrock_2026-11-21/tools/b_do_tim_theo_ve.py bang data/thu_bedrock_2026-11-21/b_buoc_4/chua_co/s2_luot_1` ⇒ dòng nhóm K: tắt 5 / 24 ↔ bật 16 / 24 theo chuỗi đáp án gốc |
 
 Phép này KHÔNG cho biết: trên tin thật của người dùng, bao nhiêu dòng "chưa có" là sai và bao nhiêu trong đó tìm theo vế gỡ được · hướng rộng hơn: hai tin không đổi cho thấy phần còn lại nằm ở chỗ đoạn kho đúng không đứng trong 2 đoạn đầu của vế — để model tự tìm thêm theo vế (nó đã tự làm ở một tin) hoặc lấy 3 đoạn mỗi vế là bước kế rẻ; và lỗi "không trích nguồn ⇒ rút cả câu" đáng một phép đếm riêng vì nó xoá cả lượt · đếm rẻ nhất: đếm trong sổ lượt thật số lượt bị rút vì không trích nguồn (0 đồng).
+
+## 6. Sau quyết định mở (10:2x 22/11/2026): bảng test với công tắc MỞ, và một lỗi do chính thay đổi này gây ra — đã sửa
+
+Nhánh đã gộp main `41bcbb2` (kho 266 bài, chỉ mục 9.458 điểm). Chạy TỪNG file trong 42 file test có đọc settings, không nạp env, `tim_theo_ve` mở [máy kiểm; bảng riêng tư `data/thu_bedrock_2026-11-21/b_buoc_4/chua_co/s2_test_cong_tac_mo.tsv`]:
+
+| Kết quả | File |
+|---|---|
+| Đạt hết | 37 / 42 file |
+| Đỏ vì thiếu khoá OpenAI khi không nạp env (bốn file vẫn được ghi là "bỏ khi không nạp env"; `test_api_chat` chạy trên cây chính cũng ra đúng 1 lỗi đó) | `test_api_chat` 14 đạt + 1 lỗi · `test_openai_full_corpus_generator` 7 + 2 lỗi · `test_phase6_live_smoke` 18 + 1 lỗi · `test_phase6_settings` 4 + 1 đỏ |
+| ĐỎ THẬT do thay đổi này | `test_noi_that_lam_thay`: 2 ca đỏ, 61 đạt (cây chính: 63 đạt) |
+
+**Lỗi thật và cách sửa.** Một test thay hàm `prepare_answer` bằng hàm dựng sẵn nhận 8 tham số; bản đầu của thay đổi này truyền thêm tham số thứ 9 (`ve_them`) theo vị trí ở MỌI lượt ⇒ `TypeError`. Trên hệ thống thật hàm thật nhận được tham số đó nên người dùng không gặp lỗi, nhưng nó phá lời hứa "tin một ý / công tắc tắt gọi y như trước". Sửa: chỉ truyền `ve_them` khi có vế để tìm, và truyền theo tên. Sau sửa: `test_noi_that_lam_thay` 63 đạt; chạy lại chín file đi qua đường này trên bản code cuối — `test_tim_theo_ve` 7 · `test_cau_nhieu_y` 44 · `test_web_chi_khi_tu_choi` 13 · `test_b2_tool_loop` 12 · `test_toc_do_song_song` 10 · `test_assistant` 9 · `test_b6_tra_web` 166 · `test_cong_dot_1` 22 — đều đạt. 33 file còn lại của bảng chạy trên bản ngay trước bản sửa một dòng này (bản sửa chỉ đổi cách truyền tham số) — cả bộ test trên main cuối là cổng đóng của phiên đo.
+
+Bài học cho người viết: bốn file "lân cận" tôi tự chọn để chạy trước khi báo xong không có file này; bảng từng file theo `grep` mới bắt được.

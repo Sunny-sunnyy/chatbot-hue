@@ -1188,7 +1188,9 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     instructions = _assistant_instructions(generator, trace, trace.nhieu_y) if (flags.tim_them and generator is not None) else None
     # cờ `tim_theo_ve`: chỉ tin nhiều ý, và chỉ khi câu tìm là câu gốc (câu tìm do định tuyến viết đã là câu tách sẵn)
     ve_them = cac_ve_tim(query) if flags.tim_theo_ve and trace.nhieu_y and not trace.cau_tim else ()
-    await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions, ve_them)
+    # chỉ truyền thêm khi có vế để tìm ⇒ tin một ý / cờ tắt gọi `prepare_answer` y như trước (bảng test 22/11: một test thay hàm này bằng hàm
+    # dựng sẵn 8 tham số đã đỏ khi tham số mới được truyền theo vị trí ở MỌI lượt)
+    await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions, **({"ve_them": ve_them} if ve_them else {}))
     # ngữ cảnh rỗng ⇒ câu từ chối do code đặt; câu nhờ làm thay vẫn nhận câu nói thật. `thoi_tiet_ctx` chưa có ở bước này (đặt sau, trong
     # `_lich_extra`) ⇒ xét thẳng lưới bão / lũ trên câu người dùng (review B m1): lượt bão – lũ giữ câu từ chối cũ + các lớp an toàn của nó
     if trace.fixed_outcome == "refusal_no_sources" and not _khop_luoi_cuoi(query, flags, trace.history):
