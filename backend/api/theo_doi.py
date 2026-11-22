@@ -10,6 +10,7 @@ ngày — không dòng riêng lẻ, không mã lượt."""
 import hmac
 import json
 import os
+import time
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -116,12 +117,29 @@ def khoa_dung(gui: str | None) -> bool | None:
     return hmac.compare_digest((gui or "").encode(), khoa.encode())
 
 
+# Rà bảo mật 22/11 (R5): thử khoá không giới hạn ⇒ dò được khoá ngắn. Một địa chỉ gửi sai `SAI_TOI_DA` lần LIỀN NHAU ⇒ khoá tạm `KHOA_TAM_GIAY` giây (kể
+# cả khi lần sau gửi đúng); gửi đúng ⇒ xoá sổ đếm của địa chỉ đó. Đếm trong RAM, không ghi IP vào log. 5 lần / 15 phút: người gõ nhầm vài lần vẫn vào
+# được, còn dò khoá 16 ký tự ở tốc độ 20 lần / giờ là vô vọng.
+SAI_TOI_DA, KHOA_TAM_GIAY = 5, 15 * 60
+_sai: dict[str, tuple[int, float]] = {}  # địa chỉ ⇒ (số lần sai liền nhau, thời điểm `time.monotonic()` được thử lại)
+
+
 @router.get("/api/theo_doi")
 async def theo_doi(request: Request):
-    """Bảng theo ngày cho trang theo dõi. Trang tắt ⇒ 404; sai / thiếu khoá ⇒ 403; cả hai không kèm số nào."""
+    """Bảng theo ngày cho trang theo dõi. Trang tắt ⇒ 404; sai / thiếu khoá ⇒ 403; sai quá nhiều lần ⇒ 429 trong 15 phút; không trường hợp nào kèm số."""
     dung = khoa_dung(request.headers.get(KHOA_HEADER))
     if dung is None:
         return JSONResponse({"detail": "Not Found"}, status_code=404)
+    ip, luc = (request.client.host if request.client else "khong_ro"), time.monotonic()
+    so_sai, mo_lai = _sai.get(ip, (0, 0.0))
+    if so_sai >= SAI_TOI_DA:
+        if luc < mo_lai:
+            return JSONResponse({"detail": "Nhập sai khoá quá nhiều lần. Chờ 15 phút rồi thử lại."}, status_code=429)
+        so_sai = 0  # hết thời gian khoá ⇒ đếm lại từ đầu
     if not dung:
+        if len(_sai) > 10_000:  # trần RAM của sổ đếm
+            _sai.clear()
+        _sai[ip] = (so_sai + 1, luc + KHOA_TAM_GIAY)
         return JSONResponse({"detail": "Sai khoá."}, status_code=403)
+    _sai.pop(ip, None)
     return {**tong_hop(doc_log()), "doc_luc": datetime.now().strftime("%H:%M %d/%m/%Y"), "so_ngay": SO_NGAY}

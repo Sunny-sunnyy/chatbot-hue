@@ -230,3 +230,16 @@ def test_api_without_memory_flag_sets_no_cookie():
 def test_memory_flags_read_from_settings(flag):
     assert getattr(AssistantFlags.from_settings({"assistant": {flag: not AssistantFlags.__dataclass_fields__[flag].default}}), flag) \
         is not AssistantFlags.__dataclass_fields__[flag].default
+
+
+def test_starting_a_new_conversation_does_not_take_a_slot_until_the_first_turn():
+    """Rà bảo mật 22/11 (R4): "Cuộc trò chuyện mới" (giao diện gọi ở MỖI lần tải trang) từng chiếm một chỗ trong kho ⇒ gọi đủ số lần là đẩy cuộc — và
+    lịch đã lưu — của người khác ra. Nay mã mới chỉ thành cuộc ở lượt hỏi đầu tiên."""
+    s = store(max_conversations=3)
+    cid = s.ensure(None)
+    s.append(cid, "Lịch 2 ngày", "…")
+    s.luu_lich(cid, {"khung": 1})
+    ma = [s.reset(None) for _ in range(50)]  # 50 lần tải trang của người khác
+    assert s.lay_lich(cid) == {"khung": 1} and s.history(cid) and len(set(ma)) == 50
+    moi = s.ensure(ma[0])  # lượt hỏi đầu của một người vừa tải trang: mã chưa có trong kho ⇒ được cấp cuộc mới
+    assert moi != cid and s.history(moi) == () and s.lay_lich(cid) == {"khung": 1}
