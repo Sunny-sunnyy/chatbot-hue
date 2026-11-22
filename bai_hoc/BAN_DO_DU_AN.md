@@ -74,7 +74,7 @@ Mỗi tính năng của trợ lý là **một cờ**; tắt một cờ thì ch�
 | Trả lời song song với xếp loại | **bật** | chữ đầu câu về Huế nhanh hơn 1,37 giây (trung vị 20 cặp câu, đo 04/11, so với chạy lần lượt) |
 | Tìm thêm (tối đa 2 lần) + hết lượt thì dừng | **bật** | câu nhiều nguồn đủ ý hơn +1,17 điểm (thang 1–5, 18 câu, so bản không tìm thêm); 8 / 8 câu kho không có bớt được ít nhất một lần gọi model, nhanh hơn khoảng 6,7 giây cả câu |
 | Nhớ 3 câu hỏi gần nhất | **bật** | câu hỏi tiếp bị từ chối nhầm 5 / 19 ⇒ 0 / 19 (so bản không nhớ) |
-| Nhớ cả câu trả lời (trong MỘT cuộc trò chuyện) | **tắt** | bản thử từng mượn nhầm đoạn của nơi khác |
+| Nhớ câu trả lời LIỀN TRƯỚC (trong MỘT cuộc trò chuyện) | **mở từ sáng 22/11** (dòng này sửa 22/11; các dòng khác của bảng vẫn là ảnh chụp chiều 20/11) | hiểu được câu hỏi tiếp kiểu "quán thứ hai bạn vừa kể ở đường nào"; bản thử cũ nhớ cả cuộc từng mượn nhầm đoạn của nơi khác nên bản đang chạy chỉ nhớ một lượt liền trước và không nhớ lượt có thời tiết, khoảng cách, lịch |
 | Người sau gõ đúng câu người trước đã hỏi ⇒ lấy lại câu trả lời cũ (giữa CÁC cuộc trò chuyện, 24 giờ) | **bật** (20/11) | lượt thật 20/11: lần đầu 7,5 giây và 0,00076 USD, người sau 0,11 giây và 0 USD, chữ + nguồn + ảnh giống hệt (một câu, ba cuộc trò chuyện — mẫu nhỏ); chỉ khớp đúng chữ, không lưu câu từ chối / web / thời tiết / lịch — `VIEC_MOI_XONG.md` mục 21 |
 | Câu xin danh sách ⇒ thêm dòng "danh sách có thể chưa đủ" | **bật** (20/11) | trước đó danh sách thiếu nơi mà không nói gì (đo sáng 20/11: thiếu ở 5 / 6 lần); bộ câu thử của người khác soạn: nhận 19 / 20 câu xin danh sách, hiện nhầm ở 2 trên 32 câu không phải xin danh sách (tổng 52 câu thử); KHÔNG làm danh sách đủ hơn — `VIEC_MOI_XONG.md` mục 22 |
 | Câu hỏi nhiều ý (ý kho có thì trả lời, ý thiếu mới ra web) | **bật** | từ 14/11 |
@@ -165,7 +165,7 @@ cả bộ test chỉ chạy một lượt ở cuối đợt · lỗi hiếm thì
 | Sự kiện theo ngày ("cuối tuần này Huế có lễ hội gì") | code xong, **cờ tắt**; bảng 27 dòng đã có người thứ hai đọc đủ (số đúng 27 / 27), code đã có người thứ hai kiểm; còn thiếu lượt thật | chưa viết (xong mới viết) |
 | Gõ "lên lịch giúp mình" trong ô chat ⇒ dẫn sang trang Lên kế hoạch | code xong, đã gộp, **cờ tắt**; bộ câu thử của phiên khác đạt (nhận 20 / 20, nhận nhầm 0 / 20); chờ một lượt thật trên giao diện rồi mới bật | chưa viết |
 | Sửa lịch "đổi chỗ ngày 1 với ngày 2" | đang viết code (kế hoạch đã duyệt) | — |
-| Nhớ cả câu trả lời trong một cuộc trò chuyện | đã đếm: thiếu nó làm 3 / 122 lượt hỏi tiếp bị từ chối (kiểu "quán thứ hai bạn vừa nói…"), 0 lượt trả lời sai; kế hoạch một trang có hai phương án (giữ tắt ↔ bản nhỏ chỉ nhớ câu trả lời liền trước), chờ phiên điều phối quyết | `report_agent/2026-11-20/b_nho_cau_tra_loi_plan.md` |
+| Nhớ câu trả lời liền trước trong một cuộc trò chuyện | **đã làm, mở cho người dùng sáng 22/11** (bản nhỏ: chỉ nhớ câu trả lời liền trước). Số đếm trước khi làm: thiếu nó làm 3 / 122 lượt hỏi tiếp bị từ chối (kiểu "quán thứ hai bạn vừa nói…"), 0 lượt trả lời sai | `bai_hoc/VIEC_MOI_XONG.md` mục 35 |
 | Hỏi lại khi thiếu thông tin · "gần X có gì ăn" trong ô chat · trang theo dõi · agent đề xuất sửa kho có anh duyệt | **chưa bắt đầu** | — |
 | Câu nhiều ý mà kho chỉ có một phần thì bị từ chối cả câu | **giữ giới hạn** — anh chọn theo số đếm (khoảng 1 % lượt) | sổ tay bàn giao mục 10.1 |
 | Bốn việc từng hẹn "sau lượt đo cuối" | **giữ giới hạn** cả bốn (hiếm hoặc chưa có lượt thật nào gặp) | sổ tay bàn giao mục 10 |
