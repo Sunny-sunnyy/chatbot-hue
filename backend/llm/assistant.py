@@ -52,7 +52,7 @@ from llm.luu_y_nguon import dong_tam_ngung, nhan_nguon
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_LAM_THAY, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
-                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, build_assistant_input, today_line)
+                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, VIET_LAI_NHIEU_Y_TEXT, build_assistant_input, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
 from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusContextBuilder, PackedContext, PackedSource
@@ -122,6 +122,10 @@ class AssistantFlags:
     # 12/11 (plan `2026-11-12-het-luot-tim-plan.md`): model đã dùng hết `MODEL_SEARCH_LIMIT` lần tìm thật ⇒ lượt gọi model kế tiếp không còn công cụ
     # `tim_kho` (bớt một lượt gọi chỉ để nhận chữ "đã hết lượt"). TẮT tới khi đo đạt; tắt ⇒ gọi generator y như trước.
     het_luot_bo_cong_cu: bool = False
+    # 22/11/2026: model đã dùng hết lượt tìm kho mà chữ nó nộp KHÔNG có mã nguồn nào (chữ giữ chỗ: "placeholder", "tìm kho", "Tôi cần tìm thêm…" — nó còn
+    # muốn tìm tiếp trong khi công cụ đã bị cất) ⇒ thay cho màn hình lỗi: gọi MỘT lần viết không công cụ trên mọi Bằng chứng lượt đã gom; vẫn không có
+    # mã ⇒ câu từ chối cố định. Không chạm lượt nào đang qua kiểm. Lý do + số đo: `tests/test_het_luot_viet_lai.py`. TẮT ⇒ như trước.
+    het_luot_viet_lai: bool = False
     so_vet: bool = False  # sổ vết debug có nội dung, chỉ máy local (`core/so_vet.py`); bật bằng `HUE_SO_VET=true`
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
@@ -1135,6 +1139,37 @@ def check_citations(trace: AnswerTrace) -> None:
         trace.citation_error = exc
 
 
+TEN_VIET_LAI = "viet_lai_het_luot"  # tên mục `trace.tools` của lần viết lại (sổ số đo: chỉ tên + thời gian + kết cục, không chữ)
+_LOI_KHONG_MA_NGUON = "Grounded answer has no citation"  # đầu lời lỗi của `llm/citations.py`
+
+
+async def _viet_lai_het_luot(query: str, generator, trace: AnswerTrace, flags: AssistantFlags, today: str | None, call_log: "CallLog | None") -> bool:
+    """Công tắc `het_luot_viet_lai`, gọi ngay sau `_finish_generated` của lượt có công cụ. Chỉ khi: lỗi kiểm là "không có mã nguồn nào" VÀ model đã dùng
+    hết lượt tìm kho VÀ lượt không phải câu cố định / lượt có lịch. Viết MỘT lần bằng đường không công cụ (`generate_answer`) trên mọi khối Bằng chứng
+    lượt đã gom (`trace.context_parts` — số nguồn giữ nguyên), kiểm lại như thường; vẫn không có mã ⇒ câu từ chối cố định. Trả True khi đã viết lại
+    (đường stream phải thay chữ đã hiện). `call_log` None ⇒ tự ghi tiền của lần gọi thêm (đường không stream đã ghi sổ trước đó)."""
+    if not (flags.het_luot_viet_lai and trace.citation_error is not None and str(trace.citation_error).startswith(_LOI_KHONG_MA_NGUON)
+            and trace.model_searches >= flags.so_lan_tim_kho and trace.fixed_outcome is None and trace.lich is None):
+        return False
+    started, rieng = time.perf_counter(), CallLog() if call_log is None else None
+    context = "\n\n".join(trace.context_parts) + (f"\n\n{VIET_LAI_NHIEU_Y_TEXT}" if trace.nhieu_y else "")
+    kwargs = {"call_log": rieng or call_log} if today is None else {"call_log": rieng or call_log, "today": today}
+    trace.citation_error, trace.cited = None, ()
+    try:
+        trace.generated = await generator.generate_answer(query, context, **kwargs, **_history_kwargs(trace))
+    finally:
+        if rieng is not None:
+            record_llm_calls(trace, rieng.calls, ROUTE_TRO_LY_HUE)
+    _finish_generated(trace, flags, query)
+    con_loi = trace.citation_error is not None and str(trace.citation_error).startswith(_LOI_KHONG_MA_NGUON)
+    if con_loi:  # lần viết lại cũng không trích nguồn nào ⇒ không có gì đứng được ⇒ câu từ chối cố định (khối dự báo / câu 112 vẫn do `_thoi_tiet_cuoi` nối)
+        trace.citation_error, trace.answer, trace.cited = None, INSUFFICIENT_ANSWER, ()
+        if flags.thoi_tiet:
+            _thoi_tiet_cuoi(trace)
+    trace.tools.append({"name": TEN_VIET_LAI, "ms": elapsed_ms(started), "tu_choi": con_loi})
+    return True
+
+
 def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
     """H4c (D8): câu trả lời kho có nguồn được trích thuộc vé / điểm đến / lễ hội ⇒ dòng cố định. Chữ câu trả lời không đổi.
     Khoảng cách (16/11): câu trả lời TRÍCH nguồn khoảng cách mà chữ model không nhắc "kẹt xe" ⇒ code nối câu ghi chú của nguồn vào dòng cố định —
@@ -1451,6 +1486,8 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     if recorder:
         recorder.record_generation_result(trace.generated)
     _finish_generated(trace, flags, query)
+    if flags.uses_tools:
+        await _viet_lai_het_luot(query, generator, trace, flags, today, None)
 
 
 def _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags) -> dict:
@@ -1930,6 +1967,10 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             trace.answer, trace.cited = trace.generated.text, ()
         else:
             _finish_generated(trace, flags, query)
+            if tool_state is not None and await _viet_lai_het_luot(query, generator, trace, flags, today, call_log):
+                # chữ giữ chỗ của lần đầu đã hiện (hoặc đang bị giữ) ⇒ thay bằng chữ của lần viết lại; khối dự báo code nối vẫn phát riêng ở dưới
+                giu_chu = False
+                yield "thay_chu", trace.answer.removesuffix(f"\n\n{trace.thoi_tiet_noi}") if trace.thoi_tiet_noi else trace.answer
             if trace.fixed_outcome is not None:  # chạm `max_turns`: không có chữ model nào ⇒ câu từ chối thành một `delta` (B2 D5)
                 if trace.answer:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer

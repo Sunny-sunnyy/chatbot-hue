@@ -169,6 +169,10 @@ LICH_V2_LOI_DAN = (
 
 # D5: chữ công cụ trả ở lần model gọi `tim_kho` thứ 3 (A quyết D5 = (b), `max_turns` 4): không tìm, để model viết bằng bằng chứng đã có.
 TOOL_LIMIT_TEXT = "Đã hết lượt tìm kho. Hãy trả lời bằng Bằng chứng đã có hoặc trả câu không đủ thông tin."
+# Công tắc `het_luot_viet_lai` (22/11/2026): dòng nối vào cuối ngữ cảnh của LẦN VIẾT LẠI, chỉ ở tin nhiều ý — đường viết một lần vốn theo luật "thiếu ⇒
+# từ chối cả câu"; tin nhiều ý được trả lời phần có và ghi dòng `CAU_Y_THIEU` cho phần thiếu, như lời dặn tin nhiều ý của trợ lý có công cụ.
+VIET_LAI_NHIEU_Y_TEXT = ("Lưu ý: câu hỏi có nhiều ý. Ý nào Bằng chứng ở trên có thì trả lời kèm mã nguồn; ý nào Bằng chứng không nói tới thì ghi một dòng "
+                         f"\"{CAU_Y_THIEU} …\" cho ý đó. Bằng chứng không nói về ý nào cả thì trả câu không đủ thông tin.")
 TOOL_NO_NEW_TEXT = "Không có nguồn mới cho câu tìm này."
 # B5 vòng chỉnh 1 (A quyết (a), 05/11): lượt đã có khung lịch ⇒ `tim_kho` không tìm nữa (pilot / server L2: model tìm thêm 3 lần ⇒ chạm `max_turns`)
 # B5b D3 (plan B5b bản 2): mô tả ngắn, không thêm lời dặn hệ thống; số liệu do code in (model không thêm số)
