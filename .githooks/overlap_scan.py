@@ -32,7 +32,8 @@ def norm(text: str) -> str:
     return " ".join(unicodedata.normalize("NFC", text).split())
 
 
-def build_grams() -> dict[str, str]:
+def build_grams(cong_khai: list[str] | None = None) -> dict[str, str]:
+    """`cong_khai` (nếu truyền): nhận thêm chữ đã chuẩn hoá của mọi nguồn công khai (Golden, kho) — hook dùng để lọc cửa sổ câu kín."""
     sys.path.insert(0, str(ROOT / "backend"))
     from llm.full_corpus_prompt import INSUFFICIENT_ANSWER  # câu từ chối chuẩn, có trong code public ⇒ không tính trùng
 
@@ -41,6 +42,8 @@ def build_grams() -> dict[str, str]:
 
     def add(text: str, tag: str) -> None:
         t = norm(text).replace(refusal, " ")
+        if cong_khai is not None and tag != "sealed":
+            cong_khai.append(t)
         for i in range(0, max(0, len(t) - WINDOW + 1), 5):
             grams.setdefault(t[i:i + WINDOW], tag)
 
@@ -120,11 +123,14 @@ def main() -> int:
         inputs = staged_added_lines()
     else:
         inputs = [(Path(f).name, list(enumerate(Path(f).read_text(encoding="utf-8").splitlines(), 1))) for f in sys.argv[1:]]
-    grams, shorts = build_grams(), short_questions()
+    cong_khai: list[str] = []
+    grams, shorts = build_grams(cong_khai), short_questions()
     if staged:
-        # Hook chỉ chặn chữ CHỈ CÓ ở câu kín. Cửa sổ chữ mà đáp án kín chép nguyên từ kho / Golden mang nhãn của nguồn công khai (nguồn
-        # công khai được nạp trước) ⇒ không chặn: trích kho là được phép, và chặn nó sẽ làm lộ đoạn kho nào có câu kín dựa vào.
-        grams = {g: tag for g, tag in grams.items() if tag == "sealed"}
+        # Hook chỉ chặn chữ CHỈ CÓ ở câu kín: cửa sổ nào cũng nằm nguyên trong chữ công khai (đáp án kín chép một khúc kho / Golden) thì
+        # không chặn — trích kho là được phép, và chặn nó sẽ làm lộ đoạn kho nào có câu kín dựa vào. Phải dò CHUỖI CON, so nhãn không đủ:
+        # cửa sổ dựng theo bước 5 từ đầu mỗi văn bản nên khúc chép lệch vị trí sinh cửa sổ không trùng cửa sổ nào của kho (review C 22/11).
+        van_ban = "\n".join(cong_khai)  # norm() đã bỏ mọi xuống dòng ⇒ không cửa sổ nào khớp vắt qua hai văn bản
+        grams = {g: tag for g, tag in grams.items() if tag == "sealed" and g not in van_ban}
         shorts = {q: tag for q, tag in shorts.items() if tag == "sealed"}
     any_hit = False
     for label, lines in inputs:

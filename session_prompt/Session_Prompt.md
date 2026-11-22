@@ -58,7 +58,8 @@ phạm vi và quyền của việc; session giao chịu trách nhiệm kết qu�
   chúng (kho + bộ câu mẫu được commit từ 20/11/2026). Repo GitHub là **public**: số liệu, đường dẫn, sự cố của dự án khác của User chỉ ghi ở `data/` (file
   tracked chỉ nói "một dự án khác của User"); hook `.githooks/pre-commit` chặn phần máy kiểm được. Report tracked tả câu dev / test ở **mức loại câu** (so
   sánh, giá, nhiều nguồn…), không nêu chủ đề cụ thể (tên nơi, món, loại giá) cạnh `case_index` — từ 22/11/2026 điều này chỉ còn áp cho CÂU KÍN: chữ của kho và của bộ câu mẫu
-  được trích vào tài liệu tracked (chủ dự án chọn; cả hai đã công khai từ 20/11), hook chỉ còn chặn chép nguyên văn ≥ 40 ký tự của câu kín.
+  được trích vào tài liệu tracked, hook chỉ còn chặn chép nguyên văn ≥ 40 ký tự của câu kín (phần hook: chủ dự án chọn, cả hai đã công khai từ
+  20/11; phần "tả ở mức loại câu" cho bộ câu mẫu: nhóm tự gỡ theo đó).
 - **Câu kín** (`*sealed*`): chỉ mở khi việc giao rõ cho đúng session / sub-agent đó; người điều phối không đọc nội dung; mở để chấm ở mốc cuối do User
   quyết. Rào đọc `*sealed*` chỉ là LUẬT CHỮ khi máy chạy chế độ bỏ hỏi quyền (ở auto mode thì máy chặn — rào đúng, không lách); báo cáo đo ghi rõ giới hạn
   này. Người chạy chuẩn bị lệnh kín **sớm** (lệnh `!` chỉ in số đếm), đưa User `!` ngay khi đã thấy đạt trên **đúng sha khoá**; bản khoá đổi ⇒ bỏ lệnh cũ,
