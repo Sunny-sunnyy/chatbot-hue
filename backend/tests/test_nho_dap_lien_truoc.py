@@ -77,8 +77,12 @@ def test_cau_xin_ke_lai_va_cau_go_lai_khong_lam_mat_cau_tra_loi_lien_truoc():
     ls = (("Ăn bún ở đâu?", GHI_CHU), ("Ăn cơm hến ở đâu?", lien_truoc))
     # xin kể lại: gỡ dòng ghi chú (danh sách không đủ) nhưng GIỮ câu trả lời liền trước — danh sách thật nằm ở đó
     assert lich_su_cho_luot(ls, "Kể lại các quán vừa nêu") == (("Ăn bún ở đâu?", ""), ("Ăn cơm hến ở đâu?", lien_truoc))
-    # gõ lại nguyên văn câu cũ từng có ghi chú: gỡ ghi chú của lượt cũ, câu trả lời liền trước giữ
-    assert lich_su_cho_luot(ls, "Ăn bún ở đâu?") == (("Ăn bún ở đâu?", ""), ("Ăn cơm hến ở đâu?", lien_truoc))
+    # gõ lại nguyên văn câu cũ từng có ghi chú: lịch sử GIỮ NGUYÊN (đổi 22/11/2026). Hai thiết kế đã có: (1) bản đầu của tính năng này gỡ ghi chú của lượt
+    # cũ để lượt đó trông như chưa được trả lời; (2) bản sau lượt soát khác hãng (G10) không gỡ — luật "gõ lại thì gỡ ghi chú" sinh ra để chữa lịch sử LỆCH
+    # DẠNG (lượt có ghi chú ⇒ lượt rỗng), mà ở đây lượt liền trước mang cả câu trả lời nên không lệch dạng; gỡ là tự tạo ra một lượt rỗng. Giữ (2) vì chuỗi
+    # thật trên trình duyệt 22/11 (hỏi A ⇒ hỏi B ⇒ gõ lại A, model đang chạy): lượt ba trả lời đúng và đủ câu A, có nguồn, không lạc sang B. Mới MỘT lần, một
+    # cặp câu ngắn; chưa thử ca lượt B có dòng ghi chú tên nơi dài.
+    assert lich_su_cho_luot(ls, "Ăn bún ở đâu?") == ls
     assert lich_su_cho_luot(ls, "Quán thứ hai ở đường nào?") == ls  # câu thường: nguyên
 
 
