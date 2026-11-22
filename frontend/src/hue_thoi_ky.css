@@ -10,7 +10,7 @@
 .tk-khung-anh img.tk-anh-dang { opacity: 1; }
 .tk-khung-anh::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 61, 64, .78) 0%, rgba(10, 61, 64, 0) 45%); }
 .tk-nam-lon { position: absolute; left: 24px; bottom: 18px; z-index: 1; color: var(--color-on-accent); font-family: var(--font-serif); font-weight: 600;
-              font-size: 44px; line-height: 1; letter-spacing: -.01em; }
+              font-size: var(--text-trang); line-height: 1; letter-spacing: -.01em; }
 .tk-tien { height: 4px; margin-top: 14px; border-radius: 4px; background: var(--color-line); overflow: hidden; }
 .tk-tien i { display: block; height: 100%; background: var(--color-accent); transform-origin: left; }
 
@@ -20,8 +20,8 @@
 .tk-buoc::before { content: ""; position: absolute; left: -8px; top: calc(50% - 7px); width: 14px; height: 14px; border-radius: 50%;
                    background: var(--color-surface); border: 3px solid var(--color-field-line); }
 .tk-buoc.tk-dang::before { background: var(--color-accent); border-color: var(--color-accent); }
-.tk-nam { margin: 0; color: var(--color-lotus); font-weight: 700; font-size: 15px; letter-spacing: .04em; }
-.tk-buoc h3 { margin: 4px 0 8px; font-family: var(--font-serif); font-weight: 600; font-size: 28px; line-height: 1.2; color: var(--color-accent-deep); }
+.tk-nam { margin: 0; color: var(--color-lotus); font-weight: 700; font-size: var(--text-phu); letter-spacing: .04em; }
+.tk-buoc h3 { margin: 4px 0 8px; font-family: var(--font-serif); font-weight: 600; font-size: var(--text-tieu-de); line-height: 1.2; color: var(--color-accent-deep); }
 .tk-buoc p:last-child { margin: 0; max-width: 46ch; }
 .tk-anh-nho { display: none; }
 
@@ -43,5 +43,5 @@
   .tk-buoc { min-height: 0; padding: 0 0 36px 22px; justify-content: flex-start; }
   .tk-buoc::before { top: 6px; }
   .tk-anh-nho { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; margin-bottom: 14px; }
-  .tk-buoc h3 { font-size: var(--text-lon); }
+  .tk-buoc h3 { font-size: var(--text-tieu-de-nho); }
 }

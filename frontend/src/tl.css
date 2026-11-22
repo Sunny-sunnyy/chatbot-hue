@@ -4,25 +4,25 @@
 
 /* Bố cục trang: cột gợi ý trái + khung chat. Ghi đè bề rộng cũ của index.css (.tro-ly-trang 900 px) theo mẫu 1280 (review E m-1) */
 .tro-ly-trang.khung { max-width: 1280px; padding-top: 0; }
-.tl-cot { display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start; padding-top: 28px; }
+.tl-cot { display: grid; grid-template-columns: 324px 1fr; gap: 28px; align-items: start; padding-top: 28px; }
 .tl-ben { position: sticky; top: 88px; display: flex; flex-direction: column; gap: 14px; }
 .tl-hop { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-l); padding: 18px 20px; }
-.tl-hop h2 { margin: 0 0 10px; font-family: var(--font-serif); font-weight: 600; font-size: 21px; color: var(--color-ink); }
-.tl-hop p { margin: 0; color: var(--color-muted); font-size: 15px; }
+.tl-hop h2 { margin: 0 0 10px; font-family: var(--font-serif); font-weight: 600; font-size: var(--text-tieu-de-nho); color: var(--color-ink); text-wrap: balance; }
+.tl-hop p { margin: 0; color: var(--color-muted); font-size: var(--text-phu); }
 .tl-chu-de { display: flex; flex-direction: column; gap: 8px; }
 .tl-chu-de button { display: flex; gap: 12px; align-items: center; text-align: left; border: 1px solid var(--color-line); background: var(--color-surface);
-  border-radius: var(--radius-m); padding: 10px 12px; cursor: pointer; font-size: 15px; color: var(--color-ink); }
+  border-radius: var(--radius-m); padding: 10px 12px; cursor: pointer; font-size: var(--text-phu); color: var(--color-ink); }
 .tl-chu-de button:hover { border-color: var(--color-accent); }
 .tl-chu-de button:disabled { opacity: .6; cursor: not-allowed; }
 .tl-chu-de .bt { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; }
-.tl-lam { margin: 0; padding-left: 18px; font-size: 15px; color: var(--color-muted); display: grid; gap: 4px; }
+.tl-lam { margin: 0; padding-left: 18px; font-size: var(--text-phu); color: var(--color-muted); display: grid; gap: 4px; }
 .tl-lam a { color: var(--color-accent-deep); text-decoration: underline; text-underline-offset: 3px; }
 
 .tl-chat { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 24px; overflow: hidden; display: flex; flex-direction: column;
   min-height: calc(100vh - 120px); }
 .tl-chat-dau { display: flex; align-items: center; gap: 12px; padding: 16px 22px; background: linear-gradient(90deg, var(--color-river), var(--color-accent)); color: var(--color-on-accent); }
 .tl-chat-dau .tra-av { background: var(--color-surface); color: var(--color-river); width: 42px; height: 42px; }
-.tl-chat-dau b { display: block; font-size: 17px; }
+.tl-chat-dau b { display: block; font-size: var(--text-than); }
 .tl-chat-dau small { color: var(--color-river-muted); font-size: var(--text-nho); }
 .tl-chat .chat-view { flex: 1; display: flex; flex-direction: column; }
 .tl-chat .chat-turns { flex: 1; padding: 24px 22px; background: var(--color-page); }
@@ -41,7 +41,7 @@
 
 /* Bước công cụ thật + "đang gõ" */
 .searching { flex-wrap: wrap; }
-.buoc-dang { font-size: 15px; font-weight: 600; color: var(--color-accent-deep); }
+.buoc-dang { font-size: var(--text-phu); font-weight: 600; color: var(--color-accent-deep); }
 .go { display: inline-flex; gap: 5px; padding: 6px 2px; }
 .go i { width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); opacity: .35; }
 .hieu-ung .go i { animation: tl-go 1.2s ease-in-out infinite; }
@@ -83,11 +83,11 @@
 
 /* Thẻ khách sạn dưới câu trả lời (C 15/11) — cùng kiểu ô với trang Chỗ ở */
 .the-ks-hang { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; margin: 10px 0 6px; }
-.the-ks { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; min-height: 76px; padding: 8px 12px 8px 96px; border-radius: var(--radius-m); background: var(--color-accent-soft); font-size: 14.5px; }
+.the-ks { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; min-height: 76px; padding: 8px 12px 8px 96px; border-radius: var(--radius-m); background: var(--color-accent-soft); font-size: var(--text-nho); }
 .the-ks img, .the-ks-khong-anh { position: absolute; left: 8px; top: 8px; width: 78px; height: 60px; object-fit: cover; border-radius: 10px; }
 .the-ks-khong-anh { background: var(--color-line); }
 .the-ks-ten { font-weight: 600; }
 .the-ks small { color: var(--color-muted); }
 .the-ks-link { flex-basis: 100%; display: inline-flex; gap: 12px; }
 .the-ks-link a { color: var(--color-accent-deep); font-weight: 600; }
-.the-ks-nhan { grid-column: 1 / -1; margin: 0; color: var(--color-muted); font-size: 13px; }
+.the-ks-nhan { grid-column: 1 / -1; margin: 0; color: var(--color-muted); font-size: var(--text-chu-thich); }

@@ -4,11 +4,11 @@
 .co-h { margin: 6px 0 4px; font-family: var(--font-serif); font-size: clamp(28px, 4vw, 40px); color: var(--color-accent-deep); }
 .co-p { margin: 0 0 16px; color: var(--color-muted); max-width: 64ch; }
 .co-loc { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 10px; }
-.co-loc button { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--color-line); background: var(--color-surface); color: var(--color-ink); font: inherit; font-size: 14.5px; cursor: pointer; }
+.co-loc button { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--color-line); background: var(--color-surface); color: var(--color-ink); font: inherit; font-size: var(--text-nho); cursor: pointer; }
 .co-loc button[aria-pressed="true"] { background: var(--color-accent-deep); border-color: var(--color-accent-deep); color: var(--color-on-accent); }
 .co-nhom { margin-top: 22px; }
-.co-nhom h2 { margin: 0 0 8px; font-family: var(--font-serif); font-size: 23px; color: var(--color-accent-deep); }
-.co-muc h3 { margin: 14px 0 8px; font-size: var(--text-vua); }
+.co-nhom h2 { margin: 0 0 8px; font-family: var(--font-serif); font-size: var(--text-tieu-de-nho); color: var(--color-accent-deep); }
+.co-muc h3 { margin: 14px 0 8px; font-size: var(--text-than); }
 .co-muc h3 small { color: var(--color-muted); font-weight: 400; }
 .co-muc ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
 .co-muc li { position: relative; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; min-height: 84px; padding: 10px 14px 10px 112px; border-radius: var(--radius-m); background: var(--color-accent-soft); }
@@ -16,7 +16,7 @@
 .co-khong-anh { background: var(--color-line); }
 .co-ten { font-weight: 600; }
 .co-muc li small { color: var(--color-muted); }
-.co-dc { flex-basis: 100%; color: var(--color-muted); font-size: 14.5px; }
+.co-dc { flex-basis: 100%; color: var(--color-muted); font-size: var(--text-nho); }
 .co-link { display: inline-flex; gap: 14px; }
 .co-link a { color: var(--color-accent-deep); font-weight: 600; }
 .co-nguon { margin-top: 22px; color: var(--color-muted); font-size: var(--text-nho); }
