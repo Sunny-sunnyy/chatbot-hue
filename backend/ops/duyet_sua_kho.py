@@ -28,8 +28,16 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("thu_muc", help="thư mục đề xuất do ops.de_xuat_sua_kho tạo")
     p.add_argument("--goc", default=str(GOC_REPO), help="gốc repo có kho cần sửa (mặc định: repo này)")
     p.add_argument("--thu", action="store_true", help="chỉ áp vào kho của --goc; không commit, không cập nhật chỉ mục (để thử trên bản chép)")
+    p.add_argument("--collection-thu", help="[thử đầu–cuối trên bản chép] tên collection thử để cập nhật thay cho collection đang chạy")
+    p.add_argument("--ban-ghi-thu", help="[thử đầu–cuối trên bản chép] thư mục bản ghi dựng + thống kê từ khoá của collection thử")
     a = p.parse_args(argv)
+    if bool(a.collection_thu) != bool(a.ban_ghi_thu):
+        p.error("--collection-thu và --ban-ghi-thu đi cùng nhau")
     thu_muc, goc = Path(a.thu_muc).resolve(), Path(a.goc).resolve()
+    if a.thu and goc == GOC_REPO:
+        # `--thu` vẫn ÁP file vá lên đĩa (chỉ không lưu bản ghi git) ⇒ quên `--goc` là sửa kho của chính repo này trong khi tưởng chạy thử
+        print("DỪNG: --thu chỉ dùng trên một bản chép — thêm --goc <gốc bản chép>. Chưa có gì được áp.", file=sys.stderr)
+        return 2
     vet = json.loads((thu_muc / "vet.json").read_text(encoding="utf-8"))
     va = thu_muc / "de_xuat.patch"
     cac_bai = [f"{vet['ten_kho']}/{bai}" for bai in vet["bam_bai"]]
@@ -40,6 +48,14 @@ def main(argv: list[str] | None = None) -> int:
     def git(*lenh: str) -> subprocess.CompletedProcess:
         return subprocess.run(["git", "-c", "core.quotepath=false", "-C", str(goc), *lenh], capture_output=True, text=True)
 
+    # Cập nhật chỉ mục (bước 4) dùng `ingestion.cap_nhat_rieng.dong_bo`. Kho của --goc không phải kho của server ⇒ chỉ cập nhật khi người chạy
+    # nêu rõ collection thử (không bao giờ ghi chữ của một bản chép vào collection đang chạy — `dong_bo` cũng tự từ chối tên trùng).
+    can_cap_nhat = sorted(bai for bai in vet["bam_bai"] if bai not in set(vet.get("bai_ngoai_chi_muc", [])))
+    tham_so_thu = ({"kho": goc / vet["ten_kho"], "collection": a.collection_thu, "thu_muc_ban_ghi": Path(a.ban_ghi_thu).resolve()}
+                   if a.collection_thu else {})
+    co_cap_nhat = (not a.thu and bool(can_cap_nhat) and importlib.util.find_spec("ingestion.cap_nhat_rieng") is not None
+                   and (goc == GOC_REPO or bool(tham_so_thu)))
+
     # 1. Kho phải còn đúng như lúc đề xuất: bài đã đổi từ đó ⇒ số dòng trong bản đề xuất bạn đọc không còn đúng ⇒ dừng, đề xuất lại.
     da_doi = [bai for bai, bam in vet["bam_bai"].items() if hashlib.sha256((goc / vet["ten_kho"] / bai).read_bytes()).hexdigest() != bam]
     if da_doi:
@@ -49,6 +65,21 @@ def main(argv: list[str] | None = None) -> int:
     if kiem.returncode != 0:
         print(f"DỪNG: file vá không áp được.\n{kiem.stderr.strip()}", file=sys.stderr)
         return 2
+    #    File vá chỉ được chạm đúng các bài của đề xuất (bản đề xuất người duyệt đã đọc chỉ nói về các bài đó).
+    trong_va = sorted(dong.split("\t")[2] for dong in git("apply", "--numstat", "-z", str(va)).stdout.split("\0") if dong.count("\t") == 2)
+    if trong_va != sorted(cac_bai):
+        print("DỪNG: file vá chạm file ngoài danh sách bài của đề xuất — không áp gì:\n  "
+              + "\n  ".join(sorted(set(trong_va) ^ set(cac_bai))), file=sys.stderr)
+        return 2
+    #    Chỉ mục phải đang KHỚP kho trước khi sửa (chỉ đọc, khoảng 20 giây): đang lệch sẵn ⇒ sau khi sửa không còn biết phần lệch nào là của lần
+    #    này ⇒ dừng khi kho chưa đổi gì.
+    if co_cap_nhat:
+        from ingestion import cap_nhat_rieng
+        truoc = cap_nhat_rieng.dong_bo(chi_xem=True, **tham_so_thu)
+        if not truoc["da_khop"]:
+            print("DỪNG, kho chưa đổi gì: chỉ mục đang lệch kho từ TRƯỚC lần sửa này ở các bài:\n  " + "\n  ".join(truoc["bai_doi"])
+                  + "\nCập nhật chỉ mục trước (`uv run python -m ingestion.cap_nhat_rieng`) rồi duyệt lại.", file=sys.stderr)
+            return 3
 
     # 2. Áp. Từ đây kho đã đổi trên đĩa; chưa có bản ghi git.
     ap = git("apply", str(va))
@@ -78,27 +109,23 @@ def main(argv: list[str] | None = None) -> int:
           "  uv run pytest tests/test_quan_lich.py -q -k marked_closed")
 
     # 4. Cập nhật chỉ mục cho riêng các bài đã sửa (để chatbot trả lời theo giá mới). File kiểm kê không nằm trong chỉ mục ⇒ bỏ qua.
-    #    Lệnh cập nhật (`ingestion.cap_nhat_rieng`) TỰ DÒ bài nào khác chỉ mục; ở đây đối chiếu danh sách nó dò ra với đúng các bài vừa vá —
-    #    lệch nghĩa là kho còn thay đổi khác chưa vào chỉ mục, hoặc bản vá không tới ⇒ không tin, dừng, in cả hai danh sách.
-    can_cap_nhat = sorted(bai for bai in vet["bam_bai"] if bai not in set(vet.get("bai_ngoai_chi_muc", [])))
     if not can_cap_nhat:
         print("Các bài vừa sửa không nằm trong chỉ mục (file kiểm kê) — không cần cập nhật chỉ mục.")
         return 0
-    if goc != GOC_REPO or importlib.util.find_spec("ingestion.cap_nhat_rieng") is None:
+    if not co_cap_nhat:
         print("CHƯA cập nhật chỉ mục (lệnh cập nhật riêng bài chưa có ở bản code này, hoặc kho vừa sửa không phải kho của server này).\n"
               "Tới khi cập nhật, chatbot vẫn trả lời theo giá cũ và server sẽ từ chối khởi động lại. Các bài cần cập nhật:\n  " + "\n  ".join(can_cap_nhat))
         return 3
-    from ingestion import cap_nhat_rieng
-    truoc = cap_nhat_rieng.dong_bo(chi_xem=True)
-    if sorted(truoc["bai_doi"]) != can_cap_nhat:
-        print("DỪNG trước khi đụng chỉ mục: các bài khác chỉ mục không trùng với các bài vừa sửa.\n  vừa sửa: " + ", ".join(can_cap_nhat)
-              + "\n  khác chỉ mục: " + ", ".join(sorted(truoc["bai_doi"])) + "\nKho đã có bản ghi git; chỉ mục CHƯA đổi.", file=sys.stderr)
+    ket_qua = cap_nhat_rieng.dong_bo(**tham_so_thu)
+    #    Lệnh cập nhật TỰ DÒ bài nào khác chỉ mục. Trước khi sửa chỉ mục đã khớp ⇒ danh sách nó vừa xử lý phải đúng bằng các bài vừa sửa.
+    if sorted(ket_qua["bai_doi"]) != can_cap_nhat:
+        print("CẦN XEM: chỉ mục đã được cập nhật, nhưng danh sách bài nó xử lý KHÁC các bài vừa sửa.\n  vừa sửa: " + ", ".join(can_cap_nhat)
+              + "\n  đã xử lý: " + ", ".join(sorted(ket_qua["bai_doi"]))
+              + "\nLùi: `git revert` bản ghi vừa lưu rồi chạy `uv run python -m ingestion.cap_nhat_rieng`.", file=sys.stderr)
         return 3
-    ket_qua = cap_nhat_rieng.dong_bo()
-    print(f"Đã cập nhật chỉ mục cho {len(ket_qua['bai_doi'])} bài ({ket_qua['so_doan_tinh_lai']} đoạn tính lại, {ket_qua['giay']} giây). "
-          "Khởi động lại server để chatbot trả lời theo giá mới.")
+    print(f"Đã cập nhật chỉ mục cho {len(ket_qua['bai_doi'])} bài: tính lại {ket_qua['so_doan_tinh_lai']} đoạn, {ket_qua['giay']} giây. "
+          "Khởi động lại server để trợ lý trả lời theo giá mới.")
     return 0
-
 
 if __name__ == "__main__":
     sys.exit(main())

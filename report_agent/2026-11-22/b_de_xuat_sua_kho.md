@@ -98,3 +98,14 @@ Hồ sơ riêng tư: `data/de_xuat_kho/2026-11-22_083503/`, `…_083711/`, `…_
 Phép này KHÔNG cho biết: model phán đúng tới đâu ở mức giá không gắn với một tên nơi rõ (giá thuyền theo tuyến, giá theo khoảng) và ở lần chạy thứ n của cùng ca ngoài ba lần đã thấy · hướng rộng hơn tôi thấy: kho ghi cùng một mức giá ở nhiều bài là gốc của việc phải "tìm mọi chỗ" — một bảng giá duy nhất mà các bài trỏ tới sẽ bỏ được cả bước tìm; đó là sửa kho, việc của chủ dự án · đếm rẻ nhất: đếm bao nhiêu mức giá trong 15 bài có giá xuất hiện ở từ hai bài trở lên (0 đồng, dùng chính bộ tìm theo giá trị này).
 
 Ý cho `session_prompt/Y_CHUA_THU.md`: bảng giá một nơi gốc (ý trên); cho lệnh nhận nhiều mức giá một lần khi một nghị quyết giá mới đổi cả biểu.
+
+## 9. Sau review của phiên E (09:0x 22/11/2026) — bốn điểm, đều nhận, đã tái hiện bằng test đỏ rồi sửa
+
+| Điểm | Tái hiện | Sửa | Kiểm |
+|---|---|---|---|
+| F1 (lớn): `--thu` thiếu `--goc` áp file vá vào kho của chính repo chứa code | test `test_thu_ma_quen_goc…` đỏ trên `2fe9753` (lệnh trả 0, kho đổi) | `--thu` với gốc = repo chứa code ⇒ dừng mã 2 trước mọi bước; runbook mục 5a sửa dòng "thử trên bản chép" | test xanh; kho không đổi |
+| F2: bước cập nhật chỉ mục không chạy thử được trên bản chép | đọc code: `goc != GOC_REPO ⇒ return 3` | lệnh duyệt nhận `--collection-thu` + `--ban-ghi-thu`, chuyển `kho / collection / thu_muc_ban_ghi` cho `dong_bo`; đổi thứ tự: kiểm "chỉ mục đang khớp kho" TRƯỚC khi áp (chỉ đọc), cập nhật sau khi lưu bản ghi git, rồi đối chiếu danh sách bài | lượt đầu–cuối trên bản chép + collection thử: xem mục 10 |
+| F3: file vá bị nối thêm file ngoài đề xuất vẫn được áp | test `test_file_va_co_them_file_ngoai…` đỏ (README của repo tạm bị đổi) | trước khi áp so đường dẫn của `git apply --numstat -z` với danh sách bài; lệch ⇒ dừng mã 2 | test xanh |
+| F4: con số trong tiêu đề mục không vào nhóm nào | test `test_con_so_trong_tieu_de…` đỏ | quét cả dòng tiêu đề; code xếp cứng "không rõ" kèm lý do, không hỏi model, không bao giờ tự sửa | test xanh; trên kho: 100.000 có 2 tiêu đề ở bài cẩm nang ẩm thực được liệt kê; 200.000 và 150.000: 0 tiêu đề ⇒ file vá của hai ca đã đo không đổi |
+
+`tests/test_sua_kho.py`: 15 ca đạt (12 cũ + 3 ca của review).

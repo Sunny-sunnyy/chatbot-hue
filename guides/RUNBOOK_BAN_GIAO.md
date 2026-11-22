@@ -109,12 +109,14 @@ Dùng khi một mức giá trong kho đổi và phải sửa mọi bài còn ghi
 | Đề xuất (một lời gọi model, khoảng 0,05 USD, khoảng 20 giây; KHÔNG ghi kho) | `uv run python -m ops.de_xuat_sua_kho --gia "<mô tả mức giá>" --cu <giá cũ> --moi <giá mới> --nguon "<link / nơi lấy giá>"` | `Sẽ sửa N chỗ ở M bài · không rõ … · không phải giá này …` và `Kho CHƯA đổi`; thư mục `data/de_xuat_kho/<ngày_giờ>/` có `DE_XUAT.md`, `de_xuat.patch`, `vet.json` |
 | Đọc | mở `DE_XUAT.md`: mục 1 (sẽ sửa), mục 2 (không rõ), mục 4 (câu có tổng / tiết kiệm phải sửa tay, bảng ngoài kho bị lệch) | — |
 | Duyệt — CHỈ chủ dự án chạy trên kho thật (sửa kho = "Hỏi User trước") | dòng lệnh in ở cuối `DE_XUAT.md` | `Đã áp vào M bài` · `Đã lưu bản ghi git <mã>`; bài đã đổi từ lúc đề xuất ⇒ `DỪNG`, đề xuất lại |
-| Thử trên bản chép (agent được làm) | thêm `--goc <gốc một worktree tạm>` vào cả hai lệnh; lệnh duyệt thêm `--thu` (chỉ áp, không lưu bản ghi git, không đụng chỉ mục) | `git -C <bản chép> diff --stat` chỉ gồm các bài của đề xuất |
+| Thử trên bản chép (agent được làm) | thêm `--goc <gốc một worktree tạm>` vào CẢ HAI lệnh; lệnh duyệt thêm `--thu` (áp vào bản chép, không lưu bản ghi git, không đụng chỉ mục). `--thu` mà thiếu `--goc` ⇒ lệnh DỪNG, không áp gì (22/11: trước đó nó áp vào kho của chính repo) | `git -C <bản chép> diff --stat` chỉ gồm các bài của đề xuất |
+| Thử đầu–cuối cả cập nhật chỉ mục trên bản chép | lệnh duyệt: `--goc <bản chép> --collection-thu <tên collection thử> --ban-ghi-thu <thư mục bản ghi thử>` (không `--thu`) — hai lựa chọn đi cùng nhau; collection thử không được trùng collection đang chạy | `Đã lưu bản ghi git …` (trên nhánh của bản chép) · `Đã cập nhật chỉ mục cho M bài …` |
 
 - Lùi: `git revert <mã bản ghi>` rồi cập nhật chỉ mục lại.
 - Sau khi duyệt, lệnh in hai dòng test của các bảng chép từ kho (`tests/test_su_kien_theo_ngay.py`, `tests/test_quan_lich.py`) — chạy không nạp env; đỏ ⇒ sửa bảng, không sửa test.
 - Giới hạn: phải biết giá cũ; mỗi lần một mức giá; con số tính từ giá cũ và con số viết chung cho nhiều nơi chỉ được NHẮC, người sửa tay; số viết bằng chữ / "200–250 nghìn" không được tìm; độ đúng của bước model phán mới đo trên hai mức giá (`report_agent/2026-11-22/b_de_xuat_sua_kho.md`).
-- Cập nhật chỉ mục sau khi duyệt: lệnh duyệt gọi `ingestion.cap_nhat_rieng` khi module đó có trong code; chưa có ⇒ in `CHƯA cập nhật chỉ mục` + danh sách bài, mã thoát 3 — lúc đó kho đã sửa mà chỉ mục chưa, server sẽ từ chối khởi động lại cho tới khi chỉ mục được cập nhật (hoặc bản sửa được lùi).
+- Cập nhật chỉ mục khi duyệt (cần module `ingestion.cap_nhat_rieng` trong code): TRƯỚC khi áp, lệnh kiểm chỉ mục đang khớp kho (chỉ đọc, khoảng 20 giây) — đang lệch sẵn ⇒ `DỪNG, kho chưa đổi gì`; sau khi áp + lưu bản ghi git, lệnh cập nhật chỉ mục rồi đối chiếu danh sách bài đã xử lý với các bài vừa sửa — khác ⇒ `CẦN XEM` kèm cách lùi. Module chưa có ⇒ in `CHƯA cập nhật chỉ mục` + danh sách bài, mã thoát 3 — lúc đó kho đã sửa mà chỉ mục chưa, server sẽ từ chối khởi động lại cho tới khi chỉ mục được cập nhật (hoặc bản sửa được lùi).
+- File vá bị thêm đoạn chạm file ngoài danh sách bài của đề xuất ⇒ lệnh duyệt dừng, không áp gì. Con số nằm trong TIÊU ĐỀ MỤC được liệt kê ở nhóm "không rõ" và không bao giờ tự sửa.
 
 ## 6. Bảng dữ liệu của lịch "Lên kế hoạch"
 

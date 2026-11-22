@@ -100,12 +100,23 @@ class LanXuatHien:
     truoc: list[str] = field(default_factory=list)  # các dòng cha theo thụt lề + dòng có chữ liền trước (xem `quet_bai`)
     dau_bang: str | None = None                     # hàng đầu của bảng nếu dòng là một hàng bảng
     trong_chi_muc: bool = True                      # False = file kiểm kê nằm trong kho nhưng chatbot không đọc
+    la_tieu_de: bool = False                        # con số nằm trong một dòng tiêu đề mục
     phan_doan: str = "khong_ro"                     # dung | khong | khong_ro
     ly_do: str = ""
 
     @property
     def trong_muc_nguon(self) -> bool:
         return MUC_NGUON in self.muc
+
+    @property
+    def code_tu_xep(self) -> tuple[str, str] | None:
+        """Chỗ code tự xếp, không hỏi model: (phán đoán, lý do). Dòng ghi nguồn cũ ⇒ giữ làm lịch sử. Tiêu đề mục ⇒ để người quyết: đổi chữ
+        tiêu đề là đổi đường mục của mọi đoạn bên dưới (và có thể chạm file điều kiện của bộ chia đoạn)."""
+        if self.trong_muc_nguon:
+            return "khong", "dòng ghi nguồn của lần đối chiếu trước — giữ nguyên làm lịch sử"
+        if self.la_tieu_de:
+            return "khong_ro", "con số nằm trong TIÊU ĐỀ MỤC — lệnh không tự sửa tiêu đề; nếu đúng là mức giá này thì bạn sửa tay"
+        return None
 
 
 def _thut_le(dong: str) -> int:
@@ -153,7 +164,6 @@ def quet_bai(bai: str, chu: str, gia_cu: int, trong_chi_muc: bool = True) -> lis
             if cap == 1 and tieu_de == Path(bai).stem:
                 tieu_de = m[2]
             muc = [(c, t) for c, t in muc if c < cap] + [(cap, m[2])]
-            continue
         cac_lan = tim_trong_dong(dong, gia_cu)
         if not cac_lan:
             continue
@@ -172,7 +182,7 @@ def quet_bai(bai: str, chu: str, gia_cu: int, trong_chi_muc: bool = True) -> lis
         for lan in cac_lan:
             ra.append(LanXuatHien(ma="", bai=bai, tieu_de=tieu_de, muc=[t for c, t in muc if c > 1], so_dong=i + 1, dong=dong,
                                   bat_dau=lan.start("so"), ket_thuc=lan.end("so"), het_don_vi=lan.end(), so=lan["so"], dv=lan["dv"],
-                                  truoc=truoc, dau_bang=dau_bang, trong_chi_muc=trong_chi_muc))
+                                  truoc=truoc, dau_bang=dau_bang, trong_chi_muc=trong_chi_muc, la_tieu_de=bool(m)))
     return ra
 
 
@@ -246,8 +256,8 @@ def tao_agent(generator) -> Agent:
 
 def gan_phan_doan(cac_lan: list[LanXuatHien], tra_ve: KetQuaPhanDoan) -> list[str]:
     """Ghi phán đoán của model vào từng lần xuất hiện; trả các điều lạ (mã model bịa, mã trả hai lần, mã model bỏ sót). Chỗ model bỏ sót hoặc
-    trả hai lần khác nhau ⇒ giữ "không rõ" (không vào file vá). Dòng trong mục nguồn không hỏi model: luôn "không" (xem `phan_doan`)."""
-    theo_ma, la = {lan.ma: lan for lan in cac_lan if not lan.trong_muc_nguon}, []
+    trả hai lần khác nhau ⇒ giữ "không rõ" (không vào file vá). Chỗ code tự xếp (`code_tu_xep`) model không đổi được."""
+    theo_ma, la = {lan.ma: lan for lan in cac_lan if lan.code_tu_xep is None}, []
     da_thay: dict[str, str] = {}
     for cho in tra_ve.cac_cho:
         if cho.ma not in theo_ma:
@@ -268,12 +278,12 @@ def gan_phan_doan(cac_lan: list[LanXuatHien], tra_ve: KetQuaPhanDoan) -> list[st
 
 
 async def phan_doan(generator, mo_ta: str, gia_cu: int, cac_lan: list[LanXuatHien], call_log, timeout: float) -> list[str]:
-    """MỘT lời gọi model cho mọi chỗ (trừ dòng trong mục "Nguồn dữ liệu": đó là ghi chép lần đối chiếu trước, giữ nguyên làm lịch sử ⇒ code tự
-    xếp "không", không tốn chữ gửi model). Lỗi model ⇒ `GenerationError` đi thẳng ra — không thử lại, không đoán thay."""
+    """MỘT lời gọi model cho mọi chỗ, trừ chỗ code tự xếp (`LanXuatHien.code_tu_xep`: dòng ghi nguồn cũ, tiêu đề mục) — không tốn chữ gửi model.
+    Lỗi model ⇒ `GenerationError` đi thẳng ra — không thử lại, không đoán thay."""
     for lan in cac_lan:
-        if lan.trong_muc_nguon:
-            lan.phan_doan, lan.ly_do = "khong", "dòng ghi nguồn của lần đối chiếu trước — giữ nguyên làm lịch sử"
-    can_hoi = [lan for lan in cac_lan if not lan.trong_muc_nguon]
+        if lan.code_tu_xep:
+            lan.phan_doan, lan.ly_do = lan.code_tu_xep
+    can_hoi = [lan for lan in cac_lan if lan.code_tu_xep is None]
     if not can_hoi:
         return []
     result = await generator._run(tao_agent(generator), dau_vao_model(mo_ta, gia_cu, can_hoi), call_log, timeout)

@@ -41,6 +41,7 @@ def repo(tmp_path):
     kho.mkdir(parents=True)
     (kho / "Vé tham quan.md").write_text(VE, encoding="utf-8")
     (kho / "Nhà hát.md").write_bytes(NHA_HAT.encode())
+    (tmp_path / "README.md").write_text("dòng một\n", encoding="utf-8")
     git(tmp_path, "init", "-q")
     git(tmp_path, "add", "-A")
     git(tmp_path, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "kho")
@@ -102,7 +103,7 @@ def test_model_bo_sot_bia_ma_hoac_tra_hai_lan_thi_khong_vao_file_va():
     assert cac_lan[3].trong_muc_nguon
     tra = sua_kho.KetQuaPhanDoan(cac_cho=[sua_kho.PhanDoanMotCho(ma=m, phan_doan=p, ly_do="x") for m, p in
                                            [("c1", "dung"), ("c2", "dung"), ("c2", "khong"), ("c9", "dung"), ("c4", "dung")]])
-    cac_lan[3].phan_doan = "khong"  # như `phan_doan` làm trước khi gọi model
+    cac_lan[3].phan_doan = cac_lan[3].code_tu_xep[0]  # như `phan_doan` làm trước khi gọi model
     dieu_la = sua_kho.gan_phan_doan(cac_lan, tra)
     assert [x.phan_doan for x in cac_lan] == ["dung", "khong_ro", "khong_ro", "khong"]  # c2 hai phán đoán · c3 bỏ sót · dòng nguồn không cho model đổi
     assert len(dieu_la) == 4  # c2 trái nhau · c9 bịa · c4 (dòng nguồn, không nằm trong danh sách hỏi) · c3 bỏ sót
@@ -148,3 +149,32 @@ def test_duyet_thu_ap_dung_va_tu_choi_khi_bai_da_doi(repo, monkeypatch, capsys):
     assert "250.000 | 40.000" in bai.read_text(encoding="utf-8") and "Người lớn: 200.000 đồng/người/tuyến" in bai.read_text(encoding="utf-8")
     assert git(repo, "log", "--oneline").count("\n") == 1  # chế độ thử không tạo bản ghi git
     assert duyet_sua_kho.main([str(ra), "--goc", str(repo), "--thu"]) == 2  # duyệt lần hai: bài đã khác lúc đề xuất ⇒ từ chối
+
+
+def test_thu_ma_quen_goc_thi_khong_cham_kho_cua_repo_chua_code(repo, monkeypatch):
+    """Review E 22/11 (F1): `--thu` không kèm `--goc` từng áp file vá vào kho của chính repo chứa code rồi in "Chế độ thử"."""
+    _, ra, _ = de_xuat(repo, monkeypatch)
+    monkeypatch.setattr(duyet_sua_kho, "GOC_REPO", repo)  # coi repo tạm là repo chứa code ⇒ `--goc` mặc định trỏ vào nó
+    assert duyet_sua_kho.main([str(ra), "--thu"]) == 2
+    assert git(repo, "status", "--porcelain", "--", "knowledge-base-hue") == ""
+
+
+def test_file_va_co_them_file_ngoai_de_xuat_thi_khong_ap(repo, monkeypatch):
+    """Review E 22/11 (F3): file vá bị nối thêm một đoạn sửa file ngoài danh sách bài của đề xuất ⇒ dừng, không áp gì."""
+    _, ra, _ = de_xuat(repo, monkeypatch)
+    with (ra / "de_xuat.patch").open("a", encoding="utf-8") as f:
+        f.write("--- a/README.md\n+++ b/README.md\n@@ -1 +1 @@\n-dòng một\n+dòng lạ\n")
+    assert duyet_sua_kho.main([str(ra), "--goc", str(repo), "--thu"]) == 2
+    assert git(repo, "status", "--porcelain") .replace("?? de_xuat/\n", "") == ""
+
+
+def test_con_so_trong_tieu_de_muc_duoc_liet_ke_va_khong_tu_sua():
+    """Review E 22/11 (F4): số trong dòng tiêu đề từng không vào nhóm nào. Nay: có trong danh sách, xếp cứng "không rõ", không hỏi model."""
+    cac_lan = sua_kho.quet_bai("a.md", "# A\n\n## Vé Thành Mẫu 200.000 đồng\n\nThành Mẫu 200.000\n", 200_000)
+    assert [(x.so_dong, x.la_tieu_de) for x in cac_lan] == [(3, True), (5, False)]
+    for n, lan in enumerate(cac_lan, 1):
+        lan.ma = f"c{n}"
+    model = ModelDungSan()
+    import asyncio
+    asyncio.run(sua_kho.phan_doan(model, "vé Thành Mẫu", 200_000, cac_lan, None, 5))
+    assert [x.phan_doan for x in cac_lan] == ["khong_ro", "dung"] and model.da_nhan[0].count("⟦") == 1
