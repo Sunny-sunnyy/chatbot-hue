@@ -1,6 +1,6 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 11:18, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11; khuôn thêm hai mục "Quyết định và lý do" và "Nếu… thì sao" theo yêu cầu của anh trưa 22/11, bài 6 là bài mẫu · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
+*Cập nhật 11:29, ngày 22/11/2026 · mục lục và khuôn bài chốt sau khi anh trả lời bốn câu hỏi sáng 22/11; khuôn thêm hai mục "Quyết định và lý do" và "Nếu… thì sao" theo yêu cầu của anh trưa 22/11, bài 6 là bài mẫu · đã viết xong chặng 2 và chặng 3 (bài 7–16) và hai bài khác (bài 2, 21), mỗi bài đã qua một lượt đối chiếu độc lập với chương trình và số đo; các bài còn lại viết theo từng chặng · mọi con số trong bộ này lấy từ hệ thống đang chạy và các phép đo đã ghi, không có phép thử mới.*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -133,9 +133,10 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 5. **Từ dùng trong bài:** chỉ các từ mới của bài; tên dùng trong bài · tên gốc tiếng Anh · nghĩa.
 6. **Thân bài:** 3–5 mục, tên mỗi mục là một câu khẳng định (đọc riêng các tên mục là ra dàn ý của bài). Nói thẳng cơ chế, không dùng ẩn dụ; ví dụ lấy từ lượt chạy thật; mỗi hình tối đa 6 ô.
 7. **Quyết định và lý do:** mỗi quyết định thiết kế của phần này viết thành một câu hỏi "Vì sao…?". Mở bằng hai ba câu kể tình huống bằng lời thường (giảng luôn khái niệm mới nếu có), rồi chốt bằng bốn gạch: **đã chọn** gì · **vì sao** · **cách khác** (ghi rõ là "đã đo", "chưa thử" hay "quyết định đã ghi") · **cái giá** phải trả cho lựa chọn đó. Chỗ nào không tìm thấy lý do được ghi lại thì viết đúng một dạng: "chưa thấy ghi lý do; điều thấy được là…", không thêm câu đoán. Mỗi bài giữ bốn tới sáu quyết định quan trọng ở đây; quyết định nhỏ nằm ở nửa để tra. Chỉ viết về thứ hệ thống thật sự có. Có ba loại câu hỏi: *vì sao đặt ở đây* (việc này làm ở máy chủ hay ở giao diện; chương trình làm hay giao cho model; tính sẵn hay tính lúc hỏi) · *vì sao làm cách này* (gọi thẳng hay xếp hàng chờ; một lần hay nhiều lần; tự viết hay dùng đồ có sẵn) · *vì sao là con số này*.
-8. **Nếu… thì sao:** hai loại tình huống. *Khi có thứ hỏng:* dịch vụ bên ngoài sập hoặc chậm, quá hạn giờ, dữ liệu lệch nhau, người dùng làm điều không ngờ. *Khi điều kiện đổi:* kho lớn gấp mười, nhiều người dùng cùng lúc, đổi model. Mỗi tình huống ghi: hệ thống làm gì · người dùng thấy gì · đã có hay chưa có. Chỗ nào chưa xử lý thì ghi thẳng "chưa có". Lời báo cho người dùng chép nguyên văn từ chương trình; tình huống nào chưa được thử thật thì ghi rõ là đọc từ chương trình.
+8. **Nếu… thì sao:** kể trọn một tình huống, rồi một bảng ngắn các tình huống đáng nhớ nhất (nếu · người dùng thấy gì · muốn hết lỗi thì ai làm gì); bảng đủ nằm ở nửa để tra. Hai loại tình huống. *Khi có thứ hỏng:* dịch vụ bên ngoài sập hoặc chậm, quá hạn giờ, dữ liệu lệch nhau, người dùng làm điều không ngờ. *Khi điều kiện đổi:* kho lớn gấp mười, nhiều người dùng cùng lúc, đổi model. Mỗi tình huống ghi: hệ thống làm gì · người dùng thấy gì · đã có hay chưa có. Chỗ nào chưa xử lý thì ghi thẳng "chưa có". Lời báo cho người dùng chép nguyên văn từ chương trình; tình huống nào chưa được thử thật thì ghi rõ là đọc từ chương trình.
 9. **Dễ nhầm:** 1–3 câu người mới hay nói, kèm câu sửa.
 10. **Những điều cần nhớ:** 3–5 câu.
+    **Câu hỏi tự kiểm** (anh chọn thêm trưa 22/11): 4–6 câu kiểu "vì sao…", "nếu… thì sao", đáp án gập lại, bấm mới hiện.
 
 **Nửa để tra** (bài nào có mục nào thì ghi mục đó; bài nền thường chỉ có hai mục cuối)
 
