@@ -126,8 +126,8 @@ mọi điểm (phụ thuộc thống kê cả kho, chỉ CPU), kiểm cả colle
 
 ```bash
 cd backend      # TẮT server trước; bật lại sau khi lệnh xong (server đọc thống kê từ khoá và xoá câu trả lời đã nhớ lúc khởi động)
-uv run python -m ingestion.cap_nhat_rieng --chi-xem    # chỉ in bài nào khác chỉ mục + số đoạn phải tính lại; không ghi gì
-uv run python -m ingestion.cap_nhat_rieng              # chạy thật; in "XONG trong … giây" hoặc "Chỉ mục ĐÃ KHỚP kho"
+HF_HUB_OFFLINE=1 uv run python -m ingestion.cap_nhat_rieng --chi-xem    # chỉ in bài nào khác chỉ mục + số đoạn phải tính lại; không ghi gì
+HF_HUB_OFFLINE=1 uv run python -m ingestion.cap_nhat_rieng              # chạy thật; in "XONG trong … giây" hoặc "Chỉ mục ĐÃ KHỚP kho"
 ```
 - Lệnh không tham số ghi THẬT theo kho của cây đang đứng ⇒ chỉ chạy từ CÂY CHÍNH (`/home/minhhieu/hue_rag/backend`), `--chi-xem` trước; chạy từ
   một cây tạm ở commit cũ sẽ kéo chỉ mục thật lùi theo kho cũ.
