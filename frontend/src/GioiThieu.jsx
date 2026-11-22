@@ -131,15 +131,23 @@ export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
               <li>Trợ lý có thể sai. Giờ mở cửa, giá vé, lịch lễ hội có thể đã đổi — kiểm lại trước khi đi.</li>
               {/* quán gần từng điểm chỉ có trong lịch bản 2 (bảng quán từ bản đồ mở); hỏi đáp chỉ biết quán có trong kho */}
               {tinhNang?.len_ke_hoach_v2 && <li>Quán ăn gần từng điểm chỉ có trong lịch ở trang Lên kế hoạch; khi hỏi đáp, trợ lý chỉ biết các quán có trong kho.</li>}
-              <li>{banDo ? "Chưa có lịch sự kiện theo ngày. Bản đồ lịch trình chỉ ghim các điểm tham quan đã có toạ độ."
-                : "Chưa có bản đồ và lịch sự kiện theo ngày."}</li>
+              {/* khớp `backend/llm/su_kien.py` (công tắc `su_kien_theo_ngay`, mở 21/11/2026): ô hỏi đáp tra được lễ hội có ngày hằng năm + hoạt động lặp theo
+                  tuần; không có sự kiện một lần, không có lễ hội bài kho không ghi ngày, không hiện trong lịch Lên kế hoạch — tắt công tắc đó thì sửa dòng này */}
+              <li>Lễ hội, sự kiện theo ngày: khi hỏi đáp, trợ lý chỉ biết lễ hội có ngày hằng năm và hoạt động lặp theo tuần ghi trong kho — chưa có sự kiện
+                tổ chức một lần; lịch ở trang Lên kế hoạch chưa gồm lễ hội, sự kiện.</li>
+              <li>{banDo ? "Bản đồ lịch trình chỉ ghim các điểm tham quan đã có toạ độ." : "Chưa có bản đồ."}</li>
               <li>Câu hỏi ngoài chủ đề Huế được báo là ngoài phạm vi.</li>
             </ul>
           </div>
           <div className="gt-du-lieu hien" style={{ "--n": 1 }}>
             <h2 className="gt-h2">Dữ liệu của bạn</h2>
-            <p>Trợ lý nhớ các câu hỏi trong một cuộc trò chuyện để hiểu câu hỏi tiếp theo: nhớ trong bộ nhớ máy chủ, tối đa 30 phút, qua một cookie chỉ dùng
-              cho trò chuyện. Máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký. Nút “Cuộc trò chuyện mới” xoá phần đã nhớ.</p>
+            {/* khớp `backend/api/conversations.py` (3 lượt gần nhất, đáp liền trước, dòng tên nơi gợi ý, lịch đã lưu; hạn 30 phút từ lượt cuối) và
+                `backend/api/cache_tra_loi.py` (đáp của lượt đầu cuộc, 24 giờ, không mã cuộc / cookie / IP). Câu "không lưu vào nhật ký" đúng khi sổ vết
+                debug tắt (mặc định; `HUE_SO_VET=true` ở máy local thì có ghi chữ vào file) — đổi các thứ đó thì sửa đoạn này */}
+            <p>Trong một cuộc trò chuyện, trợ lý nhớ ba câu hỏi gần nhất, câu trả lời liền trước, tên những nơi vừa gợi ý và lịch trình bạn đã lập (nếu có)
+              để hiểu câu hỏi tiếp theo: nhớ trong bộ nhớ máy chủ, tối đa 30 phút sau câu hỏi cuối, qua một cookie chỉ dùng cho trò chuyện. Nút “Cuộc trò
+              chuyện mới” xoá phần đã nhớ. Câu trả lời cho câu hỏi mở đầu một cuộc trò chuyện có thể được giữ thêm tới 24 giờ, không kèm thông tin nào
+              về bạn, để trả lại khi có người gõ đúng câu đó. Máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký.</p>
             <p>Để trả lời, câu hỏi được gửi tới dịch vụ mô hình AI bên ngoài{moHinh ? ` (${moHinh})` : ""}; khi tra web, câu hỏi cũng được gửi tới dịch vụ tìm kiếm — ở lượt
               hỏi tiếp, đó có thể là câu trợ lý viết lại từ cuộc trò chuyện. Đừng gõ thông tin cá nhân vào câu hỏi.</p>
             {banDo && <p>Khi lịch có bản đồ, trình duyệt của bạn tải ảnh bản đồ từ máy chủ {tinhNang.ban_do?.nha_cung_cap ?? "bản đồ"} — máy chủ đó nhận địa chỉ IP và vùng bản đồ bạn
