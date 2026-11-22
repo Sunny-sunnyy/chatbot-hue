@@ -76,6 +76,7 @@ def test_route_is_off_without_a_key_and_refuses_a_wrong_one(tmp_path, monkeypatc
     app = FastAPI()
     app.include_router(td.router)
     client = TestClient(app)
+    monkeypatch.setattr(td, "_sai", {})  # sổ đếm lần sai là của cả tiến trình ⇒ mỗi ca test một sổ riêng
     monkeypatch.delenv(td.KHOA_ENV, raising=False)
     assert client.get("/api/theo_doi", headers={td.KHOA_HEADER: KHOA_GIA}).status_code == 404   # chưa đặt khoá ⇒ như đường không tồn tại
     monkeypatch.setenv(td.KHOA_ENV, "ngan")
@@ -84,8 +85,30 @@ def test_route_is_off_without_a_key_and_refuses_a_wrong_one(tmp_path, monkeypatc
     for sai in ({}, {td.KHOA_HEADER: ""}, {td.KHOA_HEADER: KHOA_GIA[:-1]}, {td.KHOA_HEADER: KHOA_GIA + "x"}):
         r = client.get("/api/theo_doi", headers=sai)
         assert r.status_code == 403 and "ngay" not in r.json() and "luot" not in r.text
+    td._sai.clear()                                                                              # bốn lần sai ở trên: chưa tới ngưỡng khoá tạm, xoá để ca dưới đủ chỗ
     assert client.get(f"/api/theo_doi?khoa={KHOA_GIA}").status_code == 403                       # khoá trong URL không được nhận
     with caplog.at_level("DEBUG"):
         dung = client.get("/api/theo_doi", headers={td.KHOA_HEADER: KHOA_GIA})
     assert dung.status_code == 200 and [h["luot"] for h in dung.json()["ngay"]] == [5, 5, 4] and dung.json()["so_ngay"] == td.SO_NGAY
     assert KHOA_GIA not in caplog.text and KHOA_GIA not in dung.text                              # khoá không vào log, không vọng lại trong phản hồi
+
+
+def test_wrong_key_five_times_in_a_row_locks_the_address_for_a_while(tmp_path, monkeypatch):
+    """Rà bảo mật 22/11 (R5): thử khoá không giới hạn ⇒ dò được. Năm lần sai liền nhau ⇒ 429 cả khi lần sau gửi ĐÚNG, tới khi hết thời gian khoá."""
+    monkeypatch.setattr(td, "LOGS_DIR", tmp_path)
+    monkeypatch.setattr(td, "doc_log", lambda thu_muc=tmp_path, _goc=td.doc_log: _goc(thu_muc))
+    monkeypatch.setattr(td, "_sai", {})
+    gio = [1000.0]
+    monkeypatch.setattr(td.time, "monotonic", lambda: gio[0])
+    monkeypatch.setenv(td.KHOA_ENV, KHOA_GIA)
+    app = FastAPI()
+    app.include_router(td.router)
+    client = TestClient(app)
+    dung, sai = {td.KHOA_HEADER: KHOA_GIA}, {td.KHOA_HEADER: KHOA_GIA + "x"}
+    assert [client.get("/api/theo_doi", headers=sai).status_code for _ in range(4)] == [403] * 4
+    assert client.get("/api/theo_doi", headers=dung).status_code == 200                # gõ nhầm bốn lần rồi đúng ⇒ vào được, sổ đếm xoá
+    assert [client.get("/api/theo_doi", headers=sai).status_code for _ in range(td.SAI_TOI_DA)] == [403] * td.SAI_TOI_DA
+    r = client.get("/api/theo_doi", headers=dung)
+    assert r.status_code == 429 and "ngay" not in r.json()                             # đang khoá: khoá đúng cũng không vào, không kèm số nào
+    gio[0] += td.KHOA_TAM_GIAY + 1
+    assert client.get("/api/theo_doi", headers=dung).status_code == 200                # hết thời gian khoá ⇒ vào lại được

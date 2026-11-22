@@ -15,7 +15,7 @@ from api.conversations import ConversationStore
 from llm import lich_trinh_v2 as lt2
 from api.feedback import FeedbackTurns
 from api.feedback import router as feedback_router
-from api.gioi_han import ChanLuot, GioiHanLuot, tran_tu_moi_truong
+from api.gioi_han import LUOT_TONG_ENV, ChanLuot, GioiHanLuot, tran_tu_moi_truong
 from api.theo_doi import router as theo_doi_router
 from api.health import router as health_router
 from api.routes.anh import router as anh_router
@@ -251,9 +251,9 @@ def create_app(settings=None):
     app.include_router(theo_doi_router)  # trang theo dõi của chủ dự án: luôn đăng ký; chưa đặt `HUE_KHOA_THEO_DOI` ⇒ 404
     app.state.feedback_turns = FeedbackTurns()  # B142: mã lượt cho 👍 / 👎 (RAM, không cần lifespan)
 
-    tran = tran_tu_moi_truong()
-    if tran:  # chốt trước deploy: giới hạn lượt / IP / ngày (`HUE_LUOT_MOI_NGAY`); không đặt ⇒ không thêm middleware (như cũ)
-        app.add_middleware(ChanLuot, gioi_han=GioiHanLuot(tran))
+    tran, tran_tong = tran_tu_moi_truong(), tran_tu_moi_truong(LUOT_TONG_ENV)
+    if tran or tran_tong:  # chốt trước deploy: giới hạn lượt / IP / ngày (`HUE_LUOT_MOI_NGAY`) + trần tổng / ngày (`HUE_LUOT_TONG_MOI_NGAY`); không đặt cả hai ⇒ không thêm middleware (như cũ)
+        app.add_middleware(ChanLuot, gioi_han=GioiHanLuot(tran, tran_tong))
 
     if not FRONTEND_DIR.is_dir():
         logger.warning("Frontend build not found at frontend/dist — run `npm ci && npm run build` in frontend/")

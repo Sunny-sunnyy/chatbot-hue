@@ -165,6 +165,8 @@ class ConversationStore:
             conversation.lich = lich
 
     def reset(self, conversation_id: str | None) -> str:
-        """"Cuộc trò chuyện mới": xoá cuộc hiện tại khỏi RAM, trả mã mới."""
+        """"Cuộc trò chuyện mới": xoá cuộc hiện tại khỏi RAM, trả mã mới. Mã mới CHƯA chiếm chỗ trong kho — lượt hỏi đầu tiên mới tạo cuộc (`ensure` gặp
+        mã lạ ⇒ cấp mã khác và đặt lại cookie). Rà bảo mật 22/11 (R4): trước đây mỗi lần gọi (giao diện gọi ở MỖI lần tải trang) chiếm một chỗ ⇒ 500 lần
+        gọi, của bất kỳ ai, đẩy mọi cuộc đang có — kèm lịch đã lưu — ra khỏi kho."""
         self._items.pop(conversation_id, None)
-        return self.ensure(None)
+        return secrets.token_urlsafe(16)
