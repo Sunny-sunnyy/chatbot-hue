@@ -40,6 +40,8 @@ class Noi:
     mau: re.Pattern             # khớp ĐÚNG hoa thường, cả tên, có biên chữ — không khúc tên, không tên gọi khác
     dong: tuple[str, ...]       # dòng địa chỉ / giờ chép từ bài (0–2 dòng)
     ve: str | None              # hàng của nơi này trong bảng vé lẻ (None = bảng không có)
+    bai: lk.Bai                 # bài của nơi — phần nối câu an toàn / dòng "có thể đã thay đổi" đọc CẢ bài khi câu trả lời trích thẻ (thẻ chỉ có 1–2 dòng)
+    che: tuple[str, ...] = ()   # tên BÀI KHÁC dài hơn chứa tên này ("Đầm Chuồn" ⊂ "Đầm Chuồn Hội Quán"): nhắc bài kia không phải nhắc nơi này
 
 
 @dataclass(frozen=True)
@@ -60,16 +62,23 @@ def dung_bang(muc_luc: tuple[lk.Bai, ...]) -> Bang:
             hang_ve[" ".join(_nfc(khop.group(1)).replace("Lăng vua", "Lăng").split())] = dong
         elif not hang_ve and dong.startswith("|") and bai_ve.dong[i + 1:i + 2] and bai_ve.dong[i + 1].startswith("| :"):
             ve_dau = dong  # hàng tiêu đề đứng ngay trên hàng gạch của bảng ĐẦU có hàng đánh số
-    noi = []
+    noi, moi_ten = [], [_nfc(b.tieu_de) for b in muc_luc]
     for bai in muc_luc:
         if not bai.rel.startswith(NHOM_NOI):
             continue
         ten = _nfc(bai.tieu_de)
+        mau = re.compile(rf"(?<!\w){re.escape(ten)}(?!\w)")
         dong = tuple(d for d in (next((d for d in bai.dong if nhan.match(d)), None) for nhan in _NHAN) if d)
         ve = hang_ve.get(ten) or hang_ve.get(ten.removesuffix(" Huế"))
         if dong or ve:
-            noi.append(Noi(ten, bai.rel, re.compile(rf"(?<!\w){re.escape(ten)}(?!\w)"), dong, ve))
+            noi.append(Noi(ten, bai.rel, mau, dong, ve, bai, tuple(t for t in moi_ten if t != ten and mau.search(t))))
     return Bang(tuple(noi), bai_ve.rel if bai_ve else "", bai_ve.tieu_de if bai_ve else "", ve_dau)
+
+
+def _co_ten(noi: Noi, ngu_canh: str) -> bool:
+    for dai in noi.che:  # che tên bài dài hơn trước khi dò (soát của phiên C 22/11: cả kho có đúng một tên lồng — thẻ của đầm bị gắn khi ngữ cảnh nhắc quán)
+        ngu_canh = ngu_canh.replace(dai, " ")
+    return bool(noi.mau.search(ngu_canh))
 
 
 def the_moi(bang: Bang, ngu_canh: str, rel_da_co: frozenset[str], con: int) -> tuple[tuple[Noi, ...], tuple[str, ...]]:
@@ -78,5 +87,5 @@ def the_moi(bang: Bang, ngu_canh: str, rel_da_co: frozenset[str], con: int) -> t
     của lượt ⇒ không gắn hai lần). Nhiều nhất `con` nơi. Hàng vé đã có nguyên văn trong ngữ cảnh thì không chép lại; nơi chỉ có hàng vé mà hàng đó đã
     ở ngữ cảnh thì không còn gì để gắn."""
     ngu_canh = _nfc(ngu_canh)
-    noi = tuple(n for n in bang.noi if n.rel not in rel_da_co and (n.dong or n.ve not in ngu_canh) and n.mau.search(ngu_canh))[:max(con, 0)]
+    noi = tuple(n for n in bang.noi if n.rel not in rel_da_co and (n.dong or n.ve not in ngu_canh) and _co_ten(n, ngu_canh))[:max(con, 0)]
     return noi, tuple(n.ve for n in noi if n.ve and n.ve not in ngu_canh)

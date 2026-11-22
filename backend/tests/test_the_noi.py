@@ -25,6 +25,8 @@ KHO_BIA = tuple(lk.bai_tu_markdown(rel, md) for rel, md in (
     ("foods/restaurants/quan may.md", "# Quán Mây\n\nĐịa chỉ: 2 đường Thử\nGiờ hoạt động: 6h - 9h\n"),
     ("heritages/heritage/dan khong gio.md", "# Đàn Không Giờ\n\nMột nền đất cổ, bài không ghi giờ hay vé.\n"),
     ("heritages/heritage/lang thu.md", "# Lăng Thử\n\nBài chỉ kể chuyện xây lăng.\n"),
+    ("travel/places/thac thu.md", "# Thác Thử\n\nĐịa chỉ: 3 đường Thử\n\nKhu thác tạm ngừng đón khách khi có lũ.\n"),
+    ("foods/restaurants/thac thu quan.md", "# Thác Thử Quán\n\nĐịa chỉ: 4 đường Thử\n"),
     ("foods/local_specialties/che thu.md", "# Chè Thử\n\nĐịa chỉ: món ăn, không phải một nơi\n"),
     (thn.BAI_VE_LE, "# Vé thử\n\n| STT | Tên điểm | Nơi | Giá người lớn | Giá trẻ em |\n| :---: | :--- | :--- | :---: | :---: |\n"
                     "| 1 | Dinh Gió Bấc *(tên chữ)* | Huế | 10.000 | Miễn phí |\n| 2 | Lăng vua Thử | Huế | 20.000 | 5.000 |\n"),
@@ -35,7 +37,7 @@ HANG_DINH, HANG_LANG = "| 1 | Dinh Gió Bấc *(tên chữ)* | Huế | 10.000 | 
 
 def test_table_copies_only_label_lines_of_place_articles_and_matches_ticket_rows_by_name():
     theo_ten = {n.ten: n for n in BANG_BIA.noi}
-    assert set(theo_ten) == {"Dinh Gió Bấc", "Quán Mây", "Lăng Thử"}                      # bài không có dòng nào để chép và bài không phải một nơi: không vào bảng
+    assert set(theo_ten) == {"Dinh Gió Bấc", "Quán Mây", "Lăng Thử", "Thác Thử", "Thác Thử Quán"}                      # bài không có dòng nào để chép và bài không phải một nơi: không vào bảng
     assert theo_ten["Dinh Gió Bấc"].dong == ("Địa chỉ: 1 đường Thử", "Giờ mở cửa: 08h00 – 16h00")  # dòng "Mở cửa đón khách…" (nhãn không đứng đầu) không được chép
     assert theo_ten["Dinh Gió Bấc"].ve == HANG_DINH and theo_ten["Quán Mây"].ve is None
     assert theo_ten["Lăng Thử"].dong == () and theo_ten["Lăng Thử"].ve == HANG_LANG       # ô tên "Lăng vua X" khớp bài "Lăng X"
@@ -48,6 +50,8 @@ def test_table_copies_only_label_lines_of_place_articles_and_matches_ticket_rows
     ("gợi ý: dinh gió bấc và QUÁN MÂY", []),                    # khác hoa thường ⇒ không khớp
     ("Quán Mâyy và Dinh Gió Bấcc", []),                         # khúc của một chữ dài hơn ⇒ không khớp
     ("Đàn Không Giờ nằm gần Chè Thử", []),                      # nơi bài không ghi gì / bài không phải một nơi ⇒ không có thẻ
+    ("Trưa ghé Thác Thử Quán.", ["Thác Thử Quán"]),             # tên một nơi nằm trong tên bài KHÁC dài hơn ⇒ nhắc quán không phải nhắc thác
+    ("Thác Thử Quán nằm cách Thác Thử 2 km.", ["Thác Thử", "Thác Thử Quán"]),
 ])
 def test_a_place_gets_a_card_only_when_its_exact_name_is_in_the_context(ngu_canh, mong):
     noi, _ = thn.the_moi(BANG_BIA, ngu_canh, frozenset(), thn.TRAN_THE)
@@ -63,6 +67,21 @@ def test_no_card_for_an_article_already_in_the_sources_and_the_cap_and_ticket_ro
     assert [n.ten for n in thn.the_moi(BANG_BIA, ca, frozenset(), 1)[0]] == ["Dinh Gió Bấc"] and thn.the_moi(BANG_BIA, ca, frozenset(), 0) == ((), ())
     noi, ve = thn.the_moi(BANG_BIA, f"{ca}\n{HANG_LANG}", frozenset(), thn.TRAN_THE)  # hàng vé đã ở ngữ cảnh ⇒ không chép lại; nơi chỉ có hàng vé ⇒ hết thứ để gắn
     assert [n.ten for n in noi] == ["Dinh Gió Bấc", "Quán Mây"] and ve == (HANG_DINH,)
+
+
+def test_answer_citing_a_card_still_gets_the_safety_line_of_the_whole_article():
+    """Thẻ chỉ chép dòng địa chỉ / giờ; câu "tạm ngừng khi có lũ" nằm ở dòng khác của bài ⇒ phần nối ghi chú phải soi cả bài của thẻ."""
+    from llm.assistant import set_notice
+    from retrieval.full_corpus_context import PackedSource
+    thac = next(n for n in BANG_BIA.noi if n.ten == "Thác Thử")
+    the = PackedSource(id=1, title=thac.ten, heading_path=(thn.MUC_THE,), excerpts=thac.dong, source=thac.rel)
+    flags = AssistantFlags(noi_dong_tam_ngung=True, may_have_changed_notice=True)
+    co = AnswerTrace(answer="Thác Thử ở số 3 đường Thử [1].", cited=(the,), muc_luc_bai={1: (thac.bai,)})
+    set_notice(co, flags)
+    assert "tạm ngừng đón khách khi có lũ" in co.notice
+    khong_neu_ten = AnswerTrace(answer="Nơi đó ở số 3 đường Thử [1].", cited=(the,), muc_luc_bai={1: (thac.bai,)})  # cùng luật với công cụ liệt kê: bài chỉ được soi khi câu trả lời nêu tên nơi
+    set_notice(khong_neu_ten, flags)
+    assert "tạm ngừng" not in (khong_neu_ten.notice or "")
 
 
 # ---------- qua lõi trợ lý: tìm kho thật, model theo kịch bản ----------
@@ -118,6 +137,7 @@ def test_multi_part_turn_with_a_narrow_question_gets_cards_after_the_first_searc
     assert f"Mục: {thn.MUC_THE}" in dau and f"Mục: {thn.MUC_THE}" in sau and sau.index("Mục: " + thn.MUC_THE) > sau.index("[Nguồn ")  # lần của code lẫn của model; thẻ nối SAU kết quả tìm
     assert trace.citation_error is None and trace.cited[0].heading_path == (thn.MUC_THE,) and trace.cited[0].source == bang[trace.cited[0].title].rel  # phép kiểm trích nguồn nhận thẻ
     assert so_vet.ban_ghi("chat", {}, trace)["the_noi"] == trace.the_noi
+    assert all(trace.muc_luc_bai[s.id][0].rel == s.source for s in the)  # bài của thẻ đi theo mã nguồn thẻ (phần nối câu an toàn)
 
     tat = run_turn(deps, NHIEU_Y_HEP, generator(_tim_roi_trich_the), TAT)
     assert not _the(tat) and tat.the_noi == []

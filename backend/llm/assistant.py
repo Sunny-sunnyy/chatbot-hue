@@ -597,6 +597,9 @@ def the_noi_sau_tim(trace: AnswerTrace, flags: "AssistantFlags", query: str) -> 
     the = [PackedSource(id=dau + i, title=ten, heading_path=muc, excerpts=dong, source=rel) for i, (ten, muc, dong, rel) in enumerate(nguon)]
     trace.so_nguon.extend(the)
     trace.the_noi.extend(n.ten for n in noi)
+    # thẻ chỉ chép 1–2 dòng ⇒ câu "tạm ngừng khi lũ / bão" của bài không nằm trong chữ thẻ; ghi bài của thẻ để `set_notice` soi cả bài khi câu trả lời trích
+    # thẻ và nêu tên nơi — đúng cách của công cụ liệt kê / gần một điểm (soát của phiên C 22/11: 2 / 113 nơi có thẻ có câu đó, 0 / 2 nằm trong dòng thẻ)
+    trace.muc_luc_bai.update({src.id: (n.bai,) for src, n in zip(the, (n for n in noi if n.dong))})
     chu = "\n\n".join(FullCorpusContextBuilder._block(src) for src in the)
     trace.context_parts.append(chu)  # lần tìm sau đếm ngân sách cả chữ thẻ; lần viết lại của lưới (`_viet_lai_het_luot`) mang thẻ theo
     return chu
@@ -1258,7 +1261,7 @@ def set_notice(trace: AnswerTrace, flags: AssistantFlags) -> None:
     # cờ `liet_ke_bai`: câu trả lời trích nguồn "mục lục" ⇒ bài nào của mục lục đó CÓ TÊN trong câu trả lời được coi như bài đã trích khi xét hai dòng ghi chú
     # dưới (rỗng khi cờ tắt / không trích mục lục ⇒ `notice` y như trước)
     tra_loi = (trace.answer or "").casefold()
-    bai_neu = [bai for src in (trace.cited or ()) if src.source in (lk.NGUON_SOURCE, gd.NGUON_SOURCE)  # nguồn "gần một điểm": bài của từng nơi nó kể (K5)
+    bai_neu = [bai for src in (trace.cited or ()) if src.source in (lk.NGUON_SOURCE, gd.NGUON_SOURCE) or src.heading_path == (thn.MUC_THE,)  # nguồn "gần một điểm": bài của từng nơi nó kể (K5); thẻ nơi: bài của nơi đó
                for bai in trace.muc_luc_bai.get(src.id, ()) if bai.tieu_de.casefold() in tra_loi]
     # câu an toàn của nguồn đã trích đứng TRƯỚC các ghi chú thường; cờ tắt ⇒ `notice` y như trước. Lượt có lịch (biểu mẫu, sửa lịch, công cụ lịch) KHÔNG
     # nhận: chưa có dữ liệu đo, và "một dòng mỗi câu trả lời" là tuỳ tiện với lịch nhiều điểm (review E 19/11)
