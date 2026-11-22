@@ -158,3 +158,10 @@ html .nguon::before { content: ""; position: absolute; left: 0; right: 0; top: 0
   html .h1-chu .tt-hop { order: 6; margin: 16px 16px 0; }
 }
 
+
+/* ════════ Trang Trợ lý lúc chưa hỏi gì: khúc sông có bốn bến + con đò, lời chào căn giữa (trước là một khung trắng lớn) ════════ */
+html .tl-chat .chat-chao { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+  max-width: 46ch; margin: 8vh auto 0; padding-top: 166px; font-size: var(--text-nhan); color: var(--color-ink);
+  background: url("/static/hoa_tiet/song_chao.svg") center 14px / min(100%, 520px) auto no-repeat; }
+html .tl-chat .chat-chao .suggest { justify-content: center; }
+@media (max-width: 980px) { html .tl-chat .chat-chao { margin-top: 12px; padding-top: 124px; background-size: min(100%, 380px) auto; font-size: var(--text-vua); } }
