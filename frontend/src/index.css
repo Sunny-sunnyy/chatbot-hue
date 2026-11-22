@@ -24,7 +24,7 @@
   --color-sun-deep: #8A5A0B;        /* nắng chiều bản đậm: chữ trên nền trắng (≥ 4,5 : 1) */
   --color-on-river: #E4F1EE;        /* câu dẫn sáng trên nền nước sâu: đầu trang chủ, ô khảm chủ đề (tc.css), đầu Khám phá / trang bài (kp.css), đầu Giới thiệu (gt.css) */
   --color-photo-bg: #D7E8E4;        /* nền ô ảnh khi ảnh chưa tải / chưa có: ảnh bến tròn, `.anh` (index.css), ảnh thẻ "Điểm nên đến" (tc.css) */
-  --color-warm-deep: #9A3412;       /* cam đất đậm: ghim ngày 1 trên bản đồ lịch, biểu tượng ô cam của lối vào "Ăn gì ở Huế" */
+  --color-warm-deep: #9A3412;       /* cam đất đậm: ghim ngày 1 trên bản đồ lịch, chấm buổi chiều của lịch, biểu tượng ô cam của lối vào "Ăn gì ở Huế" */
   /* Màu theo CHỦ ĐỀ của bài kho (thư mục đầu của mã bài) — chấm nguồn, chấm bài đã tìm thấy, bến; màu mang nghĩa, không trang trí */
   --color-lv-foods: #B4531A;
   --color-lv-heritages: #0E6B66;
