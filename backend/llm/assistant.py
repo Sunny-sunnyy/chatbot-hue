@@ -1064,6 +1064,14 @@ def loi_bao_luoi_cuoi(query: str, message: str, flags: "AssistantFlags | None", 
     return f"{message}\n\n{tt.CAU_BAO_LU}"
 
 
+def _giu_dau_bao_lu(trace: AnswerTrace, bo: AnswerTrace) -> None:
+    """Soát khác hãng 22/11 (A6): `bo` là trace của đường trả lời thường vừa bị HUỶ (tin hoá ra là lệnh sửa lịch). Model ở đường đó đã tự gọi công cụ
+    thời tiết loại bão / lũ ⇒ dấu `bao_lu_model` sang trace của lượt sửa, để lưới cuối (`luoi_cuoi_bao`) vẫn gắn câu bản tin chính thức + 112 dù câu
+    gõ không trúng lưới chữ. Chỉ chép đúng dấu đó; đường thường chưa kịp gọi công cụ thì không có gì để chép (giới hạn: runbook 10.2)."""
+    if (bo.thoi_tiet_ctx or {}).get("bao_lu_model"):
+        trace.thoi_tiet_ctx = {**(trace.thoi_tiet_ctx or {}), "bao_lu_model": True}
+
+
 def _can_dau_bao_lu(trace: AnswerTrace) -> bool:
     """Cờ `bao_lu_cong_cu`: CHÍNH câu đang hỏi khớp lưới bão / lũ nhưng model không gọi `thoi_tiet` (trả lời từ kho) và lượt không có lịch ⇒ cần
     câu `CAU_DAU_BAO_LU` trước. Câu hỏi tiếp chỉ khớp nhờ câu liền trước ⇒ không (review E M-1: câu hỏi tiếp không liên quan bị đặt câu đầu)."""
@@ -2103,14 +2111,16 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 # chữ giữ chỗ của lần đầu đã hiện (hoặc đang bị giữ) ⇒ thay bằng chữ của lần viết lại; khối dự báo code nối vẫn phát riêng ở dưới.
                 # Công tắc `giu_chu_toi_kiem` đang gom ⇒ chữ giữ chỗ chưa hề hiện ⇒ bản viết lại là chữ đầu tiên, phát như một mảnh thường
                 giu_chu = False
-                yield "thay_chu" if cho_kiem is None else "delta", trace.answer.removesuffix(f"\n\n{trace.thoi_tiet_noi}") if trace.thoi_tiet_noi else trace.answer
+                if trace.citation_error is None:  # soát khác hãng 22/11 (A2): bản viết lại còn lỗi kiểm (mã nguồn lạ) ⇒ không phát, route báo lỗi như thường
+                    yield "thay_chu" if cho_kiem is None else "delta", trace.answer.removesuffix(f"\n\n{trace.thoi_tiet_noi}") if trace.thoi_tiet_noi else trace.answer
                 cho_kiem = None
             if trace.fixed_outcome is not None:  # chạm `max_turns`: không có chữ model nào ⇒ câu từ chối thành một `delta` (B2 D5)
                 if trace.answer:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer
                 return
             if cho_kiem and trace.citation_error is None:  # chữ đã gom qua phép kiểm ⇒ phát bằng đúng đường của một mảnh chữ; bị rút ⇒ không phát
-                text = chu_phat(cho_kiem)
+                # soát khác hãng 22/11 (A1): phép kiểm số đã gỡ câu có số lạ ⇒ phát chữ ĐÃ gỡ (chữ model của `trace.answer`), không phát chữ gốc đã gom
+                text = chu_phat(cho_kiem if trace.kiem_so_go is None else chu_cua_model(trace))
                 if text is not None:
                     yield "delta", text
             if giu_chu:  # chữ giữ lại đến hết = câu từ chối (đã thay) hoặc một khúc đầu của nó
@@ -2286,6 +2296,7 @@ async def _sua_song_song(query: str, retrieval_service, context_builder, generat
         yield "status", {"stage": "sua_lich"}  # review E m-1: chỉ hiện khi đúng là lượt sửa
         async for event in len_ke_hoach.stream_sua(query, retrieval_service, context_builder, generator, trace, flags, kq):
             yield event
+        _giu_dau_bao_lu(trace, phu)
         set_notice(trace, flags)
         return
     da_quyet.set()  # không phải lượt sửa ⇒ đường thường được tra web (nếu cổng mở)
