@@ -1,6 +1,6 @@
 # Bài 6 — Kiến trúc: các khối, vì sao đặt như vậy, và khi một khối hỏng thì sao
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Bốn tình huống hỏng (Qdrant ngừng giữa chừng, Qdrant tắt lúc bật máy chủ, thiếu khoá model lúc bật, khởi động lại máy chủ giữa một cuộc) đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt; các tình huống hỏng còn lại là đọc từ chương trình, chưa thử.*
+*Cập nhật 16:26, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: các khối, công nghệ và cách xử lý lỗi đọc từ chương trình và cấu hình sáng 22/11; thời gian từng bước lấy từ một lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5). Bốn tình huống hỏng (Qdrant ngừng giữa chừng, Qdrant tắt lúc bật máy chủ, thiếu khoá model lúc bật, khởi động lại máy chủ giữa một cuộc) đã được thử thật trưa 22/11 qua trình duyệt, mỗi ca một lượt; các tình huống hỏng còn lại là đọc từ chương trình, chưa thử.*
 
 **Bài trước đã biết:** người dùng thấy sáu trang; ở khung Trợ lý họ gõ câu hỏi và nhận câu trả lời có nguồn.
 **Bài này thêm:** phía sau màn hình có những khối nào, một câu hỏi đi qua chúng theo thứ tự nào, **vì sao** các khối được đặt như vậy, và **một khối hỏng thì sao**. Bài mở bằng vài khái niệm về trang web và máy chủ, giảng từ đầu.
@@ -117,7 +117,7 @@ Khối chính là thứ thiếu thì không thể có câu trả lời: model vi
 - **Đã chọn:** hai giai đoạn. Model trả chữ dần (gpt-6-luna, từ 01/11): hiện trước, kiểm sau; kiểm hỏng thì xoá chữ đã hiện, hiện "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại". Model đang chạy (trả cả câu một lần), lượt có công cụ, từ 15:42 22/11: giữ chữ tới khi qua kiểm; hỏng thì chỉ thấy lời báo.
 - **Vì sao:** giai đoạn một, để đọc sớm: đo 01/11 (gpt-6-luna, 38 câu, trình duyệt), chữ đầu tới sau 1,23 giây ở câu đứng giữa, sớm hơn 0,44 giây; dưới mốc 0,5 giây nhóm tự đặt; chủ dự án chọn giữ. Giai đoạn hai: chữ về một lần thì hiện trước hết lợi, mà cái giá "thấy chữ rồi mất" còn; trước khi mở, bước viết lại chạy ở 9 trên 114 lượt, đoạn chữ giữ chỗ đứng 17–25 giây rồi mới bị thay. Nhóm đã chốt mở.
 - **Cách khác:** hiện trước cho cả model đang chạy: là bản trước 15:42 22/11. Giữ chữ cả ở model trả chữ dần: không làm, sẽ mất chữ chạy dần.
-- **Cái giá:** model trả chữ dần: có lượt thấy chữ rồi mất (3 trên 48 và 4 trên 53 lượt, 21/11; bài 16). Model đang chạy: ở lượt viết lại, dòng trạng thái đứng lâu hơn; theo test và một lượt thật, chưa nhìn trên trình duyệt.
+- **Cái giá:** khi còn hiện trước, kiểm sau, có lượt người dùng thấy chữ rồi mất: ở lần đo 21/11 là 3 trên 48 lượt với gpt-6-luna và 4 trên 53 lượt với Claude (bài 16). Từ 15:42 22/11, với model đang chạy: ở lượt viết lại, dòng trạng thái đứng lâu hơn; theo test và một lượt thật, chưa nhìn trên trình duyệt.
 
 ### 5. Vì sao khi kho và chỉ mục lệch nhau, máy chủ từ chối mọi câu hỏi?
 
