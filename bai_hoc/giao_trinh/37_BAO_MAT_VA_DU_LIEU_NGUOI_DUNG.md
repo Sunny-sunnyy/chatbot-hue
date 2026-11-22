@@ -1,6 +1,6 @@
 # Bài 37 — Bảo mật: khoá bí mật, dữ liệu người dùng, và chữ lạ chen vào lời dặn
 
-*Cập nhật 21:40, ngày 22/11/2026 · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): phép quét trùng chữ của rào trước khi lưu chỉ còn so với câu kín · giới hạn về trang Giới thiệu theo code · cơ chế đọc từ chương trình 22/11; các đợt rà rủi ro lấy từ báo cáo 01/11, 02/11, 05/11, 20/11, bảng rủi ro 22/11 và đợt soát khác hãng 22/11; người viết không chạy máy chủ, không thử tấn công; bài đã qua một lượt đối chiếu độc lập.*
+*Cập nhật 22:04, ngày 22/11/2026 · câu về đề bài soát khác hãng theo mẫu mới · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): phép quét trùng chữ của rào trước khi lưu chỉ còn so với câu kín · giới hạn về trang Giới thiệu theo code · cơ chế đọc từ chương trình 22/11; các đợt rà rủi ro lấy từ báo cáo 01/11, 02/11, 05/11, 20/11, bảng rủi ro 22/11 và đợt soát khác hãng 22/11; người viết không chạy máy chủ, không thử tấn công; bài đã qua một lượt đối chiếu độc lập.*
 
 **Bài trước đã biết:** khoá chỉ nằm ở máy chủ, bốn thứ được gửi ra ngoài (bài 6); cookie chỉ mang mã cuộc, chữ model qua hai lớp chặn trước khi lên màn hình (bài 35).
 **Bài này thêm:** khoá nằm ở đâu và rào nào giữ nó khỏi repo công khai; chữ người dùng đi đâu, giữ bao lâu; "chữ lạ chen vào lời dặn" là gì và hệ thống chặn bằng những lớp nào; những gì đã có sẵn nhưng đang tắt, và những gì chưa làm trước khi đưa lên mạng.
@@ -67,7 +67,7 @@ Vì vậy, nếu một chữ lạ lừa được model, điều tệ nhất nó 
 
 ## Các đợt rà rủi ro, và soát bằng AI khác hãng
 
-Đã có sáu đợt rà (bảng ở nửa để tra). Hai đợt gần nhất cùng ngày 22/11: một lượt rà rủi ro trên bản đã gộp mọi công cụ (13 dòng, 5 dòng phải đóng trước khi đưa lên mạng, 4 dòng làm ngay trong buổi), và một đợt soát bằng ba AI khác hãng (33 điểm). Soát khác hãng là đưa code cho AI không phải AI đã viết nó, kèm một đề bài viết sẵn, để nó đọc, chạy thử hàm và chỉ chỗ sai; nó không sửa gì, và không được biết nhóm đã tìm ra gì. Nhóm tái hiện từng điểm trước khi tin.
+Đã có sáu đợt rà (bảng ở nửa để tra). Hai đợt gần nhất cùng ngày 22/11: một lượt rà rủi ro trên bản đã gộp mọi công cụ (13 dòng, 5 dòng phải đóng trước khi đưa lên mạng, 4 dòng làm ngay trong buổi), và một đợt soát bằng ba AI khác hãng (33 điểm). Soát khác hãng là đưa code cho AI không phải AI đã viết nó, kèm một đề bài viết sẵn, để nó đọc, chạy thử hàm và chỉ chỗ sai; nó không sửa gì. Ở các đợt đã chạy, nó không được biết nhóm đã tìm ra gì; đề bài soạn từ tối 22/11 thì ghi cả các điểm đó dưới nhãn "đã biết" (bài 39). Nhóm tái hiện từng điểm trước khi tin.
 
 ## Quyết định và lý do
 
