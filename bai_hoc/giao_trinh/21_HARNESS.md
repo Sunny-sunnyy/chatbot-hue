@@ -1,9 +1,9 @@
 # Bài 21 — Harness: phần chương trình bao quanh model
 
-*Cập nhật 10:21, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy sáng 22/11; ví dụ là hai lượt hỏi thật ngày 20/11 (model gpt-6-luna); số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11; người viết không chạy lại phép đo nào.*
+*Cập nhật 12:11, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy sáng 22/11; ví dụ là hai lượt hỏi thật ngày 20/11 (model gpt-6-luna); số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** đường hỏi đáp cơ bản (chặng 3): chương trình tìm 10 đoạn, model viết một lần, chương trình kiểm số nguồn. Và ở bài 3: model có thể "xin" chương trình chạy một công cụ rồi đọc kết quả.
-**Bài này thêm:** cho model quyền xin công cụ thì hệ thống thành một **trợ lý**. Bài này giảng phần chương trình đứng quanh model để trợ lý đó làm được việc mà không chạy lung tung. Phần đó tên là **harness**; các bài còn lại của chặng này đều dựa trên nó.
+**Bài này thêm:** cho model quyền xin công cụ thì hệ thống thành một **trợ lý**. Bài này giảng phần chương trình đứng quanh model để trợ lý đó làm được việc mà không chạy lung tung, vì sao các cái trần được đặt như vậy, và chạm trần thì người dùng thấy gì. Phần chương trình đó tên là **harness**; các bài còn lại của chặng này đều dựa trên nó.
 
 ## Ý chính
 
@@ -91,19 +91,91 @@ Harness chặn bằng ba cái trần:
 
 Nguyên tắc đứng sau bảng: việc cần hiểu ngôn ngữ thì model làm; việc có luật rõ và phải luôn đúng thì chương trình làm. Ngoài các vòng của trợ lý, một lượt hỏi còn hai lần gọi model hẹp, mỗi lần một việc: xếp loại câu (bài 22) và viết mục web (bài 25).
 
+## Quyết định và lý do
+
+### 1. Vì sao cho model quyền tự tìm thêm, và vì sao trần là 2 lần?
+
+- **Đã chọn:** model được tự xin tìm kho nhiều nhất 2 lần trong một lượt hỏi.
+- **Vì sao:** đã đo (gpt-6-luna). Trên 18 câu cần nhiều nguồn, điểm "đủ ý" (thang 1–5) tăng 1,17 so với tìm một lần; mức tăng không phải do may (khoảng tin cậy từ +0,44 tới +2,00).
+- **Cách khác:** chỉ cho tìm thêm 1 lần: đã đo, câu kho có mà bị từ chối tăng từ 5 lên 7 trên 30 câu, đổi lại 7 câu nhanh hơn 2,4 giây; bỏ. Cho 3 lần, hoặc 4 lần cùng 8 vòng: đã đo ngày 21/11 trên cả hai model, kết quả như cũ, không lượt nào dùng tới lần thứ ba; bỏ.
+- **Cái giá:** lúc mới mở xuất hiện 1 câu an toàn sai mới, sau đó chữa bằng một câu dặn hẹp. Câu kho không có thì tốn thêm hai vòng tìm trước khi bị từ chối.
+
+### 2. Vì sao dùng hết hai lần tìm thì cất hẳn công cụ, không chỉ nhắc "đã hết lượt"?
+
+- **Đã chọn:** sau 2 lần tự tìm, ở vòng kế tiếp model không còn thấy công cụ tìm kho.
+- **Vì sao:** đã đo. Khi còn để model xin lần ba rồi nhận một dòng nhắc, cả 8 trên 8 câu kho không có đều tốn thừa một lần gọi model. Cất công cụ thì cả 8 câu bớt được ít nhất một vòng; thời gian cả lượt ở câu đứng giữa từ 22,85 xuống 16,15 giây.
+- **Cách khác:** dòng nhắc "đã hết lượt" (bản trước đó).
+- **Cái giá:** trên bộ câu mẫu có 3 câu đổi sang từ chối. Chạy lại bản chưa đổi cũng ra đúng 3 câu đó, tức không do thay đổi này; vẫn giữ kèm theo dõi. Model vẫn đòi tìm thì lượt hỏi nhận câu từ chối cố định.
+
+### 3. Vì sao hết vòng thì trả câu từ chối cố định?
+
+- **Đã chọn:** hết số vòng mà model chưa viết thì chương trình trả câu từ chối thay cho model.
+- **Vì sao:** chưa thấy ghi lý do. Điều thấy được: lúc đó model mới chỉ xin công cụ, chưa có câu trả lời nào đã qua bước kiểm để dùng.
+- **Cách khác:** "hết vòng thì vòng cuối chỉ viết từ những gì đã tìm được": đã viết xong trong chương trình, chưa mở, đang chờ đo.
+- **Cái giá:** người dùng nhận câu từ chối kể cả khi 10 đoạn của lần tìm đầu đã đủ để trả lời; lượt đó vẫn tốn tiền cho các vòng đã chạy.
+
+### 4. Vì sao đã dặn trong lời dặn rồi mà chương trình vẫn kiểm lại sau khi model viết?
+
+- **Đã chọn:** ba việc sau khi model viết: kiểm số nguồn, kiểm con số thời tiết và khoảng cách, nối các dòng bắt buộc.
+- **Vì sao:** lời dặn là lời nhờ, model có thể không theo; luật nào quan trọng thì phải có một bước chương trình đếm được ở sau (bài 16). Đã gặp ở chính bài này: mở quyền tìm thêm làm xuất hiện một câu an toàn sai mới.
+- **Cách khác:** chỉ dựa vào lời dặn (bản đầu tiên của hệ thống).
+- **Cái giá:** chữ đã hiện có lượt bị rút lại. Và bước kiểm số nguồn mới biết nguồn [25] có thật, chưa biết đoạn 25 có nói đúng điều câu trả lời viết.
+
+### 5. Vì sao mỗi vòng model chỉ được gọi một công cụ?
+
+- **Đã chọn:** không cho gọi nhiều công cụ trong cùng một vòng.
+- **Vì sao:** chưa thấy ghi lý do lúc đặt. Điều thấy được: đã thử bật, model gần như không dùng (1 trên 176 câu), nên giữ cách cũ.
+- **Cách khác:** gọi nhiều công cụ cùng lúc: đã thử, bỏ.
+- **Cái giá:** câu cần ba công cụ mất ba vòng, tức ba lần chờ model.
+
+## Nếu… thì sao
+
+| Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa |
+|---|---|---|---|
+| lần tìm đầu không lấy ra đoạn có đáp án | model xin tìm thêm, nhiều nhất 2 lần | câu trả lời có nguồn, chậm hơn vài giây (lượt "áo dài": 7,5 giây) | đã có |
+| tìm cả ba lần vẫn không ra, hoặc kho không có | model trả câu từ chối; sau đó chương trình tra web một lần | câu từ chối, kèm mục "Từ web (chưa kiểm)" nếu web có (bài 25) | đã có; "kho có mà tìm không ra" vẫn xảy ra (lượt "cởi giày") |
+| model cứ xin công cụ, hết số vòng vẫn chưa viết | chương trình trả câu từ chối cố định | "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này." | đã có; bản "vòng cuối chỉ viết" chưa mở |
+| các vòng của trợ lý cộng lại quá 45 giây, hoặc hãng model lỗi | dừng lượt hỏi, không gọi lại | "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại" (bài 6) | đã có |
+| model viết một số nguồn không có thật | rút lại chữ đã hiện. Riêng lượt ngay sau một câu trả lời được nhớ: tự chạy lại cả lượt một lần | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" | đã có (bài 16) |
+| đổi sang model viết khác | chỗ nối giữa harness và model có thể hỏng: với Claude, cách gửi cũ làm model xin công cụ mãi, 0 trên 8 lần viết được | — | đã gặp và đã chữa: số lượt chạm trần vòng từ 6 xuống 0 trên 29 câu |
+
 ## Dễ nhầm
 
 - **"Trợ lý tự quyết định mọi bước."** Không. Nó chỉ quyết có xin công cụ không và viết gì.
 - **"Model chạy công cụ."** Không. Model chỉ gửi ra tên công cụ và tham số. Chương trình mới là thứ chạy.
 - **"Dặn kỹ trong lời dặn là đủ."** Không. Lời dặn là lời nhờ, model có thể không theo. Luật nào quan trọng thì có thêm một bước kiểm bằng chương trình ở sau.
 
-## Những điều cần nhớ
+## Câu hỏi tự kiểm
 
-- Harness là phần chương trình quanh model: cho thấy gì, đưa công cụ nào, dừng lúc nào, kiểm gì.
-- Model quyết hai việc: xin công cụ hay không, và viết gì. Việc có luật rõ và phải luôn đúng thì chương trình làm.
-- Cho model tự tìm thêm (tối đa 2 lần) giúp những câu mà tìm một lần thì không đủ bằng chứng: trên 18 câu cần nhiều nguồn, điểm "đủ ý" tăng 1,17 trên thang 5 (đo với gpt-6-luna).
-- Ba trần: 2 lần tự tìm; 4 vòng, cộng 1 cho mỗi công cụ được đưa thêm; 45 giây. Hết số lần tìm hoặc hết vòng thì chương trình trả câu từ chối cố định.
-- Chương trình đi trước model (tìm sẵn, tính sẵn, chọn công cụ) và đi sau model (kiểm số nguồn, kiểm con số, nối dòng bắt buộc); số nguồn sai thì câu trả lời bị rút lại.
+Thử trả lời bằng lời của mình trước khi bấm mở đáp án.
+
+<details>
+<summary>1. Harness là gì? Khi trả lời, model được quyết những việc nào?</summary>
+
+Harness là phần chương trình bao quanh model: cho model thấy gì, đưa công cụ nào, dừng lúc nào, kiểm gì sau khi model viết. Model chỉ quyết hai việc: có xin công cụ không (với tham số trong giới hạn cho sẵn), và viết chữ gì.
+
+</details>
+
+<details>
+<summary>2. Ba cái trần của một lượt hỏi là gì, và chạm trần thì sao?</summary>
+
+Tối đa 2 lần model tự tìm kho; tối đa 4 vòng gọi model, cộng 1 vòng cho mỗi công cụ khác được đưa thêm; tối đa 45 giây. Hết lần tìm thì công cụ tìm kho bị cất; hết vòng thì chương trình trả câu từ chối cố định; quá 45 giây thì lượt hỏi báo lỗi.
+
+</details>
+
+<details>
+<summary>3. Vì sao trần tự tìm là 2 lần, không phải 1 hay 3?</summary>
+
+Đã đo: cho tìm thêm tới 2 lần thì điểm đủ ý của câu cần nhiều nguồn tăng 1,17. Siết còn 1 lần thì câu kho có bị từ chối tăng từ 5 lên 7 trên 30. Nới lên 3 hay 4 lần thì kết quả như cũ, không lượt nào dùng tới lần thứ ba.
+
+</details>
+
+<details>
+<summary>4. Chương trình làm gì trước khi gọi model và sau khi model viết?</summary>
+
+Trước: tìm lần đầu bằng chính câu người dùng gõ, tính sẵn ngày và khoảng cách khi câu hỏi cần, chọn công cụ nào được đưa. Sau: kiểm số nguồn (sai thì rút lại), kiểm con số thời tiết và khoảng cách (câu có số lạ bị gỡ), nối các dòng bắt buộc.
+
+</details>
 
 ## Cấu hình đang chạy
 
@@ -122,7 +194,7 @@ Nguyên tắc đứng sau bảng: việc cần hiểu ngôn ngữ thì model là
 | Gọi nhiều công cụ trong cùng một vòng | tắt | chương trình hiện xử lý từng công cụ một | đã thử bật: model gần như không dùng, 1 trên 176 câu (bài 23) |
 | Dạng đầu ra bắt buộc của lần viết | một ô chữ duy nhất chứa câu trả lời | chương trình luôn biết đâu là chữ để kiểm và hiện | dạng này chưa so; cách gửi nó cho Claude thì đã so (dòng 4) |
 | Hạn giờ | 45 giây cho các vòng của trợ lý cộng lại; 10 giây riêng cho lần xếp loại câu; 45 giây riêng cho lần viết mục web | quá hạn thì báo lỗi, không treo | chưa so |
-| Số đoạn mỗi lần tìm | 10 | như đường hỏi đáp (bài 13) | bài 13 |
+| Số đoạn mỗi lần tìm | 10; tin hỏi nhiều ý được nối thêm 2 đoạn cho mỗi ý ở lần tìm đầu (từ 22/11) | như đường hỏi đáp (bài 13); phần nối thêm ở bài 23 | bài 13, bài 23 |
 | Độ ngẫu nhiên khi viết (temperature) | không gửi, để mặc định của nhà cung cấp | — | chưa so |
 | Lịch sử gửi kèm | câu hỏi của các lượt trước; từ sáng 22/11 thêm câu trả lời của lượt liền trước (bỏ số nguồn, cắt còn 4.000 ký tự, kèm một dòng nhãn nói rõ nó không phải nguồn). Lượt có dùng công cụ đổi theo giờ (thời tiết, khoảng cách) thì câu trả lời không được nhớ. Kết quả công cụ cũ không được gửi lại | lịch sử để hiểu "đó / này" và "quán thứ hai bạn vừa kể" chỉ cái gì; không làm nguồn | bài 23 |
 | Agent con | không có | — | chưa thử |
@@ -168,6 +240,14 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 
 **Giới hạn của các phép đo.** Bộ câu nhỏ (8 tới 30 câu), do nhóm soạn. Dòng 1–3 chưa đo lại trên model đang chạy; riêng số lần tìm thì đã thử 3 và 4 trên cả hai model (bảng cấu hình).
 
+## Quyết định nhỏ hơn
+
+**Vì sao không để model tự quyết hết: tìm gì, tính gì, dừng lúc nào?** Đã đo từng mảnh của ý đó: ba lần mở thêm quyền cho model (xin hai công cụ một lúc, tự viết lại câu tìm đầu, tự quyết lúc nào tra web) đều không thắng (bài 23, 25), và model tự tính thì sai ngày (bài 24).
+
+**Vì sao không dùng nhiều agent, mỗi agent một việc?** Chưa thử. Lập luận, không phải số đo: đường đi của một lượt hỏi ở đây cố định (xếp loại, tìm, viết, kiểm), nên một trợ lý cùng vài lần gọi model hẹp là đủ; thêm agent là thêm chỗ phải kiểm.
+
+**Vì sao dùng một thư viện có sẵn để chạy vòng công cụ, không tự viết?** Quyết định đã ghi: hệ thống dùng thư viện OpenAI Agents SDK (lo việc gọi model, nhận lời xin công cụ, chạy công cụ, gọi lại model); khi đổi tạm sang Claude, quyết định là giữ nguyên thư viện và viết một lớp nối (bài 33). Lý do chọn đúng thư viện này lúc đầu: chưa thấy ghi.
+
 ## Giới hạn đã biết
 
 - **Chạm trần vòng thì mất cả câu trả lời.** Người dùng nhận câu từ chối kể cả khi 10 đoạn của lần tìm đầu đã đủ để trả lời. Một bản "hết vòng thì vòng cuối chỉ viết từ những gì đã tìm được" đã viết xong nhưng chưa mở, đang chờ đo.
@@ -175,14 +255,6 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 - **Mỗi công cụ ăn một vòng.** Vì gọi lần lượt, câu cần ba công cụ mất ba vòng, tức ba lần chờ model.
 - **Bước kiểm số nguồn chưa kiểm nghĩa.** Chương trình biết nguồn [25] có thật; chưa biết đoạn 25 có nói đúng điều câu trả lời viết (bài 16). Model vẫn có thể viết sai kèm một số nguồn có thật.
 - **Lượt hỏi chạm trần vẫn tốn tiền** cho các vòng đã chạy.
-
-## Vì sao không làm cách khác
-
-**Vì sao không để model tự quyết hết: tìm gì, tính gì, dừng lúc nào?** Đã đo từng mảnh của ý đó: ba lần mở thêm quyền cho model đều không thắng (bài 23, 25), và model tự tính thì sai ngày (bài 24).
-
-**Vì sao không dùng nhiều agent, mỗi agent một việc?** Chưa thử. Lập luận thiết kế, không phải số đo: đường đi của một lượt hỏi ở đây cố định (xếp loại, tìm, viết, kiểm), nên một trợ lý cùng vài lần gọi model hẹp là đủ; thêm agent là thêm chỗ phải kiểm.
-
-**Vì sao không tự viết vòng lặp mà dùng một bộ khung có sẵn?** Quyết định đã ghi: hệ thống dùng bộ khung OpenAI Agents SDK (thư viện lo việc gọi model, nhận lời xin công cụ, chạy công cụ, gọi lại model); khi đổi tạm sang Claude, quyết định là giữ nguyên bộ khung và viết một lớp nối (bài 33). Lý do chọn đúng bộ khung này lúc đầu: người viết chưa tra được trong hồ sơ.
 
 ## Chi tiết để tra
 
@@ -216,5 +288,7 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 - 8 / 8 câu kho không có tốn thừa một lần gọi model khi chưa cất công cụ: `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` dòng 35.
 - Bảng rà harness 17 mục (chạm trần mất câu trả lời; 0,36 so với 0,30; không có agent con): `data/thu_bedrock_2026-11-21/c_harness/RA_HARNESS.md` [riêng tư; phiên khác đọc code và đo 21/11].
 - Quyết định giữ bộ khung khi đổi model: `session_prompt/HIEN_TRANG.md` mục 4, gạch 09:41 21/11/2026.
+
+- Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm" (thêm trưa 22/11 theo khuôn mới): gom từ bảng "Đã so", bảng "Cấu hình đang chạy" và các nguồn trên. Lời báo nguyên văn: câu từ chối `backend/llm/full_corpus_prompt.py` (`INSUFFICIENT_ANSWER`); lời báo lỗi model và lỗi trích dẫn `backend/api/routes/chat.py` (`GENERATION_FAILURE_MESSAGE`, `_loi_trich_dan`); lần chạy lại hẹp `backend/llm/assistant.py` (`answer_turn_stream_parallel`). "Chưa thấy ghi lý do" ở quyết định 3 và 5: người viết đã dò chú thích quanh `on_max_turns` và `parallel_tool_calls`.
 
 </details>
