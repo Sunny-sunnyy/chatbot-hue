@@ -14,7 +14,7 @@ cách, xếp lịch — do code làm; model chỉ đọc ý người dùng và d
 - **Closed-world.** Ngữ cảnh không đủ bằng chứng ⇒ một câu từ chối cố định. Tin hỏi nhiều ý: trả lời ý kho có, ý thiếu ghi rõ
   "Tư liệu chưa có thông tin về: …".
 - **Phân loại câu hỏi.** Mỗi câu được model xếp vào: trò chuyện thông thường · câu hỏi về Huế · câu ngoài phạm vi (trả một câu cố định) · khẩn cấp (đi
-  chung đường với câu hỏi về Huế). Lượt biểu mẫu Lên kế hoạch không qua bước này.
+  chung đường với câu hỏi về Huế). Bước này chạy song song với việc tìm kho và viết câu trả lời (sơ đồ ở mục Kiến trúc). Lượt biểu mẫu Lên kế hoạch không qua bước này.
 - **Tìm trong kho nhiều lần.** Sau lần tìm đầu bằng chính câu hỏi, trợ lý được gọi công cụ tìm thêm tối đa 2 lần. Tin nhiều ý: lần tìm
   đầu nối thêm kết quả tìm riêng cho từng vế hỏi.
 - **Công cụ do code tính** (model chỉ quyết định gọi và viết lời quanh kết quả): dự báo thời tiết Huế 7 ngày (Open-Meteo; câu về bão / lũ
@@ -74,9 +74,7 @@ flowchart TD
     U[Người dùng] --> W[Giao diện web React]
     W -->|SSE| API[FastAPI]
     API --> R{Phân loại câu hỏi}
-    R -->|Trò chuyện| CHAT[LLM trả lời ngắn]
-    R -->|Ngoài phạm vi| OOS[Câu trả lời cố định]
-    R -->|Câu hỏi về Huế, khẩn cấp| N[Chuẩn hoá NFC]
+    API -->|cùng lúc với phân loại| N[Chuẩn hoá NFC]
     N --> DS[Dense search - 30 ứng viên]
     Q[Qdrant] --> DS
     DS --> BM[Chấm lại bằng BM25]
@@ -84,12 +82,23 @@ flowchart TD
     RRF --> GEN[LLM sinh câu trả lời]
     GEN -.->|tìm thêm, tối đa 2 lần| DS
     GEN -.->|công cụ do code tính| TOOL[Thời tiết - ngày - khoảng cách - gần một điểm - liệt kê - sự kiện]
-    GEN --> CIT[Kiểm trích dẫn và con số]
+    GEN --> CHO[Chữ của nhánh trả lời - giữ lại tới khi phân loại xong]
+    R -.->|Câu hỏi về Huế - thả chữ đang giữ| CHO
+    R -->|Trò chuyện - huỷ nhánh trả lời| CHAT[LLM trả lời ngắn]
+    R -->|Ngoài phạm vi - huỷ nhánh trả lời| OOS[Câu trả lời cố định]
+    R -->|Khẩn cấp - chạy lại nhánh trả lời| N
+    CHO --> CIT[Kiểm trích dẫn và con số]
     CIT --> OUT[Câu trả lời kèm nguồn]
     CIT -->|Cả câu bị từ chối| WEB[Tìm web một lần - mục Từ web chưa kiểm]
     API -->|Biểu mẫu Lên kế hoạch| PLAN[Code xếp lịch theo buổi] --> GEN
     API -->|Sửa lịch bằng lời| EDIT[LLM đọc ý - code áp và kiểm luật] --> PLAN
 ```
+
+Bước phân loại và nhánh trả lời (tìm kho rồi gọi model viết) được khởi động **cùng lúc** để người dùng không phải chờ hai lần gọi model nối tiếp.
+Sự kiện của nhánh trả lời nằm trong hàng đợi cho tới khi có kết quả phân loại: câu hỏi về Huế ⇒ thả ra cho người dùng; trò chuyện hoặc ngoài
+phạm vi ⇒ nhánh trả lời bị huỷ, không chữ nào của nó tới người dùng; khẩn cấp ⇒ chạy lại đúng đường tìm kho rồi trả lời. Tìm web chỉ chạy sau khi
+đã biết câu thuộc loại "câu hỏi về Huế". Lượt biểu mẫu Lên kế hoạch không có bước phân loại nên không có gì chạy song song
+(`backend/llm/assistant.py`, hàm `_answer_core`).
 
 | Thành phần | Công nghệ |
 |---|---|
