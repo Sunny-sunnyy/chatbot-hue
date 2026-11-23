@@ -214,6 +214,11 @@ class AssistantFlags:
     # giữ nguyên + dòng nói điểm nào thay được ("bạn nhắn: thay Y bằng X"); lệnh thêm bị luật xếp chặn ⇒ lý do + chỗ làm được. TẮT tới khi đo và chủ dự
     # án chọn (đổi thứ người dùng thấy); cần cờ sua_lich_v2. Tắt ⇒ bộ áp chạy y như cũ.
     sua_lich_them_khong_the: bool = False
+    # 23/11/2026 (chủ dự án chọn "cho ngày dày thêm" sau khi nghe số: 0 / 14.725 lệnh thêm làm được trên lịch vừa xếp): lệnh THÊM mà luật xếp chặn chỉ
+    # vì NHỊP ĐI (số điểm một buổi, quỹ phút) ⇒ vẫn thêm; ngày đó dài ra (buổi chiều lùi theo buổi sáng, giữ bữa trưa 60 phút, chiều kết trước 18:00),
+    # dòng báo nói ngày dày hơn nhịp đã chọn. Giờ mở cửa, luật khu, luật của đoàn có trẻ nhỏ / người lớn tuổi không nới. TẮT tới khi đo; cần
+    # sua_lich_them_khong_the (phần gợi ý "thêm vào buổi khác" nằm trong câu của cờ đó). Tắt ⇒ bộ áp chạy y như cũ với lịch chưa có ngày nào dày.
+    sua_lich_them_day: bool = False
     # 23/11/2026 (chủ dự án nêu: buổi tối của đoàn có trẻ nhỏ đang bỏ trống). `toi_nhe`: đoàn có trẻ nhỏ / người lớn tuổi được MỘT hoạt động tối nhẹ gần trung
     # tâm mỗi tối không phải ngày đi xa, lấy từ khoá `toi_nhe` của bảng điểm, không lặp (đếm 960 tổ hợp: 720 tổ hợp / 2.160 tối đang trống ⇒ 1.710 tối có hoạt
     # động). `bo_toi_de_trong`: lệnh bỏ hoạt động tối ⇒ tối đó để trống, các tối khác giữ nguyên (xem `sua_lich_v2.ap`). Cả hai TẮT tới khi chủ dự án quyết.
@@ -325,6 +330,8 @@ class AssistantFlags:
             raise ValueError("assistant.bo_toi_de_trong needs assistant.sua_lich_v2: true")
         if self.sua_lich_them_khong_the and not self.sua_lich_v2:
             raise ValueError("assistant.sua_lich_them_khong_the needs assistant.sua_lich_v2: true")
+        if self.sua_lich_them_day and not self.sua_lich_them_khong_the:
+            raise ValueError("assistant.sua_lich_them_day needs assistant.sua_lich_them_khong_the: true")
         if self.lich_vao_hoi_thuong and not (self.sua_lich_v2 and self.tim_them):
             raise ValueError("assistant.lich_vao_hoi_thuong needs assistant.sua_lich_v2: true and assistant.tim_them: true")
         if self.anh_lich and (not self.len_ke_hoach_v2 or self.anh_lich_bang is None):
