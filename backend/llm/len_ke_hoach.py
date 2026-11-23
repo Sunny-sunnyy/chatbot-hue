@@ -349,7 +349,10 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             kq["hoi_them"] = True
     if flags.sua_lich_them_khong_the:  # câu gợi ý của CHÍNH lượt này ⇒ route nhớ cho đúng một lượt kế (lượt không gợi ý gì ⇒ rỗng ⇒ xoá)
         trace.goi_y_moi = sl.cau_goi_y(bang, kq)
-    trace.vet.setdefault("sua", {}).update(chon_the=trace.sua_chon, thay_doi=sl.thay_doi(bang, kq))
+    thay_doi = sl.thay_doi(bang, kq)
+    if kq["the"] is None:  # các dòng do code viết của lượt sửa ⇒ ô lịch sử của lượt này (`api.conversations.ghi_chu_sua_lich`). Lượt ra THẺ CHỌN thì
+        trace.sua_dong = tuple(d["cau"] for d in thay_doi)  # chưa áp gì (khung giữ nguyên tới khi người dùng bấm) ⇒ không ghi, ô lịch sử như trước
+    trace.vet.setdefault("sua", {}).update(chon_the=trace.sua_chon, thay_doi=thay_doi)
     trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),
                  "n_khong": len(kq["khong_doi"]), "the": kq["the"] is not None, **({"hoi_them": True} if kq.get("hoi_them") else {})}
     # model đã hiểu là câu sửa ⇒ luôn là lượt sửa, kể cả khi mọi hành động trượt (báo "Không đổi được: X không có trong lịch" thay vì trả lời
