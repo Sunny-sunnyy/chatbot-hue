@@ -12,6 +12,10 @@
 #   SERPER_API_KEY=…      (chỉ khi bật tra web) · HUE_KHOA_THEO_DOI=… (≥ 16 ký tự, mở trang theo dõi #/theo-doi; không đặt ⇒ trang trả 404)
 #   OPENAI_API_KEY=…      (chỉ khi đổi model viết về model cũ: sửa dòng `provider: bedrock` ⇒ `provider: openai` trong ./cau_hinh/settings.yaml, thêm khoá này,
 #                          rồi `docker compose … up -d app`; về lại thì sửa ngược dòng đó — guides/DOI_MODEL_VIET.md)
+# Tên dự án Compose CỐ ĐỊNH: không ghi thì Compose lấy tên thư mục đang đứng làm tên dự án ⇒ chạy lệnh từ một thư mục khác là ra một bộ hộp + volume
+# MỚI (chứng chỉ HTTPS nằm ở volume của dự án cũ). Lượt thử ở máy chủ dự án ghi đè bằng `-p` / biến COMPOSE_PROJECT_NAME.
+name: hue
+
 x-log: &log   # log stdout của Docker có trần (mặc định json-file không giới hạn)
   logging:
     driver: json-file
