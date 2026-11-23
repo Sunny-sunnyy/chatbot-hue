@@ -76,7 +76,8 @@ flowchart LR
 
 ### 4. Vì sao câu gõ lúc khung "chưa nhận ra" mang thêm một ghi chú, mà không để giao diện tự từ chối?
 
-- **Đã chọn:** từ 13:57 23/11, giao diện nối vào câu gõ một đuôi ghi chú "ảnh vừa gửi chưa nhận ra" (nguyên văn: "Chi tiết để tra"); câu vẫn đi đường hỏi đáp thường, bong bóng chỉ hiện chữ người dùng gõ, model tự quyết.- **Vì sao:** ghi trong chương trình: thiếu dấu hiệu về ảnh thì trợ lý gán nơi của lượt trước cho ảnh mới (2 trên 2 lượt). Dùng lại khuôn đuôi sẵn có nên máy chủ không đổi gì.
+- **Đã chọn:** từ 13:57 23/11, giao diện nối vào câu gõ một đuôi ghi chú "ảnh vừa gửi chưa nhận ra" (nguyên văn: "Chi tiết để tra"); câu vẫn đi đường hỏi đáp thường, bong bóng chỉ hiện chữ người dùng gõ, model tự quyết.
+- **Vì sao:** ghi trong chương trình: thiếu dấu hiệu về ảnh thì trợ lý gán nơi của lượt trước cho ảnh mới (2 trên 2 lượt). Dùng lại khuôn đuôi sẵn có nên máy chủ không đổi gì.
 - **Cách khác:** gửi như câu thường (bản cũ): sai 2 trên 2. Giao diện tự chặn câu gõ lúc khung mở: chưa thử; cách này mất đường "gõ tên nơi ngay trong khung".
 - **Cái giá:** từ chối hay không là việc của model, mới thấy đúng ở vài lượt lẻ, chưa nói được "luôn".
 
