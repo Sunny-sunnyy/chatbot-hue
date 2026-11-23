@@ -53,7 +53,8 @@ CONG_CU_KHONG_NHO_DAP = frozenset({"thoi_tiet", "ngay_lich", "lich_san", "su_kie
 # Lượt SỬA lịch không giữ đáp (`dap_duoc_nho`: chữ thẻ lịch có tên quán lấy từ bản đồ mở). Hệ quả đo 23/11/2026: lượt kế thấy câu LỆNH với ô đáp rỗng cạnh
 # lịch ĐÃ sửa ⇒ model áp lệnh ấy thêm một lần trong đầu ("bỏ điểm đầu tiên của ngày 2" rồi "ngày 2 giờ còn những điểm nào?" — kể sai điểm đã bỏ, cãi thẻ
 # lịch: 2 / 3 lần trên model đang chạy, 1 / 1 trên model cũ). Ô lịch sử của lượt sửa nay mang ĐÚNG các dòng do CODE viết ở đầu thẻ lịch
-# (`sua_lich_v2.thay_doi` — "Đã bỏ X.", "Không đổi được: …", "Chưa làm: …"; tên điểm lấy từ bảng điểm): không chữ model, không chữ thẻ, không tên quán.
+# (`sua_lich_v2.thay_doi` — "Đã bỏ X.", câu LÝ DO của ý không đổi được, "Chưa làm: …"; tên điểm lấy từ bảng điểm): không chữ model, không chữ thẻ, không tên quán.
+# Tiền tố "Không đổi được:" người dùng thấy trên thẻ là chữ GIAO DIỆN gắn lúc hiện (`frontend/src/LichV2.jsx` `ThayDoi`) — KHÔNG nằm trong ô lịch sử.
 GHI_CHU_SUA_DAU = ("[Ghi chú hệ thống — lệnh sửa lịch ở lượt này đã được xử lý xong, lịch hiện có là lịch SAU lệnh này; không áp lại lệnh. "
                    "Kết quả đã báo cho người dùng: ")
 
