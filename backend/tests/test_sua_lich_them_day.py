@@ -243,3 +243,21 @@ def test_ly_do_tu_choi_khi_khong_noi_ro_mot_buoi():
         tat = _them(luu, i)
         assert "ly_do_cho" not in tat["khong_doi"][0] and "«" not in s.thay_doi(B, tat)[0]["cau"]
     assert n == 20  # lịch mặc định: 20 / 30 điểm chưa có bị từ chối khi không nói buổi
+
+
+def test_passage_cap_covers_the_densest_schedule_a_user_can_build_by_adding():
+    """Lượt dựng lịch lấy nhiều nhất `len_ke_hoach.MAX_DOAN` đoạn nguồn, một đoạn mỗi điểm; điểm không có đoạn ⇒ code cắt NGÀY CUỐI. Trần cũ 25 tính
+    cho lịch chưa sửa (4 điểm ban ngày + 1 tối × 5 ngày); lệnh thêm vượt nhịp làm lịch 5 ngày "khám phá nhiều" lên 26 điểm từ lệnh thứ tư."""
+    from llm import len_ke_hoach as lkh
+    from llm import lich_trinh as lt
+    k, luu = _lich(5, "kham_pha", ())
+    nhieu_nhat = len(dict.fromkeys(lt.diem_trong_khung(k)))
+    for _ in range(12):  # thêm liên tiếp tới khi lịch không nhận thêm
+        trong = set(s._vi_tri(k)) | {j for ng in k["ngay"] for j in ng["buoi"]["toi"]}
+        kq = next((r for i in NGAY_DIEM if i not in trong and (r := _them(luu, i, them_day=True))["da_ap"]), None)
+        if kq is None:
+            break
+        k, luu = kq["khung"], kq["luu"]
+        nhieu_nhat = max(nhieu_nhat, len(dict.fromkeys(lt.diem_trong_khung(k))))
+    assert nhieu_nhat > 25  # ca này thật sự vượt trần cũ
+    assert nhieu_nhat <= lkh.MAX_DOAN == (v2.TOI_DA_BUOI + 1) * 2 * v2.SO_NGAY_TOI_DA + v2.SO_NGAY_TOI_DA

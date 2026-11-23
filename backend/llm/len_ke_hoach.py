@@ -23,7 +23,11 @@ from llm.citations import CITATION_PATTERN
 from llm.assistant import (STREAM_DRAIN_SECONDS, AnswerTrace, AssistantFlags, CallLog, GenerationError, GeneratorNotReadyError, ROUTE_TRO_LY_HUE,
                            _lay_nguon_lich, check_citations, elapsed_ms, record_llm_calls)
 
-MAX_DOAN = lt2.TOI_DA_BUOI * 2 * lt2.SO_NGAY_TOI_DA + lt2.SO_NGAY_TOI_DA  # một đoạn mỗi điểm: ≤ 4 điểm ban ngày + 1 tối × 5 ngày = 25
+# Một đoạn nguồn mỗi điểm. Điểm nào không có đoạn vào được ngữ cảnh thì `assistant._lay_nguon_lich` CẮT NGÀY CUỐI của lịch ⇒ trần này phải phủ lịch dày
+# nhất có thể có: từ khi lệnh "thêm <điểm>" được vượt nhịp đi (công tắc `sua_lich_them_day`, 23/11/2026) một buổi có tới `TOI_DA_BUOI` + 1 điểm ⇒
+# (3 × 2 buổi + 1 tối) × 5 ngày = 35. Trần cũ 25 (= 4 điểm ban ngày + 1 tối × 5 ngày): đếm 23/11/2026 bằng hàm áp lệnh thật — lịch 5 ngày "khám phá
+# nhiều" (22 điểm) vượt 25 từ lệnh thêm thứ tư ở 3 / 4 bộ sở thích, tức lệnh thêm đó sẽ làm mất cả ngày 5 (phiên viết giáo trình nêu từ đọc code).
+MAX_DOAN = (lt2.TOI_DA_BUOI + 1) * 2 * lt2.SO_NGAY_TOI_DA + lt2.SO_NGAY_TOI_DA
 TIM_MO_TA = "tổng quan kiến trúc cảnh quan"  # vòng chỉnh nghiệm thu 13/11 (A chọn (a)): chọn đoạn TẢ điểm cho câu "ở đây có gì"
 LOI_MODEL = (GenerationError, TimeoutError, AgentsException, OpenAIError)  # lỗi của lần gọi viết câu ⇒ câu dự phòng, lịch vẫn hiện
 
