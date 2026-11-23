@@ -1,6 +1,6 @@
 # Bài 39 — Đồ án được làm thế nào: một người quyết định và nhiều coding agent
 
-*Cập nhật 22:04, ngày 22/11/2026 · thêm mẫu đề bài mới cho AI khác hãng · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): phép quét trùng chữ lúc lưu code chỉ còn so với bộ câu chấm cất riêng · từ trang hiện trạng, sổ việc, bảng quyền, lịch sử code; đã qua một lượt đối chiếu độc lập.*
+*Cập nhật 12:18, ngày 23/11/2026 · khớp hệ thống trưa 23/11 (49 tính năng, kho 267 bài): thêm một dòng vào bảng sự cố — lượt "dùng như người thật" trên trình duyệt thành bước thường xuyên (kể đủ ở bài 38) · từ trang hiện trạng, sổ việc, bảng quyền, lịch sử code · các lần sửa trước: khối Nguồn.*
 
 **Bài trước đã biết:** hệ thống gồm những khối nào, đo bằng gì, và bộ test kiểm những gì (bài 38).
 **Bài này thêm:** ai làm ra hệ thống đó: ai quyết gì, việc ghi ở đâu, ai kiểm ai, và cách làm đã bị sửa ra sao sau từng sự cố.
@@ -77,6 +77,7 @@ Từ 10:11 ngày 18/11, chủ dự án duyệt một bảng quyền dùng lâu d
 | 18/11: một bản sửa an toàn qua review cùng hãng; Gemini chỉ ra nó ghi sai kết cục và làm mất một dòng gợi ý | soát khác hãng ở mốc chốt |
 | 21–22/11: chủ dự án nhắc kiểm thử quá nhiều; sáng 22/11 cả bộ test chạy bốn lần, bắt 0 lỗi mới | liều lượng theo rủi ro, không con số cố định; cả bộ test một lần cuối đợt |
 | 21/11: ít nhất 12 lần trong khoảng bốn tuần chủ dự án phải tự gợi một hướng nhóm lẽ ra phải nêu | "nghĩ rộng, đừng chờ dắt"; ba ngày thử nhóm tự giữ luật cách làm |
+| 22 và 23/11: chủ dự án hai lần nhắc thử sản phẩm bằng công cụ cho agent tự lái trình duyệt | thêm lượt "dùng như người thật" sau mỗi đợt gộp thứ người dùng thấy; lượt đầu ra ba điều mới mà bộ chụp soạn sẵn không thấy (bài 38) |
 
 Chủ dự án dặn tối 21/11: "phần này cũng nên linh hoạt chứ đừng cố định nhé… tôi sợ vấn đề này ảnh hưởng đến chất lượng dự án". Trong khoảng bốn tuần anh nhắc chuyện làm quá tay 9 lần, 7 lần về kiểm soát (rào, vòng review, đo lặp). Về hướng đi, lời anh ngày 21/11: "các bạn phải tự suy nghĩ rộng ra… chứ không phải đi theo hướng của tôi mà để tôi dắt các bạn đi vào ngõ cụt"; từ đó hướng anh nêu là một gợi ý để xét. Luật chung: sự cố lần đầu thì ghi lại, lặp lần hai mới thành luật, máy kiểm được thì làm phép kiểm thay chữ.
 
@@ -253,6 +254,7 @@ Tái hiện, đếm số lượt thật gặp nó. Lỗi người dùng dễ g�
 - Khoảng 50 ý chưa thử: `Y_CHUA_THU.md` có 50 dòng ý lúc 14:48 22/11. Sổ việc 18/11 đo bằng byte (175.884), không phải ký tự. Rào quét trùng 40 ký tự (từ 16:45 22/11 chỉ với câu kín): `.githooks/pre-commit` dòng 9–10, 48–59, `.githooks/overlap_scan.py` [code]. Bốn phép chặn (+ chặn khi phép quét lỗi) + hai cảnh báo, rào lúc đẩy kiểm lại ba phép đầu, lệnh quét cả file vẫn so với cả ba nguồn, câu hỏi kín ngắn dò nguyên câu: `.githooks/pre-commit` dòng 18–23 (file), 31–36 (khoá), 38–43 (tên dự án khác), 52–58 (trùng câu kín / quét lỗi), 63–72 (hai cảnh báo); `.githooks/pre-push` dòng 5; `overlap_scan.py` dòng 7–8, 70–81, 128–134 [code, người viết đếm tay tối 22/11; "bốn" theo đúng danh sách "Chặn khi: 1.–4." ở đầu `pre-commit`].
 - Bài đã qua một lượt đối chiếu độc lập (14:43 22/11/2026): `data/hoc_cung_D/kiem/bai_39_41.md` [riêng tư]; các dòng đã áp và không áp ghi ở báo cáo của người viết.
 
+- Dòng bảng sự cố "22 và 23/11" (thêm 12:18 23/11/2026): lời chủ dự án lần hai 10:22 23/11 ("…dùng thử đi chứ"; lần đầu 17:16 22/11) — `session_prompt/HIEN_TRANG.md` mục 4 gạch "10:22 23/11/2026"; cách dùng nhóm chốt 11:13 23/11 — `session_prompt/VIEC_DANG_MO.md` gạch "Cách đo"; ba lỗi mới: `data/playwright_mcp/SO_SANH_MCP_VOI_SCRIPT.md` mục 2 [riêng tư; chép, đã mở]. Kể đủ ở bài 38 vì bài đó là chỗ giảng "kiểm bằng gì, bắt được lỗi nào"; bài này chỉ giữ dòng sự cố → cách sửa. Dòng Cập nhật trước: "22:04, ngày 22/11/2026 · thêm mẫu đề bài mới cho AI khác hãng · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): phép quét trùng chữ lúc lưu code chỉ còn so với bộ câu chấm cất riêng · …; đã qua một lượt đối chiếu độc lập".
 - Mẫu đề bài mới cho AI khác hãng (thêm 22:04 22/11/2026): ba lời dặn của chủ dự án và cách nhóm áp (khối trạng thái, danh sách nên đọc, nhãn "đã biết — đừng báo lại", bí mật không đưa, cái giá, đề bài mù): `session_prompt/HIEN_TRANG.md` mục 4, gạch "21:39 22/11/2026 — ĐỀ BÀI CHO AI KHÁC" (gồm lời nói rõ thêm 21:48) và gạch "20:44 22/11/2026" (lời dặn dùng agent con, nghiên cứu chuyên sâu) [chép, đã mở]; chữ mẫu: `guides/khung/GOI_REVIEW_KHAC_HANG.mau.md` mục 1, 2, 5 và ghi chú cho người soạn [đã mở]. "Chưa có đề bài nào theo mẫu mới": liệt kê `data/review_khac_hang/` lúc 22:04 22/11, file đề bài mới nhất ghi 20:54 [riêng tư; người viết tự liệt kê].
 
 </details>
