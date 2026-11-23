@@ -1,6 +1,6 @@
 # Phụ lục F — Các con số chính trên một trang
 
-*Cập nhật 11:33, ngày 23/11/2026 · khớp các bài sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): lần chạy đủ bộ test mới nhất 09:41–09:59 23/11 (82 file chạy, 2.218 ca đạt); năm con số của giao diện mới (mục 9); bốn con số của hai phép đếm 0 đồng và của việc gọi lại một lần (mục 8); dòng tin dài nói thẻ chờ (108 dòng) · trước đó (22/11: lần chạy 20:48–21:07, tin dài nhiều ý, lệnh thêm điểm, thẻ nơi; gom lần đầu); bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 12:55, ngày 23/11/2026 · lượt hai: lần chạy đủ bộ test mới nhất nay là 12:05–12:23 23/11 (2.228 ca đạt), lượt 09:41–09:59 thành lần trước đó; số tính năng 49 mở, 5 tắt; dòng 761 ảnh ghi đúng phạm vi lượt chụp lại thẻ chọn tên ảnh (113 dòng) · bản 12:31, ngày 23/11/2026, khớp các bài trưa 23/11 (49 tính năng, kho 267 bài): số tính năng 48 ⇒ 49; bảng quán bản 4; năm con số mới — 30 trên 41 quán có giờ và 5 trên 6 ⇒ 0 trên 6 của "gần một điểm" (bài 24), 11 trên 25 lịch mất câu tả lăng Thiệu Trị (bài 29), 766 ⇒ 0 trên 960 tổ hợp có quán lệch bữa (bài 30), lượt "dùng như người thật" đầu tiên (bài 38); dòng 761 ảnh ghi thẻ chọn tên ảnh đã sửa (113 dòng) · bản 11:33, ngày 23/11/2026, khớp các bài sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): lần chạy đủ bộ test mới nhất 09:41–09:59 23/11 (82 file chạy, 2.218 ca đạt); năm con số của giao diện mới (mục 9); bốn con số của hai phép đếm 0 đồng và của việc gọi lại một lần (mục 8); dòng tin dài nói thẻ chờ (108 dòng) · trước đó (22/11: lần chạy 20:48–21:07, tin dài nhiều ý, lệnh thêm điểm, thẻ nơi; gom lần đầu); bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một con số quan trọng của hệ thống, chép từ mục "Ý chính", bảng "Cấu hình đang chạy" hoặc bảng số chính của một bài. Cột thứ ba ghi điều kiện mà bài gốc ghi kèm: đếm trên bộ nào, model viết nào, ngày nào. Một con số không có điều kiện thì không so được với con số khác, nên đừng đọc cột hai mà bỏ cột ba. Dòng ghi "cấu hình" là giá trị đặt sẵn trong hệ thống, không phải kết quả đo. Dòng ghi "lúc đó" hay "đã cũ" là số của một thời điểm đã qua, giữ lại để so. Hai model viết: gpt-6-luna (tới trưa 21/11) và Claude Sonnet 5.5 (từ 21/11, đổi tạm).
 
@@ -58,6 +58,8 @@
 | sớm hơn 1,37 giây | chữ đầu tới sớm hơn khi xếp loại câu chạy song song (khoảng tin cậy 0,34 tới 2,14) | gpt-6-luna, 20 cặp, 04–05/11; chưa đo lại với Claude | 6, 22, 34 |
 | 9 câu từ chối nhầm bớt, 0 câu sai ngày | khi chương trình tính ngày thay model | gpt-6-luna, 09/11 | 1, 3, 24, 40 |
 | 40 điểm, 1.560 cặp | bảng khoảng cách dựng sẵn; không gọi mạng lúc trả lời | cấu hình, trưa 22/11 | 24 |
+| 30 trên 41 quán | quán có bài kho mà bài riêng có dòng "Giờ hoạt động", nên công cụ "gần một điểm" in được giờ cạnh tên quán (11 quán kia không in gì, chương trình không đoán giờ) | bảng quán bản 4, đếm trưa 23/11; in giờ từ 11:56 23/11 | 24 |
+| tắt 5 trên 6 ⇒ bật 0 trên 6 | câu hỏi "ăn gì gần X" kèm bữa mà câu trả lời gợi ý cho bữa được hỏi một quán kho ghi đóng bữa đó, trước ⇒ sau khi "gần một điểm" in giờ quán; 2 câu không kèm bữa dài hơn tới 1,4 lần | 8 câu (6 kèm bữa + 2 không), mỗi bên một lượt, Claude Sonnet 5.5, 23/11; phiên đo chưa chấm | 24 |
 
 ## 5. Tra web và hỏi bằng ảnh
 
@@ -103,9 +105,11 @@
 | 210 / 240 phút / 1 điểm | quỹ một buổi: cân bằng / khám phá nhiều / nhẹ nhàng | cấu hình, trưa 22/11 | 28 |
 | 0,2 giây · 9,3 giây | khung lịch hiện · đủ câu mô tả | ví dụ, Claude, 21/11 | 27, 40 |
 | 23 luật, 0 lỗi | bước kiểm khung đối chiếu lịch; đã chạy trên mọi tổ hợp biểu mẫu | mô phỏng bằng chương trình | 29 |
+| 11 trên 25 lịch ⇒ 0 câu dự phòng | lịch mặc định mà câu tả lăng Thiệu Trị (câu so sánh đúng tư liệu) bị thay bằng câu dự phòng, trước ⇒ sau khi nới luật kiểm câu; lượt chấm sau sửa: 81 câu, 0 câu bị thay | lịch chạy qua chương trình máy chủ, Claude Sonnet 5.5, 23/11: trước 25 lịch, sau 6 lịch; lượt chấm 9 lịch | 29 |
 | 16 trên 20 ⇒ 20 trên 20 | nghiệm thu câu mô tả: lần đầu trượt, sau khi chọn tay đoạn kho thì đạt | nghiệm thu lịch (lúc đó) | 29 |
 | 136 cơ sở, tối đa 5 | cơ sở lưu trú (bản 6, 67 có ảnh) và số cơ sở gợi ý | cấu hình, trưa 22/11 | 30 |
-| 467 quán; 2 quán mỗi bữa, 2 km | bảng quán (bản 2, 21/11); giới hạn mỗi bữa | cấu hình, trưa 22/11 | 30 |
+| 467 quán; 2 quán mỗi bữa, 2 km | bảng quán (bản 4, 23/11: 6 quán kho mang dấu "bữa không hợp", 30 quán kho mang dòng giờ); giới hạn mỗi bữa | cấu hình, trưa 23/11 | 30, 24 |
+| 766 ⇒ 0 trên 960 tổ hợp | tổ hợp biểu mẫu (không ngày đi) có ít nhất một quán ở bữa mà bài kho ghi quán đóng, trước ⇒ sau dấu "bữa không hợp" (riêng Bún bò Bà Nga ở bữa trưa: 756); phép đếm độc lập trên 3.840 khung: 3.066 ⇒ 0 | chỉ chương trình, 0 USD, 23/11; chỉ tính 6 quán kho có giờ rõ | 30 |
 | 9 trên 10 | bộ 10 chuỗi sửa lịch đạt (cả hai lần chạy) | đo 14–19/11, trước khi đổi sang Claude | 31, 40 |
 | 90 % trong 15.360 cặp, 0 lỗi | đổi chỗ hai ngày làm được | đếm bằng chương trình | 31 |
 | 5 / 6 · 2 / 6 · 0 / 6 | lệnh sửa lịch khó làm đúng ở mức suy luận cao / thấp / vừa | Claude Sonnet 5.5, 21/11 | 31, 33 |
@@ -142,19 +146,20 @@
 
 | Con số | Đếm cái gì | Đo trên gì, model nào, ngày nào | Bài |
 |---|---|---|---|
-| 48 mở, 3 tắt | số tính năng đang mở / đang tắt (lúc 10:25 là 42 mở; từ 14:47 thêm ba; từ 15:42 thêm một; từ 16:08 thêm việc nhớ câu trả lời liền trước cả trong cuộc đã lập lịch; từ 17:15 thêm thẻ nơi) | đếm 17:21 22/11 (lúc 16:13: 47) | 4, 40, phụ lục B |
+| 49 mở, 5 tắt | số tính năng đang mở / đang tắt (từ 12:34 23/11 thêm hai dòng đang tắt, trước đó 3 tắt; lúc 10:25 22/11 là 42 mở; từ 14:47 thêm ba; từ 15:42 thêm một; từ 16:08 thêm việc nhớ câu trả lời liền trước cả trong cuộc đã lập lịch; từ 17:15 thêm thẻ nơi, là 48; từ 11:56 23/11 thêm giờ quán trong "gần một điểm") | đếm 12:51 23/11 (lúc 12:25 23/11: 49 mở, 3 tắt; lúc 17:21 22/11: 48 mở) | 4, 24, 40, phụ lục B |
 | 5 khối · 6 bước · 4 thứ gửi ra ngoài | khối của hệ thống; bước của một câu hỏi; thứ rời máy (lời gọi model, ảnh, dự báo thời tiết, câu tra web) | kiến trúc, sáng 22/11 | 6 |
 | khoảng 18 đường gọi | số đường gọi giữa giao diện và máy chủ; 3 đường gọi model | chương trình, trưa 22/11 | 35 |
 | 869 điểm ảnh | chiều cao khung nhìn: thấp hơn thì sáu bến ở màn đầu Trang chủ chỉ còn tên, mất dòng mô tả, vì dòng mô tả chạm ảnh sông (đo tương phản 1,8 : 1 ở 1536 × 695; ngưỡng 4,5 : 1); gồm máy demo 1536 × 695 | cấu hình giao diện, bản chính từ 10:00 23/11 | 5, 35 |
 | 6 · 3 tên bài | số tên bài nhiều nhất trong thẻ chờ: màn rộng (phần còn lại gộp thành "+k bài") · điện thoại, khung trợ lý nổi và khung nhìn cao tới 700 điểm ảnh, gồm máy demo 1536 × 695 (không có "+k bài") | cấu hình giao diện, 23/11 | 5, 35 |
-| 761 ảnh · 8 khung nhìn · 49 cảnh | ảnh chụp tự động trước khi gộp giao diện mới: 0 cảnh không chụp được; máy dò tràn ngang và chữ bị cắt gắn cờ 1 ô (thẻ chọn tên ảnh ở 390 px, có từ giao diện cũ) | bản gộp thử, chạy trên máy, server thật, Claude Sonnet 5.5; 22/11 tối và 23/11 sáng; chạy trước ba bản sửa nhỏ của lõi (ba bản đó không chạm giao diện) | 35 |
+| 761 ảnh · 8 khung nhìn · 49 cảnh | ảnh chụp tự động trước khi gộp giao diện mới: 0 cảnh không chụp được; máy dò tràn ngang và chữ bị cắt gắn cờ 1 ô (thẻ chọn tên ảnh ở 390 px, có từ giao diện cũ; sửa sau gộp, vào nhánh chính 11:26 23/11; chụp lại nhóm hỏi bằng ảnh ở 390 px (3 cảnh): 0 ô tràn — bài 26) | bản gộp thử, chạy trên máy, server thật, Claude Sonnet 5.5; 22/11 tối và 23/11 sáng; chạy trước ba bản sửa nhỏ của lõi (ba bản đó không chạm giao diện) | 35 |
 | 49 trên 50 bước | kịch bản thao tác đủ của cổng gộp: 49 đạt, 1 bước để người xem ảnh (trang Chỗ ở), 0 trượt | như trên | 35, 40 |
+| 32 phút · 107 lượt công cụ · 3 điều mới | lượt "dùng như người thật" đầu tiên (agent tự lái trình duyệt, đọc chữ trên trang): ba điều mà 761 ảnh và 50 bước kịch bản không thấy; khoảng 82 nghìn ký tự đi vào ngữ cảnh của agent; một phiên chịu được khoảng một lượt cỡ đó | 10:36–11:08 23/11, máy chủ tạm của nhánh chính, 15 lượt gọi model | 38, 39 |
 | 1.523 ⇒ 1.850 phép, 0 dưới ngưỡng | đo tương phản chữ / nền của giao diện mới: 1.523 phép trên 24 màn ở bốn bề rộng (bản dựng 19:56 22/11); đo lại trên bản đã gộp, có thêm sáu cỡ máy xách tay: 1.850 phép | chưa đo thẻ lịch đã xếp, khung trợ lý nổi, màn lỗi | 35 |
 | khoảng 14 giây · 34 giây | lệnh bật ra "SẴN SÀNG" khi mọi thứ đủ · khi bắt đầu từ lúc Qdrant đang tắt | 14 giây: bốn ca chạy thật ở cổng tạm; 34 giây: lượt kiểm chốt trưa 22/11 | 36, 40 |
 | 76 file, 2.060 ca | lần chạy đủ của lượt kiểm chốt trưa | trưa 22/11 | 38 |
 | 75 file, 1.961 ca đạt, 4 file bỏ | lần chạy cuối buổi sáng; 4 file bỏ vì cần khoá OpenAI | sáng 22/11 | 38 |
-| 82 file chạy, 2.218 ca đạt, 0 ca hỏng, 4 file bỏ | lần chạy đủ mới nhất của cả bộ test (86 file trong bảng; 4 file bỏ cả file vì cần khoá OpenAI), trên bản có giao diện mới và ba bản sửa lõi sáng 23/11; 21 ca thêm so với lần trước đó: 4 ca giữ việc máy chủ báo tên bài đã tìm thấy cho thẻ chờ, 17 ca giữ các bản sửa đêm 22/11 và sáng 23/11 (lần trước đó, 20:48–21:07 22/11: 82 file trong bảng, 78 chạy, 2.197 ca) | 09:41–09:59 ngày 23/11 | 38, 40 |
-| khoảng 16 tới 19 phút · khoảng 4,4 GB | cả bộ test chạy từng file một · bộ nhớ khi chạy cả bộ một lượt | hướng dẫn vận hành (khoảng 16 phút); lần chạy 09:41–09:59 ngày 23/11 mất khoảng 18,5 phút | 38 |
+| 82 file chạy, 2.228 ca đạt, 0 file đỏ, 4 file bỏ | lần chạy đủ mới nhất của cả bộ test (86 file trong bảng; 4 file bỏ cả file vì cần khoá OpenAI), trên nhánh chính đã có mọi bản sửa của sáng 23/11 (49 tính năng); 10 ca thêm so với lần trước đó (bảng quán của lịch, "gần một điểm", câu tả điểm); lần trước đó, 09:41–09:59 23/11, trên bản có giao diện mới và ba bản sửa lõi: 82 file chạy, 2.218 ca đạt (trước nữa, 20:48–21:07 22/11: 2.197 ca). Sau lượt này, 12:34 23/11 nhánh chính nhận một bản gộp có code (hai tính năng đang tắt); chưa có lượt đủ sau bản gộp đó | 12:05–12:23 ngày 23/11 | 38, 40 |
+| khoảng 16 tới 19 phút · khoảng 4,4 GB | cả bộ test chạy từng file một · bộ nhớ khi chạy cả bộ một lượt | hướng dẫn vận hành (khoảng 16 phút); lần chạy 12:05–12:23 ngày 23/11 khoảng 18 phút, lần 09:41–09:59 khoảng 18,5 phút | 38 |
 | 5 phiên · 11 skill | số phiên làm việc (điều phối, hai thực thi, đo, giảng) · số file skill | cách làm lúc viết, trưa 22/11 | 39 |
 
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
@@ -164,5 +169,8 @@ Gom từ mục "Ý chính", bảng "Cấu hình đang chạy", bảng "Các con 
 - Hai dòng thẻ nơi và số 48 (thêm 17:30 22/11/2026): bài 23 "Đã so" dòng 13, "Quyết định nhỏ hơn", Nguồn; bài 40 hàng "4. Thiếu ý"; số gốc ở `data/thu_bedrock_2026-11-21/b_dem_chua_co_2211/KET_QUA.md` phép đếm 3 và `…/b_x10_the_noi/luot_1/CHAM_E.md`, `luot_2/CHAM_E.md` [riêng tư; đã chạy, phiên khác]; 113 / 174: chạy `dung_bang` trên mục lục kho thật 17:22 22/11/2026 [tự chạy lệnh đếm]; 48: lệnh runbook mục 0 tự chạy 17:21 [tự chạy lệnh đếm]. Dòng 13 % thêm "trước thẻ nơi" cho khớp bài 40. Bảng từ 93 thành 95 hàng.
 
 - Đợt 23/11/2026 (11:33): bộ test — bài 38 "Ý chính" và "Chi tiết để tra" (bản 11:15); 25–34 giây — bài 34 bảng "Nếu… thì sao" hàng tin dài (11:14); hai phép đếm 0 đồng — bài 34 "Đã so" (11:14), bài 23 "Đã so" dòng 15 (11:12); gọi lại một lần — bài 33 "Quyết định nhỏ hơn" (11:13); 869, 6 / 3 tên bài — bài 5 "Cấu hình đang chạy" (11:10) và bài 35 bảng lớp nhìn (11:17); 761 ảnh, 49 / 50 bước, 1.523 ⇒ 1.850 phép — bài 35 "Đã so" bảng cổng gộp. Bảng từ 99 thành 108 hàng.
+
+- Đợt trưa 23/11/2026 (12:31): 30 trên 41 quán và 5 / 6 ⇒ 0 / 6 — bài 24 đoạn "Gần một điểm in kèm giờ của quán", "Đã so" dòng 7b; 11 trên 25 lịch — bài 29 "Đã so" khối "Câu so sánh bị thay oan"; 766 ⇒ 0, 756, 3.066 ⇒ 0 — bài 30 "Đã so" khối "Quán lệch bữa"; bảng quán bản 4 — bài 30 "Cấu hình đang chạy"; lượt "dùng như người thật" (32 phút, 107 lượt công cụ, khoảng 82 nghìn ký tự, 15 lượt gọi model) — bài 38 "Quyết định nhỏ hơn" và "Chi tiết để tra"; thẻ chọn tên ảnh đã sửa 11:26 — bài 26 "Giới hạn đã biết", bài 35 "Đã so"; bản các bài lúc 12:14–12:19 23/11 [chép từ bài]. 49 / 3: người gom tự chạy lệnh đếm 12:25 23/11 trên main `0367e775` [tự chạy lệnh đếm]. Bảng từ 108 thành 113 hàng.
+- Lượt hai (12:55 23/11/2026): lần chạy đủ 12:05–12:23 (86 file, 4 bỏ, 82 chạy, 2.228 ca, 0 file đỏ; 10 ca thêm ở ba file; bản gộp 12:34 sau lượt này) — bài 38 "Ý chính" và "Chi tiết để tra" (bản đã áp biên bản 12:45 23/11); 09:41–09:59 nay là "lần trước đó" theo cùng bài [chép từ bài]. 49 / 5: người gom tự chạy lệnh đếm 12:51 23/11 trên main `5138622d` [tự chạy lệnh đếm]. Thẻ chọn tên ảnh: bài 35 "Đã so" hàng ảnh chụp tự động [chép]. Số hàng không đổi.
 
 </details>
