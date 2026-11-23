@@ -4,9 +4,10 @@ import { anhCuaBai, khoaBai } from "./anhBai.js";
 // Tập chọn = bài của `/api/kham_pha` thuộc các nhóm ở `NHOM`, có ảnh mà ảnh KHÔNG mang dấu "không chắc" (`kc`), xếp theo khoá băm của mã bài (thứ tự ổn định, trông như đã xáo);
 // bài của ngày = phần tử thứ (số ngày theo giờ Việt Nam) chia dư cho cỡ tập ⇒ ai mở cùng ngày cũng thấy cùng bài, hết tập thì quay vòng.
 // File riêng (không nằm trong TrangChu.jsx) để phép chọn chạy được bằng Node khi kiểm, không cần dựng giao diện.
-// Chỉ nhóm bài "nơi / món / lễ hội / loại hình nghệ thuật" (phiên điều phối chốt 23/11/2026): một QUÁN ăn hay quán cà phê cụ thể đứng dưới chữ "Hôm nay ở Huế"
+// Chỉ nhóm bài "điểm đến / di tích – di sản / đặc sản" (phiên điều phối chốt 23/11/2026): một QUÁN ăn hay quán cà phê cụ thể đứng dưới chữ "Hôm nay ở Huế"
 // trông như quảng cáo (tính năng hỏi bằng ảnh cũng không nhận quán); bài vé / dịch vụ / cẩm nang không phải thứ để "ghé hôm nay".
-const NHOM = new Set(["places", "heritage", "local_specialties", "festival", "arts"]);
+// KHÔNG lấy bài lễ hội / chương trình biểu diễn: tên một lễ hội đứng dưới chữ "Hôm nay ở Huế" sẽ được đọc là "hôm nay có lễ hội đó" — sai về ngày.
+const NHOM = new Set(["places", "heritage", "local_specialties"]);
 const LECH_VN_MS = 7 * 3600 * 1000;  // giờ Việt Nam = UTC+7 quanh năm (không đổi giờ theo mùa) ⇒ mốc đổi bài là 0 giờ Việt Nam
 const MOT_NGAY_MS = 24 * 3600 * 1000;
 
