@@ -118,9 +118,11 @@ function LichMau({ onXep, pending }) {
 function CotLich({ lichTurn, onEditPlan, onXep, pending }) {
   // Bấm "Xếp lịch" (hoặc "Xếp lịch như ví dụ") ⇒ đưa ĐẦU lịch vào khung nhìn. Trước 23/11/2026 không có gì cuộn: ở màn rộng người bấm nút (cuối biểu
   // mẫu dài) đứng nguyên ở đáy trang, khối "Tổng quan" nằm 2–3 nghìn px phía trên. Chỉ khi lịch ĐỔI sau lúc trang đã mở (vào lại trang đang có lịch
-  // thì không tự cuộn) và không phải bản vừa sửa bằng lời trong khung trợ lý (người dùng đang nhìn khung đó).
+  // thì không tự cuộn) và không phải bản vừa sửa bằng lời trong khung trợ lý (người dùng đang nhìn khung đó). Cuộn lúc KHUNG LỊCH đã tới (`lichV2`),
+  // không phải lúc lượt vừa mở: lúc đó cột lịch mới có ba chấm chờ, ở bố cục một cột (màn hẹp) trang còn quá ngắn để cuộn ⇒ lệnh cuộn không làm gì
+  // (phiên đo đo 23/11: ở 390 px đầu lịch đứng ở 472 px thay vì dưới thanh trên).
   const khungRef = useRef(null), khoaTruoc = useRef(undefined);
-  const khoa = lichTurn && !lichTurn.daSua ? lichTurn.key : null;
+  const khoa = lichTurn && !lichTurn.daSua && lichTurn.lichV2 ? lichTurn.key : null;
   useEffect(() => {
     const truoc = khoaTruoc.current;
     khoaTruoc.current = khoa;

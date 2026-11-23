@@ -379,7 +379,8 @@ export function vanBanLich(turn, answerText, items) {
   // soát khác hãng 18/11: câu an toàn (bản tin chính thức + 112) chỉ được VẼ trên màn hình ⇒ bản sao chép / tải về gửi cho người đi cùng bị mất câu đó.
   // Có `noticeAnToan` ⇒ đặt ngay dưới dòng đầu, trước lịch (như trên màn hình); không có ⇒ văn bản y như trước.
   const anToan = turn.noticeAnToan ? ["", turn.noticeAnToan] : [];
-  return [turn.question + (turn.summary ? ` · ${turn.summary}` : ""), ...anToan, "", answerText.replaceAll("**", "").trim(),
+  // đuôi "— sai thì bấm Sửa." của dòng "Mình hiểu" chỉ có nghĩa trên màn hình (có nút Sửa) ⇒ bản sao chép / tải về bỏ đuôi đó
+  return [turn.question + (turn.summary ? ` · ${turn.summary}` : ""), ...anToan, "", answerText.replaceAll("**", "").replace(/\s*—\s*sai thì bấm Sửa\.?/, ".").trim(),
           ...(diem.length ? ["", "Bản đồ từng điểm:", ...diem] : []), "", DONG_CUOI_LICH, ""].join("\n");
 }
 
