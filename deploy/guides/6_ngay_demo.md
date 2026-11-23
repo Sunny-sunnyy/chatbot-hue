@@ -11,6 +11,9 @@ trang ngừng phục vụ 36 giây khi cập nhật, 29 giây khi lùi; dòng s�
 lại sau khi lùi. GIỚI HẠN của lượt đó: thư mục máy đứng thay thùng S3 và `/srv/hue` · hai gói khác mã bản nhưng CÙNG nội dung ảnh · http cổng 8880,
 không HTTPS · khoá OpenAI GIẢ nên câu hỏi chỉ đi tới câu báo "Không thể tạo câu trả lời vào lúc này" (không lời gọi model nào) · máy chủ dự án
 nhanh hơn máy `t3a.medium`. Script + đầu ra (riêng tư): `data/x14_deploy_2026-11-23/c_thu_chuoi_6_3/chay.sh`, `chay_ra.txt`.
+Sáng 24/11/2026 mục 6.3 được TÁCH thành từng nhóm lệnh có dòng "mong" (sau lượt đọc như người làm lần đầu): các lệnh làm việc giữ nguyên, thêm
+hai lệnh chỉ in ra (`echo`, `ls truoc`) và khối kiểm đủ file bảng chép thẳng từ guide 4 — bản đã tách CHƯA chạy lại; các dòng "mong" lấy từ đầu ra
+của lượt 23/11.
 
 Từ dùng: **dừng tạm** (stop) = tắt máy nhưng giữ đĩa và IP — đúng chữ đã học là "co về 0 bằng tay" · **khởi động lạnh / làm ấm** = bật máy lại và hỏi
 thử trước giờ cần dùng · **phá** (destroy) = xoá hẳn tầng máy chủ · **gói**, **sha**, **hộp**, **hồ sơ**: như guide 2–4.
@@ -114,31 +117,72 @@ thêm một phút và phụ thuộc hạn mức dùng chung của tên dạng `s
 ### 6.3 Cập nhật bản mới
 
 Làm NGOÀI giờ demo (mất mọi cuộc trò chuyện đang mở). Trước đó: guide 2 với commit mới ⇒ gói `<sha mới>` trong thùng. Vào máy (`aws ssm start-session
---target "$ID"`, rồi hai dòng ở mục 5), sau đó:
+--target "$ID"`, rồi hai dòng ở mục 5), sau đó làm NĂM nhóm lệnh dưới theo thứ tự.
+
+**Gõ từng nhóm, NHÌN dòng "mong" rồi mới sang nhóm kế — đừng dán cả mục như một script.** Các lệnh không tự dừng khi một lệnh trước báo lỗi: dán một
+lần thì băm lệch hay thiếu file bảng vẫn chạy tiếp tới chỗ dừng app và bật lại với gói hỏng. Một dòng "mong" lệch ⇒ DỪNG ở đó. Chừng nào chưa gõ
+nhóm (5) thì ba hộp chưa bị đụng, trang vẫn chạy bản cũ; nhưng từ nhóm (2) các file trong `/srv/hue` đã là của gói mới ⇒ bỏ dở thì đưa file về bản cũ
+bằng hai dòng `cp -a truoc/… .` và `rm -rf cau_hinh && cp -a truoc/cau_hinh .` của mục 6.4 (không cần các dòng còn lại của mục đó vì app chưa dừng).
+
+Mở đầu — nạp tên thùng và đặt mã bản mới (thay `<sha mới>` bằng mã in ở guide 2):
 
 ```bash
 cd /srv/hue && set -a && . ./may.env && set +a
 MOI=<sha mới>
+echo "thùng: $HUE_THUNG · bản mới: $MOI"                       # mong: đúng tên thùng và đúng mã bản, không còn dấu < >
+```
 
-# (1) giữ lại bản đang chạy để lùi được
+**(1) Giữ lại bản đang chạy để lùi được.**
+
+```bash
 rm -rf truoc && mkdir truoc && cp -a compose.yml Caddyfile nap_chi_muc.sh hue.env cau_hinh truoc/
+ls truoc                                                      # mong: Caddyfile  cau_hinh  compose.yml  hue.env  nap_chi_muc.sh
+```
 
-# (2) tải gói mới, kiểm băm, nạp ảnh mới (ảnh cũ VẪN nằm trong Docker — đừng xoá)
+**(2) Tải gói mới, kiểm băm, nạp ảnh mới** (ảnh cũ VẪN nằm trong Docker — đừng xoá).
+
+```bash
 aws s3 cp "s3://$HUE_THUNG/$MOI/" . --recursive
-sha256sum -c SHA256SUMS                                       # mọi dòng OK
-gunzip -c "app_$MOI.tar.gz" | docker load && rm "app_$MOI.tar.gz"
+sha256sum -c SHA256SUMS                                       # mong: MỌI dòng kết bằng OK; có một dòng FAILED ⇒ DỪNG, tải lại
+```
 
-# (3) trỏ hue.env sang ảnh mới (HUE_SITE và hai trần lượt giữ nguyên)
+Băm đủ OK rồi mới nạp ảnh:
+
+```bash
+gunzip -c "app_$MOI.tar.gz" | docker load && rm "app_$MOI.tar.gz"      # mong: Loaded image: hue-rag-app:<sha mới>
+```
+
+**(3) Trỏ `hue.env` sang ảnh mới** (`HUE_SITE` và hai trần lượt giữ nguyên).
+
+```bash
 sed -i "s/^HUE_IMAGE=.*/HUE_IMAGE=hue-rag-app:$MOI/; s/^HUE_GIT_SHA=.*/HUE_GIT_SHA=$MOI/" hue.env && cat hue.env
+#     mong: hai dòng HUE_IMAGE và HUE_GIT_SHA mang mã bản mới; các dòng khác như cũ
+```
 
-# (4) hai phép kiểm của guide 4: dòng provider (bước 6) và đủ file bảng (bước 7)
+**(4) Hai phép kiểm trước khi đổi bản** — dòng `provider` và đủ file bảng (cùng hai phép kiểm của guide 4 bước 6, 7; khối lệnh thứ hai chép nguyên
+từ đó, chỉ đổi `$SHA` thành `$MOI`).
+
+```bash
 grep -n '^  provider:' cau_hinh/settings.yaml                 # mong: provider: openai
-SHA=$MOI                                                      # rồi dán NGUYÊN khối lệnh bước 7 của guide 4 — mong: ĐỦ
+```
 
-# (5) đổi bản: dừng app + cửa vào, nạp chỉ mục của gói mới, bật lại
+```bash
+docker run --rm --network none -v "$PWD/cau_hinh:/c:ro" --entrypoint sh "hue-rag-app:$MOI" -c '
+  cd /app/backend; t=0
+  for f in $(grep -o "\.\./data/[^\"[:space:]]*" /c/settings.yaml | sort -u); do
+    [ -e "$f" ] || { echo "THIẾU trong ảnh: $f"; t=1; }
+  done
+  [ "$t" = 0 ] && echo "ĐỦ: mọi file bảng mà cấu hình trỏ tới đều có trong ảnh"; exit $t'
+```
+
+Mong: `ĐỦ: …`. In `THIẾU` ⇒ DỪNG: ảnh và cấu hình không cùng một commit — đưa file về bản cũ như câu in đậm ở trên, rồi làm lại guide 2.
+
+**(5) Đổi bản: dừng app + cửa vào, nạp chỉ mục của gói mới, bật lại.** Từ lệnh đầu của nhóm này trang ngừng phục vụ.
+
+```bash
 dc stop caddy app
-bash nap_chi_muc.sh                                           # hai số điểm phải BẰNG nhau
-dc up -d --wait
+bash nap_chi_muc.sh                                           # mong: hai số điểm BẰNG nhau; lệch ⇒ đừng bật, lùi bằng mục 6.4
+dc up -d --wait                                               # mong: ba hộp Healthy
 ```
 
 Rồi hỏi MỘT câu thật từ máy mình như mục 6.2. Trang ngừng phục vụ trong lúc làm bước (5): đo ở máy chủ dự án 36 giây (lùi bản: 29 giây); trên máy

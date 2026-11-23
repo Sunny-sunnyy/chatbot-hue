@@ -46,15 +46,30 @@ variable "swap_gb" {
 variable "instance_profile_name" {
   description = "Tên hồ sơ gắn máy do tầng nền tạo — lấy bằng `terraform output -raw instance_profile_name` trong thư mục 1_nen_tang. Cho máy quyền tải gói từ thùng và nhận phiên Session Manager; KHÔNG có quyền gọi model."
   type        = string
+
+  validation {
+    condition     = !startswith(var.instance_profile_name, "DIEN-")
+    error_message = "instance_profile_name còn là chữ mẫu DIEN-… của terraform.tfvars.example. Thay bằng giá trị in ra ở guide 3 bước 2: terraform output -raw instance_profile_name (thư mục 1_nen_tang)."
+  }
 }
 
 variable "artifact_bucket_name" {
   description = "Tên thùng S3 chứa gói do tầng nền tạo — lấy bằng `terraform output -raw artifact_bucket_name` trong thư mục 1_nen_tang. Terraform chỉ ghi tên này vào một file trên máy để lệnh tải gói ở guide 4 khỏi gõ lại."
   type        = string
+
+  validation {
+    condition     = !startswith(var.artifact_bucket_name, "DIEN-")
+    error_message = "artifact_bucket_name còn là chữ mẫu DIEN-… của terraform.tfvars.example. Thay bằng giá trị in ra ở guide 3 bước 2: terraform output -raw artifact_bucket_name (thư mục 1_nen_tang). Tên này chỉ được ghi vào máy một lần lúc máy bật lần đầu — sai thì phải thay máy."
+  }
 }
 
 variable "alert_topic_arn" {
   description = "ARN chủ đề email cảnh báo của tầng nền. Có giá trị thì tạo MỘT báo động: máy không qua kiểm tra trạng thái ⇒ gửi email. Để chuỗi rỗng thì không tạo báo động."
   type        = string
   default     = ""
+
+  validation {
+    condition     = !startswith(var.alert_topic_arn, "DIEN-")
+    error_message = "alert_topic_arn còn là chữ mẫu DIEN-… của terraform.tfvars.example. Thay bằng giá trị in ra ở guide 3 bước 2: terraform output -raw alert_topic_arn (thư mục 1_nen_tang), hoặc để chuỗi rỗng nếu không muốn báo động máy hỏng."
+  }
 }

@@ -36,7 +36,16 @@ máy chủ tải về rồi nạp (`docker load`): bớt một dịch vụ phả
 - Guide 0, guide 1 xong (có hồ sơ deploy; có thùng). Lượt đo bù trên model cũ đã xong và các bản sửa của nó đã ở main.
 - Ở máy mình: Docker đang chạy; Qdrant của dự án đang chạy ở cổng 6335 và chỉ mục khớp kho của commit sẽ dựng (lệnh dựng tự so băm, lệch thì dừng).
 - Một file khoá riêng cho lượt thử, KHÔNG phải `.env` của dự án, ví dụ `~/hue_khoa_thu.env`, quyền 600, có đúng một dòng `OPENAI_API_KEY=…`
-  (khoá riêng của bản deploy, tạo ở guide 0). Tự gõ bằng `nano`; không dán khoá vào cửa sổ của agent nào.
+  (khoá riêng của bản deploy, tạo ở guide 0). Tự gõ bằng `nano`; không dán khoá vào cửa sổ của agent nào. Tạo file rỗng với quyền 600 TRƯỚC rồi
+  mới gõ khoá vào, để khoá không lúc nào nằm trong một file người dùng khác của máy đọc được:
+
+  ```bash
+  touch ~/hue_khoa_thu.env && chmod 600 ~/hue_khoa_thu.env
+  nano ~/hue_khoa_thu.env          # gõ đúng MỘT dòng: OPENAI_API_KEY=<khoá lấy từ chỗ cất mật khẩu>  rồi lưu (Ctrl+O, Enter, Ctrl+X)
+  ls -l ~/hue_khoa_thu.env         # mong: dòng bắt đầu bằng -rw-------
+  ```
+
+  File này chỉ sống trong lượt thử: thử xong thì xoá (mục 10).
 - Không dựng ảnh trên máy chủ: máy chủ 4 GB RAM không đủ rộng để dựng, và ảnh đưa lên phải là ảnh ĐÃ thử.
 - RAM khả dụng ở máy mình từ 4 GB trở lên (dựng ảnh lần đầu dùng khoảng 2 GB); không chạy cùng lúc với việc nặng khác.
 
@@ -174,6 +183,16 @@ docker image rm hue-rag-app:<sha cũ>                                           
 ```
 
 Giữ lại ít nhất gói ĐANG chạy trên máy chủ và gói liền trước nó — guide 6 dùng gói liền trước để lùi bản. Chỉ xoá thư mục, ảnh do chính lượt này tạo.
+
+File khoá thử — XOÁ ngay khi lượt thử ở bước 3 đã xong và các hộp thử đã tắt (không chờ tới lúc dọn gói cũ):
+
+```bash
+rm ~/hue_khoa_thu.env
+ls ~/hue_khoa_thu.env            # mong: No such file or directory
+```
+
+Khoá vẫn còn ở chỗ cất mật khẩu của mình (guide 0 bước 9); lần cập nhật bản mới cần thử lại thì tạo lại file theo mục 3. Để file nằm lại là để khoá
+gọi model tốn tiền thật nằm thêm ở một nơi không ai cần tới nó.
 
 ## 11. Guide kế
 
