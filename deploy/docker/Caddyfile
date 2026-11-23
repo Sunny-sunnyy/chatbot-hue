@@ -1,0 +1,13 @@
+# HUE_SITE = tên miền thật hoặc <IP>.sslip.io (Caddy tự xin chứng chỉ Let's Encrypt); ":80" = http để thử ở máy (không TLS).
+{$HUE_SITE}
+# Trần cỡ yêu cầu ở cửa vào (bảng rủi ro 22/11, điểm còn mở): thân lớn nhất app nhận là ảnh hỏi 10 MB (`settings.yaml` `anh.max_bytes`) ⇒ 12 MB cho
+# cả phần bọc của biểu mẫu; lớn hơn thì Caddy trả 413, không tới app.
+request_body {
+	max_size 12MB
+}
+# Nén trang / JS / CSS; KHÔNG nén luồng trả lời (/api/chat/stream) để chữ đi ra ngay, không bị gom.
+@nen not path /api/chat/stream
+encode @nen gzip
+reverse_proxy app:8000 {
+	flush_interval -1
+}

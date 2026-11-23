@@ -1,0 +1,6 @@
+# Phủ lên compose.yml để THỬ ở máy chủ dự án (thu_o_may.sh dùng): quyền gọi model = file khoá tạm đang có của máy, gắn CHỈ ĐỌC đúng một file
+# (không gắn cả thư mục chứa nó). Gắn một file thì hộp giữ bản lúc bật — khoá được làm mới bên ngoài sau đó hộp không thấy; đủ cho một lượt thử.
+services:
+  app:
+    volumes:
+      - ${HUE_KHOA_FILE:?đặt HUE_KHOA_FILE = đường dẫn file khoá tạm Bedrock của máy}:/run/hue-khoa/bedrock.json:ro

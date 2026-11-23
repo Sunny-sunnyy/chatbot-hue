@@ -1,0 +1,107 @@
+# Trợ lý Huế trên MỘT máy: Qdrant + app + Caddy (cửa vào, HTTPS). File này KHÔNG tự đủ: app đọc quyền gọi model ở /run/hue-khoa/bedrock.json và
+# file đó tới từ đâu là việc của MỘT file phủ đi kèm —
+#   thử ở máy chủ dự án:  -f compose.yml -f compose.thu.yml      (gắn file khoá tạm đang có của máy, chỉ đọc)
+#   máy AWS có vai gắn:    -f compose.yml -f compose.vai-may.yml  (một dịch vụ phụ lấy khoá tạm của vai, tự làm mới)
+# Biến (đặt trong file `hue.env` cạnh file này, nạp bằng `--env-file hue.env` — KHÔNG có bí mật nào trong đó):
+#   HUE_IMAGE            ảnh app, vd hue-rag-app:c2579fa (dung_anh.sh in ra)
+#   HUE_SITE             tên miền cho HTTPS (vd 13-250-1-2.sslip.io); mặc định ":80" = http, chỉ để thử
+#   HUE_LUOT_MOI_NGAY    lượt gọi model mỗi địa chỉ mỗi ngày (mặc định 50) · HUE_LUOT_TONG_MOI_NGAY trần tổng cả máy mỗi ngày (mặc định 500)
+#   HUE_GIT_SHA          mã commit ghi vào log (ảnh không có git)
+#   HUE_TRA_WEB          "true" để bật mục tra web (khi đó phải có SERPER_API_KEY trong file bí mật dưới); mặc định tắt
+# Bí mật (file riêng, quyền 600, KHÔNG nằm trong ảnh, KHÔNG commit): `hue.khoa.env` cạnh file này — không có cũng chạy được. Dòng có thể có:
+#   SERPER_API_KEY=…      (chỉ khi bật tra web) · HUE_KHOA_THEO_DOI=… (≥ 16 ký tự, mở trang theo dõi #/theo-doi; không đặt ⇒ trang trả 404)
+#   OPENAI_API_KEY=…      (chỉ khi đổi model viết về model cũ: sửa dòng `provider: bedrock` ⇒ `provider: openai` trong ./cau_hinh/settings.yaml, thêm khoá này,
+#                          rồi `docker compose … up -d app`; về lại thì sửa ngược dòng đó — guides/DOI_MODEL_VIET.md)
+# Tên dự án Compose CỐ ĐỊNH: không ghi thì Compose lấy tên thư mục đang đứng làm tên dự án ⇒ chạy lệnh từ một thư mục khác là ra một bộ hộp + volume
+# MỚI (chứng chỉ HTTPS nằm ở volume của dự án cũ). Lượt thử ở máy chủ dự án ghi đè bằng `-p` / biến COMPOSE_PROJECT_NAME.
+name: hue
+
+x-log: &log   # log stdout của Docker có trần (mặc định json-file không giới hạn)
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "3"}
+
+services:
+  qdrant:
+    image: qdrant/qdrant@sha256:0bd98fa7977f1e75694779359ca4e212822e5a71334e28421182f72f209d5286   # v1.18.3, cùng bản máy chủ dự án (bản chụp chỉ nạp được cùng minor)
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+    # App kiểm Qdrant MỘT lần lúc khởi động (lỗi ⇒ mọi câu lỗi, không tự hồi) ⇒ app chỉ lên khi Qdrant đã nhận kết nối. Ảnh Qdrant không có curl.
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/127.0.0.1/6333"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    mem_limit: 768m        # đo 16/11: 222 MiB
+    restart: unless-stopped
+    <<: *log
+
+  app:
+    image: ${HUE_IMAGE:?đặt HUE_IMAGE = tên ảnh app (dung_anh.sh in ra)}
+    env_file:
+      - path: ./hue.khoa.env
+        required: false
+    environment:
+      HUE_QDRANT_URL: http://qdrant:6333
+      TZ: Asia/Ho_Chi_Minh   # hộp mặc định chạy giờ UTC; "hôm nay" của sản phẩm đã tự theo giờ Việt Nam, nhưng giờ trong log và dòng "đọc lúc" của trang theo dõi theo giờ MÁY
+      HUE_BEDROCK_CREDS_FILE: /run/hue-khoa/bedrock.json   # file phủ quyết định file này tới từ đâu
+      HUE_TRA_WEB: ${HUE_TRA_WEB:-false}
+      # Các chốt cho bản mở ra ngoài (ở máy local không đặt biến nào ⇒ tắt): giới hạn lượt, cookie chỉ đi qua https, tắt trang /docs.
+      HUE_LUOT_MOI_NGAY: ${HUE_LUOT_MOI_NGAY:-50}
+      HUE_LUOT_TONG_MOI_NGAY: ${HUE_LUOT_TONG_MOI_NGAY:-500}
+      HUE_COOKIE_SECURE: ${HUE_COOKIE_SECURE:-1}
+      HUE_TAT_DOCS: "1"
+      HUE_GIT_SHA: ${HUE_GIT_SHA:-}
+    # App kiểm Qdrant ĐÚNG MỘT LẦN lúc khởi động; Qdrant chưa sẵn sàng lúc đó ⇒ mọi câu ra "Hệ thống tra cứu tạm thời không khả dụng" và KHÔNG tự hồi
+    # (thử thật 23/11: bật app trước Qdrant 25 giây). `depends_on` chỉ giữ thứ tự ở lệnh `up`; khi máy mở lại Docker tự bật các hộp không theo thứ tự nào
+    # ⇒ chính hộp app chờ tới khi Qdrant trả được collection rồi mới chạy server. Collection chưa nạp (máy mới) ⇒ hộp đứng chờ, log in "chờ Qdrant".
+    command:
+      - sh
+      - -c
+      - |
+        until python -c "import urllib.request as u; u.urlopen('http://qdrant:6333/collections/${HUE_COLLECTION:-hue_full_corpus_7a2_e5_small_384}', timeout=3)" 2>/dev/null; do
+          echo "chờ Qdrant có collection…"; sleep 2
+        done
+        exec uvicorn api.app:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips '*' --no-access-log
+    volumes:
+      - ./logs:/app/backend/logs      # log + số đo từng lượt sống qua lần tạo lại hộp
+      # Thư mục cấu hình của app nằm NGOÀI ảnh (dong_goi.sh lấy đúng bản trong ảnh ra, có băm kiểm) ⇒ đổi model viết hay tắt một tính năng trên máy chủ
+      # là sửa một dòng của ./cau_hinh/settings.yaml rồi `docker compose … restart app` — như ở máy local, không phải dựng + tải lại ảnh 3,6 GB.
+      # Gắn cả THƯ MỤC chứ không gắn riêng file: gắn riêng file thì sau khi file bị thay bằng file mới (sed -i, vim…) hộp không khởi động lại được
+      # (thử thật 23/11 trên Docker Desktop). Sửa sai ⇒ app không lên (bộ nạp cấu hình kiểm chặt) ⇒ lấy lại bản gốc từ ảnh:
+      #   docker run --rm --entrypoint cat $HUE_IMAGE /app/backend/config/settings.yaml > cau_hinh/settings.yaml
+      - type: bind
+        source: ./cau_hinh
+        target: /app/backend/config
+        read_only: true
+        bind: {create_host_path: false}   # thiếu thư mục thì báo lỗi ngay, không lặng lẽ tạo một thư mục trống (app sẽ thiếu cấu hình)
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    healthcheck:   # khoẻ = `status: ok` (app, Qdrant, khâu tìm, bộ đếm token, lớp nối model đều sẵn sàng); /health vẫn trả HTTP 200 khi `degraded` nên phải đọc chữ
+      test: ["CMD", "python", "-c", "import json, sys, urllib.request as u; sys.exit(json.load(u.urlopen('http://127.0.0.1:8000/health', timeout=3))['status'] != 'ok')"]
+      interval: 5s
+      timeout: 5s
+      retries: 36
+    mem_limit: 2g          # đo 16/11: 1.021 MiB
+    restart: unless-stopped
+    <<: *log
+
+  caddy:
+    image: caddy:2.11.7@sha256:36c24ad91a7ff7bc4c87fe22bfa8df3c4b18da0773d73fc12ee2c52b98c0bb7e
+    environment:
+      HUE_SITE: ${HUE_SITE:-:80}
+    ports:
+      - "${HUE_HTTP_PORT:-80}:80"
+      - "${HUE_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data             # chứng chỉ HTTPS — mất volume này là xin lại chứng chỉ
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+    <<: *log
+
+volumes:
+  caddy_data:
