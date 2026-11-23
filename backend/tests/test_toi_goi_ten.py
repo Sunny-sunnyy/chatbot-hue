@@ -163,26 +163,24 @@ def test_edit_reply_says_when_restaurants_of_an_untouched_day_change():
 
 
 def test_ask_first_switch_asks_before_two_evenings_swap_and_only_offers_evenings_that_work():
-    """Công tắc `sua_lich_hoi_truoc` (mức 1, cụm buổi tối): gọi tên một mục đang ở tối KHÁC mà tối đích đã có mục ⇒ lịch đứng yên + câu hỏi kèm hai nút;
-    nút "đổi chỗ" ra đúng lịch của đường cũ; nút "để trống" chỉ chuyển mục được gọi tên. Hỏi "tối nào" chỉ nêu các tối mà lần đặt thật nhận."""
+    """Công tắc `sua_lich_hoi_truoc` (mức 1, cụm buổi tối): gọi tên / thay bằng một mục đang ở tối KHÁC ⇒ lịch đứng yên + câu hỏi kèm MỘT nút; nút mang
+    `chon` (đường thẻ chọn, không gọi model) và ra đúng lịch của đường cũ. Hỏi "tối nào" chỉ nêu các tối mà lần đặt thật nhận."""
     HOI = dict(BAT, them_hoi_truoc=True)
     k = v2.xep_v2(B, v2.ThamSoV2(2, kieu_di="can_bang"))
     luu, toi = s.luu_tu_lich(k, None, None), _toi(k)
     x, y = toi[1], toi[2]
-    lenh = [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(y), ngay=1, buoi="toi")]
-    cu = s.ap(B, luu, lenh, **BAT)  # công tắc tắt: hai tối đổi chỗ ngay như trước
-    assert _toi(cu["khung"]) == {1: y, 2: x}
-    hoi = s.ap(B, luu, lenh, **HOI)
-    assert not hoi["da_ap"] and hoi["khung"] == k and hoi["khong_doi"][0]["ma_luat"] == "toi_doi_cho_hoi"
-    dong = s.thay_doi(B, hoi)[0]
-    assert dong["hoi"] is True and "«" not in dong["cau"] and "lịch chưa đổi gì" in dong["cau"] and _ten(x) in dong["cau"] and _ten(y) in dong["cau"]
-    assert [n["nhan"] for n in dong["nut"]] == ["Đổi chỗ hai tối", "Chỉ chuyển, để trống tối ngày 2"]
-    assert [s.cho_doi_toi(n["gui"]) for n in dong["nut"]] == ["doi_cho", "de_trong"] and s.cho_doi_toi(f"tối ngày 1 đi {_ten(y)}") is None
-    doi = s.ap(B, luu, lenh, **HOI, doi_toi="doi_cho")
-    assert doi["khung"] == cu["khung"] and s.thay_doi(B, doi) == s.thay_doi(B, cu)
-    trong = s.ap(B, luu, lenh, **HOI, doi_toi="de_trong")
-    assert _toi(trong["khung"]) == {1: y} and _ban_ngay(trong["khung"]) == _ban_ngay(k) and not v2.kiem_khung_v2(B, trong["khung"])
-    assert s.thay_doi(B, trong)[0]["cau"] == f"Đã chuyển {_ten(y)} sang buổi tối ngày 1, thay {_ten(x)}; buổi tối ngày 2 để trống."
+    for lenh in ([s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(y), ngay=1, buoi="toi")], [s.HanhDongToiHoiBo(loai="thay_diem", ten=_ten(x), ten_moi=_ten(y))]):
+        cu = s.ap(B, luu, lenh, **BAT)  # công tắc tắt: hai tối đổi chỗ ngay như trước
+        assert _toi(cu["khung"]) == {1: y, 2: x}
+        hoi = s.ap(B, luu, lenh, **HOI)
+        assert not hoi["da_ap"] and hoi["khung"] == k and hoi["khong_doi"][0]["ma_luat"] == "toi_doi_cho_hoi"
+        dong = s.thay_doi(B, hoi)[0]
+        assert dong["hoi"] is True and "«" not in dong["cau"] and "lịch chưa đổi gì" in dong["cau"] and _ten(x) in dong["cau"] and _ten(y) in dong["cau"]
+        assert [n["nhan"] for n in dong["nut"]] == ["Đổi chỗ hai tối"] and dong["nut"][0]["chon"] == {"cu": x, "moi": y}
+        # bấm nút = đường thẻ chọn với lời đồng ý (như `len_ke_hoach.hieu_va_ap` gọi khi công tắc bật)
+        doi = s.ap(B, luu, [], sua_chon=dong["nut"][0]["chon"], toi_goi_ten=True, them_hoi_truoc=True, dong_y_doi_toi=True)
+        assert _toi(doi["khung"]) == {1: y, 2: x} and _ban_ngay(doi["khung"]) == _ban_ngay(k) and not v2.kiem_khung_v2(B, doi["khung"])
+        assert f"{_ten(x)} chuyển sang buổi tối ngày 2." in s.thay_doi(B, doi)[0]["cau"]
     # mục chưa có trong lịch, tối đích có mục: người dùng nêu đúng tối đó ⇒ làm luôn như trước (không hỏi)
     moi = next(j for j in TOI if j not in toi.values() and not B.theo_id[j].get("ngay_hoat_dong") and j not in s._vi_tri(k))
     assert _toi(s.ap(B, luu, [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(moi), ngay=1, buoi="toi")], **HOI)["khung"]) == {1: moi, 2: y}
