@@ -8,6 +8,7 @@ import "@fontsource/noto-serif-display/latin-600.css";
 import "@fontsource/noto-serif-display/vietnamese-600.css";
 import "./index.css";
 import "./hieu_ung.css";
+import "./song/song.css";  // lớp nhìn "Dòng sông dẫn đường" — nạp sau cùng
 import { batHieuUng } from "./hieuUng.js";
 import App from "./App.jsx";
 

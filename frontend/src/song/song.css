@@ -1,0 +1,215 @@
+/* Giao diện "Dòng sông dẫn đường" (việc X13, 22/11/2026). Lớp nhìn MỚI phủ lên lớp cũ (index.css, tc.css, tl.css): file này nạp sau cùng, bộ chọn mở đầu bằng `html`
+   để thắng luật cũ cùng tên lớp mà không phải sửa từng file gốc trong một lần. Khi bản mới đã đứng yên: gộp dần từng khối về file gốc rồi xoá luật cũ bị đè.
+   Không dùng `url("data:…")` — CSP của server không cho; hình nhỏ để ở `frontend/public/hoa_tiet/`. Chuyển động chỉ chạy dưới `.hieu-ung` (máy không bật giảm chuyển động). */
+
+/* ════════ Màn câu trả lời: nguồn, khối "chưa có", cảnh báo an toàn, lúc chờ ════════ */
+/* Mọi luật `.answer` ở file này CHỈ cho câu trả lời của trợ lý. Trang một bài của Khám phá cũng mang lớp `.answer` (kèm `.ct-bai`) để dùng luật chữ gốc ở index.css —
+   phải loại nó ra, không thì bài bị bó cột 64 ký tự (bảng giá vỡ thành từng ký tự) và mất chấm đầu dòng. */
+html .bubble { border-radius: 6px var(--radius-l) var(--radius-l) var(--radius-l); box-shadow: var(--shadow-2); padding: 20px 24px; }
+html .answer:not(.ct-bai) strong { font-weight: 700; }
+/* dòng "Tư liệu chưa có thông tin về…": một khối riêng, không lẫn với chữ trả lời */
+html .answer:not(.ct-bai) .y-thieu { list-style: none; margin-left: -1.4em; padding: 10px 14px 10px 40px; border: 1px dashed var(--color-field-line); border-radius: 12px;
+  background: var(--color-page) url("/static/hoa_tiet/y_thieu.svg") 12px 13px no-repeat;
+  font-size: var(--text-phu); color: var(--color-muted); }
+html .answer:not(.ct-bai) p.y-thieu { margin-left: 0; }
+html .answer:not(.ct-bai) p.y-thieu-dau { border-bottom: 0; border-radius: 12px 12px 0 0; padding-bottom: 2px; font-weight: 600; }
+html .answer:not(.ct-bai) ul.y-thieu-ds { margin-top: 0; padding: 2px 14px 10px 38px; border: 1px dashed var(--color-field-line); border-top: 0; border-radius: 0 0 12px 12px;
+  background: var(--color-page); font-size: var(--text-phu); color: var(--color-muted); }
+/* đoạn chỉ có một cụm in đậm = tiêu đề phần của câu trả lời: cho nó bậc nhìn riêng (chữ không đổi). Lớp `.dau-muc` do `nhin.js` gắn sau khi xét cả chữ thường quanh cụm đậm. */
+html .answer:not(.ct-bai) > p.dau-muc > strong { display: inline-block; font-size: 1.06em; color: var(--color-accent-deep); padding-bottom: 2px;
+  border-bottom: 3px solid var(--color-accent-soft); }
+/* Thân câu trả lời: hết là "khối chữ trong thẻ trắng" — dòng ngắn lại, gạch đầu dòng nhẹ, con số giá / giờ đậm và đều cột, bảng có đầu bảng rõ (chữ không đổi) */
+html .answer:not(.ct-bai) { max-width: 64ch; }
+html .answer:not(.ct-bai) .so { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--color-ink); }
+html .answer:not(.ct-bai) ul { list-style: none; padding-left: 0; }
+html .answer:not(.ct-bai) ul > li { position: relative; padding-left: 1.5em; }
+html .answer:not(.ct-bai) ul > li::before { content: ""; position: absolute; left: .4em; top: .66em; width: .42em; height: .42em; border-radius: 50%; background: var(--color-accent); opacity: .6; }
+html .answer:not(.ct-bai) ul ul > li::before { background: none; border: 1.5px solid var(--color-accent); }
+html .answer:not(.ct-bai) li + li { margin-top: .45em; }
+html .answer:not(.ct-bai) table { border-radius: 12px; border: 1px solid var(--color-line); border-spacing: 0; border-collapse: separate; font-variant-numeric: tabular-nums; }
+html .answer:not(.ct-bai) th { background: var(--color-accent-soft); color: var(--color-accent-deep); text-align: left; }
+html .answer:not(.ct-bai) th, html .answer:not(.ct-bai) td { border: 0; border-bottom: 1px solid var(--color-line); padding: .45em .8em; }
+html .answer:not(.ct-bai) tr:last-child td { border-bottom: 0; }
+/* câu từ chối / ngoài phạm vi: thẻ nền sương, không phải thẻ trả lời */
+html .bubble-tu-choi { background: var(--color-page); border-style: dashed; box-shadow: none; }
+html .bubble.web { margin-top: 12px; }  /* khối "Từ web (chưa kiểm)" không dính sát thẻ từ chối phía trên */
+html .answer:not(.ct-bai) ul.y-thieu-ds > li::before { background: var(--color-muted); opacity: .5; }
+/* cảnh báo an toàn: khối viền đậm, không phải một dòng chữ */
+html .notice-an-toan { padding: 10px 14px; border-radius: 12px; border-left: 5px solid #B45309; background: #FFF4DB; color: #5A3A05; }
+/* Nguồn: hàng "bến" nhìn thấy được — số thứ tự mang màu chủ đề của bài */
+html .nguon { margin-top: 18px; padding-top: 14px; }
+html .nguon-dong { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+html .nguon-nhan { flex-basis: 100%; font-size: var(--text-nho); font-weight: 600; color: var(--color-muted); }
+html .nguon-ten { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; border: 1px solid var(--color-line); border-radius: 999px;
+  background: var(--color-surface); color: var(--color-ink); text-decoration: none; font-size: var(--text-nho); line-height: 1.3; transition: transform .2s var(--ease-song), border-color .2s; }
+html .nguon-ten:hover { border-color: var(--color-accent); transform: translateY(-2px); }
+html .nguon-ten[aria-expanded="true"] { border-color: var(--color-accent); background: var(--color-accent-soft); }
+html .nguon-so { flex: none; width: 12px; height: 12px; margin: 0 2px 0 8px; border-radius: 50%; background: var(--color-lv-other); }
+html .nguon-ten[data-lv="foods"] .nguon-so { background: var(--color-lv-foods); }
+html .nguon-ten[data-lv="heritages"] .nguon-so { background: var(--color-lv-heritages); }
+html .nguon-ten[data-lv="festivals"] .nguon-so { background: var(--color-lv-festivals); }
+html .nguon-ten[data-lv="travel"] .nguon-so { background: var(--color-lv-travel); }
+html .nguon-ten[data-lv="performing_arts"] .nguon-so { background: var(--color-lv-arts); }
+/* Lúc chờ: hình + bước thật + tên bài đã tìm thấy */
+html .searching { display: block; border: 1px solid var(--color-line); border-style: solid; border-radius: 6px var(--radius-l) var(--radius-l) var(--radius-l); padding: 16px 20px 18px;
+  box-shadow: var(--shadow-2); }
+html .cho-hinh svg { display: block; width: 100%; height: 60px; overflow: visible; }
+html .cho-thu .buoc-dang { margin-top: 8px; font-size: var(--text-than); }
+html .cho-nhan { margin-top: 10px; font-size: var(--text-nho); color: var(--color-muted); }
+html .cho-ben { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; padding: 0; list-style: none; }
+html .cho-ben li { display: inline-flex; align-items: center; gap: 8px; padding: 5px 14px 5px 5px; border: 1px solid var(--color-line); border-radius: 999px; font-size: var(--text-nho);
+  background: var(--color-surface); }
+html .cho-so { width: 12px; height: 12px; margin: 0 2px 0 8px; border-radius: 50%; background: var(--color-accent); }
+html .cho-ben a { color: inherit; text-decoration: none; }
+html .cho-ben a:hover { text-decoration: underline; text-underline-offset: 3px; }
+html .cho-ben .cho-them { padding: 5px 14px; color: var(--color-muted); }
+html .cho-ben li[data-lv="foods"] .cho-so { background: var(--color-lv-foods); }
+html .cho-ben li[data-lv="heritages"] .cho-so { background: var(--color-lv-heritages); }
+html .cho-ben li[data-lv="festivals"] .cho-so { background: var(--color-lv-festivals); }
+html .cho-ben li[data-lv="travel"] .cho-so { background: var(--color-lv-travel); }
+html .cho-ben li[data-lv="performing_arts"] .cho-so { background: var(--color-lv-arts); }
+/* Điện thoại và khung trợ lý nổi (rộng 400 px): thẻ chờ thấp lại để ô nhập + nút "Dừng" còn trong màn đầu khi câu hỏi dài (trước: sáu tên bài, mỗi tên hai dòng,
+   đẩy ô nhập xuống dưới màn suốt lúc chờ) — ba tên bài, mỗi tên một dòng cắt bằng "…"; tổng số bài vẫn ghi ở dòng nhãn. */
+html .chat .cho-hinh svg { height: 40px; }
+html .chat .cho-nhan-them { display: none; }
+html .chat .cho-ben li { display: block; position: relative; max-width: 100%; padding: 5px 14px 5px 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html .chat .cho-ben li:nth-child(n+4) { display: none; }
+html .chat .cho-ben .cho-so { position: absolute; left: 10px; top: 50%; margin: -6px 0 0; }
+@media (max-width: 760px) {
+  html .cho-hinh svg { height: 40px; }
+  html .cho-nhan-them { display: none; }
+  html .cho-ben li { display: block; position: relative; max-width: 100%; padding: 5px 14px 5px 30px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  html .cho-ben li:nth-child(n+4) { display: none; }
+  html .cho-ben .cho-so { position: absolute; left: 10px; top: 50%; margin: -6px 0 0; }
+}
+@media (max-height: 700px) {  /* máy xách tay màn thấp: ba tên bài để ô nhập + nút "Dừng" không tụt dưới mép đáy khi câu hỏi dài (đo ở 1280 × 620) */
+  html .cho-hinh svg { height: 44px; }
+  html .cho-ben li:nth-child(n+4) { display: none; }
+}
+html.hieu-ung .cho-ben li { animation: ben-moc .45s var(--ease-song) both; animation-delay: calc(var(--n) * 110ms + 100ms); }
+@keyframes ben-moc { from { opacity: 0; transform: translateY(10px) scale(.92); } }
+@media (max-width: 760px) {
+  html .bubble { padding: 16px; }
+  /* 390 px: mọi nguồn hiện ĐỦ, xuống dòng như bản cũ (phiên đo 22/11: hàng cuộn ngang chỉ để lộ một nút — nguồn là thứ sản phẩm này bán) */
+  html .nguon-dong { gap: 6px; }
+  html .nguon-ten { text-align: left; padding: 4px 12px 4px 4px; font-size: var(--text-nho); }
+  html .nguon-so { margin-left: 6px; }
+}
+
+/* ════════ Thanh trên + màn đầu Trang chủ: con sông ════════ */
+html .hd { background: var(--color-page); color: var(--color-ink);
+  border-bottom: 1px solid var(--color-line); }
+html.hieu-ung .hd-cuon { animation: none; }
+html .hd-cuon.da-cuon { background: var(--color-page); box-shadow: 0 8px 24px rgba(8, 53, 56, .1); }
+html .nav-a { color: var(--color-ink); }
+html .nav-a:hover { background: var(--color-accent-soft); }
+html .nav-a[aria-current="page"] { background: var(--color-river); color: #fff; }
+html .brand svg, html .brand img { color: var(--color-river); }
+
+/* Màn rộng: màn đầu cao đúng phần khung nhìn nằm dưới thanh trên, kẹp 520–800 px ⇒ sáu bến, ô hỏi và dòng thời tiết nằm trọn màn đầu của máy xách tay
+   (đo ở 1536 × 695, 1366 × 650, 1280 × 620; trước đó cố định 800 px: bến cuối và dòng thời tiết bị cắt ở đáy). Hình sông co giãn theo ô chứa; cột chữ co khoảng cách
+   và cỡ tiêu đề theo `--cao` (ở 800 px mọi số bằng đúng bản trước). `--h1-tren` = mép trên của màn đầu, `Song.jsx` đo; 69 px = thanh trên ở màn rộng. */
+.h1-hero { --cao: clamp(520px, calc(100vh - var(--h1-tren, 69px)), 800px); position: relative; min-height: var(--cao); overflow: hidden; background: radial-gradient(900px 520px at 18% 8%, #fff 0%, rgba(255, 255, 255, 0) 70%), var(--color-page); }
+.h1-song { position: absolute; inset: 0 0 0 auto; width: min(100%, 1536px); }  /* màn rất rộng: hình sông giữ cỡ của màn 1536 px, neo mép phải — kéo giãn thêm thì bờ sông thoải ra, nhãn bến dưới đè lên ảnh (thấy ở 1920 px) */
+.h1-ve { position: absolute; inset: 0; width: 100%; height: 100%; }
+.h1-ve.hep { display: none; }
+.h1-bo { stroke: #BFDCD5; }
+.h1-nuoc { opacity: 1; }
+.h1-tam { stroke: rgba(255, 255, 255, .9); stroke-width: 2.5; stroke-dasharray: 10 16; stroke-linecap: round; }
+.hieu-ung .h1-tam { animation: h1-chay 1.6s linear infinite; }
+@keyframes h1-chay { to { stroke-dashoffset: -26; } }
+.hieu-ung .h1-mat, .hieu-ung .h1-bo { stroke-dasharray: 1; stroke-dashoffset: 1; animation: h1-ve 2s cubic-bezier(.45, .05, .2, 1) .15s forwards; }
+@keyframes h1-ve { to { stroke-dashoffset: 0; } }
+.h1-ben-ds { position: absolute; inset: 0; }
+.h1-ben { position: absolute; left: var(--x); top: var(--y); width: 0; height: 0; text-decoration: none; color: var(--color-ink); }
+.h1-cham { position: absolute; left: -32px; top: -32px; width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; border: 3px solid #fff;
+  box-shadow: 0 10px 22px rgba(8, 53, 56, .3); transition: transform .3s var(--ease-song); }
+.h1-ben:hover .h1-cham, .h1-ben:focus-visible .h1-cham { transform: scale(1.12); }
+.h1-nhan { position: absolute; right: 44px; top: -22px; width: max-content; max-width: 240px; display: flex; flex-direction: column; text-align: right; line-height: 1.25; }
+.h1-nhan-phai .h1-nhan { right: auto; left: 44px; text-align: left; max-width: min(240px, var(--cho, 240px)); }
+.h1-nhan-duoi .h1-nhan { right: -32px; top: 42px; max-width: 190px; }  /* bến đầu: nhãn hẹp, nằm trong khoảng nền dưới bờ sông — không đè lên ảnh */
+.h1-nhan-tren .h1-nhan { top: calc(var(--cao) * -.0575); }  /* bến cuối: nhãn nằm trên tầm bến, trọn trên nền sương */
+.h1-ben-4 .h1-nhan { right: 70px; top: calc(var(--cao) * -.0375); }      /* bến thứ năm đứng ở mũi nhọn của bờ: nhãn lùi ra xa mũi, nơi dải nền đủ cao cho hai dòng chữ (đo tương phản: sát bến thì cuối dòng chạm ảnh) */
+.h1-nhan b { font-size: var(--text-dan); font-weight: 600; white-space: nowrap; }
+.h1-ben:hover .h1-nhan b, .h1-ben:focus-visible .h1-nhan b { text-decoration: underline; text-decoration-color: var(--color-sun); text-decoration-thickness: 3px; text-underline-offset: 4px; }
+.h1-nhan small { font-size: var(--text-nho); color: var(--color-muted); }
+.hieu-ung .h1-ben { animation: h1-ben .6s var(--ease-song) both; animation-delay: calc(var(--n) * 150ms + 900ms); }
+@keyframes h1-ben { from { opacity: 0; transform: scale(.4); } }
+.h1-chu { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: calc(var(--cao) * .075) 32px 0; pointer-events: none; }
+.h1-chu > * { max-width: 620px; pointer-events: auto; }
+.h1-chu .hero-h { font-size: min(var(--text-h1), calc(var(--cao) * .0775)); line-height: 1.12; color: var(--color-ink); margin: 0 0 calc(var(--cao) * .0225); max-width: 6.7em; }  /* ba dòng ở mọi cỡ chữ (13ch = 6,5em sát bề rộng dòng cuối: ở vài cỡ chữ "xứ" rơi xuống dòng thứ tư) */
+.h1-chu .hero-p { margin: 0 0 calc(var(--cao) * .0325); max-width: 38ch; color: var(--color-muted); font-size: var(--text-dan); }
+.h1-chu .hoi { margin-top: 0; border: 1.5px solid var(--color-line); box-shadow: 0 14px 34px rgba(8, 53, 56, .14); }
+.h1-chu .goi-y { justify-content: flex-start; max-width: 620px; }
+.h1-chu .goi-y .chip { background: #fff; color: var(--color-ink); border-color: #B7CFCA; font-size: var(--text-nho); padding: 6px 13px; }
+.h1-chu .goi-y { gap: 6px; margin-top: 14px; }
+.h1-dung { position: absolute; right: 16px; top: 12px; z-index: 3; border: 1px solid rgba(255, 255, 255, .6); background: rgba(8, 53, 56, .82); color: #fff; border-radius: 999px;
+  padding: 6px 14px; font-size: var(--text-nho); cursor: pointer; }
+.h1-dung-lai .h1-tam { animation-play-state: paused; }
+.h1-chu .goi-y .chip:hover { border-color: var(--color-accent); }
+/* thời tiết: một dòng neo dưới các câu gợi ý (không còn là thẻ trôi ở góc) */
+html .h1-chu .tt-hop { position: static; width: auto; max-width: 620px; margin-top: calc(var(--cao) * .0325); padding: 12px 0 0; background: none; border-radius: 0; border-top: 1px solid var(--color-line);
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+html .h1-chu .tt-h { font-size: var(--text-phu); color: var(--color-muted); font-weight: 400; }
+html .h1-chu .tt-so { color: var(--color-ink); font-size: var(--text-than); font-variant-numeric: tabular-nums; }
+html .h1-chu .tt-chu { margin: 0; flex-basis: 100%; }
+/* Nét sông dùng chung (`song/hinh.jsx`): dải nhạt + nét đứt chạy + con đò — lúc chờ ở Hỏi đáp, trục của Lên kế hoạch */
+html .net-song { fill: none; stroke: var(--color-river-muted); stroke-width: 20; stroke-linecap: round; }
+html .net-song-chay { stroke: var(--color-accent); stroke-width: 3; stroke-dasharray: 10 14; }
+html.hieu-ung .net-song-chay { animation: h1-chay 1.3s linear infinite; }
+html .do-song .do-than { fill: var(--color-sun); stroke: #fff; stroke-width: 1; stroke-linejoin: round; }
+html .do-song .do-mai { fill: #fff; stroke: var(--color-sun-deep); stroke-width: 1; }
+html .nguon { border-top: 0; position: relative; }
+html .nguon::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 8px;
+  background: url("/static/hoa_tiet/song_nguon.svg") repeat-x; }
+@media (min-width: 1141px) and (max-height: 868px), (min-width: 1141px) and (max-width: 1360px) {
+  /* Bến chỉ còn tên (như ở điện thoại) khi không đủ chỗ cho dòng mô tả; màn rộng và cao hơn giữ tên + mô tả.
+     · khung nhìn thấp hơn 869 px = hình sông bị nén dọc (màn đầu dưới 800 px): khoảng nền giữa hai khúc sông không đủ cho tên + mô tả của hai bến cuối, dòng mô tả
+       chạm ảnh sông hoặc chạm dòng thời tiết (đo tương phản ở 1536 × 695: 1,8 : 1);
+     · cửa sổ hẹp hơn 1361 px: sông sát mép phải, dòng mô tả của bến bên phải xuống dòng và chạm ảnh / viền bờ (đo ở 1141 × 900: 3,0 : 1; 1341 × 900: 4,48 : 1). */
+  .h1-nhan small { display: none; }
+}
+@media (min-width: 1141px) and (max-height: 720px) {
+  /* máy xách tay (khung nhìn cao tới 720 px): bốn câu gợi ý trong hai hàng (câu thứ năm ở hàng ba) ⇒ dòng thời tiết kết thúc trên mép đáy */
+  .h1-chu .goi-y .chip:nth-child(n+5) { display: none; }
+}
+@media (min-width: 1141px) and (max-height: 668px) {
+  .h1-chu { padding-top: calc(var(--cao) * .055); }
+}
+@media (max-width: 1140px) {
+  /* điện thoại + máy tính bảng + cửa sổ hẹp (mốc trùng MAN_DOC của Song.jsx): tiêu đề ⇒ ô hỏi ⇒ CON SÔNG với sáu bến (thấy ngay ở màn đầu) ⇒ câu gợi ý ⇒ thời tiết */
+  .h1-hero { min-height: 0; display: flex; flex-direction: column; padding-bottom: 20px; }
+  .h1-chu { display: contents; }
+  .h1-chu > * { max-width: none; margin-left: 16px; margin-right: 16px; }
+  .h1-chu .hero-h { order: 1; font-size: var(--text-h2); line-height: 1.15; max-width: none; margin: 22px 16px 10px; }
+  .h1-chu .hero-p { order: 2; font-size: var(--text-than); margin: 0 16px 16px; max-width: none; text-wrap: pretty; }
+  .h1-chu .hoi { order: 3; width: auto; }
+  .h1-song { order: 4; position: relative; inset: auto; height: 500px; margin-top: 6px; }  /* 500 px: cả sáu bến nằm trong màn đầu 844 px, trên thanh điều hướng đáy */
+  .h1-chu .goi-y { order: 5; margin: 6px 16px 0; }
+  .h1-dung { order: 7; position: static; align-self: flex-start; margin: 14px 16px 0; }
+  .h1-ve.rong { display: none; }
+  .h1-ve.hep { display: block; }
+  .h1-cham { left: -27px; top: -27px; width: 54px; height: 54px; }
+  /* điện thoại: chỉ tên lối vào, nằm trong một viên trắng cạnh bến (mô tả để ở trang đích) — nhãn so le hai bên dòng */
+  .h1-nhan, .h1-nhan-phai .h1-nhan, .h1-nhan-duoi .h1-nhan, .h1-nhan-tren .h1-nhan { left: 34px; right: auto; top: -19px; padding: 8px 14px; border-radius: 999px; background: #fff; box-shadow: 0 6px 16px rgba(8, 53, 56, .18); text-align: left; }
+  .h1-nhan small { display: none; }
+  .h1-nhan b { font-size: var(--text-than); }
+  .h1-ben-0 .h1-nhan, .h1-ben-3 .h1-nhan, .h1-ben-4 .h1-nhan { left: auto; right: 34px; }
+  html .h1-chu .tt-hop { order: 6; margin: 16px 16px 0; }
+}
+@media (min-width: 761px) and (max-width: 1140px) {
+  /* máy tính bảng / cửa sổ hẹp: cùng thứ tự dọc, mọi khối canh giữa trong một cột 680 px, chữ to hơn điện thoại */
+  .h1-hero { align-items: center; padding-bottom: 36px; }
+  .h1-hero .h1-chu > *, .h1-hero .h1-song { width: min(100% - 64px, 680px); margin-left: 0; margin-right: 0; }
+  .h1-hero .h1-chu .hero-h { font-size: var(--text-trang); margin-top: 40px; text-wrap: balance; }
+  .h1-hero .h1-chu .hero-p { font-size: var(--text-dan); }
+  .h1-hero .h1-dung { align-self: center; margin-left: 0; margin-right: 0; }
+}
+
+
+/* ════════ Trang Trợ lý lúc chưa hỏi gì: khúc sông có bốn bến + con đò, lời chào căn giữa (trước là một khung trắng lớn) ════════ */
+html .tl-chat .chat-chao { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+  max-width: 46ch; margin: 8vh auto 0; padding-top: 166px; font-size: var(--text-dan); color: var(--color-ink);
+  background: url("/static/hoa_tiet/song_chao.svg") center 14px / min(100%, 520px) auto no-repeat; }
+html .tl-chat .chat-chao .suggest { justify-content: center; }
+@media (max-width: 980px) { html .tl-chat .chat-chao { margin-top: 12px; padding-top: 124px; background-size: min(100%, 380px) auto; font-size: var(--text-than); } }

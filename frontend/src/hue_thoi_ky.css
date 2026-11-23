@@ -5,12 +5,12 @@
 .tk-cot { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 48px; align-items: start; }
 
 .tk-ghim { position: sticky; top: 96px; }
-.tk-khung-anh { position: relative; aspect-ratio: 4 / 3; border-radius: 20px; overflow: hidden; background: var(--color-river); }
+.tk-khung-anh { position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius-l); overflow: hidden; background: var(--color-river); }
 .tk-khung-anh img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
 .tk-khung-anh img.tk-anh-dang { opacity: 1; }
 .tk-khung-anh::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 61, 64, .78) 0%, rgba(10, 61, 64, 0) 45%); }
-.tk-nam-lon { position: absolute; left: 24px; bottom: 18px; z-index: 1; color: #fff; font-family: var(--font-serif); font-weight: 600;
-              font-size: 44px; line-height: 1; letter-spacing: -.01em; }
+.tk-nam-lon { position: absolute; left: 24px; bottom: 18px; z-index: 1; color: var(--color-on-accent); font-family: var(--font-serif); font-weight: 600;
+              font-size: var(--text-trang); line-height: 1; letter-spacing: -.01em; }
 .tk-tien { height: 4px; margin-top: 14px; border-radius: 4px; background: var(--color-line); overflow: hidden; }
 .tk-tien i { display: block; height: 100%; background: var(--color-accent); transform-origin: left; }
 
@@ -20,14 +20,14 @@
 .tk-buoc::before { content: ""; position: absolute; left: -8px; top: calc(50% - 7px); width: 14px; height: 14px; border-radius: 50%;
                    background: var(--color-surface); border: 3px solid var(--color-field-line); }
 .tk-buoc.tk-dang::before { background: var(--color-accent); border-color: var(--color-accent); }
-.tk-nam { margin: 0; color: var(--color-lotus); font-weight: 700; font-size: 15px; letter-spacing: .04em; }
-.tk-buoc h3 { margin: 4px 0 8px; font-family: var(--font-serif); font-weight: 600; font-size: 28px; line-height: 1.2; color: var(--color-accent-deep); }
+.tk-nam { margin: 0; color: var(--color-lotus); font-weight: 700; font-size: var(--text-phu); letter-spacing: .04em; }
+.tk-buoc h3 { margin: 4px 0 8px; font-family: var(--font-serif); font-weight: 600; font-size: var(--text-tieu-de); line-height: 1.2; color: var(--color-accent-deep); }
 .tk-buoc p:last-child { margin: 0; max-width: 46ch; }
 .tk-anh-nho { display: none; }
 
 .hieu-ung .tk-khung-anh img { transition: opacity .7s ease, transform 6s ease-out; transform: scale(1.04); }
 .hieu-ung .tk-khung-anh img.tk-anh-dang { transform: scale(1); }
-.hieu-ung .tk-tien i { transition: transform .5s cubic-bezier(.16, 1, .3, 1); }
+.hieu-ung .tk-tien i { transition: transform .5s var(--ease-song); }
 .hieu-ung .tk-cot .tk-buoc { transition: opacity .4s ease; }
 
 @media (min-width: 900px) {
@@ -43,5 +43,5 @@
   .tk-buoc { min-height: 0; padding: 0 0 36px 22px; justify-content: flex-start; }
   .tk-buoc::before { top: 6px; }
   .tk-anh-nho { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; margin-bottom: 14px; }
-  .tk-buoc h3 { font-size: 24px; }
+  .tk-buoc h3 { font-size: var(--text-tieu-de-nho); }
 }

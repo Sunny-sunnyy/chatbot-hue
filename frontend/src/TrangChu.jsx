@@ -1,15 +1,12 @@
 import { useState } from "react";
-import { ANH_DAU_TRANG, ANH_LINH_VUC, MAN_NHO } from "./anh.js";
+import { ANH_LINH_VUC, MAN_NHO } from "./anh.js";
 import { GOI_Y, LINH_VUC, soBai } from "./chung.jsx";
 import { baiHref } from "./route.js";
 import "./tc.css";
+import { HeroSong } from "./song/Song.jsx";
 
-// Trang chủ H1 "Sông Hương" (bản mẫu `data/ui_mau_2026-11-14/h1/trang_chu.html`, User duyệt 14/11). Không thêm số liệu / lời hứa mới:
+// Trang chủ. Màn đầu từ 22/11/2026 là `song/Song.jsx` (con sông làm bố cục, sáu lối vào là sáu bến); phần dưới giữ bản H1 "Sông Hương" 14/11. Không thêm số liệu / lời hứa mới:
 // mọi chữ là chữ trang cũ hoặc tên điểm + mô tả ngắn đã có trong bài kho; ảnh chỉ là ảnh đã có ghi công.
-
-// Ảnh đầu trang đổi lần lượt (B, `b_hieu_ung_tham_khao.md` §3): chuyển mờ bằng CSS; có nút Dừng (WCAG 2.2.2 — nội dung tự đổi > 5 s);
-// máy giảm chuyển động ⇒ chỉ ảnh đầu, đứng yên.
-const ANH_HERO = [ANH_DAU_TRANG.song, ANH_DAU_TRANG.ngoMon, ANH_LINH_VUC.heritages];
 
 // Lối vào nhanh: chỉ dẫn tới chỗ đã có trên trang (không câu hỏi soạn sẵn mới). `co` = cờ phải bật mới hiện.
 const NHANH = [
@@ -52,7 +49,6 @@ function Icon({ d }) {
 
 export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
   const [cau, setCau] = useState("");
-  const [dung, setDung] = useState(false);
   function submit(event) {
     event.preventDefault();
     if (cau.trim() && onAsk(cau)) setCau("");
@@ -60,50 +56,10 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
   const maBai = duoi => (bai || []).find(b => b.id.endsWith(duoi))?.id;
   return (
     <>
-      <section className={`tc-hero ${dung ? "tc-dung" : ""}`} aria-labelledby="hero-h">
-        <div className="tc-anh troi-cuon" aria-hidden="true">
-          {ANH_HERO.map((a, i) => (
-            <picture key={a.src}>
-              <source media={MAN_NHO} srcSet={a.srcNho} />
-              <img src={a.src} alt="" className="tc-anh-i" fetchpriority={i === 0 ? "high" : "low"}
-                   loading={i === 0 ? "eager" : "lazy"} />
-            </picture>
-          ))}
-        </div>
-        {tinhNang.thoi_tiet && thoiTiet?.trang_thai === "ok" && <ThoiTiet tt={thoiTiet} />}
-        <div className="tc-hero-in">
-          <h1 id="hero-h" className="hero-h vao" style={{ "--n": 0 }}>Hỏi về Huế, như hỏi người bản xứ</h1>
-          <p className="hero-p vao" style={{ "--n": 1 }}>Trả lời từ kho tư liệu về món ăn, di tích, lễ hội Huế — kèm tên tài liệu để bạn tự kiểm.</p>
-          <form className="hoi vao" style={{ "--n": 2 }} onSubmit={submit}>
-            <label className="sr-only" htmlFor="hoi-lon">Câu hỏi cho Trợ lý Huế</label>
-            <input id="hoi-lon" className="hoi-o" value={cau} onChange={e => setCau(e.target.value)} placeholder="Ví dụ: chiều nay nên đi lăng nào?"
-                   autoComplete="off" maxLength={500} />
-            <button className="nut nut-chinh nhan-nut" type="submit">Hỏi</button>
-          </form>
-          <div className="goi-y" aria-label="Câu hỏi gợi ý">
-            {GOI_Y.map((q, i) => (
-              <button key={q} className="chip vao nhan-nut" style={{ "--n": 3 + i }} type="button" onClick={() => onAsk(q)}>{q}</button>
-            ))}
-          </div>
-        </div>
-        <button type="button" className="tc-dung-nut" aria-pressed={dung} onClick={() => setDung(!dung)}>
-          {dung ? "Chạy ảnh" : "Dừng ảnh"}
-        </button>
-        <svg className="tc-song" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
-          <path className="song-lop sau" fill="currentColor" opacity=".45" d="M0 40c180-30 360-30 540 4s360 30 540-2 270-26 360-10V90H0z" />
-          <path className="song-lop" fill="currentColor" d="M0 52c160-34 320-34 480 0s320 34 480 0 320-34 480 0V90H0z" />
-        </svg>
-      </section>
+      <HeroSong nhanh={NHANH.filter(n => !n.co || tinhNang[n.co])} cau={cau} setCau={setCau} submit={submit} onAsk={onAsk}
+                thoiTiet={tinhNang.thoi_tiet && thoiTiet?.trang_thai === "ok" ? <ThoiTiet tt={thoiTiet} /> : null} />
 
       <div className="khung">
-        <nav className="tc-nhanh vao" style={{ "--n": 6 }} aria-label="Lối vào nhanh">
-          {NHANH.filter(n => !n.co || tinhNang[n.co]).map(n => (
-            <a key={n.href + n.ten} className="nang" href={n.href}>
-              <span className={`tc-bt tc-bt-${n.mau}`}><Icon d={n.d} /></span><b>{n.ten}</b><span>{n.mo}</span>
-            </a>
-          ))}
-        </nav>
-
         <section className="khoi" aria-labelledby="kp-h">
           <h2 id="kp-h" className="khoi-h chu-hien">Khám phá theo chủ đề</h2>
           <p className="khoi-p">Mỗi chủ đề là các bài trong kho mà trợ lý dùng để trả lời. Bấm để đọc cả bài.</p>

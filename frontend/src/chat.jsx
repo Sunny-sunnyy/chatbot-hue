@@ -6,6 +6,8 @@ import { useHoiBangAnh } from "./HoiBangAnh.jsx";  // Phase 10: hỏi bằng ả
 const BanDoLich = lazy(() => import("./BanDoLich.jsx"));
 import { toaDoHopLe } from "./toaDo.js";
 import { SourceLine } from "./SourceLine.jsx";
+import { ChoSong } from "./song/Song.jsx";
+import { trangTriTraLoi } from "./song/nhin.js";
 import { anhTraLoi } from "./anhTraLoi.js";
 import { phangCoSo, theKhachSan } from "./theKhachSan.js";
 import { baiHref } from "./route.js";
@@ -137,7 +139,8 @@ export function useChat() {
           } else if (name === "status") {
             // chỉ các nhãn đã biết; trạng thái lạ giữ nhãn "đã tìm" (B1 review C129 m-3); `n_sources` có ở `searched`
             const stage = data.stage in STATUS_TEXT ? data.stage : "searched";
-            update({ phase: stage, ...(data.n_sources != null && { nSources: data.n_sources }), buoc: themBuoc(stage, data.n_sources) });
+            update({ phase: stage, ...(data.n_sources != null && { nSources: data.n_sources }), buoc: themBuoc(stage, data.n_sources),
+                     ...(Array.isArray(data.bai) && { daTim: data.bai }) });  // tên các bài đã tìm thấy, cộng dồn — hiện trong lúc chờ (`song/Song.jsx`)
           } else if (name === "delta") {
             // Chữ hiện dần: gom mảnh vào buffer, vẽ lại CẢ buffer tối đa một lần mỗi khung hình (yêu cầu 8); chỉ nối mảnh có `seq` mới (yêu cầu 4).
             if (data.seq <= lastSeqRef.current) return;
@@ -337,7 +340,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
     <div className="chat-view">
       <div className="chat-turns">
         {resetError && <p className="mb-4 rounded-md bg-error-soft p-3 text-error" role="alert">{resetError}</p>}
-        {turns.length === 0 && (
+        {turns.length === 0 && !hoiAnh.the && (  /* đang có thẻ "Trong ảnh là…" thì thu lời chào + câu gợi ý: ở điện thoại chúng đẩy ô nhập xuống dưới thanh đáy */
           <div className="chat-chao">
             <p>Hỏi về món ăn, di tích, lễ hội, nghệ thuật hay chuyến đi ở Huế. Mỗi câu trả lời ghi tên tài liệu đã dùng để bạn tự xem lại.</p>
             {suggestions.length > 0 && (
@@ -400,6 +403,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
   const html = useMemo(() => renderAnswerHtml(moDauWeb(turn.text, turn.web)), [turn.text, turn.web]);  // câu mở đầu khi mục web có nội dung
   const pending = PENDING.has(turn.phase);
   const answerRef = useRef(null);  // việc nhỏ (1): chữ lịch đúng như đang hiện (đã qua DOMPurify) cho nút sao chép / tải
+  useEffect(() => { trangTriTraLoi(answerRef.current); }, [html]);  // chỉ lớp nhìn: khối "chưa có" + con số giá / giờ (chữ không đổi)
   return (
     <article className="turn" ref={turnRef} data-turn={turn.key} data-phase={turn.phase}>
       <h2 className="ask">{turn.hienThi?.anh && <img src={turn.hienThi.anh} alt="Ảnh bạn gửi" className="ask-anh" />}{turn.hienThi?.chu ?? turn.question}{turn.summary && <span className="ask-chon"> · {turn.summary}</span>}</h2>
@@ -410,8 +414,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
       <div className="tra-noi">
       {pending && !turn.text && (
         <div className="searching" role="status">
-          {HIEN_BUOC_LUC_CHO && <BuocDangChay buoc={turn.buoc} phase={turn.phase} />}
-          <span className="go" aria-hidden="true"><i /><i /><i /></span>
+          <ChoSong daTim={turn.daTim} dongBuoc={STATUS_TEXT[turn.buoc.length ? turn.buoc[turn.buoc.length - 1].stage : turn.phase]} />
           <span className="sr-only">{STATUS_TEXT[turn.phase]}</span>
         </div>
       )}
@@ -434,7 +437,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
                 gon={gon || ((turn.lichV2.thay_doi || []).length > 0 && !turn.lichV2.thay_doi.some(d => d.duoc))} />
       )}
       {turn.text && !turn.lichV2 && !turn.suaThe && turn.phase !== "error" && (  /* thẻ chọn đã hỏi đúng câu đó — không vẽ lần hai */
-        <div className="bubble">
+        <div className={`bubble${turn.outcome === "out_of_scope" || turn.tuChoiKho ? " bubble-tu-choi" : ""}`}>
           {pending && <p className="mb-2 text-sm text-muted" aria-live="polite">{STATUS_TEXT[turn.phase]}</p>}
           {turn.hienThi?.doan && <p className="anh-doan">Mình đoán trong ảnh là <b>{turn.hienThi.doan}</b> — có thể sai.</p>}
           <div className="answer" ref={answerRef} dangerouslySetInnerHTML={{ __html: html }} />
@@ -486,11 +489,6 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
 }
 
 // Bước đang chạy của lượt (bước cuối trong các sự kiện `status` thật; chưa có sự kiện nào ⇒ nhãn của pha hiện tại).
-function BuocDangChay({ buoc, phase }) {
-  const b = buoc[buoc.length - 1];
-  return <div className="buoc-dang">{b ? `${STATUS_TEXT[b.stage]}${b.n > 0 ? ` (${b.n} đoạn)` : ""}` : STATUS_TEXT[phase]}</div>;
-}
-
 // B6 D6: khối riêng sau câu từ chối của kho. Nhãn "chưa kiểm" cố định; chữ + nguồn từ sự kiện `web` (server đã kiểm mã, link, số tiền).
 function WebSection({ web, turnKey }) {
   const sources = web.sources.filter(source => WEB_LINK.test(source.link));

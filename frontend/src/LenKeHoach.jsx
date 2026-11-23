@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { BIEU_MAU } from "./chung.jsx";
 import { LichV2 } from "./LichV2.jsx";
+import { SONG_NGANG } from "./song/hinh.jsx";
 import "./lkh.css";
 
 export function LenKeHoach({ bat, prefill, pending, onSubmit }) {
@@ -175,6 +176,11 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, on
       <div className="khung">
         <p className="vet"><a href="#/">Trang chủ</a> / Lên kế hoạch</p>
         <h1 className="trang-h vao" style={{ "--n": 0 }}>Lên kế hoạch đi Huế</h1>
+        {/* nét sông dùng chung chạy dọc mép dưới dải đầu trang (trang trí, chỉ trên màn hình) */}
+        <svg className="lkh-dau-song" viewBox="0 0 600 44" preserveAspectRatio="none" aria-hidden="true">
+          <path className="lkh-song-nen" d={SONG_NGANG} vectorEffect="non-scaling-stroke" />
+          <path className="lkh-song-chay" d={SONG_NGANG} vectorEffect="non-scaling-stroke" />
+        </svg>
         <p className="khoi-p vao" style={{ "--n": 1 }}>Trợ lý xếp lịch theo buổi từ các điểm trong kho. Muốn đổi lịch: điền lại biểu mẫu, hoặc bấm Trợ lý Huế để sửa bằng lời.</p>
       </div>
     </section>
