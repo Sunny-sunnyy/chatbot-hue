@@ -52,6 +52,18 @@ def test_restricted_groups_get_one_light_evening_activity_without_repeats():
     lich = v2.dung_lich(B1, k, {})
     muc_toi = [m for ng in lich["ngay"] for m in ng["muc"] if m["loai"] == "hoat_dong_toi"]
     assert muc_toi and all(m["ghi_chu"].endswith(v2.GHI_CHU_TOI_NHE) for m in muc_toi)  # thẻ nói thật vì sao là hoạt động này
+    for m in muc_toi:  # giờ in là giờ GHÉ ngắn do code đặt (không phải cả khung giờ mở cửa của nơi đó) — kết thúc trước 21:00
+        assert m["gio"] == v2.gio_toi_nhe(B1.theo_id[m["id_diem"]].get("gio_toi"))
+        so = [int(a) * 60 + int(b) for a, b in __import__("re").findall(r"(\d{1,2}):(\d{2})", m["gio"] or "")]
+        assert not so or max(so) <= 21 * 60
+
+
+def test_evening_visit_time_for_restricted_groups_is_a_short_visit_not_the_opening_hours():
+    assert v2.gio_toi_nhe("18:00 – 23:00") == "18:00 – 19:15" and v2.gio_toi_nhe("18:30 – 22:00") == "18:30 – 19:45"
+    assert v2.gio_toi_nhe("suất 19:00 / 20:00 / 21:00, khoảng 1 giờ") == "suất 19:00, khoảng 1 giờ"
+    assert v2.gio_toi_nhe(None) is None and v2.gio_toi_nhe("cả buổi tối") == "cả buổi tối"
+    lich = v2.dung_lich(B1, v2.xep_v2(B1, v2.ThamSoV2(3, kieu_di="can_bang")), {})  # đoàn thường: giờ của bảng in nguyên như trước
+    assert all(m["gio"] == B1.theo_id[m["id_diem"]].get("gio_toi") for ng in lich["ngay"] for m in ng["muc"] if m["loai"] == "hoat_dong_toi")
 
 
 def chon_duoc(khung) -> bool:

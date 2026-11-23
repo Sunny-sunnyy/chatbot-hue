@@ -379,6 +379,21 @@ def _han_che_khung(khung: dict) -> bool:
     return ts["tre_em"] >= 1 or bool(ts["lon_tuoi"])
 
 
+def gio_toi_nhe(gio_toi: str | None) -> str | None:
+    """Công tắc `toi_nhe`: giờ in trên mục buổi tối của đoàn có trẻ nhỏ / người lớn tuổi là giờ GHÉ do code đặt, không phải giờ mở cửa của nơi đó
+    (bảng ghi "18:00 – 23:00" là giờ phố ẩm thực đêm MỞ; in nguyên thì người đọc hiểu là ở tới 23:00 — ngược với lý do "nên về sớm").
+    Khung "HH:MM – HH:MM" ⇒ từ giờ mở, dài `PHUT["ngan"]` (75 phút — đúng thời lượng "ghé ngắn" bộ xếp dùng ban ngày); "suất a / b / c…" ⇒ giữ suất ĐẦU;
+    chuỗi khác / không có giờ ⇒ để nguyên."""
+    if not gio_toi:
+        return gio_toi
+    m = re.fullmatch(r"\s*(\d{1,2}):(\d{2})\s*[–-]\s*\d{1,2}:\d{2}\s*", gio_toi)
+    if m:
+        dau = int(m[1]) * 60 + int(m[2])
+        return in_gio(dau, dau + PHUT["ngan"])
+    m = re.match(r"(suất \d{1,2}:\d{2})(?:\s*/\s*\d{1,2}:\d{2})+(.*)", gio_toi)
+    return f"{m[1]}{m[2]}" if m else gio_toi
+
+
 ANH_SRC = "/anh/lich/"  # ảnh lịch tự host (frontend/public/anh/lich/) — CSP img-src 'self' không đổi
 ANH_TRANG = "https://commons.wikimedia.org/"
 FRONTEND_PUBLIC = Path(__file__).resolve().parents[2] / "frontend" / "public"
@@ -591,7 +606,7 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                 toi = b == "toi"
                 lap_lai = toi and id_ in [x for ng0 in khung["ngay"] if ng0["ngay"] < ng["ngay"] for x in ng0["buoi"]["toi"]]
                 muc.append({"id_muc": f"n{ng['ngay']}-{b}-{k}", "buoi": b, "loai": "hoat_dong_toi" if toi else "tham_quan", "id_diem": id_,
-                            "ten": d["ten"], "gio": d.get("gio_toi") if toi else khung.get("gio", {}).get(id_),
+                            "ten": d["ten"], "gio": (gio_toi_nhe(d.get("gio_toi")) if _han_che_khung(khung) else d.get("gio_toi")) if toi else khung.get("gio", {}).get(id_),
                             # buổi tối của bảng (vd chợ Đông Ba = phố ẩm thực đêm trước chợ): không có dòng này người đọc tưởng vào chợ đã đóng
                             "ghi_chu": ("; ".join(x for x in (d.get("ghi_chu_toi"), GHI_CHU_TOI_NHE if _han_che_khung(khung) else None) if x) or None)
                             if toi else None,
