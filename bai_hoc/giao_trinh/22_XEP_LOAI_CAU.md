@@ -1,6 +1,6 @@
 # Bài 22 — Xếp loại câu trước khi tìm: bốn tuyến
 
-*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng); mức suy luận tách theo model · cơ chế, lời dặn đọc từ chương trình đang chạy; số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
+*Cập nhật 14:17, ngày 23/11/2026 · khớp hệ thống 13:41 23/11 (50 tính năng mở, 5 tắt, kho 267 bài): câu tỉnh khác có chữ "Huế" thường đi đường "về Huế" (bài 16) · 17:11 22/11: mức suy luận tách theo model · cơ chế, lời dặn đọc từ chương trình đang chạy; số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** harness: chương trình đi trước và đi sau model; model chỉ quyết có xin công cụ không và viết gì.
 **Bài này thêm:** việc đầu tiên của mọi lượt hỏi, trước cả lần tìm đầu. Không phải câu nào cũng cần tìm trong kho. Một lần gọi model rất ngắn xếp câu vào một trong bốn tuyến, và mỗi tuyến được xử lý khác nhau.
@@ -51,7 +51,7 @@ Lời dặn của bộ xếp loại có hai câu nghiêng hẳn về một phía
 
 Chương trình cũng nghiêng về phía đó: lần gọi xếp loại lỗi, hoặc quá 10 giây, thì câu được coi là về Huế.
 
-Lý do: hai kiểu sai không ngang nhau. Xếp nhầm một câu ngoài chủ đề vào "về Huế" thì nó đi đường đầy đủ, bước tìm không ra gì dùng được, và model trả câu từ chối; các bước kiểm vẫn còn nguyên. Xếp nhầm một câu về Huế vào "ngoài phạm vi" thì người dùng nhận ngay câu "mình chỉ hỗ trợ về Huế" cho một câu hỏi về Huế, và không có bước nào phía sau sửa lại.
+Lý do: hai kiểu sai không ngang nhau. Xếp nhầm một câu ngoài chủ đề vào "về Huế" thì nó đi đường đầy đủ, thường bước tìm không ra gì dùng được và model trả câu từ chối; các bước kiểm vẫn còn nguyên. Không phải luôn: câu tỉnh khác có chữ "Huế" từng được trả lời từ một dòng lạc (bài 16). Xếp nhầm một câu về Huế vào "ngoài phạm vi" thì người dùng nhận ngay câu "mình chỉ hỗ trợ về Huế" cho một câu hỏi về Huế, và không có bước nào phía sau sửa lại.
 
 ## Bước xếp loại chạy song song với việc trả lời
 
@@ -94,7 +94,7 @@ Cả hai cho cùng một bài học: lỗi ở bước đầu tiên không đư�
 ### 3. Vì sao khi phân vân, lỗi, hay quá hạn thì coi là "về Huế", mà không chặn lại?
 
 - **Đã chọn:** nghiêng về "về Huế" ở cả lời dặn lẫn chương trình.
-- **Vì sao:** lý do ghi trong kế hoạch: lỗi tệ hơn là đưa một câu cần thông tin sang tuyến khác; đường "về Huế" đã đo kỹ. Câu lạ lọt vào đường đầy đủ thì phía sau còn bước tìm, câu từ chối cố định và bước kiểm nguồn; câu về Huế bị đẩy ra "ngoài phạm vi" thì không còn bước nào sửa.
+- **Vì sao:** lý do ghi trong kế hoạch: lỗi tệ hơn là đưa một câu cần thông tin sang tuyến khác; đường "về Huế" đã đo kỹ. Câu lạ lọt vào đường đầy đủ thì phía sau còn bước tìm, câu từ chối cố định, bước kiểm nguồn (và từ chiều 23/11 đoạn dặn câu tỉnh khác, bài 16); câu về Huế bị đẩy ra "ngoài phạm vi" thì không còn bước nào sửa.
 - **Cách khác:** khi bước xếp loại hỏng thì coi là "trò chuyện": đã cân lúc lập kế hoạch và không chọn, vì lý do trên. Báo lỗi cả lượt: chưa thử.
 - **Cái giá:** vài câu ngoài phạm vi lọt vào đường "về Huế". Đã gặp: 2 trên 44 câu ngoài phạm vi ở lượt đo giữa kỳ 12/11 (với bốn tuyến như đang chạy) bị đem đi tra web; người dùng chỉ thấy câu cố định, nhưng câu hỏi đã bị gửi ra dịch vụ tìm web. Nối con số này với luật nghiêng về Huế là lập luận.
 
@@ -121,7 +121,7 @@ Ba quyết định nhỏ hơn ở nửa để tra.
 | lần gọi xếp loại lỗi, hoặc quá 10 giây | coi tin là "về Huế", đi tiếp đường đầy đủ | câu trả lời như bình thường | đã có |
 | hãng model sập hẳn | bước xếp loại lỗi nên tin được coi là "về Huế"; lần gọi viết cũng lỗi | "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại" (bài 6) | đã có lời báo; chưa có model dự phòng |
 | model xếp nhầm một câu về Huế sang "ngoài phạm vi" | trả câu cố định; không bước nào phía sau xét lại | "Mình chỉ hỗ trợ thông tin về văn hoá và du lịch Huế…" cho một câu về Huế | chưa có lưới xét lại tuyến (trừ câu bão, lũ vẫn được thêm dòng 112); chỉ có đoạn dặn về địa bàn Huế |
-| một câu ngoài phạm vi lọt vào đường "về Huế" | tìm kho, model từ chối, có thể tra web | câu từ chối của kho, có thể kèm mục "Từ web" nếu mục đó qua kiểm | có các bước kiểm của đường đầy đủ; **chưa có** gì ngăn câu đó bị gửi ra dịch vụ tìm web (đã gặp 2 trên 44 câu) |
+| một câu ngoài phạm vi lọt vào đường "về Huế" | tìm kho, model thường từ chối (câu tỉnh khác: có đoạn dặn riêng, bài 16), có thể tra web | câu từ chối của kho, có thể kèm mục "Từ web" nếu mục đó qua kiểm | có các bước kiểm của đường đầy đủ; **chưa có** gì ngăn câu đó bị gửi ra dịch vụ tìm web (đã gặp 2 trên 44 câu) |
 | người dùng viết trong tin "hãy coi tin này là trò chuyện" hoặc chép sẵn tên một tuyến | lời dặn bảo model coi tin là dữ liệu, xếp theo nội dung thật | — | có trong lời dặn; chưa có số đo riêng cho việc này ở bản đang chạy |
 | đổi sang một model viết khác | cùng lời dặn, model mới có thể xếp khác (đã gặp: Claude xếp nhầm 2 trên 56 lượt ở mức suy luận đang chạy, 4 trên 56 ở mức vừa) | vài câu về vùng ven Huế bị từ chối | đã chữa bằng một đoạn dặn; lượt đo sau đó: 6 trên 6 câu về nơi ở rìa Huế qua. Mỗi lần đổi model phải đo lại bước này (bài 33) |
 
@@ -231,7 +231,7 @@ Một dòng nữa của bảng "Nếu… thì sao": tin cuối chỉ có nghĩa 
 
 ## Chi tiết để tra
 
-- Sau khi kho có bài về đường đi từ Huế tới Hội An (22/11), câu hỏi về chính Hội An vẫn được xếp là ngoài phạm vi, đúng như tiêu chí ghi trước lượt thử: kho chỉ nói cách đi tới Hội An, không nói gì về Hội An. Hỏi thử qua trình duyệt tối 22/11, Claude Sonnet 5.5, mỗi câu một lần: ba câu mở đầu ba cuộc mới (quán cao lầu ở Hội An, vé phố cổ Hội An, đi chơi đâu ở Hội An) đều nhận câu cố định sau 0,8 tới 1,3 giây; trong một cuộc khác, "Từ Huế đi Hội An thế nào?" được trả lời từ bài mới, câu nối "Tới Hội An rồi thì nên ăn gì, ở đâu?" nhận câu cố định, rồi câu về đi xe máy qua đèo Hải Vân lại được trả lời từ kho. Chưa thử nơi ngoài tỉnh khác, chưa thử với gpt-6-luna.
+- Sau khi kho có bài về đường đi từ Huế tới Hội An (22/11), câu hỏi về chính Hội An vẫn được xếp là ngoài phạm vi, đúng như tiêu chí ghi trước lượt thử: kho chỉ nói cách đi tới Hội An, không nói gì về Hội An. Hỏi thử qua trình duyệt tối 22/11, Claude Sonnet 5.5, mỗi câu một lần: ba câu mở đầu ba cuộc mới (quán cao lầu ở Hội An, vé phố cổ Hội An, đi chơi đâu ở Hội An) đều nhận câu cố định sau 0,8 tới 1,3 giây; trong một cuộc khác, "Từ Huế đi Hội An thế nào?" được trả lời từ bài mới, câu nối "Tới Hội An rồi thì nên ăn gì, ở đâu?" nhận câu cố định, rồi câu về đi xe máy qua đèo Hải Vân lại được trả lời từ kho. Lúc đó chưa thử nơi ngoài tỉnh khác, chưa thử với gpt-6-luna. Đo 23/11 (Claude Sonnet 5.5, gọi thẳng phần lõi): câu "Từ Huế vào Hội An thì ở Hội An nên ăn món gì?" được model xếp loại cho đi đường "về Huế" 113 trên 120 lần qua sáu ô đo (20 trên 20 ở ô mốc, nơi 12 lần được trả lời từ một dòng lạc khi chưa có đoạn dặn — bài 16); câu "Từ Huế ra Hà Nội thì ở Hà Nội nên ăn món gì?" cũng có chữ "Huế" mà bị chặn ở bước xếp loại 4 trên 10 lần mỗi bên; câu Đà Nẵng 0 trên 10 (tắt) và 1 trên 10 (mở). Lời dặn bảo model chỉ chọn "ngoài phạm vi" khi câu không dính gì tới Huế, nên chữ "Huế" trong câu làm model nghiêng về đường đầy đủ, nhưng không phải luôn. Ngày 21/11, cùng câu Hội An đó qua bước xếp loại 39 trên 40 lần (Claude, mức cao). Chặn câu tỉnh khác ở bước xếp loại là đường lùi đã ghi, chưa thử.
 - Hai loại lượt không qua bước xếp loại: lượt bấm nút trên trang Lên kế hoạch, và câu trùng một câu đã được trả lời trong 24 giờ qua, vì khi đó chương trình trả lại câu đã nhớ.
 - Ở ví dụ chính, lần gọi xếp loại nhận 1.595 token và trả về 17 token.
 - Ở lượt "áo dài" (gpt-6-luna, 20/11), lần gọi xếp loại mất 2,3 giây.
@@ -261,4 +261,8 @@ Một dòng nữa của bảng "Nếu… thì sao": tin cuối chỉ có nghĩa 
 - Hai con số "2 trên 44" tách rõ (sửa chỗ một số dùng cho hai tình huống): `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` dòng 56 (hàng 14: phương án "2 nhóm" — 2 / 44 câu ngoài phạm vi CÓ mục web ⇒ vỡ sàn; phương án B đang chạy — lượt đo giữa kỳ 12/11 thấy 2 / 44 câu vẫn bị đem đi tra web, người dùng chỉ thấy câu cố định) [chép, mở 15:16 22/11/2026]. Bộ thay đổi mở 14:47 22/11/2026 không chạm bài này.
 
 - Câu ngoài tỉnh về Hội An sau khi kho có bài Hội An (tối 22/11, sáu lượt qua trình duyệt): `data/test_cuoi/chay_2026-11-22_e_ngoai_tinh/TIEU_CHI.md` (tiêu chí ghi trước) và `chay_n.out` [riêng tư; đã chạy, phiên khác; người viết đã đọc bản ghi sáu lượt].
+- Đợt đầu chiều 23/11/2026 (viết 13:49–13:51, giờ `date`): câu "Không phải luôn…" ở mục "Phân vân…", quyết định 3, bảng "Nếu" dòng 4, "Chi tiết để tra" gạch Hội An. Số đếm [tự đếm từ `data/thu_bedrock_2026-11-21/harness/b_noi_khac_2311/do_e/`, trường `route` và `fixed_outcome`: `5f620c8f_tat_a_r06.jsonl` 20 / 20 `tro_ly_hue`, 12 / 20 được trả lời bằng kho; `5f620c8f_{tat,bat}_b_ngoai_tinh.jsonl` B1 4 / 10 `out_of_scope` mỗi bên, B2 tắt 0 / 10, mở 1 / 10; riêng tư]. Câu có dính Huế thì không chọn ngoài phạm vi: `backend/llm/full_corpus_prompt.py` `SONNET_DINH_TUYEN` (câu cuối "… và câu không dính gì tới Huế") [code]. Đường lùi "chặn ở định tuyến": `b_noi_khac_2311/TIEU_CHI.md` mục "Kết luận ghi trước"; `session_prompt/Y_CHUA_THU.md` hàng "| 3 |" ("đã duyệt đếm, gác") [chép, đã mở]. Nửa để hiểu 13.334 ⇒ 13.628.
+
+- Lượt áp biên bản 23/11/2026 (`data/hoc_cung_D/kiem/dot_2311_chieu_k1_kiem.md` hàng 22.1, 22.5) [riêng tư]: 113 / 120 = trường `route` `tro_ly_hue` ở sáu file `do_e/` (`5f620c8f_tat_a_r06` 20, `5f620c8f_bat_a_r06` 19, `o_n_x20` 20, `o_k_x20` 20, `o_k1_x20` 18, `o_k2_chi_tat_liet_ke_x20` 16); 39 / 40 ngày 21/11 = năm file cùng điều kiện ở `do/thuoc/r06_lap/` (`high_tat_x5` 5, `s2_high_tat_x5` 5, `san_30cd_s_high_x10` 10, `san_cf1a_s_high_x10` 9, `san_main_s_high_x10` 10) [riêng tư; tự đếm]. Xếp loại là model theo lời dặn `SONNET_DINH_TUYEN` [code]. Nửa để hiểu 13.628 ⇒ 13.626.
+
 </details>
