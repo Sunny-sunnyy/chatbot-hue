@@ -149,6 +149,15 @@ def test_t7_nap_danh_sach(tmp_path):
             nap_danh_sach(p)
 
 
+def test_t6_xac_nhan_truoc_di_theo_ung_vien():
+    """Mục danh sách mang `xac_nhan_truoc` (nơi dễ bị nhầm với nơi khác không có trong danh sách — 23/11/2026: cầu Dã Viên ra "Cầu Trường Tiền")
+    ⇒ ứng viên trả về mang cờ đó để giao diện hiện thẻ xác nhận thay vì tự hỏi; mục không có cờ ⇒ ứng viên y như cũ (không thêm khoá)."""
+    ds = [{**DS[0], "xac_nhan_truoc": True}, *DS[1:]]
+    Out = kieu_dau_ra(ds)
+    assert kiem_lai(Out(ung_vien=["diem_a", "mon_c"], khong_nhan_ra=False), ds) == [
+        {"id": "diem_a", "ten": "Điểm A", "xac_nhan_truoc": True}, {"id": "mon_c", "ten": "Món C"}]
+
+
 def test_t7_danh_sach_that():
     """Danh sách ĐANG CHẠY (đường dẫn ở `settings.yaml`) nạp được — id / khoá tên không trùng — và 42 tên chủ dự án duyệt 05/11 còn nguyên ở đầu."""
     import yaml

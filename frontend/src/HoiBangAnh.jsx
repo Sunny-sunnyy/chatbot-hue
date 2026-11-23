@@ -122,8 +122,10 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     // URL riêng cho bong bóng câu hỏi (sống theo cuộc trò chuyện); `preview` của ô nhập được thu hồi khi state đổi
     const anh = URL.createObjectURL(file);
     // 2–3 tên ⇒ người dùng chọn (chữ đang gõ giữ trong ô). Một tên mà lúc này đang có lượt khác chạy (bấm câu gợi ý / "Hỏi lại" trong lúc chờ)
-    // ⇒ KHÔNG tự hỏi chen ngang: hiện thẻ chọn với một tên, người dùng bấm khi lượt kia xong.
-    if (ungVien.length > 1 || moi.current.disabled) return setState({ preview, phase: "xong", ungVien, anh });
+    // ⇒ KHÔNG tự hỏi chen ngang: hiện thẻ chọn với một tên, người dùng bấm khi lượt kia xong. Một tên mang `xac_nhan_truoc` (nơi hay bị nhận
+    // thay cho một nơi giống nó mà danh sách không có — cầu thép khác ra "Cầu Trường Tiền", đo 23/11/2026) ⇒ cũng hiện thẻ: người dùng bấm tên
+    // mới hỏi, hoặc bấm "Không phải các tên này"; lượt đó không cần dòng "Mình đoán…" vì tên là do người dùng xác nhận.
+    if (ungVien.length > 1 || moi.current.disabled || ungVien[0].xac_nhan_truoc) return setState({ preview, phase: "xong", ungVien, anh });
     setState({ phase: "doan", chon: ungVien[0].ten });
     hoiVoiTen(ungVien[0].ten, moi.current.draft, anh, true);  // chữ trong ô LÚC TÊN VỀ (gõ thêm trong lúc chờ không bị mất)
   }

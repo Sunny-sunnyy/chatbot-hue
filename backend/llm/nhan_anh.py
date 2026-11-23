@@ -110,14 +110,16 @@ def dau_vao(jpeg: bytes, danh_sach: list[dict]) -> list[dict]:
 
 
 def kiem_lai(output, danh_sach: list[dict]) -> list[dict]:
-    """Backend kiểm lại đầu ra (D4): chỉ id trong danh sách, bỏ trùng, ≤ 3; `khong_nhan_ra` ⇒ rỗng. Trả [{id, ten}] theo thứ tự model."""
+    """Backend kiểm lại đầu ra (D4): chỉ id trong danh sách, bỏ trùng, ≤ 3; `khong_nhan_ra` ⇒ rỗng. Trả [{id, ten}] theo thứ tự model.
+    Mục danh sách mang `xac_nhan_truoc: true` (nơi hay bị nhận thay cho một nơi GIỐNG nó mà danh sách không có — đo 23/11/2026: cầu Dã Viên ra
+    "Cầu Trường Tiền") ⇒ ứng viên mang thêm khoá đó: giao diện hiện thẻ để người dùng bấm xác nhận, không tự hỏi khi chỉ có một tên."""
     if getattr(output, "khong_nhan_ra", True):
         return []
-    theo_id = {m["id"]: m["ten"] for m in danh_sach}
+    theo_id = {m["id"]: m for m in danh_sach}
     ra: list[dict] = []
     for i in getattr(output, "ung_vien", []) or []:
         if i in theo_id and all(r["id"] != i for r in ra):
-            ra.append({"id": i, "ten": theo_id[i]})
+            ra.append({"id": i, "ten": theo_id[i]["ten"], **({"xac_nhan_truoc": True} if theo_id[i].get("xac_nhan_truoc") else {})})
     return ra[:3]
 
 
