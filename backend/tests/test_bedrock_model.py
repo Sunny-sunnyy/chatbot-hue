@@ -343,7 +343,7 @@ def test_provider_switch_picks_the_model_class_and_openai_stays_openai(monkeypat
     settings["full_corpus_generation"]["provider"] = "openai"
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
     openai_generator = OpenAIFullCorpusGenerator.from_environment(settings)
-    assert type(openai_generator.responses_model) is OpenAIResponsesModel and openai_generator.responses_model.model == "gpt-6-luna"
+    assert isinstance(openai_generator.responses_model, OpenAIResponsesModel) and not hasattr(openai_generator.responses_model, "provider") and openai_generator.responses_model.model == "gpt-6-luna"
     assert (openai_generator.provider, openai_generator.model) == ("openai", "gpt-6-luna")
 
     monkeypatch.delenv("OPENAI_API_KEY")

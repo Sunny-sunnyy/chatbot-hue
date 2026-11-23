@@ -12,7 +12,6 @@ from typing import Any, Literal
 from agents import (
     Agent,
     ModelSettings,
-    OpenAIResponsesModel,
     RunConfig,
     RunHooks,
     RunResultStreaming,
@@ -28,6 +27,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from core.schema import GenerationError
 from llm.bedrock_model import BedrockClaudeModel, BedrockError
 from llm.pricing import cost_usd
+from llm.openai_goi_lai import OpenAIGoiLaiModel
 from llm.sua_lich_v2 import HOI_THEM, MAX_HANH_DONG, HanhDong, HanhDongCHT, HanhDongHoi, HanhDongToi, HanhDongToiHoi, HanhDongToiHoiBo
 from llm.full_corpus_prompt import (
     ANSWER_SYSTEM_INSTRUCTIONS,
@@ -351,7 +351,8 @@ class OpenAIFullCorpusGenerator:
         tra_loi = them_noi_khac(answer_instructions)
 
         # Create one shared OpenAIResponsesModel with gpt-6-luna alias
-        self.responses_model = bedrock_model if bedrock_model is not None else OpenAIResponsesModel(
+        # đường OpenAI: lớp mỏng ghi loại lỗi + mã HTTP và gọi lại MỘT lần khi 5xx / lỗi kết nối (`openai_goi_lai.py`); chuỗi gửi đi không đổi
+        self.responses_model = bedrock_model if bedrock_model is not None else OpenAIGoiLaiModel(
             model=self.model, openai_client=self.client
         )
 
