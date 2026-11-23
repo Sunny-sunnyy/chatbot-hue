@@ -6,7 +6,7 @@ tham số hợp lệ với `aws-cli/2.36.25`); tên tài nguyên và số tài n
 11 hoặc 12 — 12 khi có báo động). Mọi dòng "Mong" là điều tài liệu AWS / Terraform nói sẽ xảy ra: **[chưa kiểm trên AWS]**. Sự thật về AWS ghi
 nhãn [AWS] lấy từ bản tra cứu tài liệu chính thức ngày 23/11/2026 (riêng tư: `data/tra_cuu_cli/2026-11-23_aws-pha-sach-va-kiem-sau-deploy/ket_qua.md`);
 phiên đo tự mở lại hai trang trong đó (cú pháp tìm của Resource Explorer; trang "xoá vai hoặc hồ sơ gắn máy" của IAM), các ý khác chưa tự mở. Buổi diễn tập ở guide 5
-(mục 5b) đi qua Bước 3 của guide này một lần — lúc đó ghi số thật vào đây.
+(mục 6b) đi qua Bước 3 của guide này một lần — lúc đó ghi số thật vào đây.
 
 Guide này theo đúng khuôn sáu bước chủ dự án đã tự làm khi phá hạ tầng dự án cuối khoá ngày 11/07/2026: chốt phạm vi ⇒ kiểm trước ⇒ phá ngược thứ tự ⇒
 làm rỗng thùng ⇒ kiểm bằng lệnh AWS chứ không tin state ⇒ xem hoá đơn sau một ngày. Thêm hai thứ ở dự án kia không có: Bước 0 (giữ lại thứ cần giữ)
