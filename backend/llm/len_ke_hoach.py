@@ -280,10 +280,11 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
     bang, luu = flags.bang_lich_v2, trace.lich_luu
     luu_tru = flags.luu_tru_bang if flags.luu_tru_lich else None  # cờ nơi ở tắt ⇒ "đổi hạng chỗ ở" báo không có mục chỗ ở
     if trace.sua_chon is not None:
-        # công tắc `sua_lich_hoi_truoc`: nút "Đổi chỗ hai tối" (câu hỏi trước khi hai buổi tối cùng đổi) đi đường này ⇒ cần luật gọi tên mục tối; bấm nút
-        # = người dùng đã đồng ý. Công tắc tắt ⇒ lời gọi như cũ.
+        # công tắc `sua_lich_hoi_truoc`, đường thẻ chọn (không gọi model): nút "Bỏ điểm này" cũng chỉ bỏ đúng điểm đó, không tự lấp buổi vừa trống; nút
+        # "Đổi chỗ hai tối" (câu hỏi trước khi hai buổi tối cùng đổi) đi đường này ⇒ cần luật gọi tên mục tối, và bấm nút = người dùng đã đồng ý.
+        # Công tắc tắt ⇒ lời gọi như cũ.
         kq = sl.ap(bang, luu, [], sua_chon=trace.sua_chon, luu_tru=luu_tru,
-                   **({"toi_goi_ten": True, "them_hoi_truoc": True, "dong_y_doi_toi": True} if flags.sua_lich_hoi_truoc and flags.toi_goi_ten else {}))
+                   **({"them_hoi_truoc": True, "dong_y_doi_toi": True, **({"toi_goi_ten": True} if flags.toi_goi_ten else {})} if flags.sua_lich_hoi_truoc else {}))
     else:
         call_log = CallLog()
         try:
