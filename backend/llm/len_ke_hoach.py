@@ -139,6 +139,12 @@ def gan_o_an(lich: dict, bang, khung: dict, flags: AssistantFlags) -> None:
         lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do)
 
 
+def ghi_cau_bi_loai(trace: AnswerTrace, id_muc: str, ma: str, cau: str) -> None:
+    """Câu model viết bị `kiem_cau` loại ⇒ giữ nguyên văn cho sổ vết (`core/so_vet.py`, chỉ máy local). Trước 23/11/2026 chỉ có mã lỗi nên không biết
+    model đã viết gì; câu là chữ của model về một điểm của bảng, không có chữ người dùng."""
+    trace.lich_v2.setdefault("cau_bi_loai", []).append({"id_muc": id_muc, "ma": ma, "cau": cau[:500]})
+
+
 def hoan_tat(trace: AnswerTrace, flags: AssistantFlags, cau: dict[str, str], loi: dict[str, str]) -> None:
     """Câu cuối ⇒ `answer` chữ thuần + kiểm citation trên sổ nguồn (mỗi dòng mang mã nguồn của điểm)."""
     trace.lich_v2.update(cau=cau, loi_cau=dict(Counter(loi.values())), so_cau_du_phong=len(loi))
@@ -160,7 +166,13 @@ async def answer_v2(query: str, retrieval_service, context_builder, generator, t
     finally:
         trace.generation_ms = elapsed_ms(started)
         record_llm_calls(trace, call_log.calls, ROUTE_TRO_LY_HUE)
-    hoan_tat(trace, flags, *lt2.chon_cau(flags.bang_lich_v2, trace.lich_v2["lich"], tu_model))
+    cau, loi = lt2.chon_cau(flags.bang_lich_v2, trace.lich_v2["lich"], tu_model)
+    da_ghi: set[str] = set()
+    for x in tu_model:  # `chon_cau` lấy phần tử ĐẦU của mỗi id ⇒ ghi đúng câu đó
+        if loi.get(x.get("id_muc")) not in (None, "thieu") and x["id_muc"] not in da_ghi:
+            da_ghi.add(x["id_muc"])
+            ghi_cau_bi_loai(trace, x["id_muc"], loi[x["id_muc"]], x.get("cau") or "")
+    hoan_tat(trace, flags, cau, loi)
 
 
 async def stream_v2(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, flags: AssistantFlags, today: str | None,
@@ -216,6 +228,7 @@ async def stream_v2(query: str, retrieval_service, context_builder, generator, t
                         da_phat[id_muc] = lt2.cau_du_phong(bang, muc[id_muc]) if ma else x["cau"].strip()
                         if ma:
                             loi[id_muc] = ma
+                            ghi_cau_bi_loai(trace, id_muc, ma, x.get("cau") or "")
                         yield "lich_cau", {"id_muc": id_muc, "cau": da_phat[id_muc]}
         trace.generated, _ = generator.finish_lich_v2_stream(result, call_log, generator_started)  # khuôn sai ⇒ lỗi ⇒ dự phòng phần còn lại
     except LOI_MODEL as exc:

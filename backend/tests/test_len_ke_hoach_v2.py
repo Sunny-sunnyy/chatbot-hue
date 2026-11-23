@@ -502,6 +502,27 @@ def test_v2_sentence_checks(app_client):
     assert v2.chon_cau(b, lich, [{"id_muc": m[3]["id_muc"], "cau": tot}])[0][m[3]["id_muc"]] == tot
 
 
+def test_v2_comparison_after_own_name_is_kept_wrong_place_is_not(tmp_path):
+    """23/11/2026: câu tả Lăng Thiệu Trị nhắc hai lăng tiền nhiệm để SO SÁNH (đúng tư liệu) bị thay bằng câu dự phòng ở 11 / 25 lịch mặc định trên
+    model đang chạy. Ba câu đầu là nguyên văn model viết ở lượt thật. Câu tả NHẦM sang điểm khác vẫn bị loại."""
+    b = _bang(tmp_path, [_diem("lang_thieu_tri", "thuy_xuan"), _diem("lang_gia_long", "lang_xa"), _diem("lang_minh_mang", "lang_xa")])
+    for i, ten, khac in (("lang_thieu_tri", "Lăng Thiệu Trị", ["Xương Lăng"]), ("lang_gia_long", "Lăng Gia Long", ["Thiên Thọ Lăng"]),
+                         ("lang_minh_mang", "Lăng Minh Mạng", ["Hiếu Lăng"])):
+        b.theo_id[i]["ten"], b.theo_id[i]["ten_khac"] = ten, khac
+    muc = {"id_diem": "lang_thieu_tri", "nguon": 7, "ten": "Lăng Thiệu Trị"}
+    for that in ("Xương Lăng của vua Thiệu Trị kết hợp phong cách tự nhiên của Lăng Gia Long với quy thức đăng đối của Lăng Minh Mạng, được bao quanh "
+                 "bởi cánh đồng lúa, đồi thông và hồ sen. [7]",
+                 "Lăng Thiệu Trị (Xương Lăng) kết hợp phong cách của lăng Gia Long và lăng Minh Mạng, xung quanh là đồng lúa, đồi thông và hồ sen [7].",
+                 "Lăng Thiệu Trị (Xương Lăng) được xây dựng hoàn toàn sau khi nhà vua băng hà, hoàn tất trong chưa đầy 10 tháng. Quanh lăng là đồng "
+                 "lúa, đồi thông và hồ sen, kiến trúc kết hợp phong cách Lăng Gia Long và Lăng Minh Mạng [7]."):
+        assert v2.kiem_cau(b, muc, that) is None
+    for nham in ("Lăng Minh Mạng có hồ Trừng Minh và Minh Lâu [7].",                                # chưa hề gọi tên điểm này
+                 "Kết hợp phong cách của Lăng Gia Long và Hiếu Lăng [7].",                          # như trên, qua bí danh
+                 "Xương Lăng nằm giữa đồng lúa. Lăng Minh Mạng có hồ Trừng Minh và Minh Lâu [7].",  # câu thứ hai MỞ ĐẦU bằng điểm khác
+                 "Giống Lăng Gia Long, Xương Lăng không có La thành [7]."):                         # điểm khác đứng trước tên điểm này
+        assert v2.kiem_cau(b, muc, nham) == "ten_khac"
+
+
 def test_v2_sub_name_inside_own_name_is_not_another_place(tmp_path):
     """Tên một điểm khác nằm trong chính tên điểm này (tên con trong điểm lớn) ⇒ không thay câu — ca plan (c) dặn đếm."""
     b = _bang(tmp_path, [_diem("lon", "kinh_thanh"), _diem("con", "kinh_thanh"), _diem("xa", "bo_nam")])
