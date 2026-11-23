@@ -150,7 +150,9 @@ function CotLich({ lichTurn, onEditPlan, onXep, pending }) {
 }
 
 export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, onEditPlan }) {
-  const [chon, setChon] = useState(() => tuTruong(prefill));
+  // Rời trang rồi quay lại: thẻ lịch cũ vẫn hiện nhưng biểu mẫu từng về mặc định ("2 người lớn") ⇒ bấm "Xếp lịch" lần nữa ra lịch của đoàn KHÁC với thẻ
+  // đang hiện, không báo gì (lượt trình duyệt 23/11/2026: lịch có 1 trẻ em, biểu mẫu mất trẻ em). Không có `prefill` thì điền theo biểu mẫu của lịch đang hiện.
+  const [chon, setChon] = useState(() => tuTruong(prefill ?? lichTurn?.truong));
   useEffect(() => { if (prefill) setChon(tuTruong(prefill)); }, [prefill]);
   const hien = new Set(cauHinh.o_hien);
   const doi = (ten, giaTri) => setChon(old => ({ ...old, [ten]: giaTri }));

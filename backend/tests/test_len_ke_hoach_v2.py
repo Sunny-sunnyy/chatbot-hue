@@ -1174,3 +1174,18 @@ def test_edit_turn_that_changes_nothing_keeps_the_saved_plan_and_its_storm_sente
     an_toan_vao_ghi_chu(bieu_mau)
     luu_lich_cua_luot(store, cid, bieu_mau, flags)
     assert "an_toan" not in store.lay_lich(cid) and tt.CAU_BAO_LU not in tai() and bieu_mau.notice is None
+
+
+def test_group_with_children_or_elderly_that_chose_a_faster_pace_is_told_the_choice_was_changed():
+    """Đoàn có trẻ nhỏ / người lớn tuổi luôn được xếp nhẹ nhàng; khi họ TỰ CHỌN mức khác thì ghi chú phải nói lựa chọn đó đã bị đổi (lượt trình duyệt
+    23/11/2026: chọn "Cân bằng", lịch nhẹ nhàng, không dòng nào nói). Không chọn kiểu đi / chọn nhẹ nhàng / đoàn thường ⇒ không có dòng này."""
+    from llm import lich_trinh_v2 as v2
+    bang = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True).bang_lich_v2
+    def ghi_chu(**ts):
+        k = v2.xep_v2(bang, v2.ThamSoV2(2, **ts))
+        return [g["ma"] for g in v2.dung_lich(bang, k, {})["ghi_chu"]], [g["cau"] for g in v2.dung_lich(bang, k, {})["ghi_chu"]]
+    ma, cau = ghi_chu(tre_em=1, kieu_di="can_bang")
+    assert ma[:2] == ["han_che_doi_kieu", "han_che"] and cau[0] == "Bạn chọn đi cân bằng, nhưng đoàn có trẻ em hoặc người lớn tuổi nên lịch này được xếp ở mức nhẹ nhàng."
+    assert "khám phá nhiều" in ghi_chu(lon_tuoi=True, kieu_di="kham_pha")[1][0]
+    for ts in (dict(tre_em=1), dict(tre_em=1, kieu_di="nhe_nhang"), dict(kieu_di="can_bang"), dict()):
+        assert "han_che_doi_kieu" not in ghi_chu(**ts)[0]
