@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { baiHref } from "./route.js";
 import "./vi_sao.css";
 
@@ -53,8 +53,41 @@ function NoiDung({ d, turn }) {
   const goi = d.goi_model || [], buoc = d.buoc || [], nguon = d.nguon || [], ghiChu = d.ghi_chu || [];
   const modelDoc = d.sua_lich?.model_doc || [], ketQua = d.sua_lich?.ket_qua || [];
   const soTim = buoc.filter(b => b.loai === "tim").length;
-  let thuTu = 0;  // số của từng nhóm đánh theo nhóm THẬT có mặt (lượt sửa lịch không có nhóm tìm kho…)
-  const Dau = ({ children }) => <h4><i aria-hidden="true">{++thuTu}</i>{children}</h4>;
+  const laLich = d.loai === "sua_lich" || d.loai === "lap_lich";
+  // Các nhóm THẬT có mặt của lượt này, mỗi nhóm [tiêu đề, thân]; số của nhóm = vị trí trong mảng (lượt sửa lịch không có nhóm tìm kho…).
+  // Không đếm bằng biến tăng dần lúc vẽ: chế độ dev vẽ mỗi thành phần hai lần (StrictMode) thì số nhảy 2, 4, 6.
+  const nhom = [
+    // thứ tự in = thứ tự server ghi; vài lời gọi chạy song song (phân loại ↔ hiểu câu lệnh) nên không ghi "theo thứ tự"
+    goi.length > 0 && [`${goi.length} lần gọi model`,
+      <ol className="vi-sao-goi">{goi.map((g, i) => <li key={i}><b>{g.nhan}</b>{g.giay != null && <small>{giay(g.giay)}</small>}</li>)}</ol>],
+    // hai danh sách rời: server không ghi phép nối từng hành động ↔ từng dòng kết quả. `duoc: false` gồm cả dòng thông tin ("Mình không tự thêm
+    // điểm khác…"), không chỉ việc không làm được ⇒ không gắn nhãn, không tô đỏ
+    (modelDoc.length > 0 || ketQua.length > 0) && ["Model đọc câu lệnh, code áp lên lịch",
+      <>
+        {modelDoc.length > 0 && (
+          <ul className="vi-sao-hd"><li className="vi-sao-hd-dau">Model đọc ra:</li>{modelDoc.map((h, i) => <li key={i}>{h.nhan}</li>)}</ul>
+        )}
+        {ketQua.length > 0 && (
+          <ul className="vi-sao-hd"><li className="vi-sao-hd-dau">Code làm:</li>
+            {ketQua.map((k, i) => <li key={i}>{k.duoc && <span>đã làm</span>}{k.cau}</li>)}</ul>
+        )}
+      </>],
+    buoc.length > 0 && [soTim === buoc.length ? `Đã tìm gì trong kho tư liệu (${soTim} lần tìm)` : `Tìm trong kho và gọi công cụ, theo thứ tự (${buoc.length} bước)`,
+      <CacBuoc buoc={buoc} />],
+    d.web && ["Tra web sau khi kho không đủ",
+      <p className="vi-sao-web">Câu đem đi tra: <q>{d.web.cau}</q>{d.web.so_nguon != null && <> · {d.web.so_nguon} nguồn web</>}</p>],
+    nguon.length > 0 && [`${laLich ? "Câu tả các điểm trong lịch" : "Câu trả lời"} dựa vào ${nguon.length} nguồn`,
+      <ul className="vi-sao-nguon">
+        {/* `ma` là mã gốc của đoạn; câu trả lời trên màn hình đánh số lại ⇒ in đúng số người xem đang thấy, xếp theo số đó */}
+        {nguon.map(n => ({ ...n, so: turn.numbers?.get(String(n.ma)) ?? n.ma })).sort((a, b) => a.so - b.so).map(n => (
+          <li key={n.ma}>
+            <span className="vi-sao-ma">[{n.so}]</span>
+            <span>{n.bai_id ? <a href={baiHref(n.bai_id)}>{n.title}</a> : <b>{n.title}</b>}{n.muc && <small>{n.muc}</small>}</span>
+          </li>
+        ))}
+      </ul>],
+    d.thoi_gian?.tong > 0 && [`Mất bao lâu — tổng ${giay(d.thoi_gian.tong)}`, <ThoiGian t={d.thoi_gian} />],
+  ].filter(Boolean);
   return (
     <>
       <h3>Trợ lý đã làm gì để ra câu trả lời này</h3>
@@ -63,61 +96,9 @@ function NoiDung({ d, turn }) {
       {d.cau?.gui && (
         <p className="vi-sao-cau">Bạn gõ: <q>{d.cau.go}</q><br />Hệ thống đem đi xử lý: <q>{d.cau.gui}</q></p>
       )}
-      {goi.length > 0 && (
-        <>
-          {/* thứ tự in = thứ tự server ghi; vài lời gọi chạy song song (phân loại ↔ hiểu câu lệnh) nên không ghi "theo thứ tự" */}
-          <Dau>{goi.length} lần gọi model</Dau>
-          <ol className="vi-sao-goi">
-            {goi.map((g, i) => <li key={i}><b>{g.nhan}</b>{g.giay != null && <small>{giay(g.giay)}</small>}</li>)}
-          </ol>
-        </>
-      )}
-      {(modelDoc.length > 0 || ketQua.length > 0) && (
-        <>
-          <Dau>Model đọc câu lệnh, code áp lên lịch</Dau>
-          {/* hai danh sách rời: server không ghi phép nối từng hành động ↔ từng dòng kết quả */}
-          {modelDoc.length > 0 && (
-            <ul className="vi-sao-hd"><li className="vi-sao-hd-dau">Model đọc ra:</li>{modelDoc.map((h, i) => <li key={i}>{h.nhan}</li>)}</ul>
-          )}
-          {ketQua.length > 0 && (
-            <ul className="vi-sao-hd"><li className="vi-sao-hd-dau">Code làm:</li>
-              {/* `duoc: false` gồm cả dòng thông tin ("Mình không tự thêm điểm khác…"), không chỉ việc không làm được ⇒ không gắn nhãn, không tô đỏ */}
-              {ketQua.map((k, i) => <li key={i}>{k.duoc && <span>đã làm</span>}{k.cau}</li>)}</ul>
-          )}
-        </>
-      )}
-      {buoc.length > 0 && (
-        <>
-          <Dau>{soTim === buoc.length ? `Đã tìm gì trong kho tư liệu (${soTim} lần tìm)` : `Tìm trong kho và gọi công cụ, theo thứ tự (${buoc.length} bước)`}</Dau>
-          <CacBuoc buoc={buoc} />
-        </>
-      )}
-      {d.web && (
-        <>
-          <Dau>Tra web sau khi kho không đủ</Dau>
-          <p className="vi-sao-web">Câu đem đi tra: <q>{d.web.cau}</q>{d.web.so_nguon != null && <> · {d.web.so_nguon} nguồn web</>}</p>
-        </>
-      )}
-      {nguon.length > 0 && (
-        <>
-          <Dau>{d.loai === "sua_lich" || d.loai === "lap_lich" ? "Câu tả các điểm trong lịch" : "Câu trả lời"} dựa vào {nguon.length} nguồn</Dau>
-          <ul className="vi-sao-nguon">
-            {/* `ma` là mã gốc của đoạn; câu trả lời trên màn hình đánh số lại ⇒ in đúng số người xem đang thấy, xếp theo số đó */}
-            {nguon.map(n => ({ ...n, so: turn.numbers?.get(String(n.ma)) ?? n.ma })).sort((a, b) => a.so - b.so).map(n => (
-              <li key={n.ma}>
-                <span className="vi-sao-ma">[{n.so}]</span>
-                <span>{n.bai_id ? <a href={baiHref(n.bai_id)}>{n.title}</a> : <b>{n.title}</b>}{n.muc && <small>{n.muc}</small>}</span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-      {d.thoi_gian?.tong > 0 && (
-        <>
-          <Dau>Mất bao lâu — tổng {giay(d.thoi_gian.tong)}</Dau>
-          <ThoiGian t={d.thoi_gian} />
-        </>
-      )}
+      {nhom.map(([tieuDe, than], i) => (
+        <Fragment key={tieuDe}><h4><i aria-hidden="true">{i + 1}</i>{tieuDe}</h4>{than}</Fragment>
+      ))}
       {ghiChu.length > 0 && <ul className="vi-sao-ghi">{ghiChu.map((c, i) => <li key={i}>{c}</li>)}</ul>}
     </>
   );
