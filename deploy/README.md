@@ -73,5 +73,5 @@ chữ chạy dần của model đi qua cửa vào tới trình duyệt · dừng
 | IP tĩnh · Session Manager · dừng / bật máy · nhiều hộp bằng Docker Compose · Caddy tự xin chứng chỉ | chưa gặp | MỚI — guide 3, 4, 6 giảng từ đầu |
 | "Co về 0", "khởi động lạnh" | tuần 2 ngày 1 — đã học | co về 0 BẰNG TAY (dừng máy); bật lại trước giờ demo |
 | "Có trạng thái ↔ không trạng thái" | tuần 2 ngày 1, tuần 3 ngày 4 — đã học | lý do chia hai tầng; lý do dừng máy là mất cuộc đang mở |
-| OpenAI: nạp trước, hết là ngừng ↔ AWS: chỉ cảnh báo | tuần 1 — đã làm | guide 0 Bước 9, guide 1 mục 9 |
+| OpenAI: nạp trước, hết là ngừng ↔ AWS: chỉ cảnh báo | tuần 1 — đã làm | guide 0 Bước 9, guide 1 mục 9 — ở hue_rag viết đúng là KHÔNG ngừng tức thời (guide 0 Bước 9) |
 | Trần chi phí đặt cứng (số lượt chạy cùng lúc = 2) | tuần 1 ngày 5 — đã làm | trần lượt mỗi ngày trong ứng dụng, vượt thì trả lỗi 429 |
