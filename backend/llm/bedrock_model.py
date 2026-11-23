@@ -23,7 +23,9 @@ Các giới hạn đã đo thật trên bộ khoá đang dùng (46 lời gọi s
 import datetime as dt
 import hashlib
 import hmac
+import asyncio
 import json
+import logging
 from pathlib import Path
 import re
 from typing import Any
@@ -57,6 +59,15 @@ ANSWER_TOOL_DESCRIPTION = ("Nộp câu trả lời cuối cùng cho người dù
 HISTORY_GAP = "(Câu trả lời của lượt này không được lưu trong lịch sử.)"
 CODE_FENCE = re.compile(r"^```(?:json)?\s*(?P<body>.*?)\s*```$", re.DOTALL)
 DATA_URL = re.compile(r"^data:(?P<media>[\w/+.-]+);base64,(?P<data>.+)$", re.DOTALL)
+
+
+logger = logging.getLogger("llm.full_corpus")
+# 23/11/2026: Bedrock trả 5xx thoáng qua KHÔNG phụ thuộc câu hỏi (lượt thật: một lần 500 ở lần viết cuối của một tin bốn ý sáng 23/11 — lượt kế 26
+# giây sau bình thường; một lần 503 ở lượt đo 22/11) ⇒ người dùng thấy màn "Thử lại" cho một lỗi tự hết. Gọi lại ĐÚNG lời gọi đó MỘT lần sau một
+# nhịp chờ ngắn; lần hai vẫn 5xx ⇒ lỗi đi ra như cũ. KHÔNG gọi lại: 4xx (403 khoá hỏng, 429 quá hạn mức — gọi lại không chữa được) và lỗi mạng /
+# hết giờ (chưa thấy trên lượt thật; hết giờ mà gọi lại thì người dùng chờ gấp đôi).
+MA_GOI_LAI = frozenset({500, 502, 503, 504})
+CHO_GOI_LAI_GIAY = 1.0
 
 
 class BedrockError(GenerationError):
@@ -274,6 +285,11 @@ class BedrockClaudeModel(Model):
             raise BedrockError(f"Không đọc được file khoá Bedrock: {type(exc).__name__}") from None
         try:
             reply = await self.http.post(f"https://{self.host}{path}", content=raw, headers=headers)
+            if reply.status_code in MA_GOI_LAI:  # lỗi thoáng qua phía nhà cung cấp ⇒ gọi lại MỘT lần (ký lại: chữ ký mang giờ gửi)
+                logger.warning("bedrock_goi_lai status=%s", reply.status_code)  # dòng đếm được: tần suất 5xx phải gọi lại
+                await asyncio.sleep(CHO_GOI_LAI_GIAY)
+                headers = sign_headers("POST", self.host, path, raw, self.region, creds, dt.datetime.now(dt.timezone.utc))
+                reply = await self.http.post(f"https://{self.host}{path}", content=raw, headers=headers)
         except httpx.HTTPError as exc:  # hết giờ, rớt mạng
             raise BedrockError(f"Bedrock request failed: {type(exc).__name__}") from exc
         if reply.status_code == 403:
