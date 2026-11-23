@@ -1189,3 +1189,33 @@ def test_group_with_children_or_elderly_that_chose_a_faster_pace_is_told_the_cho
     assert "khám phá nhiều" in ghi_chu(lon_tuoi=True, kieu_di="kham_pha")[1][0]
     for ts in (dict(tre_em=1), dict(tre_em=1, kieu_di="nhe_nhang"), dict(kieu_di="can_bang"), dict()):
         assert "han_che_doi_kieu" not in ghi_chu(**ts)[0]
+
+
+def test_changed_pace_line_only_when_the_user_really_chose_a_pace_also_after_edits():
+    """Lượt trình duyệt cuối 23/11/2026: đoàn có 1 trẻ em KHÔNG chọn kiểu đi; sau lệnh sửa "thêm Hổ Quyền" khối ghi chú hiện thêm "Bạn chọn đi cân bằng, nhưng…" —
+    tham số lưu mang kiểu đi MẶC ĐỊNH và đường sửa lịch đọc nó như lựa chọn của người dùng. Dòng đó chỉ có khi người dùng thật sự chọn mức khác nhẹ
+    nhàng (ở biểu mẫu hoặc bằng lời), ở lượt xếp lẫn mọi lượt sửa."""
+    from llm import lich_trinh_v2 as v2, sua_lich_v2 as s
+    bang = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True).bang_lich_v2
+    co_dong = lambda khung: "han_che_doi_kieu" in [g["ma"] for g in v2.dung_lich(bang, khung, {})["ghi_chu"]]
+    def sua(khung, **hd):
+        kq = s.ap(bang, s.luu_tu_lich(khung, None, None), [s.HanhDong(**hd)], them_khong_the=True, them_day=True, them_han_che=True)
+        assert kq["da_ap"], kq["khong_doi"]
+        return kq["khung"]
+    mot_diem = lambda khung: bang.theo_id[khung["ngay"][0]["buoi"]["sang"][0]]["ten"]
+    # (1) không chọn kiểu đi: không có dòng, kể cả sau hai lượt sửa
+    k = v2.xep_v2(bang, v2.tu_truong({"so_ngay": 2, "nguoi_lon": 2, "tre_em": 1}))
+    assert not co_dong(k)
+    k1 = sua(k, loai="bo_diem", ten=mot_diem(k))
+    assert not co_dong(k1) and not co_dong(sua(k1, loai="doi_so_ngay", so_ngay=3))
+    # (2) chọn "cân bằng" ở biểu mẫu: có dòng, và còn sau lượt sửa
+    k = v2.xep_v2(bang, v2.tu_truong({"so_ngay": 2, "nguoi_lon": 2, "tre_em": 1, "kieu_di": "can_bang"}))
+    assert co_dong(k) and co_dong(sua(k, loai="bo_diem", ten=mot_diem(k)))
+    # (3) đoàn thường không chọn kiểu đi, rồi thêm trẻ em BẰNG LỜI: không có dòng; đoàn thường chọn "khám phá" rồi thêm trẻ em: có dòng
+    k = v2.xep_v2(bang, v2.tu_truong({"so_ngay": 2, "nguoi_lon": 2}))
+    assert not co_dong(sua(k, loai="doi_tham_so", tre_em=1))
+    k = v2.xep_v2(bang, v2.tu_truong({"so_ngay": 2, "nguoi_lon": 2, "kieu_di": "kham_pha"}))
+    assert co_dong(sua(k, loai="doi_tham_so", tre_em=1))
+    # (4) đoàn có trẻ em không chọn kiểu đi, rồi NÓI "đi cân bằng" (trùng mức mặc định): nay là lựa chọn thật ⇒ có dòng
+    k = v2.xep_v2(bang, v2.tu_truong({"so_ngay": 2, "nguoi_lon": 2, "tre_em": 1}))
+    assert co_dong(sua(k, loai="doi_tham_so", kieu_di="can_bang"))

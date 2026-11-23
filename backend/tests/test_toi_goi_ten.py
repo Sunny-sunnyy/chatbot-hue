@@ -60,7 +60,10 @@ def test_every_named_replacement_on_the_form_grid_lands_on_that_evening_only_or_
                     assert kq["khung"] == k and len(kq["khong_doi"]) == 1
                     ma = kq["khong_doi"][0]["ma_luat"]
                     assert ma == ("toi_ten_ban_ngay" if y in vt else "toi_ten_theo_thu"), (ma, y)
-                    assert _ten(y) in s.thay_doi(B, kq)[0]["cau"]
+                    cau = s.thay_doi(B, kq)[0]["cau"]
+                    assert _ten(y) in cau
+                    if ma == "toi_ten_theo_thu":  # câu nói rõ nơi đó mở tối nào và cách để đặt được
+                        assert all(s.THU[t] in cau for t in B.theo_id[y]["ngay_hoat_dong"]) and "chọn ngày đi ở biểu mẫu" in cau
                     dem[ma] += 1
                     continue
                 assert v2.kiem_khung_v2(B, kq["khung"]) == [] and _ban_ngay(kq["khung"]) == _ban_ngay(k) and sau[d] == y

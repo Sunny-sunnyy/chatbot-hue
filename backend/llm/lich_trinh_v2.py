@@ -149,6 +149,10 @@ class ThamSoV2:
     # động đang có ở mọi lần xếp lại sau đó (không ghim thì bỏ một mục làm cả dãy buổi tối dồn hàng: đếm 23/11, 412 / 652 lệnh bỏ làm đổi tối ngày khác).
     # Rỗng ⇒ không có khoá trong `tham_so` của khung (trạng thái lưu giống byte bản trước).
     toi_chon: tuple[tuple[int, str], ...] = ()
+    # Kiểu đi của lịch là mức MẶC ĐỊNH, người dùng chưa chọn. Khung lưu `kieu_di` đã quy về mức thật ⇒ lượt sửa lịch đọc lại không còn phân biệt được
+    # "mặc định" với "người dùng chọn" (lượt trình duyệt 23/11/2026: đoàn có trẻ em không chọn kiểu đi, sau một lệnh sửa hiện "Bạn chọn đi cân bằng…").
+    # Dấu này đi theo `tham_so` của khung qua mọi lượt sửa; người dùng nêu kiểu đi (biểu mẫu / bằng lời) thì hết dấu. Chỉ dùng cho dòng ghi chú đó.
+    kieu_chua_chon: bool = False
 
     @property
     def han_che(self) -> bool:
@@ -258,6 +262,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     giu = {i: v for i, v in (giu or {}).items() if v[0] <= n and v[1] in BUOI_NGAY and i not in loai}
     ngay_cua = (lambda i: None) if ngay_bat_dau is None else (lambda i: ngay_bat_dau + dt.timedelta(days=i - 1))
     kieu = ts.kieu_di or KIEU_DI_MAC_DINH
+    chua_chon = ts.kieu_di is None or ts.kieu_chua_chon  # người dùng chưa chọn kiểu đi (lượt xếp: ô để trống; lượt sửa: dấu của khung đã lưu)
     quy = None if ts.han_che else QUY[kieu]  # nhóm hạn chế: trần là "nhẹ nhàng" (spec 3.1)
     bo = ({d["id"] for d in bang.diem if d["cum"] == CUM_XA} if n < 3 else set()) | set(loai)
     pool, lap, uu = thu_tu_xet(bang, ts.so_thich, bo)
@@ -378,7 +383,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     # `han_che_doi_kieu` (23/11/2026, lượt trình duyệt): đoàn có trẻ nhỏ / người lớn tuổi TỰ CHỌN "cân bằng" / "khám phá" vẫn được xếp nhẹ nhàng — trước đây
     # ghi chú không nói lựa chọn của họ đã bị đổi (dòng tóm biểu mẫu và dòng đầu file .txt vẫn ghi mức họ chọn). Không chọn kiểu đi ⇒ không có dòng này.
     gia_dinh = (["kieu_di"] if ts.kieu_di is None and not ts.han_che else []) + \
-        (["han_che_doi_kieu"] if ts.han_che and ts.kieu_di not in (None, "nhe_nhang") else []) + \
+        (["han_che_doi_kieu"] if ts.han_che and not chua_chon and ts.kieu_di != "nhe_nhang" else []) + \
         ([("han_che_toi" if bang.toi_nhe else "han_che")] if ts.han_che else []) + \
         (["so_thich"] if not ts.so_thich else [])
     ngays = [ngay_cua(i) for i in range(1, n + 1)]
@@ -389,7 +394,8 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
                         "so_thich": list(ts.so_thich),
                         # chỉ khi có chọn ⇒ không chọn thì khung / trạng thái lưu giống byte bản trước; sửa lịch xếp lại qua đây ⇒ giữ mức
                         **({"ngan_sach": ts.ngan_sach} if ts.ngan_sach else {}), **({"toi_trong": list(ts.toi_trong)} if ts.toi_trong else {}),
-                        **({"toi_chon": [list(x) for x in ts.toi_chon]} if ts.toi_chon else {})},
+                        **({"toi_chon": [list(x) for x in ts.toi_chon]} if ts.toi_chon else {}),
+                        **({"kieu_chua_chon": True} if chua_chon else {})},
             "ngay": ngay, "ngoai_so_thich": ngoai, "hop_so_thich": sorted(hop_so_thich & set(da_xep)), "thieu_uu_tien": thieu,
             "thay_bac_thang": [{"diem": k, "thay": v} for k, v in bi_thay.items() if k not in da_xep], "gia_dinh": gia_dinh,
             "ngay_thang": [None if x is None else x.isoformat() for x in ngays], "tam_dung_mua": tam_dung_uu,
@@ -864,6 +870,7 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
     # khung giữ nguyên lựa chọn của người dùng (bỏ trẻ nhỏ khỏi đoàn bằng lệnh sửa thì kiểu đi cũ dùng lại).
     if ts["tre_em"] >= 1 or ts["lon_tuoi"]:
         ts = {**ts, "kieu_di": "nhe_nhang"}
+    ts = {k: v for k, v in ts.items() if k != "kieu_chua_chon"}  # dấu nội bộ của khung đã lưu — không gửi ra giao diện (lịch gửi đi giống byte bản trước)
     return {"phien_ban": 2, "tham_so": {**ts, "ngay_di": ngay_di}, "minh_hieu": dong_minh_hieu_v2(ts, ngay_di), "ngay": ngay,
             "o_dau": None, "ghi_chu": ghi_chu}
 
