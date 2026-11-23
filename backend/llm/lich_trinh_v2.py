@@ -634,6 +634,12 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
     ts = khung["tham_so"]
     ghi_chu = [{"ma": "mua_mua", "cau": bang.nhac_mua_chung["cau"]}] if khung.get("mua_mua") else []  # 5c.2 (iii): đầu khối, đúng một dòng
     ghi_chu += [{"ma": m, "cau": CAU_GHI_CHU[m]} for m in khung["gia_dinh"]]
+    # Hai công tắc buổi tối (23/11/2026): mục "nghỉ" không hiện trên thẻ (User 15/11) ⇒ tối trống có lý do riêng — người dùng đã bỏ, đoàn hạn chế hết mục
+    # nhẹ / ngày đi xa — phải có MỘT dòng ghi chú theo ngày, không thì thẻ, file xuất và bản in không nói gì về tối đó. Công tắc tắt ⇒ không mã nào có.
+    for ng in khung["ngay"]:
+        ma = khung.get("toi_nghi", {}).get(ng["ngay"])
+        if ma in ("da_bo", "het_nhe") or (ma == "xa" and "han_che_toi" in khung["gia_dinh"]):
+            ghi_chu.append({"ma": f"toi_{ma}", "cau": CAU_TOI[ma], "ngay": ng["ngay"]})
     if ts["tre_em"] or ts["lon_tuoi"]:  # bộ đo ý 2: nhóm hạn chế + điểm nhiều bậc thang còn trong lịch (không có điểm thay cùng khu) ⇒ ghi chú
         ghi_chu += [{"ma": "bac_thang", "cau": CAU_GHI_CHU["bac_thang"].format(diem=bang.theo_id[j]["ten"])}
                     for j in dict.fromkeys(diem_ban_ngay(khung)) if bang.theo_id[j]["bac_thang"] == "nhieu"]

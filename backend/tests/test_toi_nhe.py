@@ -47,6 +47,8 @@ def test_restricted_groups_get_one_light_evening_activity_without_repeats():
             else:
                 assert not xa
         assert "han_che_toi" in k["gia_dinh"] and "han_che" not in k["gia_dinh"]
+        gc = {g["ngay"]: g["ma"] for g in v2.dung_lich(B1, k, {})["ghi_chu"] if g["ma"].startswith("toi_")}
+        assert gc == {ng["ngay"]: "toi_" + k["toi_nghi"][ng["ngay"]] for ng in k["ngay"] if not ng["buoi"]["toi"]}  # mỗi tối trống có đúng một dòng lý do
     k = v2.xep_v2(B1, v2.ThamSoV2(2, kieu_di="nhe_nhang", tre_em=1))
     assert chon_duoc(k), "lịch 2 ngày nhẹ nhàng của đoàn có trẻ nhỏ phải có ít nhất một hoạt động tối"
     lich = v2.dung_lich(B1, k, {})
@@ -103,6 +105,10 @@ def test_removing_an_evening_activity_leaves_that_evening_empty_and_touches_noth
     assert m["tham_so"]["toi_trong"] == [2] and m["toi_nghi"][2] == "da_bo" and bo in kq["luu"]["loai"]
     cau = s.thay_doi(B1, kq)[0]["cau"]
     assert cau == f"Đã bỏ {B1.theo_id[bo]['ten']}; buổi tối ngày 2 để trống."
+    # thẻ lịch / file xuất sau đó vẫn nói tối ngày 2 để trống theo lời người dùng (một dòng ghi chú của ĐÚNG ngày đó)
+    gc = [g for g in v2.dung_lich(B1, m, {})["ghi_chu"] if g["ma"] == "toi_da_bo"]
+    assert [(g["ngay"], g["cau"]) for g in gc] == [(2, v2.CAU_TOI["da_bo"])]
+    assert not any(g["ma"].startswith("toi_") for g in v2.dung_lich(B1, k, {})["ghi_chu"])  # lịch chưa sửa: không dòng nào như vậy
 
     # sửa tiếp (bỏ một điểm ban ngày): bộ xếp chạy lại nhưng tối đã bỏ vẫn trống, hoạt động đã bỏ không quay lại ở tối nào
     x = next(j for row in _ban_ngay(m) for buoi in row for j in buoi)
