@@ -274,3 +274,30 @@ def test_removing_the_last_place_of_a_day_keeps_the_plan_and_offers_ways_out_ins
     assert k3["da_ap"] == [] and _dong(k3)["nut"][-1] == {"nhan": "Rút lịch còn 1 ngày", "gui": "đổi lịch còn 1 ngày"}
     rut = s.ap(B, luu2, [s.HanhDong(loai="doi_so_ngay", so_ngay=1)], **MOI)
     assert rut["khung"]["tham_so"]["so_ngay"] == 1 and not v2.kiem_khung_v2(B, rut["khung"])
+
+
+def test_after_a_removal_the_emptied_session_is_the_place_suggested_for_a_later_add():
+    """Lượt trình duyệt cả cụm 23/11/2026: bỏ điểm duy nhất của chiều ngày 1 (buổi đó để trống) rồi xin thêm một điểm vào một buổi không nhận được ⇒ gợi ý
+    từng là "buổi sáng ngày 1" (xếp theo ngày rồi buổi) dù buổi chiều ngày 1 đang trống cũng đặt được. Buổi mang dấu để trống không bị chặn — và nay
+    được nêu trước; thêm vào đó thì dấu tự gỡ. Công tắc tắt ⇒ cách chọn gợi ý y như cũ (hàm không nhận `khung`)."""
+    k, luu = _mac_dinh()
+    (chieu1,) = k["ngay"][0]["buoi"]["chieu"]
+    luu1 = _bo(luu, T[chieu1]["ten"], **MOI)["luu"]
+    k1, vt1 = luu1["khung"], s._vi_tri(luu1["khung"])
+    assert k1["buoi_trong"] == [[1, "chieu"]]
+    n = 0
+    for i, d in T.items():
+        if i in vt1 or i == chieu1 or "chieu" not in d["buoi"] or any(i in ng["buoi"]["toi"] for ng in k1["ngay"]):
+            continue
+        thang = [g for g in s._cach_them(B, luu1, s._ts(k1["tham_so"]), k1, vt1, list(luu1["loai"]), i, None, None, day=True, khu=True) if g["thay"] is None]
+        kq = _them(luu1, d["ten"], 2, "chieu", **MOI)
+        if kq["da_ap"] or not any((g["ngay"], g["buoi"]) == (1, "chieu") for g in thang):
+            continue
+        n += 1
+        (m,) = kq["khong_doi"]
+        assert [(g["ngay"], g["buoi"], g["thay"]) for g in m["cach"]] == [(1, "chieu", None)], d["ten"]  # buổi đang trống là chỗ được gợi ý
+        (nut,) = _dong(kq)["nut"]
+        assert nut == {"nhan": "Thêm vào buổi chiều ngày 1", "gui": f"thêm {d['ten']} vào buổi chiều ngày 1"}, d["ten"]
+        sau = _them(luu1, d["ten"], 1, "chieu", **MOI)["khung"]
+        assert s._vi_tri(sau)[i] == (1, "chieu") and "buoi_trong" not in sau and not v2.kiem_khung_v2(B, sau), d["ten"]
+    assert n >= 1
