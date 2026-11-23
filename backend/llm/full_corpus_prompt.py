@@ -340,6 +340,15 @@ def _kem_hoi(loi_dan: str) -> str:
 
 SUA_LICH_LOI_DAN_CHT_HOI = _kem_hoi(SUA_LICH_LOI_DAN_CHT)
 SUA_LICH_LOI_DAN_TOI_HOI = _kem_hoi(SUA_LICH_LOI_DAN_TOI)
+# Công tắc `bo_toi_hoi_lai` (23/11/2026; chủ dự án: bỏ hoạt động tối thì "nên hỏi lại người dùng đổi hoạt động hay là để trống"): model chỉ GHI LẠI người
+# dùng đã nói cách nào (`cach_toi`); chưa nói thì để trống — hỏi lại, đổi sang gì, để trống ra sao đều do code. Công tắc tắt ⇒ bản trên (giống byte).
+SUA_LICH_LOI_DAN_TOI_HOI_BO = SUA_LICH_LOI_DAN_TOI_HOI + (
+    "\n- bo_diem một hoạt động BUỔI TỐI của lịch (dòng \"tối\" của ngày): điền thêm cach_toi theo đúng điều người dùng nói — doi khi họ muốn đổi sang "
+    "một hoạt động tối KHÁC mà không nêu tên hoạt động mới (\"đổi hoạt động tối ngày 2 sang cái khác\", \"tối ngày 1 đổi cái khác đi\"); de_trong khi "
+    "họ muốn tối đó không có hoạt động nào (\"bỏ tối ngày 2, để trống\", \"tối ngày 1 cho nghỉ\"); họ chỉ bảo bỏ mà không nói đổi hay để trống ⇒ để "
+    "trống cach_toi, hệ thống sẽ hỏi lại họ. Không tự chọn thay họ. Người dùng không gọi tên hoạt động (\"bỏ hoạt động tối ngày 2\") ⇒ ten = tên hoạt "
+    "động đang đứng ở tối ngày đó trong lịch hiện tại, ngay = ngày đó."
+)
 
 # `{khong_ro}` = việc trả về khi ý người dùng không khớp kiểu đi nào (khuôn có `chua_ho_tro` hay không tuỳ cờ).
 SONNET_SUA_LICH = (

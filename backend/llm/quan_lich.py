@@ -138,6 +138,8 @@ def an_uong(theo_cum: dict, bang, khung: dict, toa_do: dict | None, kho_truoc: b
                     if any(q["nguon"] == "kho" for q in c):
                         diem, chon = j, c
                         break
+                    if not c and (j, bua) in GHI_CHU_AN:  # điểm có ghi chú ăn riêng của kho (không quán trong 2 km) ⇒ giữ ghi chú đó như vòng cũ
+                        break
             if not chon:
                 for j in ung_vien:
                     chon = chon_o(j)

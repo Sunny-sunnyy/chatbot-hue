@@ -113,8 +113,7 @@ def test_t5_thu_nho():
 def test_t6_kieu_dau_ra():
     Out = kieu_dau_ra(DS)
     assert Out.model_validate({"ung_vien": ["diem_a"], "khong_nhan_ra": False})
-    for bad in ({"ung_vien": ["la_lam"], "khong_nhan_ra": False}, {"ung_vien": ["diem_a"] * 4, "khong_nhan_ra": False},
-                {"ung_vien": [], "khong_nhan_ra": False, "giai_thich": "x"}):
+    for bad in ({"ung_vien": ["la_lam"], "khong_nhan_ra": False}, {"ung_vien": [], "khong_nhan_ra": False, "giai_thich": "x"}):
         with pytest.raises(ValidationError):
             Out.model_validate(bad)
     schema = json.dumps(Out.model_json_schema())
@@ -130,6 +129,14 @@ def test_t6_kiem_lai():
     assert kiem_lai(None, DS) == []
 
 
+def test_t6_qua_ba_ten_thi_cat_khong_bao_loi():
+    """Đường Bedrock gỡ `maxItems` khỏi khuôn gửi đi (`bedrock_model.UNSUPPORTED_SCHEMA_KEYS`) ⇒ model có thể trả 4 tên. Trước 23/11/2026 kiểu đầu ra
+    tự chặn ở 3 nên cả lượt thành lỗi "chưa nhận ra" dù model đã nhận ra; nay kiểu nhận, `kiem_lai` giữ ba tên đầu."""
+    Out = kieu_dau_ra(DS)
+    bon = Out.model_validate({"ung_vien": ["mon_d", "diem_a", "diem_b", "mon_c"], "khong_nhan_ra": False})
+    assert kiem_lai(bon, DS) == [{"id": "mon_d", "ten": "Món D"}, {"id": "diem_a", "ten": "Điểm A"}, {"id": "diem_b", "ten": "Điểm B"}]
+
+
 # T7 — nạp danh sách: id / tên trùng ⇒ lỗi khởi động
 def test_t7_nap_danh_sach(tmp_path):
     p = tmp_path / "ds.json"
@@ -142,12 +149,25 @@ def test_t7_nap_danh_sach(tmp_path):
             nap_danh_sach(p)
 
 
+def test_t6_xac_nhan_truoc_di_theo_ung_vien():
+    """Mục danh sách mang `xac_nhan_truoc` (nơi dễ bị nhầm với nơi khác không có trong danh sách — 23/11/2026: cầu Dã Viên ra "Cầu Trường Tiền")
+    ⇒ ứng viên trả về mang cờ đó để giao diện hiện thẻ xác nhận thay vì tự hỏi; mục không có cờ ⇒ ứng viên y như cũ (không thêm khoá)."""
+    ds = [{**DS[0], "xac_nhan_truoc": True}, *DS[1:]]
+    Out = kieu_dau_ra(ds)
+    assert kiem_lai(Out(ung_vien=["diem_a", "mon_c"], khong_nhan_ra=False), ds) == [
+        {"id": "diem_a", "ten": "Điểm A", "xac_nhan_truoc": True}, {"id": "mon_c", "ten": "Món C"}]
+
+
 def test_t7_danh_sach_that():
-    p = (BACKEND_DIR / "../data/phase_10/anh/danh_sach_ten.json").resolve()
-    if not p.exists():  # bản clone / worktree không có data/ (private)
-        pytest.skip("không có data/phase_10/anh/danh_sach_ten.json")
+    """Danh sách ĐANG CHẠY (đường dẫn ở `settings.yaml`) nạp được — id / khoá tên không trùng — và 42 tên chủ dự án duyệt 05/11 còn nguyên ở đầu."""
+    import yaml
+    duong = yaml.safe_load((BACKEND_DIR / "config" / "settings.yaml").read_text(encoding="utf-8"))["anh"]["danh_sach"]
+    p, goc = (BACKEND_DIR / duong).resolve(), (BACKEND_DIR / "../data/phase_10/anh/danh_sach_ten.json").resolve()
+    if not (p.exists() and goc.exists()):  # bản clone / worktree không có data/ (private)
+        pytest.skip("không có data/phase_10/anh/")
     ds = nap_danh_sach(p)
     assert len(ds) >= 40 and kieu_dau_ra(ds)
+    assert ds[:42] == nap_danh_sach(goc)
 
 
 # Mức route (không lifespan ⇒ không generator, không model): rào chạy trước khi đọc thân / gọi model

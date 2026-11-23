@@ -268,7 +268,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             ra = await generator.hieu_sua(sl.tin_nhan_hieu(bang, luu, query, **({"goi_y": goi_y} if goi_y else {})), call_log,
                                           **({"chua_ho_tro": True} if flags.sua_lich_chua_ho_tro else {}),  # cờ tắt ⇒ lời gọi như cũ
                                           **({"buoi_toi": True} if flags.sua_lich_buoi_toi else {}),
-                                          **({"kem_hoi": True} if flags.sua_lich_kem_hoi else {}))
+                                          **({"kem_hoi": True} if flags.sua_lich_kem_hoi else {}),
+                                          **({"bo_toi_hoi": True} if flags.bo_toi_hoi_lai else {}))
             # cờ `sua_lich_kem_hoi`: `hoi_them` không phải hành động sửa ⇒ tách ra TRƯỚC mọi bước cũ (tin chỉ có `hoi_them` ⇒ như danh sách rỗng ⇒
             # đường thường). Cờ tắt ⇒ khuôn không có loại này ⇒ `ra` giữ nguyên.
             hoi_them = any(h.loai == sl.HOI_THEM for h in ra)
@@ -303,7 +304,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
                    **({"them_khong_the": True} if flags.sua_lich_them_khong_the else {}),  # cờ tắt ⇒ lời gọi như cũ
                    **({"them_day": True} if flags.sua_lich_them_day else {}),
                    **({"them_khu": True} if flags.sua_lich_them_khu else {}),
-                   **({"bo_toi_de_trong": True} if flags.bo_toi_de_trong else {}))
+                   **({"bo_toi_de_trong": True} if flags.bo_toi_de_trong else {}),
+                   **({"bo_toi_hoi_lai": True} if flags.bo_toi_hoi_lai else {}))
         kq["chua_lam"] += [h.loai for h in khong_neo]  # lượt còn ý sửa khác: ý bỏ / thay không neo được nói ra ("Chưa làm: bỏ điểm"), không bỏ lặng
         # (C 17/11) model đã nhận là câu sửa: "đổi chỗ ngày 1 với ngày 2" từng ra "Chưa làm: đổi số ngày"; ý đổi chỗ ngày đi kèm ý làm được từng bị bỏ lặng
         if sl.la_viec_ngay_chua_lam(query) and not any(f == "so_ngay" for f, _, _ in kq["doi_truong"]):  # "gộp…" đã ra đổi số ngày ⇒ không báo ngược

@@ -285,7 +285,9 @@
      đó. Thanh menu ngắn lại (832 px) ⇒ chữ in to lên 22 %, lịch ví dụ từ 2 trang thành 3. Giờ thanh menu ra khỏi bố cục in, bề rộng 1019 px đặt thẳng
      ở `body` ⇒ bản in không còn đổi theo thanh menu. Muốn chữ in to hơn: giảm số này (và soát lại chỗ ngắt trang). */
   html.in-lich .hd { display: none; }
-  html.in-lich body { min-width: 1019px; }
+  /* 23/11/2026 (chủ dự án chọn chữ in to hơn, khoảng 9–10 pt, nhận lịch dài thêm khoảng một trang): 1019 ⇒ 860 px ⇒ tỉ lệ thu 688 / 860 = 80 % (trước 67,5 %):
+     câu tả / ghi chú 7,8 ⇒ 9,3 pt · tên điểm 9,1 ⇒ 10,8 pt · dòng quán 7,6 ⇒ 9,0 pt; lịch mặc định và lịch ví dụ 2 ⇒ 3 trang (in thử ra PDF). */
+  html.in-lich body { min-width: 860px; }
   html.in-lich, html.in-lich body { background: var(--color-surface) !important; }
   html.in-lich body * { visibility: hidden; }
   html.in-lich .lkh-dang-in, html.in-lich .lkh-dang-in * { visibility: visible; }
@@ -311,6 +313,10 @@
   html.in-lich .lkh-dang-in .lich-ngay:not(:has(~ .lich-ngay)) { break-inside: auto; }
   html.in-lich .lkh-dang-in .lkh-muc { break-inside: avoid; opacity: 1 !important; transform: none !important; animation: none !important; }
   html.in-lich .lkh-dang-in a { color: inherit; text-decoration: none; }
+  /* chữ to hơn ⇒ khối "Nơi ở gợi ý" và khối quán ăn hay rơi vào chỗ ngắt trang: mỗi thẻ khách sạn / mỗi bữa đi nguyên khối (in thử 23/11/2026: thẻ khách
+     sạn thứ tư bị cắt đôi — tên ở cuối trang 2, địa chỉ ở đầu trang 3); tiêu đề + dòng lý do của khối nơi ở không đứng một mình ở cuối trang */
+  html.in-lich .lkh-dang-in .lkh-o li, html.in-lich .lkh-dang-in .lkh-an li { break-inside: avoid; }
+  html.in-lich .lkh-dang-in .lkh-o-h, html.in-lich .lkh-dang-in .lkh-o-ly { break-after: avoid-page; }
   /* Dòng sông của ngày được ĐO trên bố cục màn hình (LichV2.jsx `SongNgay`); bản in có bố cục khác (cỡ chữ, bề rộng 1019 px) ⇒ nét cong lệch dần khỏi các
      điểm rồi chạy xuống đè hai khối quán ăn cuối ngày (thấy ở bản in lịch mặc định, trang 2 — 23/11/2026). Bản in dùng lại vạch thẳng đặt bằng CSS: luôn khớp. */
   html.in-lich .lkh-dang-in .lkh-song-ngay { display: none; }
