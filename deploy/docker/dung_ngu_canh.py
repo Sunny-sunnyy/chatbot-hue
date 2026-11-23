@@ -28,6 +28,7 @@ import yaml
 MA = ("backend/", "frontend/", "pyproject.toml", "uv.lock")
 CAM = re.compile(r"sealed|(^|/)\.env|/rieng/|_source-dumps|/evaluation/", re.IGNORECASE)  # không bao giờ được vào phần dữ liệu của ảnh
 BAN_GHI_DUNG = "full_corpus_builds"  # `backend/ingestion/full_corpus_pipeline.BUILD_RECORD_ROOT`
+THONG_KE_TU_KHOA = "full_corpus_sparse_state.json"  # `…full_corpus_pipeline.SPARSE_STATE_PATH`
 
 
 def dung(loi: str):
@@ -66,13 +67,17 @@ def main():
     if not sha:
         dung(f"không có commit nào tên {a.ref}")
 
-    # 1. Bản ghi dựng + thống kê từ khoá (file .json nằm ngay trong thư mục, không lấy thư mục sao lưu bên trong)
-    ban_ghi = sorted((a.du_lieu / BAN_GHI_DUNG).glob("*.json"))
-    cac_ban_ghi = [json.loads(f.read_text(encoding="utf-8")) for f in ban_ghi]
-    co_kho = [b for b in cac_ban_ghi if "corpus" in b]
+    # 1. Đúng HAI file của thư mục bản ghi dựng: bản ghi dựng duy nhất (file có khoá `corpus`, tên = tên collection) + thống kê từ khoá (tên cố định).
+    #    File .json khác ai đó để tạm ở đó KHÔNG vào ảnh.
+    thu_muc_ghi = a.du_lieu / BAN_GHI_DUNG
+    co_kho = [(f, b) for f in sorted(thu_muc_ghi.glob("*.json")) if "corpus" in (b := json.loads(f.read_text(encoding="utf-8")))]
     if len(co_kho) != 1:
-        dung(f"cần đúng MỘT bản ghi dựng trong {a.du_lieu / BAN_GHI_DUNG}, thấy {len(co_kho)}")
-    bai = co_kho[0]["corpus"]["sources"]  # {đường dẫn trong kho: sha256}
+        dung(f"cần đúng MỘT bản ghi dựng trong {thu_muc_ghi}, thấy {len(co_kho)}")
+    file_ghi, ban_ghi = co_kho[0]
+    thong_ke = thu_muc_ghi / THONG_KE_TU_KHOA
+    if not thong_ke.is_file() or hashlib.sha256(thong_ke.read_bytes()).hexdigest() != ban_ghi["sparse"]["state_sha256"]:
+        dung(f"{thong_ke} thiếu hoặc không khớp băm ghi trong bản ghi dựng")
+    bai = ban_ghi["corpus"]["sources"]  # {đường dẫn trong kho: sha256}
 
     # 2. Code + bài kho từ đúng commit đó, một lượt đọc `git archive`
     luong = subprocess.run(["git", "archive", "--format=tar", sha, *[m.rstrip("/") for m in MA], "knowledge-base-hue"], capture_output=True, cwd=goc)
@@ -110,7 +115,7 @@ def main():
     thieu = [d for d in rieng if not (a.du_lieu.parent / d).is_file()] + thieu_kho
     if thieu:
         dung(f"settings.yaml của commit {sha[:8]} trỏ tới file không có trên máy: {thieu}")
-    rieng += [f"data/{BAN_GHI_DUNG}/{f.name}" for f in ban_ghi]
+    rieng += [f"data/{BAN_GHI_DUNG}/{f.name}" for f in (thong_ke, file_ghi)]
     for d in rieng:
         dich = a.ra / d
         dich.parent.mkdir(parents=True, exist_ok=True)
@@ -123,7 +128,7 @@ def main():
         dung(f"file cấm lọt vào ngữ cảnh: {cam[:5]}")
 
     # 5. Bảng kê: người cầm gói đọc để biết ảnh mang gì
-    ke = [f"commit: {sha}", f"bai_kho: {len(bai)} (khớp băm với bản ghi dựng; {co_kho[0]['qdrant']['point_count']} điểm Qdrant)", f"file_code: {so_ma}",
+    ke = [f"commit: {sha}", f"bai_kho: {len(bai)} (khớp băm với bản ghi dựng; {ban_ghi['qdrant']['point_count']} điểm Qdrant)", f"file_code: {so_ma}",
           "file_rieng_tu (từ data/, KHÔNG có trong git — vì chúng mà ảnh không được đẩy lên kho ảnh công khai):"]
     ke += [f"  {d}  sha256={hashlib.sha256((a.ra / d).read_bytes()).hexdigest()[:16]}" for d in rieng]
     (a.ra / "DANH_SACH.txt").write_text("\n".join(ke) + "\n", encoding="utf-8")

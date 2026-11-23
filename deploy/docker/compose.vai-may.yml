@@ -1,15 +1,18 @@
 # Phủ lên compose.yml trên máy AWS CÓ VAI GẮN (EC2 + instance profile): không khoá dài hạn nào nằm trên máy. Dịch vụ phụ `khoa` (cùng ảnh app)
 # lấy khoá tạm của vai từ dịch vụ thông tin máy rồi ghi /run/hue-khoa/bedrock.json vào một volume chung; app gắn volume đó CHỈ ĐỌC.
-# Điều kiện phía hạ tầng (Terraform): vai có quyền gọi model; `metadata_options { http_tokens = "required", http_put_response_hop_limit = 2 }` —
-#   hộp nằm sau mạng bridge của Docker nên cần 2 bước nhảy. [CHƯA chạy trên AWS — mới thử với máy chủ giả đúng khuôn, xem README]
+# Hộp `khoa` dùng THẲNG mạng của máy (`network_mode: host`), không qua mạng bridge của Docker ⇒ với bước nhảy IMDS = 1 (mặc định) nó vẫn hỏi được,
+# còn ba hộp app / qdrant / caddy (mạng bridge) KHÔNG tới được dịch vụ thông tin máy — hộp nhận yêu cầu từ internet không tự lấy được khoá của vai.
+# Điều kiện phía hạ tầng (Terraform): vai có quyền gọi model; `metadata_options { http_tokens = "required" }`; bước nhảy 1 hay 2 đều chạy, 1 là kín hơn.
+# [CHƯA chạy trên AWS — khuôn IMDSv2 đã đối chiếu tài liệu AWS 23/11; mới thử với máy chủ đứng thay, xem README]
 services:
   khoa:
     image: ${HUE_IMAGE:?đặt HUE_IMAGE}
+    network_mode: host
     command: ["python", "/app/lam_moi_khoa.py"]
     volumes:
       - khoa:/run/hue-khoa
-    healthcheck:   # có file khoá, khác rỗng ⇒ app mới được lên
-      test: ["CMD", "test", "-s", "/run/hue-khoa/bedrock.json"]
+    healthcheck:   # file khoá vừa được ghi trong 11 phút qua (hai chu kỳ làm mới) ⇒ khoẻ; file CŨ còn lại sau khi máy khởi động lại thì chưa tính
+      test: ["CMD-SHELL", "find /run/hue-khoa/bedrock.json -mmin -11 | grep -q ."]
       interval: 3s
       timeout: 2s
       retries: 20

@@ -23,24 +23,13 @@ len)
   if [ -z "${HUE_KHOA_FILE:-}" ]; then HUE_KHOA_FILE=$(head -n 1 "$CAY_CHINH/data/duong_dan_khoa_bedrock.txt"); fi
   [ -f "$HUE_KHOA_FILE" ] || dung "không thấy file khoá tạm Bedrock (biến HUE_KHOA_FILE)"
   ss -ltn | grep -q ":$CONG " && dung "cổng $CONG đang có người dùng"
-  mkdir -p "$THU/logs" && cp "$GOI"/compose.yml "$GOI"/compose.thu.yml "$GOI"/Caddyfile "$THU/"
+  mkdir -p "$THU/logs" && cp "$GOI"/compose.yml "$GOI"/compose.thu.yml "$GOI"/Caddyfile "$GOI"/nap_chi_muc.sh "$THU/"
   # hue.env: biến không bí mật của lượt thử — http (không TLS), cookie không đòi https, trần 3 lượt / địa chỉ để thấy được câu báo hết lượt
   printf '%s\n' "HUE_IMAGE=$HUE_IMAGE" "HUE_KHOA_FILE=$HUE_KHOA_FILE" "HUE_SITE=:80" "HUE_HTTP_PORT=$CONG" "HUE_HTTPS_PORT=8443" \
     "HUE_COOKIE_SECURE=0" "HUE_LUOT_MOI_NGAY=3" "HUE_GIT_SHA=${HUE_IMAGE##*:}" > "$THU/hue.env"
-  # Chỉ mục: chụp collection của Qdrant đang chạy, tải về, XOÁ bản chụp ở nguồn (không để lại gì ở 6335), nạp vào Qdrant của gói
-  echo "nguồn 6335 TRƯỚC lượt thử: $(curl -s $NGUON/collections/$COL | grep -o '"points_count":[0-9]*') · bản chụp đang có: $(curl -s $NGUON/collections/$COL/snapshots)"
-  TEN=$(curl -sf -X POST "$NGUON/collections/$COL/snapshots" | python3 -c "import json,sys; print(json.load(sys.stdin)['result']['name'])") || dung "Qdrant 6335 không tạo được bản chụp"
-  curl -sf -o "$THU/qdrant.snapshot" "$NGUON/collections/$COL/snapshots/$TEN"
-  curl -sf -X DELETE "$NGUON/collections/$COL/snapshots/$TEN" >/dev/null
-  dc up -d --wait qdrant
-  dc cp "$THU/qdrant.snapshot" qdrant:/qdrant/snapshots/qdrant.snapshot
-  # Ảnh Qdrant không có curl ⇒ gọi lệnh khôi phục từ một hộp dùng một lần của ảnh app (cùng mạng compose). `priority: snapshot` bắt buộc với collection trống.
-  dc run --rm --no-deps --entrypoint python app -c "
-import json, urllib.request as u
-r = u.Request('http://qdrant:6333/collections/$COL/snapshots/recover', method='PUT', headers={'Content-Type': 'application/json'},
-              data=json.dumps({'location': 'file:///qdrant/snapshots/qdrant.snapshot', 'priority': 'snapshot'}).encode())
-print('khôi phục:', u.urlopen(r, timeout=300).read().decode())
-print('điểm trong Qdrant của gói:', json.load(u.urlopen('http://qdrant:6333/collections/$COL'))['result']['points_count'])"
+  # Chỉ mục: đúng hai lệnh máy đích cũng dùng — chụp từ Qdrant đang chạy (xoá bản chụp ở nguồn ngay), nạp vào Qdrant của gói + so số điểm
+  "$GOI/chup_chi_muc.sh" "$THU/qdrant.snapshot"
+  ( cd "$THU" && COMPOSE_PROJECT_NAME=$DU_AN ./nap_chi_muc.sh compose.thu.yml )
   dc up -d --wait || { dc logs --tail 40 app; dung "app không sẵn sàng — xem log trên"; }
   echo "ĐÃ LÊN: http://127.0.0.1:$CONG  ·  kiểm: $0 kiem  ·  dọn: $0 don"
   ;;
@@ -60,7 +49,8 @@ kiem)
   ;;
 don)
   [ -d "$THU" ] || { echo "không có gì để dọn"; exit 0; }
-  dc down -v
+  dc down
+  docker volume rm "${DU_AN}_caddy_data" >/dev/null   # đúng MỘT volume do lượt thử này tạo (không `down -v`)
   # thư mục Qdrant + log do hộp tạo thuộc root ⇒ xoá qua docker
   docker run --rm -v "$THU":/x --entrypoint bash qdrant/qdrant@sha256:0bd98fa7977f1e75694779359ca4e212822e5a71334e28421182f72f209d5286 -c 'rm -rf /x/qdrant_storage /x/logs'
   rm -rf "$THU"

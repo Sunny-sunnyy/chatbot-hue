@@ -31,9 +31,12 @@ def lay_khoa() -> dict:
 
 
 def ghi(khoa: dict) -> None:
+    if khoa.get("Code") != "Success":
+        raise ValueError("dịch vụ thông tin máy chưa trả khoá dùng được")
+    cho_app = {"accessKeyId": khoa["AccessKeyId"], "secretAccessKey": khoa["SecretAccessKey"], "sessionToken": khoa["Token"]}  # thiếu trường ⇒ lỗi TRƯỚC khi đụng file
     tam = DICH + ".tam"
     with os.fdopen(os.open(tam, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), "w", encoding="utf-8") as f:
-        json.dump({"accessKeyId": khoa["AccessKeyId"], "secretAccessKey": khoa["SecretAccessKey"], "sessionToken": khoa["Token"]}, f)
+        json.dump(cho_app, f)
     os.replace(tam, DICH)
 
 
