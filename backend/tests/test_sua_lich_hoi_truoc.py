@@ -242,3 +242,35 @@ def test_a_turn_that_also_applied_something_does_not_end_the_question_with_nothi
     hoi = next(d for d in dong if d.get("nut") and d["cau"].startswith("Bạn muốn thêm Hổ Quyền"))
     assert dong[0]["cau"].startswith(f"Đã bỏ {bo}.") and "Lịch chưa đổi gì." not in hoi["cau"]
     assert "Lịch chưa đổi gì." in _dong(_them(luu, "Hổ Quyền", **MOI))["cau"]  # lượt chỉ có câu hỏi: giữ câu kết
+
+
+def test_removing_the_last_place_of_a_day_keeps_the_plan_and_offers_ways_out_instead_of_refilling():
+    """Ca dò của phiên đo 23/11/2026 trên lịch mặc định 2 ngày: «bỏ <điểm sáng ngày 1>» (sáng để trống — đúng) rồi «bỏ <điểm chiều ngày 1>» ⇒ bản đầu
+    rơi về đường cũ và TỰ THÊM hai điểm khác (ngày không được rỗng). Nay lệnh thứ hai không bỏ, không lấp: câu tình hình + nút lối đi bằng lệnh đã có."""
+    k, luu = _mac_dinh()
+    (sang,), (chieu,) = k["ngay"][0]["buoi"]["sang"], k["ngay"][0]["buoi"]["chieu"]
+    k1 = _bo(luu, T[sang]["ten"], **MOI)
+    assert k1["da_ap"] and k1["khung"]["buoi_trong"] == [[1, "sang"]]
+    k2 = _bo(k1["luu"], T[chieu]["ten"], **MOI)
+    (m,), d = k2["khong_doi"], _dong(k2)
+    assert k2["da_ap"] == [] and k2["khung"] == k1["khung"] and m["ma_luat"] == "bo_ngay_rong"  # lịch đứng yên, không điểm nào tự vào
+    assert d["hoi"] is True and d["cau"].startswith(f"{T[chieu]['ten']} là điểm duy nhất còn lại của ngày 1 — bỏ thì ngày 1 không còn điểm nào")
+    assert d["cau"].endswith("Lịch chưa đổi gì.") and "«" not in d["cau"] and not d["cau"].startswith("Chưa làm")
+    thay = [n for n in d["nut"] if "chon" in n]
+    assert thay and all(n["chon"]["cu"] == chieu and n["gui"] == f"thay {T[chieu]['ten']} bằng {T[n['chon']['moi']]['ten']}" for n in thay)
+    assert s.cau_goi_y(B, k2) == tuple(n["gui"] for n in d["nut"])
+    for n in thay:  # bấm nút thay = đường thẻ chọn, không model: điểm mới vào đúng chỗ, buổi sáng đã để trống vẫn trống
+        sau = s.ap(B, k1["luu"], [], sua_chon=dict(n["chon"]), them_hoi_truoc=True)["khung"]
+        assert s._vi_tri(sau)[n["chon"]["moi"]] == (1, "chieu") and chieu not in s._vi_tri(sau) and sau["buoi_trong"] == [[1, "sang"]]
+        assert not v2.kiem_khung_v2(B, sau)
+    # ngày 1 không phải ngày cuối ⇒ không có nút rút ngày; công tắc tắt ⇒ đường cũ (tự lấp) y như trước
+    assert not any("Rút" in n["nhan"] for n in d["nut"]) and _bo(k1["luu"], T[chieu]["ten"], **CU)["da_ap"]
+    # điểm cuối cùng của NGÀY CUỐI: thêm nút rút lịch, và lệnh đổi số ngày ấy làm được thật
+    luu2 = luu
+    for j in [x for x in s._vi_tri(k) if s._vi_tri(k)[x][0] == 2][:-1]:
+        luu2 = _bo(luu2, T[j]["ten"], **MOI)["luu"]
+    cuoi = next(x for x, v in s._vi_tri(luu2["khung"]).items() if v[0] == 2)
+    k3 = _bo(luu2, T[cuoi]["ten"], **MOI)
+    assert k3["da_ap"] == [] and _dong(k3)["nut"][-1] == {"nhan": "Rút lịch còn 1 ngày", "gui": "đổi lịch còn 1 ngày"}
+    rut = s.ap(B, luu2, [s.HanhDong(loai="doi_so_ngay", so_ngay=1)], **MOI)
+    assert rut["khung"]["tham_so"]["so_ngay"] == 1 and not v2.kiem_khung_v2(B, rut["khung"])
