@@ -89,7 +89,7 @@ này trông giống lỗi thiếu quyền [khoá].
 | `ChuDeEmailCanhBao` + `DangKyEmailVaoChuDe` | tạo chủ đề gửi email cảnh báo, đăng ký email | chủ đề tên `hue-rag-…`, vùng Singapore |
 | `NganSach` | tạo, xem, sửa, xoá ngân sách | ngân sách tên `hue-rag-…` |
 | `MayChuMangDiaChiIP` | mọi thao tác máy ảo, mạng, nhóm bảo mật, địa chỉ IP (dựng, dừng, bật, xoá) | chỉ vùng Singapore |
-| `BaoDongMayHong` | tạo, xoá báo động "máy hỏng" | báo động tên `hue-rag-…` |
+| `BaoDongMayHong` | tạo, xoá báo động "máy hỏng"; đặt TAY trạng thái của nó để thử xem email báo động có tới không (buổi diễn tập ở guide 5) | báo động tên `hue-rag-…` |
 | ba khối Session Manager + `XemTrangThai` | mở phiên vào máy mang thẻ `Project = hue-rag`; đóng phiên của chính mình; xem trạng thái | theo thẻ của máy |
 
 Không có: quyền gọi model của AWS, quyền xem tiền, quyền tạo người dùng. Nói thật một giới hạn: chính sách này hẹp theo TÊN tài nguyên và theo vùng, không
