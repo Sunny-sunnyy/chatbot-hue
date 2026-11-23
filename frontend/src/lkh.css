@@ -308,6 +308,10 @@
   html.in-lich .lkh-dang-in .lich-ngay:not(:has(~ .lich-ngay)) { break-inside: auto; }
   html.in-lich .lkh-dang-in .lkh-muc { break-inside: avoid; opacity: 1 !important; transform: none !important; animation: none !important; }
   html.in-lich .lkh-dang-in a { color: inherit; text-decoration: none; }
+  /* Dòng sông của ngày được ĐO trên bố cục màn hình (LichV2.jsx `SongNgay`); bản in có bố cục khác (cỡ chữ, bề rộng 1019 px) ⇒ nét cong lệch dần khỏi các
+     điểm rồi chạy xuống đè hai khối quán ăn cuối ngày (thấy ở bản in lịch mặc định, trang 2 — 23/11/2026). Bản in dùng lại vạch thẳng đặt bằng CSS: luôn khớp. */
+  html.in-lich .lkh-dang-in .lkh-song-ngay { display: none; }
+  html.in-lich .lkh-dang-in .lkh-dong-khung:has(.lkh-song-ngay) .lkh-dong::before { display: block; left: 31px; }   /* giữa ảnh 64 px của bố cục in */
   /* Cỡ chữ của BẢN IN giữ đúng các giá trị trước khi gom cỡ chữ về một thang (22/11/2026 tối): thang mới đổi 15,5 ⇒ 15 · 18 ⇒ 19 · 24 ⇒ 22 px… Không có
      các dòng dưới thì lịch ví dụ vẫn in 2 trang nhưng dòng chữ xê dịch tới 2 pt; có thì 76 / 76 dòng nằm đúng chỗ bản in cũ (so hai file PDF). Màn hình dùng thang mới. */
   html.in-lich .lkh-dang-in .lkh-thanh small { font-size: 14px; }

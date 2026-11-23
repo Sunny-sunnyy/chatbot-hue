@@ -129,7 +129,7 @@ export function HeroSong({ nhanh, thoiTiet, ...hoi }) {
 }
 
 // ───────── Lúc chờ ở Hỏi đáp (cả ba hướng dùng chung khung, khác hình): bước THẬT + tên bài đã tìm thấy.
-// Tên bài hiện nay server chưa gửi (chỉ gửi số đoạn) ⇒ bản thử đọc `window.__mau_cho` (dữ liệu mẫu đúng khuôn sự kiện sẽ thêm); không có ⇒ không vẽ bến nào.
+// Tên bài lấy từ trường `bai` của sự kiện `searched` server gửi (xem `daTim` dưới). `window.__mau_cho` chỉ còn là đường của bộ chụp bản dựng tĩnh: dữ liệu mẫu cùng khuôn khi không có server; cả hai đều trống ⇒ không vẽ bến nào.
 export function ChoSong({ dongBuoc, daTim }) {
   // `daTim` = trường `bai` của sự kiện `searched` ([{title, bai_id}], cộng dồn, server đã lọc); giao diện tự đặt trần 6 bến, phần còn lại gộp thành "+k bài".
   const tat = (daTim?.length ? daTim : (typeof window !== "undefined" && Array.isArray(window.__mau_cho) ? window.__mau_cho : []))
