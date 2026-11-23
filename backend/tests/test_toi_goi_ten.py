@@ -5,9 +5,11 @@ Hai cách model vốn ghi câu này: `thay_diem(ten=<mục tối đang có>, ten
 """
 import collections
 import itertools
+import types
 
 import pytest
 
+from llm import len_ke_hoach as lkh
 from llm import lich_trinh_v2 as v2
 from llm import sua_lich_v2 as s
 from llm.assistant import AssistantFlags
@@ -128,3 +130,31 @@ def test_groups_with_children_or_elderly_only_get_light_activities_by_name_and_f
             break
     else:
         raise AssertionError("lưới phải có một lịch có ngày đi xa")
+
+
+def test_naming_an_activity_that_sits_on_another_evening_says_moved_not_added():
+    k = v2.xep_v2(B, v2.ThamSoV2(3, kieu_di="can_bang"))
+    luu, toi = s.luu_tu_lich(k, None, None), _toi(k)
+    kq = s.ap(B, luu, [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(toi[2]), ngay=1, buoi="toi")], **BAT)
+    assert _toi(kq["khung"]) == {**toi, 1: toi[2], 2: toi[1]}
+    assert s.thay_doi(B, kq)[0]["cau"] == f"Đã chuyển {_ten(toi[2])} sang buổi tối ngày 1. {_ten(toi[1])} chuyển sang buổi tối ngày 2."
+
+
+def test_edit_reply_says_when_restaurants_of_an_untouched_day_change():
+    """Bảng quán TỰ DỰNG (bốn quán quanh một toạ độ, mỗi bữa lấy hai): tối 1 và tối 2 cùng chỗ ⇒ tối 1 lấy A, B; tối 2 lấy C, D. Đổi tối 1 sang một
+    mục ở xa ⇒ tối 2 lấy lại A, B dù người dùng không đụng ngày 2 ⇒ có dòng báo; đổi sang một mục cùng chỗ ⇒ quán ngày 2 y nguyên ⇒ không dòng."""
+    k = v2.xep_v2(B, v2.ThamSoV2(2, kieu_di="can_bang"))
+    luu, toi = s.luu_tu_lich(k, None, None), _toi(k)
+    xa, gan = [j for j in TOI if j not in toi.values() and not B.theo_id[j].get("ngay_hoat_dong") and j not in s._vi_tri(k)][:2]
+    quan = [{"ten": t, "toa": [16.46 + i * 0.001, 107.59], "loai": "quan_an", "nguon": "kho"} for i, t in enumerate("ABCD")]
+    f = types.SimpleNamespace(quan_lich=True, quan_bang={d["cum"]: quan for d in B.diem}, quan_trua_kho_truoc=False,
+                              quan_toa_do={toi[1]: (16.46, 107.59), toi[2]: (16.46, 107.59), gan: (16.46, 107.59), xa: (16.60, 107.59)})
+
+    def sau(m):
+        kq = s.ap(B, luu, [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(m), ngay=1, buoi="toi")], **BAT)
+        assert _toi(kq["khung"]) == {**toi, 1: m}
+        return kq["khung"]
+
+    assert lkh.dong_quan_doi(B, k, sau(xa), f) == [{"cau": "Quán ăn gợi ý của ngày 2 cũng đổi theo để các ngày không trùng quán.", "duoc": True}]
+    assert lkh.dong_quan_doi(B, k, sau(gan), f) == [] and lkh.dong_quan_doi(B, k, k, f) == []
+    assert lkh.dong_quan_doi(B, k, sau(xa), types.SimpleNamespace(quan_lich=False)) == []
