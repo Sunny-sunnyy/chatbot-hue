@@ -85,8 +85,9 @@ Mọi lệnh `aws` của guide chạy ở vùng Singapore (`ap-southeast-1`) b�
 **Bước 0 — Giữ lại thứ cần giữ** (phá tầng máy chủ là mất hẳn):
 
 - Ảnh chụp màn hình trang đang chạy trên địa chỉ thật, số đo của buổi diễn tập / buổi demo — bằng chứng cho đồ án.
-- Log của ba hộp, nếu cần xem lại. Trên máy chủ (vào bằng lệnh ở guide 4 bước 1), rồi chép chữ ra máy mình:
-  `cd /srv/hue && docker compose --env-file hue.env -f compose.yml logs --no-color app > /tmp/app.log` — file log có câu người dùng đã hỏi ⇒ không đưa vào git.
+- Log của ba hộp, nếu cần xem lại: XEM ngay trên máy chủ (vào bằng lệnh ở guide 4 bước 1) và chép đoạn cần qua cửa sổ lệnh —
+  `cd /srv/hue && docker compose --env-file hue.env -f compose.yml logs --no-color --tail 200 app` (thêm `| grep <chữ cần tìm>` cho gọn). Với quyền hiện có
+  KHÔNG lấy được cả file về máy mình (máy chỉ ĐỌC được thùng, không mở cổng 22); log có câu người dùng đã hỏi ⇒ đoạn chép ra không đưa vào git.
 - Sổ vết, nếu đã bật tạm trên máy chủ (guide 5).
 - Ghi lại hai giá trị sẽ cần ở Bước 5 (sau khi phá thì không hỏi Terraform được nữa):
 

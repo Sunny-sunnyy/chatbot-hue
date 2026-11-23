@@ -114,7 +114,8 @@ Lệnh này đã chạy ở máy chủ dự án trên gói ba hộp: ra 413, th�
 **Dòng 10 — hết lượt ⇒ 429 có lời báo.** Trần mặc định là 50 lượt mỗi địa chỉ mỗi ngày — đừng hỏi 50 câu để thử. Hạ tạm trần xuống 3 trên máy chủ:
 
 ```bash
-echo 'HUE_LUOT_MOI_NGAY=3' >> hue.env && dc up -d app      # tạo lại hộp app: bộ đếm về 0, MẤT mọi cuộc trò chuyện đang mở
+printf '\nHUE_LUOT_MOI_NGAY=3\n' >> hue.env && tail -n 2 hue.env     # NHÌN: dòng cuối phải là đúng  HUE_LUOT_MOI_NGAY=3  (đứng riêng một dòng)
+dc up -d app                                                        # tạo lại hộp app: bộ đếm về 0, MẤT mọi cuộc trò chuyện đang mở
 ```
 
 Từ máy mình hỏi bốn câu bất kỳ trên trang. Mong: ba câu đầu trả lời; câu thứ tư hiện "Bạn đã dùng hết số lượt hỏi hôm nay. Vui lòng quay lại vào ngày
@@ -145,8 +146,19 @@ Mục đích: lần ĐẦU TIÊN bộ deploy chạm AWS thật không được r
 | 1 | Dựng tầng nền (nếu chưa) và tầng máy chủ | 1, 3 | `apply` mất mấy phút; có dòng `AccessDenied` nào không (chép nguyên văn) |
 | 2 | Đẩy gói, bật lần đầu, hỏi một câu thật | 2, 4 | từ `apply` xong tới câu trả lời đầu: mấy phút; chứng chỉ HTTPS có sau bao lâu |
 | 3 | Danh sách kiểm từ ngoài, ít nhất dòng 1, 2, 4, 5, 8, 11 | guide này, mục 6 | giây tới chữ đầu tiên (dòng 2); tin dài mất mấy giây, có bị cắt không (dòng 8); phút từ lúc bật máy tới câu trả lời (dòng 11) |
-| 4 | Báo động máy hỏng có tới email không | mục 7 dưới | có thư "ALARM" khi dừng hộp thử không — KHÔNG bắt buộc; xem mục 7 |
+| 4 | Báo động máy hỏng có tới email không — ÉP báo động kêu thử bằng lệnh dưới bảng (dừng một hộp hay dừng cả máy đều KHÔNG làm nó kêu) | mục 7 dưới | thư của báo động có tới hộp thư trong khoảng một phút không |
 | 5 | Phá tầng máy chủ, kiểm IP tĩnh đã trả | guide 7, Bước 3 | `destroy` mất mấy phút; hai lệnh kiểm in gì |
+
+Lệnh của bước 4 (từ máy mình) — ép báo động sang trạng thái kêu để xem đường "báo động ⇒ chủ đề ⇒ email" có thông không **[chưa chạy trên AWS]**:
+
+```bash
+aws cloudwatch set-alarm-state --alarm-name hue-rag-may-khong-qua-kiem-tra-trang-thai --state-value ALARM --state-reason "thu bao dong"
+```
+
+Mong: một thư của AWS tới email cảnh báo trong khoảng một phút; ở lần đánh giá kế (trong vòng năm phút) báo động tự về trạng thái bình thường vì máy
+vẫn khoẻ. Không có thư ⇒ xem email đã bấm xác nhận đăng ký chưa (guide 1 mục 7); đã xác nhận mà vẫn không có ⇒ chép cho nhóm đầu ra của
+`aws cloudwatch describe-alarm-history --alarm-name hue-rag-may-khong-qua-kiem-tra-trang-thai --max-items 5`. Vì sao phải ép: báo động này đo phép
+kiểm trạng thái của MÁY; hộp app chết thì máy vẫn "ok", còn máy dừng thì không có số đo và báo động coi là bình thường — không thao tác nào ở guide 6 làm nó kêu.
 
 Tiền máy của cả buổi (máy bật một hai giờ): dưới 1 USD [ước theo bảng giá ở guide 3]; cộng vài xu OpenAI. Tầng nền để lại — nó gần như không tốn tiền,
 và lần dùng thật chỉ còn phải làm guide 3 ⇒ 4.
@@ -173,7 +185,7 @@ hue_rag nhìn ở đâu":
 
 Báo động máy hỏng KHÔNG thấy ba thứ hay hỏng nhất — khoá OpenAI hết tiền / bị thu hồi, hộp app chết trong khi máy vẫn khoẻ, chứng chỉ không xin được —
 vì với AWS máy vẫn "ok". Nó chỉ bắt được chuyện máy treo hẳn. Báo động có gửi được vào chủ đề email của tầng nền với thiết lập mặc định hay không:
-**[chưa kiểm trên AWS, chưa tra được nguồn chính thức nói chắc]**; muốn biết thì ở buổi diễn tập xem email có nhận thư của báo động không (tên báo động:
+**[chưa kiểm trên AWS, chưa tra được nguồn chính thức nói chắc]**; phép thử là bước 4 của buổi diễn tập (mục 6b) — ép báo động kêu rồi xem thư (tên báo động:
 `hue-rag-may-khong-qua-kiem-tra-trang-thai`; trạng thái hiện tại: `aws cloudwatch describe-alarms --alarm-name-prefix hue-rag- --query 'MetricAlarms[].[AlarmName,StateValue]' --output text`).
 
 Trang theo dõi: gõ sai khoá nhiều lần thì trang khoá 15 phút và báo "Nhập sai khoá quá nhiều lần. Chờ 15 phút rồi thử lại." — là rào có chủ ý, không
@@ -205,7 +217,7 @@ lần bật đầu (tải gói, băm, file khoá, chỉ mục, chứng chỉ) �
 | Ảnh hợp lệ mà báo quá cỡ | ảnh trên 10 MB (trần của app) hoặc yêu cầu trên 12 MB (trần của cửa vào) | dùng ảnh nhỏ hơn; ảnh điện thoại thường 3–8 MB |
 | Trang trắng trên một điện thoại cũ | trình duyệt quá cũ (Safari trước 15.4) | giới hạn đã biết (runbook 10.3) — dùng máy khác |
 | Console của trình duyệt có đúng một lỗi `favicon.ico` 404 | vô hại, có ở mọi bản | bỏ qua |
-| Trang chậm bất thường, câu đơn mất trên 20 giây | trên máy: `docker stats --no-stream` (bộ nhớ từng hộp: app quanh 1 GB, Qdrant quanh 250 MB là bình thường) và `free -m` | bộ nhớ sát trần ⇒ `dc up -d app`; lặp lại ⇒ báo nhóm kèm đầu ra hai lệnh |
+| Trang chậm bất thường, câu đơn mất trên 20 giây | trên máy: `docker stats --no-stream` (bộ nhớ từng hộp: app khoảng 0,9 GB, Qdrant khoảng 0,2 GB là bình thường — số của lượt thử gói ở máy chủ dự án) và `free -m` | bộ nhớ sát trần ⇒ `dc up -d app`; lặp lại ⇒ báo nhóm kèm đầu ra hai lệnh |
 | Không vào được máy bằng Session Manager | `aws ssm describe-instance-information --query 'InstanceInformationList[].[InstanceId,PingStatus]' --output text` phải có dòng `Online`; `aws ec2 describe-instance-status --instance-ids "$ID" --include-all-instances --query 'InstanceStatuses[].[InstanceState.Name,InstanceStatus.Status,SystemStatus.Status]' --output text` phải ra `running ok ok` | máy đang dừng ⇒ bật (guide 6 mục 6.2); `running` mà không `Online` sau 10 phút ⇒ bảng gỡ lỗi của guide 3 |
 | Trình duyệt báo chứng chỉ không hợp lệ sau một lần dựng lại máy | `dc logs --tail 80 caddy`; `HUE_SITE` trong `hue.env` có còn là tên của IP tĩnh HIỆN TẠI không | IP tĩnh mới ⇒ tên `sslip.io` mới ⇒ sửa `HUE_SITE` rồi `dc up -d`; chạm giới hạn cấp chứng chỉ thì chờ (mục 6b) |
 
