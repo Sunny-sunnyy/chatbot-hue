@@ -1,10 +1,10 @@
 # Phụ lục E — Thuật ngữ Việt – Anh
 
-*Cập nhật 17:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 11:32, ngày 23/11/2026 · khớp các bài sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): thêm tám từ — thẻ chờ, bến, khung nhìn (bài 5), bảng kiểu, hình vẽ bằng đường cong, giảm chuyển động, tương phản (bài 35), thẻ nơi (bài 23, sót từ 22/11) — và sáu dòng tra ngược; "dòng trạng thái" chép lại theo bài 5 (218 từ) · trước đó (22/11: phân xử chỗ lệch giữa các bài; gom lần đầu); bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một từ lấy từ bảng "Từ dùng trong bài" của bài 1–40, xếp theo thứ tự chữ cái tiếng Việt. Cột "Nghĩa" chép câu giải nghĩa của bài gốc; khi hai bài giảng cùng một từ với hai câu khác nhau, câu chính lấy từ một bài và phần ngoặc ghi điều bài kia nói thêm. Cột cuối ghi bài giảng từ đó lần đầu, trong ngoặc là các bài giảng lại. Từ có dấu "—" ở cột tên gốc là tên do giáo trình đặt, không có tên tiếng Anh quen dùng. Cuối trang là bảng tra ngược, từ tên tiếng Anh ra tên trong giáo trình.
 
-Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở hai bài; "đọc mù" của bài 32 đã gộp vào "chấm mù" ngày 22/11).
+Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở hai bài; "đọc mù" của bài 32 đã gộp vào "chấm mù" ngày 22/11).
 
 ## Bảng thuật ngữ (Việt → Anh)
 
@@ -19,6 +19,8 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | bản đồ mở | OpenStreetMap | bản đồ do cộng đồng soạn, ai cũng dùng được; cũng là nơi lấy ô nền của bản đồ | 30 |
 | bản ghi chỉ mục | build record | file ghi lần lập chỉ mục: những bài nào, dấu vân tay từng bài, bao nhiêu đoạn, model nào | 12 |
 | bảng điểm tham quan | itinerary table | 41 dòng, mỗi dòng một điểm, với các cột dùng để xếp lịch; nằm ngoài kho bài viết | 27 |
+| bảng kiểu | CSS | phần của trang quy định màu, cỡ chữ, khoảng cách, vị trí từng khối; chữ và nút nằm ở HTML | 35 |
+| bến | — | chấm tròn trên nét sông ở màn đầu Trang chủ; mỗi bến là một lối vào | 5 |
 | biến thể | variant | một bản của hệ thống khác bản đang chạy đúng một điểm | 20 |
 | biểu mẫu | form | nhóm ô và nút để người dùng chọn giá trị rồi gửi một lần | 27 |
 | BM25 | BM25 (Best Matching 25) | công thức chấm điểm theo chữ trùng dùng phổ biến nhất | 11 |
@@ -61,7 +63,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | dịch vụ bên ngoài | external service, API | chương trình của một bên khác, chạy trên máy của họ; muốn dùng thì gửi yêu cầu qua mạng | 6 |
 | dịch vụ tìm web | web search API (ở đây: Serper) | dịch vụ nhận một câu tìm và trả về các kết quả tìm Google: tiêu đề, một đoạn trích ngắn, đường link | 25 |
 | Docker | Docker | phần mềm chạy chương trình trong những "hộp" cách ly, mỗi hộp mang sẵn đủ thứ nó cần; trên máy phát triển là Docker Desktop của Windows | 36 |
-| dòng trạng thái | status line | dòng chữ nhỏ báo hệ thống đang làm gì ("Đang hiểu câu hỏi…") | 5 |
+| dòng trạng thái | status line | dòng chữ báo hệ thống đang làm bước nào ("Đang hiểu câu hỏi…") | 5 |
 | dòng ý thiếu | — | dòng mở đầu bằng "Tư liệu chưa có thông tin về:" model viết cho vế kho không có | 23 |
 | dựng giao diện | build | đổi chương trình giao diện thành các file tĩnh để máy chủ gửi cho trình duyệt | 36 |
 | đáp án mẫu | reference answer | câu trả lời đúng viết sẵn cho một câu hỏi | 17 |
@@ -88,12 +90,14 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | file thống kê từ khoá | sparse state | file ghi từ điển, độ hiếm của từng từ, và độ dài trung bình của một đoạn | 11 |
 | ghi chú do chương trình | code-written note | câu cố định chương trình chọn theo một mã; model không viết câu nào ở phần "Ghi chú của lịch" | 29 |
 | ghim | marker | dấu tròn có số trên bản đồ, đánh dấu một điểm của lịch | 30 |
+| giảm chuyển động | prefers-reduced-motion | tuỳ chọn của hệ điều hành; trang đọc được và tự tắt chuyển động | 35 |
 | giao diện | frontend, UI | phần của ứng dụng chạy trong trình duyệt của người dùng: các trang, nút bấm, ô gõ | 5 (cũng ở 6) |
 | giữ chỗ | pin | điểm không bị lệnh chạm thì giữ đúng ngày, đúng buổi khi xếp lại | 31 |
 | gối đầu | overlap | cách cắt cho hai đoạn liền nhau lặp lại vài câu của nhau; hue_rag không dùng | 8 |
 | hàm thuần | pure function | phần chương trình chỉ nhận đầu vào và trả đầu ra, không gọi mạng, không đọc ghi gì bên ngoài; dễ test nhất | 38 |
 | hạn giờ | timeout | thời gian chờ dài nhất cho một lần gọi; quá thì coi như lần gọi đó lỗi | 6 |
 | harness | harness | phần chương trình bao quanh model: cho model thấy gì, đưa công cụ nào, dừng lúc nào, kiểm gì sau khi model viết | 21 |
+| hình vẽ bằng đường cong | SVG | hình mô tả bằng toạ độ và đường cong; trình duyệt tự vẽ, phóng to không vỡ | 35 |
 | học tủ | overfitting (với bộ đo) | hệ thống được chỉnh cho hợp đúng bộ câu đang dùng, nên điểm cao hơn thực lực | 17 |
 | hồ sơ của đoạn | payload (của Qdrant) | 7 trường cất cùng mỗi đoạn, để khi tìm ra thì lấy lại được đủ thông tin | 9 |
 | hộp | container (của Docker) | một ảnh đóng gói đang chạy: chương trình chạy cách ly, mang sẵn mọi thứ nó cần | 12 (cũng ở 36) |
@@ -109,6 +113,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | khối | block (của Markdown) | một phần tự nhiên của bài: một đoạn văn, một mục danh sách, một bảng, một đoạn trích | 8 |
 | khu ở | lodging zone | một trong ba vùng để gợi ý chỗ ở: trung tâm hai bờ sông Hương, phía tây yên tĩnh (Kim Long, Thủy Xuân), ven biển – đầm phá | 30 |
 | khung lịch | itinerary frame | phần lịch do chương trình dựng: ngày, buổi, tên điểm, giờ, ghi chú; chưa có câu mô tả | 27 |
+| khung nhìn | viewport | phần trang thấy được trong cửa sổ trình duyệt khi chưa cuộn (bài 35 thêm: đo bằng điểm ảnh (px) rộng × cao) | 5 (cũng ở 35) |
 | khuôn đầu ra | output schema, JSON schema | mẫu bắt model trả về đúng các ô đã định (ví dụ ô "câu trả lời", ô "tuyến"), để chương trình đọc được | 33 |
 | kiểm khuôn | validation, schema | máy chủ đối chiếu mỗi giá trị gửi lên với một danh sách giá trị được phép; lạ là từ chối | 27 |
 | kiểm số nguồn | citation check, citation integrity | kiểm mọi số [n] trong câu trả lời trỏ tới một đoạn có thật | 16 |
@@ -184,6 +189,8 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | tham số | arguments | giá trị model gửi kèm khi xin một công cụ, ví dụ câu cần tìm | 3 |
 | thanh điều hướng | navigation bar | hàng mục ở đầu trang để chuyển giữa các trang | 5 |
 | thẻ chọn | choice card | thẻ có vài nút, mỗi nút là một điểm thay đã được chương trình thử trước | 31 |
+| thẻ chờ | loading state | khung đứng thay câu trả lời trong lúc chờ | 5 |
+| thẻ nơi | — | nguồn nhỏ chương trình dựng cho một nơi: dòng địa chỉ, dòng giờ chép nguyên từ bài riêng (số nguồn mở đúng bài đó); giá vé lẻ của nơi đó, nếu bảng vé lẻ có, đi vào một nguồn riêng mở bài vé | 23 |
 | thiết lập lúc chạy | environment variable | một giá trị đặt cho máy chủ lúc bật, nằm ngoài file chương trình; dùng cho khoá và các công tắc của bản đưa lên mạng | 37 |
 | thông tin gắn kèm | metadata | những gì đi cùng một đoạn ngoài chính thân chữ của nó | 9 |
 | thông tin kèm ảnh | EXIF | dữ liệu máy chụp ghi vào file ảnh: vị trí chụp, đời máy, giờ chụp | 26 |
@@ -210,6 +217,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | tuyến | route | một trong bốn đường xử lý của một tin | 22 |
 | từ chối nhầm | false refusal | kho có câu trả lời mà hệ thống vẫn nói "không đủ thông tin" | 13 |
 | từ điển của kho | vocabulary | danh sách mọi từ khác nhau có trong kho; hiện 5.960 từ | 11 |
+| tương phản | contrast ratio (chuẩn WCAG) | tỉ lệ sáng tối giữa chữ và nền ngay dưới chữ; chữ thường cần từ 4,5 : 1, chữ lớn từ 3 : 1 | 35 |
 | vai | persona | mô tả một kiểu khách: ai đi, muốn gì, hay nói thế nào | 32 |
 | vector | embedding, dense vector | dãy 384 con số đại diện cho nghĩa của một đoạn chữ | 10 |
 | vế cụt | — | vế đứng riêng không còn biết hỏi về cái gì ("giờ mở cửa ko?", "mất bao lâu?") | 23 (cũng ở 40) |
@@ -267,10 +275,12 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | container (bài 12 ghi Docker container) | hộp |
 | Content-Security-Policy | chính sách chặn tải |
 | context | ngữ cảnh |
+| contrast ratio (chuẩn WCAG) | tương phản |
 | conversation id (cất trong cookie) | mã cuộc trò chuyện |
 | cookie | cookie |
 | cosine similarity | độ gần |
 | cross-vendor review | soát khác hãng |
+| CSS | bảng kiểu |
 | decompression bomb | ảnh bom giải nén |
 | dense retrieval, semantic search | tìm theo nghĩa |
 | deterministic code | chương trình thuần |
@@ -327,6 +337,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | lethal trifecta | bộ ba nguy hiểm |
 | LLM (large language model) | model ngôn ngữ |
 | LLM-as-judge | người chấm là model |
+| loading state | thẻ chờ |
 | lodging | cơ sở lưu trú |
 | lodging zone | khu ở |
 | log, metrics | sổ số đo |
@@ -358,6 +369,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | port | cổng |
 | pre-compute | tính sẵn |
 | pre-registered criteria | điều kiện ghi trước |
+| prefers-reduced-motion | giảm chuyển động |
 | prefix (query:  / passage: ) | tiền tố |
 | priority point | điểm ưu tiên |
 | process | tiến trình |
@@ -401,6 +413,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | structured action | lệnh có khuôn |
 | structured output | đầu ra có khuôn |
 | sub-agent | agent con |
+| SVG | hình vẽ bằng đường cong |
 | system prompt, instructions | lời dặn |
 | template | mẫu bài |
 | test case | ca test |
@@ -419,6 +432,7 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 | turn (của vòng lặp agent) | vòng |
 | validation, schema | kiểm khuôn |
 | variant | biến thể |
+| viewport | khung nhìn |
 | vision model, multimodal model | model nhận ảnh |
 | vocabulary | từ điển của kho |
 | web search API (ở đây: Serper) | dịch vụ tìm web |
@@ -426,6 +440,6 @@ Có 210 từ, gom từ 228 dòng của các bài (18 từ được giảng ở h
 
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
 
-Gom từ mục "Từ dùng trong bài" của các bài 1–40 trong cùng thư mục, bản lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Bài 41 không có bảng từ. Một từ giảng ở hai bài với hai câu khác nhau: câu chính lấy từ bài giảng lần đầu, trừ "chỉ mục" (lấy câu của bài 12, đầy đủ hơn và cập nhật muộn hơn bài 2) và "hộp" (lấy câu của bài 36, cập nhật muộn hơn bài 12). Bài 39 ghép "kho code, lưu" thành một dòng; ở đây tách thành "kho code" và gộp phần "lưu" vào "lần lưu code" của bài 37. Các chỗ hai bài giải nghĩa khác nhau ghi ở báo cáo gom [riêng tư].
+Gom từ mục "Từ dùng trong bài" của các bài 1–40 trong cùng thư mục, bản lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Bài 41 không có bảng từ. Một từ giảng ở hai bài với hai câu khác nhau: câu chính lấy từ bài giảng lần đầu, trừ "chỉ mục" (lấy câu của bài 12, đầy đủ hơn và cập nhật muộn hơn bài 2) và "hộp" (lấy câu của bài 36, cập nhật muộn hơn bài 12). Bài 39 ghép "kho code, lưu" thành một dòng; ở đây tách thành "kho code" và gộp phần "lưu" vào "lần lưu code" của bài 37. Các chỗ hai bài giải nghĩa khác nhau ghi ở báo cáo gom [riêng tư]. Tám từ thêm sáng 23/11/2026 chép từ bảng "Từ dùng trong bài" của bài 5 (bản 11:10), bài 35 (11:17) và bài 23 (11:12); "khung nhìn" được giảng ở cả bài 5 và 35: câu chính lấy từ bài 5 (giảng lần đầu), ngoặc ghi điều bài 35 nói thêm. "Lớp nhìn" được giải nghĩa trong thân bài 5 (quyết định 4) nhưng không có trong bảng từ của bài nào, nên chưa vào trang này.
 
 </details>

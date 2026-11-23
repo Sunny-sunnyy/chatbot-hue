@@ -1,6 +1,6 @@
 # Bài 33 — Model viết, mức suy luận, và đổi model bằng một dòng cấu hình
 
-*Cập nhật 21:37, ngày 22/11/2026 · khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài); thêm phép thử mức vừa cho tin nhiều ý (đo 22/11, bỏ) · cơ chế đọc từ chương trình và cấu hình 22/11; số đo từ các báo cáo 19/11 (gpt-6-luna) và 21/11 (cả hai model); người viết không chạy lại phép đo nào.*
+*Cập nhật 11:13, ngày 23/11/2026 · khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): gọi lại một lần khi nhà cung cấp lỗi tạm thời; thẻ chờ · cơ chế đọc từ chương trình và cấu hình 22/11; số đo từ các báo cáo 19/11 (gpt-6-luna) và 21/11 (cả hai model); người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** một câu hỏi đi qua sáu bước, gần như toàn bộ thời gian chờ là model viết (bài 6); model viết được gọi nhiều lần trong một lượt: xếp loại câu, tìm thêm, viết (bài 21, 22).
 **Bài này thêm:** hai model đã dùng khác nhau ở đâu, mức suy luận là gì và vì sao để mức cao, vì sao đổi model chỉ sửa một dòng mà vẫn phải viết một lớp nối và đo lại.
@@ -79,15 +79,15 @@ Cả hai lỗi đều do Claude hiểu cùng một yêu cầu khác gpt-6-luna, 
 
 - **Đã chọn:** mức cao cho mọi vai không tự đặt mức và cho hiểu lệnh sửa lịch; mức thấp cho lượt biểu mẫu và câu thẻ lịch.
 - **Vì sao:** đo ngày 21/11. Ở hỏi đáp một lượt (66 câu), bốn mức ngang nhau và mức cao chỉ chậm hơn mức vừa khoảng 0,3 giây; chủ dự án chọn mức cao "vì không mất gì đáng kể". Ở lệnh sửa lịch khó (3 lượt mỗi lệnh), mức cao đúng 5 trên 6, mức thấp 2, mức vừa 0. Ở lượt có công cụ thời tiết, ngày (12 lượt), mức vừa và thấp chạm trần vòng 8–9 lượt, mức cao 1. Nhóm lịch giữ mức thấp (đo ở "Chi tiết để tra").
-- **Cách khác:** mức vừa hoặc thấp cho câu trả lời: đã đo ở câu một lượt (ngang nhau). Mức vừa cho lượt tin nhiều ý, sau khi sửa lớp nối: đã đo 22/11 trên một tin, nhanh hơn 8 giây nhưng trượt một điều ghi trước, và ngoài tiêu chí 3 trên 6 lượt nói kho không có vé cho bé dưới 7 tuổi ⇒ bỏ ("Đã so"). Mức thấp ở lượt có công cụ, và mức vừa ở lượt có công cụ thời tiết, ngày, sau khi sửa lớp nối: chưa đo.
+- **Cách khác:** mức vừa hoặc thấp cho câu trả lời: đã đo ở câu một lượt (ngang nhau). Mức vừa cho lượt tin nhiều ý, sau khi sửa lớp nối: đã đo 22/11 trên một tin, nhanh hơn 8 giây nhưng trượt một điều ghi trước, và ngoài tiêu chí 3 trên 6 lượt nói kho không có vé cho bé dưới 7 tuổi ⇒ bỏ ("Đã so"). Mức thấp ở lượt có công cụ, và mức vừa ở lượt có công cụ thời tiết, ngày, sau khi sửa lớp nối: chưa đo. Hạ mức chỉ ở lần viết cuối của tin dài: đếm 23/11, không làm (bài 34).
 - **Cái giá:** chậm hơn một chút và tốn token suy luận ở mọi lượt; ở tin dài nhiều ý chậm hơn mức vừa khoảng 8 giây. Lợi của mức cao ở lượt có công cụ thời tiết, ngày là số đo **trước** khi sửa lớp nối, có thể đã không còn đúng.
 
 ### 3. Vì sao chấp nhận chữ tới một lần với Claude?
 
-- **Đã chọn:** gọi Claude trọn một lần, gửi cả câu trả lời một lần. Trong lúc chờ, dòng trạng thái đổi qua "Đang hiểu câu hỏi…", "Đang tìm trong kho…", rồi đứng ở "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" cho tới khi cả câu hiện ra ("Chi tiết để tra").
+- **Đã chọn:** gọi Claude trọn một lần, gửi cả câu trả lời một lần. Trong lúc chờ, dòng trạng thái của thẻ chờ (bài 5) đổi qua "Đang hiểu câu hỏi…", "Đang tìm trong kho…", rồi đứng ở "Đã tìm trong kho, đang chuẩn bị câu trả lời…" cho tới khi cả câu hiện ra ("Chi tiết để tra").
 - **Vì sao:** bộ khoá Bedrock bị từ chối khi xin chữ chạy dần; khi đổi tạm, chủ dự án ghi "không cần stream thật"; ngày 22/11 chủ dự án gác việc cấp quyền AWS tới khi tự xem lại (bài 5).
 - **Cách khác:** xin thêm quyền và viết đường chữ chạy dần: chưa làm; ước (chưa đo) chờ tới chữ đầu từ khoảng 13 giây còn 5,5–6 giây.
-- **Cái giá:** người dùng nhìn dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời… (10 đoạn)" khoảng 10 giây ở lượt đứng giữa (bài 34); lợi của "hiện trước, kiểm sau" (bài 6) mất, nên từ 15:42 22/11 ở lượt hỏi đáp về Huế trong ô chat chữ được giữ tới khi qua bước kiểm nguồn (bài 6, quyết định 4; đã nhìn trên trình duyệt 22/11).
+- **Cái giá:** thẻ chờ đứng ở bước đó khoảng 10 giây ở lượt đứng giữa (bài 34); lợi của "hiện trước, kiểm sau" (bài 6) mất, nên từ 15:42 22/11 ở lượt hỏi đáp về Huế trong ô chat chữ được giữ tới khi qua bước kiểm nguồn (bài 6, quyết định 4; đã nhìn trên trình duyệt 22/11).
 
 ### 4. Vì sao Claude có những đoạn dặn riêng, và đổi model thì phải đo lại những gì?
 
@@ -100,12 +100,13 @@ Cả hai lỗi đều do Claude hiểu cùng một yêu cầu khác gpt-6-luna, 
 
 Một tình huống kể trọn. Khoá Bedrock là khoá tạm do chủ dự án giữ; giả sử nó hết hạn giữa buổi. Máy chủ vẫn chạy, đường báo tình trạng vẫn báo đủ (bài 6). Mỗi câu hỏi nhận "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại"; bấm lại vẫn vậy. Không có cơ chế tự làm mới khoá (chủ dự án dặn không xây). Chương trình đọc lại file khoá ở mỗi lần gọi, nên có người làm mới file xong là hỏi được ngay, không cần khởi động lại máy chủ.
 
-Lời báo là nguyên văn; các dòng đọc từ chương trình, chưa thử thật ngày 22/11.
+Lời báo là nguyên văn; các dòng đọc từ chương trình, chưa thử thật (dòng lỗi tạm thời: mới có ca test với phản hồi dựng sẵn, chưa gặp lỗi thật).
 
 | Nếu | Người dùng thấy gì | Muốn hết lỗi thì ai làm gì |
 |---|---|---|
 | khoá Bedrock hết hạn, hoặc thiếu chỗ trỏ tới file khoá lúc bật | "Không thể tạo câu trả lời vào lúc này." ở mọi câu hỏi | hết hạn: chủ dự án làm mới file khoá; thiếu chỗ trỏ: bật lại máy chủ cho đúng (bài 36) |
-| phần viết của một lượt quá 45 giây | cùng lời báo trên | người dùng bấm "Thử lại"; đã gặp một lần trong 156 lượt người dùng mô phỏng của Claude tối 21/11 (lúc hai model chạy cùng lúc trên một máy); lượt dài nhất khi chạy một mình là 28 giây (bài 34) |
+| nhà cung cấp model trả lỗi tạm thời ở một lời gọi | lượt đó chậm hơn, rồi câu trả lời như thường; lần gọi lại cũng lỗi thì lời báo trên | lớp nối tự gọi lại một lần, từ 09:31 23/11 ("Quyết định nhỏ hơn") |
+| phần viết của một lượt quá 45 giây | cùng lời báo trên | người dùng bấm "Thử lại"; đã gặp 1 trong 156 lượt người dùng mô phỏng của Claude tối 21/11, lúc hai model chạy cùng lúc (bài 34) |
 | quay về gpt-6-luna | chữ lại chạy dần, câu ngắn hơn | sửa một chữ trong cấu hình, khởi động lại máy chủ; **chưa làm được lúc này** (tài khoản OpenAI ngừng dùng) |
 | đổi sang model thứ ba | chưa biết | hãng mới thì viết lớp nối mới; đo lại các mục ở quyết định 4 |
 
@@ -211,8 +212,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 
 Đọc bảng: mức vừa nhanh thật — cả 6 lượt nhanh hơn trung vị 26,9 giây của 12 lượt mức cao cùng tin trong ngày, nên khoảng 8 giây không phải dao động. Nó trượt một điều ghi trước: một lượt ghi chưa có giá vé riêng của Bảo tàng Cổ vật rồi tự nêu giá ngay trong ngoặc. Chỗ nặng hơn nằm ngoài tiêu chí: ba lượt nói kho không có vé cho bé dưới 7 tuổi, trong khi kho có và tin hỏi thẳng tổng tiền cho nhà có bé. Gốc đọc từ sổ vết: ở mức vừa model chỉ tự tìm đúng một lần; lượt nào câu tìm đó không nhắc trẻ em thì đoạn "dưới 7 tuổi miễn phí" không vào ngữ cảnh, và model không tìm bù. Điều "số lần tìm không tăng" đạt chính vì model tìm ít hơn mức cần. Khoảng 8 giây bớt được gồm ba phần không tách được: bớt lần tìm thứ hai ở các lượt mức cao có tìm hai lần, viết ngắn hơn (trung vị 2.028 so với 2.257 ký tự), và ít token suy luận hơn.
 
-Đã chọn: bỏ hẳn theo tiêu chí ghi trước, không thử lại (nhóm đã chốt). Giới hạn: một tin, 6 lượt mỗi bên; mốc không chạy xen kẽ; chưa đo tin nhiều ý kiểu khác, mức thấp, hạ mức chỉ ở lần viết cuối, hay mức vừa kèm một vế tìm bù cho dữ kiện còn thiếu (bài 23, "Đã so" dòng 14).
-
+Đã chọn: bỏ hẳn theo tiêu chí ghi trước, không thử lại (nhóm đã chốt). Giới hạn: một tin, 6 lượt mỗi bên; mốc không chạy xen kẽ; chưa đo tin nhiều ý kiểu khác, mức thấp, hay mức vừa kèm một vế tìm bù cho dữ kiện còn thiếu (bài 23, "Đã so" dòng 14).
 **Các thứ đã thử với Claude ngày 21/11 mà không đưa vào:** đoạn dặn "nói thẳng" (gỡ, xem quyết định 5); cho gọi công cụ 8 vòng thay 4, tìm kho 4 lần thay 2 (thước 28 và 28 trên 29, không đổi; lúc đó trần là 2 lần tìm, 4 vòng — từ 14:47 ngày 22/11 là 3 và 5, mở cùng hai thay đổi ở khâu tìm, bài 21); trả lại phần suy nghĩ giữa các vòng công cụ (24 trên 24 cả hai bên); đệm lời dặn (không nhanh hơn).
 
 ## Quyết định nhỏ hơn
@@ -225,6 +225,13 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - **Cái giá:** chỉ hạn giờ chặn một câu quá dài. Thực tế lời gọi dài nhất trên 85 câu viết 684 token (21/11).
 
 **Vì sao người chấm của bộ đo đổi sang chính model đang chạy?** Chủ dự án quyết tối 21/11 khi gác gpt-6-luna: mọi phép đo chỉ chạy trên model đang chạy, kể cả người chấm. Cái giá ghi kèm quyết định: người chấm cùng họ với model viết có thể chấm dễ hơn, và số chấm bằng người chấm mới không so thẳng với số cũ (24/10–19/11 Claude chấm chính trên file đã che tên, gpt-6-luna chấm phụ một lần; ban ngày 21/11 gpt-6-luna chấm — bài 19); cần một lượt mốc mới.
+
+**Vì sao lời gọi model gặp lỗi tạm thời phía nhà cung cấp được gọi lại đúng một lần?**
+
+- **Đã chọn:** từ 09:31 23/11, khi Amazon Bedrock trả một lỗi tạm thời phía máy của họ cho một lời gọi model, lớp nối chờ 1 giây rồi gửi lại đúng lời gọi đó một lần. Lần hai được thì lượt chạy tiếp như thường; lần hai vẫn lỗi thì người dùng thấy "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại" như trước. Không gọi lại khi khoá bị từ chối hay hết hạn, khi quá hạn mức, khi yêu cầu sai, khi rớt mạng hay hết giờ.
+- **Vì sao:** hai lượt thật đã gặp loại lỗi này, không phụ thuộc câu hỏi: một lần ở lần viết cuối của một tin bốn ý sáng 23/11 (lượt kế, 26 giây sau, bình thường), một lần ở một lượt đo 22/11; khoảng 1 trên 500 lượt (ước từ hai lần gặp). Trước đó lớp nối không gọi lại, nên người dùng thấy màn "Thử lại" cho một lỗi tự hết. Các lỗi kia không gọi lại vì gọi lại không chữa được (khoá, hạn mức), hoặc chưa thấy ở lượt thật (rớt mạng), hoặc làm người dùng chờ gấp đôi (hết giờ) — lý do ghi trong chương trình.
+- **Cách khác:** gọi lại cả khi hết giờ: không làm, theo lý do trên. Gọi lại hơn một lần: không làm; chưa thấy ghi lý do. Điều thấy được: ca test khoá đúng "hai lỗi liền thì không có lần gọi thứ ba".
+- **Cái giá:** lượt đó chậm hơn. Lời gọi lỗi tự nó có thể đã mất nhiều giây (lượt thật sáng 23/11: khoảng 15 giây rồi mới báo lỗi), nên có thể chờ gần gấp đôi, tin dài tới khoảng 50 giây (phiên đo tính từ sổ vết). Bằng chứng mới là ca test với phản hồi dựng sẵn (lỗi rồi được; hai lỗi liền; các lỗi không gọi lại; đường ô chat không phát chữ hai lần); chưa thấy chạy trên một lỗi thật, vì không ép được nhà cung cấp trả lỗi. Mỗi lần gọi lại, sổ máy chủ ghi một dòng để đếm tần suất về sau.
 
 ## Giới hạn đã biết
 
@@ -248,7 +255,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - Quyết định 2, nhóm lịch giữ mức thấp: đo trên 4 kiểu lịch, ba mức cho cùng kết quả.
 - Quyết định 1: phép chụp "giống từng byte" gồm mười loại lời gọi gửi OpenAI, vì vài vai có hai biến thể.
 - Tiền một câu ví dụ chạy thẳng qua code sản phẩm (không qua máy chủ, 21/11): khoảng 0,018 USD trên Claude so với khoảng 0,0007 USD trên gpt-6-luna (khoảng 25 lần); lượt hỏi tiếp có tìm thêm 0,048 USD. Mức suy luận của các lượt đó: báo cáo gốc không ghi; hướng dẫn đổi model ghi "mức thấp".
-- Quyết định 3, dòng trạng thái với Claude: ở lượt có công cụ, "Đang viết câu trả lời…" chỉ được gửi ngay trước chữ đầu, nên với Claude gần như không thấy (đã nhìn trên trình duyệt 22/11: lúc chờ chỉ một dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời…", tin bốn ý 29,5 giây); trừ lượt phải viết lại: dòng đó đứng suốt lần viết lại (bài 21).
+- Quyết định 3, dòng trạng thái với Claude: ở lượt có công cụ, "Đang viết câu trả lời…" chỉ được gửi ngay trước chữ đầu, nên với Claude gần như không thấy (đã nhìn trên trình duyệt 22/11, giao diện cũ: lúc chờ chỉ một dòng "Đã tìm trong kho, đang chuẩn bị câu trả lời…", tin bốn ý 29,5 giây); trừ lượt phải viết lại: dòng đó đứng suốt lần viết lại (bài 21). Từ 23/11 dòng trạng thái nằm trong thẻ chờ, kèm tên các bài đã tìm thấy; nó không còn kèm số đoạn như "(10 đoạn)" của giao diện cũ (bài 35).
 - Lớp nối, ví dụ một chỗ khác nhau: khuôn có ràng buộc kiểu "nhiều nhất 3 mục" bị Bedrock từ chối, nên lớp nối gỡ ràng buộc khỏi khuôn gửi đi; chương trình vẫn kiểm đủ khi nhận về.
 - Lỗi "xin công cụ mãi", diễn biến: gpt-6-luna gọi công cụ xong thì viết vào khuôn; Claude thì không. Phát lại một yêu cầu đã đủ dữ liệu: viết được 0 trên 8 lần ở mỗi mức suy luận; bỏ khuôn thì 14 trên 14. Bản sửa: ở lượt có công cụ, lớp nối không gửi khuôn mà thêm một công cụ nội bộ "trả lời" mang đúng khuôn đó; Claude gọi nó để nộp câu trả lời. Trên thước 29 câu làm trợ lý (bài 32): chạm trần vòng 6 xuống 0; nhóm 8 câu cần nhiều công cụ đạt 2 lên 7.
 - Quyết định 4, hai thứ Claude đọc mà gpt-6-luna không đọc: mô tả của công cụ nộp câu trả lời (ở mọi lượt có công cụ) và một câu giữ chỗ trong lịch sử, đặt giữa hai câu hỏi liền nhau khi câu trả lời lượt trước không được lưu.
@@ -271,7 +278,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - Sửa lịch khó 5/6 · 2/6 · 0/6; nhóm lịch giữ low; chạm trần 8–9/12 ở medium/low trước bản sửa: `backend/config/settings.yaml` (chú thích `reasoning_sua_lich`), `guides/DOI_MODEL_VIET.md` mục 3 và 7; `data/thu_bedrock_2026-11-21/do/TONG_HOP_BAN_0.md` dòng 45 [riêng tư].
 - Mức của luna (không gửi = mức vừa; đo low ↔ medium 19/11): `bai_hoc/VIEC_MOI_XONG.md` mục 12; `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng 45 [chép].
 - Không trần token: chú thích trong `generator_openai_full_corpus.py` (trên `answer_agent`), `settings.yaml` (`max_tokens`); 3.974 lần gọi, 2 chạm trần 512: `bai_hoc/VIEC_MOI_XONG.md` mục 9 [chép].
-- Chữ tới một lần, "không cần stream thật": `bedrock_model.py` (`stream_response`), `HIEN_TRANG.md` mục 4 gạch 09:41; ước 5,5–6 giây: `THOI_GIAN_DI_DAU.md` mục 3 hàng A [ước, chưa đo]. Bốn dòng trạng thái: `frontend/src/chat.jsx` dòng 21–24 [code].
+- Chữ tới một lần, "không cần stream thật": `bedrock_model.py` (`stream_response`), `HIEN_TRANG.md` mục 4 gạch 09:41; ước 5,5–6 giây: `THOI_GIAN_DI_DAU.md` mục 3 hàng A [ước, chưa đo]. Bốn dòng trạng thái: `frontend/src/chat.jsx` `STATUS_TEXT` [code]; từ 10:00 23/11 hiện trong thẻ chờ `frontend/src/song/Song.jsx` `ChoSong` (`dongBuoc`, không kèm `n_sources`) [code].
 - Đoạn dặn riêng Claude: `backend/llm/full_corpus_prompt.py` (hằng `SONNET_*`), hàm `kem` trong `generator_openai_full_corpus.py`; số 0/56, 2/56, 4/56: `data/thu_bedrock_2026-11-21/c_harness/RA_HARNESS.md` dòng 22 [riêng tư]; 27/27: `guides/DOI_MODEL_VIET.md` mục 1; đoạn "nói thẳng" gỡ: cùng chỗ.
 - Bảng giá: `backend/llm/pricing.py` (`PRICES_PER_M`) [code]. Tiền 0,00039 ↔ 0,0146 USD: `KET_QUA_2A.md`; 0,018 ↔ 0,0007: `report_agent/2026-11-21/b_bedrock_sonnet.md` mục 3 dòng 44 (hàng "LƯỢT THẬT qua code sản phẩm… (không qua server)", không ghi mức suy luận; mục 3b "qua giao diện" là lượt khác, mức `low`, không có số 0,018 ↔ 0,0007); "mức `low`" và 0,048 USD: `guides/DOI_MODEL_VIET.md` dòng 186 [chép, mở 16:52 22/11; sửa theo biên bản `data/hoc_cung_D/kiem/phan_xu_va_cap_nhat_15h42.md` Phần 3 dòng 3 — riêng tư]. "Không lọc theo loại câu" (thay "đủ các loại câu", suy luận của người sửa trước): biên bản cùng file, Phần 1 bảng hai dòng 12. Trình duyệt 22/11: `bai_hoc/VIEC_MOI_XONG.md` mục 44 [chép].
 - Giữ một phiên chụp 10 loại lời gọi giống từng byte: `guides/DOI_MODEL_VIET.md` mục 1; `report_agent/2026-11-21/b_bedrock_sonnet.md` dòng 75 [người thứ hai kiểm].
@@ -280,6 +287,7 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - Thứ đã thử mà không đưa vào: `bai_hoc/VIEC_MOI_XONG.md` mục 23 bảng cuối.
 - Người chấm đổi sang model đang chạy, có thể chấm dễ hơn; không model dự phòng: `HIEN_TRANG.md` mục 4 gạch 21:43 [chép].
 - Lượt chạm 45 giây: `data/thu_bedrock_2026-11-21/do/moc_12vai/KET_QUA_MOC.md` (r1, V01 lượt 3) [riêng tư]. Dòng trạng thái ở lượt có công cụ: `backend/llm/assistant.py` (`pending_generating`, "đang viết" phát ngay trước chữ đầu) [code].
+- Đợt 23/11/2026. Gọi lại một lần khi lỗi tạm thời: commit `f5cf10b5` (gộp `cb711bc4` 09:31 23/11/2026) — `backend/llm/bedrock_model.py` (`MA_GOI_LAI` = 500 / 502 / 503 / 504, `CHO_GOI_LAI_GIAY = 1.0`, khối gọi lại trong `_invoke`, ký lại vì chữ ký mang giờ gửi, dòng sổ `bedrock_goi_lai`; chú thích trên `MA_GOI_LAI`: hai lượt thật, không gọi lại 4xx / lỗi mạng / hết giờ và lý do); ca test `backend/tests/test_bedrock_model.py` (`test_a_5xx_from_bedrock_is_retried_once_and_the_answer_comes_back`, `test_a_second_5xx_is_not_hidden_and_4xx_is_never_retried`, `test_a_retried_5xx_on_the_stream_path_sends_the_text_once`) [code; không chạy test]. "Khoảng 1 / 500 lượt", "khoảng 15 giây rồi mới trả lỗi", "có thể chờ gấp đôi, tin dài tới khoảng 50 giây [phiên đo tính từ sổ vết]", "CHƯA thấy trên lỗi 5xx thật — không ép được": `guides/RUNBOOK_BAN_GIAO.md` mục 10.3 hàng "Bedrock trả lỗi 5xx thoáng qua" (sửa ở commit `6e9c1a84`) [chép, đã mở]; lời commit `f5cf10b5` [chép]. Lời báo nguyên văn: `GENERATION_FAILURE_MESSAGE` trong `backend/api/routes/chat.py` [code]. Hạ mức chỉ ở lần viết cuối: bài 34 khối Nguồn.
 - Bài đã qua một lượt đối chiếu độc lập 22/11: `data/hoc_cung_D/kiem/bai_33_38.md` [riêng tư]; dòng không áp ghi ở `data/hoc_cung_D/viet/viet_33_38.md` mục "Sau lượt kiểm".
 
 - Phép thử mức vừa cho cả lượt tin nhiều ý (đợt 21:37 22/11/2026): tiêu chí ghi trước (sáu điều + bổ sung E1–E4, mốc lượt 2 thẻ nơi 17:10 = 27,3 giây, trung vị gộp 26,9 của 12 lượt high, cách thay hai agent `assistant_agent_nhieu_y` / `assistant_history_agent_nhieu_y` trong tiến trình đo): `data/thu_bedrock_2026-11-21/b_medium_nhieu_y/luot_1/TIEU_CHI.md` dòng 4–24; số máy (19,3 giây, 1 / 6 ở điều 4, 6 lần tìm, 2.028 ↔ 2.257 ký tự, token suy luận): `KET_QUA_SO_MAY.md` dòng 3–21; bản chấm (điều 4 TRƯỢT, "dưới 7 tuổi" 3 / 6, gốc là chỉ một lần tìm): `CHAM_E.md` dòng 5–21 [riêng tư; đã chạy, phiên khác, 22/11; Claude Sonnet 5.5]. Trung vị 19,3 · 27,3, khoảng thời gian, số lần tìm 1×6 ↔ 2·1·2·1·1·1: người viết đếm lại từ `tho.jsonl` của `b_medium_nhieu_y/luot_1` và `b_x10_the_noi/luot_2` [tự đếm, 0 đồng]. "Bỏ hẳn, không thử lại": `session_prompt/Y_CHUA_THU.md` hàng ý 56 [chép]. Hai agent tin nhiều ý có thật trong code: `backend/llm/generator_openai_full_corpus.py` dòng 388–389, 568–569; mức đang chạy `reasoning_default: high`: `backend/config/settings.yaml` dòng 59 [code]. Mức thấp sau khi sửa lớp nối chưa đo: không thấy trong `Y_CHUA_THU.md`, `VIEC_DANG_MO.md`, `HIEN_TRANG.md` (grep "low", "medium", "mức thấp") [đã grep].

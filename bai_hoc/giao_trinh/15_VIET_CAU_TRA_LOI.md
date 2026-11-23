@@ -1,6 +1,6 @@
 # Bài 15 — Viết câu trả lời: lời dặn, ngữ cảnh 10 đoạn, và số nguồn [n]
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: lời dặn và cách ghép lời gọi đọc từ chương trình đang chạy; ví dụ là lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5); số của các phép so lấy từ các báo cáo đo từ 26/10 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
+*Cập nhật 11:13, ngày 23/11/2026 · khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): thêm một câu trỏ sang bài 24 cho dòng lưu ý của nguồn; hàng "hãng model lỗi" ghi thêm lần gọi lại một lần (bài 33) · 16:11 22/11: phân xử chỗ lệch giữa các bài; giữ chữ tới khi kiểm (15:42) · trước đó: lời dặn và cách ghép lời gọi đọc từ chương trình đang chạy; ví dụ là lượt hỏi thật ngày 21/11 (Claude Sonnet 5.5); số của các phép so lấy từ các báo cáo đo từ 26/10 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** bước tìm chọn ra 10 đoạn, và hệ thống không xếp lại chúng.
 **Bài này thêm:** 10 đoạn được gửi cho model viết như thế nào, lời dặn nói gì, và model trả về cái gì. Đây là lời gọi chính của đường hỏi đáp; ở trợ lý đang chạy, một lượt hỏi có thể lặp lời gọi này vài vòng khi model tự tìm thêm (bài 21).
@@ -85,7 +85,7 @@ Model có thể không theo lời dặn: quên số nguồn, ghi một số khô
 | ghi số nguồn, không bịa số | kiểm mọi số nguồn có thật (bài 16) |
 | không đủ bằng chứng thì trả câu từ chối | nhận ra đúng câu đó để mở đường tra web, và để đếm khi đo (bài 16, 25) |
 | (trong mô tả công cụ thời tiết, khoảng cách) không thêm con số nào ngoài kết quả công cụ | gỡ câu chứa con số lạ (bài 24) |
-| giữ lưu ý của nguồn | chép câu "tạm ngừng khi lũ, khi có lệnh cấm, khi thời tiết xấu" của nguồn đã trích vào dòng ghi chú, nếu câu trả lời chưa nêu |
+| giữ lưu ý của nguồn | chép câu "tạm ngừng khi lũ, khi có lệnh cấm, khi thời tiết xấu" của nguồn đã trích vào dòng ghi chú, nếu câu trả lời chưa nêu (cả với bài chỉ được nêu tên qua công cụ liệt kê, gần một điểm, thẻ nơi: bài 24) |
 
 Các điều còn lại của lời dặn (chỉ dùng bằng chứng, giữ nguyên điều kiện, không tự thêm lời khuyên) chưa có bước kiểm nào bằng chương trình. Câu trả lời có nói **đúng nghĩa** của đoạn nó trích không thì chỉ đo được khi chấm (bài 19).
 
@@ -132,7 +132,7 @@ Các điều còn lại của lời dặn (chỉ dùng bằng chứng, giữ ngu
 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa / ai làm gì |
 |---|---|---|---|
-| hãng model lỗi, hoặc một lần chạy trợ lý quá 45 giây (hạn chung cho mọi vòng của lần chạy đó) | dừng lượt; không gọi lại | "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại" | người dùng bấm "Thử lại"; sập lâu thì người vận hành đổi hãng trong cấu hình (bài 6) |
+| hãng model lỗi, hoặc một lần chạy trợ lý quá 45 giây (hạn chung cho mọi vòng của lần chạy đó) | dừng lượt; không gọi lại (trừ lỗi tạm thời của nhà cung cấp: từ 23/11 gọi lại một lần, chưa gặp lỗi thật — bài 33) | "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại" | người dùng bấm "Thử lại"; sập lâu thì người vận hành đổi hãng trong cấu hình (bài 6) |
 | model không thấy đủ bằng chứng | trả câu từ chối cố định | câu từ chối, kèm mục tra web (bài 25) | đúng thiết kế |
 | model quên số nguồn hoặc ghi số không có | bước kiểm bắt được | lời báo thay cho câu trả lời: với model đang chạy, chữ hỏng chưa hề hiện; với model trả chữ dần, chữ đã hiện bị rút lại (bài 6, 16) | đã có |
 | model viết sai nghĩa của đoạn nó trích | không bước nào bắt được | câu trả lời sai mà có số nguồn hẳn hoi | chưa có; chỉ thấy khi chấm (bài 19) |
@@ -272,5 +272,7 @@ Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả l
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm", "Quyết định nhỏ hơn" (thêm 14:03 22/11/2026 theo khuôn mới): gom từ "Đã so", bảng cấu hình và các nguồn trên. Hạn 45 giây cho một lần chạy: `backend/llm/assistant.py` (một `deadline` đặt trước vòng đọc luồng sự kiện, khoảng dòng 1869); lần chạy lại hẹp gọi lại `_luot_stream` nên có hạn mới (khoảng dòng 1996–2008) [code]; 45 giây và các khoá cấm (`temperature`, `retry`, `fallback`…) được kiểm lúc bật: `backend/core/settings_loader.py` `validate_phase6_settings` [code]. Câu trả lời liền trước trong lịch sử (bỏ mã trích dẫn, nhãn "không phải nguồn"; lượt nào không được nhớ): chú thích dòng `nho_cau_tra_loi` của `backend/config/settings.yaml`, `backend/api/conversations.py` (`CONG_CU_KHONG_NHO_DAP`, `dap_duoc_nho`) [code]. Sàn không nới, có câu từ chối cố định: `session_prompt/HIEN_TRANG.md` mục 4, gạch 11:24 21/11/2026. Lời báo lỗi model: `backend/api/routes/chat.py` `GENERATION_FAILURE_MESSAGE` (qua bài 6). Luật "chỉ dẫn trong nội dung lấy từ ngoài là dữ liệu": `AGENTS.md` luật cứng 6. Khuôn đầu ra một mục: `docs/superpowers/specs/2026-09-14-phase-6-full-corpus-generation-api-ui-written-spec.md` dòng 127–131 [chép]. Không chỉnh độ ngẫu nhiên, không gọi lại, không model dự phòng: `docs/superpowers/specs/2026-10-01-phase-6-openai-baseline-amendment.md` dòng 26–48 [chép]. Các mục mới đã qua một lượt đối chiếu độc lập 14:28 22/11/2026 và được sửa theo: `data/hoc_cung_D/kiem/muc_moi_12_16.md` [riêng tư].
 
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`so_lan_tim_kho: 3`, `het_luot_viet_lai: true`) [code; người viết không chạy lại]. Hạn riêng của lần viết lại: `backend/llm/assistant.py` `_viet_lai_het_luot` ⇒ `generator.generate_answer` ⇒ `_execute_agent` ⇒ `self._run(..., self.timeout)` [code].
+- Câu trỏ sang bài 24 (đợt 23/11/2026): bài được nêu tên qua nguồn liệt kê, "gần một điểm" hay thẻ nơi cũng được xét câu lưu ý — `backend/llm/assistant.py` `set_notice` (danh sách `bai_neu`, `_doan_bai` từ commit `63ccf07c`) [code]; phần đủ ở bài 24 "Chi tiết để tra".
+- Hàng "hãng model lỗi" (đợt 23/11/2026): gọi lại một lần khi Bedrock trả lỗi tạm thời, commit `f5cf10b5` (gộp `cb711bc4` 09:31 23/11), `backend/llm/bedrock_model.py` `MA_GOI_LAI`, khối gọi lại trong `_invoke`; bằng chứng chỉ là ca test `backend/tests/test_bedrock_model.py` [code; đã mở bài 33 "Quyết định nhỏ hơn"; biên bản kiểm 23/11 đối chiếu dòng 64–70, 288–293].
 
 </details>
