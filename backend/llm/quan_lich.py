@@ -56,6 +56,9 @@ _ANH = re.compile(r"quan/[a-z0-9_]{1,40}")
 _BAN = re.compile(r"[\x00-\x1f\x7f]|https?:|www\.|//|\]\(|[<>]")
 
 
+BUA = {"trua", "toi"}  # hai bữa lịch gợi ý quán; `khong_bua` của một quán trong bảng là tập con khác rỗng của tập này
+
+
 def _ten_sach(ten: str) -> bool:
     return not _BAN.search(ten) and not any(unicodedata.category(ch) == "Cf" for ch in ten)
 
@@ -72,7 +75,8 @@ def nap_bang_quan(path: str | Path, cum_diem) -> dict:
               and all(isinstance(x, (int, float)) for x in q["toa"])
               and (q["nguon"] != "kho" or isinstance(q.get("bai_id"), str))
               and (q["nguon"] != "osm" or str(q.get("link", "")).startswith("https://www.openstreetmap.org/"))
-              and (q.get("anh") is None or (q["nguon"] != "kho" and isinstance(q["anh"], str) and _ANH.fullmatch(q["anh"]))))
+              and (q.get("anh") is None or (q["nguon"] != "kho" and isinstance(q["anh"], str) and _ANH.fullmatch(q["anh"])))
+              and (q.get("khong_bua") is None or (isinstance(q["khong_bua"], list) and q["khong_bua"] and set(q["khong_bua"]) <= BUA)))
         if not ok:
             raise ValueError(f"bảng quán lịch: dòng không hợp lệ ({str(ten)[:40]!r})")
         theo_cum.setdefault(q["cum"], []).append(q)
@@ -86,10 +90,11 @@ def _km(a, b) -> float:
     return 6371 * 2 * math.asin(math.sqrt(h))
 
 
-def _chon(ds: list[dict], toa_diem, da_dung: set) -> list[dict]:
-    # chỉ quán ≤ KM_TOI_DA; bữa chính ⇒ chỉ quán ăn, cà phê chỉ khi không có quán ăn nào (A 14/11: bữa tối từng gợi ý một quán cà phê có bài kho
+def _chon(ds: list[dict], toa_diem, da_dung: set, bua: str) -> list[dict]:
+    # bỏ quán mà KHO ghi giờ hoạt động không phủ bữa này (`khong_bua` của bảng, 23/11/2026: Bún bò Bà Nga mở 18h–23h từng được gợi ý cho bữa trưa ở
+    # 756 / 960 tổ hợp biểu mẫu); quán kho không ghi giờ và quán bản đồ mở không có trường này ⇒ như cũ. Chỉ quán ≤ KM_TOI_DA; bữa chính ⇒ chỉ quán ăn, cà phê chỉ khi không có quán ăn nào (A 14/11: bữa tối từng gợi ý một quán cà phê có bài kho
     # trước quán ăn OSM); trong cùng loại: quán kho trước, rồi gần điểm nhất
-    gan = [(q, _km(toa_diem, q["toa"])) for q in ds if (q["ten"], tuple(q["toa"])) not in da_dung]
+    gan = [(q, _km(toa_diem, q["toa"])) for q in ds if (q["ten"], tuple(q["toa"])) not in da_dung and bua not in q.get("khong_bua", ())]
     gan = [(q, km) for q, km in gan if km <= KM_TOI_DA]
     xep = [q for q, km in sorted(gan, key=lambda x: (x[0]["loai"] != "quan_an", NGUON.index(x[0]["nguon"]), x[1]))]
     an = [q for q in xep if q["loai"] == "quan_an"]
@@ -118,7 +123,7 @@ def an_uong(theo_cum: dict, bang, khung: dict, toa_do: dict | None) -> list[dict
             diem, chon = ung_vien[0], []
             for j in ung_vien:
                 toa = (toa_do or {}).get(j)
-                chon = _chon(theo_cum.get(bang.theo_id[j]["cum"], []), toa, da_dung) if toa else []
+                chon = _chon(theo_cum.get(bang.theo_id[j]["cum"], []), toa, da_dung, bua) if toa else []
                 if chon or (j, bua) in GHI_CHU_AN:
                     diem = j
                     break

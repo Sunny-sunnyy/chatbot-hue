@@ -464,7 +464,9 @@ picture { display: contents; }
   .tro-ly-trang { padding-bottom: 72px; }
   .tro-ly-trang .chat-form { bottom: 64px; }
   .hoi-anh-the { padding: 12px 14px; }
-  .hoi-anh-the:has(> .hoi-anh-xem) { display: grid; grid-template-columns: 72px 1fr; column-gap: 12px; row-gap: 6px; align-items: start; }
+  /* cột chữ `minmax(0, 1fr)` + nút được xuống dòng: tên dài ("Kinh thành Huế (Ngọ Môn – Kỳ Đài)") từng đẩy cột rộng hơn thẻ ⇒ chữ bị cắt ở mép phải */
+  .hoi-anh-the:has(> .hoi-anh-xem) { display: grid; grid-template-columns: 72px minmax(0, 1fr); column-gap: 12px; row-gap: 6px; align-items: start; }
+  .hoi-anh-the button { white-space: normal; text-align: left; overflow-wrap: anywhere; }
   .hoi-anh-the > .hoi-anh-xem { grid-row: span 2; width: 72px; height: 72px; max-width: none; max-height: none; }
   .hoi-anh-the:has(> .hoi-anh-xem) > div:last-child { grid-column: 1 / -1; }
 }

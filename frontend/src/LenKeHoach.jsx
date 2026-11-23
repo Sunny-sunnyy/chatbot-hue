@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BIEU_MAU } from "./chung.jsx";
 import { LichV2 } from "./LichV2.jsx";
 import { SONG_NGANG } from "./song/hinh.jsx";
@@ -116,11 +116,23 @@ function LichMau({ onXep, pending }) {
 }
 
 function CotLich({ lichTurn, onEditPlan, onXep, pending }) {
+  // Bấm "Xếp lịch" (hoặc "Xếp lịch như ví dụ") ⇒ đưa ĐẦU lịch vào khung nhìn. Trước 23/11/2026 không có gì cuộn: ở màn rộng người bấm nút (cuối biểu
+  // mẫu dài) đứng nguyên ở đáy trang, khối "Tổng quan" nằm 2–3 nghìn px phía trên. Chỉ khi lịch ĐỔI sau lúc trang đã mở (vào lại trang đang có lịch
+  // thì không tự cuộn) và không phải bản vừa sửa bằng lời trong khung trợ lý (người dùng đang nhìn khung đó).
+  const khungRef = useRef(null), khoaTruoc = useRef(undefined);
+  const khoa = lichTurn && !lichTurn.daSua ? lichTurn.key : null;
+  useEffect(() => {
+    const truoc = khoaTruoc.current;
+    khoaTruoc.current = khoa;
+    if (truoc === undefined || khoa == null || khoa === truoc) return;
+    const giam = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    khungRef.current?.scrollIntoView({ block: "start", behavior: giam ? "auto" : "smooth" });
+  }, [khoa]);
   if (!lichTurn) return <LichMau onXep={onXep} pending={pending} />;
   const t = lichTurn;
   const dangChay = !["done", "error", "stopped"].includes(t.phase);
   return (
-    <div className="lkh-lich" data-phase={t.phase}>
+    <div className="lkh-lich" data-phase={t.phase} ref={khungRef}>
       {!t.lichV2 && dangChay && t.progress?.length > 0 && <p className="progress" role="status">{t.progress[t.progress.length - 1]}</p>}
       {!t.lichV2 && dangChay && <span className="lkh-go" role="status" aria-label="đang xếp lịch"><i /><i /><i /></span>}
       {t.error && <p className="loi" role="alert">{t.error}</p>}

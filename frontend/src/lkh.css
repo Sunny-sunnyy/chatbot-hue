@@ -10,7 +10,10 @@
 .lkh-dau .trang-h { color: var(--color-on-accent); }
 
 .lkh-cot { display: grid; grid-template-columns: 420px 1fr; gap: 32px; align-items: start; padding-top: 32px; padding-bottom: 88px; }
-.lkh-cot .lc { position: sticky; top: 88px; margin-top: 0; max-width: none; gap: 14px; padding: 0; background: none; box-shadow: none; }
+/* Biểu mẫu KHÔNG ghim khi cuộn (23/11/2026): nó cao khoảng 1.900 px, hơn mọi khung nhìn máy xách tay ⇒ ghim `sticky` làm nửa dưới biểu mẫu và nút
+   "Xếp lịch" chỉ với tới được ở đáy trang khi cột lịch đã dài. Về biểu mẫu từ lịch: nút "Sửa" (App.jsx cuộn tới biểu mẫu). */
+.lkh-cot .lc { margin-top: 0; max-width: none; gap: 14px; padding: 0; background: none; box-shadow: none; }
+.lkh-lich { scroll-margin-top: 96px; }   /* đầu lịch dừng dưới thanh trên (thanh ghim cao 69 px) */
 .lkh-cot .lc-nhom { display: block; padding: 18px 20px 20px; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-l); }
 .lkh-cot .lc-ten { float: left; width: 100%; padding: 0 0 12px; font-size: var(--text-than); font-weight: 700; }
 .lkh-cot .lc-ten + * { clear: both; }
@@ -308,6 +311,10 @@
   html.in-lich .lkh-dang-in .lich-ngay:not(:has(~ .lich-ngay)) { break-inside: auto; }
   html.in-lich .lkh-dang-in .lkh-muc { break-inside: avoid; opacity: 1 !important; transform: none !important; animation: none !important; }
   html.in-lich .lkh-dang-in a { color: inherit; text-decoration: none; }
+  /* Dòng sông của ngày được ĐO trên bố cục màn hình (LichV2.jsx `SongNgay`); bản in có bố cục khác (cỡ chữ, bề rộng 1019 px) ⇒ nét cong lệch dần khỏi các
+     điểm rồi chạy xuống đè hai khối quán ăn cuối ngày (thấy ở bản in lịch mặc định, trang 2 — 23/11/2026). Bản in dùng lại vạch thẳng đặt bằng CSS: luôn khớp. */
+  html.in-lich .lkh-dang-in .lkh-song-ngay { display: none; }
+  html.in-lich .lkh-dang-in .lkh-dong-khung:has(.lkh-song-ngay) .lkh-dong::before { display: block; left: 31px; }   /* giữa ảnh 64 px của bố cục in */
   /* Cỡ chữ của BẢN IN giữ đúng các giá trị trước khi gom cỡ chữ về một thang (22/11/2026 tối): thang mới đổi 15,5 ⇒ 15 · 18 ⇒ 19 · 24 ⇒ 22 px… Không có
      các dòng dưới thì lịch ví dụ vẫn in 2 trang nhưng dòng chữ xê dịch tới 2 pt; có thì 76 / 76 dòng nằm đúng chỗ bản in cũ (so hai file PDF). Màn hình dùng thang mới. */
   html.in-lich .lkh-dang-in .lkh-thanh small { font-size: 14px; }
