@@ -1328,8 +1328,10 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
                        + (_cau_toi_xep_lai(bang, xep_toi) if xep_toi else ""))
         elif t == "them_diem":
             thay = f", thế chỗ {ten_cua_diem(bang, a['the_cho'])}" if a.get("the_cho") else ""
-            out.append(f"Đã thêm {ten_cua_diem(bang, a['diem'])} (ngày {a['ngay']}, buổi {NHAN_BUOI[a['buoi']]}{thay})."
-                       + (_cau_toi_doi_cho(bang, a["toi_doi_cho"]) if a.get("toi_doi_cho") else "")  # công tắc `toi_goi_ten`: hai tối đổi chỗ cho nhau
+            # công tắc `toi_goi_ten`, hai tối đổi chỗ cho nhau: mục được gọi tên vốn đã ở trong lịch ⇒ "Đã chuyển", không "Đã thêm" (lượt trình duyệt
+            # 23/11/2026: "Đã thêm HANOK" khi HANOK chỉ đổi tối; ca này là 1.502 / 5.216 lệnh gọi tên mục tối)
+            out.append((f"Đã chuyển {ten_cua_diem(bang, a['diem'])} sang buổi tối ngày {a['ngay']}." + _cau_toi_doi_cho(bang, a["toi_doi_cho"])
+                        if a.get("toi_doi_cho") else f"Đã thêm {ten_cua_diem(bang, a['diem'])} (ngày {a['ngay']}, buổi {NHAN_BUOI[a['buoi']]}{thay}).")
                        + (_cau_day(a["day"]) if a.get("day") else "") + (_cau_khu(a["khu"]) if a.get("khu") else "")
                        + (_cau_toi_xep_lai(bang, a["toi_xep_lai"]) if a.get("toi_xep_lai") else ""))
         elif t == "doi_buoi":
