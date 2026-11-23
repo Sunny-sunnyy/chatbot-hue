@@ -1,13 +1,13 @@
-# Bài 7 — Kho dữ liệu: 267 bài viết về Huế, ai soạn, lấy từ đâu, kiểm thế nào
+# Bài 7 — Kho dữ liệu: 269 bài viết về Huế, ai soạn, lấy từ đâu, kiểm thế nào
 
-*Cập nhật 17:03, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài); chưa gồm các bản gộp từ 16:38 (chờ phiếu) · chỗ đậu ô tô khu trung tâm và quy định chụp ảnh ở chùa / lăng / bảo tàng: chủ dự án chọn không bổ sung (12:22 23/11); đã áp biên bản kiểm độc lập · các mốc trước: khối Nguồn.*
+*Cập nhật 19:51, ngày 23/11/2026 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · hai bài mới (AEON Mall Huế, công viên ven sông Hương) và một dòng tự mâu thuẫn về Quán Nhỏ, ghi kho 18:03, chỉ mục cập nhật riêng 18:05 · chưa có lượt cả bộ test sau các bản gộp từ 16:20 · các mốc trước: khối Nguồn.*
 
 **Bài trước đã biết:** hệ thống gồm những khối nào, và một câu hỏi đi qua chúng ra sao. Mọi câu trả lời chỉ được lấy từ kho.
 **Bài này thêm:** mở chính kho ra xem. Trong đó có gì, bài được viết theo luật nào, kho được giữ đúng bằng cách nào, và vì sao làm như vậy.
 
 ## Ý chính
 
-- Kho là **267 bài viết tiếng Việt**, mỗi bài một file chữ có tiêu đề và các mục, chia theo 5 chủ đề: món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch.
+- Kho là **269 bài viết tiếng Việt**, mỗi bài một file chữ có tiêu đề và các mục, chia theo 5 chủ đề: món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch.
 - Bài được **soạn riêng cho hệ thống**, theo mẫu, từ các nguồn công khai; phần lớn bài ghi nguồn ở cuối bài. Câu trả lời từ kho không đọc trang web; chỉ khi kho từ chối, hệ thống mới tra web một lần và để riêng.
 - Bài phải viết sao cho **từng câu đọc riêng vẫn hiểu**, vì model viết chỉ đọc vài đoạn nhỏ, không đọc cả bài.
 - Mỗi lần thêm bài mới hoặc sửa nhiều là một lần **đo trước và sau** trên cùng bộ câu hỏi, với điều kiện ghi sẵn: câu đang trả lời tốt không được tệ đi. Sửa nhỏ thì hỏi thử các câu chạm chỗ sửa. Khi một giá đổi, có lệnh **đề xuất sửa**: chương trình tìm chỗ và thay số, model chỉ phán chỗ nào đúng là mức giá đó, người duyệt.
@@ -17,12 +17,12 @@
 
 | Tên trong bài | Tên gốc | Nghĩa |
 |---|---|---|
-| kho | **knowledge base**, **corpus** | tập 267 bài viết; thứ duy nhất phần hỏi đáp được trả lời từ đó |
+| kho | **knowledge base**, **corpus** | tập 269 bài viết; thứ duy nhất phần hỏi đáp được trả lời từ đó |
 | file Markdown | **Markdown** | file chữ thường, tiêu đề đánh dấu bằng `#`, bảng và danh sách viết bằng ký hiệu đơn giản |
 | mẫu bài | **template** | khung các mục mà mọi bài cùng chủ đề phải theo |
 | trả lời trong phạm vi kho | **closed-world**, **grounded answering** | chỉ nói điều kho có; kho không có thì từ chối |
 
-## Kho có 267 bài, chia theo 5 chủ đề
+## Kho có 269 bài, chia theo 5 chủ đề
 
 | Chủ đề | Số bài | Gồm |
 |---|---:|---|
@@ -30,15 +30,15 @@
 | Di tích | 39 | Đại Nội, Kinh thành, các lăng, chùa, di sản như Nhã nhạc |
 | Lễ hội | 40 | lễ hội, ngày hội, lễ tế trong năm |
 | Nghệ thuật biểu diễn | 15 | ca Huế, các chương trình biểu diễn |
-| Du lịch | 62 | 45 bài địa điểm (biển, đầm phá, chợ, phố đi bộ…), 12 bài dịch vụ (đi lại, lưu trú…), 5 bài vé |
+| Du lịch | 64 | 47 bài địa điểm (biển, đầm phá, chợ, phố đi bộ, công viên…), 12 bài dịch vụ (đi lại, lưu trú…), 5 bài vé |
 
-Cả kho cắt ra thành 9.479 đoạn (bài 8).
+Cả kho cắt ra thành 9.533 đoạn (bài 8).
 
-Phần hỏi đáp không biết gì ngoài 267 bài này. Có bốn thứ không lấy từ kho, và đều được ghi rõ khi hiện ra: ngày tháng và ngày âm lịch (chương trình tính), dự báo thời tiết (lấy từ một dịch vụ thời tiết), khoảng cách và "gần một điểm có gì" (chương trình tính từ một bảng vị trí riêng), và mục "Từ web (chưa kiểm)" (chỉ có khi kho từ chối). Trang Lên kế hoạch dùng thêm vài bảng dữ liệu riêng: bảng điểm tham quan, bảng chỗ ở, bảng quán ăn (chặng 6).
+Phần hỏi đáp không biết gì ngoài 269 bài này. Có bốn thứ không lấy từ kho, và đều được ghi rõ khi hiện ra: ngày tháng và ngày âm lịch (chương trình tính), dự báo thời tiết (lấy từ một dịch vụ thời tiết), khoảng cách và "gần một điểm có gì" (chương trình tính từ một bảng vị trí riêng), và mục "Từ web (chưa kiểm)" (chỉ có khi kho từ chối). Trang Lên kế hoạch dùng thêm vài bảng dữ liệu riêng: bảng điểm tham quan, bảng chỗ ở, bảng quán ăn (chặng 6).
 
 ## Bài được soạn riêng, theo mẫu, có ghi nguồn
 
-Kho không phải bản sao của các trang web. Mỗi bài được viết lại từ các nguồn công khai (cổng thông tin của địa phương, báo, trang du lịch, văn bản quy định giá) theo một **mẫu bài** của chủ đề đó. Ví dụ bài về một món ăn luôn có: món là gì, ăn ở đâu, giá, giờ mở cửa. Vài luật viết áp cho mọi bài:
+Kho không phải bản sao của các trang web. Mỗi bài được viết lại từ các nguồn công khai (cổng thông tin của địa phương, báo, trang du lịch, văn bản quy định giá) theo một **mẫu bài** của chủ đề đó. Ví dụ bài về một món ăn có: món là gì, ăn ở đâu, giá, giờ. Vài luật viết áp cho mọi bài:
 
 - bài bắt đầu bằng tên bài, rồi chia mục;
 - **không có mục rỗng:** thông tin nào không có thì bỏ hẳn mục đó, không ghi "đang cập nhật";
@@ -46,7 +46,7 @@ Kho không phải bản sao của các trang web. Mỗi bài được viết l�
 
 ## Mỗi câu trong bài phải đọc riêng vẫn hiểu
 
-Lúc trả lời, model viết không đọc cả bài. Nó đọc các đoạn nhỏ (10 đoạn ở lần tìm đầu), thường cắt từ nhiều bài khác nhau. Nếu một đoạn viết "Quán này mở từ 6 giờ sáng" mà không nói quán nào, model không biết "quán này" là quán nào, và có thể gán nhầm sang quán khác.
+Lúc trả lời, model viết không đọc cả bài. Nó đọc các đoạn nhỏ (10 đoạn ở lần tìm đầu), của nhiều bài. Nếu một đoạn viết "Quán này mở từ 6 giờ sáng" mà không nói quán nào, model không biết "quán này" là quán nào, và có thể gán nhầm sang quán khác.
 
 Vì vậy bài được viết sao cho từng câu, từng dòng mang đủ tên và bối cảnh của nó. Ở ví dụ chính, đoạn số 1 ghi giá vé vào cổng Đại Nội, 200.000 đồng cho người lớn, trong cùng một câu: con số đứng cạnh tên nơi và loại vé.
 
@@ -57,9 +57,11 @@ Kho đã đổi nhiều lần. Cách làm chung:
 1. **Có căn cứ.** Sửa khi có căn cứ ngay trong kho hoặc ở nguồn công khai; chỗ không chắc thì viết nhẹ đi chứ không đoán. Với con số: xem quyết định 5.
 2. **Ghi trước điều kiện "không làm hỏng".** Ví dụ: không thêm câu ngoài kho nào bị trả lời, không thêm lỗi ở các câu về vé, giờ, cảnh báo an toàn.
 3. **Đo trước và sau** trên cùng bộ câu hỏi (chặng 4) khi thêm bài mới hoặc sửa nhiều; sửa nhỏ thì hỏi thử các câu chạm chỗ sửa.
-4. **Cập nhật chỉ mục.** Quên bước này thì từ lần khởi động sau, máy chủ vẫn chạy nhưng mọi câu hỏi nhận lời báo (bài 12).
+4. **Cập nhật chỉ mục**, chỉ cho các bài vừa đổi (bài 12). Quên bước này thì từ lần khởi động sau, máy chủ vẫn chạy nhưng mọi câu hỏi nhận lời báo.
 
-Kho đã đổi bốn đợt chính (bảng ở mục "Chi tiết để tra"). Điều rút ra từ đợt rà sửa cuối tháng 10: kho đúng hơn mà điểm không tăng. Điểm chấm chỉ nhìn thấy những gì bộ câu hỏi có hỏi; chỉ khoảng 1 trên 6 câu của bộ chạm vào chỗ sửa. Sửa kho cho đúng vẫn phải làm, kể cả khi điểm không phản ánh.
+Lần gần nhất (tối 23/11) là lần thứ hai cả quy trình chạy thật, sau bài Hội An (22/11). 15:42 chủ dự án chọn "Viết nháp 2–3 bài, tôi đọc rồi ghi (Recommended)"; một phiên soạn hai nháp từ nguồn công khai; 18:07 chủ dự án chọn "Ghi cả hai (Recommended)". 18:03 hai bài AEON Mall Huế và công viên ven sông Hương vào kho, cùng một dòng sửa chỗ kho tự lệch về giờ Quán Nhỏ; 18:05 chỉ mục cập nhật riêng 3 bài (65 đoạn, 32 giây).
+
+Các đợt đổi kho chính: bảng ở "Chi tiết để tra". Điều rút ra từ đợt rà sửa cuối tháng 10: kho đúng hơn mà điểm không tăng. Điểm chấm chỉ nhìn thấy những gì bộ câu hỏi có hỏi; chỉ khoảng 1 trên 6 câu của bộ chạm vào chỗ sửa. Sửa kho cho đúng vẫn phải làm, kể cả khi điểm không phản ánh.
 
 ## Khi một giá đổi: chương trình tìm chỗ, model phán, người duyệt
 
@@ -68,9 +70,9 @@ Cùng một con số có thể nằm ở nhiều bài và là giá của nhiều
 Từ 22/11 có hai lệnh chạy tay:
 
 1. **Lệnh đề xuất.** Người vận hành nêu mức giá nào đổi, giá cũ, giá mới, nguồn. Chương trình tìm mọi chỗ có con số cũ. Model trả lời đúng một câu cho từng chỗ: con số này có phải mức giá vừa mô tả không (đúng / không / không rõ). Chương trình thay con số ở các chỗ "đúng" và soạn một bản đề xuất để đọc. Kho chưa đổi chữ nào.
-2. **Lệnh duyệt.** Người duyệt đọc bản đề xuất, tắt máy chủ, rồi chạy lệnh thứ hai: các dòng được thay, mỗi bài được sửa có thêm một dòng ghi nguồn và ngày đối chiếu, một bản ghi lịch sử được lưu, rồi chỉ mục của các bài đó được cập nhật. Bật lại máy chủ thì câu trả lời dùng giá mới.
+2. **Lệnh duyệt.** Người duyệt đọc bản đề xuất, tắt máy chủ, rồi chạy lệnh thứ hai: các dòng được thay, mỗi bài được sửa có thêm một dòng ghi nguồn và ngày đối chiếu, rồi chỉ mục của các bài đó được cập nhật. Bật lại máy chủ thì câu trả lời dùng giá mới.
 
-Hai lệnh này mới thử trên một bản chép của kho (số ở "Chi tiết để tra"), chưa được dùng trên kho thật.
+Hai lệnh này mới thử trên một bản chép của kho, chưa được dùng trên kho thật.
 
 ## Quyết định và lý do
 
@@ -116,7 +118,7 @@ Lượt đo 21/11 chỉ ra bốn mảng kho thiếu; tối 21/11 chủ dự án 
 - **Đã chọn:** không bổ sung cả hai mảng; ghi thành giới hạn.
 - **Vì sao:** chủ dự án chọn "bỏ cả hai" lúc 12:22 23/11: "tôi nghĩ sẽ ít người hỏi các câu này". Lúc trình lại, nhóm báo: nháp chỗ đậu ô tô mỏng; quy định chụp ảnh không có nguồn công khai nào nói dứt khoát.
 - **Cách khác:** ghi bài đậu ô tô, bỏ phần chụp ảnh; hoặc chủ dự án đọc nháp mới quyết: có trong câu trình, không được chọn.
-- **Cái giá:** kho không có bài riêng. Câu hỏi chung thường nhận câu từ chối hoặc câu dẫn sang mục web "chưa kiểm" (bài 16). Vài bài kho có dòng lẻ (chỗ gửi xe ở vài chợ, phố đi bộ, điểm tham quan; biển cấm chụp, đèn flash), nên hỏi về đúng nơi đó có thể được trả lời một phần từ kho.
+- **Cái giá:** kho không có bài riêng. Câu hỏi chung thường nhận câu từ chối hoặc câu dẫn sang mục web "chưa kiểm" (bài 16). Hỏi về đúng một nơi có thể được trả lời một phần ("Giới hạn đã biết").
 
 ## Nếu… thì sao
 
@@ -128,12 +130,11 @@ Lượt đo 21/11 chỉ ra bốn mảng kho thiếu; tối 21/11 chủ dự án 
 | hai bài ghi hai giá khác nhau cho cùng một thứ | chương trình không so hai bài; nếu cả hai đoạn cùng được đưa cho model thì lời dặn bảo model giữ chỗ mâu thuẫn (chưa thử ca này) | tuỳ đoạn nào được tìm ra: giá này, giá kia, hoặc cả hai | nhóm được tra nguồn rồi sửa; chỗ chưa phân xử được ghi vào một danh sách riêng |
 | thêm hay sửa bài mà chưa cập nhật chỉ mục | máy chủ đang chạy thì vẫn trả lời theo chỉ mục cũ; từ lần khởi động sau thì dừng trả lời | trước khởi động lại: bài mới chưa có mặt. Sau: "Dữ liệu tra cứu cần được lập chỉ mục lại." | tắt máy chủ, chạy lệnh cập nhật chỉ mục, bật lại (bài 12). Bài có điểm trong bảng điểm trang Lên kế hoạch mà mã đoạn đổi thì máy chủ không bật được tới khi sửa bảng (bài 6) |
 | kho không có điều được hỏi | câu từ chối, rồi tra web một lần | "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này."; khi mục web có nội dung, câu này được thay bằng "Tư liệu của mình chưa có thông tin này — dưới đây là thông tin từ web (chưa kiểm)." | bài mới cần chủ dự án duyệt; chỗ đậu ô tô, quy định chụp ảnh: chọn không bổ sung (quyết định 6) |
-| dòng giá cần sửa là một câu mà file quy tắc lưu ý (bài 8) chép nguyên văn để biết gắn lưu ý vào đâu | lệnh duyệt dừng, chưa áp gì, in cách sửa tay | không đổi gì: giá cũ còn | người vận hành sửa tay ở cả hai nơi; nhóm không làm cho lệnh tự sửa trọn, vì giá chỉ cần tương đối |
 | kho lớn gấp mười | mỗi lần cập nhật vẫn cắt lại cả kho | — | bước cắt đoạn (21 giây hiện nay) thành phần chính của lần cập nhật |
 
 ## Dễ nhầm
 
-- **"Hệ thống đọc Internet để trả lời."** Không. Nó đọc 267 bài đã soạn. Web chỉ là đường phụ sau khi kho từ chối, và luôn để riêng.
+- **"Hệ thống đọc Internet để trả lời."** Không. Nó đọc 269 bài đã soạn; web chỉ là đường phụ khi kho từ chối, để riêng.
 - **"Lệnh sửa giá là một agent tự sửa kho."** Không. Đó là một quy trình cố định có một bước model phán đoán và một người duyệt; model không viết chữ nào vào kho.
 
 ## Câu hỏi tự kiểm
@@ -141,7 +142,7 @@ Lượt đo 21/11 chỉ ra bốn mảng kho thiếu; tối 21/11 chủ dự án 
 <details>
 <summary>1. Vì sao bài trong kho phải viết sao cho từng câu đọc riêng vẫn hiểu?</summary>
 
-Model viết chỉ đọc vài đoạn nhỏ cắt từ nhiều bài. Câu "quán này mở từ 6 giờ" không nói quán nào thì model có thể gán nhầm.
+Model viết chỉ đọc vài đoạn nhỏ từ nhiều bài. Câu "quán này mở từ 6 giờ" không nói quán nào thì model có thể gán nhầm.
 
 </details>
 
@@ -173,7 +174,7 @@ Chủ dự án đã quyết: giá trong kho chỉ cần tương đối. Nhóm ch
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
 | Thư mục kho | `knowledge-base-hue/`, được theo dõi cùng mã của dự án từ 20/11 | mọi lần sửa bài đều có lịch sử và lùi lại được | trước 20/11 thư mục kho nằm cạnh mã nhưng không được theo dõi lịch sử |
-| Các thư mục được đưa vào | món ăn · di tích · lễ hội · nghệ thuật biểu diễn · du lịch / địa điểm · du lịch / dịch vụ · du lịch / vé | 7 thư mục, 267 bài | — |
+| Các thư mục được đưa vào | món ăn · di tích · lễ hội · nghệ thuật biểu diễn · du lịch / địa điểm · du lịch / dịch vụ · du lịch / vé | 7 thư mục, 269 bài (từ 18:05 23/11) | — |
 | Thư mục bị loại | bộ câu hỏi chấm · bản thô tải từ trang nguồn · mẫu bài và ghi chú soạn | không phải nội dung cho người dùng | — |
 | File bị loại đích danh | 3 file danh mục dùng lúc soạn | chỉ là danh sách tên, không phải nội dung để trả lời | hai file loại từ đầu tháng 9, file thứ ba loại cuối tháng 10; phép đo lúc loại: kết quả tìm không khác |
 | Dạng bài | file Markdown, bắt đầu bằng tên bài | đọc thẳng, không cần bước rút chữ từ PDF hay trang web | — |
@@ -205,7 +206,7 @@ Chủ dự án đã quyết: giá trong kho chỉ cần tương đối. Nhóm ch
 
 **Vì sao loại 3 file danh mục khỏi chỉ mục?** Chúng chỉ là danh sách tên dùng lúc soạn, không phải nội dung để trả lời. Đã đo lúc loại: kết quả tìm không khác.
 
-**Vì sao bài mới và việc đổi cấu trúc kho cần chủ dự án duyệt, còn chỗ kho tự mâu thuẫn thì nhóm được sửa?** Quyết định đã ghi: viết hay sửa nội dung kho nằm ở hàng "hỏi chủ dự án trước" của bảng quyền; ngày 22/11 chủ dự án cho nhóm tra nguồn rồi sửa chỗ sai hoặc chưa khớp trong bài đang có.
+**Vì sao bài mới và việc đổi cấu trúc kho cần chủ dự án duyệt, còn chỗ kho tự mâu thuẫn thì nhóm được sửa?** Quyết định đã ghi: viết hay sửa nội dung kho nằm ở hàng "hỏi chủ dự án trước" của bảng quyền; ngày 22/11 chủ dự án cho nhóm tra nguồn rồi sửa chỗ sai hoặc chưa khớp trong bài đang có. Dòng Quán Nhỏ 23/11 là loại thứ hai: chính bài cẩm nang ẩm thực (ở danh sách bữa sáng) và bài riêng của quán đều ghi 06:00 – 10:00, ba trang công khai đối chiếu ngày 23/11 cũng nói quán đóng trước trưa; bản sửa viết 12:09 nhưng chỉ gộp 18:03, để chỉ mục được cập nhật cùng một bước với hai bài mới. Nơi khác dùng giờ quán này: bảng quán của lịch đã đánh dấu Quán Nhỏ không hợp bữa trưa từ trưa 23/11 (bài 30).
 
 **Vì sao lệnh duyệt và lệnh cập nhật chỉ mục bắt tắt máy chủ trước?** Lý do ghi trong chương trình: máy chủ chỉ kiểm chỉ mục một lần lúc bật, nên nếu còn chạy nó sẽ trả lời trên chỉ mục đang ghi dở cùng file thống kê cũ. Hai lệnh dò máy chủ trước khi ghi; thấy đang chạy thì dừng, kho không đổi.
 
@@ -226,8 +227,9 @@ Các lần đổi kho chính:
 | đầu tháng 11 | thêm một dòng giờ mở cửa cho 11 bài điểm tham quan, lấy từ bài vé đã có trong kho | hỏi thử trả đúng giờ, có nguồn; 1 câu của bộ câu mẫu lần đầu bị từ chối, chạy lại hai lần đều đúng |
 | 14–16/11 | thêm 61 bài (204 lên 265): khách sạn, quán ăn, địa điểm, lễ hội, những thứ hệ thống từng từ chối | câu về khách sạn trả lời được 11 trên 12 (trước đó 4); đo bù 65 câu cũ: không câu nào tệ đi |
 | 22/11 | sửa hai bài về giá (giá thuê thuyền ghi theo từng nhà thuyền; vé một điểm tham quan cho người địa phương); thêm một bài gom những gì kho đã nói về bậc thang, dốc và đi bộ ở các điểm tham quan (265 lên 266 bài); buổi chiều thêm một bài về đường đi từ Huế tới Hội An, chủ dự án đọc bản nháp rồi duyệt (266 lên 267 bài); sửa một dòng ở bài về đèo Hải Vân: dòng đó nói Hải Vân Quan đón khách không thu tiền, trái với chính bài đó và với bài vé (thu 70.000 đồng một người từ tháng 6/2026) | chỉ mục cập nhật riêng trong 37,7 giây cho lần sửa giá (bài 12); bài Hội An: thêm 21 đoạn trong 29 giây, hai câu hỏi thử trên trình duyệt đều được trả lời từ bài mới; dòng Hải Vân Quan: 40 đoạn tính lại trong 28,8 giây, hỏi thử một lần trên trình duyệt thì danh sách điểm miễn phí không còn Hải Vân Quan và câu hỏi giá vé nhận 70.000 đồng, không còn lời "hai nguồn không khớp" |
+| 23/11 | thêm hai bài địa điểm chủ dự án nêu cho buổi tối (AEON Mall Huế; công viên ven sông Hương ở trung tâm Huế): một phiên soạn nháp từ nguồn công khai, phiên điều phối đọc, chủ dự án chọn "Ghi cả hai" (267 lên 269 bài); sửa một dòng ở bài cẩm nang ẩm thực (tour ăn nửa ngày gợi ý Quán Nhỏ cho bữa trưa, trái với chính bài đó và bài riêng của quán) | chỉ mục cập nhật riêng 3 bài lúc 18:05: 65 đoạn tính lại, 32 giây, kho 9.479 ⇒ 9.533 đoạn; lượt trình duyệt 18:48–18:54: ba câu hỏi về AEON, công viên ven sông, chợ Đông Ba buổi tối đều được trả lời từ đúng bài kho, có nguồn, có ảnh; trang Khám phá có hai bài mới, có ảnh |
 
-- Số bài theo thư mục, đếm lúc 10:02 ngày 22/11: món ăn 111 · di tích 39 · lễ hội 40 · nghệ thuật biểu diễn 15 · địa điểm 45 · dịch vụ 11 · vé 5. Kho còn được bổ sung nên số có thể lớn hơn khi anh đọc.
+- Số bài theo thư mục, đếm từ bản ghi chỉ mục 18:05 ngày 23/11: món ăn 111 · di tích 39 · lễ hội 40 · nghệ thuật biểu diễn 15 · địa điểm 47 · dịch vụ 12 · vé 5 (lúc 10:02 ngày 22/11: địa điểm 45, dịch vụ 11). Kho còn được bổ sung nên số có thể lớn hơn khi anh đọc.
 - Hai đợt sửa cuối tháng 10: 123 chỗ ở 65 bài, rồi 123 chỗ ở 40 bài.
 - Lệnh sửa giá, thử trên bản chép với Claude Sonnet 5.5, hai ca: ca Đại Nội chọn đúng 9 chỗ, để 1 chỗ cho người xem, bỏ qua 27 chỗ; ca vé lăng Tự Đức (có câu ghi chung một giá cho ba lăng) sửa 1 chỗ, để 3 chỗ cho người xem. Không chỗ nào sửa nhầm, không chỗ nào sót so với đáp án gắn tay từ trước.
 - Lệnh sửa giá, thêm: chạy ba lần ca Đại Nội, file vá giống nhau từng ký tự; một phiên khác tự chạy lại trên bản chép riêng ra đúng 9 · 1 · 27. Ca Tự Đức có 51 chỗ (1 sửa, 3 không rõ, 47 không phải). Con số viết bằng chữ hoặc viết gọn kiểu "200–250 nghìn" không được tìm thấy. Lệnh đề xuất mất khoảng 20 giây. Hai bài có bảng giá gắn luật điều kiện thì lệnh duyệt dừng và in cách sửa tay.
@@ -235,9 +237,10 @@ Các lần đổi kho chính:
 - Khoảng 76 trang web nguồn khác nhau, đếm lúc kho có 204 bài; chưa đếm lại.
 - Một phép đếm thô ngày 22/11: khoảng 39 bài không có tiêu đề mục nào mang chữ "Nguồn" (chưa đọc tay từng bài).
 - Bước chuẩn bị còn hai cách giữ bối cảnh nữa: dòng tiêu đề bảng đi kèm mỗi dòng giá (bài 8), và tên bài cùng tên mục đi kèm mỗi đoạn (bài 9).
+- Tình huống hỏng của lệnh sửa giá (chuyển từ bảng "Nếu… thì sao" đêm 23/11, không đổi nội dung): dòng giá cần sửa là một câu mà file quy tắc lưu ý (bài 8) chép nguyên văn để biết gắn lưu ý vào đâu ⇒ lệnh duyệt dừng, chưa áp gì, in cách sửa tay; người dùng thấy: không đổi gì: giá cũ còn; người vận hành sửa tay ở cả hai nơi; nhóm không làm cho lệnh tự sửa trọn, vì giá chỉ cần tương đối.
 - Hai mảng không bổ sung: nháp "Đỗ ô tô ở khu trung tâm Huế" đã soạn (ngắn, khoảng 2.600 byte) và giữ nguyên ngoài kho; phần quy định chụp ảnh / quay phim / flycam không soạn được nháp vì đợt tra 21/11 không mở được nguồn nào nêu quy định. Nhóm đã chốt không trình lại.
 
-**Bài sau (bài 8):** bước đầu tiên của giai đoạn chuẩn bị: cắt 267 bài thành 9.479 đoạn.
+**Bài sau (bài 8):** bước đầu tiên của giai đoạn chuẩn bị: cắt 269 bài thành 9.533 đoạn.
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
@@ -263,4 +266,10 @@ Các lần đổi kho chính:
 - Mục "Khi một giá đổi", "Quyết định và lý do", "Nếu… thì sao", "Quyết định nhỏ hơn", "Câu hỏi tự kiểm" (thêm 13:43 22/11/2026 theo khuôn mới; gom từ mục "Vì sao không làm cách khác" cũ, "Đã so" và các nguồn trên). Hai lệnh sửa giá (chia việc chương trình / model / người duyệt; 37 · 9 · 1 · 27; ca Tự Đức 51 · 1 · 3 · 47; 13 câu tính từ giá cũ; chưa dùng trên kho thật): `bai_hoc/VIEC_MOI_XONG.md` mục 30 [đã chạy trên bản chép]; lý do "model chỉ phán, chương trình dựng dòng" và "chủ dự án chọn 22:22 21/11/2026": chú thích đầu `backend/ops/sua_kho.py` [code]; lệnh duyệt dừng khi dòng sửa nằm trong file điều kiện: `backend/ops/duyet_sua_kho.py` [code]; hai bài bảng giá gắn luật điều kiện, nhóm không làm tự sửa trọn: `session_prompt/HIEN_TRANG.md` mục "câu gác" (G-2, 12:38 22/11/2026). Lời chủ dự án "giá chỉ cần tương đối": `session_prompt/HIEN_TRANG.md` mục 4, gạch 09:25 22/11/2026 [quyết định đã ghi]; nhóm được tra nguồn rồi sửa chỗ sai: cùng mục, gạch 08:40 22/11/2026. Bảng quyền ("viết / sửa nội dung kho" hỏi chủ dự án trước): `AGENTS.md` mục "Quyền thường trực". Máy chủ đang chạy vẫn trả lời theo chỉ mục cũ; kiểm khớp chỉ lúc khởi động: chú thích đầu `backend/ingestion/cap_nhat_rieng.py`; lời báo lập chỉ mục lại: `backend/api/app.py` [code, đọc từ chương trình, chưa thử]. Câu từ chối: `backend/llm/full_corpus_prompt.py` (`INSUFFICIENT_ANSWER`); dòng nhắc: `MAY_HAVE_CHANGED_NOTICE` cùng file [code]. 21 giây cắt đoạn, "kho lớn gấp nhiều lần thì bước cắt thành phần chính": `bai_hoc/VIEC_MOI_XONG.md` mục 32 [đã chạy].
 - Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư]. Lệnh duyệt dừng khi máy chủ đang chạy ("DỪNG, kho chưa đổi gì: server đang chạy"), lưu bản ghi git: `backend/ops/duyet_sua_kho.py` [code]. Lời dặn giữ điểm mâu thuẫn giữa các nguồn: `backend/llm/full_corpus_prompt.py` (`ANSWER_SYSTEM_INSTRUCTIONS`) [code]. Câu dẫn sang mục web: `frontend/src/moDauWeb.js` [code]. Máy chủ không bật khi đoạn mô tả của bảng điểm không còn trong chỉ mục: `backend/llm/lich_trinh_v2.py` (`kiem_doan_mo_ta`) [code].
 
+- **Đợt đêm 23/11/2026 (cụm X: kho 269 bài).** Người viết đọc cây chính `07bbf67b` / `5a11e3f0`, không chạy test, không chạy server. Dòng Cập nhật trước: "Cập nhật 17:03, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài); chưa gồm các bản gộp từ 16:38 (chờ phiếu) · chỗ đậu ô tô khu trung tâm và quy định chụp ảnh ở chùa / lăng / bảo tàng: chủ dự án chọn không bổ sung (12:22 23/11); đã áp biên bản kiểm độc lập · các mốc trước: khối Nguồn." Đếm 57 mở / 6 tắt: lệnh của lời giao [tự đếm].
+  - 269 bài / 9.533 đoạn, số theo thư mục: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count` 269, `chunk_count` 9.533, `qdrant.point_count` 9.533; đếm `corpus.sources` theo thư mục: restaurants 67 + cafes 24 + local_specialties 19 + 1 bài chung = 111, di tích 38 + 1 = 39, lễ hội 39 + 1 = 40, nghệ thuật 14 + 1 = 15, places 47, services 12, tickets 5); bản sao lưu trước lần cập nhật `data/full_corpus_builds/sao_luu/20261123_180502/` (267, 9.479); so `sources` hai bản: đúng 3 file đổi (`foods/food-guides.md`, hai bài `travel/places/` mới) [riêng tư; tự đếm bằng `python3`]. "65 đoạn tính lại, 32 giây": `session_prompt/HIEN_TRANG.md` mục 4 gạch "18:12 23/11/2026" điểm (3) [chép sổ; không thấy bản ghi của lệnh trong `data/`; giờ 18:05 khớp tên thư mục sao lưu].
+  - Hai bài mới: `git show --stat a8a8820f` (18:03; hai file `knowledge-base-hue/travel/places/`, 65 + 58 dòng; lời commit "written by the measuring session from public sources, read by the coordinator") [code]. Quán Nhỏ: `git show 39476168` (12:09; `foods/food-guides.md` 1 dòng; lời commit "the same guide (breakfast list) and the restaurant's own article both give its hours as 06:00–10:00; three public pages checked on 23/11/2026…", "Not merged until the index can be updated in the same step"), gộp `0ce3fe4f` 18:03 ("written by the coordinator, diff read by session B") [code; chép lời commit]. Quán Nhỏ không hợp bữa trưa ở bảng quán: `data/phase_9/lich_trinh/bang_quan_lich_v5.json` (`khong_bua` `['trua', 'toi']`) [riêng tư; tự đếm].
+  - Lời chủ dự án: `data/loi_user/2026-11-23.md` dòng 24 (15:42, ô "Viết nháp 2–3 bài, tôi đọc rồi ghi (Recommended)"), dòng 40 (18:07, ô "Ghi cả hai (Recommended)") [riêng tư; chép]; quyết định đã ghi `HIEN_TRANG.md` mục 4 gạch "18:12 23/11/2026" điểm (3) ("GHI CẢ HAI BÀI NHÁP VÀO KHO (phương án khuyến nghị)") [chép sổ]. Nháp và trang tóm tắt: `data/bo_sung_kho_2026-11-23/nhap/` (hai nháp 17:05, 17:08; `TOM_TAT_CHO_CHU_DU_AN.md` 17:09: mục web lệch kho về phố đi bộ, chợ Đông Ba — "tôi KHÔNG sửa bài kho") [riêng tư; đã mở trang tóm tắt, không mở nội dung nháp]. Lần đầu của quy trình (bài Hội An 22/11): dòng Nguồn đầu của bài này [chép trong bài].
+  - Lượt trình duyệt: `data/playwright_mcp/luot_2311_toi_v15/NHAT_KY.md` cảnh V6a, V6b, V6c, V7 ("269 bài trong kho tư liệu…"; nguồn "AEON Mall Huế", "Công viên ven sông Hương ở trung tâm Huế", "Chợ Đông Ba"; có ảnh) [riêng tư; đã mở; agent con, chưa có người thứ hai kiểm].
+  - Chuyển xuống "Chi tiết để tra" (không bỏ thông tin) để giữ độ dài: hàng "dòng giá cần sửa là một câu mà file quy tắc lưu ý…" của bảng "Nếu… thì sao". Rút gọn trong thân bài: câu "Vài bài kho có dòng lẻ…" của quyết định 6 (đủ ở "Giới hạn đã biết"), "(số ở Chi tiết để tra)", "một bản ghi lịch sử được lưu" (đã ở "Quyết định nhỏ hơn"). Nửa để hiểu 13.298 ⇒ 13.291 ký tự.
 </details>
