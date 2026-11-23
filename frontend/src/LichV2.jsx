@@ -135,7 +135,8 @@ function ThayDoi({ thayDoi }) {
     <ul className="lkh-doi" aria-label="Thay đổi của lịch">
       {thayDoi.map((d, i) => {
         const cau = d.cau.replace(/^Không đổi được: /, "");
-        return <li key={i} className={d.duoc ? "lkh-doi-duoc" : "lkh-doi-khong"}>{d.duoc || /^Chưa làm/.test(cau) ? "" : "Không đổi được: "}{cau}</li>;
+        // `hoi`: dòng là một câu trợ lý HỎI LẠI (bỏ hoạt động tối: đổi hay để trống) — không phải việc hỏng ⇒ không tô đỏ, không gắn tiền tố
+        return <li key={i} className={d.duoc ? "lkh-doi-duoc" : d.hoi ? "lkh-doi-hoi" : "lkh-doi-khong"}>{d.duoc || d.hoi || /^Chưa làm/.test(cau) ? "" : "Không đổi được: "}{cau}</li>;
       })}
     </ul>
   );

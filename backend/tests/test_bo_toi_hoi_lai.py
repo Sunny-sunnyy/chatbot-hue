@@ -51,9 +51,12 @@ def test_removing_an_evening_activity_without_saying_how_keeps_the_schedule_and_
     assert not kq["da_ap"] and kq["khung"] == k and [d["ma_luat"] for d in kq["khong_doi"]] == ["bo_toi_hoi"]
     cau = s.thay_doi(B, kq)[0]["cau"]
     ten = B.theo_id[x]["ten"]
-    assert cau.startswith(f"Chưa làm: bỏ {ten} (buổi tối ngày 2)") and "đổi sang một hoạt động tối khác hay để trống" in cau
+    # dòng hỏi lại là một CÂU HỎI (không mở đầu "Chưa làm", mang `hoi` để giao diện không tô đỏ), nêu tên mục một lần, mời gõ ngắn
+    dong = s.thay_doi(B, kq)[0]
+    assert dong["hoi"] is True and dong["duoc"] is False
+    assert cau == f"Bạn muốn đổi {ten} (tối ngày 2) sang một hoạt động tối khác, hay để trống tối đó? Nhắn «đổi đi» hoặc «để trống» — lịch chưa đổi gì."
     goi_y = s.cau_goi_y(B, kq)
-    assert len(goi_y) == 2 and all(c in cau and ten in c and "ngày 2" in c for c in goi_y)  # hai câu được mời nhắn = hai câu nhớ cho lượt kế
+    assert len(goi_y) == 2 and all(ten in c and "ngày 2" in c for c in goi_y)  # hai câu ĐỦ TÊN vẫn được nhớ cho lần hiểu ý của lượt kế
     # công tắc tắt (không truyền `bo_toi_hoi_lai`) ⇒ đường cũ: bỏ là áp ngay
     assert s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=ten)])["da_ap"]
 
@@ -109,3 +112,16 @@ def test_a_pin_left_from_a_day_no_longer_in_the_schedule_does_not_block_the_rema
     sach = v2.xep_v2(B, v2.ThamSoV2(2, kieu_di="can_bang"))
     con_ghim = v2.xep_v2(B, v2.ThamSoV2(2, kieu_di="can_bang", toi_chon=((3, _toi(sach)[0][0]),)))
     assert _toi(con_ghim) == _toi(sach)
+
+
+def test_old_refusals_no_longer_advise_removing_when_removing_now_asks():
+    """Công tắc mở: "bỏ" một hoạt động tối là hỏi lại, không tự chọn mục khác ⇒ câu từ chối của "thay / thêm vào buổi tối" không được khuyên "bỏ …, lịch sẽ
+    tự chọn"; dòng thường (không phải câu hỏi lại) không mang `hoi`."""
+    k = v2.xep_v2(B, v2.ThamSoV2(3, kieu_di="can_bang"))
+    luu = s.luu_tu_lich(k, None, None)
+    x = _toi(k)[0][0]
+    khac = next(d["id"] for d in B.diem if set(d["buoi"]) == {"toi"} and not d.get("ngay_hoat_dong") and d["id"] not in [j for t in _toi(k) for j in t])
+    for lenh in ([s.HanhDongToiHoiBo(loai="thay_diem", ten=B.theo_id[x]["ten"], ten_moi=B.theo_id[khac]["ten"])],
+                 [s.HanhDongToiHoiBo(loai="them_diem", ten=B.theo_id[khac]["ten"])]):
+        dong = s.thay_doi(B, s.ap(B, luu, lenh, them_khong_the=True, bo_toi_hoi_lai=True))
+        assert dong and "tự chọn một" not in dong[0]["cau"] and "đổi" in dong[0]["cau"] and "hoi" not in dong[0]
