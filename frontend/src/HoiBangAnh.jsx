@@ -182,7 +182,10 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
         )}
         {state.phase === "xong" && (
           <>
-            <p className="mb-2 font-semibold text-accent-deep">Trong ảnh là (có thể sai) — chọn đúng tên:</p>
+            {/* MỘT tên (tên cần xác nhận trước, hoặc đang có lượt khác chạy) ⇒ hỏi thẳng có / không; 2–3 tên ⇒ mời chọn (lượt trình duyệt 23/11/2026:
+                chữ "chọn đúng tên" + "các tên này" đọc cụt và sai số khi thẻ chỉ có một nút) */}
+            <p className="mb-2 font-semibold text-accent-deep">{state.ungVien.length === 1
+              ? "Trong ảnh có phải là tên dưới đây không? (mình có thể đoán sai)" : "Trong ảnh là (có thể sai) — chọn đúng tên:"}</p>
             <div className="flex flex-wrap gap-2">
               {state.ungVien.map(u => (
                 <button key={u.id} type="button" className="send" disabled={disabled}
@@ -191,10 +194,11 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
             </div>
           </>
         )}
-        {state.nhac && <p role="alert" className="pt-2 font-semibold text-accent-deep">Chọn một tên ở trên để mình trả lời.</p>}
+        {state.nhac && <p role="alert" className="pt-2 font-semibold text-accent-deep">{state.ungVien?.length === 1
+          ? "Đúng thì bấm vào tên ở trên để mình trả lời." : "Chọn một tên ở trên để mình trả lời."}</p>}
         {(state.phase === "xong" || state.phase === "loi") && (
           <div className="flex flex-wrap gap-2 pt-2">
-            {state.phase === "xong" && <button type="button" className="retry" onClick={khongPhai}>Không phải các tên này — tôi gõ tên</button>}
+            {state.phase === "xong" && <button type="button" className="retry" onClick={khongPhai}>{state.ungVien.length === 1 ? "Không phải — tôi gõ tên" : "Không phải các tên này — tôi gõ tên"}</button>}
             {state.phase === "loi" && <button type="button" className="retry" onClick={() => dong(true)}>Gõ tên</button>}
           </div>
         )}
