@@ -10,10 +10,10 @@ Dựng SAU tầng nền `../1_nen_tang`; phá TRƯỚC tầng nền. Hướng d�
 | `main.tf` | mạng, nhóm bảo mật, máy, IP tĩnh, báo động |
 | `outputs.tf` | `instance_id` · `public_ip` · `site_name` |
 | `user_data.sh.tftpl` | chạy một lần lúc máy bật lần đầu: vùng nhớ tráo, Docker + Compose, AWS CLI, thư mục `/srv/hue` — không tải gói, không bật app |
-| `terraform.tfvars.example` | mẫu; chép thành `terraform.tfvars` (không vào git) rồi điền hai tên lấy từ đầu ra của tầng nền |
+| `terraform.tfvars.example` | mẫu; chép thành `terraform.tfvars` (không vào git) rồi điền ba giá trị lấy từ đầu ra của tầng nền |
 | `.terraform.lock.hcl` | bản bộ cắm đã kiểm — có trong git |
 
-Hai tầng không đọc state của nhau: `instance_profile_name`, `artifact_bucket_name` (và `alert_topic_arn` nếu muốn báo động) chép tay từ
+Hai tầng không đọc state của nhau: `instance_profile_name`, `artifact_bucket_name`, `alert_topic_arn` (để rỗng = không tạo báo động) chép tay từ
 `terraform output` của `1_nen_tang`.
 
 Đã kiểm ở máy, không gọi AWS (23/11/2026, Terraform 1.17.2, bộ cắm AWS 6.73.0): `terraform fmt -check` sạch · `terraform init -backend=false` ·

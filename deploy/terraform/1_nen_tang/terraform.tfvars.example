@@ -1,0 +1,14 @@
+# Chép file này thành `terraform.tfvars` rồi sửa giá trị:  cp terraform.tfvars.example terraform.tfvars
+# File `terraform.tfvars` KHÔNG vào git (đã chặn trong .gitignore).
+
+# Vùng Singapore — giữ nguyên, trừ khi cả hai thư mục Terraform cùng đổi.
+aws_region = "ap-southeast-1"
+
+# Tiền tố tên tài nguyên — giữ nguyên.
+project_name = "hue-rag"
+
+# Email nhận cảnh báo. SỬA thành địa chỉ đọc hằng ngày.
+alert_email = "ban@example.com"
+
+# Mức ngân sách theo tháng (USD), chỉ để cảnh báo. 10 USD: thư ở 5, 8 và 10 USD.
+monthly_budget_usd = 10
