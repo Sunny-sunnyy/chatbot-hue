@@ -56,10 +56,9 @@ phạm vi và quyền của việc; session giao chịu trách nhiệm kết qu�
 - Data flow chuẩn: `raw -> curated Markdown -> chunks -> embeddings/index -> retrieval -> context -> answer`. Không chunk trực tiếp từ source dumps.
 - **Private, không commit:** `data/`, Qdrant storage, trace chi tiết, `gửi chatgpt/`, câu kín; report tracked không chép nội dung, vector hay payload của
   chúng (kho + bộ câu mẫu được commit từ 20/11/2026). Repo GitHub là **public**: số liệu, đường dẫn, sự cố của dự án khác của User chỉ ghi ở `data/` (file
-  tracked chỉ nói "một dự án khác của User"); hook `.githooks/pre-commit` chặn phần máy kiểm được. Report tracked tả câu dev / test ở **mức loại câu** (so
-  sánh, giá, nhiều nguồn…), không nêu chủ đề cụ thể (tên nơi, món, loại giá) cạnh `case_index` — từ 22/11/2026 điều này chỉ còn áp cho CÂU KÍN: chữ của kho và của bộ câu mẫu
-  được trích vào tài liệu tracked, hook chỉ còn chặn chép nguyên văn ≥ 40 ký tự của câu kín (phần hook: chủ dự án chọn, cả hai đã công khai từ
-  20/11; phần "tả ở mức loại câu" cho bộ câu mẫu: nhóm tự gỡ theo đó).
+  tracked chỉ nói "một dự án khác của User"); hook `.githooks/pre-commit` chặn phần máy kiểm được. Report tracked tả CÂU KÍN ở **mức loại câu**
+  (so sánh, giá, nhiều nguồn…), không nêu chủ đề cụ thể (tên nơi, món, loại giá) cạnh `case_index`; chữ của kho và của bộ câu mẫu thì được trích
+  (chủ dự án 22/11/2026 — cả hai đã công khai từ 20/11; hook chỉ còn chặn chép nguyên văn ≥ 40 ký tự của câu kín).
 - **Câu kín** (`*sealed*`): chỉ mở khi việc giao rõ cho đúng session / sub-agent đó; người điều phối không đọc nội dung; mở để chấm ở mốc cuối do User
   quyết. Rào đọc `*sealed*` chỉ là LUẬT CHỮ khi máy chạy chế độ bỏ hỏi quyền (ở auto mode thì máy chặn — rào đúng, không lách); báo cáo đo ghi rõ giới hạn
   này. Người chạy chuẩn bị lệnh kín **sớm** (lệnh `!` chỉ in số đếm), đưa User `!` ngay khi đã thấy đạt trên **đúng sha khoá**; bản khoá đổi ⇒ bỏ lệnh cũ,
@@ -131,8 +130,9 @@ phạm vi và quyền của việc; session giao chịu trách nhiệm kết qu�
 - Trong lúc sửa chạy file test bị chạm; cả bộ `backend/tests` ở mốc (§7). Phép "chuỗi gửi model giống byte" khi code chạm phần dựng chuỗi gửi model / lời
   dặn / công cụ; Playwright khi sửa giao diện. Test khi nó bảo vệ hành vi cần thiết hoặc bug thật có nguy cơ tái diễn — không đặt mục tiêu số test /
   coverage; test pass không thay lượt thật khi nghiệm thu cần hệ thống thật.
-- **Đổi cờ trong `settings.yaml`:** trước commit chạy test các file chạm cờ **cả có lẫn không** `--env-file`; test khoá hành vi theo cờ tự đặt cờ trong
-  test, không đọc `settings.yaml` thật.
+- **Mở / tắt một công tắc trong `settings.yaml`:** trên CHÍNH nhánh có dòng đã đổi, chạy từng file test đọc cấu hình thật
+  (`grep -lE 'load_settings|settings\.yaml' backend/tests/*.py`), không nạp env; cùng nhánh đó sửa các hàng `guides/RUNBOOK_BAN_GIAO.md` mục 10 nhắc tên
+  công tắc hoặc hành vi nó đổi. Test khoá hành vi theo cờ tự đặt cờ trong test, không đọc `settings.yaml` thật.
 - **Code đọc chữ người dùng (ngày, số, tên…):** trước lượt có phí, người **không viết code đó** soạn ≥ 20 câu dò (câu phải đọc đúng, câu "giống mà không
   phải", câu ghép, câu ngoài phạm vi), chạy thẳng hàm thuần (0 USD); sau bản sửa thêm đúng một bộ ≤ 20 câu; dừng khi 0 câu **ra sai**, còn sai ⇒ ghi giới
   hạn. Review đã ready ⇒ commit code thêm trên nhánh phải được A cho trước.
