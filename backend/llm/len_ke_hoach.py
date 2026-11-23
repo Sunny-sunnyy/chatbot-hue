@@ -326,6 +326,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
                    **({"them_day": True} if flags.sua_lich_them_day else {}),
                    **({"them_khu": True} if flags.sua_lich_them_khu else {}),
                    **({"them_han_che": True} if flags.sua_lich_them_han_che else {}),
+                   # công tắc `sua_lich_hoi_truoc`: thiếu ngày / buổi thì hỏi lại; câu có lời cho phép tự chọn ("bạn tự xếp giúp mình") ⇒ tự xếp như cũ
+                   **({"them_hoi_truoc": True, "tu_xep": sl.cho_tu_xep(query)} if flags.sua_lich_hoi_truoc else {}),
                    **({"bo_toi_de_trong": True} if flags.bo_toi_de_trong else {}),
                    **({"bo_toi_hoi_lai": True} if flags.bo_toi_hoi_lai else {}),
                    **({"toi_goi_ten": True} if flags.toi_goi_ten else {}))
