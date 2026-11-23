@@ -1,10 +1,10 @@
 # Phụ lục E — Thuật ngữ Việt – Anh
 
-*Cập nhật 18:51, ngày 23/11/2026 · khớp hệ thống 17:35 23/11 (55 tính năng mở, 7 tắt, kho 267 bài); chưa có lượt cả bộ test sau các bản gộp từ 16:20; chưa gồm các việc từ 18:00 (chờ phiếu) · thêm "chặng sang khu" (bài 31) và dòng tra ngược · các mốc trước: khối Nguồn.*
+*Cập nhật 21:06, ngày 23/11/2026 · khớp hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · thêm "lượt đo bù" (bài 33), "đoàn nhẹ" (bài 31), công tắc "hết vòng" (bài 21); sửa "kho" 269 bài, "đoạn" và "tìm" 9.533 đoạn, "bảng điểm tham quan" 47 dòng, "giữ chỗ", "trần vòng" theo bài gốc; số từ 220 ⇒ 223 · các mốc trước: khối Nguồn.*
 
 **Cách dùng trang này.** Mỗi dòng là một từ lấy từ bảng "Từ dùng trong bài" của bài 1–40, xếp theo thứ tự chữ cái tiếng Việt. Cột "Nghĩa" chép câu giải nghĩa của bài gốc; khi hai bài giảng cùng một từ với hai câu khác nhau, câu chính lấy từ một bài và phần ngoặc ghi điều bài kia nói thêm. Cột cuối ghi bài giảng từ đó lần đầu, trong ngoặc là các bài giảng lại. Từ có dấu "—" ở cột tên gốc là tên do giáo trình đặt, không có tên tiếng Anh quen dùng. Cuối trang là bảng tra ngược, từ tên tiếng Anh ra tên trong giáo trình.
 
-Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở hai bài; "đọc mù" của bài 32 đã gộp vào "chấm mù" ngày 22/11).
+Có 223 từ: 221 từ gom từ 240 dòng bảng "Từ dùng trong bài" của các bài (19 từ được giảng ở hai bài; dòng "kho code, lưu" của bài 39 tách thành "kho code" và "lần lưu code"), cộng 2 từ bài gốc giảng ngay trong thân bài ("đoàn nhẹ", bài 31; công tắc "hết vòng", bài 21). Đếm tối 23/11.
 
 ## Bảng thuật ngữ (Việt → Anh)
 
@@ -18,7 +18,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | bản chụp | snapshot | bản sao của cả collection ở một thời điểm, để khôi phục khi cần | 12 |
 | bản đồ mở | OpenStreetMap | bản đồ do cộng đồng soạn, ai cũng dùng được; cũng là nơi lấy ô nền của bản đồ | 30 |
 | bản ghi chỉ mục | build record | file ghi lần lập chỉ mục: những bài nào, dấu vân tay từng bài, bao nhiêu đoạn, model nào | 12 |
-| bảng điểm tham quan | itinerary table | 41 dòng, mỗi dòng một điểm, với các cột dùng để xếp lịch; nằm ngoài kho bài viết | 27 |
+| bảng điểm tham quan | itinerary table | 47 dòng (41 điểm tham quan, 6 mục chỉ dùng buổi tối), mỗi dòng có các cột dùng để xếp lịch; nằm ngoài kho bài viết | 27 |
 | bảng kiểu | CSS | phần của trang quy định màu, cỡ chữ, khoảng cách, vị trí từng khối; chữ và nút nằm ở HTML | 35 |
 | bến | — | chấm tròn trên nét sông ở màn đầu Trang chủ; mỗi bến là một lối vào | 5 |
 | biến thể | variant | một bản của hệ thống khác bản đang chạy đúng một điểm | 20 |
@@ -56,6 +56,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | cookie | cookie | một mẩu chữ nhỏ máy chủ nhờ trình duyệt giữ hộ; trình duyệt tự gửi lại mẩu đó ở mỗi yêu cầu sau tới cùng máy chủ | 35 |
 | cổng | port | số của "cửa" trên một máy mà một chương trình đứng nghe; máy chủ hue_rag nghe ở cổng 8010, Qdrant ở 6335 | 36 |
 | công cụ | tool; cơ chế gọi là tool calling hay function calling | một hàm của chương trình mà model được xin chạy | 3 |
+| công tắc "hết vòng" | — | hai công tắc viết ngày 21/11 cho model cũ: một cái bỏ công cụ ở vòng cuối để model phải viết từ bằng chứng đã gom; cái kia báo model rằng cặp nơi đó không có số khoảng cách, đừng gọi lại. Đang tắt, cả ở bản deploy | 21 |
 | cơ sở lưu trú | lodging | khách sạn, nhà nghỉ, homestay trong danh mục công khai có hạng sao | 30 |
 | cụm | cluster | nhóm các điểm nằm cùng một khu (ví dụ Kinh thành, bờ nam sông Hương, khu lăng Thủy Xuân); có 8 cụm | 27 |
 | cụm kề | adjacent cluster | hai cụm được ghi sẵn là cùng hướng, đi nối được trong một ngày | 28 |
@@ -79,7 +80,8 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | điều kiện ghi trước | pre-registered criteria | thế nào là đạt, thế nào là trượt, viết ra trước khi thấy con số nào | 20 |
 | điều kiện không được vỡ | — (hồ sơ dự án gọi là "sàn") | một điều ghi trước mà mọi thay đổi phải giữ (bài 16: ở đây là 0 câu ngoài kho được trả lời bằng kho) | 4 (cũng ở 16) |
 | đỏ, xanh | failing, passing | ca hỏng, ca đạt | 38 |
-| đoạn | chunk | một mẩu cắt ra từ một bài; kho có 9.479 đoạn. Bài 8 thêm: đơn vị nhỏ nhất mà hệ thống tìm và đưa cho model viết | 2 (cũng ở 8) |
+| đoàn nhẹ | — | cách gọi tắt trong bài 31 cho đoàn có trẻ nhỏ hoặc người lớn tuổi (bài 28 gọi là nhóm hạn chế) | 31 |
+| đoạn | chunk | một mẩu cắt ra từ một bài; kho có 9.533 đoạn (từ 18:05 23/11; trước 9.479). Bài 8 thêm: đơn vị nhỏ nhất mà hệ thống tìm và đưa cho model viết | 2 (cũng ở 8) |
 | đoạn trích | snippet | vài câu ngắn dịch vụ tìm web cắt từ trang kết quả; model chỉ đọc đoạn này, không đọc cả trang | 25 |
 | độ gần | cosine similarity | số từ −1 tới 1 đo hai vector giống nhau tới đâu; càng gần 1 thì hai đoạn chữ càng gần nghĩa | 10 |
 | độ hiếm | IDF (inverse document frequency) | số cho biết một từ có mặt ở ít hay nhiều đoạn; từ có ở ít đoạn thì độ hiếm cao | 11 |
@@ -93,7 +95,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | ghim | marker | dấu tròn có số trên bản đồ, đánh dấu một điểm của lịch | 30 |
 | giảm chuyển động | prefers-reduced-motion | tuỳ chọn của hệ điều hành; trang đọc được và tự tắt chuyển động | 35 |
 | giao diện | frontend, UI | phần của ứng dụng chạy trong trình duyệt của người dùng: các trang, nút bấm, ô gõ | 5 (cũng ở 6) |
-| giữ chỗ | pin | điểm không bị lệnh chạm thì giữ đúng ngày, đúng buổi khi xếp lại | 31 |
+| giữ chỗ | pin | điểm không bị lệnh chạm thì giữ đúng ngày, đúng buổi khi xếp lại; mục tối được giữ theo từng tối | 31 |
 | gối đầu | overlap | cách cắt cho hai đoạn liền nhau lặp lại vài câu của nhau; hue_rag không dùng | 8 |
 | hàm thuần | pure function | phần chương trình chỉ nhận đầu vào và trả đầu ra, không gọi mạng, không đọc ghi gì bên ngoài; dễ test nhất | 38 |
 | hạn giờ | timeout | thời gian chờ dài nhất cho một lần gọi; quá thì coi như lần gọi đó lỗi | 6 |
@@ -107,7 +109,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | huấn luyện lại | fine-tuning | cho model học thêm trên dữ liệu riêng để chính model đổi; hue_rag không làm việc này | 2 |
 | JSON | JSON | cách viết dữ liệu thành chữ có cấu trúc (tên ô và giá trị) | 35 |
 | kết nối mã hoá | https | trình duyệt và máy chủ nói chuyện bằng chữ đã mã hoá, người ở giữa đường không đọc được; địa chỉ bắt đầu bằng https. Trên máy phát triển trang mở bằng địa chỉ không mã hoá | 35 |
-| kho | knowledge base, corpus | 267 bài viết về Huế do nhóm soạn; mọi thứ hệ thống được phép nói đều nằm ở đây | 2 (cũng ở 7) |
+| kho | knowledge base, corpus | 269 bài viết về Huế do nhóm soạn (từ 18:05 23/11; 267 tới 18:03 23/11); mọi thứ hệ thống được phép nói đều nằm ở đây | 2 (cũng ở 7) |
 | kho code | repository | nơi giữ mọi phiên bản của chương trình; kho code của dự án để công khai trên GitHub | 39 |
 | khoá | API key | một chuỗi bí mật, như mật khẩu, mà dịch vụ bên ngoài cấp cho dự án để biết ai đang gọi và tính tiền ai | 6 |
 | khoảng tin cậy 95 % | confidence interval, tính bằng bootstrap | khoảng mà mức chênh thật nhiều khả năng nằm trong; tính bằng cách rút lại bộ câu nhiều lần | 19 |
@@ -131,6 +133,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | lớp nhận kết nối | reverse proxy (Caddy) | chương trình đứng ngoài cùng, nhận mọi kết nối từ mạng, lo kết nối mã hoá, rồi chuyển vào ứng dụng | 36 |
 | lớp nối | adapter | phần chương trình dự án tự viết, đứng giữa thư viện và Claude, đổi cách gọi của bên này sang cách gọi của bên kia ở cả hai chiều | 33 |
 | luồng cố định | workflow | chuỗi bước do chương trình định sẵn; model chỉ làm việc trong từng bước | 3 |
+| lượt đo bù | — | đo lại trên model cũ những thứ trước đó chỉ đo trên model đang chạy | 33 |
 | lượt hỏi | turn (của cuộc trò chuyện) | một câu người dùng gửi, cùng mọi việc hệ thống làm để trả lời câu đó | 21 |
 | mã cuộc trò chuyện | conversation id (cất trong cookie) | chuỗi ngẫu nhiên máy chủ đưa trình duyệt cất; trình duyệt gửi kèm mỗi câu hỏi để máy chủ biết câu đó thuộc cuộc nào | 23 |
 | mã đoạn | chunk_id | tên riêng của mỗi đoạn: đường dẫn file của bài kèm số thứ tự của đoạn trong bài (đếm từ 0) | 8 |
@@ -201,7 +204,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | tỉ lệ tìm thấy | recall | trong những thứ cần tìm, tìm được bao nhiêu phần | 18 |
 | tiền tố | prefix (`query: ` / `passage: `) | chữ thêm vào đầu câu hỏi / đầu đoạn để model e5 biết đang đọc loại nào | 10 |
 | tiến trình | process | một chương trình đang chạy trên máy; máy chủ hue_rag là một tiến trình, tắt là mất mọi thứ nó giữ trong bộ nhớ | 36 (cũng ở 38) |
-| tìm | retrieval | chọn ra các đoạn hợp câu hỏi nhất trong 9.479 đoạn (10 đoạn ở lần tìm đầu) để đưa cho model viết | 2 (cũng ở 13) |
+| tìm | retrieval | chọn ra các đoạn hợp câu hỏi nhất trong 9.533 đoạn (10 đoạn ở lần tìm đầu) để đưa cho model viết | 2 (cũng ở 13) |
 | tìm lai | hybrid search | dùng cả tìm theo nghĩa lẫn tìm theo từ khoá | 13 |
 | tìm theo nghĩa | dense retrieval, semantic search | tìm các đoạn có vector gần vector câu hỏi nhất | 10 |
 | tìm theo từ khoá | keyword search, lexical search, sparse retrieval | chấm đoạn theo chữ trùng với câu hỏi | 11 |
@@ -212,7 +215,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | trả lời trong phạm vi kho | closed-world, grounded answering | chỉ nói điều kho có; kho không có thì từ chối | 7 |
 | trang theo dõi | monitoring page | trang riêng của chủ dự án, bảng số lượt, kết cục, thời gian, tiền theo ngày | 34 |
 | trần token viết ra | max output tokens | số token nhiều nhất một lần gọi được viết; quá thì bị cắt giữa chừng | 33 |
-| trần vòng | max turns | số vòng tối đa của một lượt hỏi; 5, cộng 1 cho mỗi công cụ ngoài tìm kho được đưa ở lượt đó (trước 14:47 ngày 22/11: 4) | 21 |
+| trần vòng | max turns | số vòng tối đa của một lượt hỏi; 5, cộng 1 cho mỗi công cụ ngoài tìm kho được đưa ở lượt đó, trừ thời tiết (trước 14:47 ngày 22/11: 4) | 21 |
 | trình duyệt | browser | chương trình trên máy của người dùng để mở trang web (Chrome, Safari…) | 5 (cũng ở 6) |
 | trợ lý | agent | model được quyết bước kế tiếp (xin công cụ nào, hay viết luôn) trong lúc chạy | 3 |
 | trung vị | median, p50 | số đứng giữa khi xếp các lượt từ nhanh tới chậm; một nửa nhanh hơn, một nửa chậm hơn | 34 |
@@ -448,5 +451,6 @@ Gom từ mục "Từ dùng trong bài" của các bài 1–40 trong cùng thư m
 
 - Đợt đầu tối 23/11/2026 (người viết của đợt, 17:33): hai dòng chép bảng "Từ dùng trong bài" của bài 26 bản đầu tối 23/11 [chép từ bài]. Số từ 218 ⇒ 219.
 - Đợt tối 23/11/2026 (người gom phụ lục, 18:51; khớp hệ thống 17:35 23/11, nhánh chính `7693f0b0`): dòng "chặng sang khu": bảng "Từ dùng trong bài" của bài 31 bản 18:29 [chép từ bài]; các bài 27, 28, 29, 30, 05 không thêm từ mới vào bảng này (so bảng "Từ dùng" HEAD ↔ cây viết). Bài 27 bảng "Từ dùng" còn ghi bảng điểm "41 dòng" (trong khi "Cấu hình" ghi 45 dòng) — dòng "bảng điểm tham quan" giữ theo bảng "Từ dùng", lệch ghi ở báo cáo người gom. Báo cáo từng hàng: `data/hoc_cung_D/viet/dot_2311_toi_g1_phu_luc.md` [riêng tư].
+- Đợt cuối tối 23/11/2026 (người gom phụ lục g1, 21:06; khớp hệ thống lúc code đứng yên tối 23/11): so cột đầu với bảng "Từ dùng trong bài" của 40 bài trong cây viết (script `python3` đọc các bảng): thiếu đúng một từ của bảng — "lượt đo bù" (bài 33 dòng 28); thêm hai từ giảng trong thân bài ("đoàn nhẹ": bài 31 "Ý chính" gạch 3 "(dưới đây: đoàn nhẹ)"; công tắc "hết vòng": bài 21 quyết định 4 đoạn mở đầu). Sửa nghĩa theo câu hiện tại: "kho" (bài 7 dòng 20), "bảng điểm tham quan" (bài 27 "Từ dùng"), "giữ chỗ" (bài 31 dòng 23), "trần vòng" (bài 21 "Từ dùng"); "đoạn", "tìm": số đoạn theo bản ghi chỉ mục 18:05 23/11 (`269 9533`) [tự chạy]. Không thêm "giờ ghé", "ghi chú ăn riêng", "mục tối": không bài gốc nào có trong bảng "Từ dùng" hay giảng rõ thành một câu nghĩa. Đếm: 240 dòng bảng "Từ dùng", 221 tên khác nhau, 19 tên ở hai bài [tự đếm]; bảng Việt → Anh 220 ⇒ 223 hàng. Ba từ mới không có tên tiếng Anh nên bảng tra ngược không đổi. Dòng Cập nhật trước: "Cập nhật 18:51, ngày 23/11/2026 · khớp hệ thống 17:35 23/11 (55 tính năng mở, 7 tắt, kho 267 bài) · thêm "chặng sang khu" (bài 31) và dòng tra ngược."
 - Dòng Cập nhật trước (chuyển xuống 18:51 23/11/2026): "Cập nhật 17:40, ngày 23/11/2026 · dòng "danh sách tên" (55) và dòng mới "tên phải xác nhận" theo bảng "Từ dùng trong bài" của bài 26 bản đầu tối · 17:10, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài) + số lệnh thêm trên bảng điểm từ 16:38; chưa gồm các bản gộp khác từ 16:38 (chờ phiếu) · dòng "danh sách tên" ghi mốc "42 … (tới 16:47 23/11)" theo bài 26 · 11:32: khớp các bài sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): thêm tám từ — thẻ chờ, bến, khung nhìn (bài 5), bảng kiểu, hình vẽ bằng đường cong, giảm chuyển động, tương phản (bài 35), thẻ nơi (bài 23, sót từ 22/11) — và sáu dòng tra ngược; "dòng trạng thái" chép lại theo bài 5 (218 từ) · trước đó (22/11: phân xử chỗ lệch giữa các bài; gom lần đầu); bài gốc đổi thì trang này phải gom lại."
 </details>
