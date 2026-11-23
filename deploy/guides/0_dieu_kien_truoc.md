@@ -145,7 +145,8 @@ sudo dpkg -i session-manager-plugin.deb && session-manager-plugin --version
 
 1. Tạo một project riêng tên `hue-rag-deploy` (ô chọn project ở góc trái trên ⇒ Create project). Project riêng thì trần chi tiêu và số liệu sử dụng của bản
    deploy tách khỏi mọi việc khác.
-2. Trong project đó ⇒ API keys ⇒ tạo một khoá. Chép khoá vào chỗ cất mật khẩu của riêng mình; nó chỉ được gõ vào file `hue.khoa.env` trên máy chủ ở guide 4.
+2. Trong project đó ⇒ API keys ⇒ tạo một khoá. Chép khoá vào chỗ cất mật khẩu của riêng mình; nó chỉ được gõ vào HAI file, cả hai do chính bạn tự gõ: file thử
+   `~/hue_khoa_thu.env` ở máy mình (guide 2 mục 3 — để thử gói trước khi đưa lên) và `hue.khoa.env` trên máy chủ (guide 4). Không dán khoá vào cửa sổ của agent nào.
    Không dùng lại khoá đang nằm trong `.env` của máy.
 3. Đặt TRẦN CỨNG cho project: Project settings ⇒ Limits ⇒ mục Spend ⇒ Edit spend limit ⇒ nhập "Monthly spend limit" ⇒ bật **"Enforce a hard limit"** ⇒ Save.
    Không bật thì con số chỉ là cảnh báo, lời gọi vẫn chạy. Chạm trần thì mọi lời gọi của project trả lỗi 429 mã `project_spend_limit_exceeded` — người dùng
@@ -188,6 +189,7 @@ Bốn dòng lệnh `aws` trên **[chưa chạy]** — kết quả ghi theo cách
 | `Arn` in ra `user/aiengineer` | chưa `export AWS_PROFILE` ở cửa sổ này | gõ lại hai dòng `export` ở mục 5 |
 | "Unable to locate credentials" / "InvalidClientTokenId" | khoá chưa cất, hoặc dán thiếu ký tự | chạy lại `aws configure --profile hue-rag-deploy`; vẫn lỗi thì tạo khoá mới ở Bước 4 và xoá khoá cũ |
 | Guide 1 hoặc 3 báo "AccessDenied" / "UnauthorizedOperation" ở một thao tác | dòng lỗi in tên quyền bị thiếu (dạng `dịch-vụ:TênThaoTác`) | chép nguyên dòng lỗi cho nhóm ⇒ nhóm thêm quyền vào file chính sách ⇒ bằng tài khoản gốc: IAM ⇒ Policies ⇒ `HueRagDeployAccess` ⇒ Edit ⇒ dán bản mới. Khoá học cũng dặn trước chuyện này: lần dựng đầu có thể lộ quyền thiếu [khoá] |
+| `AccessDenied` ở `cloudwatch:PutMetricAlarm`, `cloudwatch:DeleteAlarms` hoặc `cloudwatch:SetAlarmState` (guide 3, 5, 7) | khối `BaoDongMayHong` của tờ quyền giới hạn các thao tác này theo TÊN báo động (`hue-rag-…`); AWS có nhận kiểu giới hạn đó cho báo động hay không thì **[chưa kiểm trên AWS]** | báo nhóm; cách sửa: trong khối `BaoDongMayHong` đổi dòng `Resource` thành `"*"`, rồi dán lại chính sách bằng tài khoản gốc như hàng trên |
 | Dán chính sách báo lỗi cú pháp | dán thiếu dấu ngoặc đầu / cuối | dán lại cả file, từ dấu `{` đầu tới dấu `}` cuối |
 | Trang OpenAI không có ô "Enforce a hard limit" | trang đã đổi so với 23/11/2026 | báo nhóm; trong lúc chờ, chốt cứng còn lại là số tiền nạp trước với tự nạp lại đã tắt |
 
