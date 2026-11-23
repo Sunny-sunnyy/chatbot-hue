@@ -390,6 +390,7 @@ def test_sonnet_only_instructions_are_appended_on_bedrock_and_absent_on_openai(m
     monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
     settings = bedrock_settings()
+    settings["assistant"]["noi_khac_tu_choi"] = False  # đoạn dặn "nơi khác" (23/11/2026) có test riêng ngay dưới; ở đây so các đoạn dặn còn lại
     sonnet = OpenAIFullCorpusGenerator.from_environment(settings)
     settings["full_corpus_generation"]["provider"] = "openai"
     luna = OpenAIFullCorpusGenerator.from_environment(settings)
@@ -431,7 +432,8 @@ def test_other_province_note_is_added_only_when_switched_on_and_only_on_bedrock(
     monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
     settings = bedrock_settings()
-    assert settings["assistant"]["noi_khac_tu_choi"] is False  # dòng công tắc có trong file cấu hình (bộ đo chỉ ghi đè khoá đã có), mặc định tắt
+    assert "noi_khac_tu_choi" in settings["assistant"]  # dòng công tắc phải có trong file cấu hình (bộ đo chỉ ghi đè khoá đã có); test tự đặt giá trị
+    settings["assistant"]["noi_khac_tu_choi"] = False   # ⇒ đúng dù file cấu hình đang để bật hay tắt
     tat = OpenAIFullCorpusGenerator.from_environment(settings)
     settings["assistant"]["noi_khac_tu_choi"] = True
     bat = OpenAIFullCorpusGenerator.from_environment(settings)
