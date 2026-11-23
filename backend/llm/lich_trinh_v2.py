@@ -441,6 +441,16 @@ def _phut_noi(a: dict, b: dict, khu: bool) -> int | None:
     return di
 
 
+def _nghi_trua(a: dict, b: dict, khu: bool) -> int | None:
+    """Khoảng nghỉ giữa điểm cuối buổi sáng `a` và điểm đầu buổi chiều `b` của một ngày được dày. Cùng khu / khu kề: `NGHI_TRUA` (60 phút đã gồm phút đi
+    ngắn, như bộ xếp vẫn tính). Hai khu KHÔNG kề (ngày `khu`): 60 phút ăn + TRỌN số phút của chặng — lượt trình duyệt 23/11: luật cũ "60 phút cộng phần
+    vượt 30" in ra lịch chỉ còn 30 phút ăn trưa (sáng kết 13:20, chặng 35 phút, chiều bắt đầu 14:25). Chặng không có số trong bảng ⇒ None."""
+    if _phut_di(a, b) is not None or not khu:
+        return NGHI_TRUA
+    m = _phut_noi(a, b, True)
+    return None if m is None else NGHI_TRUA + m
+
+
 def ngay_vuot_nhip(bang: BangV2, tham_so: dict, ng: dict, khu: bool = False) -> bool:
     """Nội dung của ngày này có vượt NHỊP ĐI của đoàn thường không — đúng hai điều kiện `qua_day_buoi` / `vuot_quy` của `kiem_khung_v2` (số điểm một
     buổi theo kiểu đi, quỹ phút). `sua_lich_v2._xep` dùng để quyết ngày nào MANG dấu `day_them`: dấu là thứ tính lại từ nội dung sau mỗi lần xếp, không
@@ -508,9 +518,8 @@ def gio_ngay_day(bang: BangV2, tham_so: dict, ng: dict, khu: bool = False) -> di
     cuoi_sang = None
     for b in BUOI_NGAY:
         t = bat_dau[b]
-        if het_sang is not None and ng["buoi"][b]:  # `NGHI_TRUA` đã gồm phút đi tới khu kề; sang khu không kề (ngày `khu`) thì cộng phần vượt
-            qua_trua = _phut_noi(T[cuoi_sang], T[ng["buoi"][b][0]], khu) or DI_CUM_KE
-            t = max(bat_dau[b], het_sang + NGHI_TRUA + max(0, qua_trua - DI_CUM_KE))
+        if het_sang is not None and ng["buoi"][b]:  # sang khu không kề (ngày `khu`): 60 phút ăn + trọn số phút của chặng (`_nghi_trua`)
+            t = max(bat_dau[b], het_sang + (_nghi_trua(T[cuoi_sang], T[ng["buoi"][b][0]], khu) or NGHI_TRUA))
         truoc = None
         for j in ng["buoi"][b]:
             if truoc is not None:
@@ -570,9 +579,9 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
             loi.append("sang_chong_chieu")  # review 14/11 M-1: hai buổi liền nhau không được chồng giờ
         day = ng["ngay"] in day_them
         if day:  # ngày được dày: bữa trưa còn đủ `NGHI_TRUA` phút, buổi chiều không kết sau `GIO_KET_CHIEU_DAY`
-            qua_trua = (_phut_noi(T[sang[-1]], T[chieu[0]], khu) if sang and chieu else None) or DI_CUM_KE
-            if sang and chieu and sang[-1] in gio_k and chieu[0] in gio_k and ra_phut(gio_k[sang[-1]].split("–")[1].strip()) + NGHI_TRUA \
-                    + max(0, qua_trua - DI_CUM_KE) > ra_phut(gio_k[chieu[0]].split("–")[0].strip()):
+            nghi = (_nghi_trua(T[sang[-1]], T[chieu[0]], khu) if sang and chieu else None) or NGHI_TRUA
+            if sang and chieu and sang[-1] in gio_k and chieu[0] in gio_k and \
+                    ra_phut(gio_k[sang[-1]].split("–")[1].strip()) + nghi > ra_phut(gio_k[chieu[0]].split("–")[0].strip()):
                 loi.append("day_qua_gio")
             if khu and sang and chieu:  # chặng qua bữa trưa của ngày đi sang khu không kề: phải có số trong bảng và không quá trần
                 m = _phut_noi(T[sang[-1]], T[chieu[0]], True)

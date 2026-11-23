@@ -84,7 +84,7 @@ def test_add_across_non_adjacent_areas_is_applied_timed_with_real_minutes_and_re
             assert m <= v2.TRAN_PHUT_KHU
             ket = v2.ra_phut(moi["gio"][x].split("–")[1].strip())
             bat = v2.ra_phut(moi["gio"][y].split("–")[0].strip())
-            assert bat >= ket + (v2.NGHI_TRUA + max(0, m - v2.DI_CUM_KE) if x == sang_cuoi else m)  # qua bữa trưa: 60 phút + phần phút đi vượt 30
+            assert bat >= ket + (v2.NGHI_TRUA + m if x == sang_cuoi else m)  # qua bữa trưa: 60 phút ăn + TRỌN số phút của chặng không kề
         cau = s.thay_doi(B, kq)[0]["cau"]
         assert f"Ngày {ngay} nay đi qua {ap['khu']['so_khu']} khu" in cau and "nay dày hơn nhịp" in cau
         co_chang = any(v2._phut_di(T[x], T[y]) is None for x, y in zip(day, day[1:]))
