@@ -4,7 +4,7 @@ Vì sao cần: lớp nối model (`backend/llm/bedrock_model.py`) không dùng t
 `secretAccessKey`, `sessionToken`, đọc lại ở mỗi lời gọi. Trên máy có vai gắn, khoá tạm của vai nằm ở dịch vụ thông tin máy (IMDSv2) dưới tên
 trường khác (`AccessKeyId`, `SecretAccessKey`, `Token`) ⇒ tiến trình này đổi tên trường và ghi file; code sản phẩm không phải sửa.
 Ghi kiểu "file tạm rồi đổi tên" để app không bao giờ đọc trúng file viết dở. Không in, không log giá trị khoá — chỉ giờ hết hạn và tên lớp lỗi.
-Chỉ dùng thư viện chuẩn. Biến: HUE_IMDS (địa chỉ gốc, mặc định của AWS) · HUE_KHOA_DICH (file đích) · HUE_KHOA_NGHI (giây giữa hai lần, mặc định 300).
+Chỉ dùng thư viện chuẩn. Biến: HUE_IMDS (địa chỉ gốc, mặc định của AWS) · HUE_KHOA_DICH (file đích) · HUE_KHOA_NGHI (giây giữa hai lần, mặc định 60).
 """
 import json
 import os
@@ -14,7 +14,9 @@ import urllib.request
 
 IMDS = os.getenv("HUE_IMDS", "http://169.254.169.254")
 DICH = os.getenv("HUE_KHOA_DICH", "/run/hue-khoa/bedrock.json")
-NGHI = int(os.getenv("HUE_KHOA_NGHI", "300"))  # AWS đưa khoá mới ra trước khi khoá cũ hết hạn ít nhất 5 phút ⇒ 5 phút hỏi một lần là luôn còn hạn
+# AWS đưa khoá mới ra "ít nhất 5 phút trước khi khoá cũ hết hạn" ⇒ hỏi 5 phút một lần thì biên an toàn bằng 0 (hỏi ngay trước lúc có khoá mới + một lần
+# lỗi mạng = file khoá hết hạn vài chục giây). Hỏi MỖI PHÚT: luôn có ít nhất bốn lần hỏi trong khoảng 5 phút đó; lời gọi là nội bộ máy, không tốn gì.
+NGHI = int(os.getenv("HUE_KHOA_NGHI", "60"))
 NGHI_KHI_LOI = 15
 
 

@@ -11,8 +11,8 @@ services:
     command: ["python", "/app/lam_moi_khoa.py"]
     volumes:
       - khoa:/run/hue-khoa
-    healthcheck:   # file khoá vừa được ghi trong 11 phút qua (hai chu kỳ làm mới) ⇒ khoẻ; file CŨ còn lại sau khi máy khởi động lại thì chưa tính
-      test: ["CMD-SHELL", "find /run/hue-khoa/bedrock.json -mmin -11 | grep -q ."]
+    healthcheck:   # file khoá vừa được ghi trong 3 phút qua (chu kỳ làm mới là 1 phút) ⇒ khoẻ; file CŨ còn lại sau khi máy khởi động lại thì chưa tính
+      test: ["CMD-SHELL", "find /run/hue-khoa/bedrock.json -mmin -3 | grep -q ."]
       interval: 3s
       timeout: 2s
       retries: 20

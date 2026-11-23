@@ -38,6 +38,7 @@ services:
         required: false
     environment:
       HUE_QDRANT_URL: http://qdrant:6333
+      TZ: Asia/Ho_Chi_Minh   # hộp mặc định chạy giờ UTC; "hôm nay" của sản phẩm đã tự theo giờ Việt Nam, nhưng giờ trong log và dòng "đọc lúc" của trang theo dõi theo giờ MÁY
       HUE_BEDROCK_CREDS_FILE: /run/hue-khoa/bedrock.json   # file phủ quyết định file này tới từ đâu
       HUE_TRA_WEB: ${HUE_TRA_WEB:-false}
       # Các chốt cho bản mở ra ngoài (ở máy local không đặt biến nào ⇒ tắt): giới hạn lượt, cookie chỉ đi qua https, tắt trang /docs.

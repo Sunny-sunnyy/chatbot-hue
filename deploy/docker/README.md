@@ -18,7 +18,7 @@ Ba hộp trên MỘT máy: `qdrant` (chỉ mục) · `app` (FastAPI + giao diệ
 | `Dockerfile` | hai tầng: dựng giao diện bằng Node, rồi ảnh Python 3.13 (torch bản CPU, model nhúng tải sẵn) |
 | `compose.yml` | ba hộp + các chốt cho bản mở ra ngoài; chưa nói quyền gọi model tới từ đâu |
 | `compose.thu.yml` | file phủ để thử ở máy chủ dự án: gắn file khoá tạm đang có, chỉ đọc |
-| `compose.vai-may.yml` + `lam_moi_khoa.py` | file phủ cho máy AWS có vai gắn: hộp phụ `khoa` lấy khoá tạm của vai, tự làm mới 5 phút một lần |
+| `compose.vai-may.yml` + `lam_moi_khoa.py` | file phủ cho máy AWS có vai gắn: hộp phụ `khoa` lấy khoá tạm của vai, tự làm mới mỗi phút |
 | `Caddyfile` | cửa vào; không nén luồng trả lời để chữ ra ngay |
 | `thu_o_may.sh len / kiem / don` | chạy thử trọn gói ở máy chủ dự án, cổng 8880, không đụng server 8010 |
 | `chup_chi_muc.sh <file ra>` | lấy chỉ mục ra một file bản chụp từ Qdrant đang chạy (tạo ⇒ tải ⇒ xoá ngay ở nguồn; chỉ đọc) |
@@ -69,7 +69,7 @@ Lớp nối model (`backend/llm/bedrock_model.py`) KHÔNG dùng thư viện AWS:
 - `compose.thu.yml`: gắn file khoá tạm của máy chủ dự án (một file, chỉ đọc).
 - `compose.vai-may.yml`: hộp `khoa` hỏi dịch vụ thông tin máy (IMDSv2) lấy khoá tạm của vai, đổi tên trường, ghi file kiểu "file tạm rồi đổi
   tên" vào một volume chung (app gắn cả thư mục, chỉ đọc ⇒ luôn thấy file mới). Không khoá dài hạn nào nằm trên máy. Khuôn hỏi – đáp đã đối
-  chiếu tài liệu AWS (phiên B, 23/11): AWS đưa khoá mới ra ít nhất 5 phút trước khi khoá cũ hết hạn ⇒ hỏi 5 phút một lần.
+  chiếu tài liệu AWS (phiên B, 23/11): AWS đưa khoá mới ra ít nhất 5 phút trước khi khoá cũ hết hạn ⇒ hỏi MỖI PHÚT (5 phút một lần thì biên an toàn bằng 0).
   Hộp `khoa` dùng thẳng mạng của máy (`network_mode: host`) ⇒ bước nhảy IMDS để 1 vẫn chạy, và ba hộp còn lại (trong đó có hộp nhận yêu cầu từ
   internet) không tới được dịch vụ thông tin máy. Cần phía Terraform: vai có quyền gọi model, `http_tokens = "required"`.
   Hai điều biết trước: (a) máy khởi động lại thì Docker tự bật lại các hộp không theo thứ tự — đo ở máy này: hộp `khoa` ghi lại file sau 0,75 giây,
