@@ -375,7 +375,11 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     thieu = [s for s in ts.so_thich if not any(j in da_xep for j in bang.uu_tien.get(s, []))]  # 5c.7 (4): ghi chú do code
     # Đoàn có trẻ nhỏ / người lớn tuổi luôn được xếp nhẹ nhàng (kiểu đi không vào bộ xếp) ⇒ KHÔNG ghi câu "chưa chọn kiểu đi nên xếp mức cân bằng": câu đó
     # sai với họ và đứng ngay trên câu "xếp nhẹ nhàng" (lượt trình duyệt 23/11/2026; xảy ra ở mọi lịch của đoàn hạn chế khi để trống kiểu đi — mặc định của biểu mẫu)
-    gia_dinh = (["kieu_di"] if ts.kieu_di is None and not ts.han_che else []) + ([("han_che_toi" if bang.toi_nhe else "han_che")] if ts.han_che else []) + \
+    # `han_che_doi_kieu` (23/11/2026, lượt trình duyệt): đoàn có trẻ nhỏ / người lớn tuổi TỰ CHỌN "cân bằng" / "khám phá" vẫn được xếp nhẹ nhàng — trước đây
+    # ghi chú không nói lựa chọn của họ đã bị đổi (dòng tóm biểu mẫu và dòng đầu file .txt vẫn ghi mức họ chọn). Không chọn kiểu đi ⇒ không có dòng này.
+    gia_dinh = (["kieu_di"] if ts.kieu_di is None and not ts.han_che else []) + \
+        (["han_che_doi_kieu"] if ts.han_che and ts.kieu_di not in (None, "nhe_nhang") else []) + \
+        ([("han_che_toi" if bang.toi_nhe else "han_che")] if ts.han_che else []) + \
         (["so_thich"] if not ts.so_thich else [])
     ngays = [ngay_cua(i) for i in range(1, n + 1)]
     # 5c.2 (i): điểm ưu tiên không xếp vì đang tạm dừng theo mùa ⇒ ghi chú (mã `tam_dung_mua`)
@@ -747,6 +751,7 @@ CAU_MUC_TOI_DA = 30  # từ / câu (5c.6) — chỉ đếm để báo, không th
 # Ghi chú do code viết (model không viết lý do) — mã ⇒ câu
 CAU_GHI_CHU = {
     "kieu_di": "Chưa chọn kiểu đi nên mình xếp mức cân bằng.",
+    "han_che_doi_kieu": "Bạn chọn đi {kieu}, nhưng đoàn có trẻ em hoặc người lớn tuổi nên lịch này được xếp ở mức nhẹ nhàng.",
     "han_che": "Đi cùng trẻ em hoặc người lớn tuổi nên mình xếp nhẹ nhàng: mỗi buổi một điểm, không xếp buổi tối.",
     "han_che_toi": "Đi cùng trẻ em hoặc người lớn tuổi nên mình xếp nhẹ nhàng: mỗi buổi một điểm; buổi tối chỉ một hoạt động nhẹ gần trung tâm, nên về sớm.",
     "so_thich": "Chưa chọn sở thích nên mình gợi ý điểm tiêu biểu, thêm một điểm thiên nhiên mỗi ngày.",
@@ -831,7 +836,7 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                      "thu": None if ngay_that is None else dt.date.fromisoformat(ngay_that).weekday(), "muc": muc})
     ts = khung["tham_so"]
     ghi_chu = [{"ma": "mua_mua", "cau": bang.nhac_mua_chung["cau"]}] if khung.get("mua_mua") else []  # 5c.2 (iii): đầu khối, đúng một dòng
-    ghi_chu += [{"ma": m, "cau": CAU_GHI_CHU[m]} for m in khung["gia_dinh"]]
+    ghi_chu += [{"ma": m, "cau": CAU_GHI_CHU[m].format(kieu=NHAN_KIEU_DI[ts["kieu_di"]]) if m == "han_che_doi_kieu" else CAU_GHI_CHU[m]} for m in khung["gia_dinh"]]
     # Hai công tắc buổi tối (23/11/2026): mục "nghỉ" không hiện trên thẻ (User 15/11) ⇒ tối trống có lý do riêng — người dùng đã bỏ, đoàn hạn chế hết mục
     # nhẹ / ngày đi xa — phải có MỘT dòng ghi chú theo ngày, không thì thẻ, file xuất và bản in không nói gì về tối đó. Công tắc tắt ⇒ không mã nào có.
     for ng in khung["ngay"]:

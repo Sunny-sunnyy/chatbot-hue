@@ -236,6 +236,10 @@ class AssistantFlags:
     # hoạt động BUỔI TỐI mà chưa nói cách ⇒ lịch giữ nguyên, code hỏi lại hai lựa chọn; "đổi" ⇒ thay đúng tối đó (các tối khác được ghim, không dồn hàng,
     # không lặp); "để trống" ⇒ tối đó trống. Thay cho `bo_toi_de_trong` (không bật cùng). TẮT tới khi đo đạt.
     bo_toi_hoi_lai: bool = False
+    # 23/11/2026 (phần nối của lời chủ dự án "đi uống cà phê ở quán nào đó"): người dùng GỌI TÊN hoạt động tối muốn có ("tối ngày 1 đi cà phê HANOK",
+    # "thay phố Tây bằng Ca Huế") ⇒ code đặt đúng mục đó vào tối đó bằng ghim, tối khác + ban ngày giữ nguyên; mục đang ở tối khác ⇒ hai tối đổi chỗ;
+    # không làm được ⇒ câu nói thật lý do. Đếm 5.216 lệnh trên lưới: 0 ⇒ 86 % làm được. Không đổi khuôn / lời dặn. Cần `bo_toi_hoi_lai`. TẮT tới khi đo đạt.
+    toi_goi_ten: bool = False
     # Lịch đã lưu của cuộc vào LƯỢT HỎI THƯỜNG (plan private data/lich_da_luu_2026-11-19/PLAN.md): cuộc có lịch + tuyến `tro_ly_hue` ⇒ code nối một nguồn
     # "Lịch bạn đang có" (lịch + số giờ do code tính) sau ngữ cảnh kho; lượt biểu mẫu / lượt sửa / trò chuyện / câu cố định không nhận. TẮT tới khi
     # đo đạt; cần cờ sua_lich_v2 (route chỉ nạp lịch khi cờ đó bật) + tim_them. Tắt ⇒ chuỗi gửi model giống byte.
@@ -343,6 +347,8 @@ class AssistantFlags:
             raise ValueError("assistant.toi_nhe needs assistant.len_ke_hoach_v2: true and a schedule table that carries the `toi_nhe` list")
         if self.bo_toi_de_trong and not self.sua_lich_v2:
             raise ValueError("assistant.bo_toi_de_trong needs assistant.sua_lich_v2: true")
+        if self.toi_goi_ten and not self.bo_toi_hoi_lai:
+            raise ValueError("assistant.toi_goi_ten needs assistant.bo_toi_hoi_lai: true")
         if self.bo_toi_hoi_lai and (self.bo_toi_de_trong or not (self.sua_lich_v2 and self.sua_lich_chua_ho_tro and self.sua_lich_buoi_toi
                                                                  and self.sua_lich_kem_hoi and self.sua_lich_them_khong_the)):
             raise ValueError("assistant.bo_toi_hoi_lai needs sua_lich_v2, sua_lich_chua_ho_tro, sua_lich_buoi_toi, sua_lich_kem_hoi and "

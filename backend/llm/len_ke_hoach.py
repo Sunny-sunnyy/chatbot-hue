@@ -23,7 +23,11 @@ from llm.citations import CITATION_PATTERN
 from llm.assistant import (STREAM_DRAIN_SECONDS, AnswerTrace, AssistantFlags, CallLog, GenerationError, GeneratorNotReadyError, ROUTE_TRO_LY_HUE,
                            _lay_nguon_lich, check_citations, elapsed_ms, record_llm_calls)
 
-MAX_DOAN = lt2.TOI_DA_BUOI * 2 * lt2.SO_NGAY_TOI_DA + lt2.SO_NGAY_TOI_DA  # một đoạn mỗi điểm: ≤ 4 điểm ban ngày + 1 tối × 5 ngày = 25
+# Một đoạn nguồn mỗi điểm. Điểm nào không có đoạn vào được ngữ cảnh thì `assistant._lay_nguon_lich` CẮT NGÀY CUỐI của lịch ⇒ trần này phải phủ lịch dày
+# nhất có thể có: từ khi lệnh "thêm <điểm>" được vượt nhịp đi (công tắc `sua_lich_them_day`, 23/11/2026) một buổi có tới `TOI_DA_BUOI` + 1 điểm ⇒
+# (3 × 2 buổi + 1 tối) × 5 ngày = 35. Trần cũ 25 (= 4 điểm ban ngày + 1 tối × 5 ngày): đếm 23/11/2026 bằng hàm áp lệnh thật — lịch 5 ngày "khám phá
+# nhiều" (22 điểm) vượt 25 từ lệnh thêm thứ tư ở 3 / 4 bộ sở thích, tức lệnh thêm đó sẽ làm mất cả ngày 5 (phiên viết giáo trình nêu từ đọc code).
+MAX_DOAN = (lt2.TOI_DA_BUOI + 1) * 2 * lt2.SO_NGAY_TOI_DA + lt2.SO_NGAY_TOI_DA
 TIM_MO_TA = "tổng quan kiến trúc cảnh quan"  # vòng chỉnh nghiệm thu 13/11 (A chọn (a)): chọn đoạn TẢ điểm cho câu "ở đây có gì"
 LOI_MODEL = (GenerationError, TimeoutError, AgentsException, OpenAIError)  # lỗi của lần gọi viết câu ⇒ câu dự phòng, lịch vẫn hiện
 
@@ -306,7 +310,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
                    **({"them_khu": True} if flags.sua_lich_them_khu else {}),
                    **({"them_han_che": True} if flags.sua_lich_them_han_che else {}),
                    **({"bo_toi_de_trong": True} if flags.bo_toi_de_trong else {}),
-                   **({"bo_toi_hoi_lai": True} if flags.bo_toi_hoi_lai else {}))
+                   **({"bo_toi_hoi_lai": True} if flags.bo_toi_hoi_lai else {}),
+                   **({"toi_goi_ten": True} if flags.toi_goi_ten else {}))
         kq["chua_lam"] += [h.loai for h in khong_neo]  # lượt còn ý sửa khác: ý bỏ / thay không neo được nói ra ("Chưa làm: bỏ điểm"), không bỏ lặng
         # (C 17/11) model đã nhận là câu sửa: "đổi chỗ ngày 1 với ngày 2" từng ra "Chưa làm: đổi số ngày"; ý đổi chỗ ngày đi kèm ý làm được từng bị bỏ lặng
         if sl.la_viec_ngay_chua_lam(query) and not any(f == "so_ngay" for f, _, _ in kq["doi_truong"]):  # "gộp…" đã ra đổi số ngày ⇒ không báo ngược

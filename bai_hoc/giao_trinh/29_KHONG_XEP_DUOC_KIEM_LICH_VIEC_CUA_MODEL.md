@@ -1,6 +1,6 @@
 # Bài 29 — Khi không xếp được, bước kiểm lịch, và phần việc của model
 
-*Cập nhật 14:10, ngày 23/11/2026 · khớp hệ thống 13:52 23/11 (50 tính năng mở, 5 tắt, kho 267 bài) · bảng "Tám trường hợp thành ghi chú": nhóm có trẻ em hay người lớn tuổi không còn câu "Chưa chọn kiểu đi…" · số của bản sửa kiểm câu chép từ hồ sơ đo 23/11 (Claude Sonnet 5.5); số nghiệm thu chép từ báo cáo 13–15/11 (gpt-6-luna); người viết không chạy lượt có model · lần sửa trước: Nguồn.*
+*Cập nhật 17:03, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài); chưa gồm các bản gộp từ 16:38 (chờ phiếu) · bước kiểm khung có mã thứ 24 cho ngày người dùng tự xin thêm điểm (bài 31); đã áp biên bản kiểm độc lập · số của bản sửa kiểm câu chép từ hồ sơ đo 23/11 (Claude Sonnet 5.5); số nghiệm thu chép từ báo cáo 13–15/11 (gpt-6-luna); người viết không chạy lượt có model · lần sửa trước: Nguồn.*
 
 **Bài trước đã biết:** chương trình xếp lịch theo bảy luật có thứ tự, tính giờ bằng phút cố định (bài 28).
 **Bài này thêm:** ba việc xảy ra sau bộ xếp. Một: khi yêu cầu không xếp được trọn, chương trình làm gì và người dùng đọc thấy gì. Hai: một bước kiểm viết riêng, đối chiếu khung lịch với luật. Ba: lần gọi model duy nhất của lượt, nó nhận gì, viết gì, và câu nó viết được kiểm ra sao.
@@ -8,7 +8,7 @@
 ## Ý chính
 
 - Lượt lập lịch **không bao giờ từ chối cả lịch** vì một phần không xếp được. Phần không làm được trở thành **một dòng ghi chú do chương trình viết**, theo một mã cố định: thiếu điểm tiêu biểu của sở thích, điểm tạm dừng theo mùa, điểm có nhiều bậc thang, điểm không lấy được tài liệu.
-- Sau khi xếp, một **bước kiểm khung** viết độc lập với bộ xếp đối chiếu lịch với 23 luật (giờ trong giờ mở cửa, không quá 2 cụm, không trùng điểm…). Nó chạy ở mọi lượt, và đã chạy trên mọi tổ hợp biểu mẫu với 0 lỗi. Lịch trượt bước này thì không được lưu.
+- Sau khi xếp, một **bước kiểm khung** viết độc lập với bộ xếp đối chiếu lịch với 24 luật (giờ trong giờ mở cửa, không quá 2 cụm, không trùng điểm…). Nó chạy ở mọi lượt, và đã chạy trên mọi tổ hợp biểu mẫu với 0 lỗi. Lịch trượt bước này thì không được lưu.
 - Model nhận **danh sách mục và đúng một đoạn kho cho mỗi điểm**, không nhận chữ nào người dùng gõ. Nó trả một danh sách theo mã mục: mỗi mục một mô tả ngắn có số nguồn.
 - Chương trình kiểm **từng câu**: không giờ, không thời lượng, không tiền, không đường link, tên điểm khác chỉ được đứng sau tên chính điểm và không mở đầu một câu (từ 23/11, để giữ câu so sánh), đúng số nguồn của điểm, không nói về "tài liệu". Câu hỏng thì **chỉ câu đó** được thay bằng một câu dự phòng ("tên — điểm di tích [n]"); model lỗi hẳn thì mọi mục dùng câu dự phòng, khung lịch vẫn đủ.
 - Lần nghiệm thu đầu **trượt** (16 trên 20) vì vài điểm có bài kho quá mỏng; nhóm sửa bằng dữ liệu (chọn tay đoạn kho), rồi đạt 20 trên 20.
@@ -34,7 +34,7 @@ Có hai chỗ chương trình **im lặng**. Buổi không có điểm nào hợ
 
 ## Bước kiểm khung: một chương trình thứ hai đọc lại lịch
 
-Bước kiểm khung có **cùng các luật của bộ xếp, viết lại riêng**, không gọi lại bộ xếp. Nó nhận khung và trả về danh sách mã lỗi; khung đúng thì rỗng. Có 23 mã, chia năm nhóm: ngày và buổi, giờ (ngoài giờ mở cửa, chồng giờ, sáng tràn sang chiều), gom gần (quá 2 cụm, cụm không kề), độ dày (vượt quỹ phút, nhóm hạn chế quá dày), và điểm (trùng điểm, tối sai thứ, điểm tạm dừng). Bảng ở nửa để tra.
+Bước kiểm khung có **cùng các luật của bộ xếp, viết lại riêng**, không gọi lại bộ xếp. Nó nhận khung và trả về danh sách mã lỗi; khung đúng thì rỗng. Có 24 mã, chia năm nhóm: ngày và buổi, giờ (ngoài giờ mở cửa, chồng giờ, sáng tràn sang chiều), gom gần (quá 2 cụm, cụm không kề), độ dày (vượt quỹ phút, nhóm hạn chế quá dày, ngày người dùng tự xin thêm điểm mà quá giờ — từ 23/11, bài 31), và điểm (trùng điểm, tối sai thứ, điểm tạm dừng). Bảng ở nửa để tra.
 
 Bước kiểm chạy ở **mọi lượt lập lịch**. Lịch trượt bước này vẫn hiện trên màn hình (khung đã được gửi), nhưng sổ số đo ghi lượt là "không đạt" và lịch **không được lưu**, nên không sửa bằng lời hay tải PowerPoint được. Đây là đọc từ chương trình; các lần mô phỏng mọi tổ hợp biểu mẫu chưa gặp lịch nào trượt.
 
@@ -216,6 +216,8 @@ Thời gian tới lúc đủ câu ở lần sửa 14/11: 4,06 giây (bản đang
 
 Trần số đoạn của một lượt là 25, đúng bằng số điểm nhiều nhất của lịch 5 ngày kiểu "khám phá nhiều" (4 điểm ban ngày và 1 hoạt động tối mỗi ngày); dòng "Ngày … chưa xếp" vì vậy chỉ xảy ra khi có đoạn rỗng hay lỗi lạ (phép tính trên trần, chưa ghi lần nào gặp).
 
+Từ 15:38 23/11 khối "Ghi chú của lịch" còn có một dòng không thuộc tám trường hợp trên, cho ngày người dùng tự xin thêm điểm khi sửa lịch: "Ngày {n} dày hơn nhịp {kiểu đi} bạn chọn vì bạn đã xin thêm điểm: buổi sáng {số} điểm, {giờ} – {giờ}; …" (bài 31).
+
 Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối xảy ra sau bộ xếp; đọc chương trình thì khi đó bước kiểm khung báo lỗi và lịch cũng không được lưu (suy từ code, chưa gặp lần nào).
 
 ## Năm nhóm mã lỗi của bước kiểm khung
@@ -225,7 +227,7 @@ Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối 
 | ngày và buổi | sai số ngày; ngày không có điểm nào; điểm nằm ở buổi nó không đi được |
 | giờ | thiếu giờ; ngoài giờ mở cửa; buổi chiều bắt đầu trước 13:00; hai điểm chồng giờ; buổi sáng tràn sang buổi chiều |
 | gom gần | quá 2 cụm một ngày; hai cụm không kề; cụm xa ở ngày 1 hoặc ở lịch dưới 3 ngày; ghép hai điểm không kề trong một buổi |
-| độ dày | quá 2 điểm một buổi; vượt quỹ phút; nhóm hạn chế có hơn 2 điểm một ngày hoặc có buổi tối |
+| độ dày | quá 2 điểm một buổi; vượt quỹ phút; nhóm hạn chế có hơn 2 điểm một ngày hoặc có buổi tối; ngày người dùng tự xin thêm điểm khi sửa lịch (từ 15:38 23/11, đoàn thường, bài 31): được tới 3 điểm một buổi (kể cả kiểu "nhẹ nhàng") và không tính quỹ, nhưng báo lỗi khi buổi sáng kết sau 13:30, buổi chiều kết sau 18:00 hoặc nghỉ trưa dưới 60 phút |
 | điểm | trùng điểm; hoạt động tối sai thứ hay lặp sai; điểm đang tạm dừng theo mùa; điểm lấp ngoài sở thích không được đánh dấu |
 
 ## Giới hạn đã biết
@@ -256,7 +258,7 @@ Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối 
 
 - Mã và câu ghi chú: `backend/llm/lich_trinh_v2.py` (`CAU_GHI_CHU`, `CAU_CHUA_DU_BAO`, `CAU_TOI`, `dung_lich`, `thieu_uu_tien`, `tam_dung_mua`, `thay_bac_thang`), `backend/llm/lich_trinh.py` (`CAU_KHONG_XEP`: `khong_co_doan_nguon`, `vuot_ngan_sach`; `bo_diem`, `cat_ngay_cuoi`), `backend/llm/len_ke_hoach.py` (`MAX_DOAN` = 25, `dong_du_bao`) [code].
 - Buổi để trống không hiện, nhóm hạn chế có dòng ghi chú: `frontend/src/LichV2.jsx` (chú thích "User 15/11", `LOAI_MUC_V2`), `lich_trinh_v2.py` (`ghep_chu`) [code]. "Tối nghỉ vì đi xa / không có hoạt động" không có dòng: suy từ code (không có mã ghi chú tương ứng), chưa thử trên giao diện.
-- Bước kiểm khung, 23 mã (người kiểm độc lập đếm; người viết đếm lại bằng `grep` các `loi.append`: 23), mục đích "mô phỏng toàn tổ hợp + test cố tình vi phạm": `lich_trinh_v2.py` (`kiem_khung_v2`, docstring) [code]. Chạy mọi lượt, không lưu khi trượt: `len_ke_hoach.py` (`chuan_bi` → `loi_khung`; `luu_sau_luot`), `backend/api/routes/chat.py` (`lich_trinh_ok`) [code]. 3.840 tổ hợp: spec `2026-11-12-len-ke-hoach-ban-2-design.md` mục 5c.7 [chép].
+- Bước kiểm khung, 23 mã tới 15:38 23/11 (người kiểm độc lập đếm; người viết đếm lại bằng `grep` các `loi.append`: 23), nay 24 — mã mới `day_qua_gio` (bản gộp `a02586fa`; người viết đếm lại trong đợt viết 16:19–16:40 23/11 bằng `grep -o 'append("[a-z_0-9]*"'` trong `kiem_khung_v2`: 24 mã khác nhau, bản trước gộp `a02586fa^1`: 23) [code]; mục đích "mô phỏng toàn tổ hợp + test cố tình vi phạm": `lich_trinh_v2.py` (`kiem_khung_v2`, docstring) [code]. Chạy mọi lượt, không lưu khi trượt: `len_ke_hoach.py` (`chuan_bi` → `loi_khung`; `luu_sau_luot`), `backend/api/routes/chat.py` (`lich_trinh_ok`) [code]. 3.840 tổ hợp: spec `2026-11-12-len-ke-hoach-ban-2-design.md` mục 5c.7 [chép].
 - Ba lỗi người chấm mù, 52 / 3.840, mã `sang_chong_chieu` (chú thích "review 14/11 M-1"): `kiem_khung_v2`; `bai_hoc/23_LEN_KE_HOACH_BAN_2.md` mục "Một chuyện thật: ba lỗi…" [code; chép].
 - Lần gọi model: `len_ke_hoach.py` (docstring, `chuan_bi`, `stream_v2`, `LOI_MODEL`, `TIM_MO_TA`), `lich_trinh_v2.py` (`tin_nhan_model` — "Không chữ người dùng nào vào đây", `kiem_cau`, `_NOI_VE_TAI_LIEU` + chú thích 1.068 câu và review E m-3, `cau_du_phong`, `chon_cau`, `CauStream`, `CAU_MUC_TOI_DA` + chú thích "cắt chữ model là sửa chữ người khác viết"), `backend/llm/full_corpus_prompt.py` (`LICH_V2_LOI_DAN`, `_CAU_LICH_MOT_CAU`, `SONNET_GIU_DUNG_VAT`, `LICH_V2_LOI_DAN_SONNET` + chú thích ca "ba bảo vật", báo cáo `report_agent/2026-11-21/b_bedrock_sonnet.md` mục 6–7), `backend/llm/generator_openai_full_corpus.py` (`lich_v2_agent`, `BIEU_MAU_REASONING`, `generate_lich_v2`) [code].
 - Chọn đoạn ba bậc: `backend/llm/assistant.py` (`_lay_nguon_lich`: `doan_chon`, `doan_mo_ta`, `chon_doan` + docstring "11/28 điểm < 80 ký tự", "luật cũ hay chọn đoạn bằng chứng như lăng lân cận / quy tắc ứng xử ⇒ model trả câu rỗng") [code]. 18 điểm có đoạn chọn tay: đếm `diem_v10.json` [riêng tư].
@@ -277,4 +279,6 @@ Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối 
 
 - Đợt 14:10 23/11/2026 (V2 đầu chiều; đọc cây chính `64f188fa`). Dòng Cập nhật trước: "Cập nhật 13:25, ngày 23/11/2026 · khớp hệ thống 13:25 23/11 (49 tính năng mở, 5 tắt, kho 267 bài); đã áp hai lượt kiểm · luật kiểm câu nay giữ câu so sánh; câu bị thay ghi nguyên văn vào sổ vết · số của bản sửa chép từ hồ sơ đo 23/11 (Claude Sonnet 5.5); số nghiệm thu chép từ báo cáo 13–15/11 (gpt-6-luna); người viết không chạy lượt có model · lần sửa trước: Nguồn.". Hàng "chưa chọn kiểu đi…" của bảng tám trường hợp: `backend/llm/lich_trinh_v2.py` `xep_v2` dòng `gia_dinh = (["kieu_di"] if ts.kieu_di is None and not ts.han_che else [])` (commit `8ab947e4`; gộp `9c7196b2` 13:47), `CAU_GHI_CHU` (`kieu_di`, `han_che`) [code]; kể đủ ở bài 28 "Chi tiết để tra".
 
+- Đợt cuối chiều 23/11/2026 (Việc 1 của lời giao đợt): mã `day_qua_gio` và ngoại lệ của ngày có dấu `day_them` trong `kiem_khung_v2` (`TOI_DA_BUOI + (1 if day else 0)`, `not day and … vuot_quy`, ba điều kiện `day_qua_gio`: sáng + `NGHI_TRUA` > đầu chiều, cuối chiều > `GIO_KET_CHIEU_DAY` 18:00, cuối sáng > `GIO_KET_SANG_DAY` 13:30), `cau_ngay_day` (câu ghi chú nguyên văn, phần trong ngoặc nhọn do người viết thay cho biến), `dung_lich` (`ghi_chu += [{"ma": "day_them", …}]`): `git show a02586fa -- backend/llm/lich_trinh_v2.py` [code]. Dòng Cập nhật trước: "Cập nhật 14:10, ngày 23/11/2026 · khớp hệ thống 13:52 23/11 (50 tính năng mở, 5 tắt, kho 267 bài) · bảng "Tám trường hợp thành ghi chú": nhóm có trẻ em hay người lớn tuổi không còn câu "Chưa chọn kiểu đi…" · số của bản sửa kiểm câu chép từ hồ sơ đo 23/11 (Claude Sonnet 5.5); số nghiệm thu chép từ báo cáo 13–15/11 (gpt-6-luna); người viết không chạy lượt có model · lần sửa trước: Nguồn."
+- Áp biên bản kiểm độc lập (`data/hoc_cung_D/kiem/dot_2311_chieu2_k1_kiem.md` mục "Bài 29" dòng 3 [riêng tư]): "đoàn thường", "kể cả kiểu nhẹ nhàng" — `kiem_khung_v2` (`day_them = set() if han_che`; `not day and len(ids) > 1 and (han_che or kieu_di == "nhe_nhang")`) [code]. Dòng Cập nhật trước: "Cập nhật 16:37, ngày 23/11/2026 · khớp hệ thống 16:23 23/11 (51 tính năng mở, 7 tắt, kho 267 bài) · bước kiểm khung có mã thứ 24 cho ngày người dùng tự xin thêm điểm (bài 31) · số của bản sửa kiểm câu chép từ hồ sơ đo 23/11 (Claude Sonnet 5.5); số nghiệm thu chép từ báo cáo 13–15/11 (gpt-6-luna); người viết không chạy lượt có model · lần sửa trước: Nguồn."
 </details>

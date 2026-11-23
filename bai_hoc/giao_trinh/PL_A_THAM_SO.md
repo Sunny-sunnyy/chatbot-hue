@@ -1,6 +1,6 @@
 # Phụ lục A — Mọi tham số cấu hình: giá trị đang chạy, dùng để làm gì, bài nào giảng
 
-*Cập nhật 13:25, ngày 23/11/2026 · khớp hệ thống 13:25 23/11 (49 tính năng mở, 5 tắt, kho 267 bài) · lượt áp cuối: hàng độ dài chữ giờ quán · bản 12:28: bảng quán bản 4 (dấu bữa không hợp cho 6 quán, dòng giờ cho 30 quán kho); thêm hằng độ dài chữ giờ quán · bản 17:11, ngày 22/11/2026: chép từ cấu hình và chương trình lúc đó (sau bộ thay đổi mở 14:47 22/11: hai tham số của vòng công cụ đổi, thêm hằng số tách câu tìm gộp); hệ thống đổi thì phụ lục phải chép lại.*
+*Cập nhật 17:10, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài) + số lệnh thêm trên bảng điểm từ 16:38; chưa gồm các bản gộp khác từ 16:38 (chờ phiếu) · đồng bộ theo câu hiện tại của bài gốc sau khi hai agent viết áp biên bản kiểm độc lập · 16:55: đợt gom đầu · thêm bốn hàng của ngày dày (lệnh "thêm" vượt nhịp đi, bài 31): trần 3 điểm một buổi, sáng kết ≤ 13:30, chiều ≤ 18:00, nghỉ trưa ≥ 60 phút; hàng "Điểm tối đa một buổi" ghi ngoại lệ · 13:25, ngày 23/11/2026 · khớp hệ thống 13:25 23/11 (49 tính năng mở, 5 tắt, kho 267 bài) · lượt áp cuối: hàng độ dài chữ giờ quán · bản 12:28: bảng quán bản 4 (dấu bữa không hợp cho 6 quán, dòng giờ cho 30 quán kho); thêm hằng độ dài chữ giờ quán · bản 17:11, ngày 22/11/2026: chép từ cấu hình và chương trình lúc đó (sau bộ thay đổi mở 14:47 22/11: hai tham số của vòng công cụ đổi, thêm hằng số tách câu tìm gộp); hệ thống đổi thì phụ lục phải chép lại.*
 
 **Phụ lục này có gì.** Mọi tham số có giá trị số hoặc chữ trong file cấu hình của máy chủ, và các hằng số trong chương trình mà các bài đã nhắc. Dòng bật / tắt và bảy dòng chọn chế độ (model viết, cách tìm, xếp lại, bản chỉ mục, câu cho lần tìm đầu, cổng đưa công cụ) nằm ở phụ lục B.
 
@@ -105,7 +105,7 @@
 
 | Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
 |---|---|---|---|---|---|
-| Danh sách tên được đoán | `anh.danh_sach` | 42 nơi / món; chương trình dựng, chủ dự án duyệt (riêng tư) | đầu ra chỉ được là mã trong danh sách | — | 26 |
+| Danh sách tên được đoán | `anh.danh_sach` | 42 nơi / món (tới 16:47 23/11; sau đó đã đổi, kể ở đợt sau); chương trình dựng, chủ dự án duyệt (riêng tư) | đầu ra chỉ được là mã trong danh sách | — | 26 |
 | Dung lượng ảnh tối đa | `anh.max_bytes` | 10 MB | chặn trước khi đọc thân ảnh | — | 26, 37 |
 | Số điểm ảnh tối đa | `anh.max_pixels` | 40 triệu | chặn ảnh "bom giải nén" trước khi giải mã | — | 26, 37 |
 | Cạnh dài sau thu nhỏ | `anh.canh_dai` | 1.024 điểm ảnh; JPEG chất lượng 85, bỏ thông tin kèm ảnh | rẻ: khoảng 922 token cho ảnh 1.024 × 768 | chưa so | 26 |
@@ -127,7 +127,7 @@
 | Thời lượng tham quan | `lich_trinh_v2.PHUT` | ngắn 75 phút · nửa buổi 150 phút | — | chưa thử số phút riêng từng điểm | 28 |
 | Phút đi giữa hai điểm trong buổi | `DI_CUNG_CUM`, `DI_CUM_KE` | cùng cụm 15 · cụm kề 30 · cụm khác không ghép | — | chưa thử số từ bảng khoảng cách | 28 |
 | Quỹ phút một buổi | `lich_trinh_v2.QUY` | nhẹ nhàng 1 điểm · cân bằng 210 · khám phá nhiều 240 | — | luật "đi dày" cũ: bỏ (3 / 120) | 28 |
-| Điểm tối đa một buổi | `lich_trinh_v2.TOI_DA_BUOI` | 2 (4 một ngày) | ba điểm ngắn đã vượt quỹ 240 | — | 28 |
+| Điểm tối đa một buổi | `lich_trinh_v2.TOI_DA_BUOI` | 2 (4 một ngày); ngày người dùng tự xin thêm sau khi xếp: đoàn thường, 3 một buổi, không tính quỹ (từ 15:38 23/11, bài 31) | ba điểm ngắn đã vượt quỹ 240 | — | 28, 31 |
 | Giờ bắt đầu | `lich_trinh_v2.GIO_BAT_DAU` | sáng 8:00, chiều 13:30; khám phá nhiều 7:30, 13:00 | — | bản nháp: 8:00 – 11:00, 14:00 – 17:00 | 28 |
 | Chừa giờ ăn trưa | `lich_trinh_v2.NGHI_TRUA` | 60 phút | — | không chừa: 26 ngày sát giờ trên 960 cách điền | 28 |
 | Ngày mưa phải xếp lại | `NGUONG_MUA`, `MM_MUA_XEP` | khả năng mưa ≥ 60 % VÀ lượng mưa ≥ 6 mm | 6 mm theo lời chủ dự án 15/11 (đầu cấp "Mưa" của quy chuẩn) | chỉ 60 %: bỏ | 28 |
@@ -160,6 +160,10 @@
 | Mức suy luận lần hiểu ý sửa lịch | `full_corpus_generation.bedrock.reasoning_sua_lich` | `high` | — | đã đo 21/11 (model đang chạy): lệnh khó đúng 5 / 6 cao, 2 / 6 thấp, 0 / 6 vừa | 31, 33 |
 | Số lệnh model trả / chương trình áp mỗi lượt | `sua_lich_v2.MAX_HANH_DONG`, `MAX_AP` | ≤ 3 / ≤ 2; lệnh thứ 3 ⇒ "Chưa làm" | — | chưa so | 31 |
 | Số lựa chọn trên thẻ chọn | `sua_lich_v2.MAX_LUA_CHON` | ≤ 3 + "Bỏ điểm này" | — | chưa so | 31 |
+| Trần một buổi của ngày dày (ngày người dùng tự xin thêm điểm khi sửa lịch, từ 15:38 23/11, chỉ đoàn không có trẻ nhỏ / người lớn tuổi) | `TOI_DA_BUOI + 1` trong `lich_trinh_v2.kiem_khung_v2` | 3 điểm (thường: 2), kể cả kiểu "nhẹ nhàng"; không tính quỹ phút | chưa thấy ghi lý do; trần thường cộng một | — | 31, 28, 29 |
+| Buổi sáng của ngày dày kết muộn nhất | `lich_trinh_v2.GIO_KET_SANG_DAY` | 13:30 | bữa trưa không bắt đầu sau 13:30; không có trần này thì có buổi sáng ba điểm 7:30 – 14:15 | không trần: 340 thay vì 319 / 1.116 lệnh làm được (bảng điểm trước 16:38 23/11) | 31, 29 |
+| Buổi chiều của ngày dày kết muộn nhất | `lich_trinh_v2.GIO_KET_CHIEU_DAY` | 18:00 | sau đó là bữa tối và hoạt động tối | — | 31, 29 |
+| Nghỉ trưa giữa hai buổi của ngày dày | `lich_trinh_v2.NGHI_TRUA` | ≥ 60 phút; buổi chiều lùi theo buổi sáng | cùng mốc 60 phút của bộ xếp (bài 28) | — | 31, 29 |
 | Số tên nêu trong câu báo xếp lại | `sua_lich_v2.MAX_TEN_XEP_LAI` | 6; nhiều hơn chỉ nêu số điểm | đổi sở thích ở lịch 5 ngày từng ra 27 tên | chưa so | **chưa có bài** |
 
 ## 10. Máy móc bên dưới (chặng 7, bài 33–38)
@@ -217,5 +221,7 @@ Soát bằng cách tìm tên dòng, tên hằng và con số trong các bài đ�
 - Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư]. Trần vòng cộng 1 cho mỗi công cụ được đưa: `backend/llm/generator_openai_full_corpus.py` (`max_turns_for`); công cụ liệt kê bài đưa ở mọi lượt khi tính năng mở: `backend/llm/assistant.py` (`_lich_extra`) [code].
 
 - Lượt áp cuối (13:25 23/11/2026; biên bản `data/hoc_cung_D/kiem/dot_2311_trua_k2_phu_luc_kiem.md` hàng 37 [riêng tư]): `backend/llm/quan_lich.py` `nap_bang_quan` (docstring "Lúc khởi động (cờ `quan_lich`) … Sai một dòng ⇒ không khởi động"; vế `gio_kho` dùng `GIO_TOI_DA` và `_ten_sach`, không phụ thuộc `gan_diem_gio`) [code, đã mở main `a3938538`]; in giờ: `backend/llm/gan_diem.py` `_chu_gio(q) if in_gio` [code]. 72 ký tự: người áp đếm `len(gio_kho)` trên `data/phase_9/lich_trinh/bang_quan_lich_v4.json` (72 ký tự, 86 byte); chú thích code ghi "81" — không khớp số đếm, chưa rõ đếm theo cách nào [riêng tư; tự đếm].
+- Đợt cuối chiều 23/11/2026 (16:55, người gom phụ lục): bốn hàng ngày dày ở mục 9 chép từ bài 31 bảng "Cấu hình đang chạy" (hàng "trần một buổi của ngày dày", "buổi sáng của ngày dày kết muộn nhất", "buổi chiều…", "nghỉ trưa…") và bài 29 bảng "Năm nhóm mã lỗi" hàng độ dày; tên hằng `GIO_KET_SANG_DAY`, `GIO_KET_CHIEU_DAY`, `TOI_DA_BUOI`, `NGHI_TRUA` và vế `TOI_DA_BUOI + (1 if day else 0)` trong `kiem_khung_v2`: người gom đọc `git show origin/main:backend/llm/lich_trinh_v2.py` dòng 33–36, 584 (nhánh chính `afeb0e8c`, 16:54 23/11) [code]. Hàng "Điểm tối đa một buổi" (mục 7) chép bài 28 bảng "Cấu hình đang chạy" hàng "số điểm tối đa" [chép từ bài].
+- Đồng bộ 17:10 23/11/2026 (người gom phụ lục, lượt hai): sau biên bản kiểm `data/hoc_cung_D/kiem/dot_2311_chieu2_k1_kiem.md` [riêng tư] và lượt ÁP của hai agent viết, các hàng của đợt cuối chiều chép lại theo CÂU HIỆN TẠI của bài 31, 26, 7, 4, 28, 29, 30 (bản 16:55–17:04): mốc "bảng điểm trước 16:38 23/11" cho 319 / 1.116, 10 / 30, 16 / 31, 20 / 30 và số trên bảng đang chạy (341 / 1.143, 11 / 31, 17 / 32, 20 / 31 — "một người kiểm độc lập chạy lại, chưa có người thứ hai"); "đoàn thường" cho «…» và ngày dày; hai câu chung trước 16:21; ca 17:45 là ca 14:21 khi chợ Đông Ba còn là hoạt động tối; quán trưa (2 km, "số của sổ"); hướng "dời một điểm" thành lớp chọn chỗ của bản "sang khu"; nhãn "đo trên bản đầu, trước hai bản sửa"; hỏi bằng ảnh ("model quyết; 2 / 2 lượt", ghi chú chỉ gắn khi gõ lúc khung còn mở, mục web chỉ có câu cố định, phím Enter theo ca, "42 tên tới 16:47 23/11"); hai mảng kho (trình tự 21/11 ⇒ 23/11, câu hỏi chung ↔ dòng lẻ trong kho) [chép từ bài]. Mốc của đợt theo lời phiên D: khớp hệ thống 16:21 23/11; các bản gộp từ 16:38 chưa viết. Bảng từng hàng: báo cáo `data/hoc_cung_D/viet/dot_2311_chieu2_g1_phu_luc.md` mục "ĐỒNG BỘ" [riêng tư].
 
 </details>
