@@ -156,8 +156,10 @@ aws cloudwatch set-alarm-state --alarm-name hue-rag-may-khong-qua-kiem-tra-trang
 ```
 
 Mong: một thư của AWS tới email cảnh báo trong khoảng một phút; ở lần đánh giá kế (trong vòng năm phút) báo động tự về trạng thái bình thường vì máy
-vẫn khoẻ. Không có thư ⇒ xem email đã bấm xác nhận đăng ký chưa (guide 1 mục 7); đã xác nhận mà vẫn không có ⇒ chép cho nhóm đầu ra của
-`aws cloudwatch describe-alarm-history --alarm-name hue-rag-may-khong-qua-kiem-tra-trang-thai --max-items 5`. Vì sao phải ép: báo động này đo phép
+vẫn khoẻ — xem bằng `aws cloudwatch describe-alarms --alarm-names hue-rag-may-khong-qua-kiem-tra-trang-thai --query 'MetricAlarms[0].StateValue'`
+(in `ALARM` ngay sau lệnh ép, rồi `OK`). Không có thư ⇒ xem email đã bấm xác nhận đăng ký chưa (guide 1 mục 7) và `alert_topic_arn` đã điền ở guide 3
+chưa; đủ cả hai mà vẫn không có ⇒ báo nhóm: đó chính là trường hợp chủ đề cần thêm quyền cho báo động. Lệnh ép báo `AccessDenied` ⇒ chép nguyên dòng
+lỗi cho nhóm (quyền `cloudwatch:SetAlarmState` trong tờ quyền của guide 0 chưa từng được thử trên tài khoản thật). Vì sao phải ép: báo động này đo phép
 kiểm trạng thái của MÁY; hộp app chết thì máy vẫn "ok", còn máy dừng thì không có số đo và báo động coi là bình thường — không thao tác nào ở guide 6 làm nó kêu.
 
 Tiền máy của cả buổi (máy bật một hai giờ): dưới 1 USD [ước theo bảng giá ở guide 3]; cộng vài xu OpenAI. Tầng nền để lại — nó gần như không tốn tiền,
