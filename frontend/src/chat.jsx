@@ -14,7 +14,7 @@ import { baiHref } from "./route.js";
 import "./tl.css";
 import { GOI_Y } from "./chung.jsx";
 import { moDauWeb } from "./moDauWeb.js";
-import { LINK_TIM_PHONG, LichV2, LuuLich, MAP_PREFIX, vanBanLich } from "./LichV2.jsx";
+import { LINK_TIM_PHONG, LichV2, LuuLich, MAP_PREFIX, NutDoi, vanBanLich } from "./LichV2.jsx";
 
 // Trợ lý Huế: một cuộc trò chuyện dùng chung cho khung nổi và trang `#/tro-ly` (cổng D8). Server giữ lịch sử (cookie HttpOnly `conversation_id`)
 // — trang chỉ vẽ lại các lượt đã hỏi, không gửi lại lịch sử (plan B3 D1). State nằm ở `useChat` (gọi một lần ở App) ⇒ chuyển trang không ngắt lượt.
@@ -353,9 +353,10 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
         {turns.length > 0 && (
           <section aria-label="Cuộc trò chuyện">
             {turns.map((turn, index) => (
-              <Turn key={turn.key} turn={turn} turnRef={index === turns.length - 1 ? lastTurnRef : null}
+              <Turn key={turn.key} turn={turn} turnRef={index === turns.length - 1 ? lastTurnRef : null} laCuoi={index === turns.length - 1}
                     onRetry={() => ask(turn.question, { retryKey: turn.key, truong: turn.truong, summary: turn.summary, bieuMau: turn.bieuMau, hienThi: turn.hienThi })}
-                    onAsk={(q, opts) => ask(q, opts)} onEditPlan={onEditPlan} gon={idPrefix === "noi"} />
+                    onAsk={(q, opts) => ask(q, opts)} onEditPlan={onEditPlan} gon={idPrefix === "noi"}
+                    truongGoc={turns.findLast(t => t.bieuMau)?.truong} />
             ))}
           </section>
         )}
@@ -399,7 +400,7 @@ const ICON_GHI_CHU = (  // chữ "i" trong vòng tròn, đứng trước ghi ch�
   </svg>
 );
 
-function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
+function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon, laCuoi = false, truongGoc = null }) {
   const html = useMemo(() => renderAnswerHtml(moDauWeb(turn.text, turn.web)), [turn.text, turn.web]);  // câu mở đầu khi mục web có nội dung
   const pending = PENDING.has(turn.phase);
   const answerRef = useRef(null);  // việc nhỏ (1): chữ lịch đúng như đang hiện (đã qua DOMPurify) cho nút sao chép / tải
@@ -433,7 +434,9 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
       {turn.lichV2 && turn.phase !== "error" && (
         /* lượt sửa không áp được gì (không dòng nào `duoc`): lịch y như lượt trước ⇒ chỉ khối báo + nút "Xem cả lịch", ở CẢ trang trợ lý — vẽ lại cả
            tấm lịch đẩy dòng "Chưa làm" ra khỏi màn hình (lượt đo trình duyệt 21/11) */
-        <LichV2 turn={turn} onEditPlan={turn.bieuMau ? onEditPlan : null}
+        <LichV2 turn={turn} onEditPlan={turn.bieuMau ? onEditPlan : null} onAsk={laCuoi && turn.phase === "done" ? onAsk : null}
+                /* nút "mở biểu mẫu" của một dòng chưa làm được (điểm khu xa): về biểu mẫu với đúng giá trị của lượt biểu mẫu gần nhất */
+                onMo={laCuoi && turn.phase === "done" && onEditPlan ? () => onEditPlan(null, truongGoc ?? turn.truong) : null}
                 gon={gon || ((turn.lichV2.thay_doi || []).length > 0 && !turn.lichV2.thay_doi.some(d => d.duoc))} />
       )}
       {turn.text && !turn.lichV2 && !turn.suaThe && turn.phase !== "error" && (  /* thẻ chọn đã hỏi đúng câu đó — không vẽ lần hai */
@@ -463,7 +466,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
         <p className="progress" role="status">{turn.progress[turn.progress.length - 1]}</p>
       )}
       {turn.phase === "done" && turn.clarify && <ClarifyCard clarify={turn.clarify} onAsk={onAsk} />}
-      {turn.phase === "done" && turn.suaThe && <SuaTheCard the={turn.suaThe} onAsk={onAsk} />}
+      {turn.phase === "done" && turn.suaThe && <SuaTheCard the={turn.suaThe} onAsk={onAsk} nutMoi={laCuoi} />}
       {turn.phase === "done" && turn.suaThe && <>{turn.noticeAnToan && <p className="notice notice-an-toan" role="note">{turn.noticeAnToan}</p>}{turn.notice && <p className="notice">{turn.notice}</p>}</>}
       {turn.phase === "done" && turn.lich && !turn.lichV2 && (
         <LichExtras lich={turn.lich} truong={turn.truong} onAsk={onAsk} onEditPlan={turn.bieuMau ? onEditPlan : null}
@@ -548,11 +551,12 @@ function MapLinks({ links }) {
 // B4 D10: thẻ hỏi lại — mỗi trường một nhóm nút (chọn một), "Gửi" bật khi đủ trường bắt buộc, "Trả lời luôn" gửi `truong: {}`.
 // Sửa lịch bằng lời: "thay X" mà không nói thay bằng gì ⇒ thẻ 2–3 điểm đặt được vào đúng chỗ cũ (code chọn, đúng luật) + "Bỏ điểm này".
 // Bấm nút ⇒ lượt mới mang `sua_chon` {cu, moi} — server áp đúng lựa chọn, không hỏi lại lần hai.
-function SuaTheCard({ the, onAsk }) {
+// `nutMoi`: dòng chưa làm được đi kèm thẻ (tin hai ý: "thay A" + "thêm X") cũng mang nút gợi ý như khối thay đổi của lịch — chỉ ở lượt mới nhất.
+function SuaTheCard({ the, onAsk, nutMoi = false }) {
   const khong = (the.thay_doi || []).filter(d => !d.duoc);
   return (
     <div className="clarify bubble sua-the">
-      {khong.length > 0 && <ul className="lkh-doi">{khong.map((d, i) => <li key={i} className={d.hoi ? "lkh-doi-hoi" : "lkh-doi-khong"}>{d.cau}</li>)}</ul>}
+      {khong.length > 0 && <ul className="lkh-doi">{khong.map((d, i) => <li key={i} className={d.hoi ? "lkh-doi-hoi" : "lkh-doi-chua"}>{d.cau}{nutMoi && <NutDoi d={d} onAsk={onAsk} />}</li>)}</ul>}
       <p className="mb-2">Bạn muốn thay <b>{the.ten_cu}</b> bằng điểm nào?</p>
       <div className="flex flex-wrap gap-2">
         {the.lua_chon.map(c => (

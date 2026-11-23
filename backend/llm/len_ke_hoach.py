@@ -279,8 +279,15 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
     Trả None khi model trả danh sách rỗng / lỗi ⇒ lõi đi đường thường."""
     bang, luu = flags.bang_lich_v2, trace.lich_luu
     luu_tru = flags.luu_tru_bang if flags.luu_tru_lich else None  # cờ nơi ở tắt ⇒ "đổi hạng chỗ ở" báo không có mục chỗ ở
-    if trace.sua_chon is not None:
-        kq = sl.ap(bang, luu, [], sua_chon=trace.sua_chon, luu_tru=luu_tru)
+    chon = trace.sua_chon
+    if chon is None and flags.sua_lich_hoi_truoc and flags.toi_goi_ten:  # lời đồng ý gõ tay ngay sau câu hỏi "hai tối đổi chỗ?" ⇒ như bấm nút
+        chon = sl.chon_doi_toi(bang, query, trace.goi_y_sua)
+    if chon is not None:
+        # công tắc `sua_lich_hoi_truoc`, đường thẻ chọn (không gọi model): nút "Bỏ điểm này" cũng chỉ bỏ đúng điểm đó, không tự lấp buổi vừa trống; nút
+        # "Đổi chỗ hai tối" (câu hỏi trước khi hai buổi tối cùng đổi) đi đường này ⇒ cần luật gọi tên mục tối, và bấm nút = người dùng đã đồng ý.
+        # Công tắc tắt ⇒ lời gọi như cũ.
+        kq = sl.ap(bang, luu, [], sua_chon=chon, luu_tru=luu_tru,
+                   **({"them_hoi_truoc": True, "dong_y_doi_toi": True, **({"toi_goi_ten": True} if flags.toi_goi_ten else {})} if flags.sua_lich_hoi_truoc else {}))
     else:
         call_log = CallLog()
         try:
@@ -326,6 +333,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
                    **({"them_day": True} if flags.sua_lich_them_day else {}),
                    **({"them_khu": True} if flags.sua_lich_them_khu else {}),
                    **({"them_han_che": True} if flags.sua_lich_them_han_che else {}),
+                   # công tắc `sua_lich_hoi_truoc`: thiếu ngày / buổi thì hỏi lại; câu có lời cho phép tự chọn ("bạn tự xếp giúp mình") ⇒ tự xếp như cũ
+                   **({"them_hoi_truoc": True, "tu_xep": sl.cho_tu_xep(query)} if flags.sua_lich_hoi_truoc else {}),
                    **({"bo_toi_de_trong": True} if flags.bo_toi_de_trong else {}),
                    **({"bo_toi_hoi_lai": True} if flags.bo_toi_hoi_lai else {}),
                    **({"toi_goi_ten": True} if flags.toi_goi_ten else {}))
