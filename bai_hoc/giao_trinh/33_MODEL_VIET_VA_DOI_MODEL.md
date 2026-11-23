@@ -1,6 +1,6 @@
 # Bài 33 — Model viết, mức suy luận, và đổi model bằng một dòng cấu hình
 
-*Cập nhật 11:13, ngày 23/11/2026 · khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): gọi lại một lần khi nhà cung cấp lỗi tạm thời; thẻ chờ · cơ chế đọc từ chương trình và cấu hình 22/11; số đo từ các báo cáo 19/11 (gpt-6-luna) và 21/11 (cả hai model); người viết không chạy lại phép đo nào.*
+*Cập nhật 14:17, ngày 23/11/2026 · khớp hệ thống 13:41 23/11 (50 tính năng mở, 5 tắt, kho 267 bài): thêm đoạn dặn câu tỉnh khác (khác đoạn "nói thẳng" đã gỡ) · 11:13: gọi lại một lần khi nhà cung cấp lỗi tạm thời; thẻ chờ · cơ chế đọc từ chương trình và cấu hình 22/11; số đo từ các báo cáo 19/11 (gpt-6-luna) và 21/11 (cả hai model); người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** một câu hỏi đi qua sáu bước, gần như toàn bộ thời gian chờ là model viết (bài 6); model viết được gọi nhiều lần trong một lượt: xếp loại câu, tìm thêm, viết (bài 21, 22).
 **Bài này thêm:** hai model đã dùng khác nhau ở đâu, mức suy luận là gì và vì sao để mức cao, vì sao đổi model chỉ sửa một dòng mà vẫn phải viết một lớp nối và đo lại.
@@ -91,10 +91,10 @@ Cả hai lỗi đều do Claude hiểu cùng một yêu cầu khác gpt-6-luna, 
 
 ### 4. Vì sao Claude có những đoạn dặn riêng, và đổi model thì phải đo lại những gì?
 
-- **Đã chọn:** lời dặn gửi gpt-6-luna không đổi một chữ. Khi chạy Claude, chương trình nối thêm ba đoạn dặn ngắn: cho xếp loại câu (địa bàn Huế gồm cả vùng ven, bài 22), cho câu thẻ lịch (một hai câu, giữ con số đi đúng vật), cho hiểu lệnh sửa lịch. Claude còn đọc hai thứ riêng ("Chi tiết để tra"; nguyên văn ở phụ lục D).
+- **Đã chọn:** lời dặn gửi gpt-6-luna không đổi một chữ. Khi chạy Claude, chương trình nối thêm các đoạn dặn ngắn: cho xếp loại câu (địa bàn Huế gồm cả vùng ven, bài 22), cho câu thẻ lịch (một hai câu, giữ con số đi đúng vật), cho hiểu lệnh sửa lịch; từ chiều 23/11 thêm đoạn dặn câu tỉnh khác ở lời viết câu trả lời (bài 16). Claude còn đọc hai thứ riêng ("Chi tiết để tra"; nguyên văn ở phụ lục D).
 - **Vì sao:** mỗi đoạn có một ca đo làm lý do. Ví dụ ở bước xếp loại câu: cùng lời dặn, gpt-6-luna xếp nhầm 0 trên 56 lượt, Claude 2 trên 56 ở mức cao và 4 trên 56 ở mức vừa. Ở lệnh sửa lịch sau đoạn dặn: 27 trên 27 lượt đúng ý.
 - **Cách khác:** đoạn dặn thứ tư "nói thẳng, không lặp ý": đã thử trên 85 câu, câu dài thêm, trọng tâm 4,39 xuống 4,26 ⇒ gỡ.
-- **Cái giá:** mỗi lần đổi model phải đo lại ít nhất bước xếp loại câu, lệnh sửa lịch khó, lượt có công cụ, độ dài và điểm câu trả lời; nếu là hãng mới thì thêm năm chỗ cách gọi hay khác nhau: khuôn có ràng buộc, ép gọi công cụ, quyền chữ chạy dần, cách tắt suy luận, cách đếm token.
+- **Cái giá:** đường gpt-6-luna không có đoạn câu tỉnh khác, và đã hở câu đó ngày 21/11 (bài 16). Mỗi lần đổi model phải đo lại ít nhất bước xếp loại câu, lệnh sửa lịch khó, lượt có công cụ, độ dài và điểm câu trả lời; nếu là hãng mới thì thêm năm chỗ cách gọi hay khác nhau: khuôn có ràng buộc, ép gọi công cụ, quyền chữ chạy dần, cách tắt suy luận, cách đếm token.
 
 ## Nếu… thì sao
 
@@ -293,5 +293,9 @@ Sửa một chữ trên dòng cấu hình chọn hãng, khởi động lại má
 - Phép thử mức vừa cho cả lượt tin nhiều ý (đợt 21:37 22/11/2026): tiêu chí ghi trước (sáu điều + bổ sung E1–E4, mốc lượt 2 thẻ nơi 17:10 = 27,3 giây, trung vị gộp 26,9 của 12 lượt high, cách thay hai agent `assistant_agent_nhieu_y` / `assistant_history_agent_nhieu_y` trong tiến trình đo): `data/thu_bedrock_2026-11-21/b_medium_nhieu_y/luot_1/TIEU_CHI.md` dòng 4–24; số máy (19,3 giây, 1 / 6 ở điều 4, 6 lần tìm, 2.028 ↔ 2.257 ký tự, token suy luận): `KET_QUA_SO_MAY.md` dòng 3–21; bản chấm (điều 4 TRƯỢT, "dưới 7 tuổi" 3 / 6, gốc là chỉ một lần tìm): `CHAM_E.md` dòng 5–21 [riêng tư; đã chạy, phiên khác, 22/11; Claude Sonnet 5.5]. Trung vị 19,3 · 27,3, khoảng thời gian, số lần tìm 1×6 ↔ 2·1·2·1·1·1: người viết đếm lại từ `tho.jsonl` của `b_medium_nhieu_y/luot_1` và `b_x10_the_noi/luot_2` [tự đếm, 0 đồng]. "Bỏ hẳn, không thử lại": `session_prompt/Y_CHUA_THU.md` hàng ý 56 [chép]. Hai agent tin nhiều ý có thật trong code: `backend/llm/generator_openai_full_corpus.py` dòng 388–389, 568–569; mức đang chạy `reasoning_default: high`: `backend/config/settings.yaml` dòng 59 [code]. Mức thấp sau khi sửa lớp nối chưa đo: không thấy trong `Y_CHUA_THU.md`, `VIEC_DANG_MO.md`, `HIEN_TRANG.md` (grep "low", "medium", "mức thấp") [đã grep].
 - Để giữ độ dài nửa để hiểu: chuyển xuống "Chi tiết để tra" câu "37 lần", câu "lịch sử lúc đó chỉ giữ câu hỏi", "mười loại lời gọi", "4 kiểu lịch", câu "tối 21/11 gác hẳn gpt-6-luna" (21:37 22/11/2026).
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 (hàng "Trần tìm 3 lần / 5 vòng là khoá CHUNG cho cả hai đường model"); `backend/config/settings.yaml` [code; người viết không chạy lại]. Người chấm 24/10–19/11 là Claude (chính), gpt-6-luna phụ: `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` dòng 34 ("Judge chính là Claude (xem E1)") [chép; sửa theo bài 19]. 8 giá trị khoá: `backend/core/settings_loader.py` `validate_phase6_settings` [code, đọc 22/11].
+
+- Đợt đầu chiều 23/11/2026 (viết khoảng 13:53, giờ `date`): quyết định 4 "Đã chọn" và "Cái giá". Đoạn dặn câu tỉnh khác `SONNET_NOI_KHAC` (công tắc `noi_khac_tu_choi`, "MỞ 13:11 23/11/2026"), chỉ nối khi `bedrock_model` có (`kem`, `them_noi_khac` trong `backend/llm/generator_openai_full_corpus.py`) [code]. Đường gpt-6-luna hở câu đối chứng ngày 21/11: 2 / 10 (`san_30cd_luna_x10.jsonl`) và 3 / 5 (`s2_luna_tat_x5.jsonl`) ở `data/thu_bedrock_2026-11-21/do/thuoc/r06_lap/` [riêng tư; tự đếm]. Gạch "Dễ nhầm" "ba đoạn dặn riêng" giữ nguyên: nó nói về lần đổi sang Claude ngày 21/11. `guides/DOI_MODEL_VIET.md` mục 1 vẫn ghi "ba đoạn dặn" [lệch, chưa sửa ở đó].
+
+- Lượt áp biên bản 23/11/2026 (`data/hoc_cung_D/kiem/dot_2311_chieu_k1_kiem.md` hàng 33.1) [riêng tư]: bỏ cách gọi "đoạn thứ tư" cho đoạn câu tỉnh khác (trùng với đoạn "nói thẳng" ở "Cách khác" của quyết định 4); giờ "chiều 23/11" (dòng cấu hình ghi mở 13:11, vào nhánh chính 13:28) [code].
 
 </details>
