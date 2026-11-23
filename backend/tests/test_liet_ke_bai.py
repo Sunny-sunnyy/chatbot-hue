@@ -256,7 +256,7 @@ def test_answer_citing_the_index_keeps_the_notes_of_the_articles_it_names():
         return trace.notice or ""
 
     day_du = luot("Trong tư liệu hiện có Bãi X và Bãi Y [1].", noi_dong_tam_ngung=True, may_have_changed_notice=True)
-    assert day_du.startswith(f"{TIEN_TO} «Bãi X»: Bãi tạm ngừng đón khách tắm biển khi có bão hoặc lũ.") and day_du.endswith(MAY_HAVE_CHANGED_NOTICE)
+    assert day_du.startswith(f"{TIEN_TO} “Bãi X”: Bãi tạm ngừng đón khách tắm biển khi có bão hoặc lũ.") and day_du.endswith(MAY_HAVE_CHANGED_NOTICE)
     chi_quan = luot("Trong tư liệu hiện có Quán Z gần bãi tắm [1].", noi_dong_tam_ngung=True, may_have_changed_notice=True)
     assert chi_quan == ""  # bài được nêu tên không thuộc nhóm có ghi chú và không có câu cảnh báo; bãi không được nêu tên ⇒ không kéo theo
     assert TIEN_TO not in luot("Trong tư liệu hiện có Bãi X [1].", may_have_changed_notice=True)  # cờ dòng tạm ngừng tắt

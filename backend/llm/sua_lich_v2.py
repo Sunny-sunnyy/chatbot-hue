@@ -38,6 +38,25 @@ _TU_XEP = re.compile(r"(?<!\w)(?:(?<!mình )(?<!tôi )(?<!tớ )(?<!em )tự\s+(
 _KHONG_TU_XEP = re.compile(r"(?<!\w)(?:không|đừng|chớ|khỏi)\s+(?:\w+\s+){0,3}?(?:tự\s+)?(?:sắp\s+xếp|xếp|chọn|quyết)(?!\w)")
 
 
+# Cùng công tắc, cụm buổi tối: lời ĐỒNG Ý gõ tay ngay sau câu hỏi "hai tối đổi chỗ?" (lượt trình duyệt 23/11/2026: gõ "ừ đổi chỗ đi" thay cho bấm nút ⇒ model
+# ghi thành việc chưa hỗ trợ). Code đọc theo danh sách đóng, khớp CẢ câu (câu dài hơn / có ý khác ⇒ không khớp ⇒ đi đường hiểu ý như cũ).
+_DONG_Y_DOI_TOI = re.compile(r"(?:(?:ừ+m?|ờ|uh+|ok\w*|được|đồng ý|có|vâng|dạ|ừ thì)(?:[\s,]+(?:được|đồng ý|đổi|đổi chỗ|hai tối|bạn|mình|nhé|đi|luôn|ạ|nha|chứ|đấy|đó))*"
+                             r"|(?:cứ\s+|bạn\s+)?đổi(?:\s+chỗ)?(?:\s+hai\s+tối)?(?:\s+(?:đi|nhé|luôn|giúp mình|giúp tôi|nha|ạ|cho mình))*)[\s.!]*")
+_GUI_DOI_TOI = re.compile(r"đổi chỗ hai tối: (.+) sang tối ngày \d+, (.+) sang tối ngày \d+")
+
+
+def chon_doi_toi(bang: "v2.BangV2", cau: str, goi_y) -> dict | None:
+    """Lượt NGAY SAU câu hỏi "hai tối đổi chỗ?" (câu của nút nằm trong `goi_y` — các câu code gợi ý ở lượt trước, route nhớ đúng một lượt): câu gõ là một lời
+    đồng ý ngắn ⇒ trả đúng lựa chọn {cu, moi} của nút "Đổi chỗ hai tối" (đi đường thẻ chọn, không gọi model). Không thì None."""
+    m = next((x for g in goi_y or () if (x := _GUI_DOI_TOI.fullmatch(g))), None)
+    if any("sang hoạt động tối khác" in g for g in goi_y or ()):  # lượt trước còn hỏi "bỏ hoạt động tối: đổi hay để trống" ⇒ "đổi đi" có hai nghĩa ⇒ không đoán
+        return None
+    if m is None or not _DONG_Y_DOI_TOI.fullmatch(unicodedata.normalize("NFC", cau or "").casefold().strip()):
+        return None
+    moi, cu = khop_ten(bang, m.group(1)), khop_ten(bang, m.group(2))
+    return {"cu": cu, "moi": moi} if cu and moi else None
+
+
 def cho_tu_xep(cau: str) -> bool:
     """Câu gõ có lời cho trợ lý TỰ chọn chỗ không ("xếp giúp mình", "bạn tự xếp đi", "hôm nào cũng được", "tuỳ bạn"); câu phủ định ⇒ không."""
     c = unicodedata.normalize("NFC", cau or "").casefold()
@@ -148,7 +167,7 @@ def _loai_ly_do_cho(ma, noi_khu: bool) -> str | None:
 NHAN_TRUONG = {"so_ngay": "số ngày", "kieu_di": "kiểu đi", "so_thich": "sở thích", "tre_em": "số trẻ em", "lon_tuoi": "người lớn tuổi",
                "ngan_sach": "hạng chỗ ở"}
 CAU_KHONG_DOI = {
-    "ngoai_bang": "«{diem}» chưa có trong danh sách điểm của lịch.",
+    "ngoai_bang": "“{diem}” chưa có trong danh sách điểm của lịch.",
     "khong_co_trong_lich": "{diem} không có trong lịch hiện tại.",
     "da_co_trong_lich": "{diem} đã có trong lịch.",
     "khong_buoi_hop_le": "{diem} không đi được vào buổi đó.",
@@ -169,17 +188,19 @@ CAU_KHONG_DOI = {
     "toi_chua_xep_trong": "Mình chưa đặt được {diem} vào buổi tối theo ý bạn — hoạt động buổi tối do lịch tự chọn.",
     # công tắc `bo_toi_hoi_lai`: "bỏ" nay là HỎI LẠI chứ không tự chọn mục khác ⇒ hai câu khuyên "bỏ …, lịch sẽ tự chọn" không còn đúng (lượt trình duyệt 23/11/2026)
     "toi_chua_xep_hoi": "Mình chưa đặt được {diem} vào buổi tối theo ý bạn — hoạt động buổi tối do lịch tự chọn. Muốn tối nào đổi sang hoạt động khác, bạn "
-                        "nhắn «đổi hoạt động tối ngày …» kèm số ngày.",
+                        "nhắn “đổi hoạt động tối ngày …” kèm số ngày.",
     # công tắc `toi_goi_ten` (23/11/2026): người dùng GỌI TÊN hoạt động tối muốn có ("tối ngày 1 đi cà phê HANOK", "thay phố Tây bằng Ca Huế") — đặt được
     # thì ghim tối đó; không được thì nói thật lý do
-    "toi_ten_thieu_ngay": "Bạn muốn {diem} vào buổi tối ngày nào? Nhắn kèm số ngày, ví dụ «tối ngày 2 đi {diem}».",
+    "toi_ten_thieu_ngay": "Bạn muốn {diem} vào buổi tối ngày nào? Bấm một nút dưới đây, hoặc nhắn kèm số ngày, ví dụ “tối ngày 2 đi {diem}”.",
+    "toi_doi_cho_hoi": "{diem} đang ở buổi tối ngày {ngay_kia}, còn buổi tối ngày {ngay} đang có {diem_kia}. Đặt {diem} vào tối ngày {ngay} thì {diem_kia} "
+                       "chuyển sang tối ngày {ngay_kia}. Bạn đồng ý thì bấm nút dưới đây — lịch chưa đổi gì.",
     "toi_ten_ban_ngay": "{diem} đang là điểm ban ngày của lịch nên chưa đặt được vào buổi tối.",
     "toi_ten_han_che": "Đi cùng trẻ em hoặc người lớn tuổi nên lịch này không xếp hoạt động buổi tối — {diem} chưa đặt được.",
     "toi_ten_khong_nhe": "Đi cùng trẻ em hoặc người lớn tuổi nên buổi tối của lịch chỉ nhận hoạt động nhẹ gần trung tâm — {diem} chưa đặt được.",
     "toi_ten_ngay_xa": "Ngày {ngay} đi xa nên buổi tối để nghỉ — {diem} chưa đặt được vào tối đó; bạn chọn tối của ngày khác nhé.",
     "toi_ten_theo_thu": "{diem} chỉ có vào một số tối trong tuần — tối ngày {ngay} của lịch không rơi vào hôm đó, hoặc lịch chưa có ngày đi.",
-    "toi_chua_thay_hoi": "Mình chưa thay được hoạt động buổi tối theo tên bạn nêu — hoạt động buổi tối do lịch tự chọn. Bạn có thể nhắn «đổi {diem} sang "
-                         "hoạt động tối khác» để lịch chọn một hoạt động khác cho tối đó, hoặc «bỏ {diem}, để trống».",
+    "toi_chua_thay_hoi": "Mình chưa thay được hoạt động buổi tối theo tên bạn nêu — hoạt động buổi tối do lịch tự chọn. Bạn có thể bấm một nút dưới đây, hoặc nhắn “đổi {diem} sang "
+                         "hoạt động tối khác” để lịch chọn một hoạt động khác cho tối đó, hoặc “bỏ {diem}, để trống”.",
     "toi_chua_thay_trong": "Mình chưa thay được hoạt động buổi tối theo ý bạn — hoạt động buổi tối do lịch tự chọn. Bạn có thể bỏ {diem} để tối đó trống.",
     "van_cho_cu": "{diem} vẫn ở chỗ cũ — bạn nói lại từng điểm một nhé.",
     "het_diem_thay": "Không còn điểm phù hợp để thay {diem} (đặt được vào đúng chỗ đó) nên mình giữ nguyên.",
@@ -830,7 +851,7 @@ def _so_cho(cu: dict, moi: dict) -> dict:
 def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | None = None, luu_tru: dict | None = None,
        ngay_moi: dict | None = None, them_khong_the: bool = False, them_day: bool = False, them_khu: bool = False, them_han_che: bool = False,
        bo_toi_de_trong: bool = False, bo_toi_hoi_lai: bool = False, toi_goi_ten: bool = False, them_hoi_truoc: bool = False,
-       tu_xep: bool = False) -> dict:
+       tu_xep: bool = False, dong_y_doi_toi: bool = False) -> dict:
     """Áp hành động trên **bản sao** khung đã lưu ⇒ {khung, luu, da_ap, khong_doi, chua_lam, doi_truong, the}.
     `the` khác None ⇒ lượt dừng ở thẻ chọn, khung KHÔNG đổi. `sua_chon` {cu, moi} (bấm nút của thẻ) ⇒ bỏ qua hành động model.
     `luu_tru` = bảng lưu trú đang dùng (None khi cờ nơi ở tắt) — chỉ hành động `doi_hang_o` cần.
@@ -1038,12 +1059,26 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                     kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "toi_dang_o", "ngay": h.ngay if h.ngay is not None else toi[i][0]})
                 elif toi_goi_ten and "toi" in bang.theo_id[i]["buoi"]:  # công tắc `toi_goi_ten`: người dùng gọi tên hoạt động tối ⇒ đặt vào tối họ nói
                     so_ngay = len(khung["ngay"])
+                    # công tắc `sua_lich_hoi_truoc`: các tối mà lần đặt THẬT nhận (cùng phép thử `_dat_toi`) — nút "Tối ngày N" chỉ vẽ cho các tối này
+                    # (đếm 23/11/2026 trên 240 lịch × 11 mục tối: 1.142 / 4.939 nút dẫn tới lệnh không áp được; 240 lệnh mọi nút đều như vậy)
+                    duoc = [d for d in range(1, so_ngay + 1) if d != h.ngay and _dat_toi(bang, luu, ts, khung, vt, loai, i, d)[0] is not None] if them_hoi_truoc else None
                     if h.ngay is None or h.ngay > so_ngay:
-                        khong(ten_cua_diem(bang, i), "toi_ten_thieu_ngay")
+                        if duoc == []:  # không tối nào đặt được ⇒ nói thẳng lý do (của tối đầu) thay cho câu hỏi "ngày nào"
+                            kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": _dat_toi(bang, luu, ts, khung, vt, loai, i, 1)[3], "ngay": 1, "ngay_duoc": [],
+                                                    "khong_ngay": True})  # người dùng không nhắc ngày nào ⇒ câu không nói "tối ngày 1"
+                        else:
+                            kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "toi_ten_thieu_ngay", **({} if duoc is None else {"ngay_duoc": duoc})})
                         continue
                     dat, cu, roi, ma = _dat_toi(bang, luu, ts, khung, vt, loai, i, h.ngay)
                     if dat is None:
-                        kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": ma, "ngay": h.ngay})
+                        kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": ma, "ngay": h.ngay, **({} if duoc is None else {"ngay_duoc": duoc})})
+                        continue
+                    if them_hoi_truoc and roi is not None and cu is not None and not dong_y_doi_toi:
+                        # hai tối cùng đổi mà người dùng chỉ nhắc một ⇒ lịch đứng yên, hỏi trước (nguyên tắc chủ dự án xác nhận 22:02 23/11/2026). Nút mang
+                        # `chon` ⇒ lượt bấm đi đường thẻ chọn (không gọi model) với `dong_y_doi_toi`: lượt thật 23/11, model đọc câu "…, đổi chỗ hai tối" thành
+                        # việc chưa hỗ trợ.
+                        kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "toi_doi_cho_hoi", "ngay": h.ngay, "ngay_kia": roi,
+                                                "diem_kia": ten_cua_diem(bang, cu), "chon": {"cu": cu, "moi": i}})
                         continue
                     xep_toi = None if roi is not None and cu is not None else _toi_xep_lai(khung, dat[0])  # hai tối đổi chỗ: đã nói ở `toi_doi_cho`
                     khung, ts, loai = dat
@@ -1224,6 +1259,10 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 if dat is None:
                     kq["khong_doi"].append({"diem": ten_cua_diem(bang, j_toi), "ma_luat": ma, "ngay": d})
                     continue
+                if them_hoi_truoc and roi is not None and not dong_y_doi_toi:  # "thay <mục tối> bằng <mục đang ở tối khác>": cũng là hai tối cùng đổi ⇒ hỏi trước
+                    kq["khong_doi"].append({"diem": ten_cua_diem(bang, j_toi), "ma_luat": "toi_doi_cho_hoi", "ngay": d, "ngay_kia": roi,
+                                            "diem_kia": ten_cua_diem(bang, i), "chon": {"cu": i, "moi": j_toi}})
+                    continue
                 xep_toi = None if roi is not None else _toi_xep_lai(khung, dat[0])
                 khung, ts, loai = dat
                 kq["da_ap"].append({"loai": "thay_diem", "diem": i, "moi": j_toi, "toi_ngay": d,
@@ -1351,13 +1390,42 @@ def cau_goi_y(bang: v2.BangV2, kq: dict) -> tuple[str, ...]:
     return (tuple(nut_bo_trong(bang, a)["gui"] for a in kq["da_ap"] if a.get("goi_y_thay"))
             + tuple(n["gui"] for k in kq["khong_doi"] if k["ma_luat"] in ("them_hoi", "bo_ngay_rong") for n in nut_them(bang, k))
             + tuple(_cau_cach(bang, k["diem"], g, False) for k in kq["khong_doi"] for g in k.get("cach") or ())
-            + tuple(c for k in kq["khong_doi"] if k["ma_luat"] == "bo_toi_hoi" for c in _cau_bo_toi(k)))
+            + tuple(c for k in kq["khong_doi"] if k["ma_luat"] == "bo_toi_hoi" for c in _cau_bo_toi(k))
+            + tuple(n["gui"] for k in kq["khong_doi"] if k["ma_luat"] == "toi_doi_cho_hoi" for n in nut_khong_doi(bang, kq, k)))  # `chon_doi_toi` đọc lại ở lượt kế
 
 
 def _cau_bo_toi(k: dict) -> tuple[str, str]:
     """Hai câu người dùng được mời nhắn sau lệnh bỏ một hoạt động buổi tối chưa nói rõ cách (công tắc `bo_toi_hoi_lai`)."""
     ngay = ", ".join(str(n) for n in k["ngay"])
     return (f"đổi {k['diem']} (buổi tối ngày {ngay}) sang hoạt động tối khác", f"bỏ {k['diem']}, để trống buổi tối ngày {ngay}")
+
+
+NHAC_NUT = "bấm một nút dưới đây hoặc nhắn đủ câu"  # vế dẫn trước các câu gợi ý: mỗi câu vừa in trong “…” vừa là một nút (`nut_khong_doi`)
+
+
+def nut_khong_doi(bang: v2.BangV2, kq: dict, k: dict) -> list[dict]:
+    """NÚT của một dòng "chưa làm / hỏi lại" (chủ dự án 21:48 23/11/2026: không bắt người dùng chép lại câu trong dấu « ») — mỗi nút {nhan, gui}:
+    `gui` là ĐÚNG câu lệnh đủ tên mà dòng đó vốn mời nhắn; giao diện gửi nó như người dùng gõ. Câu của các cách thêm và của "bỏ hoạt động tối" còn nằm
+    trong `cau_goi_y` (route nhớ cho lần hiểu ý của lượt kế); các nút buổi tối khác KHÔNG nằm ở đó — không sao vì `gui` là câu đủ tên, tự hiểu được. Không dùng `sua_chon` cho "thay A bằng X": đường thẻ chọn gọi `ap` KHÔNG kèm các
+    công tắc của lệnh thêm (nới nhịp, sang khu) nên có thể từ chối một cách mà `_cach_them` vừa thử là được. Dòng không có cách nào ⇒ danh sách rỗng."""
+    ma = k["ma_luat"]
+    if k.get("cach"):
+        return [{"nhan": (c := _cau_cach(bang, k["diem"], g, True))[0].upper() + c[1:], "gui": _cau_cach(bang, k["diem"], g, False)} for g in k["cach"]]
+    if ma == "bo_toi_hoi":
+        doi, trong = _cau_bo_toi(k)
+        return [{"nhan": "Đổi sang hoạt động tối khác", "gui": doi}, {"nhan": "Để trống tối đó", "gui": trong}]
+    if ma == "toi_chua_thay_hoi":
+        return [{"nhan": "Đổi sang hoạt động tối khác", "gui": f"đổi {k['diem']} sang hoạt động tối khác"},
+                {"nhan": "Bỏ, để trống tối đó", "gui": f"bỏ {k['diem']}, để trống"}]
+    if ma == "toi_doi_cho_hoi":
+        return [{"nhan": "Đổi chỗ hai tối", "gui": f"đổi chỗ hai tối: {k['diem']} sang tối ngày {k['ngay']}, {k['diem_kia']} sang tối ngày {k['ngay_kia']}",
+                 "chon": k["chon"]}]
+    if "ngay_duoc" in k:  # công tắc `sua_lich_hoi_truoc`: chỉ các tối mà lần đặt thật nhận; lịch chưa có ngày đi + nơi chỉ mở vài tối trong tuần ⇒ nút mở biểu mẫu
+        nut = [{"nhan": f"Tối ngày {d}", "gui": f"tối ngày {d} đi {k['diem']}"} for d in k["ngay_duoc"]]
+        return nut + ([{"nhan": "Mở biểu mẫu để chọn ngày đi", "mo": "bieu_mau"}] if ma == "toi_ten_theo_thu" and not kq["luu"].get("ngay_di") else [])
+    if ma == "toi_ten_thieu_ngay":
+        return [{"nhan": f"Tối ngày {ng['ngay']}", "gui": f"tối ngày {ng['ngay']} đi {k['diem']}"} for ng in kq["khung"]["ngay"]]
+    return []
 
 
 def _cau_them(bang: v2.BangV2, k: dict) -> str:
@@ -1380,9 +1448,10 @@ def _cau_them(bang: v2.BangV2, k: dict) -> str:
                else f" (ngày đó sẽ có buổi dày hơn {nhip})" if g.get("day") else "")
         if not moi:
             return _cau_cach(bang, x, g, kem_cho or bool(g.get("day"))) + gia
-        # chữ mới: câu để nhắn nằm RIÊNG trong «…» (lượt trình duyệt 23/11: "thay A bằng X hoặc thay B bằng X" — chép nguyên là gửi một lệnh hai
+        # chữ mới: câu để nhắn nằm RIÊNG trong ngoặc kép “…” — và mỗi câu còn là một NÚT bấm (`nut_khong_doi`); trước 23/11/2026 tối dùng dấu « » mà chủ
+        # dự án đọc như ký tự lạ dính vào câu (lượt trình duyệt 23/11: "thay A bằng X hoặc thay B bằng X" — chép nguyên là gửi một lệnh hai
         # nghĩa); chỗ của điểm bị thay và cái giá "dày hơn nhịp" đứng NGOÀI dấu
-        return f"«{_cau_cach(bang, x, g, False)}»" + (f" (buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']})" if kem_cho and g["thay"] is not None else "") + gia
+        return f"“{_cau_cach(bang, x, g, False)}”" + (f" (buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']})" if kem_cho and g["thay"] is not None else "") + gia
 
     if k["ma_luat"] == "them_can_thay":
         ro = ngay is not None and buoi is not None  # người dùng nói rõ một buổi ⇒ nêu buổi đó đang có gì; không thì mỗi cách kèm buổi của nó
@@ -1391,7 +1460,7 @@ def _cau_them(bang: v2.BangV2, k: dict) -> str:
              else f"đặt vào {noi} thì vướng: {vuong}" if vuong and noi else f"đặt vào buổi nào cũng vướng: {vuong}" if vuong
              else f"{noi or 'lịch'} đang kín, không xếp thêm được một điểm nữa")
         # "đủ câu": lần hiểu ý không thấy lượt trước ⇒ câu đồng ý cụt ("ok thay đi") không được hiểu (đo 21/11: 0 / 6 lượt mỗi model)
-        return f"Chưa làm: thêm {x} — {o}. Muốn đổi, bạn nhắn đủ câu: {' hoặc '.join(cach(g, not ro) for g in k['cach'])}."
+        return f"Chưa làm: thêm {x} — {o}. Muốn đổi, bạn {NHAC_NUT if moi else 'nhắn đủ câu'}: {' hoặc '.join(cach(g, not ro) for g in k['cach'])}."
     vi = (f"vì {CAU_LY_DO[k['ly_do']]}" if k["ly_do"] else f"vì {vuong}" if vuong and noi else f"vì đặt vào buổi nào cũng vướng: {vuong}" if vuong
           else "vì đặt vào đó lịch sẽ phạm luật xếp (giờ mở cửa / cụm xa / quá dày)" if noi or k["ma_luat"] == "thay_bi_chan"
           else "vì đặt vào buổi nào lịch cũng phạm luật xếp (giờ mở cửa / cụm xa / quá dày)")  # không nói chỗ ⇒ không gán lý do riêng của một buổi
@@ -1399,7 +1468,7 @@ def _cau_them(bang: v2.BangV2, k: dict) -> str:
            else f"Chưa làm: thêm {x}" + (f" vào {noi}" if noi else "") + f" — {vi}.")
     if not k["cach"]:
         return f"{dau} Lịch này hiện không còn chỗ nào xếp được {x}."
-    return f"{dau} Làm được, bạn nhắn đủ câu: {' hoặc '.join(cach(g, True) for g in k['cach'])}."
+    return f"{dau} Làm được, bạn {NHAC_NUT if moi else 'nhắn đủ câu'}: {' hoặc '.join(cach(g, True) for g in k['cach'])}."
 
 
 def _la_khu_xa(k: dict) -> bool:
@@ -1509,16 +1578,22 @@ def _cau_khong_doi(bang: v2.BangV2, k: dict) -> str:
     if k["ma_luat"] == "toi_ten_theo_thu":  # nói rõ nơi đó mở tối nào và làm sao để đặt được (lượt trình duyệt cuối 23/11/2026: câu cũ không nói)
         i = khop_ten(bang, k["diem"])
         thu = ", ".join(THU[t] for t in (bang.theo_id[i].get("ngay_hoat_dong") or ())) if i else ""
-        return (f"{k['diem']} chỉ mở tối {thu} — lịch chưa có ngày đi, hoặc tối ngày {k['ngay']} không rơi vào các hôm đó. Bạn chọn ngày đi ở biểu mẫu "
-                "(nút Sửa) rồi xếp lại; đúng thứ thì mình đặt được.") if thu else CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"], ngay=k.get("ngay"))
+        toi_nao = "các tối của lịch" if k.get("khong_ngay") else f"tối ngày {k['ngay']}"
+        return (f"{k['diem']} chỉ mở tối {thu} — lịch chưa có ngày đi, hoặc {toi_nao} không rơi vào các hôm đó. Bạn chọn ngày đi ở biểu mẫu "
+                "(nút Sửa) rồi xếp lại; đúng thứ thì mình đặt được."
+                + (" Hoặc bấm một nút dưới đây để đặt vào tối khác." if k.get("ngay_duoc") else "")) if thu else CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"], ngay=k.get("ngay"))
     if k["ma_luat"] == "bo_toi_hoi":
         # công tắc `bo_toi_hoi_lai`: đây là một CÂU HỎI của trợ lý, không phải lỗi ⇒ mở đầu bằng chính câu hỏi, tên mục nêu một lần, mời gõ ngắn; dòng này
         # mang `hoi: True` ở `thay_doi` để giao diện không tô đỏ (lượt trình duyệt 23/11/2026: dòng mở đầu "Chưa làm:" hiện trong ô lỗi). Hai câu đủ tên
         # của `_cau_bo_toi` vẫn được nhớ cho lần hiểu ý của lượt kế (`cau_goi_y`) — nhờ đó gõ "đổi đi" / "để trống" là đủ (lượt thật 23/11: 3 / 3).
         return (f"Bạn muốn đổi {k['diem']} (tối ngày {', '.join(str(n) for n in k['ngay'])}) sang một hoạt động tối khác, hay để trống tối đó? "
-                "Nhắn «đổi đi» hoặc «để trống» — lịch chưa đổi gì.")
+                "Bấm một nút dưới đây, hoặc nhắn “đổi đi” / “để trống” — lịch chưa đổi gì.")
+    if k["ma_luat"] == "toi_doi_cho_hoi":
+        return CAU_KHONG_DOI["toi_doi_cho_hoi"].format(**{x: k[x] for x in ("diem", "diem_kia", "ngay", "ngay_kia")})
     if "goi_y" not in k:
-        return CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"], ngay=k.get("ngay"))
+        # công tắc `sua_lich_hoi_truoc`: mục buổi tối chưa đặt được vào tối này nhưng đặt được vào tối khác ⇒ câu tình hình + nút các tối đó
+        return CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"], ngay=k.get("ngay")) + (
+            " Bấm một nút dưới đây để đặt vào tối khác." if k.get("ngay_duoc") and k["ma_luat"] != "toi_ten_thieu_ngay" else "")
     ngay, buoi = k["dich"]
     dau = (f"{k['diem']} chưa dời sang buổi {NHAN_BUOI[buoi]} ngày {ngay} được vì {CAU_LY_DO[k['ly_do']]}." if k["ly_do"]
            else CAU_KHONG_DOI["khong_hop_luat"].format(diem=k["diem"]))
@@ -1602,12 +1677,15 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
     dong += [{"cau": _cau_bo_trong(bang, a), "duoc": False, "hoi": True, "nut": [nut_bo_trong(bang, a)]} for a in kq["da_ap"] if a.get("goi_y_thay")]
     da_doi = bool(kq["da_ap"] or kq["doi_truong"] or kq.get("ngay_di"))
 
-    def cau_kd(k: dict) -> str:  # lượt đã áp một ý khác (lượt thật 23/11: "Đã bỏ X." rồi "…Lịch chưa đổi gì.") ⇒ dòng hỏi trước bỏ câu kết đó
+    def cau_kd(k: dict) -> str:  # lượt đã áp một ý khác (lượt thật 23/11: "Đã bỏ X." rồi "…Lịch chưa đổi gì.") ⇒ dòng hỏi bỏ câu kết đó
         c = _cau_khong_doi(bang, k)
-        return c.removesuffix(" Lịch chưa đổi gì.") if k.get("hoi_truoc") and da_doi else c
+        if not da_doi:
+            return c
+        return c.removesuffix(" Lịch chưa đổi gì.") if k.get("hoi_truoc") else c.replace(" — lịch chưa đổi gì.", ".") if k["ma_luat"] in ("bo_toi_hoi", "toi_doi_cho_hoi") else c
 
-    dong += [{"cau": cau_kd(k), "duoc": False, **({"hoi": True} if k["ma_luat"] == "bo_toi_hoi" or k.get("hoi_truoc") else {}),
-              **({"nut": nut_them(bang, k)} if k.get("hoi_truoc") and nut_them(bang, k) else {})} for k in kq["khong_doi"]]
+    # nút của một dòng: mục "hỏi trước khi thêm" (dấu `hoi_truoc`, lõi mức 1) tự dựng bằng `nut_them`; các mục còn lại (cụm buổi tối, cách thêm cũ) bằng `nut_khong_doi`
+    dong += [{"cau": cau_kd(k), "duoc": False, **({"hoi": True} if k["ma_luat"] in ("bo_toi_hoi", "toi_doi_cho_hoi", "toi_ten_thieu_ngay") or k.get("hoi_truoc") else {}),
+              **({"nut": nut} if (nut := nut_them(bang, k) if k.get("hoi_truoc") else nut_khong_doi(bang, kq, k)) else {})} for k in kq["khong_doi"]]
     co_dinh = {VIEC_KHAC: CAU_VIEC_KHAC, CHUA_HO_TRO: CAU_CHUA_HO_TRO}
     dong += [{"cau": co_dinh.get(t) or f"Chưa làm: {NHAN_HANH_DONG[t]} — bạn nhắn tiếp nhé.", "duoc": False} for t in kq["chua_lam"]]
     if kq.get("hoi_them"):  # cờ `sua_lich_kem_hoi`: tin còn có câu hỏi ⇒ nói thật là lượt sửa chưa trả lời nó (dòng cuối khối, `duoc` False ⇒ không đổi "có ý nào áp được")

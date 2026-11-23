@@ -115,7 +115,7 @@ function LichMau({ onXep, pending }) {
   );
 }
 
-function CotLich({ lichTurn, onEditPlan, onXep, pending }) {
+function CotLich({ lichTurn, onEditPlan, onXep, pending, onAsk }) {
   // Bấm "Xếp lịch" (hoặc "Xếp lịch như ví dụ") ⇒ đưa ĐẦU lịch vào khung nhìn. Trước 23/11/2026 không có gì cuộn: ở màn rộng người bấm nút (cuối biểu
   // mẫu dài) đứng nguyên ở đáy trang, khối "Tổng quan" nằm 2–3 nghìn px phía trên. Chỉ khi lịch ĐỔI sau lúc trang đã mở (vào lại trang đang có lịch
   // thì không tự cuộn) và không phải bản vừa sửa bằng lời trong khung trợ lý (người dùng đang nhìn khung đó). Cuộn lúc KHUNG LỊCH đã tới (`lichV2`),
@@ -143,13 +143,15 @@ function CotLich({ lichTurn, onEditPlan, onXep, pending }) {
         <p className="lkh-da-sua" role="status">Đã sửa theo lời bạn: {t.lichV2.thay_doi.filter(d => d.duoc).map(d => d.cau).join(" ")}{" "}
           <span>Biểu mẫu vẫn là bản gốc — xếp lại từ biểu mẫu sẽ thay bản đã sửa.</span></p>
       )}
-      {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} />}
+      {/* `onAsk`: nút của dòng hỏi lại / chưa làm cũng bấm được ngay ở cột lịch — khung trợ lý có thể đang đóng, và mỗi nút gửi một câu lệnh ĐỦ tên */}
+      {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} onAsk={t.phase === "done" ? onAsk : null}
+                                                     onMo={t.phase === "done" && onEditPlan ? () => onEditPlan(null, t.truong) : null} />}
       {t.lichV2 && t.phase === "done" && <p className="lkh-chi-dan">Muốn sửa lịch bằng lời (ví dụ “bỏ điểm đầu ngày 2”): bấm <b>Trợ lý Huế</b> rồi nhắn — lịch ở đây đổi theo.</p>}
     </div>
   );
 }
 
-export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, onEditPlan }) {
+export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, onEditPlan, onAsk = null }) {
   // Rời trang rồi quay lại: thẻ lịch cũ vẫn hiện nhưng biểu mẫu từng về mặc định ("2 người lớn") ⇒ bấm "Xếp lịch" lần nữa ra lịch của đoàn KHÁC với thẻ
   // đang hiện, không báo gì (lượt trình duyệt 23/11/2026: lịch có 1 trẻ em, biểu mẫu mất trẻ em). Không có `prefill` thì điền theo biểu mẫu của lịch đang hiện.
   const [chon, setChon] = useState(() => tuTruong(prefill ?? lichTurn?.truong));
@@ -271,7 +273,7 @@ export function LenKeHoachV2({ cauHinh, prefill, pending, onSubmit, lichTurn, on
         <p className="lc-tom" aria-live="polite">{tomTat}</p>
         <button className="nut nut-chinh lc-nut" type="submit" disabled={pending}>{pending ? "Trợ lý đang trả lời…" : `Xếp lịch ${soNgay} ngày`}</button>
       </form>
-      <CotLich lichTurn={lichTurn} onEditPlan={onEditPlan} onXep={onSubmit} pending={pending} />
+      <CotLich lichTurn={lichTurn} onEditPlan={onEditPlan} onXep={onSubmit} pending={pending} onAsk={onAsk} />
     </div>
     </>
   );
