@@ -9,6 +9,10 @@ const KIEU = ["image/jpeg", "image/png", "image/webp"];
 const MAX_BYTES = 10 * 1024 * 1024;  // khớp `anh.max_bytes` server — báo sớm thay vì gửi rồi nhận 413
 const MAX_QUERY = 500;  // `ChatRequest.query` max_length
 const KHONG_NHAN_RA = "Mình chưa nhận ra ảnh này — bạn gõ tên nơi / món bạn muốn hỏi nhé.";
+// Khung "chưa nhận ra" đang mở mà người dùng gửi chữ ⇒ câu đi kèm tên này ở đuôi "(Trong ảnh: …)", như khi nhận ra. Vì sao (23/11/2026, hai lượt thật):
+// gửi ảnh A (nhận ra) rồi ảnh B (không nhận ra) rồi gõ "đây là đâu vậy?" — câu đi như câu thường, không dấu gì về ảnh ⇒ trợ lý lấy câu trả lời liền
+// trước và khẳng định ảnh B là nơi của ảnh A. Bong bóng câu hỏi vẫn chỉ hiện chữ người dùng gõ.
+const TEN_CHUA_NHAN_RA = "ảnh vừa gửi chưa nhận ra được là nơi / món nào — không phải nơi hay món của các câu trước";
 
 export function cauGhep(chu, ten) {
   // spec A3: có chữ người dùng gõ kèm ⇒ "<chữ> (Trong ảnh: <tên>)"; không ⇒ "Giới thiệu về <tên>". Quá 500 ký tự ⇒ cắt phần chữ người dùng.
@@ -93,6 +97,12 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     if (state?.phase === "dang") return true;  // đang xem ảnh ⇒ chờ, không gửi câu trần
     if (state?.phase === "xong") {  // thẻ chọn tên đang mở mà bấm Hỏi ⇒ không gửi câu trần, nhắc chọn tên (không nhắc thì trông như bị treo)
       setState({ ...state, nhac: true });
+      return true;
+    }
+    if (state?.phase === "loi" && state.text === KHONG_NHAN_RA && moi.current.draft.trim()) {
+      setState(null);
+      const chu = moi.current.draft.trim();
+      moi.current.onAsk(cauGhep(chu, TEN_CHUA_NHAN_RA), { chu, anh: null, doan: null });
       return true;
     }
     if (state) setState(null);  // thẻ "mình đoán…" / lời báo còn mở ⇒ đóng, câu gõ đi như câu thường (thẻ không chặn câu kế)
