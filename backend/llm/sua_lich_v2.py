@@ -642,6 +642,14 @@ def _cach_them(bang, luu: dict, ts, khung: dict, vt: dict, loai, i: str, ngay: i
         if khu and _thu_cho(bang, luu, ts, vt, loai, i, cho, False, day_moi=cho[0], khu_moi=cho[0])[0] is not None:  # công tắc `sua_lich_them_khu` (bản thử)
             ra.append({"ngay": cho[0], "buoi": cho[1], "thay": None, "day": True, "khu": True})
             continue
+        chen = next(({"ngay": cho[0], "buoi": cho[1], "thay": None, **({"day": True} if nd or cho[0] in (kc.get("day_them") or ()) else {}),
+                      **({"khu": True} if nk else {})}
+                     for nd, nk in ((False, False), (True, False), (True, True)) if (not nd or day) and (not nk or khu)
+                     if (kc := _thu_cho(bang, luu, ts, vt, loai, i, cho, False, day_moi=cho[0] if nd else None, khu_moi=cho[0] if nk else None,
+                                        chen=True)[0]) is not None), None)
+        if chen is not None:  # chèn điểm mới vào trước một điểm đang có của buổi thì được (xem `_thu_cho`)
+            ra.append(chen)
+            continue
         for z in sorted((j for j, v in vt.items() if v == cho and j != i), key=lambda j: bool(st & set(bang.theo_id[j]["loai"]))):
             if _thu_giu(bang, luu, ts, {**{x: v for x, v in vt.items() if x not in (z, i)}, i: cho}, [x for x in loai if x != i] + [z], can=i) is not None:
                 ra.append({"ngay": cho[0], "buoi": cho[1], "thay": z})
@@ -700,12 +708,28 @@ def _dat_toi(bang, luu: dict, ts, khung: dict, vt: dict, loai, m: str, d: int) -
 
 
 def _thu_cho(bang, luu: dict, ts, vt: dict, loai, i: str, cho: tuple[int, str], doi_cho: bool,
-             day_moi: int | None = None, khu_moi: int | None = None) -> tuple[dict | None, list[str], str | None]:
+             day_moi: int | None = None, khu_moi: int | None = None, chen: bool = False) -> tuple[dict | None, list[str], str | None]:
     """Thử đặt điểm `i` vào `cho`, mọi điểm khác giữ nguyên chỗ; `doi_cho` và chỗ đích có đúng một điểm ⇒ hai điểm đổi chỗ cho nhau.
     Trả (khung nếu đúng luật và có `i` — không thì None, mã luật `kiem_khung_v2` khung thử phạm, điểm bị đổi chỗ). Dùng chung cho lần dời thật
     và cho gợi ý "dời được sang" ⇒ gợi ý nào cũng là chỗ mà chính đường dời thật nhận."""
     giu = {**{j: v for j, v in vt.items() if j != i}, i: cho}
     o_kia = [j for j, v in giu.items() if v == cho and j != i]
+    if chen:
+        # Lệnh THÊM một điểm chưa có trong lịch: bộ xếp đặt điểm giữ chỗ theo thứ tự của `giu`, điểm mới đứng cuối ⇒ luôn SAU các điểm đang có của buổi.
+        # `chen` = thử CHÈN điểm mới vào trước từng điểm đang có của buổi (không điểm nào đổi ngày / buổi; giờ của điểm đứng sau lùi lại). Nơi gọi chỉ
+        # dùng khi mọi lần thử "đứng sau" đã không được — lệnh nào trước nay làm được vẫn ra đúng chỗ cũ. Đếm 23/11/2026 (phiên C, 1.143 lệnh thêm của
+        # đoàn thường): 31 / 291 lệnh bị từ chối chỉ cần đổi thứ tự này (suất diễn có giờ cố định, giờ đóng cửa, phút đi).
+        for p in o_kia:
+            giu2: dict = {}
+            for j, v in giu.items():
+                if j == p:
+                    giu2[i] = cho
+                if j != i:
+                    giu2[j] = v
+            k2 = _xep(bang, luu, ts, giu2, [x for x in loai if x != i], day_moi, khu_moi)
+            if not v2.kiem_khung_v2(bang, k2) and i in _vi_tri(k2):
+                return k2, [], None
+        return None, [], None
     kia = o_kia[0] if doi_cho and len(o_kia) == 1 else None
     if kia is not None:
         giu[kia] = vt[i]
@@ -1086,6 +1110,18 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 if ung:
                     *_, day, k = min(ung, key=lambda u: u[:3])
                     khu = day
+            if k is None and h.loai == "them_diem" and i not in vt:
+                # Bước CUỐI: mọi lần thử trên đặt điểm mới SAU các điểm đang có của buổi. Không chỗ nào được ⇒ thử chèn điểm mới vào TRƯỚC một điểm đang
+                # có (`_thu_cho(chen=True)`), lại theo ba bậc: thường ⇒ nới nhịp ⇒ nới khu. `loi`, `ma_cho` giữ của các lần thử trên (cho câu lý do).
+                bac = [(False, False)] + ([(True, False)] if noi_nhip else []) + (
+                    [(True, True)] if them_khu and them_day and not ts.han_che and v2.PHUT_KHU is not None else [])
+                for nd, nk in bac:
+                    duoc = [(kc, cho[0]) for cho in _cho_thu(bang, khung, i, ngay, h.buoi)
+                            if (kc := _thu_cho(bang, luu, ts, vt, loai, i, cho, False, day_moi=cho[0] if nd else None,
+                                               khu_moi=cho[0] if nk else None, chen=True)[0]) is not None]
+                    if duoc:  # bậc nới khu: như lần thử thường — chỗ ít chặng sang khu không kề nhất, rồi ít phút nhất; hai bậc kia: chỗ đầu tiên
+                        k = min(duoc, key=lambda u: (len((c := _chang_khu(bang, *u))["chang"]), sum(x[2] for x in c["chang"])))[0] if nk else duoc[0][0]
+                        break
             the_cho = None
             if k is None and h.loai == "them_diem" and them_khong_the:
                 # Người dùng mô phỏng 21/11 (vai sửa lịch, cả hai model): nhờ "thêm X" ⇒ code tự thế chỗ một điểm đang có ⇒ người dùng xin trả lại ⇒ code
@@ -1161,7 +1197,11 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 luu["day_them"] = sorted({*(luu.get("day_them") or ()), *k["day_them"]})
             if k.get("khu_them"):
                 luu["khu_them"] = sorted({*(luu.get("khu_them") or ()), *k["khu_them"]})
+            # điểm vừa THÊM đứng trước điểm đang có của buổi (chèn trước mới hợp luật) ⇒ giờ của các điểm đứng sau lùi lại: dòng báo nêu giờ mới của chúng
+            cung_buoi = next(x for x in k["ngay"] if x["ngay"] == ng_i)["buoi"][_vi_tri(k)[i][1]]
+            dung_sau = [{"diem": j, "gio": k["gio"][j]} for j in cung_buoi[cung_buoi.index(i) + 1:]] if h.loai == "them_diem" else []
             kq["da_ap"].append({"loai": h.loai, "diem": i, "ngay": _vi_tri(k)[i][0], "buoi": _vi_tri(k)[i][1], "the_cho": the_cho,
+                                **({"dung_sau": dung_sau} if dung_sau else {}),
                                 **({"toi_xep_lai": xep_toi} if xep_toi else {}), **({"day": _tin_day(k, day, bang)} if day is not None else {}),
                                 **({"khu": _chang_khu(bang, k, khu)} if khu is not None else {}),
                                 **({"khu_van": _chang_khu(bang, k, khu_van)} if khu_van is not None else {})})
@@ -1511,6 +1551,8 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
             # 23/11/2026: "Đã thêm HANOK" khi HANOK chỉ đổi tối; ca này là 1.502 / 5.216 lệnh gọi tên mục tối)
             out.append((f"Đã chuyển {ten_cua_diem(bang, a['diem'])} sang buổi tối ngày {a['ngay']}." + _cau_toi_doi_cho(bang, a["toi_doi_cho"])
                         if a.get("toi_doi_cho") else f"Đã thêm {ten_cua_diem(bang, a['diem'])} (ngày {a['ngay']}, buổi {NHAN_BUOI[a['buoi']]}{thay}).")
+                       + (f" {ten_cua_diem(bang, a['diem'])} xếp trước " + ", ".join(f"{ten_cua_diem(bang, x['diem'])} (nay {x['gio']})" for x in a["dung_sau"])
+                          + " cho kịp giờ." if a.get("dung_sau") else "")
                        + (_cau_day(a["day"]) if a.get("day") else "") + (_cau_khu(a["khu"]) if a.get("khu") else "")
                        + (_cau_toi_xep_lai(bang, a["toi_xep_lai"]) if a.get("toi_xep_lai") else ""))
         elif t == "doi_buoi":

@@ -151,9 +151,12 @@ def test_default_schedule_picks_the_slot_with_fewest_cross_area_legs_and_says_th
             continue
         # chỗ được chọn có ít chặng không kề nhất trong mọi chỗ làm được
         ts, vt = s._ts(k["tham_so"]), s._vi_tri(k)
-        it_nhat = min(len(v2.chang_khu(B, next(x for x in k2["ngay"] if x["ngay"] == cho[0]))[1]) for cho in s._cho_thu(B, k, i, None, None)
-                      if (k2 := s._thu_cho(B, luu, ts, vt, [], i, cho, False, day_moi=cho[0], khu_moi=cho[0])[0]) is not None)
-        assert len(kq["da_ap"][0]["khu"]["chang"]) == it_nhat
+        # (từ 23/11/2026 lệnh thêm có bước cuối "chèn trước một điểm đang có": lệnh chỉ làm được nhờ bước đó thì so trong các chỗ của bước đó)
+        def so_chang(chen):
+            return [len(v2.chang_khu(B, next(x for x in k2["ngay"] if x["ngay"] == cho[0]))[1]) for cho in s._cho_thu(B, k, i, None, None)
+                    if (k2 := s._thu_cho(B, luu, ts, vt, [], i, cho, False, day_moi=cho[0], khu_moi=cho[0], chen=chen)[0]) is not None]
+
+        assert len(kq["da_ap"][0]["khu"]["chang"]) == min(so_chang(False) or so_chang(True))
         # thẻ: mỗi chặng không kề của ngày đó mang đúng số phút của bảng ở mục ĐẾN
         ngay = kq["da_ap"][0]["ngay"]
         muc = {m["id_diem"]: m for m in next(x for x in v2.dung_lich(B, kq["khung"], {})["ngay"] if x["ngay"] == ngay)["muc"]}
@@ -162,7 +165,9 @@ def test_default_schedule_picks_the_slot_with_fewest_cross_area_legs_and_says_th
         for x, y in zip(day, day[1:]):
             if v2._phut_di(T[x], T[y]) is None:
                 assert muc[y]["phut_di"] == bang_phut[f"{x}|{y}"]
-    assert n_duoc == 25  # lịch mặc định (bảng điểm bản 13): 25 / 31 điểm chưa có thêm được (11 chỉ nhờ nới nhịp, 14 nhờ sang khu)
+    # lịch mặc định (bảng điểm bản 13): 25 / 31 điểm chưa có thêm được (11 chỉ nhờ nới nhịp, 14 nhờ sang khu); 26 từ 23/11/2026 — Duyệt Thị Đường
+    # (suất diễn giờ cố định) vào được nhờ bước cuối "chèn trước một điểm đang có"
+    assert n_duoc == 26
     qh = _them(luu, ten["Trường Quốc Học Huế"], them_day=True, them_khu=True)["da_ap"][0]
     assert (qh["ngay"], qh["buoi"]) == (2, "chieu") and len(qh["khu"]["chang"]) == 1
     cau = lambda t: s.thay_doi(B, _them(luu, ten[t], them_day=True, them_khu=True))[0]["cau"]  # noqa: E731
