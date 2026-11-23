@@ -310,7 +310,9 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     ngoai = [j for j in da_xep if ts.so_thich and not set(ts.so_thich) & set(T[j]["loai"]) and j not in
              [x for ng in ngay for x in ng["buoi"]["toi"]]]  # hoạt động tối không phải "điểm lấp ngoài sở thích"
     thieu = [s for s in ts.so_thich if not any(j in da_xep for j in bang.uu_tien.get(s, []))]  # 5c.7 (4): ghi chú do code
-    gia_dinh = (["kieu_di"] if ts.kieu_di is None else []) + (["han_che"] if ts.han_che else []) + \
+    # Đoàn có trẻ nhỏ / người lớn tuổi luôn được xếp nhẹ nhàng (kiểu đi không vào bộ xếp) ⇒ KHÔNG ghi câu "chưa chọn kiểu đi nên xếp mức cân bằng": câu đó
+    # sai với họ và đứng ngay trên câu "xếp nhẹ nhàng" (lượt trình duyệt 23/11/2026; xảy ra ở mọi lịch của đoàn hạn chế khi để trống kiểu đi — mặc định của biểu mẫu)
+    gia_dinh = (["kieu_di"] if ts.kieu_di is None and not ts.han_che else []) + (["han_che"] if ts.han_che else []) + \
         (["so_thich"] if not ts.so_thich else [])
     ngays = [ngay_cua(i) for i in range(1, n + 1)]
     # 5c.2 (i): điểm ưu tiên không xếp vì đang tạm dừng theo mùa ⇒ ghi chú (mã `tam_dung_mua`)
