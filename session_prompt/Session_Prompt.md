@@ -92,7 +92,8 @@ phạm vi và quyền của việc; session giao chịu trách nhiệm kết qu�
 ## 7. Đơn giản là mặc định; chất lượng trước tối ưu
 
 - **Bốn điều chủ dự án chọn 20/11/2026** (đứng TRÊN các gạch khác khi lệch nhau): (1) **Test vừa đủ** — mỗi bản sửa: ca tái hiện lỗi + ca dùng thường +
-  nhiều nhất một ca an toàn / tiền + MỘT lượt thật qua giao diện; cả bộ test chạy ở mốc (cuối đợt, trước deploy). (2) **Lỗi hiếm thì ghi lại** — trước khi
+  nhiều nhất một ca an toàn / tiền + MỘT lượt thật qua giao diện (nhiều thay đổi cùng một cụm tính năng thì chung một lượt); cả bộ test chạy ở mốc (cuối đợt,
+  trước deploy) và nhiều nhất một lượt mỗi ngày, lúc code đứng yên — không chạy lại toàn bộ vì một thay đổi (chủ dự án 23/11/2026). (2) **Lỗi hiếm thì ghi lại** — trước khi
   sửa hay trình chủ dự án một lỗi phải có số "bao nhiêu lượt thật gặp"; hiếm (khoảng dưới 1 % hoặc chỉ tái hiện bằng đầu vào dựng tay) ⇒ một dòng giới
   hạn, không sửa — trừ lỗi an toàn. (3) **Báo "xong" theo người dùng** — bảng "người dùng làm được gì / chưa làm được gì"; các phiên ngang hàng: thấy việc
   được giao không đáng thì nói một dòng TRƯỚC khi làm, kể cả với A; việc nào được đưa tới chủ dự án thì ý phản đối đi kèm; bất đồng nội bộ về hướng: `AGENTS.md` mục "Cách nhìn việc". (4) **Tài liệu, luật** — một bản, một người đọc
@@ -130,8 +131,9 @@ phạm vi và quyền của việc; session giao chịu trách nhiệm kết qu�
 - Trong lúc sửa chạy file test bị chạm; cả bộ `backend/tests` ở mốc (§7). Phép "chuỗi gửi model giống byte" khi code chạm phần dựng chuỗi gửi model / lời
   dặn / công cụ; Playwright khi sửa giao diện. Test khi nó bảo vệ hành vi cần thiết hoặc bug thật có nguy cơ tái diễn — không đặt mục tiêu số test /
   coverage; test pass không thay lượt thật khi nghiệm thu cần hệ thống thật.
-- **Mở / tắt một công tắc trong `settings.yaml`:** trên CHÍNH nhánh có dòng đã đổi, chạy từng file test đọc cấu hình thật
-  (từ gốc repo: `grep -lE 'load_settings|settings\.yaml|create_app\(\)' backend/tests/*.py`), không nạp env; cùng nhánh đó sửa các hàng `guides/RUNBOOK_BAN_GIAO.md` mục 10 nhắc tên
+- **Mở / tắt một công tắc trong `settings.yaml`:** trên CHÍNH nhánh có dòng đã đổi, chạy các file test CHẠM đường code công tắc đó đổi, không nạp env.
+  KHÔNG chạy cả bảng file đọc cấu hình thật cho từng công tắc: bảng đó (từ gốc repo: `grep -lE 'load_settings|settings\.yaml|create_app\(\)' backend/tests/*.py`) nằm trong lượt cả bộ
+  test của ngày (§7); file nào đỏ ở lượt đó vì công tắc ⇒ sửa test hoặc lùi dòng công tắc ngay trong ngày. Cùng nhánh đó sửa các hàng `guides/RUNBOOK_BAN_GIAO.md` mục 10 nhắc tên
   công tắc hoặc hành vi nó đổi. Test khoá hành vi theo cờ tự đặt cờ trong test, không đọc `settings.yaml` thật.
 - **Code đọc chữ người dùng (ngày, số, tên…):** trước lượt có phí, người **không viết code đó** soạn ≥ 20 câu dò (câu phải đọc đúng, câu "giống mà không
   phải", câu ghép, câu ngoài phạm vi), chạy thẳng hàm thuần (0 USD); sau bản sửa thêm đúng một bộ ≤ 20 câu; dừng khi 0 câu **ra sai**, còn sai ⇒ ghi giới
