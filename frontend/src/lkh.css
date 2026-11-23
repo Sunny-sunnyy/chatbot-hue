@@ -10,7 +10,10 @@
 .lkh-dau .trang-h { color: var(--color-on-accent); }
 
 .lkh-cot { display: grid; grid-template-columns: 420px 1fr; gap: 32px; align-items: start; padding-top: 32px; padding-bottom: 88px; }
-.lkh-cot .lc { position: sticky; top: 88px; margin-top: 0; max-width: none; gap: 14px; padding: 0; background: none; box-shadow: none; }
+/* Biểu mẫu KHÔNG ghim khi cuộn (23/11/2026): nó cao khoảng 1.900 px, hơn mọi khung nhìn máy xách tay ⇒ ghim `sticky` làm nửa dưới biểu mẫu và nút
+   "Xếp lịch" chỉ với tới được ở đáy trang khi cột lịch đã dài. Về biểu mẫu từ lịch: nút "Sửa" (App.jsx cuộn tới biểu mẫu). */
+.lkh-cot .lc { margin-top: 0; max-width: none; gap: 14px; padding: 0; background: none; box-shadow: none; }
+.lkh-lich { scroll-margin-top: 96px; }   /* đầu lịch dừng dưới thanh trên (thanh ghim cao 69 px) */
 .lkh-cot .lc-nhom { display: block; padding: 18px 20px 20px; background: var(--color-surface); border: 1px solid var(--color-line); border-radius: var(--radius-l); }
 .lkh-cot .lc-ten { float: left; width: 100%; padding: 0 0 12px; font-size: var(--text-than); font-weight: 700; }
 .lkh-cot .lc-ten + * { clear: both; }
