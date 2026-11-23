@@ -50,6 +50,20 @@ def stored_answer(answer: str) -> str:
 CONG_CU_KHONG_NHO_DAP = frozenset({"thoi_tiet", "ngay_lich", "lich_san", "su_kien_san", "khoang_cach", "khoang_cach_san", "lich_dang_co"})
 
 
+# Lượt SỬA lịch không giữ đáp (`dap_duoc_nho`: chữ thẻ lịch có tên quán lấy từ bản đồ mở). Hệ quả đo 23/11/2026: lượt kế thấy câu LỆNH với ô đáp rỗng cạnh
+# lịch ĐÃ sửa ⇒ model áp lệnh ấy thêm một lần trong đầu ("bỏ điểm đầu tiên của ngày 2" rồi "ngày 2 giờ còn những điểm nào?" — kể sai điểm đã bỏ, cãi thẻ
+# lịch: 2 / 3 lần trên model đang chạy, 1 / 1 trên model cũ). Ô lịch sử của lượt sửa nay mang ĐÚNG các dòng do CODE viết ở đầu thẻ lịch
+# (`sua_lich_v2.thay_doi` — "Đã bỏ X.", "Không đổi được: …", "Chưa làm: …"; tên điểm lấy từ bảng điểm): không chữ model, không chữ thẻ, không tên quán.
+GHI_CHU_SUA_DAU = ("[Ghi chú hệ thống — lệnh sửa lịch ở lượt này đã được xử lý xong, lịch hiện có là lịch SAU lệnh này; không áp lại lệnh. "
+                   "Kết quả đã báo cho người dùng: ")
+
+
+def ghi_chu_sua_lich(trace) -> str:
+    """Dòng ghi chú cho ô lịch sử của một lượt sửa lịch đã xong, hoặc "" khi lượt không phải lượt sửa (`trace.sua_dong` rỗng)."""
+    dong = getattr(trace, "sua_dong", ())
+    return f"{GHI_CHU_SUA_DAU}{' '.join(dong)}]" if dong else ""
+
+
 def dap_duoc_nho(trace, outcome: str | None, *, mo_cho_cuoc_co_lich: bool = False) -> bool:
     """Lượt này có được giữ câu trả lời cho lượt kế không (`chi_dap_lien_truoc`): chỉ lượt hỏi đáp thường trả lời được. KHÔNG giữ: câu cố định (từ chối,
     ngoài phạm vi, nói thật giới hạn, hỏi lại), lượt lịch / biểu mẫu / sửa lịch — chữ lịch có tên quán lấy từ bản đồ mở, model không được thấy
