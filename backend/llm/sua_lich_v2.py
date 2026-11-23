@@ -1110,7 +1110,7 @@ def _cau_khong_doi(bang: v2.BangV2, k: dict) -> str:
     if k["ma_luat"] == "bo_toi_hoi":  # công tắc `bo_toi_hoi_lai`; mở đầu "Chưa làm" ⇒ giao diện không gắn "Không đổi được"
         doi, trong = _cau_bo_toi(k)
         return (f"Chưa làm: bỏ {k['diem']} (buổi tối ngày {', '.join(str(n) for n in k['ngay'])}) — bạn muốn đổi sang một hoạt động tối khác hay để trống "
-                f"tối đó? Bạn nhắn một trong hai câu: “{doi}” hoặc “{trong}”.")
+                f"tối đó? Bạn nhắn một trong hai câu: «{doi}» hoặc «{trong}».")
     if "goi_y" not in k:
         return CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"], ngay=k.get("ngay"))
     ngay, buoi = k["dich"]

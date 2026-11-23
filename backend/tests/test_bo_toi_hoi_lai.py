@@ -101,3 +101,11 @@ def test_leave_empty_empties_that_evening_only_and_names_it():
     y = _toi(kq["khung"])[2][0]
     kq2 = _bo(kq["luu"], y, 3, "doi")
     assert _toi(kq2["khung"])[0] == [] and _toi(kq2["khung"])[1] == _toi(k)[1] and _toi(kq2["khung"])[2] not in ([], [y])
+
+
+def test_a_pin_left_from_a_day_no_longer_in_the_schedule_does_not_block_the_remaining_evenings():
+    """Lịch từng 3 ngày có ghim ở tối ngày 3, rồi rút còn 2 ngày: mục ghim của ngày đã mất phải dùng lại được — buổi tối của lịch 2 ngày giống hệt lịch
+    không có ghim nào (trước khi lọc: mục đó bị loại khỏi lựa chọn của mọi tối còn lại)."""
+    sach = v2.xep_v2(B, v2.ThamSoV2(2, kieu_di="can_bang"))
+    con_ghim = v2.xep_v2(B, v2.ThamSoV2(2, kieu_di="can_bang", toi_chon=((3, _toi(sach)[0][0]),)))
+    assert _toi(con_ghim) == _toi(sach)

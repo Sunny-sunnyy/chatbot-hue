@@ -369,7 +369,9 @@ def _xep_toi(bang: BangV2, ts: ThamSoV2, ngay: list[dict], ngays: list, da_dung:
                       # hợp sở thích trước, rồi thứ tự `thu_tu_toi` của bảng (mục ngoài danh sách xếp sau), rồi thứ tự bảng (sort ổn định)
                       key=lambda d: (not (so_thich & set(d["loai"])), bang.thu_tu_toi.index(d["id"]) if d["id"] in bang.thu_tu_toi else len(bang.thu_tu_toi)))
     da_toi: list[str] = []
-    ghim = dict(ts.toi_chon)  # công tắc `bo_toi_hoi_lai`: tối đã ghim giữ đúng hoạt động đó khi còn hợp lệ; mục ghim cho tối khác không bị tối này lấy
+    # công tắc `bo_toi_hoi_lai`: tối đã ghim giữ đúng hoạt động đó khi còn hợp lệ; mục ghim cho tối khác không bị tối này lấy. Chỉ tính ngày CÒN trong
+    # lịch: đổi số ngày 3 ⇒ 2 thì mục ghim của ngày 3 không được chiếm chỗ lựa chọn của các tối còn lại (B đọc code 23/11/2026)
+    ghim = {n: j for n, j in ts.toi_chon if n <= len(ngay)}
     for ng, ngay_that in zip(ngay, ngays):
         if ng["ngay"] in ts.toi_trong:  # công tắc `bo_toi_de_trong`: người dùng đã bỏ hoạt động tối của ngày này ⇒ không chọn lại
             nghi[ng["ngay"]] = "da_bo"
