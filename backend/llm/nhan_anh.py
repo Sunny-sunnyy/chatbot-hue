@@ -14,7 +14,7 @@ from typing import Literal
 
 from agents import Agent, ModelSettings
 from PIL import Image, ImageOps, UnidentifiedImageError
-from pydantic import BaseModel, ConfigDict, Field, create_model
+from pydantic import BaseModel, ConfigDict, create_model
 
 DINH_DANG = ["JPEG", "PNG", "WEBP"]  # OpenAI nhận PNG / JPEG / WEBP / GIF; GIF bỏ (không cần cho ảnh chụp)
 # Không đặt trần token đầu ra (User 19/11/2026). Lịch sử: A2 vòng 0 trần 512 ⇒ 4 / 66 lần ảnh khó dùng hết 512 cho suy luận, đầu ra bị cắt ⇒ `khong_doan_duoc`.
@@ -86,10 +86,12 @@ def nap_danh_sach(path: Path) -> list[dict]:
 
 
 def kieu_dau_ra(danh_sach: list[dict]) -> type[BaseModel]:
-    """Kiểu đầu ra strict: tối đa 3 id **trong danh sách** + `khong_nhan_ra` (plan D4) — model không bịa được tên ngoài danh sách."""
+    """Kiểu đầu ra strict: các id **trong danh sách** + `khong_nhan_ra` (plan D4) — model không bịa được tên ngoài danh sách.
+    Không chặn số tên ở đây: đường Bedrock gỡ `maxItems` khỏi khuôn gửi đi nên model có thể trả hơn 3 tên, và chặn ở kiểu sẽ biến cả lượt
+    thành lỗi "chưa nhận ra"; lời dặn vẫn xin 1–3 tên, `kiem_lai` giữ ba tên đầu."""
     MaId = Literal[tuple(m["id"] for m in danh_sach)]
     return create_model("UngVienOutput", __config__=ConfigDict(extra="forbid"),
-                        ung_vien=(list[MaId], Field(max_length=3)), khong_nhan_ra=(bool, ...))
+                        ung_vien=(list[MaId], ...), khong_nhan_ra=(bool, ...))
 
 
 def tao_agent(generator, danh_sach: list[dict]) -> Agent:

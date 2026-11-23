@@ -113,8 +113,7 @@ def test_t5_thu_nho():
 def test_t6_kieu_dau_ra():
     Out = kieu_dau_ra(DS)
     assert Out.model_validate({"ung_vien": ["diem_a"], "khong_nhan_ra": False})
-    for bad in ({"ung_vien": ["la_lam"], "khong_nhan_ra": False}, {"ung_vien": ["diem_a"] * 4, "khong_nhan_ra": False},
-                {"ung_vien": [], "khong_nhan_ra": False, "giai_thich": "x"}):
+    for bad in ({"ung_vien": ["la_lam"], "khong_nhan_ra": False}, {"ung_vien": [], "khong_nhan_ra": False, "giai_thich": "x"}):
         with pytest.raises(ValidationError):
             Out.model_validate(bad)
     schema = json.dumps(Out.model_json_schema())
@@ -128,6 +127,14 @@ def test_t6_kiem_lai():
     assert kiem_lai(Out(ung_vien=["diem_a"], khong_nhan_ra=True), DS) == []
     assert kiem_lai(Out(ung_vien=[], khong_nhan_ra=False), DS) == []
     assert kiem_lai(None, DS) == []
+
+
+def test_t6_qua_ba_ten_thi_cat_khong_bao_loi():
+    """Đường Bedrock gỡ `maxItems` khỏi khuôn gửi đi (`bedrock_model.UNSUPPORTED_SCHEMA_KEYS`) ⇒ model có thể trả 4 tên. Trước 23/11/2026 kiểu đầu ra
+    tự chặn ở 3 nên cả lượt thành lỗi "chưa nhận ra" dù model đã nhận ra; nay kiểu nhận, `kiem_lai` giữ ba tên đầu."""
+    Out = kieu_dau_ra(DS)
+    bon = Out.model_validate({"ung_vien": ["mon_d", "diem_a", "diem_b", "mon_c"], "khong_nhan_ra": False})
+    assert kiem_lai(bon, DS) == [{"id": "mon_d", "ten": "Món D"}, {"id": "diem_a", "ten": "Điểm A"}, {"id": "diem_b", "ten": "Điểm B"}]
 
 
 # T7 — nạp danh sách: id / tên trùng ⇒ lỗi khởi động
