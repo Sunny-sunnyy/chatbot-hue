@@ -1,6 +1,6 @@
 # Bài 4 — Bài toán: ai dùng, hỏi gì, nhận gì, và những thứ cố ý không làm
 
-*Cập nhật 14:37, ngày 23/11/2026 · khớp các bài 14:17 23/11 (50 tính năng mở, 5 tắt, kho 267 bài): bảng "Nếu… thì sao" dòng câu không thuộc Huế thêm ca câu có chữ "Huế" hỏi việc ở tỉnh, thành khác (bài 16); câu kể số tính năng nối mốc 50 · bản 12:56, khớp hệ thống trưa 23/11 (49 tính năng mở, 5 tắt): nối hai mốc mới vào câu kể số tính năng (giờ quán trong "gần một điểm"; hai tính năng đang tắt gộp 12:34) · bản 18:13, ngày 22/11/2026, khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): thêm thẻ nơi · phạm vi và các luật của sản phẩm chép từ các quyết định đã ghi của chủ dự án; người viết không chạy lại gì ngoài lệnh đếm tính năng.*
+*Cập nhật 15:44, ngày 23/11/2026 · khớp hệ thống 15:29 23/11 (50 tính năng mở, 7 tắt, kho 267 bài) · theo lượt trình duyệt chiều 23/11: "Cái giá" tình huống khẩn cấp ghi câu dẫn sang web · khớp các bài cùng giờ · lần sửa trước: Nguồn.*
 
 **Bài trước đã biết:** ba ý nền: model ngôn ngữ viết trôi chảy mà vẫn sai; RAG cho model đọc tài liệu trước khi viết; công cụ cho model nhờ chương trình làm việc phải đúng.
 **Bài này thêm:** chính sản phẩm. hue_rag làm gì, cho ai, theo luật nào, và ranh giới của nó ở đâu.
@@ -103,7 +103,7 @@ Các quyết định của bài này là quyết định về **sản phẩm**, 
 - **Đã chọn:** câu khẩn cấp được xử lý như một câu hỏi thường về Huế.
 - **Vì sao:** quyết định đã ghi; chủ dự án chốt ba lần rằng việc này ngoài phạm vi sản phẩm.
 - **Cách khác:** từng có một câu trả lời soạn sẵn kèm số điện thoại khẩn cấp (tới 09/11); đã bỏ. Cách nhận ra câu khẩn cấp bằng luật từ khoá cũng đã thử: đúng 14 trên 14 câu đã thấy nhưng 0 trên 8 câu chưa thấy, và chặn nhầm 2 trên 8.
-- **Cái giá:** người hỏi lúc gặp nạn nhận câu trả lời theo những gì kho có, hoặc câu từ chối kèm mục "Từ web" nếu kho không có.
+- **Cái giá:** người hỏi lúc gặp nạn nhận câu trả lời theo những gì kho có, hoặc, nếu kho không có, câu từ chối hay câu dẫn sang mục "Từ web".
 
 ### 6. Vì sao không đặt phòng, mua vé thay người dùng?
 
@@ -188,5 +188,7 @@ Câu gõ không dấu: hay nhận câu từ chối. Tình huống khẩn cấp: 
 - Dòng trỏ sang trang Lên kế hoạch; lịch từ câu gõ tự do tắt: `backend/config/settings.yaml` (`len_lich_dan_trang`, `lich_trinh`) và `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 22.
 - Chưa có số đo với người dùng thật: `bai_hoc/BAN_DO_DU_AN.md` mục "Chỗ còn yếu đã biết" ý 5.
 - Mục "Quyết định và lý do" và "Nếu… thì sao" (đã sửa theo biên bản `data/hoc_cung_D/kiem/bai_22_va_muc_moi_01_03_04.md`): nới luật từ chối (2 câu ngoài kho bị trả lời) `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng số 11; tin nhiều ý từ 14/11 `backend/config/settings.yaml` (`cau_nhieu_y`); từ chối nhầm 3 / 158 (12/11, gpt-6-luna) `bai_hoc/BAN_DO_DU_AN.md`, 0 / 78 và câu lâu nhất 17,7 giây (21/11, Claude) `data/thu_bedrock_2026-11-21/do/TONG_HOP_BAN_0.md` [riêng tư]; câu soạn sẵn khẩn cấp tới 09/11 `bai_hoc/12_VI_SAO_CAN_TRO_LY.md`; ba câu nói thật (nguyên văn) `backend/llm/full_corpus_prompt.py` (`CAU_LAM_THAY`); câu dẫn sang mục web `frontend/src/moDauWeb.js`; dòng cố định của mục web `backend/llm/tra_web.py`; dòng "có thể đã thay đổi" `data/hoc_cung_D/vi_du_di_suot_vet.json`. Câu "bị từ chối thì người dùng biết…" là lập luận, ghi rõ trong bài.
+
+- Đợt 15:44 23/11/2026 (giờ `date`): quyết định tình huống khẩn cấp, "Cái giá" — bản trước ghi "câu từ chối kèm mục Từ web"; chép bài 22 cùng đợt; câu dẫn sang web thay câu từ chối khi và chỉ khi mục web có nội dung (kết cục `co_muc`, tức mục web đã qua kiểm): `frontend/src/moDauWeb.js` (`CAU_TU_CHOI`, `CAU_DAN_WEB`, `moDauWeb`), `frontend/src/chat.jsx` dòng 403; mục web lỗi / rỗng / không tin cậy / câu cố định thì giữ câu từ chối gốc; đường khẩn cấp đổi về tuyến "về Huế" nên cũng qua cổng web: `backend/llm/assistant.py` dòng 1745–1746, `web_gate_open`, `cong_web` [code, đọc 15:35 23/11]. Dòng Cập nhật trước: "Cập nhật 14:37, ngày 23/11/2026 · khớp các bài 14:17 23/11 (50 tính năng mở, 5 tắt, kho 267 bài): bảng "Nếu… thì sao" dòng câu không thuộc Huế thêm ca câu có chữ "Huế" hỏi việc ở tỉnh, thành khác (bài 16); câu kể số tính năng nối mốc 50 · bản 12:56, khớp hệ thống trưa 23/11 (49 tính năng mở, 5 tắt): nối hai mốc mới vào câu kể số tính năng (giờ quán trong "gần một điểm"; hai tính năng đang tắt gộp 12:34) · bản 18:13, ngày 22/11/2026, khớp hệ thống tối 22/11 (48 tính năng, kho 267 bài): thêm thẻ nơi · phạm vi và các luật của sản phẩm chép từ các quyết định đã ghi của chủ dự án; người viết không chạy lại gì ngoài lệnh đếm tính năng."
 
 </details>
