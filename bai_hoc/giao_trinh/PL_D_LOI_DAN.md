@@ -1,6 +1,6 @@
 # Phụ lục D — Lời dặn gửi model và mô tả từng công cụ, chép nguyên văn từ chương trình
 
-*Cập nhật 13:38, ngày 23/11/2026 · chép bằng máy từ chương trình lúc đó; chương trình đổi thì phụ lục phải chép lại.*
+*Cập nhật 16:41, ngày 23/11/2026 · chép bằng máy từ chương trình lúc đó; chương trình đổi thì phụ lục phải chép lại.*
 
 **Cách đọc.** Mỗi loại lời gọi model có lời dặn riêng; lời dặn là đoạn chữ cố định gửi kèm mọi lần gọi loại đó. Chữ trong khung xám là nguyên văn chương trình gửi đi, kể cả dấu xuống dòng; phần lời dẫn ngoài khung là của giáo trình. Một lời dặn ghép từ nhiều đoạn thì mỗi đoạn một khung, theo đúng thứ tự ghép; giữa hai đoạn chương trình chèn một dòng trống. Tên trong dấu `…` là tên đoạn trong chương trình, chỉ để tra. Model viết đang chạy lúc chép: Claude Sonnet 5.5 (qua Amazon Bedrock); phần chỉ gửi khi model là Claude ghi rõ ở từng mục.
 
@@ -692,7 +692,7 @@ Mình chưa tra được web lúc này.
 Mình chưa tìm thấy thông tin phù hợp trên web.
 ```
 
-**Web không đáng tin** (`WEB_KHONG_TIN_CAY_TEXT`) — dùng khi: mục web: chữ model viết không qua phép kiểm. Bài: 25.
+**Web không đáng tin** (`WEB_KHONG_TIN_CAY_TEXT`) — dùng khi: mục web: chữ model viết không qua phép kiểm. Bài: 25, 26.
 
 ```text
 Mình chưa tra được thông tin đáng tin trên web.
@@ -784,7 +784,7 @@ Bạn đã tải file quá số lần cho phép hôm nay. Vui lòng quay lại v
 
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
 
-- Chép lúc 13:38 23/11/2026 từ cây chính, commit `49a05ab9`; cấu hình `backend/config/settings.yaml` lúc đó (`provider: bedrock`, `lan_tim_dau: v0`). [code]
+- Chép lúc 16:41 23/11/2026 từ cây chính, commit `56a09365`; cấu hình `backend/config/settings.yaml` lúc đó (`provider: bedrock`, `lan_tim_dau: v0`). [code]
 - Lệnh chép: `cd backend && PYTHONPATH=$PWD uv run --no-sync python ../data/hoc_cung_D/tools/chep_loi_dan.py` [riêng tư]. Script import các module, dựng generator bằng client giả / model giả (không gọi mạng, không gọi model, không đọc .env), kiểm bằng assert rằng chuỗi lời dặn mỗi agent mang đúng bằng các khung nối bằng một dòng trống (23 phép kiểm), bọc công cụ bằng `function_tool` với đúng tham số của `OpenAIFullCorpusGenerator._assistant_for`. [đã chạy]
 - Lời dặn: `backend/llm/full_corpus_prompt.py` (mọi hằng in hoa ở mục 1–7, 9, 10); `backend/llm/nhan_anh.py` `NHAN_ANH_INSTRUCTIONS`; `backend/llm/bedrock_model.py` `ANSWER_TOOL_DESCRIPTION`, `HISTORY_GAP`. Chỗ ghép: `backend/llm/generator_openai_full_corpus.py` `__init__` (hàm `kem` chỉ nối khi có model Bedrock), `_assistant_for`, `hieu_sua`; chọn bản ở `backend/llm/assistant.py` `_pick_route`, `answer_query`, `_viet_lai_het_luot`, `_lich_extra`, `_assistant_instructions`, `answer_bieu_mau`; `backend/llm/len_ke_hoach.py` (gọi `hieu_sua` với ba tính năng sửa lịch). [code]
 - Mô tả công cụ: `tim_kho` lấy từ docstring hàm trong `tool_for_turn`; `khoang_cach`, `gan_diem` từ `mo_ta_cong_cu` của `backend/llm/khoang_cach.py`, `backend/llm/gan_diem.py` (danh sách mã thay bằng dòng giữ chỗ; bảng điểm `data/` [riêng tư], 41 điểm). Tham số mô tả từ phần `Args:` của docstring (thời tiết bản có `loai` không có docstring nên không có mô tả tham số). [code]

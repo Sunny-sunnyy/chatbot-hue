@@ -1,6 +1,6 @@
 # Phụ lục E — Thuật ngữ Việt – Anh
 
-*Cập nhật 11:32, ngày 23/11/2026 · khớp các bài sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): thêm tám từ — thẻ chờ, bến, khung nhìn (bài 5), bảng kiểu, hình vẽ bằng đường cong, giảm chuyển động, tương phản (bài 35), thẻ nơi (bài 23, sót từ 22/11) — và sáu dòng tra ngược; "dòng trạng thái" chép lại theo bài 5 (218 từ) · trước đó (22/11: phân xử chỗ lệch giữa các bài; gom lần đầu); bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 17:10, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài) + số lệnh thêm trên bảng điểm từ 16:38; chưa gồm các bản gộp khác từ 16:38 (chờ phiếu) · dòng "danh sách tên" ghi mốc "42 … (tới 16:47 23/11)" theo bài 26 · 11:32: khớp các bài sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): thêm tám từ — thẻ chờ, bến, khung nhìn (bài 5), bảng kiểu, hình vẽ bằng đường cong, giảm chuyển động, tương phản (bài 35), thẻ nơi (bài 23, sót từ 22/11) — và sáu dòng tra ngược; "dòng trạng thái" chép lại theo bài 5 (218 từ) · trước đó (22/11: phân xử chỗ lệch giữa các bài; gom lần đầu); bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một từ lấy từ bảng "Từ dùng trong bài" của bài 1–40, xếp theo thứ tự chữ cái tiếng Việt. Cột "Nghĩa" chép câu giải nghĩa của bài gốc; khi hai bài giảng cùng một từ với hai câu khác nhau, câu chính lấy từ một bài và phần ngoặc ghi điều bài kia nói thêm. Cột cuối ghi bài giảng từ đó lần đầu, trong ngoặc là các bài giảng lại. Từ có dấu "—" ở cột tên gốc là tên do giáo trình đặt, không có tên tiếng Anh quen dùng. Cuối trang là bảng tra ngược, từ tên tiếng Anh ra tên trong giáo trình.
 
@@ -58,7 +58,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | cơ sở lưu trú | lodging | khách sạn, nhà nghỉ, homestay trong danh mục công khai có hạng sao | 30 |
 | cụm | cluster | nhóm các điểm nằm cùng một khu (ví dụ Kinh thành, bờ nam sông Hương, khu lăng Thủy Xuân); có 8 cụm | 27 |
 | cụm kề | adjacent cluster | hai cụm được ghi sẵn là cùng hướng, đi nối được trong một ngày | 28 |
-| danh sách tên | — | 42 nơi và món dễ nhận ra bằng ảnh, mỗi mục một mã, tên chính và tên khác; model chỉ được trả mã trong danh sách này | 26 |
+| danh sách tên | — | 42 nơi và món (tới 16:47 23/11) dễ nhận ra bằng ảnh, mỗi mục một mã, tên chính và tên khác; model chỉ được trả mã trong danh sách này | 26 |
 | dấu vân tay | hash (SHA-256) | chuỗi ký tự tính từ nội dung một file; sửa một chữ là chuỗi đổi | 12 |
 | dịch vụ bên ngoài | external service, API | chương trình của một bên khác, chạy trên máy của họ; muốn dùng thì gửi yêu cầu qua mạng | 6 |
 | dịch vụ tìm web | web search API (ở đây: Serper) | dịch vụ nhận một câu tìm và trả về các kết quả tìm Google: tiêu đề, một đoạn trích ngắn, đường link | 25 |
@@ -441,5 +441,6 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
 
 Gom từ mục "Từ dùng trong bài" của các bài 1–40 trong cùng thư mục, bản lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Bài 41 không có bảng từ. Một từ giảng ở hai bài với hai câu khác nhau: câu chính lấy từ bài giảng lần đầu, trừ "chỉ mục" (lấy câu của bài 12, đầy đủ hơn và cập nhật muộn hơn bài 2) và "hộp" (lấy câu của bài 36, cập nhật muộn hơn bài 12). Bài 39 ghép "kho code, lưu" thành một dòng; ở đây tách thành "kho code" và gộp phần "lưu" vào "lần lưu code" của bài 37. Các chỗ hai bài giải nghĩa khác nhau ghi ở báo cáo gom [riêng tư]. Tám từ thêm sáng 23/11/2026 chép từ bảng "Từ dùng trong bài" của bài 5 (bản 11:10), bài 35 (11:17) và bài 23 (11:12); "khung nhìn" được giảng ở cả bài 5 và 35: câu chính lấy từ bài 5 (giảng lần đầu), ngoặc ghi điều bài 35 nói thêm. "Lớp nhìn" được giải nghĩa trong thân bài 5 (quyết định 4) nhưng không có trong bảng từ của bài nào, nên chưa vào trang này.
+- Đồng bộ 17:10 23/11/2026 (người gom phụ lục): dòng "danh sách tên" chép bảng "Từ dùng trong bài" của bài 26 (bản đã áp biên bản `data/hoc_cung_D/kiem/dot_2311_chieu2_k1_kiem.md`) [chép từ bài]. Số từ không đổi (218).
 
 </details>
