@@ -53,8 +53,9 @@ kiem)
   ;;
 don)
   [ -d "$THU" ] || { echo "không có gì để dọn"; exit 0; }
-  dc down
-  docker volume rm "${DU_AN}_caddy_data" >/dev/null   # đúng MỘT volume do lượt thử này tạo (không `down -v`)
+  dc down --remove-orphans
+  # chỉ các volume mang nhãn của ĐÚNG dự án compose của lượt thử này (không `down -v`, không đụng volume của ai khác)
+  docker volume ls -q --filter "label=com.docker.compose.project=$DU_AN" | xargs -r docker volume rm >/dev/null
   # thư mục Qdrant + log do hộp tạo thuộc root ⇒ xoá qua docker
   docker run --rm -v "$THU":/x --entrypoint bash qdrant/qdrant@sha256:0bd98fa7977f1e75694779359ca4e212822e5a71334e28421182f72f209d5286 -c 'rm -rf /x/qdrant_storage /x/logs'
   rm -rf "$THU"

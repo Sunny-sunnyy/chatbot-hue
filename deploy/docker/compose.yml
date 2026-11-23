@@ -46,13 +46,24 @@ services:
       HUE_COOKIE_SECURE: ${HUE_COOKIE_SECURE:-1}
       HUE_TAT_DOCS: "1"
       HUE_GIT_SHA: ${HUE_GIT_SHA:-}
+    # App kiểm Qdrant ĐÚNG MỘT LẦN lúc khởi động; Qdrant chưa sẵn sàng lúc đó ⇒ mọi câu ra "Hệ thống tra cứu tạm thời không khả dụng" và KHÔNG tự hồi
+    # (thử thật 23/11: bật app trước Qdrant 25 giây). `depends_on` chỉ giữ thứ tự ở lệnh `up`; khi máy mở lại Docker tự bật các hộp không theo thứ tự nào
+    # ⇒ chính hộp app chờ tới khi Qdrant trả được collection rồi mới chạy server. Collection chưa nạp (máy mới) ⇒ hộp đứng chờ, log in "chờ Qdrant".
+    command:
+      - sh
+      - -c
+      - |
+        until python -c "import urllib.request as u; u.urlopen('http://qdrant:6333/collections/${HUE_COLLECTION:-hue_full_corpus_7a2_e5_small_384}', timeout=3)" 2>/dev/null; do
+          echo "chờ Qdrant có collection…"; sleep 2
+        done
+        exec uvicorn api.app:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips '*'
     volumes:
       - ./logs:/app/backend/logs      # log + số đo từng lượt sống qua lần tạo lại hộp
     depends_on:
       qdrant:
         condition: service_healthy
-    healthcheck:   # /health 200 khi app, Qdrant, khâu tìm, bộ đếm token, lớp nối model đều sẵn sàng
-      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+    healthcheck:   # khoẻ = `status: ok` (app, Qdrant, khâu tìm, bộ đếm token, lớp nối model đều sẵn sàng); /health vẫn trả HTTP 200 khi `degraded` nên phải đọc chữ
+      test: ["CMD", "python", "-c", "import json, sys, urllib.request as u; sys.exit(json.load(u.urlopen('http://127.0.0.1:8000/health', timeout=3))['status'] != 'ok')"]
       interval: 5s
       timeout: 5s
       retries: 36

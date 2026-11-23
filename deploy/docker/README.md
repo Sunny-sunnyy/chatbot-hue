@@ -72,8 +72,9 @@ Lớp nối model (`backend/llm/bedrock_model.py`) KHÔNG dùng thư viện AWS:
   chiếu tài liệu AWS (phiên B, 23/11): AWS đưa khoá mới ra ít nhất 5 phút trước khi khoá cũ hết hạn ⇒ hỏi 5 phút một lần.
   Hộp `khoa` dùng thẳng mạng của máy (`network_mode: host`) ⇒ bước nhảy IMDS để 1 vẫn chạy, và ba hộp còn lại (trong đó có hộp nhận yêu cầu từ
   internet) không tới được dịch vụ thông tin máy. Cần phía Terraform: vai có quyền gọi model, `http_tokens = "required"`.
-  Hai điều biết trước: (a) máy khởi động lại thì Docker tự bật lại các hộp không theo thứ tự — vài giây đầu app có thể còn đọc file khoá cũ đã
-  hết hạn, lượt hỏi đúng lúc đó nhận lỗi "khoá Bedrock bị từ chối hoặc đã hết hạn" một lần; (b) vai bị gỡ khỏi máy / bị gắn chính sách cấm thì
+  Hai điều biết trước: (a) máy khởi động lại thì Docker tự bật lại các hộp không theo thứ tự — đo ở máy này: hộp `khoa` ghi lại file sau 0,75 giây,
+  app phải 13,8 giây mới nhận được câu đầu ⇒ thường không lượt nào gặp khoá cũ; chỉ khi dịch vụ thông tin máy trả lời chậm hơn app khởi động thì
+  lượt hỏi đầu mới nhận lỗi "khoá Bedrock bị từ chối hoặc đã hết hạn" một lần; (b) vai bị gỡ khỏi máy / bị gắn chính sách cấm thì
   lỗi người dùng thấy cũng là dòng đó, còn nguyên nhân nằm ở log hộp `khoa` ("CHƯA lấy được khoá tạm của vai") và trạng thái `unhealthy` của nó.
 - Máy KHÔNG gắn được vai: phải chọn giữa (i) khoá dài hạn chỉ có quyền đổi lấy khoá tạm + một hộp phụ khác, hoặc (ii) sửa lớp nối cho
   `sessionToken` thành tuỳ chọn. Chưa viết — chờ phương án hạ tầng được chốt.
@@ -96,6 +97,10 @@ Lớp nối model (`backend/llm/bedrock_model.py`) KHÔNG dùng thư viện AWS:
 | RAM | app 886–933 MiB / 2 GiB (sau câu hỏi lẫn sau xếp lịch) · Qdrant 186–196 MiB / 768 MiB · Caddy 12 MiB. Server ngoài hộp sau 59 lượt: 1.526 MB (phiên đo) ⇒ trần 2 GiB của hộp app còn dư nhưng không rộng | chạy thật |
 | Volume chung cho file khoá | hộp A ghi "file tạm rồi đổi tên" ⇒ hộp B đang chạy (gắn chỉ đọc) đọc ngay nội dung mới; hộp B không ghi được | chạy thật |
 | `dong_goi.sh e7193bd` | 28 giây; `app_e7193bd.tar.gz` 909 MB · `qdrant.snapshot` 78 MB · bốn file cấu hình; `sha256sum -c` 6 / 6 OK | chạy thật |
+| Dừng hẳn cả ba hộp rồi bật CÙNG LÚC (như Docker tự bật lại khi máy mở) | 11,4 giây tới `/health` ok; Qdrant của gói vẫn 9.479 điểm (chỉ mục nằm ở thư mục `qdrant_storage/` trên đĩa) | chạy thật |
+| Ca xấu: app + Caddy bật TRƯỚC, Qdrant sau 25 giây | bản đầu của gói: `/health` trả HTTP 200 nhưng `degraded`, Docker vẫn coi hộp app là `healthy`, mọi câu ra "Hệ thống tra cứu tạm thời không khả dụng", KHÔNG tự hồi ⇒ ĐÃ SỬA trong `compose.yml`: hộp app chờ Qdrant trả được collection rồi mới chạy server, và chỉ `status: ok` mới tính là khoẻ. Sau sửa: trong lúc chờ Caddy trả 502, log app "chờ Qdrant có collection…", 19 giây sau khi Qdrant bật là ok | chạy thật, trước và sau sửa |
+| Qdrant khởi động lại GIỮA CHỪNG khi app đang chạy | app tự chạy tiếp: 6 giây sau `/health` ok, câu hỏi thật trả lời được | chạy thật |
+| `compose.vai-may.yml` chạy trọn với một máy chủ ĐỨNG THAY dịch vụ thông tin máy (không phải AWS) | hộp `khoa` ghi file, app chỉ lên sau khi `khoa` khoẻ; app đọc được file (đủ ba khoá), không ghi được vào volume. Dừng hẳn BỐN hộp rồi bật cùng lúc: `khoa` ghi lại file sau 0,75 giây, app in dòng log đầu sau 9,9 giây và `/health` ok sau 13,8 giây ⇒ file khoá luôn mới TRƯỚC khi app nhận được câu đầu | chạy thật (khoá giả ⇒ không gọi model ở ca này) |
 | `don` | 0 hộp, 0 volume của lượt thử còn lại; Qdrant của dự án không bị đụng | chạy thật |
 
 Đã chạy thật trước đó, không tốn gì: ca đối chứng của `dung_ngu_canh.py` (commit có kho cũ `2f7b56e4` ⇒ DỪNG, báo 3 bài lệch băm + 2 bài thiếu) ·
@@ -105,7 +110,8 @@ ba phép 0 đồng (cùng số).
 
 CHƯA kiểm:
 - Mọi thứ trên AWS: hộp `khoa` ở mạng của máy hỏi được dịch vụ thông tin máy với bước nhảy 1, khoá của vai gọi được model, HTTPS thật qua Caddy,
-  `docker load` + bốn lệnh trên máy đích, `compose.vai-may.yml` chạy cùng app (ở máy này mới thử từng phần của nó).
+  `docker load` + bốn lệnh trên máy đích. Máy dừng / bật thật (ở đây giả lập bằng dừng / bật các hộp; Docker tự bật lại hộp sau khi máy mở cần
+  `sudo systemctl enable docker` — việc của bước dựng máy).
 - Luồng trả lời `/api/chat/stream` qua Caddy và trình duyệt mở cổng 8880 (lượt thử gọi `/api/chat`, không qua trình duyệt).
 - Hộp chạy bằng người dùng root (như bản 16/11); chưa hạ quyền.
 - Đã xét, KHÔNG đổi (kết quả tra cứu 23/11 nêu): bỏ `flush_interval -1` ở Caddy (Caddy tự đẩy ngay luồng `text/event-stream`; giữ vì cấu hình
