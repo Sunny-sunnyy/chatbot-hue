@@ -678,10 +678,16 @@ def _hai_cach(bang, ts, cach: list[dict], ngay: int | None) -> list[dict]:
     return sorted(cach, key=khoa)[:2]
 
 
-def _mot_cach_khong_mat(bang, ts, cach: list[dict], ngay: int | None) -> list[dict]:
+def _mot_cach_khong_mat(bang, ts, cach: list[dict], ngay: int | None, khung: dict | None = None) -> list[dict]:
     """Công tắc `sua_lich_them_day`: có cách THÊM THẲNG (không mất điểm nào) thì chỉ nêu MỘT cách đó; không có mới nêu hai cách "thay…" như cũ. Vì
-    sao (lượt trình duyệt 23/11): câu gợi ý ghép "thêm X vào buổi … hoặc thay Y bằng X" — người dùng chép nguyên câu là gửi một lệnh hai nghĩa."""
+    sao (lượt trình duyệt 23/11): câu gợi ý ghép "thêm X vào buổi … hoặc thay Y bằng X" — người dùng chép nguyên câu là gửi một lệnh hai nghĩa.
+    `khung` (chỉ truyền khi công tắc `sua_lich_hoi_truoc` bật): có cách thêm thẳng vào một buổi đang TRỐNG thì nêu cách đó — lượt trình duyệt cả cụm
+    23/11/2026: người dùng bỏ điểm duy nhất của chiều ngày 1 rồi xin thêm điểm khác vào một buổi không nhận được ⇒ gợi ý từng là "buổi sáng ngày 1"
+    (xếp theo ngày rồi buổi) trong khi buổi chiều ngày 1 vừa để trống cũng đặt được."""
     khong_mat = [g for g in cach if g["thay"] is None]
+    if khung is not None:
+        rong = {(x["ngay"], b) for x in khung["ngay"] for b in v2.BUOI_NGAY if not x["buoi"][b]}
+        khong_mat = [g for g in khong_mat if (g["ngay"], g["buoi"]) in rong] or khong_mat
     return _hai_cach(bang, ts, khong_mat, ngay)[:1] if khong_mat else _hai_cach(bang, ts, cach, ngay)
 
 
@@ -1142,15 +1148,16 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 theo_cho = ({"ly_do_cho": [x for x, _ in collections.Counter(filter(None, (_loai_ly_do_cho(m, noi_khu) for m in ma_cho))).most_common()]
                              if ly_do is None else [], **({"han_che": True} if ts.han_che else {}),
                             **({"chua_chon": True} if ts.kieu_chua_chon else {})} if noi_nhip else {})
+                uu_trong = {"khung": khung} if them_hoi_truoc else {}  # công tắc `sua_lich_hoi_truoc`: gợi ý buổi đang trống trước
                 if trong:
                     kq["khong_doi"].append({"diem": ten, "ma_luat": "them_can_thay", "dich": [ngay, h.buoi], **hoi_k,
-                                            "cach": _mot_cach_khong_mat(bang, ts, khac + trong, ngay) if them_day else _hai_cach(bang, ts, trong, ngay),
+                                            "cach": _mot_cach_khong_mat(bang, ts, khac + trong, ngay, **uu_trong) if them_day else _hai_cach(bang, ts, trong, ngay),
                                             "ly_do": ly_do, **theo_cho,
                                             "dang_co": [ten_cua_diem(bang, j) for j, v in vt.items() if v == (ngay, h.buoi)]})
                 else:
                     kq["khong_doi"].append({"diem": ten, "ma_luat": "them_bi_chan", "dich": [ngay, h.buoi], "ly_do": ly_do, **theo_cho, **hoi_k,
                                             "cach": [] if ngay is None and h.buoi is None
-                                            else _mot_cach_khong_mat(bang, ts, khac or _cach_them(bang, luu, ts, khung, vt, loai, i, None, None), ngay) if them_day
+                                            else _mot_cach_khong_mat(bang, ts, khac or _cach_them(bang, luu, ts, khung, vt, loai, i, None, None), ngay, **uu_trong) if them_day
                                             else _hai_cach(bang, ts, _cach_them(bang, luu, ts, khung, vt, loai, i, None, None), ngay)})
                 continue
             if k is None and h.loai == "them_diem":
