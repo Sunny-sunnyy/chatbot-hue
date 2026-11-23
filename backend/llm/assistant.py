@@ -235,6 +235,11 @@ class AssistantFlags:
     khoang_cach_bang: "kc.BangKhoangCach | None" = field(default=None, compare=False, repr=False)
     # 20/11 (plan `report_agent/2026-11-20/c_su_kien_theo_ngay_plan.md`): câu vừa nêu một khoảng ngày vừa hỏi lễ hội / sự kiện ⇒ code tra bảng chép từ kho
     # (`assistant.su_kien_bang`, nạp ở rìa), đổi ngày âm ⇒ dương, đăng một nguồn trước lần gọi model đầu (`llm/su_kien.py`). TẮT tới khi đo đạt; cần `tim_them`.
+    # 21/11/2026 (plan `report_agent/2026-11-21/b_bac_1_vong_cong_cu_plan.md` phần 1a; người dùng mô phỏng: 5 / 44 lượt luna chạm trần vòng ở câu 3–5 ý có "bao xa"
+    # + nơi không có trong bảng khoảng cách ⇒ câu từ chối trống): vòng cuối cùng của lượt có công cụ gửi KHÔNG kèm công cụ ⇒ model viết từ bằng chứng đã có.
+    vong_cuoi_chi_viet: bool = False
+    # cùng ngày: công cụ khoảng cách khi không có số cho cặp nơi ⇒ thêm một dòng trạng thái (đừng gọi lại cho cặp này, vẫn trả lời các ý khác)
+    khoang_cach_trang_thai: bool = False
     su_kien_theo_ngay: bool = False
     su_kien_bang: "tuple[dict, ...] | None" = field(default=None, compare=False, repr=False)
     # 21/11/2026 (plan `report_agent/2026-11-21/b_cong_cu_liet_ke_plan.md`): công cụ `liet_ke_bai` — code liệt kê BÀI của kho theo nhóm / cụm từ cho câu xin
@@ -895,7 +900,7 @@ def ngay_lich_for_turn(trace: AnswerTrace, query: str = ""):
     return ngay_lich
 
 
-def khoang_cach_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach"):
+def khoang_cach_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach", trang_thai: bool = False):
     """Hàm `khoang_cach` của **một lượt** (plan 16/11): model chỉ gửi MÃ hai điểm (enum, `khac` = nơi ngoài danh sách); code tra bảng, dựng dòng,
     đăng thành **một nguồn** trong sổ nguồn (như `ngay_lich_for_turn`). ≤ 3 lần / câu (câu hỏi nhiều cặp); lần thứ 4 ⇒ câu nhắc."""
     Ma = Literal[tuple(bang.ids) + (kc.KHAC,)]
@@ -912,6 +917,9 @@ def khoang_cach_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach"):
         trace.so_nguon.append(src)
         chu = FullCorpusContextBuilder._block(src)
         trace.context_parts.append(chu)
+        if trang_thai and len(dong) == 1:  # `kc.ket_qua` trả đúng MỘT dòng khi không có số (nơi ngoài danh sách / cặp chưa có / hai mã trùng)
+            entry["khong_co"] = True
+            return f"{kc.TRANG_THAI_KHONG_CO}\n\n{chu}"
         return chu
 
     khoang_cach.__doc__ = kc.mo_ta_cong_cu(bang)
@@ -1521,6 +1529,8 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None, q
         trace.clarify = clarify
         _set_fixed(trace, "", "hoi_lai")
         return
+    if getattr(trace.generated, "bao_vong_cuoi", False) and trace.tools:  # cờ `vong_cuoi_chi_viet`: dấu đếm (như `khong_co` của công cụ khoảng cách) — công cụ
+        trace.tools[-1]["bao_vong_cuoi"] = True                             # chạy sau cùng của lượt là công cụ mang dòng báo (sau nó không còn công cụ nào)
     if getattr(trace.generated, "hit_max_turns", False):  # getattr: generator thay thế trong test chỉ có `text` (như route, B68 m-4)
         _set_fixed(trace, INSUFFICIENT_ANSWER, "max_turns")
         if flags is not None and flags.thoi_tiet and (trace.thoi_tiet_ctx or {}).get("bao_lu"):
@@ -1634,7 +1644,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
             extra["thoi_tiet_fn"] = thoi_tiet_for_turn(trace, flags.du_bao)
     # như thời tiết — lượt không có từ khoá ⇒ danh sách công cụ như cũ (Q1); số đã tính sẵn trước lần gọi đầu (`trace.khoang_cach`) ⇒ không đưa công cụ
     if flags.khoang_cach and trace.khoang_cach is None and (luon or kc.co_tu_khoa_luot(query, trace.history)):
-        extra["khoang_cach_fn"] = khoang_cach_for_turn(trace, flags.khoang_cach_bang)
+        extra["khoang_cach_fn"] = khoang_cach_for_turn(trace, flags.khoang_cach_bang, flags.khoang_cach_trang_thai)
     if flags.ngay_lich and (luon or nl.co_tu_ngay_luot(query, trace.history)):  # T1: như thời tiết — lượt không có từ chỉ ngày ⇒ danh sách công cụ như cũ (Q1)
         extra["ngay_lich_fn"] = ngay_lich_for_turn(trace, query)
     if flags.gan_diem and (luon or gd.co_tu_khoa_luot(query, trace.history)):  # cờ tắt / lượt không có từ "gần…" ⇒ không truyền, danh sách công cụ như cũ
@@ -1648,6 +1658,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
         extra["con_luot_fn"] = lambda: trace.model_searches < flags.so_lan_tim_kho
     if trace.nhieu_y:  # lời dặn theo ý (cờ tắt / câu một ý ⇒ không truyền, gọi y như trước)
         extra["nhieu_y"] = True
+    if flags.vong_cuoi_chi_viet:  # cờ tắt ⇒ không truyền, công cụ không có điều kiện bật mới (giống byte)
+        extra["vong_cuoi_chi_viet"] = True
     return extra
 
 

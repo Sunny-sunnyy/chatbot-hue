@@ -347,6 +347,7 @@ def test_provider_switch_picks_the_model_class_and_openai_stays_openai(monkeypat
     assert (openai_generator.provider, openai_generator.model) == ("openai", "gpt-6-luna")
 
     monkeypatch.delenv("OPENAI_API_KEY")
+    monkeypatch.delenv("HUE_BEDROCK_CREDS_FILE", raising=False)  # máy đang chạy Sonnet có sẵn biến này ⇒ ca "thiếu biến" phải tự gỡ nó
     with pytest.raises(GenerationError, match="HUE_BEDROCK_CREDS_FILE"):
         OpenAIFullCorpusGenerator.from_environment(bedrock_settings())
     monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")  # file chỉ được đọc lúc gọi model
