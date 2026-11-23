@@ -5,6 +5,7 @@ Model chọn **hành động có tên** (`HanhDong`); **code** áp tối đa `MA
 đều do đúng một bộ xếp tính; khung mới chỉ được nhận khi `kiem_khung_v2` = 0 lỗi, không thì giữ khung cũ + lý do. Hàm thuần — không mạng,
 không SDK. Trạng thái lưu của cuộc (`luu`): {tham_so, ngay_di, mua, khung, loai} — chỉ dữ liệu code dựng (không chữ người dùng).
 """
+import collections
 import copy
 import re
 import unicodedata
@@ -90,6 +91,14 @@ CAU_LY_DO = {"khu": "một ngày sẽ phải đi hai khu không liền nhau", "k
 # một điểm không đứng được ở buổi của nó sau khi đổi)
 CAU_LY_DO_NGAY = {"xa_ngay_dau": "ngày 1 sẽ có điểm ở khu xa trung tâm, mà lịch không xếp khu xa vào ngày đầu",
                   "khong_giu_cho": "với ngày đi của lịch (thứ trong tuần, dự báo mưa) có điểm không đứng được ở buổi của nó sau khi đổi"}
+
+
+def _loai_ly_do(ma) -> str | None:
+    """Mã `kiem_khung_v2` của một khung thử ⇒ MỘT loại lý do lời thường (khoá của `CAU_LY_DO`); thứ tự xét: khu > kín > giờ mở."""
+    ma = set(ma)
+    return "khu" if ma & MA_LUAT_KHU else "kin" if ma & MA_LUAT_KIN else "gio_mo" if "ngoai_gio_mo" in ma else None
+
+
 NHAN_TRUONG = {"so_ngay": "số ngày", "kieu_di": "kiểu đi", "so_thich": "sở thích", "tre_em": "số trẻ em", "lon_tuoi": "người lớn tuổi",
                "ngan_sach": "hạng chỗ ở"}
 CAU_KHONG_DOI = {
@@ -851,9 +860,10 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 continue
             giu0 = {j: v for j, v in vt.items() if j != i}
             doi_cho = h.loai == "doi_buoi" and i in vt  # dời điểm ĐANG ở trong lịch (chỗ đích có đúng một điểm ⇒ đổi chỗ hai điểm)
-            k, loi = None, []
+            k, loi, ma_cho = None, [], []  # `ma_cho`: mã luật của TỪNG chỗ đã thử ở vòng quyết định (cho lý do của lệnh thêm không nói rõ một buổi)
             for cho in _cho_thu(bang, khung, i, ngay, h.buoi):
                 k, loi, _ = _thu_cho(bang, luu, ts, vt, loai, i, cho, doi_cho)
+                ma_cho.append(loi)
                 if k is not None:
                     break
             day = None
@@ -861,8 +871,10 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 # Chủ dự án chọn 23/11/2026 "cho ngày dày thêm": người dùng XIN thêm thì lịch nhận, vượt nhịp đi đã chọn, miễn giờ còn đi được thật.
                 # Thử lại từng chỗ với ngày đó được vượt nhịp; `kiem_khung_v2` vẫn giữ mọi luật còn lại + bữa trưa + giờ kết buổi chiều.
                 # `loi` nay là mã luật của lần thử ĐÃ nới nhịp ⇒ lý do từ chối bên dưới nói đúng thứ còn chặn (giờ mở cửa, khu…), không còn "quá kín"
+                ma_cho = []
                 for cho in _cho_thu(bang, khung, i, ngay, h.buoi):
                     k, loi, _ = _thu_cho(bang, luu, ts, vt, loai, i, cho, False, day_moi=cho[0])
+                    ma_cho.append(loi)
                     if k is not None:
                         break
             khu = None
@@ -891,14 +903,20 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 # lý do = mã luật của lần thử thêm thẳng; chỉ chắc khi người dùng nói rõ MỘT buổi (không nói chỗ ⇒ `loi` là của chỗ thử sau cùng,
                 # không phải lý do chung — review của phiên khác 21/11) ⇒ ngoài ca đó để None, câu dùng lời chung
                 ma = set(loi) if ngay is not None and h.buoi is not None else set()
-                ly_do = "khu" if ma & MA_LUAT_KHU else "kin" if ma & MA_LUAT_KIN else "gio_mo" if "ngoai_gio_mo" in ma else None
+                ly_do = _loai_ly_do(ma)
+                # công tắc `sua_lich_them_day`, lệnh KHÔNG nói rõ một buổi: lý do của TỪNG chỗ đã thử, loại gặp nhiều đứng trước. Đếm 23/11/2026 trên
+                # lưới 108 lịch: 797 lệnh "thêm X" của đoàn thường bị từ chối — 701 chỉ vướng MỘT loại (690 là khu), 96 lẫn hai ba loại ⇒ một loại thì
+                # câu nói thẳng loại đó, lẫn thì nêu từng loại (trước đó mọi ca đều đọc "lịch đang kín…", kể cả 20 / 30 điểm của lịch mặc định). Đoàn có
+                # trẻ nhỏ / người lớn tuổi GIỮ câu cũ: không có lần thử nới nhịp, chỗ nào cũng vướng trần "hai điểm một ngày" ⇒ "lịch đang kín" là đúng
+                theo_cho = ({"ly_do_cho": [x for x, _ in collections.Counter(filter(None, map(_loai_ly_do, ma_cho))).most_common()] if ly_do is None else []}
+                            if them_day and not ts.han_che else {})
                 if trong:
                     kq["khong_doi"].append({"diem": ten, "ma_luat": "them_can_thay", "dich": [ngay, h.buoi],
                                             "cach": _mot_cach_khong_mat(bang, ts, khac + trong, ngay) if them_day else _hai_cach(bang, ts, trong, ngay),
-                                            "ly_do": ly_do,
+                                            "ly_do": ly_do, **theo_cho,
                                             "dang_co": [ten_cua_diem(bang, j) for j, v in vt.items() if v == (ngay, h.buoi)]})
                 else:
-                    kq["khong_doi"].append({"diem": ten, "ma_luat": "them_bi_chan", "dich": [ngay, h.buoi], "ly_do": ly_do,
+                    kq["khong_doi"].append({"diem": ten, "ma_luat": "them_bi_chan", "dich": [ngay, h.buoi], "ly_do": ly_do, **theo_cho,
                                             "cach": [] if ngay is None and h.buoi is None
                                             else _mot_cach_khong_mat(bang, ts, khac or _cach_them(bang, luu, ts, khung, vt, loai, i, None, None), ngay) if them_day
                                             else _hai_cach(bang, ts, _cach_them(bang, luu, ts, khung, vt, loai, i, None, None), ngay)})
@@ -1060,20 +1078,31 @@ def _cau_them(bang: v2.BangV2, k: dict) -> str:
     noi = (f"buổi {NHAN_BUOI[buoi]} ngày {ngay}" if ngay is not None and buoi is not None else f"ngày {ngay}" if ngay is not None
            else f"buổi {NHAN_BUOI[buoi]}" if buoi is not None else None)
 
+    moi = "ly_do_cho" in k  # mục dựng khi công tắc `sua_lich_them_day` bật ⇒ chữ mới; tắt ⇒ câu y như cũ
+    # lệnh không nói rõ một buổi: lý do của các chỗ đã thử — một loại thì nói thẳng, lẫn thì nêu từng loại (không gán lý do của một buổi cho cả lịch)
+    cho_vuong = k.get("ly_do_cho") or []
+    vuong = CAU_LY_DO[cho_vuong[0]] if len(cho_vuong) == 1 else ", ".join(f"có buổi thì {CAU_LY_DO[m]}" for m in cho_vuong)
+
     def cach(g: dict, kem_cho: bool) -> str:
         # cách "thêm thẳng nhưng ngày đó dày hơn nhịp đi" (công tắc `sua_lich_them_day`): nói rõ cái giá ngay cạnh câu gợi ý; câu để nhắn giữ nguyên
-        return _cau_cach(bang, x, g, kem_cho or bool(g.get("day"))) + (
-            " (ngày đó sẽ dày hơn nhịp bạn chọn và phải đi sang một khu không liền kề)" if g.get("khu")
-            else " (ngày đó sẽ dày hơn nhịp bạn chọn)" if g.get("day") else "")
+        gia = (" (ngày đó sẽ dày hơn nhịp bạn chọn và phải đi sang một khu không liền kề)" if g.get("khu")
+               else " (ngày đó sẽ dày hơn nhịp bạn chọn)" if g.get("day") else "")
+        if not moi:
+            return _cau_cach(bang, x, g, kem_cho or bool(g.get("day"))) + gia
+        # chữ mới: câu để nhắn nằm RIÊNG trong «…» (lượt trình duyệt 23/11: "thay A bằng X hoặc thay B bằng X" — chép nguyên là gửi một lệnh hai
+        # nghĩa); chỗ của điểm bị thay và cái giá "dày hơn nhịp" đứng NGOÀI dấu
+        return f"«{_cau_cach(bang, x, g, False)}»" + (f" (buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']})" if kem_cho and g["thay"] is not None else "") + gia
 
     if k["ma_luat"] == "them_can_thay":
         ro = ngay is not None and buoi is not None  # người dùng nói rõ một buổi ⇒ nêu buổi đó đang có gì; không thì mỗi cách kèm buổi của nó
         vi = f"thêm vào đó thì {CAU_LY_DO[k['ly_do']]}" if k["ly_do"] else "không xếp thêm được một điểm nữa"  # lý do chỉ chắc khi nói rõ một buổi
         o = (f"{noi} đang có {' và '.join(k['dang_co'])}; {vi}" if ro and k["dang_co"]
+             else f"đặt vào {noi} thì vướng: {vuong}" if vuong and noi else f"đặt vào buổi nào cũng vướng: {vuong}" if vuong
              else f"{noi or 'lịch'} đang kín, không xếp thêm được một điểm nữa")
         # "đủ câu": lần hiểu ý không thấy lượt trước ⇒ câu đồng ý cụt ("ok thay đi") không được hiểu (đo 21/11: 0 / 6 lượt mỗi model)
         return f"Chưa làm: thêm {x} — {o}. Muốn đổi, bạn nhắn đủ câu: {' hoặc '.join(cach(g, not ro) for g in k['cach'])}."
-    vi = (f"vì {CAU_LY_DO[k['ly_do']]}" if k["ly_do"] else "vì đặt vào đó lịch sẽ phạm luật xếp (giờ mở cửa / cụm xa / quá dày)" if noi or k["ma_luat"] == "thay_bi_chan"
+    vi = (f"vì {CAU_LY_DO[k['ly_do']]}" if k["ly_do"] else f"vì {vuong}" if vuong and noi else f"vì đặt vào buổi nào cũng vướng: {vuong}" if vuong
+          else "vì đặt vào đó lịch sẽ phạm luật xếp (giờ mở cửa / cụm xa / quá dày)" if noi or k["ma_luat"] == "thay_bi_chan"
           else "vì đặt vào buổi nào lịch cũng phạm luật xếp (giờ mở cửa / cụm xa / quá dày)")  # không nói chỗ ⇒ không gán lý do riêng của một buổi
     dau = (f"Chưa làm: thay {k['cu']} bằng {x} — {vi}." if k["ma_luat"] == "thay_bi_chan"
            else f"Chưa làm: thêm {x}" + (f" vào {noi}" if noi else "") + f" — {vi}.")

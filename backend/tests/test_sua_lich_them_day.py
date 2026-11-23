@@ -207,3 +207,39 @@ def test_validator_keeps_the_ceilings_of_a_marked_day():
     assert "qua_day_buoi" in v2.kiem_khung_v2(B, dong)
     lech = {**copy.deepcopy(khung), "day_them": [3 - ngay]}
     assert set(v2.kiem_khung_v2(B, lech)) & NHIP
+
+
+def test_ly_do_tu_choi_khi_khong_noi_ro_mot_buoi():
+    """Lệnh "thêm X" không nói rõ một buổi bị từ chối (23/11/2026): trước đây câu nào cũng là "lịch đang kín…" / "phạm luật xếp (giờ mở cửa / cụm xa /
+    quá dày)" — kể cả khi thứ chặn là luật khu (20 / 30 điểm của lịch mặc định, gồm các lăng lớn). Cờ bật: câu nêu lý do của các chỗ đã thử — một
+    loại thì nói thẳng, lẫn thì nêu từng loại; câu để nhắn nằm riêng trong «…». Cờ tắt: mục và câu y như cũ."""
+    k, luu = _lich(2, "can_bang", so_thich=())  # đúng lịch mặc định của trang Lên kế hoạch (không chọn sở thích)
+    ten = {d["ten"]: i for i, d in T.items()}
+
+    def tu_choi(i, **kw):
+        kq = _them(luu, i, **kw)
+        return kq, kq["khong_doi"][0], s.thay_doi(B, kq)[0]["cau"]
+
+    _, kd, cau = tu_choi(ten["Lăng Minh Mạng"], them_day=True)
+    assert kd["ly_do_cho"] == ["khu"]
+    assert cau.startswith("Chưa làm: thêm Lăng Minh Mạng — vì đặt vào buổi nào cũng vướng: một ngày sẽ phải đi hai khu không liền nhau.")
+    _, kd, cau = tu_choi(ten["Lăng Tự Đức"], them_day=True)  # ngày 1 vướng khu, ngày 2 vướng giờ
+    assert set(kd["ly_do_cho"]) == {"khu", "kin"} and all(f"có buổi thì {s.CAU_LY_DO[m]}" in cau for m in ("khu", "kin"))
+    assert "vào ngày 1 — vì một ngày sẽ phải đi hai khu không liền nhau." in tu_choi(ten["Lăng Tự Đức"], ngay=1, them_day=True)[2]
+    n = 0
+    for i, ng, b in _lenh(k):
+        if ng is not None:
+            continue
+        kq, kd, cau = tu_choi(i, them_day=True) if not _them(luu, i, them_day=True)["da_ap"] else (None, None, None)
+        if kq is None:
+            continue
+        n += 1
+        # lý do nêu ra = đúng các lý do mà lệnh NÓI RÕ từng buổi nhận được (cơ chế có từ trước), không thêm không bớt
+        tung_buoi = {_them(luu, i, x["ngay"], bb, them_day=True)["khong_doi"][0]["ly_do"] for x in k["ngay"] for bb in v2.BUOI_NGAY if bb in T[i]["buoi"]}
+        assert set(kd["ly_do_cho"]) == tung_buoi - {None} and kd["ly_do_cho"]
+        assert "đang kín" not in cau and "phạm luật xếp" not in cau
+        # mỗi câu code nhớ cho lượt kế đứng riêng trong «…» — không còn "thay A bằng X hoặc thay B bằng X" chép nguyên là một lệnh hai nghĩa
+        assert all(f"«{g}»" in cau for g in s.cau_goi_y(B, kq)) and cau.count("«") == len(s.cau_goi_y(B, kq))
+        tat = _them(luu, i)
+        assert "ly_do_cho" not in tat["khong_doi"][0] and "«" not in s.thay_doi(B, tat)[0]["cau"]
+    assert n == 20  # lịch mặc định: 20 / 30 điểm chưa có bị từ chối khi không nói buổi
