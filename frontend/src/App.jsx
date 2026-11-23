@@ -151,7 +151,7 @@ export default function App() {
         {route.page === "len-ke-hoach" && daCoTinhNang && (
           tinhNang.len_ke_hoach_v2
             ? <LenKeHoachV2 cauHinh={tinhNang.len_ke_hoach_v2} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan}
-                            lichTurn={lichTurn} onEditPlan={editPlan} onAsk={chat.pending ? null : q => chat.ask(q)} />
+                            lichTurn={lichTurn} onEditPlan={editPlan} onAsk={chat.pending ? null : (q, opts) => chat.ask(q, opts)} />
             : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
         {route.page === "cho-o" && <ChoO khu={route.khu} />}

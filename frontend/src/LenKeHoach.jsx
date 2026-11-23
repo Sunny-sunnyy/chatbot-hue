@@ -144,7 +144,8 @@ function CotLich({ lichTurn, onEditPlan, onXep, pending, onAsk }) {
           <span>Biểu mẫu vẫn là bản gốc — xếp lại từ biểu mẫu sẽ thay bản đã sửa.</span></p>
       )}
       {/* `onAsk`: nút của dòng hỏi lại / chưa làm cũng bấm được ngay ở cột lịch — khung trợ lý có thể đang đóng, và mỗi nút gửi một câu lệnh ĐỦ tên */}
-      {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} onAsk={t.phase === "done" ? onAsk : null} />}
+      {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} onAsk={t.phase === "done" ? onAsk : null}
+                                                     onMo={t.phase === "done" && onEditPlan ? () => onEditPlan(null, t.truong) : null} />}
       {t.lichV2 && t.phase === "done" && <p className="lkh-chi-dan">Muốn sửa lịch bằng lời (ví dụ “bỏ điểm đầu ngày 2”): bấm <b>Trợ lý Huế</b> rồi nhắn — lịch ở đây đổi theo.</p>}
     </div>
   );

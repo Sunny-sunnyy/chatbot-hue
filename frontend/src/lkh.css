@@ -344,6 +344,7 @@
   html.in-lich .lkh-dang-in .lkh-du-bao li { font-size: 15px; }
   html.in-lich .lkh-dang-in .lich-ghi-chu { font-size: 15.5px; }
   html.in-lich .lkh-dang-in .lkh-doi li { font-size: 15px; }
+  .lkh-doi-nut { display: none; }   /* nút gợi ý của dòng chưa làm được: trên giấy không bấm được */
   html.in-lich .lkh-dang-in .lkh-chang { font-size: 15px; }
   html.in-lich .lkh-dang-in .lkh-ghi-toi { font-size: 14px; }
   html.in-lich .lkh-dang-in .lkh-loai small { font-size: 12.5px; }
