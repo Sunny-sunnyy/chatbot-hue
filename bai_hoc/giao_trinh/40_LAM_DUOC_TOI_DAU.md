@@ -1,6 +1,6 @@
 # Bài 40 — Làm được tới đâu, còn yếu ở đâu, hướng phát triển
 
-*Cập nhật 14:45, ngày 23/11/2026 · khớp các bài 14:35 23/11 (50 tính năng mở, 5 tắt, kho 267 bài): hàng Giao diện có thẻ "Hôm nay ở Huế"; bộ test ghi 88 file trong thư mục · 14:35: nấc 3 "trả lời câu ngoài kho" theo bài 16; thêm một hướng phát triển; số tính năng 49 ⇒ 50 · số chép từ bài gốc (ghi "bài N"), không đo mới · các lần sửa trước: Nguồn.*
+*Cập nhật 16:01, ngày 23/11/2026 · 16:01: hàng "Hỏi đáp từ kho" ghi thêm câu dẫn sang mục web (theo bài 16) · 14:45: khớp các bài 14:35 23/11 (50 tính năng mở, 5 tắt, kho 267 bài): hàng Giao diện có thẻ "Hôm nay ở Huế"; bộ test ghi 88 file trong thư mục · 14:35: nấc 3 "trả lời câu ngoài kho" theo bài 16; thêm một hướng phát triển; số tính năng 49 ⇒ 50 · số chép từ bài gốc (ghi "bài N"), không đo mới · các lần sửa trước: Nguồn.*
 
 **Bài trước đã biết:** hệ thống được làm ra thế nào, ai kiểm ai (bài 39).
 **Bài này thêm:** theo từng mảng: làm được gì, chưa làm được gì, chỗ yếu nào nặng nhất, thứ gì chưa đo, hướng phát triển nào có căn cứ.
@@ -26,7 +26,7 @@ Mỗi dòng một mảng, kèm **một con số chính** lấy từ bài giảng
 
 | Mảng | Người dùng làm được | Chưa làm được | Một con số |
 |---|---|---|---|
-| Hỏi đáp từ kho | hỏi món, di tích, lễ hội, vé, đi lại; câu trả lời có nguồn bấm xem được; kho không có thì nhận câu từ chối cố định | câu kho có mà bước tìm không ra vẫn bị từ chối | từ chối nhầm 3 trên 158 câu kho có (gpt-6-luna, 12/11); 0 trên 78 câu (Claude, 21/11, mẫu nhỏ hơn) (bài 4) |
+| Hỏi đáp từ kho | hỏi món, di tích, lễ hội, vé, đi lại; câu trả lời có nguồn bấm xem được; kho không có thì nhận câu từ chối cố định, rồi mục "Từ web (chưa kiểm)"; mục web có nội dung thì trang hiện câu dẫn sang mục đó thay cho câu từ chối (bài 16) | câu kho có mà bước tìm không ra vẫn bị từ chối | từ chối nhầm 3 trên 158 câu kho có (gpt-6-luna, 12/11); 0 trên 78 câu (Claude, 21/11, mẫu nhỏ hơn) (bài 4) |
 | Trợ lý nhiều lượt | hỏi tiếp "còn chỗ đó thì sao", "quán thứ hai bạn vừa kể" (cả trong cuộc đã lập lịch); hỏi nhiều ý trong một tin | tin dài 4–5 ý dễ thiếu ý; chỉ nhớ câu trả lời liền trước (bài 23) | 12 vai: 7 · 7 · 8 trên 12 phiên đạt (Claude, 21/11) (bài 32); đo lại 22/11: 8 trên 12 |
 | Việc chương trình tính | ngày âm ↔ dương, dự báo 7 ngày, khoảng cách giữa 40 điểm, "gần X có gì", lễ hội theo ngày | tổng tiền vé do model tự cộng; khoảng cách ngoài 40 điểm | công cụ đổi ngày bớt 9 câu từ chối nhầm, 0 câu sai ngày (gpt-6-luna, 09/11) (bài 24) |
 | Tra web | kho từ chối thì có mục riêng "Từ web (chưa kiểm)" | mục web chỉ được kiểm con số, không kiểm địa chỉ hay ý | 2 trên 44 câu ngoài phạm vi bị gửi đi tra web vì xếp loại nhầm (bài 25) |

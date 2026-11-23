@@ -377,10 +377,12 @@ SONNET_DINH_TUYEN = (
     "đó thuộc tỉnh, thành khác và câu không dính gì tới Huế."
 )
 
-# (5) Trả lời — ý hỏi về việc diễn ra ở tỉnh, thành khác (công tắc `assistant.noi_khac_tu_choi`, 23/11/2026; TẮT tới khi đo bật ↔ tắt).
-# Ca đo: câu đối chứng ngoài tỉnh của sàn "câu ngoài kho không được trả lời bằng kho" được trả lời có nguồn 3 / 10 lần (mốc 21/11: 0 / 30) sau khi kho
-# có thêm một bài về đường đi từ Huế tới tỉnh đó — ngữ cảnh đầu nay có chữ về nơi ấy, model bớt từ chối và lấy một dòng lạc trong bài một quán ở Huế
-# (món mang tên nơi ấy) làm câu trả lời. Viết theo LOẠI tình huống, không nêu tên nơi hay món nào của bộ đo. Ba ngoại lệ ở đoạn hai là thứ phải
+# (5) Trả lời — ý hỏi về việc diễn ra ở tỉnh, thành khác (công tắc `assistant.noi_khac_tu_choi`; MỞ 13:11–13:29 23/11/2026 sau khi đo bật ↔ tắt).
+# Ca đo: câu đối chứng ngoài tỉnh của sàn "câu ngoài kho không được trả lời bằng kho" được trả lời có nguồn 3 / 10 rồi 12 / 20 lần (mốc 21/11 cùng
+# điều kiện: 1 / 40, không phải 0) — model lấy một dòng lạc trong bài một quán ở Huế (món mang tên nơi ấy) làm câu trả lời; đoạn này bật: 0 / 20.
+# VÌ SAO hở nặng lên — cách nhóm đang hiểu, CHƯA phải nguyên nhân đã chứng minh (mới đo trên một câu): chỉ tắt công cụ liệt kê bài (mở 22/11; tắt nó
+# cũng bớt một vòng công cụ) đưa mức hở về 1 / 20. Giả thuyết "do bài kho mới về đường đi tới tỉnh đó" ĐÃ BỊ BÁC: lọc hết đoạn của bài ấy khỏi
+# kết quả tìm vẫn hở 11 / 20. Viết theo LOẠI tình huống, không nêu tên nơi hay món nào của bộ đo. Ba ngoại lệ ở đoạn hai là thứ phải
 # vẫn được trả lời (đường đi là nội dung của kho; món mang tên nơi khác bán tại Huế là câu hỏi về Huế; nơi ở rìa Huế — cùng lý do với đoạn (4)).
 # Nối sau lời dặn trả lời (bản thường và bản nhiều ý) ⇒ "luật đã dặn" trong đoạn này là luật từ chối / luật theo ý đứng ngay phía trên nó.
 SONNET_NOI_KHAC = (
