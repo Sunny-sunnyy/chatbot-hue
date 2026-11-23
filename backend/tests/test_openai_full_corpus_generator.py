@@ -57,7 +57,11 @@ def test_answer_call_sends_exactly_the_messages_counted_for_context(monkeypatch)
     """Chuỗi gửi model (instructions + input) phải đúng là chuỗi FullCorpusContextBuilder đếm token (C-03).
     Không gọi mạng: key giả chỉ để dựng client, bước gọi agent được thay bằng hàm ghi lại."""
     monkeypatch.setenv("OPENAI_API_KEY", "khong-dung-key-that")
-    generator = OpenAIFullCorpusGenerator.from_environment(openai_settings())
+    settings = openai_settings()
+    # Đoạn dặn "câu về tỉnh khác" (từ tối 23/11/2026 gắn cả đường OpenAI) nối SAU lời dặn trả lời; phép đếm của đường viết không công cụ vẫn đếm
+    # lời dặn gốc (như đường Bedrock từ trưa 23/11 — con số ước, không phải trần) ⇒ ca này so chuỗi gốc với công tắc tắt.
+    settings["assistant"]["noi_khac_tu_choi"] = False
+    generator = OpenAIFullCorpusGenerator.from_environment(settings)
     sent = {}
 
     async def record(agent, user_prompt, expected_type, call_log=None):
