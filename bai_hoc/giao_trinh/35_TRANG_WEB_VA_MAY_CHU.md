@@ -1,6 +1,6 @@
 # Bài 35 — Trang web và máy chủ: ai gửi gì cho ai
 
-*Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · bài Khám phá căn đều từ 641 px (21:49 23/11, nửa để tra) · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC các bản gộp này · mốc trước: Nguồn · đã áp biên bản kiểm độc lập 01:15 24/11.*
+*Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · bài Khám phá căn đều từ 641 px (21:49 23/11, nửa để tra) · lượt cả bộ test gần nhất xong 01:00 24/11 trên đúng bản code này: 96 file, 4 bỏ vì cần khoá OpenAI, 92 chạy, 2.325 ca đạt, không file nào đỏ (bài 38) · mốc trước: Nguồn · đã áp biên bản kiểm độc lập 01:15 24/11 · 06:35 24/11: áp biên bản kiểm độc lập của đợt gom (cụm lượt cả bộ test).*
 
 **Bài trước đã biết:** giao diện chạy trong trình duyệt, máy chủ chạy ở máy dự án, chữ được gửi dần, cuộc trò chuyện nằm trong bộ nhớ của máy chủ (bài 6); model viết gửi chữ một lần (bài 33).
 **Bài này thêm:** giao diện gọi máy chủ qua những đường nào; trên đường gửi dần có những loại tin gì và giao diện làm gì với từng loại; máy chủ nhận ra "cùng một cuộc trò chuyện" bằng cách nào; hai lớp chặn để chữ model viết không làm trang tải thứ lạ; và lớp nhìn mới của trang được dựng, được kiểm thế nào.

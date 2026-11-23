@@ -1,6 +1,6 @@
 # Bài 28 — Chương trình xếp lịch theo luật nào: một lịch thật được xếp từng bước
 
-*Cập nhật 01:19, ngày 24/11/2026 · khớp hệ thống 00:21 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · bảng điểm bản 16 (từ 21:46 23/11) = bản 15 thêm tên gọi tắt của ba quán cà phê tối (sổ: lịch xếp ra không đổi); bộ xếp nhận các buổi người dùng để trống khi sửa lịch (từ 00:17 24/11, bài 31) · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC các bản gộp này · đã áp biên bản kiểm độc lập 01:19 24/11 · dòng cũ: Nguồn.*
+*Cập nhật 01:19, ngày 24/11/2026 · khớp hệ thống 00:21 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · bảng điểm bản 16 (từ 21:46 23/11) = bản 15 thêm tên gọi tắt của ba quán cà phê tối (sổ: lịch xếp ra không đổi); bộ xếp nhận các buổi người dùng để trống khi sửa lịch (từ 00:17 24/11, bài 31) · lượt cả bộ test gần nhất xong 01:00 24/11 trên đúng bản code này: 96 file, 4 bỏ vì cần khoá OpenAI, 92 chạy, 2.325 ca đạt, không file nào đỏ (bài 38) · đã áp biên bản kiểm độc lập 01:19 24/11 · dòng cũ: Nguồn · 06:35 24/11: áp biên bản kiểm độc lập của đợt gom (cụm lượt cả bộ test).*
 
 **Bài trước đã biết:** người dùng bấm tám ô; chương trình xếp lịch từ bảng 41 điểm và 6 mục chỉ dùng buổi tối; model chỉ viết câu mô tả (bài 27).
 **Bài này thêm:** chương trình chọn điểm và tính giờ theo những luật nào, luật nào thắng khi hai luật kéo ngược nhau, và vì sao các con số là 75, 150, 210, 240 phút. Bài đi từng bước trên chính lịch ví dụ: 3 ngày, 2 người lớn, cân bằng, thích di tích.

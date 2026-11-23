@@ -1,6 +1,6 @@
 # Bài 30 — Quanh một lịch: chỗ ở, quán ăn, ảnh, bản đồ, xuất file
 
-*Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · bỏ nút .txt (21:49 23/11) · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC các bản gộp này · lần sửa trước: Nguồn · đã áp biên bản kiểm độc lập 01:15 24/11.*
+*Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · bỏ nút .txt (21:49 23/11) · lượt cả bộ test gần nhất xong 01:00 24/11 trên đúng bản code này: 96 file, 4 bỏ vì cần khoá OpenAI, 92 chạy, 2.325 ca đạt, không file nào đỏ (bài 38) · lần sửa trước: Nguồn · đã áp biên bản kiểm độc lập 01:15 24/11 · 06:35 24/11: áp biên bản kiểm độc lập của đợt gom (cụm lượt cả bộ test).*
 
 **Bài trước đã biết:** chương trình xếp lịch, kiểm khung, model viết mỗi mục một mô tả (bài 27–29).
 **Bài này thêm:** những thứ đi kèm một lịch: khối "Nơi ở", quán cho bữa trưa và bữa tối, ảnh từng điểm, bản đồ có ghim, và bốn nút xuất (sao chép, thêm vào lịch điện thoại, in, PowerPoint; nút tải chữ .txt bỏ từ 21:49 23/11). Mọi thứ trong bài do chương trình chọn (quyết định 1).

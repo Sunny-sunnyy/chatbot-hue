@@ -1,6 +1,6 @@
 # Bài 39 — Đồ án được làm thế nào: một người quyết định và nhiều coding agent
 
-*Cập nhật 01:21, ngày 24/11/2026 · khớp hệ thống 00:21 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · thêm luật "nhắc lại cách hiểu trước khi xây" (22:05 23/11) và buổi tự test của chủ dự án · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC các bản gộp sau đó · đã áp biên bản kiểm độc lập 01:21 24/11 · dòng cũ: Nguồn.*
+*Cập nhật 01:21, ngày 24/11/2026 · khớp hệ thống 00:21 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · thêm luật "nhắc lại cách hiểu trước khi xây" (22:05 23/11) và buổi tự test của chủ dự án · lượt cả bộ test gần nhất xong 01:00 24/11 trên đúng bản code này: 96 file, 4 bỏ vì cần khoá OpenAI, 92 chạy, 2.325 ca đạt, không file nào đỏ (bài 38) · đã áp biên bản kiểm độc lập 01:21 24/11 · dòng cũ: Nguồn · 06:35 24/11: áp biên bản kiểm độc lập của đợt gom (cụm lượt cả bộ test).*
 
 **Bài trước đã biết:** hệ thống gồm những khối nào, đo bằng gì, và bộ test kiểm những gì (bài 38).
 **Bài này thêm:** ai làm ra hệ thống đó: ai quyết gì, việc ghi ở đâu, ai kiểm ai, và cách làm đã bị sửa ra sao sau từng sự cố.
