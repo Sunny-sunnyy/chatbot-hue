@@ -13,8 +13,8 @@ from retrieval.full_corpus_context import PackedSource
 DONG_NGUON = "- Khi nước lên to hoặc cảng vụ ra lệnh cấm, mọi chuyến đò đều tạm ngừng cho tới lúc an toàn. Khi đó, khách đổi vé ở quầy."
 CAU_NGUON = "Khi nước lên to hoặc cảng vụ ra lệnh cấm, mọi chuyến đò đều tạm ngừng cho tới lúc an toàn."
 NGUON = [("Thuyền trên sông", (f"- Khán giả mặc áo phao khi lên thuyền.\n{DONG_NGUON}",))]
-MONG = f"Lưu ý trong nguồn «Thuyền trên sông»: {CAU_NGUON}"
-MONG_CO_MUC = f"Lưu ý trong nguồn «Thuyền trên sông — An toàn»: {CAU_NGUON}"  # `set_notice` kèm tên mục cuối của đoạn
+MONG = f"Lưu ý trong nguồn “Thuyền trên sông”: {CAU_NGUON}"
+MONG_CO_MUC = f"Lưu ý trong nguồn “Thuyền trên sông — An toàn”: {CAU_NGUON}"  # `set_notice` kèm tên mục cuối của đoạn
 
 
 def test_appends_exactly_one_source_sentence_when_answer_omits_it():
@@ -56,7 +56,7 @@ def test_takes_first_cited_source_in_given_order_and_strips_list_markup():
     nguon = [("Bài A", ("- Giá vé 100.000 đồng.",)),
              ("Bài B", ("  4. **An toàn:** buổi diễn bị hoãn nếu thời tiết xấu.",)),
              ("Bài C", (DONG_NGUON,))]
-    assert dong_tam_ngung("Vé 100.000 đồng [1].", nguon) == "Lưu ý trong nguồn «Bài B»: An toàn: buổi diễn bị hoãn nếu thời tiết xấu."
+    assert dong_tam_ngung("Vé 100.000 đồng [1].", nguon) == "Lưu ý trong nguồn “Bài B”: An toàn: buổi diễn bị hoãn nếu thời tiết xấu."
 
 
 def test_source_label_adds_last_section_name_when_present():

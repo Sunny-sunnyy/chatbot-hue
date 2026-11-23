@@ -104,7 +104,7 @@ def dong_tam_ngung(answer: str, nguon_da_trich: Iterable[tuple[str, Iterable[str
         for doan in cac_doan:
             cau = cau_tam_ngung(doan)
             if cau:
-                return f"{TIEN_TO} «{nhan}»: {cau}"
+                return f"{TIEN_TO} “{nhan}”: {cau}"
     return None
 
 

@@ -95,7 +95,7 @@ def test_article_notes_of_the_places_the_tool_lists_are_kept_when_only_the_tool_
 
     co_bai = {"bai_theo_rel": {bai.rel: bai}, "bai_diem": {"b": bai.rel}}
     ra = notice("Gần Điểm A có Điểm B, khoảng 4,0 km đường đi [1].", **co_bai)
-    assert "tạm dừng bơi lội trong mùa mưa lũ" in ra and "«Điểm B»" in ra and kc.CAU_GHI_CHU in ra and ra.endswith(MAY_HAVE_CHANGED_NOTICE)
+    assert "tạm dừng bơi lội trong mùa mưa lũ" in ra and "“Điểm B”" in ra and kc.CAU_GHI_CHU in ra and ra.endswith(MAY_HAVE_CHANGED_NOTICE)
     assert notice("Gần Điểm A có Điểm B, khoảng 4,0 km đường đi [1].") == kc.CAU_GHI_CHU               # không có mục lục (cờ liệt kê tắt) ⇒ như cũ
     assert notice("Quanh Điểm A có vài điểm, xa nhất khoảng 4,0 km đường đi [1].", **co_bai) == kc.CAU_GHI_CHU  # không nêu tên nơi ⇒ không nối bài của nơi
 
