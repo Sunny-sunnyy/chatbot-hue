@@ -9,7 +9,7 @@ import json
 import re
 
 from llm import thoi_tiet as tt
-from llm.assistant import AnswerTrace, AssistantFlags, _giu_dau_bao_lu, answer_turn_stream, luoi_cuoi_bao
+from llm.assistant import CAU_LAM_THAY, INSUFFICIENT_ANSWER, AnswerTrace, AssistantFlags, _giu_dau_bao_lu, answer_turn_stream, luoi_cuoi_bao
 from test_b2_tool_loop import answer, deps, generator  # noqa: F401  (`deps` = fixture tìm kho thật)
 from test_het_luot_viet_lai import MOT_Y, kich_ban
 from test_khoang_cach import BAT, kc_call
@@ -58,6 +58,29 @@ def test_rewrite_that_fails_the_citation_check_is_not_sent(deps):
     # đối chứng: bản viết lại hợp lệ vẫn ra đúng một lần
     trace, events = chay(deps, MOT_Y, kich_ban(), giu)
     assert trace.citation_error is None and chu_da_gui(events) == trace.answer
+
+
+def man_hinh(events):
+    """Chữ người dùng thấy sau cùng, như route ghép: `delta` nối thêm, `thay_chu` thay hết chữ đã hiện."""
+    chu = ""
+    for k, d in events:
+        chu = d if k == "thay_chu" else chu + d if k == "delta" else chu
+    return chu
+
+
+def test_rewrite_that_ends_in_the_done_for_you_sentence_is_sent_once(deps):
+    """Soát khác hãng 22/11 (Gemini 4 Neon va chạm #1, Gemini 4 Carbon 4.2.3): câu NHỜ LÀM THAY, model tự tìm rồi nộp chữ giữ chỗ ⇒ lưới viết lại chạy,
+    bản viết lại là câu từ chối khuôn ⇒ code đổi thành câu nói thật (`lam_thay`, kết thúc cố định). Trước bản sửa: nhánh viết lại phát câu đó, rồi nhánh
+    "kết thúc cố định" ngay dưới phát thêm lần nữa ⇒ người dùng thấy câu nói thật lặp hai lần liền nhau."""
+    cau = "Đặt phòng khách sạn ở Huế giúp mình nhé"
+    for giu in (True, False):  # giữ chữ: câu nói thật là mảnh đầu tiên; không giữ: chữ giữ chỗ đã hiện rồi được thay
+        flags = dataclasses.replace(VIET_LAI, noi_that_lam_thay=True, giu_chu_toi_kiem=giu)
+        trace, events = chay(deps, cau, kich_ban(lan_viet_lai=INSUFFICIENT_ANSWER), flags)
+        assert trace.fixed_outcome == "lam_thay" and trace.answer == CAU_LAM_THAY[trace.lam_thay]
+        assert man_hinh(events) == trace.answer
+    # đối chứng: model nộp thẳng câu từ chối khuôn (không qua lưới viết lại) ⇒ vẫn đúng một lần, như trước
+    trace, events = chay(deps, cau, lambda n, kw: [answer(INSUFFICIENT_ANSWER)], flags)
+    assert trace.fixed_outcome == "lam_thay" and man_hinh(events) == trace.answer
 
 
 def test_storm_mark_of_the_cancelled_normal_path_survives_into_the_edit_turn():
