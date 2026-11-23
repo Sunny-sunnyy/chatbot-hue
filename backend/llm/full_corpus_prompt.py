@@ -385,6 +385,7 @@ SONNET_DINH_TUYEN = (
 # kết quả tìm vẫn hở 11 / 20. Viết theo LOẠI tình huống, không nêu tên nơi hay món nào của bộ đo. Ba ngoại lệ ở đoạn hai là thứ phải
 # vẫn được trả lời (đường đi là nội dung của kho; món mang tên nơi khác bán tại Huế là câu hỏi về Huế; nơi ở rìa Huế — cùng lý do với đoạn (4)).
 # Nối sau lời dặn trả lời (bản thường và bản nhiều ý) ⇒ "luật đã dặn" trong đoạn này là luật từ chối / luật theo ý đứng ngay phía trên nó.
+# Tên còn chữ SONNET vì đo lần đầu trên model đó; từ tối 23/11/2026 đoạn này gắn cho CẢ đường OpenAI (đo bù model cũ: hở 6 / 20 khi chưa có).
 SONNET_NOI_KHAC = (
     "Về nơi được hỏi: kho tri thức này chỉ viết về Huế — cả thành phố Huế hiện nay, tức toàn tỉnh Thừa Thiên Huế trước đây, kể cả các huyện, thị xã, "
     "vùng núi, đầm phá, bãi biển ở rìa. Có khi người dùng hỏi một việc diễn ra ở một tỉnh, thành khác: tới đó nên ăn gì, chơi gì, ở đâu, mua gì, "

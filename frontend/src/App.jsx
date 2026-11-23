@@ -85,11 +85,11 @@ export default function App() {
   // lượt đo trình duyệt 21/11: người chỉ nhìn trang không biết lệnh "thêm…" chưa được làm).
   const cuoiTurn = sauGoc.findLast(t => t.phase === "done" && t.lichV2 && (t.lichV2.thay_doi || []).length > 0);
   const baoMoi = cuoiTurn && cuoiTurn !== suaTurn ? cuoiTurn.lichV2.thay_doi : null;
-  // Soát khác hãng 22/11 (G4): lượt mới đó có thể mang câu an toàn bão / lũ + 112 (`noticeAnToan`) ⇒ cột — và bản in, bản chép, .txt, .ics lấy từ cột —
+  // Soát khác hãng 22/11 (G4): lượt mới đó có thể mang câu an toàn bão / lũ + 112 (`noticeAnToan`) ⇒ cột — và bản in, bản chép, .ics lấy từ cột —
   // phải có câu ấy như khung chat; trước đây chỉ các dòng báo được chép sang, câu an toàn thì mất.
   const voiBao = t => (baoMoi ? { ...t, noticeAnToan: cuoiTurn.noticeAnToan || t.noticeAnToan,
                                   lichV2: { ...t.lichV2, thay_doi: [...(t.lichV2.thay_doi || []).filter(d => d.duoc), ...baoMoi] } } : t);
-  // `question` + `summary` cũng của lượt biểu mẫu: dòng đầu của "Sao chép lịch" / "Tải về (.txt)" là tóm tắt biểu mẫu, không phải câu chat của lượt sửa
+  // `question` + `summary` cũng của lượt biểu mẫu: dòng đầu của "Sao chép lịch" là tóm tắt biểu mẫu, không phải câu chat của lượt sửa
   const lichTurn = suaTurn
     ? voiBao({ ...suaTurn, key: `${suaTurn.key}-cot`, truong: gocTurn.truong, question: gocTurn.question, summary: gocTurn.summary, daSua: true })
     : gocTurn && gocTurn.lichV2 ? voiBao(gocTurn) : gocTurn;

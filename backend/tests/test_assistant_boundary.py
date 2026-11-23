@@ -26,6 +26,10 @@ ALLOWED = {
 # lần gọi model vẫn qua `generator._run` (hạn giờ, lỗi, tiền) — import thêm `Runner` (gọi model thẳng) phải làm test đỏ.
 ALLOWED_NAMES = {
     "llm.nhan_anh": {"agents": {"Agent", "ModelSettings"}},
+    # Lớp mỏng quanh model OpenAI của SDK (đường `provider: openai`, 23/11/2026): kế thừa ĐÚNG lớp model đó để ghi loại lỗi + gọi lại một lần khi 5xx / rớt
+    # kết nối; không tự gọi mạng — lời gọi vẫn là của lớp cha, dựng trong `generator_openai_full_corpus`. Import thêm client của OpenAI hay `Runner` ở
+    # file đó phải làm test đỏ (lớp LỖI của `openai` thì module nào cũng được import).
+    "llm.openai_goi_lai": {"agents": {"OpenAIResponsesModel"}},
     # Lớp nối Bedrock chỉ mượn KIỂU DỮ LIỆU của Agents SDK / OpenAI để trả kết quả đúng khuôn; lời gọi mạng duy nhất của nó là httpx (ở `ALLOWED`).
     # Import thêm client của OpenAI hay `Runner` ở file đó phải làm test đỏ.
     "llm.bedrock_model": {

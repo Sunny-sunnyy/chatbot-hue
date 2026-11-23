@@ -94,3 +94,27 @@ def test_storm_mark_of_the_cancelled_normal_path_survives_into_the_edit_turn():
     _giu_dau_bao_lu(khong, AnswerTrace(thoi_tiet_ctx={"bao_lu": False, "bao_lu_model": False}))
     _giu_dau_bao_lu(khong, AnswerTrace())
     assert khong.thoi_tiet_ctx is None and luoi_cuoi_bao(cau, khong, flags) is False and khong.notice is None  # đối chứng: không có dấu ⇒ không gắn
+
+
+def test_edit_turn_carrying_only_the_storm_mark_still_gets_its_metrics_copied():
+    """Đo bù model cũ 23/11: lượt sửa lịch chỉ mang dấu `bao_lu_model` (không có `co_cong_cu` / `bao_lu`) làm bước chép số đo văng KeyError — ở đường
+    stream bước đó nằm trong `finally`, văng thì lượt không được ghi vào trí nhớ cuộc trò chuyện, không có dòng `chat_metrics`."""
+    import time
+
+    from api.routes.chat import STREAM_METRIC_FIELDS, _answer_events
+
+    sua = AnswerTrace(answer="Đã bỏ Đầm Chuồn.", cited=())
+    _giu_dau_bao_lu(sua, AnswerTrace(thoi_tiet_ctx={"bao_lu": True, "bao_lu_model": True, "co_cong_cu": True}))
+    assert sua.thoi_tiet_ctx == {"bao_lu_model": True}  # đúng dạng đã làm văng
+    metrics, da_nho = dict.fromkeys(STREAM_METRIC_FIELDS), []
+
+    async def loi():  # lõi của lượt sửa: chữ do code dựng, không model
+        yield "delta", sua.answer
+
+    async def run() -> None:
+        async for _ in _answer_events(loi(), sua, metrics, time.perf_counter(), remember=lambda: da_nho.append(True)):
+            pass
+
+    asyncio.run(run())
+    assert da_nho == [True]  # lượt ĐƯỢC ghi vào trí nhớ cuộc trò chuyện
+    assert metrics["outcome"] == "success" and metrics["thoi_tiet"] == {**metrics["thoi_tiet"], "bao_lu": True, "cong_cu": False, "goi": False}

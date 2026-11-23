@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 // Phase 10 — hỏi bằng ảnh, P1 v1 dạng GỢI Ý có xác nhận (User chọn 05/11 sau A2: âm theo tiêu chí gốc, User đổi thước vì có bước xác nhận).
 // Ảnh ⇒ `POST /api/anh/ung_vien` (thân = bytes ảnh, không multipart — spec A10) ⇒ 1–3 tên trong danh sách do code dựng ⇒ người dùng BẤM một tên
 // ⇒ code ghép câu (spec A3) ⇒ hỏi như câu gõ. Model trả lời không bao giờ nhìn ảnh (câu trả lời từ kho, theo TÊN). Tách file riêng (spec A8).
-// Từ 15/11 tối: bước "BẤM một tên" chỉ còn khi có 2–3 tên — xem khối ghi chú trước `useHoiBangAnh`.
+// Từ 15/11 tối: bước "BẤM một tên" chỉ còn khi có 2–3 tên. Từ 23/11/2026 (tối): KHÔNG còn bước bấm tên nào chặn câu hỏi — xem khối ghi chú trước
+// `useHoiBangAnh`.
 
 const KIEU = ["image/jpeg", "image/png", "image/webp"];
 const MAX_BYTES = 10 * 1024 * 1024;  // khớp `anh.max_bytes` server — báo sớm thay vì gửi rồi nhận 413
@@ -29,11 +30,20 @@ export function cauGhep(chu, ten) {
 // User 15/11 (tối, sau khi thử + xem số đếm: bước nhận ảnh trả 1 tên thì đúng 31 / 33, trả 2–3 tên thì tên đầu chỉ đúng ~65 %) — PHƯƠNG ÁN LAI:
 // đúng MỘT tên ⇒ không bắt bấm: TỰ hỏi ngay câu ghép (câu trả lời vẫn từ kho, có nguồn — model trả lời không nhìn ảnh) + thẻ gọn không chặn
 // "Mình đoán trong ảnh là … — có thể sai" + nút gõ tên; 2–3 tên ⇒ GIỮ thẻ chọn tên (bấm Hỏi lúc thẻ mở ⇒ dòng nhắc). Không tên / lỗi ⇒ lời báo.
+// Chủ dự án 23/11/2026 (tối, sau khi tự test — nguyên văn `data/loi_user/2026-11-23.md`): "tôi muốn bấm hỏi thì sẽ gửi cho hệ thống là cả ảnh và câu
+// [hỏi] luôn, chứ không phải là để người dùng chọn… người dùng có biết gì đâu mà chọn, biết thì cần gì gửi ảnh để hỏi đây là món gì ?" ⇒ THAY phương án
+// lai và thẻ xác nhận trước của tên dễ nhầm: 1–3 tên ⇒ TỰ hỏi ngay với tên ĐẦU (đếm trên 73 ảnh có nhãn: ảnh của nơi có trong danh sách mà model trả
+// 2–3 tên thì tên đầu đúng 24 / 25 lần trên model đang chạy, 6 / 7 trên model cũ); dòng đoán ở đầu câu trả lời nêu cả các tên còn lại; thẻ gọn KHÔNG
+// chặn dưới câu trả lời có nút "Hỏi lại với: <tên kia>" (hỏi lại đúng câu đã gõ) và "Không phải — tôi gõ tên". Cái giá đã báo chủ dự án: ảnh của nơi
+// KHÔNG có trong danh sách nhưng giống một tên trong danh sách nay được trả lời thẳng về tên đó (trả lời về sai nơi 3 ⇒ 14 / 73 ảnh của bộ đo).
+// Thẻ chọn tên chỉ còn ở MỘT ca: tên về lúc đang có lượt khác chạy (không tự hỏi chen ngang).
 // Hook trả: `nut` (dấu cộng) + `kem` (ảnh nhỏ có nút ×) đặt trong ô nhập, `the` (thẻ chờ / xác nhận / lời báo) đặt trên ô nhập, `onPaste`
 // gắn vào ô gõ, `gui()` gọi khi bấm Hỏi — trả true nếu lượt này do ảnh xử lý (ô nhập không gửi câu trần). Cờ tắt ⇒ tất cả rỗng.
 export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
   // null · {phase: "kem", file, preview} (đã đính kèm, chưa gửi gì) · {phase: "dang" | "loi", preview, text}
-  // · {phase: "xong", preview, ungVien (2–3 tên chờ chọn), anh, nhac} · {phase: "doan", chon (tên duy nhất đã tự hỏi)}; `anh` = URL ảnh cho bong bóng
+  // · {phase: "xong", preview, ungVien (tên về lúc đang bận ⇒ chờ bấm), anh, nhac}
+  // · {phase: "doan", chon (tên đang được trả lời), khac (các tên còn lại ⇒ nút "Hỏi lại với"), chu (câu đã gõ lúc hỏi), anh, tuChon (true = hệ thống
+  //   tự lấy tên đầu; false = người dùng vừa bấm "Hỏi lại với")}; `anh` = URL ảnh cho bong bóng
   const [state, setState] = useState(null);
   const inputRef = useRef(null);
   const rootRef = useRef(null);
@@ -68,10 +78,20 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
   // Người dùng bấm "Không phải các tên này" ở thẻ chọn tên ⇒ với họ ảnh này CHƯA được nhận ra: mở đúng khung "chưa nhận ra" (không đóng trắng) để câu
   // gõ kế mang đuôi "(Trong ảnh: … chưa nhận ra …)". Đóng trắng thì câu đi như câu thường và trợ lý có thể trả lời theo nơi của ảnh / câu TRƯỚC —
   // cùng lỗi đã chữa 23/11/2026 ở khung "chưa nhận ra"; thẻ xác nhận của tên dễ nhầm (cầu khác được gợi ý là "Cầu Trường Tiền") đi đúng đường này.
+  // Từ 23/11/2026 (tối) nút "Không phải — tôi gõ tên" của thẻ đoán (dưới câu trả lời) cũng đi đường này: câu trả lời vừa rồi nói về SAI nơi, nên câu gõ
+  // kế càng phải mang đuôi "chưa nhận ra" để trợ lý không bám vào nơi đó.
   function khongPhai() {
     luot.current += 1;
     setState({ preview: state.preview, phase: "loi", text: KHONG_NHAN_RA });
     onGoTen();
+  }
+
+  // "Hỏi lại với: <tên kia>" — hỏi lại ĐÚNG câu đã gõ lúc gửi ảnh, với tên người dùng vừa bấm. Tên đó VẪN là tên hệ thống đoán từ ảnh (ứng viên thứ hai /
+  // ba) — người dùng bấm vì thấy câu đầu sai chứ không phải vì biết — nên câu trả lời của lượt này cũng mang dòng "Mình đoán trong ảnh là … — có thể
+  // sai" (người đọc code nêu 23/11/2026: không có thì thứ ở lại trong cuộc trò chuyện là một câu nói chắc đứng cạnh ảnh). Tên vừa bị thay quay về hàng nút.
+  function hoiLai(ten) {
+    setState({ ...state, chon: ten, khac: [state.chon, ...state.khac.filter(t => t !== ten)], tuChon: false });
+    hoiVoiTen(ten, state.chu, state.anh, []);  // `[]` = có dòng đoán, không nêu thêm tên nào
   }
 
   function chonAnh(event) {
@@ -128,22 +148,25 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     } catch { /* lỗi mạng ⇒ như chưa nhận ra */ }
     if (toi !== luot.current) return;  // trong lúc chờ người dùng đã bỏ ảnh / mở cuộc mới ⇒ không làm gì với kết quả cũ
     if (!ungVien.length) return setState({ preview, phase: "loi", text: KHONG_NHAN_RA });
-    // URL riêng cho bong bóng câu hỏi (sống theo cuộc trò chuyện); `preview` của ô nhập được thu hồi khi state đổi
+    // URL riêng cho bong bóng câu hỏi — KHÔNG thu hồi ở đâu cả (sống tới khi tải lại trang; rò nhỏ có sẵn), nên lượt "Hỏi lại với" dùng lại được;
+    // `preview` của ô nhập thì được thu hồi khi state đổi
     const anh = URL.createObjectURL(file);
-    // 2–3 tên ⇒ người dùng chọn (chữ đang gõ giữ trong ô). Một tên mà lúc này đang có lượt khác chạy (bấm câu gợi ý / "Hỏi lại" trong lúc chờ)
-    // ⇒ KHÔNG tự hỏi chen ngang: hiện thẻ chọn với một tên, người dùng bấm khi lượt kia xong. Một tên mang `xac_nhan_truoc` (nơi hay bị nhận
-    // thay cho một nơi giống nó mà danh sách không có — cầu thép khác ra "Cầu Trường Tiền", đo 23/11/2026) ⇒ cũng hiện thẻ: người dùng bấm tên
-    // mới hỏi, hoặc bấm "Không phải các tên này"; lượt đó không cần dòng "Mình đoán…" vì tên là do người dùng xác nhận.
-    if (ungVien.length > 1 || moi.current.disabled || ungVien[0].xac_nhan_truoc) return setState({ preview, phase: "xong", ungVien, anh });
-    setState({ phase: "doan", chon: ungVien[0].ten });
-    hoiVoiTen(ungVien[0].ten, moi.current.draft, anh, true);  // chữ trong ô LÚC TÊN VỀ (gõ thêm trong lúc chờ không bị mất)
+    // Lúc tên về mà đang có lượt khác chạy (bấm câu gợi ý / "Hỏi lại" trong lúc chờ) ⇒ KHÔNG tự hỏi chen ngang: hiện thẻ tên, người dùng bấm khi lượt
+    // kia xong (chữ đang gõ giữ trong ô). Đây là ca DUY NHẤT còn thẻ chờ bấm.
+    if (moi.current.disabled) return setState({ preview, phase: "xong", ungVien, anh });
+    // Mọi ca còn lại — 1, 2 hay 3 tên, kể cả tên mang `xac_nhan_truoc` (cờ còn trong danh sách, giao diện không dùng nữa): TỰ hỏi ngay với tên ĐẦU.
+    const chu = moi.current.draft;  // chữ trong ô LÚC TÊN VỀ (gõ thêm trong lúc chờ không bị mất)
+    const khac = ungVien.slice(1).map(u => u.ten);
+    setState({ phase: "doan", chon: ungVien[0].ten, khac, chu, anh, tuChon: true });
+    hoiVoiTen(ungVien[0].ten, chu, anh, khac);
   }
 
-  // `doan` = tên do hệ thống TỰ chọn (một tên) ⇒ lượt đó có dòng "Mình đoán trong ảnh là … — có thể sai" ngay đầu câu trả lời (giao diện chèn,
-  // không vào chuỗi gửi model); tên người dùng tự bấm chọn (2–3 tên) thì không cần dòng này
-  function hoiVoiTen(ten, chu, anh, doan = false) {
+  // `khac` khác null = tên do hệ thống ĐOÁN từ ảnh mà người dùng chưa xác nhận (tên đầu tự lấy; tên bấm ở nút "Hỏi lại với") ⇒ lượt đó có dòng "Mình
+  // đoán trong ảnh là … — có thể sai" ngay đầu câu trả lời, nêu cả các tên trong `khac` (giao diện chèn, không vào chuỗi gửi model); chỉ tên người
+  // dùng bấm ở thẻ chờ lúc bận (họ nhìn danh sách rồi chọn TRƯỚC khi có câu trả lời nào) là không có dòng này
+  function hoiVoiTen(ten, chu, anh, khac = null) {
     // bong bóng câu hỏi hiện ảnh + đúng chữ người dùng gõ (không đuôi "(Trong ảnh: …)"); ô rỗng ⇒ hiện câu mặc định
-    moi.current.onAsk(cauGhep(chu, ten), { chu: chu.trim() || cauGhep(chu, ten), anh, doan: doan ? ten : null });
+    moi.current.onAsk(cauGhep(chu, ten), { chu: chu.trim() || cauGhep(chu, ten), anh, doan: khac ? ten : null, doanKhac: khac ?? [] });
   }
 
   const nut = (
@@ -176,13 +199,16 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
         {state.phase === "loi" && <p>{state.text}</p>}
         {state.phase === "doan" && (
           <div className="hoi-anh-doan">
-            <span>Mình đoán trong ảnh là <b>{state.chon}</b> — có thể sai.</span>
-            <button type="button" className="retry" onClick={() => dong(true)}>Không đúng — tôi gõ tên</button>
+            <span>{state.tuChon ? <>Mình đoán trong ảnh là <b>{state.chon}</b> — có thể sai.</> : <>Đang trả lời theo tên bạn chọn: <b>{state.chon}</b>.</>}</span>
+            {state.khac.map(ten => (
+              <button key={ten} type="button" className="retry" disabled={disabled} onClick={() => hoiLai(ten)}>Hỏi lại với: {ten}</button>
+            ))}
+            <button type="button" className="retry" onClick={khongPhai}>Không phải — tôi gõ tên</button>
           </div>
         )}
         {state.phase === "xong" && (
           <>
-            {/* MỘT tên (tên cần xác nhận trước, hoặc đang có lượt khác chạy) ⇒ hỏi thẳng có / không; 2–3 tên ⇒ mời chọn (lượt trình duyệt 23/11/2026:
+            {/* Chỉ còn khi tên về lúc đang có lượt khác chạy. MỘT tên ⇒ hỏi thẳng có / không; 2–3 tên ⇒ mời chọn (lượt trình duyệt 23/11/2026:
                 chữ "chọn đúng tên" + "các tên này" đọc cụt và sai số khi thẻ chỉ có một nút) */}
             <p className="mb-2 font-semibold text-accent-deep">{state.ungVien.length === 1
               ? "Trong ảnh có phải là tên dưới đây không? (mình có thể đoán sai)" : "Trong ảnh là (có thể sai) — chọn đúng tên:"}</p>

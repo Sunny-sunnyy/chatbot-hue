@@ -207,7 +207,7 @@ CAU_TOI = {"xa": "Tối nghỉ sau chuyến đi xa.", "tre_em": "Để trống �
            "da_bo": "Tối tự do — bạn đã bỏ hoạt động buổi tối của ngày này.",  # công tắc `bo_toi_de_trong`
            "het_nhe": "Tối nghỉ — các hoạt động tối nhẹ gần trung tâm đã có ở những tối khác."}  # công tắc `toi_nhe`: đoàn hạn chế không lặp hoạt động
 # Công tắc `toi_nhe`: dòng lý do do code viết, nối vào ghi chú của mục buổi tối khi đoàn có trẻ nhỏ / người lớn tuổi (nói thật vì sao là hoạt động này)
-GHI_CHU_TOI_NHE = "hoạt động nhẹ gần trung tâm, nên về sớm — đoàn mệt thì bỏ qua"
+GHI_CHU_TOI_NHE = "hoạt động nhẹ, nên về sớm — đoàn mệt thì bỏ qua"  # không ghi "gần trung tâm" ở từng thẻ: dòng riêng của AEON Mall đã ghi "cách trung tâm khoảng 5 phút đi xe"
 
 
 def ra_phut(hhmm: str) -> int:
@@ -823,6 +823,14 @@ def co_suat_dien(diem: dict) -> bool:
     return "le_hoi_nghe_thuat" in diem["loai"]
 
 
+def bai_cua_diem(bang: BangV2, id_: str) -> str | None:
+    """Đường dẫn bài kho để TÊN ĐIỂM trên thẻ lịch bấm mở — chỉ khi bài đó là bài của chính điểm. Hai dòng bảng dùng chung một bài (bảng 16: Trung tâm
+    Nghệ thuật Lê Bá Đảng lấy tư liệu từ bài Phố đi bộ Nguyễn Đình Chiểu) ⇒ chỉ dòng ĐỨNG TRƯỚC trong bảng giữ link; dòng sau để chữ thường — bấm tên
+    trung tâm mà mở ra bài phố đi bộ thì người đọc tưởng bấm nhầm (B đọc code 23/11/2026)."""
+    nguon = bang.theo_id[id_]["nguon"]
+    return nguon if next(d["id"] for d in bang.diem if d["nguon"] == nguon) == id_ else None
+
+
 def ten_cua(diem: dict) -> list[str]:
     return [diem["ten"], *diem["ten_khac"]]
 
@@ -856,7 +864,10 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                             "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else [])
                                     + (["kiem_lich_dien"] if toi and ngay_that is None and co_suat_dien(d) else []),  # chưa có ngày ⇒ không khẳng định diễn hôm đó
                             "map_url": MAP_BASE + quote(f"{d['ten']}, Huế"),
-                            "loai_diem": list(d["loai"])})  # giao diện: màu + nhãn theo loại điểm (không vào tin nhắn gửi model)
+                            "loai_diem": list(d["loai"]),  # giao diện: màu + nhãn theo loại điểm (không vào tin nhắn gửi model)
+                            # giao diện: tên điểm bấm mở bài kho của chính điểm đó (chủ dự án 21:10 23/11/2026: "nên để cho người dùng click vào được các
+                            # bài như đại nội huế, đầm chuồn, phố đi bộ"); `nguon` của dòng bảng = đường dẫn bài kho; không vào tin nhắn gửi model
+                            "bai_id": bai_cua_diem(bang, id_)})
         if ng["ngay"] in khung.get("toi_nghi", {}):  # tối nghỉ: dòng do code (không qua model, không nguồn)
             muc.append({"id_muc": f"n{ng['ngay']}-toi-1", "buoi": "toi", "loai": "nghi", "id_diem": None,
                         "ten": CAU_TOI[khung["toi_nghi"][ng["ngay"]]], "gio": None, "nguon": None, "anh": None, "toa_do": None, "nhan": []})

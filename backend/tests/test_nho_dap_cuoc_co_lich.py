@@ -125,3 +125,37 @@ def test_an_edit_turn_is_never_rerun(deps):
     trace, events, r = _chay(deps, MO, sua=[{"loai": "thay_diem", "ten": "Đầm Chuồn"}], cau="Thay Đầm Chuồn bằng chỗ khác")
     assert trace.fixed_outcome == "sua_the" and [loai(c) for c in r.calls].count("sua") == 1
     assert all(t["name"] != TEN_CHAY_LAI for t in trace.tools) and not [e for e in events if e[0] == "thay_chu"]
+
+
+def test_an_edit_turn_leaves_its_code_written_result_lines_for_the_next_turn():
+    """Đo 23/11/2026: "bỏ giúp mình điểm đầu tiên của ngày 2" rồi hỏi "Vậy ngày 2 giờ còn những điểm nào?" — lượt kế thấy câu LỆNH (ô đáp rỗng) cạnh lịch ĐÃ sửa
+    nên áp lệnh thêm một lần trong đầu và cãi thẻ lịch (2 / 3 lần trên model đang chạy, 1 / 1 trên model cũ). Ô lịch sử của lượt sửa nay mang các dòng do CODE
+    viết ở đầu thẻ ("Đã bỏ X."); chữ thẻ lịch — có tên quán lấy từ bản đồ mở — vẫn không vào lịch sử. Lệnh hiểu ý + bộ áp chạy thật, chỉ model là đồ giả."""
+    from api.conversations import GHI_CHU_SUA_DAU
+    from api.routes.chat import _remember
+    from llm import sua_lich_v2 as s
+    from llm.ten_goi_y import lich_su_cho_luot
+    from test_sua_lich_kem_hoi import _bo, _chay, _co
+    from test_sua_lich_v2 import B
+
+    cau = "Mai có bão vào Huế, bỏ giúp mình điểm đầu tiên của ngày 1"
+    k, kq, tr, _ = _chay(lambda k: [_bo(k)], _co(), cau)
+    ten = B.theo_id[sorted(s._vi_tri(k))[0]]["ten"]
+    assert kq is not None and tr.sua_dong == tuple(d["cau"] for d in s.thay_doi(B, kq)) and tr.sua_dong[0].startswith(f"Đã bỏ {ten}")
+    tr.answer, tr.lich_v2 = "Ngày 1 — buổi sáng … Ăn trưa gần đó: Quán Bịa Từ Bản Đồ Mở.", {"lich": {}}  # chữ thẻ lịch của lượt sửa
+    kho = ConversationStore(len, chi_dap_lien_truoc=True)
+    cid = kho.ensure(None)
+    request = SimpleNamespace(app=SimpleNamespace(state=SimpleNamespace(conversations=kho, assistant_flags=MO)))
+    _remember(request, cid, cau, tr, "success")
+    (hoi, dap), = kho.history(cid)
+    assert hoi == cau and dap == f"{GHI_CHU_SUA_DAU}{' '.join(tr.sua_dong)}]"
+    assert "Quán Bịa" not in dap and NHAN_LOI_TRUOC not in dap and kho.history_khong_dap(cid) is None  # không chữ thẻ, không phải "đáp được nhớ"
+    # lượt kế nhận đúng ô đó — kể cả câu xin liệt kê lại (luật bỏ dòng ghi chú TÊN NƠI không đụng dòng này); có lượt mới thì ô vẫn ở lại
+    assert lich_su_cho_luot(kho.history(cid), "Vậy ngày 1 giờ còn những điểm nào?") == ((cau, dap),)
+    assert lich_su_cho_luot(kho.history(cid), "Liệt kê các điểm đó") == ((cau, dap),)
+    kho.append(cid, "Vậy ngày 1 giờ còn những điểm nào?", "Còn hai điểm [1].", ghi_chu="")
+    assert kho.history(cid)[0] == (cau, dap)
+    # đối chứng: lượt hỏi thường không có dòng sửa ⇒ ô lịch sử y như trước (đáp được nhớ, không dòng ghi chú sửa)
+    thuong = AnswerTrace(sua=dict(THUONG_CO_LICH), cited=(), tools=[{"name": "tim_kho"}], answer="Vé 200.000 đồng [1].")
+    _remember(request, cid, "Vé Đại Nội bao nhiêu?", thuong, "success")
+    assert kho.history(cid)[-1] == ("Vé Đại Nội bao nhiêu?", f"{NHAN_LOI_TRUOC}\nVé 200.000 đồng.") and thuong.sua_dong == ()

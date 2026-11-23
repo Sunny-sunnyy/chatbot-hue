@@ -14,7 +14,7 @@ const NHANH = [
   { href: "#/kham-pha/foods", ten: "Ăn gì ở Huế", mo: "Món sáng, món chiều, quán trong kho", mau: "cam",
     d: "M3 11h18M5 11a7 7 0 0 0 14 0M12 4v3M9 5l1 2M15 5l-1 2" },
   { href: "#/kham-pha/heritages", ten: "Đi đâu hôm nay", mo: "Kinh thành, lăng tẩm, chùa", mau: "ngoc", d: "M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" },
-  { href: "#/kham-pha/festivals", ten: "Lễ hội và ngày âm", mo: "Hỏi lễ nào, ngày nào", mau: "sen",
+  { href: "#/kham-pha/festivals", ten: "Lễ hội", mo: "Hỏi lễ nào, ngày nào", mau: "sen",
     d: "M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" },
   { href: "#/len-ke-hoach", ten: "Lên kế hoạch", mo: "Lịch theo buổi, có giờ gợi ý", mau: "lam", co: "lich_trinh_bieu_mau",
     d: "M9 20l-6-3V4l6 3 6-3 6 3v13l-6-3-6 3zM9 7v13M15 4v13" },

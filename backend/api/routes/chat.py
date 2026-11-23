@@ -35,7 +35,7 @@ from llm import ngay_lich as nl
 from llm import thoi_tiet as tt
 from llm.ten_goi_y import ghi_chu_goi_y, lich_su_cho_luot
 from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_moi, ghep_cau, ghep_cau_v2, loi_v2
-from api.conversations import TTL_SECONDS, dap_duoc_nho
+from api.conversations import TTL_SECONDS, dap_duoc_nho, ghi_chu_sua_lich
 from api.cache_tra_loi import BanLuu, luot_luu_duoc
 from llm.assistant import (AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, co_y_thieu, loi_bao_luoi_cuoi, luoi_cuoi_bao, elapsed_ms,
                            lich_cho_giao_dien, so_y_thieu, turn_usd)
@@ -224,6 +224,7 @@ def _remember(request: Request, conversation_id: str | None, query: str, trace: 
     # B4 D5: lượt hỏi lại không có chữ trả lời nhưng vẫn lưu câu hỏi ⇒ người dùng gõ giá trị bằng chữ ở lượt sau vẫn có câu gốc
     if conversation_id is not None and outcome in REMEMBERED_OUTCOMES and (trace.answer or outcome == "hoi_lai"):
         ghi_chu = ghi_chu_goi_y(trace) if _flags(request.app.state).nho_ten_goi_y and outcome == "success" else ""
+        ghi_chu = ghi_chu or ghi_chu_sua_lich(trace)  # lượt sửa lịch (không bao giờ có dòng tên nơi): các dòng kết quả do code viết, để lượt kế không áp lại lệnh
         store = request.app.state.conversations
         dap = (trace.answer if not getattr(store, "chi_dap_lien_truoc", False)
                or dap_duoc_nho(trace, outcome, mo_cho_cuoc_co_lich=_flags(request.app.state).nho_dap_cuoc_co_lich) else "")
@@ -507,7 +508,11 @@ def _thoi_tiet_metrics(trace: AnswerTrace) -> dict | None:
     if trace.thoi_tiet_ctx is None:
         return None
     goi = trace.thoi_tiet or (trace.lich or {}).get("thoi_tiet")
-    return {"cong_cu": trace.thoi_tiet_ctx["co_cong_cu"], "bao_lu": trace.thoi_tiet_ctx["bao_lu"], "goi": goi is not None,
+    # Lượt SỬA lịch chỉ mang dấu `bao_lu_model` chép từ đường thường đã huỷ (`_giu_dau_bao_lu`) — không có `co_cong_cu` / `bao_lu`: đọc cứng ở đây từng
+    # văng KeyError trong `finally` của đường stream ⇒ lượt không được ghi nhớ, không có dòng `chat_metrics` (đo bù model cũ 23/11).
+    # Bộ dấu đủ khoá (mọi lượt khác) ⇒ số đo y như trước.
+    ctx = trace.thoi_tiet_ctx
+    return {"cong_cu": ctx.get("co_cong_cu", False), "bao_lu": ctx.get("bao_lu", bool(ctx.get("bao_lu_model"))), "goi": goi is not None,
             "trang_thai": None if goi is None else goi["trang_thai"], "loi": None if goi is None else goi["loi"],
             "ms": None if goi is None else goi["ms"], "tu_cache": None if goi is None else goi["tu_cache"],
             "n_ngay": (trace.thoi_tiet or {}).get("n_ngay"), "so_ngoai_tap": None if trace.thoi_tiet_kiem is None else len(trace.thoi_tiet_kiem)}

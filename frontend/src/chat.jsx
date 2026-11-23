@@ -102,7 +102,7 @@ export function useChat() {
   }
 
   // `truong` (B4 / biểu mẫu) + `summary` (tóm tắt lựa chọn hiện cạnh câu hỏi) + `bieuMau` (cổng D3). Trả false khi đang bận (không gửi).
-  // `hienThi` = {chu, anh, doan}: lượt hỏi bằng ảnh (`doan` = tên hệ thống tự chọn ⇒ dòng "Mình đoán…" đầu câu trả lời) — bong bóng câu hỏi hiện ảnh + chữ người dùng gõ; câu gửi đi (`value`) vẫn là câu ghép có tên
+  // `hienThi` = {chu, anh, doan, doanKhac}: lượt hỏi bằng ảnh (`doan` = tên hệ thống tự lấy ⇒ dòng "Mình đoán…" đầu câu trả lời, `doanKhac` = các tên còn lại nêu kèm) — bong bóng câu hỏi hiện ảnh + chữ người dùng gõ; câu gửi đi (`value`) vẫn là câu ghép có tên
   async function ask(value, { retryKey = null, truong = null, summary = "", bieuMau = false, suaChon = null, hienThi = null } = {}) {
     const query = value.trim();
     if (!query || pending || resetting) return false;
@@ -439,7 +439,10 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
       {turn.text && !turn.lichV2 && !turn.suaThe && turn.phase !== "error" && (  /* thẻ chọn đã hỏi đúng câu đó — không vẽ lần hai */
         <div className={`bubble${turn.outcome === "out_of_scope" || turn.tuChoiKho ? " bubble-tu-choi" : ""}`}>
           {pending && <p className="mb-2 text-sm text-muted" aria-live="polite">{STATUS_TEXT[turn.phase]}</p>}
-          {turn.hienThi?.doan && <p className="anh-doan">Mình đoán trong ảnh là <b>{turn.hienThi.doan}</b> — có thể sai.</p>}
+          {turn.hienThi?.doan && (  /* tên hệ thống tự lấy (tên đầu); 2–3 tên ⇒ nêu cả các tên còn lại — nút hỏi lại nằm ở thẻ dưới câu trả lời */
+            <p className="anh-doan">Mình đoán trong ảnh là <b>{turn.hienThi.doan}</b> — có thể sai{turn.hienThi.doanKhac?.length > 0 && (
+              <>; cũng có thể là {turn.hienThi.doanKhac.map((ten, i) => <span key={ten}>{i > 0 && ", "}<b>{ten}</b></span>)}</>)}.</p>
+          )}
           <div className="answer" ref={answerRef} dangerouslySetInnerHTML={{ __html: html }} />
           <AnhTraLoi turn={turn} />
           <TheKhachSan turn={turn} />

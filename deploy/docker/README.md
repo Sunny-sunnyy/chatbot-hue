@@ -39,11 +39,12 @@ Ba hộp trên MỘT máy: `qdrant` (chỉ mục) · `app` (FastAPI + giao diệ
 cd /home/minhhieu/hue_rag && uv run --project backend --no-sync python deploy/docker/dung_ngu_canh.py --ref origin/main --du-lieu data --chi-kiem
 ```
 
-In từng file `data/…` cấu hình trỏ tới kèm `có` / `THIẾU`, thoát 1 khi thiếu (lệnh dựng thật cũng dừng ở đúng chỗ này). Lúc 17:23 23/11/2026, main `d1b0f52e`:
-9 file, thiếu 0 — gồm năm bảng đổi trong ngày 23/11 (`diem_v14.json`, `diem_toa_do_v10.json`, `bang_anh_v8.json`, `bang_quan_lich_v4.json`,
-`danh_sach_ten_55.json`); cùng hai file của thư mục bản ghi dựng là 11 file riêng tư như bảng mục 3. Ảnh mới của lịch (ba ảnh quán ở
-`frontend/public/anh/lich/`) nằm trong git nên đi theo code. Ảnh Docker dựng sáng 23/11 (`e7193bd`) mang các bảng CŨ ⇒ trước khi deploy phải dựng lại
-từ commit sẽ chạy.
+In từng file `data/…` cấu hình trỏ tới kèm `có` / `THIẾU`, thoát 1 khi thiếu (lệnh dựng thật cũng dừng ở đúng chỗ này). Lúc 19:47 23/11/2026, main `5a11e3f0`:
+9 file, thiếu 0 — gồm năm bảng đổi trong ngày 23/11 (`diem_v15.json`, `diem_toa_do_v11.json`, `bang_anh_v9.json`, `bang_quan_lich_v5.json`,
+`danh_sach_ten_55.json`); cùng hai file của thư mục bản ghi dựng là 11 file riêng tư như bảng mục 3. Tên bảng ghi ở đây chỉ là ảnh chụp của lúc đó —
+danh sách thật luôn là thứ lệnh trên in ra. Ảnh mới của lịch (`frontend/public/anh/lich/`) nằm trong git nên đi theo code. Hai ảnh Docker còn trên máy
+dựng (`0367e77`, `e38b55c`, trưa 23/11) mang các bảng CŨ và kho 267 bài ⇒ trước khi deploy phải dựng lại từ commit sẽ chạy (kho nay 269 bài, 9.533 điểm
+chỉ mục).
 
 ```bash
 deploy/docker/dung_anh.sh origin/main     # phải ghi rõ commit / nhánh lấy code + kho
@@ -185,6 +186,19 @@ nào tới OpenAI (tài khoản đang gác): hai ca dưới chỉ trả lời c�
 `docker compose config` cho cả hai tổ hợp file · `lam_moi_khoa.py` với máy chủ ĐỨNG THAY dịch vụ thông tin máy (đúng khuôn tài liệu AWS): file quyền 600 đủ
 ba khoá, hàm ký thật của app nhận, 0 giá trị khoá lọt log; máy chủ tắt / `Code` khác `Success` / thiếu trường ⇒ không đụng file. Phiên B đọc gói và tự chạy lại
 ba phép 0 đồng (cùng số).
+
+**Lượt thử thứ tư — 20:11–20:15 23/11/2026, ảnh `hue-rag-app:d8d5c3a` (= main lúc đó; lượt đầu trên kho 269 bài + bảng điểm bản 15), đường deploy,
+khoá GIẢ (không lời gọi model nào). Mục đích: chạy TRỌN chuỗi lệnh của `deploy/guides/4_bat_lan_dau.md` rồi `6_ngay_demo.md` mục 6.3, 6.4.**
+
+| Bước | Kết quả | |
+|---|---|---|
+| `dung_anh.sh origin/main` | 9 giây (có bộ đệm); 269 bài kho, 0 file cấm, ảnh 3,62 GB | chạy thật |
+| `dong_goi.sh` × 2 (hai mã bản, cùng nội dung ảnh) rồi XOÁ ảnh khỏi Docker | hai gói, mỗi gói `sha256sum -c` 7 / 7 OK; `docker load` từ file nén: 7 giây | chạy thật |
+| Guide 4 bước 2–9 trong một thư mục trống | chỉ mục 9.533 = 9.533 điểm; ba hộp khoẻ; `/health` `ok`; câu hỏi ⇒ câu báo cố định của khoá hỏng | chạy thật |
+| Guide 6 mục 6.3 (cập nhật) rồi 6.4 (lùi) | hộp app chạy đúng ảnh của bản vừa đổi ở cả hai chiều; trang ngừng phục vụ 36 giây / 29 giây; dòng sửa tay trong `cau_hinh/settings.yaml` bị gói mới ghi đè, còn ở `truoc/`, trở lại sau khi lùi; khởi động lại riêng hộp app: 15 giây | chạy thật |
+| Dọn | 0 hộp, 0 volume của lượt thử; Qdrant của dự án 9.533 điểm không đổi; ảnh `d8d5c3a` giữ lại | chạy thật |
+
+Đầu ra đủ (riêng tư): `data/x14_deploy_2026-11-23/c_thu_chuoi_6_3/chay_ra.txt`.
 
 CHƯA kiểm:
 - Mọi thứ trên AWS: hộp `khoa` ở mạng của máy hỏi được dịch vụ thông tin máy với bước nhảy 1, khoá của vai gọi được model, HTTPS thật qua Caddy,

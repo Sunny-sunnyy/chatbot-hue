@@ -506,6 +506,7 @@ class AnswerTrace:
     goi_y_sua: tuple = ()
     goi_y_moi: tuple = ()
     sua: dict | None = None
+    sua_dong: tuple = ()  # lượt sửa lịch: các dòng do CODE viết ở đầu thẻ (`sua_lich_v2.thay_doi`) — route ghi vào ô lịch sử của lượt (`ghi_chu_sua_lich`); KHÔNG log
     # #6 (plan D2): phần `tro_ly_hue` chạy trước định tuyến rồi bị bỏ vì tuyến khác — số lần, USD (lần gọi xong = usage thật; lần bị huỷ
     # giữa chừng không có usage ⇒ cộng token vào bộ dựng đếm × giá vào = cận dưới), cờ bị huỷ giữa chừng. Chỉ số đếm, không chữ.
     n_tra_loi_bo: int = 0

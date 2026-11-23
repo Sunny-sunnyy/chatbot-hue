@@ -143,6 +143,23 @@ def gan_o_an(lich: dict, bang, khung: dict, flags: AssistantFlags) -> None:
         lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do, flags.quan_trua_kho_truoc)
 
 
+def dong_quan_doi(bang, cu: dict, moi: dict, flags: AssistantFlags) -> list[dict]:
+    """Lượt sửa: MỘT dòng nói thật khi quán gợi ý của ngày người dùng KHÔNG sửa (các buổi của ngày y nguyên trước ↔ sau) cũng đổi. Vì sao đổi: quán
+    chống trùng trên cả lịch theo thứ tự ngày (`quan_lich.an_uong`), đổi điểm neo một bữa là các bữa sau chọn lại — đếm 23/11/2026: 1.548 / 3.841 lệnh
+    thay một hoạt động tối làm đổi bữa của ngày khác, ba lượt trình duyệt đều gặp. Không lưu gì thêm: hai bảng quán tính lại từ khung cũ và khung mới."""
+    if not flags.quan_lich:
+        return []
+
+    def quan(khung: dict) -> dict:
+        return {(a["ngay"], a["bua"]): [q["ten"] for q in a["quan"]]
+                for a in ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do, flags.quan_trua_kho_truoc)}
+
+    q_cu, q_moi = quan(cu), quan(moi)
+    nguyen = {a["ngay"] for a, b in zip(cu["ngay"], moi["ngay"]) if a["buoi"] == b["buoi"]}
+    ngay = sorted({n for n, bua in q_cu.keys() | q_moi.keys() if n in nguyen and q_cu.get((n, bua)) != q_moi.get((n, bua))})
+    return [{"cau": f"Quán ăn gợi ý của ngày {', '.join(map(str, ngay))} cũng đổi theo để các ngày không trùng quán.", "duoc": True}] if ngay else []
+
+
 def ghi_cau_bi_loai(trace: AnswerTrace, id_muc: str, ma: str, cau: str) -> None:
     """Câu model viết bị `kiem_cau` loại ⇒ giữ nguyên văn cho sổ vết (`core/so_vet.py`, chỉ máy local). Trước 23/11/2026 chỉ có mã lỗi nên không biết
     model đã viết gì; câu là chữ của model về một điểm của bảng, không có chữ người dùng."""
@@ -332,7 +349,10 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             kq["hoi_them"] = True
     if flags.sua_lich_them_khong_the:  # câu gợi ý của CHÍNH lượt này ⇒ route nhớ cho đúng một lượt kế (lượt không gợi ý gì ⇒ rỗng ⇒ xoá)
         trace.goi_y_moi = sl.cau_goi_y(bang, kq)
-    trace.vet.setdefault("sua", {}).update(chon_the=trace.sua_chon, thay_doi=sl.thay_doi(bang, kq))
+    thay_doi = sl.thay_doi(bang, kq)
+    if kq["the"] is None:  # các dòng do code viết của lượt sửa ⇒ ô lịch sử của lượt này (`api.conversations.ghi_chu_sua_lich`). Lượt ra THẺ CHỌN thì
+        trace.sua_dong = tuple(d["cau"] for d in thay_doi)  # chưa áp gì (khung giữ nguyên tới khi người dùng bấm) ⇒ không ghi, ô lịch sử như trước
+    trace.vet.setdefault("sua", {}).update(chon_the=trace.sua_chon, thay_doi=thay_doi)
     trace.sua = {"n_hanh_dong": len(kq["da_ap"]) + len(kq["khong_doi"]) + len(kq["chua_lam"]), "n_ap": len(kq["da_ap"]) + len(kq["doi_truong"]),
                  "n_khong": len(kq["khong_doi"]), "the": kq["the"] is not None, **({"hoi_them": True} if kq.get("hoi_them") else {})}
     # model đã hiểu là câu sửa ⇒ luôn là lượt sửa, kể cả khi mọi hành động trượt (báo "Không đổi được: X không có trong lịch" thay vì trả lời
@@ -350,7 +370,10 @@ async def stream_sua(query: str, retrieval_service, context_builder, generator, 
         yield "delta", trace.answer
         return
     luu = trace.lich_luu
-    sua = {"khung": kq["khung"], "ngay_di": kq["luu"]["ngay_di"], "thay_doi": sl.thay_doi(bang, kq), "cau_cu": dict(luu.get("cau") or {}),
+    thay_doi = sl.thay_doi(bang, kq)
+    n_duoc = sum(d["duoc"] for d in thay_doi)  # các dòng "đã làm" đứng đầu ⇒ dòng báo quán chen ngay sau chúng
+    thay_doi[n_duoc:n_duoc] = dong_quan_doi(bang, luu["khung"], kq["khung"], flags)
+    sua = {"khung": kq["khung"], "ngay_di": kq["luu"]["ngay_di"], "thay_doi": thay_doi, "cau_cu": dict(luu.get("cau") or {}),
            "sua_ap": sl.sua_ap(kq)}
     async for event in stream_v2(query, retrieval_service, context_builder, generator, trace, flags, _today_v2(flags, trace), sua):
         yield event

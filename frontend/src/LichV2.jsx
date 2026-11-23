@@ -83,7 +83,7 @@ function NgayLich({ ng, turnKey, cau, xong, theoNgay, i, an }) {
                 {anhHopLe(m.anh) ? <AnhLich anh={m.anh} ten={m.ten} /> : <span className="lkh-khong-anh" aria-hidden="true" />}
                 <div className="lkh-than">
                   <span className="lich-buoi">{NHAN_BUOI_V2[m.buoi] || m.buoi}{m.gio ? ` · ${m.gio}` : ""}</span>
-                  <span className="lich-ten">{m.ten}{(m.nhan || []).filter(x => NHAN_MUC_V2[x]).map(x => <small key={x}>{NHAN_MUC_V2[x]}</small>)}</span>
+                  <span className="lich-ten">{typeof m.bai_id === "string" ? <a href={baiHref(m.bai_id)}>{m.ten}</a> : m.ten}{(m.nhan || []).filter(x => NHAN_MUC_V2[x]).map(x => <small key={x}>{NHAN_MUC_V2[x]}</small>)}</span>
                   {m.ghi_chu && <span className="lkh-ghi-toi">{m.ghi_chu}</span>}
                   {loai.length > 0 && <span className="lkh-loai">{loai.map(x => <small key={x} className={`lkh-loai-${x}`}>{NHAN_LOAI_DIEM[x]}</small>)}</span>}
                   <span className="lich-cau">{cau[m.id_muc] != null ? <span className="lkh-cau-moi">{boMaTrichDan(cau[m.id_muc])}</span>
@@ -197,7 +197,7 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
         {lich.ngay.map((ng, i) => <NgayLich key={ng.ngay} ng={ng} turnKey={turn.key} cau={cau} xong={xong} theoNgay={theoNgay} i={i}
                                               an={(lich.an || []).filter(a => a.ngay === ng.ngay)} />)}
       </div>
-      {banDo.length > 0 && <Suspense fallback={null}><BanDoLich items={banDo} /></Suspense>}
+      {banDo.length > 0 && <Suspense fallback={null}><BanDoLich items={banDo} turnKey={turn.key} /></Suspense>}
       {chung.length > 0 && (
         <div className="lich-ghi-chu">
           <p className="font-semibold">Ghi chú của lịch</p>
@@ -369,8 +369,8 @@ function XuatLich() {
   );
 }
 
-// Việc nhỏ (1) 08/11: lưu lịch ra chữ thường — chữ lấy từ phần đang hiện (không gọi server, không gửi đi đâu).
-const TEN_FILE_LICH = "lich-trinh-hue.txt";
+// Việc nhỏ (1) 08/11: lưu lịch ra chữ thường — chữ lấy từ phần đang hiện (không gọi server, không gửi đi đâu). Nút "Tải về (.txt)" đã BỎ
+// (chủ dự án 21:10 23/11/2026: "chỉ cần tải về power point là được rồi"); còn "Sao chép lịch" ở đây, "Tải PowerPoint" + "In / Lưu PDF" ở `XuatLich`.
 const DONG_CUOI_LICH = "Từ Trợ lý Huế — có thể sai; giờ mở cửa, giá vé có thể đã thay đổi, hãy kiểm lại trước khi đi.";
 
 export function vanBanLich(turn, answerText, items) {
@@ -392,22 +392,12 @@ export function LuuLich({ getText }) {
       await navigator.clipboard.writeText(getText());  // chỉ có ở trang https / localhost
       setBao("Đã sao chép lịch.");
     } catch {
-      setBao("Trình duyệt không cho sao chép — dùng nút Tải về.");
+      setBao("Trình duyệt không cho sao chép lịch ở trang này.");
     }
-  }
-  function taiVe() {
-    const url = URL.createObjectURL(new Blob([getText()], { type: "text/plain;charset=utf-8" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = TEN_FILE_LICH;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setBao("Đã tải về " + TEN_FILE_LICH + ".");
   }
   return (
     <div className="luu-lich">
       <button type="button" className="retry" onClick={saoChep}>Sao chép lịch</button>
-      <button type="button" className="retry" onClick={taiVe}>Tải về (.txt)</button>
       <span className="text-sm text-muted" role="status">{bao}</span>
     </div>
   );

@@ -48,3 +48,13 @@ gửi chatgpt/
 
 # chứa nội dung kho — bản riêng ở data/reports_artifacts_private_2026-10-26/ (14/11/2026)
 reports/phase_4_5_active_retrieval_baseline.json
+
+# Terraform (deploy/terraform/) — repo công khai: state và tfvars mang mã tài khoản AWS, email, tên thùng; bản kế hoạch lưu ra file cũng vậy.
+# ĐƯỢC commit: *.tfvars.example (giá trị mẫu) và .terraform.lock.hcl (ghim bản bộ cắm).
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+*.tfplan
