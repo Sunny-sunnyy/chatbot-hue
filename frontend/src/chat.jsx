@@ -549,7 +549,7 @@ function SuaTheCard({ the, onAsk }) {
   const khong = (the.thay_doi || []).filter(d => !d.duoc);
   return (
     <div className="clarify bubble sua-the">
-      {khong.length > 0 && <ul className="lkh-doi">{khong.map((d, i) => <li key={i} className="lkh-doi-khong">{d.cau}</li>)}</ul>}
+      {khong.length > 0 && <ul className="lkh-doi">{khong.map((d, i) => <li key={i} className={d.hoi ? "lkh-doi-hoi" : "lkh-doi-khong"}>{d.cau}</li>)}</ul>}
       <p className="mb-2">Bạn muốn thay <b>{the.ten_cu}</b> bằng điểm nào?</p>
       <div className="flex flex-wrap gap-2">
         {the.lua_chon.map(c => (
