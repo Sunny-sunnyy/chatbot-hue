@@ -51,6 +51,7 @@ def ban_ghi(duong: str, metrics: dict, trace=None, cau_go: str | None = None, ca
             lich={"bieu_mau": lay("bieu_mau"), "truong": lay("truong"), "buoc": lay("buoc_lich"), "kiem": lay("lich_kiem"),
                   "khung": (lay("lich") or {}).get("khung"), "v2_loi_khung": (lay("lich_v2") or {}).get("loi_khung"),
                   "v2_so_cau_du_phong": (lay("lich_v2") or {}).get("so_cau_du_phong"),
+                  "v2_cau_bi_loai": (lay("lich_v2") or {}).get("cau_bi_loai"),  # nguyên văn câu model viết bị `kiem_cau` loại + mã lỗi
                   # lịch bản 2 giữ khung ở `trace.lich_v2` (điểm nào ngày / buổi nào — thứ cần khi "lịch xếp lạ"); khoá của `mua` là ngày ⇒ đổi ra chữ
                   "v2_khung": (lay("lich_v2") or {}).get("khung"), "v2_ngay_di": (lay("lich_v2") or {}).get("ngay_di"),
                   "v2_mua": {str(k): v for k, v in ((lay("lich_v2") or {}).get("mua") or {}).items()} or None} if lay("lich") or lay("lich_v2") or lay("bieu_mau") else None,

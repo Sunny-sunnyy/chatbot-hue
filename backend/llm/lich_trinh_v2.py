@@ -704,6 +704,9 @@ def tin_nhan_model(lich: dict, tai_lieu: str) -> str:
     return "\n".join(dong) + "\n\nTài liệu:\n" + tai_lieu.strip()
 
 
+_MO_DAU_CAU = re.compile(r"(?:^|[.!?…])\s*$")  # phần chữ đứng TRƯỚC một tên: rỗng hoặc vừa hết một câu ⇒ tên đó mở đầu câu
+
+
 def kiem_cau(bang: BangV2, muc: dict, cau: str) -> str | None:
     """Kiểm cuối MỘT câu (5c.6) ⇒ mã lỗi hoặc None. Lỗi ⇒ câu dự phòng cho riêng mục đó (không rút cả lịch)."""
     cau = cau.strip()
@@ -724,14 +727,21 @@ def kiem_cau(bang: BangV2, muc: dict, cau: str) -> str | None:
         return "link"
     chu = chuan_ten(cau)
     cua_minh = [chuan_ten(t) for t in ten_cua(bang.theo_id[muc["id_diem"]])]
+    # Chỗ đầu tiên câu gọi tên CHÍNH điểm này. Câu SO SÁNH được giữ (23/11/2026): tên điểm khác đứng SAU chỗ đó và không mở đầu một câu ⇒ câu vẫn
+    # đang tả điểm này ("Xương Lăng kết hợp phong cách của Lăng Gia Long và Lăng Minh Mạng" — đúng tư liệu của Lăng Thiệu Trị, trước đây bị thay bằng
+    # câu dự phòng ở 11 / 25 lịch mặc định trên model đang chạy). Vẫn loại: tên điểm khác khi câu chưa gọi tên điểm này, hoặc tên điểm khác MỞ ĐẦU
+    # một câu (câu đó tả điểm kia).
+    dau_minh = min((m.start() for k in cua_minh for m in re.finditer(rf"(?<!\w){re.escape(k)}(?!\w)", chu)), default=None)
     for d in bang.diem:
         if d["id"] == muc["id_diem"]:
             continue
         for t in ten_cua(d):
             k = chuan_ten(t)
-            # tên điểm khác nằm trong câu — trừ khi chính tên đó là một phần tên của điểm này (tên con nằm trong điểm lớn: plan (c) đếm ca này)
-            if re.search(rf"(?<!\w){re.escape(k)}(?!\w)", chu) and not any(k in m for m in cua_minh):
-                return "ten_khac"
+            if any(k in m for m in cua_minh):  # chính tên đó là một phần tên của điểm này (tên con nằm trong điểm lớn: plan (c) đếm ca này)
+                continue
+            for m in re.finditer(rf"(?<!\w){re.escape(k)}(?!\w)", chu):
+                if dau_minh is None or m.start() < dau_minh or _MO_DAU_CAU.search(chu[: m.start()]):
+                    return "ten_khac"
     return None
 
 
