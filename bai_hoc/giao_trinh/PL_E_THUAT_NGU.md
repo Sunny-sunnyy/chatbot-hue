@@ -1,6 +1,6 @@
 # Phụ lục E — Thuật ngữ Việt – Anh
 
-*Cập nhật 17:10, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài) + số lệnh thêm trên bảng điểm từ 16:38; chưa gồm các bản gộp khác từ 16:38 (chờ phiếu) · dòng "danh sách tên" ghi mốc "42 … (tới 16:47 23/11)" theo bài 26 · 11:32: khớp các bài sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): thêm tám từ — thẻ chờ, bến, khung nhìn (bài 5), bảng kiểu, hình vẽ bằng đường cong, giảm chuyển động, tương phản (bài 35), thẻ nơi (bài 23, sót từ 22/11) — và sáu dòng tra ngược; "dòng trạng thái" chép lại theo bài 5 (218 từ) · trước đó (22/11: phân xử chỗ lệch giữa các bài; gom lần đầu); bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 18:51, ngày 23/11/2026 · khớp hệ thống 17:35 23/11 (55 tính năng mở, 7 tắt, kho 267 bài); chưa có lượt cả bộ test sau các bản gộp từ 16:20; chưa gồm các việc từ 18:00 (chờ phiếu) · thêm "chặng sang khu" (bài 31) và dòng tra ngược · các mốc trước: khối Nguồn.*
 
 **Cách dùng trang này.** Mỗi dòng là một từ lấy từ bảng "Từ dùng trong bài" của bài 1–40, xếp theo thứ tự chữ cái tiếng Việt. Cột "Nghĩa" chép câu giải nghĩa của bài gốc; khi hai bài giảng cùng một từ với hai câu khác nhau, câu chính lấy từ một bài và phần ngoặc ghi điều bài kia nói thêm. Cột cuối ghi bài giảng từ đó lần đầu, trong ngoặc là các bài giảng lại. Từ có dấu "—" ở cột tên gốc là tên do giáo trình đặt, không có tên tiếng Anh quen dùng. Cuối trang là bảng tra ngược, từ tên tiếng Anh ra tên trong giáo trình.
 
@@ -39,6 +39,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | câu tệ đi | regression | câu mà bản mới trả lời kém hơn bản đang chạy | 14 (cũng ở 20) |
 | câu tìm gộp | — | câu tìm model viết nhắc hai nơi hoặc hai ý cùng lúc ("giá vé Đại Nội và Lăng Tự Đức") | 23 |
 | câu từ chối cố định | fixed refusal, fallback answer | một câu duy nhất, đúng từng chữ, dùng mỗi khi không đủ bằng chứng | 16 |
+| chặng sang khu | non-adjacent leg | quãng đi giữa hai điểm liền nhau ở hai khu (bài 28 gọi là cụm) không kề nhau; phút lấy từ bảng khoảng cách (bài 24) | 31 |
 | chấm mù | blind evaluation, blind grading | người chấm không biết câu trả lời (hay bản ghi) đến từ bản nào, hệ thống nào | 19 (cũng ở 32) |
 | chỉ mục | index | toàn bộ dạng đã xử lý của kho để tìm: collection, file thống kê từ khoá, bản ghi chỉ mục (bài 2 gọn hơn: dạng đã xử lý sẵn của kho để tìm nhanh) | 2 (cũng ở 12) |
 | chính sách chặn tải | Content-Security-Policy | dòng máy chủ gửi kèm trang, bảo trình duyệt chỉ được tải chương trình, kiểu chữ, ảnh từ những nơi được liệt kê | 35 |
@@ -58,7 +59,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | cơ sở lưu trú | lodging | khách sạn, nhà nghỉ, homestay trong danh mục công khai có hạng sao | 30 |
 | cụm | cluster | nhóm các điểm nằm cùng một khu (ví dụ Kinh thành, bờ nam sông Hương, khu lăng Thủy Xuân); có 8 cụm | 27 |
 | cụm kề | adjacent cluster | hai cụm được ghi sẵn là cùng hướng, đi nối được trong một ngày | 28 |
-| danh sách tên | — | 42 nơi và món (tới 16:47 23/11) dễ nhận ra bằng ảnh, mỗi mục một mã, tên chính và tên khác; model chỉ được trả mã trong danh sách này | 26 |
+| danh sách tên | — | 55 nơi và món (từ 16:57 23/11; trước đó 42) dễ nhận ra bằng ảnh, mỗi mục một mã, tên chính và tên khác; model chỉ được trả mã trong danh sách này | 26 |
 | dấu vân tay | hash (SHA-256) | chuỗi ký tự tính từ nội dung một file; sửa một chữ là chuỗi đổi | 12 |
 | dịch vụ bên ngoài | external service, API | chương trình của một bên khác, chạy trên máy của họ; muốn dùng thì gửi yêu cầu qua mạng | 6 |
 | dịch vụ tìm web | web search API (ở đây: Serper) | dịch vụ nhận một câu tìm và trả về các kết quả tìm Google: tiêu đề, một đoạn trích ngắn, đường link | 25 |
@@ -185,6 +186,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | tách từ | tokenize | cắt một câu thành các "từ" để đếm; ở đây mỗi từ là một âm tiết | 11 |
 | test tự động | automated test | đoạn chương trình kiểm một đoạn chương trình khác, chạy bằng một lệnh | 38 |
 | tên bài | title | tiêu đề lớn nhất của bài | 9 |
+| tên phải xác nhận | — | mục của danh sách mang dấu "xác nhận trước": model đoán một mình tên đó thì trang vẫn hiện thẻ để người dùng bấm, không tự hỏi | 26 |
 | tệp lịch điện thoại | `.ics` | một dạng file mà ứng dụng lịch của điện thoại và máy tính đọc được để thêm sự kiện | 30 |
 | tham số | arguments | giá trị model gửi kèm khi xin một công cụ, ví dụ câu cần tìm | 3 |
 | thanh điều hướng | navigation bar | hàng mục ở đầu trang để chuyển giữa các trang | 5 |
@@ -354,6 +356,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 | navigation bar | thanh điều hướng |
 | nDCG (normalized discounted cumulative gain) | nDCG |
 | noise; phép đo gọi là A/A test | nhiễu |
+| non-adjacent leg | chặng sang khu |
 | OpenAI Agents SDK | thư viện gọi model |
 | OpenStreetMap | bản đồ mở |
 | out of corpus | ngoài kho |
@@ -443,4 +446,7 @@ Có 218 từ, gom từ 237 dòng của các bài (19 từ được giảng ở h
 Gom từ mục "Từ dùng trong bài" của các bài 1–40 trong cùng thư mục, bản lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Bài 41 không có bảng từ. Một từ giảng ở hai bài với hai câu khác nhau: câu chính lấy từ bài giảng lần đầu, trừ "chỉ mục" (lấy câu của bài 12, đầy đủ hơn và cập nhật muộn hơn bài 2) và "hộp" (lấy câu của bài 36, cập nhật muộn hơn bài 12). Bài 39 ghép "kho code, lưu" thành một dòng; ở đây tách thành "kho code" và gộp phần "lưu" vào "lần lưu code" của bài 37. Các chỗ hai bài giải nghĩa khác nhau ghi ở báo cáo gom [riêng tư]. Tám từ thêm sáng 23/11/2026 chép từ bảng "Từ dùng trong bài" của bài 5 (bản 11:10), bài 35 (11:17) và bài 23 (11:12); "khung nhìn" được giảng ở cả bài 5 và 35: câu chính lấy từ bài 5 (giảng lần đầu), ngoặc ghi điều bài 35 nói thêm. "Lớp nhìn" được giải nghĩa trong thân bài 5 (quyết định 4) nhưng không có trong bảng từ của bài nào, nên chưa vào trang này.
 - Đồng bộ 17:10 23/11/2026 (người gom phụ lục): dòng "danh sách tên" chép bảng "Từ dùng trong bài" của bài 26 (bản đã áp biên bản `data/hoc_cung_D/kiem/dot_2311_chieu2_k1_kiem.md`) [chép từ bài]. Số từ không đổi (218).
 
+- Đợt đầu tối 23/11/2026 (người viết của đợt, 17:33): hai dòng chép bảng "Từ dùng trong bài" của bài 26 bản đầu tối 23/11 [chép từ bài]. Số từ 218 ⇒ 219.
+- Đợt tối 23/11/2026 (người gom phụ lục, 18:51; khớp hệ thống 17:35 23/11, nhánh chính `7693f0b0`): dòng "chặng sang khu": bảng "Từ dùng trong bài" của bài 31 bản 18:29 [chép từ bài]; các bài 27, 28, 29, 30, 05 không thêm từ mới vào bảng này (so bảng "Từ dùng" HEAD ↔ cây viết). Bài 27 bảng "Từ dùng" còn ghi bảng điểm "41 dòng" (trong khi "Cấu hình" ghi 45 dòng) — dòng "bảng điểm tham quan" giữ theo bảng "Từ dùng", lệch ghi ở báo cáo người gom. Báo cáo từng hàng: `data/hoc_cung_D/viet/dot_2311_toi_g1_phu_luc.md` [riêng tư].
+- Dòng Cập nhật trước (chuyển xuống 18:51 23/11/2026): "Cập nhật 17:40, ngày 23/11/2026 · dòng "danh sách tên" (55) và dòng mới "tên phải xác nhận" theo bảng "Từ dùng trong bài" của bài 26 bản đầu tối · 17:10, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài) + số lệnh thêm trên bảng điểm từ 16:38; chưa gồm các bản gộp khác từ 16:38 (chờ phiếu) · dòng "danh sách tên" ghi mốc "42 … (tới 16:47 23/11)" theo bài 26 · 11:32: khớp các bài sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): thêm tám từ — thẻ chờ, bến, khung nhìn (bài 5), bảng kiểu, hình vẽ bằng đường cong, giảm chuyển động, tương phản (bài 35), thẻ nơi (bài 23, sót từ 22/11) — và sáu dòng tra ngược; "dòng trạng thái" chép lại theo bài 5 (218 từ) · trước đó (22/11: phân xử chỗ lệch giữa các bài; gom lần đầu); bài gốc đổi thì trang này phải gom lại."
 </details>
