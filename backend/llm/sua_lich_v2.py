@@ -1116,9 +1116,12 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 if ung:
                     *_, day, k = min(ung, key=lambda u: u[:3])
                     khu = day
-            if k is None and h.loai == "them_diem" and i not in vt:
+            if k is None and h.loai == "them_diem" and i not in vt and ((ngay is not None and h.buoi is not None) or tu_xep):
                 # Bước CUỐI: mọi lần thử trên đặt điểm mới SAU các điểm đang có của buổi. Không chỗ nào được ⇒ thử chèn điểm mới vào TRƯỚC một điểm đang
                 # có (`_thu_cho(chen=True)`), lại theo ba bậc: thường ⇒ nới nhịp ⇒ nới khu. `loi`, `ma_cho` giữ của các lần thử trên (cho câu lý do).
+                # CHỈ khi người dùng đã nói ngày + buổi (hoặc đã bảo trợ lý tự xếp): chèn trước làm điểm đang có lùi giờ — phiên C đếm trên 31 lệnh
+                # không nói chỗ: 21 đẩy một điểm đang có lùi từ 120 phút, 16 ra "ngày lạ" (ăn trưa sau 13:00, đi vòng) ⇒ không TỰ chọn chỗ như vậy; lệnh
+                # không nói chỗ đi tiếp xuống dưới, các chỗ chèn-trước vẫn được `_cach_them` nêu thành lối đi (câu gợi ý / nút).
                 bac = [(False, False)] + ([(True, False)] if noi_nhip else []) + (
                     [(True, True)] if them_khu and them_day and not ts.han_che and v2.PHUT_KHU is not None else [])
                 for nd, nk in bac:

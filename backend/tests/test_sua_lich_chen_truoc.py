@@ -23,7 +23,13 @@ def test_an_add_that_only_fits_before_an_existing_place_is_applied_and_reports_t
     # đứng SAU các điểm đang có: không chỗ nào được, kể cả khi nới nhịp / nới khu ⇒ trước đây lệnh này bị từ chối
     assert all(s._thu_cho(B, luu, ts, vt, [], i, cho, False, **kw)[0] is None for cho in s._cho_thu(B, k, i, None, None)
                for kw in ({}, {"day_moi": cho[0]}, {"day_moi": cho[0], "khu_moi": cho[0]}))
-    kq = _them(luu, "Duyệt Thị Đường", **CU)
+    # không nói ngày / buổi ⇒ KHÔNG tự chọn chỗ chèn (điểm đang có sẽ lùi giờ): lịch đứng yên, chỗ đó được nêu thành lối đi
+    tran = _them(luu, "Duyệt Thị Đường", **CU)
+    (m0,) = tran["khong_doi"]
+    assert tran["da_ap"] == [] and tran["khung"] == k and m0["ma_luat"] == "them_can_thay" and len(m0["cach"]) == 1 and m0["cach"][0]["thay"] is None
+    cho0 = (m0["cach"][0]["ngay"], m0["cach"][0]["buoi"])
+    assert f"thêm Duyệt Thị Đường vào buổi {s.NHAN_BUOI[cho0[1]]} ngày {cho0[0]}" in s.thay_doi(B, tran)[0]["cau"]
+    kq = _them(luu, "Duyệt Thị Đường", *cho0, **CU)  # người dùng nói đủ ngày + buổi ⇒ làm, điểm mới đứng trước
     (a,), sau = kq["da_ap"], kq["khung"]
     ds = next(x for x in sau["ngay"] if x["ngay"] == a["ngay"])["buoi"][a["buoi"]]
     assert ds.index(i) < len(ds) - 1 and not v2.kiem_khung_v2(B, sau)  # điểm mới đứng TRƯỚC một điểm đang có, lịch đúng luật
@@ -36,6 +42,7 @@ def test_an_add_that_only_fits_before_an_existing_place_is_applied_and_reports_t
     (m,) = hoi["khong_doi"]
     assert hoi["khung"] == k and m["ma_luat"] == "them_hoi" and (m["cho"][0]["ngay"], m["cho"][0]["buoi"]) == (a["ngay"], a["buoi"])
     assert _them(luu, "Duyệt Thị Đường", a["ngay"], a["buoi"], them_hoi_truoc=True, **CU)["khung"] == sau
+    assert _them(luu, "Duyệt Thị Đường", them_hoi_truoc=True, tu_xep=True, **CU)["khung"] == sau  # "xếp giúp mình" ⇒ người dùng đã bảo tự xếp
 
 
 def test_an_add_that_already_worked_is_placed_exactly_as_before():

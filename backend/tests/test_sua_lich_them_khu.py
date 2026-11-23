@@ -165,9 +165,9 @@ def test_default_schedule_picks_the_slot_with_fewest_cross_area_legs_and_says_th
         for x, y in zip(day, day[1:]):
             if v2._phut_di(T[x], T[y]) is None:
                 assert muc[y]["phut_di"] == bang_phut[f"{x}|{y}"]
-    # lịch mặc định (bảng điểm bản 13): 25 / 31 điểm chưa có thêm được (11 chỉ nhờ nới nhịp, 14 nhờ sang khu); 26 từ 23/11/2026 — Duyệt Thị Đường
-    # (suất diễn giờ cố định) vào được nhờ bước cuối "chèn trước một điểm đang có"
-    assert n_duoc == 26
+    # lịch mặc định (bảng điểm bản 13): 25 / 31 điểm chưa có thêm được (11 chỉ nhờ nới nhịp, 14 nhờ sang khu). Bước "chèn trước một điểm đang có"
+    # (23/11/2026) không đổi số này: lệnh KHÔNG nói ngày / buổi không tự chọn chỗ chèn
+    assert n_duoc == 25
     qh = _them(luu, ten["Trường Quốc Học Huế"], them_day=True, them_khu=True)["da_ap"][0]
     assert (qh["ngay"], qh["buoi"]) == (2, "chieu") and len(qh["khu"]["chang"]) == 1
     cau = lambda t: s.thay_doi(B, _them(luu, ten[t], them_day=True, them_khu=True))[0]["cau"]  # noqa: E731
