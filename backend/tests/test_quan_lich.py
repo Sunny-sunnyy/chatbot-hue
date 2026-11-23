@@ -68,7 +68,12 @@ def test_far_or_unknown_point_gets_no_row():
 def test_meal_note_for_points_without_restaurants():
     """Bạch Mã / Nhị Hồ: không quán trong 2 km ⇒ bữa có ghi chú theo kho (không bịa quán), vào cả chữ chép / tải."""
     for diem, _ in ql.GHI_CHU_AN:
-        assert diem in BANG_V2.theo_id and not any(ql._km(TOA[diem], q["toa"]) <= ql.KM_TOI_DA for q in QUAN.get(BANG_V2.theo_id[diem]["cum"], []))
+        # ghi chú ăn chỉ được dùng khi đường chọn quán không trả gì: điểm không có quán trong 2 km, hoặc (bảng điểm bản 15, AEON Mall) điểm CHƯA có toạ độ
+        # nên không có danh sách quán nào — có toạ độ rồi thì quán quanh đó sẽ thay ghi chú, lúc ấy phải quyết lại
+        assert diem in BANG_V2.theo_id and (diem not in TOA or not any(ql._km(TOA[diem], q["toa"]) <= ql.KM_TOI_DA
+                                                                      for q in QUAN.get(BANG_V2.theo_id[diem]["cum"], [])))
+    khung = {"ngay": [{"ngay": 1, "buoi": {"sang": [], "chieu": [], "toi": ["aeon_mall"]}}]}  # tối ở AEON Mall: bữa tối là ghi chú ăn tại chỗ (theo bài kho)
+    assert [(a["bua"], a["quan"], a["ghi_chu"]) for a in ql.an_uong(QUAN, BANG_V2, khung, TOA)] == [("toi", [], ql.GHI_CHU_AN[("aeon_mall", "toi")])]
     khung = {"ngay": [{"ngay": 1, "buoi": {"sang": ["bach_ma"], "chieu": ["thac_nhi_ho"]}}]}
     an = ql.an_uong(QUAN, BANG_V2, khung, TOA)
     assert [(a["bua"], a["quan"], a["ghi_chu"]) for a in an] == [("trua", [], ql.GHI_CHU_AN[("bach_ma", "trua")]),
