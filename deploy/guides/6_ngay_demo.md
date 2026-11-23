@@ -195,6 +195,9 @@ Nếu trước đó đã sửa tay `cau_hinh/settings.yaml` trên máy (tắt m�
 Khi bản mới hỏng: quay về bộ file đã giữ ở `truoc/`. Ảnh cũ vẫn nằm trong Docker của máy; chỉ mục cũ tải lại từ thùng (gói cũ còn ở đó — guide 2 dặn
 giữ gói liền trước).
 
+Lùi bản thường làm trong một phiên MỚI ⇒ trước hết vào máy (`aws ssm start-session --target "$ID"`), rồi gõ hai dòng ở mục 5 (`sudo -i` và dòng định
+nghĩa `dc`) — thiếu hai dòng đó thì lệnh `dc` dưới đây báo `command not found`.
+
 ```bash
 cd /srv/hue && set -a && . ./may.env && set +a
 dc stop caddy app
