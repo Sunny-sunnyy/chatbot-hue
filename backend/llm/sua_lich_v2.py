@@ -1003,7 +1003,8 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                     duoc = [d for d in range(1, so_ngay + 1) if d != h.ngay and _dat_toi(bang, luu, ts, khung, vt, loai, i, d)[0] is not None] if them_hoi_truoc else None
                     if h.ngay is None or h.ngay > so_ngay:
                         if duoc == []:  # không tối nào đặt được ⇒ nói thẳng lý do (của tối đầu) thay cho câu hỏi "ngày nào"
-                            kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": _dat_toi(bang, luu, ts, khung, vt, loai, i, 1)[3], "ngay": 1, "ngay_duoc": []})
+                            kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": _dat_toi(bang, luu, ts, khung, vt, loai, i, 1)[3], "ngay": 1, "ngay_duoc": [],
+                                                    "khong_ngay": True})  # người dùng không nhắc ngày nào ⇒ câu không nói "tối ngày 1"
                         else:
                             kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "toi_ten_thieu_ngay", **({} if duoc is None else {"ngay_duoc": duoc})})
                         continue
@@ -1488,7 +1489,8 @@ def _cau_khong_doi(bang: v2.BangV2, k: dict) -> str:
     if k["ma_luat"] == "toi_ten_theo_thu":  # nói rõ nơi đó mở tối nào và làm sao để đặt được (lượt trình duyệt cuối 23/11/2026: câu cũ không nói)
         i = khop_ten(bang, k["diem"])
         thu = ", ".join(THU[t] for t in (bang.theo_id[i].get("ngay_hoat_dong") or ())) if i else ""
-        return (f"{k['diem']} chỉ mở tối {thu} — lịch chưa có ngày đi, hoặc tối ngày {k['ngay']} không rơi vào các hôm đó. Bạn chọn ngày đi ở biểu mẫu "
+        toi_nao = "các tối của lịch" if k.get("khong_ngay") else f"tối ngày {k['ngay']}"
+        return (f"{k['diem']} chỉ mở tối {thu} — lịch chưa có ngày đi, hoặc {toi_nao} không rơi vào các hôm đó. Bạn chọn ngày đi ở biểu mẫu "
                 "(nút Sửa) rồi xếp lại; đúng thứ thì mình đặt được."
                 + (" Hoặc bấm một nút dưới đây để đặt vào tối khác." if k.get("ngay_duoc") else "")) if thu else CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"], ngay=k.get("ngay"))
     if k["ma_luat"] == "bo_toi_hoi":

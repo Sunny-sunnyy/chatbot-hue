@@ -190,6 +190,6 @@ def test_ask_first_switch_asks_before_two_evenings_swap_and_only_offers_evenings
     theo_thu = next(j for j in TOI if B.theo_id[j].get("ngay_hoat_dong"))
     kq = s.ap(B, luu, [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(theo_thu), buoi="toi")], **HOI)
     dong = s.thay_doi(B, kq)[0]
-    assert kq["khong_doi"][0]["ma_luat"] == "toi_ten_theo_thu" and "chỉ mở tối" in dong["cau"] and dong["nut"] == [{"nhan": "Mở biểu mẫu để chọn ngày đi", "mo": "bieu_mau"}]
+    assert kq["khong_doi"][0]["ma_luat"] == "toi_ten_theo_thu" and "chỉ mở tối" in dong["cau"] and "các tối của lịch" in dong["cau"] and "tối ngày 1" not in dong["cau"] and dong["nut"] == [{"nhan": "Mở biểu mẫu để chọn ngày đi", "mo": "bieu_mau"}]
     cu = s.ap(B, luu, [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(theo_thu), buoi="toi")], **BAT)  # công tắc tắt: câu hỏi "ngày nào" + nút mọi ngày như trước
     assert cu["khong_doi"][0]["ma_luat"] == "toi_ten_thieu_ngay" and len(s.thay_doi(B, cu)[0]["nut"]) == 2
