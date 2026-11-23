@@ -1,6 +1,6 @@
 # Phụ lục D — Lời dặn gửi model và mô tả từng công cụ, chép nguyên văn từ chương trình
 
-*Cập nhật 16:41, ngày 23/11/2026 · chép bằng máy từ chương trình lúc đó; chương trình đổi thì phụ lục phải chép lại.*
+*Cập nhật 21:06, ngày 23/11/2026 · chép bằng máy lúc 16:41 23/11; sửa TAY bảy chỗ cho khớp chương trình lúc code đứng yên tối 23/11 (đoạn dặn tỉnh khác gắn cả hai model từ 19:49; bản lời dặn sửa lịch đang gửi từ 17:29; khuôn đầu ra nhìn ảnh; ghi chú lượt sửa lịch trong lịch sử từ 20:14) vì công cụ chép chưa theo kịp chương trình · chương trình đổi thì phụ lục phải chép lại.*
 
 **Cách đọc.** Mỗi loại lời gọi model có lời dặn riêng; lời dặn là đoạn chữ cố định gửi kèm mọi lần gọi loại đó. Chữ trong khung xám là nguyên văn chương trình gửi đi, kể cả dấu xuống dòng; phần lời dẫn ngoài khung là của giáo trình. Một lời dặn ghép từ nhiều đoạn thì mỗi đoạn một khung, theo đúng thứ tự ghép; giữa hai đoạn chương trình chèn một dòng trống. Tên trong dấu `…` là tên đoạn trong chương trình, chỉ để tra. Model viết đang chạy lúc chép: Claude Sonnet 5.5 (qua Amazon Bedrock); phần chỉ gửi khi model là Claude ghi rõ ở từng mục.
 
@@ -9,12 +9,12 @@
 | Loại lời gọi | Gồm những phần lời dặn nào | Phần chỉ thêm khi… | Bài giảng |
 |---|---|---|---|
 | Xếp loại câu (chọn một trong bốn tuyến) — đang mở | `ROUTER_INSTRUCTIONS` | model là Claude: `SONNET_DINH_TUYEN` · cuộc trò chuyện đã có lượt trước: `ROUTER_HISTORY_NOTE` | 22 |
-| Trợ lý có công cụ: viết câu trả lời về Huế — đang mở | `ANSWER_SYSTEM_INSTRUCTIONS` + `ASSISTANT_TOOL_NOTE`; kèm mô tả của các công cụ được đưa ở lượt đó | tin nhiều ý (tính năng tin nhiều ý đang mở, tin từ 2 vế hỏi): đoạn từ chối của lời dặn đầu được thay bằng đoạn theo ý · đã có lượt trước: `ASSISTANT_HISTORY_NOTE` · model là Claude: thêm công cụ nộp câu trả lời `tra_loi` và câu giữ chỗ trong lịch sử · model là Claude và tính năng từ chối việc ở tỉnh, thành khác đang mở: `SONNET_NOI_KHAC` nối ngay sau lời dặn viết câu trả lời | 15, 16, 21, 23, 24, 33 |
-| Viết lại một lần, không công cụ (khi chữ nộp không có số nguồn nào) — đang mở | `ANSWER_SYSTEM_INSTRUCTIONS` | tin nhiều ý: dòng `VIET_LAI_NHIEU_Y_TEXT` nối vào cuối phần Bằng chứng (không vào lời dặn) · model là Claude và tính năng từ chối việc ở tỉnh, thành khác đang mở: `SONNET_NOI_KHAC` nối sau lời dặn | 21, 16 |
+| Trợ lý có công cụ: viết câu trả lời về Huế — đang mở | `ANSWER_SYSTEM_INSTRUCTIONS` + `ASSISTANT_TOOL_NOTE`; kèm mô tả của các công cụ được đưa ở lượt đó | tin nhiều ý (tính năng tin nhiều ý đang mở, tin từ 2 vế hỏi): đoạn từ chối của lời dặn đầu được thay bằng đoạn theo ý · đã có lượt trước: `ASSISTANT_HISTORY_NOTE` · model là Claude: thêm công cụ nộp câu trả lời `tra_loi` và câu giữ chỗ trong lịch sử · tính năng từ chối việc ở tỉnh, thành khác đang mở: `SONNET_NOI_KHAC` nối ngay sau lời dặn viết câu trả lời (cả hai model từ 19:49 23/11; trước đó chỉ Claude) | 15, 16, 21, 23, 24, 33 |
+| Viết lại một lần, không công cụ (khi chữ nộp không có số nguồn nào) — đang mở | `ANSWER_SYSTEM_INSTRUCTIONS` | tin nhiều ý: dòng `VIET_LAI_NHIEU_Y_TEXT` nối vào cuối phần Bằng chứng (không vào lời dặn) · tính năng từ chối việc ở tỉnh, thành khác đang mở: `SONNET_NOI_KHAC` nối sau lời dặn (cả hai model từ 19:49 23/11) | 21, 16 |
 | Đáp câu trò chuyện (chào, cảm ơn, hỏi trợ lý là ai) — đang mở | `CHAT_INSTRUCTIONS` | — | 22 |
 | Viết mục "Từ web" — đang mở | `TU_WEB_LUAT` | — | 25 |
 | Viết câu mô tả cho từng điểm của lịch — đang mở | `LICH_V2_LOI_DAN` | model là Claude: bản `LICH_V2_LOI_DAN_SONNET` (nới độ dài câu + nối `SONNET_GIU_DUNG_VAT`) | 29, 33 |
-| Hiểu lệnh sửa lịch — đang mở | một trong năm bản; đang gửi `SUA_LICH_LOI_DAN_TOI_HOI` | bản nào là tuỳ ba tính năng sửa lịch (xem mục 7) · model là Claude: `SONNET_SUA_LICH` | 31, 33 |
+| Hiểu lệnh sửa lịch — đang mở | một trong sáu bản; đang gửi `SUA_LICH_LOI_DAN_TOI_HOI_BO` (từ 17:29 23/11; trước đó `SUA_LICH_LOI_DAN_TOI_HOI`) | bản nào là tuỳ bốn tính năng sửa lịch (xem mục 7) · model là Claude: `SONNET_SUA_LICH` | 31, 33 |
 | Nhận tên nơi / món từ ảnh — đang mở | `NHAN_ANH_INSTRUCTIONS` | — | 26 |
 | Lượt biểu mẫu lập lịch kiểu cũ — không dùng (chỉ khi "Lên kế hoạch" bản 2 tắt; bản 2 đang mở) | `ANSWER_SYSTEM_INSTRUCTIONS` + `LICH_TRINH_LUAT` | model là Claude: `SONNET_GIU_DUNG_VAT` | 27, 33 |
 | Xếp loại kèm viết câu tìm — không dùng (lần tìm đầu đang là `v0`, câu gốc) | `ROUTER_INSTRUCTIONS` + `ROUTER_SEARCH_V1` hoặc `ROUTER_SEARCH_V3` | — | 22 |
@@ -90,7 +90,7 @@ Tuyến không phải tro_ly_hue thì vẫn viết cau_tim bằng chính ý củ
 
 ## 2. Trợ lý có công cụ: viết câu trả lời về Huế
 
-Đây là lời gọi viết câu trả lời cho mọi câu về Huế: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần (từ 14:47 22/11; trước đó 2); tin nhiều ý được nối thêm 2 đoạn mỗi ý. Model còn gọi được các công cụ ở mục 9. Lời dặn gồm lời dặn viết câu trả lời rồi đến đoạn về công cụ tìm kho; luật dùng các công cụ khác nằm trong mô tả của từng công cụ, không nằm ở đây. Hai khung đầu giống nhau cho cả hai model; riêng model Claude có thêm một đoạn về tỉnh, thành khác (khung thứ ba dưới đây) khi tính năng đó mở.
+Đây là lời gọi viết câu trả lời cho mọi câu về Huế: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần (từ 14:47 22/11; trước đó 2); tin nhiều ý được nối thêm 2 đoạn mỗi ý. Model còn gọi được các công cụ ở mục 9. Lời dặn gồm lời dặn viết câu trả lời rồi đến đoạn về công cụ tìm kho; luật dùng các công cụ khác nằm trong mô tả của từng công cụ, không nằm ở đây. Hai khung đầu giống nhau cho cả hai model; khi tính năng từ chối việc ở tỉnh, thành khác mở, cả hai model nhận thêm một đoạn (khung thứ ba dưới đây; đường OpenAI từ 19:49 23/11, trước đó chỉ Claude).
 
 ### Lời dặn viết câu trả lời (`ANSWER_SYSTEM_INSTRUCTIONS`)
 
@@ -116,9 +116,9 @@ và ý của câu hỏi; các lần sau mỗi lần một câu tìm đứng mộ
 Chỉ đặt citation [n] trỏ tới nguồn có trong ngữ cảnh hoặc trong kết quả tim_kho.
 ```
 
-**Chỉ khi model là Claude và tính năng từ chối việc ở tỉnh, thành khác đang mở** (có từ 23/11/2026). Đoạn dưới được nối NGAY SAU lời dặn viết câu trả lời, trước đoạn về công cụ tìm kho — ở lượt trợ lý có công cụ (bản thường, bản tin nhiều ý, bản có lịch sử) và ở lượt viết lại không công cụ. Lượt viết câu mô tả của lịch và lượt biểu mẫu không nhận đoạn này. Model khác Claude không nhận.
+**Khi tính năng từ chối việc ở tỉnh, thành khác đang mở** (có từ 23/11/2026; tới 19:49 23/11 chỉ khi model là Claude, từ đó cả hai model, cùng đoạn chữ). Đoạn dưới được nối NGAY SAU lời dặn viết câu trả lời, trước đoạn về công cụ tìm kho — ở lượt trợ lý có công cụ (bản thường, bản tin nhiều ý, bản có lịch sử) và ở lượt viết lại không công cụ. Lượt viết câu mô tả của lịch và lượt biểu mẫu không nhận đoạn này.
 
-### Đoạn dặn riêng cho Claude về việc diễn ra ở tỉnh, thành khác (`SONNET_NOI_KHAC`)
+### Đoạn dặn về việc diễn ra ở tỉnh, thành khác — cả hai model (tên hằng còn chữ SONNET vì đo lần đầu trên Claude) (`SONNET_NOI_KHAC`)
 
 ```text
 Về nơi được hỏi: kho tri thức này chỉ viết về Huế — cả thành phố Huế hiện nay, tức toàn tỉnh Thừa Thiên Huế trước đây, kể cả các huyện, thị xã, vùng núi, đầm phá, bãi biển ở rìa. Có khi người dùng hỏi một việc diễn ra ở một tỉnh, thành khác: tới đó nên ăn gì, chơi gì, ở đâu, mua gì, tham quan gì. Bằng chứng đôi lúc vẫn nhắc tên nơi ấy — một món mang tên nơi ấy bán ở một quán tại Huế, một câu so sánh, một điểm trên đường đi — nhưng các dòng đó nói về Huế, không phải tư liệu về nơi kia; trả lời từ chúng thì người dùng nhận một gợi ý thiếu và lệch mà trông như có nguồn. Vì vậy ý nào hỏi về việc diễn ra ở tỉnh, thành khác thì coi như Bằng chứng không nêu ý đó, rồi làm đúng theo luật đã dặn cho trường hợp bằng chứng không đủ; không bù bằng gợi ý về Huế.
@@ -253,17 +253,18 @@ Khuôn đầu ra: `cau` (mỗi phần tử gồm `id_muc`, `cau`).
 
 ## 7. Hiểu lệnh sửa lịch
 
-Khi người dùng gõ một câu dưới lịch đang có, lời gọi này chỉ đổi câu đó thành danh sách hành động có tên; chương trình áp và kiểm từng hành động. Có năm bản lời dặn, chọn theo ba tính năng sửa lịch. Bảng dưới đọc từ cấu hình lúc chép.
+Khi người dùng gõ một câu dưới lịch đang có, lời gọi này chỉ đổi câu đó thành danh sách hành động có tên; chương trình áp và kiểm từng hành động. Có sáu bản lời dặn, chọn theo bốn tính năng sửa lịch. Bảng dưới đọc từ cấu hình lúc chép.
 
 | Tính năng | Trạng thái | Thêm gì vào lời dặn |
 |---|---|---|
 | "chưa hỗ trợ" (`sua_lich_chua_ho_tro`) | đang mở | hành động `chua_ho_tro`; `doi_so_ngay` nhận cả số ngày đang có |
 | buổi tối (`sua_lich_buoi_toi`, cần tính năng trên) | đang mở | `doi_buoi` nhận thêm `toi` |
 | vừa sửa vừa hỏi (`sua_lich_kem_hoi`, cần tính năng đầu) | đang mở | hành động `hoi_them` |
+| bỏ hoạt động tối thì hỏi lại (`bo_toi_hoi_lai`, từ 17:29 23/11; chép tay) | đang mở | một gạch về `bo_diem` buổi tối; khuôn thêm ô `cach_toi` (`doi` · `de_trong` · null) |
 
-Bản đang gửi là `SUA_LICH_LOI_DAN_TOI_HOI`, chép đủ dưới đây.
+Bản đang gửi (từ 17:29 23/11) là `SUA_LICH_LOI_DAN_TOI_HOI_BO` = khung dưới (`SUA_LICH_LOI_DAN_TOI_HOI`, bản đang gửi tới 17:29) nối thêm khung kế tiếp (chép tay từ chương trình lúc code đứng yên tối 23/11).
 
-### Lời dặn hiểu lệnh sửa lịch, bản đang gửi (`SUA_LICH_LOI_DAN_TOI_HOI`)
+### Lời dặn hiểu lệnh sửa lịch, phần chung (`SUA_LICH_LOI_DAN_TOI_HOI`)
 
 ```text
 Bạn đọc câu người dùng nói về lịch tham quan Huế họ đang có, và chỉ trả danh sách hành động sửa lịch. Không viết câu trả lời.
@@ -287,6 +288,14 @@ Người dùng chỉ chỗ bằng ngày / buổi / "một chỗ" / "chỗ đó" 
 Câu KHÔNG yêu cầu sửa lịch (hỏi thông tin, chào, cảm ơn, hỏi về một điểm, việc khẩn cấp, an toàn) ⇒ trả danh sách rỗng. Không thêm hành động người dùng không nói.
 ```
 
+### Gạch nối thêm của bản đang gửi, khi tính năng hỏi lại lúc bỏ hoạt động tối đang mở (phần sau của `SUA_LICH_LOI_DAN_TOI_HOI_BO`; chép tay)
+
+Nối ngay sau khung trên, mở đầu bằng một dấu xuống dòng.
+
+```text
+- bo_diem một hoạt động BUỔI TỐI của lịch (dòng "tối" của ngày): điền thêm cach_toi theo đúng điều người dùng nói — doi khi họ muốn đổi sang một hoạt động tối KHÁC mà không nêu tên hoạt động mới ("đổi hoạt động tối ngày 2 sang cái khác", "tối ngày 1 đổi cái khác đi"); de_trong khi họ muốn tối đó không có hoạt động nào ("bỏ tối ngày 2, để trống", "tối ngày 1 cho nghỉ"); họ chỉ bảo bỏ mà không nói đổi hay để trống ⇒ để trống cach_toi, hệ thống sẽ hỏi lại họ. Không tự chọn thay họ. Người dùng không gọi tên hoạt động ("bỏ hoạt động tối ngày 2") ⇒ ten = tên hoạt động đang đứng ở tối ngày đó trong lịch hiện tại, ngay = ngày đó.
+```
+
 Bản gốc `SUA_LICH_LOI_DAN` (dùng khi cả ba tính năng tắt) giống bản đang gửi, trừ 4 dòng của bản đang gửi (các gạch `doi_buoi`, `doi_so_ngay`, `chua_ho_tro`, `hoi_them`). Ở chỗ đó bản gốc chỉ có 2 dòng dưới. Ba bản còn lại (`SUA_LICH_LOI_DAN_CHT`, `SUA_LICH_LOI_DAN_TOI`, `SUA_LICH_LOI_DAN_CHT_HOI`) là các bước giữa, ghép bằng cùng các thay đổi đó.
 
 ```text
@@ -304,7 +313,7 @@ Hai trường hợp dễ nhầm:
 - Người dùng nêu rõ điểm và chỗ muốn dời tới ⇒ luôn trả đúng doi_buoi đó, kể cả khi bạn thấy chỗ ấy có vẻ không hợp (kín lịch, xa, ngoài giờ mở cửa). Dời được hay không là việc hệ thống kiểm; có hành động của bạn thì hệ thống mới nói được lý do và gợi ý chỗ dời được.
 ```
 
-Khuôn đầu ra: `hanh_dong` (danh sách hành động; mỗi hành động có `loai` và các ô tuỳ loại).
+Khuôn đầu ra: `hanh_dong` (danh sách hành động; mỗi hành động có `loai` và các ô tuỳ loại). Bản đang gửi thêm ô `cach_toi` cho mỗi hành động: `doi` · `de_trong` · null (từ 17:29 23/11; chép tay).
 
 ## 8. Nhận tên nơi / món từ ảnh
 
@@ -323,7 +332,7 @@ một nơi / món khác trong danh sách mà trông gần giống (cùng loại,
 - Không viết giải thích; chỉ trả đúng cấu trúc đầu ra.
 ```
 
-Khuôn đầu ra: `ung_vien` (tối đa 3 mã trong danh sách), `khong_nhan_ra`.
+Khuôn đầu ra: `ung_vien` (các mã trong danh sách; từ 16:46 23/11 khuôn không còn chặn số mã — lời dặn vẫn xin 1–3, chương trình giữ ba mã đầu; chép tay), `khong_nhan_ra`.
 
 ## 9. Mô tả từng công cụ
 
@@ -510,6 +519,14 @@ Ghi chú: người dùng không nêu năm cụ thể (hoặc nói "năm nay" v�
 
 ```text
 [Lời trợ lý ở lượt trước — chỉ để hiểu câu hỏi tiếp; KHÔNG phải nguồn, không được trích hay coi là bằng chứng]
+```
+
+### Đầu dòng ghi chú của một lượt sửa lịch đã xong, đứng ở ô lịch sử của lượt đó (từ 20:14 23/11; chép tay) (`GHI_CHU_SUA_DAU`)
+
+Sau phần chữ dưới, chương trình nối các dòng kết quả do chính nó viết của lượt sửa ("Đã bỏ …", câu lý do của việc không đổi được, "Chưa làm: …"), cách nhau một dấu cách, rồi đóng bằng "]". Lượt chỉ ra thẻ chọn (chưa áp gì) không có dòng này.
+
+```text
+[Ghi chú hệ thống — lệnh sửa lịch ở lượt này đã được xử lý xong, lịch hiện có là lịch SAU lệnh này; không áp lại lệnh. Kết quả đã báo cho người dùng: 
 ```
 
 ### Dòng ghi chú tên nơi lượt trước đã trích, đứng ở chỗ câu trả lời của các lượt cũ hơn lượt liền trước trong lịch sử (chỗ ngoặc nhọn là tên bài) (`ghi_chu_goi_y`)
@@ -790,5 +807,6 @@ Bạn đã tải file quá số lần cho phép hôm nay. Vui lòng quay lại v
 - Mô tả công cụ: `tim_kho` lấy từ docstring hàm trong `tool_for_turn`; `khoang_cach`, `gan_diem` từ `mo_ta_cong_cu` của `backend/llm/khoang_cach.py`, `backend/llm/gan_diem.py` (danh sách mã thay bằng dòng giữ chỗ; bảng điểm `data/` [riêng tư], 41 điểm). Tham số mô tả từ phần `Args:` của docstring (thời tiết bản có `loai` không có docstring nên không có mô tả tham số). [code]
 - Câu cố định: `backend/llm/full_corpus_prompt.py`, `tra_web.py`, `thoi_tiet.py`, `khoang_cach.py`, `gan_diem.py`, `ngay_lich.py`, `su_kien.py`, `danh_sach.py`, `len_lich.py`, `luu_y_nguon.py`, `sua_lich_v2.py`, `len_ke_hoach.py` (trong `backend/llm/`); `backend/api/routes/chat.py`, `backend/api/gioi_han.py`, `backend/api/conversations.py`, `backend/llm/ten_goi_y.py`, `backend/llm/liet_ke.py`. Cột bài: máy dò 40 ký tự đầu của câu trong `bai_hoc/giao_trinh/[0-4]*.md`, cộng bài ghi tay. [code]
 - Số khung nguyên văn đã chép: 99 (tính cả mô tả tham số). [đã chạy]
+- Sửa tay 21:06 23/11/2026 (người gom phụ lục g1; chương trình lúc code đứng yên `73dae1f3`), không chạy lại công cụ chép vì công cụ chưa theo kịp chương trình: `data/hoc_cung_D/tools/chep_loi_dan.py` dòng 86, 95, 250, 254, 300–303 còn ghi đoạn dặn tỉnh khác "chỉ đường Claude" (từ bản gộp `c475f5e0` 19:49 `backend/llm/generator_openai_full_corpus.py` `them_noi_khac` nối cho cả hai đường); dòng 123–136 chỉ biết năm bản lời dặn sửa lịch, chưa có `SUA_LICH_LOI_DAN_TOI_HOI_BO` (`full_corpus_prompt.py` dòng 345, agent `sua_lich_toi_hoi_bo_agent`, khuôn `HanhDongToiHoiBo.cach_toi` ở `sua_lich_v2.py` dòng 76); chưa chép `api/conversations.GHI_CHU_SUA_DAU` (dòng 57). Bảy chỗ sửa tay: hai ô bảng tổng (trợ lý có công cụ, viết lại một lần), ô bảng tổng hiểu lệnh sửa lịch, câu dẫn và tiêu đề khung `SONNET_NOI_KHAC` (mục 2), bảng tính năng và câu dẫn mục 7 + khung gạch `bo_diem` buổi tối (chữ in bằng `uv run --no-sync python` từ hằng của chương trình, kiểm `SUA_LICH_LOI_DAN_TOI_HOI_BO == SUA_LICH_LOI_DAN_TOI_HOI + phần nối`), câu khuôn đầu ra nhìn ảnh (`nhan_anh.py`: `ung_vien=(list[MaId], ...)`, không còn `max_length=3`, từ `df433d8b` 16:46), khung `GHI_CHU_SUA_DAU` (chữ in từ hằng). Hai dòng "danh sách 41 dòng" của công cụ khoảng cách / gần một điểm: vẫn đúng — `khoang_cach.nap_bang` bỏ dòng `la_quan` và `chi_muc_toi`; bảng điểm bản 15 có 47 dòng, bỏ 6 còn 41 [tự đếm bằng `python3 -I`]. Số khung nguyên văn: 99 ⇒ 101. Lần chạy lại công cụ tới đây phải sửa công cụ trước, không thì mất các chỗ sửa tay này. [code; chép tay]
 
 </details>

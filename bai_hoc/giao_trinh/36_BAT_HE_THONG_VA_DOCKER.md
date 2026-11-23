@@ -1,6 +1,6 @@
 # Bài 36 — Bật hệ thống trên máy, và đóng gói bằng Docker
 
-*Cập nhật 13:25, ngày 23/11/2026 · khớp hệ thống 13:25 23/11 (49 tính năng mở, 5 tắt, kho 267 bài): hàng "danh sách file của gói" sửa theo gói mới (11:07 23/11) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · bản 13:25: hàng "danh sách file của gói" sửa theo gói mới (11:07 23/11) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** máy chủ kiểm một số thứ đúng một lần lúc bật, và bật lúc Qdrant tắt thì không tự hồi (bài 6); kho đổi thì phải cập nhật chỉ mục (bài 12); khoá và các thiết lập lúc chạy (bài 37).
 **Bài này thêm:** bật cả hệ thống trên máy phát triển bằng một lệnh, lệnh đó làm gì và báo gì; "hộp Docker" là gì và hệ thống dùng nó ở đâu; gói ba hộp để mang sang máy khác; và những việc còn phải làm trước khi đưa lên mạng.
@@ -35,7 +35,7 @@ Trước trưa 22/11, bật hệ thống là gõ tay ba bốn lệnh: bật Qdra
 | 2 | giao diện đã được dựng | giao diện chưa được dựng ⇒ chạy lệnh dựng |
 | 3 | có bản ghi chỉ mục (bài 12) | chỉ mục chưa được dựng trên máy này |
 | 4 | nếu model viết là Claude: biết đường tới file khoá Bedrock, và file đó có thật | chưa biết file khoá ở đâu ⇒ ghi đường dẫn vào một file riêng tư, hoặc đặt thiết lập lúc chạy |
-| 5 | bật Qdrant; chờ tối đa khoảng 30 giây cho tới khi Qdrant báo có đủ 9.479 đoạn như bản ghi lúc dựng chỉ mục | không có Docker ⇒ bật Docker Desktop · Qdrant không trả lời · chỉ mục có N đoạn, bản ghi ghi 9.479 ⇒ chỉ mục lệch kho |
+| 5 | bật Qdrant; chờ tối đa khoảng 30 giây cho tới khi Qdrant báo có đủ 9.533 đoạn (từ 18:05 23/11) như bản ghi lúc dựng chỉ mục | không có Docker ⇒ bật Docker Desktop · Qdrant không trả lời · chỉ mục có N đoạn, bản ghi ghi 9.533 ⇒ chỉ mục lệch kho |
 | 6 | cổng 8010 đã có máy chủ chưa: có và báo đủ thì dùng luôn; có mà báo thiếu thì bảo tắt nó trước | cổng đang có một máy chủ báo chưa sẵn sàng ⇒ tắt nó rồi chạy lại |
 | 7 | bật máy chủ; chờ tới 90 giây cho đường báo tình trạng | máy chủ tự thoát · không trả lời sau 90 giây · lên nhưng phần nào "chưa sẵn sàng" |
 
@@ -105,17 +105,17 @@ Gói đã chạy thử trên máy một lần, ngày 10/11, với gpt-6-luna và
 
 ## Nếu… thì sao
 
-Một tình huống kể trọn. Sáng hôm sau, chủ dự án mở lại máy và chạy lệnh bật. Docker Desktop chưa chạy, nên lệnh dừng ngay ở bước 5 với một dòng: docker không bật được Qdrant, hãy bật Docker Desktop rồi chạy lại. Chủ dự án bật Docker Desktop, chạy lại. Lần này Qdrant lên, đủ 9.479 đoạn, đường tới file khoá đã ghi từ hôm trước trong file riêng tư, máy chủ bật và lệnh in "SẴN SÀNG". Nếu khoá Bedrock đã hết hạn qua đêm, lệnh vẫn in "SẴN SÀNG", vì nó chỉ thấy file khoá có tồn tại; câu hỏi đầu tiên mới lộ lỗi (bài 33).
+Một tình huống kể trọn. Sáng hôm sau, chủ dự án mở lại máy và chạy lệnh bật. Docker Desktop chưa chạy, nên lệnh dừng ngay ở bước 5 với một dòng: docker không bật được Qdrant, hãy bật Docker Desktop rồi chạy lại. Chủ dự án bật Docker Desktop, chạy lại. Lần này Qdrant lên, đủ 9.533 đoạn, đường tới file khoá đã ghi từ hôm trước trong file riêng tư, máy chủ bật và lệnh in "SẴN SÀNG". Nếu khoá Bedrock đã hết hạn qua đêm, lệnh vẫn in "SẴN SÀNG", vì nó chỉ thấy file khoá có tồn tại; câu hỏi đầu tiên mới lộ lỗi (bài 33).
 
 Lời báo của người dùng là nguyên văn; các dòng đọc từ chương trình, trừ dòng có chữ **(đã thử)** (bài 6).
 
 | Nếu | Lệnh bật hoặc người dùng thấy gì | Ai làm gì |
 |---|---|---|
 | Docker Desktop chưa chạy | lệnh dừng: không có lệnh docker, hoặc docker không bật được Qdrant (đọc từ lệnh, chưa thử) | người bật mở Docker Desktop |
-| chỉ mục lệch kho | lệnh dừng: chỉ mục có N đoạn, bản ghi ghi 9.479 | chạy lệnh cập nhật chỉ mục (bài 12) |
+| chỉ mục lệch kho | lệnh dừng: chỉ mục có N đoạn, bản ghi ghi 9.533 | chạy lệnh cập nhật chỉ mục (bài 12) |
 | cổng 8010 có một máy chủ cũ bật lúc Qdrant tắt **(đã thử ca gốc)** | lệnh dừng: cổng đang có máy chủ báo chưa sẵn sàng, hãy tắt nó trước | tắt máy chủ cũ, chạy lại |
 | khoá Bedrock hết hạn | lệnh vẫn in "SẴN SÀNG"; câu hỏi nhận "Không thể tạo câu trả lời vào lúc này." | chủ dự án làm mới file khoá; không cần bật lại |
-| dựng lại gói ba hộp bằng bản nháp hiện có | ứng dụng có thể không khởi động hoặc không trả lời được: bản nháp chép bảng dữ liệu cũ, thiếu bảng khoảng cách, bảng sự kiện, bảng điểm mới; danh sách file bài chép vào gói sinh từ bản ghi chỉ mục ngày 16/11 (263 bài, kho nay 267); file mô tả gói không có chỗ đưa file khoá Bedrock vào hộp, nên mọi câu sẽ nhận "Không thể tạo câu trả lời vào lúc này." | cập nhật gói trước khi dựng (đọc từ file, chưa dựng thử) |
+| dựng lại gói ba hộp bằng bản nháp hiện có | ứng dụng có thể không khởi động hoặc không trả lời được: bản nháp chép bảng dữ liệu cũ, thiếu bảng khoảng cách, bảng sự kiện, bảng điểm mới; danh sách file bài chép vào gói sinh từ bản ghi chỉ mục ngày 16/11 (263 bài, kho nay 269); file mô tả gói không có chỗ đưa file khoá Bedrock vào hộp, nên mọi câu sẽ nhận "Không thể tạo câu trả lời vào lúc này." | cập nhật gói trước khi dựng (đọc từ file, chưa dựng thử) |
 | đưa gói lên mạng mà tên miền chưa có kết nối mã hoá | cookie bị trình duyệt bỏ, trợ lý mất trí nhớ hội thoại, không báo lỗi | đặt tên miền có kết nối mã hoá trước (ghi trong bản nháp) |
 
 ## Dễ nhầm
@@ -237,5 +237,6 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 - Bảng quán bản 4 ở hàng "cập nhật danh sách file của gói" (thêm 12:36 23/11/2026, người gom phụ lục): `backend/config/settings.yaml` dòng 130 trỏ `bang_quan_lich_v4.json` trên main `0367e775` [code, đã đọc]; bài 30 "Cấu hình đang chạy" [chép]. Câu "việc cập nhật gói vẫn chưa" của bản 12:36 SAI, đã sửa ở lượt áp cuối (gạch dưới). Dòng Cập nhật trước: "17:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · …".
 
 - Hàng "danh sách file của gói", lượt áp cuối (13:25 23/11/2026; biên bản `data/hoc_cung_D/kiem/dot_2311_trua_k2_phu_luc_kiem.md` hàng 22–24 [riêng tư]): `deploy/docker/dung_ngu_canh.py` docstring ("danh sách được SINH từ chính thứ app đọc lúc khởi động"; "bài kho: đúng các bài có trong bản ghi dựng chỉ mục … so băm sha256 từng bài"; "file bảng riêng tư: mọi đường dẫn `../data/…` trong `backend/config/settings.yaml` CỦA commit đó") [code, đã mở]; gộp vào main `0af536cc` 11:07 23/11 [đã chạy `git log`]; `deploy/docker/README.md` mục 6 ("danh sách file sinh từ `settings.yaml` + bản ghi dựng (hết chép tay hai chỗ)") [code]. Các hàng khác của bảng này, hàng "dựng lại gói ba hộp…" ở "Nếu… thì sao" và phần gói ba hộp của bài chưa viết lại — để phiếu deploy riêng.
+- Quét số cũ 20:46 23/11/2026: dòng Cập nhật ("khớp hệ thống 13:25 23/11 (49 tính năng mở, 5 tắt, kho 267 bài)" ⇒ 57 mở, 6 tắt, kho 269), bảng các bước bật (bước 5), tình huống kể trọn, hàng "chỉ mục lệch kho" (9.479 ⇒ 9.533 đoạn), hàng "dựng lại gói" ("kho nay 267" ⇒ 269; 263 bài của bản ghi 16/11 giữ); gạch Nguồn "kho nay 267 bài" ở trên giữ như ghi lúc đó. Lệnh: `corpus.file_count` / `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269 / 9533) và đếm dòng `: true` / `: false` dưới `assistant:` của `backend/config/settings.yaml` (57 / 6), chạy 20:40 23/11/2026 trên cây chính `03229b64` [đã chạy].
 
 </details>

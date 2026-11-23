@@ -1,6 +1,6 @@
 # Bài 5 — Người dùng thấy gì: các trang của ứng dụng
 
-*Cập nhật 18:32, ngày 23/11/2026 · khớp hệ thống 17:35 23/11 (55 tính năng mở, 7 tắt, kho 267 bài) · một câu ở "Chi tiết để tra": buổi tối của lịch ví dụ từ 16:38 (bài 28 kể đủ) · chưa có lượt cả bộ test sau các bản gộp từ 16:20 · các lần sửa trước: Nguồn.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · một câu ở "Chi tiết để tra": buổi tối của lịch ví dụ từ 16:38 (bài 28 kể đủ) · lượt cả bộ test xong 20:09 23/11: một file đỏ vì lỗi của chính phép kiểm, đã sửa (bài 38) · các lần sửa trước: Nguồn.*
 
 **Bài trước đã biết:** sản phẩm làm ba loại việc: hỏi đáp có nguồn, việc cần tính, và lên kế hoạch.
 **Bài này thêm:** ba loại việc đó nằm ở đâu trên màn hình: một vòng qua các trang, một lượt hỏi, một lượt lập lịch; rồi vì sao giao diện làm như vậy, và khi có thứ hỏng thì người dùng thấy gì.
@@ -205,7 +205,7 @@ Thấy khác bốn bước này thì tra bảng "Mọi tình huống hỏng" bê
 
 **Giới hạn của phép so.** Đây là nhận xét bằng mắt của các phiên làm việc trên ảnh dựng thử, không phải phép đo trên người dùng; chưa người dùng thật nào được hỏi. Chủ dự án xem ảnh trước / sau và có thể nói đổi.
 
-**Thẻ "Hôm nay ở Huế" (23/11): ba vòng xoay.** Vấn đề: chọn những bài nào để một tên bài đứng dưới chữ "Hôm nay ở Huế" không bị đọc sai. Cả ba bản dùng cùng phép chọn theo ngày, trên danh sách 267 bài thật của trang Khám phá.
+**Thẻ "Hôm nay ở Huế" (23/11): ba vòng xoay.** Vấn đề: chọn những bài nào để một tên bài đứng dưới chữ "Hôm nay ở Huế" không bị đọc sai. Cả ba bản dùng cùng phép chọn theo ngày, trên danh sách 267 bài thật của trang Khám phá lúc đó (kho nay 269 bài, từ 18:05 23/11).
 
 | Vòng xoay | Số bài | Giữ / bỏ, vì sao | Lúc |
 |---|---|---|---|
@@ -283,7 +283,7 @@ Nút "Thử lại" khi không nối được máy chủ gửi lại đúng câu 
 - Từ tối 21/11, bước kiểm con số (thời tiết, khoảng cách) ở lượt không có lịch không rút cả câu: chương trình gỡ câu chứa số lạ, không có nút "Thử lại" (bài 24). Với model đang chạy, chữ được giữ tới khi kiểm xong nên từ 22:06 22/11 người dùng chỉ thấy bản đã gỡ; với model trả chữ dần thì chữ trên màn hình bị thay (bài 6).
 - Tin hỏi nhiều ý mà kho trả lời được một phần thì không có mục web; chỉ có dòng "Tư liệu chưa có thông tin về: …" (bài 23).
 - Việc làm tại trình duyệt, đủ danh sách: ô tìm của trang Khám phá lọc trong danh sách bài đã tải về, gõ thiếu dấu vẫn ra, và xếp bài khớp đúng dấu lên trước (sửa sau một lỗi thật ngày 16/11: tìm "lăng" ra các bài "làng" trước); bỏ số [n] khỏi chữ; chọn ảnh cạnh câu trả lời; dựng file lịch dạng chữ và file cho ứng dụng lịch từ lịch đang hiện. File PowerPoint thì dựng ở máy chủ, từ lịch máy chủ đang giữ.
-- Trang Khám phá: 262 trên 265 bài có ảnh (đếm ngày 16/11; kho nay 267 bài, chưa đếm lại).
+- Trang Khám phá: 262 trên 265 bài có ảnh (đếm ngày 16/11; kho nay 269 bài, chưa đếm lại).
 - Trang Bản đồ: 40 điểm tham quan.
 - Thẻ "Hôm nay ở Huế", phép chọn (đọc từ chương trình): lấy thời điểm hiện tại theo đồng hồ của máy người dùng, tính theo giờ quốc tế (UTC), cộng 7 giờ (giờ Việt Nam) rồi lấy phần nguyên của số ngày. Vì vậy máy đặt múi giờ nào cũng đổi bài lúc 0 giờ Việt Nam; chỉ máy chạy sai đồng hồ mới thấy bài của ngày khác. Bài được chọn một lần khi Trang chủ hiện ra và danh sách bài đã tới; danh sách chỉ lấy một lần lúc tải trang. Trang để mở qua nửa đêm giữ bài cũ cho tới khi tải lại, hoặc rời Trang chủ rồi quay lại (chưa thử). Bài xếp theo một mã băm của mã bài (thứ tự cố định, trông như đã xáo), lấy bài thứ (số ngày chia dư 97). Theo phép tính trên danh sách bài thật, ngày 23/11/2026 thẻ là bài đặc sản "Bánh canh Nam Phổ"; lượt trình duyệt chiều 23/11 thấy đúng bài này. Bài không có tên bị bỏ khỏi vòng xoay. Ảnh cả trang ở tám cỡ màn (0 tràn ngang) chụp trên bản lọc lần một (141 bài); lần lọc hai chỉ đổi tập bài, không đổi bố cục.
 - Phần mã của giao diện tải về nặng khoảng 124 KB sau khi nén (đo ngày 14/11 trên giao diện cũ; chưa đo lại trên giao diện mới).
@@ -359,4 +359,5 @@ Nút "Thử lại" khi không nối được máy chủ gửi lại đúng câu 
 
 - Đợt đầu tối 23/11/2026: gạch "Hỏi bằng ảnh ở trang Trợ lý" của "Chi tiết để tra" thêm ca ba tên phải xác nhận — `frontend/src/HoiBangAnh.jsx` `nhanAnh` (`ungVien[0].xac_nhan_truoc`), gộp `77d20c27` 16:57 [code]; chi tiết ở bài 26. Dòng Cập nhật trước: "Cập nhật 15:40, ngày 23/11/2026 · khớp hệ thống 15:29 23/11 (50 tính năng mở, 7 tắt, kho 267 bài) · nâng nhãn theo lượt trình duyệt chiều 23/11 (thẻ "Hôm nay ở Huế") · đọc từ chương trình và ảnh chụp, người viết không chạy lại · lần sửa trước: Nguồn."
 - Đợt tối 23/11/2026: gạch "Ngày 1 của lịch ví dụ" của "Chi tiết để tra" thêm mốc buổi tối — bảng điểm bản 13 / 14 (gộp `56a09365` 16:38), người viết chạy `xep_v2` trên `data/phase_9/lich_trinh/diem_v14.json` (bài 28 khối Nguồn) [code; riêng tư; tự chạy hàm, không qua model]. Dòng Cập nhật trước: "Cập nhật 17:40, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt) + hỏi bằng ảnh tới 16:57 (một câu ở "Chi tiết để tra", bài 26 kể đủ); chưa gồm cụm buổi tối (chờ phiếu) · các lần sửa trước: Nguồn."
+- Quét số cũ 20:46 23/11/2026: dòng Cập nhật (55 ⇒ 57 tính năng mở, 7 ⇒ 6 tắt, kho 267 ⇒ 269 bài; câu "chưa có lượt cả bộ test sau các bản gộp từ 16:20" ⇒ lượt 20:09), "Chi tiết để tra" gạch Khám phá (kho nay 269), "Đã so" thẻ "Hôm nay ở Huế" (267 bài giữ, thêm mốc "lúc đó"). Lệnh: `corpus.file_count` / `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269 / 9533) và đếm dòng `: true` / `: false` dưới `assistant:` của `backend/config/settings.yaml` (57 / 6), chạy 20:40 23/11/2026 trên cây chính `03229b64` [đã chạy]; mức test: `session_prompt/HIEN_TRANG.md` mục 1 và bảng `data/test_rong_2026-11-22/KET_QUA_c475f5e0.tsv` (95 file, 4 bỏ, 2.307 ca đạt, 1 file đỏ) [riêng tư; tự đếm].
 </details>

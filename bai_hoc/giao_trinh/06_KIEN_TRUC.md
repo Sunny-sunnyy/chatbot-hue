@@ -1,6 +1,6 @@
 # Bài 6 — Kiến trúc: các khối, vì sao đặt như vậy, và khi một khối hỏng thì sao
 
-*Cập nhật 11:38, ngày 23/11/2026 · khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài) · sửa câu tả lúc chờ ở quyết định 4 theo thẻ chờ mới; quyết định 3 thêm ngoại lệ gọi lại một lần khi nhà cung cấp model lỗi tạm thời · các khối, công nghệ, cách xử lý lỗi đọc từ chương trình và cấu hình 22/11; thời gian từng bước từ một lượt hỏi thật 21/11 (Claude Sonnet 5.5).*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · 11:38: khớp giao diện mới · sửa câu tả lúc chờ ở quyết định 4 theo thẻ chờ mới; quyết định 3 thêm ngoại lệ gọi lại một lần khi nhà cung cấp model lỗi tạm thời · các khối, công nghệ, cách xử lý lỗi đọc từ chương trình và cấu hình 22/11; thời gian từng bước từ một lượt hỏi thật 21/11 (Claude Sonnet 5.5).*
 
 **Bài trước đã biết:** người dùng thấy sáu trang; ở khung Trợ lý họ gõ câu hỏi và nhận câu trả lời có nguồn.
 **Bài này thêm:** phía sau màn hình có những khối nào, một câu hỏi đi qua chúng theo thứ tự nào, **vì sao** các khối được đặt như vậy, và **một khối hỏng thì sao**. Bài mở bằng vài khái niệm về trang web và máy chủ, giảng từ đầu.
@@ -45,8 +45,8 @@ Phần này dành cho người chưa làm trang web bao giờ. Năm ý dưới �
 ```mermaid
 flowchart LR
   U["Giao diện<br/>trong trình duyệt"] <--> S["Máy chủ"]
-  S <--> Q["Qdrant<br/>9.479 đoạn đã lập chỉ mục"]
-  K["Kho 267 bài<br/>+ các bảng dữ liệu"] --> S
+  S <--> Q["Qdrant<br/>9.533 đoạn đã lập chỉ mục"]
+  K["Kho 269 bài<br/>+ các bảng dữ liệu"] --> S
   S <--> M["Model viết<br/>(bên ngoài)"]
   S <--> X["Thời tiết, tìm web<br/>(bên ngoài)"]
 ```
@@ -56,7 +56,7 @@ flowchart LR
 | **Giao diện** | sáu trang người dùng thấy (bài 5) | React, đóng gói bằng Vite; bản đồ bằng Leaflet | trình duyệt của người dùng |
 | **Máy chủ** | nhận câu hỏi, tìm, gọi model, chạy công cụ, kiểm, xếp lịch, ghi sổ | Python, FastAPI; phần gọi model và nhận lời xin công cụ dùng thư viện OpenAI Agents SDK | máy của dự án |
 | **Qdrant** | cất vector của mọi đoạn kèm chữ và thông tin của đoạn đó; trả về 30 đoạn gần câu hỏi nhất | Qdrant, chạy trong một hộp Docker | máy của dự án |
-| **Kho và các bảng dữ liệu** | 267 bài viết; các bảng điểm tham quan, khoảng cách, chỗ ở, quán ăn, ảnh (dùng cho trang Lên kế hoạch và cho các công cụ của trợ lý); bảng sự kiện theo ngày (chỉ dùng cho ô hỏi đáp) | file chữ và file bảng | máy của dự án |
+| **Kho và các bảng dữ liệu** | 269 bài viết (từ 18:05 23/11); các bảng điểm tham quan, khoảng cách, chỗ ở, quán ăn, ảnh (dùng cho trang Lên kế hoạch và cho các công cụ của trợ lý); bảng sự kiện theo ngày (chỉ dùng cho ô hỏi đáp) | file chữ và file bảng | máy của dự án |
 | **Dịch vụ bên ngoài** | model viết; dự báo thời tiết; tìm web | model: Claude Sonnet 5.5 qua Amazon Bedrock (trước đó gpt-6-luna qua OpenAI) · thời tiết: Open-Meteo · tìm web: Serper | máy của các bên đó |
 
 Một model nữa không có trong hình vì nó nằm ngay trong máy chủ: model embedding nhỏ (multilingual-e5-small), dùng để đổi câu hỏi thành vector (bài 10). Nó chạy trên máy của dự án, không gọi ra ngoài.
@@ -301,7 +301,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Khi điều kiện đổi (tóm tắt bảng ở mục "Mọi tình huống hỏng"): chưa có giới hạn số lượt chạy cùng lúc và mới đo một lần với nhiều người hỏi; có sẵn một bộ đếm số lượt mỗi ngày cho từng người nhưng đang tắt.
 - Lượt ví dụ chính: ngày 21/11/2026; thời gian từng bước theo sổ ghi: lần gọi xếp loại 0,74 giây (cả bước 0,75 giây), tìm 0,040 giây, ghép ngữ cảnh 0,004 giây, viết 3,63 giây, tổng 3,69 giây. Tiền: 0,0034 USD cho lần xếp loại, 0,0144 USD cho lần viết.
 - Ví dụ "phải tìm thêm" mất 7,5 giây với 4 lần gọi model; lượt đó chạy ngày 20/11 với gpt-6-luna, chưa có lượt tương đương trên Claude.
-- Giai đoạn chuẩn bị kho: cắt 267 bài thành 9.479 đoạn, đổi mỗi đoạn thành vector, lập thống kê từ khoá, cất vào Qdrant; khoảng 225 giây cho cả kho, khoảng nửa phút khi chỉ vài bài đổi.
+- Giai đoạn chuẩn bị kho: cắt 269 bài thành 9.533 đoạn, đổi mỗi đoạn thành vector, lập thống kê từ khoá, cất vào Qdrant; khoảng 225 giây cho cả kho, khoảng nửa phút khi chỉ vài bài đổi.
 - Cùng chỗ nhớ với cuộc trò chuyện còn có nhiều nhất 500 câu trả lời đã nhớ, mỗi câu giữ 24 giờ (bài 34). Hệ thống hiện chỉ chạy một bản máy chủ trên một máy, nên chỗ nhớ của chính bản đó là đủ.
 - Các trang không cần model và Qdrant: Trang chủ, Bản đồ, Chỗ ở, Giới thiệu; trang Khám phá cần danh sách bài nạp lúc bật.
 - Quyết định 3, phần không gọi lại: chương trình kiểm cấu hình từ chối hẳn các dòng "gọi lại" và "model dự phòng"; cả ba chỗ gọi ra ngoài đều gọi đúng một lần; với thư viện của OpenAI, chương trình phải tắt hẳn việc tự gọi lại có sẵn của thư viện.
@@ -314,9 +314,9 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Ảnh của chức năng hỏi bằng ảnh được thu nhỏ còn cạnh dài 1.024 điểm ảnh trước khi gửi; ảnh gốc nhiều nhất 10 MB.
 - Khi hãng model lỗi sau khi máy chủ đã bắt đầu gửi dần, sổ số đo phân biệt hai kết cục: lỗi trước khi có chữ, và lỗi sau khi đã có chữ.
 - Gói đóng sẵn để mang hệ thống sang máy khác gồm ba hộp (cửa nhận kết nối mã hoá, ứng dụng, Qdrant); đã chạy thử trên máy, chưa đưa lên mạng (bài 36).
-- Bộ test của máy chủ: lần chạy đủ gần nhất (lượt kiểm chốt trưa 22/11) có 76 file, 2.060 ca (bài 38).
+- Bộ test của máy chủ: lần chạy đủ gần nhất (xong 20:09 23/11) có 95 file, 4 file bỏ vì cần khoá của model cũ, 2.307 ca đạt và một file đỏ vì lỗi của chính phép kiểm, đã sửa (bài 38).
 
-**Bài sau (bài 7):** bắt đầu chặng 2, giai đoạn chuẩn bị. Khối đầu tiên được mở ra là kho: 267 bài viết về Huế.
+**Bài sau (bài 7):** bắt đầu chặng 2, giai đoạn chuẩn bị. Khối đầu tiên được mở ra là kho: 269 bài viết về Huế.
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
@@ -357,5 +357,6 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Chạy lại cả lượt trong cuộc đã lập lịch (từ 16:08 22/11; không chạy lại lượt sửa lịch): `backend/config/settings.yaml` dòng 76 (`nho_dap_cuoc_co_lich`); `backend/llm/assistant.py` dòng 2114–2131 [code].
 
 - Đợt 23/11 (giao diện mới, ở bản chính từ 10:00 23/11, commit gộp `e7193bd0`): thẻ chờ thay cho dòng trạng thái có "(n đoạn)": `frontend/src/chat.jsx` dòng 22–31, 139–143, 415–419, `frontend/src/song/Song.jsx` (`ChoSong`); bản cũ `git show bedfa091:frontend/src/chat.jsx` dòng 491 [code, đọc main `20f998f4`]. Tin "đã tìm" mang tên bài: commit `a76eb962` (`backend/llm/assistant.py` `bai_da_tim`, `backend/api/routes/chat.py` `StreamEvents.status`) [code]. Con số 29,5 giây đo trên giao diện cũ, chưa đo lại trên giao diện mới; thẻ chờ của tin gia đình bốn ý đã được chụp tự động trên bản đã gộp ở giây 2 · 5 · 9 · 14 · 20 (`data/giao_dien_2026-11-22/sau_gop_10c30bc5/MUC_LUC.md` hàng `C01_cho_tin_dai`) [riêng tư; chép]. Con đò và nét đứt `.net-song-chay` vẫn chạy dưới `.hieu-ung` lúc chờ: `frontend/src/song/song.css` dòng 158–159 [code, theo biên bản `data/hoc_cung_D/kiem/dot_2311_k1_kiem.md` bài 06 hàng 2]. Dòng thời tiết ở Trang chủ: `frontend/src/TrangChu.jsx` (`ThoiTiet` đưa vào `HeroSong`), `song/song.css` (`.h1-chu .tt-hop`) [code]. Hướng giao diện: bài 5, quyết định 4.
+- Quét số cũ 20:46 23/11/2026: dòng Cập nhật (48 ⇒ 57 tính năng mở, 6 tắt, kho 267 ⇒ 269), sơ đồ năm khối, bảng khối, gạch "Giai đoạn chuẩn bị kho" và câu "Bài sau" (267 ⇒ 269 bài, 9.479 ⇒ 9.533 đoạn; 225 giây giữ, đo trên kho trước), gạch "Bộ test của máy chủ" (lượt 22/11, 76 file, 2.060 ca ⇒ lượt 20:09 23/11). Lệnh: `corpus.file_count` / `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269 / 9533) và đếm dòng `: true` / `: false` dưới `assistant:` của `backend/config/settings.yaml` (57 / 6), chạy 20:40 23/11/2026 trên cây chính `03229b64` [đã chạy]; lượt test: `session_prompt/HIEN_TRANG.md` mục 1 và `data/test_rong_2026-11-22/KET_QUA_c475f5e0.tsv` (95 dòng file: 90 xanh, 1 đỏ, 4 bỏ; 2.307 ca đạt; 1.171 giây) [riêng tư; tự đếm].
 
 </details>

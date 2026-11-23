@@ -1,6 +1,6 @@
 # Bài 11 — Tìm theo chữ trùng: từ khoá BM25
 
-*Cập nhật 17:11, ngày 22/11/2026 · cơ chế đọc từ chương trình đang chạy, đối chiếu lại lúc 13:49; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ báo cáo đo ngày 30/08 và 25/10; người viết không chạy lại phép đo nào.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn, từ điển 5.971 từ) · bản 17:11 22/11: cơ chế đọc từ chương trình đang chạy, đối chiếu lại lúc 13:49; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ báo cáo đo ngày 30/08 và 25/10; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** mỗi đoạn có một vector; câu hỏi cũng thành một vector; hệ thống lấy 30 đoạn có vector gần câu hỏi nhất, gọi là 30 ứng viên.
 **Bài này thêm:** cách chấm thứ hai, theo chữ trùng, áp lên chính 30 ứng viên đó; vì sao nó được tính ngay lúc hỏi; và file thống kê của nó lệch kho thì sao.
@@ -20,7 +20,7 @@
 | tìm theo từ khoá | **keyword search**, **lexical search**, **sparse retrieval** | chấm đoạn theo chữ trùng với câu hỏi |
 | BM25 | **BM25** (Best Matching 25) | công thức chấm điểm theo chữ trùng dùng phổ biến nhất |
 | tách từ | **tokenize** | cắt một câu thành các "từ" để đếm; ở đây mỗi từ là một âm tiết |
-| từ điển của kho | **vocabulary** | danh sách mọi từ khác nhau có trong kho; hiện 5.960 từ |
+| từ điển của kho | **vocabulary** | danh sách mọi từ khác nhau có trong kho; hiện 5.971 từ (từ 18:05 23/11) |
 | độ hiếm | **IDF** (inverse document frequency) | số cho biết một từ có mặt ở ít hay nhiều đoạn; từ có ở ít đoạn thì độ hiếm cao |
 | file thống kê từ khoá | **sparse state** | file ghi từ điển, độ hiếm của từng từ, và độ dài trung bình của một đoạn |
 
@@ -38,7 +38,7 @@ BM25 làm ba việc với mỗi đoạn:
 2. **Nhân với độ hiếm của từ.** Từ có mặt ở hầu hết các đoạn (như "và") gần như không đem lại điểm; từ có ở khoảng nửa kho (như "huế") đem lại ít điểm. Từ chỉ có ở vài đoạn (như tên một quán) đem lại nhiều điểm.
 3. **Trừ bớt cho đoạn dài.** Đoạn dài dễ trùng nhiều chữ chỉ vì nó nhiều chữ, nên bị trừ bớt theo độ dài so với độ dài trung bình của kho.
 
-Để làm được việc 2 và 3, lúc chuẩn bị kho chương trình lập sẵn một **file thống kê từ khoá**: danh sách 5.960 từ khác nhau của kho, độ hiếm của từng từ, và độ dài trung bình của một đoạn (khoảng 67 từ).
+Để làm được việc 2 và 3, lúc chuẩn bị kho chương trình lập sẵn một **file thống kê từ khoá**: danh sách 5.971 từ khác nhau của kho, độ hiếm của từng từ, và độ dài trung bình của một đoạn (khoảng 67 từ).
 
 ## "Từ" ở đây là âm tiết
 
@@ -48,7 +48,7 @@ Cách tách này có vẻ thô: "tham quan" bị tách đôi, "Đại Nội" b�
 
 ## Ở hue_rag, BM25 chỉ chấm lại 30 ứng viên của bước tìm theo nghĩa
 
-BM25 ở đây không tự đi tìm trên 9.479 đoạn. Thứ tự là:
+BM25 ở đây không tự đi tìm trên 9.533 đoạn. Thứ tự là:
 
 1. Tìm theo nghĩa lấy ra 30 ứng viên (bài 10).
 2. BM25 chấm điểm **đúng 30 đoạn đó**, và xếp chúng thành một bảng thứ hai.
@@ -163,8 +163,8 @@ BM25 chỉ chấm 30 ứng viên của bước tìm theo nghĩa. Đoạn đó kh
 | Cách tách từ | chữ thường, cắt ở mọi ký tự không phải chữ hay số (thực tế: theo âm tiết) | đơn giản, không cần thư viện tách từ | đã thử ghép cặp âm tiết, thư viện tách từ tiếng Việt, giữ nguyên cụm mã số (mục "Đã so") |
 | Hằng số k1 | 1,5 | mức "bão hoà" khi một từ lặp nhiều lần trong đoạn: lặp thêm thì điểm tăng chậm dần | đã thử 1,2 và 1,8 trên bản thử nhóm món ăn: giữ 1,5 |
 | Hằng số b | 0,75 | mức trừ bớt cho đoạn dài (0 = không trừ, 1 = trừ hết mức) | đã thử 0,5 và 1,0: 0,5 chưa rõ hơn, 1,0 mất đoạn đúng ở 1 câu |
-| Số từ trong từ điển | 5.960 | — | — |
-| Độ dài trung bình một đoạn | 66,59 từ | dùng trong phép trừ bớt cho đoạn dài | — |
+| Số từ trong từ điển | 5.971 | — | — |
+| Độ dài trung bình một đoạn | 66,46 từ | dùng trong phép trừ bớt cho đoạn dài | — |
 | Số đoạn được chấm mỗi câu hỏi | 30 (các ứng viên của bước tìm theo nghĩa) | — | đã thử cho từ khoá tự tìm trên cả kho rồi trộn: kém hơn (bài 13) |
 | Nơi tính điểm lúc trả lời | chương trình tự tính từ chữ của 30 ứng viên và file thống kê | không phải hỏi thêm cơ sở dữ liệu | — |
 | Từ của câu hỏi không có trong từ điển | 0 điểm | — | — |
@@ -219,12 +219,12 @@ Trên bản thử chỉ có nhóm món ăn (45 câu), BM25 đứng một mình t
 
 - Ở ví dụ chính, bước chấm BM25 cho 30 ứng viên mất khoảng 3,5 mili giây; cả bước tìm 42 mili giây.
 - Số thứ hạng trong bảng ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); 10 đoạn giữ lại trùng với 10 đoạn của lượt hỏi thật ngày 21/11.
-- Từ điển 5.660 từ trong phép so là của kho cuối tháng 10; kho hiện nay 5.960 từ.
+- Từ điển 5.660 từ trong phép so là của kho cuối tháng 10; kho hiện nay 5.971 từ.
 - Khi kho đổi dù chỉ một bài, độ hiếm của các từ và độ dài trung bình đổi theo, nên file thống kê được lập lại cho cả kho. Việc này không cần model và mất khoảng 20 giây cùng với việc cắt đoạn (bài 12).
 - Phép so tách từ trên bản thử nhóm món ăn (30/08): tách theo âm tiết và tách bằng một thư viện tách từ cho kết quả gần như nhau; cách âm tiết được chọn vì đơn giản.
 - Chưa có phép so "có từ khoá" với "chỉ theo nghĩa" trên toàn kho. Trên bản thử nhóm món ăn (30/08), hồ sơ ghi cách trộn tốt nhất có một nhóm câu tụt quá mức cho phép, nên lúc đó chưa chọn cách trộn nào. Ngày 11/09, khi thiết kế cho toàn kho, chủ dự án chốt cách đang chạy làm cách mốc; cách hai bên tìm độc lập là phương án để so với nó.
 
-**Bài sau (bài 12):** vector, chữ và thông tin gắn kèm của 9.479 đoạn được cất ở đâu, cập nhật thế nào khi kho đổi, và vì sao hệ thống không chịu chạy khi kho và chỉ mục lệch nhau.
+**Bài sau (bài 12):** vector, chữ và thông tin gắn kèm của 9.533 đoạn được cất ở đâu, cập nhật thế nào khi kho đổi, và vì sao hệ thống không chịu chạy khi kho và chỉ mục lệch nhau.
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
@@ -239,5 +239,6 @@ Trên bản thử chỉ có nhóm món ăn (45 câu), BM25 đứng một mình t
 - Ví dụ cởi giày: `data/hoc_cung_D/kiem/bai_02_10.md` dòng 26.
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Quyết định nhỏ hơn", "Câu hỏi tự kiểm" (thêm 13:49 22/11/2026 theo khuôn mới; gom từ "Đã so", bảng cấu hình, mục "Vì sao không làm cách khác" cũ). Cơ chế "tính lúc hỏi từ 30 ứng viên" đối chiếu lại 13:49: `backend/retrieval/full_corpus.py`, `search` nhánh `dense_bm25_rrf` (vòng `for pid in dense_ranked_ids`, `encode_sparse_document` trên `search_text` của payload) [code]. File thống kê nạp lúc bật, so `state_sha256` và `corpus_identity` với bản ghi, lệch ⇒ `ComponentNotReadyError` ⇒ lời báo lập chỉ mục lại: `build_full_corpus_retrieval_service` bước 2 và `backend/api/app.py` [code, chưa thử]. Lệnh cập nhật dừng khi máy chủ đang chạy: `backend/ingestion/cap_nhat_rieng.py` (`ServerDangChay`) [code]. 1,8 giây ghi lại phần cất sẵn; khởi động lại để nạp thống kê mới và quên câu trả lời đã nhớ: `bai_hoc/VIEC_MOI_XONG.md` mục 32 [đã chạy]. Không từ nào trong từ điển ⇒ chỉ còn bảng theo nghĩa: cùng hàm (`branches` chỉ thêm bảng BM25 khi có đoạn được điểm) [code]. Chủ dự án chốt 11/09 cách "nghĩa lấy ứng viên rồi từ khoá chấm lại" làm cách mốc: `docs/superpowers/specs/2026-09-09-full-corpus-context-decisions.md` mục Decision Queue #1 ("User xác nhận … 2026-09-11") [quyết định đã ghi]. Lý do cần phần từ khoá ngay từ đầu: người viết dò thẻ T3-02, N2-14 của `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` và kế hoạch Phase 5 `docs/superpowers/plans/2026-09-13-phase-5-full-corpus-retrieval-reranking-implementation-plan.md`, không thấy; thẻ N2-14 ghi "bm25_finalist = None" ở bản món ăn và "không thấy ai chốt / ngày" cho việc bỏ TF-IDF [tài liệu]. 0,726 / 0,721: thẻ T3-02 dòng 7B [đã chạy, chưa kiểm theo cặp].
 - Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư].
+- Quét số cũ 20:46 23/11/2026: số đoạn 9.479 ⇒ 9.533, từ điển 5.960 ⇒ 5.971 từ, độ dài trung bình 66,59 ⇒ 66,46 ở các câu nói hiện tại; điểm số của lượt ví dụ (chạy sáng 22/11 trên kho lúc đó) giữ nguyên. Lệnh: `document_count`, `len(vocabulary)`, `average_document_length` của `data/full_corpus_builds/full_corpus_sparse_state.json` (9533, 5971, 66,4578; file ghi 18:05 23/11), đọc 20:40–20:45 23/11/2026 [đã chạy].
 
 </details>

@@ -1,8 +1,8 @@
 # Bài 9 — Thông tin gắn kèm mỗi đoạn (metadata) và "chữ để tìm"
 
-*Cập nhật 22:43, ngày 22/11/2026 · thêm một vế cho dòng "có thể đã thay đổi" (bài chỉ được nêu tên) · cơ chế đọc từ chương trình đang chạy; số kho khớp bản ghi hiện trạng lúc 13:33; ví dụ lấy từ lượt hỏi thật ngày 21/11; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 22:43 22/11: thêm một vế cho dòng "có thể đã thay đổi" (bài chỉ được nêu tên) · cơ chế đọc từ chương trình đang chạy; số kho khớp bản ghi hiện trạng lúc 13:33; ví dụ lấy từ lượt hỏi thật ngày 21/11; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
 
-**Bài trước đã biết:** 267 bài được cắt thành 9.479 đoạn nhỏ, phần lớn chỉ một hai câu.
+**Bài trước đã biết:** 269 bài (từ 18:05 23/11) được cắt thành 9.533 đoạn nhỏ, phần lớn chỉ một hai câu.
 **Bài này thêm:** một đoạn nhỏ đứng riêng thì không biết nó nói về cái gì. Bài này giảng những thông tin được gắn kèm mỗi đoạn, chúng được dùng ở đâu, và vì sao chỉ gắn chừng đó.
 
 ## Ý chính
@@ -68,7 +68,7 @@ Bằng chứng:
 
 ## Hệ thống không lọc theo chủ đề khi tìm
 
-Có thể gắn thêm nhiều trường nữa (chủ đề con, khu vực, mức giá…) rồi dùng chúng để lọc trước khi tìm, ví dụ "chỉ tìm trong nhóm món ăn". hue_rag không làm vậy: mọi câu hỏi đều tìm trên cả 9.479 đoạn.
+Có thể gắn thêm nhiều trường nữa (chủ đề con, khu vực, mức giá…) rồi dùng chúng để lọc trước khi tìm, ví dụ "chỉ tìm trong nhóm món ăn". hue_rag không làm vậy: mọi câu hỏi đều tìm trên cả 9.533 đoạn.
 
 Ví dụ chính cho thấy một hệ quả của lựa chọn này: câu hỏi về giá vé được trả lời bằng đoạn của hai bài vé **và** một đoạn của bài nghệ thuật biểu diễn. Nếu hệ thống lọc "chỉ tìm trong nhóm du lịch" (nhóm chứa các bài vé) thì đoạn số 4, nơi có giá vé trẻ em, đã không được xét. Lý do và cái giá: quyết định 3 và 4 dưới đây.
 
@@ -90,7 +90,7 @@ Ví dụ chính cho thấy một hệ quả của lựa chọn này: câu hỏi 
 
 ### 3. Vì sao không lọc theo chủ đề khi tìm, ví dụ "chỉ tìm trong nhóm món ăn"?
 
-- **Đã chọn:** mọi câu hỏi tìm trên cả 9.479 đoạn.
+- **Đã chọn:** mọi câu hỏi tìm trên cả 9.533 đoạn.
 - **Vì sao:** lập luận, không phải số đo: câu hỏi hay chạm nhiều chủ đề, và lọc sai một lần là mất đáp án. Ví dụ ở mục trên: đoạn số 4 nằm ngoài nhóm du lịch.
 - **Cách khác:** lọc theo chủ đề: chưa đo.
 - **Cái giá:** không có cách "chỉ tìm trong lễ hội"; một câu hỏi về món ăn vẫn có thể kéo về đoạn của bài di tích.
@@ -201,7 +201,7 @@ Câu hỏi hay chạm nhiều chủ đề. Ở ví dụ chính, giá vé trẻ e
 - Dòng "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi…" được thêm khi câu trả lời trích một đoạn có trường nguồn thuộc nhóm vé, địa điểm, lễ hội, hoặc là bài "Lưu trú ở Huế", hoặc nêu đúng tên một bài như thế có trong nguồn liệt kê, nguồn "gần một điểm" hay thẻ nơi (bài 16, 24).
 - Bước tìm kiểm hồ sơ của từng ứng viên (đủ 7 trường, đúng dạng, mã đoạn khớp mã cất trong Qdrant, chủ đề khớp đường dẫn) mỗi lần tìm.
 
-**Bài sau (bài 10):** chữ để tìm của 9.479 đoạn được đổi thành vector như thế nào.
+**Bài sau (bài 10):** chữ để tìm của 9.533 đoạn được đổi thành vector như thế nào.
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
@@ -218,5 +218,6 @@ Câu hỏi hay chạm nhiều chủ đề. Ở ví dụ chính, giá vé trẻ e
 - Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư]. Nguyên tắc "chỉ thêm trường khi có chỗ dùng" chốt 11/09: `docs/superpowers/specs/2026-09-09-full-corpus-context-decisions.md` (Decision Queue #3) [quyết định đã ghi]. Bảng điểm trang Lên kế hoạch: `backend/llm/lich_trinh_v2.py` (`kiem_doan_mo_ta`) [code].
 
 - Dòng "có thể đã thay đổi" cũng hiện khi bài chỉ được nêu tên qua nguồn liệt kê, "gần một điểm" hay thẻ nơi (thêm 22:43 22/11/2026): `backend/llm/assistant.py` hàm `set_notice` (`bai_neu`) [code].
+- Quét số cũ 20:46 23/11/2026: bốn câu nói số kho hiện tại (267 ⇒ 269 bài, 9.479 ⇒ 9.533 đoạn); dòng Cập nhật cũ ghi "số kho khớp bản ghi hiện trạng lúc 13:33" (22/11) nay thuộc bản 22:43 22/11. Lệnh: `corpus.file_count` / `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269 / 9533), đọc 20:40 23/11/2026 [đã chạy].
 
 </details>

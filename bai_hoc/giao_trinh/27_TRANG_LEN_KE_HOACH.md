@@ -1,6 +1,6 @@
 # Bài 27 — Trang Lên kế hoạch: từ mấy nút chọn tới một lịch, và bảng điểm tham quan đứng sau
 
-*Cập nhật 19:51, ngày 23/11/2026 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · bảng điểm bản 15 (47 dòng, có AEON Mall và công viên ven sông, từ 18:43) · chưa có lượt cả bộ test sau các bản gộp từ 16:20 · thời gian từ một lượt thật 21/11 (Claude Sonnet 5.5) · lần sửa trước: Nguồn.*
+*Cập nhật 20:46, ngày 23/11/2026 · mức test theo hệ thống lúc code đứng yên tối 23/11 · bản 19:51: khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · bảng điểm bản 15 (47 dòng, có AEON Mall và công viên ven sông, từ 18:43) · lượt cả bộ test xong 20:09 23/11: một file đỏ vì lỗi của chính phép kiểm, đã sửa (bài 38) · thời gian từ một lượt thật 21/11 (Claude Sonnet 5.5) · lần sửa trước: Nguồn.*
 
 **Bài trước đã biết:** trợ lý trả lời câu hỏi từ kho; việc phải đúng (ngày âm lịch, thời tiết, khoảng cách) do chương trình tính (bài 24). Bài 5 đã tả trang Lên kế hoạch trông ra sao.
 **Bài này thêm:** người dùng bấm "Xếp lịch" thì máy chủ nhận gì, kiểm gì, và đi qua những bước nào cho tới khi có một lịch. Bài cũng mở bảng điểm tham quan, thứ mà mọi lịch được xếp từ đó, và nói ô chat liên quan tới trang này ra sao.
@@ -307,4 +307,5 @@ Câu trả lời bằng chữ từ kho, kèm một dòng chỉ sang trang Lên k
   - Bảng toạ độ bản 11 (46 dòng, 45 có vị trí, không có dòng AEON), bảng ảnh bản 9 (45 dòng; thiếu biển Thuận An, MoKa): `settings.yaml` dòng `lich_trinh_toa_do`, `lich_trinh_bang_anh`; đếm `diem_toa_do_v11.json`, `bang_anh_v9.json` [riêng tư; tự đếm]; kể ở bài 30. Bảng khoảng cách 40 điểm, không gồm mục buổi tối: `settings.yaml` dòng `khoang_cach_bang` ("40 điểm có toạ độ × 39 chiều"); lời commit `7fe74669` ("The two rows stay out of the place list of the distance / nearby tools") [code; chép].
   - Lịch ví dụ trên bảng bản 15, ba tối phố đi bộ / Bến Trăng / Ca Huế: `/tmp/d_dem_xl/chay.py` [người viết tự chạy hàm, không qua model].
   - Kho 269 bài: bài 7 (Nguồn) [tự đếm].
+- Quét số cũ 20:46 23/11/2026: chỉ câu về mức test ở dòng Cập nhật ("chưa có lượt cả bộ test sau các bản gộp từ 16:20" ⇒ lượt 20:09); thân bài không đổi. Nguồn: `session_prompt/HIEN_TRANG.md` mục 1 và bảng `data/test_rong_2026-11-22/KET_QUA_c475f5e0.tsv` (95 file · 4 bỏ · 91 chạy · 2.307 ca đạt · một file đỏ, 1.171 giây; tự đếm 20:40–20:45 23/11/2026) [riêng tư]; số kho / tính năng của dòng Cập nhật khớp lệnh chạy 20:40 23/11/2026 (269 / 9533; 57 / 6) [đã chạy].
 </details>

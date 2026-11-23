@@ -1,6 +1,6 @@
 # Bài 7 — Kho dữ liệu: 269 bài viết về Huế, ai soạn, lấy từ đâu, kiểm thế nào
 
-*Cập nhật 20:20, ngày 23/11/2026 · đã áp biên bản kiểm độc lập tối 23/11 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · hai bài mới (AEON Mall Huế, công viên ven sông Hương) và một dòng tự mâu thuẫn về Quán Nhỏ, ghi kho 18:03, chỉ mục cập nhật riêng 18:05 · chưa có lượt cả bộ test sau các bản gộp từ 16:20 · các mốc trước: khối Nguồn.*
+*Cập nhật 20:46, ngày 23/11/2026 · mức test theo hệ thống lúc code đứng yên tối 23/11 · bản 20:20: đã áp biên bản kiểm độc lập tối 23/11 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · hai bài mới (AEON Mall Huế, công viên ven sông Hương) và một dòng tự mâu thuẫn về Quán Nhỏ, ghi kho 18:03, chỉ mục cập nhật riêng 18:05 · lượt cả bộ test xong 20:09 23/11: một file đỏ vì lỗi của chính phép kiểm, đã sửa (bài 38) · các mốc trước: khối Nguồn.*
 
 **Bài trước đã biết:** hệ thống gồm những khối nào, và một câu hỏi đi qua chúng ra sao. Mọi câu trả lời chỉ được lấy từ kho.
 **Bài này thêm:** mở chính kho ra xem. Trong đó có gì, bài được viết theo luật nào, kho được giữ đúng bằng cách nào, và vì sao làm như vậy.
@@ -279,4 +279,5 @@ Các lần đổi kho chính:
   - Quán Nhỏ "cả bữa trưa lẫn bữa tối": `bang_quan_lich_v5.json` Quán Nhỏ `khong_bua` `['trua', 'toi']` [riêng tư; tự đếm].
   - Mọi con trỏ "`session_prompt/HIEN_TRANG.md` mục … gạch [giờ]" của các đợt trước trong khối này đọc ở bản `678f0b16` (18:57 23/11) — sổ viết lại theo chủ đề lúc 19:34 (`6c1e9a4c`); các gạch 08:40 22/11, 09:25 22/11, 22:06 21/11, 12:22 23/11, 18:12 23/11 đều còn ở bản đó. Riêng "câu gác (G-2, 12:38 22/11/2026)" chỉ có ở các bản sổ từ `dc0fd040` (12:38 22/11) tới trước `014c564f` (16:41 22/11) [đã chạy `git log -S`].
   - Để giữ độ dài: trình tự giờ của lần 23/11 chuyển từ thân bài xuống "Chi tiết để tra" (đã sửa thứ tự: chủ dự án chọn trước lần ghi kho 18:03; 18:07 là giờ ghi lời); "Cái giá" quyết định 6 rút gọn (đủ ở "Giới hạn đã biết"); tên mục "Mỗi lần thêm hay sửa kho là một lần đo trước và sau" ⇒ "Thêm hay sửa kho đi theo bốn bước"; tên quyết định 3 "thêm bài nào cũng đo lại" ⇒ "đợt thêm nhiều bài phải đo lại".
+- Quét số cũ 20:46 23/11/2026: chỉ câu về mức test ở dòng Cập nhật ("chưa có lượt cả bộ test sau các bản gộp từ 16:20" ⇒ lượt 20:09); thân bài không đổi. Nguồn: `session_prompt/HIEN_TRANG.md` mục 1 và bảng `data/test_rong_2026-11-22/KET_QUA_c475f5e0.tsv` (95 file · 4 bỏ · 91 chạy · 2.307 ca đạt · một file đỏ, 1.171 giây; tự đếm 20:40–20:45 23/11/2026) [riêng tư]; số kho / tính năng của dòng Cập nhật khớp lệnh chạy 20:40 23/11/2026 (269 / 9533; 57 / 6) [đã chạy].
 </details>

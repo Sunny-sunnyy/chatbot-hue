@@ -1,6 +1,6 @@
 # Bài 17 — Bộ 176 câu hỏi mẫu: đề kiểm tra của hệ thống
 
-*Cập nhật 17:11, ngày 22/11/2026 · cấu tạo bộ câu đọc từ chương trình đo; các số đo lấy từ các báo cáo từ 24/10 tới 12/11, model viết gpt-6-luna; người viết không mở nội dung bộ câu và không chạy lại phép đo nào.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài) · bản 17:11 22/11: cấu tạo bộ câu đọc từ chương trình đo; các số đo lấy từ các báo cáo từ 24/10 tới 12/11, model viết gpt-6-luna; người viết không mở nội dung bộ câu và không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** đường hỏi đáp: tìm, viết, kiểm. Ở mỗi bài đều có những dòng "đã thử cách này, điểm tăng bao nhiêu, bỏ vì mấy câu tệ đi".
 **Bài này thêm:** những con số đó đo trên cái gì. Trước khi chấm được thì phải có đề. Bài này nói về đề; hai bài sau nói về cách chấm.
@@ -135,7 +135,7 @@ Hai quyết định nhỏ hơn ở nửa để tra.
 | Nếu | Phải làm gì | Đã có chưa |
 |---|---|---|
 | kho sửa một giá vé hay giờ mở cửa | soát và sửa đáp án mẫu của các câu liên quan; sửa đáp án là đổi đề, nên điểm chấm trên đề cũ và đề mới không đặt cạnh nhau để so được | đã soát hai lần, bằng tay, sau hai đợt sửa kho (28/10: 0 câu phải sửa; 30/10: sửa 2 câu); sau lần sửa kho 22/11 (giá thuê thuyền, một giá vé) đã dò các con số cũ trên cả 176 câu: 0 câu có đáp án lệch giá mới |
-| kho thêm bài mới | bộ câu không có câu nào về bài mới, nên không đo được phần đó | **chưa có**: số câu của bộ vẫn là 176 từ khi soạn, trong khi kho nay có 267 bài |
+| kho thêm bài mới | bộ câu không có câu nào về bài mới, nên không đo được phần đó | **chưa có**: số câu của bộ vẫn là 176 từ khi soạn, trong khi kho nay có 269 bài (từ 18:05 23/11) |
 | đổi model viết | bộ câu dùng lại được; mọi con số phải đo lại | đã đổi model; bộ 176 câu chưa được chấm lại đủ trên model đang chạy |
 | người chấm của bộ an toàn không bắt đủ câu đối chứng | bỏ kết quả chấm của lượt đó | đã có; chưa lượt nào bị bỏ |
 | một người hay agent sửa hệ thống lỡ đọc bộ cất riêng | bộ đó chỉ còn giá trị như bộ quen; phải soạn bộ mới | có luật cấm mở; một lệnh tìm chữ riêng chỉ tìm trong bài của kho, bỏ qua các file đề; rào máy chặn đưa các bộ đó lên kho mã công khai |
@@ -230,5 +230,6 @@ Soát đáp án mẫu của các câu liên quan, sửa nếu lệch. Sửa đá
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Quyết định nhỏ hơn" (sửa theo biên bản `data/hoc_cung_D/kiem/muc_moi_05_06_17_20.md` phần bài 17 [riêng tư]): chủ dự án quyết bỏ câu không tự nhiên 24/10 21:40, "chỉ tự nhiên" là số phụ (24/10 21:58), không dấu ngoài phạm vi và thêm dấu cho câu kín (25/10 15:15 và chiều 25/10): `session_prompt/Project_Status.md` (bảng quyết định); chia 120 / 56 từ 24/10: `Project_Status.md` dòng về đợt 8.1; luật bộ kín 05/11, "khi có người dùng thật": `bai_hoc/09_BO_CAU_HOI_MAU.md`; soát đáp án sau sửa kho 28/10 (0 câu) và 30/10 (2 câu): `bao_cao_he_thong/09_BAO_CAO_BO_CAU_HOI_GOLDEN.md`; sửa kho 22/11 (thuyền, vé Lê Bá Đảng) và "176 câu mẫu 0 lệch" là phép so bước tìm, không phải soát đáp án: `report_agent/2026-11-22/TONG_HOP.md`; không tìm thấy hồ sơ soát đáp án theo lần sửa này (tìm trong `report_agent/2026-11-22/`, `VIEC_DANG_MO.md`; không mở bộ câu); lượt 18/11 trượt 1 / 18: `bai_hoc/VIEC_MOI_XONG.md`; 267 bài: `session_prompt/HIEN_TRANG.md` mục 1; 13 ⇒ 1 câu không dấu: bài 10 mục "Giới hạn đã biết". Phần cũ gom từ biên bản kiểm `data/hoc_cung_D/kiem/bai_17_20.md` (nhóm kiểm lại đã dùng, khoảng tin cậy +0,024 tới +0,585; bốn số của bộ an toàn theo `skills/run-experiment/SKILL.md`; ngưỡng câu đối chứng 9 / 10 và 1 / 5; bộ 104 và 45 câu thời nhóm món ăn; 34 câu kho có của bộ cất riêng; lý do hai lần sửa đáp án). Luật câu kín và lệnh tìm riêng: `AGENTS.md` luật cứng 3. "Số câu của bộ vẫn là 176": `backend/evaluation/golden_full_corpus.py` [người viết không mở nội dung].
 
 - Soát đáp án mẫu sau lần sửa kho 22/11 (9 mẫu số cũ, 176 câu, 2 câu chạm, 0 câu lệch): phiên đo đếm 12:27 22/11/2026, một phiên, không tốn tiền; phiên điều phối chuyển lời [đã chạy; người viết chép từ tin, chưa tự mở kết quả].
+- Quét số cũ 20:46 23/11/2026: bảng "Nếu… thì sao" hàng "kho thêm bài mới": "kho nay có 267 bài" ⇒ 269. Lệnh: `corpus.file_count` / `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269 / 9533) và đếm dòng `: true` / `: false` dưới `assistant:` của `backend/config/settings.yaml` (57 / 6), chạy 20:40 23/11/2026 trên cây chính `03229b64` [đã chạy].
 
 </details>

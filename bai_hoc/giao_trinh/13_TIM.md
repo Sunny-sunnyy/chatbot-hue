@@ -1,8 +1,8 @@
 # Bài 13 — Tìm: lấy 30 ứng viên, trộn hai bảng xếp hạng, giữ 10 đoạn
 
-*Cập nhật 17:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào.*
 
-**Bài trước đã biết:** chặng 2: kho được cắt thành 9.479 đoạn, mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
+**Bài trước đã biết:** chặng 2: kho được cắt thành 9.533 đoạn (từ 18:05 23/11), mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
 **Bài này thêm:** chặng 3 bắt đầu. Người dùng gõ một câu; trong vài chục mili giây chương trình chọn ra 10 đoạn. Bài này đi qua bốn bước của việc chọn đó, và chỉ ra bước tìm hỏng ở đâu.
 
 ## Ý chính
@@ -279,5 +279,6 @@ Thử ngày 19/11, trên cả 176 câu mẫu và 32 câu an toàn, model viết 
 - "3 đoạn mỗi ý" sửa từ "chưa thử" theo bài 23 và chú thích `SO_DOAN_MOI_VE` trong `backend/llm/assistant.py` ("đếm 0 đồng 21/11: 2, 3, 4 đoạn mỗi vế cho cùng kết quả") [code, đọc 15:18 22/11/2026].
 
 - Lần chấm mù của chủ dự án 01/11 (3 cặp bản 5 đoạn từ chối nhầm, còn lại như nhau; luật dừng "chưa rõ", chủ dự án chọn giữ 10): `session_prompt/Project_Status.md` dòng 104, 187 [chép; phân xử 22/11 với bài 2].
+- Quét số cũ 20:46 23/11/2026: "Bài trước đã biết" 9.479 ⇒ 9.533 đoạn; số của lượt ví dụ và các phép so giữ nguyên. Lệnh: `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (9533), đọc 20:40 23/11/2026 [đã chạy].
 
 </details>
