@@ -205,8 +205,9 @@ def test_a_typed_yes_right_after_the_swap_question_acts_like_the_button_and_an_e
     assert nut["gui"] in goi_y
     for cau in ("ừ đổi chỗ đi", "Ok", "đổi chỗ hai tối nhé", "Đồng ý.", "được, đổi đi", "có"):
         assert s.chon_doi_toi(B, cau, goi_y) == nut["chon"], cau
-    for cau in ("không", "thôi không đổi", "có thể thêm Lăng Gia Long không", f"đổi {_ten(toi[1])} sang hoạt động tối khác", "ừ mà thêm chùa Thiên Mụ nữa", ""):
+    for cau in ("không", "thôi không đổi", "có thể thêm Lăng Gia Long không", f"đổi {_ten(toi[1])} sang hoạt động tối khác", "ừ mà thêm chùa Thiên Mụ nữa", "được rồi", ""):
         assert s.chon_doi_toi(B, cau, goi_y) is None, cau
+    assert s.chon_doi_toi(B, "đổi đi", goi_y + (f"đổi {_ten(toi[1])} (buổi tối ngày 1) sang hoạt động tối khác",)) is None  # hai câu hỏi tối cùng lượt ⇒ không đoán
     assert s.chon_doi_toi(B, "ừ đổi chỗ đi", ()) is None and s.chon_doi_toi(B, "ok", ("thay A bằng B",)) is None  # không đứng ngay sau câu hỏi đó ⇒ không đoán
     # buổi ban ngày người dùng để trống: không hiện trên thẻ (User 15/11) ⇒ một dòng ghi chú đúng ngày đó
     d, b = next((ng["ngay"], x) for ng in k["ngay"] for x in v2.BUOI_NGAY if len(ng["buoi"][x]) == 1)

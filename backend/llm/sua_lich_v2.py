@@ -40,7 +40,7 @@ _KHONG_TU_XEP = re.compile(r"(?<!\w)(?:không|đừng|chớ|khỏi)\s+(?:\w+\s+)
 
 # Cùng công tắc, cụm buổi tối: lời ĐỒNG Ý gõ tay ngay sau câu hỏi "hai tối đổi chỗ?" (lượt trình duyệt 23/11/2026: gõ "ừ đổi chỗ đi" thay cho bấm nút ⇒ model
 # ghi thành việc chưa hỗ trợ). Code đọc theo danh sách đóng, khớp CẢ câu (câu dài hơn / có ý khác ⇒ không khớp ⇒ đi đường hiểu ý như cũ).
-_DONG_Y_DOI_TOI = re.compile(r"(?:(?:ừ+m?|ờ|uh+|ok\w*|được|đồng ý|có|vâng|dạ|ừ thì)(?:[\s,]+(?:được|đồng ý|đổi|đổi chỗ|hai tối|bạn|mình|nhé|đi|luôn|ạ|nha|rồi|chứ|đấy|đó))*"
+_DONG_Y_DOI_TOI = re.compile(r"(?:(?:ừ+m?|ờ|uh+|ok\w*|được|đồng ý|có|vâng|dạ|ừ thì)(?:[\s,]+(?:được|đồng ý|đổi|đổi chỗ|hai tối|bạn|mình|nhé|đi|luôn|ạ|nha|chứ|đấy|đó))*"
                              r"|(?:cứ\s+|bạn\s+)?đổi(?:\s+chỗ)?(?:\s+hai\s+tối)?(?:\s+(?:đi|nhé|luôn|giúp mình|giúp tôi|nha|ạ|cho mình))*)[\s.!]*")
 _GUI_DOI_TOI = re.compile(r"đổi chỗ hai tối: (.+) sang tối ngày \d+, (.+) sang tối ngày \d+")
 
@@ -49,6 +49,8 @@ def chon_doi_toi(bang: "v2.BangV2", cau: str, goi_y) -> dict | None:
     """Lượt NGAY SAU câu hỏi "hai tối đổi chỗ?" (câu của nút nằm trong `goi_y` — các câu code gợi ý ở lượt trước, route nhớ đúng một lượt): câu gõ là một lời
     đồng ý ngắn ⇒ trả đúng lựa chọn {cu, moi} của nút "Đổi chỗ hai tối" (đi đường thẻ chọn, không gọi model). Không thì None."""
     m = next((x for g in goi_y or () if (x := _GUI_DOI_TOI.fullmatch(g))), None)
+    if any("sang hoạt động tối khác" in g for g in goi_y or ()):  # lượt trước còn hỏi "bỏ hoạt động tối: đổi hay để trống" ⇒ "đổi đi" có hai nghĩa ⇒ không đoán
+        return None
     if m is None or not _DONG_Y_DOI_TOI.fullmatch(unicodedata.normalize("NFC", cau or "").casefold().strip()):
         return None
     moi, cu = khop_ten(bang, m.group(1)), khop_ten(bang, m.group(2))
