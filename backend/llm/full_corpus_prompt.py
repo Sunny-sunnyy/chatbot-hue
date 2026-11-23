@@ -174,6 +174,13 @@ TOOL_LIMIT_TEXT = "Đã hết lượt tìm kho. Hãy trả lời bằng Bằng c
 VIET_LAI_NHIEU_Y_TEXT = ("Lưu ý: câu hỏi có nhiều ý. Ý nào Bằng chứng ở trên có thì trả lời kèm mã nguồn; ý nào Bằng chứng không nói tới thì ghi một dòng "
                          f"\"{CAU_Y_THIEU} …\" cho ý đó. Bằng chứng không nói về ý nào cả thì trả câu không đủ thông tin.")
 TOOL_NO_NEW_TEXT = "Không có nguồn mới cho câu tìm này."
+# Cờ `vong_cuoi_chi_viet` (21/11): nối vào kết quả của lượt công cụ SÁT CUỐI — bước kế model không còn công cụ nào, nên phải được báo bằng chữ (lượt đo đầu
+# không có dòng này: luna vẫn xin công cụ ở vòng cuối 3 / 15 lượt ⇒ lỗi). Dòng mới nằm ở cuối chuỗi gửi model ⇒ không đổi phần đã gửi trước đó.
+# Vế cuối ("…không nói về điều được hỏi ở ý nào cả thì trả câu không đủ thông tin") là BẢN CHỮ 2 của nhánh gốc (`13efd6f3`): bản đầu không có lối từ chối cả
+# câu ⇒ ở một dòng báo cùng loại, model đang chạy trả lời câu đối chứng ngoài tỉnh 4 / 5 lần (cờ tắt 0 / 5); thêm vế này còn 2 / 5. Dòng báo đó (hết lượt
+# tìm kho) KHÔNG nằm trong nhánh này; sàn câu ngoài kho của RIÊNG cờ này chưa ai đo — là ô bắt buộc trước khi bật.
+TOOL_VONG_CUOI_TEXT = ("Lưu ý: đây là lượt dùng công cụ cuối cùng của câu này — ở bước kế không còn công cụ nào. Hãy viết câu trả lời từ Bằng chứng đã có; "
+                       "ý nào Bằng chứng không nói tới thì nói rõ là tư liệu chưa có. Nếu Bằng chứng không nói về điều được hỏi ở ý nào cả thì trả câu không đủ thông tin.")
 # B5 vòng chỉnh 1 (A quyết (a), 05/11): lượt đã có khung lịch ⇒ `tim_kho` không tìm nữa (pilot / server L2: model tìm thêm 3 lần ⇒ chạm `max_turns`)
 # B5b D3 (plan B5b bản 2): mô tả ngắn, không thêm lời dặn hệ thống; số liệu do code in (model không thêm số)
 THOI_TIET_MO_TA = (
