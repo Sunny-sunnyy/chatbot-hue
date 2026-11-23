@@ -162,7 +162,7 @@ def test_default_schedule_picks_the_slot_with_fewest_cross_area_legs_and_says_th
         for x, y in zip(day, day[1:]):
             if v2._phut_di(T[x], T[y]) is None:
                 assert muc[y]["phut_di"] == bang_phut[f"{x}|{y}"]
-    assert n_duoc == 24  # lịch mặc định: 24 / 30 điểm chưa có thêm được (10 chỉ nhờ nới nhịp, 14 nhờ sang khu)
+    assert n_duoc == 25  # lịch mặc định (bảng điểm bản 13): 25 / 31 điểm chưa có thêm được (11 chỉ nhờ nới nhịp, 14 nhờ sang khu)
     qh = _them(luu, ten["Trường Quốc Học Huế"], them_day=True, them_khu=True)["da_ap"][0]
     assert (qh["ngay"], qh["buoi"]) == (2, "chieu") and len(qh["khu"]["chang"]) == 1
     cau = lambda t: s.thay_doi(B, _them(luu, ten[t], them_day=True, them_khu=True))[0]["cau"]  # noqa: E731
