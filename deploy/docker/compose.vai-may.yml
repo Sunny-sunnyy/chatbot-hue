@@ -1,0 +1,29 @@
+# Phủ lên compose.yml trên máy AWS CÓ VAI GẮN (EC2 + instance profile): không khoá dài hạn nào nằm trên máy. Dịch vụ phụ `khoa` (cùng ảnh app)
+# lấy khoá tạm của vai từ dịch vụ thông tin máy rồi ghi /run/hue-khoa/bedrock.json vào một volume chung; app gắn volume đó CHỈ ĐỌC.
+# Điều kiện phía hạ tầng (Terraform): vai có quyền gọi model; `metadata_options { http_tokens = "required", http_put_response_hop_limit = 2 }` —
+#   hộp nằm sau mạng bridge của Docker nên cần 2 bước nhảy. [CHƯA chạy trên AWS — mới thử với máy chủ giả đúng khuôn, xem README]
+services:
+  khoa:
+    image: ${HUE_IMAGE:?đặt HUE_IMAGE}
+    command: ["python", "/app/lam_moi_khoa.py"]
+    volumes:
+      - khoa:/run/hue-khoa
+    healthcheck:   # có file khoá, khác rỗng ⇒ app mới được lên
+      test: ["CMD", "test", "-s", "/run/hue-khoa/bedrock.json"]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+    mem_limit: 128m
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+  app:
+    volumes:
+      - khoa:/run/hue-khoa:ro
+    depends_on:
+      khoa:
+        condition: service_healthy
+
+volumes:
+  khoa:

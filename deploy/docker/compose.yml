@@ -1,0 +1,80 @@
+# Trợ lý Huế trên MỘT máy: Qdrant + app + Caddy (cửa vào, HTTPS). File này KHÔNG tự đủ: app đọc quyền gọi model ở /run/hue-khoa/bedrock.json và
+# file đó tới từ đâu là việc của MỘT file phủ đi kèm —
+#   thử ở máy chủ dự án:  -f compose.yml -f compose.thu.yml      (gắn file khoá tạm đang có của máy, chỉ đọc)
+#   máy AWS có vai gắn:    -f compose.yml -f compose.vai-may.yml  (một dịch vụ phụ lấy khoá tạm của vai, tự làm mới)
+# Biến (đặt trong file `hue.env` cạnh file này, nạp bằng `--env-file hue.env` — KHÔNG có bí mật nào trong đó):
+#   HUE_IMAGE            ảnh app, vd hue-rag-app:c2579fa (dung_anh.sh in ra)
+#   HUE_SITE             tên miền cho HTTPS (vd 13-250-1-2.sslip.io); mặc định ":80" = http, chỉ để thử
+#   HUE_LUOT_MOI_NGAY    lượt gọi model mỗi địa chỉ mỗi ngày (mặc định 50) · HUE_LUOT_TONG_MOI_NGAY trần tổng cả máy mỗi ngày (mặc định 500)
+#   HUE_GIT_SHA          mã commit ghi vào log (ảnh không có git)
+#   HUE_TRA_WEB          "true" để bật mục tra web (khi đó phải có SERPER_API_KEY trong file bí mật dưới); mặc định tắt
+# Bí mật (file riêng, quyền 600, KHÔNG nằm trong ảnh, KHÔNG commit): `hue.khoa.env` cạnh file này — không có cũng chạy được. Dòng có thể có:
+#   SERPER_API_KEY=…      (chỉ khi bật tra web) · HUE_KHOA_THEO_DOI=… (≥ 16 ký tự, mở trang theo dõi #/theo-doi; không đặt ⇒ trang trả 404)
+#   OPENAI_API_KEY=…      (chỉ khi đổi model viết về model cũ — guides/DOI_MODEL_VIET.md)
+x-log: &log   # log stdout của Docker có trần (mặc định json-file không giới hạn)
+  logging:
+    driver: json-file
+    options: {max-size: "10m", max-file: "3"}
+
+services:
+  qdrant:
+    image: qdrant/qdrant@sha256:0bd98fa7977f1e75694779359ca4e212822e5a71334e28421182f72f209d5286   # v1.18.3, cùng bản máy chủ dự án (bản chụp chỉ nạp được cùng minor)
+    volumes:
+      - ./qdrant_storage:/qdrant/storage
+    # App kiểm Qdrant MỘT lần lúc khởi động (lỗi ⇒ mọi câu lỗi, không tự hồi) ⇒ app chỉ lên khi Qdrant đã nhận kết nối. Ảnh Qdrant không có curl.
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/127.0.0.1/6333"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+    mem_limit: 768m        # đo 16/11: 222 MiB
+    restart: unless-stopped
+    <<: *log
+
+  app:
+    image: ${HUE_IMAGE:?đặt HUE_IMAGE = tên ảnh app (dung_anh.sh in ra)}
+    env_file:
+      - path: ./hue.khoa.env
+        required: false
+    environment:
+      HUE_QDRANT_URL: http://qdrant:6333
+      HUE_BEDROCK_CREDS_FILE: /run/hue-khoa/bedrock.json   # file phủ quyết định file này tới từ đâu
+      HUE_TRA_WEB: ${HUE_TRA_WEB:-false}
+      # Các chốt cho bản mở ra ngoài (ở máy local không đặt biến nào ⇒ tắt): giới hạn lượt, cookie chỉ đi qua https, tắt trang /docs.
+      HUE_LUOT_MOI_NGAY: ${HUE_LUOT_MOI_NGAY:-50}
+      HUE_LUOT_TONG_MOI_NGAY: ${HUE_LUOT_TONG_MOI_NGAY:-500}
+      HUE_COOKIE_SECURE: ${HUE_COOKIE_SECURE:-1}
+      HUE_TAT_DOCS: "1"
+      HUE_GIT_SHA: ${HUE_GIT_SHA:-}
+    volumes:
+      - ./logs:/app/backend/logs      # log + số đo từng lượt sống qua lần tạo lại hộp
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    healthcheck:   # /health 200 khi app, Qdrant, khâu tìm, bộ đếm token, lớp nối model đều sẵn sàng
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 36
+    mem_limit: 2g          # đo 16/11: 1.021 MiB
+    restart: unless-stopped
+    <<: *log
+
+  caddy:
+    image: caddy:2.11.7@sha256:36c24ad91a7ff7bc4c87fe22bfa8df3c4b18da0773d73fc12ee2c52b98c0bb7e
+    environment:
+      HUE_SITE: ${HUE_SITE:-:80}
+    ports:
+      - "${HUE_HTTP_PORT:-80}:80"
+      - "${HUE_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data             # chứng chỉ HTTPS — mất volume này là xin lại chứng chỉ
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
+    <<: *log
+
+volumes:
+  caddy_data:
