@@ -257,6 +257,10 @@ class AssistantFlags:
     # Chỉ đưa khi câu có từ "gần / quanh / cạnh…" (hoặc cổng công cụ ở chế độ luôn đưa). TẮT tới khi đo; cần khoang_cach + bảng quán và toạ độ điểm của
     # thẻ lịch (hai bảng đó nạp khi `quan_lich` hoặc cờ này bật, và cần bảng lịch bản 2).
     gan_diem: bool = False
+    # 23/11/2026: công cụ "gần một điểm" in giờ hoạt động theo bài kho cạnh tên quán (`gio_kho` của bảng quán bản 4; quán kho không ghi giờ thì không in).
+    # Vì sao: "…trưa ăn gì gần đó?" hai lần được trả lời bằng một quán kho ghi chỉ mở 18h–23h (22 và 23/11) — công cụ xếp theo khoảng cách, model
+    # không thấy giờ. TẮT tới khi đo bật ↔ tắt; cần `gan_diem`. Tắt ⇒ chữ công cụ như cũ từng byte.
+    gan_diem_gio: bool = False
     # 19/11 (plan private `data/xuat_lich_dep_2026-11-19/PLAN.md`): `GET /api/lich/pptx` — tải lịch đã lưu của cuộc thành PowerPoint (code điền
     # khuôn, không model). TẮT tới khi đạt; cần `sua_lich_v2` (chỉ cờ đó mới lưu lịch của cuộc) và thư viện `python-pptx`.
     xuat_pptx: bool = False
@@ -915,7 +919,7 @@ def khoang_cach_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach"):
 
 
 def gan_diem_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach", quan_theo_cum: dict, toa_do: dict, bai_theo_rel: dict | None = None,
-                      bai_diem: dict | None = None):
+                      bai_diem: dict | None = None, in_gio: bool = False):
     """Hàm `gan_diem` của **một lượt** (cờ `gan_diem`): model chỉ gửi MÃ một điểm (enum của bảng khoảng cách, `khac` = nơi ngoài danh sách) + loại; code
     tính (`llm/gan_diem.py`), đăng thành **một nguồn** trong sổ nguồn (như `khoang_cach_for_turn`). ≤ 3 lần / câu; lần thứ 4 ⇒ câu nhắc. Các dòng code
     dựng vào `trace.gan_diem` ⇒ số km / phút trong đó thuộc tập "số code dựng" của phép kiểm số sau khi viết."""
@@ -928,7 +932,7 @@ def gan_diem_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach", quan_theo_c
         if trace.gan_diem is not None and len(trace.gan_diem) >= 3:
             entry["het_luot"] = True
             return "Đã tra những gì ở gần ở các lần gọi trước trong lượt này; hãy viết câu trả lời."
-        dong, n = gd.ket_qua(bang, quan_theo_cum, toa_do, diem, loai)
+        dong, n = gd.ket_qua(bang, quan_theo_cum, toa_do, diem, loai, in_gio=in_gio)
         entry["n"] = n
         trace.gan_diem = (trace.gan_diem or []) + [{"diem": diem, "loai": loai, "dong": dong}]
         src = PackedSource(id=len(trace.so_nguon) + 1, title=gd.tieu_de(bang, diem, loai), heading_path=(gd.MUC_NGUON,), excerpts=dong, source=gd.NGUON_SOURCE)
@@ -1636,7 +1640,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
     if flags.gan_diem and (luon or gd.co_tu_khoa_luot(query, trace.history)):  # cờ tắt / lượt không có từ "gần…" ⇒ không truyền, danh sách công cụ như cũ
         extra["gan_diem_fn"] = gan_diem_for_turn(trace, flags.khoang_cach_bang, flags.quan_bang, flags.quan_toa_do or {},
                                                  {bai.rel: bai for bai in flags.muc_luc or ()},
-                                                 {i: d["nguon"] for i, d in flags.bang_lich_v2.theo_id.items()} if flags.bang_lich_v2 else {})
+                                                 {i: d["nguon"] for i, d in flags.bang_lich_v2.theo_id.items()} if flags.bang_lich_v2 else {},
+                                                 in_gio=flags.gan_diem_gio)
     if flags.liet_ke_bai and flags.muc_luc is not None:  # cờ tắt ⇒ không truyền, danh sách công cụ như cũ
         extra["liet_ke_fn"] = liet_ke_for_turn(trace, flags.muc_luc)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)

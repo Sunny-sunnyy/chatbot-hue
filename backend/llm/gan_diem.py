@@ -46,6 +46,10 @@ def _chu_cach(km: float, muc: str | None) -> str:
     return kc._km(km)
 
 
+def _chu_gio(q: dict) -> str:
+    return f" (giờ hoạt động theo bài của quán: {q['gio_kho']})" if q.get("gio_kho") else ""
+
+
 def quan_gan(theo_cum: dict, toa_diem: tuple[float, float], loai: str) -> list[tuple[dict, float]]:
     """Quán CÓ BÀI KHO đúng loại trong `KM_TOI_DA` km quanh toạ độ điểm, gần trước (bằng nhau ⇒ theo tên), tối đa `SO_TOI_DA`. Xét mọi cụm: điểm ở rìa
     cụm vẫn thấy quán của cụm kề (mục ăn uống của thẻ lịch chỉ lấy cùng cụm vì nó gắn với đường đi trong ngày)."""
@@ -63,8 +67,10 @@ def tieu_de(bang: kc.BangKhoangCach, diem: str, loai: str) -> str:
     return f"Gần {bang.ten[diem]}: {NHAN_LOAI[loai]}" if diem in bang.ten else f"Gần một nơi ngoài danh sách: {NHAN_LOAI[loai]}"
 
 
-def ket_qua(bang: kc.BangKhoangCach, theo_cum: dict, toa_do: dict, diem: str, loai: str) -> tuple[tuple[str, ...], int]:
-    """(các dòng của nguồn, số quán / điểm trả ra). Nơi ngoài danh sách hoặc điểm không có toạ độ / không có trong bảng khoảng cách ⇒ câu cố định, 0."""
+def ket_qua(bang: kc.BangKhoangCach, theo_cum: dict, toa_do: dict, diem: str, loai: str, in_gio: bool = False) -> tuple[tuple[str, ...], int]:
+    """(các dòng của nguồn, số quán / điểm trả ra). Nơi ngoài danh sách hoặc điểm không có toạ độ / không có trong bảng khoảng cách ⇒ câu cố định, 0.
+    `in_gio` (công tắc `gan_diem_gio`): quán mà bảng có `gio_kho` (giờ hoạt động chép nguyên từ bài riêng của quán) được in giờ đó cạnh tên — để câu
+    "trưa ăn gì gần X" không gợi ý quán chỉ mở buổi tối (thấy hai lần, 22 và 23/11/2026). Quán kho không ghi giờ: dòng như cũ, không bịa giờ."""
     if diem == KHAC or diem not in bang.ten:
         return (CAU_NGOAI_BANG,), 0
     ten = bang.ten[diem]
@@ -82,7 +88,7 @@ def ket_qua(bang: kc.BangKhoangCach, theo_cum: dict, toa_do: dict, diem: str, lo
     if not ds:
         return (f"Trong kho chưa có bài về {NHAN_LOAI[loai]} nào trong khoảng {KM_TOI_DA:g} km quanh {ten}.",), 0
     dong = [f"{NHAN_LOAI[loai].capitalize()} có bài trong kho quanh {ten} (gần trước):"]
-    dong += [f"- {q['ten']}: cách {ten} {_chu_cach(km, q.get('muc_toa_do'))} theo đường chim bay." for q, km in ds]
+    dong += [f"- {q['ten']}{_chu_gio(q) if in_gio else ''}: cách {ten} {_chu_cach(km, q.get('muc_toa_do'))} theo đường chim bay." for q, km in ds]
     return (*dong, CAU_GHI_CHU_QUAN), len(ds)
 
 

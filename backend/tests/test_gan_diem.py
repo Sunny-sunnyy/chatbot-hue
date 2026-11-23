@@ -42,6 +42,18 @@ def test_restaurants_only_kb_places_within_two_km_nearest_first():
     assert "Quán Xa" not in chu and "Quán Nguồn Mở" not in chu  # ngoài 2 km · không có bài kho
 
 
+def test_opening_hours_from_the_restaurant_article_are_printed_only_with_the_switch_on():
+    """23/11/2026 (công tắc `gan_diem_gio`): "…trưa ăn gì gần đó?" hai lần được trả lời bằng một quán kho ghi chỉ mở 18h–23h — công cụ không in giờ.
+    Bật ⇒ quán có `gio_kho` trong bảng mang giờ đó cạnh tên; quán không có `gio_kho` và mọi dòng khi tắt ⇒ như cũ từng chữ."""
+    quan = {"x": [{**_q("Quán Tối", "quan_an", 300), "gio_kho": "18h - 23h"}, _q("Quán Không Ghi Giờ", "quan_an", 500)]}
+    tat, _ = gd.ket_qua(BANG, quan, TOA, "a", "quan_an")
+    bat, n = gd.ket_qua(BANG, quan, TOA, "a", "quan_an", in_gio=True)
+    assert n == 2 and tat[1].startswith("- Quán Tối: cách Điểm A") and "giờ" not in " ".join(tat[1:3])
+    assert bat[1].startswith("- Quán Tối (giờ hoạt động theo bài của quán: 18h - 23h): cách Điểm A")
+    assert bat[2] == tat[2] and bat[0] == tat[0] and bat[-1] == tat[-1]  # quán không ghi giờ, dòng đầu, dòng ghi chú: không đổi
+    assert gd.ket_qua(BANG, QUAN, TOA, "a", "quan_an", in_gio=True) == gd.ket_qua(BANG, QUAN, TOA, "a", "quan_an")  # bảng không có `gio_kho` ⇒ bật cũng như tắt
+
+
 def test_cafes_are_found_across_clusters_and_other_kinds_are_not_mixed_in():
     dong, n = gd.ket_qua(BANG, QUAN, TOA, "a", "ca_phe")
     assert n == 1 and dong[1] == "- Cà Phê Cụm Khác: cách Điểm A khoảng 1,5 km theo đường chim bay." and "Quán Gần" not in " ".join(dong)

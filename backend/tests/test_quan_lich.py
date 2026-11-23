@@ -93,6 +93,7 @@ def test_lunch_falls_back_to_other_points_of_the_day():
     ({"ten": "Quán <b>x</b>"}, "không hợp lệ"), ({"ten": "x" * 81}, "không hợp lệ"), ({"ten": "Ăn ở https://a.vn"}, "không hợp lệ"),
     ({"ten": "a\u0007b"}, "không hợp lệ"), ({"ten": "Qu\u202eán"}, "không hợp lệ"), ({"ten": "Quán\u200bA"}, "không hợp lệ"),
     ({"khong_bua": ["sang"]}, "không hợp lệ"), ({"khong_bua": []}, "không hợp lệ"), ({"khong_bua": "trua"}, "không hợp lệ"),
+    ({"gio_kho": ""}, "không hợp lệ"), ({"gio_kho": "x" * 161}, "không hợp lệ"), ({"gio_kho": "xem https://a.vn"}, "không hợp lệ"), ({"gio_kho": 18}, "không hợp lệ"),
     ({"ten": "[Quán](x)"}, "không hợp lệ"), ({"ten": "Quán //x"}, "không hợp lệ"), ({"cum": "khong_co"}, "không hợp lệ"), ({"link": "https://evil.example/x"}, "không hợp lệ"),
 ])
 def test_table_load_rejects_bad_rows(tmp_path, sua, loi):
