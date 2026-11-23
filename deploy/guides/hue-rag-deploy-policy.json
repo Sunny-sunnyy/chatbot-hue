@@ -115,6 +115,7 @@
       "Action": [
         "cloudwatch:PutMetricAlarm",
         "cloudwatch:DeleteAlarms",
+        "cloudwatch:SetAlarmState",
         "cloudwatch:TagResource",
         "cloudwatch:UntagResource",
         "cloudwatch:ListTagsForResource"
