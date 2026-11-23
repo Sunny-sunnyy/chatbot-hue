@@ -302,7 +302,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         kq = sl.ap(bang, luu, hanh_dong, luu_tru=luu_tru, ngay_moi=ngay_moi,
                    **({"them_khong_the": True} if flags.sua_lich_them_khong_the else {}),  # cờ tắt ⇒ lời gọi như cũ
                    **({"them_day": True} if flags.sua_lich_them_day else {}),
-                   **({"them_khu": True} if flags.sua_lich_them_khu else {}))
+                   **({"them_khu": True} if flags.sua_lich_them_khu else {}),
+                   **({"bo_toi_de_trong": True} if flags.bo_toi_de_trong else {}))
         kq["chua_lam"] += [h.loai for h in khong_neo]  # lượt còn ý sửa khác: ý bỏ / thay không neo được nói ra ("Chưa làm: bỏ điểm"), không bỏ lặng
         # (C 17/11) model đã nhận là câu sửa: "đổi chỗ ngày 1 với ngày 2" từng ra "Chưa làm: đổi số ngày"; ý đổi chỗ ngày đi kèm ý làm được từng bị bỏ lặng
         if sl.la_viec_ngay_chua_lam(query) and not any(f == "so_ngay" for f, _, _ in kq["doi_truong"]):  # "gộp…" đã ra đổi số ngày ⇒ không báo ngược
