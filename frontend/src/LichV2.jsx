@@ -130,13 +130,28 @@ IC_BUOI.trua = IC_BUOI.sang;
 // .lich-ngay (aria-label "Ngày N") .lich-ten .lich-cau .lich-anh .lich-ghi-chu .lich. Ghi chú dự báo có `ngay` ⇒ đặt dưới đúng ngày (B, trường mới).
 // Phút đi `phut_di` (B) chỉ có giữa hai mục cùng buổi ⇒ chỉ vẽ khi có trường, không đoán.
 // Khối "Đã đổi / Chưa làm" của lượt sửa bằng lời — câu do CODE viết; dòng "Chưa làm…" đã tự nói ⇒ không chồng thêm "Không đổi được:" (tự thử 16/11)
-function ThayDoi({ thayDoi }) {
+// Chủ dự án 21:48 23/11/2026: việc chưa làm được hiện như một TIN THƯỜNG của trợ lý — không khung đỏ, không ký tự « » — và các câu lệnh gợi ý là NÚT
+// bấm (`d.nut` = [{nhan, gui}] do server dựng; bấm = gửi đúng câu `gui` như người dùng gõ). Nút chỉ vẽ khi có `onAsk`: lượt MỚI NHẤT ở khung trợ lý /
+// trang Trợ lý, và khối đầu thẻ lịch ở cột Lên kế hoạch; các lượt cũ chỉ hiện chữ. Tiền tố là lời nói, không phải nhãn lỗi.
+const TIEN_TO_CHUA_DOI = "Mình chưa đổi được: ";
+const NUT_HOP_LE = n => n && typeof n.nhan === "string" && typeof n.gui === "string" && n.gui.length > 0 && n.gui.length <= 200;
+function ThayDoi({ thayDoi, onAsk }) {
   return (
     <ul className="lkh-doi" aria-label="Thay đổi của lịch">
       {thayDoi.map((d, i) => {
         const cau = d.cau.replace(/^Không đổi được: /, "");
-        // `hoi`: dòng là một câu trợ lý HỎI LẠI (bỏ hoạt động tối: đổi hay để trống) — không phải việc hỏng ⇒ không tô đỏ, không gắn tiền tố
-        return <li key={i} className={d.duoc ? "lkh-doi-duoc" : d.hoi ? "lkh-doi-hoi" : "lkh-doi-khong"}>{d.duoc || d.hoi || /^Chưa làm/.test(cau) ? "" : "Không đổi được: "}{cau}</li>;
+        const nut = onAsk && !d.duoc && Array.isArray(d.nut) ? d.nut.filter(NUT_HOP_LE).slice(0, 6) : [];
+        // `hoi`: dòng là một câu trợ lý HỎI LẠI (bỏ hoạt động tối: đổi hay để trống) ⇒ không gắn tiền tố; dòng mở đầu "Chưa làm" đã tự nói
+        return (
+          <li key={i} className={d.duoc ? "lkh-doi-duoc" : d.hoi ? "lkh-doi-hoi" : "lkh-doi-chua"}>
+            {d.duoc || d.hoi || /^Chưa làm/.test(cau) ? "" : TIEN_TO_CHUA_DOI}{cau}
+            {nut.length > 0 && (
+              <span className="lkh-doi-nut">
+                {nut.map(n => <button key={n.gui} type="button" className="chip chip-sm" onClick={() => onAsk(n.gui)}>{n.nhan}</button>)}
+              </span>
+            )}
+          </li>
+        );
       })}
     </ul>
   );
@@ -144,7 +159,7 @@ function ThayDoi({ thayDoi }) {
 
 // `gon` (khung trợ lý nổi): lượt sửa bằng lời chỉ hiện khối thay đổi + nút mở cả lịch — khung nổi hẹp, vẽ lại cả lịch mỗi lượt đẩy khối
 // "Đã đổi" xuống dưới mép (tự thử 16/11); trang Lên kế hoạch đã có cột lịch theo bản sửa.
-export function LichV2({ turn, onEditPlan, gon = false }) {
+export function LichV2({ turn, onEditPlan, gon = false, onAsk = null }) {
   const [moRong, setMoRong] = useState(false);
   const lich = turn.lichV2;
   if (gon && !moRong && Array.isArray(lich.thay_doi) && lich.thay_doi.length > 0) {
@@ -152,7 +167,7 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
     return (
       <div className="bubble lich-v2 lkh-gon">
         {turn.noticeAnToan && <p className="notice notice-an-toan" role="note">{turn.noticeAnToan}</p>}
-        <ThayDoi thayDoi={lich.thay_doi} />
+        <ThayDoi thayDoi={lich.thay_doi} onAsk={onAsk} />
         {/* review C m-1: nút cùng dòng với câu dẫn — đặt riêng một dòng thì nút khuất dưới mép khung nổi */}
         <p className="lkh-gon-dan">{coDuoc ? "Lịch đã cập nhật theo các thay đổi trên. " : ""}
           <button type="button" className="lkh-gon-nut" onClick={() => setMoRong(true)}>Xem cả lịch</button></p>
@@ -184,7 +199,7 @@ export function LichV2({ turn, onEditPlan, gon = false }) {
       <p className="lich-hieu">{lich.minh_hieu.replaceAll("**", "")}</p>
       {/* Sửa lịch bằng lời (B, cờ `sua_lich_v2`): `lich.thay_doi` = [{cau, duoc}] — câu do CODE viết đã có sẵn động từ ("Đã bỏ…", "Chưa làm…")
           ⇒ vẽ nguyên câu, màu theo `duoc`; lượt không sửa ⇒ không có khối này */}
-      {Array.isArray(lich.thay_doi) && lich.thay_doi.length > 0 && <ThayDoi thayDoi={lich.thay_doi} />}
+      {Array.isArray(lich.thay_doi) && lich.thay_doi.length > 0 && <ThayDoi thayDoi={lich.thay_doi} onAsk={onAsk} />}
       <section className="lkh-tong" aria-label="Tổng quan">
         <p className="lkh-tong-h">Tổng quan</p>
         <ol>{lich.ngay.map(ng => (

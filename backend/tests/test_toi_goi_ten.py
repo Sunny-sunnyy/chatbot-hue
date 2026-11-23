@@ -96,6 +96,8 @@ def test_naming_an_activity_for_an_evening_places_it_and_survives_a_later_edit()
     # không nói ngày ⇒ hỏi ngày, lịch không đổi; mục đang ở đúng tối được xin ⇒ câu "đang ở … rồi"
     kq3 = s.ap(B, luu, [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(moi))], **BAT)
     assert not kq3["da_ap"] and [d["ma_luat"] for d in kq3["khong_doi"]] == ["toi_ten_thieu_ngay"] and "ngày nào" in s.thay_doi(B, kq3)[0]["cau"]
+    # không nói ngày ⇒ mỗi ngày của lịch một nút gửi đúng câu "tối ngày N đi <mục>"; câu không còn ký tự « »
+    assert [n["gui"] for n in s.thay_doi(B, kq3)[0]["nut"]] == [f"tối ngày {d} đi {_ten(moi)}" for d in (1, 2, 3)] and "«" not in s.thay_doi(B, kq3)[0]["cau"]
     kq4 = s.ap(B, luu, [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(toi[3]), ngay=3, buoi="toi")], **BAT)
     assert [d["ma_luat"] for d in kq4["khong_doi"]] == ["toi_dang_o"]
     # tối người dùng đã để trống rồi gọi tên một mục cho tối đó ⇒ hết trống

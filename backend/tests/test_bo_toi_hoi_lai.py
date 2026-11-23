@@ -54,7 +54,11 @@ def test_removing_an_evening_activity_without_saying_how_keeps_the_schedule_and_
     # dòng hỏi lại là một CÂU HỎI (không mở đầu "Chưa làm", mang `hoi` để giao diện không tô đỏ), nêu tên mục một lần, mời gõ ngắn
     dong = s.thay_doi(B, kq)[0]
     assert dong["hoi"] is True and dong["duoc"] is False
-    assert cau == f"Bạn muốn đổi {ten} (tối ngày 2) sang một hoạt động tối khác, hay để trống tối đó? Nhắn «đổi đi» hoặc «để trống» — lịch chưa đổi gì."
+    assert cau == (f"Bạn muốn đổi {ten} (tối ngày 2) sang một hoạt động tối khác, hay để trống tối đó? Bấm một nút dưới đây, hoặc nhắn “đổi đi” / “để trống” "
+                   "— lịch chưa đổi gì.")
+    # chủ dự án 21:48 23/11/2026: không bắt chép lại câu trong dấu « » ⇒ hai lối đi là hai NÚT, mỗi nút gửi đúng câu đủ tên mà route nhớ cho lượt kế
+    assert "«" not in cau and [n["nhan"] for n in dong["nut"]] == ["Đổi sang hoạt động tối khác", "Để trống tối đó"]
+    assert tuple(n["gui"] for n in dong["nut"]) == s.cau_goi_y(B, kq)
     goi_y = s.cau_goi_y(B, kq)
     assert len(goi_y) == 2 and all(ten in c and "ngày 2" in c for c in goi_y)  # hai câu ĐỦ TÊN vẫn được nhớ cho lần hiểu ý của lượt kế
     # công tắc tắt (không truyền `bo_toi_hoi_lai`) ⇒ đường cũ: bỏ là áp ngay

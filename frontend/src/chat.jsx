@@ -353,7 +353,7 @@ export function ChatView({ chat, idPrefix, suggestions = [], onEditPlan, anh = f
         {turns.length > 0 && (
           <section aria-label="Cuộc trò chuyện">
             {turns.map((turn, index) => (
-              <Turn key={turn.key} turn={turn} turnRef={index === turns.length - 1 ? lastTurnRef : null}
+              <Turn key={turn.key} turn={turn} turnRef={index === turns.length - 1 ? lastTurnRef : null} laCuoi={index === turns.length - 1}
                     onRetry={() => ask(turn.question, { retryKey: turn.key, truong: turn.truong, summary: turn.summary, bieuMau: turn.bieuMau, hienThi: turn.hienThi })}
                     onAsk={(q, opts) => ask(q, opts)} onEditPlan={onEditPlan} gon={idPrefix === "noi"} />
             ))}
@@ -399,7 +399,7 @@ const ICON_GHI_CHU = (  // chữ "i" trong vòng tròn, đứng trước ghi ch�
   </svg>
 );
 
-function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
+function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon, laCuoi = false }) {
   const html = useMemo(() => renderAnswerHtml(moDauWeb(turn.text, turn.web)), [turn.text, turn.web]);  // câu mở đầu khi mục web có nội dung
   const pending = PENDING.has(turn.phase);
   const answerRef = useRef(null);  // việc nhỏ (1): chữ lịch đúng như đang hiện (đã qua DOMPurify) cho nút sao chép / tải
@@ -433,7 +433,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon }) {
       {turn.lichV2 && turn.phase !== "error" && (
         /* lượt sửa không áp được gì (không dòng nào `duoc`): lịch y như lượt trước ⇒ chỉ khối báo + nút "Xem cả lịch", ở CẢ trang trợ lý — vẽ lại cả
            tấm lịch đẩy dòng "Chưa làm" ra khỏi màn hình (lượt đo trình duyệt 21/11) */
-        <LichV2 turn={turn} onEditPlan={turn.bieuMau ? onEditPlan : null}
+        <LichV2 turn={turn} onEditPlan={turn.bieuMau ? onEditPlan : null} onAsk={laCuoi && turn.phase === "done" ? onAsk : null}
                 gon={gon || ((turn.lichV2.thay_doi || []).length > 0 && !turn.lichV2.thay_doi.some(d => d.duoc))} />
       )}
       {turn.text && !turn.lichV2 && !turn.suaThe && turn.phase !== "error" && (  /* thẻ chọn đã hỏi đúng câu đó — không vẽ lần hai */
@@ -552,7 +552,7 @@ function SuaTheCard({ the, onAsk }) {
   const khong = (the.thay_doi || []).filter(d => !d.duoc);
   return (
     <div className="clarify bubble sua-the">
-      {khong.length > 0 && <ul className="lkh-doi">{khong.map((d, i) => <li key={i} className={d.hoi ? "lkh-doi-hoi" : "lkh-doi-khong"}>{d.cau}</li>)}</ul>}
+      {khong.length > 0 && <ul className="lkh-doi">{khong.map((d, i) => <li key={i} className={d.hoi ? "lkh-doi-hoi" : "lkh-doi-chua"}>{d.cau}</li>)}</ul>}
       <p className="mb-2">Bạn muốn thay <b>{the.ten_cu}</b> bằng điểm nào?</p>
       <div className="flex flex-wrap gap-2">
         {the.lua_chon.map(c => (
