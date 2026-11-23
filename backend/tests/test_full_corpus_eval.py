@@ -307,7 +307,7 @@ def test_judge_model_defaults_to_openai_and_can_be_claude_at_high_reasoning(monk
     monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")  # file chỉ được đọc lúc gọi model
 
     luna = OpenAIFullCorpusGenerator.from_environment(judge_settings(settings, "openai"))
-    assert type(luna.responses_model) is OpenAIResponsesModel and luna.model == "gpt-6-luna"
+    assert isinstance(luna.responses_model, OpenAIResponsesModel) and luna.model == "gpt-6-luna"
     claude = OpenAIFullCorpusGenerator.from_environment(judge_settings(settings, "bedrock"))
     assert isinstance(claude.responses_model, BedrockClaudeModel) and claude.responses_model.reasoning_default == "high"
     assert settings["full_corpus_generation"]["bedrock"]["reasoning_default"] == "low"  # dict gốc không bị sửa
