@@ -108,6 +108,10 @@ class ThamSoV2:
     # Công tắc `bo_toi_de_trong` (23/11/2026): các NGÀY người dùng đã bỏ hoạt động buổi tối ⇒ tối đó để trống ở MỌI lần xếp lại sau đó (biểu mẫu không có ô này;
     # chỉ lệnh sửa lịch ghi vào). Rỗng ⇒ không có khoá trong `tham_so` của khung (trạng thái lưu giống byte bản trước).
     toi_trong: tuple[int, ...] = ()
+    # Công tắc `bo_toi_hoi_lai` (23/11/2026): (ngày, id) hoạt động buổi tối được GHIM sau lệnh "đổi hoạt động tối ngày N" — các tối KHÁC giữ đúng hoạt
+    # động đang có ở mọi lần xếp lại sau đó (không ghim thì bỏ một mục làm cả dãy buổi tối dồn hàng: đếm 23/11, 412 / 652 lệnh bỏ làm đổi tối ngày khác).
+    # Rỗng ⇒ không có khoá trong `tham_so` của khung (trạng thái lưu giống byte bản trước).
+    toi_chon: tuple[tuple[int, str], ...] = ()
 
     @property
     def han_che(self) -> bool:
@@ -343,7 +347,8 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
             "tham_so": {"so_ngay": n, "nguoi_lon": ts.nguoi_lon, "tre_em": ts.tre_em, "lon_tuoi": ts.lon_tuoi, "kieu_di": kieu,
                         "so_thich": list(ts.so_thich),
                         # chỉ khi có chọn ⇒ không chọn thì khung / trạng thái lưu giống byte bản trước; sửa lịch xếp lại qua đây ⇒ giữ mức
-                        **({"ngan_sach": ts.ngan_sach} if ts.ngan_sach else {}), **({"toi_trong": list(ts.toi_trong)} if ts.toi_trong else {})},
+                        **({"ngan_sach": ts.ngan_sach} if ts.ngan_sach else {}), **({"toi_trong": list(ts.toi_trong)} if ts.toi_trong else {}),
+                        **({"toi_chon": [list(x) for x in ts.toi_chon]} if ts.toi_chon else {})},
             "ngay": ngay, "ngoai_so_thich": ngoai, "hop_so_thich": sorted(hop_so_thich & set(da_xep)), "thieu_uu_tien": thieu,
             "thay_bac_thang": [{"diem": k, "thay": v} for k, v in bi_thay.items() if k not in da_xep], "gia_dinh": gia_dinh,
             "ngay_thang": [None if x is None else x.isoformat() for x in ngays], "tam_dung_mua": tam_dung_uu,
@@ -364,6 +369,9 @@ def _xep_toi(bang: BangV2, ts: ThamSoV2, ngay: list[dict], ngays: list, da_dung:
                       # hợp sở thích trước, rồi thứ tự `thu_tu_toi` của bảng (mục ngoài danh sách xếp sau), rồi thứ tự bảng (sort ổn định)
                       key=lambda d: (not (so_thich & set(d["loai"])), bang.thu_tu_toi.index(d["id"]) if d["id"] in bang.thu_tu_toi else len(bang.thu_tu_toi)))
     da_toi: list[str] = []
+    # công tắc `bo_toi_hoi_lai`: tối đã ghim giữ đúng hoạt động đó khi còn hợp lệ; mục ghim cho tối khác không bị tối này lấy. Chỉ tính ngày CÒN trong
+    # lịch: đổi số ngày 3 ⇒ 2 thì mục ghim của ngày 3 không được chiếm chỗ lựa chọn của các tối còn lại (B đọc code 23/11/2026)
+    ghim = {n: j for n, j in ts.toi_chon if n <= len(ngay)}
     for ng, ngay_that in zip(ngay, ngays):
         if ng["ngay"] in ts.toi_trong:  # công tắc `bo_toi_de_trong`: người dùng đã bỏ hoạt động tối của ngày này ⇒ không chọn lại
             nghi[ng["ngay"]] = "da_bo"
@@ -375,7 +383,8 @@ def _xep_toi(bang: BangV2, ts: ThamSoV2, ngay: list[dict], ngays: list, da_dung:
             nghi[ng["ngay"]] = "xa"
             continue
         hop = [d["id"] for d in ung_vien if dung_thu(d, ngay_that) and not tam_dung(d, ngay_that)]
-        moi = [j for j in hop if j not in da_toi]
+        g = ghim.get(ng["ngay"])
+        moi = [g] if g in hop and g not in da_toi else [j for j in hop if j not in da_toi and j not in ghim.values()]
         lai = [] if nhe else [j for j in hop if not T[j].get("ngay_hoat_dong")]  # diễn mọi tối ⇒ đi lại được (đoàn hạn chế: không lặp, để trống)
         chon = moi[0] if moi else (lai[0] if lai else None)
         if chon is None:

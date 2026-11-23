@@ -224,6 +224,10 @@ class AssistantFlags:
     # động). `bo_toi_de_trong`: lệnh bỏ hoạt động tối ⇒ tối đó để trống, các tối khác giữ nguyên (xem `sua_lich_v2.ap`). Cả hai TẮT tới khi chủ dự án quyết.
     toi_nhe: bool = False
     bo_toi_de_trong: bool = False
+    # 23/11/2026 (chủ dự án, khi được hỏi "bỏ hoạt động tối thì để trống hay lấp": "nên hỏi lại người dùng đổi hoạt động hay là để trống"): lệnh bỏ một
+    # hoạt động BUỔI TỐI mà chưa nói cách ⇒ lịch giữ nguyên, code hỏi lại hai lựa chọn; "đổi" ⇒ thay đúng tối đó (các tối khác được ghim, không dồn hàng,
+    # không lặp); "để trống" ⇒ tối đó trống. Thay cho `bo_toi_de_trong` (không bật cùng). TẮT tới khi đo đạt.
+    bo_toi_hoi_lai: bool = False
     # Lịch đã lưu của cuộc vào LƯỢT HỎI THƯỜNG (plan private data/lich_da_luu_2026-11-19/PLAN.md): cuộc có lịch + tuyến `tro_ly_hue` ⇒ code nối một nguồn
     # "Lịch bạn đang có" (lịch + số giờ do code tính) sau ngữ cảnh kho; lượt biểu mẫu / lượt sửa / trò chuyện / câu cố định không nhận. TẮT tới khi
     # đo đạt; cần cờ sua_lich_v2 (route chỉ nạp lịch khi cờ đó bật) + tim_them. Tắt ⇒ chuỗi gửi model giống byte.
@@ -328,6 +332,10 @@ class AssistantFlags:
             raise ValueError("assistant.toi_nhe needs assistant.len_ke_hoach_v2: true and a schedule table that carries the `toi_nhe` list")
         if self.bo_toi_de_trong and not self.sua_lich_v2:
             raise ValueError("assistant.bo_toi_de_trong needs assistant.sua_lich_v2: true")
+        if self.bo_toi_hoi_lai and (self.bo_toi_de_trong or not (self.sua_lich_v2 and self.sua_lich_chua_ho_tro and self.sua_lich_buoi_toi
+                                                                 and self.sua_lich_kem_hoi and self.sua_lich_them_khong_the)):
+            raise ValueError("assistant.bo_toi_hoi_lai needs sua_lich_v2, sua_lich_chua_ho_tro, sua_lich_buoi_toi, sua_lich_kem_hoi and "
+                             "sua_lich_them_khong_the on, and bo_toi_de_trong off")
         if self.sua_lich_them_khong_the and not self.sua_lich_v2:
             raise ValueError("assistant.sua_lich_them_khong_the needs assistant.sua_lich_v2: true")
         if self.sua_lich_them_day and not self.sua_lich_them_khong_the:
