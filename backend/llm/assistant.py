@@ -223,6 +223,10 @@ class AssistantFlags:
     # không kề) ⇒ vẫn thêm khi mỗi chặng sang khu không kề ≤ 60 phút theo bảng khoảng cách; giờ cộng đúng số phút đó; dòng báo nêu chặng + số phút.
     # Đếm trước khi làm (đoàn thường, có trần giờ): chỉ nới nhịp 30 % lệnh "thêm X" làm được ⇒ thêm phần này 82 %. Cần sua_lich_them_day + khoang_cach.
     sua_lich_them_khu: bool = False
+    # 23/11/2026 (chủ dự án: đoàn có trẻ nhỏ / người lớn tuổi TỰ XIN "thêm <điểm>" thì "cho thêm, có dòng báo"): ngày đoàn đó xin thêm được vượt mức
+    # "một điểm một buổi, hai điểm một ngày" tới các trần `lich_trinh_v2.HAN_CHE_*` (ba điểm một ngày, hai điểm một buổi, sáng kết ≤ 13:00, chiều kết
+    # ≤ 17:00); luật khu KHÔNG nới cho đoàn này; lịch xếp BAN ĐẦU của đoàn không đổi. Đếm 72 lịch của đoàn: 0 ⇒ 22 % lệnh "thêm X". Cần sua_lich_them_day.
+    sua_lich_them_han_che: bool = False
     # 23/11/2026 (chủ dự án nêu: buổi tối của đoàn có trẻ nhỏ đang bỏ trống). `toi_nhe`: đoàn có trẻ nhỏ / người lớn tuổi được MỘT hoạt động tối nhẹ gần trung
     # tâm mỗi tối không phải ngày đi xa, lấy từ khoá `toi_nhe` của bảng điểm, không lặp (đếm 960 tổ hợp: 720 tổ hợp / 2.160 tối đang trống ⇒ 1.710 tối có hoạt
     # động). `bo_toi_de_trong`: lệnh bỏ hoạt động tối ⇒ tối đó để trống, các tối khác giữ nguyên (xem `sua_lich_v2.ap`). Cả hai TẮT tới khi chủ dự án quyết.
@@ -353,6 +357,8 @@ class AssistantFlags:
             raise ValueError("assistant.sua_lich_them_khong_the needs assistant.sua_lich_v2: true")
         if self.sua_lich_them_day and not self.sua_lich_them_khong_the:
             raise ValueError("assistant.sua_lich_them_day needs assistant.sua_lich_them_khong_the: true")
+        if self.sua_lich_them_han_che and not self.sua_lich_them_day:
+            raise ValueError("assistant.sua_lich_them_han_che needs assistant.sua_lich_them_day: true")
         if self.sua_lich_them_khu and not (self.sua_lich_them_day and self.khoang_cach):
             raise ValueError("assistant.sua_lich_them_khu needs assistant.sua_lich_them_day and assistant.khoang_cach: true")
         if self.lich_vao_hoi_thuong and not (self.sua_lich_v2 and self.tim_them):

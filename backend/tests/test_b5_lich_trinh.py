@@ -46,7 +46,7 @@ CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lic
                    # `len_ke_hoach_v2` phải tắt theo (thử bật `gan_diem` trong settings: `test_quan_lich` hỏng ngay khi nạp)
                    "gan_diem": False,
                    # 23/11/2026: `sua_lich_them_day` cần `sua_lich_them_khong_the` ⇒ tắt theo (thử bật trong settings: 20 file test hỏng ngay khi nạp)
-                   "sua_lich_them_day": False, "sua_lich_them_khu": False}
+                   "sua_lich_them_day": False, "sua_lich_them_khu": False, "sua_lich_them_han_che": False}
 BANG = nap_bang_lich(SETTINGS)
 ON = AssistantFlags(tim_them=True, lich_trinh=True, bang_lich=BANG)
 OFF = AssistantFlags(tim_them=True)

@@ -308,6 +308,7 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
                    **({"them_khong_the": True} if flags.sua_lich_them_khong_the else {}),  # cờ tắt ⇒ lời gọi như cũ
                    **({"them_day": True} if flags.sua_lich_them_day else {}),
                    **({"them_khu": True} if flags.sua_lich_them_khu else {}),
+                   **({"them_han_che": True} if flags.sua_lich_them_han_che else {}),
                    **({"bo_toi_de_trong": True} if flags.bo_toi_de_trong else {}),
                    **({"bo_toi_hoi_lai": True} if flags.bo_toi_hoi_lai else {}),
                    **({"toi_goi_ten": True} if flags.toi_goi_ten else {}))

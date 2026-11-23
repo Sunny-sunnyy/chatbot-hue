@@ -197,3 +197,20 @@ def test_lunch_prefers_a_stop_with_corpus_restaurants_along_the_route_when_the_s
     tat, bat = (next(a for a in ql.an_uong(QUAN, BANG_V2, khung, TOA, x) if a["bua"] == "trua") for x in (False, True))
     assert kho(tat) == 0 and tat["gan"] == "Lăng Minh Mạng"
     assert kho(bat) > 0 and bat["gan"] == "Đầm Chuồn"  # điểm ĐẦU buổi chiều (sắp đi tới) đứng trước điểm sáng sớm hơn
+
+
+def test_lunch_switch_never_replaces_a_stops_own_food_note():
+    """Điểm có ghi chú ăn riêng của kho (`GHI_CHU_AN`: không quán trong 2 km — "chưa có gợi ý quán gần làng, nên ăn ở trung tâm…") giữ đúng ghi chú đó
+    khi công tắc `quan_trua_kho_truoc` bật, kể cả khi điểm đầu buổi chiều có quán có bài kho. Bản đầu của công tắc (23/11/2026, chưa từng mở) đè mất
+    hơn 120 ghi chú trên 480 tổ hợp biểu mẫu — phiên đọc code nêu."""
+    khung = {"ngay": [{"ngay": 1, "buoi": {"sang": ["dai_noi", "lang_non_tay_ho"], "chieu": ["dam_chuon"], "toi": []}}]}
+    tat, bat = (next(a for a in ql.an_uong(QUAN, BANG_V2, khung, TOA, x) if a["bua"] == "trua") for x in (False, True))
+    assert tat == bat and bat["quan"] == [] and bat["ghi_chu"] == ql.GHI_CHU_AN[("lang_non_tay_ho", "trua")]
+    n = 0
+    for so_ngay, kieu, st in itertools.product((3, 4, 5), ("can_bang", "kham_pha"), ((), ("thien_nhien",), ("di_tich",))):
+        k = v2.xep_v2(BANG_V2, v2.ThamSoV2(so_ngay, kieu_di=kieu, so_thich=st))
+        cu = {(a["ngay"], a["bua"]): a.get("ghi_chu") for a in ql.an_uong(QUAN, BANG_V2, k, TOA)}
+        moi = {(a["ngay"], a["bua"]): a.get("ghi_chu") for a in ql.an_uong(QUAN, BANG_V2, k, TOA, True)}
+        assert all(moi.get(khoa) == gc for khoa, gc in cu.items() if gc)
+        n += sum(bool(gc) for gc in cu.values())
+    assert n > 0
