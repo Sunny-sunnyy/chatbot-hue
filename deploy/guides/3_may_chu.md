@@ -128,7 +128,13 @@ terraform output -raw alert_topic_arn; echo
 cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu
 [ -e terraform.tfvars ] || cp terraform.tfvars.example terraform.tfvars    # không đè file đã điền từ lần trước
 nano terraform.tfvars        # thay ba dòng DIEN-… bằng ba giá trị vừa in
+grep -n 'DIEN-' terraform.tfvars || echo "không còn chữ mẫu"     # mong: không còn chữ mẫu
 ```
+
+Thay phần chữ `DIEN-…` NẰM TRONG dấu ngoặc kép, GIỮ hai dấu ngoặc kép. Cả ba dòng đều phải thay: không muốn có báo động máy hỏng thì dòng
+`alert_topic_arn` để `""` (hai dấu ngoặc kép, không có gì ở giữa), không để nguyên chữ mẫu. Nếu còn sót một chữ `DIEN-`, lệnh `plan` ở bước 4 dừng với
+lỗi "… còn là chữ mẫu DIEN-…" và nêu tên dòng đó — chưa có gì được tạo. Phép chặn này có vì tên thùng chỉ được ghi vào máy MỘT lần lúc máy bật lần
+đầu: tên sai thì `plan` và `apply` vẫn xanh, tới guide 4 mới lộ, và lúc đó phải thay cả máy (guide 6 mục 6.8).
 
 **Bước 4 — chuỗi lệnh sổ tay dạy: `fmt` ⇒ `init` ⇒ `validate` ⇒ `plan`.** Chưa lệnh nào ở bước này tạo gì.
 
@@ -145,13 +151,16 @@ nào "destroy" hay "replace". Thấy số khác ⇒ DỪNG, xem mục 8.
 
 **Bước 5 — `apply`: BẮT ĐẦU TÍNH TIỀN.**
 
+Lệnh dưới KHÔNG hỏi "yes" như lệnh `apply` ở guide 1: nó được đưa sẵn file kế hoạch `may_chu.tfplan` nên làm ĐÚNG bản kế hoạch đã đọc ở bước 4 và
+tạo máy ngay khi nhấn Enter — không còn lần dừng nào nữa. Chưa đọc kỹ bản kế hoạch, hoặc chưa muốn bắt đầu tính tiền, thì đừng gõ.
+
 ```bash
 cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu
 terraform apply may_chu.tfplan
 terraform output              # ghi lại ba dòng: instance_id, public_ip, site_name
 ```
 
-Ở đây KHÔNG dùng `-auto-approve` và không có lệnh `-target` nào (khoá học dùng `-target` để dựng kho ảnh trước; ta giải việc "cái nào trước" bằng hai
+Ở đây KHÔNG dùng `-auto-approve` (lần xem lại đã là bước 4: đọc bản kế hoạch được lưu) và không có lệnh `-target` nào (khoá học dùng `-target` để dựng kho ảnh trước; ta giải việc "cái nào trước" bằng hai
 thư mục). Lệnh `apply` chạy khoảng một tới hai phút **[chưa kiểm trên AWS]**.
 
 **Bước 6 — chờ máy tự chuẩn bị** (cài Docker…): khoảng ba tới năm phút sau khi `apply` xong **[chưa kiểm trên AWS]**. Không cần gõ gì; sang mục 7.
@@ -196,6 +205,18 @@ Vì sao `sudo -i`: người dùng `ssm-user` do Session Manager tự tạo ở p
 cần quyền root. Mọi lệnh trên máy ở guide 4 và guide 6 đều gõ sau `sudo -i`.
 
 Báo động máy hỏng chỉ gửi được email sau khi địa chỉ nhận đã bấm xác nhận ở guide 1 **[chưa kiểm trên AWS: chủ đề của tầng nền nhận được tin từ báo động]**.
+
+**Nghỉ ở đây, chưa làm tiếp guide 4 ⇒ DỪNG MÁY trước khi rời bàn.** Máy đang bật là đang tính tiền và không tự dừng. Từ máy mình, trong cửa sổ còn
+biến `ID` ở trên (ba dòng này là mục 6.1 của guide 6):
+
+```bash
+aws ec2 stop-instances --instance-ids "$ID"
+aws ec2 wait instance-stopped --instance-ids "$ID"
+aws ec2 describe-instances --instance-ids "$ID" --query 'Reservations[0].Instances[0].State.Name' --output text    # mong: stopped
+```
+
+Máy dừng thì còn tiền đĩa và IP tĩnh (mục 9), mọi thứ trên máy giữ nguyên. Hôm sau bật lại bằng mục 6.2 của guide 6 — riêng hai lệnh `aws ec2
+start-instances` và `aws ec2 wait instance-status-ok`; các lệnh `curl` của mục đó chưa dùng được vì trang chưa được bật (guide 4).
 
 ## 8. Gỡ lỗi
 
