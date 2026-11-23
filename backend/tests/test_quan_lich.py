@@ -92,6 +92,7 @@ def test_lunch_falls_back_to_other_points_of_the_day():
 @pytest.mark.parametrize("sua, loi", [
     ({"ten": "Quán <b>x</b>"}, "không hợp lệ"), ({"ten": "x" * 81}, "không hợp lệ"), ({"ten": "Ăn ở https://a.vn"}, "không hợp lệ"),
     ({"ten": "a\u0007b"}, "không hợp lệ"), ({"ten": "Qu\u202eán"}, "không hợp lệ"), ({"ten": "Quán\u200bA"}, "không hợp lệ"),
+    ({"khong_bua": ["sang"]}, "không hợp lệ"), ({"khong_bua": []}, "không hợp lệ"), ({"khong_bua": "trua"}, "không hợp lệ"),
     ({"ten": "[Quán](x)"}, "không hợp lệ"), ({"ten": "Quán //x"}, "không hợp lệ"), ({"cum": "khong_co"}, "không hợp lệ"), ({"link": "https://evil.example/x"}, "không hợp lệ"),
 ])
 def test_table_load_rejects_bad_rows(tmp_path, sua, loi):
@@ -101,6 +102,20 @@ def test_table_load_rejects_bad_rows(tmp_path, sua, loi):
     p.write_text(json.dumps({"quan": [dong]}), encoding="utf-8")
     with pytest.raises(ValueError, match=loi):
         ql.nap_bang_quan(p, BANG_V2.cum)
+
+
+def test_restaurant_closed_at_a_meal_is_not_suggested_for_it():
+    """23/11/2026: quán mà kho ghi giờ hoạt động không phủ một bữa (`khong_bua` của bảng) không được gợi ý cho bữa đó — Bún bò Bà Nga (18h–23h) từng ra
+    ở bữa trưa của lịch mặc định và ở 756 / 960 tổ hợp biểu mẫu. Sàn trên mọi khung không ngày đi: 0 quán nằm ở bữa nó đóng."""
+    q = {"ten": "Quán tối", "loai": "quan_an", "cum": "kinh_thanh", "toa": [16.47, 107.58], "nguon": "kho", "bai_id": "x.md", "khong_bua": ["trua"]}
+    assert ql._chon([q], (16.47, 107.58), set(), "trua") == [] and ql._chon([q], (16.47, 107.58), set(), "toi") == [q]
+    mac_dinh = ql.an_uong(QUAN, BANG_V2, v2.xep_v2(BANG_V2, v2.ThamSoV2(2)), TOA)
+    assert mac_dinh and all(x["ten"] != "Bún bò Bà Nga" for a in mac_dinh if a["bua"] == "trua" for x in a["quan"])
+    cam = {(x["ten"], b) for ds in QUAN.values() for x in ds for b in x.get("khong_bua", ())}
+    assert ("Bún bò Bà Nga", "trua") in cam  # bảng đang chạy phải mang trường này, không thì sàn dưới không kiểm gì
+    for key in itertools.product(range(1, 6), (0, 1), (False, True), ("nhe_nhang", "can_bang", "kham_pha"), ST_16):
+        for a in ql.an_uong(QUAN, BANG_V2, v2.xep_v2(BANG_V2, v2.ThamSoV2(*key[:4], so_thich=key[4])), TOA):
+            assert not [x["ten"] for x in a["quan"] if (x["ten"], a["bua"]) in cam]
 
 
 def test_flag_needs_v2_and_table():
