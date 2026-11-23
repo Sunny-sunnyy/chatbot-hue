@@ -1,6 +1,6 @@
 # Bài 27 — Trang Lên kế hoạch: từ mấy nút chọn tới một lịch, và bảng điểm tham quan đứng sau
 
-*Cập nhật 18:32, ngày 23/11/2026 · khớp hệ thống 17:35 23/11 (55 tính năng mở, 7 tắt, kho 267 bài) · bảng điểm thêm 4 quán cà phê (từ 16:38), đoàn có trẻ nhỏ có tối nhẹ (từ 17:29), biểu mẫu giữ lựa chọn (từ 17:15) · chưa có lượt cả bộ test sau các bản gộp từ 16:20 · thời gian từ một lượt thật 21/11 (Claude Sonnet 5.5) · lần sửa trước: Nguồn.*
+*Cập nhật 19:51, ngày 23/11/2026 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · bảng điểm bản 15 (47 dòng, có AEON Mall và công viên ven sông, từ 18:43) · chưa có lượt cả bộ test sau các bản gộp từ 16:20 · thời gian từ một lượt thật 21/11 (Claude Sonnet 5.5) · lần sửa trước: Nguồn.*
 
 **Bài trước đã biết:** trợ lý trả lời câu hỏi từ kho; việc phải đúng (ngày âm lịch, thời tiết, khoảng cách) do chương trình tính (bài 24). Bài 5 đã tả trang Lên kế hoạch trông ra sao.
 **Bài này thêm:** người dùng bấm "Xếp lịch" thì máy chủ nhận gì, kiểm gì, và đi qua những bước nào cho tới khi có một lịch. Bài cũng mở bảng điểm tham quan, thứ mà mọi lịch được xếp từ đó, và nói ô chat liên quan tới trang này ra sao.
@@ -8,7 +8,7 @@
 ## Ý chính
 
 - Người dùng chọn bằng nút, không gõ câu. Máy chủ nhận **tám giá trị** và kiểm lại từng giá trị; sai một giá trị thì cả yêu cầu bị từ chối.
-- Mọi lịch được xếp từ **một bảng 41 điểm tham quan** (từ 16:38 23/11 thêm 4 quán cà phê chỉ dùng buổi tối), không xếp thẳng từ kho. Mỗi ô của bảng (thời lượng, giờ mở cửa…) có ghi căn cứ: từ kho, từ web, hay ước.
+- Mọi lịch được xếp từ **một bảng 41 điểm tham quan** cùng 6 mục chỉ dùng buổi tối (bài 28), không xếp thẳng từ kho. Mỗi ô của bảng (thời lượng, giờ mở cửa…) có ghi căn cứ: từ kho, từ web, hay ước.
 - Một lượt lập lịch có **một lần gọi model**, chỉ để viết câu mô tả. Việc chọn điểm, chia ngày, tính giờ là của chương trình. Ở ví dụ: khung lịch hiện sau 0,2 giây, đủ câu mô tả sau 9,3 giây.
 - Gõ "lên lịch giúp mình 2 ngày" trong ô chat thì **không** ra một lịch: trợ lý trả lời bằng chữ từ kho, kèm một dòng chỉ sang trang này. Xếp lịch từ câu gõ tự do đã thử hai lần, không đạt, đang tắt.
 - Đã có lịch thì câu hỏi tiếp trong ô chat được trả lời trên **đúng lịch đó**: chương trình in lịch và số giờ thành một nguồn cho model đọc.
@@ -19,7 +19,7 @@
 |---|---|---|
 | biểu mẫu | **form** | nhóm ô và nút để người dùng chọn giá trị rồi gửi một lần |
 | kiểm khuôn | **validation**, **schema** | máy chủ đối chiếu mỗi giá trị gửi lên với một danh sách giá trị được phép; lạ là từ chối |
-| bảng điểm tham quan | **itinerary table** | 41 dòng, mỗi dòng một điểm, với các cột dùng để xếp lịch; nằm ngoài kho bài viết |
+| bảng điểm tham quan | **itinerary table** | 47 dòng (41 điểm tham quan, 6 mục chỉ dùng buổi tối), mỗi dòng có các cột dùng để xếp lịch; nằm ngoài kho bài viết |
 | cụm | **cluster** | nhóm các điểm nằm cùng một khu (ví dụ Kinh thành, bờ nam sông Hương, khu lăng Thủy Xuân); có 8 cụm |
 | khung lịch | **itinerary frame** | phần lịch do chương trình dựng: ngày, buổi, tên điểm, giờ, ghi chú; chưa có câu mô tả |
 | lịch đã lưu | **saved itinerary** | bản khung lịch mới nhất của một cuộc trò chuyện, máy chủ giữ trong bộ nhớ để sửa và hỏi tiếp |
@@ -45,9 +45,9 @@ Bấm nút "Xếp lịch N ngày" (N theo số ngày đang chọn), trang gửi 
 
 Qua bước kiểm, máy chủ ghép các giá trị thành một câu cố định cho lịch sử cuộc trò chuyện, ở ví dụ là *"Lên kế hoạch tham quan Huế (Thông tin thêm: 3 ngày; 2 người lớn; đi cân bằng; thích di tích.)"*. Lượt biểu mẫu đi đường riêng: không qua bước xếp loại câu (bài 22), không tra web, không đưa công cụ nào cho model, không dùng câu trả lời đã nhớ.
 
-## Bảng điểm tham quan: 41 dòng, mỗi ô có căn cứ
+## Bảng điểm tham quan: 41 điểm và 6 mục tối, mỗi ô có căn cứ
 
-Lịch không xếp thẳng từ 267 bài của kho: bài viết là văn xuôi, còn xếp lịch cần con số và nhãn đặt sẵn. Mỗi dòng có tên và tên khác, cụm, loại điểm, thời lượng ("ngắn" 75 phút hoặc "nửa buổi" 150 phút), buổi đi được, giờ mở cửa, trong nhà hay ngoài trời, có nhiều bậc thang không, thứ tự ưu tiên theo từng sở thích, thứ và mùa hoạt động, giờ của hoạt động buổi tối, và bài nguồn trong kho. 18 điểm có thêm một đoạn kho được chọn tay để model tả. Bảng đủ các cột, kèm số đếm từng cột, ở nửa để tra.
+Lịch không xếp thẳng từ 269 bài của kho: bài viết là văn xuôi, còn xếp lịch cần con số và nhãn đặt sẵn. Mỗi dòng có tên và tên khác, cụm, loại điểm, thời lượng ("ngắn" 75 phút hoặc "nửa buổi" 150 phút), buổi đi được, giờ mở cửa, trong nhà hay ngoài trời, có nhiều bậc thang không, thứ tự ưu tiên theo từng sở thích, thứ và mùa hoạt động, giờ của hoạt động buổi tối, và bài nguồn trong kho. 18 điểm có thêm một đoạn kho được chọn tay để model tả. Bảng đủ các cột, kèm số đếm từng cột, ở nửa để tra.
 
 Hầu như mọi ô có thêm một dòng **căn cứ**: câu trích từ bài kho, trang web, hoặc ghi là ước. Ví dụ giờ 7:00 – 17:00 của Đại Nội là phần chung của giờ mùa hè và mùa đông, chủ dự án tra ngày 14/11.
 
@@ -99,7 +99,7 @@ Có ba tình huống ô chat chạm tới lịch.
 - **Đã chọn:** chương trình chọn điểm, chia ngày và buổi, tính giờ, chọn quán, gắn ảnh, viết ghi chú. Model chỉ viết mô tả cho từng điểm của khung đã xếp.
 - **Vì sao:** thiết kế ghi một luật chung: phép tính, luật, giờ, chọn quán, chọn ảnh do chương trình làm; model chỉ diễn đạt. Luật này rút từ các lần để model tính bị âm: model dặn "đừng cộng tổng tiền" vẫn tự cộng (bài 24), và ở bản lịch đầu, khi khuôn lịch đổi thì model viết lệch khung, tự thêm giờ.
 - **Cách khác:** để model tự xếp lịch từ các đoạn kho: không làm. Bản đầu đã cho model viết cả lời lịch theo khung (07/11); bản hiện nay thu lại còn mỗi câu mô tả.
-- **Cái giá:** lịch chỉ hay bằng luật và bảng. Điểm ngoài 41 dòng không bao giờ được xếp; luật thiếu một tình huống thì lịch sai lặp lại được (bài 28).
+- **Cái giá:** lịch chỉ hay bằng luật và bảng. Điểm ngoài bảng không bao giờ được xếp; luật thiếu một tình huống thì lịch sai lặp lại được (bài 28).
 
 ### 3. Vì sao máy chủ kiểm lại các giá trị, khi giao diện đã chỉ cho bấm giá trị đúng?
 
@@ -130,7 +130,7 @@ Lời báo trong ngoặc kép là nguyên văn trong chương trình. Các dòng
 
 ## Dễ nhầm
 
-- **"Lịch được xếp từ kho 267 bài."** Không. Lịch xếp từ bảng 41 điểm (và 4 quán cà phê buổi tối); kho chỉ cho mỗi điểm một đoạn để model tả.
+- **"Lịch được xếp từ kho 269 bài."** Không. Lịch xếp từ bảng 41 điểm (và 6 mục buổi tối); kho chỉ cho mỗi điểm một đoạn để model tả.
 - **"Model đọc ý người dùng rồi lên lịch."** Ở trang này model không đọc ý gì: người dùng bấm nút, chương trình xếp, model chỉ viết câu mô tả.
 
 ## Câu hỏi tự kiểm
@@ -172,7 +172,7 @@ Câu trả lời bằng chữ từ kho, kèm một dòng chỉ sang trang Lên k
 | ngưỡng hiện một loại sở thích | ≥ 4 điểm trong bảng | chủ dự án chốt; hiện cả 5 loại đều đủ | — |
 | ngày đi xa nhất | 180 ngày | thiết kế ghi, chưa thấy lý do riêng | — |
 | `len_ke_hoach_so_thich_an` | rỗng | ẩn loại sở thích dưới sàn "≥ 50 % suất của từng lịch 2 ngày"; ngày 13/11 lễ hội chỉ 43 %, nhóm gắn thêm nhãn cho Cung An Định (có căn cứ kho) thì lên 50 % | — |
-| `lich_trinh_bang_v2` | bảng điểm bản 14 (từ 17:14 23/11): 41 điểm + 4 quán cà phê chỉ dùng buổi tối = 45 dòng, kèm thứ tự chọn buổi tối và danh sách 6 mục tối nhẹ (bài 28) | thiếu file hay thiếu cột ⇒ máy chủ không bật | bản 34 điểm tới 15/11; bản 10 (41 điểm) tới 14:56 23/11; bản 12 (dựng 12:43, vào nhánh chính 14:56) tới 16:38; bản 13 16:38 – 17:14 ("Chi tiết để tra") |
+| `lich_trinh_bang_v2` | bảng điểm bản 15 (từ 18:43 23/11): 41 điểm + 6 mục chỉ dùng buổi tối (4 quán cà phê, AEON Mall Huế, công viên ven sông Hương) = 47 dòng, kèm thứ tự chọn buổi tối và danh sách 8 mục tối nhẹ (bài 28) | thiếu file hay thiếu cột ⇒ máy chủ không bật | bản 34 điểm tới 15/11; bản 10 (41 điểm) tới 14:56 23/11; bản 12 (dựng 12:43, vào nhánh chính 14:56) tới 16:38; bản 13 16:38 – 17:14; bản 14 (45 dòng) 17:14 – 18:43 ("Chi tiết để tra") |
 | `len_lich_dan_trang` | đang mở (từ 21:54 21/11) | dòng chỉ sang trang khi gõ câu nhờ lập lịch | — |
 | `lich_trinh` | **đang tắt** | xếp lịch từ câu gõ tự do (bản đầu) | đã đo hai lần, không đạt |
 | `lich_vao_hoi_thuong` | đang mở (từ 19/11) | nguồn "Lịch bạn đang có" cho câu hỏi tiếp; chủ dự án chọn bật riêng phần lịch và số giờ | bản có tổng tiền vé do chương trình tính: thử, chưa bật (giới hạn đã biết) |
@@ -219,7 +219,7 @@ Câu trả lời bằng chữ từ kho, kèm một dòng chỉ sang trang Lên k
 | cụm | Kinh thành | 8 cụm; một cụm "phía nam xa" (khoảng 40 km trở lên) chỉ xếp khi đi từ 3 ngày |
 | loại | di tích | 5 loại: di tích 19 điểm, thiên nhiên 10, chụp ảnh 9, ẩm thực 7, lễ hội – nghệ thuật 6 (một điểm có thể mang hai loại) |
 | thời lượng | nửa buổi (150 phút) | 21 điểm "ngắn" (75 phút), 20 điểm "nửa buổi" |
-| buổi hợp | sáng, chiều | 37 điểm đi được ban ngày; 5 điểm có hoạt động buổi tối (từ 16:38 23/11 Chợ Đông Ba chỉ còn ban ngày; trước đó 6), cộng 4 quán cà phê chỉ dùng buổi tối |
+| buổi hợp | sáng, chiều | 37 điểm đi được ban ngày; 5 điểm có hoạt động buổi tối (từ 16:38 23/11 Chợ Đông Ba chỉ còn ban ngày; trước đó 6), cộng 6 mục chỉ dùng buổi tối (4 quán cà phê từ 16:38; AEON Mall, công viên ven sông từ 18:43) |
 | giờ mở cửa | 7:00 – 17:00 | 21 điểm có khung giờ; 20 điểm kho không ghi giờ ⇒ không ràng buộc |
 | trong nhà hay ngoài trời | ngoài trời | 29 ngoài trời, 6 trong nhà, 6 cả hai |
 | nhiều bậc thang | không | 11 điểm |
@@ -230,7 +230,7 @@ Câu trả lời bằng chữ từ kho, kèm một dòng chỉ sang trang Lên k
 
 ## Giới hạn đã biết
 
-- Bảng chỉ 41 điểm (và 4 quán cà phê chỉ dùng buổi tối). Điểm ngoài bảng không bao giờ vào lịch, dù kho có bài.
+- Bảng chỉ 41 điểm (và 6 mục chỉ dùng buổi tối). Điểm ngoài bảng không bao giờ vào lịch, dù kho có bài.
 - Biểu mẫu giữ lựa chọn khi rời trang rồi quay lại (từ 17:15 23/11): thấy một lần trên trình duyệt chiều 23/11 (3 ngày, 1 trẻ em, có người lớn tuổi, "Cân bằng" còn nguyên sau khi sang Trang chủ rồi về; agent con, chưa có người thứ hai kiểm). CÒN: lịch đã đổi tham số bằng lời ("thêm một trẻ em") thì biểu mẫu vẫn theo lần gửi biểu mẫu gốc, như nút "Sửa"; tải lại trang hay mở tab thứ hai thì cả lịch lẫn biểu mẫu mất.
 - Thời lượng của 31 điểm dựa vào web, 2 điểm là ước; sai thì giờ gợi ý sai theo.
 - Ô số người lớn chưa làm đổi lịch.
@@ -243,15 +243,15 @@ Câu trả lời bằng chữ từ kho, kèm một dòng chỉ sang trang Lên k
 
 ## Chi tiết để tra
 
-- Lượt ví dụ (21/11/2026, Claude Sonnet 5.5): khung lịch 219 ms; lời gọi viết câu 9.096 ms; cả lượt 9.320 ms; 5.592 token vào, 1.137 token ra, 0 token suy luận; 0,022554 USD; 11 nguồn được trích; 0 câu dự phòng; không có dự báo (không chọn ngày đi). Lịch: ngày 1 Đại Nội (sáng), chùa Thiên Mụ và Kinh thành (chiều), chợ Đông Ba (tối); ngày 2 lăng Tự Đức, lăng Khải Định, phố đi bộ Nguyễn Đình Chiểu; ngày 3 phố cổ Bao Vinh, Quốc Học, cung An Định, phố Tây. Từ 16:38 23/11 cùng biểu mẫu giữ nguyên ban ngày, ba buổi tối là phố đi bộ Nguyễn Đình Chiểu, quán Bến Trăng, Ca Huế trên sông Hương (bài 28; người viết tự chạy hàm, không qua model).
+- Lượt ví dụ (21/11/2026, Claude Sonnet 5.5): khung lịch 219 ms; lời gọi viết câu 9.096 ms; cả lượt 9.320 ms; 5.592 token vào, 1.137 token ra, 0 token suy luận; 0,022554 USD; 11 nguồn được trích; 0 câu dự phòng; không có dự báo (không chọn ngày đi). Lịch: ngày 1 Đại Nội (sáng), chùa Thiên Mụ và Kinh thành (chiều), chợ Đông Ba (tối); ngày 2 lăng Tự Đức, lăng Khải Định, phố đi bộ Nguyễn Đình Chiểu; ngày 3 phố cổ Bao Vinh, Quốc Học, cung An Định, phố Tây. Từ 16:38 23/11 cùng biểu mẫu giữ nguyên ban ngày, ba buổi tối là phố đi bộ Nguyễn Đình Chiểu, quán Bến Trăng, Ca Huế trên sông Hương; bảng bản 15 (18:43) ra y như vậy (bài 28; người viết tự chạy hàm, không qua model).
 - Trên đường gửi dần, lượt biểu mẫu có các tin: trạng thái "đang xếp", khung lịch, từng câu mô tả, "lịch xong", rồi chữ thuần của cả lịch (dùng cho lịch sử và nút sao chép).
 - Lượt biểu mẫu, lượt sửa lịch và việc nạp lịch đã lưu chỉ chạy trên đường gửi dần (đường giao diện dùng); đường trả cả câu một lần không nạp lịch đã lưu. Vì sao: chưa thấy ghi lý do. Điều thấy được: giao diện chỉ dùng đường gửi dần.
 - Khi chưa xếp lịch nào, trang hiện một lịch **ví dụ** 2 ngày do chính bộ xếp dựng từ một tổ hợp cố định; câu mỗi điểm của lịch ví dụ do chương trình viết, không gọi model.
 - Lịch đã lưu không ghi ra đĩa; câu an toàn bão lũ (nếu lượt đó có) được giữ cùng bản lưu để file tải về còn câu đó.
 - Giao diện trang này từ 23/11 (sửa trước khi gộp, so với bản dựng thử đầu tối 22/11): cột biểu mẫu chỉ hẹp lại 300 px khi đã có lịch thật kèm bản đồ (ở 300 px với lịch ví dụ, nhiều mục xuống dòng và nút "Xếp lịch" tụt khoảng 400 px); thẻ lịch dùng hết cột ở mọi bề rộng; dòng "Đã sửa theo lời bạn" dừng ở mép cột lịch, không lấn sang cột bản đồ; mỗi quán gợi ý một hàng, quán không ảnh thụt vào cho thẳng cột tên; bản đồ thấp lại ở khung nhìn thấp (cao 240–400 px) để nút ngày, bản đồ, danh sách điểm nằm trọn màn khi đi theo lúc cuộn; ba kiểu đi mỗi kiểu một hàng ở mọi bề rộng (trước: ba cột hẹp, một hai chữ mỗi dòng ở điện thoại và 1.024–1.152 px); nhãn "Ngày đi (không bắt buộc)" nằm trên ô ngày. Hai lỗi có sẵn ở giao diện cũ được chữa cùng đợt: ảnh điểm gần đáy màn bị cắt thành một dải hẹp khi dừng cuộn (gỡ hiệu ứng ảnh lộ dần theo cuộn), và "Ghi chú của lịch" mất chấm đầu dòng.
 - Dải đầu trang có nét sông chạy dọc mép dưới, hết bề ngang màn (chỉ trên màn hình). Nét đứt trên đường nối các điểm chạy khi máy không bật giảm chuyển động; dải nước nhạt vẫn vẽ dần khi cuộn như bản cũ.
-- Bảng điểm qua các bản: bản 8 (13/11, 34 điểm), bản 9 (15/11, thêm 7 điểm: chùa Từ Hiếu, cầu Trường Tiền, đèo Hải Vân, chợ Bến Ngự, làng nón Tây Hồ, nhà vườn An Hiên, đầm Lập An), bản 10 (17/11, giờ tối chợ Đông Ba 18:00 – 23:00). Ba nơi khác bị loại khi thêm vì thiếu căn cứ. Bản 11 (19/11) có cột giá vé, chưa dùng. Bản 12 (dựng 12:43, vào nhánh chính 14:56 23/11) = bản 10 + danh sách hoạt động tối nhẹ. Bản 13 (vào nhánh chính 16:38 23/11): Chợ Đông Ba bỏ buổi tối, thêm 4 quán cà phê có bài kho chỉ dùng buổi tối (ở cuối bảng), thêm thứ tự chọn buổi tối. Bản 14 (17:14 23/11): giờ ghé cho cầu Trường Tiền buổi tối và cho quán, chữ ghi chú tối của phố Tây, Ca Huế đứng trước phố Tây trong thứ tự chọn (bài 28).
-- Ba bảng nhỏ cạnh bảng điểm, đều ngoài kho: bảng toạ độ và bảng ảnh (40 trên 41 điểm, bài 30), và bảng khoảng cách giữa 40 điểm, dựng một lần ngày 16/11 bằng một dịch vụ chỉ đường. Trợ lý dùng bảng khoảng cách khi được hỏi "từ A sang B bao xa" (bài 24); bộ xếp lịch không dùng.
+- Bảng điểm qua các bản: bản 8 (13/11, 34 điểm), bản 9 (15/11, thêm 7 điểm: chùa Từ Hiếu, cầu Trường Tiền, đèo Hải Vân, chợ Bến Ngự, làng nón Tây Hồ, nhà vườn An Hiên, đầm Lập An), bản 10 (17/11, giờ tối chợ Đông Ba 18:00 – 23:00). Ba nơi khác bị loại khi thêm vì thiếu căn cứ. Bản 11 (19/11) có cột giá vé, chưa dùng. Bản 12 (dựng 12:43, vào nhánh chính 14:56 23/11) = bản 10 + danh sách hoạt động tối nhẹ. Bản 13 (vào nhánh chính 16:38 23/11): Chợ Đông Ba bỏ buổi tối, thêm 4 quán cà phê có bài kho chỉ dùng buổi tối (ở cuối bảng), thêm thứ tự chọn buổi tối. Bản 14 (17:14 23/11): giờ ghé cho cầu Trường Tiền buổi tối và cho quán, chữ ghi chú tối của phố Tây, Ca Huế đứng trước phố Tây trong thứ tự chọn. Bản 15 (vào nhánh chính 18:43 23/11): thêm AEON Mall Huế (cụm An Cựu) và công viên ven sông Hương ở cuối bảng, chỉ dùng buổi tối, cả hai vào danh sách tối nhẹ; ban ngày không đổi (bài 28).
+- Ba bảng nhỏ cạnh bảng điểm, đều ngoài kho: bảng toạ độ (bản 11: 46 dòng, 45 có vị trí; AEON Mall không có) và bảng ảnh (bản 9: 45 ảnh cho 47 dòng), bài 30; và bảng khoảng cách giữa 40 điểm (không gồm 6 mục buổi tối), dựng một lần ngày 16/11 bằng một dịch vụ chỉ đường. Trợ lý dùng bảng khoảng cách khi được hỏi "từ A sang B bao xa" (bài 24); bộ xếp lịch không dùng.
 - Bảng khoảng cách: 40 điểm × 39 chiều; km và phút theo đường ô tô, không tính kẹt xe; lúc trả lời không gọi mạng.
 - Căn cứ của cột thời lượng (chuyển từ thân bài 23/11): đây là cột dựa vào web nhiều nhất, 31 điểm lấy từ web, 8 từ kho, 2 điểm ước. Có ngày đi trong 7 ngày tới thì bước xếp lấy thêm dự báo thời tiết một lần (chuyển từ thân bài 23/11).
 - Khuôn nhận câu nhờ lập lịch trong ô chat (chuyển từ thân bài 23/11): lời nhờ, chữ "lịch / lịch trình / kế hoạch", và số ngày; không nêu số ngày thì không có dòng.
@@ -301,4 +301,10 @@ Câu trả lời bằng chữ từ kho, kèm một dòng chỉ sang trang Lên k
   - Biểu mẫu giữ lựa chọn: `git show 179e503e -- frontend/src/LenKeHoach.jsx` (`useState(() => tuTruong(prefill ?? lichTurn?.truong))` + chú thích "Rời trang rồi quay lại…"), gộp `d1b0f52e` 17:15 [code]; giới hạn CÒN: runbook 10.2 hàng "Rời trang Lên kế hoạch rồi quay lại khi đã có lịch" [chép runbook]; thấy trên trình duyệt: `data/playwright_mcp/luot_2311_cum_toi_2/NHAT_KY.md` cảnh C9 + mục (2) điểm 6 [riêng tư; agent con, chưa có người thứ hai kiểm].
   - Bảng điểm bản 14: `settings.yaml` dòng 112 (chú thích lịch sử bản 10 ⇒ 12 ⇒ 13 ⇒ 14; bản 11 giá vé "chưa dùng"); đếm 41 dòng không phải quán / 37 ban ngày / 5 có buổi tối trên `data/phase_9/lich_trinh/diem_v14.json` bằng `python3` [riêng tư; tự đếm]. Mốc: bản 13 `56a09365` 16:38, bản 14 `5044f3e9` gộp `d589ccc0` 17:14 [code].
   - Ô trẻ em, buổi tối nhẹ từ 17:29: `toi_nhe: true`, commit bật `32a7aeb4` [code]; buổi tối của lịch ví dụ trên bảng đang chạy: người viết chạy `xep_v2` (bài 28 khối Nguồn, script `/tmp/d_v3_xl/chay.py`) [riêng tư; tự chạy hàm, không qua model].
+- **Đợt đêm 23/11/2026 (cụm X: bảng điểm bản 15, kho 269 bài; X5).** Người viết đọc cây chính `07bbf67b` / `5a11e3f0`, không chạy test, không chạy server. Dòng Cập nhật trước: "Cập nhật 18:32, ngày 23/11/2026 · khớp hệ thống 17:35 23/11 (55 tính năng mở, 7 tắt, kho 267 bài) · bảng điểm thêm 4 quán cà phê (từ 16:38), đoàn có trẻ nhỏ có tối nhẹ (từ 17:29), biểu mẫu giữ lựa chọn (từ 17:15) · chưa có lượt cả bộ test sau các bản gộp từ 16:20 · thời gian từ một lượt thật 21/11 (Claude Sonnet 5.5) · lần sửa trước: Nguồn." Đếm 57 mở / 6 tắt: lệnh của lời giao [tự đếm].
+  - Bảng bản 15, 47 dòng = 41 điểm + 6 mục chỉ có buổi tối; danh sách nhẹ 8 mục: `settings.yaml` dòng `lich_trinh_bang_v2` = `diem_v15.json`; người viết đếm bằng `python3` (47 dòng; 11 mục có `"toi"`: 5 trong 41 điểm — hai phố đi bộ, phố Tây, Ca Huế, cầu Trường Tiền — và 6 dòng thêm ở cuối bảng: bốn quán, `aeon_mall`, `cong_vien_song_huong`) [riêng tư; tự đếm]. Mốc 18:43: gộp `bc70bf78` (commit `7fe74669` 18:33) [code]. Bản 14 = 45 dòng: Nguồn gạch "Đợt tối" dưới [chép trong bài].
+  - **X5 (bài 27 bảng "Từ dùng" 41 dòng ↔ "Cấu hình" 45 dòng):** phân xử theo cấu hình đang chạy — cả hai chỗ nay ghi bản 15, 47 dòng; "41" vẫn đúng cho số ĐIỂM THAM QUAN (cột "tên và tên khác") [tự đếm].
+  - Bảng toạ độ bản 11 (46 dòng, 45 có vị trí, không có dòng AEON), bảng ảnh bản 9 (45 dòng; thiếu biển Thuận An, MoKa): `settings.yaml` dòng `lich_trinh_toa_do`, `lich_trinh_bang_anh`; đếm `diem_toa_do_v11.json`, `bang_anh_v9.json` [riêng tư; tự đếm]; kể ở bài 30. Bảng khoảng cách 40 điểm, không gồm mục buổi tối: `settings.yaml` dòng `khoang_cach_bang` ("40 điểm có toạ độ × 39 chiều"); lời commit `7fe74669` ("The two rows stay out of the place list of the distance / nearby tools") [code; chép].
+  - Lịch ví dụ trên bảng bản 15, ba tối phố đi bộ / Bến Trăng / Ca Huế: `/tmp/d_dem_xl/chay.py` [người viết tự chạy hàm, không qua model].
+  - Kho 269 bài: bài 7 (Nguồn) [tự đếm].
 </details>
