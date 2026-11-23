@@ -1,6 +1,6 @@
 # Bài 26 — Hỏi bằng ảnh
 
-*Cập nhật 17:14, ngày 22/11/2026 · sửa theo một lượt đối chiếu độc lập · cơ chế đọc từ chương trình (máy chủ và giao diện) trưa 22/11; số đo chép từ báo cáo 05/11 – 21/11, ghi rõ model ở từng con số; người viết không chạy lại phép đo nào và không gửi ảnh nào.*
+*Cập nhật 11:11, ngày 23/11/2026 · khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài) · thêm chỗ đứng thẻ chọn tên, giới hạn điện thoại · cơ chế đọc từ chương trình 22–23/11; số đo chép từ báo cáo 05–21/11; người viết không đo lại, không gửi ảnh.*
 
 **Bài trước đã biết:** trợ lý trả lời từ kho, có số nguồn (chặng 3); chương trình chọn công cụ và kiểm sau khi model viết (bài 21–25).
 **Bài này thêm:** người dùng gửi một tấm ảnh chụp ở Huế và hỏi về nó. Ảnh không đi thẳng vào câu trả lời: model chỉ đoán **tên** thứ trong ảnh, chọn trong một danh sách cố định; rồi câu hỏi đi đường hỏi đáp như một câu gõ bằng chữ. Bài giảng vì sao chia hai bước như vậy, vì sao có bước xác nhận, và khi model lỗi thì người dùng thấy gì.
@@ -26,7 +26,7 @@
 
 1. Trong ô nhập có **nút dấu cộng** (chỉ hiện khi tính năng đang mở). Người dùng chọn ảnh hoặc dán ảnh thẳng vào ô. Ảnh nằm trong ô như một tệp đính kèm; lúc này **chưa có gì được gửi đi**. Giao diện chặn sớm ảnh sai kiểu ("Chọn ảnh JPEG, PNG hoặc WEBP.") hoặc quá 10 MB ("Ảnh lớn hơn 10 MB — chọn ảnh nhỏ hơn.").
 2. Người dùng gõ câu hỏi (hoặc để trống) rồi bấm Hỏi. Ảnh được gửi tới máy chủ; màn hình hiện "Đang xem ảnh…" và nút **Huỷ**. Bấm Huỷ thì giao diện bỏ kết quả sắp về và trả ảnh lại ô nhập; máy chủ vẫn chạy xong lượt đó.
-3. Kết quả về, có ba trường hợp:
+3. Kết quả về, có ba trường hợp. Thẻ nằm trên ô nhập, kèm ảnh vừa chọn:
 
 | Model trả | Người dùng thấy | Tiếp theo |
 |---|---|---|
@@ -199,6 +199,7 @@ Một tên đúng 31 trên 33 lượt; khi đưa 2–3 tên thì tên đầu ch�
 - **Lời báo lỗi và lời báo không nhận ra là một.**
 - **Chưa giới hạn số ảnh mỗi người.** Bản thiết kế ghi để dành cho lúc đưa lên mạng.
 - **Ảnh rời máy** tới hãng model (bài 6).
+- **Trên điện thoại (bề rộng 390 điểm ảnh), thẻ chọn tên cắt chữ ở mép phải và có khoảng trắng thừa phía trên.** Tên dài như "Kinh thành Huế (Ngọ Môn – Kỳ Đài)" mất phần cuối; khoảng trắng khoảng 215 điểm ảnh nằm giữa đầu khung trò chuyện và thẻ. Chữ bị cắt có từ giao diện cũ; đây là ô duy nhất mà máy dò tràn ngang của lượt kiểm trước khi gộp gắn cờ (chữ thò ra mép phải 51 điểm ảnh; bài 35). Cả hai chưa sửa, nằm trong danh sách việc nhẹ sau lần gộp giao diện mới 23/11. Ô nhập và nút "Hỏi" vẫn nằm trọn trên thanh dưới. Chưa thử trên điện thoại thật.
 
 ## Chi tiết để tra
 
@@ -210,6 +211,7 @@ Một tên đúng 31 trên 33 lượt; khi đưa 2–3 tên thì tên đầu ch�
 - Đang có một lượt khác chạy mà model trả đúng một tên thì giao diện không tự hỏi chen ngang; nó hiện thẻ chọn với một tên để người dùng bấm sau.
 - Câu ghép dài quá 500 ký tự thì phần chữ người dùng bị cắt để giữ đuôi "(Trong ảnh: …)".
 - Bấm "Cuộc trò chuyện mới" thì ảnh đính kèm bị gỡ và thẻ đang mở bị đóng.
+- Từ giao diện mới (23/11): lúc chưa hỏi câu nào mà thẻ chọn tên đang mở, lời chào và câu gợi ý của khung trò chuyện được thu lại, để ô nhập không bị đẩy xuống dưới thanh dưới của điện thoại (lỗi bắt được trước lần gộp). Trang chủ có bến "Hỏi bằng ảnh" dẫn sang trang Trợ lý (chỉ khi tính năng đang mở; bài 5). Chữ trên thẻ, các nút, luồng hỏi không đổi.
 
 **Bài sau (bài 27):** bắt đầu chặng 6, trang Lên kế hoạch: từ mấy nút chọn tới một lịch, và bảng điểm tham quan đứng sau.
 
@@ -227,5 +229,7 @@ Một tên đúng 31 trên 33 lượt; khi đưa 2–3 tên thì tên đầu ch�
 - Dữ liệu thô thay biểu mẫu: chú thích đầu `backend/api/routes/anh.py`; không chữ người dùng: `nhan_anh.dau_vao`, plan A1 D3; tệp đính kèm: chú thích `HoiBangAnh.jsx` (User 15/11 tối); sổ vết gỡ lỗi ghi tên gợi ý: `anh.py` (`so_vet.ghi`) [code]. 2 / 5 ở lượt 2 (lượt 1: 0 / 5): `e8_a1_implementation.md` [đã chạy].
 - Bài đã qua một lượt đối chiếu độc lập với chương trình và số đo ngày 22/11 (25 dòng: 1 sai, 2 lệch, đã sửa): `data/hoc_cung_D/kiem/bai_23_26.md` [riêng tư].
 - Lượt thử ảnh trên giao diện tối 22/11 (dòng B0-8): `data/test_cuoi/chay_2026-11-22_e_sau_dong/KET_QUA.md` [riêng tư; đã chạy qua trình duyệt 17:04–17:08 22/11, phiên đo; mỗi dòng một lần; người viết đã đọc bảng kết quả].
+
+- Đợt 23/11 (giao diện mới, ở bản chính từ 10:00 23/11, commit gộp `e7193bd0`): `frontend/src/HoiBangAnh.jsx` không đổi trong đợt (`git log bedfa091..origin/main -- frontend/src/HoiBangAnh.jsx` rỗng); thẻ đặt trước ô nhập và có ảnh xem trước: `HoiBangAnh.jsx` (`the`, `hoi-anh-xem`), `frontend/src/chat.jsx` dòng 365 [code]. Lời chào thu lại khi thẻ mở: `chat.jsx` dòng 343 (`turns.length === 0 && !hoiAnh.the`; bản cũ dòng 340 không có điều kiện thẻ) [code]; lỗi bắt trước khi gộp: `session_prompt/VIEC_DANG_MO.md` khối A hàng X13 (cảnh A01 ở 390 px) [chép]. Giới hạn điện thoại (khoảng trắng ~215 px, chữ cắt mép phải có sẵn ở bản cũ): `VIEC_DANG_MO.md` khối A, danh sách SAU CỔNG cho C; `session_prompt/HIEN_TRANG.md` mục 1 gạch "Giao diện mới…" [chép]; ảnh `data/giao_dien_2026-11-22/sau_gop_10c30bc5/A01_the_chon_ten_anh_390_man.png` (chữ "chọn đ…", "Kỳ Đ…" bị cắt; ô nhập và nút "Hỏi" trọn trên thanh dưới) và `…_1536x695_man.png` (thẻ trên ô nhập, đủ chữ) [riêng tư; đã mở ảnh]. Ô duy nhất máy dò tràn ngang gắn cờ (A01 ở 390 px, chữ thò 51px): `…/sau_gop_10c30bc5/TRAN_NGANG_ANH.md` dòng 8; `session_prompt/sessions/STATUS_E.md` dòng 19 [riêng tư; người sửa đã mở]. Bến "Hỏi bằng ảnh": `frontend/src/TrangChu.jsx` (`NHANH`, `co: "anh"`) [code].
 
 </details>

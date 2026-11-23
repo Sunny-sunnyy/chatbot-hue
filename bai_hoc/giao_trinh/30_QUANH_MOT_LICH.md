@@ -1,6 +1,6 @@
 # Bài 30 — Quanh một lịch: chỗ ở, quán ăn, ảnh, bản đồ, xuất file
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: đã sửa theo một lượt đối chiếu độc lập · luật chọn và lời báo đọc từ chương trình trưa 22/11; số cơ sở, số quán, số ảnh đếm lại từ các bảng đang chạy; số đo cũ chép từ báo cáo các ngày 14–20/11; người viết không chạy lại lượt nào.*
+*Cập nhật 11:14, ngày 23/11/2026 · khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài) · thêm: file xuất không đổi và bản in giữ tỉ lệ cũ sau giao diện mới, chỗ đứng mới của bản đồ, ba giới hạn của bản in; người viết so hai file PDF và hai file chữ thật của lượt kiểm · luật chọn và lời báo đọc từ chương trình trưa 22/11; số cơ sở, quán, ảnh đếm lại từ các bảng đang chạy; số đo cũ chép từ báo cáo 14–20/11; người viết không chạy lại lượt nào · các lần sửa trước: khối Nguồn.*
 
 **Bài trước đã biết:** chương trình xếp lịch, kiểm khung, model viết mỗi mục một mô tả (bài 27–29).
 **Bài này thêm:** những thứ đi kèm một lịch: khối "Nơi ở", quán cho bữa trưa và bữa tối, ảnh từng điểm, bản đồ có ghim, và năm nút xuất (sao chép, tải chữ, thêm vào lịch điện thoại, in, PowerPoint). Mọi thứ trong bài đều do chương trình chọn; model không thấy tên quán, tên khách sạn hay toạ độ nào.
@@ -33,9 +33,9 @@ Lịch ví dụ (bài 27) không chọn hạng sao, nên dưới lịch chỉ c�
 2. Không thì đếm cụm của các điểm ban ngày (bỏ các điểm đi trong ngày ở phía nam xa). Từ 60 % điểm ở ven biển ⇒ ven biển. Hơn 50 % ở phía tây ⇒ phía tây, trừ khi có trẻ em hay người lớn tuổi thì về trung tâm.
 3. Còn lại ⇒ trung tâm.
 
-Bộ xếp chỉ đặt buổi tối ở hai cụm trung tâm (bài 28), nên bậc 1 gần như luôn quyết: mô phỏng 3.840 tổ hợp ra trung tâm 3.036 khung, ven biển 36, phía tây 0 (còn lại là lịch 1 ngày).
+Bộ xếp chỉ đặt buổi tối ở hai cụm trung tâm (bài 28), nên bậc 1 gần như luôn quyết (mô phỏng 3.840 tổ hợp: bảng "Đã so").
 
-**Chọn cơ sở.** Trong khu đã chọn, chương trình lấy tối đa 5 cơ sở của đúng hạng người dùng chọn (hạng đó trống thì trải đều các hạng), gần cụm có nhiều điểm nhất trước, có ảnh trước. Mỗi cơ sở có tên, hạng, địa chỉ, link tìm phòng trên một trang đặt phòng công khai (chỉ mở khi bấm), link bản đồ, và nhãn chung "Gợi ý theo vị trí và hạng — chưa kiểm giá, phòng trống." Bảng lưu trú có 136 cơ sở từ danh mục công khai có nguồn và ngày: 121 ở trung tâm, 5 phía tây, 10 ven biển; 67 cơ sở có ảnh.
+**Chọn cơ sở.** Trong khu đã chọn, chương trình lấy tối đa 5 cơ sở của đúng hạng người dùng chọn (hạng đó trống thì trải đều các hạng), gần cụm có nhiều điểm nhất trước, có ảnh trước. Mỗi cơ sở có tên, hạng, địa chỉ, link tìm phòng trên một trang đặt phòng công khai (chỉ mở khi bấm), link bản đồ, và nhãn chung "Gợi ý theo vị trí và hạng — chưa kiểm giá, phòng trống." Bảng lưu trú có 136 cơ sở từ danh mục công khai có nguồn và ngày (chia theo khu: "Chi tiết để tra").
 
 ## Quán ăn: hai quán mỗi bữa, cùng cụm, trong 2 km
 
@@ -46,13 +46,13 @@ Với mỗi ngày, chương trình tìm quán cho hai bữa:
 
 Một quán được chọn khi cùng cụm với điểm và cách điểm không quá 2 km đường chim bay. Bữa chính chỉ gợi ý quán ăn; chỉ khi trong 2 km không có quán ăn nào mới gợi ý quán cà phê. Trong cùng loại: quán có bài trong kho trước, rồi dữ liệu mở của thành phố, rồi bản đồ mở; sau đó gần nhất trước. Không lặp quán trong cả chuyến.
 
-Ở lịch ví dụ, bữa trưa ngày 3 gần Bao Vinh chỉ có một quán, nhãn "(từ bản đồ mở, chưa kiểm)". Quán có bài trong kho có link "Đọc bài". Cuối khối có câu "Gợi ý theo vị trí — chưa kiểm giờ mở cửa, giá; quán có thể đã đổi." Bảng có 467 quán: 41 có bài trong kho, 4 từ dữ liệu mở của thành phố, 422 từ bản đồ mở. Sáu nơi xa có một câu ghi chú cố định thay cho tên quán khi không chọn được quán (năm câu dựa trên kho, một câu chỉ nói chưa có gợi ý).
+Ở lịch ví dụ, bữa trưa ngày 3 gần Bao Vinh chỉ có một quán, nhãn "(từ bản đồ mở, chưa kiểm)". Quán có bài trong kho có link "Đọc bài". Cuối khối có câu "Gợi ý theo vị trí — chưa kiểm giờ mở cửa, giá; quán có thể đã đổi." Sáu nơi xa có một câu ghi chú cố định thay cho tên quán khi không chọn được quán (năm câu dựa trên kho, một câu chỉ nói chưa có gợi ý).
 
 ## Ảnh và bản đồ: lấy từ bảng, không đoán
 
-**Ảnh.** Mỗi điểm nhiều nhất một ảnh, gắn theo mã điểm. 40 trên 41 điểm có ảnh: 26 từ Wikimedia Commons (giấy phép mở), 13 ảnh web (phần lớn dùng lại ảnh của mục Khám phá), 1 ảnh chủ dự án tự tìm. Mọi ảnh nằm trên máy của dự án. Lúc bật, máy chủ kiểm từng dòng của bảng ảnh: file có thật, ảnh Commons có tác giả và giấy phép, ảnh web có trang nguồn. Trang không hiện dòng ghi công (chủ dự án yêu cầu 14/11, nhắc lại 19/11).
+**Ảnh.** Mỗi điểm nhiều nhất một ảnh, gắn theo mã điểm. 40 trên 41 điểm có ảnh, phần lớn từ Wikimedia Commons (giấy phép mở); nguồn từng ảnh và phép kiểm lúc bật ở "Chi tiết để tra". Mọi ảnh nằm trên máy của dự án. Trang không hiện dòng ghi công (chủ dự án yêu cầu 14/11, nhắc lại 19/11).
 
-**Bản đồ.** Dưới lịch có một khung bản đồ, mỗi lần hiện một ngày; nút "Ngày 1 / Ngày 2…" đổi ngày. Ghim có số theo thứ tự đi trong ngày, khớp danh sách đánh số dưới bản đồ. Bấm ghim thì hiện tên điểm và link mở Google Maps. Toạ độ do chương trình lấy từ bảng toạ độ; model không tạo toạ độ, và toạ độ không vào tin gửi model. Điểm không có toạ độ thì không có ghim. Bản đồ không vẽ đường nối giữa các ghim, vì hệ thống không có đường đi thật. Hai ghim sát nhau thì ghim sau được vẽ lệch sang một chút để khỏi che số.
+**Bản đồ.** Trên trang Lên kế hoạch ở màn từ 1.200 px, khung bản đồ đứng cạnh lịch và đi theo khi cuộn; màn hẹp hơn, và trong khung trò chuyện, nó nằm dưới lịch. Mỗi lần khung hiện một ngày; nút "Ngày 1 / Ngày 2…" đổi ngày. Ghim có số theo thứ tự đi trong ngày, khớp danh sách đánh số dưới bản đồ. Bấm ghim thì hiện tên điểm và link mở Google Maps. Toạ độ do chương trình lấy từ bảng toạ độ; model không tạo toạ độ, và toạ độ không vào tin gửi model. Điểm không có toạ độ thì không có ghim. Bản đồ không vẽ đường nối giữa các ghim, vì hệ thống không có đường đi thật.
 
 ## Năm nút xuất: bốn ở trình duyệt, một ở máy chủ
 
@@ -63,6 +63,8 @@ Một quán được chọn khi cùng cụm với điểm và cách điểm khô
 | Thêm vào lịch (.ics) | trình duyệt | khung lịch đang hiện | chỉ khi đã chọn ngày đi ("Chọn ngày đi ở biểu mẫu để thêm lịch vào lịch điện thoại."); mục không có giờ thì bỏ; câu an toàn bão lũ (nếu có) đứng đầu phần mô tả |
 | In / Lưu PDF | khung in của trình duyệt | bố cục in riêng của thẻ lịch | chỉ có ở trang Lên kế hoạch |
 | Tải PowerPoint | máy chủ | lịch đã lưu của cuộc trò chuyện | báo "Đang tạo file…", rồi "Đã tải lich-trinh-hue.pptx (lịch mới nhất của cuộc trò chuyện)." |
+
+Giao diện mới (23/11) không chạm chương trình dựng file: ở lượt kiểm trước khi gộp, một lịch 2 ngày tải ra file chữ 29 dòng và PowerPoint 4 slide, bằng bản cũ. **Bản in** giữ tỉ lệ và chỗ ngắt trang cũ nhờ một luật riêng cho bản in (vì sao phải thêm luật đó: mục "Quyết định nhỏ hơn").
 
 Bấm "Tải PowerPoint", trình duyệt chỉ báo "tôi muốn tải lịch của cuộc trò chuyện này"; không gửi nội dung lịch. Máy chủ dựng lại lịch từ khung và câu mô tả đã lưu bằng đúng các hàm dựng thẻ (không xếp lại, không gọi model), rồi vẽ file. Không có lịch đã lưu thì người dùng nhận "Chưa có lịch để tải hoặc lịch đã hết hạn — bấm Lên kế hoạch để tạo lại rồi tải."
 
@@ -92,7 +94,7 @@ Bấm "Tải PowerPoint", trình duyệt chỉ báo "tôi muốn tải lịch c�
 ### 4. Vì sao file chữ, tệp lịch điện thoại và bản in dựng ở trình duyệt, còn PowerPoint dựng ở máy chủ?
 
 - **Đã chọn:** bốn nút đầu dựng trong trình duyệt từ thứ đang hiện. PowerPoint dựng ở máy chủ bằng một thư viện Python, từ lịch đã lưu.
-- **Vì sao:** bốn nút đầu chỉ đổi cách hiện thứ trình duyệt đã có (bài 5), không cần gửi gì đi (điều thấy được; chưa thấy ghi lý do riêng). Chủ dự án chọn thư viện Python cho PowerPoint ngày 19/11, sau một lần tra cứu công khai, không có số đo. Kế hoạch viết sau đó có bảng so với thư viện chạy trong trình duyệt; lợi được nêu: test bằng Python sẵn có; máy chủ dựng lại từ bản đã lưu nên mọi chữ trong file là chữ của bảng hoặc câu đã kiểm. Bảng so còn nêu "khuôn làm tay, dễ đẹp", nhưng chương trình hiện vẽ bằng toạ độ, không dùng khuôn.
+- **Vì sao:** bốn nút đầu chỉ đổi cách hiện thứ trình duyệt đã có (bài 5), không cần gửi gì đi (điều thấy được; chưa thấy ghi lý do riêng). Chủ dự án chọn thư viện Python cho PowerPoint ngày 19/11, sau một lần tra cứu công khai, không có số đo. Kế hoạch viết sau đó có bảng so với thư viện chạy trong trình duyệt; lợi được nêu: test bằng Python sẵn có; máy chủ dựng lại từ bản đã lưu nên mọi chữ trong file là chữ của bảng hoặc câu đã kiểm (bảng so còn nêu một lợi nữa nay không còn đúng; nửa để tra).
 - **Cách khác:** dựng PowerPoint trong trình duyệt: nêu trong bảng so, không chọn. Bên đó tải được cả khi lịch hết hạn, và máy chủ không tốn gì.
 - **Cái giá:** chỉ tải được trong 30 phút từ lượt cuối; nút ở thẻ lịch cũ vẫn tải lịch mới nhất của cuộc; mỗi lần bấm máy chủ dựng file; số lượt tải chỉ bị giới hạn (30 mỗi địa chỉ mỗi ngày) khi bộ giới hạn lượt được bật, mặc định tắt (bài 37).
 
@@ -113,7 +115,7 @@ Lời báo trong ngoặc kép là nguyên văn. Các dòng đọc từ chương 
 ## Dễ nhầm
 
 - **"Model gợi ý quán và khách sạn."** Không. Chương trình chọn từ bảng; model không thấy tên quán hay khách sạn nào.
-- **"Bản đồ vẽ đường đi giữa các điểm."** Không. Chỉ có ghim theo thứ tự; hệ thống không có đường đi thật.
+- **"Bản đồ vẽ đường đi giữa các điểm."** Không. Chỉ có ghim theo thứ tự; hệ thống không có đường đi thật. Nét sông nối các điểm trong thẻ lịch (bài 27) chỉ là hình theo thứ tự đi, không phải đường đi.
 
 ## Câu hỏi tự kiểm
 
@@ -142,7 +144,7 @@ Chỉ lời "tải lịch của cuộc trò chuyện này", không có nội dun
 
 ## Cấu hình đang chạy
 
-*Theo cấu hình và chương trình trưa 22/11/2026.*
+*Theo cấu hình và chương trình trưa 22/11/2026; hàng `ban_do_lich` theo nhánh chính sáng 23/11/2026.*
 
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
@@ -155,7 +157,7 @@ Chỉ lời "tải lịch của cuộc trò chuyện này", không có nội dun
 | số quán / khoảng cách | ≤ 2 quán; ≤ 2 km chim bay, cùng cụm | mục "Quyết định nhỏ hơn" | không giới hạn: bỏ |
 | `anh_lich` | đang mở (từ 14/11) | ảnh từng điểm | — |
 | `lich_trinh_bang_anh` | bản 7: 40 / 41 điểm | 26 Commons + 13 web + 1 ảnh chủ dự án | bản 6 đổi ảnh đèo Hải Vân; bản 7 đổi ảnh lăng Thiệu Trị |
-| `ban_do_lich` | đang mở (từ tối 16/11) | bản đồ dưới lịch; chủ dự án chọn bật | — |
+| `ban_do_lich` | đang mở (từ tối 16/11) | bản đồ dưới lịch, hoặc cạnh lịch ở trang Lên kế hoạch từ 1.200 px (giao diện 23/11); chủ dự án chọn bật | — |
 | `lich_trinh_toa_do` | bảng toạ độ 41 dòng, 40 có vị trí | ghim | bản cũ 18 điểm |
 | ô nền bản đồ | máy chủ cộng đồng bản đồ mở ở Đức | máy chủ chính lỗi bắt tay ở mạng đã thử (16/11); chủ dự án chọn | — |
 | dòng ghi nguồn bản đồ | tắt | chủ dự án chọn 21/11; phải xem lại trước khi công khai | — |
@@ -192,6 +194,8 @@ Chỉ lời "tải lịch của cuộc trò chuyện này", không có nội dun
 
 **Vì sao nút "Thêm vào lịch" chỉ có khi đã chọn ngày đi?** Tệp lịch điện thoại cần ngày thật cho từng sự kiện; chú thích chương trình ghi "không đoán ngày", nên chưa có ngày đi thì nút chỉ nhắc chọn ngày.
 
+**Vì sao tỉ lệ bản in được ghim bằng luật (22/11)?** Chú thích trong chương trình: trước đó tỉ lệ có do tình cờ. Khi in, thanh menu bị giấu đi nhưng vẫn giữ chỗ, dài 1.019 px, rộng hơn phần in được của trang A4 (688 px); trình duyệt thấy trang không vừa giấy nên tự thu nhỏ cả trang còn 688 / 1.019 = 67,5 %. Cỡ chữ in và chỗ ngắt trang trước nay có được là nhờ lần thu nhỏ tình cờ đó. Giao diện mới làm thanh menu ngắn lại (832 px) thì chữ in to lên 22 %, lịch ví dụ từ 2 trang thành 3; lỗi này lộ ra khi in thử ra PDF trước khi gộp. **Đã chọn:** khi in, thanh menu ra khỏi bố cục, bề rộng 1.019 px đặt thẳng cho cả trang; cỡ chữ của bản in giữ các giá trị trước khi gom cỡ chữ về một thang (thang mới đổi 15,5 ⇒ 15, 18 ⇒ 19, 24 ⇒ 22 px…). **Kết quả ghi trong chương trình:** lịch ví dụ in 2 trang, 76 / 76 dòng nằm đúng chỗ bản in cũ (so hai file PDF); không giữ cỡ chữ cũ thì vẫn 2 trang nhưng dòng chữ xê dịch tới 2 pt. **Cách khác:** để tỉ lệ theo thanh menu như trước: bỏ, vì mỗi lần đổi thanh trên bản in lại đổi cỡ. Đặt một tỉ lệ thu nhỏ khác: chưa thử. **Cái giá:** muốn chữ in to hơn phải giảm con số 1.019 và soát lại chỗ ngắt trang; đổi thanh trên, cỡ chữ hay bề rộng thì phải in thử ra PDF, so số trang.
+
 **Vì sao nút in chỉ ở trang Lên kế hoạch?** Ngày 20/11, in từ khung trò chuyện ra 5 trang giống nhau không có ngày nào, in từ trang Trợ lý mất ngày 2: khung trò chuyện là hộp có cuộn nên bản in bị cắt. Nút in ở hai chỗ đó được ẩn.
 
 ## Giới hạn đã biết
@@ -202,9 +206,14 @@ Chỉ lời "tải lịch của cuộc trò chuyện này", không có nội dun
 - Tệp lịch điện thoại: khung giờ qua nửa đêm sẽ mất sự kiện (bảng hiện chưa có điểm như vậy).
 - Quán và khách sạn từ nguồn mở chưa kiểm giờ mở cửa, giá; có thể đã đổi.
 - Bản đồ không có dòng ghi nguồn của bản đồ mở; phải xem lại trước khi công khai.
+- Bản in, trang 2 của lịch 2 ngày mặc định: nét cong của đường nối các điểm chạy xuống đè lên hai khối "Ăn trưa gần…", "Ăn tối gần…". Thấy trên bản in của lượt kiểm sau gộp; bản in cũ ngày 22/11 cũng có đúng chỗ đè này (người viết mở hai file PDF). Chưa chữa.
+- Chưa có cặp bản in "cùng một lịch, từng chữ" cũ ↔ mới: hai bản đem so cùng khung lịch nhưng câu mô tả khác.
+- In bằng tay (bấm "In / Lưu PDF" trên trình duyệt thật, ra giấy hoặc PDF) chưa ai thử với giao diện mới; các bản in kể trên do trình duyệt tự động in ra PDF.
 
 ## Chi tiết để tra
 
+- Chuyển từ thân bài 23/11 (số đếm và chi tiết, không đổi nội dung): bảng lưu trú 136 cơ sở chia theo khu: 121 ở trung tâm, 5 phía tây, 10 ven biển; 67 cơ sở có ảnh. Bảng quán 467 quán: 41 có bài trong kho, 4 từ dữ liệu mở của thành phố, 422 từ bản đồ mở. Mô phỏng chọn khu trên 3.840 tổ hợp: trung tâm 3.036 khung, ven biển 36, phía tây 0 (còn lại là lịch 1 ngày). Ảnh 40 / 41 điểm: 26 từ Wikimedia Commons, 13 ảnh web (phần lớn dùng lại ảnh của mục Khám phá), 1 ảnh chủ dự án tự tìm; lúc bật, máy chủ kiểm từng dòng của bảng ảnh: file có thật, ảnh Commons có tác giả và giấy phép, ảnh web có trang nguồn. Trên bản đồ, hai ghim sát nhau thì ghim sau được vẽ lệch sang một chút để khỏi che số.
+- Bản in sau giao diện mới, chuyển từ thân bài 23/11: giao diện mới làm thanh menu ngắn lại thì chữ in to lên 22 %, lịch ví dụ từ 2 trang thành 3; luật riêng cho bản in ghim lại tỉ lệ cũ (mục "Quyết định nhỏ hơn").
 - Phần vẽ bản đồ là một thư viện chạy trong trình duyệt, chỉ tải khi có lịch. Ô nền tải từ một máy chủ của cộng đồng bản đồ mở ở Đức. Bản đồ không hiện dòng ghi nguồn của bản đồ mở: chủ dự án chọn ngày 21/11, sau khi được báo điều khoản đòi dòng đó; phải xem lại trước khi công khai.
 - Ba khu: trung tâm hai bờ sông Hương · phía tây yên tĩnh (Kim Long, Thủy Xuân) · ven biển, đầm phá (chia phía bắc và phía nam). Trang Chỗ ở chia thành 4 nhóm.
 - Lý do chọn khu do chương trình viết, ví dụ "Cùng khu với {n} / {m} điểm tham quan ban ngày của lịch." hoặc "Khu trung tâm — đi cùng trẻ em hoặc người lớn tuổi nên ở gần dịch vụ, đường đi ngắn."
@@ -212,6 +221,9 @@ Chỉ lời "tải lịch của cuộc trò chuyện này", không có nội dun
 - Lịch ví dụ "Ví dụ" của trang chỉ dùng quán có bài trong kho.
 - File .txt của lịch bản hiện nay không có mục "Bản đồ từng điểm".
 - Tệp lịch điện thoại ghi giờ theo giờ quốc tế (đổi từ giờ Việt Nam).
+- Bảng so thư viện PowerPoint (19/11) còn nêu lợi "khuôn làm tay, dễ đẹp", nhưng chương trình hiện vẽ bằng toạ độ, không dùng khuôn.
+- Bản in từ 23/11, so hai file PDF thật của cùng một khung lịch 2 ngày (bản cũ chạy 20:43 22/11, bản mới 09:32 23/11; câu mô tả khác chữ vì model viết lại mỗi lượt): cùng 2 trang, cùng chỗ ngắt trang, cùng bố cục thẻ điểm, ảnh, khối quán. Khác hai chỗ: dòng nguồn in theo kiểu mới ("Nguồn đã dùng (8 bài)", mỗi bài một nút có chấm màu, một vạch sông mảnh phía trên) thay cho dòng chữ gạch chân; "Ghi chú của lịch" có lại chấm đầu dòng (một lỗi có sẵn ở bản cũ, chữa cùng đợt). Nét đứt chạy giữa dòng sông và nét sông ở dải đầu trang chỉ có trên màn hình, không in.
+- File chữ: bỏ phần câu mô tả do model viết (sau dấu "—" của từng dòng), file .txt của lượt kiểm mới và của lượt cũ 20:43 22/11 trùng nhau từng dòng (người viết so). Tệp lịch điện thoại: chương trình không đổi; lượt kiểm sau gộp không tải tệp này.
 - PowerPoint: không in tác giả, giấy phép ảnh; điểm không có ảnh thì là một ô hoạ tiết mang tên điểm; trang cuối có link bản đồ từng điểm; câu an toàn bão lũ của lượt (nếu có) nằm trong file.
 
 **Bài sau (bài 31):** sửa lịch bằng lời: model chỉ đọc ý thành một lệnh có khuôn, chương trình áp lệnh và kiểm.
@@ -227,8 +239,13 @@ Chỉ lời "tải lịch của cuộc trò chuyện này", không có nội dun
 - Bản đồ: `frontend/src/BanDoLich.jsx` (chú thích đầu file: không đường nối, tải riêng, không dòng ghi nguồn — chủ dự án 21/11; vẽ lệch 16 px; lời "Các điểm ngày này chưa có vị trí trên bản đồ."), `backend/api/routes/cong.py` (ô nền OSM Đức, lý do "bắt tay TLS lỗi… Host cuối do User chọn"), `settings.yaml` (`ban_do_lich`, `lich_trinh_toa_do`) [code]. Ba lỗi ảnh chụp, nền xám: `bai_hoc/23_LEN_KE_HOACH_BAN_2.md` mục "Tối 16/11" và "Khi nào hỏng" [chép].
 - Năm nút: `frontend/src/LichV2.jsx` (dòng 209–216 các nút, 287–311 .ics, 315–352 PowerPoint, 364–397 sao chép / tải; các lời báo), `frontend/src/lich_ics.js` (docstring "Không gửi gì đi đâu") [code]; `backend/api/routes/xuat.py` (docstring "Server KHÔNG nhận dữ liệu lịch nào từ trình duyệt", `CAU_HET_HAN`, `lich_tu_luu`), `backend/api/lich_pptx.py` (vẽ bằng toạ độ, không file khuôn; ô hoạ tiết) [code]. Lý do PowerPoint ở máy chủ, bảng so với thư viện trình duyệt, "User đã chọn… PowerPoint = python-pptx": `data/xuat_lich_dep_2026-11-19/PLAN.md` dòng 4, 21–28 [riêng tư; chép]. Nút in chỉ ở trang Lên kế hoạch, 5 trang giống nhau: `guides/RUNBOOK_BAN_GIAO.md` mục 10.2; `bai_hoc/VIEC_MOI_XONG.md` (dòng 804) [chép]. 44 / 33 / 288: `bai_hoc/23_LEN_KE_HOACH_BAN_2.md` mục "Phần phụ" [chép].
 - Giới hạn PowerPoint (không "Nơi ở", nút ở thẻ cũ, chưa giới hạn lượt tải, cần thư mục ảnh): `guides/RUNBOOK_BAN_GIAO.md` mục 10.2; `bai_hoc/VIEC_MOI_XONG.md` dòng 811–812 [chép].
+- Giao diện mới, bản in và file xuất (thêm 23/11/2026, đọc main `20f998f4`): chương trình dựng file không đổi — `git diff --stat bedfa091 e7193bd0 -- frontend/src/lich_ics.js backend/api/routes/xuat.py backend/api/lich_pptx.py` rỗng; trong `frontend/src/LichV2.jsx` lần gộp chỉ đổi hàm vẽ `SongNgay` [code, đã chạy lệnh]. File thật: `data/giao_dien_2026-11-22/kich_ban_du_sau_gop_10c30bc5/KET_QUA.md` hàng XUAT (09:32 23/11: .txt 29 dòng, PowerPoint 4 slide, PDF 2 trang) và `…/in_dung_cach_cu/KET_QUA.md` hàng XUAT (20:43 22/11, cổng 8010, giao diện cũ — người viết mở `XUAT_lich_1440.png` của thư mục đó: thanh trên nền sẫm, ba kiểu đi ba cột: giao diện cũ; .txt 29 dòng, PowerPoint 4 slide, PDF 2 trang) [riêng tư; đã mở]. So .txt: `diff <(sed 's/ — .*//' in_dung_cach_cu/XUAT_lich.txt) <(sed 's/ — .*//' kich_ban_du_sau_gop_10c30bc5/XUAT_lich.txt)` không ra dòng nào [đã chạy]. So PDF: người viết mở trang 2 của `kich_ban_du_sau_gop_10c30bc5/XUAT_ban_in.pdf` và của `in_dung_cach_cu/XUAT_ban_in.pdf` [đã mở ảnh]. Bản đồ cạnh lịch: `frontend/src/lkh.css` khối `@media screen and (min-width: 1200px)` (`.lich-v2:has(> .bd)`, `position: sticky`) [code]; ảnh `sau_gop_10c30bc5/L02_lich_xong_1536x695_man.png` [đã mở ảnh].
+- Tỉ lệ in "đúng nhờ may", 1.019 / 688 / 67,5 %, 832 px, 22 %, 2 ⇒ 3 trang, 76 / 76 dòng, 2 pt, cỡ chữ in giữ cũ: `frontend/src/lkh.css` khối `@media print` (chú thích "Tỉ lệ bản in — ghim bằng luật (22/11/2026)…" và "Cỡ chữ của BẢN IN giữ đúng các giá trị…"), lời commit `e27398dc` [code; chép]; mọi luật nhìn mới trong `@media screen`: `lkh.css` chú thích khối "Hướng Dòng sông dẫn đường", lời commit `22e4694f` [code]. Dòng nguồn in kiểu mới: luật `.nguon*` ở `frontend/src/song/song.css` không nằm trong khối chỉ cho màn hình [code; thấy trên PDF]. Chấm đầu dòng "Ghi chú của lịch": lời commit `10c30bc5`, `lkh.css` (`list-style: disc`, chú thích "bộ đặt lại của Tailwind bỏ chấm đầu dòng") [code].
+- Ba giới hạn bản in: `session_prompt/HIEN_TRANG.md` mục 1 gạch "Giao diện mới…" ("bản in trang 2 nét cong dòng thời gian đè hai khối quán"; "bản in 2 trang đúng kiểu in (chưa có cặp 'cùng một lịch, cũ ↔ mới')") [chép]; "in bằng tay chưa ai thử": lời giao đợt 23/11 sự việc A, khớp với `KET_QUA.md` (PDF do trình duyệt tự động in) [chép; suy từ hồ sơ]. Nét cong đè ở cả bản cũ: người viết mở trang 2 của hai PDF [đã mở ảnh].
 - Quyết định nhỏ "ảnh không ghi công, giấy phép mở đòi ghi công": phần "nên xem lại trước khi công khai" là lập luận của người viết, đã ghi nhãn trong bài.
 
 - Bài đã qua một lượt đối chiếu độc lập (người kiểm chỉ đọc, tự chạy lại bộ xếp và phần áp lệnh), trưa 22/11/2026: `data/hoc_cung_D/kiem/bai_27_32.md` [riêng tư]; các dòng SAI / LỆCH đã áp, dòng không áp ghi ở `data/hoc_cung_D/viet/viet_27_32.md` mục "Sau lượt kiểm" [riêng tư].
+
+- Lịch sử sửa bài (chuyển từ dòng "Cập nhật" 23/11): 16:11 22/11 phân xử chỗ lệch giữa các bài; trước đó sửa theo một lượt đối chiếu độc lập; 10:27 23/11 thêm phần giao diện mới (vì sao tỉ lệ in cũ "đúng nhờ may"); 11:14 23/11 áp biên bản kiểm độc lập `data/hoc_cung_D/kiem/dot_2311_k1_kiem.md` bài 30 (thêm "Cách khác" cho quyết định nhỏ tỉ lệ in — căn cứ chú thích `@media print` của `frontend/src/lkh.css` "Muốn chữ in to hơn: giảm số này (và soát lại chỗ ngắt trang)"; chuyển số đếm của bảng lưu trú, quán, ảnh và đoạn bản in xuống "Chi tiết để tra") [riêng tư; chép biên bản].
 
 </details>
