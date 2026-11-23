@@ -280,7 +280,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
     bang, luu = flags.bang_lich_v2, trace.lich_luu
     luu_tru = flags.luu_tru_bang if flags.luu_tru_lich else None  # cờ nơi ở tắt ⇒ "đổi hạng chỗ ở" báo không có mục chỗ ở
     if trace.sua_chon is not None:
-        kq = sl.ap(bang, luu, [], sua_chon=trace.sua_chon, luu_tru=luu_tru)
+        # công tắc `sua_lich_hoi_truoc`: nút "Bỏ điểm này" của thẻ chọn cũng chỉ bỏ đúng điểm đó, không tự lấp buổi vừa trống
+        kq = sl.ap(bang, luu, [], sua_chon=trace.sua_chon, luu_tru=luu_tru, **({"them_hoi_truoc": True} if flags.sua_lich_hoi_truoc else {}))
     else:
         call_log = CallLog()
         try:

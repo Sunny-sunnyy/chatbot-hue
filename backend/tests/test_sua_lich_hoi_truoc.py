@@ -43,7 +43,12 @@ def test_auto_arrange_phrase_is_read_by_code_and_the_button_sentence_carries_it(
     for cau in ("thêm Hổ Quyền, bạn tự xếp giúp mình", "thêm Hổ Quyền, bạn tự xếp đi", "bạn xếp giúp mình nhé", "ngày nào cũng được", "tuỳ bạn chọn",
                 "tùy bạn", "bạn chọn giúp mình", "mình để bạn tự sắp xếp", "buổi nào cũng được"):
         assert s.cho_tu_xep(cau), cau
-    for cau in ("thêm Hổ Quyền", "thêm Hổ Quyền vào ngày 2", "xếp lại lịch giúp mình", "bạn xếp Hổ Quyền vào sáng ngày 2 nhé", "mình tự đi được không"):
+    # lượt thật của phiên đo 23/11/2026: gõ tay đúng chữ trên nút và các lời cho phép không có chủ ngữ "bạn" từng bị hỏi lại
+    for cau in ("Xếp giúp mình", "xếp giúp mình đi", "tự xếp đi", "tự chọn giúp mình", "bạn chọn đi", "bạn quyết đi", "hôm nào cũng được",
+                "thêm Đàn Nam Giao, hôm nào cũng được", "sáng hay chiều đều được", "sao cũng được", "để bạn xếp"):
+        assert s.cho_tu_xep(cau), cau
+    for cau in ("thêm Hổ Quyền", "thêm Hổ Quyền vào ngày 2", "xếp lại lịch giúp mình", "bạn xếp Hổ Quyền vào sáng ngày 2 nhé", "mình tự đi được không",
+                "bạn đừng tự xếp", "mình không muốn bạn tự xếp", "để mình tự chọn ngày sau"):  # phủ định / người dùng tự chọn ⇒ không phải lời cho phép
         assert not s.cho_tu_xep(cau), cau
     assert s.cho_tu_xep(f"thêm Hổ Quyền, {s.CAU_TU_XEP}")
 
@@ -179,3 +184,61 @@ def test_typed_command_goes_through_the_understanding_step_and_the_next_turn_rem
     assert tr.sua_dong == (_dong(kq)["cau"],) and tr.sua["n_ap"] == 0 and tr.sua["n_khong"] == 1  # ô lịch sử mang câu hỏi; lượt không áp gì
     k, tu, _ = _hieu(nut[-1]["gui"], "Hổ Quyền", sua_lich_hoi_truoc=True)  # bấm "Xếp giúp mình": câu nút đi qua đúng đường này
     assert tu["khung"] == cu["khung"] and tu["khong_doi"] == []
+
+
+def _bo(luu, ten, **kw):
+    return s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=ten)], **kw)
+
+
+def test_removing_the_only_place_of_a_session_leaves_it_empty_and_offers_one_suggestion_button():
+    """Chủ dự án chọn 23/11/2026 (sau khi tự test: "Đã bỏ Lăng Tự Đức thì trợ lý lại tự động thêm lăng Dục Đức?"): lệnh BỎ chỉ bỏ đúng điểm đó — buổi
+    vừa trống KHÔNG tự lấp, kể cả ở các lượt sửa sau; điểm bản cũ tự lấp thành MỘT nút "Gợi ý điểm thay"; không bấm thì buổi đó cứ trống. Buổi còn điểm
+    khác (bản cũ vốn không lấp) và công tắc tắt ⇒ y như cũ."""
+    k, luu = _mac_dinh()
+    vt = s._vi_tri(k)
+    co_nut = 0
+    for i, (ngay, buoi) in vt.items():
+        ten = T[i]["ten"]
+        cu, moi = _bo(luu, ten, **CU), _bo(luu, ten, **MOI)
+        assert _bo(luu, ten, them_hoi_truoc=False, **CU) == cu
+        if list(vt.values()).count((ngay, buoi)) > 1:  # buổi còn điểm khác: không có gì để lấp ⇒ không đổi
+            assert moi == cu, ten
+            continue
+        (a,), sau, dong = moi["da_ap"], moi["khung"], s.thay_doi(B, moi)
+        assert a["trong"] == [ngay, buoi] and sau["buoi_trong"] == [[ngay, buoi]] and not v2.kiem_khung_v2(B, sau), ten
+        assert set(s._vi_tri(sau)) == set(vt) - {i}, ten  # không điểm ban ngày nào tự vào lịch
+        assert dong[0]["duoc"] and dong[0]["cau"].startswith(f"Đã bỏ {ten}. Buổi {s.NHAN_BUOI[buoi]} ngày {ngay} nay để trống."), ten
+        assert s.ap(B, luu, [], sua_chon={"cu": i, "moi": "bo"}, them_hoi_truoc=True)["khung"] == sau, ten  # nút "Bỏ điểm này" của thẻ chọn: cùng kết quả
+        lap = [x["diem"] for x in cu["da_ap"][0].get("lap", ()) if (x["ngay"], x["buoi"]) == (ngay, buoi)]
+        if not lap:  # bản cũ cũng không lấp được gì ⇒ không có gợi ý, không có nút
+            assert len(dong) == 1 and "goi_y_thay" not in a and s.cau_goi_y(B, moi) == (), ten
+            continue
+        co_nut += 1
+        goi = T[lap[0]]["ten"]
+        cau = f"thêm {goi} vào buổi {s.NHAN_BUOI[buoi]} ngày {ngay}"
+        assert a["goi_y_thay"] == lap[0] and dong[1]["hoi"] is True and dong[1]["duoc"] is False and len(dong) == 2, ten
+        assert dong[1]["nut"] == [{"nhan": f"Gợi ý điểm thay: {goi}", "gui": cau}] and goi in dong[1]["cau"] and "cứ để trống" in dong[1]["cau"], ten
+        assert s.cau_goi_y(B, moi) == (cau,), ten  # lời đáp cụt ("ừ thêm đi") ở lượt kế hiểu được
+        # bấm nút = lệnh đủ ngày + buổi ⇒ điểm gợi ý vào đúng buổi đó, dấu "để trống" tự gỡ
+        bam = _them(moi["luu"], goi, ngay, buoi, **MOI)
+        assert s._vi_tri(bam["khung"])[lap[0]] == (ngay, buoi) and "buoi_trong" not in bam["khung"] and not v2.kiem_khung_v2(B, bam["khung"]), ten
+        # KHÔNG bấm: một lượt sửa khác (bỏ thêm một điểm ở buổi khác) không làm bộ xếp lấp lại buổi đã để trống
+        khac = next(j for j, v in s._vi_tri(sau).items() if v != (ngay, buoi))
+        sau2 = _bo(moi["luu"], T[khac]["ten"], **MOI)["khung"]
+        assert not next(x for x in sau2["ngay"] if x["ngay"] == ngay)["buoi"][buoi] and [ngay, buoi] in sau2["buoi_trong"], ten
+        # đổi chỗ hai ngày: buổi để trống đi theo nội dung của ngày
+        doi = s.doi_cho_ngay(B, moi["luu"], 1, 2)
+        if doi["da_ap"]:
+            assert doi["khung"]["buoi_trong"] == [[3 - ngay, buoi]], ten
+    assert co_nut >= 1
+
+
+def test_a_turn_that_also_applied_something_does_not_end_the_question_with_nothing_changed():
+    """Lượt thật 23/11/2026: tin vừa bỏ vừa thêm ⇒ thẻ in "Đã bỏ X." rồi câu hỏi kết "Lịch chưa đổi gì." (sai). Lượt có ý đã áp ⇒ câu hỏi bỏ câu kết đó."""
+    k, luu = _mac_dinh()
+    bo = T[next(iter(s._vi_tri(k)))]["ten"]
+    kq = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=bo), s.HanhDong(loai="them_diem", ten="Hổ Quyền")], **MOI)
+    dong = s.thay_doi(B, kq)
+    hoi = next(d for d in dong if d.get("nut") and d["cau"].startswith("Bạn muốn thêm Hổ Quyền"))
+    assert dong[0]["cau"].startswith(f"Đã bỏ {bo}.") and "Lịch chưa đổi gì." not in hoi["cau"]
+    assert "Lịch chưa đổi gì." in _dong(_them(luu, "Hổ Quyền", **MOI))["cau"]  # lượt chỉ có câu hỏi: giữ câu kết

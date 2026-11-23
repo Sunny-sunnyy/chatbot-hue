@@ -255,12 +255,15 @@ def dung_thu(d: dict, ngay: dt.date | None) -> bool:
 
 
 def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_dau: dt.date | None = None,
-           mua: dict | None = None, giu: dict[str, tuple[int, str]] | None = None, loai: frozenset[str] = frozenset()) -> dict:
+           mua: dict | None = None, giu: dict[str, tuple[int, str]] | None = None, loai: frozenset[str] = frozenset(),
+           trong: frozenset[tuple[int, str]] = frozenset()) -> dict:
     """Khung tham quan sáng / chiều theo luật ở đầu module. `ngay_1_khong_xa=False` chỉ để mô phỏng so "có / không luật cụm xa ngày 1".
     Bước (d): `ngay_bat_dau` (ngày đi) ⇒ mỗi ngày lịch có ngày thật ⇒ luật mùa + thứ xét theo NGÀY (lịch vắt hai tháng xét từng ngày);
     `mua` = {ngày: khả năng mưa %}, chỉ ngày dự báo ≥ `MM_MUA_XEP` mm (lọc ở `len_ke_hoach.ngay_mua_xep`) ⇒ ngày ≥ `NGUONG_MUA` đổi thứ tự xét của điểm không ưu tiên.
     Sửa lịch (plan 2026-11-14-sua-lich-v2): `giu` = điểm giữ nguyên chỗ {id: (ngày, buổi sáng / chiều)}, đặt trước rồi buổi đó không lấp thêm;
-    `loai` = điểm người dùng đã bỏ — không bao giờ được chọn lại (cả buổi tối). Mặc định (None, rỗng) ⇒ đúng như trước (test 3.840 khung giống byte)."""
+    `loai` = điểm người dùng đã bỏ — không bao giờ được chọn lại (cả buổi tối). Mặc định (None, rỗng) ⇒ đúng như trước (test 3.840 khung giống byte).
+    `trong` = các buổi (ngày, buổi) người dùng đã ĐỂ TRỐNG khi bỏ điểm duy nhất của buổi (công tắc `sua_lich_hoi_truoc`, 23/11/2026) — không tự lấp, như
+    buổi đã có điểm giữ chỗ. Rỗng ⇒ đúng như trước."""
     n = ts.so_ngay
     giu = {i: v for i, v in (giu or {}).items() if v[0] <= n and v[1] in BUOI_NGAY and i not in loai}
     ngay_cua = (lambda i: None) if ngay_bat_dau is None else (lambda i: ngay_bat_dau + dt.timedelta(days=i - 1))
@@ -346,6 +349,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
             gio[id_] = dat_gio(T[id_], t) or (t, t + PHUT[T[id_]["thoi_luong"]])  # vượt giờ đóng ⇒ kiểm khung bắt (ngoai_gio_mo)
             tn_hom_nay = tn_hom_nay or "thien_nhien" in T[id_]["loai"]
             giu_buoi.add(b_g)
+        giu_buoi |= {b for d, b in trong if d == i}
         for buoi in BUOI_NGAY:  # điểm đầu của sáng rồi chiều trước (bậc 4–6), điểm thêm theo kiểu đi sau (bậc 7) — điểm thêm không được chiếm suất cụm
             if buoi in giu_buoi:
                 continue
