@@ -1,5 +1,6 @@
 """Sửa lịch bằng lời trên lịch bản 2 (plan `docs/superpowers/plans/2026-11-14-sua-lich-v2-plan.md`) — phần code (0 USD): bộ xếp giữ chỗ / loại điểm,
 áp hành động, khối "Đã đổi / Không đổi được", từ dò câu sửa, trạng thái lưu. Phép thử mọi tổ hợp ở `data/len_ke_hoach_v2_2026-11-13/tools/do_sua_lich_v2.py`."""
+import dataclasses
 import datetime as dt
 
 from llm import lich_trinh_v2 as v2
@@ -11,9 +12,16 @@ V2 = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True)
 B = V2.bang_lich_v2
 
 
-def _lich(n=3, kieu="can_bang", so_thich=("di_tich",), ngay=None):
-    k = v2.xep_v2(B, v2.ThamSoV2(n, kieu_di=kieu, so_thich=so_thich), ngay_bat_dau=ngay)
+def _lich(n=3, kieu="can_bang", so_thich=("di_tich",), ngay=None, bang=B):
+    k = v2.xep_v2(bang, v2.ThamSoV2(n, kieu_di=kieu, so_thich=so_thich), ngay_bat_dau=ngay)
     return k, s.luu_tu_lich(k, None if ngay is None else ngay.isoformat(), None)
+
+
+def _bang_toi_hai_buoi():
+    """Bảng điểm từ bản 13: nơi vừa có ban ngày vừa có buổi tối đứng gần cuối thứ tự chọn buổi tối (`thu_tu_toi`) nên lịch thật hiếm khi dùng nó làm
+    hoạt động tối. Các ca "nơi đang là hoạt động tối bị kéo sang ban ngày" cần lịch CÓ tình huống đó ⇒ đưa các nơi ấy lên đầu thứ tự chọn."""
+    hai = tuple(d["id"] for d in B.diem if "toi" in d["buoi"] and set(d["buoi"]) - {"toi"})
+    return dataclasses.replace(B, thu_tu_toi=hai + tuple(i for i in B.thu_tu_toi if i not in hai))
 
 
 def test_default_scheduler_unchanged_and_keep_exclude_work():
@@ -325,37 +333,43 @@ def test_five_day_schedule_with_a_repeated_evening_does_not_report_evenings_that
     """Lịch 5 ngày lặp một hoạt động tối ở hai ngày; bảng tra ngược `mã ⇒ một ngày` từng bị ghi đè ⇒ mọi lệnh bỏ / thay báo "Buổi tối xếp lại" dù không tối
     nào đổi (kể cả so một lịch với chính nó)."""
     lap = thay = 0
+    # Bảng điểm từ bản 13 có đủ hoạt động tối cho 5 ngày (thêm các dòng quán cà phê tối, cột `la_quan`) nên lịch thật không còn lặp; ca này cần lịch
+    # CÓ lặp ⇒ xếp trên bảng đã bỏ các dòng đó.
+    it = tuple(d for d in B.diem if not d.get("la_quan"))
+    bang = dataclasses.replace(B, diem=it, theo_id={d["id"]: d for d in it}, thu_tu_toi=())
     for kieu in ("nhe_nhang", "can_bang", "kham_pha"):
         for st in ((), ("di_tich",), ("am_thuc",), ("thien_nhien",)):
-            k, luu = _lich(5, kieu, st)
+            k = v2.xep_v2(bang, v2.ThamSoV2(5, kieu_di=kieu, so_thich=st))
+            luu = s.luu_tu_lich(k, None, None)
             truoc = _toi(k)
             if len({j for v in truoc.values() for j in v}) == sum(len(v) for v in truoc.values()):
                 continue  # lịch này không lặp hoạt động tối nào
             lap += 1
             assert s._toi_xep_lai(k, k) is None  # lịch so với chính nó ⇒ không tối nào đổi
             for j in sorted(s._vi_tri(k)):
-                kq = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=B.theo_id[j]["ten"])])
+                kq = s.ap(bang, luu, [s.HanhDong(loai="bo_diem", ten=bang.theo_id[j]["ten"])])
                 if kq["da_ap"] and _toi(kq["khung"]) == truoc:
                     thay += 1
-                    assert "Buổi tối xếp lại" not in s.thay_doi(B, kq)[0]["cau"]
+                    assert "Buổi tối xếp lại" not in s.thay_doi(bang, kq)[0]["cau"]
     assert lap > 0 and thay > 0  # bảng điểm thật phải có lịch lặp hoạt động tối, không thì test không kiểm gì
 
 
 def test_adding_or_moving_an_evening_place_into_the_day_reports_the_evenings_that_moved():
     """Thêm / dời một nơi lịch đang dùng làm hoạt động TỐI sang ban ngày ⇒ bộ xếp chọn lại buổi tối; dòng báo từng chỉ nói "Đã thêm…" / "Đã dời…"."""
-    ten = lambda j: B.theo_id[j]["ten"]
+    bang = _bang_toi_hai_buoi()
+    ten = lambda j: bang.theo_id[j]["ten"]
     co = 0
     for n in (3, 4, 5):
-        k, luu = _lich(n, "can_bang", ("di_tich",))
+        k, luu = _lich(n, "can_bang", ("di_tich",), bang=bang)
         truoc = _toi(k)
-        for x in sorted({j for v in truoc.values() for j in v if set(B.theo_id[j]["buoi"]) - {"toi"}}):
+        for x in sorted({j for v in truoc.values() for j in v if set(bang.theo_id[j]["buoi"]) - {"toi"}}):
             for loai in ("them_diem", "doi_buoi"):
                 for ngay in range(1, n + 1):
                     for buoi in ("sang", "chieu"):
-                        kq = s.ap(B, luu, [s.HanhDong(loai=loai, ten=ten(x), ngay=ngay, buoi=buoi)], them_khong_the=True)
+                        kq = s.ap(bang, luu, [s.HanhDong(loai=loai, ten=ten(x), ngay=ngay, buoi=buoi)], them_khong_the=True)
                         if not kq["da_ap"]:
                             continue
-                        sau, cau = _toi(kq["khung"]), s.thay_doi(B, kq)[0]["cau"]
+                        sau, cau = _toi(kq["khung"]), s.thay_doi(bang, kq)[0]["cau"]
                         cu = s._ngay_toi(k)
                         if any(j in cu and d not in cu[j] for d, v in sau.items() for j in v):  # một hoạt động tối đứng ở ngày nó chưa từng đứng
                             co += 1
@@ -381,18 +395,19 @@ def test_adding_an_evening_only_activity_without_saying_evening_gets_the_evening
 
 def test_replacing_a_daytime_stop_with_an_evening_place_reports_the_evenings_that_moved():
     """Thay một điểm ban ngày bằng nơi lịch đang dùng làm hoạt động TỐI (chợ, phố đi bộ…) ⇒ các buổi tối bị chọn lại; dòng báo phải nói."""
+    bang = _bang_toi_hai_buoi()
     co = khong = 0
-    ten = lambda j: B.theo_id[j]["ten"]
+    ten = lambda j: bang.theo_id[j]["ten"]
     for n in (2, 3):
         for st in ((), ("di_tich",)):
-            k, luu = _lich(n, "can_bang", st)
+            k, luu = _lich(n, "can_bang", st, bang=bang)
             truoc, vt = _toi(k), s._vi_tri(k)
             for y, (_, b) in vt.items():
-                for x in [j for v in truoc.values() for j in v] + [j for j in B.theo_id if j not in vt and b in B.theo_id[j]["buoi"]][:6]:
-                    kq = s.ap(B, luu, [s.HanhDong(loai="thay_diem", ten=ten(y), ten_moi=ten(x))])
+                for x in [j for v in truoc.values() for j in v] + [j for j in bang.theo_id if j not in vt and b in bang.theo_id[j]["buoi"]][:6]:
+                    kq = s.ap(bang, luu, [s.HanhDong(loai="thay_diem", ten=ten(y), ten_moi=ten(x))])
                     if not kq["da_ap"]:
                         continue
-                    sau, cau = _toi(kq["khung"]), s.thay_doi(B, kq)[0]["cau"]
+                    sau, cau = _toi(kq["khung"]), s.thay_doi(bang, kq)[0]["cau"]
                     dau = f"Đã thay {ten(y)} bằng {ten(x)}."
                     cu = {j: d for d, v in truoc.items() for j in v}
                     if any(cu.get(j, d) != d for d, v in sau.items() for j in v):
