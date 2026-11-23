@@ -296,3 +296,22 @@ def test_notice_wording_on_a_denser_day_and_the_no_interest_note_stay_true():
         else:
             khong += 1
     assert co > 0 and khong > 0
+
+
+def test_notice_does_not_say_you_chose_a_pace_the_user_never_chose():
+    """Lịch mặc định của trang Lên kế hoạch: người dùng KHÔNG chọn kiểu đi (khung mang dấu `kieu_chua_chon`) ⇒ dòng báo, dòng ghi chú và câu gợi ý nói
+    "nhịp cân bằng của lịch"; người dùng có chọn ⇒ "bạn chọn" như cũ."""
+    def mot_lan_them(kieu):
+        k = v2.xep_v2(B, v2.ThamSoV2(2, kieu_di=kieu))
+        luu = s.luu_tu_lich(k, None, None)
+        kq = next(r for i, ng, b in _lenh(k) if ng is None and (r := _them(luu, i, them_day=True))["da_ap"] and r["da_ap"][0].get("day"))
+        ghi = next(g["cau"] for g in v2.dung_lich(B, kq["khung"], {})["ghi_chu"] if g["ma"] == "day_them")
+        goi_y = [c for i, ng, b in _lenh(k) if ng is not None and (r := _them(luu, i, ng, b, them_day=True))["khong_doi"]
+                 for c in [s.thay_doi(B, r)[0]["cau"]] if "sẽ có buổi dày hơn" in c]
+        return s.thay_doi(B, kq)[0]["cau"], ghi, goi_y
+    cau, ghi, goi_y = mot_lan_them(None)
+    assert "nhịp cân bằng của lịch" in cau and "nhịp cân bằng của lịch" in ghi and "bạn chọn" not in cau + ghi
+    assert goi_y and all("dày hơn nhịp của lịch" in c and "nhịp bạn chọn" not in c for c in goi_y)
+    cau, ghi, goi_y = mot_lan_them("can_bang")
+    assert "nhịp cân bằng bạn chọn" in cau and "nhịp cân bằng bạn chọn" in ghi
+    assert goi_y and all("dày hơn nhịp bạn chọn" in c for c in goi_y)

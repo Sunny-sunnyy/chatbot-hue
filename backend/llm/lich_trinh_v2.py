@@ -599,7 +599,8 @@ def cau_ngay_day(khung: dict, ngay: int, bang: "BangV2 | None" = None) -> str:
     buoi = "; ".join(f"buổi {NHAN_BUOI[b].lower()} {len(ng['buoi'][b])} điểm, {khung['gio'][ng['buoi'][b][0]].split('–')[0].strip()} – "
                      f"{khung['gio'][ng['buoi'][b][-1]].split('–')[1].strip()}" for b in BUOI_NGAY if ng["buoi"][b])
     ts = khung["tham_so"]
-    muc = MUC_HAN_CHE if ts["tre_em"] >= 1 or ts["lon_tuoi"] else f"nhịp {NHAN_KIEU_DI[ts['kieu_di']]} bạn chọn"
+    # người dùng KHÔNG chọn kiểu đi (dấu `kieu_chua_chon` của khung — lịch mặc định của trang Lên kế hoạch) ⇒ "nhịp … của lịch", không nói "bạn chọn"
+    muc = MUC_HAN_CHE if ts["tre_em"] >= 1 or ts["lon_tuoi"] else f"nhịp {NHAN_KIEU_DI[ts['kieu_di']]} {'của lịch' if ts.get('kieu_chua_chon') else 'bạn chọn'}"
     # đoàn thường: thước là TỪNG BUỔI (số điểm một buổi, quỹ phút của buổi) ⇒ "có buổi dày hơn nhịp…" — đếm 23/11/2026: 24–31 % ngày mang dòng này
     # không nhiều điểm hơn ngày đông nhất của chính lịch gốc, người đọc so số điểm cả ngày thì thấy câu "ngày dày hơn" sai
     han_che = ts["tre_em"] >= 1 or ts["lon_tuoi"]

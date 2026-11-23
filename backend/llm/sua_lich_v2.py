@@ -1029,7 +1029,8 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 # câu nói thẳng loại đó, lẫn thì nêu từng loại (trước đó mọi ca đều đọc "lịch đang kín…", kể cả 20 / 30 điểm của lịch mặc định). Đoàn có
                 # trẻ nhỏ / người lớn tuổi GIỮ câu cũ: không có lần thử nới nhịp, chỗ nào cũng vướng trần "hai điểm một ngày" ⇒ "lịch đang kín" là đúng
                 theo_cho = ({"ly_do_cho": [x for x, _ in collections.Counter(filter(None, (_loai_ly_do_cho(m, noi_khu) for m in ma_cho))).most_common()]
-                             if ly_do is None else [], **({"han_che": True} if ts.han_che else {})} if noi_nhip else {})
+                             if ly_do is None else [], **({"han_che": True} if ts.han_che else {}),
+                            **({"chua_chon": True} if ts.kieu_chua_chon else {})} if noi_nhip else {})
                 if trong:
                     kq["khong_doi"].append({"diem": ten, "ma_luat": "them_can_thay", "dich": [ngay, h.buoi],
                                             "cach": _mot_cach_khong_mat(bang, ts, khac + trong, ngay) if them_day else _hai_cach(bang, ts, trong, ngay),
@@ -1182,7 +1183,7 @@ def _tin_day(khung: dict, ngay: int, bang: "v2.BangV2 | None" = None) -> dict:
     ts = khung["tham_so"]
     sat = v2.chieu_sat_toi(bang, khung, ngay) if bang is not None else None  # buổi chiều kết sát mục buổi tối của ngày đó ⇒ câu nhắc
     return {"ngay": ngay, "kieu_di": ts["kieu_di"], "buoi": buoi, **({"han_che": True} if ts["tre_em"] >= 1 or ts["lon_tuoi"] else {}),
-            **({"sat_toi": sat} if sat else {})}
+            **({"chua_chon": True} if ts.get("kieu_chua_chon") else {}), **({"sat_toi": sat} if sat else {})}
 
 
 def _chang_khu(bang: v2.BangV2, khung: dict, ngay: int) -> dict:
@@ -1199,7 +1200,8 @@ def _cau_khu(d: dict, van: bool = False) -> str:
 
 
 def _cau_day(d: dict) -> str:
-    muc = v2.MUC_HAN_CHE if d.get("han_che") else f"nhịp {v2.NHAN_KIEU_DI[d['kieu_di']]} bạn chọn"  # đoàn có trẻ nhỏ / người lớn tuổi: mức của đoàn, không phải kiểu đi
+    # đoàn có trẻ nhỏ / người lớn tuổi: mức của đoàn, không phải kiểu đi; người dùng chưa chọn kiểu đi (lịch mặc định): "nhịp … của lịch"
+    muc = v2.MUC_HAN_CHE if d.get("han_che") else f"nhịp {v2.NHAN_KIEU_DI[d['kieu_di']]} {'của lịch' if d.get('chua_chon') else 'bạn chọn'}"
     # đoàn thường: "có buổi dày hơn nhịp…" — thước là từng buổi, không phải số điểm cả ngày (`lich_trinh_v2.cau_ngay_day`)
     return (f" Ngày {d['ngay']} nay {'dày hơn' if d.get('han_che') else 'có buổi dày hơn'} {muc}: "
             + "; ".join(f"buổi {NHAN_BUOI[b]} {x['so']} điểm, {x['tu']} – {x['den']}" for b, x in d["buoi"].items()) + "."
@@ -1241,9 +1243,10 @@ def _cau_them(bang: v2.BangV2, k: dict) -> str:
 
     def cach(g: dict, kem_cho: bool) -> str:
         # cách "thêm thẳng nhưng ngày đó dày hơn nhịp đi" (công tắc `sua_lich_them_day`): nói rõ cái giá ngay cạnh câu gợi ý; câu để nhắn giữ nguyên
-        gia = (" (ngày đó sẽ có buổi dày hơn nhịp bạn chọn và phải đi sang một khu không liền kề)" if g.get("khu")
+        nhip = "nhịp của lịch" if k.get("chua_chon") else "nhịp bạn chọn"  # người dùng chưa chọn kiểu đi ⇒ không nói "bạn chọn"
+        gia = (f" (ngày đó sẽ có buổi dày hơn {nhip} và phải đi sang một khu không liền kề)" if g.get("khu")
                else f" (ngày đó sẽ dày hơn {v2.MUC_HAN_CHE})" if g.get("day") and k.get("han_che")
-               else " (ngày đó sẽ có buổi dày hơn nhịp bạn chọn)" if g.get("day") else "")
+               else f" (ngày đó sẽ có buổi dày hơn {nhip})" if g.get("day") else "")
         if not moi:
             return _cau_cach(bang, x, g, kem_cho or bool(g.get("day"))) + gia
         # chữ mới: câu để nhắn nằm RIÊNG trong «…» (lượt trình duyệt 23/11: "thay A bằng X hoặc thay B bằng X" — chép nguyên là gửi một lệnh hai
