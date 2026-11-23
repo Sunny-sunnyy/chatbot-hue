@@ -187,6 +187,19 @@ nào tới OpenAI (tài khoản đang gác): hai ca dưới chỉ trả lời c�
 ba khoá, hàm ký thật của app nhận, 0 giá trị khoá lọt log; máy chủ tắt / `Code` khác `Success` / thiếu trường ⇒ không đụng file. Phiên B đọc gói và tự chạy lại
 ba phép 0 đồng (cùng số).
 
+**Lượt thử thứ tư — 20:11–20:15 23/11/2026, ảnh `hue-rag-app:d8d5c3a` (= main lúc đó; lượt đầu trên kho 269 bài + bảng điểm bản 15), đường deploy,
+khoá GIẢ (không lời gọi model nào). Mục đích: chạy TRỌN chuỗi lệnh của `deploy/guides/4_bat_lan_dau.md` rồi `6_ngay_demo.md` mục 6.3, 6.4.**
+
+| Bước | Kết quả | |
+|---|---|---|
+| `dung_anh.sh origin/main` | 9 giây (có bộ đệm); 269 bài kho, 0 file cấm, ảnh 3,62 GB | chạy thật |
+| `dong_goi.sh` × 2 (hai mã bản, cùng nội dung ảnh) rồi XOÁ ảnh khỏi Docker | hai gói, mỗi gói `sha256sum -c` 7 / 7 OK; `docker load` từ file nén: 7 giây | chạy thật |
+| Guide 4 bước 2–9 trong một thư mục trống | chỉ mục 9.533 = 9.533 điểm; ba hộp khoẻ; `/health` `ok`; câu hỏi ⇒ câu báo cố định của khoá hỏng | chạy thật |
+| Guide 6 mục 6.3 (cập nhật) rồi 6.4 (lùi) | hộp app chạy đúng ảnh của bản vừa đổi ở cả hai chiều; trang ngừng phục vụ 36 giây / 29 giây; dòng sửa tay trong `cau_hinh/settings.yaml` bị gói mới ghi đè, còn ở `truoc/`, trở lại sau khi lùi; khởi động lại riêng hộp app: 15 giây | chạy thật |
+| Dọn | 0 hộp, 0 volume của lượt thử; Qdrant của dự án 9.533 điểm không đổi; ảnh `d8d5c3a` giữ lại | chạy thật |
+
+Đầu ra đủ (riêng tư): `data/x14_deploy_2026-11-23/c_thu_chuoi_6_3/chay_ra.txt`.
+
 CHƯA kiểm:
 - Mọi thứ trên AWS: hộp `khoa` ở mạng của máy hỏi được dịch vụ thông tin máy với bước nhảy 1, khoá của vai gọi được model, HTTPS thật qua Caddy,
   `docker load` + bốn lệnh trên máy đích. Máy dừng / bật thật (ở đây giả lập bằng dừng / bật các hộp; Docker tự bật lại hộp sau khi máy mở cần

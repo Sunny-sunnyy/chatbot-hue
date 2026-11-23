@@ -2,8 +2,15 @@
 
 Viết: 19:54 23/11/2026, phiên C. Dừng / bật ở guide này mới được GIẢ LẬP ở máy chủ dự án bằng cách dừng hẳn rồi bật lại ba hộp (ba hộp tự lên, trả
 lời được sau 11–14 giây — `deploy/docker/README.md` mục 5). Dừng / bật MÁY thật, IP tĩnh giữ nguyên, chứng chỉ còn sau khi dừng lâu:
-**[chưa kiểm trên AWS]**. Hai chuỗi lệnh "cập nhật bản mới" (6.3) và "lùi về bản trước" (6.4) ghép từ các lệnh đã chạy thật từng cái một, nhưng CẢ CHUỖI
-chưa từng được chạy trọn ở đâu — buổi diễn tập của guide 5 nên đi qua 6.3 một lần.
+**[chưa kiểm trên AWS]**.
+
+**Hai chuỗi lệnh "cập nhật bản mới" (6.3) và "lùi về bản trước" (6.4) ĐÃ CHẠY TRỌN ở máy chủ dự án, 20:11–20:15 23/11/2026** (một lượt, chép đúng từng
+lệnh của guide; ảnh dựng từ main `d8d5c3a`, kho 269 bài): bật lần đầu bằng gói cũ ⇒ sửa tay một dòng `cau_hinh/settings.yaml` ⇒ cập nhật lên gói mới ⇒
+lùi về gói cũ. Kết quả: mỗi lần đổi bản băm 7 / 7 OK, chỉ mục 9.533 = 9.533 điểm, ba hộp khoẻ, `/health` `ok`, hộp app chạy đúng ảnh của bản vừa đổi;
+trang ngừng phục vụ 36 giây khi cập nhật, 29 giây khi lùi; dòng sửa tay bị gói mới ghi đè (đúng như mục 6.3 báo trước), còn trong `truoc/`, và trở
+lại sau khi lùi. GIỚI HẠN của lượt đó: thư mục máy đứng thay thùng S3 và `/srv/hue` · hai gói khác mã bản nhưng CÙNG nội dung ảnh · http cổng 8880,
+không HTTPS · khoá OpenAI GIẢ nên câu hỏi chỉ đi tới câu báo "Không thể tạo câu trả lời vào lúc này" (không lời gọi model nào) · máy chủ dự án
+nhanh hơn máy `t3a.medium`. Script + đầu ra (riêng tư): `data/x14_deploy_2026-11-23/c_thu_chuoi_6_3/chay.sh`, `chay_ra.txt`.
 
 Từ dùng: **dừng tạm** (stop) = tắt máy nhưng giữ đĩa và IP — đúng chữ đã học là "co về 0 bằng tay" · **khởi động lạnh / làm ấm** = bật máy lại và hỏi
 thử trước giờ cần dùng · **phá** (destroy) = xoá hẳn tầng máy chủ · **gói**, **sha**, **hộp**, **hồ sơ**: như guide 2–4.
@@ -134,7 +141,8 @@ bash nap_chi_muc.sh                                           # hai số điểm
 dc up -d --wait
 ```
 
-Rồi hỏi MỘT câu thật từ máy mình như mục 6.2. Trang ngừng phục vụ trong lúc làm bước (5) — khoảng một hai phút.
+Rồi hỏi MỘT câu thật từ máy mình như mục 6.2. Trang ngừng phục vụ trong lúc làm bước (5): đo ở máy chủ dự án 36 giây (lùi bản: 29 giây); trên máy
+`t3a.medium` sẽ lâu hơn **[chưa kiểm trên AWS]**.
 
 Nếu trước đó đã sửa tay `cau_hinh/settings.yaml` trên máy (tắt một tính năng…): gói mới ghi đè file đó ⇒ sửa lại sau bước (2); bản cũ còn ở `truoc/cau_hinh/`.
 

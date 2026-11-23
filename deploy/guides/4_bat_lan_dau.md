@@ -1,7 +1,9 @@
 # Guide 4 — Bật lần đầu trên máy chủ: tải gói, đặt khoá OpenAI, bật ba hộp, hỏi một câu thật
 
 Viết: 19:50 23/11/2026, phiên C. Các lệnh `sha256sum`, `docker load`, `nap_chi_muc.sh`, `docker compose … up` ở guide này ĐÃ chạy thật ở máy chủ dự án
-(lượt thử trọn gói 23/11 — `deploy/docker/README.md` mục 5). Chạy chúng trên máy AWS, tải gói bằng vai gắn máy, HTTPS thật và câu hỏi thật qua model
+(các lượt thử trọn gói 23/11 — `deploy/docker/README.md` mục 5; lượt 20:11 chạy đúng thứ tự bước 2–9 của guide này trên ảnh dựng từ main `d8d5c3a`:
+băm 7 / 7 OK, nạp ảnh 7 giây, chỉ mục 9.533 = 9.533 điểm, ba hộp khoẻ sau khoảng 30 giây, `/health` `ok`; khoá GIẢ ⇒ câu hỏi ra đúng câu báo cố định).
+Chạy chúng trên máy AWS, tải gói bằng vai gắn máy, HTTPS thật và câu hỏi thật qua model
 của OpenAI: **[chưa kiểm trên AWS]** — buổi diễn tập của guide 5 đổi các dòng đó thành "đã kiểm".
 
 Từ dùng: **hộp** = container · **gói** = bộ file guide 2 đã đẩy lên thùng · **vai gắn máy** = quyền AWS gắn vào máy, máy tự xin khoá tạm · **máy chủ web /
