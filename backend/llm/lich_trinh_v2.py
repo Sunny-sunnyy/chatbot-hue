@@ -904,6 +904,10 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
         ma = khung.get("toi_nghi", {}).get(ng["ngay"])
         if ma in ("da_bo", "het_nhe") or (ma == "xa" and "han_che_toi" in khung["gia_dinh"]):
             ghi_chu.append({"ma": f"toi_{ma}", "cau": CAU_TOI[ma], "ngay": ng["ngay"]})
+    # công tắc `sua_lich_hoi_truoc`: buổi ban ngày người dùng để trống sau một lệnh bỏ (khoá `buoi_trong` của khung) — buổi trống không hiện trên thẻ (User
+    # 15/11) ⇒ cũng MỘT dòng ghi chú theo ngày (lượt trình duyệt 23/11/2026: thẻ ngày từ Sáng nhảy thẳng sang Tối, không nói gì về buổi chiều)
+    ghi_chu += [{"ma": "buoi_trong", "cau": f"Buổi {NHAN_BUOI[b].lower()} ngày {d} để trống — bạn đã bỏ điểm của buổi này.", "ngay": d}
+                for d, b in khung.get("buoi_trong") or ()]
     if ts["tre_em"] or ts["lon_tuoi"]:  # bộ đo ý 2: nhóm hạn chế + điểm nhiều bậc thang còn trong lịch (không có điểm thay cùng khu) ⇒ ghi chú
         ghi_chu += [{"ma": "bac_thang", "cau": CAU_GHI_CHU["bac_thang"].format(diem=bang.theo_id[j]["ten"])}
                     for j in dict.fromkeys(diem_ban_ngay(khung)) if bang.theo_id[j]["bac_thang"] == "nhieu"]

@@ -38,6 +38,23 @@ _TU_XEP = re.compile(r"(?<!\w)(?:(?<!mình )(?<!tôi )(?<!tớ )(?<!em )tự\s+(
 _KHONG_TU_XEP = re.compile(r"(?<!\w)(?:không|đừng|chớ|khỏi)\s+(?:\w+\s+){0,3}?(?:tự\s+)?(?:sắp\s+xếp|xếp|chọn|quyết)(?!\w)")
 
 
+# Cùng công tắc, cụm buổi tối: lời ĐỒNG Ý gõ tay ngay sau câu hỏi "hai tối đổi chỗ?" (lượt trình duyệt 23/11/2026: gõ "ừ đổi chỗ đi" thay cho bấm nút ⇒ model
+# ghi thành việc chưa hỗ trợ). Code đọc theo danh sách đóng, khớp CẢ câu (câu dài hơn / có ý khác ⇒ không khớp ⇒ đi đường hiểu ý như cũ).
+_DONG_Y_DOI_TOI = re.compile(r"(?:(?:ừ+m?|ờ|uh+|ok\w*|được|đồng ý|có|vâng|dạ|ừ thì)(?:[\s,]+(?:được|đồng ý|đổi|đổi chỗ|hai tối|bạn|mình|nhé|đi|luôn|ạ|nha|rồi|chứ|đấy|đó))*"
+                             r"|(?:cứ\s+|bạn\s+)?đổi(?:\s+chỗ)?(?:\s+hai\s+tối)?(?:\s+(?:đi|nhé|luôn|giúp mình|giúp tôi|nha|ạ|cho mình))*)[\s.!]*")
+_GUI_DOI_TOI = re.compile(r"đổi chỗ hai tối: (.+) sang tối ngày \d+, (.+) sang tối ngày \d+")
+
+
+def chon_doi_toi(bang: "v2.BangV2", cau: str, goi_y) -> dict | None:
+    """Lượt NGAY SAU câu hỏi "hai tối đổi chỗ?" (câu của nút nằm trong `goi_y` — các câu code gợi ý ở lượt trước, route nhớ đúng một lượt): câu gõ là một lời
+    đồng ý ngắn ⇒ trả đúng lựa chọn {cu, moi} của nút "Đổi chỗ hai tối" (đi đường thẻ chọn, không gọi model). Không thì None."""
+    m = next((x for g in goi_y or () if (x := _GUI_DOI_TOI.fullmatch(g))), None)
+    if m is None or not _DONG_Y_DOI_TOI.fullmatch(unicodedata.normalize("NFC", cau or "").casefold().strip()):
+        return None
+    moi, cu = khop_ten(bang, m.group(1)), khop_ten(bang, m.group(2))
+    return {"cu": cu, "moi": moi} if cu and moi else None
+
+
 def cho_tu_xep(cau: str) -> bool:
     """Câu gõ có lời cho trợ lý TỰ chọn chỗ không ("xếp giúp mình", "bạn tự xếp đi", "hôm nào cũng được", "tuỳ bạn"); câu phủ định ⇒ không."""
     c = unicodedata.normalize("NFC", cau or "").casefold()
@@ -1321,7 +1338,8 @@ def cau_goi_y(bang: v2.BangV2, kq: dict) -> tuple[str, ...]:
     return (tuple(nut_bo_trong(bang, a)["gui"] for a in kq["da_ap"] if a.get("goi_y_thay"))
             + tuple(n["gui"] for k in kq["khong_doi"] if k["ma_luat"] in ("them_hoi", "bo_ngay_rong") for n in nut_them(bang, k))
             + tuple(_cau_cach(bang, k["diem"], g, False) for k in kq["khong_doi"] for g in k.get("cach") or ())
-            + tuple(c for k in kq["khong_doi"] if k["ma_luat"] == "bo_toi_hoi" for c in _cau_bo_toi(k)))
+            + tuple(c for k in kq["khong_doi"] if k["ma_luat"] == "bo_toi_hoi" for c in _cau_bo_toi(k))
+            + tuple(n["gui"] for k in kq["khong_doi"] if k["ma_luat"] == "toi_doi_cho_hoi" for n in nut_khong_doi(bang, kq, k)))  # `chon_doi_toi` đọc lại ở lượt kế
 
 
 def _cau_bo_toi(k: dict) -> tuple[str, str]:

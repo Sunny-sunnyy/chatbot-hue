@@ -193,3 +193,24 @@ def test_ask_first_switch_asks_before_two_evenings_swap_and_only_offers_evenings
     assert kq["khong_doi"][0]["ma_luat"] == "toi_ten_theo_thu" and "chỉ mở tối" in dong["cau"] and "các tối của lịch" in dong["cau"] and "tối ngày 1" not in dong["cau"] and dong["nut"] == [{"nhan": "Mở biểu mẫu để chọn ngày đi", "mo": "bieu_mau"}]
     cu = s.ap(B, luu, [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(theo_thu), buoi="toi")], **BAT)  # công tắc tắt: câu hỏi "ngày nào" + nút mọi ngày như trước
     assert cu["khong_doi"][0]["ma_luat"] == "toi_ten_thieu_ngay" and len(s.thay_doi(B, cu)[0]["nut"]) == 2
+
+
+def test_a_typed_yes_right_after_the_swap_question_acts_like_the_button_and_an_emptied_session_gets_a_day_note():
+    """Lượt trình duyệt cả cụm 23/11/2026: sau câu hỏi "hai tối đổi chỗ?" người dùng GÕ "ừ đổi chỗ đi" ⇒ code đọc lời đồng ý (danh sách đóng, khớp cả
+    câu, chỉ ở lượt ngay sau câu hỏi — nhờ câu của nút nằm trong `cau_goi_y`) và trả đúng lựa chọn của nút. Buổi ban ngày để trống ⇒ một ghi chú theo ngày."""
+    k = v2.xep_v2(B, v2.ThamSoV2(2, kieu_di="can_bang"))
+    luu, toi = s.luu_tu_lich(k, None, None), _toi(k)
+    hoi = s.ap(B, luu, [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(toi[2]), ngay=1, buoi="toi")], **BAT, them_hoi_truoc=True)
+    nut, goi_y = s.thay_doi(B, hoi)[0]["nut"][0], s.cau_goi_y(B, hoi)
+    assert nut["gui"] in goi_y
+    for cau in ("ừ đổi chỗ đi", "Ok", "đổi chỗ hai tối nhé", "Đồng ý.", "được, đổi đi", "có"):
+        assert s.chon_doi_toi(B, cau, goi_y) == nut["chon"], cau
+    for cau in ("không", "thôi không đổi", "có thể thêm Lăng Gia Long không", f"đổi {_ten(toi[1])} sang hoạt động tối khác", "ừ mà thêm chùa Thiên Mụ nữa", ""):
+        assert s.chon_doi_toi(B, cau, goi_y) is None, cau
+    assert s.chon_doi_toi(B, "ừ đổi chỗ đi", ()) is None and s.chon_doi_toi(B, "ok", ("thay A bằng B",)) is None  # không đứng ngay sau câu hỏi đó ⇒ không đoán
+    # buổi ban ngày người dùng để trống: không hiện trên thẻ (User 15/11) ⇒ một dòng ghi chú đúng ngày đó
+    d, b = next((ng["ngay"], x) for ng in k["ngay"] for x in v2.BUOI_NGAY if len(ng["buoi"][x]) == 1)
+    bo = s.ap(B, luu, [s.HanhDongToiHoiBo(loai="bo_diem", ten=_ten(next(g for g in k["ngay"] if g["ngay"] == d)["buoi"][b][0]))], **BAT, them_hoi_truoc=True)
+    lich = v2.dung_lich(B, bo["khung"], {j: n for n, j in enumerate(v2.diem_v2(bo["khung"]), start=1)})
+    assert [(g["ngay"], g["cau"]) for g in lich["ghi_chu"] if g["ma"] == "buoi_trong"] == [(d, f"Buổi {v2.NHAN_BUOI[b].lower()} ngày {d} để trống — bạn đã bỏ điểm của buổi này.")]
+    assert not [g for g in v2.dung_lich(B, k, {j: n for n, j in enumerate(v2.diem_v2(k), start=1)})["ghi_chu"] if g["ma"] == "buoi_trong"]
