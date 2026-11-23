@@ -1,6 +1,6 @@
 # Bài 2 — RAG là gì: cho model đọc tài liệu trước khi trả lời
 
-*Cập nhật 11:11, ngày 23/11/2026 · khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài, 9.479 đoạn); đổi hai câu tả màn hình (thẻ chờ, khung "Nguồn đã dùng") · ví dụ là ba lượt hỏi thật từ sổ ghi từng lượt (20 và 21/11); người viết không chạy lại.*
+*Cập nhật 16:01, ngày 23/11/2026 · 16:01: "Cái giá" của quyết định 4 ghi đúng chữ trên trang (câu dẫn sang mục web), khớp đoạn ví dụ của chính bài · 11:11: khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài, 9.479 đoạn); đổi hai câu tả màn hình (thẻ chờ, khung "Nguồn đã dùng") · ví dụ là ba lượt hỏi thật từ sổ ghi từng lượt (20 và 21/11); người viết không chạy lại.*
 
 **Bài trước đã biết:** model ngôn ngữ viết ra chữ tiếp theo có khả năng cao nhất. Nó viết trôi chảy cả khi không biết, và không tự nói được nó lấy thông tin từ đâu.
 **Bài này thêm:** cách hue_rag xử lý chuyện đó. Cách này có tên là RAG, và nó là tên của chính đề tài. Bài này cũng nói vì sao chọn cách này thay cho các cách khác.
@@ -112,7 +112,7 @@ Vì mọi thông tin nằm trong kho chứ không nằm trong model, cập nhậ
 - **Đã chọn:** model trả đúng một câu từ chối đặt sẵn; sau đó chương trình tra web một lần và để kết quả ở mục "chưa kiểm".
 - **Vì sao từ chối:** luật đã ghi của sản phẩm: chỉ trả lời từ kho, câu ngoài kho phải bị từ chối. **Vì sao là một câu cố định:** lý do ghi trong chương trình là bộ chấm và các sàn đo dựa vào đúng câu này. Ngoài ra chương trình so đúng từng chữ của nó: câu đó được miễn bước kiểm số nguồn, và chỉ khi câu trả lời đúng bằng nó thì bước tra web mới chạy.
 - **Cách khác:** để model trả lời theo hiểu biết chung, hoặc tự tìm trên Internet: không làm; quyết định đã ghi là web chỉ là đường phụ, luôn để riêng (bài 25).
-- **Cái giá:** người hỏi một câu kho có mà tìm không ra (lượt "cởi giày") cũng chỉ nhận câu từ chối và mục web chưa kiểm.
+- **Cái giá:** người hỏi một câu kho có mà tìm không ra (lượt "cởi giày") cũng không được trả lời từ kho: chỉ có mục web chưa kiểm, mở đầu bằng câu dẫn sang mục web (mục web trắng thì trang giữ câu từ chối).
 
 ### 5. Vì sao chương trình còn kiểm số nguồn, khi model đã được dặn chỉ dùng các đoạn được đưa?
 
