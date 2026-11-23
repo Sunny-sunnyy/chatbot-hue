@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { BIEU_MAU } from "./chung.jsx";
 import { LichV2 } from "./LichV2.jsx";
 import { SONG_NGANG } from "./song/hinh.jsx";
+import { ViSao } from "./ViSao.jsx";
 import "./lkh.css";
 
 export function LenKeHoach({ bat, prefill, pending, onSubmit }) {
@@ -146,6 +147,7 @@ function CotLich({ lichTurn, onEditPlan, onXep, pending, onAsk }) {
       {/* `onAsk`: nút của dòng hỏi lại / chưa làm cũng bấm được ngay ở cột lịch — khung trợ lý có thể đang đóng, và mỗi nút gửi một câu lệnh ĐỦ tên */}
       {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} onAsk={t.phase === "done" ? onAsk : null}
                                                      onMo={t.phase === "done" && onEditPlan ? () => onEditPlan(null, t.truong) : null} />}
+      {t.phase === "done" && <ViSao turn={t} />}
       {t.lichV2 && t.phase === "done" && <p className="lkh-chi-dan">Muốn sửa lịch bằng lời (ví dụ “bỏ điểm đầu ngày 2”): bấm <b>Trợ lý Huế</b> rồi nhắn — lịch ở đây đổi theo.</p>}
     </div>
   );

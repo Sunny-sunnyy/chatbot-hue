@@ -11,6 +11,7 @@ import { trangTriTraLoi } from "./song/nhin.js";
 import { anhTraLoi } from "./anhTraLoi.js";
 import { phangCoSo, theKhachSan } from "./theKhachSan.js";
 import { baiHref } from "./route.js";
+import { ViSao } from "./ViSao.jsx";
 import "./tl.css";
 import { GOI_Y } from "./chung.jsx";
 import { moDauWeb } from "./moDauWeb.js";
@@ -180,7 +181,9 @@ export function useChat() {
             update({ web: data });  // B6 D6: chữ đã kiểm cuối + nguồn web (link do server dựng)
           } else if (name === "done") {
             // B142: mã lượt chỉ có ở lượt có câu trả lời cuối; (5) `tu_choi_kho`: kho không đủ ⇒ gợi ý cách hỏi
-            update({ outcome: data.outcome, tuChoiKho: data.tu_choi_kho === true });
+            // `vi_sao` + `turn_id`: server còn giữ bản tóm tắt của lượt (công tắc `vi_sao`, chỉ máy demo) ⇒ vẽ nút "Vì sao trả lời vậy?" (`ViSao.jsx`)
+            update({ outcome: data.outcome, tuChoiKho: data.tu_choi_kho === true,
+                     ...(data.vi_sao === true && data.turn_id && { viSao: true, turnId: data.turn_id }) });
           }
         },
       });
@@ -488,6 +491,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon, laCuoi = false, 
           </ul>
         </div>
       )}
+      {turn.phase === "done" && <ViSao turn={turn} />}
       </div>
       </div>
     </article>
