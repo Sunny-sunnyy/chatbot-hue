@@ -37,6 +37,8 @@ $APT install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 systemctl enable --now docker   # enable: máy dừng rồi bật lại thì Docker tự chạy ⇒ ba hộp tự lên
 
 # 3) AWS CLI: guide 4 tải gói từ thùng bằng khoá tạm của vai gắn máy.
+# Chờ snapd nạp xong lô snap ban đầu của máy: cài snap quá sớm thì lệnh hỏng, và dưới `set -e` cả đoạn này dừng trước khi ghi dấu sẵn sàng.
+snap wait system seed.loaded
 snap install aws-cli --classic
 
 # 4) Thư mục làm việc + một file ghi tên thùng và vùng (không bí mật) để lệnh ở guide 4 khỏi gõ lại.
