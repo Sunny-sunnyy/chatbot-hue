@@ -608,6 +608,11 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
     ghi_chu += [{"ma": k["ma_luat"], "cau": CAU_KHONG_XEP[k["ma_luat"]].format(diem=k["diem"])} for k in khung["khong_xep"]]
     if khung.get("gio"):
         ghi_chu.append({"ma": "gio_goi_y", "cau": "Giờ trong lịch là giờ gợi ý theo thời lượng tham quan thường gặp. " + CAU_CO_THE_DOI})
+    # Đoàn có trẻ nhỏ / người lớn tuổi luôn được xếp NHẸ NHÀNG dù kiểu đi để trống hay chọn mức khác ⇒ dòng "Mình hiểu" và ô "Thời gian" ở đầu thẻ
+    # phải ghi đúng mức lịch thật sự dùng (trước 23/11/2026: ghi "đi cân bằng" ngay trên ghi chú "xếp nhẹ nhàng"). Chỉ đổi chữ HIỆN RA: tham số lưu trong
+    # khung giữ nguyên lựa chọn của người dùng (bỏ trẻ nhỏ khỏi đoàn bằng lệnh sửa thì kiểu đi cũ dùng lại).
+    if ts["tre_em"] >= 1 or ts["lon_tuoi"]:
+        ts = {**ts, "kieu_di": "nhe_nhang"}
     return {"phien_ban": 2, "tham_so": {**ts, "ngay_di": ngay_di}, "minh_hieu": dong_minh_hieu_v2(ts, ngay_di), "ngay": ngay,
             "o_dau": None, "ghi_chu": ghi_chu}
 

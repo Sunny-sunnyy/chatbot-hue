@@ -25,3 +25,14 @@ def test_other_groups_keep_the_default_pace_note_and_a_chosen_pace_has_none():
     gia_dinh, cau = _ma_ghi_chu()
     assert "kieu_di" in gia_dinh and v2.CAU_GHI_CHU["kieu_di"] in cau
     assert "kieu_di" not in _ma_ghi_chu(kieu_di="kham_pha")[0]
+
+
+def test_card_header_states_the_gentle_pace_for_restricted_groups_whatever_was_chosen():
+    """Đầu thẻ ("Mình hiểu…", ô "Thời gian") ghi mức lịch THẬT SỰ dùng; tham số lưu trong khung giữ nguyên lựa chọn của người dùng."""
+    for chon in (None, "can_bang", "kham_pha"):
+        khung = v2.xep_v2(B, v2.ThamSoV2(2, tre_em=1, kieu_di=chon))
+        lich = v2.dung_lich(B, khung, {})
+        assert "đi nhẹ nhàng" in lich["minh_hieu"] and lich["tham_so"]["kieu_di"] == "nhe_nhang"
+        assert khung["tham_so"]["kieu_di"] == (chon or v2.KIEU_DI_MAC_DINH)
+    lich = v2.dung_lich(B, v2.xep_v2(B, v2.ThamSoV2(2)), {})  # đoàn thường: như cũ
+    assert "đi cân bằng" in lich["minh_hieu"] and lich["tham_so"]["kieu_di"] == "can_bang"
