@@ -132,19 +132,18 @@ def an_uong(theo_cum: dict, bang, khung: dict, toa_do: dict | None, kho_truoc: b
                 return _chon(theo_cum.get(bang.theo_id[j]["cum"], []), toa, da_dung, bua) if toa else []
 
             diem, chon = ung_vien[0], []
-            if kho_truoc and bua == "trua":
+            for j in ung_vien:
+                chon = chon_o(j)
+                if chon or (j, bua) in GHI_CHU_AN:
+                    diem = j
+                    break
+            # `kho_truoc`: vòng cũ ra QUÁN mà không quán nào có bài kho ⇒ thử lại theo đường người đi, lấy điểm đầu tiên có quán kho. Vòng cũ dừng ở
+            # một GHI CHÚ ĂN riêng của kho (điểm không có quán trong 2 km) thì giữ ghi chú đó — đếm 23/11/2026: không giữ thì 19 / 538 ghi chú biến mất.
+            if kho_truoc and bua == "trua" and chon and not any(q["nguon"] == "kho" for q in chon):
                 for j in dict.fromkeys(sang[-1:] + chieu[:1] + sang[::-1]):
                     c = chon_o(j)
                     if any(q["nguon"] == "kho" for q in c):
                         diem, chon = j, c
-                        break
-                    if not c and (j, bua) in GHI_CHU_AN:  # điểm có ghi chú ăn riêng của kho (không quán trong 2 km) ⇒ giữ ghi chú đó như vòng cũ
-                        break
-            if not chon:
-                for j in ung_vien:
-                    chon = chon_o(j)
-                    if chon or (j, bua) in GHI_CHU_AN:
-                        diem = j
                         break
             d = bang.theo_id[diem]
             if chon:
