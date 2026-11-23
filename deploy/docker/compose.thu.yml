@@ -2,5 +2,7 @@
 # (không gắn cả thư mục chứa nó). Gắn một file thì hộp giữ bản lúc bật — khoá được làm mới bên ngoài sau đó hộp không thấy; đủ cho một lượt thử.
 services:
   app:
+    environment:
+      HUE_BEDROCK_CREDS_FILE: /run/hue-khoa/bedrock.json
     volumes:
       - ${HUE_KHOA_FILE:?đặt HUE_KHOA_FILE = đường dẫn file khoá tạm Bedrock của máy}:/run/hue-khoa/bedrock.json:ro

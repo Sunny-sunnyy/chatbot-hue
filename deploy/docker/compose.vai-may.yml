@@ -24,6 +24,8 @@ services:
       driver: json-file
       options: {max-size: "10m", max-file: "3"}
   app:
+    environment:
+      HUE_BEDROCK_CREDS_FILE: /run/hue-khoa/bedrock.json
     volumes:
       - khoa:/run/hue-khoa:ro
     depends_on:

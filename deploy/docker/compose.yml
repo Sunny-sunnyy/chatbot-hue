@@ -1,17 +1,20 @@
-# Trợ lý Huế trên MỘT máy: Qdrant + app + Caddy (cửa vào, HTTPS). File này KHÔNG tự đủ: app đọc quyền gọi model ở /run/hue-khoa/bedrock.json và
-# file đó tới từ đâu là việc của MỘT file phủ đi kèm —
-#   thử ở máy chủ dự án:  -f compose.yml -f compose.thu.yml      (gắn file khoá tạm đang có của máy, chỉ đọc)
-#   máy AWS có vai gắn:    -f compose.yml -f compose.vai-may.yml  (một dịch vụ phụ lấy khoá tạm của vai, tự làm mới)
+# Trợ lý Huế trên MỘT máy: Qdrant + app + Caddy (cửa vào, HTTPS). File này TỰ ĐỦ cho đường deploy đã chốt (23/11/2026): model viết của OpenAI —
+#   docker compose --env-file hue.env -f compose.yml up -d --wait
+# Model viết do dòng `provider` của ./cau_hinh/settings.yaml quyết định (dong_goi.sh ghi sẵn dòng đó lúc gom gói). Hai file phủ là đường TUỲ CHỌN cho
+# model Claude trên Amazon Bedrock — bản deploy không dùng:
+#   -f compose.yml -f compose.thu.yml      thử ở máy chủ dự án (gắn file khoá tạm đang có của máy, chỉ đọc)
+#   -f compose.yml -f compose.vai-may.yml  máy AWS có vai gắn (một hộp phụ lấy khoá tạm của vai, tự làm mới)
 # Biến (đặt trong file `hue.env` cạnh file này, nạp bằng `--env-file hue.env` — KHÔNG có bí mật nào trong đó):
 #   HUE_IMAGE            ảnh app, vd hue-rag-app:c2579fa (dung_anh.sh in ra)
 #   HUE_SITE             tên miền cho HTTPS (vd 13-250-1-2.sslip.io); mặc định ":80" = http, chỉ để thử
 #   HUE_LUOT_MOI_NGAY    lượt gọi model mỗi địa chỉ mỗi ngày (mặc định 50) · HUE_LUOT_TONG_MOI_NGAY trần tổng cả máy mỗi ngày (mặc định 500)
 #   HUE_GIT_SHA          mã commit ghi vào log (ảnh không có git)
 #   HUE_TRA_WEB          "true" để bật mục tra web (khi đó phải có SERPER_API_KEY trong file bí mật dưới); mặc định tắt
-# Bí mật (file riêng, quyền 600, KHÔNG nằm trong ảnh, KHÔNG commit): `hue.khoa.env` cạnh file này — không có cũng chạy được. Dòng có thể có:
+#   HUE_COLLECTION       tên collection Qdrant — CHỈ ba script của gói (chup / nap chỉ mục) và bước chờ của hộp app đọc; app lấy tên collection từ
+#                        settings.yaml. Không đặt ⇒ tên đang dùng. Đổi tên collection thì đổi cả hai nơi.
+# Bí mật (file riêng, quyền 600, KHÔNG nằm trong ảnh, KHÔNG commit): `hue.khoa.env` cạnh file này. Dòng có thể có:
+#   OPENAI_API_KEY=…      BẮT BUỘC khi `provider: openai` (đường deploy). Thiếu ⇒ app lên nhưng /health báo `degraded`, lệnh `up --wait` báo lỗi.
 #   SERPER_API_KEY=…      (chỉ khi bật tra web) · HUE_KHOA_THEO_DOI=… (≥ 16 ký tự, mở trang theo dõi #/theo-doi; không đặt ⇒ trang trả 404)
-#   OPENAI_API_KEY=…      (chỉ khi đổi model viết về model cũ: sửa dòng `provider: bedrock` ⇒ `provider: openai` trong ./cau_hinh/settings.yaml, thêm khoá này,
-#                          rồi `docker compose … up -d app`; về lại thì sửa ngược dòng đó — guides/DOI_MODEL_VIET.md)
 # Tên dự án Compose CỐ ĐỊNH: không ghi thì Compose lấy tên thư mục đang đứng làm tên dự án ⇒ chạy lệnh từ một thư mục khác là ra một bộ hộp + volume
 # MỚI (chứng chỉ HTTPS nằm ở volume của dự án cũ). Lượt thử ở máy chủ dự án ghi đè bằng `-p` / biến COMPOSE_PROJECT_NAME.
 name: hue
@@ -44,7 +47,8 @@ services:
     environment:
       HUE_QDRANT_URL: http://qdrant:6333
       TZ: Asia/Ho_Chi_Minh   # hộp mặc định chạy giờ UTC; "hôm nay" của sản phẩm đã tự theo giờ Việt Nam, nhưng giờ trong log và dòng "đọc lúc" của trang theo dõi theo giờ MÁY
-      HUE_BEDROCK_CREDS_FILE: /run/hue-khoa/bedrock.json   # file phủ quyết định file này tới từ đâu
+      # Biến trỏ file khoá Bedrock KHÔNG đặt ở đây (23/11/2026): đặt sẵn thì cấu hình còn `provider: bedrock` mà không có file phủ vẫn ra /health `ok`
+      # trong khi câu nào cũng lỗi (đã tái hiện). Hai file phủ Bedrock tự đặt biến đó; thiếu ⇒ lớp tạo câu trả lời báo chưa sẵn sàng ngay lúc bật.
       HUE_TRA_WEB: ${HUE_TRA_WEB:-false}
       # Các chốt cho bản mở ra ngoài (ở máy local không đặt biến nào ⇒ tắt): giới hạn lượt, cookie chỉ đi qua https, tắt trang /docs.
       HUE_LUOT_MOI_NGAY: ${HUE_LUOT_MOI_NGAY:-50}
