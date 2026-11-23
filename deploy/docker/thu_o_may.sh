@@ -28,6 +28,7 @@ len)
   printf '%s\n' "HUE_IMAGE=$HUE_IMAGE" "HUE_KHOA_FILE=$HUE_KHOA_FILE" "HUE_SITE=:80" "HUE_HTTP_PORT=$CONG" "HUE_HTTPS_PORT=8443" \
     "HUE_COOKIE_SECURE=0" "HUE_LUOT_MOI_NGAY=3" "HUE_GIT_SHA=${HUE_IMAGE##*:}" > "$THU/hue.env"
   # Chỉ mục: chụp collection của Qdrant đang chạy, tải về, XOÁ bản chụp ở nguồn (không để lại gì ở 6335), nạp vào Qdrant của gói
+  echo "nguồn 6335 TRƯỚC lượt thử: $(curl -s $NGUON/collections/$COL | grep -o '"points_count":[0-9]*') · bản chụp đang có: $(curl -s $NGUON/collections/$COL/snapshots)"
   TEN=$(curl -sf -X POST "$NGUON/collections/$COL/snapshots" | python3 -c "import json,sys; print(json.load(sys.stdin)['result']['name'])") || dung "Qdrant 6335 không tạo được bản chụp"
   curl -sf -o "$THU/qdrant.snapshot" "$NGUON/collections/$COL/snapshots/$TEN"
   curl -sf -X DELETE "$NGUON/collections/$COL/snapshots/$TEN" >/dev/null
