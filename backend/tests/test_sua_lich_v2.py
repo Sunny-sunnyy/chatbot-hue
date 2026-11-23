@@ -333,9 +333,9 @@ def test_five_day_schedule_with_a_repeated_evening_does_not_report_evenings_that
     """Lịch 5 ngày lặp một hoạt động tối ở hai ngày; bảng tra ngược `mã ⇒ một ngày` từng bị ghi đè ⇒ mọi lệnh bỏ / thay báo "Buổi tối xếp lại" dù không tối
     nào đổi (kể cả so một lịch với chính nó)."""
     lap = thay = 0
-    # Bảng điểm từ bản 13 có đủ hoạt động tối cho 5 ngày (thêm các dòng quán cà phê tối, cột `la_quan`) nên lịch thật không còn lặp; ca này cần lịch
+    # Bảng điểm từ bản 13 có đủ hoạt động tối cho 5 ngày (thêm các dòng quán cà phê tối, cột `la_quan`, và hai mục tối `chi_muc_toi`) nên lịch thật không còn lặp; ca này cần lịch
     # CÓ lặp ⇒ xếp trên bảng đã bỏ các dòng đó.
-    it = tuple(d for d in B.diem if not d.get("la_quan"))
+    it = tuple(d for d in B.diem if not (d.get("la_quan") or d.get("chi_muc_toi")))  # bản 15 thêm hai mục tối nữa (`chi_muc_toi`) — cũng bỏ
     bang = dataclasses.replace(B, diem=it, theo_id={d["id"]: d for d in it}, thu_tu_toi=())
     for kieu in ("nhe_nhang", "can_bang", "kham_pha"):
         for st in ((), ("di_tich",), ("am_thuc",), ("thien_nhien",)):

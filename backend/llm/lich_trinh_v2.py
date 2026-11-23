@@ -197,7 +197,10 @@ def _phut_di(a: dict, b: dict) -> int | None:
 
 # 5c.3 giờ gợi ý (phút từ 0:00): sáng 8:00 · chiều 13:30; khám phá nhiều 7:30 · 13:00; nhóm hạn chế giờ như nhẹ nhàng
 GIO_BAT_DAU = {"kham_pha": {"sang": 450, "chieu": 780}, "khac": {"sang": 480, "chieu": 810}}
-CUM_TOI = ("bo_nam", "kinh_thanh")  # 5c.4: hoạt động tối chỉ ở hai cụm trung tâm (khách đã về khu trung tâm)
+# 5c.4: hoạt động tối chỉ ở khu trung tâm (khách đã về khu trung tâm). Bảng điểm bản 15 (23/11/2026, chủ dự án duyệt bài kho AEON Mall Huế và nêu "nên đi
+# công viên hoặc các nơi như aeon mall huế"): thêm cụm An Cựu — AEON cách trung tâm khoảng 5 phút đi xe (bài kho), và bảng chỗ ở vốn xếp cụm này vào
+# cùng khu trung tâm (`cum_ve_khu`) nên câu "các hoạt động buổi tối của lịch đều ở trung tâm" của ô Nơi ở vẫn theo đúng định nghĩa đó.
+CUM_TOI = ("bo_nam", "kinh_thanh", "an_cuu")
 CAU_TOI = {"xa": "Tối nghỉ sau chuyến đi xa.", "tre_em": "Để trống — đi cùng trẻ nhỏ nên lịch chỉ xếp buổi sáng và chiều.",
            "lon_tuoi": "Để trống — đi cùng người lớn tuổi nên lịch chỉ xếp buổi sáng và chiều.",
            "khong_co": "Tối tự do — kho chưa có hoạt động buổi tối hợp ngày này.",
@@ -411,10 +414,13 @@ def _xep_toi(bang: BangV2, ts: ThamSoV2, ngay: list[dict], ngays: list, da_dung:
     T, nghi = bang.theo_id, {}
     so_thich = set(ts.so_thich)
     nhe = ts.han_che and bool(bang.toi_nhe)  # công tắc `toi_nhe`: đoàn hạn chế được MỘT hoạt động nhẹ mỗi tối, chỉ trong danh sách của bảng, không lặp
+    thu_tu = bang.toi_nhe if nhe else bang.thu_tu_toi
     ung_vien = sorted((d for d in bang.diem if "toi" in d["buoi"] and d["cum"] in CUM_TOI and d["id"] not in da_dung
                        and (not nhe or d["id"] in bang.toi_nhe)),
                       # hợp sở thích trước, rồi thứ tự `thu_tu_toi` của bảng (mục ngoài danh sách xếp sau), rồi thứ tự bảng (sort ổn định)
-                      key=lambda d: (not (so_thich & set(d["loai"])), bang.thu_tu_toi.index(d["id"]) if d["id"] in bang.thu_tu_toi else len(bang.thu_tu_toi)))
+                      # đoàn có trẻ nhỏ / người lớn tuổi: thứ tự của CHÍNH danh sách `toi_nhe` (bảng bản 15: AEON Mall và công viên đứng sớm cho đoàn này,
+                      # đúng lời chủ dự án; đoàn thường theo `thu_tu_toi`)
+                      key=lambda d: (not (so_thich & set(d["loai"])), thu_tu.index(d["id"]) if d["id"] in thu_tu else len(thu_tu)))
     da_toi: list[str] = []
     # công tắc `bo_toi_hoi_lai`: tối đã ghim giữ đúng hoạt động đó khi còn hợp lệ; mục ghim cho tối khác không bị tối này lấy. Chỉ tính ngày CÒN trong
     # lịch: đổi số ngày 3 ⇒ 2 thì mục ghim của ngày 3 không được chiếm chỗ lựa chọn của các tối còn lại (B đọc code 23/11/2026)

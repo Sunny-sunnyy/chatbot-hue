@@ -33,6 +33,9 @@ TEN_TOI_DA = 80
 # 1.080 / 22.680 bữa mô phỏng rơi vào 2 điểm này, quán gần nhất trong bảng 36–38 km). Chỉ hiện khi bữa đó không chọn được quán; chữ theo kho:
 # Bạch Mã `travel/places/Vườn quốc gia Bạch Mã.md:207`; Nhị Hồ `travel/places/Thác Nhị Hồ.md:167` (07:30–17:30). Trưa ở Nhị Hồ 0 / 3.840 khung ⇒ không có câu (review E m-2).
 GHI_CHU_AN = {
+    # bảng điểm v15 (23/11/2026): tối ở AEON Mall — bài kho: "Trong cùng một chỗ có thể ăn tối, mua đồ, xem phim và cho trẻ nhỏ chơi"; AEON chưa có toạ độ
+    # trong bảng nên không có danh sách quán quanh đó
+    ("aeon_mall", "toi"): "AEON Mall có khu ăn uống ở tầng 1 và các nhà hàng ở tầng 4 — có thể ăn tối ngay tại đây.",
     ("bach_ma", "trua"): "Mang theo đồ ăn trưa khô và nước uống — khu Ngũ Hồ và đỉnh núi không có hàng quán bán đồ ăn.",
     ("thac_nhi_ho", "toi"): "Điểm thường mở cửa tới 17:30 — ăn tối sau khi về nơi nghỉ.",
     # 15/11 (bảng v9): Hải Vân / Lập An cách quán gần nhất trong bảng hàng chục km (mô phỏng: 1.364 bữa không quán). Chữ theo kho:

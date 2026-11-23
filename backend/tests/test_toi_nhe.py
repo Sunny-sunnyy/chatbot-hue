@@ -143,7 +143,7 @@ def test_removing_a_repeated_evening_activity_on_one_named_day_keeps_its_other_e
 def test_evening_uses_only_rows_listed_for_the_evening_and_venue_rows_never_reach_the_day_or_the_place_tools():
     """Hoạt động tối chỉ lấy dòng bảng có buổi "toi" (dòng chợ nay chỉ còn ban ngày); dòng quán (`la_quan`) chỉ có buổi tối, không bao giờ nằm ở ban
     ngày của một lịch, và không có trong danh sách nơi của hai công cụ hỏi đáp "khoảng cách" / "gần một điểm" (mô tả hai công cụ giữ nguyên chữ)."""
-    quan = {d["id"] for d in B0.diem if d.get("la_quan")}
+    quan = {d["id"] for d in B0.diem if d.get("la_quan") or d.get("chi_muc_toi")}  # bản 15: thêm hai mục chỉ-buổi-tối không phải quán
     assert quan and all(d["buoi"] == ["toi"] for d in B0.diem if d["id"] in quan)
     assert not quan & set(TAT.khoang_cach_bang.ids)
     cho = next(d for d in B0.diem if d["id"] == "cho_dong_ba")
@@ -166,3 +166,18 @@ def test_evening_order_follows_the_table_list_and_a_table_without_the_list_keeps
     assert len(B0.thu_tu_toi) >= 2 and chon == [i for i in B0.thu_tu_toi if i in {d["id"] for d in ung}][:2]
     chon, ung = hai_toi_dau(dataclasses.replace(B0, thu_tu_toi=()))
     assert chon == [d["id"] for d in ung][:2]
+
+
+def test_table_15_light_list_order_is_the_selection_order_and_an_evening_place_outside_the_old_centre_is_valid():
+    """Bảng bản 15 (chủ dự án: buổi tối "nên đi công viên hoặc các nơi như aeon mall huế"): đoàn có trẻ nhỏ / người lớn tuổi chọn theo THỨ TỰ danh sách nhẹ;
+    mục tối ở cụm ngoài hai cụm trung tâm cũ (AEON Mall, An Cựu) là khung đúng luật, và vì chưa có toạ độ nên bữa tối của tối đó là ghi chú ăn tại chỗ."""
+    from llm import quan_lich
+    for doan, n in itertools.product(DOAN, (2, 3, 4)):
+        k = v2.xep_v2(B1, v2.ThamSoV2(n, **doan))
+        chon = [t[0] for t in _toi(k) if t]
+        ban_ngay = {j for ng in _ban_ngay(k) for b in ng for j in b}
+        assert chon == [i for i in B1.toi_nhe if i not in ban_ngay][:len(chon)] and v2.kiem_khung_v2(B1, k) == []
+    ngoai = [i for i in B1.toi_nhe if B1.theo_id[i]["cum"] not in ("bo_nam", "kinh_thanh")]
+    assert ngoai and all(B1.theo_id[i]["cum"] in v2.CUM_TOI and (i, "toi") in quan_lich.GHI_CHU_AN for i in ngoai)
+    k = v2.xep_v2(B1, v2.ThamSoV2(2, tre_em=1))
+    assert ngoai[0] in [j for t in _toi(k) for j in t]  # lịch 2 ngày của đoàn có trẻ em có mục đó
