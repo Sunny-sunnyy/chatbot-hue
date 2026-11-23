@@ -483,7 +483,8 @@ def _ts(tham_so: dict) -> v2.ThamSoV2:
     return v2.ThamSoV2(so_ngay=tham_so["so_ngay"], tre_em=tham_so["tre_em"], lon_tuoi=tham_so["lon_tuoi"], kieu_di=tham_so["kieu_di"],
                        so_thich=tuple(tham_so["so_thich"]), nguoi_lon=tham_so.get("nguoi_lon"),
                        ngan_sach=tham_so.get("ngan_sach"), toi_trong=tuple(tham_so.get("toi_trong") or ()),
-                       toi_chon=tuple((int(n), j) for n, j in tham_so.get("toi_chon") or ()))
+                       toi_chon=tuple((int(n), j) for n, j in tham_so.get("toi_chon") or ()),
+                       kieu_chua_chon=bool(tham_so.get("kieu_chua_chon")))
 
 
 def _vi_tri(khung: dict) -> dict[str, tuple[int, str]]:
@@ -824,12 +825,15 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             moi = {"so_ngay": h.so_ngay, "kieu_di": h.kieu_di, "so_thich": None if h.so_thich is None else tuple(h.so_thich),
                    "tre_em": h.tre_em, "lon_tuoi": h.lon_tuoi}
             doi = {f: v for f, v in moi.items() if v is not None and v != getattr(ts, f)}  # chỉ trường khác giá trị đang dùng
-            if not doi:  # không trường nào / mọi trường trùng giá trị đang dùng ⇒ nói ra, không im lặng
+            # người dùng NÊU kiểu đi ⇒ từ nay là lựa chọn của họ (hết dấu "chưa chọn"). Đoàn có trẻ nhỏ / người lớn tuổi nêu đúng mức mặc định ("đi cân bằng"):
+            # không trường nào đổi giá trị nhưng lịch phải dựng lại để dòng ghi chú "Bạn chọn đi…, nhưng…" hiện ra ⇒ không coi là "đang dùng"
+            chon_kieu = {"kieu_chua_chon": False} if h.kieu_di is not None and ts.kieu_chua_chon else {}
+            if not doi and not (chon_kieu and ts.han_che):  # không trường nào / mọi trường trùng giá trị đang dùng ⇒ nói ra, không im lặng
                 neu = {f: v for f, v in moi.items() if v is not None}
                 khong("; ".join(f"{NHAN_TRUONG[f]}: {_gia_tri(f, v)}" for f, v in neu.items()) if neu else NHAN_HANH_DONG[h.loai],
                       "tham_so_dang_dung" if neu else "tham_so_chua_ro")
                 continue
-            ts_moi = v2.ThamSoV2(**{**ts.__dict__, **doi})
+            ts_moi = v2.ThamSoV2(**{**ts.__dict__, **doi, **chon_kieu})
             st = set(ts_moi.so_thich)
             giu = {j: v for j, v in vt.items() if v[0] <= ts_moi.so_ngay and (not st or st & set(bang.theo_id[j]["loai"]))}
             k = _thu_giu(bang, luu, ts_moi, giu, loai) or _xep(bang, luu, ts_moi, None, loai)  # giữ làm phạm luật ⇒ xếp lại không giữ
@@ -1271,6 +1275,11 @@ def _cau_khong_doi(bang: v2.BangV2, k: dict) -> str:
         return f"Chưa đổi chỗ {k['diem']} được {vi} — lịch giữ nguyên."
     if k["ma_luat"] in ("them_can_thay", "them_bi_chan", "thay_bi_chan"):  # cờ `sua_lich_them_khong_the`; mở đầu "Chưa làm" ⇒ giao diện không gắn "Không đổi được"
         return _cau_them(bang, k)
+    if k["ma_luat"] == "toi_ten_theo_thu":  # nói rõ nơi đó mở tối nào và làm sao để đặt được (lượt trình duyệt cuối 23/11/2026: câu cũ không nói)
+        i = khop_ten(bang, k["diem"])
+        thu = ", ".join(THU[t] for t in (bang.theo_id[i].get("ngay_hoat_dong") or ())) if i else ""
+        return (f"{k['diem']} chỉ mở tối {thu} — lịch chưa có ngày đi, hoặc tối ngày {k['ngay']} không rơi vào các hôm đó. Bạn chọn ngày đi ở biểu mẫu "
+                "(nút Sửa) rồi xếp lại; đúng thứ thì mình đặt được.") if thu else CAU_KHONG_DOI[k["ma_luat"]].format(diem=k["diem"], ngay=k.get("ngay"))
     if k["ma_luat"] == "bo_toi_hoi":
         # công tắc `bo_toi_hoi_lai`: đây là một CÂU HỎI của trợ lý, không phải lỗi ⇒ mở đầu bằng chính câu hỏi, tên mục nêu một lần, mời gõ ngắn; dòng này
         # mang `hoi: True` ở `thay_doi` để giao diện không tô đỏ (lượt trình duyệt 23/11/2026: dòng mở đầu "Chưa làm:" hiện trong ô lỗi). Hai câu đủ tên
