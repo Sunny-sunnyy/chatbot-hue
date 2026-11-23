@@ -1,6 +1,6 @@
 # Bài 29 — Khi không xếp được, bước kiểm lịch, và phần việc của model
 
-*Cập nhật 20:46, ngày 23/11/2026 · mức test theo hệ thống lúc code đứng yên tối 23/11 · bản 20:20: đã áp biên bản kiểm độc lập tối 23/11 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · sửa ba câu đã cũ (Nguồn) · lượt cả bộ test xong 20:09 23/11: một file đỏ vì lỗi của chính phép kiểm, đã sửa (bài 38) · người viết không chạy lượt có model · lần sửa trước: Nguồn.*
+*Cập nhật 01:20, ngày 24/11/2026 · khớp hệ thống 00:21 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · buổi người dùng tự để trống có một dòng (từ 00:17 24/11, bài 31) · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC các bản gộp này · đã áp biên bản kiểm độc lập 01:20 24/11 · dòng cũ: Nguồn.*
 
 **Bài trước đã biết:** chương trình xếp lịch theo bảy luật có thứ tự, tính giờ bằng phút cố định (bài 28).
 **Bài này thêm:** ba việc xảy ra sau bộ xếp. Một: khi yêu cầu không xếp được trọn, chương trình làm gì và người dùng đọc thấy gì. Hai: một bước kiểm viết riêng, đối chiếu khung lịch với luật. Ba: lần gọi model duy nhất của lượt, nó nhận gì, viết gì, và câu nó viết được kiểm ra sao.
@@ -30,7 +30,7 @@ Bộ xếp luôn trả về một khung lịch. Khi một luật chặn điều 
 
 Ví dụ: điểm tiêu biểu nhất của một sở thích không vào được lịch thì có dòng "Lịch này chưa xếp được điểm tiêu biểu nhất cho sở thích {sở thích} — thêm ngày thì mình xếp được nhiều điểm hơn."; không tìm được đoạn kho nào đúng bài của một điểm thì điểm bị bỏ, kèm dòng "{điểm} chưa xếp vì mình chưa lấy được tài liệu của điểm này trong kho.". Bảng đủ tám trường hợp ở nửa để tra.
 
-Có hai chỗ chương trình **im lặng**. Buổi không có điểm nào hợp luật thì buổi đó trống, không có dòng báo. Buổi tối nghỉ vì ngày đi xa, hoặc vì kho không có hoạt động tối hợp ngày đó, cũng không hiện gì: từ 15/11 chủ dự án yêu cầu buổi để trống không hiện thành một mục. Từ 17:29 23/11 có ba ngoại lệ, mỗi ca một dòng theo ngày: tối người dùng đã bỏ (bài 31), và với nhóm có trẻ em hay người lớn tuổi, tối đã hết hoạt động nhẹ hoặc tối sau ngày đi xa (bài 28).
+Có hai chỗ chương trình **im lặng**. Buổi không có điểm nào hợp luật thì buổi đó trống, không có dòng báo. Buổi tối nghỉ vì ngày đi xa, hoặc vì kho không có hoạt động tối hợp ngày đó, cũng không hiện gì: từ 15/11 chủ dự án yêu cầu buổi để trống không hiện thành một mục. Có bốn ngoại lệ, mỗi ca một dòng ở cuối thẻ ngày: tối người dùng đã bỏ (từ 17:29 23/11), buổi ban ngày người dùng đã bỏ điểm duy nhất (từ 00:17 24/11) — bài 31; và với nhóm có trẻ em hay người lớn tuổi, tối đã hết hoạt động nhẹ hoặc tối sau ngày đi xa (bài 28).
 
 ## Bước kiểm khung: một chương trình thứ hai đọc lại lịch
 
@@ -54,8 +54,6 @@ Mô phỏng không bắt được mọi thứ. Ngày 14/11, người review và 
 
 **Kiểm từng câu.** Câu bị coi là hỏng nếu: rỗng hoặc chỉ có mã nguồn; nói về tài liệu thay vì tả điểm; không có mã nguồn, hoặc có mã của điểm khác; có giờ hay thời lượng; có số tiền; có đường link; có tên một điểm khác trong bảng khi tên đó đứng trước tên chính điểm này (hoặc câu không gọi tên nó), hoặc khi tên đó mở đầu một câu (trừ tên con nằm trong tên chính điểm). Lặp mã mục thì lấy phần tử đầu; mã lạ thì bỏ; thiếu mục thì dùng câu dự phòng.
 
-Trước 23/11, có tên điểm khác là bị thay, nên câu đúng tư liệu "Xương Lăng kết hợp phong cách lăng Gia Long và lăng Minh Mạng…" của lăng Thiệu Trị bị thay ở 11 trên 25 lịch mặc định.
-
 **Câu dự phòng** do chương trình dựng từ bảng: tên, loại điểm, mã nguồn của điểm, ví dụ "Đại Nội Huế — điểm di tích [1]." Câu hỏng chỉ làm đúng mục đó mất phần mô tả. Model lỗi, quá 45 giây hay trả sai khuôn thì mọi mục dùng câu dự phòng; khung lịch, giờ, ghi chú, quán ăn vẫn còn nguyên. Người dùng không thấy lời báo riêng nào cho chuyện này.
 
 ## Quyết định và lý do
@@ -65,7 +63,7 @@ Trước 23/11, có tên điểm khác là bị thay, nên câu đúng tư liệ
 - **Đã chọn:** luôn ra một lịch; phần không làm được là một câu cố định theo mã, nằm trong "Ghi chú của lịch".
 - **Vì sao:** thiết kế ghi: model không viết lý do; chương trình chọn câu theo mã của luật đã chặn. Định nghĩa chấm ghi trước còn **đòi** dòng ghi chú khi điểm ưu tiên bị luật cứng chặn.
 - **Cách khác:** hỏi lại người dùng trước khi xếp: lượt biểu mẫu không có bước hỏi lại; bản hỏi lại do model tự quyết đã đo và bỏ (bảng tổng, hàng 19).
-- **Cái giá:** người dùng phải đọc phần ghi chú mới biết lịch đã nhân nhượng gì. Hai chỗ trống không có dòng nào (buổi trống; với đoàn thường, tối nghỉ vì đi xa).
+- **Cái giá:** người dùng phải đọc phần ghi chú mới biết lịch đã nhân nhượng gì. Hai chỗ trống không có dòng nào (buổi trống vì không có điểm hợp luật; với đoàn thường, tối nghỉ vì đi xa).
 
 ### 2. Vì sao có một bước kiểm khung viết riêng, khi bộ xếp đã theo đúng luật?
 
@@ -224,7 +222,7 @@ Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối 
 
 | Nhóm | Ví dụ mã lỗi |
 |---|---|
-| ngày và buổi | sai số ngày; ngày không có điểm nào; điểm nằm ở buổi nó không đi được |
+| ngày và buổi | sai số ngày; ngày không có điểm nào (luật có từ trước; từ 00:17 24/11 chính luật này là lý do lệnh bỏ điểm cuối cùng của một ngày không được nhận — bài 31; một buổi trống thì không phạm luật nào, bước kiểm không đọc dấu "buổi để trống" của lịch đã lưu); điểm nằm ở buổi nó không đi được |
 | giờ | thiếu giờ; ngoài giờ mở cửa; buổi chiều bắt đầu trước 13:00; hai điểm chồng giờ; buổi sáng tràn sang buổi chiều |
 | gom gần | quá 2 cụm một ngày; hai cụm không kề; cụm xa ở ngày 1 hoặc ở lịch dưới 3 ngày; ghép hai điểm không kề trong một buổi; ngày người dùng xin thêm điểm sang khu (từ 17:24 23/11, đoàn thường, bài 31): được quá 2 cụm và ghép cụm không kề, nhưng báo lỗi khi một chặng sang khu không có số trong bảng khoảng cách hoặc dài quá 60 phút; cụm xa vẫn giữ luật cũ |
 | độ dày | quá 2 điểm một buổi; vượt quỹ phút; nhóm hạn chế có hơn 2 điểm một ngày hoặc có hoạt động tối ngoài danh sách nhẹ (từ 17:29 23/11; trước đó: có buổi tối là lỗi); ngày người dùng tự xin thêm điểm khi sửa lịch (từ 15:38 23/11, đoàn thường, bài 31): được tới 3 điểm một buổi (kể cả kiểu "nhẹ nhàng") và không tính quỹ, nhưng báo lỗi khi buổi sáng kết sau 13:30, buổi chiều kết sau 18:00 hoặc nghỉ trưa dưới 60 phút; từ 18:00 23/11 đoàn có trẻ nhỏ / người lớn tuổi cũng tự xin thêm được, với trần riêng (bài 31) |
@@ -234,7 +232,7 @@ Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối 
 
 - Câu dự phòng hiện ra không kèm lời giải thích.
 - Từ 17:15 tới 18:17 23/11, lịch của đoàn có trẻ em hay người lớn tuổi không chọn kiểu đi, sau bất kỳ lệnh sửa nào được áp (bỏ, thay, dời, thêm), hiện dòng "Bạn chọn đi cân bằng, nhưng đoàn có trẻ em hoặc người lớn tuổi nên lịch này được xếp ở mức nhẹ nhàng." dù người dùng không chọn; lúc xếp từ biểu mẫu thì không có. Nguyên nhân (đọc từ chương trình, người kiểm độc lập tái hiện bằng hàm, không qua model): lịch lưu kiểu đi mặc định "cân bằng", lần xếp lại khi sửa coi đó là lựa chọn của người dùng. Thấy trên trình duyệt một lần (17:44–17:55 23/11). Đã sửa ở bản gộp 18:17 (khung lưu nhớ "chưa chọn kiểu đi"); lượt trình duyệt 18:48–18:54 (agent con) sau "thêm Hổ Quyền" không còn dòng đó (bài 31).
-- Buổi trống, và tối nghỉ vì ngày đi xa (Bạch Mã, Hải Vân…) của đoàn thường, không có dòng nào: với đoàn thường, câu "Tối nghỉ sau chuyến đi xa." có trong chương trình nhưng không tới người dùng; đoàn có trẻ nhỏ / người lớn tuổi nhận đúng câu này ở khối ghi chú (từ 17:29 23/11, bài 28). Chủ dự án bỏ mục buổi trống ngày 15/11; hệ quả với ngày đi xa chưa ai quyết.
+- Buổi trống vì không có điểm hợp luật (buổi người dùng tự để trống thì từ 00:17 24/11 có dòng, bài 31), và tối nghỉ vì ngày đi xa (Bạch Mã, Hải Vân…) của đoàn thường, không có dòng nào: với đoàn thường, câu "Tối nghỉ sau chuyến đi xa." có trong chương trình nhưng không tới người dùng; đoàn có trẻ nhỏ / người lớn tuổi nhận đúng câu này ở khối ghi chú (từ 17:29 23/11, bài 28). Chủ dự án bỏ mục buổi trống ngày 15/11; hệ quả với ngày đi xa chưa ai quyết.
 - Bộ 20 yêu cầu chưa chạy lại trên Claude Sonnet 5.5.
 - Câu mô tả với Claude dài tới khoảng 50 từ; lời dặn nới, con số 30 từ để đếm không đổi.
 - Bước kiểm câu không kiểm được ý sai trong câu (gán nhầm danh hiệu cho một vật); chỗ này chỉ có lời dặn giữ.
@@ -242,6 +240,7 @@ Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối 
 
 ## Chi tiết để tra
 
+- Luật tên điểm khác trước 23/11 (chuyển nguyên văn từ thân bài khi áp biên bản kiểm 24/11): Trước 23/11, có tên điểm khác là bị thay, nên câu đúng tư liệu "Xương Lăng kết hợp phong cách lăng Gia Long và lăng Minh Mạng…" của lăng Thiệu Trị bị thay ở 11 trên 25 lịch mặc định.
 - Câu bị thay vì có tên điểm khác nay được ghi nguyên văn vào sổ vết của máy phát triển (bài 37; chuyển từ thân bài khi áp biên bản kiểm tối 23/11, không đổi nội dung).
 - Lỗi "buổi sáng kéo tới 14:00" của lượt đọc 14/11: đếm lại thì 52 trên 3.840 khung (chuyển từ thân bài ở lượt áp cuối 23/11, không đổi nội dung).
 - 3.840 tổ hợp biểu mẫu của mô phỏng = 5 số ngày × có / không trẻ em × có / không người lớn tuổi × 3 kiểu đi × 16 lựa chọn sở thích × 4 kiểu ngày đi (chuyển từ thân bài trong đợt áp biên bản 23/11).
@@ -296,4 +295,9 @@ Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối 
   - Con trỏ sổ: gạch "Lượt cả bộ test MỚI NHẤT (09:41–09:59…" còn ở bản `678f0b16` (18:57), không còn ở bản hiện tại (sổ viết lại theo chủ đề lúc 19:34, `6c1e9a4c`) [đã chạy `grep`].
   - Để giữ độ dài: câu "Câu bị thay nay được ghi nguyên văn vào sổ vết của máy phát triển (bài 37)." chuyển từ mục "Phần việc của model" xuống "Chi tiết để tra" (không đổi nội dung).
 - Quét số cũ 20:46 23/11/2026: chỉ câu về mức test ở dòng Cập nhật ("chưa có lượt cả bộ test sau các bản gộp từ 16:20" ⇒ lượt 20:09); thân bài không đổi. Nguồn: `session_prompt/HIEN_TRANG.md` mục 1 và bảng `data/test_rong_2026-11-22/KET_QUA_c475f5e0.tsv` (95 file · 4 bỏ · 91 chạy · 2.307 ca đạt · một file đỏ, 1.171 giây; tự đếm 20:40–20:45 23/11/2026) [riêng tư]; số kho / tính năng của dòng Cập nhật khớp lệnh chạy 20:40 23/11/2026 (269 / 9533; 57 / 6) [đã chạy].
+- **Đợt đầu ngày 24/11/2026 (cụm S, phần bài 29).** Người viết đọc cây chính `ad7c9d83` (00:21 24/11), không chạy test, không gọi model. Dòng Cập nhật trước: "Cập nhật 20:46, ngày 23/11/2026 · mức test theo hệ thống lúc code đứng yên tối 23/11 · bản 20:20: đã áp biên bản kiểm độc lập tối 23/11 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · sửa ba câu đã cũ (Nguồn) · lượt cả bộ test xong 20:09 23/11: một file đỏ vì lỗi của chính phép kiểm, đã sửa (bài 38) · người viết không chạy lượt có model · lần sửa trước: Nguồn."
+  - Ngoại lệ thứ tư (buổi người dùng để trống có một dòng): `backend/llm/lich_trinh_v2.py` `dung_lich` (mã ghi chú `buoi_trong`, câu "Buổi … ngày … để trống — bạn đã bỏ điểm của buổi này."); dòng bật `sua_lich_hoi_truoc` `git show --stat 39a4bbd4` (00:17 24/11) [code]; thấy trên trình duyệt `data/playwright_mcp/luot_2411_muc1_lai/NHAT_KY.md` cảnh 1 [riêng tư; chép]. Buổi trống vì không có điểm hợp luật vẫn không có dòng: không có mã ghi chú nào khác cho ca này [suy từ code].
+  - Bước kiểm không đọc dấu buổi để trống: `kiem_khung_v2` không có `buoi_trong`; `ngay_rong` khi ngày không còn điểm ban ngày; lệnh bỏ điểm cuối cùng của ngày: `sua_lich_v2.ap` nhánh `bo_ngay_rong` + chú thích ("luật cứng `ngay_rong`") [code].
+  - Độ dài nửa để hiểu 13.830 ⇒ 13.802.
+- **Áp biên bản kiểm độc lập k1 (24/11/2026, agent con a2; biên bản `data/hoc_cung_D/kiem/dot_2411_k1_sua_lich_kiem.md` [riêng tư]).** Dòng Cập nhật trước: "Cập nhật 00:48, ngày 24/11/2026 · khớp hệ thống 00:21 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · buổi người dùng tự để trống có một dòng (từ 00:17 24/11, bài 31) · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC các bản gộp này · dòng cũ: Nguồn." [chép]. Bốn dòng ghi chú theo ngày hiện ở CUỐI thẻ ngày: `frontend/src/LichV2.jsx` dòng 99 (`theoNgay` là phần tử cuối của thẻ) [code]. Hàng "ngày và buổi" viết lại để không đọc thành luật có từ 00:17: luật `ngay_rong` có từ trước trong `kiem_khung_v2`; từ 00:17 nó là lý do của nhánh `bo_ngay_rong` trong `sua_lich_v2.ap` (chú thích "luật cứng `ngay_rong`") [code]. Đoạn "Trước 23/11…" chuyển xuống "Chi tiết để tra" để giữ độ dài [tự đếm].
 </details>

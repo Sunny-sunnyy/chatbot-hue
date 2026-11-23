@@ -1,6 +1,6 @@
 # Bài 39 — Đồ án được làm thế nào: một người quyết định và nhiều coding agent
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · bản 12:18: thêm một dòng vào bảng sự cố — lượt "dùng như người thật" trên trình duyệt thành bước thường xuyên (kể đủ ở bài 38) · từ trang hiện trạng, sổ việc, bảng quyền, lịch sử code · các lần sửa trước: khối Nguồn.*
+*Cập nhật 01:21, ngày 24/11/2026 · khớp hệ thống 00:21 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · thêm luật "nhắc lại cách hiểu trước khi xây" (22:05 23/11) và buổi tự test của chủ dự án · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC các bản gộp sau đó · đã áp biên bản kiểm độc lập 01:21 24/11 · dòng cũ: Nguồn.*
 
 **Bài trước đã biết:** hệ thống gồm những khối nào, đo bằng gì, và bộ test kiểm những gì (bài 38).
 **Bài này thêm:** ai làm ra hệ thống đó: ai quyết gì, việc ghi ở đâu, ai kiểm ai, và cách làm đã bị sửa ra sao sau từng sự cố.
@@ -62,7 +62,7 @@ Từ 10:11 ngày 18/11, chủ dự án duyệt một bảng quyền dùng lâu d
 
 **Lớp 2, agent con ngữ cảnh sạch đối chiếu**, ví dụ mỗi bài giáo trình. Lớp này cũng sai (ví dụ ở nửa để tra).
 
-**Lớp 3, soát khác hãng ở mốc chốt.** Nhóm soạn một file đề bài tự đủ; chủ dự án tự mở công cụ hãng khác và đưa file đó. Từ tối 22/11 đề bài phải mang đủ trạng thái của dự án, một danh sách nên đọc, và cả những điểm nhóm đã tìm ra ("Chi tiết để tra"). Trưa 22/11, ba bên (GPT-6, Gemini 4 Neon, Gemini 4 Carbon) soát những chỗ hai tính năng mới cùng chạy trong một lượt hỏi, nơi kiểm từng tính năng riêng không thấy lỗi, nêu 33 điểm. Cách xử theo luật chủ dự án chọn ngày 20/11: người viết phần code đó tái hiện từng điểm và **đếm trước** số lượt thật gặp nó; lỗi người dùng dễ gặp, lỗi an toàn, lỗi ghi sai kho thì sửa; lỗi hiếm thì ghi một dòng giới hạn kèm con số; không soát vòng hai (ví dụ ở nửa để tra).
+**Lớp 3, soát khác hãng ở mốc chốt.** Nhóm soạn một file đề bài tự đủ; chủ dự án tự mở công cụ hãng khác và đưa file đó. Đề bài mang đủ trạng thái của dự án, một danh sách nên đọc và các điểm nhóm đã tìm ra (từ tối 22/11; "Chi tiết để tra"). Mọi điểm được tái hiện, đếm số lượt gặp, rồi mới quyết sửa hay ghi giới hạn (quyết định 4; cách xử đủ ở nửa để tra).
 
 **Rào bằng máy** soát mỗi lần lưu và đẩy code: file vùng riêng tư, dòng trông như khoá, tên dự án khác của chủ dự án; lúc lưu còn chặn dòng trùng từ 40 ký tự liên tiếp với bộ câu chấm cất riêng (bài 37; quyết định 5 bên dưới). Nó nằm trong kho code, nên áp cho mọi agent và cả người.
 
@@ -77,9 +77,12 @@ Từ 10:11 ngày 18/11, chủ dự án duyệt một bảng quyền dùng lâu d
 | 18/11: một bản sửa an toàn qua review cùng hãng; Gemini chỉ ra nó ghi sai kết cục và làm mất một dòng gợi ý | soát khác hãng ở mốc chốt |
 | 21–22/11: chủ dự án nhắc kiểm thử quá nhiều; sáng 22/11 cả bộ test chạy bốn lần, bắt 0 lỗi mới | liều lượng theo rủi ro, không con số cố định; cả bộ test một lần cuối đợt |
 | 21/11: ít nhất 12 lần trong khoảng bốn tuần chủ dự án phải tự gợi một hướng nhóm lẽ ra phải nêu | "nghĩ rộng, đừng chờ dắt"; ba ngày thử nhóm tự giữ luật cách làm |
-| 22 và 23/11: chủ dự án hai lần nhắc thử sản phẩm bằng công cụ cho agent tự lái trình duyệt | thêm lượt "dùng như người thật" sau mỗi đợt gộp thứ người dùng thấy; lượt đầu ra ba điều mới mà bộ chụp soạn sẵn không thấy (bài 38) |
+| 22 và 23/11: chủ dự án hai lần nhắc thử sản phẩm bằng công cụ cho agent tự lái trình duyệt | thêm lượt "dùng như người thật" sau mỗi đợt gộp thứ người dùng thấy |
+| 23/11 tối: sau buổi tự test, chủ dự án xác nhận cách phiên điều phối viết lại nhận xét và muốn lần giao việc nào cũng được nhắc lại như vậy | luật "nhắc lại cách hiểu trước khi xây" (22:05 23/11, đoạn dưới) |
 
-Chủ dự án dặn tối 21/11: "phần này cũng nên linh hoạt chứ đừng cố định nhé… tôi sợ vấn đề này ảnh hưởng đến chất lượng dự án". Trong khoảng bốn tuần anh nhắc chuyện làm quá tay 9 lần, 7 lần về kiểm soát (rào, vòng review, đo lặp). Về hướng đi, lời anh ngày 21/11: "các bạn phải tự suy nghĩ rộng ra… chứ không phải đi theo hướng của tôi mà để tôi dắt các bạn đi vào ngõ cụt"; từ đó hướng anh nêu là một gợi ý để xét. Luật chung: sự cố lần đầu thì ghi lại, lặp lần hai mới thành luật, máy kiểm được thì làm phép kiểm thay chữ.
+**Nhắc lại cách hiểu trước khi xây.** Tối 23/11 chủ dự án tự test rồi gửi nhận xét; phiên điều phối viết lại ý anh thành hai nguyên tắc (bài 31). Anh trả lời "bạn hiểu đúng rồi nhé" và đề nghị: "…rồi bạn nhắc lại bằng lời của chính bạn…, sau đó tôi sẽ xác nhận xem các bạn có hiểu ý tôi không, tôi nghĩ hiểu đúng ý định mới là nút thắc". Luật ở file luật chung: lời giao có hơn một cách hiểu mà làm theo sẽ đổi thứ người dùng thấy ⇒ agent viết lại 2–5 dòng, một lần cho cả cụm nhận xét (điều sẽ KHÔNG làm, điều SUY THÊM, rồi điều anh NÓI), kết bằng "bạn sửa nếu tôi hiểu sai"; phần xây chờ xác nhận. Ngay tối đó luật bắt được một chỗ hiểu sai: cách đọc việc "đề xuất phần AI" được nói lại, chủ dự án sửa lúc 22:26.
+
+Về hướng đi, lời anh ngày 21/11: "các bạn phải tự suy nghĩ rộng ra… chứ không phải đi theo hướng của tôi mà để tôi dắt các bạn đi vào ngõ cụt"; từ đó hướng anh nêu là một gợi ý để xét. Luật chung: sự cố lần đầu thì ghi lại, lặp lần hai mới thành luật, máy kiểm được thì làm phép kiểm thay chữ.
 
 ## Quyết định và lý do
 
@@ -87,17 +90,17 @@ Chủ dự án dặn tối 21/11: "phần này cũng nên linh hoạt chứ đ�
 
 ### 1. Vì sao chia nhiều phiên theo vai, mà không để một agent làm hết?
 
-- **Đã chọn:** từ 24/10 một phiên điều phối và các phiên thực thi kiểm chéo nhau (chủ dự án duyệt ngày 24/10); phiên giảng có từ cuối tháng 10, phiên đo từ 05/11.
+- **Đã chọn:** từ 24/10 một phiên điều phối và các phiên thực thi kiểm chéo nhau (chủ dự án duyệt); sau đó thêm phiên giảng và phiên đo.
 - **Vì sao:** sự cố 24/10 ở bảng trên, cộng một vấn đề nữa thiết kế ghi: không có chỗ giữ ngữ cảnh riêng của từng phiên. Luật "ai làm thì người khác kiểm" cần ít nhất hai phiên (lập luận của người viết).
 - **Cách khác:** một phiên cộng agent con, hoặc hai phiên (một làm, một kiểm): chưa thử.
-- **Cái giá:** tầng phối hợp tốn: một phép đếm thô theo đường dẫn file ngày 21/11 thấy một tháng có 1.770 lần lưu code, chỉ 28 % chạm code sản phẩm. Máy ít bộ nhớ, nên mỗi phiên chạy nhiều nhất hai tiến trình nặng.
+- **Cái giá:** tầng phối hợp tốn: một tháng tới 21/11, chỉ 28 % lần lưu code chạm code sản phẩm (đếm thô, nửa để tra). Máy ít bộ nhớ, nên mỗi phiên chạy nhiều nhất hai tiến trình nặng.
 
 ### 2. Vì sao trạng thái ghi vào file, mà không để agent tự nhớ?
 
 - **Đã chọn:** trang hiện trạng, sổ việc, file luật chung và rào bằng máy, tất cả trong kho code.
 - **Vì sao:** phiên đóng là mất trí nhớ; nhóm ghi rằng cách làm phải đúng với bất kỳ agent nào, bất kỳ lúc nào.
 - **Cách khác:** giữ luật trong phần nhớ riêng của một công cụ: không làm, agent khác không đọc được.
-- **Cái giá:** sổ phình nhanh, phải viết lại thường xuyên (18/11: sổ việc khoảng 176 nghìn byte).
+- **Cái giá:** sổ phình nhanh, phải viết lại thường xuyên.
 
 ### 3. Vì sao quyền chia ba cột, và cột "hỏi trước" phải ngắn?
 
@@ -118,7 +121,7 @@ Chủ dự án dặn tối 21/11: "phần này cũng nên linh hoạt chứ đ�
 - **Đã chọn:** rào chạy mỗi lần lưu và đẩy code.
 - **Vì sao:** sự cố 25 và 26/10: luật chữ "nhớ quét" đã có mà vẫn lọt. Một dòng riêng tư đã lên lịch sử công khai thì coi như không gỡ được. Sau khi có rào, sổ ghi ít nhất 4 lần chặn đúng.
 - **Cách khác:** dặn bằng chữ: cách cũ, lọt hai lần.
-- **Cái giá:** rào chỉ bắt thứ máy nhận ra (dạng khoá, tên, chuỗi trùng); mô tả quá cụ thể vẫn lọt ít nhất 4 lần. Phép chặn 40 ký tự từng chặn cả giáo trình trích ví dụ kho; từ 16:45 22/11 chủ dự án chọn chỉ áp nó cho bộ câu chấm cất riêng (kho và bộ câu mẫu đã công khai từ 20/11). Sau này muốn giấu lại kho hay bộ câu mẫu thì các đoạn đã trích phải gỡ tay.
+- **Cái giá:** rào chỉ bắt thứ máy nhận ra (dạng khoá, tên, chuỗi trùng); mô tả quá cụ thể vẫn lọt ít nhất 4 lần. Phép chặn 40 ký tự nay chỉ áp cho bộ câu chấm cất riêng (nửa để tra).
 
 ### 6. Vì sao chữ "xong" phải kèm lệnh và đầu ra?
 
@@ -174,7 +177,7 @@ Tái hiện, đếm số lượt thật gặp nó. Lỗi người dùng dễ g�
 
 ## Cấu hình đang chạy
 
-*Cách làm lúc viết, trưa 22/11/2026.*
+*Cách làm lúc viết, trưa 22/11/2026; hàng "Nhắc lại cách hiểu" thêm 24/11/2026.*
 
 | Mục | Giá trị | Dùng để làm gì, vì sao | Đã thử giá trị khác chưa |
 |---|---|---|---|
@@ -185,6 +188,7 @@ Tái hiện, đếm số lượt thật gặp nó. Lỗi người dùng dễ g�
 | Luật cách làm | nhóm tự giữ trong ba ngày làm việc thử từ 21/11; chủ dự án giữ mục tiêu, luật cứng, bảng quyền | quyết định của chủ dự án 16:05 ngày 21/11 | tới 20/11 chủ dự án duyệt từng luật |
 | Soát khác hãng | ở mốc chốt; mặc định GPT và Gemini; chủ dự án gửi | quyết định 4 | — |
 | Rào bằng máy | lúc lưu và lúc đẩy code | quyết định 5 | — |
+| Nhắc lại cách hiểu | từ 22:05 23/11, một gạch của file luật chung | chủ dự án đề nghị 22:02 23/11; luật vào file luật chung 22:05; lúc kết phiên đêm (ghi 22:21) anh nhắc lại "vậy xác nhận và bạn ghi vào các file cần thiết đi nhé" | lần đầu: hai nguyên tắc 22:02 (chủ dự án xác nhận, trước khi luật thành chữ); lần hai, sau khi luật vào file: cách đọc việc "đề xuất phần AI" được nói lại và chủ dự án sửa 22:26 — luật bắt được một chỗ hiểu sai trước khi làm |
 | Skill | 11 file | mỗi quy trình một file, agent mở khi cần | chấm thử 18/11: chưa kết luận được skill có giúp không |
 
 ## Giới hạn đã biết
@@ -196,6 +200,11 @@ Tái hiện, đếm số lượt thật gặp nó. Lỗi người dùng dễ g�
 - **Ba ngày thử "nhóm tự giữ luật" chưa có kết quả xét lại** lúc viết.
 
 ## Chi tiết để tra
+
+- **Chuyển từ nửa để hiểu khi áp biên bản kiểm, 24/11/2026 (không đổi nội dung).** Quyết định 1, Đã chọn: "(chủ dự án duyệt ngày 24/10); phiên giảng có từ cuối tháng 10, phiên đo từ 05/11". Quyết định 2, Cái giá: "(18/11: sổ việc khoảng 176 nghìn byte)". Bảng sự cố, hàng "22 và 23/11", cột sửa: "…; lượt đầu ra ba điều mới mà bộ chụp soạn sẵn không thấy (bài 38)". Lớp 3: "Từ tối 22/11 đề bài phải mang đủ trạng thái…" viết gọn, cùng nội dung. Đoạn "Nhắc lại cách hiểu": "Nhóm sửa theo nhận xét trong đêm (bài 31, bài 26)." (nay ở gạch "Buổi tự test").
+- **Chuyển từ nửa để hiểu 24/11/2026 (không đổi nội dung).** Lớp 3: "Trưa 22/11, ba bên (GPT-6, Gemini 4 Neon, Gemini 4 Carbon) soát những chỗ hai tính năng mới cùng chạy trong một lượt hỏi, nơi kiểm từng tính năng riêng không thấy lỗi, nêu 33 điểm. Cách xử theo luật chủ dự án chọn ngày 20/11: người viết phần code đó tái hiện từng điểm và **đếm trước** số lượt thật gặp nó; lỗi người dùng dễ gặp, lỗi an toàn, lỗi ghi sai kho thì sửa; lỗi hiếm thì ghi một dòng giới hạn kèm con số; không soát vòng hai (ví dụ ở nửa để tra)." · quyết định 1, cái giá: "một phép đếm thô theo đường dẫn file ngày 21/11 thấy một tháng có 1.770 lần lưu code, chỉ 28 % chạm code sản phẩm" · quyết định 5, cái giá: "Phép chặn 40 ký tự từng chặn cả giáo trình trích ví dụ kho; từ 16:45 22/11 chủ dự án chọn chỉ áp nó cho bộ câu chấm cất riêng (kho và bộ câu mẫu đã công khai từ 20/11). Sau này muốn giấu lại kho hay bộ câu mẫu thì các đoạn đã trích phải gỡ tay." · đoạn cuối mục "Cách làm đã bị sửa nhiều lần": "Chủ dự án dặn tối 21/11: "phần này cũng nên linh hoạt chứ đừng cố định nhé… tôi sợ vấn đề này ảnh hưởng đến chất lượng dự án". Trong khoảng bốn tuần anh nhắc chuyện làm quá tay 9 lần, 7 lần về kiểm soát (rào, vòng review, đo lặp)."
+- **Nhắc lại cách hiểu trước khi xây — đủ.** Lời chủ dự án 22:02 23/11 (sau khi dán lại hai nguyên tắc phiên điều phối viết): "bạn hiểu đúng rồi nhé. à có nên thiết kế 1 skills, hay viết vào các file .md về trạng thái, ngữ cảnh là các coding agent có đang hiểu đúng ý tôi hay không, kiểu như bằng lời của chính tôi, kiểu mỗi lần tôi bảo các coding agent làm 1 việc, tôi cung cấp các bối cảnh cho coding agent ( tôi có thể cung cấp thiếu thông tin, các bạn phải tự tổng hợp, suy luận, tìm hiểu, ... ) rồi bạn nhắc lại bằng lời của chính bạn …, sau đó tôi sẽ xác nhận xem các bạn có hiểu ý tôi không, tôi nghĩ hiểu đúng ý định mới là nút thắc". Nhóm chọn ghi thành một gạch của mục "Cách nhìn việc" trong file luật chung (không làm skill riêng), vào nhánh chính 22:05 23/11 sau một phiên khác đọc; lúc kết phiên đêm (ghi 22:21) anh nhắc lại: "Ý "nhắc lại cách hiểu để bạn xác nhận": vậy xác nhận và bạn ghi vào các file cần thiết đi nhé". Vì sao một gạch trong file luật chung mà không làm skill riêng (chủ dự án hỏi đúng câu này: "có nên thiết kế 1 skills, hay viết vào các file .md…"): chưa thấy ghi lý do. Điều thấy được: file luật chung là file mọi agent đọc khi mở phiên, còn skill chỉ được mở khi việc cần (file luật chung ghi vậy); nối hai điều đó thành lý do là lập luận, không phải số đo. Nội dung: lời giao / nhận xét có hơn một cách hiểu mà làm theo sẽ đổi thứ người dùng thấy ⇒ agent đang nói chuyện với chủ dự án viết lại bằng lời của mình, 2–5 dòng, MỘT lần cho cả cụm nhận xét của một buổi: trước hết điều sẽ KHÔNG làm và điều SUY THÊM từ bối cảnh, code, số đếm (chủ dự án có thể nói thiếu, và hay gật nhanh nên hai phần này đứng đầu, ngắn), rồi điều chủ dự án NÓI; kết bằng "bạn sửa nếu tôi hiểu sai". Đếm, đọc, chuẩn bị làm song song; phần xây phụ thuộc cách hiểu chờ xác nhận — chủ dự án đã nói đi vắng thì không chờ: ghi "[cách đọc, CHƯA xác nhận]", lấy nghĩa hẹp, xây thứ lùi được. Cách hiểu đã xác nhận ghi nguyên văn vào trang hiện trạng kèm chữ "CHỦ DỰ ÁN XÁC NHẬN" và đi nguyên văn vào lời giao cho phiên khác. Việc chỉ có một nghĩa (đổi một nhãn, sửa một lỗi đã tái hiện) thì làm luôn. Ví dụ đầu tiên của luật: hai nguyên tắc 22:02 (bài 31 quyết định 2) — có trước khi luật thành chữ. Lần hai, sau khi luật vào file, cùng tối: phiên điều phối nói lại cách đọc việc "đề xuất phần AI bổ sung" — trang hiện trạng ghi cách đọc đó theo đúng khuôn (KHÔNG làm, SUY THÊM, chủ dự án NÓI) và ghi đã nói lại với chủ dự án; chủ dự án dán lại một dòng phiên điều phối viết (bước xếp lại kết quả tìm) rồi sửa lúc 22:26: "đây là rerank, chỉ là 1 kỹ thuật nhỏ trong rag thôi mà, không đáng làm, ý tôi là những phần như Agentic rag, agent rag, agent, llm, harness, các chức năng mới, có thể đề xuất xây các tính năng mới, hệ thống đề xuất, huấn luyện hoặc fine tune model nhỏ, vấn hành model, ... để phiên sau bàn tiếp, tôi kết phiên mở lại nhé"; 22:30 anh nhắc thêm các mục anh nêu chỉ là ví dụ: "đó chỉ là các ví dụ thôi, các bạn phải tự tìm hiểu, nghiên cứu, tìm kiếm, thảo luận, ... rồi đề xuất với tôi chứ". Trang hiện trạng ghi lời 22:26 dưới chữ "CHỦ DỰ ÁN SỬA CÁCH ĐỌC". Chủ dự án chưa chọn đề xuất nào.
+- **Buổi tự test của chủ dự án, tối 23/11.** Theo một tờ hướng dẫn nhóm soạn (mục 1, 2A, 2B, 2D, E1; anh bỏ 2C — hỏi bằng ảnh). Nhận xét 21:10 (đường chính), 21:28 (hỏi bằng ảnh; buổi tối của lịch — ca "thay HANOK bằng MoKa Kafe"), 21:48 (thêm điểm vào lịch đã xếp), 22:12 (2D bình thường; E1: bỏ điểm thì trợ lý tự thêm điểm khác). Nhóm sửa trong đêm (bài 31, bài 26): giao diện và hỏi bằng ảnh một lần bấm (vào nhánh chính 21:29–22:49), sửa lịch hỏi lại bằng nút (phần hiển thị từ bản gộp 00:13 24/11, các hành vi sau công tắc từ lúc bật 00:17). Tờ hướng dẫn test tiếp sau các bản sửa đã soạn sẵn; chủ dự án chưa tự thử cụm sửa lịch mới lúc viết.
 
 **Dòng thời gian các phase**
 
@@ -258,4 +267,9 @@ Tái hiện, đếm số lượt thật gặp nó. Lỗi người dùng dễ g�
 - Mẫu đề bài mới cho AI khác hãng (thêm 22:04 22/11/2026): ba lời dặn của chủ dự án và cách nhóm áp (khối trạng thái, danh sách nên đọc, nhãn "đã biết — đừng báo lại", bí mật không đưa, cái giá, đề bài mù): `session_prompt/HIEN_TRANG.md` mục 4, gạch "21:39 22/11/2026 — ĐỀ BÀI CHO AI KHÁC" (gồm lời nói rõ thêm 21:48) và gạch "20:44 22/11/2026" (lời dặn dùng agent con, nghiên cứu chuyên sâu) [chép, đã mở]; chữ mẫu: `guides/khung/GOI_REVIEW_KHAC_HANG.mau.md` mục 1, 2, 5 và ghi chú cho người soạn [đã mở]. "Chưa có đề bài nào theo mẫu mới": liệt kê `data/review_khac_hang/` lúc 22:04 22/11, file đề bài mới nhất ghi 20:54 [riêng tư; người viết tự liệt kê].
 - Quét số cũ 20:46 23/11/2026: chỉ dòng Cập nhật ("khớp hệ thống trưa 23/11 (49 tính năng, kho 267 bài)" ⇒ 57 mở, 6 tắt, kho 269); các số test trong bảng sự cố (22/11: bốn lượt sáng, lượt chốt 76 file / 2.060 ca) là chuyện của ngày đó, giữ; "45 dòng" là bảng đính chính 18/11, không phải bảng điểm. Lệnh: `corpus.file_count` / `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269 / 9533) và đếm dòng `: true` / `: false` dưới `assistant:` của `backend/config/settings.yaml` (57 / 6), chạy 20:40 23/11/2026 trên cây chính `03229b64` [đã chạy].
 
+- **Đợt đầu ngày 24/11/2026 (cụm S, phần bài 39).** Người viết đọc cây chính `ad7c9d83` (00:21 24/11). Dòng Cập nhật trước: "Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · bản 12:18: thêm một dòng vào bảng sự cố — lượt "dùng như người thật" trên trình duyệt thành bước thường xuyên (kể đủ ở bài 38) · từ trang hiện trạng, sổ việc, bảng quyền, lịch sử code · các lần sửa trước: khối Nguồn."
+  - Luật nhắc lại cách hiểu: `AGENTS.md` mục "Cách nhìn việc" gạch "Nhắc lại cách hiểu trước khi xây" [tài liệu, đã mở]; `git show --stat 05f694f1` (gộp 22:05 23/11, "session D read it and its four notes are applied"; commit `cb20369e` 22:03, `f38e7953` 22:05) [code]. Lời chủ dự án: `data/loi_user/2026-11-23.md` dòng 22:02 ("bạn hiểu đúng rồi nhé…", "…nút thắc") và 22:21 ("vậy xác nhận và bạn ghi vào các file cần thiết đi nhé") [riêng tư; chép, đã mở]. Trang hiện trạng ghi câu 22:21 kèm giờ "22:02" (mục 4 gạch "CHỦ DỰ ÁN MUỐN AGENT NHẮC LẠI CÁCH HIỂU") — bài theo file lời nguyên văn.
+  - Buổi tự test: `session_prompt/HIEN_TRANG.md` dòng 3 ("mục 1, 2A, 2B, 2D, E1; bỏ 2C"), mục 4 gạch "NHẬN XÉT CỦA CHỦ DỰ ÁN SAU KHI TỰ TEST"; `data/loi_user/2026-11-23.md` dòng 21:10, 21:28, 21:48, 22:12 [chép]; tờ hướng dẫn: `data/test_cuoi/TEST_TOI_2311.md`, `TEST_2411.md` [riêng tư; chỉ thấy tên file, chưa mở nội dung]. Mốc sửa: `git log --since='2026-11-23 20:14' origin/main -- backend frontend/src` [code].
+  - Đếm tính năng 58 / 6: lệnh của lời giao, 00:24 24/11 [tự đếm]. Độ dài nửa để hiểu 13.664 ⇒ 13.659; phần chuyển xuống: gạch "Chuyển từ nửa để hiểu 24/11/2026".
+- **Áp biên bản kiểm độc lập k1 (24/11/2026, agent con a2; biên bản `data/hoc_cung_D/kiem/dot_2411_k1_sua_lich_kiem.md` [riêng tư]).** Dòng Cập nhật trước: "Cập nhật 00:48, ngày 24/11/2026 · khớp hệ thống 00:21 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · thêm luật "nhắc lại cách hiểu trước khi xây" (22:05 23/11) và buổi tự test của chủ dự án · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC các bản gộp sau đó · dòng cũ: Nguồn." [chép]. Thứ tự giờ của luật nhắc lại cách hiểu: `git log` `05f694f1` 22:05 (gộp luật) trước dòng 22:21 của `data/loi_user/2026-11-23.md` ("Ý "nhắc lại cách hiểu để bạn xác nhận": vậy xác nhận và bạn ghi vào các file cần thiết đi nhé"); `session_prompt/HIEN_TRANG.md` mục 4 ghi đó là lời "nhắc lại lúc kết phiên đêm" [git; riêng tư; chép]. Lần hai của luật: `data/loi_user/2026-11-23.md` dòng 22:26 ("chủ dự án SỬA cách đọc về 'phần AI bổ sung'", nguyên văn chép trong bài) và 22:30; `HIEN_TRANG.md` mục 4 gạch "ĐỒ ÁN PHẢI CÓ THÊM PHẦN 'AI'" ("[cách đọc của phiên điều phối, ĐÃ nói lại với chủ dự án lúc kết phiên…]", rồi "CHỦ DỰ ÁN SỬA CÁCH ĐỌC (22:26 23/11/2026)") [riêng tư; chép]. Dòng "bước xếp lại kết quả tìm…" ở đầu lời 22:26 là dòng anh dán lại; không tìm được nó nằm ở file nào của nhóm [chưa chắc]. Giờ vào nhánh chính của hỏi bằng ảnh một lần bấm: `git log --first-parent origin/main` — gộp `6ab1380f` 21:29 (commit nhánh `1aabd719` 21:20), giao diện `8702829b` 21:49, `0161beba` 22:00, ngoặc kép `16896cb7` 22:49 [git]. Skill hay file: `AGENTS.md` ("Skill là file Markdown thường … agent khác mở file khi việc cần"; "Mở phiên: làm theo `session_prompt/START_SESSION.md`") [tài liệu]; lời commit `cb20369e`, `f38e7953` không ghi lý do [git].
 </details>
