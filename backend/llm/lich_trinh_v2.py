@@ -823,6 +823,14 @@ def co_suat_dien(diem: dict) -> bool:
     return "le_hoi_nghe_thuat" in diem["loai"]
 
 
+def bai_cua_diem(bang: BangV2, id_: str) -> str | None:
+    """Đường dẫn bài kho để TÊN ĐIỂM trên thẻ lịch bấm mở — chỉ khi bài đó là bài của chính điểm. Hai dòng bảng dùng chung một bài (bảng 16: Trung tâm
+    Nghệ thuật Lê Bá Đảng lấy tư liệu từ bài Phố đi bộ Nguyễn Đình Chiểu) ⇒ chỉ dòng ĐỨNG TRƯỚC trong bảng giữ link; dòng sau để chữ thường — bấm tên
+    trung tâm mà mở ra bài phố đi bộ thì người đọc tưởng bấm nhầm (B đọc code 23/11/2026)."""
+    nguon = bang.theo_id[id_]["nguon"]
+    return nguon if next(d["id"] for d in bang.diem if d["nguon"] == nguon) == id_ else None
+
+
 def ten_cua(diem: dict) -> list[str]:
     return [diem["ten"], *diem["ten_khac"]]
 
@@ -859,7 +867,7 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                             "loai_diem": list(d["loai"]),  # giao diện: màu + nhãn theo loại điểm (không vào tin nhắn gửi model)
                             # giao diện: tên điểm bấm mở bài kho của chính điểm đó (chủ dự án 21:10 23/11/2026: "nên để cho người dùng click vào được các
                             # bài như đại nội huế, đầm chuồn, phố đi bộ"); `nguon` của dòng bảng = đường dẫn bài kho; không vào tin nhắn gửi model
-                            "bai_id": d["nguon"]})
+                            "bai_id": bai_cua_diem(bang, id_)})
         if ng["ngay"] in khung.get("toi_nghi", {}):  # tối nghỉ: dòng do code (không qua model, không nguồn)
             muc.append({"id_muc": f"n{ng['ngay']}-toi-1", "buoi": "toi", "loai": "nghi", "id_diem": None,
                         "ten": CAU_TOI[khung["toi_nghi"][ng["ngay"]]], "gio": None, "nguon": None, "anh": None, "toa_do": None, "nhan": []})
