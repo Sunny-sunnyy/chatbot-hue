@@ -923,7 +923,7 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 # lý do = mã luật của lần thử thêm thẳng; chỉ chắc khi người dùng nói rõ MỘT buổi (không nói chỗ ⇒ `loi` là của chỗ thử sau cùng,
                 # không phải lý do chung — review của phiên khác 21/11) ⇒ ngoài ca đó để None, câu dùng lời chung
                 ma = set(loi) if ngay is not None and h.buoi is not None else set()
-                ly_do = _loai_ly_do(ma)
+                ly_do = _loai_ly_do_cho(ma, noi_khu) if them_day and not ts.han_che else _loai_ly_do(ma)  # công tắc bật: khu xa / chặng quá dài nói đúng tên
                 # công tắc `sua_lich_them_day`, lệnh KHÔNG nói rõ một buổi: lý do của TỪNG chỗ đã thử, loại gặp nhiều đứng trước. Đếm 23/11/2026 trên
                 # lưới 108 lịch: 797 lệnh "thêm X" của đoàn thường bị từ chối — 701 chỉ vướng MỘT loại (690 là khu), 96 lẫn hai ba loại ⇒ một loại thì
                 # câu nói thẳng loại đó, lẫn thì nêu từng loại (trước đó mọi ca đều đọc "lịch đang kín…", kể cả 20 / 30 điểm của lịch mặc định). Đoàn có
@@ -970,6 +970,10 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             ng_i = _vi_tri(k)[i][0]
             bao = h.loai == "them_diem" or vt.get(i, (ng_i,))[0] != ng_i
             khu = ng_i if bao and ng_i in (k.get("khu_them") or ()) else None
+            # DỜI trong chính một ngày đã mang dấu khu (và THAY trên ngày đó, nhánh dưới): lệnh được nhận theo luật khu đã nới của ngày ấy (không thì
+            # ngày người dùng đã nhận đi hai khu thành kẹt) ⇒ dòng trả lời nói thật ngày đó VẪN đi sang khu không kề, chặng nào, bao nhiêu phút
+            # (phiên đọc code 23/11/2026: 48 lệnh thay trên lịch mặc định sau "thêm Trường Quốc Học" được nhận mà dòng "Đã thay…" không nói gì)
+            khu_van = ng_i if not bao and ng_i in (k.get("khu_them") or ()) else None
             day = ng_i if bao and ng_i in (k.get("day_them") or ()) and v2.ngay_vuot_nhip(
                 bang, k["tham_so"], next(x for x in k["ngay"] if x["ngay"] == ng_i), ng_i in (k.get("khu_them") or ())) else None
             if k.get("day_them"):  # các bước sau của CHÍNH lượt này phải thấy ngày ứng viên (dấu của khung đầu lượt là bản cũ)
@@ -978,7 +982,8 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 luu["khu_them"] = sorted({*(luu.get("khu_them") or ()), *k["khu_them"]})
             kq["da_ap"].append({"loai": h.loai, "diem": i, "ngay": _vi_tri(k)[i][0], "buoi": _vi_tri(k)[i][1], "the_cho": the_cho,
                                 **({"toi_xep_lai": xep_toi} if xep_toi else {}), **({"day": _tin_day(k, day)} if day is not None else {}),
-                                **({"khu": _chang_khu(bang, k, khu)} if khu is not None else {})})
+                                **({"khu": _chang_khu(bang, k, khu)} if khu is not None else {}),
+                                **({"khu_van": _chang_khu(bang, k, khu_van)} if khu_van is not None else {})})
         elif h.loai == "thay_diem":
             if i is None or i not in vt:
                 khong(h.ten if i is None else ten_cua_diem(bang, i),
@@ -1014,7 +1019,9 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 continue
             xep_toi = _toi_xep_lai(khung, k)  # điểm thay VÀO vốn là hoạt động tối ⇒ các buổi tối bị chọn lại
             khung, loai = k, [x for x in loai if x != j] + [i]
-            kq["da_ap"].append({"loai": "thay_diem", "diem": i, "moi": j, **({"toi_xep_lai": xep_toi} if xep_toi else {})})
+            ng_j = _vi_tri(k)[j][0]
+            kq["da_ap"].append({"loai": "thay_diem", "diem": i, "moi": j, **({"toi_xep_lai": xep_toi} if xep_toi else {}),
+                                **({"khu_van": _chang_khu(bang, k, ng_j)} if ng_j in (k.get("khu_them") or ()) else {})})
     # điểm "đã dời" mà cuối lượt vẫn ở đúng chỗ cũ (dời về chỗ đang đứng; hai lần dời đổi chỗ ngược nhau) ⇒ không báo "Đã dời" (soát khác hãng 20/11)
     vt_cu, vt_moi = _vi_tri(luu["khung"]), _vi_tri(khung)
     for a in [a for a in kq["da_ap"] if a["loai"] == "doi_buoi" and a["diem"] in vt_moi and vt_cu.get(a["diem"]) == vt_moi[a["diem"]]]:
@@ -1067,9 +1074,10 @@ def _chang_khu(bang: v2.BangV2, khung: dict, ngay: int) -> dict:
     return {"ngay": ngay, "so_khu": so_khu, "chang": chang, "phut": max((c[2] for c in chang), default=0)}
 
 
-def _cau_khu(d: dict) -> str:
+def _cau_khu(d: dict, van: bool = False) -> str:
+    """`van`: lệnh THAY / DỜI trên một ngày ĐÃ mang dấu khu từ trước ⇒ "vẫn đi qua", không phải "nay đi qua"."""
     chang = "; ".join(f"từ {a} sang {b} là hai khu không liền nhau, đi mất khoảng {m} phút" for a, b, m in d["chang"])
-    return f" Ngày {d['ngay']} nay đi qua {d['so_khu']} khu" + (f": {chang}." if chang else " trong một ngày (lịch tự xếp chỉ đi nhiều nhất hai khu).")
+    return f" Ngày {d['ngay']} {'vẫn' if van else 'nay'} đi qua {d['so_khu']} khu" + (f": {chang}." if chang else " trong một ngày (lịch tự xếp chỉ đi nhiều nhất hai khu).")
 
 
 def _cau_day(d: dict) -> str:
@@ -1170,10 +1178,12 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
                        + (_cau_toi_xep_lai(bang, a["toi_xep_lai"]) if a.get("toi_xep_lai") else ""))
         elif t == "doi_buoi":
             out.append(f"Đã dời {ten_cua_diem(bang, a['diem'])} sang buổi {NHAN_BUOI[a['buoi']]} ngày {a['ngay']}."
-                       + (_cau_day(a["day"]) if a.get("day") else "")
+                       + (_cau_day(a["day"]) if a.get("day") else "") + (_cau_khu(a["khu"]) if a.get("khu") else "")
+                       + (_cau_khu(a["khu_van"], True) if a.get("khu_van") else "")
                        + (_cau_toi_xep_lai(bang, a["toi_xep_lai"]) if a.get("toi_xep_lai") else ""))
         elif t == "thay_diem":
             out.append(f"Đã thay {ten_cua_diem(bang, a['diem'])} bằng {ten_cua_diem(bang, a['moi'])}."
+                       + (_cau_khu(a["khu_van"], True) if a.get("khu_van") else "")
                        + (_cau_toi_xep_lai(bang, a["toi_xep_lai"]) if a.get("toi_xep_lai") else ""))
         elif t == "doi_cho_ngay":
             out.append(f"Đã đổi chỗ các điểm buổi sáng và chiều của ngày {a['ngay_a']} với ngày {a['ngay_b']}; hoạt động buổi tối giữ theo từng ngày.")

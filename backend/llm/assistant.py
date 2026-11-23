@@ -239,6 +239,9 @@ class AssistantFlags:
     # Quán ăn gợi ý trong lịch bản 2 (plan `2026-11-14-quan-trong-lich-plan.md`): ≤ 2 quán cùng cụm mỗi bữa do code chọn, `lich["an"]`
     # (không vào tin nhắn gửi model). TẮT tới khi đạt; cần cờ bản 2 + bảng quán (`assistant.lich_trinh_bang_quan`) + toạ độ điểm (`lich_trinh_toa_do`)
     quan_lich: bool = False
+    # 23/11/2026: bữa trưa của lịch lấy trước điểm có quán CÓ BÀI TRONG KHO trên đường người đi (`quan_lich.an_uong`, `kho_truoc`). Đếm 960 tổ hợp biểu
+    # mẫu + các lịch sau lệnh thêm: số ở runbook 10.2. Cần `quan_lich`. TẮT tới khi phiên điều phối mở cùng `sua_lich_them_khu`.
+    quan_trua_kho_truoc: bool = False
     quan_bang: "dict | None" = field(default=None, compare=False, repr=False)
     quan_toa_do: "dict | None" = field(default=None, compare=False, repr=False)
     anh_lich_bang: "dict | None" = field(default=None, compare=False, repr=False)
@@ -344,6 +347,8 @@ class AssistantFlags:
             raise ValueError("assistant.anh_lich needs assistant.len_ke_hoach_v2: true and the photo table (assistant.lich_trinh_bang_anh)")
         if self.luu_tru_lich and (not self.len_ke_hoach_v2 or self.luu_tru_bang is None):
             raise ValueError("assistant.luu_tru_lich needs assistant.len_ke_hoach_v2: true and the lodging table (assistant.lich_trinh_bang_luu_tru)")
+        if self.quan_trua_kho_truoc and not self.quan_lich:
+            raise ValueError("assistant.quan_trua_kho_truoc needs assistant.quan_lich: true")
         if self.quan_lich and (not self.len_ke_hoach_v2 or self.quan_bang is None):
             raise ValueError("assistant.quan_lich needs assistant.len_ke_hoach_v2: true and the restaurant table (assistant.lich_trinh_bang_quan)")
         if self.cong_cong_cu not in ("tu_khoa", "luon"):

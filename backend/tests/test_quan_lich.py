@@ -174,3 +174,26 @@ def test_no_kb_place_in_the_table_is_marked_closed_in_its_own_article():
         if any(tu in d.lower() for d in trang_thai for tu in ("đóng cửa", "ngừng hoạt động", "ngưng hoạt động")):
             da_dong.append(q["bai_id"])
     assert da_dong == []
+
+
+def test_lunch_prefers_a_stop_with_corpus_restaurants_along_the_route_when_the_switch_is_on():
+    """Công tắc `quan_trua_kho_truoc` (23/11/2026). Tắt ⇒ đúng kết quả cũ. Bật ⇒ bữa trưa lấy trước điểm có quán CÓ BÀI TRONG KHO theo đường người đi
+    (cuối buổi sáng ⇒ đầu buổi chiều ⇒ điểm sáng sớm hơn); không bữa nào mất quán kho; quán kho ghi đóng bữa trưa vẫn không được gợi ý. Ca thật: buổi
+    sáng kết ở Lăng Minh Mạng (không quán kho trong 2 km) ⇒ từng chỉ còn một quán cà phê "chưa kiểm"; nay lấy quán kho ở điểm đầu buổi chiều."""
+    kho = lambda a: sum(q["nhan"] is None for q in a["quan"])  # quán của kho không mang nhãn "chưa kiểm"
+    lech = {q["ten"] for ds in QUAN.values() for q in ds if "trua" in q.get("khong_bua", ())}
+    len_co = 0
+    for n, kieu, st in itertools.product((1, 2, 3), ("nhe_nhang", "can_bang", "kham_pha"), ((), ("di_tich",), ("am_thuc",))):
+        k = v2.xep_v2(BANG_V2, v2.ThamSoV2(n, kieu_di=kieu, so_thich=st))
+        assert ql.an_uong(QUAN, BANG_V2, k, TOA, False) == ql.an_uong(QUAN, BANG_V2, k, TOA)
+        cu = {a["ngay"]: a for a in ql.an_uong(QUAN, BANG_V2, k, TOA) if a["bua"] == "trua"}
+        moi = {a["ngay"]: a for a in ql.an_uong(QUAN, BANG_V2, k, TOA, True) if a["bua"] == "trua"}
+        assert set(moi) == set(cu)
+        for d, a in moi.items():
+            assert kho(a) >= kho(cu[d]) and not lech & {q["ten"] for q in a["quan"]}
+            len_co += kho(cu[d]) == 0 < kho(a)
+    assert len_co > 0
+    khung = {"ngay": [{"ngay": 1, "buoi": {"sang": ["dai_noi", "lang_minh_mang"], "chieu": ["dam_chuon"], "toi": []}}]}
+    tat, bat = (next(a for a in ql.an_uong(QUAN, BANG_V2, khung, TOA, x) if a["bua"] == "trua") for x in (False, True))
+    assert kho(tat) == 0 and tat["gan"] == "Lăng Minh Mạng"
+    assert kho(bat) > 0 and bat["gan"] == "Đầm Chuồn"  # điểm ĐẦU buổi chiều (sắp đi tới) đứng trước điểm sáng sớm hơn

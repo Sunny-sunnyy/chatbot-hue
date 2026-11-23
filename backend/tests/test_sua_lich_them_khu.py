@@ -168,3 +168,30 @@ def test_default_schedule_picks_the_slot_with_fewest_cross_area_legs_and_says_th
     cau = lambda t: s.thay_doi(B, _them(luu, ten[t], them_day=True, them_khu=True))[0]["cau"]  # noqa: E731
     assert f"cũng vướng: {s.CAU_LY_DO['kin']}." in cau("Lăng Gia Long")
     assert f"cũng vướng: {s.CAU_LY_DO['khu_xa']}." in cau("Vườn quốc gia Bạch Mã")
+
+
+def test_replace_or_move_on_a_day_that_already_crosses_areas_is_accepted_and_says_so(bang_phut):
+    """Ngày người dùng đã nhận đi sang khu không kề: lệnh THAY / DỜI trên ngày đó được nhận theo luật khu đã nới (không thì ngày ấy thành kẹt) và dòng
+    trả lời nói thật ngày đó VẪN đi qua mấy khu, chặng nào, bao nhiêu phút (phiên đọc code 23/11/2026: dòng "Đã thay…" từng không nói gì)."""
+    k, luu = _lich(2, "can_bang", so_thich=())
+    ten = {d["ten"]: i for i, d in T.items()}
+    kw = dict(them_khong_the=True, them_day=True, them_khu=True)
+    dau = _them(luu, ten["Trường Quốc Học Huế"], them_day=True, them_khu=True)
+    ngay = dau["da_ap"][0]["ngay"]
+    co_thay = co_doi = 0
+    for cu in [j for j, v in s._vi_tri(dau["khung"]).items() if v[0] == ngay and j != ten["Trường Quốc Học Huế"]]:
+        for moi in [j for j in NGAY_DIEM if j not in s._vi_tri(dau["khung"])][:14]:
+            kq = s.ap(B, dau["luu"], [s.HanhDong(loai="thay_diem", ten=T[cu]["ten"], ten_moi=T[moi]["ten"])], **kw)
+            if not kq["da_ap"]:
+                continue
+            assert v2.kiem_khung_v2(B, kq["khung"]) == []
+            cau = s.thay_doi(B, kq)[0]["cau"]
+            con_dau = ngay in (kq["khung"].get("khu_them") or ())
+            assert (f" Ngày {ngay} vẫn đi qua " in cau) == con_dau, cau
+            co_thay += con_dau
+    for b in v2.BUOI_NGAY:  # dời chính điểm vừa thêm sang buổi kia của cùng ngày
+        kq = s.ap(B, dau["luu"], [s.HanhDong(loai="doi_buoi", ten="Trường Quốc Học Huế", ngay=ngay, buoi=b)], **kw)
+        if kq["da_ap"] and ngay in (kq["khung"].get("khu_them") or ()):
+            co_doi += 1
+            assert f" Ngày {ngay} vẫn đi qua " in s.thay_doi(B, kq)[0]["cau"]
+    assert co_thay > 0 and co_doi > 0

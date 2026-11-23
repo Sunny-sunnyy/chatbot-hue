@@ -136,7 +136,7 @@ def gan_o_an(lich: dict, bang, khung: dict, flags: AssistantFlags) -> None:
         elif len(khung["ngay"]) >= 2:
             lich["cho_o_link"] = True
     if flags.quan_lich:
-        lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do)
+        lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do, flags.quan_trua_kho_truoc)
 
 
 def ghi_cau_bi_loai(trace: AnswerTrace, id_muc: str, ma: str, cau: str) -> None:

@@ -236,8 +236,7 @@ def test_ly_do_tu_choi_khi_khong_noi_ro_mot_buoi():
         n += 1
         # lý do nêu ra = đúng các lý do mà lệnh NÓI RÕ từng buổi nhận được (cơ chế có từ trước), không thêm không bớt
         tung_buoi = {_them(luu, i, x["ngay"], bb, them_day=True)["khong_doi"][0]["ly_do"] for x in k["ngay"] for bb in v2.BUOI_NGAY if bb in T[i]["buoi"]}
-        # (lệnh không nói buổi tách riêng "khu xa trung tâm" — với lệnh nói rõ buổi nó vẫn nằm trong loại khu)
-        assert {{"khu_xa": "khu"}.get(m, m) for m in kd["ly_do_cho"]} == tung_buoi - {None} and kd["ly_do_cho"]
+        assert set(kd["ly_do_cho"]) == tung_buoi - {None} and kd["ly_do_cho"]
         assert "đang kín" not in cau and "phạm luật xếp" not in cau
         # mỗi câu code nhớ cho lượt kế đứng riêng trong «…» — không còn "thay A bằng X hoặc thay B bằng X" chép nguyên là một lệnh hai nghĩa
         assert all(f"«{g}»" in cau for g in s.cau_goi_y(B, kq)) and cau.count("«") == len(s.cau_goi_y(B, kq))
