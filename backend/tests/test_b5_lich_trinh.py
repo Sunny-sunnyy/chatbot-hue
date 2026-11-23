@@ -40,12 +40,13 @@ CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lic
                    # 23/11/2026: hai công tắc buổi tối — `bo_toi_de_trong` cần `sua_lich_v2`, `toi_nhe` cần `len_ke_hoach_v2` + bảng điểm ⇒ tắt theo (giả lập mở
                    # cả hai trong settings: cả bốn kiểu thiết lập dùng chung đều hỏng lúc nạp); test của riêng hai công tắc tự bật chúng
                    "toi_nhe": False, "bo_toi_de_trong": False, "bo_toi_hoi_lai": False,
+                   "quan_trua_kho_truoc": False,  # 23/11/2026: cần `quan_lich` (đang tắt ở hằng này)
                    "xuat_pptx": False,  # xuất PowerPoint cần `sua_lich_v2` ⇒ tắt theo (không thì lúc bật cờ trong settings hai file test ném lỗi)
                    # 22/11/2026: công cụ "gần một điểm có gì" cần bảng quán + toạ độ điểm, hai bảng chỉ được nạp khi `len_ke_hoach_v2` bật ⇒ test tắt
                    # `len_ke_hoach_v2` phải tắt theo (thử bật `gan_diem` trong settings: `test_quan_lich` hỏng ngay khi nạp)
                    "gan_diem": False,
                    # 23/11/2026: `sua_lich_them_day` cần `sua_lich_them_khong_the` ⇒ tắt theo (thử bật trong settings: 20 file test hỏng ngay khi nạp)
-                   "sua_lich_them_day": False}
+                   "sua_lich_them_day": False, "sua_lich_them_khu": False}
 BANG = nap_bang_lich(SETTINGS)
 ON = AssistantFlags(tim_them=True, lich_trinh=True, bang_lich=BANG)
 OFF = AssistantFlags(tim_them=True)
