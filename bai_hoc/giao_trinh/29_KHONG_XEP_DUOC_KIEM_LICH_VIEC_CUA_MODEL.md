@@ -1,6 +1,6 @@
 # Bài 29 — Khi không xếp được, bước kiểm lịch, và phần việc của model
 
-*Cập nhật 20:20, ngày 23/11/2026 · đã áp biên bản kiểm độc lập tối 23/11 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · sửa ba câu đã cũ (Nguồn) · chưa có lượt cả bộ test sau các bản gộp từ 16:20 · người viết không chạy lượt có model · lần sửa trước: Nguồn.*
+*Cập nhật 20:46, ngày 23/11/2026 · mức test theo hệ thống lúc code đứng yên tối 23/11 · bản 20:20: đã áp biên bản kiểm độc lập tối 23/11 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · sửa ba câu đã cũ (Nguồn) · lượt cả bộ test xong 20:09 23/11: một file đỏ vì lỗi của chính phép kiểm, đã sửa (bài 38) · người viết không chạy lượt có model · lần sửa trước: Nguồn.*
 
 **Bài trước đã biết:** chương trình xếp lịch theo bảy luật có thứ tự, tính giờ bằng phút cố định (bài 28).
 **Bài này thêm:** ba việc xảy ra sau bộ xếp. Một: khi yêu cầu không xếp được trọn, chương trình làm gì và người dùng đọc thấy gì. Hai: một bước kiểm viết riêng, đối chiếu khung lịch với luật. Ba: lần gọi model duy nhất của lượt, nó nhận gì, viết gì, và câu nó viết được kiểm ra sao.
@@ -295,4 +295,5 @@ Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối 
   - "18 trên 41 điểm" ⇒ "18 trên 47 dòng, đều là điểm tham quan": bảng đang chạy `diem_v15.json` 47 dòng, 18 dòng có `doan_mo_ta`, không dòng mục tối nào có [riêng tư; tự đếm bằng `python3`]; mục tối cũng đi qua ba bậc chọn đoạn: `backend/llm/assistant.py` `_lay_nguon_lich`, vòng `for id_ in dict.fromkeys(lt.diem_trong_khung(khung))` + `doc = (doan_chon or {}).get(id_) or (await doan_mo_ta(d) …) or await chon_doan(…)` cho mọi mục của khung [code].
   - Con trỏ sổ: gạch "Lượt cả bộ test MỚI NHẤT (09:41–09:59…" còn ở bản `678f0b16` (18:57), không còn ở bản hiện tại (sổ viết lại theo chủ đề lúc 19:34, `6c1e9a4c`) [đã chạy `grep`].
   - Để giữ độ dài: câu "Câu bị thay nay được ghi nguyên văn vào sổ vết của máy phát triển (bài 37)." chuyển từ mục "Phần việc của model" xuống "Chi tiết để tra" (không đổi nội dung).
+- Quét số cũ 20:46 23/11/2026: chỉ câu về mức test ở dòng Cập nhật ("chưa có lượt cả bộ test sau các bản gộp từ 16:20" ⇒ lượt 20:09); thân bài không đổi. Nguồn: `session_prompt/HIEN_TRANG.md` mục 1 và bảng `data/test_rong_2026-11-22/KET_QUA_c475f5e0.tsv` (95 file · 4 bỏ · 91 chạy · 2.307 ca đạt · một file đỏ, 1.171 giây; tự đếm 20:40–20:45 23/11/2026) [riêng tư]; số kho / tính năng của dòng Cập nhật khớp lệnh chạy 20:40 23/11/2026 (269 / 9533; 57 / 6) [đã chạy].
 </details>

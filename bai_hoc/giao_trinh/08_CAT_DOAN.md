@@ -1,9 +1,9 @@
 # Bài 8 — Cắt bài thành đoạn (chunking)
 
-*Cập nhật 17:11, ngày 22/11/2026 · cách cắt đọc từ chương trình đang chạy; số đoạn đếm sáng 22/11, khớp bản ghi hiện trạng lúc 13:33; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 17:11 22/11: cách cắt đọc từ chương trình đang chạy; số đoạn đếm sáng 22/11, khớp bản ghi hiện trạng lúc 13:33; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
 
-**Bài trước đã biết:** kho là 267 bài viết về Huế, mỗi bài là một file chữ có tiêu đề và các mục.
-**Bài này thêm:** bước đầu tiên của giai đoạn chuẩn bị: cắt 267 bài thành 9.479 đoạn. Cắt ở đâu, mỗi đoạn dài bao nhiêu, vì sao đoạn to hơn lại cho kết quả tệ hơn, và một đoạn hỏng thì sao.
+**Bài trước đã biết:** kho là 269 bài viết về Huế (từ 18:05 23/11), mỗi bài là một file chữ có tiêu đề và các mục.
+**Bài này thêm:** bước đầu tiên của giai đoạn chuẩn bị: cắt 269 bài thành 9.533 đoạn. Cắt ở đâu, mỗi đoạn dài bao nhiêu, vì sao đoạn to hơn lại cho kết quả tệ hơn, và một đoạn hỏng thì sao.
 
 ## Ý chính
 
@@ -176,8 +176,8 @@ Mã là đường dẫn bài kèm số thứ tự đoạn, nên các đoạn ph�
 | Bảng | cả bảng nếu vừa giới hạn; không thì từng dòng kèm dòng tiêu đề | con số luôn đi cùng tên cột | đã thử gộp các dòng liền nhau: không khác |
 | Đoạn văn dài | tách ở ranh giới câu | không cắt giữa câu | — |
 | Giới hạn độ dài | mỗi đoạn phải vừa cả ba: 512 token của model đang dùng, 512 token và 256 token (có tách từ tiếng Việt) của hai model ứng viên cũ | mức chặt nhất (256) khiến một số khối dài bị tách thêm (61 đoạn ở 14 bài, đếm trên kho cuối tháng 10) | đã thử chỉ giữ giới hạn 512 của model đang dùng: ít đi 61 đoạn, kết quả tìm không khác; bỏ được nhưng chưa dọn |
-| Kết quả | 267 bài ⇒ 9.479 đoạn | — | — |
-| Độ dài trung bình một "chữ để tìm" | khoảng 67 âm tiết | số của bộ từ khoá (bài 11) | — |
+| Kết quả | 269 bài ⇒ 9.533 đoạn | — | — |
+| Độ dài trung bình một "chữ để tìm" | khoảng 66 âm tiết | số của bộ từ khoá (bài 11) | — |
 | Thư mục của kho không đưa vào | bộ câu hỏi chấm, bản thô tải từ trang nguồn, thư mục mẫu bài và ghi chú soạn | không phải nội dung cho người dùng | — |
 | File bị loại đích danh | 3 file danh mục dùng lúc soạn | chỉ là danh sách tên, không phải nội dung để trả lời | phép đo lúc loại: kết quả tìm không khác |
 | Quy tắc gắn lưu ý | 3 quy tắc ở 2 bài: câu lưu ý chung của bài được gắn kèm vào đúng những đoạn đã khai trong quy tắc | các đoạn giá đó được tìm ra thì mang theo lưu ý | — |
@@ -221,8 +221,8 @@ Mã là đường dẫn bài kèm số thứ tự đoạn, nên các đoạn ph�
 
 ## Chi tiết để tra
 
-- Số 366 token, "một nửa dưới khoảng 85 token" và "gần 1.800 đoạn dưới 50 token" đếm trên kho cuối tháng 10 (khoảng 8.400 đoạn); chưa đếm lại trên 9.479 đoạn hiện nay.
-- Lần chuẩn bị nào cũng chạy vòng kiểm cuối; bản ghi của lần chuẩn bị đang dùng ghi trạng thái hoàn tất với 9.479 đoạn.
+- Số 366 token, "một nửa dưới khoảng 85 token" và "gần 1.800 đoạn dưới 50 token" đếm trên kho cuối tháng 10 (khoảng 8.400 đoạn); chưa đếm lại trên 9.533 đoạn hiện nay.
+- Lần chuẩn bị nào cũng chạy vòng kiểm cuối; bản ghi của lần chuẩn bị đang dùng ghi trạng thái hoàn tất với 9.533 đoạn.
 - Có một bài test chạy lại việc cắt trên cùng kho và so kết quả với bản ghi, để bảo đảm mã đoạn không đổi giữa hai lần chạy.
 - Bảng dài tách từng dòng chỉ khi cả bảng không vừa giới hạn; bảng vừa thì giữ nguyên một đoạn.
 - Lượng chữ 750 token trong phép so là mức của thời hệ thống còn đưa 5 đoạn cho model viết.
@@ -245,5 +245,6 @@ Mã là đường dẫn bài kèm số thứ tự đoạn, nên các đoạn ph�
 - Các mục mới đã qua một lượt đối chiếu độc lập (một agent khác chỉ đọc, 22/11/2026), các dòng sai / lệch đã sửa lúc 14:17: `data/hoc_cung_D/kiem/muc_moi_02_07_11_va_phu_luc.md` [riêng tư]. Máy chủ không bật khi đoạn mô tả của bảng điểm không còn: `backend/llm/lich_trinh_v2.py` (`kiem_doan_mo_ta`), gọi trong `backend/api/app.py` ngoài khối bắt lỗi [code]. `candidate_id` chỉ nhận `e5-small-384`: `backend/core/settings_loader.py` (`validate_phase6_settings`) [code].
 
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43; `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` (`so_lan_tim_kho: 3`) [code; người viết không chạy lại].
+- Quét số cũ 20:46 23/11/2026: "Bài trước đã biết", "Bài này thêm", hàng "Kết quả" của bảng cấu hình, hai gạch "Chi tiết để tra" (267 ⇒ 269 bài, 9.479 ⇒ 9.533 đoạn); độ dài trung bình 66,59 ⇒ 66,46 ("khoảng 67" ⇒ "khoảng 66"). Lệnh: `corpus.file_count`, `corpus.chunk_count`, `status` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269, 9533, complete) và `average_document_length` của `data/full_corpus_builds/full_corpus_sparse_state.json` (66,4578; cả hai file ghi 18:05 23/11), đọc 20:40–20:45 23/11/2026 [đã chạy].
 
 </details>

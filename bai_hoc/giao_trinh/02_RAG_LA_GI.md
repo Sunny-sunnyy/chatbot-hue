@@ -1,6 +1,6 @@
 # Bài 2 — RAG là gì: cho model đọc tài liệu trước khi trả lời
 
-*Cập nhật 16:01, ngày 23/11/2026 · 16:01: "Cái giá" của quyết định 4 ghi đúng chữ trên trang (câu dẫn sang mục web), khớp đoạn ví dụ của chính bài · 11:11: khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài, 9.479 đoạn); đổi hai câu tả màn hình (thẻ chờ, khung "Nguồn đã dùng") · ví dụ là ba lượt hỏi thật từ sổ ghi từng lượt (20 và 21/11); người viết không chạy lại.*
+*Cập nhật 20:46, ngày 23/11/2026 · 20:46: số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · 16:01: "Cái giá" của quyết định 4 ghi đúng chữ trên trang (câu dẫn sang mục web), khớp đoạn ví dụ của chính bài · 11:11: khớp giao diện mới sáng 23/11; đổi hai câu tả màn hình (thẻ chờ, khung "Nguồn đã dùng") · ví dụ là ba lượt hỏi thật từ sổ ghi từng lượt (20 và 21/11); người viết không chạy lại.*
 
 **Bài trước đã biết:** model ngôn ngữ viết ra chữ tiếp theo có khả năng cao nhất. Nó viết trôi chảy cả khi không biết, và không tự nói được nó lấy thông tin từ đâu.
 **Bài này thêm:** cách hue_rag xử lý chuyện đó. Cách này có tên là RAG, và nó là tên của chính đề tài. Bài này cũng nói vì sao chọn cách này thay cho các cách khác.
@@ -9,7 +9,7 @@
 
 - **RAG** là ba việc nối nhau: **tìm** các đoạn tài liệu hợp câu hỏi, **đưa** các đoạn đó cho model đọc, rồi model **viết** câu trả lời kèm số nguồn.
 - Model được dặn không trả lời theo trí nhớ của nó, chỉ dùng những đoạn vừa được đưa, và ghi số nguồn sau mỗi ý. Chương trình kiểm lại rằng mọi số nguồn đều có thật.
-- Trước khi có câu hỏi đầu tiên, có một **giai đoạn chuẩn bị** làm một lần: cắt 267 bài của kho thành 9.479 đoạn và lập chỉ mục để tìm cho nhanh.
+- Trước khi có câu hỏi đầu tiên, có một **giai đoạn chuẩn bị** làm một lần: cắt 269 bài của kho thành 9.533 đoạn (từ 18:05 23/11) và lập chỉ mục để tìm cho nhanh.
 - Tài liệu không có điều được hỏi thì hệ thống **từ chối bằng một câu cố định**, không đoán; sau đó nó tra web một lần và để kết quả ở một mục riêng. RAG không bảo đảm đúng tuyệt đối: bước tìm bỏ sót đoạn đúng thì hệ thống từ chối cả câu mà kho có.
 - Muốn sửa điều hệ thống "biết" thì sửa bài trong kho. Không phải dạy lại model; đổi model viết cũng không làm mất kiến thức.
 
@@ -18,9 +18,9 @@
 | Tên trong bài | Tên gốc | Nghĩa |
 |---|---|---|
 | RAG | **Retrieval-Augmented Generation** | sinh câu trả lời (generation) có bổ sung (augmented) bằng bước tìm tài liệu (retrieval) |
-| kho | **knowledge base**, **corpus** | 267 bài viết về Huế do nhóm soạn; mọi thứ hệ thống được phép nói đều nằm ở đây |
-| đoạn | **chunk** | một mẩu cắt ra từ một bài; kho có 9.479 đoạn |
-| tìm | **retrieval** | chọn ra các đoạn hợp câu hỏi nhất trong 9.479 đoạn (10 đoạn ở lần tìm đầu) để đưa cho model viết |
+| kho | **knowledge base**, **corpus** | 269 bài viết về Huế do nhóm soạn; mọi thứ hệ thống được phép nói đều nằm ở đây |
+| đoạn | **chunk** | một mẩu cắt ra từ một bài; kho có 9.533 đoạn |
+| tìm | **retrieval** | chọn ra các đoạn hợp câu hỏi nhất trong 9.533 đoạn (10 đoạn ở lần tìm đầu) để đưa cho model viết |
 | ngữ cảnh | **context** | phần chữ gửi cho model cùng câu hỏi: các đoạn vừa tìm được, kèm lời dặn |
 | chỉ mục | **index** | dạng đã xử lý sẵn của kho để tìm nhanh (bài 10–12) |
 | số nguồn | **citation** | dấu [1], [2]… đặt sau mỗi ý, chỉ ý đó lấy từ đoạn nào |
@@ -40,14 +40,14 @@ Với RAG, câu hỏi về vé Đại Nội không đi thẳng tới model. Nó 
 
 ```mermaid
 flowchart LR
-  A["Câu hỏi:<br/>giá vé Đại Nội?"] --> B["1 · Tìm<br/>10 đoạn hợp nhất<br/>trong 9.479 đoạn"]
+  A["Câu hỏi:<br/>giá vé Đại Nội?"] --> B["1 · Tìm<br/>10 đoạn hợp nhất<br/>trong 9.533 đoạn"]
   B --> C["2 · Đưa cho model<br/>câu hỏi + 10 đoạn<br/>+ lời dặn"]
   C --> D["3 · Model viết<br/>mỗi ý kèm số nguồn"]
   D --> E["Chương trình kiểm<br/>số nguồn có thật"]
   E --> F["Câu trả lời<br/>+ danh sách nguồn"]
 ```
 
-**Bước 1, tìm.** Chương trình chọn ra 10 đoạn hợp câu hỏi nhất trong 9.479 đoạn của kho. Ở lượt này 10 đoạn đó nằm trong 3 bài: hai bài về vé và một bài về nghệ thuật biểu diễn. Bước này không gọi model viết (nó chỉ dùng một model nhỏ chạy ngay trên máy, bài 10) và mất khoảng 40 mili giây. Số đoạn nói chung: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần (trước 14:47 ngày 22/11 là 2); tin nhiều ý được nối thêm 2 đoạn mỗi ý (bài 21, 23).
+**Bước 1, tìm.** Chương trình chọn ra 10 đoạn hợp câu hỏi nhất trong 9.533 đoạn của kho. Ở lượt này 10 đoạn đó nằm trong 3 bài: hai bài về vé và một bài về nghệ thuật biểu diễn. Bước này không gọi model viết (nó chỉ dùng một model nhỏ chạy ngay trên máy, bài 10) và mất khoảng 40 mili giây. Số đoạn nói chung: 10 đoạn ở lần tìm đầu; trợ lý được tìm thêm tối đa 3 lần (trước 14:47 ngày 22/11 là 2); tin nhiều ý được nối thêm 2 đoạn mỗi ý (bài 21, 23).
 
 **Bước 2, đưa cho model đọc.** Chương trình ghép một lời gọi gồm ba phần: lời dặn (trong đó có câu "chỉ dùng các phần Bằng chứng trong ngữ cảnh"; "Bằng chứng" là nhãn đặt trước chữ của mỗi đoạn; và câu "Đặt citation [n] ngay sau mỗi nhận định được nguồn [n] hỗ trợ"), câu hỏi, và 10 đoạn, mỗi đoạn được đánh số từ 1 tới 10 kèm tên bài và tên mục của nó.
 
@@ -65,7 +65,7 @@ Phép kiểm: mọi số nguồn trong câu trả lời phải là số của m�
 
 Bước tìm chỉ mất 40 mili giây vì kho đã được xử lý sẵn. Việc xử lý đó là **giai đoạn chuẩn bị**, làm một lần, và làm lại khi kho đổi:
 
-1. Cắt 267 bài thành 9.479 đoạn (bài 8).
+1. Cắt 269 bài thành 9.533 đoạn (bài 8).
 2. Gắn vào mỗi đoạn tên bài và tên các mục chứa nó (bài 9).
 3. Biến mỗi đoạn thành hai dạng máy tìm được: một dãy số mang nghĩa và một bảng từ khoá (bài 10, 11).
 4. Cất tất cả vào một cơ sở dữ liệu chuyên cho việc tìm, tên là Qdrant (bài 12).
@@ -142,7 +142,7 @@ Bài nền; tình huống hỏng của từng khối ở bài 6. Ba điều ki�
 <details>
 <summary>1. RAG gồm những việc gì, và việc nào làm trước khi có câu hỏi?</summary>
 
-Tìm các đoạn hợp câu hỏi, đưa cho model đọc, model viết kèm số nguồn. Trước đó có giai đoạn chuẩn bị làm một lần: cắt 267 bài thành 9.479 đoạn, gắn tên bài, tính vector và bảng từ khoá, cất vào Qdrant.
+Tìm các đoạn hợp câu hỏi, đưa cho model đọc, model viết kèm số nguồn. Trước đó có giai đoạn chuẩn bị làm một lần: cắt 269 bài thành 9.533 đoạn, gắn tên bài, tính vector và bảng từ khoá, cất vào Qdrant.
 
 </details>
 
@@ -192,6 +192,7 @@ Thường ở bước tìm: đoạn có đáp án không nằm trong các đoạ
 - Câu dẫn sang mục web do giao diện thay: `frontend/src/moDauWeb.js` (`CAU_DAN_WEB`) [code].
 - Sửa 23/11/2026 (giao diện mới ở nhánh chính từ 10:00 23/11): khung "Nguồn đã dùng (n bài)", mỗi bài một nút: `frontend/src/SourceLine.jsx` (nhãn `nguon-nhan`) [code]; "thẻ chờ" là tên gọi của bài 5 cho khung đứng trong lúc chờ: `frontend/src/song/Song.jsx` (`ChoSong`), dùng ở `frontend/src/chat.jsx` [code].
 - 267 bài, 9.479 đoạn: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count`, `corpus.chunk_count`) và số điểm trong Qdrant, đọc 16:35 22/11/2026 [đã chạy].
+- Quét số cũ 20:46 23/11/2026: mọi câu nói số kho hiện tại đổi 267 ⇒ 269 bài, 9.479 ⇒ 9.533 đoạn (dòng Cập nhật cũ "11:11: khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài, 9.479 đoạn)" rút lại) — cùng file, `corpus.file_count` 269, `corpus.chunk_count` 9533, đọc 20:40 23/11/2026 [đã chạy]; chỉ mục cập nhật riêng 18:05 23/11: `session_prompt/HIEN_TRANG.md` mục 1 [chép].
 - Lời dặn và câu từ chối cố định: `backend/llm/full_corpus_prompt.py`, hằng `ANSWER_SYSTEM_INSTRUCTIONS`, `INSUFFICIENT_ANSWER` [code].
 - Kiểm số nguồn: `backend/llm/citations.py`, hàm `select_cited_sources` [code].
 - Tên đề tài có chữ Retrieval-Augmented Generation: `session_prompt/Project_Status.md` (phần quyết định, dòng ghi tên đề tài chốt 01/11) [quyết định đã ghi].
