@@ -1079,7 +1079,7 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             if k.get("khu_them"):
                 luu["khu_them"] = sorted({*(luu.get("khu_them") or ()), *k["khu_them"]})
             kq["da_ap"].append({"loai": h.loai, "diem": i, "ngay": _vi_tri(k)[i][0], "buoi": _vi_tri(k)[i][1], "the_cho": the_cho,
-                                **({"toi_xep_lai": xep_toi} if xep_toi else {}), **({"day": _tin_day(k, day)} if day is not None else {}),
+                                **({"toi_xep_lai": xep_toi} if xep_toi else {}), **({"day": _tin_day(k, day, bang)} if day is not None else {}),
                                 **({"khu": _chang_khu(bang, k, khu)} if khu is not None else {}),
                                 **({"khu_van": _chang_khu(bang, k, khu_van)} if khu_van is not None else {})})
         elif h.loai == "thay_diem":
@@ -1169,14 +1169,16 @@ def _phan_xep_lai(bang: v2.BangV2, x: dict) -> str:
     return "; ".join(p for p in phan if p)
 
 
-def _tin_day(khung: dict, ngay: int) -> dict:
+def _tin_day(khung: dict, ngay: int, bang: "v2.BangV2 | None" = None) -> dict:
     """Số liệu cho dòng báo "ngày này dày hơn nhịp đã chọn" (công tắc `sua_lich_them_day`): kiểu đi + mỗi buổi có điểm {số điểm, từ, đến} — giờ lấy từ
     chính `khung["gio"]` (do code tính)."""
     ng = next(x for x in khung["ngay"] if x["ngay"] == ngay)
     buoi = {b: {"so": len(ng["buoi"][b]), "tu": khung["gio"][ng["buoi"][b][0]].split("–")[0].strip(), "den": khung["gio"][ng["buoi"][b][-1]].split("–")[1].strip()}
             for b in v2.BUOI_NGAY if ng["buoi"][b]}
     ts = khung["tham_so"]
-    return {"ngay": ngay, "kieu_di": ts["kieu_di"], "buoi": buoi, **({"han_che": True} if ts["tre_em"] >= 1 or ts["lon_tuoi"] else {})}
+    sat = v2.chieu_sat_toi(bang, khung, ngay) if bang is not None else None  # buổi chiều kết sát mục buổi tối của ngày đó ⇒ câu nhắc
+    return {"ngay": ngay, "kieu_di": ts["kieu_di"], "buoi": buoi, **({"han_che": True} if ts["tre_em"] >= 1 or ts["lon_tuoi"] else {}),
+            **({"sat_toi": sat} if sat else {})}
 
 
 def _chang_khu(bang: v2.BangV2, khung: dict, ngay: int) -> dict:
@@ -1194,8 +1196,10 @@ def _cau_khu(d: dict, van: bool = False) -> str:
 
 def _cau_day(d: dict) -> str:
     muc = v2.MUC_HAN_CHE if d.get("han_che") else f"nhịp {v2.NHAN_KIEU_DI[d['kieu_di']]} bạn chọn"  # đoàn có trẻ nhỏ / người lớn tuổi: mức của đoàn, không phải kiểu đi
-    return (f" Ngày {d['ngay']} nay dày hơn {muc}: "
-            + "; ".join(f"buổi {NHAN_BUOI[b]} {x['so']} điểm, {x['tu']} – {x['den']}" for b, x in d["buoi"].items()) + ".")
+    # đoàn thường: "có buổi dày hơn nhịp…" — thước là từng buổi, không phải số điểm cả ngày (`lich_trinh_v2.cau_ngay_day`)
+    return (f" Ngày {d['ngay']} nay {'dày hơn' if d.get('han_che') else 'có buổi dày hơn'} {muc}: "
+            + "; ".join(f"buổi {NHAN_BUOI[b]} {x['so']} điểm, {x['tu']} – {x['den']}" for b, x in d["buoi"].items()) + "."
+            + (v2.cau_sat_toi(d["sat_toi"]) if d.get("sat_toi") else ""))
 
 
 def _cau_cach(bang: v2.BangV2, x: str, g: dict, kem_cho: bool) -> str:
@@ -1233,9 +1237,9 @@ def _cau_them(bang: v2.BangV2, k: dict) -> str:
 
     def cach(g: dict, kem_cho: bool) -> str:
         # cách "thêm thẳng nhưng ngày đó dày hơn nhịp đi" (công tắc `sua_lich_them_day`): nói rõ cái giá ngay cạnh câu gợi ý; câu để nhắn giữ nguyên
-        gia = (" (ngày đó sẽ dày hơn nhịp bạn chọn và phải đi sang một khu không liền kề)" if g.get("khu")
+        gia = (" (ngày đó sẽ có buổi dày hơn nhịp bạn chọn và phải đi sang một khu không liền kề)" if g.get("khu")
                else f" (ngày đó sẽ dày hơn {v2.MUC_HAN_CHE})" if g.get("day") and k.get("han_che")
-               else " (ngày đó sẽ dày hơn nhịp bạn chọn)" if g.get("day") else "")
+               else " (ngày đó sẽ có buổi dày hơn nhịp bạn chọn)" if g.get("day") else "")
         if not moi:
             return _cau_cach(bang, x, g, kem_cho or bool(g.get("day"))) + gia
         # chữ mới: câu để nhắn nằm RIÊNG trong «…» (lượt trình duyệt 23/11: "thay A bằng X hoặc thay B bằng X" — chép nguyên là gửi một lệnh hai

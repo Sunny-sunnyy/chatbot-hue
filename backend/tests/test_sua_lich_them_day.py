@@ -94,7 +94,7 @@ def test_add_beyond_pace_is_applied_marked_reported_and_still_walkable(n, kieu):
                 if g["thay"] is None:  # gợi ý "thêm vào buổi khác, không mất điểm nào"
                     n_goi_y += 1
                     assert g.get("day") and _them(luu, i, g["ngay"], g["buoi"], them_day=True)["da_ap"]
-                    assert "(ngày đó sẽ dày hơn nhịp bạn chọn)" in s.thay_doi(B, kq)[0]["cau"]
+                    assert "(ngày đó sẽ có buổi dày hơn nhịp bạn chọn)" in s.thay_doi(B, kq)[0]["cau"]
             continue
         n_duoc += 1
         a, moi = kq["da_ap"][0], kq["khung"]
@@ -105,7 +105,7 @@ def test_add_beyond_pace_is_applied_marked_reported_and_still_walkable(n, kieu):
         assert set(v2.kiem_khung_v2(B, khong_dau)) and set(v2.kiem_khung_v2(B, khong_dau)) <= NHIP  # chỉ nhịp đi bị vượt
         _gio_di_duoc(moi, a["ngay"])
         cau = s.thay_doi(B, kq)[0]
-        assert cau["duoc"] and f"Ngày {a['ngay']} nay dày hơn nhịp {v2.NHAN_KIEU_DI[kieu]} bạn chọn" in cau["cau"]
+        assert cau["duoc"] and f"Ngày {a['ngay']} nay có buổi dày hơn nhịp {v2.NHAN_KIEU_DI[kieu]} bạn chọn" in cau["cau"]
     assert n_duoc > 0 and (n == 1 or n_goi_y > 0)
 
 
@@ -146,7 +146,7 @@ def test_later_edits_work_on_a_denser_schedule():
             kq2 = _them(kq1["luu"], i, ng, b, them_day=True)
             if kq2["da_ap"]:
                 n_lan_hai += 1
-                assert kq2["da_ap"][0].get("day") and "Ngày 1 nay dày hơn nhịp" in s.thay_doi(B, kq2)[0]["cau"]
+                assert kq2["da_ap"][0].get("day") and "Ngày 1 nay có buổi dày hơn nhịp" in s.thay_doi(B, kq2)[0]["cau"]
                 assert kq2["khung"]["day_them"] == [1] and v2.kiem_khung_v2(B, kq2["khung"]) == []
                 _gio_di_duoc(kq2["khung"], 1)
         if n_lan_hai:
@@ -154,7 +154,7 @@ def test_later_edits_work_on_a_denser_schedule():
     assert n_lan_hai > 0
     # dòng báo đi theo LỊCH: khối ghi chú của thẻ lịch (và file tải về) có đúng một dòng cho ngày đã dày; lịch gốc không có
     ghi = [g for g in v2.dung_lich(B, dau["khung"], {})["ghi_chu"] if g["ma"] == "day_them"]
-    assert len(ghi) == 1 and ghi[0]["cau"].startswith(f"Ngày {ngay} dày hơn nhịp cân bằng bạn chọn vì bạn đã xin thêm điểm: buổi ")
+    assert len(ghi) == 1 and ghi[0]["cau"].startswith(f"Ngày {ngay} có buổi dày hơn nhịp cân bằng bạn chọn vì bạn đã xin thêm điểm: buổi ")
     assert not [g for g in v2.dung_lich(B, k, {})["ghi_chu"] if g["ma"] == "day_them"]
     # bỏ chính điểm vừa thêm ⇒ ngày hết vượt nhịp ⇒ dấu tự gỡ, giờ về như lịch gốc
     bo = s.ap(B, dau["luu"], [s.HanhDong(loai="bo_diem", ten=T[dau["da_ap"][0]["diem"]]["ten"])], them_khong_the=True, them_day=True)
@@ -261,3 +261,38 @@ def test_passage_cap_covers_the_densest_schedule_a_user_can_build_by_adding():
         nhieu_nhat = max(nhieu_nhat, len(dict.fromkeys(lt.diem_trong_khung(k))))
     assert nhieu_nhat > 25  # ca này thật sự vượt trần cũ
     assert nhieu_nhat <= lkh.MAX_DOAN == (v2.TOI_DA_BUOI + 1) * 2 * v2.SO_NGAY_TOI_DA + v2.SO_NGAY_TOI_DA
+
+
+def test_notice_wording_on_a_denser_day_and_the_no_interest_note_stay_true():
+    """Ba chỗ chữ người dùng đọc thấy sai ở các lượt trình duyệt 23/11/2026. (1) Đoàn thường: "có buổi dày hơn nhịp…" — thước là từng buổi; ngày mang
+    dòng đó nhiều khi không nhiều điểm hơn ngày đông nhất của lịch gốc. (2) Buổi chiều của ngày vừa thêm kết sát giờ đầu mục buổi tối (dưới 60 phút) ⇒
+    dòng báo + dòng ghi chú có câu nhắc. (3) Câu "thêm một điểm thiên nhiên mỗi ngày" chỉ hiện khi ngày nào cũng có điểm thiên nhiên."""
+    thien_nhien = lambda kh: all(any("thien_nhien" in T[j]["loai"] for b in v2.BUOI_NGAY for j in ng["buoi"][b]) for ng in kh["ngay"])  # noqa: E731
+    cau_so_thich = lambda kh: next(g["cau"] for g in v2.dung_lich(B, kh, {})["ghi_chu"] if g["ma"] == "so_thich")  # noqa: E731
+    k, luu = _lich(2, "can_bang", ())
+    assert thien_nhien(k) and cau_so_thich(k) == v2.CAU_GHI_CHU["so_thich"]
+    tn = next(j for j in s._vi_tri(k) if "thien_nhien" in T[j]["loai"])
+    moi = next(kq for i in NGAY_DIEM if i not in s._vi_tri(k) and "thien_nhien" not in T[i]["loai"]
+               and (kq := s.ap(B, luu, [s.HanhDong(loai="thay_diem", ten=T[tn]["ten"], ten_moi=T[i]["ten"])], them_khong_the=True, them_day=True))["da_ap"])
+    assert not thien_nhien(moi["khung"]) and cau_so_thich(moi["khung"]) == v2.CAU_GHI_CHU["so_thich_khong_du"]
+    nhe = v2.xep_v2(B, v2.ThamSoV2(3, kieu_di="can_bang", tre_em=1))  # đoàn hai điểm một ngày: lịch chưa sửa đã có ngày không có điểm thiên nhiên
+    assert "so_thich" in nhe["gia_dinh"] and cau_so_thich(nhe) == (v2.CAU_GHI_CHU["so_thich"] if thien_nhien(nhe) else v2.CAU_GHI_CHU["so_thich_khong_du"])
+    # (2) quét lịch một ngày: mọi lần thêm được, câu nhắc có mặt ĐÚNG khi khe chiều – tối dưới ngưỡng, ở cả dòng báo lẫn dòng ghi chú
+    k1, luu1 = _lich(1, "nhe_nhang", ())
+    co = khong = 0
+    for i, ng, b in _lenh(k1):
+        kq = _them(luu1, i, ng, b, them_day=True)
+        if not kq["da_ap"] or not kq["da_ap"][0].get("day"):
+            continue
+        sat = v2.chieu_sat_toi(B, kq["khung"], 1)
+        cau = s.thay_doi(B, kq)[0]["cau"]
+        ghi = next(g["cau"] for g in v2.dung_lich(B, kq["khung"], {})["ghi_chu"] if g["ma"] == "day_them")
+        assert ("sát mục buổi tối" in cau) == ("sát mục buổi tối" in ghi) == (sat is not None)
+        if sat:
+            co += 1
+            d = next(x for x in kq["khung"]["ngay"] if x["ngay"] == 1)
+            ket = v2.ra_phut(kq["khung"]["gio"][d["buoi"]["chieu"][-1]].split("–")[1].strip())
+            assert sat["ket"] in cau and sat["ten"] == T[d["buoi"]["toi"][0]]["ten"] and v2.ra_phut(sat["tu"]) - ket < v2.KHE_TOI
+        else:
+            khong += 1
+    assert co > 0 and khong > 0
