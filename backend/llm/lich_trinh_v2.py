@@ -568,15 +568,44 @@ def ngay_vuot_nhip(bang: BangV2, tham_so: dict, ng: dict, khu: bool = False) -> 
 MUC_HAN_CHE = "mức nhẹ nhàng dành cho đoàn có trẻ nhỏ / người lớn tuổi"  # dòng báo + dòng ghi chú của ngày đoàn đó tự xin thêm điểm
 
 
-def cau_ngay_day(khung: dict, ngay: int) -> str:
+KHE_TOI = 60  # buổi chiều của một ngày được dày kết cách giờ đầu mục buổi tối dưới chừng này phút ⇒ dòng báo nhắc (không đủ một bữa tối)
+
+
+def chieu_sat_toi(bang: BangV2, khung: dict, ngay: int) -> dict | None:
+    """Ngày người dùng đã xin thêm điểm: buổi chiều kết SÁT giờ đầu mục buổi tối của chính ngày đó (khe < `KHE_TOI` phút) ⇒ {ket, ten, tu} cho câu
+    nhắc; không thì None. Giờ mục tối = giờ đầu của khung đầu trong cột `gio_toi` của bảng. Đếm 23/11/2026 (lưới đoàn thường, mọi công tắc thêm bật):
+    77 / 848 ngày sau lệnh thêm có khe dưới 60 phút, 19 dưới 45 phút, nhỏ nhất 20 phút; lịch chưa sửa: nhỏ nhất 90; đoàn nhẹ: nhỏ nhất 150."""
+    ng = next(x for x in khung["ngay"] if x["ngay"] == ngay)
+    if not ng["buoi"]["chieu"] or not ng["buoi"]["toi"]:
+        return None
+    d = bang.theo_id[ng["buoi"]["toi"][0]]
+    m = re.search(r"(\d{1,2}):(\d{2})", d.get("gio_toi") or "")
+    if m is None:
+        return None
+    ket = khung["gio"][ng["buoi"]["chieu"][-1]].split("–")[1].strip()
+    if int(m.group(1)) * 60 + int(m.group(2)) - ra_phut(ket) >= KHE_TOI:
+        return None
+    return {"ket": ket, "ten": d["ten"], "tu": f"{int(m.group(1))}:{m.group(2)}"}
+
+
+def cau_sat_toi(s: dict) -> str:
+    return f" Buổi chiều kết {s['ket']}, sát mục buổi tối {s['ten']} (từ {s['tu']}) — nên đi mục tối muộn hơn."
+
+
+def cau_ngay_day(khung: dict, ngay: int, bang: "BangV2 | None" = None) -> str:
     """Dòng ghi chú của MỘT ngày người dùng đã xin thêm điểm (dấu `day_them`). Nằm trong khối ghi chú của lịch (`dung_lich`) ⇒ đi theo LỊCH — thẻ lịch,
     file tải về — chứ không chỉ theo lượt trả lời vừa sửa (lượt trình duyệt 23/11: sang lượt kế là mất dòng báo, file .txt không nhắc)."""
     ng = next(x for x in khung["ngay"] if x["ngay"] == ngay)
     buoi = "; ".join(f"buổi {NHAN_BUOI[b].lower()} {len(ng['buoi'][b])} điểm, {khung['gio'][ng['buoi'][b][0]].split('–')[0].strip()} – "
                      f"{khung['gio'][ng['buoi'][b][-1]].split('–')[1].strip()}" for b in BUOI_NGAY if ng["buoi"][b])
     ts = khung["tham_so"]
-    muc = MUC_HAN_CHE if ts["tre_em"] >= 1 or ts["lon_tuoi"] else f"nhịp {NHAN_KIEU_DI[ts['kieu_di']]} bạn chọn"
-    return f"Ngày {ngay} dày hơn {muc} vì bạn đã xin thêm điểm: {buoi}."
+    # người dùng KHÔNG chọn kiểu đi (dấu `kieu_chua_chon` của khung — lịch mặc định của trang Lên kế hoạch) ⇒ "nhịp … của lịch", không nói "bạn chọn"
+    muc = MUC_HAN_CHE if ts["tre_em"] >= 1 or ts["lon_tuoi"] else f"nhịp {NHAN_KIEU_DI[ts['kieu_di']]} {'của lịch' if ts.get('kieu_chua_chon') else 'bạn chọn'}"
+    # đoàn thường: thước là TỪNG BUỔI (số điểm một buổi, quỹ phút của buổi) ⇒ "có buổi dày hơn nhịp…" — đếm 23/11/2026: 24–31 % ngày mang dòng này
+    # không nhiều điểm hơn ngày đông nhất của chính lịch gốc, người đọc so số điểm cả ngày thì thấy câu "ngày dày hơn" sai
+    han_che = ts["tre_em"] >= 1 or ts["lon_tuoi"]
+    sat = chieu_sat_toi(bang, khung, ngay) if bang is not None else None
+    return f"Ngày {ngay} {'dày hơn' if han_che else 'có buổi dày hơn'} {muc} vì bạn đã xin thêm điểm: {buoi}." + (cau_sat_toi(sat) if sat else "")
 
 
 def chang_khu(bang: BangV2, ng: dict) -> tuple[int, list[tuple[str, str, int]]]:
@@ -761,6 +790,9 @@ CAU_GHI_CHU = {
     "han_che": "Đi cùng trẻ em hoặc người lớn tuổi nên mình xếp nhẹ nhàng: mỗi buổi một điểm, không xếp buổi tối.",
     "han_che_toi": "Đi cùng trẻ em hoặc người lớn tuổi nên mình xếp nhẹ nhàng: mỗi buổi một điểm; buổi tối chỉ một hoạt động nhẹ gần trung tâm, nên về sớm.",
     "so_thich": "Chưa chọn sở thích nên mình gợi ý điểm tiêu biểu, thêm một điểm thiên nhiên mỗi ngày.",
+    # câu trên chỉ đúng khi NGÀY NÀO cũng có một điểm thiên nhiên. Đếm 23/11/2026 trên lịch chưa sửa: đoàn có trẻ nhỏ / người lớn tuổi (hai điểm một
+    # ngày) 48 / 60 lịch có ngày không có điểm thiên nhiên nào; và sau một lệnh thay / bỏ thì câu đó hết đúng ngay (lượt trình duyệt 23/11) ⇒ bản ngắn
+    "so_thich_khong_du": "Chưa chọn sở thích nên mình gợi ý các điểm tiêu biểu.",
     "thay_bac_thang": "{diem} có nhiều bậc thang (theo kho) nên mình xếp {thay} cùng khu thay vào.",
     "thieu_uu_tien": "Lịch này chưa xếp được điểm tiêu biểu nhất cho sở thích {so_thich} — thêm ngày thì mình xếp được nhiều điểm hơn.",
     "tam_dung_mua": "{diem} đang tạm dừng đón khách vào thời gian này trong năm (theo kho) nên mình chưa xếp.",
@@ -842,7 +874,9 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                      "thu": None if ngay_that is None else dt.date.fromisoformat(ngay_that).weekday(), "muc": muc})
     ts = khung["tham_so"]
     ghi_chu = [{"ma": "mua_mua", "cau": bang.nhac_mua_chung["cau"]}] if khung.get("mua_mua") else []  # 5c.2 (iii): đầu khối, đúng một dòng
-    ghi_chu += [{"ma": m, "cau": CAU_GHI_CHU[m].format(kieu=NHAN_KIEU_DI[ts["kieu_di"]]) if m == "han_che_doi_kieu" else CAU_GHI_CHU[m]} for m in khung["gia_dinh"]]
+    du_thien_nhien = all(any("thien_nhien" in bang.theo_id[j]["loai"] for b in BUOI_NGAY for j in ng["buoi"][b]) for ng in khung["ngay"])
+    ghi_chu += [{"ma": m, "cau": CAU_GHI_CHU[m].format(kieu=NHAN_KIEU_DI[ts["kieu_di"]]) if m == "han_che_doi_kieu"
+                 else CAU_GHI_CHU["so_thich_khong_du"] if m == "so_thich" and not du_thien_nhien else CAU_GHI_CHU[m]} for m in khung["gia_dinh"]]
     # Hai công tắc buổi tối (23/11/2026): mục "nghỉ" không hiện trên thẻ (User 15/11) ⇒ tối trống có lý do riêng — người dùng đã bỏ, đoàn hạn chế hết mục
     # nhẹ / ngày đi xa — phải có MỘT dòng ghi chú theo ngày, không thì thẻ, file xuất và bản in không nói gì về tối đó. Công tắc tắt ⇒ không mã nào có.
     for ng in khung["ngay"]:
@@ -854,7 +888,7 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                     for j in dict.fromkeys(diem_ban_ngay(khung)) if bang.theo_id[j]["bac_thang"] == "nhieu"]
     ghi_chu += [{"ma": "tam_dung_mua", "cau": CAU_GHI_CHU["tam_dung_mua"].format(diem=bang.theo_id[j]["ten"])} for j in khung.get("tam_dung_mua", [])]
     # công tắc `sua_lich_them_day` / `sua_lich_them_khu`; khung không dấu ⇒ không thêm gì. Ngày chỉ mang dấu vì đi sang khu khác (không vượt nhịp) thì không ghi "dày hơn nhịp"
-    ghi_chu += [{"ma": "day_them", "cau": cau_ngay_day(khung, d)} for d in khung.get("day_them") or ()
+    ghi_chu += [{"ma": "day_them", "cau": cau_ngay_day(khung, d, bang)} for d in khung.get("day_them") or ()
                 if ngay_vuot_nhip(bang, khung["tham_so"], next(x for x in khung["ngay"] if x["ngay"] == d), d in (khung.get("khu_them") or ()))]
     ghi_chu += [{"ma": "khu_them", "cau": cau_ngay_khu(bang, khung, d)} for d in khung.get("khu_them") or ()]
     ghi_chu += [{"ma": "du_bao", **c} for c in them_ghi_chu]  # `{"cau", "ngay"?}` từ `len_ke_hoach.dong_du_bao`
