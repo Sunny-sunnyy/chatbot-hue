@@ -70,7 +70,9 @@ class BangKhoangCach:
 
 def nap_bang(path_khoang_cach: str | Path, path_diem: str | Path) -> BangKhoangCach:
     """Bảng km / phút (dựng sẵn) + tên điểm từ bảng lịch. Cặp có mã lạ ⇒ lỗi lúc khởi động (bảng lệch bảng điểm)."""
-    diem = json.loads(Path(path_diem).read_text(encoding="utf-8"))["diem"]
+    # Bảng điểm v13 (23/11/2026): dòng `la_quan` là quán cà phê chỉ làm mục BUỔI TỐI của lịch — không phải "nơi" của công cụ khoảng cách / gần một điểm
+    # (không có cặp km nào; đưa vào thì mô tả hai công cụ đổi chữ và model có thể gọi công cụ cho quán) ⇒ bỏ ở đây.
+    diem = [d for d in json.loads(Path(path_diem).read_text(encoding="utf-8"))["diem"] if not d.get("la_quan")]
     ten = {d["id"]: d["ten"] for d in diem}
     ten_khac = {d["id"]: tuple(d.get("ten_khac") or ()) for d in diem}
     cap = json.loads(Path(path_khoang_cach).read_text(encoding="utf-8"))["cap"]
