@@ -95,6 +95,9 @@
 .lich-v2 .lich-buoi { align-self: flex-start; font-size: var(--text-nho); font-weight: 600; color: var(--color-accent-deep); background: var(--color-accent-soft);
                       border-radius: 999px; padding: 3px 11px; }
 .lich-v2 .lich-ten { font-size: var(--text-dan); font-weight: 700; margin-top: 4px; }
+/* tên điểm bấm mở bài kho của điểm (23/11/2026): giữ màu chữ của tên, gạch chân mảnh như tên quán ở khối ăn uống */
+.lich-v2 .lich-ten a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+.lich-v2 .lich-ten a:hover { color: var(--color-accent-deep); }
 .lich-v2 .lich-ten small { margin-left: 6px; padding: 2px 8px; border-radius: 999px; background: #F6E3EA; color: var(--color-lotus-deep); font-size: var(--text-nho);
                            font-weight: 600; vertical-align: 2px; }
 .lich-v2 .lich-cau { color: var(--color-muted); font-size: var(--text-phu); line-height: 1.55; }
@@ -307,6 +310,7 @@
   html.in-lich .lkh-dang-in .lkh-thanh { background: #49634D !important; color: #F8F4E9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   html.in-lich .lkh-dang-in h3, html.in-lich .lkh-dang-in .lkh-tong-h { font-family: Georgia, serif; color: #49634D; }
   html.in-lich .lkh-dang-in .lich-ten { color: #49634D; }
+  html.in-lich .lkh-dang-in .lich-ten a { text-decoration: none; }
   html.in-lich .lkh-dang-in .lich-buoi { color: #A75B43; }
   html.in-lich .lkh-dang-in .lich-ngay { break-inside: avoid-page; opacity: 1 !important; transform: none !important; animation: none !important; }
   html.in-lich .lkh-dang-in .lich-ngay + .lich-ngay { break-before: page; }

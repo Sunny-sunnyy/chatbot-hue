@@ -90,7 +90,8 @@ Câu dự phòng xuất hiện ở MỌI điểm ⇒ mục 8, dòng "lịch toà
 dòng đầu thẻ lịch đổi theo. Gõ tiếp `Vậy ngày 2 giờ còn những điểm nào?`. ĐỌC: danh sách trợ lý kể phải KHỚP thẻ lịch đang hiện (lỗi "kể sai điểm vừa
 bỏ" tìm ra và sửa tối 23/11/2026 — bản deploy dựng từ commit cũ hơn `73dae1f3` sẽ còn lỗi này).
 
-**Dòng 6 — tải file lịch.** Dưới thẻ lịch bấm `Tải về (.txt)` rồi `Tải PowerPoint`. Mong: hai file tải về mở được; file PowerPoint khoảng nửa MB.
+**Dòng 6 — tải file lịch.** Dưới thẻ lịch bấm `Tải PowerPoint`. Mong: file tải về mở được, khoảng nửa MB. (Nút `Tải về (.txt)` đã bỏ từ tối 23/11/2026 theo
+lời chủ dự án; bản deploy dựng từ commit cũ hơn thì còn nút đó.)
 
 **Dòng 7 — hỏi bằng ảnh qua HTTPS.** Trang Trợ lý ⇒ nút dấu cộng "Hỏi bằng ảnh" ⇒ chọn một ảnh Cầu Trường Tiền (ảnh tự chụp hoặc tải về) ⇒ bấm `Hỏi`. Mong:
 thẻ "Trong ảnh có phải là tên dưới đây không? (mình có thể đoán sai)" với nút `Cầu Trường Tiền`; bấm tên ⇒ có câu trả lời. Ảnh của nơi không có trong

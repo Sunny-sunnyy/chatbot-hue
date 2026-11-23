@@ -856,7 +856,10 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                             "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else [])
                                     + (["kiem_lich_dien"] if toi and ngay_that is None and co_suat_dien(d) else []),  # chưa có ngày ⇒ không khẳng định diễn hôm đó
                             "map_url": MAP_BASE + quote(f"{d['ten']}, Huế"),
-                            "loai_diem": list(d["loai"])})  # giao diện: màu + nhãn theo loại điểm (không vào tin nhắn gửi model)
+                            "loai_diem": list(d["loai"]),  # giao diện: màu + nhãn theo loại điểm (không vào tin nhắn gửi model)
+                            # giao diện: tên điểm bấm mở bài kho của chính điểm đó (chủ dự án 21:10 23/11/2026: "nên để cho người dùng click vào được các
+                            # bài như đại nội huế, đầm chuồn, phố đi bộ"); `nguon` của dòng bảng = đường dẫn bài kho; không vào tin nhắn gửi model
+                            "bai_id": d["nguon"]})
         if ng["ngay"] in khung.get("toi_nghi", {}):  # tối nghỉ: dòng do code (không qua model, không nguồn)
             muc.append({"id_muc": f"n{ng['ngay']}-toi-1", "buoi": "toi", "loai": "nghi", "id_diem": None,
                         "ten": CAU_TOI[khung["toi_nghi"][ng["ngay"]]], "gio": None, "nguon": None, "anh": None, "toa_do": None, "nhan": []})
