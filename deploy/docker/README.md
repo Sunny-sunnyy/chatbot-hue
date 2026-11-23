@@ -28,7 +28,7 @@ Ba hộp trên MỘT máy: `qdrant` (chỉ mục) · `app` (FastAPI + giao diệ
 ## 2. Dùng
 
 ```bash
-deploy/docker/dung_anh.sh                 # ảnh từ HEAD; hoặc: dung_anh.sh origin/main
+deploy/docker/dung_anh.sh origin/main     # phải ghi rõ commit / nhánh lấy code + kho
 HUE_IMAGE=hue-rag-app:<sha> deploy/docker/thu_o_may.sh len
 deploy/docker/thu_o_may.sh kiem           # không gọi model; in sẵn lệnh hỏi MỘT câu thật
 deploy/docker/thu_o_may.sh don
@@ -40,12 +40,13 @@ Trên máy đích (Linux x86-64 — ảnh dựng cho `amd64`, không chạy trê
 
 ```bash
 sha256sum -c SHA256SUMS && gunzip -c app_<sha>.tar.gz | docker load
-nano hue.env                               # biến không bí mật — danh sách ở đầu compose.yml; ít nhất HUE_IMAGE, HUE_SITE
-./nap_chi_muc.sh compose.vai-may.yml       # bật Qdrant, nạp chỉ mục, so số điểm
+nano hue.env                               # biến không bí mật — danh sách ở đầu compose.yml; ít nhất HUE_IMAGE, HUE_SITE, HUE_GIT_SHA (không đặt ⇒ log ghi "khong_ro")
+bash nap_chi_muc.sh compose.vai-may.yml    # bật Qdrant, nạp chỉ mục, đếm chính xác số điểm (gọi bằng `bash`: chép qua S3 làm mất quyền chạy của file)
 docker compose --env-file hue.env -f compose.yml -f compose.vai-may.yml up -d --wait
 ```
 
-Thứ tự đủ cho AWS (tạo máy, mở cổng, lúc nào tính tiền, lùi thế nào) thuộc bản thiết kế deploy.
+Thứ tự đủ cho AWS (tạo máy, mở cổng, lúc nào tính tiền, lùi thế nào) thuộc bản thiết kế deploy. Đừng dán đầu ra của `docker compose config` vào
+chỗ công khai: lệnh đó in cả nội dung file bí mật `hue.khoa.env`.
 
 ## 3. Thứ gì riêng tư, thứ gì nằm trong ảnh
 
@@ -74,8 +75,11 @@ Lớp nối model (`backend/llm/bedrock_model.py`) KHÔNG dùng thư viện AWS:
   internet) không tới được dịch vụ thông tin máy. Cần phía Terraform: vai có quyền gọi model, `http_tokens = "required"`.
   Hai điều biết trước: (a) máy khởi động lại thì Docker tự bật lại các hộp không theo thứ tự — đo ở máy này: hộp `khoa` ghi lại file sau 0,75 giây,
   app phải 13,8 giây mới nhận được câu đầu ⇒ thường không lượt nào gặp khoá cũ; chỉ khi dịch vụ thông tin máy trả lời chậm hơn app khởi động thì
-  lượt hỏi đầu mới nhận lỗi "khoá Bedrock bị từ chối hoặc đã hết hạn" một lần; (b) vai bị gỡ khỏi máy / bị gắn chính sách cấm thì
-  lỗi người dùng thấy cũng là dòng đó, còn nguyên nhân nằm ở log hộp `khoa` ("CHƯA lấy được khoá tạm của vai") và trạng thái `unhealthy` của nó.
+  lượt hỏi đầu mới nhận lỗi "khoá Bedrock bị từ chối hoặc đã hết hạn" một lần; (b) hai sự cố cho người dùng CÙNG một lỗi đó nhưng nhìn khác nhau:
+  vai bị GỠ khỏi máy ⇒ hộp `khoa` thành `unhealthy`, log của nó ghi "CHƯA lấy được khoá tạm của vai"; vai bị GẮN CHÍNH SÁCH CẤM gọi model (hành
+  động tự cấm của ngân sách) ⇒ hộp `khoa` VẪN khoẻ, `/health` vẫn `ok`, chỉ các câu hỏi nhận 403 ⇒ "mọi thứ xanh mà câu nào cũng lỗi" thì xem
+  ngân sách / chính sách của vai trước, đừng tìm ở hộp `khoa`.
+  Volume chung chứa file khoá nằm trong RAM (`tmpfs`): khoá tạm không ghi xuống đĩa, máy dừng / bật thì thư mục trống.
 - Máy KHÔNG gắn được vai: phải chọn giữa (i) khoá dài hạn chỉ có quyền đổi lấy khoá tạm + một hộp phụ khác, hoặc (ii) sửa lớp nối cho
   `sessionToken` thành tuỳ chọn. Chưa viết — chờ phương án hạ tầng được chốt.
 

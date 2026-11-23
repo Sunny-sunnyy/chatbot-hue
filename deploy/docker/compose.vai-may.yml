@@ -8,6 +8,8 @@ services:
   khoa:
     image: ${HUE_IMAGE:?đặt HUE_IMAGE}
     network_mode: host
+    read_only: true        # hộp này chỉ ghi vào volume khoá
+    cap_drop: [ALL]
     command: ["python", "/app/lam_moi_khoa.py"]
     volumes:
       - khoa:/run/hue-khoa
@@ -29,4 +31,5 @@ services:
         condition: service_healthy
 
 volumes:
-  khoa:
+  khoa:   # nằm trong RAM: khoá tạm không bao giờ ghi xuống đĩa máy chủ; máy dừng / bật thì thư mục TRỐNG chứ không còn file khoá cũ đã hết hạn
+    driver_opts: {type: tmpfs, device: tmpfs, o: "size=1m,mode=0700"}

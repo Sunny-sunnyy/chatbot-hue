@@ -29,7 +29,7 @@ len)
     "HUE_COOKIE_SECURE=0" "HUE_LUOT_MOI_NGAY=4" "HUE_GIT_SHA=${HUE_IMAGE##*:}" > "$THU/hue.env"
   # Chỉ mục: đúng hai lệnh máy đích cũng dùng — chụp từ Qdrant đang chạy (xoá bản chụp ở nguồn ngay), nạp vào Qdrant của gói + so số điểm
   "$GOI/chup_chi_muc.sh" "$THU/qdrant.snapshot"
-  ( cd "$THU" && COMPOSE_PROJECT_NAME=$DU_AN ./nap_chi_muc.sh compose.thu.yml )
+  ( cd "$THU" && COMPOSE_PROJECT_NAME=$DU_AN bash nap_chi_muc.sh compose.thu.yml )
   dc up -d --wait || { dc logs --tail 40 app; dung "app không sẵn sàng — xem log trên"; }
   echo "ĐÃ LÊN: http://127.0.0.1:$CONG  ·  kiểm: $0 kiem  ·  dọn: $0 don"
   ;;

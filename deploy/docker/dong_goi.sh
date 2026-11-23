@@ -13,4 +13,4 @@ docker save "hue-rag-app:$SHA" | gzip -1 > "app_$SHA.tar.gz"
 cp "$GOI"/compose.yml "$GOI"/compose.vai-may.yml "$GOI"/Caddyfile "$GOI"/nap_chi_muc.sh .
 sha256sum "app_$SHA.tar.gz" qdrant.snapshot compose.yml compose.vai-may.yml Caddyfile nap_chi_muc.sh > SHA256SUMS
 ls -la "$RA"
-echo "XONG: $RA — trên máy đích: sha256sum -c SHA256SUMS && gunzip -c app_$SHA.tar.gz | docker load"
+echo "XONG: $RA — trên máy đích: sha256sum -c SHA256SUMS && gunzip -c app_$SHA.tar.gz | docker load   (script chạy bằng: bash nap_chi_muc.sh <file phủ>)"
