@@ -143,7 +143,7 @@ Mức chi tiêu tham khảo: các món địa phương như cơm hến, bún bò
 ## Food tour nửa ngày
 
 - Buổi sáng: bún bò Huế tại Quán bún bò Mệ Kéo (20 Bạch Đằng) hoặc Bún bò Hạnh (69 Đặng Văn Ngữ), sau đó cà phê tại The Lab Coffee Huế (3 Ngõ 66 Lê Lợi) hoặc MoKa KaFe (22 Nguyễn Huệ).
-- Buổi trưa: cơm hến tại Cơm hến Bà Cam (49 Tùng Thiện Vương) hoặc Quán Nhỏ (28 Phạm Hồng Thái), kết thúc bằng chè tại Chè Hẻm Huế (1 kiệt 29 Hùng Vương).
+- Buổi trưa: cơm hến tại Cơm hến Bà Cam (49 Tùng Thiện Vương), kết thúc bằng chè tại Chè Hẻm Huế (1 kiệt 29 Hùng Vương).
 - Buổi chiều: bánh ép tại Bánh ép Huệ (116 Lê Ngô Cát), thêm bánh ướt bún thịt nướng tại Huyền Anh (50 Kim Long), tối ghé Chè Mợ Tôn Đích (3/3 Đinh Tiên Hoàng).
 
 ## Food tour 1 ngày
