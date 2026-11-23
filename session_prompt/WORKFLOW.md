@@ -147,7 +147,7 @@ dọn worktree, file tạm, collection thử của phiên. A: viết lại `HIEN
 7b. **Vòng tự soi:** `Session_Prompt.md` §7.
 8. **Quyền thường trực:** bảng trong `AGENTS.md`, A không hỏi quyền lúc mở phiên. Quyền RIÊNG cho một việc thuộc hàng "hỏi User trước" User cấp lúc
    được hỏi; A ghi sổ việc kèm giờ, dùng cho đúng việc đó.
-9. **Giao việc cho agent con:** theo skill `giao-viec-agent-con`; số của agent con hoặc của một phiên khác — và khuyến nghị dựa trên số đó — chuyển cho User gắn `chưa kiểm` tới khi có người thứ hai tính lại trên BẢN CUỐI của code; chưa có phép đếm nào thì nói "chưa đếm", không mượn số của một việc gần giống.
+9. **Giao việc cho agent con:** theo skill `giao-viec-agent-con`; số của agent con hoặc của một phiên khác — và khuyến nghị dựa trên số đó — chuyển cho User gắn `chưa kiểm` tới khi có người thứ hai tính lại trên bản đang ở main lúc chuyển; phương án dựa trên số chưa có người thứ hai tính lại thì không gắn chữ "khuyến nghị"; chưa có phép đếm nào thì nói "chưa đếm", không mượn số của một việc gần giống.
 
 ## 10. Session D — học cùng User (tùy chọn)
 
