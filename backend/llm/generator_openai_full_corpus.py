@@ -45,6 +45,7 @@ from llm.full_corpus_prompt import (
     LICH_V2_LOI_DAN_SONNET,
     SONNET_DINH_TUYEN,
     SONNET_GIU_DUNG_VAT,
+    SONNET_NOI_KHAC,
     SONNET_SUA_LICH,
     SONNET_SUA_LICH_KHONG_RO,
     ROUTER_INSTRUCTIONS,
@@ -309,6 +310,7 @@ class OpenAIFullCorpusGenerator:
         sua_lich_reasoning: str = BIEU_MAU_REASONING,
         max_turns: int = ASSISTANT_MAX_TURNS,
         sua_lich_timeout: float | None = None,
+        noi_khac: bool = False,
     ) -> None:
         # answer_instructions / reasoning_effort: chỉ để harness Phase 8.1 thử prompt và mức suy luận;
         # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning; None hoặc "" = không gửi).
@@ -334,6 +336,14 @@ class OpenAIFullCorpusGenerator:
         def kem(loi_dan: str, ghi_chu: str) -> str:
             return f"{loi_dan}\n\n{ghi_chu}" if bedrock_model is not None else loi_dan
 
+        # Công tắc `assistant.noi_khac_tu_choi` (23/11/2026): đoạn dặn `SONNET_NOI_KHAC` nối ngay sau lời dặn TRẢ LỜI — agent trả lời không công cụ,
+        # trợ lý có công cụ (kể cả bản lịch sử) và bản nhiều ý. Lượt biểu mẫu / viết lịch không nhận (không phải hỏi đáp). Tắt, hoặc đường OpenAI ⇒
+        # `tra_loi` chính là `answer_instructions`, mọi chuỗi gửi model giống byte như trước.
+        def them_noi_khac(loi_dan: str) -> str:
+            return kem(loi_dan, SONNET_NOI_KHAC) if noi_khac else loi_dan
+
+        tra_loi = them_noi_khac(answer_instructions)
+
         # Create one shared OpenAIResponsesModel with gpt-6-luna alias
         self.responses_model = bedrock_model if bedrock_model is not None else OpenAIResponsesModel(
             model=self.model, openai_client=self.client
@@ -344,7 +354,7 @@ class OpenAIFullCorpusGenerator:
         # No temperature, verbosity, top_p or sampling knobs; reasoning only when reasoning_effort is set
         self.answer_agent = Agent(
             name="hue_full_corpus_answer_generator",
-            instructions=answer_instructions,
+            instructions=tra_loi,
             model=self.responses_model,
             model_settings=ModelSettings(
                 include_usage=True,
@@ -376,7 +386,7 @@ class OpenAIFullCorpusGenerator:
         }
         # B2 D5: trợ lý có công cụ — lời dặn trả lời + đoạn công cụ, cùng model setting, một công cụ mỗi lượt gọi.
         # Công cụ gắn mỗi lượt (`_assistant_for`): lõi đưa hàm của lượt đó (giữ trace / sổ nguồn riêng).
-        self.assistant_instructions = f"{answer_instructions}\n\n{ASSISTANT_TOOL_NOTE}"
+        self.assistant_instructions = f"{tra_loi}\n\n{ASSISTANT_TOOL_NOTE}"
         self.assistant_agent = self.answer_agent.clone(
             name="hue_assistant",
             instructions=self.assistant_instructions,
@@ -389,7 +399,7 @@ class OpenAIFullCorpusGenerator:
         # Việc agent (3) 14/11 (cờ `cau_nhieu_y`): cùng hai bản trợ lý, chỉ thay đoạn luật từ chối của lời dặn trả lời bằng luật theo ý.
         # Chỉ dựng khi lời dặn là bản runtime (harness 8.1 truyền lời dặn khác ⇒ không có biến thể này). Cờ tắt ⇒ không dùng tới.
         if answer_instructions == ANSWER_SYSTEM_INSTRUCTIONS:
-            ny = f"{ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y}\n\n{ASSISTANT_TOOL_NOTE}"
+            ny = f"{them_noi_khac(ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y)}\n\n{ASSISTANT_TOOL_NOTE}"
             self.assistant_agent_nhieu_y = self.assistant_agent.clone(instructions=ny)
             self.assistant_history_agent_nhieu_y = self.assistant_agent.clone(instructions=f"{ny}\n\n{ASSISTANT_HISTORY_NOTE}")
         # Cổng đợt 1 D3 (V5 — X1c): lượt biểu mẫu = agent trả lời + luật viết lịch trong lời dặn hệ thống + mức suy luận "low". Chỉ lượt biểu
@@ -477,6 +487,7 @@ class OpenAIFullCorpusGenerator:
                 bedrock_model=BedrockClaudeModel(model=bedrock["model"], region=bedrock["region"], creds_file=creds_file, timeout=timeout,
                                                  max_tokens=bedrock["max_tokens"], reasoning_default=bedrock["reasoning_default"]),
                 sua_lich_reasoning=bedrock["reasoning_sua_lich"],
+                noi_khac=bool(settings.get("assistant", {}).get("noi_khac_tu_choi", False)),
             )
         api_key_env = config.get("api_key_env", "OPENAI_API_KEY")
         api_key = os.getenv(api_key_env, "").strip()

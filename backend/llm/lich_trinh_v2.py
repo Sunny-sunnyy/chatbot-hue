@@ -323,7 +323,9 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     ngoai = [j for j in da_xep if ts.so_thich and not set(ts.so_thich) & set(T[j]["loai"]) and j not in
              [x for ng in ngay for x in ng["buoi"]["toi"]]]  # hoạt động tối không phải "điểm lấp ngoài sở thích"
     thieu = [s for s in ts.so_thich if not any(j in da_xep for j in bang.uu_tien.get(s, []))]  # 5c.7 (4): ghi chú do code
-    gia_dinh = (["kieu_di"] if ts.kieu_di is None else []) + ([("han_che_toi" if bang.toi_nhe else "han_che")] if ts.han_che else []) + \
+    # Đoàn có trẻ nhỏ / người lớn tuổi luôn được xếp nhẹ nhàng (kiểu đi không vào bộ xếp) ⇒ KHÔNG ghi câu "chưa chọn kiểu đi nên xếp mức cân bằng": câu đó
+    # sai với họ và đứng ngay trên câu "xếp nhẹ nhàng" (lượt trình duyệt 23/11/2026; xảy ra ở mọi lịch của đoàn hạn chế khi để trống kiểu đi — mặc định của biểu mẫu)
+    gia_dinh = (["kieu_di"] if ts.kieu_di is None and not ts.han_che else []) + ([("han_che_toi" if bang.toi_nhe else "han_che")] if ts.han_che else []) + \
         (["so_thich"] if not ts.so_thich else [])
     ngays = [ngay_cua(i) for i in range(1, n + 1)]
     # 5c.2 (i): điểm ưu tiên không xếp vì đang tạm dừng theo mùa ⇒ ghi chú (mã `tam_dung_mua`)
@@ -652,6 +654,11 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
     ghi_chu += [{"ma": k["ma_luat"], "cau": CAU_KHONG_XEP[k["ma_luat"]].format(diem=k["diem"])} for k in khung["khong_xep"]]
     if khung.get("gio"):
         ghi_chu.append({"ma": "gio_goi_y", "cau": "Giờ trong lịch là giờ gợi ý theo thời lượng tham quan thường gặp. " + CAU_CO_THE_DOI})
+    # Đoàn có trẻ nhỏ / người lớn tuổi luôn được xếp NHẸ NHÀNG dù kiểu đi để trống hay chọn mức khác ⇒ dòng "Mình hiểu" và ô "Thời gian" ở đầu thẻ
+    # phải ghi đúng mức lịch thật sự dùng (trước 23/11/2026: ghi "đi cân bằng" ngay trên ghi chú "xếp nhẹ nhàng"). Chỉ đổi chữ HIỆN RA: tham số lưu trong
+    # khung giữ nguyên lựa chọn của người dùng (bỏ trẻ nhỏ khỏi đoàn bằng lệnh sửa thì kiểu đi cũ dùng lại).
+    if ts["tre_em"] >= 1 or ts["lon_tuoi"]:
+        ts = {**ts, "kieu_di": "nhe_nhang"}
     return {"phien_ban": 2, "tham_so": {**ts, "ngay_di": ngay_di}, "minh_hieu": dong_minh_hieu_v2(ts, ngay_di), "ngay": ngay,
             "o_dau": None, "ghi_chu": ghi_chu}
 

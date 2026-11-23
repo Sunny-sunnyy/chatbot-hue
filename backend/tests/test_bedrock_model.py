@@ -391,6 +391,7 @@ def test_sonnet_only_instructions_are_appended_on_bedrock_and_absent_on_openai(m
     monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
     settings = bedrock_settings()
+    settings["assistant"]["noi_khac_tu_choi"] = False  # đoạn dặn "nơi khác" (23/11/2026) có test riêng ngay dưới; ở đây so các đoạn dặn còn lại
     sonnet = OpenAIFullCorpusGenerator.from_environment(settings)
     settings["full_corpus_generation"]["provider"] = "openai"
     luna = OpenAIFullCorpusGenerator.from_environment(settings)
@@ -421,6 +422,38 @@ def test_sonnet_only_instructions_are_appended_on_bedrock_and_absent_on_openai(m
     assert sonnet.sua_lich_agent.instructions.startswith(p.SUA_LICH_LOI_DAN) and "trả danh sách rỗng. Trường hợp" in sonnet.sua_lich_agent.instructions
     assert sonnet.sua_lich_cht_agent.instructions.startswith(p.SUA_LICH_LOI_DAN_CHT) and "trả chua_ho_tro để" in sonnet.sua_lich_cht_agent.instructions
     assert "{khong_ro}" not in sonnet.sua_lich_agent.instructions + sonnet.sua_lich_cht_agent.instructions
+
+
+def test_other_province_note_is_added_only_when_switched_on_and_only_on_bedrock(monkeypatch):
+    """Công tắc `assistant.noi_khac_tu_choi` (23/11/2026): TẮT (mặc định của file cấu hình) ⇒ mọi lời dặn y như trước; BẬT trên đường Bedrock ⇒ đoạn
+    `SONNET_NOI_KHAC` đứng ngay sau lời dặn trả lời ở agent không công cụ, trợ lý có công cụ, bản lịch sử và bản nhiều ý — không vào lượt biểu mẫu,
+    định tuyến, trò chuyện; BẬT trên đường OpenAI ⇒ không đổi gì (đoạn dặn chưa đo trên model đó)."""
+    from llm import full_corpus_prompt as p
+
+    monkeypatch.setenv("HUE_BEDROCK_CREDS_FILE", "/khong/co/file.json")
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
+    settings = bedrock_settings()
+    assert "noi_khac_tu_choi" in settings["assistant"]  # dòng công tắc phải có trong file cấu hình (bộ đo chỉ ghi đè khoá đã có); test tự đặt giá trị
+    settings["assistant"]["noi_khac_tu_choi"] = False   # ⇒ đúng dù file cấu hình đang để bật hay tắt
+    tat = OpenAIFullCorpusGenerator.from_environment(settings)
+    settings["assistant"]["noi_khac_tu_choi"] = True
+    bat = OpenAIFullCorpusGenerator.from_environment(settings)
+    settings["full_corpus_generation"]["provider"] = "openai"
+    luna_bat = OpenAIFullCorpusGenerator.from_environment(settings)
+
+    tra_loi = f"{p.ANSWER_SYSTEM_INSTRUCTIONS}\n\n{p.SONNET_NOI_KHAC}"
+    nhieu_y = f"{p.ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y}\n\n{p.SONNET_NOI_KHAC}"
+    assert tat.answer_agent.instructions == p.ANSWER_SYSTEM_INSTRUCTIONS and p.SONNET_NOI_KHAC not in tat.assistant_instructions
+    assert bat.answer_agent.instructions == tra_loi  # đường viết không công cụ — cũng là đường của bước viết lại
+    assert bat.assistant_instructions == bat.assistant_agent.instructions == f"{tra_loi}\n\n{p.ASSISTANT_TOOL_NOTE}"
+    assert bat.assistant_instructions_for([("q", "a")]) == bat.assistant_history_agent.instructions == f"{tra_loi}\n\n{p.ASSISTANT_TOOL_NOTE}\n\n{p.ASSISTANT_HISTORY_NOTE}"
+    assert bat.assistant_agent_nhieu_y.instructions == f"{nhieu_y}\n\n{p.ASSISTANT_TOOL_NOTE}"
+    assert bat.assistant_history_agent_nhieu_y.instructions == f"{nhieu_y}\n\n{p.ASSISTANT_TOOL_NOTE}\n\n{p.ASSISTANT_HISTORY_NOTE}"
+    for ten in ("bieu_mau_agent", "router_agent", "chat_agent", "web_agent", "lich_v2_agent", "sua_lich_agent"):  # vai khác không nhận đoạn dặn
+        assert getattr(bat, ten).instructions == getattr(tat, ten).instructions
+    for ten in ("answer_agent", "assistant_agent", "assistant_history_agent", "assistant_agent_nhieu_y", "assistant_history_agent_nhieu_y"):
+        assert p.SONNET_NOI_KHAC not in getattr(luna_bat, ten).instructions
+    assert luna_bat.answer_agent.instructions == p.ANSWER_SYSTEM_INSTRUCTIONS
 
 
 def test_settings_loader_accepts_bedrock_and_rejects_a_broken_block():

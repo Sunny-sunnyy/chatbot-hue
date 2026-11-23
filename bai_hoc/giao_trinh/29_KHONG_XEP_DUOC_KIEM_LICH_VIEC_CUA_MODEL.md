@@ -1,6 +1,6 @@
 # Bài 29 — Khi không xếp được, bước kiểm lịch, và phần việc của model
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: đã sửa theo một lượt đối chiếu độc lập · cách xử lý và các lời báo đọc từ chương trình trưa 22/11; số nghiệm thu chép từ báo cáo các ngày 13–15/11 (đo với gpt-6-luna); lượt ví dụ ngày 21/11 (Claude Sonnet 5.5); người viết không chạy lại lượt nào có model.*
+*Cập nhật 13:25, ngày 23/11/2026 · khớp hệ thống 13:25 23/11 (49 tính năng mở, 5 tắt, kho 267 bài); đã áp hai lượt kiểm · luật kiểm câu nay giữ câu so sánh; câu bị thay ghi nguyên văn vào sổ vết · số của bản sửa chép từ hồ sơ đo 23/11 (Claude Sonnet 5.5); số nghiệm thu chép từ báo cáo 13–15/11 (gpt-6-luna); người viết không chạy lượt có model · lần sửa trước: Nguồn.*
 
 **Bài trước đã biết:** chương trình xếp lịch theo bảy luật có thứ tự, tính giờ bằng phút cố định (bài 28).
 **Bài này thêm:** ba việc xảy ra sau bộ xếp. Một: khi yêu cầu không xếp được trọn, chương trình làm gì và người dùng đọc thấy gì. Hai: một bước kiểm viết riêng, đối chiếu khung lịch với luật. Ba: lần gọi model duy nhất của lượt, nó nhận gì, viết gì, và câu nó viết được kiểm ra sao.
@@ -10,7 +10,7 @@
 - Lượt lập lịch **không bao giờ từ chối cả lịch** vì một phần không xếp được. Phần không làm được trở thành **một dòng ghi chú do chương trình viết**, theo một mã cố định: thiếu điểm tiêu biểu của sở thích, điểm tạm dừng theo mùa, điểm có nhiều bậc thang, điểm không lấy được tài liệu.
 - Sau khi xếp, một **bước kiểm khung** viết độc lập với bộ xếp đối chiếu lịch với 23 luật (giờ trong giờ mở cửa, không quá 2 cụm, không trùng điểm…). Nó chạy ở mọi lượt, và đã chạy trên mọi tổ hợp biểu mẫu với 0 lỗi. Lịch trượt bước này thì không được lưu.
 - Model nhận **danh sách mục và đúng một đoạn kho cho mỗi điểm**, không nhận chữ nào người dùng gõ. Nó trả một danh sách theo mã mục: mỗi mục một mô tả ngắn có số nguồn.
-- Chương trình kiểm **từng câu**: không giờ, không thời lượng, không tiền, không đường link, không tên điểm khác, đúng số nguồn của điểm, không nói về "tài liệu". Câu hỏng thì **chỉ câu đó** được thay bằng một câu dự phòng ("tên — điểm di tích [n]"); model lỗi hẳn thì mọi mục dùng câu dự phòng, khung lịch vẫn đủ.
+- Chương trình kiểm **từng câu**: không giờ, không thời lượng, không tiền, không đường link, tên điểm khác chỉ được đứng sau tên chính điểm và không mở đầu một câu (từ 23/11, để giữ câu so sánh), đúng số nguồn của điểm, không nói về "tài liệu". Câu hỏng thì **chỉ câu đó** được thay bằng một câu dự phòng ("tên — điểm di tích [n]"); model lỗi hẳn thì mọi mục dùng câu dự phòng, khung lịch vẫn đủ.
 - Lần nghiệm thu đầu **trượt** (16 trên 20) vì vài điểm có bài kho quá mỏng; nhóm sửa bằng dữ liệu (chọn tay đoạn kho), rồi đạt 20 trên 20.
 
 ## Từ dùng trong bài
@@ -38,9 +38,9 @@ Bước kiểm khung có **cùng các luật của bộ xếp, viết lại riê
 
 Bước kiểm chạy ở **mọi lượt lập lịch**. Lịch trượt bước này vẫn hiện trên màn hình (khung đã được gửi), nhưng sổ số đo ghi lượt là "không đạt" và lịch **không được lưu**, nên không sửa bằng lời hay tải PowerPoint được. Đây là đọc từ chương trình; các lần mô phỏng mọi tổ hợp biểu mẫu chưa gặp lịch nào trượt.
 
-Bước kiểm còn có hai việc lớn hơn. Ở **sửa lịch bằng lời** (bài 31), nó là cổng: lịch mới chỉ được nhận khi qua bước kiểm. Ở **mô phỏng**, nó chạy trên cả 3.840 tổ hợp biểu mẫu (5 số ngày × có / không trẻ em × có / không người lớn tuổi × 3 kiểu đi × 16 lựa chọn sở thích × 4 kiểu ngày đi). Mỗi lần đổi luật hay đổi bảng, nhóm chạy lại cả 3.840 khung, không tốn tiền.
+Bước kiểm còn có hai việc lớn hơn. Ở **sửa lịch bằng lời** (bài 31), nó là cổng: lịch mới chỉ được nhận khi qua bước kiểm. Ở **mô phỏng**, nó chạy trên cả 3.840 tổ hợp biểu mẫu ("Chi tiết để tra"). Mỗi lần đổi luật hay đổi bảng, nhóm chạy lại cả 3.840 khung, không tốn tiền.
 
-Mô phỏng không bắt được mọi thứ. Ngày 14/11, người review và hai người chấm mù (bài 32) đọc lịch như khách thật và thấy ba lỗi mà mọi phép đếm đều sạch: ngày mưa toàn điểm trong nhà thì không có dòng "Nếu mưa"; buổi sáng kéo tới 14:00 trong khi buổi chiều bắt đầu 13:00 (đếm lại thì 52 trên 3.840 khung); một câu mô tả viết kiểu "tài liệu không cung cấp thông tin về…". Lỗi thứ hai sau đó thành một mã mới của bước kiểm.
+Mô phỏng không bắt được mọi thứ. Ngày 14/11, người review và hai người chấm mù (bài 32) đọc lịch như khách thật và thấy ba lỗi mà mọi phép đếm đều sạch: ngày mưa toàn điểm trong nhà thì không có dòng "Nếu mưa"; buổi sáng kéo tới 14:00 trong khi buổi chiều bắt đầu 13:00; một câu mô tả viết kiểu "tài liệu không cung cấp thông tin về…". Lỗi thứ hai sau đó thành một mã mới của bước kiểm.
 
 ## Phần việc của model: một lần gọi, một danh sách theo mã mục
 
@@ -48,11 +48,13 @@ Mô phỏng không bắt được mọi thứ. Ngày 14/11, người review và 
 
 **Mỗi điểm đúng một đoạn kho.** Chương trình chọn đoạn theo ba bậc. Có đoạn chọn tay trong bảng điểm thì dùng đoạn đó (18 trên 41 điểm). Không có thì tìm bằng "tên điểm + tổng quan kiến trúc cảnh quan" và lấy đoạn đầu tiên thuộc đúng bài của điểm mà có nhắc tên điểm. Vẫn không có thì lấy đoạn dài nhất của đúng bài trong 10 kết quả tìm bằng tên.
 
-**Model trả gì.** Một danh sách đúng khuôn: mỗi phần tử là một mã mục và một câu. Lời dặn gốc đòi "đúng một câu (tối đa 30 từ)". Với Claude Sonnet 5.5, lời dặn được nới thành "một hoặc hai câu (cả mục tối đa khoảng 50 từ)", kèm một đoạn dặn giữ mỗi danh hiệu, con số với đúng vật mà tài liệu gắn cho nó. Lý do có ghi: ở một lần đo, tài liệu ghi chuông và bia là hai Bảo vật quốc gia rồi nhắc thêm tháp bên cạnh, model dồn lại thành ba bảo vật. Câu dài hơn 30 từ không bị cắt.
+**Model trả gì.** Một danh sách đúng khuôn: mỗi phần tử là một mã mục và một câu. Lời dặn gốc đòi "đúng một câu (tối đa 30 từ)". Với Claude Sonnet 5.5, lời dặn được nới thành "một hoặc hai câu (cả mục tối đa khoảng 50 từ)", kèm một đoạn dặn giữ mỗi danh hiệu, con số với đúng vật mà tài liệu gắn cho nó (lý do: "Chi tiết để tra"). Câu dài hơn 30 từ không bị cắt.
 
 **Câu hiện dần.** Model viết dần danh sách; xong mỗi mục, chương trình tách mục đó ra, kiểm, rồi đưa lên thẻ ngay. Với model đang chạy, chữ thường tới một lần (bài 6), nên ở lượt ví dụ cả 11 câu xong lúc 9,3 giây.
 
-**Kiểm từng câu.** Câu bị coi là hỏng nếu: rỗng hoặc chỉ có mã nguồn; nói về tài liệu thay vì tả điểm; không có mã nguồn, hoặc có mã của điểm khác; có giờ hay thời lượng; có số tiền; có đường link; có tên một điểm khác trong bảng (trừ khi tên đó là một phần tên của chính điểm này). Lặp mã mục thì lấy phần tử đầu; mã lạ thì bỏ; thiếu mục thì dùng câu dự phòng. Ở lượt ví dụ: 11 câu, 0 câu bị thay.
+**Kiểm từng câu.** Câu bị coi là hỏng nếu: rỗng hoặc chỉ có mã nguồn; nói về tài liệu thay vì tả điểm; không có mã nguồn, hoặc có mã của điểm khác; có giờ hay thời lượng; có số tiền; có đường link; có tên một điểm khác trong bảng khi tên đó đứng trước tên chính điểm này (hoặc câu không gọi tên nó), hoặc khi tên đó mở đầu một câu (trừ tên con nằm trong tên chính điểm). Lặp mã mục thì lấy phần tử đầu; mã lạ thì bỏ; thiếu mục thì dùng câu dự phòng.
+
+Trước 23/11, có tên điểm khác là bị thay, nên câu đúng tư liệu "Xương Lăng kết hợp phong cách lăng Gia Long và lăng Minh Mạng…" của lăng Thiệu Trị bị thay ở 11 trên 25 lịch mặc định. Câu bị thay nay được ghi nguyên văn vào sổ vết của máy phát triển (bài 37).
 
 **Câu dự phòng** do chương trình dựng từ bảng: tên, loại điểm, mã nguồn của điểm, ví dụ "Đại Nội Huế — điểm di tích [1]." Câu hỏng chỉ làm đúng mục đó mất phần mô tả. Model lỗi, quá 45 giây hay trả sai khuôn thì mọi mục dùng câu dự phòng; khung lịch, giờ, ghi chú, quán ăn vẫn còn nguyên. Người dùng không thấy lời báo riêng nào cho chuyện này.
 
@@ -100,7 +102,7 @@ Lời báo trong ngoặc kép là nguyên văn. Các dòng đọc từ chương 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa / ai làm gì |
 |---|---|---|---|
 | model lỗi, quá 45 giây, hoặc trả sai khuôn khi viết câu | mọi mục chưa có câu dùng câu dự phòng | lịch đủ khung; các mục chỉ có "tên — điểm … [n]"; không có lời báo | đã có; muốn câu đầy đủ thì người dùng xếp lại |
-| một câu có giờ, tiền, link hay tên điểm khác | thay riêng câu đó | một mục chỉ có câu dự phòng | đã có |
+| một câu có giờ, tiền, link, hoặc có tên điểm khác khi chưa gọi tên chính điểm (kể cả không gọi lần nào) hay tên kia mở đầu câu | thay riêng câu đó | một mục chỉ có câu dự phòng | đã có |
 | thiếu khoá model lúc bật máy chủ | máy chủ chặn ngay đầu mọi yêu cầu, kể cả lượt lập lịch dù bộ xếp không cần model | "Không thể tạo câu trả lời vào lúc này." | vì sao chặn cả lượt lập lịch: chưa thấy ghi lý do. Đã thử 22/11 với câu hỏi; với lượt lập lịch: đọc từ chương trình |
 | khung trượt bước kiểm | vẫn hiện lịch; không lưu | lịch hiện bình thường; lệnh sửa sau đó áp lên lịch đã lưu trước đó (nếu có), không phải lịch đang thấy; chưa có thì bị coi như câu hỏi thường | chưa gặp trong mô phỏng |
 
@@ -178,11 +180,24 @@ Thời gian tới lúc đủ câu ở lần sửa 14/11: 4,06 giây (bản đang
 
 **Giới hạn của phép đo:** mọi lượt nghiệm thu đo với gpt-6-luna. Với Claude Sonnet 5.5 mới có lượt thật lẻ; chưa ai chạy lại bộ 20 yêu cầu trên model đang chạy.
 
+**Câu so sánh bị thay oan (23/11, Claude Sonnet 5.5).** Vấn đề thật: ở lịch 2 ngày mặc định, mục lăng Thiệu Trị hay chỉ có câu dự phòng. Người viết code tái hiện và sửa; một phiên khác (không viết dòng code nào) chạy lượt chấm.
+
+| Phép | Luật cũ | Luật mới |
+|---|---|---|
+| lịch mặc định chạy qua chương trình máy chủ (không qua trình duyệt) | 25 lịch: câu lăng Thiệu Trị bị thay ở 11; 0 điểm khác bị thay | 6 lịch: 0 câu dự phòng |
+| phát lại 248 câu đã ghi qua luật kiểm (không gọi model) | — | 11 câu từng bị thay nay đạt; 237 câu không đổi |
+| lượt chấm: 9 lịch (6 mặc định, 3 tổ hợp 3–4 ngày), qua chương trình máy chủ | — | 81 câu, 0 câu bị thay; 5 câu có tên điểm khác được giữ, cả 5 là câu so sánh của lăng Thiệu Trị |
+| lượt dùng như người thật trên trình duyệt (10:50 23/11) | — | 1 lịch mặc định: 8 / 8 câu do model viết, câu so sánh hiện đủ |
+
+**Đọc bảng thế nào:** cả 11 câu bị thay đều đúng tư liệu (bài kho của lăng Thiệu Trị so nó với hai lăng kia); lỗi nằm ở luật kiểm, không ở model. **Giới hạn:** lịch có điểm nhiều tên (núi Ngự Bình, cung An Định) mới có trong 3 lịch của lượt chấm; hồ sơ chấm chỉ in các câu có tên điểm khác, chưa thấy lượt đọc tay mọi câu xem có câu tả nhầm điểm lọt qua luật mới (trang hiện trạng ghi phiên đo đọc tay 41 câu và mọi câu có tên điểm khác, 0 câu tả sai điểm; hồ sơ chấm không ghi lượt đọc này).
+
 ## Quyết định nhỏ hơn
 
 **Vì sao câu quá 30 từ không bị cắt?** Chú thích chương trình ghi: lời dặn đã giới hạn, và cắt chữ model là sửa chữ người khác viết. Câu dài chỉ được đếm để báo.
 
 **Vì sao luật "câu nói về tài liệu" không bắt chữ "tài liệu" đứng một mình?** Một bảo tàng có thể "trưng bày tài liệu, văn bản cổ"; người review chỉ ra ca này, nên khuôn chỉ bắt các cụm như "tài liệu không…", "theo tài liệu", "không đề cập".
+
+**Vì sao nới luật kiểm câu, mà không thêm lời dặn cho model?** **Đã chọn:** giữ câu có tên điểm khác khi câu đã gọi tên chính điểm này trước và tên kia không mở đầu một câu; không đổi lời dặn, không thêm lần gọi model. **Vì sao:** lời dặn đã có câu "Không nhắc tên điểm khác.", và câu bị thay là câu đúng tư liệu, nên thêm lời dặn không phải là sửa (hồ sơ của người viết code ghi vậy). **Cách khác:** thêm lời dặn: không làm, vì lý do trên. **Cái giá:** một câu gọi tên chính điểm trước rồi tả sang điểm khác ở nửa sau sẽ không bị bắt (suy từ chương trình; ở lượt chấm 9 lịch, 81 câu, chưa gặp: cả 5 câu được giữ dù có tên điểm khác đều là câu so sánh đúng của lăng Thiệu Trị — mẫu nhỏ).
 
 **Vì sao thiếu khoá model thì không lập lịch, dù bộ xếp chạy được?** Chưa thấy ghi lý do. Điều thấy được: máy chủ kiểm "model đã sẵn sàng" ngay đầu mọi yêu cầu, trước khi biết đó là lượt biểu mẫu.
 
@@ -220,14 +235,19 @@ Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối 
 - Bộ 20 yêu cầu chưa chạy lại trên Claude Sonnet 5.5.
 - Câu mô tả với Claude dài tới khoảng 50 từ; lời dặn nới, con số 30 từ để đếm không đổi.
 - Bước kiểm câu không kiểm được ý sai trong câu (gán nhầm danh hiệu cho một vật); chỗ này chỉ có lời dặn giữ.
+- Từ 23/11, tên điểm khác đứng sau tên chính điểm (không mở đầu câu) thì câu được giữ; câu tả lẫn sang điểm kia ở nửa sau không bị bắt (suy từ chương trình; ở lượt chấm 9 lịch, 81 câu, chưa gặp: cả 5 câu được giữ dù có tên điểm khác đều là câu so sánh đúng của lăng Thiệu Trị — mẫu nhỏ).
 
 ## Chi tiết để tra
 
+- Lỗi "buổi sáng kéo tới 14:00" của lượt đọc 14/11: đếm lại thì 52 trên 3.840 khung (chuyển từ thân bài ở lượt áp cuối 23/11, không đổi nội dung).
+- 3.840 tổ hợp biểu mẫu của mô phỏng = 5 số ngày × có / không trẻ em × có / không người lớn tuổi × 3 kiểu đi × 16 lựa chọn sở thích × 4 kiểu ngày đi (chuyển từ thân bài trong đợt áp biên bản 23/11).
 - Mã mục có dạng `n<ngày>-<buổi>-<thứ tự>`, ví dụ ngày 1 buổi sáng mục 1.
 - Sau khi đủ câu, chương trình ghép lời lịch bằng chữ thuần (dòng "Mình hiểu", từng ngày, ghi chú, chỗ ở, ăn uống) rồi chạy kiểm số nguồn như mọi câu trả lời (bài 16); mỗi dòng mang mã nguồn của đúng điểm đó.
 - Lượt sửa lịch (bài 31): mục nào giữ nguyên điểm thì giữ câu cũ đã kiểm (đổi lại số nguồn), chỉ gửi model các mục mới; không còn mục mới thì không gọi model.
 - Phép thử luật "câu nói về tài liệu" trên 1.068 câu đã lưu của nghiệm thu: bắt đúng 1 câu lỗi, 0 câu tốt bị chặn.
 - Một lượt thử 15/11 thấy 2 mục hiện mỗi "[3]"; từ đó câu chỉ có mã nguồn bị coi là rỗng.
+- Đoạn dặn giữ đúng vật (chuyển từ thân bài 23/11): ở một lần đo, tài liệu ghi chuông và bia là hai Bảo vật quốc gia rồi nhắc thêm tháp bên cạnh, model dồn lại thành ba bảo vật.
+- Sổ vết của câu bị thay (từ 23/11): mỗi dòng giữ mã mục, mã lỗi và câu model viết (cắt ở 500 ký tự); ghi ở cả đường trả một lần và đường gửi dần. Trước đó chỉ có mã lỗi, nên 9 lần câu bị thay vì tên điểm khác của các ngày trước không biết là của điểm nào.
 
 **Bài sau (bài 30):** quanh một lịch: chỗ ở, quán ăn, ảnh, bản đồ, và các nút xuất file.
 
@@ -245,7 +265,14 @@ Hai trường hợp bỏ điểm vì thiếu tài liệu và bớt ngày cuối 
 - Lượt ví dụ: `data/hoc_cung_D/vi_du_lap_lich_vet.json` (`so_cau_du_phong` 0, `loi_cau` rỗng, 11 nguồn, `lich_xong_ms` 9.319,8) [riêng tư; đã chạy].
 - Thiếu khoá ⇒ không lập lịch: `len_ke_hoach.py` (`answer_v2`, `stream_v2` — `GeneratorNotReadyError` trước `chuan_bi`); bài 6 (đã thử: "mọi lần lập lịch bị từ chối") [code; đã thử ở bài 6].
 - Hỏi lại do model tự quyết đã bỏ: `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` hàng 19 [chép].
+- Luật tên điểm khác nới 23/11 (thêm 12:14 23/11/2026): `git show 8a08d39b` — `backend/llm/lich_trinh_v2.py` `kiem_cau` (`dau_minh` = chỗ đầu tiên câu gọi tên chính điểm; `_MO_DAU_CAU`; vẫn `ten_khac` khi `dau_minh is None`, tên khác đứng trước, hoặc tên khác mở đầu câu; chú thích "11 / 25 lịch mặc định trên model đang chạy") [code]. Sổ vết: `backend/llm/len_ke_hoach.py` `ghi_cau_bi_loai` (`cau[:500]`; gọi ở `answer_v2` và `stream_v2`), `backend/core/so_vet.py` trường `v2_cau_bi_loai` [code]. Lời dặn đã có "Không nhắc tên điểm khác.": `backend/llm/full_corpus_prompt.py` dòng 165 [code].
+- Số của bản sửa: `data/thu_bedrock_2026-11-21/harness/c_cau_ta_ten_khac_2311/KET_QUA.md` mục 1–4 (25 lịch ⇒ 11 `ten_khac`, 0 điểm khác; "thêm lời dặn không phải là sửa"; phát lại 248 câu: 11 ⇒ đạt, 237 không đổi; 6 lịch thật sau sửa 0 câu dự phòng; ca test mới đỏ trên luật cũ, đạt trên luật mới; "CHƯA kiểm: lịch không mặc định có điểm nhiều tên… đọc tay"; 9 dòng `ten_khac` các ngày trước không rõ điểm) [riêng tư; chép, đã mở nguồn; lượt chạy qua app, không qua trình duyệt]. Lượt chấm: `data/thu_bedrock_2026-11-21/harness/e_cham_cau_ta_2311/luot_1.out` các dòng "lượt 1…9" (model `global.anthropic.claude-sonnet-5-5`; 8 × 6 + 14 + 11 + 8 = 81 câu; "bị loại (luật mới) 0" ở cả 9; "được giữ dù có tên điểm khác 1" ở lượt 4, 5, 6, 7, 9 — đều Lăng Thiệu Trị; câu trích trong thân bài là đầu câu của lượt 5) [riêng tư; đã mở, người viết cộng]. Lượt trình duyệt: `data/playwright_mcp/luot_2311/NHAT_KY.md` dòng đầu (server từ main có bản sửa câu tả) và hàng 10:50 ("8 / 8 điểm có câu tả THẬT… 0 câu dự phòng") [riêng tư; chép, đã mở]. "Một phiên khác không viết dòng code nào": lượt chấm do phiên đo chạy (lời giao đợt D 23/11 sự việc 1) [chép].
+- Lịch sử sửa bài (chuyển từ dòng "Cập nhật" 23/11): 16:11 22/11 phân xử chỗ lệch giữa các bài; trước đó sửa theo một lượt đối chiếu độc lập; 12:14 23/11 thêm luật kiểm câu mới và sổ vết câu bị thay.
 
 - Bài đã qua một lượt đối chiếu độc lập (người kiểm chỉ đọc, tự chạy lại bộ xếp và phần áp lệnh), trưa 22/11/2026: `data/hoc_cung_D/kiem/bai_27_32.md` [riêng tư]; các dòng SAI / LỆCH đã áp, dòng không áp ghi ở `data/hoc_cung_D/viet/viet_27_32.md` mục "Sau lượt kiểm" [riêng tư].
+
+- Đợt áp biên bản kiểm độc lập (12:45 23/11/2026; `data/hoc_cung_D/kiem/dot_2311_trua_k1_kiem.md` mục "Bài 29" hàng 1, 2, 5, 13 [riêng tư]). Luật hai điều kiện: `backend/llm/lich_trinh_v2.py` dòng 707 (`_MO_DAU_CAU`), 734 (`dau_minh` = chỗ đầu tiên của tên chính điểm), 743 (`dau_minh is None or m.start() < dau_minh or _MO_DAU_CAU.search(…)` ⇒ câu hỏng) [code, đã mở trên main `8e8ec4ed`]. "Chưa ai đọc tay mọi câu": `c_cau_ta_ten_khac_2311/KET_QUA.md` dòng 18 ("CHƯA kiểm: … đọc tay "0 câu tả sai điểm" trên nhiều lịch — phần phiên đo chấm"); `e_cham_cau_ta_2311/` chỉ có `cham_cau_ta.py`, `luot_1.jsonl`, `luot_1.out`, không file nào ghi lượt đọc tay [riêng tư; đã mở / đã liệt kê]; `session_prompt/HIEN_TRANG.md` mục 1 gạch "Lượt cả bộ test MỚI NHẤT (09:41–09:59…)" ghi "0 câu tả sai điểm [đọc tay 41 câu + mọi câu có tên điểm khác]" [chép; không có file gốc người áp tìm được]. Công thức 3.840 tổ hợp chuyển xuống "Chi tiết để tra" để giữ độ dài.
+
+- Lượt áp cuối (13:25 23/11/2026; biên bản `data/hoc_cung_D/kiem/dot_2311_trua_k2_sau_bien_ban_kiem.md` mục "Bài 29" hàng 7; `dot_2311_trua_k2_phu_luc_kiem.md` hàng 96 [riêng tư]). "Chưa gặp ở 81 câu": `data/thu_bedrock_2026-11-21/harness/e_cham_cau_ta_2311/luot_1.out` — chương trình chấm in MỌI câu "được giữ dù có tên điểm khác" (`cham_cau_ta.py` ghi mọi câu kèm mã của luật mới và luật cũ); 9 dòng "lượt …" cộng 8 × 6 + 14 + 11 + 8 = 81 câu, "bị loại (luật mới) 0" ở cả 9, "được giữ dù có tên điểm khác" 1 ở lượt 4, 5, 6, 7, 9 (= 5), cả 5 dòng `[GIỮ · tên khác ['Lăng Minh Mạng', 'Lăng Gia Long']] Lăng Thiệu Trị: …` là câu so sánh [riêng tư; đã chạy, phiên đo; người áp tự đếm]. Ca "không gọi tên chính điểm lần nào": `backend/llm/lich_trinh_v2.py` dòng 743 (`dau_minh is None` ⇒ câu hỏng) [code].
 
 </details>

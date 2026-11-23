@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Nạp chỉ mục vào Qdrant của gói:  bash nap_chi_muc.sh <file phủ>     — chạy TRONG thư mục có compose.yml, hue.env, qdrant.snapshot (máy thử lẫn máy đích)
+# Nạp chỉ mục vào Qdrant của gói:  bash nap_chi_muc.sh [file phủ]     — chạy TRONG thư mục có compose.yml, hue.env, qdrant.snapshot (máy thử lẫn máy đích)
 # Bật riêng hộp qdrant ⇒ chép bản chụp vào ⇒ khôi phục ⇒ so số điểm với bản ghi dựng nằm trong ảnh app; lệch thì dừng (app sẽ không trả lời được).
 # Chạy lại được: khôi phục đè lên collection đang có.
 set -euo pipefail
-PHU=${1:?dùng: nap_chi_muc.sh <file phủ, vd compose.vai-may.yml>}
+PHU=${1:-}   # file phủ là TUỲ CHỌN: đường deploy (model OpenAI) không có file phủ nào; đường Bedrock: compose.vai-may.yml / compose.thu.yml
 COL=${HUE_COLLECTION:-hue_full_corpus_7a2_e5_small_384}
-dc() { docker compose --env-file hue.env -f compose.yml -f "$PHU" "$@"; }
+dc() { docker compose --env-file hue.env -f compose.yml ${PHU:+-f "$PHU"} "$@"; }
 dc up -d --wait qdrant
 dc cp qdrant.snapshot qdrant:/qdrant/snapshots/qdrant.snapshot
 # Ảnh Qdrant không có curl ⇒ gọi từ một hộp dùng một lần của ảnh app (cùng mạng compose). `priority: snapshot` bắt buộc khi collection còn trống.
