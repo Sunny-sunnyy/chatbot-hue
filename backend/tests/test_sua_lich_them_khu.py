@@ -1,0 +1,115 @@
+"""Cờ `sua_lich_them_khu` (BẢN THỬ 23/11/2026, chờ chủ dự án quyết — đổi luật khu) — 0 USD, không gọi model. Vì sao: sau khi cho lệnh thêm vượt nhịp
+đi (`sua_lich_them_day`), thứ còn chặn phần lớn lệnh "thêm X" là luật KHU (một ngày quá hai khu, hai khu không liền nhau): đoàn thường 319 ⇒ 836 /
+1.116 lệnh làm được khi cho đi sang khu không kề với phút đi lấy từ bảng khoảng cách (liệt kê 108 lịch mẫu). File kiểm phần code trên bảng thật: bảng
+phút chưa nạp / cờ tắt ⇒ y như bản chỉ nới nhịp; cờ bật ⇒ chặng sang khu không kề có số phút thật, ≤ 60 phút, giờ nối đủ số phút đó, dòng báo nêu chặng."""
+import pytest
+
+from llm import khoang_cach as kc
+from llm import lich_trinh_v2 as v2
+from llm import sua_lich_v2 as s
+from llm.assistant import AssistantFlags
+from test_cong_dot_1 import flags_from
+from test_sua_lich_them_day import NGAY_DIEM, _lenh, _them
+from test_sua_lich_v2 import B, _lich
+
+T = B.theo_id
+KC = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, khoang_cach=True).khoang_cach_bang
+KHU = {"qua_2_cum", "cum_khong_ke", "ghep_khong_ke"}
+
+
+@pytest.fixture
+def bang_phut():
+    """Nạp bảng phút cho đúng một ca test rồi trả về None (biến mức module của `lich_trinh_v2`)."""
+    phut = kc.bang_phut(KC)
+    v2.dat_phut_khu(phut)
+    yield phut
+    v2.dat_phut_khu(None)
+
+
+def test_flag_defaults_off_needs_its_parents_and_loads_no_table_when_off():
+    assert AssistantFlags().sua_lich_them_khu is False
+    with pytest.raises(ValueError, match="sua_lich_them_khu needs"):
+        AssistantFlags(sua_lich_them_khu=True)
+    v2.dat_phut_khu({"a|b": 1})
+    flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True)  # cờ tắt ⇒ nơi dựng cờ trả biến bảng phút về None
+    assert v2.PHUT_KHU is None
+
+
+def test_minutes_table_uses_the_distance_tool_formula_rounded_up_to_five():
+    phut = kc.bang_phut(KC)
+    khoa, v = next(iter(KC.cap.items()))
+    goc = int(v["phut"] * kc.HE_SO_OSRM + 0.5) + kc.PHUT_CONG
+    assert phut[khoa] % 5 == 0 and 0 <= phut[khoa] - goc < 5
+    a, b = khoa.split("|")
+    assert f"{b}|{a}" in phut  # cặp một chiều dùng cho cả hai chiều
+
+
+def test_without_the_table_or_the_switch_it_is_the_pace_only_behaviour(bang_phut):
+    k, luu = _lich(2, "can_bang")
+    for i, ng, b in _lenh(k):
+        a = _them(luu, i, ng, b, them_day=True)  # bảng đã nạp, công tắc khu tắt
+        v2.dat_phut_khu(None)
+        assert a == _them(luu, i, ng, b, them_day=True) == _them(luu, i, ng, b, them_day=True, them_khu=True)  # chưa nạp bảng ⇒ công tắc khu không làm gì
+        v2.dat_phut_khu(bang_phut)
+
+
+@pytest.mark.parametrize("n,kieu", [(2, "can_bang"), (3, "nhe_nhang")])
+def test_add_across_non_adjacent_areas_is_applied_timed_with_real_minutes_and_reported(n, kieu, bang_phut):
+    """Quét mọi lệnh thêm trên một lịch vừa xếp: ca bản chỉ-nới-nhịp đã làm được ⇒ kết quả không đổi; ca chỉ làm được nhờ khu ⇒ ngày có cả hai dấu, khung
+    đúng luật, bỏ dấu khu đi thì chỉ còn mã luật khu, mỗi chặng sang khu không kề có số trong bảng ≤ trần và giờ nối đủ số phút đó, dòng báo nêu chặng."""
+    k, luu = _lich(n, kieu)
+    n_khu = 0
+    for i, ng, b in _lenh(k):
+        a = _them(luu, i, ng, b, them_day=True)
+        kq = _them(luu, i, ng, b, them_day=True, them_khu=True)
+        if a["da_ap"]:
+            assert kq == a
+            continue
+        if not kq["da_ap"]:
+            assert kq["khung"] == k
+            continue
+        n_khu += 1
+        ap, moi = kq["da_ap"][0], kq["khung"]
+        ngay = ap["ngay"]
+        assert moi["khu_them"] == kq["luu"]["khu_them"] == [ngay] and ngay in moi["day_them"] and v2.kiem_khung_v2(B, moi) == []
+        khong_dau = {x: v for x, v in moi.items() if x != "khu_them"}
+        assert set(v2.kiem_khung_v2(B, khong_dau)) and set(v2.kiem_khung_v2(B, khong_dau)) <= KHU
+        d = next(x for x in moi["ngay"] if x["ngay"] == ngay)
+        day = [j for bb in v2.BUOI_NGAY for j in d["buoi"][bb]]
+        sang_cuoi = d["buoi"]["sang"][-1] if d["buoi"]["sang"] else None
+        for x, y in zip(day, day[1:]):
+            if v2._phut_di(T[x], T[y]) is not None:
+                continue
+            m = bang_phut[f"{x}|{y}"]
+            assert m <= v2.TRAN_PHUT_KHU
+            ket = v2.ra_phut(moi["gio"][x].split("–")[1].strip())
+            bat = v2.ra_phut(moi["gio"][y].split("–")[0].strip())
+            assert bat >= ket + (v2.NGHI_TRUA + max(0, m - v2.DI_CUM_KE) if x == sang_cuoi else m)  # qua bữa trưa: 60 phút + phần phút đi vượt 30
+        cau = s.thay_doi(B, kq)[0]["cau"]
+        assert f"Ngày {ngay} nay đi qua {ap['khu']['so_khu']} khu" in cau and "nay dày hơn nhịp" in cau
+        co_chang = any(v2._phut_di(T[x], T[y]) is None for x, y in zip(day, day[1:]))
+        assert bool(ap["khu"]["chang"]) == co_chang and ("là hai khu không liền nhau, đi mất khoảng" in cau) == co_chang
+        assert co_chang or ap["khu"]["so_khu"] >= 3  # không có chặng không kề ⇒ ngày đi ba khu nối nhau từng đôi
+        bo = s.ap(B, kq["luu"], [s.HanhDong(loai="bo_diem", ten=T[i]["ten"])], them_khong_the=True, them_day=True, them_khu=True)
+        assert bo["da_ap"] and v2.kiem_khung_v2(B, bo["khung"]) == []  # bỏ chính điểm vừa thêm thì lịch về lại hợp luật
+    assert n_khu > 0
+
+
+def test_a_leg_longer_than_the_ceiling_is_still_refused():
+    """Mọi chặng giữa hai khu không kề dài hơn trần ⇒ không lệnh nào được thêm nhờ khu (y như bản chỉ nới nhịp)."""
+    v2.dat_phut_khu({khoa: v2.TRAN_PHUT_KHU + 5 for khoa in kc.bang_phut(KC)})
+    try:
+        k, luu = _lich(2, "can_bang")
+        for i, ng, b in _lenh(k):
+            kq = _them(luu, i, ng, b, them_day=True, them_khu=True)
+            assert not (kq["da_ap"] and kq["da_ap"][0].get("khu", {}).get("chang"))
+            assert v2.kiem_khung_v2(B, kq["khung"]) == []
+    finally:
+        v2.dat_phut_khu(None)
+
+
+def test_groups_with_children_or_elderly_are_not_changed(bang_phut):
+    k = v2.xep_v2(B, v2.ThamSoV2(2, kieu_di="can_bang", so_thich=("di_tich",), lon_tuoi=True))
+    luu = s.luu_tu_lich(k, None, None)
+    for i in [j for j in NGAY_DIEM if j not in s._vi_tri(k)][:12]:
+        assert _them(luu, i, them_day=True, them_khu=True) == _them(luu, i)
