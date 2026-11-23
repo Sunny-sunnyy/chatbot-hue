@@ -1,0 +1,47 @@
+#!/bin/bash
+# Chạy MỘT lần, bằng quyền root, lúc máy bật lần đầu (cloud-init). Terraform điền ba giá trị: swap_gb, artifact_bucket_name,
+# aws_region. Việc của đoạn này CHỈ là chuẩn bị máy: vùng nhớ tráo, Docker + Compose, AWS CLI, thư mục làm việc.
+# KHÔNG tải gói, KHÔNG bật app — làm tay ở guide 4. Không có bí mật nào ở đây (đoạn này đọc được từ trang quản lý AWS).
+# Xem lại nó đã chạy gì: sudo tail -n 80 /var/log/cloud-init-output.log
+set -euxo pipefail
+export DEBIAN_FRONTEND=noninteractive
+
+# Lúc máy vừa bật, trình cập nhật tự động của Ubuntu hay giữ khoá của apt ⇒ chờ tới 10 phút thay vì hỏng ngay.
+APT="apt-get -o DPkg::Lock::Timeout=600 -o Acquire::Retries=5"
+
+# 1) Vùng nhớ tráo (swap): máy 4 GB chạy ba hộp; thiếu RAM mà không có swap thì hộp app bị giết.
+if [ "${swap_gb}" -gt 0 ] && [ ! -f /swapfile ]; then
+  fallocate -l "${swap_gb}G" /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+  echo '/swapfile none swap sw 0 0' >> /etc/fstab
+fi
+
+# 2) Docker Engine + Docker Compose (bản plugin, từ 2.24) từ kho chính thức của Docker.
+$APT update
+$APT install -y ca-certificates curl
+install -m 0755 -d /etc/apt/keyrings
+curl --retry 5 -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+chmod a+r /etc/apt/keyrings/docker.asc
+cat > /etc/apt/sources.list.d/docker.sources <<'REPO'
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: noble
+Components: stable
+Architectures: amd64
+Signed-By: /etc/apt/keyrings/docker.asc
+REPO
+$APT update
+$APT install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+systemctl enable --now docker   # enable: máy dừng rồi bật lại thì Docker tự chạy ⇒ ba hộp tự lên
+
+# 3) AWS CLI: guide 4 tải gói từ thùng bằng khoá tạm của vai gắn máy.
+snap install aws-cli --classic
+
+# 4) Thư mục làm việc + một file ghi tên thùng và vùng (không bí mật) để lệnh ở guide 4 khỏi gõ lại.
+install -d -m 0750 /srv/hue
+printf 'HUE_THUNG=%s\nAWS_DEFAULT_REGION=%s\n' '${artifact_bucket_name}' '${aws_region}' > /srv/hue/may.env
+
+# 5) Dấu "đã chuẩn bị xong" — guide 3 kiểm file này.
+echo "may chu san sang luc $(date -Is)" > /var/log/hue-may-chu-san-sang

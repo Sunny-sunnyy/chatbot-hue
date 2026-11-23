@@ -39,11 +39,12 @@ Ba hộp trên MỘT máy: `qdrant` (chỉ mục) · `app` (FastAPI + giao diệ
 cd /home/minhhieu/hue_rag && uv run --project backend --no-sync python deploy/docker/dung_ngu_canh.py --ref origin/main --du-lieu data --chi-kiem
 ```
 
-In từng file `data/…` cấu hình trỏ tới kèm `có` / `THIẾU`, thoát 1 khi thiếu (lệnh dựng thật cũng dừng ở đúng chỗ này). Lúc 17:23 23/11/2026, main `d1b0f52e`:
-9 file, thiếu 0 — gồm năm bảng đổi trong ngày 23/11 (`diem_v14.json`, `diem_toa_do_v10.json`, `bang_anh_v8.json`, `bang_quan_lich_v4.json`,
-`danh_sach_ten_55.json`); cùng hai file của thư mục bản ghi dựng là 11 file riêng tư như bảng mục 3. Ảnh mới của lịch (ba ảnh quán ở
-`frontend/public/anh/lich/`) nằm trong git nên đi theo code. Ảnh Docker dựng sáng 23/11 (`e7193bd`) mang các bảng CŨ ⇒ trước khi deploy phải dựng lại
-từ commit sẽ chạy.
+In từng file `data/…` cấu hình trỏ tới kèm `có` / `THIẾU`, thoát 1 khi thiếu (lệnh dựng thật cũng dừng ở đúng chỗ này). Lúc 19:47 23/11/2026, main `5a11e3f0`:
+9 file, thiếu 0 — gồm năm bảng đổi trong ngày 23/11 (`diem_v15.json`, `diem_toa_do_v11.json`, `bang_anh_v9.json`, `bang_quan_lich_v5.json`,
+`danh_sach_ten_55.json`); cùng hai file của thư mục bản ghi dựng là 11 file riêng tư như bảng mục 3. Tên bảng ghi ở đây chỉ là ảnh chụp của lúc đó —
+danh sách thật luôn là thứ lệnh trên in ra. Ảnh mới của lịch (`frontend/public/anh/lich/`) nằm trong git nên đi theo code. Hai ảnh Docker còn trên máy
+dựng (`0367e77`, `e38b55c`, trưa 23/11) mang các bảng CŨ và kho 267 bài ⇒ trước khi deploy phải dựng lại từ commit sẽ chạy (kho nay 269 bài, 9.533 điểm
+chỉ mục).
 
 ```bash
 deploy/docker/dung_anh.sh origin/main     # phải ghi rõ commit / nhánh lấy code + kho
