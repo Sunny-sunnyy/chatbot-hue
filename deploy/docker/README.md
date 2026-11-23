@@ -35,7 +35,8 @@ deploy/docker/thu_o_may.sh don
 ```
 
 Đưa sang máy đích: `deploy/docker/dong_goi.sh <sha>` ra thư mục `~/hue_goi_<sha>/` gồm `app_<sha>.tar.gz` (ảnh, khoảng 0,9 GB theo số đo 16/11) ·
-`qdrant.snapshot` (chỉ mục) · `compose.yml` · `compose.vai-may.yml` · `Caddyfile` · `nap_chi_muc.sh` · `SHA256SUMS`. Thư mục này riêng tư.
+`qdrant.snapshot` (chỉ mục) · `compose.yml` · `compose.vai-may.yml` · `Caddyfile` · `nap_chi_muc.sh` · `cau_hinh/` (`settings.yaml` + `logging.yaml`
+của chính ảnh đó) · `SHA256SUMS` (8 file có băm). Thư mục này riêng tư.
 Trên máy đích (Linux x86-64 — ảnh dựng cho `amd64`, không chạy trên máy ARM; Docker có Compose từ 2.24), trong thư mục đó:
 
 ```bash
@@ -48,6 +49,12 @@ docker compose --env-file hue.env -f compose.yml -f compose.vai-may.yml up -d --
 Thứ tự đủ cho AWS (tạo máy, mở cổng, lúc nào tính tiền, lùi thế nào) thuộc bản thiết kế deploy. Đừng dán đầu ra của `docker compose config` vào
 chỗ công khai: lệnh đó in cả nội dung file bí mật `hue.khoa.env`.
 
+**Đổi model viết / tắt một tính năng NGAY TRÊN MÁY ĐÍCH, không dựng lại ảnh.** `compose.yml` gắn thư mục `cau_hinh/` đè lên thư mục cấu hình trong
+ảnh ⇒ sửa một dòng của `cau_hinh/settings.yaml` rồi `docker compose --env-file hue.env -f compose.yml -f <file phủ> restart app` (khoảng 13 giây).
+Về model cũ: dòng `provider: bedrock` ⇒ `provider: openai`, thêm `OPENAI_API_KEY=…` vào `hue.khoa.env`, rồi `… up -d app` (để hộp nhận biến mới);
+về lại thì sửa ngược dòng đó. Chi tiết hai model: `guides/DOI_MODEL_VIET.md`. Lấy lại bản gốc của file:
+`docker run --rm --entrypoint cat <ảnh> /app/backend/config/settings.yaml > cau_hinh/settings.yaml`.
+
 ## 3. Thứ gì riêng tư, thứ gì nằm trong ảnh
 
 | Thứ | Trong ảnh? | Ghi chú |
@@ -57,7 +64,8 @@ chỗ công khai: lệnh đó in cả nội dung file bí mật `hue.khoa.env`.
 | Chỉ mục Qdrant | không | đi bằng bản chụp (~56 MB), nạp vào hộp `qdrant` lúc dựng máy |
 | `.env` của máy chủ dự án | **không bao giờ** | gói không đọc file này |
 | File khoá tạm Bedrock / khoá của vai | **không bao giờ** | gắn vào lúc chạy ở `/run/hue-khoa/bedrock.json` (file phủ) |
-| Khoá tra web, khoá trang theo dõi | **không bao giờ** | file `hue.khoa.env` cạnh `compose.yml` trên máy đích, quyền 600; không có cũng chạy |
+| Khoá tra web, khoá trang theo dõi, khoá OpenAI (chỉ khi về model cũ) | **không bao giờ** | file `hue.khoa.env` cạnh `compose.yml` trên máy đích, quyền 600; không có cũng chạy |
+| Cấu hình app (`settings.yaml`, `logging.yaml`) | có, và một bản NGOÀI ảnh ở `cau_hinh/` | công khai (có trong git); bản ngoài ảnh là bản app thật sự đọc |
 | Bộ câu kín, bộ câu mẫu, `_source-dumps`, ảnh `frontend/public/anh/rieng`, phần còn lại của `data/` | **không bao giờ** | không vào ngữ cảnh; `dung_anh.sh` còn đếm lại trong ảnh, khác 0 thì dừng |
 | Log, số đo từng lượt | không | thư mục `logs/` cạnh `compose.yml` trên máy đích |
 
@@ -107,6 +115,19 @@ Lớp nối model (`backend/llm/bedrock_model.py`) KHÔNG dùng thư viện AWS:
 | `compose.vai-may.yml` chạy trọn với một máy chủ ĐỨNG THAY dịch vụ thông tin máy (không phải AWS) | hộp `khoa` ghi file, app chỉ lên sau khi `khoa` khoẻ; app đọc được file (đủ ba khoá), không ghi được vào volume. Dừng hẳn BỐN hộp rồi bật cùng lúc: `khoa` ghi lại file sau 0,75 giây, app in dòng log đầu sau 9,9 giây và `/health` ok sau 13,8 giây ⇒ file khoá luôn mới TRƯỚC khi app nhận được câu đầu | chạy thật (khoá giả ⇒ không gọi model ở ca này) |
 | `don` | 0 hộp, 0 volume của lượt thử còn lại; Qdrant của dự án không bị đụng | chạy thật |
 
+**Lượt thử thứ hai — 10:43 23/11/2026, ảnh `hue-rag-app:e38b55c`, sau đợt sửa theo hai bản soát khác hãng (mỗi dòng là một thay đổi được thấy chạy):**
+
+| Bước | Kết quả | |
+|---|---|---|
+| Dựng lại | 6 giây (có bộ đệm); ảnh `linux/amd64`; kiểm mới trong `dung_anh.sh`: model nhúng + bảng mã đếm token nạp được trong hộp KHÔNG có mạng | chạy thật |
+| Nạp chỉ mục | đếm CHÍNH XÁC 9.479 = bản ghi dựng; bản chép của bản chụp trong hộp Qdrant đã xoá | chạy thật |
+| Luồng `/api/chat/stream` qua Caddy | `text/event-stream`, không nén; ba sự kiện trạng thái tới ngay ở giây 0,0, câu trả lời + nguồn ở giây 5,7 ⇒ Caddy không gom luồng | chạy thật (gọi bằng script, chưa qua trình duyệt) |
+| Log của hộp app | 0 dòng truy cập, 0 địa chỉ IP; giờ ghi theo giờ Việt Nam; `logs/application.log` nằm ngoài hộp | chạy thật |
+| `compose.vai-may.yml` bản mới (file khoá trong RAM, hộp `khoa` gốc chỉ đọc + bỏ hết quyền đặc biệt, chu kỳ 60 giây) với máy chủ đứng thay | bốn hộp khoẻ; app thấy thư mục khoá kiểu `tmpfs`, chỉ đọc; dừng hẳn rồi bật: file khoá ghi lại sau 1 giây, `/health` ok sau 12,9 giây; 80 giây sau đã có hai lần ghi | chạy thật (khoá giả) |
+| Đổi model bằng một dòng của `cau_hinh/settings.yaml` | ⇒ `openai` khi KHÔNG có khoá: app lên, `/health` `degraded` (`generator: not_ready`), log "Generator startup failed", câu hỏi ra "Không thể tạo câu trả lời vào lúc này", Docker không tính hộp là khoẻ · đổi ngược ⇒ `bedrock`: ok, câu hỏi thật trả lời được, băm file = bản trong ảnh | chạy thật; KHÔNG gọi model cũ (đang gác) |
+| Bản đầu gắn riêng FILE `settings.yaml` | sau khi file bị thay bằng file mới (`sed -i`) hộp app không khởi động lại được (lỗi gắn file của Docker Desktop) ⇒ đổi sang gắn cả thư mục `cau_hinh/` | chạy thật, trước và sau sửa |
+| `dong_goi.sh e38b55c` | thêm `cau_hinh/`; `sha256sum -c` 8 / 8 | chạy thật |
+
 Đã chạy thật trước đó, không tốn gì: ca đối chứng của `dung_ngu_canh.py` (commit có kho cũ `2f7b56e4` ⇒ DỪNG, báo 3 bài lệch băm + 2 bài thiếu) ·
 `docker compose config` cho cả hai tổ hợp file · `lam_moi_khoa.py` với máy chủ ĐỨNG THAY dịch vụ thông tin máy (đúng khuôn tài liệu AWS): file quyền 600 đủ
 ba khoá, hàm ký thật của app nhận, 0 giá trị khoá lọt log; máy chủ tắt / `Code` khác `Success` / thiếu trường ⇒ không đụng file. Phiên B đọc gói và tự chạy lại
@@ -116,7 +137,7 @@ CHƯA kiểm:
 - Mọi thứ trên AWS: hộp `khoa` ở mạng của máy hỏi được dịch vụ thông tin máy với bước nhảy 1, khoá của vai gọi được model, HTTPS thật qua Caddy,
   `docker load` + bốn lệnh trên máy đích. Máy dừng / bật thật (ở đây giả lập bằng dừng / bật các hộp; Docker tự bật lại hộp sau khi máy mở cần
   `sudo systemctl enable docker` — việc của bước dựng máy).
-- Luồng trả lời `/api/chat/stream` qua Caddy và trình duyệt mở cổng 8880 (lượt thử gọi `/api/chat`, không qua trình duyệt).
+- Trình duyệt mở cổng 8880 (mọi lượt thử gọi bằng script). Đường model cũ có khoá thật trong hộp.
 - Hộp chạy bằng người dùng root (như bản 16/11); chưa hạ quyền.
 - Đã xét, KHÔNG đổi (kết quả tra cứu 23/11 nêu): bỏ `flush_interval -1` ở Caddy (Caddy tự đẩy ngay luồng `text/event-stream`; giữ vì cấu hình
   này đã chạy thật 16/11) · thêm hạn giờ đọc / ghi ở Caddy (lượt dài nhiều vòng công cụ có thể bị cắt; chưa thấy sự cố nào cần nó).

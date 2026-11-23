@@ -10,7 +10,8 @@
 #   HUE_TRA_WEB          "true" để bật mục tra web (khi đó phải có SERPER_API_KEY trong file bí mật dưới); mặc định tắt
 # Bí mật (file riêng, quyền 600, KHÔNG nằm trong ảnh, KHÔNG commit): `hue.khoa.env` cạnh file này — không có cũng chạy được. Dòng có thể có:
 #   SERPER_API_KEY=…      (chỉ khi bật tra web) · HUE_KHOA_THEO_DOI=… (≥ 16 ký tự, mở trang theo dõi #/theo-doi; không đặt ⇒ trang trả 404)
-#   OPENAI_API_KEY=…      (chỉ khi đổi model viết về model cũ — guides/DOI_MODEL_VIET.md)
+#   OPENAI_API_KEY=…      (chỉ khi đổi model viết về model cũ: sửa dòng `provider: bedrock` ⇒ `provider: openai` trong ./cau_hinh/settings.yaml, thêm khoá này,
+#                          rồi `docker compose … up -d app`; về lại thì sửa ngược dòng đó — guides/DOI_MODEL_VIET.md)
 x-log: &log   # log stdout của Docker có trần (mặc định json-file không giới hạn)
   logging:
     driver: json-file
@@ -60,6 +61,16 @@ services:
         exec uvicorn api.app:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips '*' --no-access-log
     volumes:
       - ./logs:/app/backend/logs      # log + số đo từng lượt sống qua lần tạo lại hộp
+      # Thư mục cấu hình của app nằm NGOÀI ảnh (dong_goi.sh lấy đúng bản trong ảnh ra, có băm kiểm) ⇒ đổi model viết hay tắt một tính năng trên máy chủ
+      # là sửa một dòng của ./cau_hinh/settings.yaml rồi `docker compose … restart app` — như ở máy local, không phải dựng + tải lại ảnh 3,6 GB.
+      # Gắn cả THƯ MỤC chứ không gắn riêng file: gắn riêng file thì sau khi file bị thay bằng file mới (sed -i, vim…) hộp không khởi động lại được
+      # (thử thật 23/11 trên Docker Desktop). Sửa sai ⇒ app không lên (bộ nạp cấu hình kiểm chặt) ⇒ lấy lại bản gốc từ ảnh:
+      #   docker run --rm --entrypoint cat $HUE_IMAGE /app/backend/config/settings.yaml > cau_hinh/settings.yaml
+      - type: bind
+        source: ./cau_hinh
+        target: /app/backend/config
+        read_only: true
+        bind: {create_host_path: false}   # thiếu thư mục thì báo lỗi ngay, không lặng lẽ tạo một thư mục trống (app sẽ thiếu cấu hình)
     depends_on:
       qdrant:
         condition: service_healthy

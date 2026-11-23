@@ -24,6 +24,7 @@ len)
   [ -f "$HUE_KHOA_FILE" ] || dung "không thấy file khoá tạm Bedrock (biến HUE_KHOA_FILE)"
   ss -ltn | grep -q ":$CONG " && dung "cổng $CONG đang có người dùng"
   mkdir -p "$THU/logs" && cp "$GOI"/compose.yml "$GOI"/compose.thu.yml "$GOI"/Caddyfile "$GOI"/nap_chi_muc.sh "$THU/"
+  mkdir -p "$THU/cau_hinh" && docker run --rm --network none --entrypoint tar "$HUE_IMAGE" -C /app/backend/config -cf - . | tar -xf - -C "$THU/cau_hinh"   # như dong_goi.sh
   # hue.env: biến không bí mật của lượt thử — http (không TLS), cookie không đòi https, trần 4 lượt / địa chỉ (phép thử cỡ thân của `kiem` + một câu hỏi + một lịch + một lượt nữa; lượt thứ 5 phải ra câu báo hết lượt)
   printf '%s\n' "HUE_IMAGE=$HUE_IMAGE" "HUE_KHOA_FILE=$HUE_KHOA_FILE" "HUE_SITE=:80" "HUE_HTTP_PORT=$CONG" "HUE_HTTPS_PORT=8443" \
     "HUE_COOKIE_SECURE=0" "HUE_LUOT_MOI_NGAY=4" "HUE_GIT_SHA=${HUE_IMAGE##*:}" > "$THU/hue.env"
