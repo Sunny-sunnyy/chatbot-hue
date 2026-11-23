@@ -31,6 +31,8 @@ DI_CUNG_CUM, DI_CUM_KE = 15, 30  # 5c.3: phút đi giữa hai điểm trong mộ
 QUY = {"nhe_nhang": None, "can_bang": 210, "kham_pha": 240}  # None = đúng 1 điểm / buổi
 KIEU_DI_MAC_DINH = "can_bang"
 TOI_DA_BUOI = 2
+GIO_KET_SANG_DAY = 13 * 60 + 30  # công tắc `sua_lich_them_day`: buổi sáng của một ngày được dày kết muộn nhất lúc này — bữa trưa không bắt đầu sau 13:30 (không trần: có buổi sáng ba điểm 7:30 – 14:15)
+GIO_KET_CHIEU_DAY = 18 * 60  # công tắc `sua_lich_them_day`: buổi chiều của một ngày người dùng tự xin thêm điểm kết muộn nhất lúc này (sau đó là bữa tối + hoạt động tối; điểm không ghi giờ đóng thì không còn luật nào khác chặn)
 NGHI_TRUA = 60  # phút ăn trưa + đi sang điểm chiều: điểm thêm buổi sáng phải xong trước giờ đầu chiều chừng này (tự thử 16/11: 15 phút từ Kinh thành ra phá)
 CAU_CHUA_DU_BAO = "Ngày này chưa có dự báo thời tiết nên lịch chưa xét mưa."
 SO_NGAY_TOI_DA = 5
@@ -416,11 +418,39 @@ def o_dau_khung(bang_luu_tru: dict, bang: BangV2, khung: dict, ngan_sach: str | 
                      bool(ts["tre_em"] or ts["lon_tuoi"]), co_toi, ngan_sach)
 
 
+def gio_ngay_day(bang: BangV2, tham_so: dict, ng: dict) -> dict[str, tuple[int, int]]:
+    """Giờ của MỘT ngày người dùng tự xin thêm điểm khi sửa lịch (công tắc `sua_lich_them_day`; `sua_lich_v2._xep` gọi sau `xep_v2` cho các ngày có dấu
+    trong `khung["day_them"]`). Buổi sáng nối tiếp từ giờ đầu buổi như điểm giữ chỗ của `xep_v2`; buổi chiều bắt đầu ở giờ đầu buổi HOẶC muộn hơn —
+    `NGHI_TRUA` phút sau điểm cuối buổi sáng — để ngày DÀI ra thay vì mất bữa trưa. Điểm vượt giờ đóng vẫn nhận giờ nối tiếp ⇒ `kiem_khung_v2` bắt
+    (`ngoai_gio_mo`); buổi sáng / buổi chiều kết quá muộn hoặc mất bữa trưa ⇒ `day_qua_gio`. Hàm này không quyết khung có hợp luật không — chỉ tính giờ."""
+    T = bang.theo_id
+    han_che = tham_so["tre_em"] >= 1 or tham_so["lon_tuoi"]
+    bat_dau = GIO_BAT_DAU["kham_pha" if tham_so["kieu_di"] == "kham_pha" and not han_che else "khac"]
+    gio: dict[str, tuple[int, int]] = {}
+    het_sang = None
+    for b in BUOI_NGAY:
+        t = bat_dau[b] if het_sang is None else max(bat_dau[b], het_sang + NGHI_TRUA)
+        truoc = None
+        for j in ng["buoi"][b]:
+            if truoc is not None:
+                t = gio[truoc][1] + (_phut_di(T[truoc], T[j]) or DI_CUM_KE)
+            gio[j] = dat_gio(T[j], t) or (t, t + PHUT[T[j]["thoi_luong"]])
+            truoc = j
+        if b == "sang" and truoc is not None:
+            het_sang = gio[truoc][1]
+    return gio
+
+
 def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
     """Luật xếp kiểm **độc lập** với `xep_v2` (mỗi lỗi một mã; khung đúng ⇒ []): dùng cho mô phỏng toàn tổ hợp + test cố tình vi phạm."""
     T, ts = bang.theo_id, khung["tham_so"]
     n, han_che = ts["so_ngay"], ts["tre_em"] >= 1 or ts["lon_tuoi"]
     loi: list[str] = []
+    # Công tắc `sua_lich_them_day` (23/11/2026): NGÀY người dùng tự xin thêm điểm khi sửa lịch (`sua_lich_v2.ap` ghi dấu) được vượt NHỊP ĐI — một buổi
+    # tới `TOI_DA_BUOI` + 1 điểm, không tính quỹ phút — đổi lại phải giữ bữa trưa `NGHI_TRUA` phút và kết buổi chiều trước `GIO_KET_CHIEU_DAY`. Mọi
+    # luật khác (giờ mở cửa, khu, khu xa, chồng giờ) giữ nguyên. Đoàn có trẻ nhỏ / người lớn tuổi: dấu không có tác dụng (luật một điểm một buổi, hai
+    # điểm một ngày là của nhóm đó, không phải nhịp đi). Khung không có khoá `day_them` ⇒ hàm chạy y như trước.
+    day_them = set() if han_che else set(khung.get("day_them") or ())
     if len(khung["ngay"]) != n or [ng["ngay"] for ng in khung["ngay"]] != list(range(1, n + 1)):
         loi.append("so_ngay")
     for ng in khung["ngay"]:
@@ -453,6 +483,15 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
         if sang and chieu and sang[-1] in gio_k and chieu[0] in gio_k and \
                 ra_phut(gio_k[sang[-1]].split("–")[1].strip()) > ra_phut(gio_k[chieu[0]].split("–")[0].strip()):
             loi.append("sang_chong_chieu")  # review 14/11 M-1: hai buổi liền nhau không được chồng giờ
+        day = ng["ngay"] in day_them
+        if day:  # ngày được dày: bữa trưa còn đủ `NGHI_TRUA` phút, buổi chiều không kết sau `GIO_KET_CHIEU_DAY`
+            if sang and chieu and sang[-1] in gio_k and chieu[0] in gio_k and \
+                    ra_phut(gio_k[sang[-1]].split("–")[1].strip()) + NGHI_TRUA > ra_phut(gio_k[chieu[0]].split("–")[0].strip()):
+                loi.append("day_qua_gio")
+            if chieu and chieu[-1] in gio_k and ra_phut(gio_k[chieu[-1]].split("–")[1].strip()) > GIO_KET_CHIEU_DAY:
+                loi.append("day_qua_gio")
+            if sang and sang[-1] in gio_k and ra_phut(gio_k[sang[-1]].split("–")[1].strip()) > GIO_KET_SANG_DAY:
+                loi.append("day_qua_gio")
         for b in BUOI_NGAY:
             ids = ng["buoi"][b]
             so += len(ids)
@@ -464,7 +503,7 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
                     loi.append("cum_xa")
                 if d["cum"] not in cums:
                     cums.append(d["cum"])
-            if len(ids) > TOI_DA_BUOI or (len(ids) > 1 and (han_che or ts["kieu_di"] == "nhe_nhang")):
+            if len(ids) > TOI_DA_BUOI + (1 if day else 0) or (not day and len(ids) > 1 and (han_che or ts["kieu_di"] == "nhe_nhang")):
                 loi.append("qua_day_buoi")
             if len(ids) > 1:
                 phut = PHUT[T[ids[0]]["thoi_luong"]]
@@ -474,7 +513,7 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
                         loi.append("ghep_khong_ke")
                         break
                     phut += di + PHUT[T[c]["thoi_luong"]]
-                if QUY.get(ts["kieu_di"]) is not None and phut > QUY[ts["kieu_di"]]:
+                if not day and QUY.get(ts["kieu_di"]) is not None and phut > QUY[ts["kieu_di"]]:
                     loi.append("vuot_quy")
         if so == 0:
             loi.append("ngay_rong")
