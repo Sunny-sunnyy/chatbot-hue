@@ -26,7 +26,8 @@ Kế hoạch có tiêu chí ghi trước được một phiên khác đọc trư
    - **1–2 chỉ số quyết** (phải tốt lên vượt nhiễu) tách khỏi **chỉ số theo dõi** (chỉ báo, không quyết). Tiền / câu và độ trễ không làm
      SÀN (19/11/2026): là chỉ số theo dõi, trừ thí nghiệm nhằm chính tốc độ / tiền thì là chỉ số quyết.
    Mỗi chỉ số định nghĩa chính xác: hàm nào tính, đếm gì, không đếm gì, trên tập nào, n bao nhiêu. Sàn / mức tụt đo
-   một hành vi production thì trỏ `file:dòng` hành vi đó, và kiểm hai dòng tiêu chí không đếm cùng một lỗi. Không đổi tiêu chí sau khi thấy số.
+   một hành vi production thì trỏ `file:dòng` hành vi đó, và kiểm hai dòng tiêu chí không đếm cùng một lỗi. Tiêu chí kiểu "có ≥ N dòng X" ghi luôn
+   "model KHÔNG nhắc X thì tính là gì"; người chấm đọc tiêu chí tìm lỗ TRƯỚC khi chạy. Không đổi tiêu chí sau khi thấy số.
 4. **Hợp đồng kiểm:** ai review chéo; người làm nộp bằng chứng gì; người kiểm tự chạy lại phần nào.
 5. **Trần:** tiền API ghi trong việc (ước USD trước, ghi số thật sau), thời gian, một việc nặng một lúc trên máy dùng chung.
 6. **Cỡ mẫu trước khi chạy:** đếm số câu thật sự có thể đổi kết quả (ví dụ câu có đoạn đúng nằm ngoài các đoạn đưa model) và
@@ -97,8 +98,8 @@ theo dõi), ngưỡng, nhiễu + nguồn số · kết luận.
   từ chối đúng giảm).
 - **Luật giữ / gỡ** — đủ cả ba mới là "tốt hơn": (1) không vi phạm sàn; (2) không chỉ số nào xấu quá mức tụt
   cho phép (đã trừ nhiễu); (3) ít nhất một chỉ số quyết tốt lên **vượt nhiễu và CI 95% > 0**. Câu chỉ đổi ở
-  một lượt không tính. Luật CI áp cho bộ câu mẫu so THEO CẶP; thước nhỏ / nhiều lượt: ít nhất BA lượt lặp mỗi bên, "tốt hơn" khi mọi cặp lượt cùng
-  chiều VÀ chênh gộp lớn hơn chênh lớn nhất giữa hai lượt không đổi gì; không đạt ⇒ "chưa rõ". Ngưỡng thực dụng, không viết "đã chứng minh". Chỉ số theo dõi tụt mạnh ⇒ báo
+  một lượt không tính. Luật CI áp cho bộ câu mẫu so THEO CẶP; thước nhỏ / nhiều lượt: số lượt lặp ghi TRƯỚC kèm "ra A làm gì, ra B làm gì"
+  (mặc định một lượt; thước chạm trần ngay lượt đầu thì thôi lặp); "tốt hơn" khi chênh lớn hơn chênh giữa hai lượt không đổi gì, không thì "chưa rõ". Ngưỡng thực dụng, không viết "đã chứng minh". Chỉ số theo dõi tụt mạnh ⇒ báo
   dù luật nói giữ.
 - **Báo kết quả bộ an toàn (hue_rag: 32 câu) luôn đủ 4 số**, kể cả số đạt: đảo cảnh báo · sai điều kiện (mới / hết) · thiếu cảnh báo (mới / hết)
   · câu ngoài kho bị trả lời — người quyết phải thấy đủ trước khi chọn.
