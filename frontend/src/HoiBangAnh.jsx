@@ -86,11 +86,12 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     onGoTen();
   }
 
-  // "Hỏi lại với: <tên kia>" — hỏi lại ĐÚNG câu đã gõ lúc gửi ảnh, với tên người dùng vừa chọn (lượt này không có dòng "Mình đoán…": tên do người dùng
-  // chọn). Tên vừa bị thay quay về hàng nút để bấm lại được.
+  // "Hỏi lại với: <tên kia>" — hỏi lại ĐÚNG câu đã gõ lúc gửi ảnh, với tên người dùng vừa bấm. Tên đó VẪN là tên hệ thống đoán từ ảnh (ứng viên thứ hai /
+  // ba) — người dùng bấm vì thấy câu đầu sai chứ không phải vì biết — nên câu trả lời của lượt này cũng mang dòng "Mình đoán trong ảnh là … — có thể
+  // sai" (người đọc code nêu 23/11/2026: không có thì thứ ở lại trong cuộc trò chuyện là một câu nói chắc đứng cạnh ảnh). Tên vừa bị thay quay về hàng nút.
   function hoiLai(ten) {
     setState({ ...state, chon: ten, khac: [state.chon, ...state.khac.filter(t => t !== ten)], tuChon: false });
-    hoiVoiTen(ten, state.chu, state.anh);
+    hoiVoiTen(ten, state.chu, state.anh, []);  // `[]` = có dòng đoán, không nêu thêm tên nào
   }
 
   function chonAnh(event) {
@@ -147,7 +148,8 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     } catch { /* lỗi mạng ⇒ như chưa nhận ra */ }
     if (toi !== luot.current) return;  // trong lúc chờ người dùng đã bỏ ảnh / mở cuộc mới ⇒ không làm gì với kết quả cũ
     if (!ungVien.length) return setState({ preview, phase: "loi", text: KHONG_NHAN_RA });
-    // URL riêng cho bong bóng câu hỏi (sống theo cuộc trò chuyện); `preview` của ô nhập được thu hồi khi state đổi
+    // URL riêng cho bong bóng câu hỏi — KHÔNG thu hồi ở đâu cả (sống tới khi tải lại trang; rò nhỏ có sẵn), nên lượt "Hỏi lại với" dùng lại được;
+    // `preview` của ô nhập thì được thu hồi khi state đổi
     const anh = URL.createObjectURL(file);
     // Lúc tên về mà đang có lượt khác chạy (bấm câu gợi ý / "Hỏi lại" trong lúc chờ) ⇒ KHÔNG tự hỏi chen ngang: hiện thẻ tên, người dùng bấm khi lượt
     // kia xong (chữ đang gõ giữ trong ô). Đây là ca DUY NHẤT còn thẻ chờ bấm.
@@ -159,8 +161,9 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     hoiVoiTen(ungVien[0].ten, chu, anh, khac);
   }
 
-  // `khac` khác null = tên do hệ thống TỰ lấy (tên đầu) ⇒ lượt đó có dòng "Mình đoán trong ảnh là … — có thể sai" ngay đầu câu trả lời, nêu cả các
-  // tên còn lại (giao diện chèn, không vào chuỗi gửi model); tên người dùng tự bấm (thẻ lúc bận, nút "Hỏi lại với") thì không có dòng này
+  // `khac` khác null = tên do hệ thống ĐOÁN từ ảnh mà người dùng chưa xác nhận (tên đầu tự lấy; tên bấm ở nút "Hỏi lại với") ⇒ lượt đó có dòng "Mình
+  // đoán trong ảnh là … — có thể sai" ngay đầu câu trả lời, nêu cả các tên trong `khac` (giao diện chèn, không vào chuỗi gửi model); chỉ tên người
+  // dùng bấm ở thẻ chờ lúc bận (họ nhìn danh sách rồi chọn TRƯỚC khi có câu trả lời nào) là không có dòng này
   function hoiVoiTen(ten, chu, anh, khac = null) {
     // bong bóng câu hỏi hiện ảnh + đúng chữ người dùng gõ (không đuôi "(Trong ảnh: …)"); ô rỗng ⇒ hiện câu mặc định
     moi.current.onAsk(cauGhep(chu, ten), { chu: chu.trim() || cauGhep(chu, ten), anh, doan: khac ? ten : null, doanKhac: khac ?? [] });
