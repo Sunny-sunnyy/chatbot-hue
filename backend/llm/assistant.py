@@ -2115,15 +2115,19 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             trace.answer, trace.cited = trace.generated.text, ()
         else:
             _finish_generated(trace, flags, query)
+            da_phat_viet_lai = False
             if tool_state is not None and await _viet_lai_het_luot(query, generator, trace, flags, today, call_log):
                 # chữ giữ chỗ của lần đầu đã hiện (hoặc đang bị giữ) ⇒ thay bằng chữ của lần viết lại; khối dự báo code nối vẫn phát riêng ở dưới.
                 # Công tắc `giu_chu_toi_kiem` đang gom ⇒ chữ giữ chỗ chưa hề hiện ⇒ bản viết lại là chữ đầu tiên, phát như một mảnh thường
                 giu_chu = False
                 if trace.citation_error is None:  # soát khác hãng 22/11 (A2): bản viết lại còn lỗi kiểm (mã nguồn lạ) ⇒ không phát, route báo lỗi như thường
                     yield "thay_chu" if cho_kiem is None else "delta", trace.answer.removesuffix(f"\n\n{trace.thoi_tiet_noi}") if trace.thoi_tiet_noi else trace.answer
+                    da_phat_viet_lai = True
                 cho_kiem = None
             if trace.fixed_outcome is not None:  # chạm `max_turns`: không có chữ model nào ⇒ câu từ chối thành một `delta` (B2 D5)
-                if trace.answer:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
+                # soát khác hãng 22/11 (Neon #1, Carbon 4.2.3): bản viết lại là câu từ chối khuôn ở câu nhờ làm thay ⇒ `_finish_generated` trong lưới viết
+                # lại đã đổi thành câu nói thật (kết thúc cố định `lam_thay`) và nhánh trên VỪA phát nó ⇒ không phát lần hai
+                if trace.answer and not da_phat_viet_lai:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer
                 return
             if cho_kiem and trace.citation_error is None:  # chữ đã gom qua phép kiểm ⇒ phát bằng đúng đường của một mảnh chữ; bị rút ⇒ không phát
