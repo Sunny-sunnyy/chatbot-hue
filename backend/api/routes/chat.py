@@ -184,7 +184,7 @@ def an_toan_cua_luot(trace: AnswerTrace) -> str | None:
 
 
 def an_toan_vao_ghi_chu(trace: AnswerTrace) -> None:
-    """Trước khi phát sự kiện ghi chú: câu an toàn THỪA HƯỞNG (xem `an_toan_cua_luot`) vào `notice` của lượt ⇒ thẻ lịch đã sửa, bản in, .txt, .ics
+    """Trước khi phát sự kiện ghi chú: câu an toàn THỪA HƯỞNG (xem `an_toan_cua_luot`) vào `notice` của lượt ⇒ thẻ lịch đã sửa, bản in, bản chép, .ics
     (đều đọc ghi chú an toàn của lượt) có câu đó như file PowerPoint. Lượt đã có câu riêng, hoặc không có gì để thừa hưởng ⇒ không đổi gì."""
     an_toan = an_toan_cua_luot(trace)
     if an_toan and an_toan not in (trace.notice or ""):

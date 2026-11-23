@@ -37,7 +37,7 @@ chép tay các đầu ra. Không `-target`, không workspace, không `-auto-appr
 | 6 | `guides/6_ngay_demo.md` | dừng tạm, bật lại trước giờ demo, cập nhật bản mới, lùi bản, hai nút khẩn cấp | dừng tạm: còn tiền đĩa + IP |
 | 7 | `guides/7_pha_sach.md` | phá có kiểm, không còn tài nguyên nào tính tiền | hết |
 
-Lúc soạn trang này: guide 0, 1 (phiên B) và 2, 3, 4, 6 (phiên C) đã viết; guide 5 và 7 (phiên đo) chưa viết.
+Cả tám guide đã viết (0, 1: phiên B · 2, 3, 4, 6: phiên C · 5, 7: phiên đo). Chưa guide nào được chạy trên AWS thật — danh sách thứ chưa kiểm ở cuối trang này.
 
 ## Tiền, lùi, phá — tra nhanh
 

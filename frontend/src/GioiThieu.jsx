@@ -57,7 +57,7 @@ export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
       + (tinhNang?.len_ke_hoach_v2 ? " Đã chọn ngày đi thì tải lịch về lịch điện thoại (.ics)." : "")]] : []),
     ...(tinhNang?.tra_web ? [[IC.web, "Tra thêm trên web", "Khi kho không có, trợ lý tra web một lần và để riêng phần đó dưới nhãn “Từ web (chưa kiểm)”."]] : []),
     ...(tinhNang?.thoi_tiet ? [[IC.troi, "Thời tiết Huế", "Thời tiết hôm nay ở trang chủ; hỏi trợ lý “mai trời thế nào” để có dự báo tới 7 ngày, kèm nguồn."]] : []),
-    ...(anh ? [[IC.anh, "Hỏi bằng ảnh", "Gửi ảnh kèm câu hỏi; trợ lý đoán nơi hoặc món trong ảnh (có thể sai) rồi trả lời từ kho; khi phân vân sẽ hỏi bạn chọn tên."]] : []),
+    ...(anh ? [[IC.anh, "Hỏi bằng ảnh", "Gửi ảnh kèm câu hỏi; trợ lý đoán nơi hoặc món trong ảnh (có thể sai) rồi trả lời ngay từ kho; đoán chưa đúng thì bấm “Hỏi lại với” tên khác dưới câu trả lời, hoặc tự gõ tên."]] : []),
   ];
   const buoc = [
     ["Bạn hỏi", "Gõ câu hỏi như nói chuyện, hoặc bấm một câu gợi ý."],

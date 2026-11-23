@@ -81,10 +81,10 @@ Phía AWS không có chốt cứng nào: ngân sách chỉ gửi email, tới ch
 | Trụ cột [khoá] | Ở dự án cuối khoá | Ở bản deploy hue_rag | Vì sao khác |
 |---|---|---|---|
 | Mở rộng | không máy chủ, tự co giãn | một máy, một tiến trình, không co giãn | người dùng là người chấm; tăng 100 lần thì nghẽn trước ở: một tiến trình, trí nhớ trong bộ nhớ, hạn mức gọi model |
-| Bảo mật | WAF, VPC endpoint, GuardDuty, quyền hẹp | không cổng 22 (Session Manager), vai chỉ đọc một thùng, thùng riêng tư, khoá OpenAI ở file quyền 600, HTTPS, trần cỡ yêu cầu, trần lượt | bản demo một máy; các lớp kia chưa có mối đe doạ để biện minh |
+| Bảo mật | đang có: mỗi hàm một vai quyền hẹp, người dùng phải đăng nhập, chặn tần suất ở cửa vào, CORS đúng một nguồn, mật khẩu cơ sở dữ liệu cất ở Secrets Manager; WAF, VPC endpoint, GuardDuty chỉ là lớp "thêm nếu cần", có phí | không cổng 22 (Session Manager), vai chỉ đọc một thùng, thùng riêng tư, khoá OpenAI ở file quyền 600, HTTPS, trần cỡ yêu cầu, trần lượt | không có tài khoản người dùng nên không có bước đăng nhập; chặn tần suất làm ngay trong ứng dụng (trần lượt); ba lớp có phí chưa có mối đe doạ để biện minh cho một bản demo một máy |
 | Giám sát | bảng CloudWatch + báo động | ngân sách (email) + MỘT báo động "máy không qua kiểm tra trạng thái" (email) | model không nằm trong AWS nên CloudWatch không có số nào của nó |
 | Rào | rào bằng code quanh model | trả lời chỉ từ kho, kiểm trích dẫn, câu từ chối cố định, số / ngày / lịch do code tính; trần lượt | rào nằm sẵn trong sản phẩm, không thêm gì cho bản deploy |
-| Giải thích được | — | mỗi câu trả lời có nguồn mở được | — |
+| Giải thích được | model phải ghi lý do TRƯỚC kết luận, lý do được ghi log; có sổ kiểm toán cho từng quyết định của AI | mỗi câu trả lời có nguồn mở được | sản phẩm là hỏi đáp từ kho: thứ người dùng cần kiểm là NGUỒN của từng câu, không phải lý do của một quyết định thay họ |
 | Quan sát | Langfuse | log của ba hộp xem bằng lệnh trên máy; trang theo dõi của ứng dụng; trang sử dụng của OpenAI; sổ vết TẮT mặc định trên máy deploy (có chữ người dùng) | không đẩy log đi đâu: một máy, vài ngày chạy |
 
 "Ba người bạn" [khoá] đi cùng nhau ở đây là: rào = hàng "Rào" · giám sát = hàng "Giám sát" · quan sát = hàng "Quan sát".
