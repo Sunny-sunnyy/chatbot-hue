@@ -56,7 +56,7 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
     if (cau.trim() && onAsk(cau)) setCau("");
   }
   const maBai = duoi => (bai || []).find(b => b.id.endsWith(duoi))?.id;
-  // Ô "Hôm nay ở Huế": code chọn một bài có ảnh chắc theo ngày (`homNay.js`); chữ chỉ là tên bài + tên nhóm đã có — không câu mô tả mới, không ngày tháng.
+  // Ô "Hôm nay ở Huế": code chọn một bài có ảnh chắc theo ngày (`homNay.js`); chữ chỉ là tên bài + tên nhóm + dòng tóm tắt của chính bài (như thẻ bài ở Khám phá) — không câu mô tả mới, không ngày tháng.
   const homNay = useMemo(() => baiHomNay(bai), [bai]);
   return (
     <>
@@ -71,6 +71,7 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
               <div className="tc-hn-than">
                 <h2 id="hn-h" className="tc-hn-nhan">Hôm nay ở Huế</h2>
                 <p className="tc-hn-ten">{homNay.bai.tieu_de}</p>
+                {homNay.bai.tom_tat && <p className="tc-hn-tt">{homNay.bai.tom_tat}</p>}
                 <span className="tc-hn-loai">{LOAI_CON[homNay.bai.loai_con] ?? LINH_VUC.find(lv => lv.id === homNay.bai.linh_vuc)?.ten ?? "Tổng quan"}</span>
                 <span className="tc-hn-doc">Đọc bài</span>
               </div>
