@@ -131,7 +131,7 @@ phạm vi và quyền của việc; session giao chịu trách nhiệm kết qu�
   dặn / công cụ; Playwright khi sửa giao diện. Test khi nó bảo vệ hành vi cần thiết hoặc bug thật có nguy cơ tái diễn — không đặt mục tiêu số test /
   coverage; test pass không thay lượt thật khi nghiệm thu cần hệ thống thật.
 - **Mở / tắt một công tắc trong `settings.yaml`:** trên CHÍNH nhánh có dòng đã đổi, chạy từng file test đọc cấu hình thật
-  (`grep -lE 'load_settings|settings\.yaml' backend/tests/*.py`), không nạp env; cùng nhánh đó sửa các hàng `guides/RUNBOOK_BAN_GIAO.md` mục 10 nhắc tên
+  (từ gốc repo: `grep -lE 'load_settings|settings\.yaml|create_app\(\)' backend/tests/*.py`), không nạp env; cùng nhánh đó sửa các hàng `guides/RUNBOOK_BAN_GIAO.md` mục 10 nhắc tên
   công tắc hoặc hành vi nó đổi. Test khoá hành vi theo cờ tự đặt cờ trong test, không đọc `settings.yaml` thật.
 - **Code đọc chữ người dùng (ngày, số, tên…):** trước lượt có phí, người **không viết code đó** soạn ≥ 20 câu dò (câu phải đọc đúng, câu "giống mà không
   phải", câu ghép, câu ngoài phạm vi), chạy thẳng hàm thuần (0 USD); sau bản sửa thêm đúng một bộ ≤ 20 câu; dừng khi 0 câu **ra sai**, còn sai ⇒ ghi giới

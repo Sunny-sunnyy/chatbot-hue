@@ -98,7 +98,7 @@ theo dõi), ngưỡng, nhiễu + nguồn số · kết luận.
   từ chối đúng giảm).
 - **Luật giữ / gỡ** — đủ cả ba mới là "tốt hơn": (1) không vi phạm sàn; (2) không chỉ số nào xấu quá mức tụt
   cho phép (đã trừ nhiễu); (3) ít nhất một chỉ số quyết tốt lên **vượt nhiễu và CI 95% > 0**. Câu chỉ đổi ở
-  một lượt không tính. Luật CI áp cho bộ câu mẫu so THEO CẶP; thước nhỏ: số lượt lặp ghi TRƯỚC kèm "ra A làm gì, ra B làm gì"
+  một lượt không tính. Luật CI áp cho bộ câu mẫu so THEO CẶP; thước nhỏ / nhiều lượt: số lượt lặp ghi TRƯỚC kèm "ra A làm gì, ra B làm gì"
   (mặc định một lượt; thước chạm trần ngay lượt đầu thì thôi lặp); "tốt hơn" khi chênh lớn hơn chênh giữa hai lượt không đổi gì, không thì "chưa rõ". Ngưỡng thực dụng, không viết "đã chứng minh". Chỉ số theo dõi tụt mạnh ⇒ báo
   dù luật nói giữ.
 - **Báo kết quả bộ an toàn (hue_rag: 32 câu) luôn đủ 4 số**, kể cả số đạt: đảo cảnh báo · sai điều kiện (mới / hết) · thiếu cảnh báo (mới / hết)
