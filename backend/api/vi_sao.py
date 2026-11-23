@@ -111,6 +111,12 @@ def _goi_model(ghi: dict, loai: str) -> list[dict]:
     return ra
 
 
+def _tieu_de_kham_pha(bai_ids, nguon: str) -> str | None:
+    """`bai_ids` của route là sổ bài Khám phá (đường dẫn ⇒ {tieu_de, …}); nơi gọi khác có thể truyền một tập đường dẫn ⇒ không có tiêu đề."""
+    bai = bai_ids.get(nguon) if isinstance(bai_ids, dict) else None
+    return bai.get("tieu_de") if isinstance(bai, dict) else None
+
+
 def _buoc_tim(tim: dict, ms, ghi: dict, trich: dict, bai_ids) -> dict:
     cau = [c for c in (tim.get("cau") or []) if isinstance(c, str)]
     cua_model = tim.get("by") == "model"
@@ -128,7 +134,10 @@ def _buoc_tim(tim: dict, ms, ghi: dict, trich: dict, bai_ids) -> dict:
     bai: dict[str, dict] = {}
     for hang, kq in enumerate(tim.get("ket_qua") or [], start=1):  # thứ tự kết quả = thứ hạng của lần tìm
         nguon = kq.get("source") or ""
-        o = bai.setdefault(nguon, {"title": trich.get(nguon) or PurePosixPath(nguon).stem, "bai_id": nguon if nguon in bai_ids else None,
+        # tiêu đề bài: của chính đoạn tìm được (như danh sách nguồn) ⇒ của nguồn được trích ⇒ của trang Khám phá; tên file chỉ là chỗ lùi cuối
+        # cho dòng sổ vết cũ chưa ghi tiêu đề (đọc nhánh 24/11: tên file không dấu từng lọt vào bảng của 1.318 / 6.475 dòng bài)
+        o = bai.setdefault(nguon, {"title": kq.get("title") or trich.get(nguon) or _tieu_de_kham_pha(bai_ids, nguon) or PurePosixPath(nguon).stem,
+                                   "bai_id": nguon if nguon in bai_ids else None,
                                    "so_doan": 0, "hang": hang, "duoc_trich": nguon in trich})
         o["so_doan"] += 1
     vao = tim.get("vao_ngu_canh")
@@ -247,14 +256,12 @@ def tom_tat(ghi: dict, bai_ids=()) -> dict:
 
 
 def cat(state, bat: bool, duong: str, metrics: dict, trace, cau_go, cau_model, bai_ids=()) -> None:
-    """Route gọi ở cuối lượt (cùng chỗ ghi sổ vết, lúc số đo đã đủ). Không bao giờ ném: bản tóm tắt là phần thêm, không được làm hỏng lượt trả lời."""
-    try:
-        kho, turn_id = getattr(state, "vi_sao", None), metrics.get("turn_id")
-        if not bat or kho is None or not turn_id or trace is None:
-            return
-        kho.dat(turn_id, tom_tat(so_vet.ban_ghi(duong, metrics, trace, cau_go, cau_model), bai_ids))
-    except Exception as exc:
-        logger.warning("vi_sao failed: %s", type(exc).__name__)
+    """Route gọi ở cuối lượt (cùng chỗ ghi sổ vết, lúc số đo đã đủ). Nơi gọi (`chat._ghi_vet`) bọc lỗi: bản tóm tắt là phần thêm, không được làm
+    hỏng lượt trả lời."""
+    kho, turn_id = getattr(state, "vi_sao", None), metrics.get("turn_id")
+    if not bat or kho is None or not turn_id or trace is None:
+        return
+    kho.dat(turn_id, tom_tat(so_vet.ban_ghi(duong, metrics, trace, cau_go, cau_model), bai_ids))
 
 
 @router.get("/api/vi_sao/{turn_id}")

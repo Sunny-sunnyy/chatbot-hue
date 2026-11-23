@@ -354,7 +354,7 @@ def _ghi_vet(state, duong: str, metrics: dict, trace, cau_go: str, cau_model) ->
         so_vet.ghi(_flags(state).so_vet, duong, metrics, trace, cau_go, cau_model)
     except Exception as exc:
         logger.warning("so_vet failed: %s", type(exc).__name__)
-    # nút "Vì sao trả lời vậy?": cùng thời điểm (số đo của lượt đã đủ), cùng bản ghi; tự bọc lỗi, không phụ thuộc cờ `so_vet`
+    # nút "Vì sao trả lời vậy?": cùng thời điểm (số đo của lượt đã đủ), cùng bản ghi; không phụ thuộc cờ `so_vet`; lỗi ở đây không được đi ra route
     try:
         vi_sao.cat(state, getattr(_flags(state), "vi_sao", False) is True, duong, metrics, trace, cau_go, cau_model, _bai_ids(state))
     except Exception as exc:

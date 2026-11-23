@@ -16,7 +16,7 @@ def _trace() -> AnswerTrace:
     trace.model_queries.append("câu tìm model viết")
     trace.context_parts.append("[1] Bài A\nđoạn")
     trace.llm_calls.append({"route": "tro_ly_hue", "ms": 10.0, "usd": 0.0001, "input_tokens": 5, "output_tokens": 2})
-    doc = SimpleNamespace(id="travel/places/A.md#3", score=0.51234, metadata={"source": "travel/places/A.md"})
+    doc = SimpleNamespace(id="travel/places/A.md#3", score=0.51234, metadata={"source": "travel/places/A.md", "title": "Bài A"})
     trace.vet["tim"] = [so_vet.vet_tim(["câu gốc"], "code", [doc] * 12, SimpleNamespace(document_ids=("travel/places/A.md#3",)))]
     trace.vet["web"] = {"cau_gui_tra_web": "câu ra web", "so_web": [{"id": 1, "title": "t", "link": "https://a.vn", "snippet": "s"}]}
     trace.web = {"outcome": "co_muc", "text": "mục web", "kiem": []}
@@ -38,7 +38,7 @@ def test_flag_on_writes_one_json_line_with_content(tmp_path):
     assert (dau["cau_go"], dau["cau_gui_model"], dau["lich_su"]) == ("câu gõ", "câu gửi model", [["câu trước", "đáp trước"]])
     tim = dau["tim_kho"][0]
     assert tim["cau"] == ["câu gốc"] and len(tim["ket_qua"]) == so_vet.TOP_TIM and tim["vao_ngu_canh"] == ["travel/places/A.md#3"]
-    assert tim["ket_qua"][0] == {"chunk_id": "travel/places/A.md#3", "source": "travel/places/A.md", "diem": 0.5123}
+    assert tim["ket_qua"][0] == {"chunk_id": "travel/places/A.md#3", "source": "travel/places/A.md", "title": "Bài A", "diem": 0.5123}
     assert dau["cau_tim_model"] == ["câu tìm model viết"] and dau["ngu_canh"] and dau["goi_model"][0]["usd"] == 0.0001
     assert dau["tra_loi"]["chu"] == "Trả lời [1]." and dau["tra_loi"]["nguon_trich"][0]["source"] == "travel/places/A.md"
     assert dau["web"]["cau_gui_tra_web"] == "câu ra web" and dau["web"]["text"] == "mục web" and dau["web"]["so_web"][0]["link"] == "https://a.vn"

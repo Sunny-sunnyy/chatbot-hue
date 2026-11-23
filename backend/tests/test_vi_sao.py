@@ -24,7 +24,7 @@ def _ghi(**them) -> dict:
         "tuyen": {"route": "tro_ly_hue", "cau_tim_dinh_tuyen": None},
         "tim_kho": [
             {"cau": ["Nơi A mở cửa mấy giờ?"], "by": "code", "vao_ngu_canh": ["a#1", "a#2", "b#1"],
-             "ket_qua": [{"chunk_id": "a#1", "source": A, "diem": 0.03}, {"chunk_id": "b#1", "source": B, "diem": 0.03}, {"chunk_id": "a#2", "source": A, "diem": 0.02}]},
+             "ket_qua": [{"chunk_id": "a#1", "source": A, "diem": 0.03}, {"chunk_id": "b#1", "source": B, "title": "Quán B", "diem": 0.03}, {"chunk_id": "a#2", "source": A, "diem": 0.02}]},
             {"cau": ["giờ mở cửa Nơi A"], "by": "model", "vao_ngu_canh": ["a#3"], "ket_qua": [{"chunk_id": "a#3", "source": A, "diem": 0.03}]}],
         "cong_cu": [{"name": "tim_kho", "ms": 170.0, "by": "code"}, {"name": "thoi_tiet", "ms": 400.0}, {"name": "tim_kho", "ms": 90.0, "by": "model"},
                     {"name": "tim_kho", "ms": 0.0, "by": "model", "het_luot": True}],
@@ -49,7 +49,11 @@ def test_hoi_dap_du_bon_nhom_dung_thu_tu():
     dau = ban["buoc"][0]
     assert dau["so_doan_tim"] == 3 and dau["so_doan_moi"] == 3 and dau["giay"] == 0.17 and dau["cau"] == ["Nơi A mở cửa mấy giờ?"]
     assert dau["bai"] == [{"title": "Nơi A", "bai_id": A, "so_doan": 2, "hang": 1, "duoc_trich": True},
-                          {"title": "Quan B", "bai_id": None, "so_doan": 1, "hang": 2, "duoc_trich": False}]  # bài không được trích: tên lấy từ tên file
+                          {"title": "Quán B", "bai_id": None, "so_doan": 1, "hang": 2, "duoc_trich": False}]  # bài không được trích: tiêu đề của chính đoạn tìm được
+    cu = _ghi()
+    del cu["tim_kho"][0]["ket_qua"][1]["title"]  # dòng sổ vết cũ chưa ghi tiêu đề: sổ Khám phá ⇒ rồi mới tới tên file
+    assert tom_tat(cu, bai_ids={B: {"tieu_de": "Quán B (Khám phá)"}})["buoc"][0]["bai"][1]["title"] == "Quán B (Khám phá)"
+    assert tom_tat(cu)["buoc"][0]["bai"][1]["title"] == "Quan B"
     assert ban["nguon"] == [{"ma": 3, "title": "Nơi A", "bai_id": A, "muc": "Thông tin › Giờ mở cửa"}]  # `ma` = mã gốc của sự kiện `sources`
     assert ban["thoi_gian"] == {"tong": 8.1, "tim": 0.17, "dung_ngu_canh": 0.01, "model": 7.94}
     assert ban["cau"] == {"go": "Nơi A mở cửa mấy giờ?", "gui": None, "so_luot_truoc": 0} and ban["web"] is None and ban["sua_lich"] is None and ban["ghi_chu"] == []
