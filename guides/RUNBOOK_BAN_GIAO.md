@@ -181,7 +181,7 @@ duy nhất là khối `assistant:` của `backend/config/settings.yaml` — chú
 
 | Khoá `settings.yaml` | File (từ `backend/`) | md5 | Cờ cần | Thiếu một điểm trong bảng này ⇒ |
 |---|---|---|---|---|
-| `lich_trinh_bang_v2` | `../data/phase_9/lich_trinh/diem_v10.json` (41 điểm) | `6c8caf60100a` | `len_ke_hoach_v2` | — (bảng gốc) |
+| `lich_trinh_bang_v2` | `../data/phase_9/lich_trinh/diem_v12.json` (41 điểm; 12:52 23/11/2026: = `diem_v10.json` `6c8caf60100a` từng dòng + khoá `toi_nhe` — danh sách hoạt động tối nhẹ cho đoàn có trẻ nhỏ / người lớn tuổi, chỉ được đọc khi công tắc `toi_nhe` bật; `diem_v11.json` `41a4238a44ac` là bảng có cột giá vé dựng 19/11, CHƯA dùng — đừng ghi đè) | `bc4fc5fcc036` | `len_ke_hoach_v2` | — (bảng gốc) |
 | `lich_trinh_bang` | `../data/phase_9/lich_trinh/diem_v3.json` (bộ xếp cũ, câu tự do) | `dbf5b22715e4` | `lich_trinh` / `lich_trinh_bieu_mau` | — |
 | `lich_trinh_toa_do` | `../data/phase_9/lich_trinh/diem_toa_do_v9.json` | `f6068ff37d61` | `ban_do_lich`, `quan_lich` | điểm không có ghim; bữa ăn gần điểm đó không có quán |
 | `lich_trinh_bang_anh` | `../data/phase_9/lich_trinh/bang_anh_v7.json` | `4c4158648085` | `anh_lich` | điểm không có ảnh |
@@ -207,7 +207,7 @@ print('diem', len(f.bang_lich_v2.diem), 'toa_do', len(f.toa_do_lich or {}), 'cum
 - Mong đợi (17/11): `diem 41 toa_do 40 cum_quan 7 anh 40 cap_kc 1560`. Sai một dòng bảng ⇒ `ValueError` nêu đúng mã điểm / dòng ⇒ sửa bảng, không sửa code kiểm.
 
 **Thêm một điểm** (ví dụ thêm `x` vào bảng điểm; không bao giờ sửa đè file đang chạy — luôn file phiên bản mới):
-1. `cp diem_v10.json diem_v11.json` trong `data/phase_9/lich_trinh/`; thêm một dòng vào `diem`. Cột bắt buộc (`lich_trinh_v2.nap_bang_v2`):
+1. Trong `data/phase_9/lich_trinh/`: `ls diem_v*.json` TRƯỚC, lấy số bản kế tiếp CHƯA có file (23/11/2026: một phiên chép đè `diem_v11.json` đã có sẵn từ 19/11 vì làm theo đúng ví dụ cũ của dòng này; dựng lại được bằng script gốc). Chép từ bản ĐANG CHẠY ghi ở bảng trên, vd `cp -n diem_v12.json diem_v13.json` (`-n` không ghi đè); thêm một dòng vào `diem`. Cột bắt buộc (`lich_trinh_v2.nap_bang_v2`):
    `id ten cum loai gio_mo_cua nguon buoi quan_the luu_y ten_khac thoi_luong trong_nha bac_thang uu_tien`. Giá trị hợp lệ: `cum` có trong khối
    `cum` của bảng; `loai` ⊂ các loại sở thích; `thoi_luong` ∈ `ngan` (75 phút) / `nua_buoi` (150 phút); `trong_nha` ∈ `trong_nha` / `ngoai_troi` /
    `ca_hai`; `bac_thang` ∈ `nhieu` / `null`; `buoi` ⊂ `sang chieu toi`. Mỗi giá trị kèm cột `<tên>_can_cu` ghi căn cứ (file kho + dòng, hoặc "C ước") —
