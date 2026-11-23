@@ -507,7 +507,11 @@ def _thoi_tiet_metrics(trace: AnswerTrace) -> dict | None:
     if trace.thoi_tiet_ctx is None:
         return None
     goi = trace.thoi_tiet or (trace.lich or {}).get("thoi_tiet")
-    return {"cong_cu": trace.thoi_tiet_ctx["co_cong_cu"], "bao_lu": trace.thoi_tiet_ctx["bao_lu"], "goi": goi is not None,
+    # Lượt SỬA lịch chỉ mang dấu `bao_lu_model` chép từ đường thường đã huỷ (`_giu_dau_bao_lu`) — không có `co_cong_cu` / `bao_lu`: đọc cứng ở đây từng
+    # văng KeyError trong `finally` của đường stream ⇒ lượt không được ghi nhớ, không có dòng `chat_metrics` (đo bù model cũ 23/11).
+    # Bộ dấu đủ khoá (mọi lượt khác) ⇒ số đo y như trước.
+    ctx = trace.thoi_tiet_ctx
+    return {"cong_cu": ctx.get("co_cong_cu", False), "bao_lu": ctx.get("bao_lu", bool(ctx.get("bao_lu_model"))), "goi": goi is not None,
             "trang_thai": None if goi is None else goi["trang_thai"], "loi": None if goi is None else goi["loi"],
             "ms": None if goi is None else goi["ms"], "tu_cache": None if goi is None else goi["tu_cache"],
             "n_ngay": (trace.thoi_tiet or {}).get("n_ngay"), "so_ngoai_tap": None if trace.thoi_tiet_kiem is None else len(trace.thoi_tiet_kiem)}
