@@ -1,6 +1,6 @@
 # Bài 36 — Bật hệ thống trên máy, và đóng gói bằng Docker
 
-*Cập nhật 17:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 13:25, ngày 23/11/2026 · khớp hệ thống 13:25 23/11 (49 tính năng mở, 5 tắt, kho 267 bài): hàng "danh sách file của gói" sửa theo gói mới (11:07 23/11) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
 
 **Bài trước đã biết:** máy chủ kiểm một số thứ đúng một lần lúc bật, và bật lúc Qdrant tắt thì không tự hồi (bài 6); kho đổi thì phải cập nhật chỉ mục (bài 12); khoá và các thiết lập lúc chạy (bài 37).
 **Bài này thêm:** bật cả hệ thống trên máy phát triển bằng một lệnh, lệnh đó làm gì và báo gì; "hộp Docker" là gì và hệ thống dùng nó ở đâu; gói ba hộp để mang sang máy khác; và những việc còn phải làm trước khi đưa lên mạng.
@@ -183,7 +183,7 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 
 | Việc | Trạng thái |
 |---|---|
-| cập nhật danh sách file của gói theo chương trình hiện tại (bảng điểm mới, bảng quán bản 2, bảng khoảng cách, bảng sự kiện; sinh lại danh sách bài theo kho 267 bài) | chưa |
+| danh sách file của gói | đã có từ 11:07 23/11: gói mới ở nhánh chính tự lấy mọi file bảng mà cấu hình của commit được đóng gói trỏ tới (nên gồm bảng quán bản 4 đang chạy, bài 30) và đúng các bài có trong bản ghi dựng chỉ mục, so băm từng bài; không còn chép tay danh sách. Phần còn lại của bảng này và của bài viết theo bản nháp 16/11, chưa viết lại theo gói mới (đọc từ chương trình, chưa dựng thử) |
 | chỗ đưa file khoá Bedrock vào hộp ứng dụng | chưa có trong file mô tả gói |
 | đặt trần tổng lượt mỗi ngày trong file mô tả gói | chưa |
 | cách cấp khoá cho Bedrock trên máy chủ (khoá tạm hiện nay không dùng lâu được) | chưa; việc của chủ dự án |
@@ -234,5 +234,8 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 - Kết quả lượt kiểm chốt buổi trưa 22/11 (phiên điều phối báo, phiên đo chạy; người viết chép từ tin, chưa tự mở file kết quả) [đã chạy].
 
 - Quyết định 3 sửa theo bài 12: `guides/phase_4_qdrant_ingestion.md` dòng 746–752 ("Decision: Dùng Qdrant Docker Compose riêng … pin image … bằng exact digest; không dùng embedded, Cloud hoặc latest. Approved by: User. Approval date +07: 2026-08-12") [chép, mở 15:16 22/11/2026]; quyết định không nói về việc chỉ mở cổng cho chính máy. Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: không có câu nào của bài này đổi vì bộ đó.
+- Bảng quán bản 4 ở hàng "cập nhật danh sách file của gói" (thêm 12:36 23/11/2026, người gom phụ lục): `backend/config/settings.yaml` dòng 130 trỏ `bang_quan_lich_v4.json` trên main `0367e775` [code, đã đọc]; bài 30 "Cấu hình đang chạy" [chép]. Câu "việc cập nhật gói vẫn chưa" của bản 12:36 SAI, đã sửa ở lượt áp cuối (gạch dưới). Dòng Cập nhật trước: "17:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · …".
+
+- Hàng "danh sách file của gói", lượt áp cuối (13:25 23/11/2026; biên bản `data/hoc_cung_D/kiem/dot_2311_trua_k2_phu_luc_kiem.md` hàng 22–24 [riêng tư]): `deploy/docker/dung_ngu_canh.py` docstring ("danh sách được SINH từ chính thứ app đọc lúc khởi động"; "bài kho: đúng các bài có trong bản ghi dựng chỉ mục … so băm sha256 từng bài"; "file bảng riêng tư: mọi đường dẫn `../data/…` trong `backend/config/settings.yaml` CỦA commit đó") [code, đã mở]; gộp vào main `0af536cc` 11:07 23/11 [đã chạy `git log`]; `deploy/docker/README.md` mục 6 ("danh sách file sinh từ `settings.yaml` + bản ghi dựng (hết chép tay hai chỗ)") [code]. Các hàng khác của bảng này, hàng "dựng lại gói ba hộp…" ở "Nếu… thì sao" và phần gói ba hộp của bài chưa viết lại — để phiếu deploy riêng.
 
 </details>
