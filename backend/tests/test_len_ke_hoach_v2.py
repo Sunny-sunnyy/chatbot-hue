@@ -1071,6 +1071,12 @@ def test_sample_itinerary_is_built_by_the_real_scheduler_without_model():
     assert all(ng["chang"] for ng in lich["ngay"]) and all(m["loai_diem"] for m in v2.moi_muc(lich))
     # tên điểm trên thẻ lịch bấm mở bài kho của chính điểm (23/11/2026): mỗi mục mang đường dẫn bài của dòng bảng; trường này chỉ cho giao diện
     assert all(m["bai_id"] == V2.bang_lich_v2.theo_id[m["id_diem"]]["nguon"] and m["bai_id"].endswith(".md") for m in v2.moi_muc(lich))
+    # hai dòng bảng dùng chung MỘT bài ⇒ chỉ dòng đứng trước giữ link (bấm "Trung tâm Nghệ thuật Lê Bá Đảng" không được mở bài phố đi bộ)
+    bang = V2.bang_lich_v2
+    chung = [d for d in bang.diem if sum(x["nguon"] == d["nguon"] for x in bang.diem) > 1]
+    assert {d["id"] for d in chung} == {"pho_nguyen_dinh_chieu", "tt_nghe_thuat_le_ba_dang"}
+    assert v2.bai_cua_diem(bang, "pho_nguyen_dinh_chieu") == bang.theo_id["pho_nguyen_dinh_chieu"]["nguon"] and v2.bai_cua_diem(bang, "tt_nghe_thuat_le_ba_dang") is None
+    assert sum(v2.bai_cua_diem(bang, d["id"]) is not None for d in bang.diem) == len(bang.diem) - 1
     assert not any(m["bai_id"] in v2.tin_nhan_model(lich, "") for m in v2.moi_muc(lich))
 
 
