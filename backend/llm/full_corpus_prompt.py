@@ -360,3 +360,21 @@ SONNET_DINH_TUYEN = (
     "chọn ngoai_pham_vi nhầm thì người dùng bị từ chối một câu mà trợ lý trả lời được. Chỉ chọn ngoai_pham_vi vì địa danh khi bạn biết chắc nơi "
     "đó thuộc tỉnh, thành khác và câu không dính gì tới Huế."
 )
+
+# (5) Trả lời — ý hỏi về việc diễn ra ở tỉnh, thành khác (công tắc `assistant.noi_khac_tu_choi`, 23/11/2026; TẮT tới khi đo bật ↔ tắt).
+# Ca đo: câu đối chứng ngoài tỉnh của sàn "câu ngoài kho không được trả lời bằng kho" được trả lời có nguồn 3 / 10 lần (mốc 21/11: 0 / 30) sau khi kho
+# có thêm một bài về đường đi từ Huế tới tỉnh đó — ngữ cảnh đầu nay có chữ về nơi ấy, model bớt từ chối và lấy một dòng lạc trong bài một quán ở Huế
+# (món mang tên nơi ấy) làm câu trả lời. Viết theo LOẠI tình huống, không nêu tên nơi hay món nào của bộ đo. Ba ngoại lệ ở đoạn hai là thứ phải
+# vẫn được trả lời (đường đi là nội dung của kho; món mang tên nơi khác bán tại Huế là câu hỏi về Huế; nơi ở rìa Huế — cùng lý do với đoạn (4)).
+# Nối sau lời dặn trả lời (bản thường và bản nhiều ý) ⇒ "luật đã dặn" trong đoạn này là luật từ chối / luật theo ý đứng ngay phía trên nó.
+SONNET_NOI_KHAC = (
+    "Về nơi được hỏi: kho tri thức này chỉ viết về Huế — cả thành phố Huế hiện nay, tức toàn tỉnh Thừa Thiên Huế trước đây, kể cả các huyện, thị xã, "
+    "vùng núi, đầm phá, bãi biển ở rìa. Có khi người dùng hỏi một việc diễn ra ở một tỉnh, thành khác: tới đó nên ăn gì, chơi gì, ở đâu, mua gì, "
+    "tham quan gì. Bằng chứng đôi lúc vẫn nhắc tên nơi ấy — một món mang tên nơi ấy bán ở một quán tại Huế, một câu so sánh, một điểm trên đường "
+    "đi — nhưng các dòng đó nói về Huế, không phải tư liệu về nơi kia; trả lời từ chúng thì người dùng nhận một gợi ý thiếu và lệch mà trông như có "
+    "nguồn. Vì vậy ý nào hỏi về việc diễn ra ở tỉnh, thành khác thì coi như Bằng chứng không nêu ý đó, rồi làm đúng theo luật đã dặn cho trường "
+    "hợp bằng chứng không đủ; không bù bằng gợi ý về Huế.\n"
+    "Ba trường hợp không thuộc loại này, trả lời như thường khi Bằng chứng có: đường đi giữa Huế và nơi khác (phương tiện, thời gian, giá vé, lộ "
+    "trình); món, quán, sản phẩm hay sự kiện mang tên nơi khác nhưng người dùng muốn tìm ngay tại Huế; và nơi mà bạn không chắc có thuộc Huế hay "
+    "không — khi đó cứ dựa vào Bằng chứng."
+)
