@@ -418,6 +418,36 @@ def o_dau_khung(bang_luu_tru: dict, bang: BangV2, khung: dict, ngan_sach: str | 
                      bool(ts["tre_em"] or ts["lon_tuoi"]), co_toi, ngan_sach)
 
 
+def ngay_vuot_nhip(bang: BangV2, tham_so: dict, ng: dict) -> bool:
+    """Nội dung của ngày này có vượt NHỊP ĐI của đoàn thường không — đúng hai điều kiện `qua_day_buoi` / `vuot_quy` của `kiem_khung_v2` (số điểm một
+    buổi theo kiểu đi, quỹ phút). `sua_lich_v2._xep` dùng để quyết ngày nào MANG dấu `day_them`: dấu là thứ tính lại từ nội dung sau mỗi lần xếp, không
+    phải thứ mang theo (đọc chéo 23/11: dấu mang theo lan sang ngày khác khi đổi chỗ hai ngày, và không bao giờ được gỡ)."""
+    T, quy = bang.theo_id, QUY.get(tham_so["kieu_di"])
+    for b in BUOI_NGAY:
+        ids = ng["buoi"][b]
+        if len(ids) > TOI_DA_BUOI or (len(ids) > 1 and tham_so["kieu_di"] == "nhe_nhang"):
+            return True
+        if len(ids) > 1 and quy is not None:
+            phut = PHUT[T[ids[0]]["thoi_luong"]]
+            for a, c in zip(ids, ids[1:]):
+                di = _phut_di(T[a], T[c])
+                if di is None:
+                    break
+                phut += di + PHUT[T[c]["thoi_luong"]]
+            if phut > quy:
+                return True
+    return False
+
+
+def cau_ngay_day(khung: dict, ngay: int) -> str:
+    """Dòng ghi chú của MỘT ngày người dùng đã xin thêm điểm (dấu `day_them`). Nằm trong khối ghi chú của lịch (`dung_lich`) ⇒ đi theo LỊCH — thẻ lịch,
+    file tải về — chứ không chỉ theo lượt trả lời vừa sửa (lượt trình duyệt 23/11: sang lượt kế là mất dòng báo, file .txt không nhắc)."""
+    ng = next(x for x in khung["ngay"] if x["ngay"] == ngay)
+    buoi = "; ".join(f"buổi {NHAN_BUOI[b].lower()} {len(ng['buoi'][b])} điểm, {khung['gio'][ng['buoi'][b][0]].split('–')[0].strip()} – "
+                     f"{khung['gio'][ng['buoi'][b][-1]].split('–')[1].strip()}" for b in BUOI_NGAY if ng["buoi"][b])
+    return f"Ngày {ngay} dày hơn nhịp {NHAN_KIEU_DI[khung['tham_so']['kieu_di']]} bạn chọn vì bạn đã xin thêm điểm: {buoi}."
+
+
 def gio_ngay_day(bang: BangV2, tham_so: dict, ng: dict) -> dict[str, tuple[int, int]]:
     """Giờ của MỘT ngày người dùng tự xin thêm điểm khi sửa lịch (công tắc `sua_lich_them_day`; `sua_lich_v2._xep` gọi sau `xep_v2` cho các ngày có dấu
     trong `khung["day_them"]`). Buổi sáng nối tiếp từ giờ đầu buổi như điểm giữ chỗ của `xep_v2`; buổi chiều bắt đầu ở giờ đầu buổi HOẶC muộn hơn —
@@ -637,6 +667,7 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
         ghi_chu += [{"ma": "bac_thang", "cau": CAU_GHI_CHU["bac_thang"].format(diem=bang.theo_id[j]["ten"])}
                     for j in dict.fromkeys(diem_ban_ngay(khung)) if bang.theo_id[j]["bac_thang"] == "nhieu"]
     ghi_chu += [{"ma": "tam_dung_mua", "cau": CAU_GHI_CHU["tam_dung_mua"].format(diem=bang.theo_id[j]["ten"])} for j in khung.get("tam_dung_mua", [])]
+    ghi_chu += [{"ma": "day_them", "cau": cau_ngay_day(khung, d)} for d in khung.get("day_them") or ()]  # công tắc `sua_lich_them_day`; khung không dấu ⇒ không thêm gì
     ghi_chu += [{"ma": "du_bao", **c} for c in them_ghi_chu]  # `{"cau", "ngay"?}` từ `len_ke_hoach.dong_du_bao`
     ghi_chu += [{"ma": "thay_bac_thang", "cau": CAU_GHI_CHU["thay_bac_thang"].format(diem=bang.theo_id[x["diem"]]["ten"],
                                                                                         thay=bang.theo_id[x["thay"]]["ten"])}

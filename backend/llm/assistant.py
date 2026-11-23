@@ -217,7 +217,7 @@ class AssistantFlags:
     # 23/11/2026 (chủ dự án chọn "cho ngày dày thêm" sau khi nghe số: 0 / 14.725 lệnh thêm làm được trên lịch vừa xếp): lệnh THÊM mà luật xếp chặn chỉ
     # vì NHỊP ĐI (số điểm một buổi, quỹ phút) ⇒ vẫn thêm; ngày đó dài ra (buổi chiều lùi theo buổi sáng, giữ bữa trưa 60 phút, chiều kết trước 18:00),
     # dòng báo nói ngày dày hơn nhịp đã chọn. Giờ mở cửa, luật khu, luật của đoàn có trẻ nhỏ / người lớn tuổi không nới. TẮT tới khi đo; cần
-    # sua_lich_them_khong_the (phần gợi ý "thêm vào buổi khác" nằm trong câu của cờ đó). Tắt ⇒ bộ áp chạy y như cũ.
+    # sua_lich_them_khong_the (phần gợi ý "thêm vào buổi khác" nằm trong câu của cờ đó). Tắt ⇒ bộ áp chạy y như cũ với lịch chưa có ngày nào dày.
     sua_lich_them_day: bool = False
     # Lịch đã lưu của cuộc vào LƯỢT HỎI THƯỜNG (plan private data/lich_da_luu_2026-11-19/PLAN.md): cuộc có lịch + tuyến `tro_ly_hue` ⇒ code nối một nguồn
     # "Lịch bạn đang có" (lịch + số giờ do code tính) sau ngữ cảnh kho; lượt biểu mẫu / lượt sửa / trò chuyện / câu cố định không nhận. TẮT tới khi

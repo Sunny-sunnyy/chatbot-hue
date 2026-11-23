@@ -135,11 +135,43 @@ def test_later_edits_work_on_a_denser_schedule():
         kq = _them(dau["luu"], i, ng, b, them_day=True)
         assert v2.kiem_khung_v2(B, kq["khung"]) == []
         assert all(len(x["buoi"][bb]) <= v2.TOI_DA_BUOI + 1 for x in kq["khung"]["ngay"] for bb in v2.BUOI_NGAY)
-    doi = s.doi_cho_ngay(B, dau["luu"], 1, 2)
-    if doi["da_ap"]:  # hoán đổi hợp luật ⇒ dấu nằm ở ngày mang nội dung dày
-        assert 3 - ngay in doi["khung"]["day_them"] and v2.kiem_khung_v2(B, doi["khung"]) == []
-    else:
-        assert doi["khung"] == dau["khung"]
+        cach = (kq["khong_doi"][0].get("cach") or ()) if kq["khong_doi"] else ()
+        assert all(g["thay"] is not None or g.get("day") for g in cach)  # lịch này buổi nào cũng đầy ⇒ mọi cách "thêm thẳng" đều làm ngày dày hơn
+        assert len(cach) <= 1 or all(g["thay"] is not None for g in cach)  # có cách không mất điểm ⇒ chỉ nêu MỘT cách đó (không ghép "… hoặc thay …")
+    # thêm LẦN NỮA vào ngày đang dày (lịch nhẹ nhàng một ngày: sáng 2 rồi chiều 2): qua được ở lần thử thường, vẫn phải có dòng báo + dòng ghi chú của lịch
+    k1, luu1 = _lich(1, "nhe_nhang")
+    n_lan_hai = 0
+    for kq1 in (kq for i, ng, b in _lenh(k1) if ng is None and (kq := _them(luu1, i, them_day=True))["da_ap"]):
+        for i, ng, b in _lenh(kq1["khung"]):
+            kq2 = _them(kq1["luu"], i, ng, b, them_day=True)
+            if kq2["da_ap"]:
+                n_lan_hai += 1
+                assert kq2["da_ap"][0].get("day") and "Ngày 1 nay dày hơn nhịp" in s.thay_doi(B, kq2)[0]["cau"]
+                assert kq2["khung"]["day_them"] == [1] and v2.kiem_khung_v2(B, kq2["khung"]) == []
+                _gio_di_duoc(kq2["khung"], 1)
+        if n_lan_hai:
+            break
+    assert n_lan_hai > 0
+    # dòng báo đi theo LỊCH: khối ghi chú của thẻ lịch (và file tải về) có đúng một dòng cho ngày đã dày; lịch gốc không có
+    ghi = [g for g in v2.dung_lich(B, dau["khung"], {})["ghi_chu"] if g["ma"] == "day_them"]
+    assert len(ghi) == 1 and ghi[0]["cau"].startswith(f"Ngày {ngay} dày hơn nhịp cân bằng bạn chọn vì bạn đã xin thêm điểm: buổi ")
+    assert not [g for g in v2.dung_lich(B, k, {})["ghi_chu"] if g["ma"] == "day_them"]
+    # bỏ chính điểm vừa thêm ⇒ ngày hết vượt nhịp ⇒ dấu tự gỡ, giờ về như lịch gốc
+    bo = s.ap(B, dau["luu"], [s.HanhDong(loai="bo_diem", ten=T[dau["da_ap"][0]["diem"]]["ten"])], them_khong_the=True, them_day=True)
+    assert bo["da_ap"] and "day_them" not in bo["khung"] and bo["khung"]["gio"] == k["gio"]
+    # đổi chỗ hai ngày ⇒ dấu đi theo NỘI DUNG: đúng một ngày có dấu, là ngày kia
+    n_doi = 0
+    for i, ng, b in _lenh(k):
+        kq = _them(luu, i, ng, b, them_day=True)
+        if not kq["da_ap"]:
+            continue
+        doi = s.doi_cho_ngay(B, kq["luu"], 1, 2)
+        if doi["da_ap"]:
+            n_doi += 1
+            assert doi["khung"]["day_them"] == [3 - kq["da_ap"][0]["ngay"]] and v2.kiem_khung_v2(B, doi["khung"]) == []
+        else:
+            assert doi["khung"] == kq["khung"]
+    assert n_doi > 0
 
 
 def test_validator_keeps_the_ceilings_of_a_marked_day():
