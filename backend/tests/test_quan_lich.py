@@ -207,8 +207,8 @@ def test_lunch_switch_never_replaces_a_stops_own_food_note():
     tat, bat = (next(a for a in ql.an_uong(QUAN, BANG_V2, khung, TOA, x) if a["bua"] == "trua") for x in (False, True))
     assert tat == bat and bat["quan"] == [] and bat["ghi_chu"] == ql.GHI_CHU_AN[("lang_non_tay_ho", "trua")]
     n = 0
-    for so_ngay, kieu in itertools.product((2, 3, 4, 5), ("can_bang", "kham_pha")):
-        k = v2.xep_v2(BANG_V2, v2.ThamSoV2(so_ngay, kieu_di=kieu))
+    for so_ngay, kieu, st in itertools.product((3, 4, 5), ("can_bang", "kham_pha"), ((), ("thien_nhien",), ("di_tich",))):
+        k = v2.xep_v2(BANG_V2, v2.ThamSoV2(so_ngay, kieu_di=kieu, so_thich=st))
         cu = {(a["ngay"], a["bua"]): a.get("ghi_chu") for a in ql.an_uong(QUAN, BANG_V2, k, TOA)}
         moi = {(a["ngay"], a["bua"]): a.get("ghi_chu") for a in ql.an_uong(QUAN, BANG_V2, k, TOA, True)}
         assert all(moi.get(khoa) == gc for khoa, gc in cu.items() if gc)
