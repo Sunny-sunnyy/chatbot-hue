@@ -1,0 +1,24 @@
+# Chép file này thành `terraform.tfvars` (file đó KHÔNG vào git) rồi điền ba dòng dưới.
+# Lấy ba giá trị từ tầng nền:
+#   cd ../1_nen_tang
+#   terraform output -raw instance_profile_name; echo
+#   terraform output -raw artifact_bucket_name; echo
+#   terraform output -raw alert_topic_arn; echo
+
+instance_profile_name = "DIEN-TEN-HO-SO-GAN-MAY-CUA-TANG-NEN"
+artifact_bucket_name  = "DIEN-TEN-THUNG-CUA-TANG-NEN"
+alert_topic_arn       = "DIEN-ARN-CHU-DE-CANH-BAO-CUA-TANG-NEN"
+# `alert_topic_arn` có giá trị ⇒ tạo MỘT báo động "máy không qua kiểm tra trạng thái" gửi email. Để chuỗi rỗng ("") = không tạo báo động.
+
+# Tuỳ chọn — bỏ dấu # của dòng muốn đổi (mặc định ghi ở variables.tf). Sửa xong mà `terraform fmt -check` in ra tên file này
+# thì chạy `terraform fmt terraform.tfvars` — lệnh đó chỉ canh lại khoảng trắng.
+
+# aws_region = "ap-southeast-1"
+
+# project_name = "hue-rag"
+
+# instance_type = "t3a.medium"
+
+# root_volume_gb = 40
+
+# swap_gb = 2
