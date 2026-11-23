@@ -30,9 +30,36 @@ function oGhim(item) {
   return div;
 }
 
-export default function BanDoLich({ items }) {
+export default function BanDoLich({ items, turnKey }) {
   const ngays = [...new Set(items.map(i => i.ngay))];
   const [ngay, setNgay] = useState(ngays[0]);
+  const goc = useRef(null);
+  // Chủ dự án 21:10 23/11/2026: đọc từ Ngày 1 xuống Ngày 2 thì bản đồ ghim cạnh tự sang ngày đang đọc. "Ngày đang đọc" = khối ngày cuối cùng có
+  // mép trên đã lên qua 40 % chiều cao khung nhìn. Chỉ đổi khi người đọc SANG một ngày khác ⇒ bấm tay nút "Ngày N" rồi cuộn tiếp trong cùng ngày
+  // thì bản đồ không bị giật lại. Chỉ chạy khi bản đồ đang GHIM cạnh lịch (màn rộng, `lkh.css`); màn hẹp / thẻ lịch trong khung trợ lý: không làm gì.
+  const khoaNgay = ngays.join(",");
+  useEffect(() => {
+    if (turnKey == null || ngays.length < 2) return undefined;
+    const dangDoc = () => {
+      const moc = window.innerHeight * 0.4;
+      let n = null;
+      for (const x of ngays) {
+        const khoi = document.getElementById(`ngay-${turnKey}-${x}`);
+        if (khoi && khoi.getBoundingClientRect().top <= moc) n = x;
+      }
+      return n;
+    };
+    let truoc = dangDoc(), cho = 0;
+    const xet = () => {
+      cho = 0;
+      if (!goc.current || getComputedStyle(goc.current).position !== "sticky") return;
+      const n = dangDoc();
+      if (n != null && n !== truoc) { truoc = n; setNgay(n); }
+    };
+    const nghe = () => { if (!cho) cho = requestAnimationFrame(xet); };
+    window.addEventListener("scroll", nghe, { passive: true });
+    return () => { window.removeEventListener("scroll", nghe); cancelAnimationFrame(cho); };
+  }, [turnKey, khoaNgay]);  // eslint-disable-line react-hooks/exhaustive-deps
   const cuaNgay = items.filter(i => i.ngay === ngay);
   // review E m-1: số trên ghim đi qua `innerHTML` của Leaflet ⇒ chỉ nhận số nguyên dương (server luôn dựng vậy — kiểm lại như toạ độ)
   const coToaDo = cuaNgay.filter(i => toaDoHopLe(i.toa_do) && Number.isInteger(i.thu_tu) && i.thu_tu > 0);
@@ -71,7 +98,7 @@ export default function BanDoLich({ items }) {
   }, [ngay, khoa]);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="bd">
+    <div className="bd" ref={goc}>
       <p className="text-sm font-semibold text-accent-deep">Bản đồ lịch trình</p>
       {ngays.length > 1 && (
         <div className="bd-ngay" role="group" aria-label="Chọn ngày">

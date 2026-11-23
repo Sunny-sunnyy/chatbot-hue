@@ -37,7 +37,7 @@ cách, xếp lịch — do code làm; model chỉ đọc ý người dùng và d
 - **Sửa lịch bằng lời.** "Bỏ / thêm / thay / dời một điểm", "đổi chỗ ngày 1 với ngày 2", đổi số ngày, kiểu đi, ngày đi: model chỉ đọc ý,
   code áp và kiểm luật. Việc không làm được thì lịch giữ nguyên và trợ lý nói rõ; lệnh thêm / thay bị luật xếp chặn thì kèm lý do và tối đa
   hai cách code đã thử là làm được — "thêm" không tự bỏ một điểm đang có. Tin vừa sửa lịch vừa hỏi: lịch được sửa, câu hỏi được nhắc gửi riêng.
-- **Xuất lịch.** Tệp `.ics` cho ứng dụng lịch, PowerPoint, in / lưu PDF, sao chép hoặc tải `.txt`.
+- **Xuất lịch.** Tệp `.ics` cho ứng dụng lịch, PowerPoint, in / lưu PDF, sao chép lịch ra chữ thường.
 
 **Cổng thông tin và vận hành**
 

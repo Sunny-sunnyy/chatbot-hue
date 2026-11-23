@@ -65,6 +65,9 @@
 .kp2-bai-than > * { max-width: 70ch; }
 .kp2-bai-than h2 { font-family: var(--font-serif); font-weight: 600; font-size: var(--text-tieu-de); line-height: 1.2; margin-top: 1.4em; }
 .kp2-bai-than h2:first-child { margin-top: 0; }
+/* Chủ dự án 21:10 23/11/2026: chữ thân bài căn đều hai lề như trong Word, cho mọi bài. Chỉ ĐOẠN VĂN (không tiêu đề, danh sách, bảng) và chỉ ở màn
+   rộng: ở cột hẹp của điện thoại, tiếng Việt không ngắt giữa từ nên căn đều để lại khoảng trắng lỗ chỗ ⇒ dưới 641 px giữ căn trái. */
+@media (min-width: 641px) { .kp2-bai-than > p { text-align: justify; } }
 .kp2-ben { position: sticky; top: 92px; display: flex; flex-direction: column; gap: 16px; }
 .kp2-ben-anh { margin: 0; border-radius: 18px; overflow: hidden; background: var(--color-surface); }
 .kp2-ben-anh img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }

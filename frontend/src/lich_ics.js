@@ -1,6 +1,6 @@
 // Xuất lịch .ics (việc agent (4), plan `docs/superpowers/plans/2026-11-14-xuat-lich-ics-plan.md`, A duyệt 14/11).
 // Hàm thuần: dựng tệp iCalendar (RFC 5545) từ KHUNG lịch do code xếp (tên, ngày, giờ) — chữ model chỉ vào phần mô tả, không làm dữ kiện.
-// Giờ Việt Nam UTC+7 (không giờ mùa hè) ⇒ ghi giờ UTC "…Z". Không gửi gì đi đâu: trình duyệt tải về như nút "Tải về (.txt)".
+// Giờ Việt Nam UTC+7 (không giờ mùa hè) ⇒ ghi giờ UTC "…Z". Không gửi gì đi đâu: trình duyệt tự tạo file rồi tải về.
 
 const LECH_UTC_PHUT = 7 * 60;
 const NHAC = "Giờ gợi ý theo thời lượng tham quan — kiểm lại giờ mở cửa trước khi đi.";
