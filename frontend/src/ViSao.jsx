@@ -8,7 +8,8 @@ import "./vi_sao.css";
 // Mọi nhãn tiếng Việt của từng bước (`nhan`, `tom_tat`, `ghi_chu`) do server viết — ở đây chỉ có chữ khung. Nhóm nào rỗng thì không vẽ nhóm đó.
 
 const so = (x, le = 1) => Number(x).toLocaleString("vi-VN", { maximumFractionDigits: le });
-const giay = x => `${so(x, x < 1 ? 2 : 1)} giây`;
+// bước do code tính sẵn có thể ghi 0.0 giây ⇒ in "dưới 0,01 giây" thay cho "0 giây"
+const giay = x => x < 0.005 ? "dưới 0,01 giây" : `${so(x, x < 1 ? 2 : 1)} giây`;
 const SO_BAI_DAU = 4;   // một lần tìm có thể ra tới 10 bài: vẽ 4 bài đầu, còn lại sau nút "xem thêm"
 const SO_BUOC_DAU = 4;  // tin nhiều ý có thể tìm 6–7 lần: vẽ 4 bước đầu, còn lại gập
 
@@ -64,7 +65,8 @@ function NoiDung({ d, turn }) {
       )}
       {goi.length > 0 && (
         <>
-          <Dau>{goi.length} lần gọi model, theo thứ tự</Dau>
+          {/* thứ tự in = thứ tự server ghi; vài lời gọi chạy song song (phân loại ↔ hiểu câu lệnh) nên không ghi "theo thứ tự" */}
+          <Dau>{goi.length} lần gọi model</Dau>
           <ol className="vi-sao-goi">
             {goi.map((g, i) => <li key={i}><b>{g.nhan}</b>{g.giay != null && <small>{giay(g.giay)}</small>}</li>)}
           </ol>
@@ -79,7 +81,8 @@ function NoiDung({ d, turn }) {
           )}
           {ketQua.length > 0 && (
             <ul className="vi-sao-hd"><li className="vi-sao-hd-dau">Code làm:</li>
-              {ketQua.map((k, i) => <li key={i} data-duoc={k.duoc ? "co" : "khong"}><span>{k.duoc ? "đã làm" : "chưa làm"}</span>{k.cau}</li>)}</ul>
+              {/* `duoc: false` gồm cả dòng thông tin ("Mình không tự thêm điểm khác…"), không chỉ việc không làm được ⇒ không gắn nhãn, không tô đỏ */}
+              {ketQua.map((k, i) => <li key={i}>{k.duoc && <span>đã làm</span>}{k.cau}</li>)}</ul>
           )}
         </>
       )}
@@ -97,12 +100,12 @@ function NoiDung({ d, turn }) {
       )}
       {nguon.length > 0 && (
         <>
-          <Dau>Câu trả lời dựa vào {nguon.length} nguồn</Dau>
+          <Dau>{d.loai === "sua_lich" || d.loai === "lap_lich" ? "Câu tả các điểm trong lịch" : "Câu trả lời"} dựa vào {nguon.length} nguồn</Dau>
           <ul className="vi-sao-nguon">
-            {nguon.map(n => (
+            {/* `ma` là mã gốc của đoạn; câu trả lời trên màn hình đánh số lại ⇒ in đúng số người xem đang thấy, xếp theo số đó */}
+            {nguon.map(n => ({ ...n, so: turn.numbers?.get(String(n.ma)) ?? n.ma })).sort((a, b) => a.so - b.so).map(n => (
               <li key={n.ma}>
-                {/* `ma` là mã gốc của đoạn; câu trả lời trên màn hình đánh số lại ⇒ in đúng số người xem đang thấy */}
-                <span className="vi-sao-ma">[{turn.numbers?.get(String(n.ma)) ?? n.ma}]</span>
+                <span className="vi-sao-ma">[{n.so}]</span>
                 <span>{n.bai_id ? <a href={baiHref(n.bai_id)}>{n.title}</a> : <b>{n.title}</b>}{n.muc && <small>{n.muc}</small>}</span>
               </li>
             ))}
@@ -163,18 +166,24 @@ function Buoc({ b, stt }) {
   );
 }
 
-// Thanh ba đoạn: tìm trong kho · dựng phần cho model đọc · model đọc và viết. Phần quá nhỏ vẫn có vạch 2 px để người xem thấy nó tồn tại.
+// Ba phần thời gian server đo được. Chúng KHÔNG cộng lại bằng tổng (bước phân loại chạy song song với phần trả lời) ⇒ mỗi phần một vạch riêng
+// so với tổng, không ghép thành một thanh 100 %. Lượt sửa lịch chỉ có tổng ⇒ không vẽ gì ngoài dòng tiêu đề.
 function ThoiGian({ t }) {
   const phan = [["tim", "Tìm trong kho", t.tim], ["dung", "Dựng phần cho model đọc", t.dung_ngu_canh], ["model", "Model đọc và viết", t.model]]
     .filter(([, , x]) => x != null);
+  if (phan.length === 0) return null;
   return (
     <>
-      <div className="vi-sao-thanh" aria-hidden="true">
-        {phan.map(([ma, , x]) => <i key={ma} data-phan={ma} style={{ flexGrow: Math.max(x, 0), flexBasis: 2 }} />)}
-      </div>
-      <ul className="vi-sao-chu-giai">
-        {phan.map(([ma, nhan, x]) => <li key={ma} data-phan={ma}>{nhan}: <b>{giay(x)}</b></li>)}
+      <ul className="vi-sao-tg">
+        {phan.map(([ma, nhan, x]) => (
+          <li key={ma} data-phan={ma}>
+            <span>{nhan}</span>
+            <i aria-hidden="true"><b style={{ width: `${Math.min(100, Math.max(1, (x / t.tong) * 100))}%` }} /></i>
+            <strong>{giay(x)}</strong>
+          </li>
+        ))}
       </ul>
+      <p className="vi-sao-tg-ghi">Vài bước chạy song song nên các phần không cộng đúng bằng tổng.</p>
     </>
   );
 }

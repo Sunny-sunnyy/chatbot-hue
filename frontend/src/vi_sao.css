@@ -28,17 +28,17 @@
   font-size: var(--text-chu-thich); font-style: normal; }
 .vi-sao-hd + .vi-sao-hd { margin-top: 8px; }
 .vi-sao-hd .vi-sao-hd-dau { border-bottom: 0; padding-bottom: 0; color: var(--color-muted); font-size: var(--text-nho); }
-.vi-sao-hd li[data-duoc="khong"] span { background: var(--color-error-soft); color: var(--color-error); }
 
 .vi-sao-tim { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.vi-sao-tim > :only-child { grid-column: 1 / -1; }  /* lượt chỉ có một bước: không để trống nửa phải */
 .vi-sao-lan { padding: 12px 14px; border-radius: var(--radius-m); background: var(--color-page); min-width: 0; }
 .vi-sao-lan p { margin: 0; }
 .vi-sao-lan-cau { margin-top: 2px; color: var(--color-muted); }
 .vi-sao-bai { margin-top: 8px; }
-.vi-sao-bai li { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding: 6px 0; border-top: 1px solid var(--color-line); }
+/* tên bài trên, số liệu dưới: xếp ngang thì cột tên bị bóp còn một hai chữ mỗi dòng (lượt trình duyệt 24/11, khung 770 px chia hai cột) */
+.vi-sao-bai li { display: flex; flex-direction: column; gap: 2px; padding: 6px 0; border-top: 1px solid var(--color-line); }
 .vi-sao-bai-ten { min-width: 0; overflow-wrap: anywhere; }
 .vi-sao-bai em { margin-left: 8px; white-space: nowrap; }
-.vi-sao-bai small { flex: none; text-align: right; }
 .vi-sao-lan-cuoi { margin-top: 8px; color: var(--color-muted); font-size: var(--text-nho); }
 .vi-sao-them { margin-top: 8px; padding: 0; border: 0; background: none; color: var(--color-accent); font-size: var(--text-nho); text-decoration: underline;
   text-underline-offset: 3px; cursor: pointer; }
@@ -47,13 +47,13 @@
 .vi-sao-ma { flex: none; min-width: 2.2em; font-weight: 600; color: var(--color-accent-deep); }
 .vi-sao-nguon small { display: block; }
 
-.vi-sao-thanh { display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: var(--color-line); }
-.vi-sao-thanh i[data-phan="tim"], .vi-sao-chu-giai li[data-phan="tim"]::before { background: var(--color-sun); }
-.vi-sao-thanh i[data-phan="dung"], .vi-sao-chu-giai li[data-phan="dung"]::before { background: var(--color-lv-arts); }
-.vi-sao-thanh i[data-phan="model"], .vi-sao-chu-giai li[data-phan="model"]::before { background: var(--color-river); }
-.vi-sao-chu-giai { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 8px; font-size: var(--text-nho); }
-.vi-sao-chu-giai li { display: inline-flex; align-items: center; gap: 6px; }
-.vi-sao-chu-giai li::before { content: ""; width: 10px; height: 10px; border-radius: 3px; }
+.vi-sao-tg li { display: grid; grid-template-columns: minmax(0, 15em) 1fr 5.5em; gap: 12px; align-items: center; padding: 4px 0; font-size: var(--text-nho); }
+.vi-sao-tg i { height: 10px; border-radius: 999px; background: var(--color-line); overflow: hidden; }
+.vi-sao-tg i b { display: block; height: 100%; border-radius: 999px; background: var(--color-river); }
+.vi-sao-tg li[data-phan="tim"] i b { background: var(--color-sun); }
+.vi-sao-tg li[data-phan="dung"] i b { background: var(--color-lv-arts); }
+.vi-sao-tg strong { text-align: right; font-weight: 600; }
+.vi-sao-tg-ghi { margin: 4px 0 0; color: var(--color-muted); font-size: var(--text-chu-thich); }
 
 .vi-sao-ghi { margin-top: 16px; padding: 10px 14px; border: 1px dashed var(--color-field-line); border-radius: var(--radius-m); color: var(--color-muted);
   font-size: var(--text-nho); display: grid; gap: 4px; }
@@ -62,8 +62,12 @@
 @container (max-width: 560px) {
   .vi-sao-khung { padding: 14px; }
   .vi-sao-tim { grid-template-columns: 1fr; }
-  .vi-sao-bai li { flex-direction: column; gap: 2px; }
-  .vi-sao-bai small { text-align: left; }
+  .vi-sao-tg li { grid-template-columns: 1fr 5.5em; }
+  .vi-sao-tg i { grid-column: 1 / -1; grid-row: 2; }
 }
+
+/* điện thoại: ô nhập dính đáy đè lên khoảng 20 px cuối của lượt cuối (có từ trước — ô nhập bị đẩy lên bằng chiều cao thanh điều hướng đáy) ⇒ chừa chỗ để
+   nút không nằm dưới ô nhập. Chỉ có tác dụng khi nút được vẽ. */
+@media (max-width: 760px) { .vi-sao { margin-bottom: 28px; } }
 
 @media print { .vi-sao { display: none; } }
