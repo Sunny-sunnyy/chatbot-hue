@@ -64,6 +64,23 @@ def test_a_distinctive_part_of_the_name_counts_as_the_name():
     assert le_ba_dang and not s._ten_trong_cau(B, le_ba_dang, "Trung tâm Nghệ thuật Lê Bá Đảng", "bỏ quán đầu đi, quán ở trung tâm ấy")  # khúc chung, không tên riêng
 
 
+def test_one_word_brand_names_of_evening_cafes_count_as_the_name():
+    """Chủ dự án, lúc tự test 23/11/2026: sau "tối ngày 1 đi cà phê HANOK", gõ `thay HANOK bằng MoKa Kafe` ⇒ lần hiểu ý trả ĐÚNG thay_diem
+    "HANOK Cafe Huế" ⇒ "MoKa KaFe" nhưng rào loại hành động (câu chỉ có MỘT chữ của tên) ⇒ lượt rơi về hỏi đáp thường. Tên thương hiệu một chữ
+    của bảng (HANOK, MoKa, TIME, AEON) là tên gọi tắt người ta thật sự gõ ⇒ là "tên khác" của dòng; chữ thường một âm tiết thì vẫn KHÔNG đủ."""
+    thay = s.HanhDongToiHoiBo(loai="thay_diem", ten="HANOK Cafe Huế", ten_moi="MoKa KaFe")
+    assert s.loc_bo_thay(B, [thay], "thay HANOK bằng MoKa Kafe") == ([thay], [])   # nguyên văn câu của chủ dự án
+    for cau, ten in (("bỏ MoKa", "MoKa KaFe"), ("bỏ HANOK đi", "HANOK Cafe Huế"), ("bỏ TIME", "The TIME Coffee & Bakery"), ("bỏ AEON đi", "AEON Mall Huế")):
+        h = _bo(ten)
+        assert s.loc_bo_thay(B, [h], cau) == ([h], []), cau
+    assert [s.khop_ten(B, t) for t in ("HANOK", "moka", "TIME", "AEON")] == ["ca_phe_hanok", "ca_phe_moka", "ca_phe_the_time", "aeon_mall"]
+    # không nới cho chữ thường: một âm tiết của tên Việt ("Mụ", "Nội", "Trăng") hay chữ loại ("cafe", "phố") vẫn không phải chỗ neo
+    for cau, ten in (("bỏ Mụ đi", "Chùa Thiên Mụ"), ("bỏ Nội", "Đại Nội Huế"), ("bỏ quán cafe đi", "HANOK Cafe Huế"), ("bỏ Trăng", "Bến Trăng Café & Bar")):
+        h = _bo(ten)
+        assert s.loc_bo_thay(B, [h], cau) == ([], [h]), cau
+    assert [s.khop_ten(B, t) for t in ("Mụ", "cafe", "Huế", "phố")] == [None] * 4
+
+
 def test_a_name_outside_the_table_is_kept_only_when_it_is_a_real_name_in_the_message():
     """Tên model điền không phải điểm của bảng: tên riêng có trong câu ⇒ giữ (bộ áp nói thật "không có trong lịch"); chỉ là chữ trỏ ⇒ bỏ."""
     assert s.khop_ten(B, "Vincom Plaza") is None and s.khop_ten(B, "quán đầu") is None
