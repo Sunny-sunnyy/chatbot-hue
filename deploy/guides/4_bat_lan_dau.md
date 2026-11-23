@@ -93,7 +93,9 @@ Thứ tự là BẮT BUỘC: kiểm băm ⇒ nạp ảnh ⇒ `hue.env` ⇒ `hue.
 ```bash
 export AWS_PROFILE=hue-deploy AWS_REGION=ap-southeast-1
 aws sts get-caller-identity                      # NHÌN "Arn": người dùng IAM của việc deploy
-aws ssm start-session --target <instance_id>
+ID=$(cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu && terraform output -raw instance_id); echo "$ID"
+cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu && terraform output -raw site_name; echo      # ghi lại: đây là <site_name> dùng ở bước 4 và bước 10
+aws ssm start-session --target "$ID"
 ```
 
 Trong cửa sổ lệnh của máy:
@@ -103,6 +105,9 @@ sudo -i
 cd /srv/hue
 set -a; . ./may.env; set +a                      # có biến HUE_THUNG và AWS_DEFAULT_REGION
 ```
+
+Phiên Session Manager để yên lâu thì tự ngắt. Mở lại phiên giữa chừng ⇒ gõ lại ba dòng trên và dòng `SHA=<sha>` của bước 2 (biến chỉ sống trong
+cửa sổ lệnh), rồi làm tiếp từ bước đang dở — các bước đã xong không phải làm lại.
 
 **Bước 2 — tải gói và kiểm băm.** Máy tải bằng khoá tạm của vai gắn máy; không có khoá AWS nào cần gõ.
 

@@ -64,7 +64,8 @@ máy chủ tải về rồi nạp (`docker load`): bớt một dịch vụ phả
 
 ## 6. Từng bước
 
-Mọi lệnh đứng ở gốc repo trừ khi ghi khác.
+Mọi lệnh đứng ở gốc repo trừ khi ghi khác. `<sha>` = bảy ký tự lệnh dựng in ra ở bước 2 — thay vào mọi chỗ có `<sha>`. Bước 5, 6 và mục 7, 10 dùng biến
+`THUNG` đặt ở bước 5 ⇒ gõ trong CÙNG một cửa sổ lệnh (mở cửa sổ mới thì chạy lại dòng `THUNG=…` của bước 5).
 
 **Bước 1 — lấy code mới nhất và đối chiếu 0 đồng** (vài giây, không dựng gì): danh sách file riêng tư của gói sinh từ chính `settings.yaml` của commit,
 nên cấu hình trỏ sang bảng mới thì gói tự theo; thứ có thể hỏng là file đó không có trên máy dựng.

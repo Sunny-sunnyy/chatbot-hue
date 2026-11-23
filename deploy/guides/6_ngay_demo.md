@@ -124,8 +124,9 @@ gunzip -c "app_$MOI.tar.gz" | docker load && rm "app_$MOI.tar.gz"
 # (3) trỏ hue.env sang ảnh mới (HUE_SITE và hai trần lượt giữ nguyên)
 sed -i "s/^HUE_IMAGE=.*/HUE_IMAGE=hue-rag-app:$MOI/; s/^HUE_GIT_SHA=.*/HUE_GIT_SHA=$MOI/" hue.env && cat hue.env
 
-# (4) hai phép kiểm của guide 4: dòng provider (bước 6) và đủ file bảng (bước 7, thay $SHA bằng $MOI)
+# (4) hai phép kiểm của guide 4: dòng provider (bước 6) và đủ file bảng (bước 7)
 grep -n '^  provider:' cau_hinh/settings.yaml                 # mong: provider: openai
+SHA=$MOI                                                      # rồi dán NGUYÊN khối lệnh bước 7 của guide 4 — mong: ĐỦ
 
 # (5) đổi bản: dừng app + cửa vào, nạp chỉ mục của gói mới, bật lại
 dc stop caddy app
@@ -186,6 +187,21 @@ không chặn gì.
 - [ ] Xem trang sử dụng của OpenAI: số tiền còn lại khớp với số lượt đã hỏi
 
 Tự dừng máy theo giờ (một lịch hẹn giờ của AWS): TUỲ CHỌN, CHƯA làm — hiện chỉ có danh sách này và ngưỡng ngân sách nhỏ.
+
+### 6.8 Chủ ý thay máy (đổi ảnh hệ điều hành hoặc đoạn lệnh lúc máy bật) — hiếm khi cần
+
+Terraform của tầng máy chủ cố ý bỏ qua thay đổi của ảnh hệ điều hành và của đoạn lệnh lúc bật, để một lần `apply` thường không bao giờ thay máy. Khi
+THẬT SỰ muốn một máy mới (ảnh Ubuntu mới hơn, hoặc đã sửa `user_data.sh.tftpl`), nói thẳng với Terraform **[chưa kiểm trên AWS]**:
+
+```bash
+export AWS_PROFILE=hue-deploy AWS_REGION=ap-southeast-1
+cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu
+terraform plan -replace=aws_instance.app -out=thay_may.tfplan      # ĐỌC: đúng MỘT máy bị thay (1 to add, 1 to destroy); IP tĩnh chỉ được gắn lại, không bị xoá
+terraform apply thay_may.tfplan
+```
+
+IP tĩnh giữ nguyên nên `site_name` không đổi. Máy mới là máy TRỐNG: làm lại guide 4 từ bước 1 (tải gói, hai file `hue*.env`, nạp chỉ mục, bật, hỏi
+một câu thật); chứng chỉ HTTPS được xin lại. Mất mọi thứ trên đĩa máy cũ.
 
 ## 7. Kiểm
 

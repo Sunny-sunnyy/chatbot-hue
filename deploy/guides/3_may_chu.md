@@ -100,7 +100,8 @@ chiều ngược lại — `apply` xanh mà hộp chết lặp. Terraform của 
 
 ## 6. Từng bước
 
-Mỗi khối lệnh ghi rõ ĐANG ĐỨNG Ở THƯ MỤC NÀO — lỗi hay gặp nhất của kiểu nhiều thư mục là `apply` nhầm thư mục.
+Mỗi khối lệnh ghi rõ ĐANG ĐỨNG Ở THƯ MỤC NÀO — lỗi hay gặp nhất của kiểu nhiều thư mục là `apply` nhầm thư mục. Bước 1 đặt hai biến `AWS_PROFILE`,
+`AWS_REGION` cho cửa sổ lệnh đang mở: mọi bước sau và mục 7 gõ trong CÙNG cửa sổ đó (mở cửa sổ mới thì chạy lại dòng `export` của bước 1).
 
 **Bước 1 — đúng người, đúng vùng.** Hồ sơ mặc định trên máy là người dùng của khoá học, cùng tài khoản: quên `--profile` thì lệnh vẫn chạy một phần
 bằng nhầm người.
@@ -229,6 +230,8 @@ tiền; danh sách cuối buổi ở guide 6 có dòng "tắt máy".
 Phá riêng tầng này (tầng nền và gói trong thùng giữ nguyên; lần sau làm lại guide 3 rồi guide 4):
 
 ```bash
+export AWS_PROFILE=hue-deploy AWS_REGION=ap-southeast-1
+aws sts get-caller-identity     # NHÌN "Arn": người dùng IAM của việc deploy
 cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu
 terraform plan -destroy        # ĐỌC: chỉ được có tài nguyên tên bắt đầu hue-rag-
 terraform destroy              # gõ yes
@@ -238,8 +241,8 @@ Phá tầng này là MẤT: chỉ mục trên đĩa máy (nạp lại được t
 và mọi cuộc trò chuyện (mất hẳn). Phá tầng máy chủ TRƯỚC, tầng nền SAU — ở đây thứ tự này là bắt buộc vì máy đang dùng vai của tầng nền. Phá sạch
 có kiểm: guide 7.
 
-Muốn máy dùng ảnh hệ điều hành mới hơn hoặc đổi đoạn lệnh lúc bật: cũng là phá rồi dựng lại. Terraform của ta cố ý BỎ QUA thay đổi của ảnh hệ điều hành
-(Canonical ra ảnh mới gần như mỗi tuần — không bỏ qua thì một lần `apply` vô tình sẽ thay cả máy).
+Muốn máy dùng ảnh hệ điều hành mới hơn hoặc đổi đoạn lệnh lúc bật: phải CHỦ Ý thay máy — cách làm ở guide 6 mục 6.8. Terraform của ta cố ý BỎ QUA thay
+đổi của ảnh hệ điều hành (Canonical ra ảnh mới gần như mỗi tuần — không bỏ qua thì một lần `apply` vô tình sẽ thay cả máy).
 
 ## 11. Guide kế
 
