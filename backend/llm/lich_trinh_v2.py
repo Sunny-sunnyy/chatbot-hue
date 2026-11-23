@@ -49,6 +49,9 @@ class BangV2:
     uu_tien: dict  # sở thích | "chung" ⇒ danh sách id theo thứ tự 1–4
     loai_hien: tuple[str, ...]  # sở thích đủ điểm để hiện trên biểu mẫu (thứ tự như `LOAI_DIEM_THU_TU`)
     nhac_mua_chung: dict | None
+    # Công tắc `toi_nhe` (23/11/2026): id các hoạt động tối NHẸ được xếp cho đoàn có trẻ nhỏ / người lớn tuổi (khoá `toi_nhe` của bảng; danh sách là
+    # NHẬN ĐỊNH ghi ở bảng, đổi ở bảng). Rỗng ⇒ luật cũ: đoàn hạn chế không có buổi tối. `AssistantFlags.from_settings` để rỗng khi công tắc tắt.
+    toi_nhe: tuple[str, ...] = ()
 
 
 LOAI_DIEM_THU_TU = ("di_tich", "am_thuc", "thien_nhien", "le_hoi_nghe_thuat", "chup_anh")
@@ -80,7 +83,10 @@ def nap_bang_v2(path: str | Path) -> BangV2:
     if "chung" not in uu_tien:
         raise ValueError("bảng điểm v2: thiếu danh sách ưu tiên 'chung'")
     loai_hien = tuple(l for l in LOAI_DIEM_THU_TU if sum(l in d["loai"] for d in diem) >= NGUONG_LOAI)
-    return BangV2(tuple(diem), theo_id, cum, uu_tien, loai_hien, data.get("nhac_mua_chung"))
+    toi_nhe = tuple(data.get("toi_nhe") or ())
+    if any(i not in theo_id or "toi" not in theo_id[i]["buoi"] or theo_id[i]["cum"] not in CUM_TOI or theo_id[i].get("ngay_hoat_dong") for i in toi_nhe):
+        raise ValueError("bảng điểm v2: `toi_nhe` phải là hoạt động buổi tối diễn mọi tối ở hai cụm trung tâm")
+    return BangV2(tuple(diem), theo_id, cum, uu_tien, loai_hien, data.get("nhac_mua_chung"), toi_nhe)
 
 
 @dataclass(frozen=True)
@@ -92,6 +98,9 @@ class ThamSoV2:
     so_thich: tuple[str, ...] = ()
     nguoi_lon: int | None = None  # chỉ vào lời văn / dòng "Mình hiểu"; không vào bộ xếp
     ngan_sach: str | None = None  # mức chỗ ở (`luu_tru_lich.MUC_NGAN_SACH`): chỉ đổi ô "Nơi ở"; không vào bộ xếp, không vào "Mình hiểu"
+    # Công tắc `bo_toi_de_trong` (23/11/2026): các NGÀY người dùng đã bỏ hoạt động buổi tối ⇒ tối đó để trống ở MỌI lần xếp lại sau đó (biểu mẫu không có ô này;
+    # chỉ lệnh sửa lịch ghi vào). Rỗng ⇒ không có khoá trong `tham_so` của khung (trạng thái lưu giống byte bản trước).
+    toi_trong: tuple[int, ...] = ()
 
     @property
     def han_che(self) -> bool:
@@ -139,7 +148,11 @@ GIO_BAT_DAU = {"kham_pha": {"sang": 450, "chieu": 780}, "khac": {"sang": 480, "c
 CUM_TOI = ("bo_nam", "kinh_thanh")  # 5c.4: hoạt động tối chỉ ở hai cụm trung tâm (khách đã về khu trung tâm)
 CAU_TOI = {"xa": "Tối nghỉ sau chuyến đi xa.", "tre_em": "Để trống — đi cùng trẻ nhỏ nên lịch chỉ xếp buổi sáng và chiều.",
            "lon_tuoi": "Để trống — đi cùng người lớn tuổi nên lịch chỉ xếp buổi sáng và chiều.",
-           "khong_co": "Tối tự do — kho chưa có hoạt động buổi tối hợp ngày này."}
+           "khong_co": "Tối tự do — kho chưa có hoạt động buổi tối hợp ngày này.",
+           "da_bo": "Tối tự do — bạn đã bỏ hoạt động buổi tối của ngày này.",  # công tắc `bo_toi_de_trong`
+           "het_nhe": "Tối nghỉ — các hoạt động tối nhẹ gần trung tâm đã có ở những tối khác."}  # công tắc `toi_nhe`: đoàn hạn chế không lặp hoạt động
+# Công tắc `toi_nhe`: dòng lý do do code viết, nối vào ghi chú của mục buổi tối khi đoàn có trẻ nhỏ / người lớn tuổi (nói thật vì sao là hoạt động này)
+GHI_CHU_TOI_NHE = "hoạt động nhẹ gần trung tâm, nên về sớm — đoàn mệt thì bỏ qua"
 
 
 def ra_phut(hhmm: str) -> int:
@@ -314,7 +327,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
     thieu = [s for s in ts.so_thich if not any(j in da_xep for j in bang.uu_tien.get(s, []))]  # 5c.7 (4): ghi chú do code
     # Đoàn có trẻ nhỏ / người lớn tuổi luôn được xếp nhẹ nhàng (kiểu đi không vào bộ xếp) ⇒ KHÔNG ghi câu "chưa chọn kiểu đi nên xếp mức cân bằng": câu đó
     # sai với họ và đứng ngay trên câu "xếp nhẹ nhàng" (lượt trình duyệt 23/11/2026; xảy ra ở mọi lịch của đoàn hạn chế khi để trống kiểu đi — mặc định của biểu mẫu)
-    gia_dinh = (["kieu_di"] if ts.kieu_di is None and not ts.han_che else []) + (["han_che"] if ts.han_che else []) + \
+    gia_dinh = (["kieu_di"] if ts.kieu_di is None and not ts.han_che else []) + ([("han_che_toi" if bang.toi_nhe else "han_che")] if ts.han_che else []) + \
         (["so_thich"] if not ts.so_thich else [])
     ngays = [ngay_cua(i) for i in range(1, n + 1)]
     # 5c.2 (i): điểm ưu tiên không xếp vì đang tạm dừng theo mùa ⇒ ghi chú (mã `tam_dung_mua`)
@@ -323,7 +336,7 @@ def xep_v2(bang: BangV2, ts: ThamSoV2, ngay_1_khong_xa: bool = True, ngay_bat_da
             "tham_so": {"so_ngay": n, "nguoi_lon": ts.nguoi_lon, "tre_em": ts.tre_em, "lon_tuoi": ts.lon_tuoi, "kieu_di": kieu,
                         "so_thich": list(ts.so_thich),
                         # chỉ khi có chọn ⇒ không chọn thì khung / trạng thái lưu giống byte bản trước; sửa lịch xếp lại qua đây ⇒ giữ mức
-                        **({"ngan_sach": ts.ngan_sach} if ts.ngan_sach else {})},
+                        **({"ngan_sach": ts.ngan_sach} if ts.ngan_sach else {}), **({"toi_trong": list(ts.toi_trong)} if ts.toi_trong else {})},
             "ngay": ngay, "ngoai_so_thich": ngoai, "hop_so_thich": sorted(hop_so_thich & set(da_xep)), "thieu_uu_tien": thieu,
             "thay_bac_thang": [{"diem": k, "thay": v} for k, v in bi_thay.items() if k not in da_xep], "gia_dinh": gia_dinh,
             "ngay_thang": [None if x is None else x.isoformat() for x in ngays], "tam_dung_mua": tam_dung_uu,
@@ -338,11 +351,16 @@ def _xep_toi(bang: BangV2, ts: ThamSoV2, ngay: list[dict], ngays: list, da_dung:
     ngày có điểm cụm xa ⇒ tối nghỉ; nhóm hạn chế ⇒ tối để trống (lý do). Trả {ngày: mã tối nghỉ} (ngày có hoạt động không có mặt)."""
     T, nghi = bang.theo_id, {}
     so_thich = set(ts.so_thich)
-    ung_vien = sorted((d for d in bang.diem if "toi" in d["buoi"] and d["cum"] in CUM_TOI and d["id"] not in da_dung),
+    nhe = ts.han_che and bool(bang.toi_nhe)  # công tắc `toi_nhe`: đoàn hạn chế được MỘT hoạt động nhẹ mỗi tối, chỉ trong danh sách của bảng, không lặp
+    ung_vien = sorted((d for d in bang.diem if "toi" in d["buoi"] and d["cum"] in CUM_TOI and d["id"] not in da_dung
+                       and (not nhe or d["id"] in bang.toi_nhe)),
                       key=lambda d: not (so_thich & set(d["loai"])))  # hợp sở thích trước, rồi thứ tự bảng (sort ổn định)
     da_toi: list[str] = []
     for ng, ngay_that in zip(ngay, ngays):
-        if ts.han_che:
+        if ng["ngay"] in ts.toi_trong:  # công tắc `bo_toi_de_trong`: người dùng đã bỏ hoạt động tối của ngày này ⇒ không chọn lại
+            nghi[ng["ngay"]] = "da_bo"
+            continue
+        if ts.han_che and not nhe:
             nghi[ng["ngay"]] = "tre_em" if ts.tre_em else "lon_tuoi"
             continue
         if any(T[j]["cum"] == CUM_XA for b in BUOI_NGAY for j in ng["buoi"][b]):
@@ -350,14 +368,34 @@ def _xep_toi(bang: BangV2, ts: ThamSoV2, ngay: list[dict], ngays: list, da_dung:
             continue
         hop = [d["id"] for d in ung_vien if dung_thu(d, ngay_that) and not tam_dung(d, ngay_that)]
         moi = [j for j in hop if j not in da_toi]
-        lai = [j for j in hop if not T[j].get("ngay_hoat_dong")]  # diễn mọi tối ⇒ đi lại được
+        lai = [] if nhe else [j for j in hop if not T[j].get("ngay_hoat_dong")]  # diễn mọi tối ⇒ đi lại được (đoàn hạn chế: không lặp, để trống)
         chon = moi[0] if moi else (lai[0] if lai else None)
         if chon is None:
-            nghi[ng["ngay"]] = "khong_co"
+            nghi[ng["ngay"]] = "het_nhe" if nhe else "khong_co"
             continue
         ng["buoi"]["toi"].append(chon)
         da_toi.append(chon)
     return nghi
+
+
+def _han_che_khung(khung: dict) -> bool:
+    ts = khung["tham_so"]
+    return ts["tre_em"] >= 1 or bool(ts["lon_tuoi"])
+
+
+def gio_toi_nhe(gio_toi: str | None) -> str | None:
+    """Công tắc `toi_nhe`: giờ in trên mục buổi tối của đoàn có trẻ nhỏ / người lớn tuổi là giờ GHÉ do code đặt, không phải giờ mở cửa của nơi đó
+    (bảng ghi "18:00 – 23:00" là giờ phố ẩm thực đêm MỞ; in nguyên thì người đọc hiểu là ở tới 23:00 — ngược với lý do "nên về sớm").
+    Khung "HH:MM – HH:MM" ⇒ từ giờ mở, dài `PHUT["ngan"]` (75 phút — đúng thời lượng "ghé ngắn" bộ xếp dùng ban ngày); "suất a / b / c…" ⇒ giữ suất ĐẦU;
+    chuỗi khác / không có giờ ⇒ để nguyên."""
+    if not gio_toi:
+        return gio_toi
+    m = re.fullmatch(r"\s*(\d{1,2}):(\d{2})\s*[–-]\s*\d{1,2}:\d{2}\s*", gio_toi)
+    if m:
+        dau = int(m[1]) * 60 + int(m[2])
+        return in_gio(dau, dau + PHUT["ngan"])
+    m = re.match(r"(suất \d{1,2}:\d{2})(?:\s*/\s*\d{1,2}:\d{2})+(.*)", gio_toi)
+    return f"{m[1]}{m[2]}" if m else gio_toi
 
 
 ANH_SRC = "/anh/lich/"  # ảnh lịch tự host (frontend/public/anh/lich/) — CSP img-src 'self' không đổi
@@ -489,7 +527,7 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
         cums: list[str] = []
         so = 0
         toi = ng["buoi"].get("toi") or []
-        if len(toi) > 1 or (toi and han_che):
+        if len(toi) > 1 or (toi and han_che and not set(toi) <= set(bang.toi_nhe)):  # công tắc `toi_nhe`: đoàn hạn chế chỉ được hoạt động trong danh sách nhẹ
             loi.append("toi_qua_day")
         for j in toi:
             if "toi" not in T[j]["buoi"] or T[j]["cum"] not in CUM_TOI:
@@ -589,6 +627,7 @@ CAU_MUC_TOI_DA = 30  # từ / câu (5c.6) — chỉ đếm để báo, không th
 CAU_GHI_CHU = {
     "kieu_di": "Chưa chọn kiểu đi nên mình xếp mức cân bằng.",
     "han_che": "Đi cùng trẻ em hoặc người lớn tuổi nên mình xếp nhẹ nhàng: mỗi buổi một điểm, không xếp buổi tối.",
+    "han_che_toi": "Đi cùng trẻ em hoặc người lớn tuổi nên mình xếp nhẹ nhàng: mỗi buổi một điểm; buổi tối chỉ một hoạt động nhẹ gần trung tâm, nên về sớm.",
     "so_thich": "Chưa chọn sở thích nên mình gợi ý điểm tiêu biểu, thêm một điểm thiên nhiên mỗi ngày.",
     "thay_bac_thang": "{diem} có nhiều bậc thang (theo kho) nên mình xếp {thay} cùng khu thay vào.",
     "thieu_uu_tien": "Lịch này chưa xếp được điểm tiêu biểu nhất cho sở thích {so_thich} — thêm ngày thì mình xếp được nhiều điểm hơn.",
@@ -638,9 +677,10 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                 toi = b == "toi"
                 lap_lai = toi and id_ in [x for ng0 in khung["ngay"] if ng0["ngay"] < ng["ngay"] for x in ng0["buoi"]["toi"]]
                 muc.append({"id_muc": f"n{ng['ngay']}-{b}-{k}", "buoi": b, "loai": "hoat_dong_toi" if toi else "tham_quan", "id_diem": id_,
-                            "ten": d["ten"], "gio": d.get("gio_toi") if toi else khung.get("gio", {}).get(id_),
+                            "ten": d["ten"], "gio": (gio_toi_nhe(d.get("gio_toi")) if _han_che_khung(khung) else d.get("gio_toi")) if toi else khung.get("gio", {}).get(id_),
                             # buổi tối của bảng (vd chợ Đông Ba = phố ẩm thực đêm trước chợ): không có dòng này người đọc tưởng vào chợ đã đóng
-                            "ghi_chu": d.get("ghi_chu_toi") if toi else None,
+                            "ghi_chu": ("; ".join(x for x in (d.get("ghi_chu_toi"), GHI_CHU_TOI_NHE if _han_che_khung(khung) else None) if x) or None)
+                            if toi else None,
                             "nguon": nguon.get(id_), "anh": dict(anh[id_]) if anh and id_ in anh else None,  # đợt 2 (B): cờ `anh_lich`
                             "toa_do": list(toa_do[id_]) if toa_do and id_ in toa_do else None,
                             "nhan": (["ngoai_so_thich"] if id_ in khung["ngoai_so_thich"] else []) + (["co_the_di_lai"] if lap_lai else [])
@@ -665,6 +705,12 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
     ts = khung["tham_so"]
     ghi_chu = [{"ma": "mua_mua", "cau": bang.nhac_mua_chung["cau"]}] if khung.get("mua_mua") else []  # 5c.2 (iii): đầu khối, đúng một dòng
     ghi_chu += [{"ma": m, "cau": CAU_GHI_CHU[m]} for m in khung["gia_dinh"]]
+    # Hai công tắc buổi tối (23/11/2026): mục "nghỉ" không hiện trên thẻ (User 15/11) ⇒ tối trống có lý do riêng — người dùng đã bỏ, đoàn hạn chế hết mục
+    # nhẹ / ngày đi xa — phải có MỘT dòng ghi chú theo ngày, không thì thẻ, file xuất và bản in không nói gì về tối đó. Công tắc tắt ⇒ không mã nào có.
+    for ng in khung["ngay"]:
+        ma = khung.get("toi_nghi", {}).get(ng["ngay"])
+        if ma in ("da_bo", "het_nhe") or (ma == "xa" and "han_che_toi" in khung["gia_dinh"]):
+            ghi_chu.append({"ma": f"toi_{ma}", "cau": CAU_TOI[ma], "ngay": ng["ngay"]})
     if ts["tre_em"] or ts["lon_tuoi"]:  # bộ đo ý 2: nhóm hạn chế + điểm nhiều bậc thang còn trong lịch (không có điểm thay cùng khu) ⇒ ghi chú
         ghi_chu += [{"ma": "bac_thang", "cau": CAU_GHI_CHU["bac_thang"].format(diem=bang.theo_id[j]["ten"])}
                     for j in dict.fromkeys(diem_ban_ngay(khung)) if bang.theo_id[j]["bac_thang"] == "nhieu"]

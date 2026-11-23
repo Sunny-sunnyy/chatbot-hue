@@ -1,6 +1,6 @@
 # Bài 21 — Harness: phần chương trình bao quanh model
 
-*Cập nhật 11:11, ngày 23/11/2026 · khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): lúc chờ là thẻ chờ · 22:43 22/11: hàng "Lịch sử gửi kèm" · cơ chế đọc từ chương trình đang chạy; ví dụ là hai lượt hỏi thật 20/11 (gpt-6-luna, lúc đó trần tìm là 2); số phép so từ các báo cáo 02/11–22/11; người viết không chạy lại phép đo nào.*
+*Cập nhật 14:17, ngày 23/11/2026 · khớp hệ thống 13:41 23/11 (50 tính năng mở, 5 tắt, kho 267 bài): "Đã so" dòng 8: công cụ có mặt đổi câu trả lời · 22:43 22/11: hàng "Lịch sử gửi kèm" · cơ chế đọc từ chương trình đang chạy; ví dụ là hai lượt hỏi thật 20/11 (gpt-6-luna, lúc đó trần tìm là 2); số phép so từ các báo cáo 02/11–22/11; người viết không chạy lại phép đo nào.*
 
 **Bài trước đã biết:** đường hỏi đáp cơ bản (chặng 3): chương trình tìm 10 đoạn, model viết một lần, chương trình kiểm số nguồn. Và ở bài 3: model có thể "xin" chương trình chạy một công cụ rồi đọc kết quả.
 **Bài này thêm:** cho model quyền xin công cụ thì hệ thống thành một **trợ lý**. Bài này giảng phần chương trình đứng quanh model (**harness**), vì sao các cái trần được đặt như vậy, và chạm trần thì người dùng thấy gì; các bài còn lại của chặng này đều dựa trên nó.
@@ -63,7 +63,7 @@ Cất công cụ có một mặt trái, lộ ra ngày 22/11: model còn muốn t
 
 ## Trước khi gọi model và sau khi model viết đều là việc của chương trình
 
-**Trước.** Lần tìm đầu luôn do chương trình làm, bằng chính câu người dùng gõ; model không phải xin. Câu cần tính toán thì chương trình **tính sẵn** rồi đưa kết quả vào cùng 10 đoạn như một nguồn được đánh số (ví dụ ngày dương và ngày âm, bài 24). Chương trình cũng chọn **công cụ nào được đưa**: câu hỏi giá vé thì model không thấy công cụ thời tiết.
+**Trước.** Lần tìm đầu luôn do chương trình làm, bằng chính câu người dùng gõ; model không phải xin. Câu cần tính toán thì chương trình **tính sẵn** rồi đưa kết quả vào cùng 10 đoạn như một nguồn được đánh số (ví dụ ngày dương và ngày âm, bài 24). Chương trình cũng chọn **công cụ nào được đưa**: câu hỏi giá vé thì model không thấy công cụ thời tiết. Công cụ được đưa mà model không gọi vẫn có thể đổi câu trả lời: đo 23/11 trên một câu, tắt riêng công cụ liệt kê bài (kèm một vòng) thì lần trả lời sai từ 12 xuống 1 trên 20, dù model không gọi nó ("Đã so" dòng 8).
 
 **Sau.** Khi model viết xong, chương trình làm ba việc trên chữ đó. Với model đang chạy (trả cả câu một lần), ở lượt hỏi đáp về Huế trong ô chat, chữ được giữ tới khi qua bước kiểm nguồn rồi mới hiện; kiểm hỏng thì người dùng không thấy chữ đó. Với model trả chữ dần (đường cũ), chữ hiện trước, kiểm sau, kiểm hỏng thì rút lại hoặc thay chữ đã hiện.
 
@@ -104,7 +104,7 @@ Nguyên tắc: việc cần hiểu ngôn ngữ thì model làm; việc có luậ
 - **Đã chọn:** model đã tự tìm ít nhất một lần mà chữ nộp không có số nguồn nào ⇒ chương trình gọi model viết thêm một lần, không công cụ, trên mọi đoạn đã gom, rồi kiểm như thường; vẫn không có ⇒ câu từ chối cố định. Mở cùng trần 3 và hai thay đổi ở khâu tìm (bài 23).
 - **Vì sao:** đã đo (Claude Sonnet 5.5): 5 câu bị rút sáng 22/11 đều là chữ giữ chỗ; cả bộ đưa tin của gia đình về 0 trên 6 lần "Thử lại" (Đã so dòng 7; đủ ở bài 16, quyết định 5).
 - **Cách khác:** bước viết lại đứng riêng: đo rồi không mở (Đã so dòng 6). Lượt model không tìm lần nào không thuộc bước này; chỉ lượt đang kèm câu trả lời liền trước có lần chạy lại cả lượt, ở ô chat (từ 16:08 22/11 cả ở cuộc đã có lịch, trừ lượt sửa lịch; bài 16); các lượt khác vẫn ra màn hình "Thử lại".
-- **Cái giá:** lâu hơn khoảng 10 giây, thêm một lần gọi model; trong lúc đó chỉ có phần chờ (từ 15:42 22/11 chữ được giữ tới khi kiểm, với model đang chạy; từ 23/11 phần chờ là thẻ chờ; theo test và một lượt thật, ca này chưa nhìn trên trình duyệt). Chỗ chưa đo: "Giới hạn đã biết".
+- **Cái giá:** lâu hơn khoảng 10 giây, thêm một lần gọi model; trong lúc đó chỉ có thẻ chờ (ca này chưa nhìn trên trình duyệt; "Chi tiết để tra"). Chỗ chưa đo: "Giới hạn đã biết".
 
 ## Nếu… thì sao
 
@@ -121,7 +121,7 @@ Quá 45 giây hoặc hãng model lỗi: bài 6.
 ## Dễ nhầm
 
 - **"Trợ lý tự quyết định mọi bước."** Không. Nó chỉ quyết có xin công cụ không và viết gì.
-- **"Dặn kỹ trong lời dặn là đủ."** Không. Lời dặn là lời nhờ, model có thể không theo. Luật nào quan trọng thì có thêm một bước kiểm bằng chương trình ở sau.
+- **"Dặn kỹ trong lời dặn là đủ."** Không. Lời dặn là lời nhờ, model có thể không theo. Luật nào quan trọng thì có thêm một bước kiểm bằng chương trình ở sau. Không phải luật nào cũng có: câu hỏi việc ở tỉnh, thành khác (bài 16), "không thêm lời khuyên", "giữ điều kiện" chỉ nằm trong lời dặn.
 
 ## Câu hỏi tự kiểm
 
@@ -180,6 +180,7 @@ Lời dặn là phần của harness mà model đọc ở mọi vòng. Bảng d�
 | Câu từ chối | "Nếu bằng chứng không đủ, trả đúng duy nhất câu sau, không thêm citation: Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này." |
 | Khi nào xin tìm thêm | "Gọi tim_kho khi Bằng chứng hiện có chưa đủ để trả lời mọi ý của câu hỏi." · "Đủ Bằng chứng thì trả lời luôn, không gọi thêm." |
 | Khi cuộc trò chuyện đã có câu hỏi trước | "Lịch sử chỉ để hiểu câu hỏi nói về đối tượng nào: mỗi nhận định phải lấy từ Bằng chứng nói đúng về đối tượng được nhận định…" |
+| Câu hỏi việc ở tỉnh, thành khác (chỉ khi model là Claude, từ chiều 23/11; nằm giữa lời dặn trả lời và đoạn công cụ) | "Vì vậy ý nào hỏi về việc diễn ra ở tỉnh, thành khác thì coi như Bằng chứng không nêu ý đó, rồi làm đúng theo luật đã dặn cho trường hợp bằng chứng không đủ; không bù bằng gợi ý về Huế." (bài 16) |
 
 Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công cụ khác nằm trong phần mô tả đi kèm từng công cụ, nên lượt hỏi nào không được đưa công cụ đó thì model không đọc phải luật đó.
 
@@ -187,7 +188,7 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 
 **Vấn đề thật đã gặp.** Đường hỏi đáp một lượt từ chối những câu mà đáp án nằm rải ở nhiều bài, hoặc bài dùng chữ khác câu hỏi, như lượt "áo dài". Các phép so dưới đây là những lần đã đổi (hoặc suýt đổi) chính vòng công cụ. Phép so thuộc về một công cụ hay một tính năng cụ thể nằm ở bài của nó (bài 23, 24, 25) và ở phụ lục C.
 
-**So trên bộ nào.** Dòng 1–3 đo với model gpt-6-luna, trên các nhóm câu lấy từ bộ câu mẫu và bộ câu nhỏ soạn riêng; luật đạt / trượt ghi trước khi chạy (bài 20). Dòng 4 đo với Claude Sonnet 5.5. Dòng 5–7 đo với Claude Sonnet 5.5 ngày 22/11, chủ yếu trên MỘT tin 4 ý của một gia đình (do người dùng mô phỏng viết), hỏi 6 lần mỗi bên; kho có cả hai thứ tin đó hỏi thẳng (vé lẻ Đại Nội, mức giảm cho người từ đủ 60 tuổi); tiêu chí ghi trước khi chạy; người đo đọc tay.
+**So trên bộ nào.** Dòng 1–3 đo với model gpt-6-luna, trên các nhóm câu lấy từ bộ câu mẫu và bộ câu nhỏ soạn riêng; luật đạt / trượt ghi trước khi chạy (bài 20). Dòng 4 đo với Claude Sonnet 5.5. Dòng 8 đo với Claude Sonnet 5.5 ngày 23/11 trên MỘT câu đối chứng ngoài tỉnh, 20 lần mỗi ô, gọi thẳng phần lõi; ngưỡng ghi trước cho ba ô đầu, ô cuối (chỉ tắt công cụ liệt kê) chạy không có ngưỡng ghi trước. Dòng 5–7 đo với Claude Sonnet 5.5 ngày 22/11, chủ yếu trên MỘT tin 4 ý của một gia đình (do người dùng mô phỏng viết), hỏi 6 lần mỗi bên; kho có cả hai thứ tin đó hỏi thẳng (vé lẻ Đại Nội, mức giảm cho người từ đủ 60 tuổi); tiêu chí ghi trước khi chạy; người đo đọc tay.
 
 | # | Kiểu thay đổi | Thử gì, so với gì | Con số quyết định | Giữ / bỏ |
 |---|---|---|---|---|
@@ -198,16 +199,18 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 | 5 | nới trần đứng riêng | trần tìm 3 so với 2, không đổi gì khác (trưa 22/11, 26 câu) | màn hình "Thử lại" ở tin của gia đình 4 ⇒ 3 trên 6, trong mức dao động; model dùng hết 3 lần vẫn xin tìm tiếp | không mở đứng riêng |
 | 6 | bước viết lại đứng riêng | viết lại một lần khi chữ nộp không có số nguồn (bản đầu: chỉ khi đã tìm HẾT lượt), so với không có (trưa 22/11, 44 câu) | "Thử lại" 3 ⇒ 0 trên 6, không bịa số nào; nhưng 4 trên 5 câu viết lại ghi "tư liệu chưa có" đúng hai ý kho có, trong khi ba lần trả lời bình thường đúng cả hai | không mở đứng riêng |
 | 7 | bộ bốn thay đổi | lượt ba bên (57 câu; ba bản chạy cùng lúc trên cùng bộ tin): bản đang chạy · thêm bỏ vế cụt và tách câu tìm gộp (bài 23) · thêm bước viết lại (bản đầu, điều kiện "đã tìm hết lượt"); rồi thêm trần 3 lên trên cả bộ (9 câu); rồi thử lại trên đúng cấu hình sẽ mở (6 câu) | "Thử lại" 5 · 3 · 0 trên 6; đúng cả hai ý 0 · 1 · 1 trên 6 ⇒ với trần 3: 6 trên 6, không "Thử lại", chậm thêm khoảng 2 giây. Tin kho thiếu, tin thường không lỗi, không bịa; tin phòng gym (kho không có) lộ khe của bản đầu ⇒ điều kiện đổi thành "đã tìm ít nhất một lần"; lần thử cuối: từ chối 3 trên 3 | **mở cả bộ 14:47 22/11** |
+| 8 | tìm xem thứ gì làm model bớt từ chối | câu "Từ Huế vào Hội An thì ở Hội An nên ăn món gì?" (kho không có bài về món ở Hội An), mỗi ô đổi một thứ, đếm lần được trả lời bằng kho | Bản đang chạy trả lời sai câu này 12 trên 20 lần (21/11, chưa có công cụ liệt kê: 1 trên 40). Bỏ bài mới về Hội An khỏi lần tìm đầu: vẫn 11. Tắt cùng lúc 12 tính năng mới và trả hai giới hạn tìm, vòng (kho giữ như hôm nay): còn 1. Chỉ trả hai giới hạn: 8. Chỉ tắt công cụ liệt kê bài: 1. Ở 12 lần sai, model không gọi công cụ đó lần nào | giữ công cụ (nó chữa câu "những quán nào có…"); che bằng một đoạn dặn ở lời viết câu trả lời, chiều 23/11 (bài 16); chữa ở gốc chưa làm. Nghi phạm chính là việc công cụ có mặt — cách nhóm đang hiểu, chưa phải kết luận chắc |
 
 **Đọc bảng này thế nào.**
 - Quyền tự tìm thêm **có trần** là thứ thắng rõ nhất (dòng 1). Siết trần xuống 1 thì mất câu trả lời (dòng 2); để hở trần thì tốn thời gian vô ích (dòng 3).
 - Ba lần thử mở thêm quyền khác cho model (xin hai công cụ một lúc, tự viết lại câu tìm đầu, tự quyết lúc nào tra web) đều không thắng: xin hai công cụ một lúc thì model chỉ dùng ở 1 trên 176 câu; tự viết lại câu tìm đầu chỉ đưa thêm 0 tới 1 trên 12 câu (cần ít nhất 3); việc tự quyết lúc nào tra web ở bài 25.
 - Giao việc tính cho chương trình thắng ở ngày tháng nhưng thua ở cộng tổng tiền chuyến đi (bài 24). Không phải cứ giao cho chương trình là hơn.
 - Dòng 4: cùng một harness, đổi model thì chỗ nối có thể hỏng. Lỗi ở chỗ nối, không ở model.
+- Dòng 8: danh sách công cụ cũng là thứ model đọc. Thêm một công cụ thì câu không dùng tới nó cũng có thể đổi; lượt thật lúc mở công cụ liệt kê bài (22/11, 8 tin) thấy hai câu ngoài kho / ngoài tỉnh vẫn bị từ chối; mẫu cỡ đó khó thấy một mức hở 12 trên 20 (lập luận, không phải số đo). Giả thuyết đầu (bài mới trong kho) bị bác nhờ ngưỡng ghi trước.
 - Dòng 5–7: hai bản chữa đứng riêng đều không đạt — nới trần thì model vẫn tiêu lần tìm vào cùng một thứ (câu tìm gộp không kéo được đoạn giá vé); bước viết lại thì xoá màn hình lỗi nhưng viết từ bằng chứng thiếu. Gốc nằm ở câu tìm (bài 23); chữa gốc xong thì trần 3 và bước viết lại mới có ích.
 - Mỗi lần thử ở phần trợ lý đều có tầng an toàn: chạy lại bộ câu an toàn, hoặc chứng minh chuỗi chữ gửi model không đổi rồi dùng lại số cũ (bài 20).
 
-**Giới hạn của các phép đo.** Bộ câu nhỏ (8 tới 30 câu), do nhóm soạn. Dòng 1–3 chưa đo lại trên model đang chạy; riêng số lần tìm thì đã thử 3 và 4 trên cả hai model (bảng cấu hình). Dòng 5–7: lợi mới đo trên MỘT tin dài; chính bản đang chạy với cùng tin đó trong ngày 22/11 tự dao động 3, 4 rồi 5 lần "Thử lại" trên 6, nên nhóm ghi căn cứ mở hai thay đổi ở khâu tìm là cơ chế (đoạn giá vé vào bằng chứng 2 ⇒ 6 trên 6), không ghi là "giảm lỗi". Điều kiện "đã tìm ít nhất một lần" chưa gặp lượt thật; cuộc đã có lịch lưu chưa đo; model cũ chưa đo.
+**Giới hạn của các phép đo.** Bộ câu nhỏ (8 tới 30 câu), do nhóm soạn. Dòng 1–3 chưa đo lại trên model đang chạy; riêng số lần tìm thì đã thử 3 và 4 trên cả hai model (bảng cấu hình). Dòng 5–7: lợi mới đo trên MỘT tin dài; chính bản đang chạy với cùng tin đó trong ngày 22/11 tự dao động 3, 4 rồi 5 lần "Thử lại" trên 6, nên nhóm ghi căn cứ mở hai thay đổi ở khâu tìm là cơ chế (đoạn giá vé vào bằng chứng 2 ⇒ 6 trên 6), không ghi là "giảm lỗi". Điều kiện "đã tìm ít nhất một lần" chưa gặp lượt thật; cuộc đã có lịch lưu chưa đo; model cũ chưa đo. Dòng 8: một câu; ô "chỉ tắt công cụ liệt kê" cũng bớt một vòng trần (công cụ đó được cộng 1 vòng), còn ô chỉ trả hai trần vẫn hở 8 trên 20; vì sao công cụ có mặt làm model bớt từ chối: chưa thấy ghi lý do; model cũ ngày 21/11 đã hở câu này khi chưa có công cụ đó, và Claude cùng ngày cũng đã lọt 1 trên 5 lần ở một lượt (bài 16, "Đã so").
 
 ## Quyết định nhỏ hơn
 
@@ -235,6 +238,7 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 - **Tin dài chờ lâu hơn.** Từ 14:47 22/11 tin dài nhiều ý trả lời được trong khoảng 25–34 giây (trước khoảng 20); lượt phải viết lại lâu thêm khoảng 10 giây (bài 34). Ở tin đó, lượt chậm là lượt model tự tìm thêm lần thứ hai; hai cách làm nhanh đã đo ngày 22/11 và bỏ: bớt lần tìm đó (bài 23), hạ mức suy luận (bài 33).
 - **Bước viết lại còn ba chỗ chưa đo:** điều kiện "đã tìm ít nhất một lần" mới có ca test; cuộc đã có lịch lưu (bước này vẫn chạy ở đó theo chương trình, chỉ chưa đo; lần chạy lại trong cuộc có lịch mới có ca test, chưa có lượt thật — bài 16); model cũ.
 - **Ở tin dài, phần chữ trống 20–30 giây** (giá của việc giữ chữ tới khi kiểm; số đo trên giao diện cũ). Từ 23/11 trong lúc đó là thẻ chờ, thêm tên các bài đã tìm thấy sau mỗi lần tìm; lúc model viết câu cuối, chữ trên thẻ không đổi (bài 5).
+- **Công cụ có mặt mà không được gọi vẫn đổi được câu trả lời.** Công cụ liệt kê bài được đưa ở mọi lượt hỏi đáp; trên câu đối chứng, có mặt nó thì câu đó bớt bị từ chối (dòng 8). Đang che bằng một đoạn dặn, chỉ trên model đang chạy (bài 16); bớt công cụ đó ở câu không xin danh sách: chưa làm.
 - **Đổi model thì chỗ nối harness có thể hỏng.** Với Claude, cách gửi cũ làm model xin công cụ mãi, 0 trên 8 lần viết được; đã chữa (dòng 4 của "Đã so").
 
 ## Chi tiết để tra
@@ -284,5 +288,9 @@ Lời dặn chỉ nói về công cụ tìm kho. Luật dùng của các công c
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Câu hỏi tự kiểm" (thêm trưa 22/11 theo khuôn mới): gom từ bảng "Đã so", bảng "Cấu hình đang chạy" và các nguồn trên. Lời báo nguyên văn: câu từ chối `backend/llm/full_corpus_prompt.py` (`INSUFFICIENT_ANSWER`); lời báo lỗi model và lỗi trích dẫn `backend/api/routes/chat.py` (`GENERATION_FAILURE_MESSAGE`, `_loi_trich_dan`); lần chạy lại hẹp `backend/llm/assistant.py` (`answer_turn_stream_parallel`). "Chưa thấy ghi lý do" ở quyết định 3 và 5: người viết đã dò chú thích quanh `on_max_turns` và `parallel_tool_calls`.
 
 - Hàng "Lịch sử gửi kèm" (sửa 22:43 22/11/2026): `backend/api/conversations.py` `CONG_CU_KHONG_NHO_DAP` dòng 50 và `dap_duoc_nho` dòng 53–74 (công tắc `nho_dap_cuoc_co_lich`: chặn thêm câu trả lời trích nguồn lịch đã lưu; `liet_ke_bai`, `gan_diem` không trong tập) [code].
+
+- Đợt đầu chiều 23/11/2026 (viết 13:47–13:51, giờ `date`): "Đã so" dòng 8, câu trỏ ở mục "Trước khi gọi model…", gạch "Dễ nhầm", hàng lời dặn, gạch "Giới hạn". Số dòng 8 [tự đếm từ `data/thu_bedrock_2026-11-21/harness/b_noi_khac_2311/do_e/` — `5f620c8f_tat_a_r06.jsonl` 12 / 20, `o_n_x20.jsonl` 11 / 20, `o_k_x20.jsonl` 1 / 20, `o_k1_x20.jsonl` 8 / 20, `o_k2_chi_tat_liet_ke_x20.jsonl` 1 / 20; 0 / 12 lượt hở có `liet_ke_bai` trong `cong_cu`; cấu hình ghi đè của từng ô ở file `.log` cùng tên; riêng tư]; mốc 21/11 0 / 30: ba file `san_*_s_high_x10.jsonl` ở `data/thu_bedrock_2026-11-21/do/thuoc/r06_lap/` [tự đếm; riêng tư]; ngưỡng ghi trước, giả thuyết đầu bị bác: `b_noi_khac_2311/TIEU_CHI.md` [chép, đã mở]. Công cụ liệt kê cộng 1 vòng: `backend/llm/generator_openai_full_corpus.py` `max_turns_for` [code]. Đoạn dặn nguyên văn và chỗ nối: `backend/llm/full_corpus_prompt.py` `SONNET_NOI_KHAC`, generator `them_noi_khac`, `tra_loi` ⇒ `assistant_instructions` [code]. Lượt thật lúc mở công cụ liệt kê (22/11, 8 tin, hai câu ngoài kho / ngoài tỉnh bị từ chối): `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 hàng "Câu xin DANH SÁCH…" [chép]. Giữ công cụ, chữa ở gốc chưa làm: `session_prompt/Y_CHUA_THU.md` hàng "| 71 |" [chép]. Nửa để hiểu 13.330 ⇒ 13.620; dòng Cập nhật bỏ cụm "11:11: lúc chờ là thẻ chờ" (thân bài vẫn có) để giữ độ dài.
+
+- Lượt áp biên bản 23/11/2026 (`data/hoc_cung_D/kiem/dot_2311_chieu_k1_kiem.md` hàng 21.2, 21.3, 21.5, 21.6, 21.8, 21.9) [riêng tư]: mốc 21/11 1 / 40 (năm file cùng điều kiện ở `data/thu_bedrock_2026-11-21/do/thuoc/r06_lap/`, kể từng file ở khối Nguồn bài 16) [tự đếm]; ô tắt cả nhóm = 12 công tắc + `so_lan_tim_kho` 2 + `so_vong_cong_cu` 4 (dòng đầu `do_e/o_k_x20.log`), kho và code không công tắc giữ như hôm nay [đã mở]; ngưỡng ghi trước: không thấy cho ô `o_k2` [đã mở `TIEU_CHI.md`, `VIEC_DANG_MO.md` dòng 19]. Câu "Cái giá" quyết định 3 rút "từ 15:42 … theo test và một lượt thật" — đã có ở "Chi tiết để tra" (gạch "Bước viết lại, với model đang chạy từ 15:42 22/11…"). Nửa để hiểu 13.620 ⇒ 13.601.
 
 </details>
