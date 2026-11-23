@@ -78,25 +78,39 @@ Lớp nối model (`backend/llm/bedrock_model.py`) KHÔNG dùng thư viện AWS:
 - Máy KHÔNG gắn được vai: phải chọn giữa (i) khoá dài hạn chỉ có quyền đổi lấy khoá tạm + một hộp phụ khác, hoặc (ii) sửa lớp nối cho
   `sessionToken` thành tuỳ chọn. Chưa viết — chờ phương án hạ tầng được chốt.
 
-## 5. Đã kiểm ↔ chưa kiểm (23/11/2026)
+## 5. Đã kiểm ↔ chưa kiểm
 
-Đã chạy thật, không tốn gì:
-- `dung_ngu_canh.py` trên `origin/main` `c2579fad`: 595 file code · 267 bài kho khớp băm với bản ghi dựng (9.479 điểm) · 11 file riêng tư · 0 file
-  cấm · 23 MB. Ca đối chứng: commit có kho cũ `2f7b56e4` ⇒ DỪNG, báo 3 bài lệch băm + 2 bài thiếu.
-- `docker compose config` cho cả hai tổ hợp file: hợp lệ; thiếu `HUE_IMAGE` ⇒ dừng với lời báo rõ.
-- `lam_moi_khoa.py` với một máy chủ ĐỨNG THAY dịch vụ thông tin máy (đúng khuôn tài liệu AWS, không phải AWS): ghi file quyền 600 đủ ba khoá,
-  hàm ký thật của app (`sign_headers`) nhận file đó, không giá trị khoá nào lọt ra log; máy chủ tắt ⇒ giữ file cũ, in tên lớp lỗi; trả lời có
-  `Code` khác `Success` hoặc thiếu trường ⇒ không đụng file.
-- Phiên B đọc gói và tự chạy lại ba phép trên (ra cùng số); theo góp ý của B: chỉ chép đúng hai file tên cố định từ thư mục bản ghi dựng.
+**Lượt chạy thử trọn gói ở máy chủ dự án — 10:15 23/11/2026, ảnh `hue-rag-app:e7193bd` (= main có giao diện mới), model viết qua Bedrock:**
+
+| Bước | Kết quả | |
+|---|---|---|
+| `dung_anh.sh origin/main` | ngữ cảnh 603 file code · 267 bài kho khớp băm · 11 file riêng tư · 0 file cấm; dựng 2 phút 38 giây (lần đầu, có kéo ảnh nền); ảnh 3,62 GB; kiểm trong ảnh: 267 bài, 0 file cấm | chạy thật |
+| Chỉ mục (`chup_chi_muc.sh` + `nap_chi_muc.sh`) | bản chụp 75 MB; Qdrant nguồn trước / sau 9.479 điểm, không còn bản chụp nào ở nguồn; Qdrant của gói 9.479 điểm = bản ghi dựng trong ảnh | chạy thật |
+| `thu_o_may.sh len` | ba hộp lên trong 31 giây, cả ba `healthy` | chạy thật |
+| `kiem` | trang chủ 200 · `/health` ok (app, qdrant, retrieval, tokenizer, generator) · `/docs` 404 · tra web tắt · Khám phá 267 bài | chạy thật |
+| Trần cỡ yêu cầu ở Caddy | thân JSON 13 MB tới `/api/chat` ⇒ 413, thân rỗng (Caddy cắt) · 11 MB ⇒ 422 của app (đi qua). Đường trả lời TRƯỚC khi đọc thân (ảnh sai kiểu ⇒ 415; `POST /health` ⇒ 405) thì Caddy không chen vào — trần chỉ cắt khi thân được đọc | chạy thật |
+| MỘT câu hỏi đáp thật | "Vé tham quan Đại Nội bao nhiêu?" ⇒ 200, 6,8 giây, 7 nguồn, đúng giá của kho | chạy thật |
+| MỘT lượt xếp lịch thật (đường duy nhất đọc các file bảng riêng tư) | lịch 2 ngày mặc định ⇒ 200, 8,4 giây, đủ câu tả | chạy thật |
+| Giới hạn lượt | trần 3 lượt / địa chỉ: lượt thứ 4 ⇒ 429 kèm lời báo tiếng Việt. Yêu cầu bị Caddy cắt vì quá cỡ VẪN tính một lượt (phần đầu yêu cầu đã tới app) | chạy thật |
+| Khởi động lại hộp app (dừng hẳn rồi bật, hai lần) | 12,0–13,0 giây tới `/health` ok: khoảng 9,6 giây nạp thư viện Python (torch…), 1,4 giây nạp model nhúng + nối Qdrant (lần bật đầu tiên sau khi dựng ảnh: 3,3 giây); câu trả lời đầu sau đó 6,0–6,3 giây, trong đó model 5,0–5,3 giây ⇒ không có độ trễ riêng của câu đầu | chạy thật |
+| RAM | app 886–933 MiB / 2 GiB (sau câu hỏi lẫn sau xếp lịch) · Qdrant 186–196 MiB / 768 MiB · Caddy 12 MiB. Server ngoài hộp sau 59 lượt: 1.526 MB (phiên đo) ⇒ trần 2 GiB của hộp app còn dư nhưng không rộng | chạy thật |
+| Volume chung cho file khoá | hộp A ghi "file tạm rồi đổi tên" ⇒ hộp B đang chạy (gắn chỉ đọc) đọc ngay nội dung mới; hộp B không ghi được | chạy thật |
+| `dong_goi.sh e7193bd` | 28 giây; `app_e7193bd.tar.gz` 909 MB · `qdrant.snapshot` 78 MB · bốn file cấu hình; `sha256sum -c` 6 / 6 OK | chạy thật |
+| `don` | 0 hộp, 0 volume của lượt thử còn lại; Qdrant của dự án không bị đụng | chạy thật |
+
+Đã chạy thật trước đó, không tốn gì: ca đối chứng của `dung_ngu_canh.py` (commit có kho cũ `2f7b56e4` ⇒ DỪNG, báo 3 bài lệch băm + 2 bài thiếu) ·
+`docker compose config` cho cả hai tổ hợp file · `lam_moi_khoa.py` với máy chủ ĐỨNG THAY dịch vụ thông tin máy (đúng khuôn tài liệu AWS): file quyền 600 đủ
+ba khoá, hàm ký thật của app nhận, 0 giá trị khoá lọt log; máy chủ tắt / `Code` khác `Success` / thiếu trường ⇒ không đụng file. Phiên B đọc gói và tự chạy lại
+ba phép 0 đồng (cùng số).
 
 CHƯA kiểm:
-- **Dựng ảnh và chạy thử trọn gói** (việc nặng, chờ làn máy) — kể cả: Dockerfile mới chép cả thư mục `data/`, cú pháp `request_body` của Caddy,
-  `env_file` không bắt buộc, phép chờ `--wait`, một câu thật qua Bedrock từ trong hộp.
-- Mọi thứ trên AWS: hộp `khoa` ở mạng của máy hỏi được dịch vụ thông tin máy với bước nhảy 1, khoá của vai có gọi được model không, HTTPS thật
-  qua Caddy, `dong_goi.sh` + các lệnh trên máy đích.
+- Mọi thứ trên AWS: hộp `khoa` ở mạng của máy hỏi được dịch vụ thông tin máy với bước nhảy 1, khoá của vai gọi được model, HTTPS thật qua Caddy,
+  `docker load` + bốn lệnh trên máy đích, `compose.vai-may.yml` chạy cùng app (ở máy này mới thử từng phần của nó).
+- Luồng trả lời `/api/chat/stream` qua Caddy và trình duyệt mở cổng 8880 (lượt thử gọi `/api/chat`, không qua trình duyệt).
+- Hộp chạy bằng người dùng root (như bản 16/11); chưa hạ quyền.
 - Đã xét, KHÔNG đổi (kết quả tra cứu 23/11 nêu): bỏ `flush_interval -1` ở Caddy (Caddy tự đẩy ngay luồng `text/event-stream`; giữ vì cấu hình
   này đã chạy thật 16/11) · thêm hạn giờ đọc / ghi ở Caddy (lượt dài nhiều vòng công cụ có thể bị cắt; chưa thấy sự cố nào cần nó).
-- Hộp chạy bằng người dùng root (như bản 16/11); chưa hạ quyền.
+- Sau `docker load` trên máy đích nên xoá `app_<sha>.tar.gz` (0,9 GB) cho nhẹ đĩa.
 
 ## 6. Khác bản nháp 16/11 (`data/phase_12/deploy_nhap/`, riêng tư)
 

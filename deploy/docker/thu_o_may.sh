@@ -24,9 +24,9 @@ len)
   [ -f "$HUE_KHOA_FILE" ] || dung "không thấy file khoá tạm Bedrock (biến HUE_KHOA_FILE)"
   ss -ltn | grep -q ":$CONG " && dung "cổng $CONG đang có người dùng"
   mkdir -p "$THU/logs" && cp "$GOI"/compose.yml "$GOI"/compose.thu.yml "$GOI"/Caddyfile "$GOI"/nap_chi_muc.sh "$THU/"
-  # hue.env: biến không bí mật của lượt thử — http (không TLS), cookie không đòi https, trần 3 lượt / địa chỉ để thấy được câu báo hết lượt
+  # hue.env: biến không bí mật của lượt thử — http (không TLS), cookie không đòi https, trần 4 lượt / địa chỉ (phép thử cỡ thân của `kiem` + một câu hỏi + một lịch + một lượt nữa; lượt thứ 5 phải ra câu báo hết lượt)
   printf '%s\n' "HUE_IMAGE=$HUE_IMAGE" "HUE_KHOA_FILE=$HUE_KHOA_FILE" "HUE_SITE=:80" "HUE_HTTP_PORT=$CONG" "HUE_HTTPS_PORT=8443" \
-    "HUE_COOKIE_SECURE=0" "HUE_LUOT_MOI_NGAY=3" "HUE_GIT_SHA=${HUE_IMAGE##*:}" > "$THU/hue.env"
+    "HUE_COOKIE_SECURE=0" "HUE_LUOT_MOI_NGAY=4" "HUE_GIT_SHA=${HUE_IMAGE##*:}" > "$THU/hue.env"
   # Chỉ mục: đúng hai lệnh máy đích cũng dùng — chụp từ Qdrant đang chạy (xoá bản chụp ở nguồn ngay), nạp vào Qdrant của gói + so số điểm
   "$GOI/chup_chi_muc.sh" "$THU/qdrant.snapshot"
   ( cd "$THU" && COMPOSE_PROJECT_NAME=$DU_AN ./nap_chi_muc.sh compose.thu.yml )
@@ -40,10 +40,14 @@ kiem)
   echo "/docs:            $(curl -s -o /dev/null -w '%{http_code}' $G/docs)   (mong 404)"
   echo "/api/tinh_nang:   $(curl -s $G/api/tinh_nang | cut -c1-300)"
   echo "/api/kham_pha:    $(curl -s $G/api/kham_pha | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d["bai"]), "bài")' 2>&1 | tail -n 1)   (mong số bài của bản ghi dựng)"
-  echo "thân 13 MB:       $(head -c 13000000 /dev/zero | curl -s -o /dev/null -w '%{http_code}' -X POST --data-binary @- $G/api/anh/ung_vien)   (mong 413 — trần của Caddy)"
+  # Trần 12 MB của Caddy chỉ cắt khi thân được ĐỌC (đường trả lời trước khi đọc thân, vd sai kiểu ảnh ⇒ 415, thì Caddy không chen vào) ⇒ thử trên
+  # /api/chat là đường đọc trọn thân. Phần đầu yêu cầu đã tới app trước khi Caddy cắt ⇒ phép thử này VẪN tính một lượt vào giới hạn lượt của địa chỉ gọi.
+  echo "thân JSON 13 MB:  $( (printf '{"query": "'; head -c 13000000 /dev/zero | tr '\\0' 'a'; printf '"}') | curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' --data-binary @- $G/api/chat)   (mong 413 — trần của Caddy)"
   echo "nguồn 6335 sau lượt thử: $(curl -s $NGUON/collections/$COL/snapshots)   (mong \"result\":[])  ·  $(curl -s $NGUON/collections/$COL | grep -o '"points_count":[0-9]*')"
   dc ps --format '{{.Service}} {{.Status}}'
   docker stats --no-stream --format '{{.Name}} {{.MemUsage}}' $(dc ps -q)
+  echo "Một lượt XẾP LỊCH thật (có phí; chỉ xếp lịch mới đọc các file bảng riêng tư trong ảnh) — mong HTTP 200, 0 câu dự phòng do thiếu file:"
+  echo "  curl -s -X POST $G/api/chat -H 'Content-Type: application/json' -d '{\"query\": \"lên lịch\", \"bieu_mau\": true, \"truong\": {\"so_ngay\": \"2\", \"nguoi_lon\": 2, \"tre_em\": 0, \"lon_tuoi\": false}}' | head -c 1200"
   echo "Một câu THẬT qua model (có phí, tự gõ khi muốn):"
   echo "  curl -s -N -X POST $G/api/chat/stream -H 'Content-Type: application/json' -d '{\"query\": \"Vé tham quan Đại Nội bao nhiêu?\"}' | tail -c 1500"
   ;;
