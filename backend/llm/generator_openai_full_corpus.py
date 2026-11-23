@@ -343,10 +343,11 @@ class OpenAIFullCorpusGenerator:
             return f"{loi_dan}\n\n{ghi_chu}" if bedrock_model is not None else loi_dan
 
         # Công tắc `assistant.noi_khac_tu_choi` (23/11/2026): đoạn dặn `SONNET_NOI_KHAC` nối ngay sau lời dặn TRẢ LỜI — agent trả lời không công cụ,
-        # trợ lý có công cụ (kể cả bản lịch sử) và bản nhiều ý. Lượt biểu mẫu / viết lịch không nhận (không phải hỏi đáp). Tắt, hoặc đường OpenAI ⇒
-        # `tra_loi` chính là `answer_instructions`, mọi chuỗi gửi model giống byte như trước.
+        # trợ lý có công cụ (kể cả bản lịch sử) và bản nhiều ý. Lượt biểu mẫu / viết lịch không nhận (không phải hỏi đáp). Tắt ⇒ `tra_loi` chính là
+        # `answer_instructions`, mọi chuỗi gửi model giống byte như trước. Khác các đoạn `SONNET_*` còn lại, đoạn này gắn cho CẢ HAI đường model
+        # (tối 23/11/2026): lượt đo bù thấy đường OpenAI — model của bản deploy — trả lời câu về tỉnh khác bằng kho 6 / 20 lần khi chưa có nó.
         def them_noi_khac(loi_dan: str) -> str:
-            return kem(loi_dan, SONNET_NOI_KHAC) if noi_khac else loi_dan
+            return f"{loi_dan}\n\n{SONNET_NOI_KHAC}" if noi_khac else loi_dan
 
         tra_loi = them_noi_khac(answer_instructions)
 
@@ -521,6 +522,7 @@ class OpenAIFullCorpusGenerator:
             reasoning_effort=reasoning_effort,
             router_timeout=settings.get("assistant", {}).get("router_timeout_seconds", 10),
             max_turns=settings.get("assistant", {}).get("so_vong_cong_cu", ASSISTANT_MAX_TURNS),
+            noi_khac=bool(settings.get("assistant", {}).get("noi_khac_tu_choi", False)),
         )
 
     async def _run(self, agent: Agent, user_prompt: "str | list[dict]", call_log: "CallLog", timeout: float, *, max_turns: int = 1,
