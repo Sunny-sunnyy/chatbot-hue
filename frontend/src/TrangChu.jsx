@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ANH_LINH_VUC, MAN_NHO } from "./anh.js";
-import { GOI_Y, LINH_VUC, soBai } from "./chung.jsx";
+import { GOI_Y, LINH_VUC, LOAI_CON, soBai } from "./chung.jsx";
+import { baiHomNay } from "./homNay.js";
 import { baiHref } from "./route.js";
 import "./tc.css";
 import { HeroSong } from "./song/Song.jsx";
@@ -39,6 +40,7 @@ const DIEM = [
     mo: "Chợ truyền thống, gian ẩm thực ở tầng trệt." },
 ];
 const ANH_LICH = `${import.meta.env.BASE_URL}anh/lich/`;
+const ANH_GOC = `${import.meta.env.BASE_URL}anh/`;  // ảnh theo mã bài (`anhBai.js`), như trang Khám phá
 
 function Icon({ d }) {
   return (
@@ -54,12 +56,27 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
     if (cau.trim() && onAsk(cau)) setCau("");
   }
   const maBai = duoi => (bai || []).find(b => b.id.endsWith(duoi))?.id;
+  // Ô "Hôm nay ở Huế": code chọn một bài có ảnh chắc theo ngày (`homNay.js`); chữ chỉ là tên bài + tên nhóm đã có — không câu mô tả mới, không ngày tháng.
+  const homNay = useMemo(() => baiHomNay(bai), [bai]);
   return (
     <>
       <HeroSong nhanh={NHANH.filter(n => !n.co || tinhNang[n.co])} cau={cau} setCau={setCau} submit={submit} onAsk={onAsk}
                 thoiTiet={tinhNang.thoi_tiet && thoiTiet?.trang_thai === "ok" ? <ThoiTiet tt={thoiTiet} /> : null} />
 
       <div className="khung">
+        {homNay && (
+          <section className="tc-hn" aria-labelledby="hn-h">
+            <a className="tc-hn-the nang hien" href={baiHref(homNay.bai.id)}>
+              <figure className="tc-hn-anh"><img src={`${ANH_GOC}${homNay.anh}.jpg`} alt={homNay.bai.tieu_de} decoding="async" /></figure>
+              <div className="tc-hn-than">
+                <h2 id="hn-h" className="tc-hn-nhan">Hôm nay ở Huế</h2>
+                <p className="tc-hn-ten">{homNay.bai.tieu_de}</p>
+                <span className="tc-hn-loai">{LOAI_CON[homNay.bai.loai_con] ?? LINH_VUC.find(lv => lv.id === homNay.bai.linh_vuc)?.ten ?? "Tổng quan"}</span>
+                <span className="tc-hn-doc">Đọc bài</span>
+              </div>
+            </a>
+          </section>
+        )}
         <section className="khoi" aria-labelledby="kp-h">
           <h2 id="kp-h" className="khoi-h chu-hien">Khám phá theo chủ đề</h2>
           <p className="khoi-p">Mỗi chủ đề là các bài trong kho mà trợ lý dùng để trả lời. Bấm để đọc cả bài.</p>
