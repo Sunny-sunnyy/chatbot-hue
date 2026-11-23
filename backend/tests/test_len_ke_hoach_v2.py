@@ -571,7 +571,8 @@ def test_v2_old_values_and_long_limits(app_client):
             out.append(client.post("/api/chat", json={"query": "x", "bieu_mau": True, "truong": truong}).json()["lich_trinh"]["lich"])
         finally:
             _restore(app, original)
-    assert out[0]["tham_so"] | {"ngay_di": None} == {"so_ngay": 2, "nguoi_lon": 2, "tre_em": 1, "lon_tuoi": False, "kieu_di": "can_bang",
+    # đoàn có trẻ em ⇒ đầu thẻ ghi mức lịch thật sự dùng là "nhẹ nhàng" dù biểu mẫu gửi "cân bằng" (23/11/2026; trước đó dòng này mong "can_bang")
+    assert out[0]["tham_so"] | {"ngay_di": None} == {"so_ngay": 2, "nguoi_lon": 2, "tre_em": 1, "lon_tuoi": False, "kieu_di": "nhe_nhang",
                                                     "so_thich": ["di_tich"], "ngay_di": None}
     assert len(out[1]["ngay"]) == 5 and out[1]["tham_so"]["so_thich"] == ["am_thuc", "chup_anh"]
     assert out[2]["tham_so"]["so_thich"] == [] and "so_thich" in [g["ma"] for g in out[2]["ghi_chu"]]  # [] = không chọn
