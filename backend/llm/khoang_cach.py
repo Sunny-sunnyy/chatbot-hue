@@ -82,6 +82,18 @@ def nap_bang(path_khoang_cach: str | Path, path_diem: str | Path) -> BangKhoangC
     return BangKhoangCach(ten=ten, ten_khac=ten_khac, cap=cap)
 
 
+def bang_phut(bang: BangKhoangCach) -> dict[str, int]:
+    """Phút đi giữa hai điểm cho bộ sửa lịch (công tắc `sua_lich_them_khu`): CÙNG công thức với số phút công cụ khoảng cách nói với người dùng
+    (`ket_qua`), làm tròn LÊN bội 5 như giờ in của lịch; cặp chỉ có một chiều trong bảng thì dùng cho cả hai chiều."""
+    ra: dict[str, int] = {}
+    for khoa, v in bang.cap.items():
+        a, b = khoa.split("|")
+        phut = -(-(int(v["phut"] * HE_SO_OSRM + 0.5) + PHUT_CONG) // 5) * 5
+        ra[khoa] = phut
+        ra.setdefault(f"{b}|{a}", phut)
+    return ra
+
+
 # ---------- Khoảng cách tính sẵn (plan `2026-11-17-khoang-cach-tinh-san-plan.md`) ----------
 # Tên ngắn người dùng hay gõ mà bảng không có. Để ở đây, KHÔNG thêm vào `ten_khac` của bảng điểm: `ten_khac` còn vào mô tả công cụ (chuỗi gửi
 # model) và vào bước kiểm câu mô tả của lịch (`lich_trinh_v2`: câu nhắc tên điểm khác ⇒ bỏ) — hai chỗ đó không được đổi theo việc này.

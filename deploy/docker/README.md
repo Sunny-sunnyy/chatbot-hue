@@ -19,7 +19,7 @@ Ba hộp trên MỘT máy: `qdrant` (chỉ mục) · `app` (FastAPI + giao diệ
 | File | Việc |
 |---|---|
 | `dung_anh.sh [commit]` | MỘT lệnh dựng ảnh `hue-rag-app:<sha>` từ đúng một commit, rồi tự kiểm ảnh |
-| `dung_ngu_canh.py` | dựng ngữ cảnh: code + bài kho từ commit (so băm với chỉ mục), file bảng riêng tư theo `settings.yaml` |
+| `dung_ngu_canh.py` | dựng ngữ cảnh: code + bài kho từ commit (so băm với chỉ mục), file bảng riêng tư theo `settings.yaml`; thêm `--chi-kiem` = đối chiếu 0 đồng, không dựng gì (mục 2) |
 | `Dockerfile` | hai tầng: dựng giao diện bằng Node, rồi ảnh Python 3.13 (torch bản CPU, model nhúng tải sẵn) |
 | `compose.yml` | ba hộp + các chốt cho bản mở ra ngoài; TỰ ĐỦ cho đường deploy (model viết của OpenAI, khoá ở `hue.khoa.env`) |
 | `Caddyfile` | cửa vào; không nén luồng trả lời để chữ ra ngay |
@@ -31,6 +31,19 @@ Ba hộp trên MỘT máy: `qdrant` (chỉ mục) · `app` (FastAPI + giao diệ
 | `compose.vai-may.yml` + `lam_moi_khoa.py` | ĐƯỜNG TUỲ CHỌN (Bedrock), **bản deploy không dùng** — file phủ cho máy AWS có vai gắn: hộp phụ `khoa` lấy khoá tạm của vai, tự làm mới mỗi phút |
 
 ## 2. Dùng
+
+**Trước khi dựng ảnh — đối chiếu 0 đồng (vài giây, không dựng gì):** danh sách file riêng tư của gói KHÔNG chép tay ở đâu cả — nó sinh từ chính
+`settings.yaml` của commit được dựng, nên cấu hình trỏ sang bảng mới thì gói tự theo; thứ có thể hỏng là file đó không có trên máy dựng.
+
+```bash
+cd /home/minhhieu/hue_rag && uv run --project backend --no-sync python deploy/docker/dung_ngu_canh.py --ref origin/main --du-lieu data --chi-kiem
+```
+
+In từng file `data/…` cấu hình trỏ tới kèm `có` / `THIẾU`, thoát 1 khi thiếu (lệnh dựng thật cũng dừng ở đúng chỗ này). Lúc 17:23 23/11/2026, main `d1b0f52e`:
+9 file, thiếu 0 — gồm năm bảng đổi trong ngày 23/11 (`diem_v14.json`, `diem_toa_do_v10.json`, `bang_anh_v8.json`, `bang_quan_lich_v4.json`,
+`danh_sach_ten_55.json`); cùng hai file của thư mục bản ghi dựng là 11 file riêng tư như bảng mục 3. Ảnh mới của lịch (ba ảnh quán ở
+`frontend/public/anh/lich/`) nằm trong git nên đi theo code. Ảnh Docker dựng sáng 23/11 (`e7193bd`) mang các bảng CŨ ⇒ trước khi deploy phải dựng lại
+từ commit sẽ chạy.
 
 ```bash
 deploy/docker/dung_anh.sh origin/main     # phải ghi rõ commit / nhánh lấy code + kho

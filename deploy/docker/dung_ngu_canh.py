@@ -53,12 +53,36 @@ def duong_dan_du_lieu(cau_hinh) -> set[str]:
     return ra
 
 
+def chi_kiem(ref: str, du_lieu: Path) -> None:
+    """Đối chiếu nhanh trước khi dựng ảnh (23/11/2026: trong một ngày `settings.yaml` đổi sang năm file bảng mới — danh sách của gói tự theo vì sinh từ
+    chính file đó, nhưng file phải CÓ trên máy dựng). Chỉ đọc: `settings.yaml` của commit + thư mục `data/`; không `git archive`, không chép gì."""
+    goc = Path(subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=True).stdout.strip())
+    chu = subprocess.run(["git", "show", f"{ref}:backend/config/settings.yaml"], capture_output=True, text=True, cwd=goc)
+    if chu.returncode:
+        dung(f"không đọc được backend/config/settings.yaml ở {ref}")
+    can = sorted(d for d in duong_dan_du_lieu(yaml.safe_load(chu.stdout)) if d.startswith("data/"))
+    thieu = [d for d in can if not (du_lieu.parent / d).is_file()]
+    for d in can:
+        print("THIẾU" if d in thieu else "có   ", d)
+    ghi = sorted(f.name for f in (du_lieu / BAN_GHI_DUNG).glob("*.json"))
+    print(f"{ref}: settings.yaml trỏ tới {len(can)} file riêng tư trong data/ · thiếu {len(thieu)} · thư mục bản ghi dựng có {len(ghi)} file .json "
+          f"(gói lấy đúng hai: bản ghi dựng + {THONG_KE_TU_KHOA})")
+    if thieu:
+        dung(f"thiếu {len(thieu)} file trên máy: {thieu}")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--ref", required=True, help="commit / nhánh lấy code + kho")
     p.add_argument("--du-lieu", required=True, type=Path, help="thư mục data/ của cây chính")
-    p.add_argument("--ra", required=True, type=Path, help="thư mục ngữ cảnh (phải trống hoặc chưa có)")
+    p.add_argument("--ra", type=Path, help="thư mục ngữ cảnh (phải trống hoặc chưa có)")
+    p.add_argument("--chi-kiem", action="store_true",
+                   help="0 đồng, không dựng gì: in các file riêng tư mà settings.yaml của commit đó trỏ tới, báo file nào thiếu trên máy (thoát 1 khi thiếu)")
     a = p.parse_args()
+    if a.chi_kiem:
+        return chi_kiem(a.ref, a.du_lieu)
+    if a.ra is None:
+        p.error("thiếu --ra")
     if a.ra.exists() and any(a.ra.iterdir()):
         dung(f"{a.ra} không trống")
     a.ra.mkdir(parents=True, exist_ok=True)

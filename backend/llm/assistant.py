@@ -219,6 +219,10 @@ class AssistantFlags:
     # dòng báo nói ngày dày hơn nhịp đã chọn. Giờ mở cửa, luật khu, luật của đoàn có trẻ nhỏ / người lớn tuổi không nới. TẮT tới khi đo; cần
     # sua_lich_them_khong_the (phần gợi ý "thêm vào buổi khác" nằm trong câu của cờ đó). Tắt ⇒ bộ áp chạy y như cũ với lịch chưa có ngày nào dày.
     sua_lich_them_day: bool = False
+    # BẢN THỬ 23/11/2026 — KHÔNG MỞ khi chủ dự án chưa quyết (đổi luật khu của lịch): lệnh THÊM một điểm còn vướng luật khu (ngày quá hai khu, hai khu
+    # không kề) ⇒ vẫn thêm khi mỗi chặng sang khu không kề ≤ 60 phút theo bảng khoảng cách; giờ cộng đúng số phút đó; dòng báo nêu chặng + số phút.
+    # Đếm trước khi làm (đoàn thường, có trần giờ): chỉ nới nhịp 30 % lệnh "thêm X" làm được ⇒ thêm phần này 82 %. Cần sua_lich_them_day + khoang_cach.
+    sua_lich_them_khu: bool = False
     # 23/11/2026 (chủ dự án nêu: buổi tối của đoàn có trẻ nhỏ đang bỏ trống). `toi_nhe`: đoàn có trẻ nhỏ / người lớn tuổi được MỘT hoạt động tối nhẹ gần trung
     # tâm mỗi tối không phải ngày đi xa, lấy từ khoá `toi_nhe` của bảng điểm, không lặp (đếm 960 tổ hợp: 720 tổ hợp / 2.160 tối đang trống ⇒ 1.710 tối có hoạt
     # động). `bo_toi_de_trong`: lệnh bỏ hoạt động tối ⇒ tối đó để trống, các tối khác giữ nguyên (xem `sua_lich_v2.ap`). Cả hai TẮT tới khi chủ dự án quyết.
@@ -243,6 +247,9 @@ class AssistantFlags:
     # Quán ăn gợi ý trong lịch bản 2 (plan `2026-11-14-quan-trong-lich-plan.md`): ≤ 2 quán cùng cụm mỗi bữa do code chọn, `lich["an"]`
     # (không vào tin nhắn gửi model). TẮT tới khi đạt; cần cờ bản 2 + bảng quán (`assistant.lich_trinh_bang_quan`) + toạ độ điểm (`lich_trinh_toa_do`)
     quan_lich: bool = False
+    # 23/11/2026: bữa trưa của lịch lấy trước điểm có quán CÓ BÀI TRONG KHO trên đường người đi (`quan_lich.an_uong`, `kho_truoc`). Đếm 960 tổ hợp biểu
+    # mẫu + các lịch sau lệnh thêm: số ở runbook 10.2. Cần `quan_lich`. TẮT tới khi phiên điều phối mở cùng `sua_lich_them_khu`.
+    quan_trua_kho_truoc: bool = False
     quan_bang: "dict | None" = field(default=None, compare=False, repr=False)
     quan_toa_do: "dict | None" = field(default=None, compare=False, repr=False)
     anh_lich_bang: "dict | None" = field(default=None, compare=False, repr=False)
@@ -346,12 +353,16 @@ class AssistantFlags:
             raise ValueError("assistant.sua_lich_them_khong_the needs assistant.sua_lich_v2: true")
         if self.sua_lich_them_day and not self.sua_lich_them_khong_the:
             raise ValueError("assistant.sua_lich_them_day needs assistant.sua_lich_them_khong_the: true")
+        if self.sua_lich_them_khu and not (self.sua_lich_them_day and self.khoang_cach):
+            raise ValueError("assistant.sua_lich_them_khu needs assistant.sua_lich_them_day and assistant.khoang_cach: true")
         if self.lich_vao_hoi_thuong and not (self.sua_lich_v2 and self.tim_them):
             raise ValueError("assistant.lich_vao_hoi_thuong needs assistant.sua_lich_v2: true and assistant.tim_them: true")
         if self.anh_lich and (not self.len_ke_hoach_v2 or self.anh_lich_bang is None):
             raise ValueError("assistant.anh_lich needs assistant.len_ke_hoach_v2: true and the photo table (assistant.lich_trinh_bang_anh)")
         if self.luu_tru_lich and (not self.len_ke_hoach_v2 or self.luu_tru_bang is None):
             raise ValueError("assistant.luu_tru_lich needs assistant.len_ke_hoach_v2: true and the lodging table (assistant.lich_trinh_bang_luu_tru)")
+        if self.quan_trua_kho_truoc and not self.quan_lich:
+            raise ValueError("assistant.quan_trua_kho_truoc needs assistant.quan_lich: true")
         if self.quan_lich and (not self.len_ke_hoach_v2 or self.quan_bang is None):
             raise ValueError("assistant.quan_lich needs assistant.len_ke_hoach_v2: true and the restaurant table (assistant.lich_trinh_bang_quan)")
         if self.cong_cong_cu not in ("tu_khoa", "luon"):
@@ -374,11 +385,13 @@ class AssistantFlags:
         sinh = settings.get("full_corpus_generation") or {}
         cong = (sinh.get("bedrock") or {}) if sinh.get("provider") == "bedrock" else config  # cổng công cụ chọn theo provider đang chạy
         muc_luc = lk.nap_muc_luc(*discover_full_corpus_files(settings)) if values["liet_ke_bai"] or values["the_noi"] else None
+        bang_kc = kc.nap_bang(BACKEND_DIR / config["khoang_cach_bang"], BACKEND_DIR / config["lich_trinh_bang_v2"]) if values["khoang_cach"] else None
+        # công tắc `sua_lich_them_khu` (bản thử): phút đi giữa hai khu không kề cho bộ sửa lịch; tắt ⇒ None ⇒ dấu `khu_them` không có tác dụng
+        lt2.dat_phut_khu(lt2.bu_phut_khu(bang_v2, kc.bang_phut(bang_kc)) if values["sua_lich_them_khu"] and bang_kc is not None and bang_v2 is not None else None)
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), cong_cong_cu=str(cong.get("cong_cong_cu", "tu_khoa")), so_lan_tim_kho=int(config.get("so_lan_tim_kho", MODEL_SEARCH_LIMIT)),
                    bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,
-                   khoang_cach_bang=kc.nap_bang(BACKEND_DIR / config["khoang_cach_bang"], BACKEND_DIR / config["lich_trinh_bang_v2"])
-                   if values["khoang_cach"] else None,
+                   khoang_cach_bang=bang_kc,
                    su_kien_bang=sk.nap_bang(BACKEND_DIR / config["su_kien_bang"]) if values["su_kien_theo_ngay"] else None,
                    muc_luc=muc_luc if values["liet_ke_bai"] else None,
                    the_noi_bang=thn.dung_bang(muc_luc) if values["the_noi"] else None,

@@ -31,6 +31,37 @@ DI_CUNG_CUM, DI_CUM_KE = 15, 30  # 5c.3: phút đi giữa hai điểm trong mộ
 QUY = {"nhe_nhang": None, "can_bang": 210, "kham_pha": 240}  # None = đúng 1 điểm / buổi
 KIEU_DI_MAC_DINH = "can_bang"
 TOI_DA_BUOI = 2
+TRAN_PHUT_KHU = 60  # công tắc `sua_lich_them_khu`: một chặng giữa hai khu KHÔNG kề dài nhất bấy nhiêu phút (đếm 23/11 trên 108 lịch: giữ 907 / 916 lệnh làm được; chặng dài nhất 130 phút)
+# "a|b" ⇒ phút đi giữa hai ĐIỂM, lấy từ bảng khoảng cách của công cụ khoảng cách (`khoang_cach.bang_phut`); nơi dựng cờ nạp lúc khởi động khi công tắc
+# `sua_lich_them_khu` bật. None ⇒ dấu `khu_them` của khung không có tác dụng (bộ xếp thường không có số phút cho hai khu không kề: `_phut_di` trả None).
+# BẢN THỬ: để ở biến mức module cho gọn; nếu được mở thì chuyển thành một trường của `BangV2`.
+PHUT_KHU: dict[str, int] | None = None
+
+
+def dat_phut_khu(bang_phut: dict[str, int] | None) -> None:
+    global PHUT_KHU
+    PHUT_KHU = bang_phut
+
+
+def bu_phut_khu(bang: "BangV2", phut: dict[str, int]) -> dict[str, int]:
+    """Bảng phút đủ cho MỌI cặp điểm ban ngày ở hai khu không kề. Điểm không có trong bảng khoảng cách (23/11/2026: 1 / 37 — Không gian lưu niệm Lê Bá
+    Đảng, không có toạ độ) ⇒ mỗi cặp thiếu lấy chặng DÀI NHẤT đã biết giữa hai KHU đó (ước dư, không ước thiếu; hai khu chưa có cặp nào ⇒ vẫn thiếu,
+    bộ kiểm từ chối). Vì sao: thiếu một cặp thì lịch đã có điểm đó kẹt ở lệnh "bỏ" kế tiếp (1 / 2.752 lệnh trên lưới 108 lịch)."""
+    ngay = [d for d in bang.diem if set(d["buoi"]) & set(BUOI_NGAY)]
+    xa: dict[tuple[str, str], int] = {}
+    for a in ngay:
+        for b in ngay:
+            m = phut.get(f"{a['id']}|{b['id']}")
+            if m is not None:
+                xa[(a["cum"], b["cum"])] = max(m, xa.get((a["cum"], b["cum"]), 0))
+    du = dict(phut)
+    for a in ngay:
+        for b in ngay:
+            if a["id"] != b["id"] and f"{a['id']}|{b['id']}" not in du and (a["cum"], b["cum"]) in xa:
+                du[f"{a['id']}|{b['id']}"] = xa[(a["cum"], b["cum"])]
+    return du
+
+
 GIO_KET_SANG_DAY = 13 * 60 + 30  # công tắc `sua_lich_them_day`: buổi sáng của một ngày được dày kết muộn nhất lúc này — bữa trưa không bắt đầu sau 13:30 (không trần: có buổi sáng ba điểm 7:30 – 14:15)
 GIO_KET_CHIEU_DAY = 18 * 60  # công tắc `sua_lich_them_day`: buổi chiều của một ngày người dùng tự xin thêm điểm kết muộn nhất lúc này (sau đó là bữa tối + hoạt động tối; điểm không ghi giờ đóng thì không còn luật nào khác chặn)
 NGHI_TRUA = 60  # phút ăn trưa + đi sang điểm chiều: điểm thêm buổi sáng phải xong trước giờ đầu chiều chừng này (tự thử 16/11: 15 phút từ Kinh thành ra phá)
@@ -479,10 +510,30 @@ def o_dau_khung(bang_luu_tru: dict, bang: BangV2, khung: dict, ngan_sach: str | 
                      bool(ts["tre_em"] or ts["lon_tuoi"]), co_toi, ngan_sach)
 
 
-def ngay_vuot_nhip(bang: BangV2, tham_so: dict, ng: dict) -> bool:
+def _phut_noi(a: dict, b: dict, khu: bool) -> int | None:
+    """Phút đi giữa hai điểm liền nhau. Cùng khu / khu kề: như `_phut_di`. Hai khu KHÔNG kề: None, trừ ngày người dùng đã xin đi sang khu khác (`khu`,
+    công tắc `sua_lich_them_khu`) ⇒ số của bảng khoảng cách (thiếu cặp ⇒ None)."""
+    di = _phut_di(a, b)
+    if di is None and khu and PHUT_KHU is not None:
+        return PHUT_KHU.get(f"{a['id']}|{b['id']}")
+    return di
+
+
+def _nghi_trua(a: dict, b: dict, khu: bool) -> int | None:
+    """Khoảng nghỉ giữa điểm cuối buổi sáng `a` và điểm đầu buổi chiều `b` của một ngày được dày. Cùng khu / khu kề: `NGHI_TRUA` (60 phút đã gồm phút đi
+    ngắn, như bộ xếp vẫn tính). Hai khu KHÔNG kề (ngày `khu`): 60 phút ăn + TRỌN số phút của chặng — lượt trình duyệt 23/11: luật cũ "60 phút cộng phần
+    vượt 30" in ra lịch chỉ còn 30 phút ăn trưa (sáng kết 13:20, chặng 35 phút, chiều bắt đầu 14:25). Chặng không có số trong bảng ⇒ None."""
+    if _phut_di(a, b) is not None or not khu:
+        return NGHI_TRUA
+    m = _phut_noi(a, b, True)
+    return None if m is None else NGHI_TRUA + m
+
+
+def ngay_vuot_nhip(bang: BangV2, tham_so: dict, ng: dict, khu: bool = False) -> bool:
     """Nội dung của ngày này có vượt NHỊP ĐI của đoàn thường không — đúng hai điều kiện `qua_day_buoi` / `vuot_quy` của `kiem_khung_v2` (số điểm một
     buổi theo kiểu đi, quỹ phút). `sua_lich_v2._xep` dùng để quyết ngày nào MANG dấu `day_them`: dấu là thứ tính lại từ nội dung sau mỗi lần xếp, không
-    phải thứ mang theo (đọc chéo 23/11: dấu mang theo lan sang ngày khác khi đổi chỗ hai ngày, và không bao giờ được gỡ)."""
+    phải thứ mang theo (đọc chéo 23/11: dấu mang theo lan sang ngày khác khi đổi chỗ hai ngày, và không bao giờ được gỡ). `khu` (ngày có dấu
+    `khu_them`): quỹ phút tính cả số phút thật của chặng sang khu không kề."""
     T, quy = bang.theo_id, QUY.get(tham_so["kieu_di"])
     for b in BUOI_NGAY:
         ids = ng["buoi"][b]
@@ -491,7 +542,7 @@ def ngay_vuot_nhip(bang: BangV2, tham_so: dict, ng: dict) -> bool:
         if len(ids) > 1 and quy is not None:
             phut = PHUT[T[ids[0]]["thoi_luong"]]
             for a, c in zip(ids, ids[1:]):
-                di = _phut_di(T[a], T[c])
+                di = _phut_noi(T[a], T[c], khu)
                 if di is None:
                     break
                 phut += di + PHUT[T[c]["thoi_luong"]]
@@ -509,7 +560,30 @@ def cau_ngay_day(khung: dict, ngay: int) -> str:
     return f"Ngày {ngay} dày hơn nhịp {NHAN_KIEU_DI[khung['tham_so']['kieu_di']]} bạn chọn vì bạn đã xin thêm điểm: {buoi}."
 
 
-def gio_ngay_day(bang: BangV2, tham_so: dict, ng: dict) -> dict[str, tuple[int, int]]:
+def chang_khu(bang: BangV2, ng: dict) -> tuple[int, list[tuple[str, str, int]]]:
+    """(số khu của ngày, các chặng SANG KHU KHÔNG KỀ nối hai điểm liền nhau của ngày — trong một buổi và qua bữa trưa — kèm số phút của bảng khoảng cách).
+    Ngày đi ba khu NỐI nhau từng đôi (A kề B, B kề C) phạm luật "nhiều nhất hai khu" mà không có chặng không kề nào ⇒ danh sách rỗng, số khu = 3."""
+    T = bang.theo_id
+    day = [j for b in BUOI_NGAY for j in ng["buoi"][b]]
+    return len({T[j]["cum"] for j in day}), [(T[a]["ten"], T[b]["ten"], _phut_noi(T[a], T[b], True) or 0) for a, b in zip(day, day[1:]) if _phut_di(T[a], T[b]) is None]
+
+
+def ngay_vuot_khu(bang: BangV2, ng: dict) -> bool:
+    """Nội dung của ngày này có vượt luật KHU không (quá hai khu, hai khu không kề, hai điểm liền nhau ở hai khu không kề). Như `ngay_vuot_nhip`: dấu
+    `khu_them` là thứ tính lại từ nội dung sau mỗi lần xếp."""
+    T = bang.theo_id
+    cums = list(dict.fromkeys(T[j]["cum"] for b in BUOI_NGAY for j in ng["buoi"][b]))
+    return len(cums) > 2 or (len(cums) == 2 and cums[1] not in CUM_KE.get(cums[0], ())) or bool(chang_khu(bang, ng)[1])
+
+
+def cau_ngay_khu(bang: BangV2, khung: dict, ngay: int) -> str:
+    """Dòng ghi chú của MỘT ngày người dùng đã xin đi sang khu không kề (dấu `khu_them`) — nằm trong khối ghi chú của lịch như `cau_ngay_day`."""
+    so_khu, chang = chang_khu(bang, next(x for x in khung["ngay"] if x["ngay"] == ngay))
+    noi = "; ".join(f"từ {a} sang {b} là hai khu không liền nhau, đi mất khoảng {m} phút" for a, b, m in chang)
+    return f"Ngày {ngay} đi qua {so_khu} khu vì bạn đã xin thêm điểm" + (f": {noi}." if noi else " (lịch tự xếp chỉ đi nhiều nhất hai khu một ngày).")
+
+
+def gio_ngay_day(bang: BangV2, tham_so: dict, ng: dict, khu: bool = False) -> dict[str, tuple[int, int]]:
     """Giờ của MỘT ngày người dùng tự xin thêm điểm khi sửa lịch (công tắc `sua_lich_them_day`; `sua_lich_v2._xep` gọi sau `xep_v2` cho các ngày có dấu
     trong `khung["day_them"]`). Buổi sáng nối tiếp từ giờ đầu buổi như điểm giữ chỗ của `xep_v2`; buổi chiều bắt đầu ở giờ đầu buổi HOẶC muộn hơn —
     `NGHI_TRUA` phút sau điểm cuối buổi sáng — để ngày DÀI ra thay vì mất bữa trưa. Điểm vượt giờ đóng vẫn nhận giờ nối tiếp ⇒ `kiem_khung_v2` bắt
@@ -519,16 +593,19 @@ def gio_ngay_day(bang: BangV2, tham_so: dict, ng: dict) -> dict[str, tuple[int, 
     bat_dau = GIO_BAT_DAU["kham_pha" if tham_so["kieu_di"] == "kham_pha" and not han_che else "khac"]
     gio: dict[str, tuple[int, int]] = {}
     het_sang = None
+    cuoi_sang = None
     for b in BUOI_NGAY:
-        t = bat_dau[b] if het_sang is None else max(bat_dau[b], het_sang + NGHI_TRUA)
+        t = bat_dau[b]
+        if het_sang is not None and ng["buoi"][b]:  # sang khu không kề (ngày `khu`): 60 phút ăn + trọn số phút của chặng (`_nghi_trua`)
+            t = max(bat_dau[b], het_sang + (_nghi_trua(T[cuoi_sang], T[ng["buoi"][b][0]], khu) or NGHI_TRUA))
         truoc = None
         for j in ng["buoi"][b]:
             if truoc is not None:
-                t = gio[truoc][1] + (_phut_di(T[truoc], T[j]) or DI_CUM_KE)
+                t = gio[truoc][1] + (_phut_noi(T[truoc], T[j], khu) or DI_CUM_KE)
             gio[j] = dat_gio(T[j], t) or (t, t + PHUT[T[j]["thoi_luong"]])
             truoc = j
         if b == "sang" and truoc is not None:
-            het_sang = gio[truoc][1]
+            het_sang, cuoi_sang = gio[truoc][1], truoc
     return gio
 
 
@@ -542,9 +619,13 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
     # luật khác (giờ mở cửa, khu, khu xa, chồng giờ) giữ nguyên. Đoàn có trẻ nhỏ / người lớn tuổi: dấu không có tác dụng (luật một điểm một buổi, hai
     # điểm một ngày là của nhóm đó, không phải nhịp đi). Khung không có khoá `day_them` ⇒ hàm chạy y như trước.
     day_them = set() if han_che else set(khung.get("day_them") or ())
+    # Công tắc `sua_lich_them_khu` (BẢN THỬ 23/11/2026, chờ chủ dự án quyết): NGÀY người dùng xin đích danh một điểm ở khu KHÔNG kề được đi quá hai khu /
+    # hai khu không kề; phút đi của chặng đó lấy từ bảng khoảng cách (`PHUT_KHU`), mỗi chặng ≤ `TRAN_PHUT_KHU`. Khu xa (`cum_xa`) vẫn không nới.
+    khu_them = set() if han_che or PHUT_KHU is None else set(khung.get("khu_them") or ()) & day_them
     if len(khung["ngay"]) != n or [ng["ngay"] for ng in khung["ngay"]] != list(range(1, n + 1)):
         loi.append("so_ngay")
     for ng in khung["ngay"]:
+        khu = ng["ngay"] in khu_them
         cums: list[str] = []
         so = 0
         toi = ng["buoi"].get("toi") or []
@@ -567,7 +648,7 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
                     loi.append("ngoai_gio_mo")
                 if b == "chieu" and s < GIO_BAT_DAU["kham_pha"]["chieu"]:
                     loi.append("gio_buoi_sai")
-                if truoc is not None and s < truoc[1] + (_phut_di(T[truoc[0]], T[j]) or 0):
+                if truoc is not None and s < truoc[1] + (_phut_noi(T[truoc[0]], T[j], khu) or 0):
                     loi.append("gio_chong")
                 truoc = (j, e)
         sang, chieu = ng["buoi"]["sang"], ng["buoi"]["chieu"]
@@ -576,9 +657,14 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
             loi.append("sang_chong_chieu")  # review 14/11 M-1: hai buổi liền nhau không được chồng giờ
         day = ng["ngay"] in day_them
         if day:  # ngày được dày: bữa trưa còn đủ `NGHI_TRUA` phút, buổi chiều không kết sau `GIO_KET_CHIEU_DAY`
+            nghi = (_nghi_trua(T[sang[-1]], T[chieu[0]], khu) if sang and chieu else None) or NGHI_TRUA
             if sang and chieu and sang[-1] in gio_k and chieu[0] in gio_k and \
-                    ra_phut(gio_k[sang[-1]].split("–")[1].strip()) + NGHI_TRUA > ra_phut(gio_k[chieu[0]].split("–")[0].strip()):
+                    ra_phut(gio_k[sang[-1]].split("–")[1].strip()) + nghi > ra_phut(gio_k[chieu[0]].split("–")[0].strip()):
                 loi.append("day_qua_gio")
+            if khu and sang and chieu:  # chặng qua bữa trưa của ngày đi sang khu không kề: phải có số trong bảng và không quá trần
+                m = _phut_noi(T[sang[-1]], T[chieu[0]], True)
+                if m is None or m > TRAN_PHUT_KHU:
+                    loi.append("khu_qua_xa")
             if chieu and chieu[-1] in gio_k and ra_phut(gio_k[chieu[-1]].split("–")[1].strip()) > GIO_KET_CHIEU_DAY:
                 loi.append("day_qua_gio")
             if sang and sang[-1] in gio_k and ra_phut(gio_k[sang[-1]].split("–")[1].strip()) > GIO_KET_SANG_DAY:
@@ -599,18 +685,20 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
             if len(ids) > 1:
                 phut = PHUT[T[ids[0]]["thoi_luong"]]
                 for a, c in zip(ids, ids[1:]):
-                    di = _phut_di(T[a], T[c])
+                    di = _phut_noi(T[a], T[c], khu)
                     if di is None:
                         loi.append("ghep_khong_ke")
                         break
+                    if di > TRAN_PHUT_KHU:  # chỉ có thể xảy ra ở ngày `khu` (chặng giữa hai khu không kề)
+                        loi.append("khu_qua_xa")
                     phut += di + PHUT[T[c]["thoi_luong"]]
                 if not day and QUY.get(ts["kieu_di"]) is not None and phut > QUY[ts["kieu_di"]]:
                     loi.append("vuot_quy")
         if so == 0:
             loi.append("ngay_rong")
-        if len(cums) > 2 or (CUM_XA in cums and len(cums) > 1):
+        if (len(cums) > 2 and not khu) or (CUM_XA in cums and len(cums) > 1):
             loi.append("qua_2_cum")
-        if len(cums) == 2 and cums[1] not in CUM_KE.get(cums[0], ()):
+        if not khu and len(cums) == 2 and cums[1] not in CUM_KE.get(cums[0], ()):
             loi.append("cum_khong_ke")
         if han_che and so > 2:
             loi.append("han_che_qua_day")
@@ -714,9 +802,15 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                         "ten": CAU_TOI[khung["toi_nghi"][ng["ngay"]]], "gio": None, "nguon": None, "anh": None, "toa_do": None, "nhan": []})
         # giao diện mới 14/11: phút đi tới mục ngay trước TRONG CÙNG BUỔI = đúng số bộ xếp đã dùng để giãn giờ (ước theo cụm, 5c.3);
         # mục đầu buổi / hoạt động tối / tối nghỉ ⇒ không có trường (không đoán)
+        # Ngày người dùng đã xin đi sang khu không kề (dấu `khu_them`, công tắc `sua_lich_them_khu`): chặng không kề cũng in số phút — lấy từ bảng khoảng
+        # cách, đúng số đã dùng để tính giờ — kể cả chặng qua bữa trưa (mục đầu buổi chiều), để thẻ nói ra quãng đi dài nhất của ngày.
+        khu = ng["ngay"] in (khung.get("khu_them") or ())
         for a, c in zip(muc, muc[1:]):
-            if a["buoi"] == c["buoi"] != "toi" and a["id_diem"] and c["id_diem"]:
-                phut = _phut_di(bang.theo_id[a["id_diem"]], bang.theo_id[c["id_diem"]])
+            if a["buoi"] != "toi" != c["buoi"] and a["id_diem"] and c["id_diem"]:
+                da, dc = bang.theo_id[a["id_diem"]], bang.theo_id[c["id_diem"]]
+                phut = _phut_di(da, dc) if a["buoi"] == c["buoi"] else None
+                if phut is None and khu and _phut_di(da, dc) is None:
+                    phut = _phut_noi(da, dc, True)
                 if phut is not None:
                     c["phut_di"] = phut
         # giao diện: "tên chặng" của ngày = các cụm của điểm ban ngày theo thứ tự đi (tên cụm của bảng, bỏ phần trong ngoặc); không vào model
@@ -737,7 +831,10 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
         ghi_chu += [{"ma": "bac_thang", "cau": CAU_GHI_CHU["bac_thang"].format(diem=bang.theo_id[j]["ten"])}
                     for j in dict.fromkeys(diem_ban_ngay(khung)) if bang.theo_id[j]["bac_thang"] == "nhieu"]
     ghi_chu += [{"ma": "tam_dung_mua", "cau": CAU_GHI_CHU["tam_dung_mua"].format(diem=bang.theo_id[j]["ten"])} for j in khung.get("tam_dung_mua", [])]
-    ghi_chu += [{"ma": "day_them", "cau": cau_ngay_day(khung, d)} for d in khung.get("day_them") or ()]  # công tắc `sua_lich_them_day`; khung không dấu ⇒ không thêm gì
+    # công tắc `sua_lich_them_day` / `sua_lich_them_khu`; khung không dấu ⇒ không thêm gì. Ngày chỉ mang dấu vì đi sang khu khác (không vượt nhịp) thì không ghi "dày hơn nhịp"
+    ghi_chu += [{"ma": "day_them", "cau": cau_ngay_day(khung, d)} for d in khung.get("day_them") or ()
+                if ngay_vuot_nhip(bang, khung["tham_so"], next(x for x in khung["ngay"] if x["ngay"] == d), d in (khung.get("khu_them") or ()))]
+    ghi_chu += [{"ma": "khu_them", "cau": cau_ngay_khu(bang, khung, d)} for d in khung.get("khu_them") or ()]
     ghi_chu += [{"ma": "du_bao", **c} for c in them_ghi_chu]  # `{"cau", "ngay"?}` từ `len_ke_hoach.dong_du_bao`
     ghi_chu += [{"ma": "thay_bac_thang", "cau": CAU_GHI_CHU["thay_bac_thang"].format(diem=bang.theo_id[x["diem"]]["ten"],
                                                                                         thay=bang.theo_id[x["thay"]]["ten"])}

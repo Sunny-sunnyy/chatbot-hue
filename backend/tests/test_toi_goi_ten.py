@@ -109,6 +109,10 @@ def test_groups_with_children_or_elderly_only_get_light_activities_by_name_and_f
     assert _toi(kq["khung"])[1] == moi and v2.kiem_khung_v2(B_NHE, kq["khung"]) == []
     kq = s.ap(B_NHE, luu, [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(ngoai[0], B_NHE), ngay=1, buoi="toi")], **BAT)
     assert not kq["da_ap"] and [d["ma_luat"] for d in kq["khong_doi"]] == ["toi_ten_khong_nhe"] and kq["khung"] == k
+    # công tắc `toi_nhe` TẮT: đoàn này không có buổi tối nào ⇒ câu nói đúng điều đó, không nói "chỉ nhận hoạt động nhẹ" (B đọc code 23/11/2026)
+    k0 = v2.xep_v2(B, v2.ThamSoV2(3, tre_em=1))
+    kq = s.ap(B, s.luu_tu_lich(k0, None, None), [s.HanhDongToiHoiBo(loai="them_diem", ten=_ten(nhe[0]), ngay=1, buoi="toi")], **BAT)
+    assert not kq["da_ap"] and [d["ma_luat"] for d in kq["khong_doi"]] == ["toi_ten_han_che"] and "không xếp hoạt động buổi tối" in s.thay_doi(B, kq)[0]["cau"]
     # ngày đi xa: tối để nghỉ, gọi tên cũng không đặt
     for n, kieu, st in itertools.product((3, 4, 5), ("can_bang", "kham_pha"), SO_THICH):
         k = v2.xep_v2(B, v2.ThamSoV2(n, kieu_di=kieu, so_thich=st))

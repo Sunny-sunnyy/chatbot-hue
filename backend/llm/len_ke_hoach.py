@@ -23,7 +23,11 @@ from llm.citations import CITATION_PATTERN
 from llm.assistant import (STREAM_DRAIN_SECONDS, AnswerTrace, AssistantFlags, CallLog, GenerationError, GeneratorNotReadyError, ROUTE_TRO_LY_HUE,
                            _lay_nguon_lich, check_citations, elapsed_ms, record_llm_calls)
 
-MAX_DOAN = lt2.TOI_DA_BUOI * 2 * lt2.SO_NGAY_TOI_DA + lt2.SO_NGAY_TOI_DA  # một đoạn mỗi điểm: ≤ 4 điểm ban ngày + 1 tối × 5 ngày = 25
+# Một đoạn nguồn mỗi điểm. Điểm nào không có đoạn vào được ngữ cảnh thì `assistant._lay_nguon_lich` CẮT NGÀY CUỐI của lịch ⇒ trần này phải phủ lịch dày
+# nhất có thể có: từ khi lệnh "thêm <điểm>" được vượt nhịp đi (công tắc `sua_lich_them_day`, 23/11/2026) một buổi có tới `TOI_DA_BUOI` + 1 điểm ⇒
+# (3 × 2 buổi + 1 tối) × 5 ngày = 35. Trần cũ 25 (= 4 điểm ban ngày + 1 tối × 5 ngày): đếm 23/11/2026 bằng hàm áp lệnh thật — lịch 5 ngày "khám phá
+# nhiều" (22 điểm) vượt 25 từ lệnh thêm thứ tư ở 3 / 4 bộ sở thích, tức lệnh thêm đó sẽ làm mất cả ngày 5 (phiên viết giáo trình nêu từ đọc code).
+MAX_DOAN = (lt2.TOI_DA_BUOI + 1) * 2 * lt2.SO_NGAY_TOI_DA + lt2.SO_NGAY_TOI_DA
 TIM_MO_TA = "tổng quan kiến trúc cảnh quan"  # vòng chỉnh nghiệm thu 13/11 (A chọn (a)): chọn đoạn TẢ điểm cho câu "ở đây có gì"
 LOI_MODEL = (GenerationError, TimeoutError, AgentsException, OpenAIError)  # lỗi của lần gọi viết câu ⇒ câu dự phòng, lịch vẫn hiện
 
@@ -136,7 +140,7 @@ def gan_o_an(lich: dict, bang, khung: dict, flags: AssistantFlags) -> None:
         elif len(khung["ngay"]) >= 2:
             lich["cho_o_link"] = True
     if flags.quan_lich:
-        lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do)
+        lich["an"] = ql.an_uong(flags.quan_bang, bang, khung, flags.quan_toa_do, flags.quan_trua_kho_truoc)
 
 
 def ghi_cau_bi_loai(trace: AnswerTrace, id_muc: str, ma: str, cau: str) -> None:
@@ -303,6 +307,7 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
         kq = sl.ap(bang, luu, hanh_dong, luu_tru=luu_tru, ngay_moi=ngay_moi,
                    **({"them_khong_the": True} if flags.sua_lich_them_khong_the else {}),  # cờ tắt ⇒ lời gọi như cũ
                    **({"them_day": True} if flags.sua_lich_them_day else {}),
+                   **({"them_khu": True} if flags.sua_lich_them_khu else {}),
                    **({"bo_toi_de_trong": True} if flags.bo_toi_de_trong else {}),
                    **({"bo_toi_hoi_lai": True} if flags.bo_toi_hoi_lai else {}),
                    **({"toi_goi_ten": True} if flags.toi_goi_ten else {}))

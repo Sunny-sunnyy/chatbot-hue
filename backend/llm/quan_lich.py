@@ -109,9 +109,13 @@ def _hien(q: dict) -> dict:
             "anh": q.get("anh"), "map_url": MAP_BASE + quote(f"{q['toa'][0]},{q['toa'][1]}")}
 
 
-def an_uong(theo_cum: dict, bang, khung: dict, toa_do: dict | None) -> list[dict]:
+def an_uong(theo_cum: dict, bang, khung: dict, toa_do: dict | None, kho_truoc: bool = False) -> list[dict]:
     """`[{ngay, bua: "trua" | "toi", gan: tên điểm, quan: [...]}]` theo khung của bộ xếp; bữa không có quán cùng cụm ⇒ không có mục,
-    trừ điểm có `GHI_CHU_AN` ⇒ mục `quan: []` kèm `ghi_chu`."""
+    trừ điểm có `GHI_CHU_AN` ⇒ mục `quan: []` kèm `ghi_chu`.
+    `kho_truoc` (công tắc `quan_trua_kho_truoc`, 23/11/2026): bữa TRƯA lấy trước điểm có ít nhất một quán CÓ BÀI TRONG KHO, xét theo đường người đi —
+    điểm cuối buổi sáng (đang ở đó) ⇒ điểm đầu buổi chiều (sắp đi tới) ⇒ các điểm sáng sớm hơn; không điểm nào có quán kho ⇒ y như cũ. Vì sao: bữa
+    trưa vốn neo ở điểm CUỐI buổi sáng, nên một lệnh "thêm <lăng>" đổi luôn bữa trưa sang vùng không có quán kho — lượt trình duyệt 23/11: sau "thêm
+    Lăng Minh Mạng" khối ăn trưa chỉ còn một quán cà phê "từ bản đồ mở, chưa kiểm" trong khi lịch gốc có hai quán có bài kho."""
     da_dung: set = set()
     ra = []
     for ng in khung["ngay"]:
@@ -123,13 +127,24 @@ def an_uong(theo_cum: dict, bang, khung: dict, toa_do: dict | None) -> list[dict
         for bua, ung_vien in (("trua", trua), ("toi", [toi[0]] if toi else chieu[-1:])):
             if not ung_vien:
                 continue
+            def chon_o(j: str) -> list[dict]:
+                toa = (toa_do or {}).get(j)
+                return _chon(theo_cum.get(bang.theo_id[j]["cum"], []), toa, da_dung, bua) if toa else []
+
             diem, chon = ung_vien[0], []
             for j in ung_vien:
-                toa = (toa_do or {}).get(j)
-                chon = _chon(theo_cum.get(bang.theo_id[j]["cum"], []), toa, da_dung, bua) if toa else []
+                chon = chon_o(j)
                 if chon or (j, bua) in GHI_CHU_AN:
                     diem = j
                     break
+            # `kho_truoc`: vòng cũ ra QUÁN mà không quán nào có bài kho ⇒ thử lại theo đường người đi, lấy điểm đầu tiên có quán kho. Vòng cũ dừng ở
+            # một GHI CHÚ ĂN riêng của kho (điểm không có quán trong 2 km) thì giữ ghi chú đó — đếm 23/11/2026: không giữ thì 19 / 538 ghi chú biến mất.
+            if kho_truoc and bua == "trua" and chon and not any(q["nguon"] == "kho" for q in chon):
+                for j in dict.fromkeys(sang[-1:] + chieu[:1] + sang[::-1]):
+                    c = chon_o(j)
+                    if any(q["nguon"] == "kho" for q in c):
+                        diem, chon = j, c
+                        break
             d = bang.theo_id[diem]
             if chon:
                 da_dung |= {(q["ten"], tuple(q["toa"])) for q in chon}
