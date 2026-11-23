@@ -227,6 +227,11 @@ class AssistantFlags:
     # "một điểm một buổi, hai điểm một ngày" tới các trần `lich_trinh_v2.HAN_CHE_*` (ba điểm một ngày, hai điểm một buổi, sáng kết ≤ 13:00, chiều kết
     # ≤ 17:00); luật khu KHÔNG nới cho đoàn này; lịch xếp BAN ĐẦU của đoàn không đổi. Đếm 72 lịch của đoàn: 0 ⇒ 22 % lệnh "thêm X". Cần sua_lich_them_day.
     sua_lich_them_han_che: bool = False
+    # 23/11/2026 (chủ dự án, sau khi tự test: "thiếu thông tin — ngày nào, buổi nào — thì hỏi lại kèm gợi ý và câu 'hay để mình tự xếp'; trợ lý chỉ tự làm
+    # khi người dùng bảo; không làm được thì không 'từ chối' mà giải thích và đưa lối đi"): lệnh "thêm <điểm>" thiếu ngày hoặc buổi ⇒ lịch đứng yên + một
+    # câu hỏi do code viết + nút (chỗ gợi ý, các chỗ đặt được khác, "Xếp giúp mình"); lệnh đủ ngày + buổi mà thêm thẳng được ⇒ làm luôn; không thêm
+    # được ⇒ câu thường + nút lối đi; điểm khu xa ⇒ nói thật + nút mở biểu mẫu. Cần sua_lich_them_khong_the. TẮT tới khi phiên điều phối mở.
+    sua_lich_hoi_truoc: bool = False
     # 23/11/2026 (chủ dự án nêu: buổi tối của đoàn có trẻ nhỏ đang bỏ trống). `toi_nhe`: đoàn có trẻ nhỏ / người lớn tuổi được MỘT hoạt động tối nhẹ gần trung
     # tâm mỗi tối không phải ngày đi xa, lấy từ khoá `toi_nhe` của bảng điểm, không lặp (đếm 960 tổ hợp: 720 tổ hợp / 2.160 tối đang trống ⇒ 1.710 tối có hoạt
     # động). `bo_toi_de_trong`: lệnh bỏ hoạt động tối ⇒ tối đó để trống, các tối khác giữ nguyên (xem `sua_lich_v2.ap`). Cả hai TẮT tới khi chủ dự án quyết.
@@ -357,6 +362,8 @@ class AssistantFlags:
             raise ValueError("assistant.sua_lich_them_khong_the needs assistant.sua_lich_v2: true")
         if self.sua_lich_them_day and not self.sua_lich_them_khong_the:
             raise ValueError("assistant.sua_lich_them_day needs assistant.sua_lich_them_khong_the: true")
+        if self.sua_lich_hoi_truoc and not self.sua_lich_them_khong_the:
+            raise ValueError("assistant.sua_lich_hoi_truoc needs assistant.sua_lich_them_khong_the: true")
         if self.sua_lich_them_han_che and not self.sua_lich_them_day:
             raise ValueError("assistant.sua_lich_them_han_che needs assistant.sua_lich_them_day: true")
         if self.sua_lich_them_khu and not (self.sua_lich_them_day and self.khoang_cach):
