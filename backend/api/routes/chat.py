@@ -21,6 +21,7 @@ from fastapi.sse import format_sse_event
 from openai import OpenAIError
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from api import vi_sao
 from core import so_vet
 from core.schema import (
     GenerationError,
@@ -353,6 +354,11 @@ def _ghi_vet(state, duong: str, metrics: dict, trace, cau_go: str, cau_model) ->
         so_vet.ghi(_flags(state).so_vet, duong, metrics, trace, cau_go, cau_model)
     except Exception as exc:
         logger.warning("so_vet failed: %s", type(exc).__name__)
+    # nút "Vì sao trả lời vậy?": cùng thời điểm (số đo của lượt đã đủ), cùng bản ghi; tự bọc lỗi, không phụ thuộc cờ `so_vet`
+    try:
+        vi_sao.cat(state, getattr(_flags(state), "vi_sao", False) is True, duong, metrics, trace, cau_go, cau_model, _bai_ids(state))
+    except Exception as exc:
+        logger.warning("vi_sao failed: %s", type(exc).__name__)
 
 
 def _set_outcome(response, metrics: dict) -> None:
@@ -630,7 +636,8 @@ async def chat_stream(body: ChatRequest, request: Request):
                            lambda: lich_cho_giao_dien(trace, _flags(state), cau_goc), _bai_ids(state),
                            ghi_vet=lambda: _ghi_vet(state, "chat_stream", metrics, trace, body.query, query),
                            luoi_cuoi=lambda: luoi_cuoi_bao(body.query, trace, _flags(state)),
-                           sua_loi=lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history, trace.thoi_tiet_ctx)),
+                           sua_loi=lambda message: loi_bao_luoi_cuoi(body.query, message, _flags(state), trace.history, trace.thoi_tiet_ctx),
+                           co_vi_sao=getattr(_flags(state), "vi_sao", False) is True),
             media_type="text/event-stream",
             headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
         )
@@ -675,8 +682,9 @@ class StreamEvents:
     """Dựng sự kiện SSE của một lượt stream và điền `outcome` / mốc thời gian vào `metrics` (spec §4.4, §4.6). Không gọi model ⇒ test
     được bằng chữ có sẵn; `_answer_events` chỉ nối nó với luồng model."""
 
-    def __init__(self, metrics: dict, started: float, new_turn_id=None, lich=None, bai_ids=(), sua_loi=None) -> None:
+    def __init__(self, metrics: dict, started: float, new_turn_id=None, lich=None, bai_ids=(), sua_loi=None, co_vi_sao: bool = False) -> None:
         self.metrics = metrics
+        self.co_vi_sao = co_vi_sao  # cờ `vi_sao` bật ⇒ `done` báo giao diện vẽ nút
         self.sua_loi = sua_loi or (lambda message: message)  # lưới cuối câu bão: lời báo lỗi của lượt bão / lũ mang thêm câu 112
         self.bai_ids = bai_ids  # cổng D7: `bai_id` của nguồn
         self.started = started
@@ -718,6 +726,8 @@ class StreamEvents:
             data["tu_choi_kho"] = True  # việc nhỏ (5) 08/11: kho không đủ ⇒ giao diện hiện gợi ý cách hỏi do code viết sẵn (không gọi model)
         if answered and self.new_turn_id is not None:
             data["turn_id"] = self.metrics["turn_id"] = self.new_turn_id()
+            if self.co_vi_sao and data["turn_id"]:  # cờ `vi_sao`: giao diện vẽ nút "Vì sao trả lời vậy?" (bản tóm tắt được cất ở cuối lượt — `_ghi_vet`)
+                data["vi_sao"] = True
         return sse_event("done", data)
 
     def fixed(self, trace: AnswerTrace) -> list[bytes]:
@@ -789,13 +799,13 @@ class StreamEvents:
 
 
 async def _answer_events(turn, trace: AnswerTrace, metrics: dict, started: float, remember=None, new_turn_id=None, lich=None, bai_ids=(),
-                         ghi_vet=None, luoi_cuoi=None, sua_loi=None):
+                         ghi_vet=None, luoi_cuoi=None, sua_loi=None, co_vi_sao: bool = False):
     """Chuỗi sự kiện SSE của một lượt: đổi sự kiện của lõi (`answer_turn_stream`) ra `status … delta … sources | error [notice] … done`
     (spec streaming §4.1, §4.4). Tự bắt mọi `Exception` rồi phát `error` + `done`. Người dùng ngắt ⇒ không gửi gì thêm, raise lại.
     `finally`: đóng lõi **trong vùng che** (lõi ghi `llm_calls`, tự huỷ + đọc nốt có hạn giờ) rồi mới ghi dòng log — chỉ có `await` được che
     trước dòng log, nên ý spec streaming §4.5 (anyio không huỷ mất dòng log) giữ nguyên (C132 m-1)."""
     metrics["status_code"] = 200
-    stream = StreamEvents(metrics, started, new_turn_id, lich, bai_ids, sua_loi)
+    stream = StreamEvents(metrics, started, new_turn_id, lich, bai_ids, sua_loi, co_vi_sao)
     try:
         async for kind, data in turn:
             # `thay_chu` từ lõi (lượt chạy lại sau khi bị rút — cờ `nho_cau_tra_loi`): thay cả ô chữ đã hiện; đi qua `stream.thay_chu` để sổ chữ đã phát về đúng

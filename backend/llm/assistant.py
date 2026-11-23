@@ -140,6 +140,8 @@ class AssistantFlags:
     # giây); viết lại ⇒ chỉ phát bản viết lại; bị rút ⇒ không phát chữ nào. Đường chữ chạy dần thật (OpenAI) không giữ. Test: `test_giu_chu_toi_kiem.py`.
     giu_chu_toi_kiem: bool = False
     so_vet: bool = False  # sổ vết debug có nội dung, chỉ máy local (`core/so_vet.py`); bật bằng `HUE_SO_VET=true`
+    # Nút "Vì sao trả lời vậy?" (24/11/2026, `api/vi_sao.py`): giữ trong RAM bản tóm tắt "lượt này đã làm gì" theo mã lượt; lõi không đọc cờ này
+    vi_sao: bool = False
     # Việc agent (3) 14/11 (plan `2026-11-14-cau-nhieu-y-plan.md`): câu nhiều ý — lời dặn theo ý + cổng web mở cả khi có dòng `CAU_Y_THIEU`
     cau_nhieu_y: bool = False
     # 19/11 (plan private `data/phase_9/s09_code/PLAN.md`): CODE nối vào dòng ghi chú một câu "tạm ngừng khi lũ / lệnh cấm / thời tiết xấu" chép
