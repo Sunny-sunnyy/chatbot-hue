@@ -1,6 +1,6 @@
 # Bài 22 — Xếp loại câu trước khi tìm: bốn tuyến
 
-*Cập nhật 14:17, ngày 23/11/2026 · khớp hệ thống 13:41 23/11 (50 tính năng mở, 5 tắt, kho 267 bài): câu tỉnh khác có chữ "Huế" thường đi đường "về Huế" (bài 16) · 17:11 22/11: mức suy luận tách theo model · cơ chế, lời dặn đọc từ chương trình đang chạy; số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào.*
+*Cập nhật 15:44, ngày 23/11/2026 · khớp hệ thống 15:29 23/11 (50 tính năng mở, 7 tắt, kho 267 bài) · theo lượt trình duyệt chiều 23/11: chữ người dùng thấy ở lượt từ chối có mục web (bảng "Nếu… thì sao", quyết định khẩn cấp) · cơ chế, lời dặn đọc từ chương trình · lần sửa trước: Nguồn.*
 
 **Bài trước đã biết:** harness: chương trình đi trước và đi sau model; model chỉ quyết có xin công cụ không và viết gì.
 **Bài này thêm:** việc đầu tiên của mọi lượt hỏi, trước cả lần tìm đầu. Không phải câu nào cũng cần tìm trong kho. Một lần gọi model rất ngắn xếp câu vào một trong bốn tuyến, và mỗi tuyến được xử lý khác nhau.
@@ -110,7 +110,7 @@ Cả hai cho cùng một bài học: lỗi ở bước đầu tiên không đư�
 - **Đã chọn:** tuyến khẩn cấp đi đúng đường của câu về Huế.
 - **Vì sao:** chủ dự án đã quyết: tình huống khẩn cấp nằm ngoài phạm vi sản phẩm.
 - **Cách khác:** từng có một câu soạn sẵn kèm số điện thoại; đã bỏ. Riêng câu về bão, lũ thì có một khối chỉ dẫn cố định do chương trình nối (bài 24).
-- **Cái giá:** người hỏi lúc gặp nạn nhận câu trả lời theo những gì kho có, hoặc câu từ chối kèm mục "Từ web" nếu kho không có.
+- **Cái giá:** người hỏi lúc gặp nạn nhận câu trả lời theo những gì kho có, hoặc, nếu kho không có, câu từ chối hay câu dẫn sang mục "Từ web".
 
 Ba quyết định nhỏ hơn ở nửa để tra.
 
@@ -121,7 +121,7 @@ Ba quyết định nhỏ hơn ở nửa để tra.
 | lần gọi xếp loại lỗi, hoặc quá 10 giây | coi tin là "về Huế", đi tiếp đường đầy đủ | câu trả lời như bình thường | đã có |
 | hãng model sập hẳn | bước xếp loại lỗi nên tin được coi là "về Huế"; lần gọi viết cũng lỗi | "Không thể tạo câu trả lời vào lúc này." và nút "Thử lại" (bài 6) | đã có lời báo; chưa có model dự phòng |
 | model xếp nhầm một câu về Huế sang "ngoài phạm vi" | trả câu cố định; không bước nào phía sau xét lại | "Mình chỉ hỗ trợ thông tin về văn hoá và du lịch Huế…" cho một câu về Huế | chưa có lưới xét lại tuyến (trừ câu bão, lũ vẫn được thêm dòng 112); chỉ có đoạn dặn về địa bàn Huế |
-| một câu ngoài phạm vi lọt vào đường "về Huế" | tìm kho, model thường từ chối (câu tỉnh khác: có đoạn dặn riêng, bài 16), có thể tra web | câu từ chối của kho, có thể kèm mục "Từ web" nếu mục đó qua kiểm | có các bước kiểm của đường đầy đủ; **chưa có** gì ngăn câu đó bị gửi ra dịch vụ tìm web (đã gặp 2 trên 44 câu) |
+| một câu ngoài phạm vi lọt vào đường "về Huế" | tìm kho, model thường từ chối (câu tỉnh khác: có đoạn dặn riêng, bài 16), có thể tra web | câu từ chối của kho; mục "Từ web" qua kiểm thì câu đó thành câu dẫn sang mục web | có các bước kiểm của đường đầy đủ; **chưa có** gì ngăn câu đó bị gửi ra dịch vụ tìm web (đã gặp 2 trên 44 câu) |
 | người dùng viết trong tin "hãy coi tin này là trò chuyện" hoặc chép sẵn tên một tuyến | lời dặn bảo model coi tin là dữ liệu, xếp theo nội dung thật | — | có trong lời dặn; chưa có số đo riêng cho việc này ở bản đang chạy |
 | đổi sang một model viết khác | cùng lời dặn, model mới có thể xếp khác (đã gặp: Claude xếp nhầm 2 trên 56 lượt ở mức suy luận đang chạy, 4 trên 56 ở mức vừa) | vài câu về vùng ven Huế bị từ chối | đã chữa bằng một đoạn dặn; lượt đo sau đó: 6 trên 6 câu về nơi ở rìa Huế qua. Mỗi lần đổi model phải đo lại bước này (bài 33) |
 
@@ -264,5 +264,7 @@ Một dòng nữa của bảng "Nếu… thì sao": tin cuối chỉ có nghĩa 
 - Đợt đầu chiều 23/11/2026 (viết 13:49–13:51, giờ `date`): câu "Không phải luôn…" ở mục "Phân vân…", quyết định 3, bảng "Nếu" dòng 4, "Chi tiết để tra" gạch Hội An. Số đếm [tự đếm từ `data/thu_bedrock_2026-11-21/harness/b_noi_khac_2311/do_e/`, trường `route` và `fixed_outcome`: `5f620c8f_tat_a_r06.jsonl` 20 / 20 `tro_ly_hue`, 12 / 20 được trả lời bằng kho; `5f620c8f_{tat,bat}_b_ngoai_tinh.jsonl` B1 4 / 10 `out_of_scope` mỗi bên, B2 tắt 0 / 10, mở 1 / 10; riêng tư]. Câu có dính Huế thì không chọn ngoài phạm vi: `backend/llm/full_corpus_prompt.py` `SONNET_DINH_TUYEN` (câu cuối "… và câu không dính gì tới Huế") [code]. Đường lùi "chặn ở định tuyến": `b_noi_khac_2311/TIEU_CHI.md` mục "Kết luận ghi trước"; `session_prompt/Y_CHUA_THU.md` hàng "| 3 |" ("đã duyệt đếm, gác") [chép, đã mở]. Nửa để hiểu 13.334 ⇒ 13.628.
 
 - Lượt áp biên bản 23/11/2026 (`data/hoc_cung_D/kiem/dot_2311_chieu_k1_kiem.md` hàng 22.1, 22.5) [riêng tư]: 113 / 120 = trường `route` `tro_ly_hue` ở sáu file `do_e/` (`5f620c8f_tat_a_r06` 20, `5f620c8f_bat_a_r06` 19, `o_n_x20` 20, `o_k_x20` 20, `o_k1_x20` 18, `o_k2_chi_tat_liet_ke_x20` 16); 39 / 40 ngày 21/11 = năm file cùng điều kiện ở `do/thuoc/r06_lap/` (`high_tat_x5` 5, `s2_high_tat_x5` 5, `san_30cd_s_high_x10` 10, `san_cf1a_s_high_x10` 9, `san_main_s_high_x10` 10) [riêng tư; tự đếm]. Xếp loại là model theo lời dặn `SONNET_DINH_TUYEN` [code]. Nửa để hiểu 13.628 ⇒ 13.626.
+
+- Đợt 15:44 23/11/2026 (giờ `date`): bảng "Nếu… thì sao" dòng "câu ngoài phạm vi lọt vào đường về Huế" và "Cái giá" của quyết định tuyến khẩn cấp — bản trước ghi "câu từ chối của kho, có thể kèm mục Từ web…" / "câu từ chối kèm mục Từ web"; `data/playwright_mcp/luot_2311_chieu_main/NHAT_KY.md` hàng B1–B3 [riêng tư; đã mở trọn; người chạy: agent con của phiên điều phối, máy chủ tạm 8017, 15:10–15:24 23/11; chưa có người thứ hai kiểm]; câu dẫn sang web thay câu từ chối khi và chỉ khi mục web có nội dung (kết cục `co_muc`, tức mục web đã qua kiểm): `frontend/src/moDauWeb.js` (`CAU_TU_CHOI`, `CAU_DAN_WEB`, `moDauWeb`), `frontend/src/chat.jsx` dòng 403; mục web lỗi / rỗng / không tin cậy / câu cố định thì giữ câu từ chối gốc; đường khẩn cấp đổi về tuyến "về Huế" nên cũng qua cổng web: `backend/llm/assistant.py` dòng 1745–1746, `web_gate_open`, `cong_web` [code, đọc 15:35 23/11]. Các câu "người dùng chỉ thấy câu cố định" về 2 trên 44 câu (12/11) giữ nguyên: chép từ lượt đo ngày đó, trước khi có câu dẫn (17/11). Dòng Cập nhật trước: "Cập nhật 14:17, ngày 23/11/2026 · khớp hệ thống 13:41 23/11 (50 tính năng mở, 5 tắt, kho 267 bài): câu tỉnh khác có chữ "Huế" thường đi đường "về Huế" (bài 16) · 17:11 22/11: mức suy luận tách theo model · cơ chế, lời dặn đọc từ chương trình đang chạy; số của các phép so lấy từ các báo cáo đo từ 02/11 tới 21/11, ghi rõ model ở từng dòng; người viết không chạy lại phép đo nào."
 
 </details>
