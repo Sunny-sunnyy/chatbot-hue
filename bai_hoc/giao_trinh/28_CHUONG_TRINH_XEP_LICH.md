@@ -1,17 +1,17 @@
 # Bài 28 — Chương trình xếp lịch theo luật nào: một lịch thật được xếp từng bước
 
-*Cập nhật 17:03, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài); chưa gồm các bản gộp từ 16:38 (chờ phiếu) · đã áp biên bản kiểm · lịch ví dụ là lượt thật 21/11 (Claude Sonnet 5.5); biến thể "Đổi một ô" do người viết chạy bộ xếp, không gọi model · dòng cũ: Nguồn.*
+*Cập nhật 18:32, ngày 23/11/2026 · khớp hệ thống 17:35 23/11 (55 tính năng mở, 7 tắt, kho 267 bài) · buổi tối mới (từ 16:38, 17:29) · đã áp biên bản kiểm · chưa có lượt cả bộ test sau các bản gộp từ 16:20 · buổi tối và "Đổi một ô" do người viết tự chạy hàm, không qua model · dòng cũ: Nguồn.*
 
-**Bài trước đã biết:** người dùng bấm tám ô; chương trình xếp lịch từ bảng 41 điểm; model chỉ viết câu mô tả (bài 27).
+**Bài trước đã biết:** người dùng bấm tám ô; chương trình xếp lịch từ bảng 41 điểm và 4 quán cà phê buổi tối; model chỉ viết câu mô tả (bài 27).
 **Bài này thêm:** chương trình chọn điểm và tính giờ theo những luật nào, luật nào thắng khi hai luật kéo ngược nhau, và vì sao các con số là 75, 150, 210, 240 phút. Bài đi từng bước trên chính lịch ví dụ: 3 ngày, 2 người lớn, cân bằng, thích di tích.
 
 ## Ý chính
 
 - Bộ xếp là **chương trình thuần**: không gọi mạng, không gọi model; cùng tám giá trị luôn ra cùng một lịch.
 - Luật có **thứ tự ưu tiên**: an toàn cho trẻ em và người lớn tuổi → giờ mở cửa, thứ, mùa → gom điểm gần nhau (một ngày nhiều nhất 2 cụm kề nhau) → điểm ưu tiên của sở thích → sở thích → kiểu đi. Luật đứng dưới chỉ được chọn trong số điểm mà các luật đứng trên đã cho qua.
-- Thời gian tính **bằng phút cố định**: điểm ngắn 75, nửa buổi 150; đi trong cụm 15, sang cụm kề 30. Quỹ một buổi: "cân bằng" 210 phút, "khám phá nhiều" 240, "nhẹ nhàng" đúng 1 điểm. Giờ in ra là phép cộng các số này. Ngoại lệ (từ 15:38 23/11, chỉ đoàn không có trẻ nhỏ / người lớn tuổi): ngày người dùng tự xin thêm điểm sau khi lịch đã xếp được vượt quỹ phút, tới 3 điểm một buổi, miễn còn giờ mở cửa, 60 phút ăn trưa, sáng kết trước 13:30, chiều trước 18:00 (bài 31).
-- Mỗi buổi chọn **điểm đầu** trước, rồi mới thêm điểm thứ hai nếu còn quỹ; buổi tối chọn **sau cùng**. Cái giá đã đếm được: có lịch đi Đại Nội, sang chùa Thiên Mụ, rồi quay lại Ngọ Môn trong cùng ngày, như chính lịch ví dụ.
-- Đổi một ô là lịch đổi theo một luật đọc được, ví dụ có người lớn tuổi thì mỗi buổi một điểm và không buổi tối.
+- Thời gian tính **bằng phút cố định**: điểm ngắn 75, nửa buổi 150; đi trong cụm 15, cụm kề 30. Quỹ một buổi: "cân bằng" 210 phút, "khám phá nhiều" 240, "nhẹ nhàng" đúng 1 điểm. Giờ in ra là phép cộng các số này. Ngoại lệ (bài 31): ngày người dùng tự xin thêm điểm sau khi xếp được vượt quỹ phút, tới 3 điểm một buổi — đoàn thường từ 15:38 23/11; đoàn có trẻ nhỏ / người lớn tuổi từ 18:00, kể ở đợt sau.
+- Mỗi buổi chọn **điểm đầu** trước, rồi mới thêm điểm thứ hai nếu còn quỹ; buổi tối chọn **sau cùng**, một hoạt động ở trung tâm. Từ 16:38 23/11 buổi tối không còn Chợ Đông Ba (chủ dự án: tối chợ không mở) mà có bốn quán cà phê của kho. Cái giá đã đếm được: có lịch đi Đại Nội, sang chùa Thiên Mụ, rồi quay lại Ngọ Môn trong cùng ngày, như chính lịch ví dụ.
+- Đổi một ô là lịch đổi theo một luật đọc được (bảng "Đổi một ô" ở nửa để tra), ví dụ có người lớn tuổi thì mỗi buổi một điểm, buổi tối chỉ một hoạt động nhẹ, về sớm (từ 17:29 23/11; trước đó tối để trống).
 
 ## Từ dùng trong bài
 
@@ -31,7 +31,7 @@ Khi hai luật kéo ngược nhau, luật đứng trên thắng.
 
 | Bậc | Luật | Ở lịch ví dụ |
 |---|---|---|
-| 1 | **Nhóm hạn chế**: mỗi buổi một điểm, không buổi tối, tránh điểm nhiều bậc thang khi cùng cụm có điểm thay | không áp |
+| 1 | **Nhóm hạn chế**: mỗi buổi một điểm, buổi tối chỉ trong danh sách hoạt động nhẹ, tránh điểm nhiều bậc thang khi cùng cụm có điểm thay | không áp |
 | 2 | **Giờ mở cửa, thứ, mùa:** điểm phải xong trước giờ đóng; đóng cửa vào thứ đó hay tạm dừng theo mùa thì không xếp | chỉ xét giờ mở cửa (không có ngày đi) |
 | 3 | **Gom gần:** một ngày nhiều nhất 2 cụm và hai cụm phải kề nhau; cụm "phía nam xa" chiếm cả ngày, chỉ xếp khi lịch từ 3 ngày và không ở ngày 1 | mỗi ngày 2 cụm |
 | 4 | **Điểm ưu tiên** của sở thích đứng đầu thứ tự xét | 4 điểm ưu tiên của "di tích": Đại Nội, chùa Thiên Mụ, lăng Tự Đức, lăng Khải Định |
@@ -43,7 +43,7 @@ Số người lớn không vào bộ xếp. Buổi tối được chọn sau khi
 
 ## Ngày 1 của lịch ví dụ, từng bước
 
-Chương trình lập **thứ tự xét**: 4 điểm ưu tiên của di tích, rồi các di tích khác theo thứ tự bảng. Giờ bắt đầu: sáng 8:00, chiều 13:30.
+Chương trình lập **thứ tự xét**: 4 điểm ưu tiên của di tích, rồi các di tích khác theo thứ tự bảng. Sáng bắt đầu 8:00, chiều 13:30.
 
 | Bước | Chương trình làm gì | Kết quả |
 |---|---|---|
@@ -51,31 +51,18 @@ Chương trình lập **thứ tự xét**: 4 điểm ưu tiên của di tích, r
 | 2. Điểm đầu buổi chiều | điểm kế tiếp đi được buổi chiều và hợp cụm của ngày | **chùa Thiên Mụ** (cụm Kim Long, kề Kinh thành, ngắn): **13:30 – 14:45**. Ngày đã đủ 2 cụm |
 | 3. Thêm điểm vào buổi sáng | thêm một điểm cùng cụm hoặc cụm kề với điểm ngay trước, nếu tổng phút còn trong quỹ | đã dùng 150; thêm một điểm ngắn cùng cụm thành 150 + 15 + 75 = 240 > 210 ⇒ **không thêm** |
 | 4. Thêm điểm vào buổi chiều | như trên | đã dùng 75. Lăng Tự Đức, Khải Định (cụm Thủy Xuân) kề Kim Long nhưng sẽ là cụm thứ ba ⇒ bỏ qua. **Ngọ Môn – Kỳ Đài** (cụm Kinh thành, kề Kim Long, 30 phút đi): 75 + 30 + 75 = 180 ≤ 210 ⇒ **15:15 – 16:30** |
-| 5. Buổi tối | chọn sau cùng: chỉ ở hai cụm trung tâm, hợp sở thích trước, rồi theo thứ tự bảng; không có ngày đi thì chỉ lấy hoạt động diễn mọi tối | **chợ Đông Ba**, 18:00 – 23:00, kèm dòng "phố ẩm thực đêm trước cổng chợ; trong chợ đóng cửa khoảng 18:00" |
+| 5. Buổi tối | chọn sau cùng: chỉ ở hai cụm trung tâm, hợp sở thích trước, rồi theo thứ tự chọn buổi tối của bảng; không có ngày đi thì chỉ lấy hoạt động diễn mọi tối | **phố đi bộ Nguyễn Đình Chiểu**, 18:30 – 22:00 |
 
-Giữa hai điểm cùng buổi, thẻ lịch hiện dòng "khoảng 30 phút đi". Đó đúng là con số bộ xếp vừa dùng để giãn giờ, nên giờ in ra và phút đi không thể lệch nhau.
-
-Ngày 1 có một chỗ dở nhóm đã đếm: đi Đại Nội, sang Thiên Mụ, rồi **quay lại** Ngọ Môn, mà Ngọ Môn là cổng của Đại Nội. Gốc: điểm thêm chỉ xét cụm của điểm ngay trước; không bước nào sắp lại thứ tự đi của cả ngày (quyết định 3).
+Ngày 1 có một chỗ dở nhóm đã đếm: đi Đại Nội, sang Thiên Mụ, rồi **quay lại** Ngọ Môn, mà Ngọ Môn là cổng của Đại Nội. Gốc: điểm thêm chỉ xét cụm của điểm ngay trước; không bước nào sắp lại thứ tự đi của cả ngày (quyết định 2).
 
 ## Ngày 2, ngày 3, và buổi tối
 
-**Ngày 2.** Hai điểm ưu tiên còn lại cùng ở cụm Thủy Xuân: lăng Tự Đức sáng (8:00 – 10:30), lăng Khải Định chiều (13:30 – 16:00). Cả hai là điểm nửa buổi, thêm điểm nào cũng vượt quỹ. Tối: phố đi bộ Nguyễn Đình Chiểu (hoạt động tối không lặp cho tới khi hết lựa chọn).
+**Ngày 2.** Hai điểm ưu tiên còn lại cùng ở cụm Thủy Xuân: lăng Tự Đức sáng (8:00 – 10:30), lăng Khải Định chiều (13:30 – 16:00). Cả hai là điểm nửa buổi, thêm điểm nào cũng vượt quỹ. Tối: quán Bến Trăng Café & Bar, 19:00 – 20:30, dòng phụ có "mở tới 23:00" (tối không lặp tới khi hết mục).
 
-**Ngày 3.** Hết điểm ưu tiên, chương trình đi tiếp các di tích theo thứ tự bảng. Sáng: phố cổ Bao Vinh (cụm Kinh thành, 8:00 – 10:30). Chiều: trường Quốc Học (bờ nam, kề Kinh thành, 13:30 – 14:45), rồi cung An Định (cùng cụm bờ nam, 15 phút đi): 75 + 15 + 75 = 165 phút ⇒ 15:00 – 16:15. Tối: phố Tây.
+**Ngày 3.** Hết điểm ưu tiên, chương trình đi tiếp các di tích theo thứ tự bảng. Sáng: phố cổ Bao Vinh (cụm Kinh thành, 8:00 – 10:30). Chiều: trường Quốc Học (bờ nam, kề Kinh thành, 13:30 – 14:45), rồi cung An Định (cùng cụm bờ nam, 15 phút đi): 75 + 15 + 75 = 165 phút ⇒ 15:00 – 16:15. Tối: Ca Huế trên sông Hương, suất 19:00 / 20:00 / 21:00.
 
-Cả lịch: 8 điểm ban ngày, 3 hoạt động tối. Không thiếu điểm ưu tiên nào, nên phần ghi chú chỉ có một dòng: giờ trong lịch là giờ gợi ý.
+Cả lịch: 8 điểm ban ngày, 3 hoạt động tối. Không thiếu điểm ưu tiên nào, nên phần ghi chú chỉ có một dòng: giờ trong lịch là giờ gợi ý. Ban ngày là lượt thật 21/11; buổi tối theo bảng từ 16:38 23/11 (người viết tự chạy hàm, không qua model; tối của lượt thật: "Chi tiết để tra").
 
-## Đổi một ô thì lịch đổi ra sao
-
-Người viết chạy lại bộ xếp, mỗi lần đổi đúng một ô so với lịch ví dụ (không gọi model).
-
-| Đổi gì | Lịch mới | Luật nào làm việc đó |
-|---|---|---|
-| kiểu đi "nhẹ nhàng" | 6 điểm ban ngày, mỗi buổi một điểm; ngày 3 thành Ngọ Môn và Bao Vinh | bậc 7: nhẹ nhàng đúng 1 điểm một buổi |
-| kiểu đi "khám phá nhiều" | 11 điểm ban ngày, bắt đầu 7:30 và 13:00; ngày 1 thêm Ngọ Môn buổi sáng và điện Hòn Chén buổi chiều | bậc 7: quỹ 240 vừa nửa buổi cộng một điểm ngắn |
-| có người lớn tuổi (hoặc trẻ em) | 6 điểm ban ngày, không buổi tối; ngày 2 thành lăng Đồng Khánh và Thiệu Trị (không bậc thang); ghi chú nêu Thiên Mụ, Tự Đức có nhiều bậc thang | bậc 1: hết điểm thay cùng cụm thì vẫn xếp và ghi chú |
-| 2 ngày | đúng hai ngày đầu của lịch ví dụ | bộ xếp đi lần lượt từng ngày theo cùng một thứ tự xét, nên bớt ngày cuối không làm đổi các ngày trước |
-| không chọn sở thích, kiểu đi | chiều ngày 1 là Đầm Chuồn; hai dòng ghi chú nói lịch đã giả định gì | bậc 6, luật mặc định |
 
 ## Quyết định và lý do
 
@@ -88,28 +75,28 @@ Mỗi điểm trong bảng chỉ mang nhãn "ngắn" hoặc "nửa buổi", khô
 - **Cách khác:** luật "đi dày" của bản đầu (chỉ ghép thêm khi điểm đầu là điểm ngắn): đã đo trên cùng bảng, khác "thong thả" ở 3 / 120 cặp, tức bấm gần như không đổi gì ⇒ bỏ. Số phút riêng cho từng điểm: chưa thử.
 - **Cái giá:** một điểm thật sự cần 2 giờ vẫn được tính 150 phút. Thời lượng của 31 trên 41 điểm dựa vào web (bài 27); nhãn sai thì giờ gợi ý sai theo.
 
-### 2. Vì sao buổi sáng bắt đầu 8:00, buổi chiều 13:30, và điểm thêm buổi sáng phải xong trước buổi chiều 60 phút?
-
-- **Đã chọn:** sáng 8:00, chiều 13:30 (khám phá nhiều: 7:30 và 13:00). Điểm thêm của buổi sáng phải xong trước giờ đầu buổi chiều ít nhất 60 phút.
-- **Vì sao:** giờ chiều chọn để điểm cuối xong trước giờ đóng 30 phút, vì kho không ghi giờ ngừng bán vé: buổi chiều xong muộn nhất 17:00, trước giờ đóng 17:30 của Quần thể di tích. Mốc 60 phút có từ 17/11: nhóm tự thử gặp lịch xong Kinh thành 12:45 mà 13:00 đã ở phá Tam Giang; đếm trên 960 cách điền biểu mẫu, có 26 ngày như vậy.
-- **Cách khác:** không chừa giờ ăn trưa (bản trước 17/11): đã đo, bỏ.
-- **Cái giá:** phút đi chỉ ước theo cụm (15 hoặc 30 phút) và chỉ in giữa hai điểm cùng buổi; giữa sáng và chiều lịch chỉ chừa ít nhất 60 phút cho ăn trưa và đi lại, không tính đường thật. Lịch không dời theo giờ tới, giờ về.
-
-### 3. Vì sao gom điểm theo cụm, và phút đi ước theo cụm mà không tra bảng khoảng cách?
+### 2. Vì sao gom điểm theo cụm, và phút đi ước theo cụm mà không tra bảng khoảng cách?
 
 - **Đã chọn:** 8 cụm; một ngày nhiều nhất 2 cụm kề nhau; điểm thêm phải cùng cụm hoặc cụm kề với điểm ngay trước; đi trong cụm 15 phút, sang cụm kề 30 phút.
 - **Vì sao:** luật "một ngày nhiều nhất 2 cụm" có từ thiết kế gốc của lịch; danh sách cụm kề ghi trước theo vị trí kho ghi, nghĩa là "cùng hướng", không phải đường đi. Lý do của số 2 và của 15, 30 phút: chưa thấy ghi lý do. Điều thấy được: bảng khoảng cách có từ 16/11, sau khi bộ xếp đã chạy (14/11); kế hoạch làm bảng ghi rõ "công cụ này KHÔNG đổi lịch", không nêu vì sao.
-- **Cách khác:** dùng số phút thật từ bảng khoảng cách: chưa thử (kế hoạch 16/11 chủ ý để ngoài phạm vi). Bản sửa hẹp cho ca "quay lại": đã đo, ca dễ thấy về 0 nhưng làm đổi một ca mưa và một chuỗi đo sửa lịch ⇒ nhóm chốt giữ giới hạn (20/11).
+- **Cách khác:** dùng số phút thật từ bảng khoảng cách cho mọi lịch: chưa thử (kế hoạch 16/11 chủ ý để ngoài phạm vi); từ 17:24 23/11 chỉ ngày người dùng tự xin thêm một điểm ở khu không liền kề mới dùng số của bảng này (bài 31). Bản sửa hẹp cho ca "quay lại": đã đo, ca dễ thấy về 0 nhưng làm đổi một ca mưa và một chuỗi đo sửa lịch ⇒ nhóm chốt giữ giới hạn (20/11).
 - **Cái giá:** ca "quay lại cùng khu" còn nguyên: 104 trên 960 cách điền biểu mẫu có ít nhất một ngày như vậy (đếm cả buổi tối); ca Đại Nội → Thiên Mụ → Ngọ Môn là 8 trên 960, đúng lịch ví dụ.
 
-### 4. Vì sao có trẻ em hay người lớn tuổi thì lịch bị giới hạn chặt như vậy?
+### 3. Vì sao có trẻ em hay người lớn tuổi thì lịch bị giới hạn chặt như vậy?
 
-- **Đã chọn:** mỗi buổi một điểm, không buổi tối, giờ như "nhẹ nhàng" dù người dùng chọn kiểu đi khác; điểm nhiều bậc thang được thay bằng điểm cùng cụm khi có. Luật này đứng bậc 1, thắng cả điểm ưu tiên. Từ 13:47 23/11 đầu thẻ lịch (dòng "Mình hiểu…", ô "Thời gian") cũng ghi "nhẹ nhàng" cho nhóm này và bỏ câu ghi chú "Chưa chọn kiểu đi…"; chỉ đổi chữ, cách xếp giữ nguyên; tóm tắt biểu mẫu và phần đưa cho model vẫn theo kiểu đi đã lưu ("Chi tiết để tra").
-- **Vì sao:** lúc làm lịch bản đầu, nhóm đọc một hệ thống lập lịch khác và thấy nó xếp 5–6 điểm một ngày khi có người lớn tuổi, xếp cả điểm sau giờ đóng cửa. Luật an toàn được đặt lên đầu để tránh đúng hai lỗi đó.
-- **Cách khác:** cho nhóm này một hoạt động tối nhẹ khi bảng đánh dấu "hợp gia đình": thiết kế có nêu, chưa làm.
-- **Cái giá:** gia đình khoẻ mạnh muốn đi nhiều vẫn bị giữ ở mức nhẹ. Từ 15/11 buổi để trống không hiện thành một mục; lý do nằm ở một dòng ghi chú (chủ dự án yêu cầu).
+- **Đã chọn:** mỗi buổi một điểm, giờ như "nhẹ nhàng" dù người dùng chọn kiểu đi khác; điểm nhiều bậc thang được thay bằng điểm cùng cụm khi có. Luật này đứng bậc 1, thắng cả điểm ưu tiên. Buổi tối: tới 17:29 23/11 để trống; từ 17:29 mỗi tối một hoạt động trong 6 mục nhẹ của bảng, không lặp, giờ in là 75 phút ghé, kèm một dòng khuyên về sớm; ngày đi xa thì tối nghỉ. Đoàn chọn "cân bằng" hay "khám phá nhiều" thì từ 17:15 23/11 ghi chú mở bằng "Bạn chọn đi cân bằng, nhưng đoàn có trẻ em hoặc người lớn tuổi nên lịch này được xếp ở mức nhẹ nhàng.".
+- **Vì sao:** lúc làm lịch bản đầu, nhóm đọc một hệ thống lập lịch khác và thấy nó xếp 5–6 điểm một ngày khi có người lớn tuổi, xếp cả điểm sau giờ đóng cửa; luật an toàn đặt lên đầu để tránh đúng hai lỗi đó. Buổi tối: chủ dự án tự nêu trưa 23/11 ("tôi thấy các bạn đang bỏ trống buổi tối thì phải… vì vấn đề có trẻ em hay gì đó") và chọn "Mở" lúc 15:42 (giờ ghi). Ba mục bị loại khỏi danh sách nhẹ (phố Tây, The TIME, phố Hai Bà Trưng) là nhận định của nhóm ("Chi tiết để tra").
+- **Cách khác:** giữ tối trống: chủ dự án không chọn. Đếm trên 720 cách điền biểu mẫu của nhóm này: 2.160 tối trống ⇒ 1.890 tối có hoạt động; 270 tối còn lại là ngày đi xa.
+- **Cái giá:** lịch xếp ban đầu giữ gia đình khoẻ mạnh ở mức nhẹ. Danh sách nhẹ là nhận định của nhóm; 99 / 720 cách điền có hai tối cà phê liền nhau (mỗi tối một quán).
 
-Ba quyết định nhỏ hơn (ngày mưa, cụm xa, buổi sáng chọn điểm còn "bạn chiều") nằm ở nửa để tra.
+### 4. Vì sao buổi tối bỏ Chợ Đông Ba và thêm bốn quán cà phê?
+
+- **Đã chọn:** từ 16:38 23/11 (bảng điểm mới, không có công tắc riêng), Chợ Đông Ba chỉ còn được xếp ban ngày; thêm 4 quán cà phê chỉ dùng buổi tối, kèm một thứ tự chọn buổi tối riêng ("Chi tiết để tra"); mục hợp sở thích vẫn đứng trước.
+- **Vì sao:** lúc 15:42 (giờ ghi) chủ dự án góp ý "tối thì chợ đông ba đóng cửa, nên đi công viên hoặc các nơi như aeon mall huế" và "có thể đi các phố đi bộ vào buổi đêm nhé, hoặc ngồi các quán cà phê vào buổi đêm". Phiên điều phối hiểu lần đầu là đổi tên thẻ tối thành "Phố ẩm thực đêm trước chợ Đông Ba"; 15:53 chủ dự án sửa: "ý tôi là buổi tối chợ đông ba không mở cửa, nên thay bằng đi uống cà phê ở quán nào đó hay là đi phố ấm thực, hoặc chợ đêm hoặc phố đi bộ, phố tây". Quán có bài riêng trong kho, mở tới ít nhất 22:00.
+- **Cách khác:** đổi tên thẻ, giữ chợ: chủ dự án bác. Công viên, AEON Mall Huế: kho chưa có bài lúc mốc (vào kho 18:03, chưa vào lịch — kể ở đợt sau). Phố ẩm thực, chợ đêm: kho không có bài riêng.
+- **Cái giá:** trên 960 cách điền biểu mẫu: đoàn thường có tối ở chợ 141 ⇒ 0 / 240, lịch lặp hoạt động tối 18 ⇒ 0 / 240, ban ngày 0 / 960 đổi; nhưng 6 / 240 có hai tối cà phê liền nhau; giờ in của quán và cầu là giờ ghé nhóm ước, không phải của kho.
+
+Ba quyết định nhỏ hơn (ngày mưa, cụm xa, buổi sáng chọn điểm còn "bạn chiều") và quyết định về giờ bắt đầu buổi (8:00, 13:30, 60 phút trưa) nằm ở nửa để tra.
 
 ## Nếu… thì sao
 
@@ -124,7 +111,7 @@ Bộ xếp không gọi gì bên ngoài nên không có thứ "hỏng"; bảng d
 
 ## Dễ nhầm
 
-- **"Lịch đã tính đường đi thật giữa các điểm."** Không. Phút đi là 15 hay 30 theo cụm; bảng khoảng cách chỉ dùng ở ô hỏi đáp.
+- **"Lịch đã tính đường đi thật giữa các điểm."** Không. Phút đi là 15 hay 30 theo cụm; bảng khoảng cách dùng ở ô hỏi đáp, và từ 17:24 23/11 cho chặng sang khu không liền kề của ngày người dùng tự xin thêm điểm (bài 31).
 
 ## Câu hỏi tự kiểm
 
@@ -158,16 +145,18 @@ Bộ xếp chọn điểm đầu của sáng và chiều trước, rồi thêm �
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
 | thời lượng | ngắn 75 phút · nửa buổi 150 phút | quyết định 1 | chưa thử số phút riêng từng điểm |
-| phút đi trong một buổi | cùng cụm 15 · cụm kề 30 · cụm khác không ghép | quyết định 3 | chưa thử số từ bảng khoảng cách |
+| phút đi trong một buổi | cùng cụm 15 · cụm kề 30 · cụm khác không ghép (trừ ngày người dùng tự xin thêm điểm ở khu không liền kề, từ 17:24 23/11: số phút của bảng khoảng cách, bài 31) | quyết định 2 | chưa thử số từ bảng khoảng cách cho mọi lịch |
 | quỹ một buổi | nhẹ nhàng 1 điểm · cân bằng 210 · khám phá nhiều 240 | quyết định 1 | luật "đi dày" cũ: bỏ (3 / 120) |
-| số điểm tối đa | 2 một buổi, 4 một ngày; ngày người dùng tự xin thêm sau khi xếp: đoàn thường, 3 một buổi, không tính quỹ (từ 15:38 23/11, bài 31) | ba điểm ngắn đã vượt quỹ 240 | — |
-| giờ bắt đầu | sáng 8:00, chiều 13:30; khám phá nhiều 7:30, 13:00; nhóm hạn chế như nhẹ nhàng | quyết định 2 | bản nháp thiết kế: sáng 8:00 – 11:00, chiều 14:00 – 17:00 |
-| chừa giờ ăn trưa | 60 phút | quyết định 2 | không chừa: 26 ngày sát giờ trên 960 cách điền |
+| số điểm tối đa | 2 một buổi, 4 một ngày; ngày người dùng tự xin thêm sau khi xếp: đoàn thường, 3 một buổi, không tính quỹ (từ 15:38 23/11); đoàn có trẻ nhỏ / người lớn tuổi, 3 một ngày, 2 một buổi, sáng kết ≤ 13:00, chiều ≤ 17:00 (từ 18:00 23/11, kể ở đợt sau) | ba điểm ngắn đã vượt quỹ 240 | — |
+| giờ bắt đầu | sáng 8:00, chiều 13:30; khám phá nhiều 7:30, 13:00; nhóm hạn chế như nhẹ nhàng | quyết định nhỏ hơn | bản nháp thiết kế: sáng 8:00 – 11:00, chiều 14:00 – 17:00 |
+| chừa giờ ăn trưa | 60 phút | quyết định nhỏ hơn | không chừa: 26 ngày sát giờ trên 960 cách điền |
 | số ngày tối đa | 5 | chủ dự án chốt | — |
-| cụm | 8 cụm; 8 cặp kề: Kinh thành – bờ nam, Kinh thành – Kim Long, Kinh thành – đầm phá biển, bờ nam – An Cựu, An Cựu – Thủy Xuân, Thủy Xuân – Kim Long, Thủy Xuân – lăng xa, Kim Long – lăng xa | quyết định 3; "phía nam xa" không kề cụm nào | — |
+| cụm | 8 cụm; 8 cặp kề: Kinh thành – bờ nam, Kinh thành – Kim Long, Kinh thành – đầm phá biển, bờ nam – An Cựu, An Cựu – Thủy Xuân, Thủy Xuân – Kim Long, Thủy Xuân – lăng xa, Kim Long – lăng xa | quyết định 2; "phía nam xa" không kề cụm nào | — |
 | cụm phía nam xa | chỉ khi lịch từ 3 ngày, không ở ngày 1; ngày đó tối nghỉ | quyết định nhỏ hơn | đã mô phỏng có / không luật ngày 1 |
-| ngày mưa | khả năng mưa ≥ 60 % và lượng mưa ≥ 6 mm | quyết định 5 | chỉ 60 %: bỏ |
-| hoạt động buổi tối | chỉ cụm Kinh thành và bờ nam; một hoạt động một tối; không lặp tới khi hết; hợp sở thích trước | khách đã về khu trung tâm | — |
+| ngày mưa | khả năng mưa ≥ 60 % và lượng mưa ≥ 6 mm | quyết định nhỏ hơn | chỉ 60 %: bỏ |
+| hoạt động buổi tối | chỉ cụm Kinh thành và bờ nam; một hoạt động một tối; không lặp tới khi hết; hợp sở thích trước, rồi thứ tự chọn buổi tối của bảng (từ 16:38 23/11) | khách đã về khu trung tâm | trước 16:38: thứ tự dòng của bảng, có Chợ Đông Ba |
+| `lich_trinh_bang_v2` | bảng điểm bản 14: 41 điểm + 4 quán cà phê chỉ dùng buổi tối (45 dòng), thứ tự chọn buổi tối, danh sách 6 mục tối nhẹ (từ 17:14 23/11; bản 13 từ 16:38: cùng các mục tối, khác giờ ghé, thứ tự Ca Huế / phố Tây và chữ ghi chú phố Tây; bản 12 từ 14:56) | quyết định 4; thiếu file hay cột ⇒ máy chủ không bật | lùi buổi tối có chợ: trỏ lại bảng điểm bản 12, bảng toạ độ bản 9 và bảng ảnh bản 7 (bảng ảnh mới có ảnh ba quán; nạp với bảng điểm cũ thì máy chủ không bật) |
+| `toi_nhe` | đang mở (từ 17:29 23/11) | đoàn có trẻ nhỏ / người lớn tuổi: một hoạt động tối nhẹ mỗi tối, 75 phút ghé; quyết định 3 | tắt (tới 17:29): mọi tối của đoàn này để trống |
 | ngưỡng hiện một loại sở thích | ≥ 4 điểm | bài 27 | — |
 
 ## Đã so
@@ -183,13 +172,19 @@ Bộ xếp chọn điểm đầu của sáng và chiều trước, rồi thêm �
 | ngày mưa, không chọn sở thích: bỏ luật "chiều một điểm thiên nhiên" (17/11) | 100 / 3.880 lịch đổi, đều đúng loại cần đổi; ngày có điểm biển – đầm phá 109 ⇒ 0 / 300; ngày toàn ngoài trời 253 ⇒ 181 / 300 | giữ |
 | mốc mưa 6 mm (15/11, một năm dự báo so với mưa đo lại) | coi nhầm là mưa 106 ⇒ 15 ngày; chuyến 2–5 ngày có ít nhất một ngày xếp kiểu mưa 80 % ⇒ 50 % | giữ |
 | thêm 7 điểm (15/11, 3.840 tổ hợp, đếm điểm ngoài sở thích ở lịch một sở thích) | chụp ảnh 51,7 % ⇒ 36,8 %; ẩm thực 56,4 % ⇒ 44,0 %; thiên nhiên 24,4 % ⇒ 17,6 %; lễ hội 39,0 % ⇒ 39,1 %; 0 lỗi khung | giữ |
+| buổi tối bỏ Chợ Đông Ba, thêm 4 quán cà phê (23/11; 960 cách điền biểu mẫu = 5 số ngày × 3 kiểu đi × 16 tập sở thích × có / không trẻ em × có / không người lớn tuổi; bảng bản 12 ⇒ bản 14) | ban ngày đổi 0 / 960; đoàn thường (240 cách điền, 720 tối): có tối ở chợ 141 ⇒ 0, lặp hoạt động tối 18 ⇒ 0, có hoạt động 652 ⇒ 652, hai tối cà phê liền nhau 0 ⇒ 6; lịch mặc định 2 ngày: tối 1 chợ Đông Ba ⇒ phố đi bộ Nguyễn Đình Chiểu, tối 2 phố đi bộ ⇒ Bến Trăng | giữ (chủ dự án chọn) |
+| tối nhẹ cho đoàn có trẻ nhỏ / người lớn tuổi (23/11; 720 cách điền, 2.160 tối) | tắt: 0 tối có hoạt động; mở trên bảng bản 12 (còn chợ): 1.710; mở trên bảng bản 14: 1.890 (phố đi bộ Nguyễn Đình Chiểu 630, quán cà phê 666, Ca Huế 333, cầu Trường Tiền 261), 270 tối nghỉ vì ngày đi xa, 0 lặp, 99 có hai tối cà phê liền nhau; ban ngày giống bản tắt | mở 17:29 |
 | sửa hẹp ca "quay lại cùng khu" (17/11) | ca hẹp: 8 trên 960 cách điền và 24 trên 3.840 khung ⇒ 0 và 0; ca rộng (đếm theo ngày, chỉ buổi sáng và chiều — cách đếm khác số 104 ở "Giới hạn"): 65 ngày trong 960 cách điền và 258 trong 3.840 khung ⇒ 20 và 76; điểm ban ngày giảm khoảng 0,4 %; đổi một ca mưa và một chuỗi sửa lịch | không gộp; giữ giới hạn |
 
 **Đọc bảng thế nào:** mọi phép trên chỉ đếm khung lịch do chương trình xếp, không chạy model; chúng kiểm được luật, không kiểm được lịch có hay không. Ba lỗi người review và người chấm mù tìm ra (bài 29) là thứ mô phỏng không bắt.
 
+**Hai hàng buổi tối (23/11):** người viết code đếm bằng hàm thật của bộ xếp (0 lời gọi model); người kiểm độc lập của phiên D chạy lại cùng script trên bảng bản 14, ra giống hệt (chưa ai viết script đếm riêng). Trên trình duyệt: ba lượt "dùng như người thật" chiều 23/11 (agent con, chưa có người thứ hai kiểm; cả ba: máy chủ tạm, công tắc bật tại chỗ, không ghi mã cây). Lượt một (16:50) lộ ba lỗi mà test không thấy, trong đó thẻ cầu Trường Tiền buổi tối chỉ in "Tối", không giờ (thẻ và file .txt); lượt hai (17:19–17:25) thấy "Tối · 19:00 – 20:15" ở thẻ cầu của đoàn có trẻ nhỏ và người lớn tuổi, Bến Trăng đoàn thường "Tối · 19:00 – 20:30" kèm "mở tới 23:00". Lượt thứ ba (17:44–17:55, công tắc mở tại chỗ) thấy tối nhẹ của lịch mặc định + 1 trẻ em (phố đi bộ 18:30–19:45, Bến Trăng 19:00–20:15) và, qua lệnh gọi tên hoạt động tối, thẻ HANOK (có ảnh) và MoKa (ô ảnh trống). Chưa thấy trên trình duyệt: phố Hai Bà Trưng được xếp thật, cầu Trường Tiền ở đoàn thường.
+
 **Giới hạn của phép đo:** "960" là số cách điền biểu mẫu, không phải số người dùng; một ca 8 / 960 có thể là ca nhiều người bấm nhất (lịch mặc định "cân bằng + di tích").
 
 ## Quyết định nhỏ hơn
+
+**Vì sao buổi sáng bắt đầu 8:00, buổi chiều 13:30, và điểm thêm buổi sáng phải xong trước buổi chiều 60 phút?** (chuyển từ "Quyết định và lý do" tối 23/11, không đổi nội dung) Đã chọn: sáng 8:00, chiều 13:30 (khám phá nhiều: 7:30 và 13:00). Điểm thêm của buổi sáng phải xong trước giờ đầu buổi chiều ít nhất 60 phút. Vì sao: giờ chiều chọn để điểm cuối xong trước giờ đóng 30 phút, vì kho không ghi giờ ngừng bán vé: buổi chiều xong muộn nhất 17:00, trước giờ đóng 17:30 của Quần thể di tích. Mốc 60 phút có từ 17/11: nhóm tự thử gặp lịch xong Kinh thành 12:45 mà 13:00 đã ở phá Tam Giang; đếm trên 960 cách điền biểu mẫu, có 26 ngày như vậy. Cách khác: không chừa giờ ăn trưa (bản trước 17/11): đã đo, bỏ. Cái giá: phút đi chỉ ước theo cụm (15 hoặc 30 phút) và chỉ in giữa hai điểm cùng buổi; giữa sáng và chiều lịch chỉ chừa ít nhất 60 phút cho ăn trưa và đi lại, không tính đường thật. Lịch không dời theo giờ tới, giờ về.
 
 **Vì sao ngày mưa chỉ đổi điểm khi dự báo có từ 6 mm mưa?** Dự báo khả năng mưa từ 60 % thì lịch có một dòng "Nếu mưa…"; đổi thứ tự sang điểm trong nhà thì cần thêm lượng mưa dự báo từ 6 mm. Chủ dự án chốt ngày 15/11: 6 mm là đầu cấp "Mưa" theo quy chuẩn khí tượng Việt Nam. Con số "khả năng mưa" của dịch vụ dự báo là giờ cao nhất trong ngày, nên một giờ có thể lấm tấm là đủ 60 %: một năm có 222 / 365 ngày như vậy. Cách khác (chỉ mốc 60 %) đã đo, bỏ: bảng ở mục "Đã so". Cái giá: chỉ 12 / 41 điểm trong nhà hoặc có phần trong nhà, và điểm ưu tiên vẫn giữ chỗ dù mưa, nên ngày mưa to vẫn có thể toàn điểm ngoài trời; lúc đó chỉ còn dòng "Nếu mưa".
 
@@ -207,7 +202,11 @@ Bộ xếp chọn điểm đầu của sáng và chiều trước, rồi thêm �
 - Ngày mưa to vẫn có thể toàn điểm ngoài trời (181 / 300 ngày mưa không chọn sở thích ở phép đếm 17/11).
 - Lịch mặc định 1 ngày có một điểm đầm phá buổi chiều, giờ 13:30 – 16:00 trong khi bảng ghi đẹp nhất lúc hoàng hôn; chủ dự án chọn giữ ngày 17/11.
 - Điểm lấp ngoài sở thích không có nhãn trên thẻ lịch.
-- Nguồn "Lịch bạn đang có" đưa cho model ở câu hỏi tiếp (bài 27), và câu lịch sử của lượt biểu mẫu, ghi kiểu đi ĐÃ LƯU, không ghi mức xếp thật: nhóm hạn chế để trống kiểu đi thì nguồn ghi "đi cân bằng" (câu lịch sử không nhắc kiểu đi), chọn mức nào thì cả hai ghi mức đó (đọc từ chương trình, chưa thử thật; chưa biết model có nhắc lại không). Nhóm hạn chế chọn một mức khác "nhẹ nhàng" thì bản sao chép và file chữ có hai dòng nói khác nhau: dòng đầu (tóm tắt biểu mẫu) ghi mức đã chọn, dòng "Mình hiểu" ngay dưới ghi "đi nhẹ nhàng". File .txt: thấy ở ca chọn "Cân bằng" (dòng đầu "… · 1 trẻ em · cân bằng", dòng "Mình hiểu: … đi nhẹ nhàng."), tải một lần trên trình duyệt chiều 23/11, do một agent con chạy, chưa có người thứ hai kiểm; bản sao chép và ca "khám phá nhiều": đọc từ chương trình, chưa thử.
+- Buổi tối (từ 16:38 23/11): giờ ghé của bốn quán và của cầu Trường Tiền là giờ nhóm ước (kho không ghi giờ bật đèn cầu); giờ tối của hai phố đi bộ và phố Tây không có dòng căn cứ giờ riêng như quán và cầu (phố Tây trỏ về bài kho; phố đi bộ Nguyễn Đình Chiểu có ghi chú "sôi động chiều tối từ ~16:00"). Có lịch hai tối cà phê liền nhau (6 / 240 cách điền đoàn thường; 99 / 720 đoàn có trẻ nhỏ / người lớn tuổi). Phố ẩm thực, chợ đêm chủ dự án nêu: kho chưa có bài, chưa có trong lịch. Ba quán có ảnh thẻ, MoKa không (ảnh của bài kho không nhận ra quán).
+- Danh sách 6 mục tối nhẹ và ba mục bị loại là nhận định của nhóm, đổi bằng cách sửa bảng; ngày đi xa của đoàn này vẫn tối nghỉ. Thẻ cầu Trường Tiền buổi tối dùng ảnh cầu ban ngày (lượt trình duyệt 17:19).
+- Ở mốc 17:35 còn chờ chủ dự án: một bài báo công khai 14/03/2026 viết hai phố đi bộ "dừng hoạt động hoặc cầm chừng", trong khi kho tả cả hai như đang hoạt động và lịch mặc định xếp phố đi bộ Nguyễn Đình Chiểu ở tối 1. Sau mốc (18:07, giờ ghi) chủ dự án trả lời: "phố đi bộ Nguyễn Đình Chiểu, Hai Bà Trưng tại Huế vẫn đang hoạt động bình thường vào buổi tối nhé"; lịch và kho giữ nguyên.
+- Tới 18:17 23/11: đoàn có trẻ nhỏ / người lớn tuổi để trống ô kiểu đi, sau một lệnh sửa lịch có xếp lại, ghi chú vẫn mở bằng "Bạn chọn đi cân bằng, nhưng…" dù người dùng chưa chọn (lượt trình duyệt 17:44 thấy sau "thêm Hổ Quyền"); từ 18:17 đã sửa — kể ở đợt sau. Dòng "Bạn chọn đi …" mở khối ghi chú chỉ khi không có dòng nhắc mùa mưa (dòng đó luôn đứng đầu).
+- Nguồn "Lịch bạn đang có" đưa cho model ở câu hỏi tiếp (bài 27), và câu lịch sử của lượt biểu mẫu, ghi kiểu đi ĐÃ LƯU, không ghi mức xếp thật: nhóm hạn chế để trống kiểu đi thì nguồn ghi "đi cân bằng" (câu lịch sử không nhắc kiểu đi), chọn mức nào thì cả hai ghi mức đó (đọc từ chương trình, chưa thử thật; chưa biết model có nhắc lại không). Nhóm hạn chế chọn một mức khác "nhẹ nhàng" thì bản sao chép và file chữ vẫn có hai dòng nói khác nhau: dòng đầu (tóm tắt biểu mẫu, là lựa chọn của người dùng) ghi mức đã chọn, dòng "Mình hiểu" ngay dưới ghi "đi nhẹ nhàng" (thấy ở file .txt ca "Cân bằng", tải một lần trên trình duyệt chiều 23/11, agent con, chưa có người thứ hai kiểm). Tới 17:15 23/11 không dòng nào giải thích chỗ khác đó; từ 17:15 khối "Ghi chú của lịch" mở bằng "Bạn chọn đi cân bằng, nhưng đoàn có trẻ em hoặc người lớn tuổi nên lịch này được xếp ở mức nhẹ nhàng." ("khám phá nhiều" thì chữ "cân bằng" thành "khám phá nhiều"). Dòng ghi chú này thấy trên trình duyệt một lần (ca "Cân bằng", 17:19–17:25, agent con, chưa có người thứ hai kiểm); khối ghi chú có trong file .txt, nhưng file .txt sau bản sửa chưa ai tải lại; hai dòng đầu ghi chú nói cùng một ý hai lần (lượt đó ghi nhận, chưa sửa).
 
 ## Chi tiết để tra
 
@@ -215,15 +214,21 @@ Bộ xếp chọn điểm đầu của sáng và chiều trước, rồi thêm �
 - Thứ tự xét của lịch ví dụ: Đại Nội, chùa Thiên Mụ, lăng Tự Đức, lăng Khải Định (ưu tiên "di tích"), rồi các điểm di tích còn lại theo thứ tự bảng. Không chọn sở thích thì danh sách ưu tiên "chung" cũng là bốn điểm này.
 - Hai sở thích: thứ tự xét là xen kẽ A1, B1, A2, B2…; một điểm hợp cả hai chỉ xét một lần ở vị trí sớm nhất.
 - Giờ mở cửa: điểm mở muộn hơn giờ bắt đầu thì dời tới giờ mở; giờ kết thúc vượt giờ đóng thì không thêm điểm đó. Điểm kho không ghi giờ thì không ràng buộc.
-- Hoạt động tối "diễn mọi tối" được lặp lại khi hết lựa chọn mới, kèm nhãn "có thể đi lại". Điểm tối là buổi diễn (loại lễ hội – nghệ thuật) mà chưa có ngày đi thì có nhãn "kiểm lịch diễn trước khi đi".
-- Ghi chú do chương trình viết theo mã: chưa chọn kiểu đi, nhóm hạn chế, chưa chọn sở thích, điểm thay vì bậc thang, thiếu điểm ưu tiên, tạm dừng theo mùa, bậc thang, mùa mưa, giờ gợi ý. Model không viết câu nào trong phần ghi chú.
-- Chữ đầu thẻ của nhóm hạn chế (sửa 23/11, ở nhánh chính 13:47). Lịch của đoàn có trẻ em hay người lớn tuổi từ trước vẫn xếp nhẹ nhàng; bản sửa không chạm bộ xếp, chỉ đổi chữ ở những nơi lấy lại đầu thẻ. Hai ca: (T) để trống ô kiểu đi — mặc định của biểu mẫu; (C) chọn "cân bằng" hay "khám phá nhiều". Ví dụ (T), 2 người lớn, 1 trẻ em, 2 ngày, trước: "Mình hiểu: 2 ngày · 2 người lớn · 1 trẻ em · đi cân bằng", ô "Thời gian" "2 ngày · cân bằng", và hai câu ghi chú liền nhau nói ngược nhau ("Chưa chọn kiểu đi nên mình xếp mức cân bằng." rồi "Đi cùng trẻ em hoặc người lớn tuổi nên mình xếp nhẹ nhàng: mỗi buổi một điểm, không xếp buổi tối."). Từng nơi dòng chữ xuất hiện (đọc từ chương trình; trên trình duyệt: ảnh thẻ ca (T) trước / sau chụp bằng script, rồi một lượt chiều 23/11, do một agent con chạy, chưa có người thứ hai kiểm, thấy đúng cột "Nay" ở ba hàng đầu cho cả (T) lẫn (C) chọn "cân bằng", và ở hai hàng file .txt cho ca (C); các hàng khác chưa ai nhìn):
+- Giữa hai điểm cùng buổi, thẻ lịch hiện dòng "khoảng 30 phút đi": đó đúng là số phút bộ xếp vừa dùng để giãn giờ, nên giờ in ra và phút đi không lệch nhau (chuyển từ thân bài tối 23/11).
+- Giờ in của bốn quán cà phê (19:00 – 20:30) và của cầu Trường Tiền buổi tối (19:00 – 20:15) là giờ ghé do nhóm ước, không phải giờ của kho (chuyển từ thân bài tối 23/11).
+- Buổi tối của lịch ví dụ ở lượt thật 21/11 (bảng cũ): chợ Đông Ba, phố đi bộ Nguyễn Đình Chiểu, phố Tây.
+- Chín hoạt động tối của bảng (từ 16:38 23/11), đều ở bờ nam: phố đi bộ Nguyễn Đình Chiểu (18:30 – 22:00), phố Tây (18:00 – 22:00, dòng phụ "phố chỉ cấm xe, thành phố đi bộ vào tối thứ Sáu – Chủ nhật"), phố đi bộ Hai Bà Trưng (19:30 – 22:30, chỉ khi có ngày đi rơi vào thứ Sáu – Chủ nhật), Ca Huế trên sông Hương (suất 19:00 / 20:00 / 21:00, khoảng 1 giờ), cầu Trường Tiền (19:00 – 20:15, dòng phụ "đi bộ ngắm cầu lên đèn"; tới 17:14 23/11 thẻ chỉ in "Tối"), và bốn quán cà phê 19:00 – 20:30: Bến Trăng (mở tới 23:00), The TIME (tới 22:30), HANOK (tới 22:00), MoKa (tới 22:00). Chợ Đông Ba (bảng cũ: 18:00 – 23:00, dòng "phố ẩm thực đêm trước cổng chợ; trong chợ đóng cửa khoảng 18:00") nay chỉ xếp ban ngày.
+- Thứ tự chọn buổi tối (khi không mục nào hợp sở thích, hoặc giữa các mục cùng hợp): phố đi bộ Nguyễn Đình Chiểu ⇒ Bến Trăng ⇒ Ca Huế ⇒ phố Tây ⇒ Hai Bà Trưng ⇒ The TIME ⇒ cầu Trường Tiền ⇒ HANOK ⇒ MoKa. Từ 17:14 23/11 Ca Huế đứng trước phố Tây (trước đó Ca Huế đứng sau phố Tây và Hai Bà Trưng), để lần "đổi" đầu không rơi vào khu phố quán bar. Các dòng quán nằm cuối bảng và có thứ tự chọn riêng, vì chen giữa bảng làm lệch lượt xen kẽ hai sở thích của bộ xếp ban ngày. Quán lấy trong 24 bài quán cà phê của kho: có bài riêng, mở tới ít nhất 22:00; một quán bị bỏ vì buổi tối là quán bar.
+- Tối nhẹ của đoàn có trẻ nhỏ / người lớn tuổi (từ 17:29 23/11): dòng phụ "hoạt động nhẹ gần trung tâm, nên về sớm — đoàn mệt thì bỏ qua"; 6 mục phố đi bộ Nguyễn Đình Chiểu, Bến Trăng, Ca Huế, HANOK, cầu Trường Tiền, MoKa, theo cùng thứ tự chọn. Loại (nhận định của nhóm): phố Tây (kho tả là khu giải trí về đêm sôi động), The TIME (tầng 5–6, kho không nói có thang máy), phố Hai Bà Trưng (19:30 mới mở). Giờ in: khung "giờ – giờ" thành 75 phút từ giờ đầu (phố đi bộ 18:30 – 19:45, quán và cầu 19:00 – 20:15); Ca Huế giữ suất đầu ("suất 19:00, khoảng 1 giờ"). Không lặp; hết mục thì "Tối nghỉ — các hoạt động tối nhẹ gần trung tâm đã có ở những tối khác." (lịch tới 5 ngày không chạm tới vì có 6 mục). Ngày đi xa: ghi chú "Tối nghỉ sau chuyến đi xa.". Tới 17:29 mọi tối của đoàn này để trống; mục để trống không hiện trên thẻ (từ 15/11, chủ dự án yêu cầu), lý do chỉ nằm ở câu ghi chú "… mỗi buổi một điểm, không xếp buổi tối.". Tắt tính năng tối nhẹ là về đúng luật cũ đó.
+- Hoạt động tối "diễn mọi tối" được lặp lại khi hết lựa chọn mới, kèm nhãn "có thể đi lại" (đoàn có trẻ nhỏ / người lớn tuổi: không lặp). Điểm tối là buổi diễn (loại lễ hội – nghệ thuật) mà chưa có ngày đi thì có nhãn "kiểm lịch diễn trước khi đi".
+- Ghi chú do chương trình viết theo mã: chưa chọn kiểu đi, nhóm hạn chế (từ 17:29 23/11 là câu có buổi tối nhẹ), nhóm hạn chế đã chọn kiểu đi nhanh hơn (từ 17:15), tối nghỉ theo ngày (đoàn hạn chế ngày đi xa hay hết mục nhẹ; tối người dùng đã bỏ), chưa chọn sở thích, điểm thay vì bậc thang, thiếu điểm ưu tiên, tạm dừng theo mùa, bậc thang, mùa mưa, giờ gợi ý. Model không viết câu nào trong phần ghi chú.
+- Chữ đầu thẻ của nhóm hạn chế (sửa 23/11, ở nhánh chính 13:47). Lịch của đoàn có trẻ em hay người lớn tuổi từ trước vẫn xếp nhẹ nhàng; bản sửa không chạm bộ xếp, chỉ đổi chữ ở những nơi lấy lại đầu thẻ. Hai ca: (T) để trống ô kiểu đi — mặc định của biểu mẫu; (C) chọn "cân bằng" hay "khám phá nhiều". Ví dụ (T), 2 người lớn, 1 trẻ em, 2 ngày, trước: "Mình hiểu: 2 ngày · 2 người lớn · 1 trẻ em · đi cân bằng", ô "Thời gian" "2 ngày · cân bằng", và hai câu ghi chú liền nhau nói ngược nhau ("Chưa chọn kiểu đi nên mình xếp mức cân bằng." rồi "Đi cùng trẻ em hoặc người lớn tuổi nên mình xếp nhẹ nhàng: mỗi buổi một điểm, không xếp buổi tối."; từ 17:29 câu sau thành "…: mỗi buổi một điểm; buổi tối chỉ một hoạt động nhẹ gần trung tâm, nên về sớm."). Từng nơi dòng chữ xuất hiện (đọc từ chương trình; trên trình duyệt: ảnh thẻ ca (T) trước / sau chụp bằng script, rồi một lượt chiều 23/11, do một agent con chạy, chưa có người thứ hai kiểm, thấy đúng cột "Nay" ở ba hàng đầu cho cả (T) lẫn (C) chọn "cân bằng", và ở hai hàng file .txt cho ca (C); các hàng khác chưa ai nhìn):
 
 | Nơi hiện | Trước bản sửa | Nay | Căn cứ |
 |---|---|---|---|
 | dòng "Mình hiểu…" trên thẻ (và trong chữ trả lời ở khung Trợ lý) | (T) "đi cân bằng" · (C) mức đã chọn | "đi nhẹ nhàng" ở cả hai ca | dòng dựng từ tham số đầu thẻ |
 | ô "Thời gian" ở đầu thẻ | (T) "… · cân bằng" · (C) mức đã chọn | "… · nhẹ nhàng" | đọc tham số đầu thẻ |
-| mục ghi chú của lịch | (T) câu "Chưa chọn kiểu đi…" + câu nhẹ nhàng · (C) chỉ câu nhẹ nhàng | chỉ câu nhẹ nhàng | danh sách giả định của bộ xếp |
+| mục ghi chú của lịch | (T) câu "Chưa chọn kiểu đi…" + câu nhẹ nhàng · (C) chỉ câu nhẹ nhàng | (T) chỉ câu nhẹ nhàng (lượt xếp từ biểu mẫu; sau lệnh sửa: "Giới hạn đã biết") · (C) từ 17:15 23/11 thêm dòng "Bạn chọn đi …, nhưng…" ở đầu | danh sách giả định của bộ xếp |
 | bản in | giấu dòng "Mình hiểu"; vẫn in ô "Thời gian" (ghi như thẻ) | ô "Thời gian" ghi "nhẹ nhàng" | khối in của trang |
 | dòng ĐẦU của bản sao chép / file .txt (tóm tắt biểu mẫu) | (T) không có kiểu đi · (C) mức đã chọn | không đổi | tóm tắt dựng từ lựa chọn trên biểu mẫu |
 | dòng "Mình hiểu" trong bản sao chép / file .txt | như thẻ | "đi nhẹ nhàng" (bỏ đuôi "sai thì bấm Sửa") | lấy chữ trả lời của lượt |
@@ -232,7 +237,16 @@ Bộ xếp chọn điểm đầu của sáng và chiều trước, rồi thêm �
 | nguồn "Lịch bạn đang có" đưa cho model | (T) "đi cân bằng" · (C) mức đã chọn | không đổi | tham số lịch đã lưu |
 
 Lịch đã lưu giữ lựa chọn của người dùng: lệnh sửa bỏ trẻ em khỏi đoàn thì kiểu đi cũ dùng lại. Tìm ra: một lượt trình duyệt do công cụ tự lái đầu chiều 23/11 thấy hai câu ghi chú liền nhau; một lượt khác lúc 13:30 thấy lại "đi cân bằng" ở đầu thẻ. Kiểm: một file test mới ba ca (nhóm hạn chế với kiểu đi trống / cân bằng / khám phá nhiều; đoàn thường như cũ), người viết code chạy, người viết bài không chạy; ảnh thẻ trước (13:08) và sau (13:45), ca (T), chụp bằng script trên máy chủ thật. Sau bản sửa, file .txt của ca (C) "cân bằng" đã được tải một lần trong lượt đó; file .txt ca (T), nút sao chép, PowerPoint và bản in chưa ai thử.
-- Các biến thể ở mục "Đổi một ô": người viết chạy bộ xếp trưa 22/11 trên bảng 41 điểm đang chạy; mọi lịch qua bước kiểm khung với 0 lỗi.
+- **Đổi một ô thì lịch đổi ra sao** (chuyển từ thân bài tối 23/11; hàng "có người lớn tuổi" cập nhật theo bảng điểm đang chạy). Người viết chạy lại bộ xếp, mỗi lần đổi đúng một ô so với lịch ví dụ (không gọi model).
+
+| Đổi gì | Lịch mới | Luật nào làm việc đó |
+|---|---|---|
+| kiểu đi "nhẹ nhàng" | 6 điểm ban ngày, mỗi buổi một điểm; ngày 3 thành Ngọ Môn và Bao Vinh | bậc 7: nhẹ nhàng đúng 1 điểm một buổi |
+| kiểu đi "khám phá nhiều" | 11 điểm ban ngày, bắt đầu 7:30 và 13:00; ngày 1 thêm Ngọ Môn buổi sáng và điện Hòn Chén buổi chiều | bậc 7: quỹ 240 vừa nửa buổi cộng một điểm ngắn |
+| có người lớn tuổi (hoặc trẻ em) | 6 điểm ban ngày; ngày 2 thành lăng Đồng Khánh và Thiệu Trị (không bậc thang); mỗi tối một hoạt động nhẹ, ví dụ phố đi bộ 18:30 – 19:45 (từ 17:29 23/11; trước đó không buổi tối); ghi chú mở bằng "Bạn chọn đi cân bằng, nhưng…" và nêu Thiên Mụ, Tự Đức có nhiều bậc thang | bậc 1: hết điểm thay cùng cụm thì vẫn xếp và ghi chú |
+| 2 ngày | đúng hai ngày đầu của lịch ví dụ | bộ xếp đi lần lượt từng ngày theo cùng một thứ tự xét, nên bớt ngày cuối không làm đổi các ngày trước |
+| không chọn sở thích, kiểu đi | chiều ngày 1 là Đầm Chuồn; hai dòng ghi chú nói lịch đã giả định gì | bậc 6, luật mặc định |
+- Các biến thể ở mục "Đổi một ô": người viết chạy bộ xếp trưa 22/11 trên bảng 41 điểm lúc đó, chạy lại 23/11 tối trên bảng đang chạy (45 dòng): ban ngày cả năm biến thể giống trưa 22/11; mọi lịch qua bước kiểm khung với 0 lỗi.
 
 **Bài sau (bài 29):** khi yêu cầu không xếp được thì sao, bước kiểm lịch kiểm những gì, và phần việc nhỏ của model được kiểm thế nào.
 
@@ -267,4 +281,16 @@ Lịch đã lưu giữ lựa chọn của người dùng: lệnh sửa bỏ tr�
 
 - Đợt cuối chiều 23/11/2026 (Việc 1 của lời giao đợt): câu "Ngoại lệ: ngày người dùng tự xin thêm điểm…" ở "Ý chính" và hàng "số điểm tối đa" — `backend/llm/lich_trinh_v2.py` `kiem_khung_v2` (`TOI_DA_BUOI + (1 if day else 0)`; `not day and … vuot_quy`; `day_them = set() if han_che`), `xep_v2` không đổi (`git show a02586fa -- backend/llm/lich_trinh_v2.py` chỉ thêm hằng số, `ngay_vuot_nhip`, `cau_ngay_day`, `gio_ngay_day`, nhánh `day_them` của `kiem_khung_v2` và một dòng của `dung_lich`); mốc 15:38: `git show --stat a02586fa` [code]. Chỉ hai file dùng dấu ngày dày: `git grep -n "day_them" origin/main -- backend/llm` chỉ ra `lich_trinh_v2.py` và `sua_lich_v2.py` [code]. Dòng Cập nhật trước: "Cập nhật 15:40, ngày 23/11/2026 · khớp hệ thống 15:29 23/11 (50 tính năng mở, 7 tắt, kho 267 bài) · nâng nhãn theo lượt trình duyệt chiều 23/11 · lịch ví dụ là lượt thật 21/11 (Claude Sonnet 5.5); biến thể "Đổi một ô" do người viết chạy bộ xếp, không gọi model · dòng cũ: Nguồn."
 - Áp biên bản kiểm độc lập (`data/hoc_cung_D/kiem/dot_2311_chieu2_k1_kiem.md` mục "Bài 28" dòng 1, 2 [riêng tư]): "chỉ đoàn không có trẻ nhỏ / người lớn tuổi" — `kiem_khung_v2` `day_them = set() if han_che`, `sua_lich_v2._xep` `[] if ts.han_che` [code]; ba trần và 60 phút: `GIO_KET_SANG_DAY`, `GIO_KET_CHIEU_DAY`, `NGHI_TRUA`, `day_qua_gio` [code]. Lịch ví dụ ở thân bài (lượt thật 21/11) có Chợ Đông Ba buổi tối — từ 16:38 23/11 bảng điểm mới không còn; chưa sửa ở đợt này (chờ phiếu buổi tối). Dòng Cập nhật trước: "Cập nhật 16:37, ngày 23/11/2026 · khớp hệ thống 16:23 23/11 (51 tính năng mở, 7 tắt, kho 267 bài) · một câu trỏ sang bài 31: ngày người dùng tự xin thêm điểm được vượt quỹ và trần 2 điểm một buổi · lịch ví dụ là lượt thật 21/11 (Claude Sonnet 5.5); biến thể "Đổi một ô" do người viết chạy bộ xếp, không gọi model · dòng cũ: Nguồn."
+- **Đợt tối 23/11/2026 (phiếu gom các việc vào nhánh chính 16:38–17:41).** Người viết đọc cây chính `2017e5e7` (17:41), không chạy test, không chạy server. Dòng Cập nhật trước: "Cập nhật 17:03, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài); chưa gồm các bản gộp từ 16:38 (chờ phiếu) · đã áp biên bản kiểm · lịch ví dụ là lượt thật 21/11 (Claude Sonnet 5.5); biến thể "Đổi một ô" do người viết chạy bộ xếp, không gọi model · dòng cũ: Nguồn." Đếm tính năng: `sed -n '/^assistant:/,$p' backend/config/settings.yaml | grep -cE '^  [a-z_0-9]+: true'` = 55, `false` = 8 (thêm `sua_lich_them_han_che` tắt, gộp `0300648e` 17:41) [tự đếm].
+  - Lịch ví dụ trên bảng đang chạy, năm biến thể, ca có người lớn tuổi khi tối nhẹ tắt / mở, lịch mặc định 2 ngày (+ 1 trẻ em): người viết chạy `xep_v2` + `kiem_khung_v2` (+ `gio_toi_nhe` cho giờ in của đoàn hạn chế) trên `data/phase_9/lich_trinh/diem_v14.json` (md5 `0cf12f59c2d4`, khớp chú thích `settings.yaml`), script `/tmp/d_v3_xl/chay.py`, `cd backend && PYTHONPATH=$PWD uv run --no-sync python …`, không mạng, không model; 0 lỗi khung mọi ca; ban ngày lịch ví dụ và năm biến thể trùng bản trưa 22/11 [riêng tư; người viết tự chạy hàm, không qua model]. Buổi tối lượt thật 21/11 (chợ Đông Ba, phố đi bộ Nguyễn Đình Chiểu, phố Tây): `bai_hoc/giao_trinh/27_TRANG_LEN_KE_HOACH.md` "Chi tiết để tra" và `data/hoc_cung_D/vi_du_lap_lich_vet.json` [chép; riêng tư].
+  - Bảng điểm bản 14: 45 dòng, 9 mục có `"toi"` trong `buoi`, `toi_nhe` 6 mục, `thu_tu_toi` 9 mục, `cho_dong_ba.buoi` = sáng, chiều; giờ tối và dòng phụ từng mục; `gio_toi_can_cu` của bốn quán và cầu Trường Tiền ("giờ GHÉ do C ước (v14)…", "kho KHÔNG ghi giờ bật đèn"), hai phố đi bộ và phố Tây không có `gio_toi_can_cu` [riêng tư; tự đọc bằng `python3`]. Mốc bảng: bản 13 vào nhánh chính `56a09365` 16:38 (`12815bec` 16:26, `cecd9762` 16:30 ảnh ba quán), bản 14 `5044f3e9` 17:09 gộp `d589ccc0` 17:14 (`git show --stat`) [code]. Chú thích dòng `lich_trinh_bang_v2` (bản 14 = bản 13 + bốn sửa: giờ cầu, giờ ghé quán, chữ phố Tây, Ca Huế trước phố Tây; lùi = `diem_v12.json` + `diem_toa_do_v9.json`) [code]. Lý do thứ tự riêng ("chen giữa bảng làm lệch lượt xen kẽ hai sở thích"): chú thích `BangV2.thu_tu_toi` trong `backend/llm/lich_trinh_v2.py` [code]; Ca Huế trước phố Tây "so the first 'swap' no longer lands on the bar street": lời commit `5044f3e9` [chép]; 24 bài quán cà phê: `session_prompt/HIEN_TRANG.md` mục 4 gạch 15:42 [chép sổ]; bỏ một quán bar (Trốn Studio): `session_prompt/VIEC_DANG_MO.md` gạch [16:43 23/11/2026] [chép sổ].
+  - Cơ chế buổi tối: `lich_trinh_v2._xep_toi` (`nhe = ts.han_che and bool(bang.toi_nhe)`, khoá sắp xếp hợp sở thích ⇒ `thu_tu_toi`, `lai = [] if nhe`, `het_nhe`), `CAU_TOI`, `GHI_CHU_TOI_NHE`, `gio_toi_nhe` (75 phút = `PHUT["ngan"]`, suất đầu), `dung_lich` (giờ in của đoàn hạn chế, dòng phụ nối, ghi chú `toi_xa` / `toi_het_nhe` / `toi_da_bo`), `CAU_GHI_CHU` (`han_che`, `han_che_toi`, `han_che_doi_kieu`), `xep_v2` khối `gia_dinh`; `nap_bang_v2` kiểm `toi_nhe` (chỉ mục tối diễn mọi tối ở hai cụm trung tâm); `backend/llm/assistant.py` dòng 386–387 (công tắc tắt ⇒ `toi_nhe=()`); mục nghỉ không in: `ghep_chu` chú thích "User 15/11" [code]. `toi_nhe: true` "MỞ 17:27" trong `settings.yaml`; commit bật `32a7aeb4` 17:29 [code; mốc bài dùng giờ commit trên nhánh chính].
+  - Ghi chú khi đoàn hạn chế chọn kiểu đi nhanh hơn: `git show 179e503e` (17:04), gộp `d1b0f52e` 17:15 — `gia_dinh` thêm `han_che_doi_kieu`, `CAU_GHI_CHU["han_che_doi_kieu"]`, `dung_lich` `.format(kieu=NHAN_KIEU_DI[...])`; test `backend/tests/test_len_ke_hoach_v2.py` (ca cuối); runbook 10.2 hàng 'Đoàn có trẻ nhỏ / người lớn tuổi TỰ CHỌN "Cân bằng"…' [code; chép runbook].
+  - Lời chủ dự án: `data/loi_user/2026-11-23.md` dòng 12:22 ("à có thể suy nghĩ đến vấn đề xếp lịch cho buổi tối nhé, tôi thấy các bạn đang bỏ trống buổi tối thì phải, …"), dòng 15:42 ô tick buổi tối nhẹ chọn "Mở (Recommended)" kèm "góp ý là tối thì chợ đông ba đóng cửa, nên đi công viên hoặc các nơi như aeon mall huế", dòng 15:53 (lời sửa, chép trọn trong bài) [riêng tư; chép]. Cách phiên điều phối hiểu lần đầu (đổi tên thẻ thành "Phố ẩm thực đêm trước chợ Đông Ba") và lời sửa: `session_prompt/HIEN_TRANG.md` mục 4 gạch 15:42 (2), đoạn "[cách phiên điều phối đọc LÚC ĐẦU — ĐÃ BỊ SỬA…]" [chép sổ]. Ba nhận định loại trừ của danh sách nhẹ: `guides/RUNBOOK_BAN_GIAO.md` mục 10.2 hàng "BUỔI TỐI của lịch từ bảng điểm bản 13" mục (f) [chép runbook].
+  - Số đếm 960 cách điền: `data/thu_bedrock_2026-11-21/harness/c_toi_bo_cho_2311/dem_v14_ra.txt` (17:08; script `dem_v13.py` chạy với tham số `diem_v14.json` — nhãn "v13" trong file là bảng mới truyền vào; lưới `LUOI` 5 × 3 × 16 × 2 × 2) — 0 / 960 ban ngày đổi, 141 ⇒ 0, 18 ⇒ 0, 652, 6, 1.710 (bản 12, mở) ⇒ 1.890, 270 xa, 99, các phân bố mục tối, lịch 2 ngày không sở thích [riêng tư; đã mở file kết quả, không chạy lại]; 0 khi tắt: `c_toi_nhe_2311/dem_bat_tat_ra.txt` [riêng tư; đã mở]. Người đếm: phiên viết code (C) [chép sổ `session_prompt/sessions/STATUS_C.md`].
+  - Lượt trình duyệt: `data/playwright_mcp/luot_2311_cum_toi/NHAT_KY.md` (16:50, cổng 8019; điều lạ 1 "Thẻ tối Cầu Trường Tiền không có giờ", bước I, J, file `J_lich_3ngay_lon_tuoi.txt`) và `luot_2311_cum_toi_2/NHAT_KY.md` (17:19–17:25, cổng 8022; cảnh C1, C7, C8; mục (3) điều lạ 4: hai dòng ghi chú lặp ý, ảnh cầu ban ngày; mục (2) điểm 2 "chưa thấy quán cà phê khác") [riêng tư; đã mở; agent con, không ghi mã cây, chưa có người thứ hai kiểm]. Lúc chốt (trong đợt viết 17:38–18:06 23/11) `ls -t data/playwright_mcp/` có một lượt trình duyệt đang chạy (các file chụp trang 17:47–17:48), chưa có thư mục nhật ký [đã chạy lệnh].
+  - Bảng khoảng cách cho chặng sang khu không liền kề (Dễ nhầm, quyết định 2, hàng "phút đi"): `lich_trinh_v2.PHUT_KHU`, `_phut_noi`, `_nghi_trua`, `TRAN_PHUT_KHU` 60; `sua_lich_them_khu: true` "MỞ 17:22", commit bật `e5755c5a` 17:24 [code]; kể đủ ở bài 31.
+  - Hai phố đi bộ "dừng hoạt động hoặc cầm chừng" (Báo Công Thương 14/03/2026), chờ chủ dự án: `session_prompt/HIEN_TRANG.md` mục 3 gạch [17:34 23/11/2026] (ii) [chép sổ; người viết không mở bài báo].
+  - Bước soát "lúc này" 18:04 23/11: `origin/main` tới `0ce3fe4f`; `2e503128` (18:00) mở `sua_lich_them_han_che` và `toi_goi_ten` (chú thích "MỞ 17:58") ⇒ đếm 57 mở, 6 tắt; Ý chính gạch 3 và hàng "số điểm tối đa" thêm mốc 18:00 cho đoàn có trẻ nhỏ / người lớn tuổi — trần `HAN_CHE_*` trong `lich_trinh_v2.py` và chú thích `settings.yaml` dòng `sua_lich_them_han_che` ("tới ba điểm một ngày, hai điểm một buổi, sáng kết ≤ 13:00, chiều kết ≤ 17:00") [code; kể đủ ở bài 31, đợt sau]. Lượt trình duyệt thứ ba: `data/playwright_mcp/luot_2311_cuoi/NHAT_KY.md` (17:44–17:55, cổng 8023; cảnh A1 tối nhẹ, C2 HANOK có ảnh, C3 MoKa "KHÔNG ảnh: ô vuông 96 × 96 màu xanh nhạt trơn") [riêng tư; đã mở các hàng cảnh; agent con, chưa có người thứ hai kiểm].
+- **Áp biên bản kiểm độc lập k1b (tối 23/11/2026; `data/hoc_cung_D/kiem/dot_2311_toi_k1b_kiem.md` mục "Bài 28" [riêng tư]).** Mốc bài 17:35 (55 mở, 7 tắt: `git show 7693f0b0:backend/config/settings.yaml`) [tự đếm]; câu mốc 18:00: `2e503128` [code]. Lời chủ dự án 15:42 trích đủ hai dòng: `data/loi_user/2026-11-23.md` dòng 23, 24 [riêng tư; chép]; công viên / AEON vào kho 18:03: `a8a8820f` [code]. Lùi phải kèm bảng ảnh: `lich_trinh_v2.nap_bang_anh` ("id phải có trong bảng điểm" ⇒ `ValueError`), bảng ảnh v8 có ba quán (chú thích `lich_trinh_bang_anh`) [code]. Bản 12 vào nhánh chính 14:56 (`62a8cbb8`), bản 13 16:38, bản 14 17:14: dò `lich_trinh_bang_v2` theo từng commit first-parent [tự chạy lệnh git]. Ghi chú "Bạn chọn đi cân bằng…" sau lệnh sửa ở ca để trống: biên bản (`sua_lich_v2._ts` ở `7693f0b0`) + `luot_2311_cuoi/NHAT_KY.md` điều lạ 1; sửa gộp `c68960cc` 18:17 (`git log --first-parent … -- backend/llm/sua_lich_v2.py`) [chép biên bản; code]; dòng mùa mưa đứng đầu: `dung_lich` (`ghi_chu = [mua_mua] if …` rồi mới `gia_dinh`) [code]. Chủ dự án về hai phố đi bộ: `data/loi_user/2026-11-23.md` dòng 18:07 (giờ ghi) [riêng tư; chép]. Phố đi bộ Nguyễn Đình Chiểu `buoi_can_cu`, phố Tây `gio_nguon`: biên bản #31 [chép biên bản]. Người kiểm chạy lại `dem_v13.py diem_v14.json` giống từng byte: biên bản #15, #28 [chép biên bản].
 </details>
