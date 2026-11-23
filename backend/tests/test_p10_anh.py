@@ -143,11 +143,15 @@ def test_t7_nap_danh_sach(tmp_path):
 
 
 def test_t7_danh_sach_that():
-    p = (BACKEND_DIR / "../data/phase_10/anh/danh_sach_ten.json").resolve()
-    if not p.exists():  # bản clone / worktree không có data/ (private)
-        pytest.skip("không có data/phase_10/anh/danh_sach_ten.json")
+    """Danh sách ĐANG CHẠY (đường dẫn ở `settings.yaml`) nạp được — id / khoá tên không trùng — và 42 tên chủ dự án duyệt 05/11 còn nguyên ở đầu."""
+    import yaml
+    duong = yaml.safe_load((BACKEND_DIR / "config" / "settings.yaml").read_text(encoding="utf-8"))["anh"]["danh_sach"]
+    p, goc = (BACKEND_DIR / duong).resolve(), (BACKEND_DIR / "../data/phase_10/anh/danh_sach_ten.json").resolve()
+    if not (p.exists() and goc.exists()):  # bản clone / worktree không có data/ (private)
+        pytest.skip("không có data/phase_10/anh/")
     ds = nap_danh_sach(p)
     assert len(ds) >= 40 and kieu_dau_ra(ds)
+    assert ds[:42] == nap_danh_sach(goc)
 
 
 # Mức route (không lifespan ⇒ không generator, không model): rào chạy trước khi đọc thân / gọi model
