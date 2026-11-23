@@ -59,7 +59,7 @@ máy chủ tải về rồi nạp (`docker load`): bớt một dịch vụ phả
 | `HUE_IMAGE` | `hue-rag-app:<sha>` | lệnh dựng in ra |
 | `HUE_KHOA_ENV` | đường dẫn file khoá thử | chỉ cho lượt thử ở máy; không đi theo gói |
 | Model viết của gói | `openai` | `dong_goi.sh` ghi sẵn vào `cau_hinh/settings.yaml` của gói — không sửa tay |
-| Hồ sơ AWS | `hue-deploy` (tên đặt ở guide 0) | chỉ dùng ở bước 6 |
+| Hồ sơ AWS | `hue-rag-deploy` (tên đặt ở guide 0) | chỉ dùng ở bước 6 |
 | Tên thùng | `terraform output -raw artifact_bucket_name` ở `1_nen_tang` | — |
 
 ## 6. Từng bước
@@ -125,26 +125,26 @@ grep -n '^  provider:' cau_hinh/settings.yaml    # mong: provider: openai
 **Bước 5 — đúng người, đúng vùng** (hồ sơ mặc định trên máy là người dùng của khoá học, cùng tài khoản — quên `--profile` là đẩy bằng nhầm người):
 
 ```bash
-aws sts get-caller-identity --profile hue-deploy     # NHÌN "Arn": người dùng IAM của việc deploy
+aws sts get-caller-identity --profile hue-rag-deploy     # NHÌN "Arn": phải kết bằng user/hue-rag-deploy
 THUNG=$(cd /home/minhhieu/hue_rag/deploy/terraform/1_nen_tang && terraform output -raw artifact_bucket_name); echo "$THUNG"
 ```
 
 **Bước 6 — đẩy gói lên thùng** (khoảng 1 GB; đây là lúc dữ liệu riêng rời máy):
 
 ```bash
-aws s3 cp ~/hue_goi_<sha>/ "s3://$THUNG/<sha>/" --recursive --profile hue-deploy --region ap-southeast-1
+aws s3 cp ~/hue_goi_<sha>/ "s3://$THUNG/<sha>/" --recursive --profile hue-rag-deploy --region ap-southeast-1
 ```
 
 ## 7. Kiểm
 
 ```bash
-aws s3 ls "s3://$THUNG/<sha>/" --recursive --human-readable --profile hue-deploy --region ap-southeast-1
+aws s3 ls "s3://$THUNG/<sha>/" --recursive --human-readable --profile hue-rag-deploy --region ap-southeast-1
 ```
 
 Mong TÁM dòng: sáu file ở gốc (`app_<sha>.tar.gz` gần 1 GB, `qdrant.snapshot`, `compose.yml`, `Caddyfile`, `nap_chi_muc.sh`, `SHA256SUMS`) và hai
 file trong `cau_hinh/` (`settings.yaml`, `logging.yaml`) — tức bảy file được băm + chính file băm. Băm sẽ được kiểm lại trên máy chủ ở guide 4, nên ở đây chỉ cần đủ file và cỡ hợp lý.
 
-Thùng không mở công khai: `aws s3api get-public-access-block --bucket "$THUNG" --profile hue-deploy --region ap-southeast-1` phải in bốn dòng `true`.
+Thùng không mở công khai: `aws s3api get-public-access-block --bucket "$THUNG" --profile hue-rag-deploy --region ap-southeast-1` phải in bốn dòng `true`.
 
 ## 8. Gỡ lỗi
 
@@ -168,7 +168,7 @@ Thùng không mở công khai: `aws s3api get-public-access-block --bucket "$THU
 ## 10. Dọn dẹp
 
 ```bash
-aws s3 rm "s3://$THUNG/<sha cũ>/" --recursive --profile hue-deploy --region ap-southeast-1    # xoá một gói cũ khỏi thùng
+aws s3 rm "s3://$THUNG/<sha cũ>/" --recursive --profile hue-rag-deploy --region ap-southeast-1    # xoá một gói cũ khỏi thùng
 rm -rf ~/hue_goi_<sha cũ>                                                                     # gói cũ ở máy mình
 docker image rm hue-rag-app:<sha cũ>                                                          # ảnh cũ ở máy mình
 ```

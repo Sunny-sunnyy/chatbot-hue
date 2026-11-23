@@ -91,8 +91,8 @@ Thứ tự là BẮT BUỘC: kiểm băm ⇒ nạp ảnh ⇒ `hue.env` ⇒ `hue.
 **Bước 1 — vào máy** (từ máy mình):
 
 ```bash
-export AWS_PROFILE=hue-deploy AWS_REGION=ap-southeast-1
-aws sts get-caller-identity                      # NHÌN "Arn": người dùng IAM của việc deploy
+export AWS_PROFILE=hue-rag-deploy AWS_REGION=ap-southeast-1
+aws sts get-caller-identity                      # NHÌN "Arn": phải kết bằng user/hue-rag-deploy
 ID=$(cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu && terraform output -raw instance_id); echo "$ID"
 cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu && terraform output -raw site_name; echo      # ghi lại: đây là <site_name> dùng ở bước 4 và bước 10
 aws ssm start-session --target "$ID"

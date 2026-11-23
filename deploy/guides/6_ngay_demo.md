@@ -52,8 +52,8 @@ mức và tiền của tài khoản OpenAI; (4) trần lượt của app (`HUE_L
 Ở máy mình, đầu mỗi lần làm việc:
 
 ```bash
-export AWS_PROFILE=hue-deploy AWS_REGION=ap-southeast-1
-aws sts get-caller-identity                                   # NHÌN "Arn": người dùng IAM của việc deploy
+export AWS_PROFILE=hue-rag-deploy AWS_REGION=ap-southeast-1
+aws sts get-caller-identity                                   # NHÌN "Arn": phải kết bằng user/hue-rag-deploy
 ID=$(cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu && terraform output -raw instance_id); echo "$ID"
 SITE=$(cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu && terraform output -raw site_name); echo "$SITE"
 ```
@@ -194,7 +194,7 @@ Terraform của tầng máy chủ cố ý bỏ qua thay đổi của ảnh hệ 
 THẬT SỰ muốn một máy mới (ảnh Ubuntu mới hơn, hoặc đã sửa `user_data.sh.tftpl`), nói thẳng với Terraform **[chưa kiểm trên AWS]**:
 
 ```bash
-export AWS_PROFILE=hue-deploy AWS_REGION=ap-southeast-1
+export AWS_PROFILE=hue-rag-deploy AWS_REGION=ap-southeast-1
 cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu
 terraform plan -replace=aws_instance.app -out=thay_may.tfplan      # ĐỌC: đúng MỘT máy bị thay (1 to add, 1 to destroy); IP tĩnh chỉ được gắn lại, không bị xoá
 terraform apply thay_may.tfplan

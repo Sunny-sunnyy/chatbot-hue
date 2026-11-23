@@ -59,7 +59,7 @@ kể cả lúc máy dừng — trái với cách dùng "chỉ bật quanh ngày 
 
 ## 3. Điều kiện trước
 
-- Guide 0 xong: có hồ sơ AWS CLI riêng cho việc deploy (các lệnh dưới viết `--profile hue-deploy` — thay bằng tên hồ sơ đã đặt ở guide 0), Terraform
+- Guide 0 xong: có hồ sơ AWS CLI riêng cho việc deploy (các lệnh dưới viết `--profile hue-rag-deploy` — thay bằng tên hồ sơ đã đặt ở guide 0), Terraform
   từ 1.17, phần cắm Session Manager cho AWS CLI.
 - Guide 1 xong: tầng nền đã `apply`, email cảnh báo đã bấm xác nhận.
 - Guide 2 xong thì tốt (gói đã nằm trong thùng) nhưng không bắt buộc cho guide này — máy dựng xong mà chưa có gói thì chỉ là đang tính tiền mà chưa
@@ -107,9 +107,9 @@ Mỗi khối lệnh ghi rõ ĐANG ĐỨNG Ở THƯ MỤC NÀO — lỗi hay gặ
 bằng nhầm người.
 
 ```bash
-aws sts get-caller-identity --profile hue-deploy          # NHÌN dòng "Arn": phải là người dùng IAM mới của việc deploy
-aws configure get region --profile hue-deploy             # phải in ap-southeast-1
-export AWS_PROFILE=hue-deploy AWS_REGION=ap-southeast-1   # từ đây mọi lệnh aws / terraform trong cửa sổ này dùng hồ sơ đó
+aws sts get-caller-identity --profile hue-rag-deploy          # NHÌN dòng "Arn": phải kết bằng user/hue-rag-deploy
+aws configure get region --profile hue-rag-deploy             # phải in ap-southeast-1
+export AWS_PROFILE=hue-rag-deploy AWS_REGION=ap-southeast-1   # từ đây mọi lệnh aws / terraform trong cửa sổ này dùng hồ sơ đó
 ```
 
 **Bước 2 — lấy hai cái tên của tầng nền.**
@@ -230,8 +230,8 @@ tiền; danh sách cuối buổi ở guide 6 có dòng "tắt máy".
 Phá riêng tầng này (tầng nền và gói trong thùng giữ nguyên; lần sau làm lại guide 3 rồi guide 4):
 
 ```bash
-export AWS_PROFILE=hue-deploy AWS_REGION=ap-southeast-1
-aws sts get-caller-identity     # NHÌN "Arn": người dùng IAM của việc deploy
+export AWS_PROFILE=hue-rag-deploy AWS_REGION=ap-southeast-1
+aws sts get-caller-identity     # NHÌN "Arn": phải kết bằng user/hue-rag-deploy
 cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu
 terraform plan -destroy        # ĐỌC: chỉ được có tài nguyên tên bắt đầu hue-rag-
 terraform destroy              # gõ yes
