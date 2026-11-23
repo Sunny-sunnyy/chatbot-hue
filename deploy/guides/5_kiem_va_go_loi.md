@@ -93,9 +93,11 @@ bỏ" tìm ra và sửa tối 23/11/2026 — bản deploy dựng từ commit cũ
 **Dòng 6 — tải file lịch.** Dưới thẻ lịch bấm `Tải PowerPoint`. Mong: file tải về mở được, khoảng nửa MB. (Nút `Tải về (.txt)` đã bỏ từ tối 23/11/2026 theo
 lời chủ dự án; bản deploy dựng từ commit cũ hơn thì còn nút đó.)
 
-**Dòng 7 — hỏi bằng ảnh qua HTTPS.** Trang Trợ lý ⇒ nút dấu cộng "Hỏi bằng ảnh" ⇒ chọn một ảnh Cầu Trường Tiền (ảnh tự chụp hoặc tải về) ⇒ bấm `Hỏi`. Mong:
-thẻ "Trong ảnh có phải là tên dưới đây không? (mình có thể đoán sai)" với nút `Cầu Trường Tiền`; bấm tên ⇒ có câu trả lời. Ảnh của nơi không có trong
-danh sách 55 tên ra "chưa nhận ra" là ĐÚNG thiết kế.
+**Dòng 7 — hỏi bằng ảnh qua HTTPS.** Trang Trợ lý ⇒ nút dấu cộng "Hỏi bằng ảnh" ⇒ chọn một ảnh Cầu Trường Tiền (ảnh tự chụp hoặc tải về) ⇒ gõ `địa điểm
+này là gì` ⇒ bấm `Hỏi` MỘT lần. Mong: có câu trả lời ngay, mở đầu bằng dòng "Mình đoán trong ảnh là Cầu Trường Tiền — có thể sai."; dưới câu trả lời có nút
+`Không phải — tôi gõ tên` (ảnh ra hai ba tên thì có thêm nút `Hỏi lại với: <tên kia>`). KHÔNG còn thẻ nào bắt chọn hay xác nhận tên trước khi trả lời
+(luồng đổi tối 23/11/2026 theo lời chủ dự án — bản deploy dựng từ commit cũ hơn `6ab1380f` vẫn hiện thẻ cũ). Ảnh của nơi không có trong danh sách 55 tên
+ra "chưa nhận ra" hoặc bị đoán sang một tên giống nó là giới hạn đã biết (runbook 10.1), không phải lỗi deploy.
 
 **Dòng 8 — một tin dài nhiều ý, từ ngoài.** Đây là phép thử "cửa vào chờ được bao lâu". Gõ: `Gia đình mình 4 người có ông bà lớn tuổi đi Huế 2 ngày: Đại
 Nội mở cửa mấy giờ và vé bao nhiêu, trưa ăn gì gần Đại Nội, tối nên đi đâu cho nhẹ nhàng?`. Mong: câu trả lời TRỌN (đủ các ý hoặc nói rõ ý nào tư liệu
