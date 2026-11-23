@@ -1,6 +1,6 @@
 # Bài 27 — Trang Lên kế hoạch: từ mấy nút chọn tới một lịch, và bảng điểm tham quan đứng sau
 
-*Cập nhật 17:11, ngày 22/11/2026 · đã sửa theo một lượt đối chiếu độc lập · các ô, phép kiểm và đường đi của một lượt đọc từ chương trình và cấu hình trưa 22/11; số của bảng điểm đếm lại từ bảng đang chạy trưa 22/11; thời gian lấy từ một lượt lập lịch thật ngày 21/11 (Claude Sonnet 5.5); người viết không chạy lại lượt nào.*
+*Cập nhật 11:13, ngày 23/11/2026 · khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài) · thêm lời tả trang theo giao diện mới và hai giới hạn thấy trên ảnh chụp; cơ chế xếp lịch không đổi · các ô, phép kiểm và đường đi của một lượt đọc từ chương trình và cấu hình trưa 22/11; số của bảng điểm đếm lại từ bảng đang chạy trưa 22/11; thời gian lấy từ một lượt lập lịch thật ngày 21/11 (Claude Sonnet 5.5); người viết không chạy lại lượt nào · các lần sửa trước: khối Nguồn.*
 
 **Bài trước đã biết:** trợ lý trả lời câu hỏi từ kho; việc phải đúng (ngày âm lịch, thời tiết, khoảng cách) do chương trình tính (bài 24). Bài 5 đã tả trang Lên kế hoạch trông ra sao.
 **Bài này thêm:** người dùng bấm "Xếp lịch" thì máy chủ nhận gì, kiểm gì, và đi qua những bước nào cho tới khi có một lịch. Bài cũng mở bảng điểm tham quan, thứ mà mọi lịch được xếp từ đó, và nói ô chat liên quan tới trang này ra sao.
@@ -39,26 +39,25 @@ Biểu mẫu có bốn nhóm (ai đi, đi bao lâu và khi nào, đi kiểu nào
 | Ngày đi | từ hôm nay tới 180 ngày sau; được bỏ trống | thứ trong tuần, mùa, dự báo mưa |
 | Hạng chỗ ở | 1 sao · 2–3 sao · 4–5 sao; được bỏ trống | chỉ đổi khối "Nơi ở" (bài 30) |
 
-Bấm "Xếp lịch", trang gửi lên máy chủ đúng các giá trị đã chọn, kèm một ghi chú cho máy chủ biết đây là yêu cầu từ biểu mẫu. Máy chủ kiểm lại: các ô số người phải là số thật (không nhận chữ "2" thay cho số 2), số ngày chỉ nhận đúng một trong năm giá trị 1–5, không nhận ô lạ, sở thích không trùng nhau và không quá hai, ngày đi đúng dạng năm-tháng-ngày và nằm trong 180 ngày tính theo ngày Việt Nam, sở thích gửi lên phải là loại đang hiện trên biểu mẫu. Sai một chỗ thì cả yêu cầu bị từ chối với lời báo "Yêu cầu không hợp lệ." và không có lịch nào được xếp.
+Bấm nút "Xếp lịch N ngày" (N theo số ngày đang chọn), trang gửi lên máy chủ đúng các giá trị đã chọn, kèm một ghi chú cho máy chủ biết đây là yêu cầu từ biểu mẫu. Máy chủ kiểm lại từng giá trị theo tập được phép ở bảng trên, chặt tới kiểu dữ liệu: không nhận chữ "2" thay cho số 2, không nhận ô lạ (đủ danh sách ở "Chi tiết để tra"). Sai một chỗ thì cả yêu cầu bị từ chối với lời báo "Yêu cầu không hợp lệ." và không có lịch nào được xếp.
 
 Qua bước kiểm, máy chủ ghép các giá trị thành một câu cố định cho lịch sử cuộc trò chuyện, ở ví dụ là *"Lên kế hoạch tham quan Huế (Thông tin thêm: 3 ngày; 2 người lớn; đi cân bằng; thích di tích.)"*. Lượt biểu mẫu đi đường riêng: không qua bước xếp loại câu (bài 22), không tra web, không đưa công cụ nào cho model, không dùng câu trả lời đã nhớ.
 
 ## Bảng điểm tham quan: 41 dòng, mỗi ô có căn cứ
 
-Lịch không xếp thẳng từ 267 bài của kho: bài viết là văn xuôi, còn xếp lịch cần con số và nhãn đặt sẵn. Mỗi dòng có tên và tên khác, cụm, loại điểm, thời lượng ("ngắn" 75 phút hoặc "nửa buổi" 150 phút), buổi đi được, giờ mở cửa (21 điểm có khung giờ; 20 điểm kho không ghi giờ thì không ràng buộc), trong nhà hay ngoài trời (29 điểm ngoài trời), có nhiều bậc thang không (11 điểm), thứ tự ưu tiên theo từng sở thích, thứ và mùa hoạt động, giờ của hoạt động buổi tối, và bài nguồn trong kho. 18 điểm có thêm một đoạn kho được chọn tay để model tả. Bảng đủ các cột ở nửa để tra.
+Lịch không xếp thẳng từ 267 bài của kho: bài viết là văn xuôi, còn xếp lịch cần con số và nhãn đặt sẵn. Mỗi dòng có tên và tên khác, cụm, loại điểm, thời lượng ("ngắn" 75 phút hoặc "nửa buổi" 150 phút), buổi đi được, giờ mở cửa, trong nhà hay ngoài trời, có nhiều bậc thang không, thứ tự ưu tiên theo từng sở thích, thứ và mùa hoạt động, giờ của hoạt động buổi tối, và bài nguồn trong kho. 18 điểm có thêm một đoạn kho được chọn tay để model tả. Bảng đủ các cột, kèm số đếm từng cột, ở nửa để tra.
 
-Hầu như mọi ô có thêm một dòng **căn cứ**: câu trích từ bài kho, trang web, hoặc ghi là ước. Ví dụ giờ 7:00 – 17:00 của Đại Nội là phần chung của giờ mùa hè và mùa đông, chủ dự án tra ngày 14/11. Thời lượng là cột dựa vào web nhiều nhất: 31 điểm lấy từ web, 8 từ kho, 2 điểm ước.
+Hầu như mọi ô có thêm một dòng **căn cứ**: câu trích từ bài kho, trang web, hoặc ghi là ước. Ví dụ giờ 7:00 – 17:00 của Đại Nội là phần chung của giờ mùa hè và mùa đông, chủ dự án tra ngày 14/11.
 
-Bảng do các phiên làm việc soạn qua nhiều bản (34 điểm ngày 13/11; chủ dự án chọn thêm 7 nơi ngày 15/11). Các điểm ưu tiên và các ca khó (thác Nhị Hồ bỏ khỏi lịch những tháng nào, giờ của Đại Nội) do chủ dự án chốt.
+Bảng soạn qua nhiều bản (nửa để tra); chủ dự án chọn thêm 7 nơi ngày 15/11. Các điểm ưu tiên và các ca khó (thác Nhị Hồ bỏ khỏi lịch những tháng nào, giờ của Đại Nội) do chủ dự án chốt.
 
 Bảng được kiểm lúc bật máy chủ (quyết định 4).
 
-Cạnh bảng điểm có ba bảng nhỏ hơn, cũng nằm ngoài kho: bảng toạ độ và bảng ảnh (40 trên 41 điểm, bài 30), và bảng khoảng cách giữa 40 điểm, dựng một lần ngày 16/11 bằng một dịch vụ chỉ đường. Trợ lý dùng bảng khoảng cách khi được hỏi "từ A sang B bao xa" (bài 24); bộ xếp lịch **không** dùng nó mà ước phút đi theo cụm (bài 28).
+Cạnh bảng điểm có ba bảng nhỏ hơn, cũng ngoài kho (toạ độ, ảnh, khoảng cách; nửa để tra); bộ xếp lịch **không** dùng bảng khoảng cách mà ước phút đi theo cụm (bài 28).
 
 ## Một lượt lập lịch thật: năm bước, khung lịch tới trước
 
 Ví dụ lập lịch của cả bộ, lượt thật ngày 21/11/2026: 3 ngày, 2 người lớn, cân bằng, thích di tích, không chọn ngày đi.
-
 
 | Bước | Ai làm | Ở ví dụ |
 |---|---|---|
@@ -68,7 +67,9 @@ Ví dụ lập lịch của cả bộ, lượt thật ngày 21/11/2026: 3 ngày,
 | 4. Gửi khung lịch | máy chủ gửi tên, buổi, giờ, ảnh, ghi chú, quán; giao diện vẽ ngay | 0,22 giây |
 | 5. Viết câu mô tả | model, một lần gọi, không công cụ; chương trình kiểm từng câu (bài 29) | 9,1 giây; 0 câu bị thay |
 
-Cả lượt 9,3 giây, 0,0226 USD. Lúc câu mô tả chưa tới, mỗi điểm hiện hai vạch xám chờ chữ. Có ngày đi trong 7 ngày tới thì bước 2 lấy thêm dự báo thời tiết một lần.
+Cả lượt 9,3 giây, 0,0226 USD. Lúc câu mô tả chưa tới, mỗi điểm hiện hai vạch xám chờ chữ.
+
+**Trang hiện lịch thế nào** (giao diện từ 23/11; vì sao đổi: bài 5). Ở màn từ 1.200 px, khi đã có lịch thật, trang chia ba cột: biểu mẫu (hẹp lại), thẻ lịch, và bản đồ đứng cạnh lịch, đứng yên một chỗ trên màn hình khi người dùng cuộn lịch. Mỗi ngày là một khung: các điểm theo buổi, có giờ, ảnh, nhãn loại, nối nhau theo thứ tự đi bằng một dải nước nhạt có nét đứt chạy giữa dòng. Màn hẹp xếp mọi khối thành một cột. Lịch ví dụ, ba kiểu đi, khung trợ lý nổi: "Chi tiết để tra".
 
 Xong lượt, máy chủ lưu lịch vào cuộc trò chuyện, để sửa bằng lời (bài 31), tải PowerPoint (bài 30) và trả lời câu hỏi tiếp. Bản lưu nằm trong bộ nhớ của máy chủ, hết hạn sau 30 phút không nhắn, mất khi khởi động lại máy chủ (bài 6). Lịch trượt bước kiểm khung vẫn hiện nhưng không được lưu (bài 29).
 
@@ -76,9 +77,9 @@ Xong lượt, máy chủ lưu lịch vào cuộc trò chuyện, để sửa bằ
 
 Có ba tình huống ô chat chạm tới lịch.
 
-**Gõ "lên lịch giúp mình 2 ngày ở Huế".** Trợ lý trả lời như câu hỏi thường, từ kho. Dưới câu trả lời, chương trình nối một dòng: "Muốn lịch có giờ từng điểm, bản đồ và sửa được bằng lời, bạn mở trang Lên kế hoạch." Bấm cụm "trang Lên kế hoạch" là sang trang có biểu mẫu. Câu được nhận ra bằng một khuôn chữ hẹp: lời nhờ, chữ "lịch / lịch trình / kế hoạch", và số ngày; không nêu số ngày thì không có dòng.
+**Gõ "lên lịch giúp mình 2 ngày ở Huế".** Trợ lý trả lời như câu hỏi thường, từ kho. Dưới câu trả lời, chương trình nối một dòng: "Muốn lịch có giờ từng điểm, bản đồ và sửa được bằng lời, bạn mở trang Lên kế hoạch." Bấm cụm "trang Lên kế hoạch" là sang trang có biểu mẫu. Câu được nhận ra bằng một khuôn chữ hẹp ("Chi tiết để tra").
 
-**Xếp lịch thật từ câu gõ tự do** đã thử hai lần (05/11 và 09/11) và đang tắt: model đọc câu rồi gọi một công cụ xếp lịch của chương trình. Lần hai, 27 trên 27 câu ra lịch, nhưng lịch hợp người đi cùng chỉ 21 và 15 trên 27 theo hai người chấm, dưới sàn 26 (bảng ở nửa để tra). Bộ xếp hiện nay (bài 28) có từ 14/11 và chỉ chạy qua biểu mẫu.
+**Xếp lịch thật từ câu gõ tự do** (model đọc câu rồi gọi một công cụ xếp lịch) đã thử hai lần, cả hai dưới sàn, đang tắt (bảng "Đã so"). Bộ xếp hiện nay (bài 28) có từ 14/11 và chỉ chạy qua biểu mẫu.
 
 **Hỏi tiếp khi đã có lịch** (trên giao diện), ví dụ "lịch này ngày 1 đi mấy tiếng?". Chương trình in lịch đã lưu thành một nguồn tên "Lịch bạn đang có": từng buổi, giờ, tên điểm, và các con số do chương trình tính (giờ bắt đầu, giờ kết thúc, tổng thời lượng, ngày dài nhất). Model đọc và trích nguồn này như một đoạn kho. Nguồn không chứa câu mô tả model viết lúc trước, và nói thẳng tiền vé cả lịch chưa tính được.
 
@@ -114,7 +115,7 @@ Có ba tình huống ô chat chạm tới lịch.
 
 ## Nếu… thì sao
 
-Lời báo trong ngoặc kép là nguyên văn trong chương trình. Các dòng đều đọc từ chương trình, chưa thử thật, trừ dòng cuối (đã thử trưa 22/11, bài 6).
+Lời báo trong ngoặc kép là nguyên văn trong chương trình. Các dòng đều đọc từ chương trình, chưa thử thật, trừ hai dòng cuối (khởi động lại: đã thử trưa 22/11, bài 6; khung nổi: thấy trên ảnh của lượt kiểm trước khi gộp giao diện, 23/11).
 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Muốn hết thì ai làm gì |
 |---|---|---|---|
@@ -123,6 +124,7 @@ Lời báo trong ngoặc kép là nguyên văn trong chương trình. Các dòng
 | bảng điểm sai, hoặc đoạn mô tả không còn trong chỉ mục | máy chủ không bật | không vào được trang nào | người vận hành sửa bảng hoặc chỉ mục |
 | hỏi tiếp sau hơn 30 phút không nhắn | lịch đã hết hạn | câu trả lời không dựa trên lịch, không lời báo | xếp lại lịch; chưa có lời báo |
 | máy chủ khởi động lại giữa cuộc **(đã thử)** | mất lịch đã lưu | thẻ lịch vẫn hiện; lệnh sửa bị coi như câu hỏi thường | tải lại trang, xếp lại |
+| mở khung trợ lý nổi trên cửa sổ rộng 1280 px **(đã thấy trên ảnh chụp)** | khung nổi đè lên phần phải trang | mép phải cột lịch và cột bản đồ bị che; ghim trên bản đồ đổi theo lệnh sửa (suy từ chương trình) nhưng không thấy | đóng khung, hoặc bấm "Mở trang đầy đủ"; đổi chỗ đứng là việc nhóm để sau |
 
 ## Dễ nhầm
 
@@ -223,6 +225,8 @@ Câu trả lời bằng chữ từ kho, kèm một dòng chỉ sang trang Lên k
 - Chưa có ô giờ tới, giờ về: ngày đầu và ngày cuối vẫn xếp đủ buổi.
 - Lịch đã lưu mất sau 30 phút không nhắn hoặc khi máy chủ khởi động lại; người dùng không được báo.
 - Hỏi tổng tiền vé của lịch: model tự cộng giá vé từ kho trên đúng lịch (lượt thật 19/11: đúng 3 / 3), không phải số chương trình tính.
+- Ở cửa sổ rộng 1280 px, khung trợ lý nổi mở ra che hết cột bản đồ và mép phải cột lịch; ở 1536 px nó che gần hết cột bản đồ. Vì vậy lúc sửa lịch bằng lời không thấy ghim đổi theo. Nhóm để sau lượt gộp giao diện (đổi chỗ đứng của thứ người dùng thấy), chưa chữa.
+- Trên ảnh chụp của lượt kiểm trước khi gộp, ô ngày đi hiện kiểu mm/dd/yyyy (tháng / ngày / năm). Nhóm ghi là vết của phép chụp, vì trình duyệt chụp chạy tiếng Anh (suy luận, chưa chụp lại trên trình duyệt tiếng Việt); không sửa. Ngày gửi lên máy chủ luôn ở dạng năm-tháng-ngày.
 
 ## Chi tiết để tra
 
@@ -231,8 +235,16 @@ Câu trả lời bằng chữ từ kho, kèm một dòng chỉ sang trang Lên k
 - Lượt biểu mẫu, lượt sửa lịch và việc nạp lịch đã lưu chỉ chạy trên đường gửi dần (đường giao diện dùng); đường trả cả câu một lần không nạp lịch đã lưu. Vì sao: chưa thấy ghi lý do. Điều thấy được: giao diện chỉ dùng đường gửi dần.
 - Khi chưa xếp lịch nào, trang hiện một lịch **ví dụ** 2 ngày do chính bộ xếp dựng từ một tổ hợp cố định; câu mỗi điểm của lịch ví dụ do chương trình viết, không gọi model.
 - Lịch đã lưu không ghi ra đĩa; câu an toàn bão lũ (nếu lượt đó có) được giữ cùng bản lưu để file tải về còn câu đó.
+- Giao diện trang này từ 23/11 (sửa trước khi gộp, so với bản dựng thử đầu tối 22/11): cột biểu mẫu chỉ hẹp lại 300 px khi đã có lịch thật kèm bản đồ (ở 300 px với lịch ví dụ, nhiều mục xuống dòng và nút "Xếp lịch" tụt khoảng 400 px); thẻ lịch dùng hết cột ở mọi bề rộng; dòng "Đã sửa theo lời bạn" dừng ở mép cột lịch, không lấn sang cột bản đồ; mỗi quán gợi ý một hàng, quán không ảnh thụt vào cho thẳng cột tên; bản đồ thấp lại ở khung nhìn thấp (cao 240–400 px) để nút ngày, bản đồ, danh sách điểm nằm trọn màn khi đi theo lúc cuộn; ba kiểu đi mỗi kiểu một hàng ở mọi bề rộng (trước: ba cột hẹp, một hai chữ mỗi dòng ở điện thoại và 1.024–1.152 px); nhãn "Ngày đi (không bắt buộc)" nằm trên ô ngày. Hai lỗi có sẵn ở giao diện cũ được chữa cùng đợt: ảnh điểm gần đáy màn bị cắt thành một dải hẹp khi dừng cuộn (gỡ hiệu ứng ảnh lộ dần theo cuộn), và "Ghi chú của lịch" mất chấm đầu dòng.
+- Dải đầu trang có nét sông chạy dọc mép dưới, hết bề ngang màn (chỉ trên màn hình). Nét đứt trên đường nối các điểm chạy khi máy không bật giảm chuyển động; dải nước nhạt vẫn vẽ dần khi cuộn như bản cũ.
 - Bảng điểm qua các bản: bản 8 (13/11, 34 điểm), bản 9 (15/11, thêm 7 điểm: chùa Từ Hiếu, cầu Trường Tiền, đèo Hải Vân, chợ Bến Ngự, làng nón Tây Hồ, nhà vườn An Hiên, đầm Lập An), bản 10 (17/11, giờ tối chợ Đông Ba 18:00 – 23:00). Ba nơi khác bị loại khi thêm vì thiếu căn cứ.
+- Ba bảng nhỏ cạnh bảng điểm, đều ngoài kho: bảng toạ độ và bảng ảnh (40 trên 41 điểm, bài 30), và bảng khoảng cách giữa 40 điểm, dựng một lần ngày 16/11 bằng một dịch vụ chỉ đường. Trợ lý dùng bảng khoảng cách khi được hỏi "từ A sang B bao xa" (bài 24); bộ xếp lịch không dùng.
 - Bảng khoảng cách: 40 điểm × 39 chiều; km và phút theo đường ô tô, không tính kẹt xe; lúc trả lời không gọi mạng.
+- Căn cứ của cột thời lượng (chuyển từ thân bài 23/11): đây là cột dựa vào web nhiều nhất, 31 điểm lấy từ web, 8 từ kho, 2 điểm ước. Có ngày đi trong 7 ngày tới thì bước xếp lấy thêm dự báo thời tiết một lần (chuyển từ thân bài 23/11).
+- Khuôn nhận câu nhờ lập lịch trong ô chat (chuyển từ thân bài 23/11): lời nhờ, chữ "lịch / lịch trình / kế hoạch", và số ngày; không nêu số ngày thì không có dòng.
+- Máy chủ kiểm lại lượt biểu mẫu, đủ danh sách (chuyển từ thân bài 23/11): các ô số người phải là số thật (không nhận chữ "2" thay cho số 2), số ngày chỉ nhận đúng một trong năm giá trị 1–5, không nhận ô lạ, sở thích không trùng nhau và không quá hai, ngày đi đúng dạng năm-tháng-ngày và nằm trong 180 ngày tính theo ngày Việt Nam, sở thích gửi lên phải là loại đang hiện trên biểu mẫu.
+- Trang hiện lịch, phần chi tiết (chuyển từ thân bài 23/11): lúc chỉ có lịch ví dụ, biểu mẫu giữ bề rộng cũ và không có cột bản đồ (lịch ví dụ dựng không kèm toạ độ). Nét đứt trên đường nối các điểm đứng yên khi máy bật giảm chuyển động; bản in không có nét đứt (bài 30). Ba kiểu đi mỗi kiểu một hàng, có 2, 3 hoặc 4 chấm và một câu như "khoảng 2 điểm một ngày". Khung trợ lý nổi mở đè lên phần phải trang: ở 1536 px che gần hết cột bản đồ, ở 1280 px che hết cột bản đồ và mép phải cột lịch (bảng "Nếu… thì sao", "Giới hạn đã biết").
+- Bản đồ đứng cạnh lịch chỉ ở trang Lên kế hoạch; thẻ lịch trong khung trợ lý nổi và trang Trợ lý nằm ngoài bố cục ba cột nên bản đồ vẫn nằm dưới lịch. Vì sao: chú thích bảng kiểu của trang ghi rõ phần đó "không đổi"; chưa thấy ghi lý do riêng.
 
 **Bài sau (bài 28):** chương trình xếp lịch theo luật nào, đi từng bước trên chính lịch ví dụ này.
 
@@ -253,8 +265,12 @@ Câu trả lời bằng chữ từ kho, kèm một dòng chỉ sang trang Lên k
 - Luật "phép tính, luật, giờ, chọn quán, chọn ảnh ⇒ code" (N2), "ô nào hiện thì phải đổi được lịch" (N1), ngoại lệ số người lớn, ngưỡng < 4 chủ dự án chốt, số ngày tối đa 5, "rút từ các lần để model tính bị âm", "hai lần trước model viết lệch khung / tự thêm giờ khi khuôn đổi": `docs/superpowers/specs/2026-11-12-len-ke-hoach-ban-2-design.md` (bảng N1–N2, dòng ô người lớn, mục 5c.5, bảng "Có cần model không", dòng 351 "User chốt cả 4 khuyến nghị") [chép]. Lễ hội 43 % ⇒ 50 %: `settings.yaml` (`len_ke_hoach_so_thich_an`).
 - Nguồn "Lịch bạn đang có": `lich_trinh_v2.py` (`dong_lich_dang_co`, `DONG_TIEN_VE_CHUA_CO`, chú thích "KHÔNG in câu tả do model viết"); `assistant.py` (`_nguon_lich_dang_co`, điều kiện đường thường); `settings.yaml` (`lich_vao_hoi_thuong`: 3 kịch bản, 0 / 57, đo với model lúc đó là gpt-6-luna) [code; chép]. Tổng tiền vé do model cộng, 3 / 3: `guides/RUNBOOK_BAN_GIAO.md` mục 10.2 [chép].
 - Hết hạn 30 phút thì trả lời như cuộc chưa có lịch: `guides/RUNBOOK_BAN_GIAO.md` mục 10.2 [chép]; khởi động lại giữa cuộc: bài 6 (đã thử trưa 22/11).
-- Nhãn "đọc từ chương trình, chưa thử thật": các dòng của bảng "Nếu… thì sao", trừ dòng cuối.
+- Nhãn "đọc từ chương trình, chưa thử thật": các dòng của bảng "Nếu… thì sao", trừ hai dòng cuối.
+- Giao diện từ 23/11 (thêm 23/11/2026, đọc main `20f998f4`): nút "Xếp lịch {n} ngày", `KIEU_DI` ba câu, `SO_CHAM` 2 / 3 / 4, nhãn ngày đi: `frontend/src/LenKeHoach.jsx` (`LenKeHoachV2`, dòng 47–48, 82, 205–210, 256) [code]; ba cột ở ≥ 1.200 px chỉ khi `.lich-v2 > .bd`, cột biểu mẫu 300 px, bản đồ `position: sticky`, `height: clamp(240px, calc(100vh - 360px), 400px)`, "Đã sửa" dừng ở `margin-right: 330px`, mỗi quán một hàng, mọi luật mới trong `@media screen`: `frontend/src/lkh.css` dòng 217–275 [code]; đường nối các điểm hai lớp (`lkh-song-nen` vẽ dần, `lkh-song-chay` nét đứt chỉ trên màn hình): `frontend/src/LichV2.jsx` `SongNgay` [code]; lời commit `22e4694f`, `6b1e4fde`, `10c30bc5` (hai lỗi có sẵn ở main: `VIEC_DANG_MO.md` khối A hàng X13 "hai điểm CÓ SẴN Ở MAIN") [chép, đã mở]. Ảnh đã mở: `data/giao_dien_2026-11-22/sau_gop_10c30bc5/L02_lich_xong_1536x695_man.png` (ba cột, biểu mẫu, thẻ lịch, bản đồ, ô ngày "mm/dd/yyyy"), `L02_lich_xong_390_man.png` (một cột, đường nối nét đứt), `L04_tro_ly_noi_1280x620_man.png` (khung nổi che mép phải cột lịch), `L04_tro_ly_noi_1536x695_man.png` (khung nổi che cột bản đồ) [riêng tư; đã mở ảnh]. So cặp: `…/so_cap/NHOM_3_lich.md` mục L02, L04, L05 (so với `e98c42f`, trước bản gộp; các điểm HỎNG-MỚI ở đó đã chữa ở `10c30bc5`) [riêng tư; đã mở].
+- Bản đồ trong khung trợ lý nổi / trang Trợ lý vẫn nằm dưới lịch; lịch ví dụ không bản đồ nên cột biểu mẫu giữ bề rộng cũ: chú thích `frontend/src/lkh.css` dòng 247–250 [code, người sửa đã mở 23/11]. Khung nổi ở 1280 px che trọn cột bản đồ: biên bản `data/hoc_cung_D/kiem/dot_2311_k1_kiem.md` bài 27 hàng 7 (ảnh `L04_tro_ly_noi_1280x620_man.png`) [riêng tư; chép]. "Ghim đổi theo lệnh sửa" ở bảng "Nếu…": suy từ chương trình (cột lịch hiện lượt lịch mới nhất của cuộc), không thấy trên ảnh.
+- Hai giới hạn mới: `session_prompt/HIEN_TRANG.md` mục 1 gạch "Giao diện mới…" ("1280 px: khung trợ lý nổi mở ra che mép phải cột lịch · ô ngày hiện `mm/dd/yyyy` trên ảnh chụp"); `VIEC_DANG_MO.md` khối A hàng X13 ("ĐỂ SAU cổng gộp… khung trợ lý nổi che cột bản đồ ở ≥ 1200 px"; "Không sửa: ô ngày hiện `mm/dd/yyyy` (trình duyệt chụp chạy tiếng Anh — vết của phép chụp [suy luận])") [chép]. Dòng "Nếu…" khung nổi: thấy trên ảnh, link "Mở trang đầy đủ" ở `frontend/src/App.jsx` dòng 181 [đã mở ảnh; code].
 
+- Lịch sử sửa bài (chuyển từ dòng "Cập nhật" 23/11): 17:11 22/11 sửa theo một lượt đối chiếu độc lập; 10:26 23/11 thêm lời tả trang theo giao diện mới (ba cột, đường nối các điểm, ba kiểu đi, khung trợ lý nổi); 11:13 23/11 áp biên bản kiểm độc lập `data/hoc_cung_D/kiem/dot_2311_k1_kiem.md` bài 27 và chuyển vài đoạn chi tiết của thân bài xuống "Chi tiết để tra" [riêng tư].
 - Bài đã qua một lượt đối chiếu độc lập (người kiểm chỉ đọc, tự chạy lại bộ xếp và phần áp lệnh), trưa 22/11/2026: `data/hoc_cung_D/kiem/bai_27_32.md` [riêng tư]; các dòng SAI / LỆCH đã áp, dòng không áp ghi ở `data/hoc_cung_D/viet/viet_27_32.md` mục "Sau lượt kiểm" [riêng tư].
 
 </details>

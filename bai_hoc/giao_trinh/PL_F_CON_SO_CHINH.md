@@ -1,6 +1,6 @@
 # Phụ lục F — Các con số chính trên một trang
 
-*Cập nhật 21:47, ngày 22/11/2026 · khớp các bài lúc 21:45 22/11: lần chạy đủ bộ test 20:48–21:07 (2.197 ca), ba con số mới về tin dài nhiều ý và lệnh thêm điểm (99 dòng) · trước đó (18:17): khớp các bài lúc tối 22/11 (48 tính năng, kho 267 bài): thêm hai con số của thẻ nơi · trước đó: gom từ các bài của giáo trình lúc đó; bài gốc đổi thì trang này phải gom lại.*
+*Cập nhật 11:33, ngày 23/11/2026 · khớp các bài sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): lần chạy đủ bộ test mới nhất 09:41–09:59 23/11 (82 file chạy, 2.218 ca đạt); năm con số của giao diện mới (mục 9); bốn con số của hai phép đếm 0 đồng và của việc gọi lại một lần (mục 8); dòng tin dài nói thẻ chờ (108 dòng) · trước đó (22/11: lần chạy 20:48–21:07, tin dài nhiều ý, lệnh thêm điểm, thẻ nơi; gom lần đầu); bài gốc đổi thì trang này phải gom lại.*
 
 **Cách dùng trang này.** Mỗi dòng là một con số quan trọng của hệ thống, chép từ mục "Ý chính", bảng "Cấu hình đang chạy" hoặc bảng số chính của một bài. Cột thứ ba ghi điều kiện mà bài gốc ghi kèm: đếm trên bộ nào, model viết nào, ngày nào. Một con số không có điều kiện thì không so được với con số khác, nên đừng đọc cột hai mà bỏ cột ba. Dòng ghi "cấu hình" là giá trị đặt sẵn trong hệ thống, không phải kết quả đo. Dòng ghi "lúc đó" hay "đã cũ" là số của một thời điểm đã qua, giữ lại để so. Hai model viết: gpt-6-luna (tới trưa 21/11) và Claude Sonnet 5.5 (từ 21/11, đổi tạm).
 
@@ -125,8 +125,12 @@
 | khoảng 13 giây | thời gian chờ ở lượt hỏi đáp đứng giữa; một phần ba số lượt quá 15 giây | Claude mức cao, 49 lượt của người dùng mô phỏng, 21/11 | 34, 40 |
 | 9,7 giây (72 %) · 3,1 giây (25 %) · 3 % | phần của lần viết cuối · các vòng công cụ (khoảng 2,2 giây một vòng) · phần của chương trình | như trên | 34 |
 | 6,9 giây; 95 % dưới 13,1 giây | thời gian cả câu ở lượt đứng giữa, 0 màn hình lỗi | 41 tin phần lớn ngắn qua trình duyệt, lượt kiểm chốt trưa 22/11, lúc máy rảnh | 34, 40 |
-| 25–34 giây | thời gian chờ của tin dài nhiều ý (trước khoảng 20 giây), suốt lúc đó chỉ một dòng trạng thái rồi cả câu trả lời; lượt phải viết lại một lần lâu thêm khoảng 10 giây (tới 25–37 giây; ca này chưa nhìn trên trình duyệt) | một tin 4 ý, 6 lần, từ 14:47 22/11; trên trình duyệt 22/11 tin gia đình bốn ý 29,5 giây | 23, 34, 40 |
+| 25–34 giây | thời gian chờ của tin dài nhiều ý (trước khoảng 20 giây), suốt lúc đó chỉ có thẻ chờ rồi cả câu trả lời; lượt phải viết lại một lần lâu thêm khoảng 10 giây (tới 25–37 giây; ca này chưa nhìn trên trình duyệt) | một tin 4 ý, 6 lần, từ 14:47 22/11; trên trình duyệt 22/11, giao diện cũ, tin gia đình bốn ý 29,5 giây; trên giao diện mới mới có ảnh chụp tự động lúc chờ, chưa đo thời gian | 23, 34, 40 |
 | 23,4 giây · 29,1 giây | tin dài nhiều ý: trung vị của lượt model tự tìm một lần · hai lần (lần tìm thứ hai làm lượt dài thêm khoảng 5,7 giây) | 19 lượt đã ghi của một tin gia đình, Claude mức cao, 22/11, nhiều bản chương trình trong buổi; đếm trên sổ, không chạy thêm | 34 |
+| khoảng 0,15 giây + 8,67 phần nghìn giây mỗi token | giây của một lời gọi model theo số token viết ra; 218 điểm gần như nằm trên một đường thẳng (hệ số tương quan 0,995): thời gian chờ gần như chỉ là số token model viết ra | 218 lời gọi viết, sổ vết 22–23/11, Claude Sonnet 5.5 mức cao; đếm 0 đồng sáng 23/11, không phải lượt đo mới | 34 |
+| 18,5 trong 24,8 giây · khoảng 6 trong 25 giây | tin dài, trung vị: riêng lần viết trong các lời gọi trợ lý (74,9 %; 669 token suy luận, khoảng 5,9 giây) · lợi lớn nhất nếu lần viết không suy luận chút nào ⇒ không dựng | 60 tin dài (lời gọi viết từ 15 giây) trong 218 lượt như trên; 60 tin dài chỉ gồm hai câu khác nhau | 34 |
+| 193 trên 259 · khoảng 2 giây | số lần model tự tìm thêm mà thứ tìm đã có trong câu vừa gõ · một vòng tìm thêm; 75–100 % mỗi nhóm mang về đoạn mới được trích ⇒ không dựng | 218 lượt, 259 lần model tự tìm, sổ vết 22–23/11, Claude Sonnet 5.5; đếm 0 đồng sáng 23/11 | 23 |
+| khoảng 1 trên 500 lượt | lỗi tạm thời phía nhà cung cấp model (ước từ hai lần gặp thật); từ 09:31 23/11 lời gọi đó được gọi lại một lần, lượt đó có thể chờ gần gấp đôi (tin dài tới khoảng 50 giây) | Claude Sonnet 5.5 qua Amazon Bedrock; gọi lại mới có ca test, chưa gặp lỗi thật | 33 |
 | 17–24 giây | lượt nhờ "viết lại danh sách" (trợ lý tra kho lại và viết lại từng mục, không chỉ xoá một dòng); bên không nhớ câu trả lời: 10–12 giây cho một câu "không xác định được" | trên trình duyệt 22/11: 17,3 và 24,1 giây; lượt thật: 19–20 giây, khoảng 0,13–0,17 USD; Claude | 23 |
 | 0,018 USD | tiền ví dụ chính (0,0178 USD) | Claude, lượt ví dụ chính 21/11 (bài 2, 6) | 2, 4, 6, 34 |
 | 0,0004 USD · 0,0146 USD | tiền một câu trả lời có nguồn: gpt-6-luna · Claude mức cao (gấp khoảng 37 lần) (trung bình trên 66 câu tính điểm của 85 câu đầu bộ mẫu, không lọc theo loại câu) | 66 câu, 21/11 | 33, 34 |
@@ -134,18 +138,23 @@
 | đúng 4,97 ↔ 4,94 · đủ ý 4,83 ↔ 4,88 | điểm thang 1–5 của gpt-6-luna ↔ Claude; trọng tâm Claude thấp hơn rõ | 66 câu tính điểm, 21/11 | 33 |
 | 24 giờ, 500 câu, khoảng 0,1 giây | bộ nhớ câu trả lời: hạn, trần, thời gian trả lại câu đã nhớ | cấu hình (bật từ 20/11) | 6, 34 |
 
-## 9. Máy móc, bảo mật, bộ test, cách làm
+## 9. Giao diện, máy móc, bảo mật, bộ test, cách làm
 
 | Con số | Đếm cái gì | Đo trên gì, model nào, ngày nào | Bài |
 |---|---|---|---|
 | 48 mở, 3 tắt | số tính năng đang mở / đang tắt (lúc 10:25 là 42 mở; từ 14:47 thêm ba; từ 15:42 thêm một; từ 16:08 thêm việc nhớ câu trả lời liền trước cả trong cuộc đã lập lịch; từ 17:15 thêm thẻ nơi) | đếm 17:21 22/11 (lúc 16:13: 47) | 4, 40, phụ lục B |
 | 5 khối · 6 bước · 4 thứ gửi ra ngoài | khối của hệ thống; bước của một câu hỏi; thứ rời máy (lời gọi model, ảnh, dự báo thời tiết, câu tra web) | kiến trúc, sáng 22/11 | 6 |
 | khoảng 18 đường gọi | số đường gọi giữa giao diện và máy chủ; 3 đường gọi model | chương trình, trưa 22/11 | 35 |
+| 869 điểm ảnh | chiều cao khung nhìn: thấp hơn thì sáu bến ở màn đầu Trang chủ chỉ còn tên, mất dòng mô tả, vì dòng mô tả chạm ảnh sông (đo tương phản 1,8 : 1 ở 1536 × 695; ngưỡng 4,5 : 1); gồm máy demo 1536 × 695 | cấu hình giao diện, bản chính từ 10:00 23/11 | 5, 35 |
+| 6 · 3 tên bài | số tên bài nhiều nhất trong thẻ chờ: màn rộng (phần còn lại gộp thành "+k bài") · điện thoại, khung trợ lý nổi và khung nhìn cao tới 700 điểm ảnh, gồm máy demo 1536 × 695 (không có "+k bài") | cấu hình giao diện, 23/11 | 5, 35 |
+| 761 ảnh · 8 khung nhìn · 49 cảnh | ảnh chụp tự động trước khi gộp giao diện mới: 0 cảnh không chụp được; máy dò tràn ngang và chữ bị cắt gắn cờ 1 ô (thẻ chọn tên ảnh ở 390 px, có từ giao diện cũ) | bản gộp thử, chạy trên máy, server thật, Claude Sonnet 5.5; 22/11 tối và 23/11 sáng; chạy trước ba bản sửa nhỏ của lõi (ba bản đó không chạm giao diện) | 35 |
+| 49 trên 50 bước | kịch bản thao tác đủ của cổng gộp: 49 đạt, 1 bước để người xem ảnh (trang Chỗ ở), 0 trượt | như trên | 35, 40 |
+| 1.523 ⇒ 1.850 phép, 0 dưới ngưỡng | đo tương phản chữ / nền của giao diện mới: 1.523 phép trên 24 màn ở bốn bề rộng (bản dựng 19:56 22/11); đo lại trên bản đã gộp, có thêm sáu cỡ máy xách tay: 1.850 phép | chưa đo thẻ lịch đã xếp, khung trợ lý nổi, màn lỗi | 35 |
 | khoảng 14 giây · 34 giây | lệnh bật ra "SẴN SÀNG" khi mọi thứ đủ · khi bắt đầu từ lúc Qdrant đang tắt | 14 giây: bốn ca chạy thật ở cổng tạm; 34 giây: lượt kiểm chốt trưa 22/11 | 36, 40 |
 | 76 file, 2.060 ca | lần chạy đủ của lượt kiểm chốt trưa | trưa 22/11 | 38 |
 | 75 file, 1.961 ca đạt, 4 file bỏ | lần chạy cuối buổi sáng; 4 file bỏ vì cần khoá OpenAI | sáng 22/11 | 38 |
-| 78 file chạy, 2.197 ca đạt, 0 ca hỏng, 4 file bỏ | lần chạy đủ mới nhất của cả bộ test, trên bản 48 tính năng mở đã có bản sửa lệnh thêm vào buổi tối; đây là bản chủ dự án tự thử ngày 23/11 (lần trước đó, 17:16–17:34: 2.196 ca) | 20:48–21:07 ngày 22/11 | 38, 40 |
-| khoảng 16 tới 19 phút · khoảng 4,4 GB | cả bộ test chạy từng file một · bộ nhớ khi chạy cả bộ một lượt | hướng dẫn vận hành (khoảng 16 phút); lần chạy 20:48–21:07 ngày 22/11 mất khoảng 19 phút | 38 |
+| 82 file chạy, 2.218 ca đạt, 0 ca hỏng, 4 file bỏ | lần chạy đủ mới nhất của cả bộ test (86 file trong bảng; 4 file bỏ cả file vì cần khoá OpenAI), trên bản có giao diện mới và ba bản sửa lõi sáng 23/11; 21 ca thêm so với lần trước đó: 4 ca giữ việc máy chủ báo tên bài đã tìm thấy cho thẻ chờ, 17 ca giữ các bản sửa đêm 22/11 và sáng 23/11 (lần trước đó, 20:48–21:07 22/11: 82 file trong bảng, 78 chạy, 2.197 ca) | 09:41–09:59 ngày 23/11 | 38, 40 |
+| khoảng 16 tới 19 phút · khoảng 4,4 GB | cả bộ test chạy từng file một · bộ nhớ khi chạy cả bộ một lượt | hướng dẫn vận hành (khoảng 16 phút); lần chạy 09:41–09:59 ngày 23/11 mất khoảng 18,5 phút | 38 |
 | 5 phiên · 11 skill | số phiên làm việc (điều phối, hai thực thi, đo, giảng) · số file skill | cách làm lúc viết, trưa 22/11 | 39 |
 
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
@@ -153,5 +162,7 @@
 Gom từ mục "Ý chính", bảng "Cấu hình đang chạy", bảng "Các con số chính của đường hỏi đáp" (bài 19), các bảng "Người dùng làm được" và "Chỗ yếu" (bài 40), cùng vài dòng "Chi tiết để tra" có số (bài 12, 34, 36, 40) của các bài 1–40 trong cùng thư mục, bản lúc 15:22 ngày 22/11/2026; không thêm sự thật mới. Gom lại 17:00 22/11/2026 theo các bài vừa sửa: số tính năng (bài 4, 40), hai dòng tiền (bài 33 "Chi tiết để tra": câu ví dụ chạy thẳng qua code sản phẩm; bài 34 bảng tiền: "không lọc theo loại câu"), "2 trên 44" (bài 22 quyết định về luật nghiêng về Huế, "Cái giá" và "Cách khác"), tin dài trên trình duyệt (bài 34 bảng "Nếu… thì sao"), hai dòng mới về cuộc đã lập lịch (bài 23 "Đã so" dòng 12 và "Giới hạn đã biết"). Lệnh đếm tính năng chạy lại 16:57 22/11 ra `47` [đã chạy]. Mỗi dòng giữ điều kiện bài gốc ghi; dòng nào bài gốc không ghi model thì không ghi. Chỗ hai bài ghi khác nhau về cùng một con số ghi ở báo cáo gom [riêng tư].
 
 - Hai dòng thẻ nơi và số 48 (thêm 17:30 22/11/2026): bài 23 "Đã so" dòng 13, "Quyết định nhỏ hơn", Nguồn; bài 40 hàng "4. Thiếu ý"; số gốc ở `data/thu_bedrock_2026-11-21/b_dem_chua_co_2211/KET_QUA.md` phép đếm 3 và `…/b_x10_the_noi/luot_1/CHAM_E.md`, `luot_2/CHAM_E.md` [riêng tư; đã chạy, phiên khác]; 113 / 174: chạy `dung_bang` trên mục lục kho thật 17:22 22/11/2026 [tự chạy lệnh đếm]; 48: lệnh runbook mục 0 tự chạy 17:21 [tự chạy lệnh đếm]. Dòng 13 % thêm "trước thẻ nơi" cho khớp bài 40. Bảng từ 93 thành 95 hàng.
+
+- Đợt 23/11/2026 (11:33): bộ test — bài 38 "Ý chính" và "Chi tiết để tra" (bản 11:15); 25–34 giây — bài 34 bảng "Nếu… thì sao" hàng tin dài (11:14); hai phép đếm 0 đồng — bài 34 "Đã so" (11:14), bài 23 "Đã so" dòng 15 (11:12); gọi lại một lần — bài 33 "Quyết định nhỏ hơn" (11:13); 869, 6 / 3 tên bài — bài 5 "Cấu hình đang chạy" (11:10) và bài 35 bảng lớp nhìn (11:17); 761 ảnh, 49 / 50 bước, 1.523 ⇒ 1.850 phép — bài 35 "Đã so" bảng cổng gộp. Bảng từ 99 thành 108 hàng.
 
 </details>

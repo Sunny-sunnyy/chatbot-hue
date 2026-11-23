@@ -1,6 +1,6 @@
 # Bài 2 — RAG là gì: cho model đọc tài liệu trước khi trả lời
 
-*Cập nhật 17:11, ngày 22/11/2026 · khớp hệ thống 16:35 22/11 (47 tính năng, kho 267 bài, 9.479 đoạn); rút độ dài · ví dụ là ba lượt hỏi thật từ sổ ghi từng lượt (20 và 21/11); người viết không chạy lại.*
+*Cập nhật 11:11, ngày 23/11/2026 · khớp hệ thống sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài, 9.479 đoạn); đổi hai câu tả màn hình (thẻ chờ, khung "Nguồn đã dùng") · ví dụ là ba lượt hỏi thật từ sổ ghi từng lượt (20 và 21/11); người viết không chạy lại.*
 
 **Bài trước đã biết:** model ngôn ngữ viết ra chữ tiếp theo có khả năng cao nhất. Nó viết trôi chảy cả khi không biết, và không tự nói được nó lấy thông tin từ đâu.
 **Bài này thêm:** cách hue_rag xử lý chuyện đó. Cách này có tên là RAG, và nó là tên của chính đề tài. Bài này cũng nói vì sao chọn cách này thay cho các cách khác.
@@ -119,7 +119,7 @@ Vì mọi thông tin nằm trong kho chứ không nằm trong model, cập nhậ
 - **Đã chọn:** chương trình kiểm mọi số nguồn sau khi model viết. Với model đang chạy, chữ được giữ tới khi qua kiểm (từ 15:42 22/11; model trả chữ dần: "Chi tiết để tra").
 - **Vì sao:** lời dặn là lời nhờ, model có thể không theo; luật quan trọng thì cần một bước chương trình đếm được (bài 16, 21). Với model trả cả câu một lần, hiện trước không còn lợi đọc sớm mà vẫn còn cảnh thấy chữ rồi mất (đoạn chữ giữ chỗ đứng 17–25 giây ở 9 trên 114 lượt), nên giữ chữ (bài 6, quyết định 4).
 - **Cách khác:** kiểm xong mới hiện (bản trước 01/11). Chỉ dựa vào lời dặn: không làm; bước kiểm có từ bản đầu.
-- **Cái giá:** với model đang chạy, dòng trạng thái đứng lâu hơn ở lượt phải viết lại. Và phép kiểm mới biết số [4] có thật, chưa biết đoạn 4 có nói đúng điều câu trả lời viết.
+- **Cái giá:** với model đang chạy, ở lượt phải viết lại người dùng nhìn thẻ chờ (khung đứng thay câu trả lời trong lúc chờ, bài 5) lâu hơn. Và phép kiểm mới biết số [4] có thật, chưa biết đoạn 4 có nói đúng điều câu trả lời viết.
 
 ## Nếu… thì sao
 
@@ -172,7 +172,7 @@ Thường ở bước tìm: đoạn có đáp án không nằm trong các đoạ
 - Quyết định 2: ngày 01/11, chủ dự án tự chấm mù 20 cặp câu trả lời (5 đoạn ↔ 10 đoạn): 3 cặp bản 5 đoạn từ chối nhầm, còn lại như nhau; chủ dự án chọn giữ 10.
 - Quyết định 5, model trả chữ dần (gpt-6-luna, đường cũ): chữ hiện trước, kiểm sau, kiểm hỏng thì rút lại; hiện trước để người dùng đọc sớm, đã đo ngày 01/11; cái giá là có lượt người dùng thấy chữ rồi mất (bài 16). Chi tiết hai đường: bài 6, quyết định 4.
 - Ví dụ chính là lượt hỏi ngày 21/11/2026, model viết là Claude Sonnet 5.5. Cả lượt: 3,7 giây, 2 lần gọi model (một lần xếp loại câu 0,74 giây, một lần viết 3,63 giây), tốn 0,0178 USD (khoảng 445 đồng). Lần viết nhận 5.085 token, viết ra 425 token.
-- Trên màn hình, các số [n] không hiện trong chữ; dưới câu trả lời có một dòng "Nguồn:" ghi tên các bài đã được trích, bấm vào là xem được đoạn gốc (bài 16).
+- Trên màn hình, các số [n] không hiện trong chữ; dưới câu trả lời có khung "Nguồn đã dùng (n bài)", mỗi bài được trích là một nút, bấm vào là xem được đoạn gốc (bài 5, bài 16).
 - Ở lượt này chữ hiện ra một lần sau khi model viết xong, vì bộ khoá đang dùng với Claude không có quyền nhận chữ dần (bài 33).
 - Ví dụ "chỗ đậu ô tô" là lượt hỏi ngày 20/11/2026, model viết là gpt-6-luna. Trước khi từ chối, trợ lý đã tự tìm thêm một lần (bài 21) và không ra đoạn mới nào. Cả lượt 8,3 giây, 0,0017 USD (khoảng 41 đồng), gồm cả lần tra web. Mục web của lượt đó viết: chưa xác minh được chùa có chỗ đậu ô tô trong khuôn viên hay không; một nguồn nhắc chỗ gửi xe ở các bến xe, một nguồn nói ô tô bị cấm trên một đoạn đường qua khu vực chùa.
 - "Kho không nói về chỗ đậu xe ở chùa Thiên Mụ" được dò bằng cách tìm các chữ đậu xe, đỗ xe, bãi đỗ, bãi xe, gửi xe, giữ xe, chỗ để xe, dừng xe trong kho (người viết dò, rồi một agent kiểm dò lại rộng hơn): không câu nào nói chỗ đậu xe của chùa. Phép dò theo chữ này không loại trừ được một câu diễn đạt bằng chữ khác.
@@ -189,7 +189,8 @@ Thường ở bước tìm: đoạn có đáp án không nằm trong các đoạ
 - Ví dụ chính (câu hỏi, 10 đoạn thuộc 3 bài, 5 nguồn được trích, chữ câu trả lời, thời gian từng bước, token, tiền, model): sổ vết ngày 21/11/2026, lượt 09:58:36, bản sao riêng tư ở `data/hoc_cung_D/vi_du_di_suot_vet.json` [đã chạy; người viết không chạy lại]. Đoạn số 4 có chứa giá vé trẻ em: đọc trực tiếp trong trường ngữ cảnh của bản sao đó.
 - Ví dụ "chỗ đậu ô tô" (10 đoạn đều của bài chùa Thiên Mụ, một lần tìm thêm không ra đoạn mới, câu từ chối, mục web, 8,3 giây, 0,0017 USD): sổ vết ngày 20/11/2026, lượt 15:58:44, `data/hoc_cung_D/vi_du_kho_khong_co_2_vet.json` [đã chạy]. Dò kho: `scripts/grep_kb.sh` với các chữ nêu ở "Chi tiết để tra", chạy 22/11/2026 [đã chạy].
 - Ví dụ "cởi giày": sổ vết ngày 20/11/2026, lượt 15:58:10, `data/hoc_cung_D/vi_du_kho_khong_co_vet.json`; câu về giày dép ở bài chùa Thiên Mụ và việc đoạn đó có trong chỉ mục nhưng không được lấy ra: biên bản kiểm độc lập `data/hoc_cung_D/kiem/bai_02_10.md` dòng 26 [agent kiểm tìm ra; người viết chưa tự mở lại đoạn đó].
-- Câu dẫn sang mục web do giao diện thay: `frontend/src/moDauWeb.js` [code].
+- Câu dẫn sang mục web do giao diện thay: `frontend/src/moDauWeb.js` (`CAU_DAN_WEB`) [code].
+- Sửa 23/11/2026 (giao diện mới ở nhánh chính từ 10:00 23/11): khung "Nguồn đã dùng (n bài)", mỗi bài một nút: `frontend/src/SourceLine.jsx` (nhãn `nguon-nhan`) [code]; "thẻ chờ" là tên gọi của bài 5 cho khung đứng trong lúc chờ: `frontend/src/song/Song.jsx` (`ChoSong`), dùng ở `frontend/src/chat.jsx` [code].
 - 267 bài, 9.479 đoạn: `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (`corpus.file_count`, `corpus.chunk_count`) và số điểm trong Qdrant, đọc 16:35 22/11/2026 [đã chạy].
 - Lời dặn và câu từ chối cố định: `backend/llm/full_corpus_prompt.py`, hằng `ANSWER_SYSTEM_INSTRUCTIONS`, `INSUFFICIENT_ANSWER` [code].
 - Kiểm số nguồn: `backend/llm/citations.py`, hàm `select_cited_sources` [code].
