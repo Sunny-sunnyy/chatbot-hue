@@ -31,7 +31,7 @@ kèm yêu cầu: nói "chuyển về luna" là về được ngay.
 **Không bị đụng khi đổi provider:** kho, chỉ mục Qdrant, cách tìm (10 đoạn), mọi cờ ở mục `assistant:`, công cụ của trợ lý, bộ kiểm trích nguồn,
 giao diện, bộ đếm token dựng ngữ cảnh, người chấm. Lời dặn (prompt) gửi luna không đổi một ký tự.
 
-**Riêng đường Sonnet có thêm ba đoạn dặn** (một đoạn thứ tư đã thử rồi gỡ — dòng đầu bảng) (sửa 11:26 21/11/2026; chủ dự án cho chỉnh lời dặn cho hợp model). Chữ nằm ở cuối `backend/llm/full_corpus_prompt.py`, các hằng `SONNET_*`;
+**Riêng đường Sonnet có thêm bốn đoạn dặn** (một đoạn nữa đã thử rồi gỡ — dòng đầu bảng) (sửa 11:26 21/11/2026; đoạn thứ tư thêm 23/11/2026; chủ dự án cho chỉnh lời dặn cho hợp model). Chữ nằm ở cuối `backend/llm/full_corpus_prompt.py`, các hằng `SONNET_*`;
 `generator_openai_full_corpus.py` chỉ nối chúng khi đang chạy lớp dịch Bedrock. Mỗi đoạn có một ca đã đo làm lý do:
 
 | Hằng | Nối vào lời gọi nào | Vì sao (số đo 21/11) |
@@ -40,6 +40,7 @@ giao diện, bộ đếm token dựng ngữ cảnh, người chấm. Lời dặn
 | `LICH_V2_LOI_DAN_SONNET` (+ `SONNET_GIU_DUNG_VAT` cho lượt biểu mẫu cũ) | viết câu cho thẻ lịch | Bản luna ép "đúng một câu, 30 từ"; Sonnet dồn ý làm đổi nghĩa (nguồn ghi HAI bảo vật, viết thành ba). Bản Sonnet: một đến hai câu, khoảng 50 từ, kèm dặn giữ danh hiệu / con số đi đúng vật. Mục thử (người thứ hai đọc): bản 30 từ 10 lượt — sai 1, lỏng 4; bản 50 từ 12 lượt — sai 1, lỏng 4, đúng rõ 7 (trước 2). Tức lỗi KHÔNG giảm thấy được; câu đầy đủ hơn. Thử 40 từ: sai 2 / 6. |
 | `SONNET_SUA_LICH` | hai lời gọi hiểu ý sửa lịch | Lệnh mơ hồ ("ngày 2 hơi nặng, làm nhẹ bớt"): Sonnet tự bỏ một điểm (high 3 / 6). Lệnh dời cụ thể bị luật chặn: medium trả "chưa hỗ trợ" 3 / 3. Sau đoạn dặn (ở high; đoạn dặn tả theo loại câu, không chép câu đo): 9 lệnh × 3 lượt đúng ý 27 / 27 + ba câu mơ hồ do người khác đặt 9 / 9; lâu nhất 7,1 giây. |
 | `SONNET_DINH_TUYEN` | định tuyến (cả bản có lịch sử, bản viết câu tìm) | Sonnet đẩy câu về nơi ở rìa Huế sang "ngoài phạm vi" (lượt phải trả lời bị từ chối: luna 1 / 43, medium 6, high 4). Trên 14 câu tự đặt × 2: low 14 / 16 ⇒ 16 / 16 nơi rìa; high vốn 16 / 16; câu nơi tỉnh khác vẫn bị từ chối 8 / 8. Bộ câu mù của phiên đo mới là phép thử chính. | Chín loại lời gọi model dùng chung MỘT đối tượng model nên đổi là đổi cả chín, không đổi lẻ được.
+| `SONNET_NOI_KHAC` (công tắc `noi_khac_tu_choi`, mở 23/11/2026) | lời dặn trả lời (bản thường và bản nhiều ý) | Câu hỏi về việc diễn ra ở tỉnh, thành khác ("từ Huế vào <tỉnh khác> thì ở đó nên ăn gì") được trả lời bằng kho 12 / 20 lần ở bên tắt cùng buổi (mốc 21/11 cùng điều kiện: 1 / 40); đoạn dặn bật: 0 / 20, câu ngoài tỉnh thứ hai 10 / 10 ⇒ 0 / 10; đường đi Huế ↔ nơi khác, món mang tên nơi khác bán tại Huế, nơi ở rìa Huế vẫn được trả lời (100 lượt đọc tay). Là lời dặn, không phải bước chặn bằng code; chỉ che đường Sonnet — số + giới hạn: `guides/RUNBOOK_BAN_GIAO.md` mục 10.1 |
 
 **Đường luna giống từng byte so với trước khi có lớp dịch** — một phiên khác đã chụp 10 loại lời gọi gửi OpenAI ở bản trước và bản sau, ra cùng một mã băm [người thứ hai kiểm].
 
