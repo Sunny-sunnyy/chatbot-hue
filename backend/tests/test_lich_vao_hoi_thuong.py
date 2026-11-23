@@ -45,10 +45,10 @@ def test_dong_lich_mac_dinh_khop_dap_so_tinh_tay():
     ngày 2 = bốn điểm 75 phút, 8:00 ⇒ 16:15 ⇒ đầu – cuối 8 giờ 15 phút, tham quan 5 giờ; cả lịch 6 điểm, 10 giờ; ngày dài nhất = ngày 2."""
     dong = v2.dong_lich_dang_co(B, lich_2_ngay())
     assert dong[0] == "Tham số của lịch: 2 ngày · 2 người lớn · đi cân bằng."
-    assert dong[1] == "Ngày 1: Sáng (8:00 – 10:30) Đại Nội Huế; Chiều (13:30 – 16:00) Đầm Chuồn; Tối (18:00 – 23:00) Chợ Đông Ba."
+    assert dong[1] == "Ngày 1: Sáng (8:00 – 10:30) Đại Nội Huế; Chiều (13:30 – 16:00) Đầm Chuồn; Tối (18:30 – 22:00) Phố đi bộ Nguyễn Đình Chiểu."
     assert dong[2] == ("Ngày 1 — số do hệ thống tính: 2 điểm tham quan ban ngày; bắt đầu 8:00; kết thúc mục ban ngày cuối 16:00; "
                        "từ đầu tới cuối phần ban ngày 8 giờ; tổng thời lượng tham quan ban ngày 5 giờ (chưa gồm đi lại, ăn nghỉ); "
-                       "buổi tối: Chợ Đông Ba 18:00 – 23:00.")
+                       "buổi tối: Phố đi bộ Nguyễn Đình Chiểu 18:30 – 22:00.")
     assert "4 điểm tham quan ban ngày; bắt đầu 8:00; kết thúc mục ban ngày cuối 16:15; từ đầu tới cuối phần ban ngày 8 giờ 15 phút; " \
            "tổng thời lượng tham quan ban ngày 5 giờ" in dong[4]
     assert dong[5] == ("Cả lịch — số do hệ thống tính: 6 điểm tham quan ban ngày; 2 hoạt động buổi tối; tổng thời lượng tham quan ban ngày 10 giờ "
@@ -60,7 +60,7 @@ def test_gio_khong_doc_duoc_thi_khong_in_so_cua_ngay_do_va_khong_in_tong():
     luu = lich_2_ngay()
     luu["khung"]["gio"]["dai_noi"] = "buổi sáng"  # chuỗi lạ ⇒ không đoán
     dong = v2.dong_lich_dang_co(B, luu)
-    assert dong[2] == "Ngày 1 — số do hệ thống tính: 2 điểm tham quan ban ngày; buổi tối: Chợ Đông Ba 18:00 – 23:00."
+    assert dong[2] == "Ngày 1 — số do hệ thống tính: 2 điểm tham quan ban ngày; buổi tối: Phố đi bộ Nguyễn Đình Chiểu 18:30 – 22:00."
     assert "bắt đầu 8:00" in dong[4]  # ngày đọc được vẫn có số
     assert dong[5] == "Cả lịch — số do hệ thống tính: 6 điểm tham quan ban ngày; 2 hoạt động buổi tối."
 

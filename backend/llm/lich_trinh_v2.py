@@ -52,6 +52,10 @@ class BangV2:
     # Công tắc `toi_nhe` (23/11/2026): id các hoạt động tối NHẸ được xếp cho đoàn có trẻ nhỏ / người lớn tuổi (khoá `toi_nhe` của bảng; danh sách là
     # NHẬN ĐỊNH ghi ở bảng, đổi ở bảng). Rỗng ⇒ luật cũ: đoàn hạn chế không có buổi tối. `AssistantFlags.from_settings` để rỗng khi công tắc tắt.
     toi_nhe: tuple[str, ...] = ()
+    # Bảng v13 (23/11/2026, chủ dự án: buổi tối bỏ chợ Đông Ba, thay bằng cà phê / phố đi bộ / phố Tây): thứ tự CHỌN hoạt động buổi tối (khoá
+    # `thu_tu_toi` của bảng; mục hợp sở thích vẫn trước). Có khoá riêng vì các dòng quán cà phê phải nằm CUỐI bảng — chen giữa bảng làm lệch lượt xen
+    # kẽ hai sở thích của bộ xếp ban ngày. Rỗng (bảng cũ) ⇒ thứ tự bảng như trước.
+    thu_tu_toi: tuple[str, ...] = ()
 
 
 LOAI_DIEM_THU_TU = ("di_tich", "am_thuc", "thien_nhien", "le_hoi_nghe_thuat", "chup_anh")
@@ -86,7 +90,10 @@ def nap_bang_v2(path: str | Path) -> BangV2:
     toi_nhe = tuple(data.get("toi_nhe") or ())
     if any(i not in theo_id or "toi" not in theo_id[i]["buoi"] or theo_id[i]["cum"] not in CUM_TOI or theo_id[i].get("ngay_hoat_dong") for i in toi_nhe):
         raise ValueError("bảng điểm v2: `toi_nhe` phải là hoạt động buổi tối diễn mọi tối ở hai cụm trung tâm")
-    return BangV2(tuple(diem), theo_id, cum, uu_tien, loai_hien, data.get("nhac_mua_chung"), toi_nhe)
+    thu_tu_toi = tuple(data.get("thu_tu_toi") or ())
+    if len(set(thu_tu_toi)) != len(thu_tu_toi) or any(i not in theo_id or "toi" not in theo_id[i]["buoi"] for i in thu_tu_toi):
+        raise ValueError("bảng điểm v2: `thu_tu_toi` phải là các hoạt động buổi tối của bảng, không lặp")
+    return BangV2(tuple(diem), theo_id, cum, uu_tien, loai_hien, data.get("nhac_mua_chung"), toi_nhe, thu_tu_toi)
 
 
 @dataclass(frozen=True)
@@ -354,7 +361,8 @@ def _xep_toi(bang: BangV2, ts: ThamSoV2, ngay: list[dict], ngays: list, da_dung:
     nhe = ts.han_che and bool(bang.toi_nhe)  # công tắc `toi_nhe`: đoàn hạn chế được MỘT hoạt động nhẹ mỗi tối, chỉ trong danh sách của bảng, không lặp
     ung_vien = sorted((d for d in bang.diem if "toi" in d["buoi"] and d["cum"] in CUM_TOI and d["id"] not in da_dung
                        and (not nhe or d["id"] in bang.toi_nhe)),
-                      key=lambda d: not (so_thich & set(d["loai"])))  # hợp sở thích trước, rồi thứ tự bảng (sort ổn định)
+                      # hợp sở thích trước, rồi thứ tự `thu_tu_toi` của bảng (mục ngoài danh sách xếp sau), rồi thứ tự bảng (sort ổn định)
+                      key=lambda d: (not (so_thich & set(d["loai"])), bang.thu_tu_toi.index(d["id"]) if d["id"] in bang.thu_tu_toi else len(bang.thu_tu_toi)))
     da_toi: list[str] = []
     for ng, ngay_that in zip(ngay, ngays):
         if ng["ngay"] in ts.toi_trong:  # công tắc `bo_toi_de_trong`: người dùng đã bỏ hoạt động tối của ngày này ⇒ không chọn lại

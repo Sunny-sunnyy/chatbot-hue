@@ -4,6 +4,7 @@
 `bo_toi_de_trong`: lệnh bỏ một hoạt động buổi tối ⇒ tối đó để trống (cả ở các lần sửa sau), buổi tối ngày khác và điểm ban ngày giữ nguyên.
 Phép đếm mọi tổ hợp biểu mẫu (960) là script riêng tư ngoài git; ở đây là các ca giữ hành vi. Test không ghi tên điểm nào của bảng (bảng riêng tư).
 """
+import dataclasses
 import itertools
 
 from llm import lich_trinh_v2 as v2
@@ -136,3 +137,32 @@ def test_removing_a_repeated_evening_activity_on_one_named_day_keeps_its_other_e
     m = kq["khung"]
     assert kq["da_ap"][0]["toi_trong"] == [ngay[-1]] and i not in kq["luu"]["loai"]
     assert _toi(m)[ngay[-1] - 1] == [] and _toi(m)[ngay[0] - 1] == [i] and v2.kiem_khung_v2(B1, m) == []
+
+
+# ---------- bảng điểm bản 13 (chủ dự án 23/11/2026: buổi tối chợ Đông Ba không mở ⇒ bỏ khỏi buổi tối, thay bằng quán cà phê / phố đi bộ / phố Tây) ----------
+def test_evening_uses_only_rows_listed_for_the_evening_and_venue_rows_never_reach_the_day_or_the_place_tools():
+    """Hoạt động tối chỉ lấy dòng bảng có buổi "toi" (dòng chợ nay chỉ còn ban ngày); dòng quán (`la_quan`) chỉ có buổi tối, không bao giờ nằm ở ban
+    ngày của một lịch, và không có trong danh sách nơi của hai công cụ hỏi đáp "khoảng cách" / "gần một điểm" (mô tả hai công cụ giữ nguyên chữ)."""
+    quan = {d["id"] for d in B0.diem if d.get("la_quan")}
+    assert quan and all(d["buoi"] == ["toi"] for d in B0.diem if d["id"] in quan)
+    assert not quan & set(TAT.khoang_cach_bang.ids)
+    cho = next(d for d in B0.diem if d["id"] == "cho_dong_ba")
+    assert "toi" not in cho["buoi"] and cho["id"] not in B0.thu_tu_toi and cho["id"] not in B1.toi_nhe
+    for bang, doan, n, kieu in itertools.product((B0, B1), [{}] + DOAN, (1, 2, 3, 4, 5), ("nhe_nhang", "can_bang", "kham_pha")):
+        k = v2.xep_v2(bang, v2.ThamSoV2(n, kieu_di=kieu, **doan))
+        assert all("toi" in bang.theo_id[j]["buoi"] for t in _toi(k) for j in t)
+        assert not quan & {j for ng in _ban_ngay(k) for b in ng for j in b}
+        chon = [j for t in _toi(k) for j in t]
+        assert len(chon) == len(set(chon))  # đủ hoạt động tối cho 5 ngày ⇒ không lặp
+
+
+def test_evening_order_follows_the_table_list_and_a_table_without_the_list_keeps_table_order():
+    """`thu_tu_toi` của bảng quyết thứ tự chọn buổi tối (các dòng quán nằm cuối bảng nên thứ tự bảng không dùng được); bảng không có khoá ⇒ như cũ."""
+    def hai_toi_dau(bang):
+        k = v2.xep_v2(bang, v2.ThamSoV2(2, kieu_di="can_bang"))
+        ban_ngay = {j for ng in _ban_ngay(k) for b in ng for j in b}
+        return [j for t in _toi(k) for j in t], [d for d in bang.diem if "toi" in d["buoi"] and not d.get("ngay_hoat_dong") and d["id"] not in ban_ngay]
+    chon, ung = hai_toi_dau(B0)
+    assert len(B0.thu_tu_toi) >= 2 and chon == [i for i in B0.thu_tu_toi if i in {d["id"] for d in ung}][:2]
+    chon, ung = hai_toi_dau(dataclasses.replace(B0, thu_tu_toi=()))
+    assert chon == [d["id"] for d in ung][:2]
