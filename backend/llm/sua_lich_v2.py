@@ -950,6 +950,17 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 khung, loai, ts = k, loai_moi, ts_moi
                 kq["da_ap"].append({"loai": "bo_diem", "diem": i, "toi_trong": bo_ngay, **({"toi_xep_lai": xep_toi} if xep_toi else {})})
                 continue
+            if them_hoi_truoc and i in vt and not any(v[0] == vt[i][0] for j, v in vt.items() if j != i):
+                # Công tắc `sua_lich_hoi_truoc`: X là điểm ban ngày CUỐI CÙNG của ngày đó — bỏ thì ngày không còn điểm nào (luật cứng `ngay_rong`), bản cũ
+                # tự lấp điểm khác vào (ca dò của phiên đo 23/11/2026: 54 / 438 chuỗi hai lệnh bỏ; chính là điều chủ dự án phàn nàn). Nay KHÔNG bỏ, KHÔNG
+                # lấp: lịch đứng yên, một câu tình hình + lối đi bằng lệnh đã có (thay X bằng một điểm đặt được vào đúng chỗ đó — như thẻ chọn; ngày đó
+                # là ngày cuối và lệnh rút số ngày làm được thì thêm nút rút). "Ngày trống thật" là việc khác, chưa làm.
+                n_ngay = khung["tham_so"]["so_ngay"]
+                rut = (n_ngay - 1 if vt[i][0] == n_ngay and n_ngay > 1 and ap(bang, {**luu, "khung": khung, "loai": loai}, [
+                    HanhDong(loai="doi_so_ngay", so_ngay=n_ngay - 1)], luu_tru=luu_tru)["doi_truong"] else None)
+                kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "bo_ngay_rong", "hoi_truoc": True, "id": i, "ngay": vt[i][0],
+                                        "thay": _lua_chon_thay(bang, luu, ts, khung, loai, i), "rut": rut})
+                continue
             k = _thu_giu(bang, luu, ts, {j: v for j, v in vt.items() if j != i}, loai + [i])
             if k is None:
                 khong(ten_cua_diem(bang, i), "khong_hop_luat")
@@ -957,16 +968,17 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             # Công tắc `sua_lich_hoi_truoc` (chủ dự án chọn 23/11/2026: "Chỉ bỏ đúng điểm đó… chỗ đó để trống… kèm nút Gợi ý điểm thay — không bấm thì
             # cứ trống"): X là điểm DUY NHẤT của buổi ⇒ bản cũ tự lấp buổi vừa trống bằng điểm kế tiếp. Nay buổi đó mang dấu `buoi_trong` (bộ xếp không
             # lấp, cả ở các lượt sửa sau); điểm bản cũ định lấp chỉ thành GỢI Ý của một nút. Buổi còn điểm khác thì bản cũ vốn không lấp ⇒ không đổi gì.
-            # Xếp với dấu mà phạm luật ⇒ giữ đường cũ.
+            # Xếp với dấu mà phạm luật ⇒ KHÔNG lùi về đường tự lấp: nói thật là chưa bỏ được.
             bo_trong = {}
             if them_hoi_truoc and i in vt and not any(v == vt[i] for j, v in vt.items() if j != i):
                 luu["buoi_trong"] = [*(luu.get("buoi_trong") or ()), list(vt[i])]
                 k2 = _thu_giu(bang, luu, ts, {j: v for j, v in vt.items() if j != i}, loai + [i])
                 if k2 is None:
                     luu["buoi_trong"].pop()
-                else:
-                    lap_cu = next(x for x in k["ngay"] if x["ngay"] == vt[i][0])["buoi"][vt[i][1]]  # thứ bản cũ tự lấp vào buổi đó
-                    bo_trong, k = {"trong": list(vt[i]), **({"goi_y_thay": lap_cu[0]} if lap_cu else {})}, k2
+                    khong(ten_cua_diem(bang, i), "khong_hop_luat")
+                    continue
+                lap_cu = next(x for x in k["ngay"] if x["ngay"] == vt[i][0])["buoi"][vt[i][1]]  # thứ bản cũ tự lấp vào buổi đó
+                bo_trong, k = {"trong": list(vt[i]), **({"goi_y_thay": lap_cu[0]} if lap_cu else {})}, k2
             # bộ xếp lấp chỗ trống bằng điểm kế tiếp (giữ chỗ điểm không chạm) ⇒ điểm MỚI vào lịch phải có trong lời báo (tự thử 16/11:
             # "Đã bỏ X." mà lịch có thêm điểm khác; mô phỏng 910 / 960 khung). Cả buổi tối: bỏ hoạt động tối ⇒ bộ xếp chọn hoạt động tối khác.
             truoc = set(vt) | toi
@@ -1287,7 +1299,7 @@ def cau_goi_y(bang: v2.BangV2, kq: dict) -> tuple[str, ...]:
     """Các câu ĐÃ được gợi ý trong khối thay đổi của lượt này (do code dựng, không chữ người dùng / chữ model) — route nhớ đúng một lượt để lần hiểu ý
     của lượt kế hiểu được lời đồng ý cụt ("ok thay đi"). Lượt không có dòng gợi ý ⇒ rỗng."""
     return (tuple(nut_bo_trong(bang, a)["gui"] for a in kq["da_ap"] if a.get("goi_y_thay"))
-            + tuple(n["gui"] for k in kq["khong_doi"] if k["ma_luat"] == "them_hoi" for n in nut_them(bang, k))
+            + tuple(n["gui"] for k in kq["khong_doi"] if k["ma_luat"] in ("them_hoi", "bo_ngay_rong") for n in nut_them(bang, k))
             + tuple(_cau_cach(bang, k["diem"], g, False) for k in kq["khong_doi"] for g in k.get("cach") or ())
             + tuple(c for k in kq["khong_doi"] if k["ma_luat"] == "bo_toi_hoi" for c in _cau_bo_toi(k)))
 
@@ -1358,6 +1370,9 @@ def nut_them(bang: v2.BangV2, k: dict) -> list[dict]:
     lệnh ĐỦ tham số do code dựng, gửi như người dùng gõ; `chon` {cu, moi} (chỉ ở lệnh thay) ⇒ giao diện gửi kèm `sua_chon`, bộ áp làm không gọi model;
     `mo` = "bieu_mau" ⇒ nút mở biểu mẫu Lên kế hoạch (không gửi gì)."""
     x = k["diem"]
+    if k["ma_luat"] == "bo_ngay_rong":  # lệnh BỎ điểm cuối cùng của một ngày: thay bằng điểm đặt được vào đúng chỗ đó (đường thẻ chọn) / rút bớt ngày cuối
+        return ([{"nhan": f"Thay bằng {ten_cua_diem(bang, j)}", "gui": f"thay {x} bằng {ten_cua_diem(bang, j)}", "chon": {"cu": k["id"], "moi": j}}
+                 for j in k["thay"]] + ([{"nhan": f"Rút lịch còn {k['rut']} ngày", "gui": f"đổi lịch còn {k['rut']} ngày"}] if k["rut"] else []))
     if k["ma_luat"] == "them_hoi":
         return [{"nhan": f"{NHAN_BUOI[g['buoi']].capitalize()} ngày {g['ngay']}" + (" (gợi ý)" if n == 0 and k["goi_y"] else ""),
                  "gui": _cau_cach(bang, x, g, False)} for n, g in enumerate(k["cho"])] + [{"nhan": "Xếp giúp mình", "gui": f"thêm {x}, {CAU_TU_XEP}"}]
@@ -1376,6 +1391,10 @@ def _cau_them_hoi(bang: v2.BangV2, k: dict) -> str:
     (`them_can_thay`, `them_bi_chan`). Không mở đầu "Chưa làm", không dấu « »: câu để gửi nằm ở NÚT (`nut_them`). Lời về buổi đi được của điểm chỉ lấy
     từ cột `buoi` của bảng điểm."""
     x = k["diem"]
+    if k["ma_luat"] == "bo_ngay_rong":
+        loi_di = ([f"thay {x} bằng một điểm khác"] if k["thay"] else []) + ([f"rút lịch còn {k['rut']} ngày"] if k["rut"] else [])
+        return (f"{x} là điểm duy nhất còn lại của ngày {k['ngay']} — bỏ thì ngày {k['ngay']} không còn điểm nào, nên mình chưa bỏ."
+                + (f" Bạn có thể {' hoặc '.join(loi_di)}: bấm một nút dưới đây hoặc nhắn điều bạn muốn." if loi_di else "") + " Lịch chưa đổi gì.")
     ngay, buoi = k["dich"]
 
     def cho(g: dict) -> str:
