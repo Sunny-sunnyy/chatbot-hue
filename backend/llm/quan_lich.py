@@ -56,6 +56,7 @@ _ANH = re.compile(r"quan/[a-z0-9_]{1,40}")
 _BAN = re.compile(r"[\x00-\x1f\x7f]|https?:|www\.|//|\]\(|[<>]")
 
 
+GIO_TOI_DA = 160  # ký tự của `gio_kho` (dòng dài nhất của bảng bản 4: 81)
 BUA = {"trua", "toi"}  # hai bữa lịch gợi ý quán; `khong_bua` của một quán trong bảng là tập con khác rỗng của tập này
 
 
@@ -76,7 +77,9 @@ def nap_bang_quan(path: str | Path, cum_diem) -> dict:
               and (q["nguon"] != "kho" or isinstance(q.get("bai_id"), str))
               and (q["nguon"] != "osm" or str(q.get("link", "")).startswith("https://www.openstreetmap.org/"))
               and (q.get("anh") is None or (q["nguon"] != "kho" and isinstance(q["anh"], str) and _ANH.fullmatch(q["anh"])))
-              and (q.get("khong_bua") is None or (isinstance(q["khong_bua"], list) and q["khong_bua"] and set(q["khong_bua"]) <= BUA)))
+              and (q.get("khong_bua") is None or (isinstance(q["khong_bua"], list) and q["khong_bua"] and set(q["khong_bua"]) <= BUA))
+              # `gio_kho`: chữ chép từ bài kho, đi tới model và người dùng qua công cụ "gần một điểm" ⇒ cùng phép kiểm chữ sạch như tên quán
+              and (q.get("gio_kho") is None or (isinstance(q["gio_kho"], str) and 0 < len(q["gio_kho"].strip()) <= GIO_TOI_DA and _ten_sach(q["gio_kho"]))))
         if not ok:
             raise ValueError(f"bảng quán lịch: dòng không hợp lệ ({str(ten)[:40]!r})")
         theo_cum.setdefault(q["cum"], []).append(q)

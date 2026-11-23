@@ -186,7 +186,7 @@ duy nhất là khối `assistant:` của `backend/config/settings.yaml` — chú
 | `lich_trinh_toa_do` | `../data/phase_9/lich_trinh/diem_toa_do_v9.json` | `f6068ff37d61` | `ban_do_lich`, `quan_lich` | điểm không có ghim; bữa ăn gần điểm đó không có quán |
 | `lich_trinh_bang_anh` | `../data/phase_9/lich_trinh/bang_anh_v7.json` | `4c4158648085` | `anh_lich` | điểm không có ảnh |
 | `lich_trinh_bang_luu_tru` | `../data/anh_user_2026-11-15_ghep/bang_luu_tru_lich_v6.json` | `44d7b14d8fce` | `luu_tru_lich` | — (theo cụm) |
-| `lich_trinh_bang_quan` | `../data/phase_9/lich_trinh/bang_quan_lich_v3.json` (467 quán; bản 3 = bản 2 + `khong_bua` / `gio_kho` cho 6 quán có bài kho ghi giờ hoạt động không phủ bữa trưa / tối — 23/11/2026; bản 1, 2 giữ lại, không dùng) | `cf8c63e1ce4d` | `quan_lich` | — (theo cụm + toạ độ) |
+| `lich_trinh_bang_quan` | `../data/phase_9/lich_trinh/bang_quan_lich_v4.json` (467 quán; bản 3 = bản 2 + `khong_bua` cho 6 quán có bài kho ghi giờ hoạt động không phủ bữa trưa / tối; bản 4 = bản 3 + `gio_kho` chép nguyên dòng "Giờ hoạt động" của bài riêng cho 30 quán kho — chỉ công tắc `gan_diem_gio` đọc; 23/11/2026; bản 1–3 giữ lại, không dùng) | `bf0bb75e4224` | `quan_lich` | — (theo cụm + toạ độ) |
 | `khoang_cach_bang` | `../data/phase_9/lich_trinh/khoang_cach_v1.json` | `cb76ab72199c` | `khoang_cach` | không trả lời khoảng cách tới điểm đó |
 
 In lại md5 các bảng đang trỏ (so với bảng trên; khác ⇒ có người đổi bảng mà chưa cập nhật mục này):
