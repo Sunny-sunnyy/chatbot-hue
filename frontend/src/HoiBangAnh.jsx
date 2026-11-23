@@ -65,6 +65,15 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     if (goTen) onGoTen();
   }
 
+  // Người dùng bấm "Không phải các tên này" ở thẻ chọn tên ⇒ với họ ảnh này CHƯA được nhận ra: mở đúng khung "chưa nhận ra" (không đóng trắng) để câu
+  // gõ kế mang đuôi "(Trong ảnh: … chưa nhận ra …)". Đóng trắng thì câu đi như câu thường và trợ lý có thể trả lời theo nơi của ảnh / câu TRƯỚC —
+  // cùng lỗi đã chữa 23/11/2026 ở khung "chưa nhận ra"; thẻ xác nhận của tên dễ nhầm (cầu khác được gợi ý là "Cầu Trường Tiền") đi đúng đường này.
+  function khongPhai() {
+    luot.current += 1;
+    setState({ preview: state.preview, phase: "loi", text: KHONG_NHAN_RA });
+    onGoTen();
+  }
+
   function chonAnh(event) {
     const file = event.target.files?.[0];
     event.target.value = "";  // chọn lại cùng file vẫn chạy
@@ -185,7 +194,7 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
         {state.nhac && <p role="alert" className="pt-2 font-semibold text-accent-deep">Chọn một tên ở trên để mình trả lời.</p>}
         {(state.phase === "xong" || state.phase === "loi") && (
           <div className="flex flex-wrap gap-2 pt-2">
-            {state.phase === "xong" && <button type="button" className="retry" onClick={() => dong(true)}>Không phải các tên này — tôi gõ tên</button>}
+            {state.phase === "xong" && <button type="button" className="retry" onClick={khongPhai}>Không phải các tên này — tôi gõ tên</button>}
             {state.phase === "loi" && <button type="button" className="retry" onClick={() => dong(true)}>Gõ tên</button>}
           </div>
         )}
