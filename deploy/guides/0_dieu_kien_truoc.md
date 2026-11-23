@@ -151,7 +151,9 @@ sudo dpkg -i session-manager-plugin.deb && session-manager-plugin --version
    Không bật thì con số chỉ là cảnh báo, lời gọi vẫn chạy. Chạm trần thì mọi lời gọi của project trả lỗi 429 mã `project_spend_limit_exceeded` — người dùng
    thấy "Không thể tạo câu trả lời vào lúc này". Trần áp không tức thời, có thể vượt nhẹ [OpenAI].
 4. Tiền nạp trước: Billing ⇒ xem số dư. Tài khoản kiểu nạp trước hết tiền thì lời gọi trả lỗi mã `credit_balance_exhausted`. Xem mục **tự nạp lại**
-   ("auto-reload" / "auto recharge"): lúc thiết lập nó BẬT sẵn — tắt đi, nếu không số dư sẽ tự được mua thêm khi xuống thấp. Lần mua ít nhất 5 USD [OpenAI].
+   ("Use auto-reload"): lúc thiết lập nạp tiền nó BẬT sẵn — tắt đi, nếu không số dư sẽ tự được mua thêm khi xuống thấp. Lần mua ít nhất 5 USD [OpenAI].
+   Hết tiền nạp cũng KHÔNG ngừng tức thời: trang OpenAI ghi rõ lời gọi còn chạy thêm một lúc, số dư có thể âm nhẹ và phần âm bị trừ vào lần nạp sau [OpenAI]
+   ⇒ lớp chặn đứng TRƯỚC hai chốt này là trần lượt mỗi ngày trong chính ứng dụng (guide 4, 6).
 
 Số tiền của trần là việc chủ dự án chọn. Căn cứ để chọn: một câu hỏi trên `gpt-6-luna` tốn khoảng 0,0004–0,002 USD [số đo của nhóm]; gói đang giới hạn 500
 lượt mỗi ngày cho cả máy ⇒ ngày nặng nhất khoảng 1 USD. Ví dụ: trần 5 USD một tháng.
@@ -197,8 +199,8 @@ AWS: 0 đồng — người dùng, nhóm, chính sách, khoá truy cập không 
 
 Khi không deploy nữa, hoặc nghi lộ khoá (bằng tài khoản gốc): IAM ⇒ Users ⇒ `hue-rag-deploy` ⇒ Security credentials ⇒ xoá khoá truy cập (nghi lộ: làm NGAY bước
 này) ⇒ xoá người dùng ⇒ xoá nhóm `HueRagDeploy` ⇒ xoá chính sách `HueRagDeployAccess`. Trên máy: xoá khối `[hue-rag-deploy]` trong `~/.aws/credentials` và khối
-`[profile hue-rag-deploy]` trong `~/.aws/config`. OpenAI: thu hồi khoá của project `hue-rag-deploy` ở trang API keys. Làm việc này SAU guide 7 (phá hạ tầng)
-— phá cần chính người dùng này.
+`[profile hue-rag-deploy]` trong `~/.aws/config`. OpenAI: thu hồi khoá = xoá khoá của project `hue-rag-deploy` ở trang API keys; không có nút tạm tắt một khoá, và lưu trữ (archive) cả project thì không
+khôi phục được [theo bản tra cứu của nhóm ngày 23/11/2026, phiên B chưa tự mở trang này]. Phần AWS của mục này làm SAU guide 7 (phá hạ tầng) — phá cần chính người dùng này.
 
 ## 11. Guide kế
 

@@ -123,8 +123,8 @@ terraform apply                        # in lại bản kế hoạch, hỏi "Ent
 ```
 
 **Bước 6 — Bấm xác nhận email.** Trong vài phút hộp thư nhận một thư của "AWS Notifications", tiêu đề "AWS Notification - Subscription Confirmation" ⇒ bấm
-"Confirm subscription". CHƯA bấm thì cảnh báo "máy hỏng" (đi qua chủ đề) không tới. Thư cảnh báo TIỀN thì AWS gửi thẳng tới địa chỉ, không cần bước xác
-nhận này [AWS] — nhưng vẫn kiểm thư mục thư rác một lần.
+"Confirm subscription". CHƯA bấm thì cảnh báo "máy hỏng" (đi qua chủ đề) không tới. Thư cảnh báo TIỀN thì ngân sách gửi thẳng tới địa chỉ, không đi qua
+chủ đề: trang AWS chỉ đòi bước xác nhận cho đường qua chủ đề [AWS] — thư tiền có tới thật hay không thì **[chưa chạy]**, nên kiểm cả thư mục thư rác.
 
 **Bước 7 — Chép hai đầu ra sang tầng máy chủ.** (đang ở `deploy/terraform/1_nen_tang`) Hai thư mục Terraform không đọc state của nhau; giá trị đi bằng tay,
 đúng cách đã làm ở tuần 2 [khoá]:
@@ -148,7 +148,7 @@ Mọi lệnh chạy với `AWS_PROFILE=hue-rag-deploy`, vùng `ap-southeast-1` *
 | Thùng rỗng, đọc được | `aws s3 ls "s3://$(terraform output -raw artifact_bucket_name)/"` | không in gì, không lỗi |
 | Vai chỉ có hai quyền | `aws iam list-role-policies --role-name hue-rag-instance-role` và `aws iam list-attached-role-policies --role-name hue-rag-instance-role` | `read-artifacts`; `AmazonSSMManagedInstanceCore` |
 | Email đã xác nhận | `aws sns list-subscriptions-by-topic --topic-arn "$(terraform output -raw alert_topic_arn)" --query 'Subscriptions[].SubscriptionArn'` | một ARN đầy đủ. Còn chữ `PendingConfirmation` ⇒ chưa bấm thư ở Bước 6 |
-| Ngân sách có | `aws budgets describe-budgets --account-id "$(aws sts get-caller-identity --query Account --output text)" --query 'Budgets[].[BudgetName,BudgetLimit.Amount]'` | có dòng `hue-rag-monthly` với mức đã đặt |
+| Ngân sách có | `aws budgets describe-budget --account-id "$(aws sts get-caller-identity --query Account --output text)" --budget-name hue-rag-monthly --query 'Budget.[BudgetName,BudgetLimit.Amount]'` | `hue-rag-monthly` và mức đã đặt. (Lệnh liệt kê MỌI ngân sách `describe-budgets` có thể bị từ chối: quyền của người dùng này chỉ trên ngân sách tên `hue-rag-…`) |
 
 Xem ngân sách trên TRANG WEB: người dùng IAM không thấy trang tiền khi tài khoản gốc chưa bật "IAM user and role access to Billing information" ⇒ dùng lệnh ở
 bảng trên, hoặc đăng nhập tài khoản gốc ⇒ Billing and Cost Management ⇒ Budgets [AWS]. Ba ngân sách 1 / 5 / 10 USD tạo tay ở tuần 1 nếu còn thì vẫn gửi thư

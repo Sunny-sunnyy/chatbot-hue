@@ -1,13 +1,13 @@
 # File này ghim bản Terraform và bản bộ cắm AWS (provider), và khai báo vùng + thẻ chung.
 # Bản CHÍNH XÁC của bộ cắm được ghi trong `.terraform.lock.hcl` (file đó ĐƯỢC commit) — máy nào chạy `terraform init` cũng tải đúng bản ấy.
 terraform {
-  # Từ 1.17 trở lên, dưới 2.0 (bản dùng lúc viết: 1.17.2).
-  required_version = "~> 1.17"
+  # Từ 1.17 trở lên, dưới 2.0 (bản dùng lúc viết: 1.17.2). Chuỗi này GIỐNG thư mục 2_may_chu.
+  required_version = ">= 1.17.0, < 2.0.0"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.0"
+      version = "~> 6.73"
     }
   }
 
