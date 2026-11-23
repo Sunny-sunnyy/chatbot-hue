@@ -7,6 +7,7 @@ không SDK. Trạng thái lưu của cuộc (`luu`): {tham_so, ngay_di, mua, khu
 """
 import collections
 import copy
+import itertools
 import re
 import unicodedata
 import datetime as dt
@@ -1352,10 +1353,13 @@ def _cau_them_hoi(bang: v2.BangV2, k: dict) -> str:
     if k["ma_luat"] == "them_hoi":
         hoi = (f"Bạn muốn thêm {x} vào ngày nào, buổi nào?" if ngay is None and buoi is None else f"Bạn muốn thêm {x} vào buổi nào của ngày {ngay}?"
                if buoi is None else f"Bạn muốn thêm {x} vào buổi {NHAN_BUOI[buoi]} của ngày nào?")
-        ds = [cho(g) + _gia_cach(k, g) + (" — mình gợi ý chỗ này" if n == 0 and k["goi_y"] else "") for n, g in enumerate(k["cho"])]
+        # các chỗ liền nhau cùng MỘT cái giá (ngày dày hơn nhịp / sang khu) gộp thành nhóm, cái giá nói một lần sau nhóm; chỗ gợi ý nói ở câu riêng — in
+        # thử câu thật 23/11/2026: bản đầu lặp bốn lần cùng một vế "(ngày đó sẽ có buổi dày hơn nhịp bạn chọn)" trong một câu
+        ds = [", ".join(cho(g) for g in gs) + gia for gia, gs in itertools.groupby(k["cho"], key=lambda g: _gia_cach(k, g))]
         con = f"; và {k['con']} chỗ khác" if k["con"] else ""
+        goi_y = f" Mình gợi ý {cho(k['cho'][0])}." if k["goi_y"] and len(k["cho"]) + k["con"] > 1 else ""
         mot_buoi = f" {x} chỉ xếp được vào buổi {NHAN_BUOI[k['buoi_di'][0]]}." if buoi is None and len(k["buoi_di"]) == 1 else ""
-        return (f"{hoi} {x} đặt được vào: {'; '.join(ds)}{con}.{mot_buoi} Bấm một nút dưới đây hoặc nhắn ngày và buổi bạn muốn; muốn mình tự chọn "
+        return (f"{hoi} {x} đặt được vào: {'; '.join(ds)}{con}.{goi_y}{mot_buoi} Bấm một nút dưới đây hoặc nhắn ngày và buổi bạn muốn; muốn mình tự chọn "
                 f"chỗ thì nhắn “{CAU_TU_XEP}”. Lịch chưa đổi gì.")
     if _la_khu_xa(k):
         return (f"{x} ở xa trung tâm: điểm như vậy chỉ xếp được thành một ngày riêng, từ ngày thứ hai của lịch ba ngày trở lên, nên mình chưa thêm vào "

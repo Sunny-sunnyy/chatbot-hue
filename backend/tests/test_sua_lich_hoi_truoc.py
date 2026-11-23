@@ -58,7 +58,7 @@ def test_add_without_day_and_session_asks_first_and_the_first_button_is_what_the
     assert m["ma_luat"] == "them_hoi" and m["goi_y"] is True and (m["cho"][0]["ngay"], m["cho"][0]["buoi"]) == (ap_cu["ngay"], ap_cu["buoi"])
     d = _dong(kq)
     assert d["hoi"] is True and d["cau"].startswith("Bạn muốn thêm Hổ Quyền vào ngày nào, buổi nào?") and "Lịch chưa đổi gì." in d["cau"]
-    assert "«" not in d["cau"] and "Chưa làm" not in d["cau"] and "mình gợi ý chỗ này" in d["cau"] and s.CAU_TU_XEP in d["cau"]
+    assert "«" not in d["cau"] and "Chưa làm" not in d["cau"] and f"Mình gợi ý buổi {s.NHAN_BUOI[ap_cu['buoi']]} ngày {ap_cu['ngay']}." in d["cau"] and s.CAU_TU_XEP in d["cau"]
     nut = d["nut"]
     assert nut[0]["nhan"].endswith("(gợi ý)") and nut[-1] == {"nhan": "Xếp giúp mình", "gui": f"thêm Hổ Quyền, {s.CAU_TU_XEP}"}
     assert len(nut) == len(m["cho"]) + 1 and all(set(n) == {"nhan", "gui"} for n in nut)
@@ -143,3 +143,39 @@ def test_a_full_slot_offers_replacement_buttons_that_the_card_path_applies_witho
                     assert i in s._vi_tri(sau["khung"]) and n["chon"]["cu"] not in s._vi_tri(sau["khung"])
                     return
     raise AssertionError("lịch mặc định phải có ít nhất một lệnh thêm cần thay một điểm")
+
+
+def _hieu(cau, ten, **cong_tac):
+    """Chạy `len_ke_hoach.hieu_va_ap` THẬT trên lịch mặc định; chỉ lần gọi model là đồ giả trả đúng một hành động `them_diem` không ngày, không buổi
+    (thứ model thật trả cho câu "thêm X") — tức đường người dùng đi: câu gõ ⇒ hiểu ý ⇒ bộ áp ⇒ khối thay đổi + câu nhớ cho lượt kế."""
+    import asyncio
+
+    from llm import len_ke_hoach as lkh
+    from llm.assistant import AnswerTrace
+    from test_cong_dot_1 import flags_from
+
+    k, luu = _mac_dinh()
+
+    class Gen:
+        async def hieu_sua(self, prompt, call_log, **kw):
+            return [s.HanhDong(loai="them_diem", ten=ten)]
+
+    tr = AnswerTrace(history=(("Lên kế hoạch tham quan Huế", "(lịch)"),))
+    tr.lich_luu, tr.sua_chon = luu, None
+    flags = flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, sua_lich_v2=True, sua_lich_chua_ho_tro=True, sua_lich_them_khong_the=True,
+                       sua_lich_them_day=True, sua_lich_them_khu=True, sua_lich_them_han_che=True, **cong_tac)
+    return k, asyncio.run(lkh.hieu_va_ap(cau, Gen(), tr, flags)), tr
+
+
+def test_typed_command_goes_through_the_understanding_step_and_the_next_turn_remembers_the_button_sentences():
+    """Đường người dùng đi (route ⇒ `hieu_va_ap`): công tắc bật — câu "thêm X" ra dòng hỏi + các câu nút được nhớ cho lượt kế; câu có lời cho tự xếp
+    ("…, bạn tự xếp giúp mình" — chính câu nút "Xếp giúp mình" gửi) thì áp như bản cũ. Công tắc tắt — bộ áp không nhận tham số mới, kết quả y như cũ."""
+    k, cu, tr_cu = _hieu("thêm Hổ Quyền", "Hổ Quyền")
+    assert cu["da_ap"] and tr_cu.goi_y_moi == ()  # công tắc tắt: tự xếp ngay, không có câu nào để nhớ
+    k, kq, tr = _hieu("thêm Hổ Quyền", "Hổ Quyền", sua_lich_hoi_truoc=True)
+    assert kq["khung"] == k and kq["da_ap"] == [] and [m["ma_luat"] for m in kq["khong_doi"]] == ["them_hoi"]
+    nut = _dong(kq)["nut"]
+    assert tr.goi_y_moi == tuple(n["gui"] for n in nut) and tr.goi_y_moi[-1] == f"thêm Hổ Quyền, {s.CAU_TU_XEP}"
+    assert tr.sua_dong == (_dong(kq)["cau"],) and tr.sua["n_ap"] == 0 and tr.sua["n_khong"] == 1  # ô lịch sử mang câu hỏi; lượt không áp gì
+    k, tu, _ = _hieu(nut[-1]["gui"], "Hổ Quyền", sua_lich_hoi_truoc=True)  # bấm "Xếp giúp mình": câu nút đi qua đúng đường này
+    assert tu["khung"] == cu["khung"] and tu["khong_doi"] == []
