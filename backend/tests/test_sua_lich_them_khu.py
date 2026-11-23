@@ -20,7 +20,7 @@ KHU = {"qua_2_cum", "cum_khong_ke", "ghep_khong_ke"}
 @pytest.fixture
 def bang_phut():
     """Nạp bảng phút cho đúng một ca test rồi trả về None (biến mức module của `lich_trinh_v2`)."""
-    phut = kc.bang_phut(KC)
+    phut = v2.bu_phut_khu(B, kc.bang_phut(KC))  # như nơi dựng cờ: bảng khoảng cách + cặp thiếu bù bằng chặng dài nhất đã biết giữa hai khu
     v2.dat_phut_khu(phut)
     yield phut
     v2.dat_phut_khu(None)
@@ -113,3 +113,58 @@ def test_groups_with_children_or_elderly_are_not_changed(bang_phut):
     luu = s.luu_tu_lich(k, None, None)
     for i in [j for j in NGAY_DIEM if j not in s._vi_tri(k)][:12]:
         assert _them(luu, i, them_day=True, them_khu=True) == _them(luu, i)
+
+
+def test_every_day_pair_in_non_adjacent_areas_has_minutes(bang_phut):
+    """Điểm không có trong bảng khoảng cách (Không gian lưu niệm Lê Bá Đảng — không toạ độ) được bù bằng chặng DÀI NHẤT đã biết giữa hai khu đó: không
+    bù thì lịch đã có điểm ấy kẹt ở lệnh "bỏ" kế tiếp (1 / 2.752 lệnh trên lưới 108 lịch)."""
+    goc = kc.bang_phut(KC)
+    thieu = [i for i in NGAY_DIEM if not any(k.startswith(f"{i}|") for k in goc)]
+    assert thieu == ["kg_le_ba_dang"]
+    for a in NGAY_DIEM:
+        for b in NGAY_DIEM:
+            if a != b and v2._phut_di(T[a], T[b]) is None and v2.CUM_XA not in (T[a]["cum"], T[b]["cum"]):
+                assert f"{a}|{b}" in bang_phut, (a, b)
+    x = thieu[0]
+    y = next(j for j in NGAY_DIEM if v2._phut_di(T[x], T[j]) is None and f"{x}|{j}" in bang_phut)
+    cung_khu = [goc[f"{a}|{y}"] for a in NGAY_DIEM if T[a]["cum"] == T[x]["cum"] and f"{a}|{y}" in goc]
+    assert bang_phut[f"{x}|{y}"] >= max(cung_khu)  # ước dư, không ước thiếu
+
+
+def test_default_schedule_picks_the_slot_with_fewest_cross_area_legs_and_says_the_true_reason(bang_phut):
+    """Lịch mặc định của trang Lên kế hoạch (soi 23/11/2026). Chọn chỗ: "thêm Trường Quốc Học Huế" từng rơi vào giữa hai lăng của ngày 2 (hai chặng không
+    kề, đi ra trung tâm rồi quay lại) ⇒ nay cuối buổi chiều, một chặng. Thẻ lịch in số phút của chặng không kề (kể cả chặng qua bữa trưa). Lệnh vẫn bị
+    từ chối thì câu nói thứ CÒN chặn sau khi đã nới khu: hết giờ / khu xa — không còn "hai khu không liền nhau"."""
+    k, luu = _lich(2, "can_bang", so_thich=())
+    ten = {d["ten"]: i for i, d in T.items()}
+    n_duoc = 0
+    for i, ng, b in _lenh(k):
+        if ng is not None:
+            continue
+        kq = _them(luu, i, them_day=True, them_khu=True)
+        if not kq["da_ap"]:
+            cau = s.thay_doi(B, kq)[0]["cau"]
+            assert "hai khu không liền nhau" not in cau and "đang kín" not in cau and "phạm luật xếp" not in cau
+            continue
+        n_duoc += 1
+        if not kq["da_ap"][0].get("khu"):
+            continue
+        # chỗ được chọn có ít chặng không kề nhất trong mọi chỗ làm được
+        ts, vt = s._ts(k["tham_so"]), s._vi_tri(k)
+        it_nhat = min(len(v2.chang_khu(B, next(x for x in k2["ngay"] if x["ngay"] == cho[0]))[1]) for cho in s._cho_thu(B, k, i, None, None)
+                      if (k2 := s._thu_cho(B, luu, ts, vt, [], i, cho, False, day_moi=cho[0], khu_moi=cho[0])[0]) is not None)
+        assert len(kq["da_ap"][0]["khu"]["chang"]) == it_nhat
+        # thẻ: mỗi chặng không kề của ngày đó mang đúng số phút của bảng ở mục ĐẾN
+        ngay = kq["da_ap"][0]["ngay"]
+        muc = {m["id_diem"]: m for m in next(x for x in v2.dung_lich(B, kq["khung"], {})["ngay"] if x["ngay"] == ngay)["muc"]}
+        d = next(x for x in kq["khung"]["ngay"] if x["ngay"] == ngay)
+        day = [j for bb in v2.BUOI_NGAY for j in d["buoi"][bb]]
+        for x, y in zip(day, day[1:]):
+            if v2._phut_di(T[x], T[y]) is None:
+                assert muc[y]["phut_di"] == bang_phut[f"{x}|{y}"]
+    assert n_duoc == 24  # lịch mặc định: 24 / 30 điểm chưa có thêm được (10 chỉ nhờ nới nhịp, 14 nhờ sang khu)
+    qh = _them(luu, ten["Trường Quốc Học Huế"], them_day=True, them_khu=True)["da_ap"][0]
+    assert (qh["ngay"], qh["buoi"]) == (2, "chieu") and len(qh["khu"]["chang"]) == 1
+    cau = lambda t: s.thay_doi(B, _them(luu, ten[t], them_day=True, them_khu=True))[0]["cau"]  # noqa: E731
+    assert f"cũng vướng: {s.CAU_LY_DO['kin']}." in cau("Lăng Gia Long")
+    assert f"cũng vướng: {s.CAU_LY_DO['khu_xa']}." in cau("Vườn quốc gia Bạch Mã")

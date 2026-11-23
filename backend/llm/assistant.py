@@ -368,7 +368,7 @@ class AssistantFlags:
         muc_luc = lk.nap_muc_luc(*discover_full_corpus_files(settings)) if values["liet_ke_bai"] or values["the_noi"] else None
         bang_kc = kc.nap_bang(BACKEND_DIR / config["khoang_cach_bang"], BACKEND_DIR / config["lich_trinh_bang_v2"]) if values["khoang_cach"] else None
         # công tắc `sua_lich_them_khu` (bản thử): phút đi giữa hai khu không kề cho bộ sửa lịch; tắt ⇒ None ⇒ dấu `khu_them` không có tác dụng
-        lt2.dat_phut_khu(kc.bang_phut(bang_kc) if values["sua_lich_them_khu"] and bang_kc is not None else None)
+        lt2.dat_phut_khu(lt2.bu_phut_khu(bang_v2, kc.bang_phut(bang_kc)) if values["sua_lich_them_khu"] and bang_kc is not None and bang_v2 is not None else None)
         return cls(**values, lan_tim_dau=str(config.get("lan_tim_dau", "v0")), cong_cong_cu=str(cong.get("cong_cong_cu", "tu_khoa")), so_lan_tim_kho=int(config.get("so_lan_tim_kho", MODEL_SEARCH_LIMIT)),
                    bang_lich=bang, toa_do_lich=toa_do,
                    du_bao=tt.lay_du_bao if values["thoi_tiet"] else None,

@@ -86,6 +86,9 @@ MA_LUAT_KHU = {"cum_khong_ke", "qua_2_cum", "ghep_khong_ke", "cum_xa", "khu_qua_
 MA_LUAT_KIN = {"qua_day_buoi", "vuot_quy", "sang_chong_chieu", "gio_chong", "han_che_qua_day", "day_qua_gio"}
 CAU_LY_DO = {"khu": "một ngày sẽ phải đi hai khu không liền nhau", "kin": "lịch sẽ có buổi quá kín hoặc quá giờ",
              "gio_mo": "điểm sẽ rơi ngoài giờ mở cửa",
+             # hai lý do chỉ dùng cho lệnh thêm không nói rõ một buổi (`_loai_ly_do_cho`)
+             "khu_xa": "điểm ở khu xa trung tâm chỉ xếp được thành một ngày riêng, từ ngày thứ hai của lịch ba ngày trở lên",
+             "chang_xa": f"chặng đi giữa hai khu không liền nhau sẽ dài hơn {v2.TRAN_PHUT_KHU} phút",
              "ban_ngay": "đây là điểm tham quan ban ngày, còn buổi tối lịch chỉ xếp hoạt động buổi tối"}  # cờ `sua_lich_buoi_toi`
 # Lý do riêng của "đổi chỗ hai ngày" (đếm 20/11 trên 15.360 cặp: 1.346 ca bị chặn đều vì điểm khu xa rơi vào ngày 1; 183 ca có ngày đi / mưa mà
 # một điểm không đứng được ở buổi của nó sau khi đổi)
@@ -97,6 +100,19 @@ def _loai_ly_do(ma) -> str | None:
     """Mã `kiem_khung_v2` của một khung thử ⇒ MỘT loại lý do lời thường (khoá của `CAU_LY_DO`); thứ tự xét: khu > kín > giờ mở."""
     ma = set(ma)
     return "khu" if ma & MA_LUAT_KHU else "kin" if ma & MA_LUAT_KIN else "gio_mo" if "ngoai_gio_mo" in ma else None
+
+
+def _loai_ly_do_cho(ma, noi_khu: bool) -> str | None:
+    """Lý do của MỘT chỗ đã thử, cho lệnh thêm không nói rõ một buổi. Thêm hai loại so với `_loai_ly_do`: điểm ở khu xa (`cum_xa`; khi luật khu đã
+    nới — `noi_khu`, công tắc `sua_lich_them_khu` — thì `qua_2_cum` còn lại cũng chỉ là khu xa đi chung ngày với khu khác) và chặng sang khu không kề
+    quá trần phút. Soi lịch mặc định 23/11/2026: bản sang khu bật mà "thêm Lăng Gia Long" (thật ra hết giờ) và "thêm Vườn quốc gia Bạch Mã" (khu xa)
+    đều đọc "hai khu không liền nhau"."""
+    ma = set(ma)
+    if "cum_xa" in ma or (noi_khu and "qua_2_cum" in ma):
+        return "khu_xa"
+    if noi_khu and ma & {"khu_qua_xa", "ghep_khong_ke"}:
+        return "chang_xa"
+    return _loai_ly_do(ma)
 
 
 NHAN_TRUONG = {"so_ngay": "số ngày", "kieu_di": "kiểu đi", "so_thich": "sở thích", "tre_em": "số trẻ em", "lon_tuoi": "người lớn tuổi",
@@ -879,14 +895,18 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                         break
             khu = None
             if k is None and h.loai == "them_diem" and them_khu and them_day and not ts.han_che and v2.PHUT_KHU is not None:
-                # Bản thử: người dùng xin ĐÍCH DANH một điểm mà chỗ nào cũng vướng luật khu ⇒ nhận, ở chỗ có chặng sang khu không kề NGẮN nhất.
-                ung = []
+                # Người dùng xin ĐÍCH DANH một điểm mà chỗ nào cũng vướng luật khu ⇒ nhận, ở chỗ ÍT phải đi sang khu không kề nhất: ít chặng không kề
+                # trước, rồi tổng số phút của các chặng đó. (Bản đầu chọn theo chặng dài nhất ngắn nhất ⇒ trên lịch mặc định "thêm Trường Quốc Học Huế"
+                # rơi vào GIỮA hai lăng — đi ra trung tâm rồi quay lại, hai chặng 15 phút — trong khi đặt cuối buổi chiều chỉ một chặng; soi 23/11/2026.)
+                ung, ma_cho = [], []
                 for cho in _cho_thu(bang, khung, i, ngay, h.buoi):
-                    k2 = _thu_cho(bang, luu, ts, vt, loai, i, cho, False, day_moi=cho[0], khu_moi=cho[0])[0]
+                    k2, loi, _ = _thu_cho(bang, luu, ts, vt, loai, i, cho, False, day_moi=cho[0], khu_moi=cho[0])
+                    ma_cho.append(loi)  # mã của lần thử ĐÃ nới cả khu ⇒ lý do từ chối nói đúng thứ còn chặn (giờ, khu xa…), không còn "hai khu không liền nhau"
                     if k2 is not None:
-                        ung.append((_chang_khu(bang, k2, cho[0])["phut"], len(ung), cho[0], k2))
+                        c = _chang_khu(bang, k2, cho[0])
+                        ung.append((len(c["chang"]), sum(x[2] for x in c["chang"]), len(ung), cho[0], k2))
                 if ung:
-                    _, _, day, k = min(ung, key=lambda u: u[:2])
+                    *_, day, k = min(ung, key=lambda u: u[:3])
                     khu = day
             the_cho = None
             if k is None and h.loai == "them_diem" and them_khong_the:
@@ -908,8 +928,8 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 # lưới 108 lịch: 797 lệnh "thêm X" của đoàn thường bị từ chối — 701 chỉ vướng MỘT loại (690 là khu), 96 lẫn hai ba loại ⇒ một loại thì
                 # câu nói thẳng loại đó, lẫn thì nêu từng loại (trước đó mọi ca đều đọc "lịch đang kín…", kể cả 20 / 30 điểm của lịch mặc định). Đoàn có
                 # trẻ nhỏ / người lớn tuổi GIỮ câu cũ: không có lần thử nới nhịp, chỗ nào cũng vướng trần "hai điểm một ngày" ⇒ "lịch đang kín" là đúng
-                theo_cho = ({"ly_do_cho": [x for x, _ in collections.Counter(filter(None, map(_loai_ly_do, ma_cho))).most_common()] if ly_do is None else []}
-                            if them_day and not ts.han_che else {})
+                theo_cho = ({"ly_do_cho": [x for x, _ in collections.Counter(filter(None, (_loai_ly_do_cho(m, noi_khu) for m in ma_cho))).most_common()]
+                             if ly_do is None else []} if them_day and not ts.han_che else {})
                 if trong:
                     kq["khong_doi"].append({"diem": ten, "ma_luat": "them_can_thay", "dich": [ngay, h.buoi],
                                             "cach": _mot_cach_khong_mat(bang, ts, khac + trong, ngay) if them_day else _hai_cach(bang, ts, trong, ngay),

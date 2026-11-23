@@ -43,6 +43,25 @@ def dat_phut_khu(bang_phut: dict[str, int] | None) -> None:
     PHUT_KHU = bang_phut
 
 
+def bu_phut_khu(bang: "BangV2", phut: dict[str, int]) -> dict[str, int]:
+    """Bảng phút đủ cho MỌI cặp điểm ban ngày ở hai khu không kề. Điểm không có trong bảng khoảng cách (23/11/2026: 1 / 37 — Không gian lưu niệm Lê Bá
+    Đảng, không có toạ độ) ⇒ mỗi cặp thiếu lấy chặng DÀI NHẤT đã biết giữa hai KHU đó (ước dư, không ước thiếu; hai khu chưa có cặp nào ⇒ vẫn thiếu,
+    bộ kiểm từ chối). Vì sao: thiếu một cặp thì lịch đã có điểm đó kẹt ở lệnh "bỏ" kế tiếp (1 / 2.752 lệnh trên lưới 108 lịch)."""
+    ngay = [d for d in bang.diem if set(d["buoi"]) & set(BUOI_NGAY)]
+    xa: dict[tuple[str, str], int] = {}
+    for a in ngay:
+        for b in ngay:
+            m = phut.get(f"{a['id']}|{b['id']}")
+            if m is not None:
+                xa[(a["cum"], b["cum"])] = max(m, xa.get((a["cum"], b["cum"]), 0))
+    du = dict(phut)
+    for a in ngay:
+        for b in ngay:
+            if a["id"] != b["id"] and f"{a['id']}|{b['id']}" not in du and (a["cum"], b["cum"]) in xa:
+                du[f"{a['id']}|{b['id']}"] = xa[(a["cum"], b["cum"])]
+    return du
+
+
 GIO_KET_SANG_DAY = 13 * 60 + 30  # công tắc `sua_lich_them_day`: buổi sáng của một ngày được dày kết muộn nhất lúc này — bữa trưa không bắt đầu sau 13:30 (không trần: có buổi sáng ba điểm 7:30 – 14:15)
 GIO_KET_CHIEU_DAY = 18 * 60  # công tắc `sua_lich_them_day`: buổi chiều của một ngày người dùng tự xin thêm điểm kết muộn nhất lúc này (sau đó là bữa tối + hoạt động tối; điểm không ghi giờ đóng thì không còn luật nào khác chặn)
 NGHI_TRUA = 60  # phút ăn trưa + đi sang điểm chiều: điểm thêm buổi sáng phải xong trước giờ đầu chiều chừng này (tự thử 16/11: 15 phút từ Kinh thành ra phá)
@@ -761,9 +780,15 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
                         "ten": CAU_TOI[khung["toi_nghi"][ng["ngay"]]], "gio": None, "nguon": None, "anh": None, "toa_do": None, "nhan": []})
         # giao diện mới 14/11: phút đi tới mục ngay trước TRONG CÙNG BUỔI = đúng số bộ xếp đã dùng để giãn giờ (ước theo cụm, 5c.3);
         # mục đầu buổi / hoạt động tối / tối nghỉ ⇒ không có trường (không đoán)
+        # Ngày người dùng đã xin đi sang khu không kề (dấu `khu_them`, công tắc `sua_lich_them_khu`): chặng không kề cũng in số phút — lấy từ bảng khoảng
+        # cách, đúng số đã dùng để tính giờ — kể cả chặng qua bữa trưa (mục đầu buổi chiều), để thẻ nói ra quãng đi dài nhất của ngày.
+        khu = ng["ngay"] in (khung.get("khu_them") or ())
         for a, c in zip(muc, muc[1:]):
-            if a["buoi"] == c["buoi"] != "toi" and a["id_diem"] and c["id_diem"]:
-                phut = _phut_di(bang.theo_id[a["id_diem"]], bang.theo_id[c["id_diem"]])
+            if a["buoi"] != "toi" != c["buoi"] and a["id_diem"] and c["id_diem"]:
+                da, dc = bang.theo_id[a["id_diem"]], bang.theo_id[c["id_diem"]]
+                phut = _phut_di(da, dc) if a["buoi"] == c["buoi"] else None
+                if phut is None and khu and _phut_di(da, dc) is None:
+                    phut = _phut_noi(da, dc, True)
                 if phut is not None:
                     c["phut_di"] = phut
         # giao diện: "tên chặng" của ngày = các cụm của điểm ban ngày theo thứ tự đi (tên cụm của bảng, bỏ phần trong ngoặc); không vào model
