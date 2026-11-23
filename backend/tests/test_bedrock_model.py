@@ -274,6 +274,58 @@ def test_stream_path_failures_are_generation_errors(tmp_path, fault):
     assert "123456789012" not in str(error.value) and "khong_co.json" not in str(error.value)
 
 
+def _chuoi_ma(tmp_path, monkeypatch, cac_ma):
+    """Model mà lời gọi thứ i nhận mã `cac_ma[i]` (200 ⇒ một câu trả lời hợp lệ); nhịp chờ gọi lại đặt 0 để test không ngủ. Trả (generator, list lời gọi)."""
+    from llm import bedrock_model as bm
+    monkeypatch.setattr(bm, "CHO_GOI_LAI_GIAY", 0)
+    model, _ = scripted_model(tmp_path, [])
+    da_gui: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        da_gui.append(request)
+        ma = cac_ma[len(da_gui) - 1]
+        if ma == 200:
+            return httpx.Response(200, json=claude_message({"type": "tool_use", "id": "toolu_1", "name": "tra_loi", "input": {"answer": "Chào bạn."}}))
+        return httpx.Response(ma, text="arn:aws:sts::123456789012:assumed-role/ten-vai/x internal failure")
+
+    model.http = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    return OpenAIFullCorpusGenerator(client=None, model="claude-test", bedrock_model=model), da_gui
+
+
+@pytest.mark.parametrize("ma", [500, 502, 503, 504])
+def test_a_5xx_from_bedrock_is_retried_once_and_the_answer_comes_back(tmp_path, monkeypatch, caplog, ma):
+    """23/11/2026: 5xx thoáng qua của Bedrock ⇒ gọi lại đúng lời gọi đó MỘT lần ⇒ người dùng nhận câu trả lời thay cho màn "Thử lại"."""
+    generator, da_gui = _chuoi_ma(tmp_path, monkeypatch, [ma, 200])
+    with caplog.at_level("WARNING", logger="llm.full_corpus"):
+        tra_loi = asyncio.run(generator.generate_chat("chào"))
+    assert tra_loi.text == "Chào bạn." and len(da_gui) == 2 and da_gui[0].content == da_gui[1].content  # cùng thân lời gọi
+    assert [r.getMessage() for r in caplog.records if "bedrock_goi_lai" in r.getMessage()] == [f"bedrock_goi_lai status={ma}"]
+
+
+def test_a_second_5xx_is_not_hidden_and_4xx_is_never_retried(tmp_path, monkeypatch):
+    generator, da_gui = _chuoi_ma(tmp_path, monkeypatch, [500, 503, 200])  # hai lần lỗi liền ⇒ lỗi đi ra như cũ, KHÔNG có lần thứ ba
+    with pytest.raises(GenerationError) as error:
+        asyncio.run(generator.generate_chat("chào"))
+    assert len(da_gui) == 2 and "Bedrock HTTP 503" in str(error.value) and "123456789012" not in str(error.value)
+    for ma in (403, 429, 400):  # khoá hỏng / quá hạn mức / thân sai: gọi lại không chữa được
+        generator, da_gui = _chuoi_ma(tmp_path, monkeypatch, [ma, 200])
+        with pytest.raises(GenerationError):
+            asyncio.run(generator.generate_chat("chào"))
+        assert len(da_gui) == 1
+
+
+def test_a_retried_5xx_on_the_stream_path_sends_the_text_once(tmp_path, monkeypatch):
+    """Đường stream của lớp dịch phát chữ SAU khi lời gọi xong (chữ về một lần) ⇒ gọi lại nằm dưới lớp phát chữ: không mảnh chữ nào ra hai lần."""
+    generator, da_gui = _chuoi_ma(tmp_path, monkeypatch, [500, 200])
+
+    async def doc():
+        result, _ = generator.start_chat_stream("chào")
+        return [e.data.delta async for e in result.stream_events() if e.type == "raw_response_event" and e.data.type == "response.output_text.delta"]
+
+    manh = asyncio.run(doc())
+    assert len(manh) == 1 and "Chào bạn." in manh[0] and len(da_gui) == 2
+
+
 def test_error_text_masks_account_numbers_before_truncating(tmp_path):
     """Review C m1: che ARN / mã tài khoản TRƯỚC khi cắt 300 ký tự (mã vắt qua mốc cắt từng còn lại một phần)."""
     model, _ = scripted_model(tmp_path, [])
