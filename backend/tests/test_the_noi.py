@@ -172,7 +172,7 @@ def test_switch_off_or_no_table_does_nothing(deps, mo):
 
 def test_settings_switch_loads_the_table_without_turning_the_listing_tool_on():
     settings = load_settings(validate_private_paths=False)
-    settings["assistant"] = {**settings["assistant"], "the_noi": True, "liet_ke_bai": False}
+    settings["assistant"] = {**settings["assistant"], "the_noi": True, "liet_ke_bai": False, "ho_so_chu_de": False}  # hồ sơ theo chủ đề cần mục lục của `liet_ke_bai` ⇒ tắt theo
     flags = AssistantFlags.from_settings(settings)
     assert flags.the_noi and len(flags.the_noi_bang.noi) > 100 and flags.muc_luc is None
 

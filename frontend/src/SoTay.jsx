@@ -56,7 +56,7 @@ export function useSoTay() {
 }
 
 const NHAN_BUOI = { sang: "Sáng", chieu: "Chiều", toi: "Tối" };
-const IC = {  // nét 24 × 24, cùng kiểu nét với biểu tượng buổi của thẻ lịch
+export const IC = {  // nét 24 × 24, cùng kiểu nét với biểu tượng buổi của thẻ lịch
   sang: "M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z",
   chieu: "M17 18a5 5 0 0 0-10 0M12 9V3M4.2 10.2l1.4 1.4M1 18h2M21 18h2M18.4 11.6l1.4-1.4M23 22H1",
   toi: "M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z",
@@ -82,7 +82,7 @@ function icNhan(nhan) {
   if (n.startsWith("đi lại") || n.startsWith("di chuyển")) return IC.di_lai;
   return IC.khac;
 }
-function Net({ d, co = 18 }) {
+export function Net({ d, co = 18 }) {
   return (
     <svg width={co} height={co} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
          aria-hidden="true"><path d={d} /></svg>
@@ -93,7 +93,9 @@ function Net({ d, co = 18 }) {
 // trong câu khó đọc"; nhắc lại 24/11 khi xem ảnh bản thử này). Bỏ bằng đúng hàm dùng chung `boMaTrichDan`; nguồn hiện ở khối "Nguồn đã dùng" dưới mỗi mục.
 const chuSach = chu => boMaTrichDan(String(chu ?? "")).trim();
 
-function NoiDungMuc({ muc, khoa, baiId }) {
+// Dùng chung với trang hồ sơ theo chủ đề (`HoSo.jsx`): `oThieu` = hàm vẽ ô thiếu riêng của trang đó (nhận danh sách nhãn thiếu); không đưa ⇒ ô của sổ tay.
+// `duoiY` = hàm vẽ phần đuôi của từng ý trong danh sách (trang hồ sơ: tên bài mà ý dựa vào); không đưa ⇒ không có đuôi.
+export function NoiDungMuc({ muc, khoa, baiId, oThieu = null, duoiY = null }) {
   // Dữ liệu lệch hợp đồng không được làm trắng cả trang (không có lớp bắt lỗi quanh trang): thiếu mảng ⇒ mảng rỗng; nguồn luôn có `heading_path`,
   // `excerpts` (dòng nguồn dùng chung `SourceLine` đọc thẳng hai trường đó khi bấm mở)
   const nguon = (Array.isArray(muc.nguon) ? muc.nguon : []).map(s => ({ ...s, heading_path: s.heading_path || [], excerpts: s.excerpts || [] }));
@@ -114,19 +116,23 @@ function NoiDungMuc({ muc, khoa, baiId }) {
       {khoi.map((k, n) => (Array.isArray(k)
         ? <dl key={n} className="st-dl">
             {k.map((d, i) => (
-              <div key={i} className="st-d">
-                <dt><Net d={icNhan(d.nhan)} /> {d.nhan}</dt>
+              <div key={i} className={d.nhan ? "st-d" : "st-d st-d-tron"}>
+                {d.nhan && <dt><Net d={icNhan(d.nhan)} /> {d.nhan}</dt>}
                 <dd>{Array.isArray(d.gach)
-                  ? <ul>{d.gach.map((g, j) => <li key={j}>{chuSach(g)}</li>)}</ul>
+                  ? <ul>{d.gach.map((g, j) => <li key={j}>{chuSach(g)}{duoiY ? duoiY(d, j, nguon) : null}</li>)}</ul>
                   : chuSach(d.chu)}</dd>
               </div>
             ))}
           </dl>
-        // câu an toàn (bão / lũ, 112): chữ cố định của hệ thống — giữ nguyên chữ và lớp hiển thị an toàn của sản phẩm
-        : <p key={n} className="notice notice-an-toan" role="note">{k.chu}</p>))}
+        // câu an toàn (bão / lũ, 112; trang hồ sơ: lưu ý an toàn theo mùa của bài kho): giữ NGUYÊN chữ lõi gửi và lớp hiển thị an toàn của sản phẩm.
+        // Có `nhan` (hồ sơ) ⇒ in nhãn đậm trước câu, một lần cho các câu liền nhau cùng nhãn; `so[0]` trỏ một bài kho ⇒ thêm lối "Mở bài".
+        : <p key={n} className="notice notice-an-toan" role="note"><span>
+            {k.nhan && !(khoi[n - 1]?.kieu === "an_toan" && khoi[n - 1].nhan === k.nhan) && <b>{k.nhan}: </b>}{chuSach(k.chu)}
+            {typeof nguon.find(s => s.id === k.so?.[0])?.bai_id === "string" && <> <a href={baiHref(nguon.find(s => s.id === k.so[0]).bai_id)}>Mở bài</a></>}
+          </span></p>))}
       {/* Ô THIẾU: lõi báo "sổ tay không có dòng này" — KHÔNG phải "kho không có" (bài có thể nêu giờ trong câu văn chứ không ở dòng nhãn; ý của model có
           thể bị bộ lọc bỏ) ⇒ câu không khẳng định gì về kho, và chỉ lối xem tiếp (phiên đo + phiên điều phối 24/11/2026) */}
-      {thieu.length > 0 && (
+      {thieu.length > 0 && (oThieu ? oThieu(thieu, doan.filter(d => d.kieu === "thieu")) :
         <p className="st-thieu"><Net d={IC.sach} /><span><b>Sổ tay chưa ghi được:</b> {thieu.map(t => t[0].toLowerCase() + t.slice(1)).join(" · ")} —{" "}
           {typeof baiId === "string" ? <>xem ở <a href={baiHref(baiId)}>bài về nơi này</a>, hoặc hỏi Trợ lý.</> : "hỏi Trợ lý để biết thêm."}</span></p>
       )}
@@ -136,7 +142,7 @@ function NoiDungMuc({ muc, khoa, baiId }) {
   );
 }
 
-function KhungXuong() {
+export function KhungXuong() {
   return (
     <div className="st-xuong" aria-hidden="true">
       <span /><span /><span className="st-xuong-ngan" /><span /><span className="st-xuong-ngan" />
@@ -170,7 +176,7 @@ function Muc({ d, muc, dang, i }) {
 }
 
 // "Dòng sông mục lục": một nét dọc, mỗi mục một bến; bến của mục đã viết xong thì đầy, mục đang đọc thì sáng.
-function SongMucLuc({ nhom, muc, dangDoc }) {
+export function SongMucLuc({ nhom, muc, dangDoc }) {
   const khung = useRef(null);
   // Lịch dài (5 ngày: 21 bến) ⇒ mục lục cao hơn khung ghim và tự cuộn bên trong: giữ bến đang đọc ở giữa khung (chỉ cuộn khung mục lục, không cuộn trang)
   useEffect(() => {
@@ -200,19 +206,19 @@ function SongMucLuc({ nhom, muc, dangDoc }) {
 }
 
 // Lúc chờ: con đò đi dọc nét sông theo số mục đã viết xong (máy bật giảm chuyển động: đò đứng đúng chỗ, không trượt).
-function TienDo({ xong, tong }) {
+export function TienDo({ xong, tong, choDau = "Đang đọc lịch của bạn…" }) {
   const phan = tong ? Math.round((xong / tong) * 100) : 0;
   return (
-    <div className="st-tien" role="progressbar" aria-valuemin={0} aria-valuemax={tong} aria-valuenow={xong} aria-label="Tiến độ viết sổ tay">
+    <div className="st-tien" role="progressbar" aria-valuemin={0} aria-valuemax={tong} aria-valuenow={xong} aria-label="Tiến độ viết">
       <div className="st-tien-song"><i style={{ width: `${phan}%` }} /><b style={{ left: `${phan}%` }} aria-hidden="true">
         <svg width="34" height="20" viewBox="0 0 34 20" aria-hidden="true"><path d="M2 9h30l-5 8H7z" fill="currentColor" /><path d="M17 9V2l8 7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /></svg>
       </b></div>
-      <p className="st-tien-chu" aria-live="polite">{tong ? `Đang viết — xong ${xong} / ${tong} mục` : "Đang đọc lịch của bạn…"}</p>
+      <p className="st-tien-chu" aria-live="polite">{tong ? `Đang viết — xong ${xong} / ${tong} mục` : choDau}</p>
     </div>
   );
 }
 
-function inSoTay() {
+export function inSoTay() {
   // ảnh `loading="lazy"` ngoài màn hình chưa tải ⇒ bản in thiếu ảnh: tải hết rồi mới mở khung in (chờ tối đa 4 giây) — như nút in của thẻ lịch
   const anh = [...document.querySelectorAll(".st img")];
   anh.forEach(i => { i.loading = "eager"; });
@@ -220,14 +226,29 @@ function inSoTay() {
   Promise.race([cho, new Promise(r => setTimeout(r, 4000))]).then(() => window.print());
 }
 
+// Bến đang đọc: mục trên cùng đang nằm trong dải giữa màn hình (dùng chung cho trang sổ tay và trang hồ sơ theo chủ đề).
+export function useBenDangDoc(ds) {
+  const [dangDoc, setDangDoc] = useState(null);
+  useEffect(() => {
+    if (!ds.length || typeof IntersectionObserver === "undefined") return undefined;
+    const qs = new IntersectionObserver(vao => {
+      const thay = vao.filter(v => v.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+      if (thay) setDangDoc(thay.target.dataset.muc);
+    }, { rootMargin: "-20% 0px -60% 0px" });
+    document.querySelectorAll(".st-muc").forEach(e => qs.observe(e));
+    return () => qs.disconnect();
+  }, [ds]);
+  return dangDoc;
+}
+
 const DONG_CUOI = "Từ Trợ lý Huế — có thể sai; giờ mở cửa, giá vé có thể đã thay đổi, hãy kiểm lại trước khi đi.";
 
 export function SoTay({ soTay }) {
   const { pha, danY, muc, xong, loi, tao } = soTay;
-  const [dangDoc, setDangDoc] = useState(null);
   useEffect(() => { if (pha === "chua") tao(); }, [pha, tao]);  // mở thẳng / tải lại `#/so-tay` ⇒ tự dựng từ lịch đang lưu của cuộc
 
   const ds = danY?.muc || [];
+  const dangDoc = useBenDangDoc(ds);
   const nhom = useMemo(() => {
     const ra = [];
     for (const d of ds) {
@@ -239,16 +260,6 @@ export function SoTay({ soTay }) {
     return ra;
   }, [ds]);
 
-  // bến đang đọc: mục trên cùng đang nằm trong dải giữa màn hình
-  useEffect(() => {
-    if (!ds.length || typeof IntersectionObserver === "undefined") return undefined;
-    const qs = new IntersectionObserver(vao => {
-      const thay = vao.filter(v => v.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-      if (thay) setDangDoc(thay.target.dataset.muc);
-    }, { rootMargin: "-20% 0px -60% 0px" });
-    document.querySelectorAll(".st-muc").forEach(e => qs.observe(e));
-    return () => qs.disconnect();
-  }, [ds]);
 
   const soXong = ds.filter(d => muc[d.id]).length;
   const soDiem = ds.filter(d => d.loai === "diem").length;

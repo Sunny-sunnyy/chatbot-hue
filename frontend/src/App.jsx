@@ -10,6 +10,7 @@ import { useRoute } from "./route.js";
 import { datNguonBanDo } from "./nguonBanDo.js";
 import { batSoTay, batXuatLich } from "./LichV2.jsx";
 import { SoTay, useSoTay } from "./SoTay.jsx";
+import { DaiChuDe, HoSoChuDe, LuoiChuDe, useHoSo } from "./HoSo.jsx";
 
 const TrangBanDo = lazy(() => import("./TrangBanDo.jsx"));  // tải riêng ⇒ trang khác không tải Leaflet
 const TheoDoi = lazy(() => import("./TheoDoi.jsx"));  // trang riêng của chủ dự án, không có trong menu
@@ -31,6 +32,7 @@ export default function App() {
   const route = useRoute();
   const chat = useChat();
   const soTay = useSoTay();  // bản thử "Sổ tay cho chuyến đi" (công tắc server `so_tay`)
+  const hoSo = useHoSo();    // bản thử "Hồ sơ theo chủ đề" (công tắc server `ho_so_chu_de`)
   const [tinhNang, setTinhNang] = useState(TINH_NANG_TAT);
   const [daCoTinhNang, setDaCoTinhNang] = useState(false);  // H1: chưa biết cờ ⇒ trang Lên kế hoạch giữ chỗ (không vẽ biểu mẫu cũ rồi đổi — C đo CLS 0,22)
   const [bai, setBai] = useState(null);
@@ -117,7 +119,7 @@ export default function App() {
 
   const nav = [
     { href: "#/", ten: "Trang chủ", on: route.page === "trang-chu" },
-    { href: "#/kham-pha", ten: "Khám phá", on: ["kham-pha", "linh-vuc", "bai"].includes(route.page) },
+    { href: "#/kham-pha", ten: "Khám phá", on: ["kham-pha", "linh-vuc", "bai", "chu-de", "ho-so"].includes(route.page) },
     ...(tinhNang.ban_do_lich ? [{ href: "#/ban-do", ten: "Bản đồ", on: route.page === "ban-do" }] : []),
     ...(tinhNang.lich_trinh_bieu_mau ? [{ href: "#/len-ke-hoach", ten: "Lên kế hoạch", on: route.page === "len-ke-hoach" || route.page === "so-tay" }] : []),
     { href: "#/tro-ly", ten: TEN_TRO_LY, on: onTroLy },
@@ -151,7 +153,10 @@ export default function App() {
 
       <main className="noi-dung">
         {route.page === "trang-chu" && <TrangChu bai={bai} tinhNang={tinhNang} thoiTiet={thoiTiet} onAsk={askAnywhere} onAskAbout={askAbout} />}
-        {route.page === "kham-pha" && <KhamPha bai={bai} loi={baiLoi} />}
+        {route.page === "kham-pha" && <KhamPha bai={bai} loi={baiLoi} dai={tinhNang.ho_so_chu_de === true ? <DaiChuDe hoSo={hoSo} /> : null} />}
+        {(route.page === "chu-de" || route.page === "ho-so") && daCoTinhNang && (tinhNang.ho_so_chu_de === true
+          ? (route.page === "chu-de" ? <LuoiChuDe hoSo={hoSo} /> : <HoSoChuDe ma={route.ma} hoSo={hoSo} />)
+          : <div className="khung"><p>Trang hồ sơ theo chủ đề chưa bật. <a href="#/kham-pha">Về trang Khám phá</a></p></div>)}
         {route.page === "linh-vuc" && <LinhVuc linhVuc={route.linhVuc} bai={bai} loi={baiLoi} />}
         {route.page === "bai" && <Bai baiId={route.baiId} bai={bai} onAskAbout={askAbout} />}
         {route.page === "len-ke-hoach" && !daCoTinhNang && <div className="lkh-cho" aria-busy="true" />}
