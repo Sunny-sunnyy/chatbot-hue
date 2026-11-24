@@ -386,3 +386,16 @@ def test_an_ambiguous_short_name_asks_which_place_with_one_button_each():
     assert thay["khung"] == k and _dong(thay)["nut"][0]["gui"] == f"thay {T[lang[0]]['ten']} bằng Hổ Quyền"
     cu = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten="lăng")], **CU)  # công tắc tắt: không hỏi, câu cũ
     assert cu["khung"] == k and [x["ma_luat"] for x in cu["khong_doi"]] == ["ngoai_bang"]
+
+
+def test_an_add_whose_wording_matches_several_places_asks_even_when_only_one_is_not_in_the_plan():
+    """Người đọc nhánh 24/11/2026: "thêm sông Hương" khi lịch đã có Ca Huế trên sông Hương từng TỰ thêm Công viên ven sông Hương (dòng duy nhất chưa có) —
+    người dùng có thể đang nói về thứ đã có ⇒ không đoán: câu hỏi nêu cả dòng đã có, MỘT nút cho dòng chưa có."""
+    ca_hue, cong_vien = s.khop_ten(B, "Ca Huế trên sông Hương"), s.khop_ten(B, "Công viên ven sông Hương")
+    assert ca_hue and cong_vien and s.ung_vien_ten(B, "sông Hương") == [ca_hue, cong_vien] or s.ung_vien_ten(B, "sông Hương") == [cong_vien, ca_hue]
+    assert s.tim_diem(B, "them_diem", "sông Hương", {ca_hue})[0] is None
+    k, luu = next((k, luu) for n in (2, 3, 4, 5) for k, luu in [_lich(n, "can_bang", so_thich=())] if ca_hue in s._ngay_toi(k) and cong_vien not in s._ngay_toi(k))
+    kq = s.ap(B, luu, [s.HanhDong(loai="them_diem", ten="sông Hương")], **MOI)
+    (m,), d = kq["khong_doi"], _dong(kq)
+    assert kq["khung"] == k and kq["da_ap"] == [] and m["ma_luat"] == "ten_mo_ho" and m["ung_vien"] == [cong_vien] and m["da_co"] == [T[ca_hue]["ten"]]
+    assert "Ca Huế trên sông Hương cũng khớp “sông Hương” nhưng đã có trong lịch" in d["cau"] and [n["gui"] for n in d["nut"]] == ["thêm Công viên ven sông Hương"]

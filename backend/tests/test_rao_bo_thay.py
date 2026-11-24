@@ -159,7 +159,8 @@ def test_short_names_work_for_every_place_not_only_the_cafes():
             n += 1
             h = _bo(d["ten"])
             assert s.khop_ten(B, c) == d["id"], c
-            assert s.loc_bo_thay(B, [h], f"bỏ {c} đi") == ([h], []), c
+            # cách gọi gõ không dấu chỉ được nhận trong câu gõ không dấu cả câu (câu có dấu thì "hai ba", "cho" là chữ thật)
+            assert s.loc_bo_thay(B, [h], f"bo {c} di" if c == s._bo_dau(c) else f"bỏ {c} đi") == ([h], []), c
     assert n >= 150  # 47 dòng × (tên đủ + không dấu) + các tên bỏ chữ loại + chữ thương hiệu; ít hơn ⇒ điều kiện "chỉ một dòng" đang lọc quá tay
 
 
@@ -176,3 +177,23 @@ def test_ordinary_syllables_and_type_words_do_not_name_a_place_silently():
     assert bo == [] and giu.loai == "bo_diem" and giu.ten == "lăng"  # không bị bỏ im, không làm theo lựa chọn của model
     assert s.tim_diem(B, "bo_diem", "lăng", {s.khop_ten(B, "Lăng Tự Đức")}) == (None, [s.khop_ten(B, "Lăng Tự Đức")])  # lịch chỉ có một lăng: vẫn hỏi
     assert s.tim_diem(B, "bo_diem", "Tự Đức", {s.khop_ten(B, "Lăng Tự Đức")}) == (s.khop_ten(B, "Lăng Tự Đức"), [])
+
+
+def test_accent_free_matching_does_not_turn_ordinary_words_into_place_names():
+    """Người đọc nhánh (24/11/2026) dò ra hai lỗ của bản đầu: (1) so không dấu chạy cả trong câu gõ ĐỦ DẤU — "bỏ hai ba điểm cho đỡ mệt" bị đọc ra Phố đi
+    bộ Hai Bà Trưng; (2) câu gõ không dấu — động từ lệnh + chữ kế trùng một khúc của tên: "bo nguyen ngay 2 di" (bỏ nguyên ngày 2) ⇒ "…bộ Nguyễn Đình
+    Chiểu", "doi vong lai…" ⇒ Đồi Vọng Cảnh, "bo hai diem dau…" ⇒ "…bộ Hai Bà Trưng". Nay: so không dấu chỉ khi CẢ CÂU gõ không dấu, và chỉ nhận khúc
+    bằng trọn một tên hoặc gồm toàn chữ tên riêng (không tính chữ đầu tên), không phải chỉ chữ số đếm. Tên thật gõ không dấu vẫn được nhận."""
+    for cau, ten in (("bỏ hai ba điểm cho đỡ mệt", "Phố đi bộ Hai Bà Trưng"), ("cho bao nhiêu điểm thì bỏ bớt đi", "Phố cổ và chợ Bao Vinh"),
+                     ("bo hai diem dau ngay 1", "Phố đi bộ Hai Bà Trưng"), ("bo nguyen ngay 2 di", "Phố đi bộ Nguyễn Đình Chiểu"),
+                     ("doi vong lai thu tu hai ngay", "Đồi Vọng Cảnh"), ("bo hai ba diem cho do met", "Phố đi bộ Hai Bà Trưng")):
+        h = _bo(ten)
+        assert s._neo_trong_cau(B, s.khop_ten(B, ten), ten, cau) == (False, None), cau
+        assert s.loc_bo_thay(B, [h], cau) == ([], [h]), cau
+    assert [s.khop_ten(B, t) for t in ("bo nguyen", "bo hai", "doi vong", "cho bao", "hai ba")] == [None] * 5
+    for cach, ten in (("tu duc", "Lăng Tự Đức"), ("lang tu duc", "Lăng Tự Đức"), ("an dinh", "Cung An Định"), ("ho quyen", "Hổ Quyền"), ("dai noi hue", "Đại Nội Huế"),
+                      ("hai ba trung", "Phố đi bộ Hai Bà Trưng"), ("thien mu", "Chùa Thiên Mụ")):
+        assert s.khop_ten(B, cach) == s.khop_ten(B, ten), cach
+        h = _bo(ten)
+        assert s.loc_bo_thay(B, [h], f"bo {cach} di") == ([h], []), cach
+        assert s.loc_bo_thay(B, [h], f"bỏ {cach} đi") == ([], [h]), cach  # câu có dấu: chữ không dấu trong nó không được coi là tên gõ tắt

@@ -249,11 +249,20 @@ def _kieu_goi(khuc: list[str], dau_ten: bool, loai_dau: bool) -> str | None:
     return "loai" if dau_ten and loai_dau else None
 
 
-def _ung_vien(bang: v2.BangV2, ten: str | None, trong=None) -> tuple[list[str], bool]:
+_SO_KHONG_DAU = frozenset("mot hai ba bon tu nam sau bay tam chin muoi".split())  # "hai ba" gõ không dấu là số đếm, không phải "Hai Bà"
+
+
+def _ung_vien(bang: v2.BangV2, ten: str | None, trong=None, khong_dau: bool | None = None) -> tuple[list[str], bool]:
     """(các dòng mà cách gọi `ten` trỏ tới — id theo thứ tự bảng, cách gọi này CHỈ là gọi theo loại). Thứ tự: id nguyên văn ⇒ tên / tên khác khớp NGUYÊN
     sau chuẩn hoá (NFC, casefold, bỏ hậu tố " Huế") ⇒ TÊN NGẮN: dãy chữ liền nhau nằm trong tên / tên khác của dòng và là một cách gọi (`_kieu_goi`); có
-    dòng được gọi bằng tên riêng thì chỉ lấy các dòng đó. Không dòng nào khớp CÓ DẤU thì thử so KHÔNG DẤU ("tu duc") — chỉ với cách gọi từ HAI chữ, gõ
-    hoàn toàn không dấu: một chữ bỏ dấu thì "cho" thành "chợ"; bỏ dấu của chữ có dấu thì "bỏ" thành "bộ".
+    dòng được gọi bằng tên riêng thì chỉ lấy các dòng đó. Không dòng nào khớp CÓ DẤU thì thử so KHÔNG DẤU ("tu duc"), và bước này hẹp hơn nhiều vì
+    tiếng Việt có rất nhiều chữ vốn không dấu ("hai", "ba", "cho", "bao", "an"):
+      · chỉ khi `khong_dau` — nơi gọi nói CẢ CÂU được gõ không dấu (rào chỗ neo); None = xét chính cách gọi (mọi chữ của nó không dấu);
+      · cách gọi từ HAI chữ ("cho" một mình không thành "chợ");
+      · khúc phải bằng TRỌN một tên / tên khác ("ho quyen", "dai noi hue"), hoặc gồm TOÀN chữ tên riêng — viết hoa, không tính chữ đầu tên ("tu duc",
+        "an dinh") — nên "bo nguyen" (bỏ nguyên…) không thành "…bộ Nguyễn Đình Chiểu", "doi vong" (đổi vòng) không thành "Đồi Vọng Cảnh";
+      · khúc chỉ gồm chữ số đếm ("hai ba") không tính.
+    (Người đọc nhánh dò 24/11/2026: bản đầu nhận 4 / 22 câu lệnh không dấu KHÔNG nhắc điểm nào, và đọc "bỏ hai ba điểm cho đỡ mệt" ra Hai Bà Trưng.)
     `trong` = tập id được xét cho bước tên ngắn (lệnh bỏ / thay / dời: các điểm ĐANG có trong lịch); None = cả bảng.
     Vì sao (chủ dự án 24/11/2026): lỗi «thay HANOK bằng MoKa Kafe» từng được chữa bằng ba tên gọi tắt ghi tay trong bảng điểm — "phải áp dụng cho mọi
     trường hợp, mọi địa điểm". Đếm trước trên 47 dòng: 221 cách gọi ngắn trỏ đúng một dòng, bản cũ (tên ngắn phải ≥ 2 chữ, có dấu) nhận 92."""
@@ -267,18 +276,23 @@ def _ung_vien(bang: v2.BangV2, ten: str | None, trong=None) -> tuple[list[str], 
         return [dung], False
     c = _tu(t)
     dau = collections.Counter(_tu(d["ten"])[0].casefold() for d in bang.diem)
-    # so không dấu chỉ khi CHÍNH cách gọi được gõ không dấu và có từ hai chữ: bỏ dấu cả chữ có dấu thì "bỏ Nguyễn" khớp "…đi bộ Nguyễn Đình Chiểu"
-    for khong_dau in (False, True)[:2 if len(c) >= 2 and all(w == _bo_dau(w) for w in c) else 1] if c else ():
-        cc = [_bo_dau(w) for w in c] if khong_dau else c
+    thu_khong_dau = len(c) >= 2 and (all(w == _bo_dau(w) for w in c) if khong_dau is None else khong_dau)
+    for kd in (False, True)[:2 if thu_khong_dau else 1] if c else ():
+        cc = [_bo_dau(w) for w in c] if kd else c
         ra: dict[str, str] = {}
         for d in bang.diem:
             if trong is not None and d["id"] not in trong:
                 continue
             for x in v2.ten_cua(d):
                 goc = _tu(x)
-                w = [(_bo_dau(y) if khong_dau else y).casefold() for y in goc]
+                w = [(_bo_dau(y) if kd else y).casefold() for y in goc]
                 for k in range(len(w) - len(cc) + 1):
-                    kieu = _kieu_goi(goc[k:k + len(cc)], k == 0, dau[goc[0].casefold()] >= 2) if w[k:k + len(cc)] == cc else None
+                    if w[k:k + len(cc)] != cc:
+                        continue
+                    if kd:
+                        kieu = "rieng" if len(cc) == len(w) or (k > 0 and all(g[:1].isupper() for g in goc[k:k + len(cc)]) and not set(cc) <= _SO_KHONG_DAU) else None
+                    else:
+                        kieu = _kieu_goi(goc[k:k + len(cc)], k == 0, dau[goc[0].casefold()] >= 2)
                     if kieu:
                         ra[d["id"]] = "rieng" if "rieng" in (kieu, ra.get(d["id"])) else "loai"
         if ra:
@@ -294,7 +308,8 @@ def ung_vien_ten(bang: v2.BangV2, ten: str | None, trong=None) -> list[str]:
 def tim_diem(bang: v2.BangV2, loai: str, ten: str | None, trong_lich) -> tuple[str | None, list[str]]:
     """Điểm mà một hành động sửa lịch nói tới ⇒ (id | None, các ứng viên khi cách gọi MƠ HỒ). Lệnh bỏ / thay / dời: xét trong các điểm ĐANG có trong
     lịch trước (lịch có một lăng thì "Tự Đức" hay "HANOK" đều rõ); không điểm nào của lịch khớp thì xét cả bảng để câu trả lời nói thật "không có trong
-    lịch". Lệnh thêm: xét cả bảng; nhiều dòng khớp mà chỉ MỘT dòng chưa có trong lịch thì đó là điểm muốn thêm. Gọi trần theo LOẠI ("lăng", "phố đi bộ")
+    lịch". Lệnh thêm: xét cả bảng; nhiều dòng khớp thì KHÔNG tự lấy dòng duy nhất chưa có trong lịch ("thêm sông Hương" khi lịch đã có Ca Huế trên sông
+    Hương — người dùng có thể đang nói về thứ đã có): nơi gọi hỏi lại, nút chỉ cho các dòng chưa có. Gọi trần theo LOẠI ("lăng", "phố đi bộ")
     ⇒ luôn mơ hồ, kể cả khi chỉ một dòng khớp: "bỏ cái lăng đầu đi" có thể nói về danh sách vừa kể trong câu trả lời (ca gốc của rào chỗ neo, 22/11)."""
     trong_lich = set(trong_lich)
     if loai in ("bo_diem", "thay_diem", "doi_buoi"):
@@ -304,8 +319,6 @@ def tim_diem(bang: v2.BangV2, loai: str, ten: str | None, trong_lich) -> tuple[s
             return (uv[0], []) if len(uv) == 1 and not chi_loai else (None, [])
     else:
         uv, chi_loai = _ung_vien(bang, ten)
-        if loai == "them_diem" and len(uv) > 1:
-            uv = [j for j in uv if j not in trong_lich] or uv
     return (uv[0], []) if len(uv) == 1 and not chi_loai else (None, uv)
 
 
@@ -508,11 +521,12 @@ def _neo_trong_cau(bang: v2.BangV2, id_: str | None, ten_model: str | None, cau:
     if id_ is None:  # không phải điểm của bảng: giữ khi model chép một TÊN có trong câu ("Hồ Tịnh Tâm") ⇒ `ap` nói thật "không có trong lịch"
         tu = _tu(chuan_ten(ten_model or ""))
         return bool(tu) and f" {' '.join(tu)} " in f" {' '.join(tu_cau)} " and not all(w in _CHU_TRO or w.isdigit() for w in tu), None
+    cau_khong_dau = all(w == _bo_dau(w) for w in tu_cau)  # câu gõ có dấu thì chữ không dấu trong nó ("hai ba", "cho") là chữ thật, không phải tên gõ tắt
     mo_ho, p = None, 0
     while p < len(tu_cau):
         for n in range(min(len(tu_cau) - p, 12), 0, -1):
             khuc = " ".join(tu_cau[p:p + n])
-            uv, chi_loai = _ung_vien(bang, khuc)
+            uv, chi_loai = _ung_vien(bang, khuc, khong_dau=cau_khong_dau)
             if not uv:
                 continue
             if id_ in uv:
@@ -1016,8 +1030,15 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
         if mo_ho and them_hoi_truoc and h.loai in ("bo_diem", "them_diem", "thay_diem", "doi_buoi"):
             # Cách gọi trỏ tới NHIỀU điểm ("lăng", "phố đi bộ"; chủ dự án 24/11/2026: tên ngắn phải dùng được cho mọi điểm — và thiếu thông tin thì hỏi
             # lại kèm gợi ý): lịch đứng yên, câu hỏi "bạn muốn nói điểm nào" + mỗi ứng viên một nút gửi lại ĐÚNG lệnh đó với tên đủ.
-            kq["khong_doi"].append({"diem": h.ten, "ma_luat": "ten_mo_ho", "hoi_truoc": True, "ung_vien": mo_ho[:MAX_CHO_HOI],
-                                    "con": max(0, len(mo_ho) - MAX_CHO_HOI), "lenh": h.model_dump(exclude_none=True)})
+            # Lệnh THÊM: nút chỉ cho các dòng CHƯA có trong lịch; dòng đã có được nêu trong câu (không dòng nào thêm được ⇒ "đã có trong lịch").
+            co = {*vt, *_ngay_toi(khung)} if h.loai == "them_diem" else set()
+            ung = [j for j in mo_ho if j not in co]
+            if not ung:
+                khong(h.ten, "da_co_trong_lich")
+                continue
+            kq["khong_doi"].append({"diem": h.ten, "ma_luat": "ten_mo_ho", "hoi_truoc": True, "ung_vien": ung[:MAX_CHO_HOI],
+                                    "con": max(0, len(ung) - MAX_CHO_HOI), "da_co": [ten_cua_diem(bang, j) for j in mo_ho if j in co],
+                                    "lenh": h.model_dump(exclude_none=True)})
             continue
         if h.loai in ("doi_so_ngay", "doi_tham_so"):
             moi = {"so_ngay": h.so_ngay, "kieu_di": h.kieu_di, "so_thich": None if h.so_thich is None else tuple(h.so_thich),
@@ -1699,8 +1720,9 @@ def _cau_them_hoi(bang: v2.BangV2, k: dict) -> str:
     if k["ma_luat"] == "ten_mo_ho":
         ten = [ten_cua_diem(bang, j) for j in k["ung_vien"]]
         ke = (ten[0] if len(ten) == 1 else ", ".join(ten[:-1]) + " hoặc " + ten[-1]) + (f" (và {k['con']} điểm khác)" if k["con"] else "")
-        return (f"“{x}” có thể là {ke} — bạn muốn nói điểm nào? Bấm một nút dưới đây, hoặc nhắn lại kèm tên đầy đủ. Lịch chưa đổi gì." if len(ten) > 1 or k["con"]
-                else f"Bạn muốn nói {ke} phải không? Bấm nút dưới đây để làm, hoặc nhắn lại kèm tên đầy đủ. Lịch chưa đổi gì.")
+        da_co = f" ({', '.join(k['da_co'])} cũng khớp “{x}” nhưng đã có trong lịch.)" if k.get("da_co") else ""
+        return (f"“{x}” có thể là {ke} — bạn muốn nói điểm nào?{da_co} Bấm một nút dưới đây, hoặc nhắn lại kèm tên đầy đủ. Lịch chưa đổi gì." if len(ten) > 1 or k["con"]
+                else f"Bạn muốn nói {ke} phải không?{da_co} Bấm nút dưới đây để làm, hoặc nhắn lại kèm tên đầy đủ. Lịch chưa đổi gì.")
     ngay, buoi = k["dich"]
 
     def cho(g: dict) -> str:
