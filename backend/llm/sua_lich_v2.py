@@ -1029,13 +1029,19 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                 da_co = [list(x) for x in (*(luu.get("buoi_trong") or ()), *(khung.get("buoi_trong") or ()))]
                 dau = [x for x in ([list(vt[i])] + ([[vt[i][0], b] for b in v2.BUOI_NGAY if b != vt[i][1]] if cuoi_ngay else [])) if x not in da_co]
                 luu["buoi_trong"] = [*(luu.get("buoi_trong") or ()), *dau]
-                k2 = _thu_giu(bang, luu, ts, {j: v for j, v in vt.items() if j != i}, loai + [i])
+                # Ngày ĐI XA ("tối nghỉ sau chuyến đi xa", không có hoạt động tối) mà bỏ hết điểm ban ngày thì ngày đó hết "đi xa" ⇒ bộ xếp sẽ tự chọn một
+                # hoạt động tối cho nó và có thể xếp lại tối ngày khác (đếm 24/11/2026: 15 / 216 ngày) — trái lời chủ dự án ("chỉ trống thời gian của địa
+                # điểm đó thôi, các thời gian còn lại trong ngày vẫn được xếp như lịch ban đầu") ⇒ tối của ngày đó GIỮ trống (dấu `toi_trong` sẵn có).
+                nghi = khung.get("toi_nghi") or {}
+                ts_bo = (v2.ThamSoV2(**{**ts.__dict__, "toi_trong": tuple(sorted({*ts.toi_trong, vt[i][0]}))})
+                         if cuoi_ngay and nghi.get(vt[i][0], nghi.get(str(vt[i][0]))) == "xa" else ts)
+                k2 = _thu_giu(bang, luu, ts_bo, {j: v for j, v in vt.items() if j != i}, loai + [i])
                 if k2 is None:
                     del luu["buoi_trong"][len(luu["buoi_trong"]) - len(dau):]
                     khong(ten_cua_diem(bang, i), "khong_hop_luat")
                     continue
                 lap_cu = next(x for x in k["ngay"] if x["ngay"] == vt[i][0])["buoi"][vt[i][1]] if k is not None else []  # thứ bản cũ tự lấp vào buổi đó
-                bo_trong, k = {"trong": list(vt[i]), **({"goi_y_thay": lap_cu[0]} if lap_cu else {}), **({"ngay_trong": vt[i][0]} if cuoi_ngay else {})}, k2
+                bo_trong, k, ts = {"trong": list(vt[i]), **({"goi_y_thay": lap_cu[0]} if lap_cu else {}), **({"ngay_trong": vt[i][0]} if cuoi_ngay else {})}, k2, ts_bo
             # bộ xếp lấp chỗ trống bằng điểm kế tiếp (giữ chỗ điểm không chạm) ⇒ điểm MỚI vào lịch phải có trong lời báo (tự thử 16/11:
             # "Đã bỏ X." mà lịch có thêm điểm khác; mô phỏng 910 / 960 khung). Cả buổi tối: bỏ hoạt động tối ⇒ bộ xếp chọn hoạt động tối khác.
             truoc = set(vt) | toi
@@ -1693,10 +1699,9 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
             trong = a.get("toi_trong")  # công tắc `bo_toi_de_trong`: nói rõ tối nào để trống (không có dòng này người đọc chờ một hoạt động thay vào)
             out.append(f"Đã bỏ {ten_cua_diem(bang, a['diem'])}" + (f", thêm {lap} vào chỗ trống." if lap else
                                                                    f"; buổi tối ngày {', '.join(str(n) for n in trong)} để trống." if trong else ".")
-                       # vế "giữ nguyên" chỉ khi đúng: bỏ hết điểm của một ngày ĐI XA thì ngày đó hết "đi xa", bộ xếp chọn một hoạt động tối cho nó (và có
-                       # thể xếp lại tối ngày khác) — đếm 24/11/2026: 15 / 216 ngày của lưới; các ca đó đã có vế "thêm … vào chỗ trống" / "Buổi tối xếp lại"
+                       # vế "giữ nguyên" chỉ khi đúng (không có mục nào tự vào, tối không xếp lại) — lưới 24/11/2026: đúng ở 216 / 216 ngày
                        + (f" Ban ngày của ngày {a['ngay_trong']} nay không còn điểm nào"
-                          + ("." if a.get("lap") or a.get("toi_xep_lai") else f"; hoạt động buổi tối của ngày {a['ngay_trong']} và các điểm của những ngày khác giữ nguyên.")
+                          + ("." if a.get("lap") or a.get("toi_xep_lai") else f"; buổi tối của ngày {a['ngay_trong']} và các điểm của những ngày khác giữ nguyên.")
                           if a.get("ngay_trong")
                           else f" Buổi {NHAN_BUOI[a['trong'][1]]} ngày {a['trong'][0]} nay để trống." if a.get("trong") else "")  # công tắc `sua_lich_hoi_truoc`
                        + (_cau_toi_xep_lai(bang, xep_toi) if xep_toi else ""))

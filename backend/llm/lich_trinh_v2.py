@@ -204,7 +204,9 @@ CUM_TOI = ("bo_nam", "kinh_thanh", "an_cuu")
 CAU_TOI = {"xa": "Tối nghỉ sau chuyến đi xa.", "tre_em": "Để trống — đi cùng trẻ nhỏ nên lịch chỉ xếp buổi sáng và chiều.",
            "lon_tuoi": "Để trống — đi cùng người lớn tuổi nên lịch chỉ xếp buổi sáng và chiều.",
            "khong_co": "Tối tự do — kho chưa có hoạt động buổi tối hợp ngày này.",
-           "da_bo": "Tối tự do — bạn đã bỏ hoạt động buổi tối của ngày này.",  # công tắc `bo_toi_de_trong`
+           # `da_bo` (dấu `toi_trong`): người dùng bỏ hoạt động tối của ngày này, HOẶC bỏ hết điểm ban ngày của một ngày đi xa (tối vốn nghỉ — giữ trống,
+           # 24/11/2026) ⇒ câu không nói "bạn đã bỏ hoạt động buổi tối" nữa (ca sau thì câu đó sai)
+           "da_bo": "Tối tự do — buổi tối của ngày này để trống.",
            "het_nhe": "Tối nghỉ — các hoạt động tối nhẹ gần trung tâm đã có ở những tối khác."}  # công tắc `toi_nhe`: đoàn hạn chế không lặp hoạt động
 # Công tắc `toi_nhe`: dòng lý do do code viết, nối vào ghi chú của mục buổi tối khi đoàn có trẻ nhỏ / người lớn tuổi (nói thật vì sao là hoạt động này)
 GHI_CHU_TOI_NHE = "hoạt động nhẹ, nên về sớm — đoàn mệt thì bỏ qua"  # không ghi "gần trung tâm" ở từng thẻ: dòng riêng của AEON Mall đã ghi "cách trung tâm khoảng 5 phút đi xe"

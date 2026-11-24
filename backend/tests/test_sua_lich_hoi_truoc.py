@@ -259,7 +259,7 @@ def test_removing_the_last_place_of_a_day_removes_it_and_leaves_the_daytime_of_t
     assert sau["ngay"][0]["buoi"]["toi"] == k["ngay"][0]["buoi"]["toi"] and sau["ngay"][1:] == k["ngay"][1:]  # tối ngày 1 + cả ngày 2 y như lịch gốc
     assert sau["tham_so"]["so_ngay"] == 2 and not v2.kiem_khung_v2(B, sau) and a["ngay_trong"] == 1 and a["trong"] == [1, "chieu"]
     dong = s.thay_doi(B, k2)
-    assert dong[0]["duoc"] and dong[0]["cau"] == (f"Đã bỏ {T[chieu]['ten']}. Ban ngày của ngày 1 nay không còn điểm nào; hoạt động buổi tối của ngày 1 và các điểm "
+    assert dong[0]["duoc"] and dong[0]["cau"] == (f"Đã bỏ {T[chieu]['ten']}. Ban ngày của ngày 1 nay không còn điểm nào; buổi tối của ngày 1 và các điểm "
                                                "của những ngày khác giữ nguyên.")
     # dấu chỉ sinh khi người dùng tự bỏ: thiếu dấu của một trong hai buổi ⇒ luật "ngày không được rỗng" vẫn bắt
     assert "ngay_rong" in v2.kiem_khung_v2(B, {**sau, "buoi_trong": [[1, "sang"]]}) and "ngay_rong" in v2.kiem_khung_v2(B, {x: v for x, v in sau.items() if x != "buoi_trong"})
@@ -282,16 +282,18 @@ def test_removing_the_last_place_of_a_day_removes_it_and_leaves_the_daytime_of_t
     k3 = luu2["khung"]
     assert k3["tham_so"]["so_ngay"] == 2 and all(k3["ngay"][1]["buoi"][b] == [] for b in v2.BUOI_NGAY) and not v2.kiem_khung_v2(B, k3)
     assert k3["ngay"][0] == k["ngay"][0] and k3["ngay"][1]["buoi"]["toi"] == k["ngay"][1]["buoi"]["toi"]
-    # ngày ĐI XA (tối nghỉ sau chuyến đi xa): bỏ hết điểm thì ngày đó hết "đi xa" ⇒ bộ xếp chọn một hoạt động tối cho nó. Câu trả lời phải nói đúng
-    # điều đó, KHÔNG được nói "buổi tối … giữ nguyên" (giới hạn đã ghi: 15 / 216 ngày của lưới đếm 24/11/2026)
+    # ngày ĐI XA (tối nghỉ sau chuyến đi xa, không có hoạt động tối): bỏ hết điểm thì ngày đó hết "đi xa" — bản đầu của nhánh để bộ xếp tự chọn một
+    # hoạt động tối cho nó (15 / 216 ngày của lưới, 3 ca còn xếp lại tối ngày khác). Nay tối của ngày đó GIỮ trống, tối các ngày khác y nguyên
     kx, luux = _lich(3, "nhe_nhang", so_thich=("thien_nhien",))
     (dx,) = [d for d, ma in kx.get("toi_nghi", {}).items() if ma == "xa"]
     for j in [x for x, v in s._vi_tri(kx).items() if v[0] == dx]:
         kq = _bo(luux, T[j]["ten"], **MOI)
         luux = kq["luu"]
-    cau = s.thay_doi(B, kq)[0]["cau"]
-    assert kq["da_ap"][0]["ngay_trong"] == dx and luux["khung"]["ngay"][dx - 1]["buoi"]["toi"] and f"Ban ngày của ngày {dx} nay không còn điểm nào." in cau
-    assert "giữ nguyên" not in cau and ("Buổi tối xếp lại" in cau or "vào chỗ trống" in cau)
+    sau_x, cau = luux["khung"], s.thay_doi(B, kq)[0]["cau"]
+    assert kq["da_ap"][0]["ngay_trong"] == dx and not v2.kiem_khung_v2(B, sau_x)
+    assert [ng["buoi"]["toi"] for ng in sau_x["ngay"]] == [ng["buoi"]["toi"] for ng in kx["ngay"]] and sau_x["ngay"][dx - 1]["buoi"]["toi"] == []
+    assert cau.endswith(f"Ban ngày của ngày {dx} nay không còn điểm nào; buổi tối của ngày {dx} và các điểm của những ngày khác giữ nguyên.")
+    assert "vào chỗ trống" not in cau and "Buổi tối xếp lại" not in cau
 
 
 def test_after_a_removal_the_emptied_session_is_the_place_suggested_for_a_later_add():
