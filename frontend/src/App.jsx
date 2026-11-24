@@ -152,7 +152,9 @@ export default function App() {
       </header>
 
       <main className="noi-dung">
-        {route.page === "trang-chu" && <TrangChu bai={bai} tinhNang={tinhNang} thoiTiet={thoiTiet} onAsk={askAnywhere} onAskAbout={askAbout} />}
+        {route.page === "trang-chu" && <TrangChu bai={bai} tinhNang={tinhNang} thoiTiet={thoiTiet} onAsk={askAnywhere} onAskAbout={askAbout}
+                                                 /* bản thử: dải hồ sơ theo chủ đề ở Trang chủ — cần CẢ công tắc hồ sơ lẫn khoá riêng `chu_de_trang_chu` (server chưa gửi) */
+                                                 dai={tinhNang.ho_so_chu_de === true && tinhNang.chu_de_trang_chu === true ? <DaiChuDe hoSo={hoSo} tieuDe="Hồ sơ theo chủ đề" /> : null} />}
         {route.page === "kham-pha" && <KhamPha bai={bai} loi={baiLoi} dai={tinhNang.ho_so_chu_de === true ? <DaiChuDe hoSo={hoSo} /> : null} />}
         {(route.page === "chu-de" || route.page === "ho-so") && daCoTinhNang && (tinhNang.ho_so_chu_de === true
           ? (route.page === "chu-de" ? <LuoiChuDe hoSo={hoSo} /> : <HoSoChuDe ma={route.ma} hoSo={hoSo} />)

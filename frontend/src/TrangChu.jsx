@@ -49,7 +49,7 @@ function Icon({ d }) {
   );
 }
 
-export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
+export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout, dai = null }) {
   const [cau, setCau] = useState("");
   function submit(event) {
     event.preventDefault();
@@ -93,6 +93,9 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout }) {
               );
             })}
           </div>
+          {/* BẢN THỬ (nhánh `thu-c-trang-chu-chu-de`): dải "Hồ sơ theo chủ đề" dẫn sang lưới 20 chủ đề — đặt DƯỚI năm ô lĩnh vực nên màn đầu, các bến và ô
+              "Hôm nay ở Huế" đứng nguyên chỗ. App chỉ đưa `dai` khi server gửi khoá `chu_de_trang_chu` (chưa có ở server ⇒ mặc định không vẽ). */}
+          {dai}
         </section>
       </div>
 

@@ -99,7 +99,7 @@ function OChuDe({ c }) {
 }
 
 // Dải ở đầu trang Khám phá: vài chủ đề + lối sang lưới đủ. Chưa tải xong / không có chủ đề ⇒ không vẽ gì (trang Khám phá như cũ).
-export function DaiChuDe({ hoSo }) {
+export function DaiChuDe({ hoSo, tieuDe = "Đọc theo chủ đề" }) {
   useEffect(() => { hoSo.taiDs(); }, [hoSo]);
   const ds = hoSo.ds || [];
   // rải qua các nhóm: lấy chủ đề đầu tiên của mỗi lĩnh vực trước, đủ bốn thẻ
@@ -112,7 +112,7 @@ export function DaiChuDe({ hoSo }) {
   return (
     <section className="hs-dai" aria-labelledby="hs-dai-h">
       <div className="hs-dai-dau">
-        <h2 id="hs-dai-h" className="hs-dai-h">Đọc theo chủ đề</h2>
+        <h2 id="hs-dai-h" className="hs-dai-h">{tieuDe}</h2>
         <p className="hs-dai-p">Trợ lý đọc các bài kho về một chủ đề và gom lại thành hồ sơ ngắn, có dẫn nguồn.</p>
         <a className="hs-dai-het" href="#/kham-pha/chu-de">Xem cả {ds.length} chủ đề</a>
       </div>
