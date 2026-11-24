@@ -163,7 +163,9 @@ a.st-so:hover { background: var(--color-accent); color: var(--color-on-accent); 
 /* Bản in: một cột, bỏ thanh trên / chân trang / nút trợ lý / mục lục / nút; đầu trang nền trắng; thẻ không bóng, không cắt giữa thẻ.
    Khối `.hien` chưa cuộn tới đang mờ (hiệu ứng hiện dần) ⇒ ép hiện hết. */
 @media print {
-  .cong:has(.st) .hd, .cong:has(.st) .ft, .cong:has(.st) .noi, .cong:has(.st) .td, .cong:has(.st) .chat { display: none !important; }
+  /* `html:not(.in-lich)`: đang ở trang này mà bấm "In / Lưu PDF" của THẺ LỊCH trong khung trợ lý nổi thì bản in là của thẻ lịch (lkh.css) — không ẩn khung đó */
+  html:not(.in-lich) .cong:has(.st) .hd, html:not(.in-lich) .cong:has(.st) .ft, html:not(.in-lich) .cong:has(.st) .noi,
+  html:not(.in-lich) .cong:has(.st) .td, html:not(.in-lich) .cong:has(.st) .chat { display: none !important; }
   .st-song, .st-chip-ngay, .st-nut, .st-tien, .st .vet { display: none !important; }
   .st-dau { background: none !important; color: #0C2426 !important; padding: 0 0 10px; }
   .st-song-dau, .st-anh figcaption { display: none; }

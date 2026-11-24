@@ -91,11 +91,14 @@ function Net({ d, co = 18 }) {
 // Chữ có mã nguồn [n] ⇒ số bấm được: nguồn là một bài kho thì mở bài; nguồn do chương trình dựng (bảng quán của lịch…) thì chỉ là số có chú thích.
 function ChuCoNguon({ chu, nguon }) {
   const theoSo = new Map(nguon.map(s => [String(s.id), s]));
-  return chu.split(/(\[\d+\])/).map((manh, i) => {
+  return String(chu ?? "").split(/(\[\d+\])/).map((manh, i) => {
     const m = /^\[(\d+)\]$/.exec(manh);
     if (!m) return manh;
     const s = theoSo.get(m[1]);
-    if (!s) return null;  // số không có trong danh sách nguồn của mục ⇒ không vẽ số mồ côi
+    if (!s) {  // số không có trong danh sách nguồn của mục ⇒ không vẽ số mồ côi; để lại một dòng cho người soát (lõi phải ra 0)
+      console.warn(`so_tay: số nguồn [${m[1]}] không có trong danh sách nguồn của mục`);
+      return null;
+    }
     const chuThich = [s.title, ...(s.heading_path || [])].join(" › ");
     return typeof s.bai_id === "string"
       ? <a key={i} className="st-so" href={baiHref(s.bai_id)} title={chuThich} data-lv={linhVuc(s.bai_id)}>{m[1]}</a>
@@ -104,14 +107,17 @@ function ChuCoNguon({ chu, nguon }) {
 }
 
 function NoiDungMuc({ muc, khoa }) {
-  const nguon = muc.nguon || [];
-  const thieu = muc.doan.filter(d => d.kieu === "thieu").map(d => d.nhan).filter(Boolean);
+  // Dữ liệu lệch hợp đồng không được làm trắng cả trang (không có lớp bắt lỗi quanh trang): thiếu mảng ⇒ mảng rỗng; nguồn luôn có `heading_path`,
+  // `excerpts` (dòng nguồn dùng chung `SourceLine` đọc thẳng hai trường đó khi bấm mở)
+  const nguon = (Array.isArray(muc.nguon) ? muc.nguon : []).map(s => ({ ...s, heading_path: s.heading_path || [], excerpts: s.excerpts || [] }));
+  const doan = Array.isArray(muc.doan) ? muc.doan : [];
+  const thieu = doan.filter(d => d.kieu === "thieu").map(d => d.nhan).filter(Boolean);
   const turnNguon = { key: khoa, sources: nguon, numbers: new Map(nguon.map(s => [String(s.id), s.id])) };
   // vẽ THEO THỨ TỰ server gửi: các đoạn nhãn–nội dung liền nhau gom thành một bảng; câu an toàn đứng đúng chỗ của nó
   const khoi = [];
-  for (const d of muc.doan) {
+  for (const d of doan) {
     if (d.kieu === "an_toan") khoi.push(d);
-    else if (d.kieu === "van" || d.kieu === "gach") {
+    else if (d.kieu !== "thieu") {  // `van`, `gach` và mọi kiểu lạ: vẽ như một dòng nhãn–nội dung (mất chữ lặng lẽ tệ hơn vẽ thô)
       const cuoi = khoi[khoi.length - 1];
       if (Array.isArray(cuoi)) cuoi.push(d); else khoi.push([d]);
     }
@@ -123,8 +129,8 @@ function NoiDungMuc({ muc, khoa }) {
             {k.map((d, i) => (
               <div key={i} className="st-d">
                 <dt><Net d={icNhan(d.nhan)} /> {d.nhan}</dt>
-                <dd>{d.kieu === "gach"
-                  ? <ul>{(d.gach || []).map((g, j) => <li key={j}><ChuCoNguon chu={g} nguon={nguon} /></li>)}</ul>
+                <dd>{Array.isArray(d.gach)
+                  ? <ul>{d.gach.map((g, j) => <li key={j}><ChuCoNguon chu={g} nguon={nguon} /></li>)}</ul>
                   : <ChuCoNguon chu={d.chu || ""} nguon={nguon} />}</dd>
               </div>
             ))}
@@ -275,11 +281,11 @@ export function SoTay({ soTay }) {
         <div className="khung">
           <p className="vet"><a href="#/len-ke-hoach">Lên kế hoạch</a> › Sổ tay</p>
           <h1 className="st-h">{danY?.tieu_de || "Sổ tay cho chuyến đi"}</h1>
-          <p className="st-p">Mỗi điểm trong lịch: nên xem gì, giờ mở cửa, giá vé, điều cần lưu ý — viết từ kho tư liệu, câu nào cũng dẫn nguồn.</p>
+          <p className="st-p">Mỗi điểm trong lịch: nên xem gì, giờ mở cửa, giá vé, điều cần lưu ý — viết từ kho tư liệu, có dẫn nguồn để bạn kiểm lại.</p>
           {dang && <TienDo xong={soXong} tong={ds.length} />}
           {pha === "xong" && (
             <ul className="st-tom" aria-label="Tóm tắt sổ tay">
-              <li><b>{danY.so_ngay}</b> ngày</li>
+              {danY?.so_ngay != null && <li><b>{danY.so_ngay}</b> ngày</li>}
               <li><b>{soDiem}</b> điểm trong lịch</li>
               <li><b>{baiDung.length}</b> bài kho đã dùng</li>
               {xong?.giay != null && <li>viết trong <b>{Math.round(xong.giay)}</b> giây</li>}
