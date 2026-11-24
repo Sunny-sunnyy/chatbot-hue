@@ -229,8 +229,9 @@ def test_doan_canh_bao_an_toan_cua_bai_luon_vao_bang_chung_cua_diem():
     assert st.loc_y(y, {1, 4}, 3)[0] == ["Lời dặn 0 [1]", "Lời dặn 1 [1]", "Lời dặn 2 [1]"]
 
 
-def _chay_diem(may):
+def _chay_diem(may, bai=None):
     from api.routes import so_tay as r
+    bai = THAC if bai is None else bai
     lich = {"ngay": [{"ngay": 1, "muc": [{"id_muc": "n1-sang-1", "buoi": "sang", "id_diem": "thac", "ten": "Thác", "gio": "8:00 – 10:00",
                                          "bai_id": "travel/places/Thác.md", "anh": None}]}], "ghi_chu": []}
 
@@ -239,7 +240,7 @@ def _chay_diem(may):
             return SimpleNamespace(documents=[THAC[0], THAC[1]])
 
         def doan_cua_bai(self, rel):
-            return list(THAC)
+            return list(bai)
 
     async def gom():
         return [e async for e in r._su_kien(st.dan_y(lich), lich, None, SimpleNamespace(retrieval_service=Kho()), SimpleNamespace(the_noi_bang=None, bang_lich_v2=None), may)]
@@ -275,3 +276,49 @@ def test_diem_co_doan_canh_bao_thi_so_tay_luon_co_dong_an_toan():
             raise RuntimeError("model hỏng")
     muc = _chay_diem(MayHong())
     assert muc["trang_thai"] == "loi" and len([d for d in muc["doan"] if d["kieu"] == "an_toan"]) == 1     # model hỏng: dòng an toàn do code vẫn có
+
+
+MUA_BAO_LAP_AN = "Mùa mưa bão (Tháng 9 đến tháng 12) tại Đầm Lập An"
+LAP_AN = [_dc(14, "Địa mạo lòng đầm và cơ chế che chắn gió tự nhiên Đầm Lập An", "Dãy núi bao quanh che chắn sóng lớn từ biển hở nên mặt đầm phẳng lặng."),
+          _dc(73, MUA_BAO_LAP_AN, "Vào mùa mưa bão cuối năm, thời tiết và thủy văn đầm Lập An thay đổi lớn:"),
+          _dc(75, MUA_BAO_LAP_AN, "- **Lưu ý tham quan:** Vào mùa này, con đường cát giữa đầm thường xuyên bị ngập nước; các hoạt động chèo kayak, chèo SUP bị tạm dừng "
+                                  "để đảm bảo an toàn."),
+          _dc(90, "An toàn mặt nước", "Áo phao bắt buộc khi chèo kayak, SUP; không bơi lội hoặc chèo gần luồng lạch cửa biển Lăng Cô.")]
+BON_MUA_CHUON = _dc(14, "Sắc thái ánh sáng và cảnh quan bốn mùa Đầm Chuồn", "Mặt nước Đầm Chuồn phẳng lặng như gương, hầu như không có sóng lớn nhờ được bao bọc bởi dải cồn cát.")
+QUY_TAC_CHUON = _dc(88, "Quy tắc an toàn giao thông thủy và nhà chồ Đầm Chuồn", "Tại các luồng lạch chân cọc rớ hoặc rãnh nước chảy xiết vẫn có những hố sâu nguy hiểm. Tuyệt đối "
+                                                                             "không tự ý nhảy xuống đầm tắm khi không có trang bị cứu sinh.")
+TRUNG_TU = _dc(46, "Hiện trạng bảo tồn và trùng tu", "Năm 2020 làm kè chống sạt lở bờ hồ sau các đợt mưa bão.")
+BUOI_TOI = _dc(21, "Gợi ý cho buổi tối", "Mùa lũ nước sông lên nhanh, không nên ra bờ sông sau 21 giờ.")
+
+
+def test_dong_tro_an_toan_chi_tro_toi_muc_that_su_dan_du_khach():
+    """Phiên đo đọc bản sửa 24/11/2026: (1) lượt thật, Đầm Lập An — dòng trỏ nêu mục «Địa mạo lòng đầm…» (không có lời dặn nào: đoạn được chọn chỉ vì câu "che chắn
+    sóng lớn"), trong khi mục đã có hai ý cảnh báo thật mà code không nhận ra; (2) đếm trên lịch mặc định, Đầm Chuồn — dòng trỏ sẽ nêu mục «…cảnh quan bốn mùa» nói
+    mặt đầm "không có sóng lớn" (ngược với cảnh báo), còn đoạn dặn du khách thật ("hố sâu nguy hiểm, tuyệt đối không tự ý nhảy xuống đầm") không đủ điều kiện."""
+    # (1) Đầm Lập An: đoạn được chọn là một đoạn DẶN du khách (áo phao, không bơi gần luồng lạch; thiếu nó thì là lời dặn của mục mùa mưa bão) — không phải câu
+    # "che chắn sóng lớn", không phải dòng dẫn của mục
+    chon = st.doan_canh_bao(LAP_AN)
+    assert chon.id.endswith("#90") and st.muc_tro_an_toan(chon) == "An toàn mặt nước" and st.doan_canh_bao(LAP_AN[:1]) is None
+    chon = st.doan_canh_bao(LAP_AN[:3])
+    assert chon.id.endswith("#75") and st.muc_tro_an_toan(chon) == MUA_BAO_LAP_AN
+    # hai ý model đã viết ở lượt thật đều là ý cảnh báo ⇒ mục đã có cảnh báo, không thêm dòng trỏ
+    assert st.la_y_canh_bao("Mùa mưa bão từ tháng 9 đến tháng 12, con đường cát giữa đầm thường bị ngập và các hoạt động kayak, SUP bị tạm dừng. [5]", None)
+    assert st.la_y_canh_bao("Khi chèo kayak hoặc SUP phải mặc áo phao đúng quy cách, không tiến gần luồng lạch cửa biển Lăng Cô vì nước chảy xiết, đáy sâu đột ngột. [6]", None)
+    assert not st.la_y_canh_bao("Dải cồn cát là đê tự nhiên che chắn sóng lớn từ biển hở [3]", None)
+    assert not st.la_y_canh_bao("Thời các chúa Nguyễn, sóng to và xoáy nước ở phá dễ lật thuyền nan [3]", None)
+    # (2) Đầm Chuồn: câu "không có sóng lớn" dưới mục "bốn mùa" không phải đoạn cảnh báo; đoạn quy tắc an toàn thì có, và dòng trỏ nêu đúng mục đó
+    assert st.doan_canh_bao([BON_MUA_CHUON]) is None
+    chon = st.doan_canh_bao([BON_MUA_CHUON, QUY_TAC_CHUON])
+    assert chon is QUY_TAC_CHUON and "«Quy tắc an toàn giao thông thủy và nhà chồ Đầm Chuồn»" in st.cau_tro_an_toan(chon)
+    # đoạn kể chuyện trùng tu ("kè chống sạt lở… mưa bão") vẫn vào bằng chứng nhưng KHÔNG sinh dòng trỏ; câu cấm dưới một mục không phải mục an toàn ⇒ dòng trỏ
+    # không nêu tên mục
+    assert st.doan_canh_bao([TRUNG_TU]) is TRUNG_TU and st.muc_tro_an_toan(TRUNG_TU) is None and st.cau_tro_an_toan(TRUNG_TU) is None
+    assert st.doan_canh_bao([BUOI_TOI]) is BUOI_TOI and st.muc_tro_an_toan(BUOI_TOI) == "" and st.cau_tro_an_toan(BUOI_TOI) == st.CAU_TRO_AN_TOAN_CHUNG
+
+    class MayKhongViet:
+        async def viet_so_tay(self, loai, prompt, log):
+            return {"nen_xem": [{"chu": "Thác có nước trong xanh", "nguon": [2]}], "luu_y": [{"chu": "Nên mang giày chống trượt", "nguon": [2]}], "di_lai": []}
+    muc = _chay_diem(MayKhongViet(), [*THAC[:2], TRUNG_TU])
+    assert not [d for d in muc["doan"] if d["kieu"] == "an_toan"] and muc["trang_thai"] == "xong"
+    tro = [d for d in _chay_diem(MayKhongViet(), [*THAC[:2], BUOI_TOI])["doan"] if d["kieu"] == "an_toan"]
+    assert len(tro) == 1 and "«" not in tro[0]["chu"] and tro[0]["so"]

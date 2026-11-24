@@ -191,7 +191,7 @@ def loc_y(y_model: list[dict], hop_le: set[int], tran: int, cam_gio_gia: bool = 
 
 def khoi_model(ten_khoi: str, y_model: list[dict], hop_le: set[int], cam_gio_gia: bool = True, nguon_uu_tien: frozenset = frozenset()) -> tuple[dict, dict]:
     """Một danh sách của model ⇒ MỘT đoạn: `gach` khi còn ý sau khi lọc, không thì `thieu` (khuôn "Kho chưa có" do giao diện in)."""
-    giu, bo = loc_y(y_model, hop_le, TRAN_Y[ten_khoi], cam_gio_gia, nguon_uu_tien)
+    giu, bo = loc_y(y_model, hop_le, TRAN_Y[ten_khoi], cam_gio_gia, nguon_uu_tien=nguon_uu_tien)
     if giu:
         return {"nhan": NHAN[ten_khoi], "kieu": "gach", "chu": None, "gach": giu}, bo
     return {"nhan": NHAN[ten_khoi], "kieu": "thieu", "chu": None, "gach": None}, bo
@@ -261,27 +261,50 @@ def doan_chung(lich: dict, an_toan: str | None) -> list[dict]:
 # Mỗi bài: đoạn khớp nhiều NHÓM dấu hiệu nhất được thêm vào bằng chứng (ngoài trần); ý "Lưu ý" dẫn đoạn đó không bị trần số ý cắt; không ý nào dẫn nó ⇒ code
 # thêm một dòng `an_toan` trỏ tới đúng mục của bài (code không tóm tắt nội dung cảnh báo, chỉ trỏ).
 MAU_CANH_BAO = tuple(re.compile(m, re.IGNORECASE) for m in (
-    r"cấm tắm|không (?:được|nên) (?:tắm|bơi|ra bờ)|tránh leo|tạm (?:dừng|ngừng) (?:bơi|tắm|đón khách|hoạt động|tham quan)", r"biển động|sóng (?:lớn|to)|dòng chảy xa bờ|nước xiết|xoáy",
-    r"lũ quét|sạt lở|lũ ống|ngập lụt|nước dâng", r"đuối nước|nguy hiểm|tai nạn|cảnh báo", r"mùa mưa (?:bão|lũ)|mùa lũ|mưa bão|bão lũ|áp thấp nhiệt đới|[dg]i?ông (?:sét|lốc)",
-    r"trơn trượt|trơn trợt|dốc đứng"))
-_MUC_AN_TOAN = re.compile(r"an toàn|lưu ý|mùa|thời tiết|cảnh báo|dành cho du khách", re.IGNORECASE)  # tên mục của bài hay chứa phần cảnh báo
-_LOI_DAN_CANH_BAO = re.compile(r"\bnên\b|\bkhông\b|\bcấm\b|tránh|hạn chế|tuyệt đối|\bphải\b|cẩn thận|lưu ý", re.IGNORECASE)
+    r"cấm tắm|không (?:được |nên )?(?:tắm|bơi|ra bờ)|tránh leo|tạm (?:dừng|ngừng) (?:bơi|tắm|đón khách|hoạt động|tham quan)",
+    r"biển động|sóng (?:lớn|to)|dòng chảy xa bờ|nước xiết|chảy xiết|xoáy", r"lũ quét|sạt lở|lũ ống|ngập lụt|nước dâng", r"đuối nước|nguy hiểm|tai nạn|cảnh báo|áo phao",
+    r"mùa mưa (?:bão|lũ)|mùa lũ|mưa bão|bão lũ|áp thấp nhiệt đới|[dg]i?ông (?:sét|lốc)", r"trơn trượt|trơn trợt|dốc đứng"))
+# Tên mục cho biết đây là mục DẶN DU KHÁCH (chữ "mùa" trần không tính: "cảnh quan bốn mùa" từng được chọn nhờ nó). Xét trên tên mục CUỐI của đường dẫn mục.
+_MUC_AN_TOAN = re.compile(r"an toàn|cảnh báo|rủi ro|lưu ý|mùa mưa (?:bão|lũ)|mùa (?:bão|lũ)|dành cho du khách", re.IGNORECASE)
+_LOI_DAN_CANH_BAO = re.compile(r"\bnên\b|\bkhông\b|\bcấm\b|tránh|hạn chế|tuyệt đối|\bphải\b|bắt buộc|cẩn thận|lưu ý|tạm (?:dừng|ngừng|ngưng)", re.IGNORECASE)
 CAU_TRO_AN_TOAN = "Bài của điểm này có phần lưu ý an toàn ở mục «{muc}» — mở bài để đọc trước khi đi."
+CAU_TRO_AN_TOAN_CHUNG = "Bài của điểm này có phần lưu ý an toàn — mở bài để đọc trước khi đi."
+
+
+def _muc_cuoi(doan) -> str:
+    return (doan.metadata.get("heading_path") or [""])[-1]
 
 
 def doan_canh_bao(doan_bai: list):
-    """Đoạn cảnh báo an toàn của MỘT bài: đoạn khớp nhiều nhóm dấu hiệu nhất của `MAU_CANH_BAO` (bằng nhau ⇒ đoạn đứng trước); phải khớp ít nhất HAI nhóm, hoặc một
-    trong hai nhóm đầu (cấm / tạm dừng; biển động – nước xiết) — một chữ "nguy hiểm" hay "mùa mưa bão" đứng lẻ chưa đủ. Không có ⇒ None."""
+    """Đoạn cảnh báo an toàn của MỘT bài (thêm vào bằng chứng): phải có câu cấm / tạm dừng (nhóm đầu), hoặc khớp ít nhất HAI nhóm dấu hiệu của `MAU_CANH_BAO`, hoặc nằm
+    dưới một mục dặn du khách (`_MUC_AN_TOAN`) và khớp ít nhất một nhóm — một chữ "sóng lớn", "nguy hiểm" hay "mùa mưa bão" đứng lẻ dưới mục khác chưa đủ. Nhiều đoạn đủ
+    điều kiện ⇒ đoạn nhiều điểm nhất: số nhóm + 2 nếu thuộc mục dặn du khách + 1 nếu có lời dặn (bằng nhau ⇒ đoạn đứng trước). Không có ⇒ None.
+    Phiên đo đọc bản sửa 24/11/2026: bản trước cho "sóng lớn" đứng lẻ là đủ và cộng điểm cho mọi tên mục có chữ "mùa" ⇒ Đầm Lập An, Đầm Chuồn ra đoạn tả mặt đầm
+    "che chắn sóng lớn", "không có sóng lớn", còn đoạn dặn thật (áo phao, hố sâu, tạm dừng kayak mùa mưa bão) không đủ điều kiện."""
     tot, diem_tot = None, 0
     for d in doan_bai:
-        muc = " ".join(d.metadata.get("heading_path") or ())
-        khop = [bool(m.search(f"{muc} {d.text or ''}")) for m in MAU_CANH_BAO]
-        # đủ điều kiện rồi mới cộng điểm tên mục: đoạn nằm dưới mục "Mùa…", "Lưu ý…", "Thông tin dành cho du khách" được chọn trước đoạn kể chuyện lịch sử / địa mạo
-        # có cùng số dấu hiệu (đếm 0 đồng trên 47 điểm 24/11/2026: Phá Tam Giang, Đầm Lập An từng ra mục "dấu ấn lịch sử", "địa mạo")
-        diem = sum(khop) + (2 if _MUC_AN_TOAN.search(muc) else 0)
-        if (sum(khop) >= 2 or khop[0] or khop[1]) and diem > diem_tot:
+        chu = f"{' '.join(d.metadata.get('heading_path') or ())} {d.text or ''}"
+        so_nhom, khop_cam = sum(bool(m.search(chu)) for m in MAU_CANH_BAO), bool(MAU_CANH_BAO[0].search(chu))
+        muc_dan = bool(_MUC_AN_TOAN.search(_muc_cuoi(d)))
+        diem = so_nhom + 2 * muc_dan + bool(_LOI_DAN_CANH_BAO.search(d.text or ""))
+        if (khop_cam or so_nhom >= 2 or (muc_dan and so_nhom)) and diem > diem_tot:
             tot, diem_tot = d, diem
     return tot
+
+
+def muc_tro_an_toan(doan) -> str | None:
+    """Dòng trỏ do code thêm (khi mục không có ý cảnh báo nào) được nói gì về đoạn cảnh báo `doan`: tên mục — khi đó là mục dặn du khách; "" — đoạn có câu cấm /
+    tạm dừng nhưng nằm dưới mục khác ⇒ trỏ tới bài, không nêu tên mục; None — đoạn chỉ là bằng chứng (vd chuyện trùng tu "kè chống sạt lở") ⇒ KHÔNG thêm dòng trỏ."""
+    muc = _muc_cuoi(doan)
+    if _MUC_AN_TOAN.search(muc):
+        return muc
+    return "" if MAU_CANH_BAO[0].search(doan.text or "") else None
+
+
+def cau_tro_an_toan(doan) -> str | None:
+    """Câu trỏ của SỔ TAY cho đoạn cảnh báo `doan` (None ⇒ không thêm dòng trỏ)."""
+    muc = muc_tro_an_toan(doan)
+    return None if muc is None else CAU_TRO_AN_TOAN.format(muc=muc) if muc else CAU_TRO_AN_TOAN_CHUNG
 
 
 def la_y_canh_bao(dong: str, nguon_canh_bao) -> bool:
