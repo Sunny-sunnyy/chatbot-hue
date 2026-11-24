@@ -45,7 +45,7 @@ async def _muc_model(loai: str, ten_khoi: tuple[str, ...], cau_tim: str, de: str
     """Phần model của một mục: tìm kho bằng câu tìm cố định của code ⇒ một lời gọi có khuôn ⇒ lọc bằng luật của code ⇒ nối vào `doan` / `nguon`.
     Trả trạng thái mục ("xong" | "loi"). MỌI ngoại lệ ở đây (tìm kho, đọc đoạn của bài, dựng ngữ cảnh, model, sai khuôn) chỉ làm hỏng mục này: `doan` /
     `nguon` giữ nguyên các dòng do code chép đã có. `CancelledError` (trình duyệt đóng luồng) đi qua."""
-    tro_an_toan, trang_thai = None, "xong"  # (số nguồn, tên mục) của đoạn cảnh báo an toàn của bài: phải có ý "Lưu ý" dẫn nó, không thì code thêm dòng trỏ
+    tro_an_toan, trang_thai = None, "xong"  # (số nguồn, câu trỏ) của đoạn cảnh báo an toàn của bài: mục không có ý cảnh báo nào thì code thêm dòng trỏ này
     try:
         ket_qua = await asyncio.to_thread(state.retrieval_service.search, cau_tim)
         doan_bai = await asyncio.to_thread(state.retrieval_service.doan_cua_bai, bai_id) if bai_id else []
@@ -54,9 +54,9 @@ async def _muc_model(loai: str, ten_khoi: tuple[str, ...], cau_tim: str, de: str
         canh_bao = st.doan_canh_bao(doan_bai) if loai == "diem" and not ten_rieng else None
         so_cb = next((s["id"] for s, d in zip(nguon_kho, tai_lieu) if canh_bao is not None and d.id == canh_bao.id), None)
         if so_cb is not None:
-            nguon_cb = next(s for s in nguon_kho if s["id"] == so_cb)
-            nguon.append(nguon_cb)  # nguồn của đoạn cảnh báo có mặt kể cả khi model hỏng (dòng trỏ dẫn nó)
-            tro_an_toan = (so_cb, (nguon_cb["heading_path"] or ["lưu ý"])[-1])
+            nguon.append(next(s for s in nguon_kho if s["id"] == so_cb))  # nguồn của đoạn cảnh báo có mặt kể cả khi model hỏng (dòng trỏ dẫn nó)
+            cau_tro = st.cau_tro_an_toan(canh_bao)  # None: đoạn chỉ là bằng chứng (không chắc là lời dặn du khách) ⇒ không trỏ
+            tro_an_toan = (so_cb, cau_tro) if cau_tro else None
         if not nguon_kho:  # không đoạn nào ⇒ không gọi model; mọi khối là "Kho chưa có"
             doan.extend({"nhan": st.NHAN[k], "kieu": "thieu", "chu": None, "gach": None} for k in ten_khoi)
             return "xong"
@@ -88,7 +88,7 @@ async def _muc_model(loai: str, ten_khoi: tuple[str, ...], cau_tim: str, de: str
             logger.exception("so_tay section failed unexpectedly")
         trang_thai = "loi"
     if tro_an_toan is not None:  # bài có đoạn cảnh báo mà không ý nào nói tới (model không viết, bị lọc, hoặc lời gọi hỏng) ⇒ dòng an toàn do CODE
-        doan.append({"nhan": None, "kieu": "an_toan", "chu": st.CAU_TRO_AN_TOAN.format(muc=tro_an_toan[1]) + f" [{tro_an_toan[0]}]", "gach": None})
+        doan.append({"nhan": None, "kieu": "an_toan", "chu": f"{tro_an_toan[1]} [{tro_an_toan[0]}]", "gach": None})
         dem["tro_an_toan"] = dem.get("tro_an_toan", 0) + 1
     return trang_thai
 
