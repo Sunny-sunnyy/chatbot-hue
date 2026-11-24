@@ -192,7 +192,7 @@ def loc_y(y_model: list[dict], hop_le: set[int], tran: int, cam_gio_gia: bool = 
 
 def khoi_model(ten_khoi: str, y_model: list[dict], hop_le: set[int], cam_gio_gia: bool = True, nguon_uu_tien: frozenset = frozenset()) -> tuple[dict, dict]:
     """Một danh sách của model ⇒ MỘT đoạn: `gach` khi còn ý sau khi lọc, không thì `thieu` (khuôn "Kho chưa có" do giao diện in)."""
-    giu, bo = loc_y(y_model, hop_le, TRAN_Y[ten_khoi], cam_gio_gia, nguon_uu_tien)
+    giu, bo = loc_y(y_model, hop_le, TRAN_Y[ten_khoi], cam_gio_gia, nguon_uu_tien=nguon_uu_tien)
     if giu:
         return {"nhan": NHAN[ten_khoi], "kieu": "gach", "chu": None, "gach": giu}, bo
     return {"nhan": NHAN[ten_khoi], "kieu": "thieu", "chu": None, "gach": None}, bo

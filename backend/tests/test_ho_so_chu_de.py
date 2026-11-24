@@ -129,6 +129,12 @@ def test_doan_canh_bao_chi_nhan_doan_co_dau_hieu_ro():
     assert hs.doan_canh_bao(bai).id == "b.md#2"                       # đoạn khớp nhiều nhóm dấu hiệu nhất
     assert hs.doan_canh_bao(bai[:2]) is None                          # "mùa mưa bão" đứng lẻ chưa đủ
     assert hs.doan_canh_bao([bai[3]]).id == "b.md#3"                  # một câu cấm tắm là đủ
+    # ý dẫn đoạn cảnh báo: chỉ là Ý CẢNH BÁO khi có câu cấm / hai nhóm dấu hiệu / một dấu hiệu đi cùng lời dặn
+    assert hs.la_y_canh_bao("Bãi biển Thuận An mùa mưa bão có sóng cao, phải tuân thủ lệnh cấm tắm [3]", {3})
+    assert hs.la_y_canh_bao("Từ tháng 9 biển động, du khách nên hạn chế tắm biển [3]", {3})
+    assert not hs.la_y_canh_bao("Dải cồn cát Lăng Cô là đê tự nhiên che chắn sóng lớn từ biển hở [3]", {3})
+    assert not hs.la_y_canh_bao("Thời các chúa Nguyễn, sóng to và xoáy nước ở phá dễ lật thuyền nan [3]", {3})
+    assert not hs.la_y_canh_bao("Mùa mưa bão biển động, cấm tắm [4]", {3})   # không dẫn đoạn cảnh báo ⇒ không tính
 
 
 class _KhoBien:

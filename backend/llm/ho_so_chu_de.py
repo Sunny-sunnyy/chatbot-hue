@@ -92,30 +92,10 @@ CUM_XEP = "tổng quan giới thiệu lịch sử nổi bật đặc điểm"
 # theo mùa trong các đoạn được chọn; hồ sơ "Biển và đầm phá" 36 ý không có ý cảnh báo nào dù bài Bãi biển Cảnh Dương có hẳn mục "Mùa mưa bão và biển động",
 # bài Thuận An có đoạn cấm tắm). Mỗi bài có đoạn khớp mẫu dưới đây ⇒ đoạn khớp nhiều dấu hiệu nhất được THÊM vào bằng chứng của mục; ý nào dẫn đoạn đó được
 # giữ trước; không ý nào dẫn nó ⇒ code tự thêm một dòng `an_toan` trỏ tới đúng mục của bài (code không tóm tắt nội dung, chỉ trỏ).
-MAU_CANH_BAO = tuple(re.compile(m, re.IGNORECASE) for m in (
-    r"cấm tắm|không (?:được|nên) (?:tắm|bơi)|tạm (?:dừng|ngừng) (?:bơi|tắm|đón khách|hoạt động|tham quan)", r"biển động|sóng (?:lớn|to)|dòng chảy xa bờ|nước xiết|xoáy",
-    r"lũ quét|sạt lở|lũ ống|ngập lụt|nước dâng", r"đuối nước|nguy hiểm|tai nạn|cảnh báo", r"mùa mưa (?:bão|lũ)|mưa bão|bão lũ|áp thấp nhiệt đới", r"trơn trượt|trơn trợt|dốc đứng"))
+# Phép nhận đoạn cảnh báo và ý cảnh báo dùng CHUNG với sổ tay chuyến đi (`so_tay.MAU_CANH_BAO`, `doan_canh_bao`, `la_y_canh_bao`) — một bộ dấu hiệu, sửa một chỗ.
+doan_canh_bao, la_y_canh_bao = st.doan_canh_bao, st.la_y_canh_bao
 CAU_TRO_AN_TOAN = "{ten}: bài có phần lưu ý an toàn ở mục «{muc}» — mở bài để đọc trước khi đi."
 NHAN_AN_TOAN = "Lưu ý an toàn theo mùa"
-
-
-def la_y_canh_bao(dong: str, nguon_canh_bao) -> bool:
-    """Một ý đã qua lọc (kết bằng "[n]…") là ý CẢNH BÁO khi nó dẫn một đoạn cảnh báo VÀ chữ của nó mang một dấu hiệu trong `MAU_CANH_BAO` (đoạn cảnh báo cũng
-    có thể chứa chi tiết thường — ý dẫn nó mà không nói gì về an toàn thì vẫn là ý thường)."""
-    return bool({int(n) for n in re.findall(r"\[(\d+)\]", dong)} & set(nguon_canh_bao)) and any(m.search(dong) for m in MAU_CANH_BAO)
-
-
-def doan_canh_bao(doan_bai: list):
-    """Đoạn cảnh báo an toàn của MỘT bài: đoạn khớp nhiều NHÓM dấu hiệu nhất trong `MAU_CANH_BAO` (bằng nhau ⇒ đoạn đứng trước); phải khớp ít nhất HAI nhóm,
-    hoặc một nhóm thuộc hai nhóm đầu (cấm / tạm dừng; biển động) — một chữ "nguy hiểm" hay "mùa mưa bão" đứng lẻ chưa đủ. Không có ⇒ None."""
-    tot, diem_tot = None, 0
-    for d in doan_bai:
-        chu = " ".join([" ".join(d.metadata.get("heading_path") or ()), d.text or ""])
-        khop = [bool(m.search(chu)) for m in MAU_CANH_BAO]
-        diem = sum(khop)
-        if (diem >= 2 or khop[0] or khop[1]) and diem > diem_tot:
-            tot, diem_tot = d, diem
-    return tot
 
 
 def chia_muc_du_phong(so_bai: int) -> list[dict]:
