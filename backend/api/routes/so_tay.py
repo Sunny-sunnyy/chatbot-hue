@@ -41,13 +41,13 @@ def _bang_chung(tai_lieu: list, tu_so: int) -> tuple[str, list[dict]]:
 
 
 async def _muc_model(loai: str, ten_khoi: tuple[str, ...], cau_tim: str, de: str, bai_id: str | None, doan: list[dict], nguon: list[dict], state,
-                     generator, dem: dict) -> str:
+                     generator, dem: dict, ten_rieng: str | None = None) -> str:
     """Phần model của một mục: tìm kho bằng câu tìm cố định của code ⇒ một lời gọi có khuôn ⇒ lọc bằng luật của code ⇒ nối vào `doan` / `nguon`.
     Trả trạng thái mục ("xong" | "loi")."""
     try:
         ket_qua = await asyncio.to_thread(state.retrieval_service.search, cau_tim)
         doan_bai = await asyncio.to_thread(state.retrieval_service.doan_cua_bai, bai_id) if bai_id else []
-        chu, nguon_kho = _bang_chung(st.chon_bang_chung(ket_qua.documents, doan_bai, bai_id), len(nguon) + 1)
+        chu, nguon_kho = _bang_chung(st.chon_bang_chung(ket_qua.documents, doan_bai, bai_id, ten_rieng=ten_rieng), len(nguon) + 1)
         if not nguon_kho:  # không đoạn nào ⇒ không gọi model; mọi khối là "Kho chưa có"
             doan.extend({"nhan": st.NHAN[k], "kieu": "thieu", "chu": None, "gach": None} for k in ten_khoi)
             return "xong"
@@ -77,8 +77,10 @@ async def _dung_muc(muc: dict, lich: dict, an_toan: str | None, state, flags, ge
         noi = next((n for n in (bang_the.noi if bang_the else ()) if n.rel == muc["bai_id"]), None) if muc["bai_id"] else None
         diem = flags.bang_lich_v2.theo_id.get(muc["id_diem"], {}) if flags.bang_lich_v2 else {}
         doan, nguon = st.du_kien(noi, bang_the, muc["bai_id"], (diem.get("gio_mo_cua"), diem.get("gio_nguon")), muc["ten"])
-        trang_thai = await _muc_model("diem", ("nen_xem", "luu_y"), st.CAU_TIM_DIEM.format(ten=muc["ten"]), f"Điểm: {muc['ten']}", muc["bai_id"], doan, nguon,
-                                      state, generator, dem)
+        # điểm không có bài riêng ⇒ bằng chứng là các đoạn NHẮC TÊN điểm trong bài mà bảng điểm trỏ tới (`llm/so_tay.chon_bang_chung`)
+        trang_thai = await _muc_model("diem", ("nen_xem", "luu_y"), st.CAU_TIM_DIEM.format(ten=muc["ten"]), f"Điểm: {muc['ten']}",
+                                      muc["bai_id"] or diem.get("nguon"), doan, nguon, state, generator, dem,
+                                      ten_rieng=None if muc["bai_id"] else muc["ten"])
     elif muc["loai"] == "an_uong":
         doan, nguon = st.muc_an_uong(muc["an"])
     else:

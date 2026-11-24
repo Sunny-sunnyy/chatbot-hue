@@ -204,13 +204,17 @@ def xep_trong_bai(doan_bai: list, cum: str = CUM_TRONG_BAI) -> list:
     return [d for _, _, d in sorted(((-round(diem(t), 6), i, d) for i, (t, d) in enumerate(zip(chu, doan_bai))), key=lambda x: x[:2])]
 
 
-def chon_bang_chung(ket_qua_tim: list, doan_bai: list, bai_id: str | None, k: int = SO_DOAN_BANG_CHUNG) -> list:
+def chon_bang_chung(ket_qua_tim: list, doan_bai: list, bai_id: str | None, k: int = SO_DOAN_BANG_CHUNG, ten_rieng: str | None = None) -> list:
     """Bằng chứng cho mục của một điểm, nhiều nhất `k` đoạn. Điểm có bài riêng trong chỉ mục ⇒ CHỈ đoạn của bài đó: tới `SO_DOAN_TU_TIM` đoạn theo thứ hạng
     của lần tìm chung, phần còn lại theo `xep_trong_bai`. Điểm không có bài riêng (hoặc bài không có đoạn nào) ⇒ kết quả tìm như nó vốn có.
     Vì sao không lấy thẳng kết quả tìm (bản đầu, lượt thật 24/11/2026): mục Đại Nội nhận 8 đoạn của bài vé và bài dịch vụ ⇒ "Nên xem" toàn máy thuyết minh,
     xe điện."""
     if not bai_id or not doan_bai:
         return list(ket_qua_tim)[:k]
+    if ten_rieng:  # điểm KHÔNG có bài riêng (bảng 16: Trung tâm Nghệ thuật Lê Bá Đảng lấy tư liệu từ bài phố đi bộ): `bai_id` = bài bảng điểm trỏ tới ⇒ chỉ
+        # các đoạn của bài đó CÓ NHẮC tên điểm (tìm chung theo tên dễ mang về bài của một nơi khác trùng tên — "Không gian lưu niệm Lê Bá Đảng")
+        ten = " ".join(_tu(ten_rieng))
+        return [d for d in xep_trong_bai(doan_bai, ten_rieng) if ten in " ".join(_tu(d.text or ""))][:SO_DOAN_TU_TIM]
     tu_tim = [d for d in ket_qua_tim if d.metadata.get("source") == bai_id][:SO_DOAN_TU_TIM]
     da_co = {d.id for d in tu_tim}
     return (tu_tim + [d for d in xep_trong_bai(doan_bai) if d.id not in da_co])[:k]

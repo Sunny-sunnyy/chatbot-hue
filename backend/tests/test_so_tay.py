@@ -64,7 +64,10 @@ def test_chon_bang_chung_chi_doan_cua_bai_rieng_khi_co():
     tim = [_D(9, "ve.md", "Vé", "xe điện"), bai[2], _D(8, "dv.md", "Dịch vụ", "máy thuyết minh")]
     chon = st.chon_bang_chung(tim, bai, "a.md", k=3)
     assert [d.id for d in chon] == ["a.md#2", "a.md#3", "a.md#1"]  # đoạn của bài theo lần tìm trước, rồi theo xếp trong bài (đoạn khớp nhiều từ của cụm hơn đứng trước); không đoạn nào của bài khác
-    assert [d.id for d in st.chon_bang_chung(tim, [], None, k=2)] == ["ve.md#9", "a.md#2"]  # điểm không có bài riêng ⇒ kết quả tìm như nó vốn có
+    assert [d.id for d in st.chon_bang_chung(tim, [], None, k=2)] == ["ve.md#9", "a.md#2"]  # không biết bài nào ⇒ kết quả tìm như nó vốn có
+    # điểm không có bài riêng, bảng điểm trỏ sang bài khác ⇒ chỉ đoạn của bài đó có nhắc đúng tên điểm
+    pho = [_D(0, "pho.md", "Tổng quan", "Phố đi bộ ven sông"), _D(1, "pho.md", "Gần đó", "Trung tâm Nghệ thuật Lê Bá Đảng nằm ở đầu phố"), _D(2, "pho.md", "Ăn uống", "quầy ăn vặt")]
+    assert [d.id for d in st.chon_bang_chung(tim, pho, "pho.md", ten_rieng="Trung tâm Nghệ thuật Lê Bá Đảng")] == ["pho.md#1"]
 
 
 def test_loc_y_bo_y_khong_nguon_qua_dai_co_gio_gia_va_giu_tran():
