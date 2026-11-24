@@ -195,7 +195,7 @@ function MucHoSo({ d, muc, dang, i }) {
         {muc ? <NoiDungMuc muc={muc} khoa={`hs-${d.id}`} oThieu={oThieu} duoiY={duoiY} />
           : dang ? <><KhungXuong /><span className="sr-only">đang viết…</span></>
           : <p className="st-muc-loi">Mục này chưa có nội dung — bấm “Dựng lại” để thử lần nữa.</p>}
-        {muc?.muc_do === "mong" && <p className="hs-mong">Mục này kho nói ít.</p>}
+        {muc?.muc_do === "mong" && <p className="hs-mong">Mục này hồ sơ ghi được ít ý — mở các bài của mục để đọc đủ.</p>}
       </div>
     </article>
   );
@@ -237,9 +237,10 @@ export function HoSoChuDe({ ma, hoSo }) {
           <h1 className="st-h">{danY?.tieu_de && dung ? danY.tieu_de : cd?.ten || "Hồ sơ theo chủ đề"}</h1>
           <p className="st-p">Trợ lý đọc {cd ? `${cd.so_bai} bài kho` : "các bài kho"} về chủ đề này và gom lại thành từng mục — có dẫn nguồn để bạn kiểm lại.</p>
           {/* chủ đề ít bài: nói thật số bài, KHÔNG đoán "hồ sơ sẽ ngắn" (lượt thật: chủ đề 5 bài vẫn ra 5 mục đủ ý); "bản ngắn" chỉ nói khi LÕI đếm ra
-              (`xong.ban_ngan`: dưới nửa số mục có đủ ý) */}
+              (`xong.ban_ngan`: dưới nửa số mục có đủ ý). Hai câu "ít ý" nói về HỒ SƠ, không khẳng định gì về kho — ít ý có thể do bộ lọc hay do model
+              (phiên đo 24/11, cùng bài học ô "Kho chưa có" của sổ tay) */}
           {dung && pha === "xong" && xong?.ban_ngan
-            ? <p className="hs-it">Đây là bản ngắn vì kho nói ít về chủ đề này.</p>
+            ? <p className="hs-it">Đây là bản ngắn: phần lớn mục chỉ ghi được ít ý.</p>
             : cd && cd.so_bai <= IT_BAI && <p className="hs-it">Kho hiện có {cd.so_bai} bài về chủ đề này — hồ sơ viết từ đúng {cd.so_bai} bài đó.</p>}
           {dang && <TienDo xong={soXong} tong={ds.length} choDau={cd ? `Đang đọc ${cd.so_bai} bài và chia mục…` : "Đang mở chủ đề…"} />}
           {dung && pha === "xong" && (
