@@ -32,7 +32,7 @@ function IconLv({ lv, lon }) {
 // tên chuyển cảnh: cùng một tên ở thẻ và ở ảnh đầu bài ⇒ trình duyệt "bay" ảnh sang trang mới (phải là tên CSS hợp lệ, duy nhất trên trang)
 const tenChuyenCanh = id => `kp-anh-${khoaBai(id)}`;
 
-function DanhSach({ bai, loi, linhVuc }) {
+function DanhSach({ bai, loi, linhVuc, dai = null }) {
   const [lv, setLv] = useState(linhVuc ?? null);
   const [loai, setLoai] = useState(null);
   const [tim, setTim] = useState("");
@@ -64,6 +64,8 @@ function DanhSach({ bai, loi, linhVuc }) {
       </section>
       <div className="khung kp2-than">
         {loi && <p className="loi" role="alert">{loi}</p>}
+        {/* bản thử "Hồ sơ theo chủ đề": dải ở đầu trang Khám phá (App chỉ đưa khi công tắc `ho_so_chu_de` bật; không đưa ⇒ trang như cũ) */}
+        {dai}
         <div className="kp2-loc" role="group" aria-label="Lọc theo lĩnh vực">
           <button type="button" className="chip chip-sm nhan-nut" aria-pressed={!lv} onClick={() => chonLv(null)}>
             Tất cả {bai && <b>{bai.length}</b>}
@@ -101,8 +103,8 @@ function DanhSach({ bai, loi, linhVuc }) {
   );
 }
 
-export function KhamPha({ bai, loi }) {
-  return <DanhSach bai={bai} loi={loi} linhVuc={null} />;
+export function KhamPha({ bai, loi, dai = null }) {
+  return <DanhSach bai={bai} loi={loi} linhVuc={null} dai={dai} />;
 }
 
 export function LinhVuc({ linhVuc, bai, loi }) {
