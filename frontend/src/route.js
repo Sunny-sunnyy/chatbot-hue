@@ -7,6 +7,8 @@ import { giamChuyenDong } from "./hieuUng.js";
 //   #/kham-pha               5 lĩnh vực
 //   #/kham-pha/<linh_vuc>    danh sách bài một lĩnh vực (mã = tên thư mục kho)
 //   #/kham-pha/bai/<id>      một bài (id = đường dẫn bài trong kho, có dấu `/`)
+//   #/kham-pha/chu-de        lưới chủ đề của "Hồ sơ theo chủ đề" (bản thử; công tắc server `ho_so_chu_de`)
+//   #/kham-pha/chu-de/<mã>   trang đọc hồ sơ của một chủ đề
 //   #/len-ke-hoach · #/tro-ly · #/gioi-thieu
 //   #/ban-do                 trang Bản đồ điểm tham quan (mục menu chỉ có khi cờ `ban_do_lich` bật)
 //   #/theo-doi               trang theo dõi của chủ dự án (KHÔNG có trong menu; cần khoá quản trị)
@@ -24,6 +26,7 @@ export function parseHash(hash) {
   const parts = path.split("/").filter(Boolean);
   if (parts[0] === "kham-pha") {
     if (parts[1] === "bai" && parts.length > 2) return { page: "bai", baiId: parts.slice(2).join("/") };
+    if (parts[1] === "chu-de") return parts[2] ? { page: "ho-so", ma: parts[2] } : { page: "chu-de" };
     if (parts[1]) return { page: "linh-vuc", linhVuc: parts[1] };
     return { page: "kham-pha" };
   }
