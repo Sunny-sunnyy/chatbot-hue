@@ -99,7 +99,8 @@ def test_kho_co_tran_va_cong_tac_mac_dinh_tat():
     for i in range(3):
         kho.dat(f"m{i}", {"i": i})
     assert kho.lay("m0") is None and kho.lay("m2") == {"i": 2} and MAX_LUOT == 200
-    assert AssistantFlags().vi_sao is False and load_settings(validate_private_paths=False)["assistant"]["vi_sao"] is False
+    assert AssistantFlags().vi_sao is False  # thiếu dòng trong settings (ảnh cũ, cấu hình rút gọn) ⇒ tắt
+    assert load_settings(validate_private_paths=False)["assistant"]["vi_sao"] is True  # máy demo: MỞ từ 24/11/2026 (gói deploy ghi lại false)
 
 
 def test_done_chi_bao_vi_sao_khi_cong_tac_bat():
@@ -115,6 +116,7 @@ def test_route_cat_ban_tom_tat_theo_ma_luot_va_404_khi_tat():
     with TestClient(app) as client:
         goc = app.state.generator, app.state.generator_ready, app.state.assistant_flags
         app.state.generator, app.state.generator_ready = MemoryGenerator(), True
+        app.state.assistant_flags = dataclasses.replace(app.state.assistant_flags, vi_sao=False)
         tat = client.post("/api/chat", json={"query": "Đại Nội mở cửa mấy giờ?"}).json()["turn_id"]
         khi_tat = client.get(f"/api/vi_sao/{tat}")
         app.state.assistant_flags = dataclasses.replace(app.state.assistant_flags, vi_sao=True)
