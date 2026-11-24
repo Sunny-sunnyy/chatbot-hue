@@ -137,7 +137,7 @@ def _buoc_tim(tim: dict, ms, ghi: dict, trich: dict, bai_ids) -> dict:
         # tiêu đề bài: của chính đoạn tìm được (như danh sách nguồn) ⇒ của nguồn được trích ⇒ của trang Khám phá; tên file chỉ là chỗ lùi cuối
         # cho dòng sổ vết cũ chưa ghi tiêu đề (đọc nhánh 24/11: tên file không dấu từng lọt vào bảng của 1.318 / 6.475 dòng bài)
         o = bai.setdefault(nguon, {"title": kq.get("title") or trich.get(nguon) or _tieu_de_kham_pha(bai_ids, nguon) or PurePosixPath(nguon).stem,
-                                   "bai_id": nguon if nguon in bai_ids else None,
+                                   "bai_id": nguon if nguon in bai_ids else None,  # `duoc_trich` dưới đây là dấu mức BÀI (bài có đoạn được trích), không phải của từng đoạn
                                    "so_doan": 0, "hang": hang, "duoc_trich": nguon in trich})
         o["so_doan"] += 1
     vao = tim.get("vao_ngu_canh")
@@ -229,14 +229,16 @@ def tom_tat(ghi: dict, bai_ids=()) -> dict:
         tom = "Bạn nhờ trợ lý tự làm một việc hệ thống không có (đặt chỗ, gửi tin, xem tình trạng phòng…) ⇒ trả một câu nói thật cố định."
         ghi_chu.append("Câu trả lời của lượt này là câu cố định do code chọn theo loại việc được nhờ.")
     elif loai == "tu_choi":
-        tom = f"Trợ lý gọi model {len(goi)} lần, tìm trong kho {len(lan_tim)} lần, đọc {so_doan} đoạn nhưng không đoạn nào trả lời được câu này."
-        ghi_chu.append("Không có đoạn nào dùng được ⇒ code trả câu từ chối cố định, không gọi model viết." if tra_loi.get("ket_qua_co_dinh") == "refusal_no_sources"
-                       else "Model đọc các đoạn tìm được và thấy kho không trả lời được câu này ⇒ nó phải trả đúng câu từ chối cố định, "
-                            "không được tự viết từ hiểu biết riêng.")
+        # chữ chỉ nói điều hệ thống BIẾT (soát khác hãng 24/11/2026): đoạn được ĐƯA cho model, không phải "model đã đọc"; lượt từ chối = model trả câu
+        # cố định, hệ thống không tự kiểm lại là kho thiếu thật hay không
+        tom = f"Trợ lý gọi model {len(goi)} lần, tìm trong kho {len(lan_tim)} lần, đưa {so_doan} đoạn kho cho model; lượt này không có căn cứ đủ để trả lời."
+        ghi_chu.append("Không có đoạn nào để đưa cho model ⇒ code trả câu từ chối cố định, không gọi model viết." if tra_loi.get("ket_qua_co_dinh") == "refusal_no_sources"
+                       else "Câu từ chối là câu cố định của hệ thống: model nhận các đoạn tìm được và trả đúng câu đó thay vì tự viết từ hiểu biết riêng. "
+                            "Hệ thống không tự kiểm lại là kho có thật sự thiếu hay không.")
     else:
-        tom = f"Trợ lý gọi model {len(goi)} lần, tìm trong kho {len(lan_tim)} lần, đọc {so_doan} đoạn, trích {len(nguon_trich)} nguồn."
+        tom = f"Trợ lý gọi model {len(goi)} lần, tìm trong kho {len(lan_tim)} lần, đưa {so_doan} đoạn kho cho model, trích {len(nguon_trich)} nguồn."
     if so_truoc and loai != "bo_nho_dem":
-        ghi_chu.append(f"Trợ lý được đọc {so_truoc} lượt trước của cuộc trò chuyện.")
+        ghi_chu.append(f"Model được đưa kèm {so_truoc} lượt trước của cuộc trò chuyện.")
     if web is not None:
         ghi_chu.append("Phần «Từ web» lấy ngoài kho, chưa được kiểm với kho.")
     if any(c.get("name") == "viet_lai_het_luot" for c in ghi.get("cong_cu") or []):
