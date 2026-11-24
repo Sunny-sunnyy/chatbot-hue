@@ -155,6 +155,21 @@ def nguon_da_dung(doan: list[dict], nguon: list[dict]) -> list[dict]:
     return [s for s in nguon if s["id"] in co]
 
 
+def tach_ma(doan: list[dict]) -> list[dict]:
+    """Bước CUỐI trước khi gửi ra giao diện: gỡ mã [n] khỏi chữ, đưa số nguồn thành danh sách riêng — `so` cho `chu`, `gach_so` (song song với `gach`) cho
+    từng dòng gạch. Vì sao: sản phẩm không hiện số tham chiếu chen trong chữ (chủ dự án nhắc lại 21:4x 24/11/2026 khi xem trang sổ tay); mã vẫn cần ở tầng
+    dữ liệu để code kiểm ý nào có nguồn hợp lệ và để giao diện biết dòng nào dựa vào nguồn nào."""
+    def tach(chu: str) -> tuple[str, list[int]]:
+        return " ".join(_MA.sub("", chu).split()), [int(n) for n in dict.fromkeys(re.findall(r"\[(\d+)\]", chu))]
+    ra = []
+    for d in doan:
+        chu, so = tach(d["chu"]) if d.get("chu") else (d.get("chu"), [])
+        cap = [tach(g) for g in d.get("gach") or ()]
+        ra.append({"nhan": d["nhan"], "kieu": d["kieu"], "chu": chu, "so": so, "gach": [c for c, _ in cap] if d.get("gach") is not None else None,
+                   "gach_so": [s for _, s in cap] if d.get("gach") is not None else None})
+    return ra
+
+
 def muc_an_uong(an: list[dict]) -> tuple[list[dict], list[dict]]:
     """Mục ăn uống của một ngày = đúng quán gợi ý của lịch (`quan_lich.an_uong`), không gọi model. Quán có bài kho ⇒ một nguồn trỏ bài đó; quán chưa có
     bài ⇒ giữ nhãn của lịch ("chưa kiểm"…), không số nguồn. Bữa có ghi chú ăn riêng của điểm ⇒ in ghi chú đó."""

@@ -88,7 +88,9 @@ async def _dung_muc(muc: dict, lich: dict, an_toan: str | None, state, flags, ge
         trang_thai = await _muc_model("di_lai", ("di_lai",), st.CAU_TIM_DI_LAI, "Phần cần viết: Đi lại giữa các điểm tham quan ở Huế", None, doan, nguon,
                                       state, generator, dem)
         doan.extend(st.doan_chung(lich, an_toan))
-    return {"id": muc["id"], "trang_thai": trang_thai, "doan": doan, "nguon": st.nguon_da_dung(doan, nguon), "giay": round(time.perf_counter() - started, 1)}
+    # chữ gửi ra KHÔNG mang mã [n]: số nguồn của từng dòng nằm ở `so` / `gach_so` (`llm/so_tay.tach_ma`)
+    return {"id": muc["id"], "trang_thai": trang_thai, "doan": st.tach_ma(doan), "nguon": st.nguon_da_dung(doan, nguon),
+            "giay": round(time.perf_counter() - started, 1)}
 
 
 async def _su_kien(dan_y: list[dict], lich: dict, an_toan: str | None, state, flags, generator):

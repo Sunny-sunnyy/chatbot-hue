@@ -100,6 +100,15 @@ def test_muc_an_uong_la_quan_cua_lich_va_doan_chung():
     assert st.nguon_da_dung([{"chu": "a [2]", "gach": None}, {"chu": None, "gach": ["b [3][2]"]}], [{"id": i} for i in (1, 2, 3)]) == [{"id": 2}, {"id": 3}]
 
 
+def test_tach_ma_chu_gui_ra_khong_con_so_tham_chieu():
+    ra = st.tach_ma([{"nhan": "Giờ mở cửa", "kieu": "van", "chu": "07h00 – 17h30. [1]", "gach": None},
+                     {"nhan": "Nên xem", "kieu": "gach", "chu": None, "gach": ["Hồ Lưu Khiêm [3][2]", "Quán B (quán ăn) — chưa kiểm"]},
+                     {"nhan": "Lưu ý", "kieu": "thieu", "chu": None, "gach": None}])
+    assert ra == [{"nhan": "Giờ mở cửa", "kieu": "van", "chu": "07h00 – 17h30.", "so": [1], "gach": None, "gach_so": None},
+                  {"nhan": "Nên xem", "kieu": "gach", "chu": None, "so": [], "gach": ["Hồ Lưu Khiêm", "Quán B (quán ăn) — chưa kiểm"], "gach_so": [[3, 2], []]},
+                  {"nhan": "Lưu ý", "kieu": "thieu", "chu": None, "so": [], "gach": None, "gach_so": None}]
+
+
 def test_cong_tac_mac_dinh_tat_va_can_lich_luu():
     assert AssistantFlags().so_tay is False
     with pytest.raises(ValueError):
