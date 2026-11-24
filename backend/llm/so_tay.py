@@ -55,7 +55,11 @@ _TU_VE = re.compile(r"\bvé\b|\bphí\b|người lớn|trẻ em")
 _KHONG_THU = re.compile(r"không (?:thu|mất) (?:phí|tiền)|không bán vé|vào (?:cửa|cổng) tự do|không niêm yết|giờ mở cửa|ngừng bán vé")
 _MIEN_PHI_VE = re.compile(r"miễn phí[^,;.]*(?:\bvé\b|vào cửa|vào cổng|tham quan)|(?:\bvé\b|vào cửa|vào cổng|tham quan)[^,;.]*miễn phí")
 _MO_DONG = re.compile(r"mở cửa|đóng cửa|giờ mở|mở từ|mở (?:cho|đón) khách|đón khách|hoạt động từ|nghỉ trưa|tham quan được từ")
-_MOC_GIO = re.compile(r"\d{1,2}\s*(?:h|g|:)\s*\d{0,2}(?!\d)|\b\d{1,2}\s*giờ\b|thứ (?:hai|ba|tư|năm|sáu|bảy)|chủ nhật|hằng ngày|hàng ngày|cả ngày|cả tuần")
+_MOC_GIO = re.compile(r"\d{1,2}\s*(?:h|g|:)\s*\d{0,2}(?!\w)|\b\d{1,2}\s*giờ\b|thứ (?:hai|ba|tư|năm|sáu|bảy)|chủ nhật|hằng ngày|hàng ngày|cả ngày|cả tuần")
+
+
+_PHU_THUOC = re.compile(r"(?:trừ|ngoại trừ|kể cả|riêng|trong đó|sau đó)\b", re.IGNORECASE)
+_TIEN_KHONG_SO = re.compile(r"miễn phí|\bgiảm\b|phụ thu|trả thêm", re.IGNORECASE)
 
 
 def noi_gio_gia(ve: str) -> bool:
@@ -154,7 +158,9 @@ def go_ve_gio_gia(chu: str) -> str | None:
     if len(giu) == len(ve):
         return chu
     con = re.sub(r"^(?:và|nhưng|còn|song)\s+", "", ", ".join(giu).strip(" .,;"), flags=re.IGNORECASE)
-    if len(con) < VE_CON_LAI_NGAN:
+    # phần còn lại đứng không vững sau khi mất vế trước (phiên đo dò 24/11/2026): mở đầu bằng từ phụ thuộc vế đã gỡ ("Trừ các dịp lễ lớn…"), hoặc còn nói
+    # tiền bằng từ không kèm số ("miễn phí cho trẻ dưới 7 tuổi", "người cao tuổi được giảm một nửa") ⇒ bỏ cả ý
+    if len(con) < VE_CON_LAI_NGAN or _PHU_THUOC.match(con) or _TIEN_KHONG_SO.search(con):
         return None
     return con[:1].upper() + con[1:] + ("" if con.endswith((".", "!", "?")) else ".")
 

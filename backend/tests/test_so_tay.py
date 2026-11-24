@@ -164,6 +164,11 @@ def test_y_gop_gio_voi_loi_dan_chi_bi_go_ve_noi_gio_gia():
     assert st.khoi_model("luu_y", [{"chu": cau, "nguon": [1]}], {1})[0]["kieu"] == "gach"
     assert st.go_ve_gio_gia("Hồ Lưu Khiêm có đảo Tịnh Khiêm, ba cầu đá") == "Hồ Lưu Khiêm có đảo Tịnh Khiêm, ba cầu đá"  # không có vế giờ / giá ⇒ nguyên văn
     assert st.go_ve_gio_gia("Vé người lớn 150.000 đồng, trẻ em 30.000") is None
+    # phần còn lại đứng không vững sau khi mất vế trước ⇒ bỏ cả ý (ba câu dò của phiên đo)
+    assert st.go_ve_gio_gia("Không mở cửa vào thứ Hai, trừ các dịp lễ lớn của thành phố") is None
+    assert st.go_ve_gio_gia("Vé vào cổng 50.000 đồng, miễn phí cho trẻ dưới 7 tuổi, nên mua vé trước ở cổng chính") is None
+    assert st.go_ve_gio_gia("Người lớn 150.000, trẻ em 30.000, người cao tuổi được giảm một nửa") is None
+    assert st.noi_gio_gia("Khu lăng mở cửa đón khách, có 2 hồ và 5 gian nhà") is False  # số + chữ "h" / "g" đầu một từ không phải mốc giờ
 
 
 def test_mot_muc_gap_loi_la_khong_lam_dut_luong_va_muc_truoc_khi_di_luon_con_dong_do_code():
