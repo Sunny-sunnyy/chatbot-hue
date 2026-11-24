@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { anhHopLe } from "./LichV2.jsx";
 import { SourceLine } from "./SourceLine.jsx";
+import { boMaTrichDan } from "./markdown.js";
 import { baiHref } from "./route.js";
 import { createSseParser } from "./stream.js";
 import { linhVuc } from "./song/nhin.js";
@@ -11,7 +12,7 @@ import "./so_tay.css";
 // mục (dữ kiện chép từ kho + "nên xem" + "lưu ý"), ăn uống từng ngày, "trước khi đi". Chữ và nguồn do server gửi (lõi của B, `POST /api/so_tay`);
 // trang chỉ vẽ. Hợp đồng sự kiện SSE (B chốt 24/11): `dan_y` {tieu_de, so_ngay, muc: [{id, loai, ngay, buoi, ten, gio, bai_id, anh}]} có ngay ⇒ nhiều
 // `muc` {id, trang_thai, doan: [{nhan, kieu: van | gach | thieu | an_toan, chu, gach}], nguon} về KHÔNG theo thứ tự ⇒ `xong` {giay, so_muc, so_muc_loi}.
-// Nguồn đánh số TRONG từng mục (như một câu trả lời của trợ lý) ⇒ số không nhảy khi mục khác về sau.
+// Nguồn của từng mục hiện thành khối "Nguồn đã dùng" dưới mục (dùng chung `SourceLine`), không có số chen trong chữ.
 
 const KHONG_CO_LICH = "khong_co_lich";
 const BAN_DAU = { pha: "chua", danY: null, muc: {}, xong: null, loi: null };
@@ -88,23 +89,9 @@ function Net({ d, co = 18 }) {
   );
 }
 
-// Chữ có mã nguồn [n] ⇒ số bấm được: nguồn là một bài kho thì mở bài; nguồn do chương trình dựng (bảng quán của lịch…) thì chỉ là số có chú thích.
-function ChuCoNguon({ chu, nguon }) {
-  const theoSo = new Map(nguon.map(s => [String(s.id), s]));
-  return String(chu ?? "").split(/(\[\d+\])/).map((manh, i) => {
-    const m = /^\[(\d+)\]$/.exec(manh);
-    if (!m) return manh;
-    const s = theoSo.get(m[1]);
-    if (!s) {  // số không có trong danh sách nguồn của mục ⇒ không vẽ số mồ côi; để lại một dòng cho người soát (lõi phải ra 0)
-      console.warn(`so_tay: số nguồn [${m[1]}] không có trong danh sách nguồn của mục`);
-      return null;
-    }
-    const chuThich = [s.title, ...(s.heading_path || [])].join(" › ");
-    return typeof s.bai_id === "string"
-      ? <a key={i} className="st-so" href={baiHref(s.bai_id)} title={chuThich} data-lv={linhVuc(s.bai_id)}>{m[1]}</a>
-      : <span key={i} className="st-so st-so-tinh" title={chuThich}>{m[1]}</span>;
-  });
-}
+// Chữ của server mang mã nguồn [n] (lõi cần mã đó để kiểm); trang KHÔNG hiện số chen trong chữ — như ô trợ lý và thẻ lịch (chủ dự án 01/11: "[n] chen
+// trong câu khó đọc"; nhắc lại 24/11 khi xem ảnh bản thử này). Bỏ bằng đúng hàm dùng chung `boMaTrichDan`; nguồn hiện ở khối "Nguồn đã dùng" dưới mỗi mục.
+const chuSach = chu => boMaTrichDan(String(chu ?? "")).trim();
 
 function NoiDungMuc({ muc, khoa }) {
   // Dữ liệu lệch hợp đồng không được làm trắng cả trang (không có lớp bắt lỗi quanh trang): thiếu mảng ⇒ mảng rỗng; nguồn luôn có `heading_path`,
@@ -130,8 +117,8 @@ function NoiDungMuc({ muc, khoa }) {
               <div key={i} className="st-d">
                 <dt><Net d={icNhan(d.nhan)} /> {d.nhan}</dt>
                 <dd>{Array.isArray(d.gach)
-                  ? <ul>{d.gach.map((g, j) => <li key={j}><ChuCoNguon chu={g} nguon={nguon} /></li>)}</ul>
-                  : <ChuCoNguon chu={d.chu || ""} nguon={nguon} />}</dd>
+                  ? <ul>{d.gach.map((g, j) => <li key={j}>{chuSach(g)}</li>)}</ul>
+                  : chuSach(d.chu)}</dd>
               </div>
             ))}
           </dl>
