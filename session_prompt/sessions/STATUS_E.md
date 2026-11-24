@@ -4,7 +4,7 @@ Việc được giao, bước kế, quyết định đang chờ: CHỈ ở sổ 
 
 **Liều test giữ nguyên.** Việc thuộc hàng "hỏi chủ dự án trước" (tiền model cũ, máy thuê, sửa kho) KHÔNG làm trong đêm — ghi lại cho sáng. Hết việc được giao thì dừng, không dựng việc phụ.
 
-1. **VIỆC ĐÊM, theo thứ tự phiên điều phối giao (tin 22:3x 24/11):**
+1. **VIỆC ĐÊM, theo thứ tự phiên điều phối giao (tin đêm 24/11, tới giữa 22:29 và 22:38):**
    1. **Hồ sơ theo chủ đề** (chủ dự án chọn "đạt thì gộp và mở luôn"): phiên đo là người ĐỌC.
       - Lõi `origin/thu-b-ho-so-chu-de`: ĐÃ ĐỌC ở `3dfa99a` + đọc tay 25 ý (25 đỡ đủ, 0 không đỡ) — hồ sơ `data/x15_phan_ai_2026-11-23/e_doc_ho_so/KET_QUA.md`. B báo sau đó nhánh lên `006c9fb` (chỉ đổi tên hiển thị một chủ đề — CHƯA đọc diff đó). **Còn MỘT điểm chặn việc mở, đã báo B + phiên điều phối lúc 22:38:** hai chủ đề "Biển và đầm phá", "Núi, đồi, suối và thác" gần như không mang cảnh báo theo mùa của kho (0 / 24 bài có đoạn nguy hiểm theo mùa lọt vào đoạn đưa model; lượt thật biển – đầm phá 36 ý, 0 ý cảnh báo). B chọn: ẩn hai chủ đề, hoặc dành chỗ bằng chứng cho đoạn cảnh báo + lượt thật ⇒ **phiên đo đọc lại ĐÚNG hai chủ đề đó** (tìm ý cảnh báo cho Thuận An, Cảnh Dương, Suối Mơ, Pâr Le, Nhị Hồ, Bạch Mã).
       - CHỜ: sha nhánh giao diện của C (`thu-c-ho-so-chu-de`) ⇒ đọc một lượt (chữ của server vẽ an toàn · trạng thái lỗi / đứt luồng · ô thiếu không nói quá về kho · tên bài gắn cho từng ý · bản in) · rồi phần riêng của nhánh MỞ (dòng bật trong `settings.yaml`, `deploy/docker/dong_goi.sh` ép tắt, hàng runbook) ⇒ trả phiên điều phối một dòng "đạt / còn điểm chặn" cho từng bước.
