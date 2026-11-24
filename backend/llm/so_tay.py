@@ -7,7 +7,10 @@ Chia việc code ↔ model (luật nền: thứ phải luôn đúng do code làm
   của lịch (`lich["an"]`). Model KHÔNG viết giờ / giá: ý nào của model chứa giờ hoặc giá bị bỏ (`loc_y`).
 - Model chỉ viết hai danh sách ngắn cho mỗi điểm ("Nên xem", "Lưu ý") và một danh sách "Đi lại", mỗi ý kèm số nguồn; code giữ ĐỘ DÀI (số ý, số ký tự) và
   bỏ ý không có nguồn hợp lệ.
-- "Kho chưa có" là MỘT khuôn do code đặt (`kieu: "thieu"`): ô dữ kiện bảng không có, hoặc danh sách model trả rỗng / bị bỏ hết. Model không tự viết câu thiếu.
+- Ô thiếu là MỘT khuôn do code đặt (`kieu: "thieu"`): ô dữ kiện bài không có DÒNG NHÃN để chép, hoặc danh sách model trả rỗng / bị bỏ hết. Model không tự
+  viết câu thiếu. NGHĨA của ô này là "sổ tay chưa ghi được dòng này", KHÔNG phải "kho không có": bài có thể nói điều đó trong câu văn (Đồi Vọng Cảnh "mở tự
+  do 24/24", Chùa Từ Hiếu "không niêm yết giờ") mà code không chép được. Giao diện in "Sổ tay chưa ghi được: … — mở bài của điểm để xem, hoặc hỏi Trợ lý"
+  (phiên đo nêu, phiên điều phối quyết 24/11/2026; bản đầu in "Kho chưa có" là nói quá về kho).
 
 Vì sao không dùng vòng hỏi đáp cho từng mục (cách của hai hồ sơ mẫu, `data/x15_phan_ai_2026-11-23/b_ho_so_mau/KET_QUA.md`): 3,2 lời gọi + định tuyến mỗi
 mục, 78–87 giây cho 11 mục; độ dài không do code giữ; các mục cãi nhau về số (mục này "kho chưa có khoảng cách", mục kia "khoảng 7 km"; "vé lẻ mỗi lăng
@@ -122,17 +125,37 @@ def du_kien(noi: "thn.Noi | None", bang_the: "thn.Bang | None", bai_id: str | No
     return doan, nguon
 
 
+VE_CON_LAI_NGAN = 25   # sau khi gỡ vế nói giờ / giá, phần còn lại ngắn hơn chừng này ký tự ⇒ bỏ cả ý
+
+
+def go_ve_gio_gia(chu: str) -> str | None:
+    """Ý có vế nói giờ mở cửa / giá: gỡ ĐÚNG các vế đó (vế = phần giữa hai dấu phẩy / chấm phẩy), giữ phần còn lại khi nó còn đủ dài; trả None khi không còn
+    gì đáng giữ. Ý không có vế nào như vậy ⇒ trả nguyên. Vì sao không bỏ cả ý (bản trước): bài Chùa Từ Hiếu viết "không niêm yết giờ mở cửa hay vé chính
+    thức, nên đến vào ban ngày… mặc trang phục kín đáo" — model gộp thành một ý, bỏ cả ý làm mục "Lưu ý" rỗng trong khi bài có lời dặn (phiên đo 24/11/2026)."""
+    if not _GIO_GIA.search(chu):
+        return chu
+    giu = [v for v in re.split(r"[,;]\s+", chu) if not _GIO_GIA.search(v)]
+    con = re.sub(r"^(?:và|nhưng|còn|song)\s+", "", ", ".join(giu).strip(" .,;"), flags=re.IGNORECASE)
+    if len(con) < VE_CON_LAI_NGAN:
+        return None
+    return con[:1].upper() + con[1:] + ("" if con.endswith((".", "!", "?")) else ".")
+
+
 def loc_y(y_model: list[dict], hop_le: set[int], tran: int, cam_gio_gia: bool = True) -> tuple[list[str], dict]:
     """Các ý model trả (`{chu, nguon}`) ⇒ các dòng gạch "chữ [n][m]" đã qua luật của code + số đếm lý do bỏ. Giữ khi: có chữ, ≤ `TRAN_KY_TU` ký tự, có ít
-    nhất một số nguồn hợp lệ (số lạ bị gỡ khỏi ý), không chứa giờ / giá (`cam_gio_gia`). Nhiều hơn `tran` ý ⇒ lấy `tran` ý đầu."""
+    nhất một số nguồn hợp lệ (số lạ bị gỡ khỏi ý), không nói giờ mở cửa / giá (`cam_gio_gia`: vế nói giờ / giá bị gỡ — `go_ve_gio_gia`; không còn gì thì bỏ
+    cả ý; ý bị gỡ một phần ghi lý do `gio_gia_cat` trong `chu` để soát). Nhiều hơn `tran` ý ⇒ lấy `tran` ý đầu."""
     giu, bo = [], {"khong_nguon": 0, "qua_dai": 0, "gio_gia": 0, "qua_tran": 0, "chu": []}  # `chu`: (lý do, chữ) của từng ý bị bỏ — route ghi log để soát bỏ oan
     for y in y_model or ():
         chu = " ".join(_MA.sub("", _nfc(str(y.get("chu") or ""))).split())
         so = [n for n in dict.fromkeys(y.get("nguon") or ()) if isinstance(n, int) and n in hop_le]
         if not chu:
             continue
-        ly_do = ("khong_nguon" if not so else "qua_dai" if len(chu) > TRAN_KY_TU else "gio_gia" if cam_gio_gia and _GIO_GIA.search(chu)
-                 else "qua_tran" if len(giu) >= tran else None)
+        con = go_ve_gio_gia(chu) if cam_gio_gia else chu
+        ly_do = "khong_nguon" if not so else "qua_dai" if len(chu) > TRAN_KY_TU else "gio_gia" if con is None else "qua_tran" if len(giu) >= tran else None
+        if ly_do is None and con != chu:  # gỡ một phần: ý vẫn được giữ, ghi lại chữ gốc để soát
+            bo["chu"].append(("gio_gia_cat", chu))
+            chu = con
         if ly_do:
             bo[ly_do] += 1
             bo["chu"].append((ly_do, chu))

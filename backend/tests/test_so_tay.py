@@ -149,6 +149,18 @@ def test_loc_y_khong_bo_oan_y_chi_nhac_so_hoac_gio_trong_ngay(chu):
     assert st.loc_y([{"chu": chu, "nguon": [1]}], {1}, 4)[0] == [f"{chu} [1]"]
 
 
+def test_y_gop_gio_voi_loi_dan_chi_bi_go_ve_noi_gio_gia():
+    """Bài Chùa Từ Hiếu: "nhà chùa không niêm yết giờ mở cửa hay vé chính thức, nên đến vào ban ngày… mặc trang phục kín đáo…". Bản trước bỏ cả ý ⇒ mục
+    "Lưu ý" ra ô thiếu trong khi bài có lời dặn."""
+    cau = "Nhà chùa không niêm yết giờ mở cửa hay vé chính thức, nên đến vào ban ngày, mặc trang phục kín đáo và giữ yên lặng"
+    giu, bo = st.loc_y([{"chu": cau, "nguon": [1]}], {1}, 3)
+    assert giu == ["Nên đến vào ban ngày, mặc trang phục kín đáo và giữ yên lặng. [1]"]
+    assert bo["gio_gia"] == 0 and bo["chu"] == [("gio_gia_cat", cau)]
+    assert st.khoi_model("luu_y", [{"chu": cau, "nguon": [1]}], {1})[0]["kieu"] == "gach"
+    assert st.go_ve_gio_gia("Hồ Lưu Khiêm có đảo Tịnh Khiêm, ba cầu đá") == "Hồ Lưu Khiêm có đảo Tịnh Khiêm, ba cầu đá"  # không có vế giờ / giá ⇒ nguyên văn
+    assert st.go_ve_gio_gia("Vé người lớn 150.000 đồng, trẻ em 30.000") is None
+
+
 def test_mot_muc_gap_loi_la_khong_lam_dut_luong_va_muc_truoc_khi_di_luon_con_dong_do_code():
     """Phiên đo: ngoại lệ không phải `GenerationError` / `RetrievalDependencyError` của MỘT mục từng làm cả luồng đóng không có `xong`, các mục chưa về mất,
     và nếu mục hỏng là "Trước khi đi" thì câu an toàn mất theo."""
