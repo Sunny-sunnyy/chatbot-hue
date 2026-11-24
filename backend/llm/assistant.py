@@ -92,6 +92,9 @@ class AssistantFlags:
     # Bậc 1b (21/11/2026): số lần MODEL được tìm kho thật trong một lượt — khoá `assistant.so_lan_tim_kho`, mặc định = `MODEL_SEARCH_LIMIT` như trước;
     # mở thành cấu hình để bộ đo thử nới. (Số vòng công cụ: `assistant.so_vong_cong_cu`, generator đọc.)
     so_lan_tim_kho: int = MODEL_SEARCH_LIMIT
+    # BẢN THỬ ĐO (nhánh thu-b-ba-duong-tim, 24/11/2026 — không gộp): "tìm thêm CỐ ĐỊNH" — ở lần tìm đầu, code nối thêm N đoạn đứng ngay sau 10 đoạn đầu
+    # của chính câu tìm đó (hạng 11…10+N của danh sách đã trộn), không ai quyết gì. 0 = tắt ⇒ y như trước. Chỉ bộ đo đặt (dataclasses.replace).
+    tim_co_dinh: int = 0
     tim_them: bool = False
     # B3 (plan B3 D7): nhớ hội thoại trong một cuộc trò chuyện — tắt tới khi giao diện nhiều lượt xong (D8); chỉ nhớ câu hỏi khi `nho_cau_tra_loi` tắt
     # 20/11/2026: `nho_cau_tra_loi` bật = chỉ câu trả lời của lượt LIỀN TRƯỚC vào lịch sử (`api/conversations.py` `chi_dap_lien_truoc`); lõi không đọc cờ này
@@ -441,7 +444,7 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 
 
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
-                    if name not in ("lan_tim_dau", "cong_cong_cu", "so_lan_tim_kho", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
+                    if name not in ("lan_tim_dau", "cong_cong_cu", "so_lan_tim_kho", "tim_co_dinh", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
                                      "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do",
                                      "khoang_cach_bang", "su_kien_bang", "muc_luc", "the_noi_bang"))
 
@@ -555,7 +558,7 @@ class AnswerTrace:
 
 async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_service, context_builder, trace: AnswerTrace,
                             today: str | None = None, instructions: str | None = None, by: str = "code",
-                            ve_them: Sequence[str] = ()) -> PackedContext:
+                            ve_them: Sequence[str] = (), tim_sau: int = 0) -> PackedContext:
     """Một lần tìm của lượt: tìm `queries` (1 câu ⇒ `search`; nhiều ⇒ `search_many`, B2 V3) → dựng ngữ cảnh → nối sổ nguồn.
     Ngân sách token đếm bằng `cau_hoi` (câu thật gửi model — B2 D3) + ngữ cảnh các lần trước (`trace.context_parts`) + `instructions` của
     đường trợ lý (B2 D5); lần sau đánh số tiếp, bỏ đoạn đã có. Lần đầu điền `trace.documents` / `trace.packed` (như B1); thời gian cộng dồn.
@@ -590,7 +593,12 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
         context_ms = elapsed_ms(started)
         # lần tìm ĐẦU: lần tìm chính không ra nguồn nào ⇒ giữ đường từ chối cũ, không tìm theo vế. Lần tìm của MODEL (cờ `tach_cau_tim_model`): các phần
         # của câu tìm gộp vẫn được tìm kể cả khi cả câu không mang về đoạn mới nào.
-        if ve_them and (packed.sources if first else by == "model"):
+        sau = []
+        if tim_sau and first and packed.sources and len(queries) == 1:  # bản thử đo `tim_co_dinh`: các đoạn hạng 11… của chính lần tìm đầu
+            ma_sau = [e["chunk_id"] for e in result.trace.stages.get("rrf") or []][len(result.documents):len(result.documents) + tim_sau]
+            theo_ma = await asyncio.to_thread(retrieval_service.lay_doan, ma_sau)
+            sau = [theo_ma[m] for m in ma_sau if m in theo_ma]
+        if (ve_them or sau) and (packed.sources if first else by == "model"):
             started = time.perf_counter()
             theo_ve = await asyncio.to_thread(lambda: [retrieval_service.search(ve).documents[:SO_DOAN_MOI_VE] for ve in ve_them])
             if first:
@@ -600,6 +608,7 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
                 trace.search_ms = round((trace.search_ms or 0) + elapsed_ms(started), 1)
             # xoay vòng theo hạng: đoạn đứng đầu của mọi vế trước, rồi tới đoạn thứ hai — vế nào cũng có phần trước khi vế khác lấy thêm
             ung_vien = list({doan.id: doan for hang in zip_longest(*theo_ve) for doan in hang if doan is not None}.values())  # hai vế ra cùng một đoạn ⇒ một lần
+            ung_vien += [doan for doan in sau if doan.id not in {d.id for d in ung_vien}]  # bản thử đo: đoạn hạng sâu đứng SAU các đoạn của vế
             started = time.perf_counter()
             phu = context_builder.build(cau_hoi, ung_vien, today=today, first_id=len(trace.so_nguon) + len(packed.sources) + 1,
                                         prior_context="\n\n".join([*trace.context_parts, packed.text]),
@@ -623,8 +632,8 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
         entry = {"name": "tim_kho", "ms": elapsed_ms(tool_started)}
         if not first or by == "model" or len(queries) > 1:  # B2: thêm số đo cho lần tìm thêm / do model / nhiều câu; lần tìm đầu một câu giữ như B1
             entry.update(by=by, n_queries=len(queries), n_new=None if packed is None else len(packed.sources))
-        if ve_them:  # log chỉ số đếm: số vế tìm riêng, số đoạn nối thêm (None = lỗi trước khi tới bước đó)
-            entry.update(n_ve=len(ve_them), n_them_ve=n_them)
+        if ve_them or tim_sau:  # log chỉ số đếm: số vế tìm riêng, số đoạn nối thêm (None = lỗi trước khi tới bước đó)
+            entry.update(n_ve=len(ve_them), n_them_ve=n_them, **({"tim_sau": tim_sau} if tim_sau else {}))
         trace.tools.append(entry)
         trace.vet.setdefault("tim", []).append(so_vet.vet_tim(queries, by, None if result is None else result.documents, packed))
 
@@ -1279,7 +1288,7 @@ def turn_usd(trace: AnswerTrace) -> float | None:
 
 
 async def prepare_answer(query: str, retrieval_service, context_builder, generator, trace: AnswerTrace, recorder=None,
-                         today: str | None = None, instructions: str | None = None, ve_them: Sequence[str] = ()) -> None:
+                         today: str | None = None, instructions: str | None = None, ve_them: Sequence[str] = (), tim_sau: int = 0) -> None:
     """Phần trước model của tuyến `tro_ly_hue`: lần tìm đầu của code → ngữ cảnh. `ve_them`: xem `search_into_trace` (cờ `tim_theo_ve`). Câu tìm = câu gốc (V0) hoặc câu định tuyến viết
     (`trace.cau_tim`, B2 V1 / V3); ngân sách luôn đếm bằng câu gốc (B2 D3). `instructions`: lời dặn trợ lý khi lượt đi vòng công cụ (B2b).
     Ngữ cảnh không có nguồn ⇒ `trace.answer` = câu từ chối chuẩn (không gọi model). Còn lại cần model: `generator=None` nghĩa là
@@ -1287,7 +1296,7 @@ async def prepare_answer(query: str, retrieval_service, context_builder, generat
 
     Lỗi đi ra nguyên kiểu: `RetrievalDependencyError` (tìm), `GeneratorNotReadyError`."""
     await search_into_trace(trace.cau_tim or [trace.search_query or query], cau_hoi=query, retrieval_service=retrieval_service, context_builder=context_builder,
-                            trace=trace, today=today, instructions=instructions, ve_them=ve_them)
+                            trace=trace, today=today, instructions=instructions, ve_them=ve_them, tim_sau=tim_sau)
     if recorder:
         recorder.record_packed_context(trace.packed)
 
@@ -1423,7 +1432,8 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
     ve_them = cac_ve_tim(query, flags.tim_ve_bo_cut) if flags.tim_theo_ve and trace.nhieu_y and not trace.cau_tim else ()
     # chỉ truyền thêm khi có vế để tìm ⇒ tin một ý / cờ tắt gọi `prepare_answer` y như trước (bảng test 22/11: một test thay hàm này bằng hàm
     # dựng sẵn 8 tham số đã đỏ khi tham số mới được truyền theo vị trí ở MỌI lượt)
-    await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions, **({"ve_them": ve_them} if ve_them else {}))
+    await prepare_answer(query, retrieval_service, context_builder, generator, trace, recorder, today, instructions, **({"ve_them": ve_them} if ve_them else {}),
+                         **({"tim_sau": flags.tim_co_dinh} if flags.tim_co_dinh else {}))
     # ngữ cảnh rỗng ⇒ câu từ chối do code đặt; câu nhờ làm thay vẫn nhận câu nói thật. `thoi_tiet_ctx` chưa có ở bước này (đặt sau, trong
     # `_lich_extra`) ⇒ xét thẳng lưới bão / lũ trên câu người dùng (review B m1): lượt bão – lũ giữ câu từ chối cũ + các lớp an toàn của nó
     if trace.fixed_outcome == "refusal_no_sources" and not _khop_luoi_cuoi(query, flags, trace.history):
