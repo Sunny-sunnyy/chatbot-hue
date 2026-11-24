@@ -175,7 +175,8 @@ function SongMucLuc({ nhom, muc, dangDoc }) {
     <nav className="st-song" aria-label="Mục lục sổ tay">
       {nhom.map(g => (
         <div key={g.khoa} className="st-song-nhom">
-          <p className="st-song-ngay">{g.ten}</p>
+          {/* nhóm "Trước khi đi" chỉ có một bến cùng tên ⇒ không in nhãn nhóm (lặp chữ) */}
+          {g.ngay != null && <p className="st-song-ngay">{g.ten}</p>}
           <ol>{g.muc.map(d => (
             <li key={d.id}>
               <a href={`#st-${d.id}`} className="st-ben" data-tt={muc[d.id] ? "xong" : "cho"} aria-current={dangDoc === d.id ? "true" : undefined}
