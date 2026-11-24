@@ -20,9 +20,10 @@ PHU=""; [ "$PROVIDER" = bedrock ] && { cp "$GOI"/compose.vai-may.yml .; PHU=comp
 mkdir -p cau_hinh && docker run --rm --network none --entrypoint tar "hue-rag-app:$SHA" -C /app/backend/config -cf - . | tar -xf - -C cau_hinh
 sed -i "s/^\(  provider: \)[a-z]*/\1$PROVIDER/" cau_hinh/settings.yaml
 grep -q "^  provider: $PROVIDER\b" cau_hinh/settings.yaml || { echo "DỪNG: không ghi được dòng provider vào cau_hinh/settings.yaml" >&2; exit 1; }
-# Hai công tắc chỉ định bật ở máy demo — bản đưa lên GHI SẴN tắt (ảnh dựng từ commit cũ chưa có dòng nào thì bỏ qua dòng đó):
+# Ba công tắc chỉ định bật ở máy demo — bản đưa lên GHI SẴN tắt (ảnh dựng từ commit cũ chưa có dòng nào thì bỏ qua dòng đó):
 #   vi_sao — nút "Vì sao trả lời vậy?" · so_tay — sổ tay cho chuyến đi (một sổ tay 9–10 lời gọi model mà tính một lượt; chưa có trần riêng — 24/11/2026)
-for cong_tac in vi_sao so_tay; do
+#   ho_so_chu_de — hồ sơ theo chủ đề (một hồ sơ 4–8 lời gọi model mà tính một lượt; chưa có trần riêng — 24/11/2026)
+for cong_tac in vi_sao so_tay ho_so_chu_de; do
   if grep -q "^  $cong_tac:" cau_hinh/settings.yaml; then
     sed -i "s/^\(  $cong_tac: \)true/\1false/" cau_hinh/settings.yaml
     grep -q "^  $cong_tac: false" cau_hinh/settings.yaml || { echo "DỪNG: không ghi được dòng $cong_tac: false vào cau_hinh/settings.yaml" >&2; exit 1; }

@@ -155,7 +155,7 @@ def _chay_bien(may):
 
 def test_canh_bao_an_toan_cua_bai_luon_di_theo_ho_so():
     """Phiên đo đọc nhánh 24/11/2026: hồ sơ "Biển và đầm phá" 36 ý, 0 ý cảnh báo dù kho có (cấm tắm mùa mưa bão). Nay: đoạn cảnh báo của mỗi bài được đưa cho
-    model; ý cảnh báo thành khối riêng "Lưu ý an toàn theo mùa"; bài nào model KHÔNG viết cảnh báo thì code tự thêm dòng trỏ tới mục cảnh báo của bài."""
+    model; ý cảnh báo thành khối riêng "Lưu ý an toàn"; bài nào model KHÔNG viết cảnh báo thì code tự thêm dòng trỏ tới mục cảnh báo của bài."""
     da_thay = {}
 
     class May:

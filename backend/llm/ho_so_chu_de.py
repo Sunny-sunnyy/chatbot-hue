@@ -96,7 +96,7 @@ CUM_XEP = "tổng quan giới thiệu lịch sử nổi bật đặc điểm"
 doan_canh_bao, la_y_canh_bao = st.doan_canh_bao, st.la_y_canh_bao
 CAU_TRO_AN_TOAN = "{ten}: bài có phần lưu ý an toàn ở mục «{muc}» — mở bài để đọc trước khi đi."
 CAU_TRO_AN_TOAN_CHUNG = "{ten}: bài có phần lưu ý an toàn — mở bài để đọc trước khi đi."
-NHAN_AN_TOAN = "Lưu ý an toàn theo mùa"
+NHAN_AN_TOAN = "Lưu ý an toàn"  # không ghi "theo mùa": khối này mang cả lời dặn quanh năm (áo phao, hố sâu)
 
 
 def chia_muc_du_phong(so_bai: int) -> list[dict]:
