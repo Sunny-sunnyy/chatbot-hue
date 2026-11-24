@@ -641,6 +641,28 @@ class FullCorpusRetrievalService:
             out[payload["chunk_id"]] = build_retrieved_document(payload, 0.0)
         return out
 
+    def doan_cua_bai(self, source: str) -> list[RetrievedDocument]:
+        """BẢN THỬ `doc_tiep` (nhánh thu-b-mo-doc-tiep, 24/11/2026): mọi đoạn của MỘT bài, theo thứ tự trong bài (số sau dấu # của `chunk_id`) — đọc Qdrant,
+        lọc payload `source`; không tìm, không điểm số. Bài không có trong chỉ mục ⇒ danh sách rỗng."""
+        points, vi_tri = [], None
+        try:
+            while True:
+                lo, vi_tri = self.client.scroll(
+                    collection_name=self.candidate.collection_name,
+                    scroll_filter=models.Filter(must=[models.FieldCondition(key="source", match=models.MatchValue(value=source))]),
+                    limit=256, offset=vi_tri, with_payload=True, with_vectors=False,
+                )
+                points.extend(lo)
+                if vi_tri is None:
+                    break
+        except Exception as exc:
+            raise RetrievalDependencyError(f"Qdrant lookup by source failed: {type(exc).__name__}") from exc
+        doan = []
+        for p in points:
+            payload = validate_point_payload(str(p.id), p.payload)
+            doan.append((validate_chunk_id(payload["source"], payload["chunk_id"]), build_retrieved_document(payload, 0.0)))
+        return [d for _, d in sorted(doan, key=lambda cap: cap[0])]
+
     def search_many(self, queries: Sequence[str]) -> RetrievalResult:
         """Phase 9 B2 V3 (plan D4): tìm từng câu nhỏ bằng `search` rồi trộn RRF lần hai (cùng `rrf_k`, giữ `candidate_pool`) — thứ hạng chung,
         không ưu tiên câu đầu, tất định. Một câu ⇒ đúng `search` (giống byte). Trace = trace câu đầu, thời gian cộng của mọi câu."""

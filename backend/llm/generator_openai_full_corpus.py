@@ -580,7 +580,7 @@ class OpenAIFullCorpusGenerator:
         return parsed.route, queries
 
     def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                       con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None,
+                       con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None, doc_tiep_fn=None,
                        vong_cuoi: "tuple[CallLog, int] | None" = None) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
@@ -646,10 +646,12 @@ class OpenAIFullCorpusGenerator:
             # lần (`con_luot` của chính công cụ) HOẶC ở vòng cuối chỉ viết — cùng hàm gom điều kiện `mo` với mọi công cụ khác
             tools.append(function_tool(bao(liet_ke_fn), name_override="liet_ke_bai", description_override=LIET_KE_MO_TA, failure_error_function=None,
                                        **mo(state["liet_ke_con_luot"])))
+        if doc_tiep_fn is not None:  # BẢN THỬ `doc_tiep` (nhánh thu-b-mo-doc-tiep): đọc các đoạn kề của một nguồn đã có; chung trần lượt với `tim_kho` ⇒ ẩn cùng lúc
+            tools.append(function_tool(bao(doc_tiep_fn), name_override="doc_tiep", failure_error_function=None, **mo(con_luot_fn)))
         return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
     async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
-                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None,
+                                  thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None, doc_tiep_fn=None,
                                   vong_cuoi_chi_viet: bool = False) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
@@ -657,7 +659,7 @@ class OpenAIFullCorpusGenerator:
         so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn, gan_diem_fn)  # cùng con số với `max_turns` của lần chạy — lệch một vòng là nhận nhầm vòng cuối
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
                                                      con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn,
-                                                     gan_diem_fn=gan_diem_fn, vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None)
+                                                     gan_diem_fn=gan_diem_fn, doc_tiep_fn=doc_tiep_fn, vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None)
         try:
             result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=so_vong,
                                      error_handlers=handlers)
@@ -674,7 +676,7 @@ class OpenAIFullCorpusGenerator:
         `max_turns`. Lỗi hành vi model khác, hoặc công cụ chưa bị ẩn ⇒ False (vẫn là lỗi)."""
         con_vong_fn = state.get("con_vong_fn")
         da_an = any(fn is not None and not fn() and ten in str(exc)  # `liet_ke_bai` cũng bị ẩn khi dùng đủ số lần (cờ `liet_ke_bai`)
-                    for fn, ten in ((state.get("con_luot_fn"), "tim_kho"), (state.get("liet_ke_con_luot"), "liet_ke_bai")))
+                    for fn, ten in ((state.get("con_luot_fn"), "tim_kho"), (state.get("con_luot_fn"), "doc_tiep"), (state.get("liet_ke_con_luot"), "liet_ke_bai")))
         if isinstance(exc, ModelBehaviorError) and da_an:
             state["xin_cong_cu_da_an"] = True
             return True
@@ -697,14 +699,14 @@ class OpenAIFullCorpusGenerator:
         return dataclasses.replace(self._generated_text(result, text, started, call_log), hit_max_turns=state["hit_max_turns"], bao_vong_cuoi=da_bao)
 
     def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
-                           con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None,
+                           con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None, doc_tiep_fn=None,
                            vong_cuoi_chi_viet: bool = False) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
         so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn, gan_diem_fn)  # cùng con số với `max_turns` của lần chạy — lệch một vòng là nhận nhầm vòng cuối
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
                                                      con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn,
-                                                     gan_diem_fn=gan_diem_fn, vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None)
+                                                     gan_diem_fn=gan_diem_fn, doc_tiep_fn=doc_tiep_fn, vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None)
         result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=so_vong, run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state

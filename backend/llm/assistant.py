@@ -285,6 +285,10 @@ class AssistantFlags:
     # danh sách và câu "nơi nào có đặc điểm X" (tìm theo đoạn chỉ chạm 1–3 trên 6–39 bài đúng loại). Mục lục nạp ở rìa từ chính các file của kho. TẮT tới khi
     # đo đạt; tắt ⇒ danh sách công cụ gửi model giống byte.
     liet_ke_bai: bool = False
+    # BẢN THỬ (nhánh thu-b-mo-doc-tiep, 24/11/2026 — chủ dự án chọn cụm "Agentic RAG: thử thêm công cụ" 20:43 24/11; KHÔNG gộp trước khi có số): công cụ
+    # `doc_tiep` — model đưa số một nguồn [n] đã có, code trả các đoạn KỀ nó trong chính bài đó (cùng mục trước). Dùng CHUNG trần `so_lan_tim_kho` với
+    # `tim_kho` (cùng ngân sách: một lượt vẫn tối đa chừng ấy lần lấy thêm bằng chứng). Tắt ⇒ danh sách công cụ gửi model giống byte.
+    doc_tiep: bool = False
     muc_luc: "tuple[lk.Bai, ...] | None" = field(default=None, compare=False, repr=False)
     # 22/11/2026 (việc X10; lý do + số đếm: `llm/the_noi.py`, test `tests/test_the_noi.py`): THẺ NƠI — ở tin nhiều ý có chữ hỏi hẹp (giờ, địa chỉ…), sau
     # mỗi lần tìm kho code gắn cho từng nơi được nhắc đúng tên mà bài riêng chưa có trong sổ nguồn một nguồn chép dòng địa chỉ / giờ từ chính bài đó (+ hàng
@@ -339,6 +343,8 @@ class AssistantFlags:
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
         if self.liet_ke_bai and (not self.tim_them or self.muc_luc is None):
             raise ValueError("assistant.liet_ke_bai needs assistant.tim_them: true and the article index (loaded from the knowledge base)")
+        if self.doc_tiep and not self.tim_them:
+            raise ValueError("assistant.doc_tiep needs assistant.tim_them: true")
         if self.bao_lu_cong_cu and not self.thoi_tiet:
             raise ValueError("assistant.bao_lu_cong_cu needs assistant.thoi_tiet: true")
         if self.len_ke_hoach_v2 and (not self.lich_trinh_bieu_mau or self.bang_lich_v2 is None):
@@ -550,6 +556,7 @@ class AnswerTrace:
     # cờ `liet_ke_bai`: mã nguồn "mục lục" đã đăng ⇒ các bài nó liệt kê (chỉ RAM). `set_notice` dùng để bài CÓ TÊN trong câu trả lời vẫn kéo theo dòng "có thể đã
     # thay đổi" và dòng cảnh báo tạm ngừng của chính bài đó, dù câu trả lời trích mục lục thay cho bài (review 21/11: một lượt mất dòng ghi chú).
     muc_luc_bai: dict = field(default_factory=dict)
+    ma_doan: dict = field(default_factory=dict)  # bản thử `doc_tiep`: số nguồn [n] ⇒ `chunk_id` của đoạn kho (nguồn do code dựng — thẻ nơi, mục lục… — không có ở đây)
     the_noi: list[str] = field(default_factory=list)  # công tắc `the_noi`: tên các nơi đã được gắn thẻ trong lượt (đếm trần; sổ vết ghi để soát nhầm nơi)
     # Sổ vết debug (`core/so_vet.py`): nội dung chỉ giữ trong RAM của lượt — `tim` (từng lần tìm), `web` (câu gửi tra web + sổ web), `sua`
     # (hành động model hiểu), `loi`. Route ghi ra file CHỈ khi cờ `so_vet` bật; không vào `chat_metrics`, không vào chuỗi gửi model.
@@ -627,6 +634,7 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
         trace.so_nguon.extend(packed.sources)
         trace.context_parts.append(packed.text)
         trace.seen_ids.extend(packed.document_ids)
+        trace.ma_doan.update({src.id: ma for src, ma in zip(packed.sources, packed.document_ids)})
         return packed
     finally:
         entry = {"name": "tim_kho", "ms": elapsed_ms(tool_started)}
@@ -1073,6 +1081,72 @@ def liet_ke_for_turn(trace: AnswerTrace, muc_luc: "tuple[lk.Bai, ...]"):
     # 21/11 (luna): lần xin thứ ba chỉ nhận dòng "hết lượt" nhưng ăn mất vòng viết ⇒ chạm trần vòng ⇒ câu từ chối.
     liet_ke_bai.con_luot = lambda: sum(t["name"] == "liet_ke_bai" for t in trace.tools) < lk.SO_LAN_MOI_LUOT
     return liet_ke_bai
+
+
+SO_DOAN_DOC_TIEP = 6  # bản thử `doc_tiep`: số đoạn kề trả về mỗi lần gọi
+DOC_TIEP_KHONG_CO = "Trạng thái: số nguồn này không phải một đoạn của bài kho (hoặc không tồn tại) — không mở đọc tiếp được. Dùng số của một nguồn [Nguồn n] là đoạn bài, hoặc tim_kho."
+DOC_TIEP_HET = "Trạng thái: bài này không còn đoạn nào chưa đọc."
+
+
+def chon_doan_ke(thu_tu: Sequence[tuple[int, tuple[str, ...], str]], goc: int, muc_goc: tuple[str, ...], da_co: frozenset[str],
+                 k: int = SO_DOAN_DOC_TIEP) -> list[str]:
+    """Bản thử `doc_tiep`: `thu_tu` = (số thứ tự trong bài, đường mục, mã đoạn) của MỌI đoạn của bài ⇒ nhiều nhất `k` mã đoạn CHƯA đọc, ưu tiên: cùng mục
+    với đoạn gốc → cùng mục lớn (cấp đầu của đường mục) → phần còn lại của bài; trong mỗi bậc, đoạn gần đoạn gốc trước. Trả theo thứ tự trong bài (đọc xuôi)."""
+    def bac(muc: tuple[str, ...]) -> int:
+        return 0 if muc == muc_goc else 1 if muc_goc and muc[:1] == muc_goc[:1] else 2
+    ung_vien = sorted((bac(muc), abs(so - goc), so, ma) for so, muc, ma in thu_tu if ma not in da_co)
+    return [ma for _, _, _, ma in sorted(ung_vien[:k], key=lambda x: x[2])]
+
+
+def doc_tiep_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str,
+                      search_limit: int = MODEL_SEARCH_LIMIT):
+    """Hàm `doc_tiep` của **một lượt** (bản thử, cờ `doc_tiep`): model gửi số một nguồn đã có; code lấy mọi đoạn của bài đó, chọn các đoạn kề chưa đọc
+    (`chon_doan_ke`), dựng ngữ cảnh đánh số tiếp theo, nối sổ nguồn như một lần tìm. Tính vào CÙNG bộ đếm `trace.model_searches` với `tim_kho` ⇒ hết lượt
+    thì trả chữ "đã hết lượt". Sổ vết: một dòng trong `tim` (câu = "doc_tiep:<mã đoạn gốc>") + một dòng công cụ tên `doc_tiep`."""
+
+    async def doc_tiep(nguon: int) -> str:
+        """Mở đọc tiếp bài của một nguồn đã có: trả các đoạn nằm kề nguồn đó trong CHÍNH bài ấy (cùng mục trước, rồi các mục bên cạnh), đánh số tiếp theo.
+        Dùng khi một nguồn đã đúng bài nhưng Bằng chứng của nó chưa có chi tiết cần cho câu trả lời (giờ, giá, năm, con số, điều kiện, tên riêng…) và chi tiết
+        ấy nhiều khả năng nằm ở phần khác của cùng bài. Muốn tìm BÀI KHÁC thì dùng tim_kho. Mỗi lần gọi tính vào cùng số lượt với tim_kho.
+
+        Args:
+            nguon: số của một nguồn đã có trong Bằng chứng (số n của [Nguồn n]).
+        """
+        started = time.perf_counter()
+        trace.model_searches += 1
+        entry = {"name": "doc_tiep", "ms": 0.0, "by": "model"}
+        trace.tools.append(entry)
+        if trace.model_searches > search_limit:
+            entry["het_luot"] = True
+            return TOOL_LIMIT_TEXT
+        ma = trace.ma_doan.get(nguon)
+        if ma is None:
+            entry["khong_phai_doan"] = True
+            return DOC_TIEP_KHONG_CO
+        try:
+            doan = await asyncio.to_thread(retrieval_service.doan_cua_bai, ma.rsplit("#", 1)[0])
+        except RetrievalDependencyError as exc:
+            trace.tool_error = exc
+            raise
+        theo_ma = {d.id: d for d in doan}
+        goc = int(ma.rsplit("#", 1)[1])
+        muc_goc = tuple(theo_ma[ma].metadata.get("heading_path") or ()) if ma in theo_ma else ()
+        chon = chon_doan_ke([(int(d.id.rsplit("#", 1)[1]), tuple(d.metadata.get("heading_path") or ()), d.id) for d in doan], goc, muc_goc,
+                            frozenset(trace.seen_ids))
+        packed = context_builder.build(query, [theo_ma[m] for m in chon], today=today, first_id=len(trace.so_nguon) + 1,
+                                       prior_context="\n\n".join(trace.context_parts), skip_ids=frozenset(trace.seen_ids), instructions=instructions,
+                                       history=trace.history, n_tool_items=2 * trace.model_searches,
+                                       extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD if trace.lich_offered else 0, max_documents=max(len(chon), 1))
+        trace.so_nguon.extend(packed.sources)
+        trace.seen_ids.extend(packed.document_ids)
+        trace.ma_doan.update({src.id: m for src, m in zip(packed.sources, packed.document_ids)})
+        if packed.text:
+            trace.context_parts.append(packed.text)
+        entry.update(ms=elapsed_ms(started), n_new=len(packed.sources), cung_muc=sum(tuple(theo_ma[m].metadata.get("heading_path") or ()) == muc_goc for m in chon))
+        trace.vet.setdefault("tim", []).append(so_vet.vet_tim([f"doc_tiep:{ma}"], "model", [theo_ma[m] for m in chon], packed))
+        return packed.text or DOC_TIEP_HET
+
+    return doc_tiep
 
 
 def _nguon_khoang_cach_san(trace: AnswerTrace, bang: "kc.BangKhoangCach", cap: tuple[str, str]) -> str:
@@ -1725,6 +1799,8 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
                                                  in_gio=flags.gan_diem_gio)
     if flags.liet_ke_bai and flags.muc_luc is not None:  # cờ tắt ⇒ không truyền, danh sách công cụ như cũ
         extra["liet_ke_fn"] = liet_ke_for_turn(trace, flags.muc_luc)
+    if flags.doc_tiep:  # bản thử: cờ tắt ⇒ không truyền, danh sách công cụ như cũ
+        extra["doc_tiep_fn"] = doc_tiep_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
         extra["con_luot_fn"] = lambda: trace.model_searches < flags.so_lan_tim_kho
     if trace.nhieu_y:  # lời dặn theo ý (cờ tắt / câu một ý ⇒ không truyền, gọi y như trước)
