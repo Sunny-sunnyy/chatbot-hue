@@ -54,7 +54,9 @@ CHU_DE = (
     ChuDe("quan_chay", "Quán chay", ("foods/restaurants/",), r"\bchay\b"),
     ChuDe("ca_phe", "Quán cà phê", ("foods/cafes/",)),
     ChuDe("luu_tru", "Chọn khu để ở khi đến Huế", ("travel/services/",), r"^Lưu trú"),
-    ChuDe("ve_di_lai", "Vé, đi lại và chi phí", ("travel/tickets/", "travel/services/"), r"^Vé |vé du lịch|^Đi lại|^Đi từ|^Chi phí|^Leo bậc"),
+    # Tên nói "cách", không hứa bảng giá: ý nào của model nêu số tiền đều bị code gỡ (giá chỉ đi đường code chép, mà bài vé không phải một "nơi" có dòng trong
+    # bảng thẻ nơi) — lượt thật 24/11/2026 bỏ 7 ý nêu giá ở chủ đề này; bảng giá nằm trong bài vé, mở từ khối nguồn của mục.
+    ChuDe("ve_di_lai", "Cách mua vé, đi lại và tính chi phí", ("travel/tickets/", "travel/services/"), r"^Vé |vé du lịch|^Đi lại|^Đi từ|^Chi phí|^Leo bậc"),
 )
 
 
