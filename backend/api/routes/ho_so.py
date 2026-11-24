@@ -123,11 +123,12 @@ async def _su_kien(cd: "hs.ChuDe", bai: list, state, flags, generator, dem_ho_so
             return await _mot_muc(m, cd.ten, state, flags, generator, dem)
 
     viec = [asyncio.create_task(mot(m)) for m in muc]
-    loi = 0
+    loi = du = 0
     try:
         for xong in asyncio.as_completed(viec):
             ket_qua = await xong
             loi += ket_qua["trang_thai"] == "loi"
+            du += ket_qua["trang_thai"] == "xong" and ket_qua["muc_do"] == "du"
             phat.append(sse_event("muc", ket_qua))
             yield phat[-1]
     finally:
@@ -135,7 +136,8 @@ async def _su_kien(cd: "hs.ChuDe", bai: list, state, flags, generator, dem_ho_so
             v.cancel()
     giay = round(time.perf_counter() - started, 1)
     logger.info("ho_so done: topic=%s sections=%d failed=%d outline_fallback=%s seconds=%.1f llm_calls=%d", cd.ma, len(muc), loi, dan_y_loi, giay, dem["goi_model"])
-    cuoi = {"giay": giay, "so_muc": len(muc), "so_muc_loi": loi, "dan_y_do_code": dan_y_loi, "so_loi_goi_model": dem["goi_model"],
+    # `ban_ngan`: dưới nửa số mục có đủ ý ⇒ giao diện nói rõ đây là bản ngắn (code đếm, không phải model tự nhận)
+    cuoi = {"giay": giay, "so_muc": len(muc), "so_muc_loi": loi, "so_muc_du": du, "ban_ngan": du * 2 < len(muc), "dan_y_do_code": dan_y_loi, "so_loi_goi_model": dem["goi_model"],
             "y_bi_bo": {k[3:]: v for k, v in dem.items() if k.startswith("bo_")}}
     if not loi and not dan_y_loi:  # chỉ nhớ bản dựng trọn vẹn
         dem_ho_so[cd.ma] = [*phat, sse_event("xong", {**cuoi, "tu_dem": True})]

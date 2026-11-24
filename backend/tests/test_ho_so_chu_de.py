@@ -92,6 +92,7 @@ def test_luong_ho_so_dan_y_roi_tung_muc_va_nho_dem_khi_tron_ven():
     assert [(d["kieu"], d["nhan"], d.get("bai_id")) for d in muc["m1"]["doan"][1:]] == [("thieu", "Lăng Thiệu Trị", LANG[2].rel)] and muc["m1"]["muc_do"] == "mong"
     assert [d["kieu"] for d in muc["m2"]["doan"]] == ["thieu", "thieu"] and muc["m2"]["trang_thai"] == "xong"
     assert sk[-1][1]["tu_dem"] is False and sk[-1][1]["y_bi_bo"]["gio_gia"] == 1 and "lang_tam" in dem  # trọn vẹn ⇒ được nhớ
+    assert sk[-1][1]["so_muc_du"] == 0 and sk[-1][1]["ban_ngan"] is True  # cả hai mục đều dưới 3 ý ⇒ hồ sơ tự nhận là bản ngắn
     assert json.loads(dem["lang_tam"][-1].decode().split("data: ", 1)[1])["tu_dem"] is True
 
 
