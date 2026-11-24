@@ -89,3 +89,24 @@ def test_plan_v2_frame_is_recorded(tmp_path):
     (tep,) = tmp_path.iterdir()
     lich = json.loads(tep.read_text(encoding="utf-8"))["lich"]
     assert lich["v2_khung"] == khung and lich["v2_ngay_di"] == "2026-11-20" and lich["v2_mua"] == {"2026-11-20": 70}
+
+
+def test_edit_turn_records_frame_before_the_turn(tmp_path):
+    # lượt sửa lịch: `sua_lich.khung_truoc` = khung đã lưu của cuộc TRƯỚC lượt, `lich.v2_khung` = khung SAU lượt ⇒ so được "thứ khác có đổi theo không"
+    trace = _trace()
+    truoc = {"tham_so": {"so_ngay": 1}, "ngay": [{"ngay": 1, "buoi": {"sang": ["dai_noi"], "chieu": ["thien_mu"], "toi": []}}]}
+    sau = {"tham_so": {"so_ngay": 1}, "ngay": [{"ngay": 1, "buoi": {"sang": ["dai_noi"], "chieu": [], "toi": []}}]}
+    trace.lich_luu, trace.sua, trace.lich_v2 = {"khung": truoc, "ngay_di": None}, {"n_hanh_dong": 1, "n_ap": 1}, {"khung": sau, "loi_khung": []}
+    so_vet.ghi(True, "chat_stream", {"outcome": "success"}, trace, "bỏ Chùa Thiên Mụ", "bỏ Chùa Thiên Mụ", thu_muc=tmp_path)
+    (tep,) = tmp_path.iterdir()
+    dong = json.loads(tep.read_text(encoding="utf-8"))
+    assert dong["sua_lich"]["khung_truoc"] == truoc and dong["lich"]["v2_khung"] == sau
+
+
+def test_non_edit_turn_has_no_edit_block(tmp_path):
+    # cuộc có lịch nhưng lượt KHÔNG phải lượt sửa (không `trace.sua`, không vết sửa) ⇒ khối `sua_lich` vẫn là None, dòng sổ vết không phình thêm khung
+    trace = _trace()
+    trace.lich_luu = {"khung": {"tham_so": {"so_ngay": 1}, "ngay": []}, "ngay_di": None}
+    so_vet.ghi(True, "chat_stream", {"outcome": "success"}, trace, "a", "b", thu_muc=tmp_path)
+    (tep,) = tmp_path.iterdir()
+    assert json.loads(tep.read_text(encoding="utf-8"))["sua_lich"] is None

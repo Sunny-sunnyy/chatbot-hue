@@ -49,7 +49,10 @@ def ban_ghi(duong: str, metrics: dict, trace=None, cau_go: str | None = None, ca
                      "loi_trich_dan": None if lay("citation_error") is None else str(lay("citation_error"))[:500],
                      "nhieu_y": lay("nhieu_y"), "chi_y_thieu": lay("chi_y_thieu"), "hoi_lai": lay("clarify")},
             web=None if lay("web") is None else {**lay("web"), **(vet.get("web") or {})},
-            sua_lich=None if lay("sua") is None and "sua" not in vet else {"so_dem": lay("sua"), **(vet.get("sua") or {})},
+            # `khung_truoc` (bản thử 24/11/2026): khung lịch đã lưu của cuộc TRƯỚC lượt sửa (`trace.lich_luu`, route nạp đầu lượt, không ai gán lại) —
+            # cùng dạng với `lich.v2_khung` (khung SAU lượt) ⇒ chấm được trên lượt thật "thứ khác trong lịch có đổi theo mà lời đáp không nói không"
+            sua_lich=None if lay("sua") is None and "sua" not in vet else {"so_dem": lay("sua"), **(vet.get("sua") or {}),
+                                                                           "khung_truoc": (lay("lich_luu") or {}).get("khung")},
             lich={"bieu_mau": lay("bieu_mau"), "truong": lay("truong"), "buoc": lay("buoc_lich"), "kiem": lay("lich_kiem"),
                   "khung": (lay("lich") or {}).get("khung"), "v2_loi_khung": (lay("lich_v2") or {}).get("loi_khung"),
                   "v2_so_cau_du_phong": (lay("lich_v2") or {}).get("so_cau_du_phong"),
