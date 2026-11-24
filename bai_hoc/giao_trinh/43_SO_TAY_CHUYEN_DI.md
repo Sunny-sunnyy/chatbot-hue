@@ -24,7 +24,7 @@
 
 ## Người dùng bấm một nút, các mục hiện dần
 
-Nút nằm sau "In / Lưu PDF" và "Tải PowerPoint" dưới mọi thẻ lịch đã xếp xong (trang Lên kế hoạch, trang Trợ lý, khung Trợ lý nổi; thẻ lịch mẫu in sẵn thì không), khi tính năng tải PowerPoint đang mở. Bấm nút, trang gửi **một** yêu cầu không mang dữ liệu: máy chủ nhận ra cuộc trò chuyện qua cookie (bài 37) và tự lấy lịch đang lưu, như đường tải PowerPoint (bài 30). Kết quả về theo **đường gửi dần** (bài 35): dàn ý trước, rồi từng mục.
+Nút nằm sau "Tải PowerPoint" dưới mọi thẻ lịch đã xếp xong (trang Lên kế hoạch, trang Trợ lý, khung Trợ lý nổi; thẻ lịch mẫu in sẵn thì không), khi tính năng tải PowerPoint đang mở. Bấm nút, trang gửi **một** yêu cầu không mang dữ liệu: máy chủ nhận ra cuộc trò chuyện qua cookie (bài 37) và tự lấy lịch đang lưu, như đường tải PowerPoint (bài 30). Kết quả về theo **đường gửi dần** (bài 35): dàn ý trước, rồi từng mục.
 
 Mục chưa xong là khung xám; tiến độ ghi "Đang viết — xong *x* / *y* mục". Mỗi mục điểm có ảnh, các dòng chép, "Nên xem", "Lưu ý" và khối "Nguồn đã dùng". Chữ **không** có số nguồn chen giữa câu.
 
