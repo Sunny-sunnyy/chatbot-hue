@@ -305,6 +305,10 @@ class AssistantFlags:
     # 19/11 (plan private `data/xuat_lich_dep_2026-11-19/PLAN.md`): `GET /api/lich/pptx` — tải lịch đã lưu của cuộc thành PowerPoint (code điền
     # khuôn, không model). TẮT tới khi đạt; cần `sua_lich_v2` (chỉ cờ đó mới lưu lịch của cuộc) và thư viện `python-pptx`.
     xuat_pptx: bool = False
+    # BẢN THỬ (nhánh thu-b-so-tay, 24/11/2026 — chủ dự án chọn 21:21 sau khi xem hai hồ sơ mẫu; KHÔNG mở trước khi chủ dự án xem trong giao diện): sổ tay
+    # cho chuyến đi dựng từ lịch đang lưu của cuộc — `POST /api/so_tay` (`api/routes/so_tay.py`, `llm/so_tay.py`). Tắt ⇒ đường API trả 404, `/api/tinh_nang`
+    # không có khoá, không gì khác đổi.
+    so_tay: bool = False
 
     def __post_init__(self) -> None:
         if self.xuat_pptx:
@@ -336,6 +340,8 @@ class AssistantFlags:
             raise ValueError("assistant.thoi_tiet needs assistant.tim_them: true and a forecast function")
         if self.liet_ke_bai and (not self.tim_them or self.muc_luc is None):
             raise ValueError("assistant.liet_ke_bai needs assistant.tim_them: true and the article index (loaded from the knowledge base)")
+        if self.so_tay and not (self.sua_lich_v2 and self.len_ke_hoach_v2 and self.the_noi):
+            raise ValueError("assistant.so_tay needs assistant.sua_lich_v2 (the saved schedule), assistant.len_ke_hoach_v2 and assistant.the_noi (the place-card table)")
         if self.bao_lu_cong_cu and not self.thoi_tiet:
             raise ValueError("assistant.bao_lu_cong_cu needs assistant.thoi_tiet: true")
         if self.len_ke_hoach_v2 and (not self.lich_trinh_bieu_mau or self.bang_lich_v2 is None):
