@@ -181,7 +181,8 @@ def test_feature_flags_key_only_when_flag_on(app_client):
         _restore(app, original)
         app.state.anh = anh_goc
         app.state.generator = may_viet_goc
-    co_cu = {"lich_trinh_bieu_mau": True, "thoi_tiet": FORM.thoi_tiet, "anh": False, "tra_web": FORM.tra_web, "ban_do_lich": FORM.ban_do_lich}
+    co_cu = {"lich_trinh_bieu_mau": True, "thoi_tiet": FORM.thoi_tiet, "anh": False, "tra_web": FORM.tra_web, "ban_do_lich": FORM.ban_do_lich,
+             **({"ho_so_chu_de": True} if FORM.ho_so_chu_de else {})}  # hồ sơ theo chủ đề (mở ở máy demo 24/11/2026): khoá có khi cờ của settings bật, như `tra_web`
     assert off == co_cu  # cờ tắt: khoá mới vắng hẳn (không null, không rỗng)
     assert on == {**co_cu, "len_ke_hoach_v2": {"o_hien": list(V2.len_ke_hoach_o_hien), "so_ngay_toi_da": 5, "so_thich_toi_da": 2,
                                                "so_thich_hien": list(V2.so_thich_hien)}}
