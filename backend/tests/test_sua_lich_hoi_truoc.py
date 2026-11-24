@@ -301,3 +301,35 @@ def test_after_a_removal_the_emptied_session_is_the_place_suggested_for_a_later_
         sau = _them(luu1, d["ten"], 1, "chieu", **MOI)["khung"]
         assert s._vi_tri(sau)[i] == (1, "chieu") and "buoi_trong" not in sau and not v2.kiem_khung_v2(B, sau), d["ten"]
     assert n >= 1
+
+
+def test_a_blocked_move_offers_each_working_slot_as_a_button_and_every_button_applies():
+    """Lệnh DỜI bị luật xếp chặn: câu vốn kể các chỗ dời được ("Dời được sang: …") nhưng người dùng phải gõ lại (sổ vết 24/11/2026: 30 / 143 dòng "không
+    đổi" là loại này). Công tắc bật ⇒ mỗi chỗ đó (nhiều nhất `MAX_CHO_HOI`) là một nút gửi lệnh dời đủ tên; áp đúng lệnh của nút ⇒ dời được, kể cả nút
+    mà lần dời thật đổi chỗ hai điểm (nhãn nút nói rõ điểm kia). Công tắc tắt ⇒ câu y như cũ, không nút."""
+    k, luu = _lich()
+    vt = s._vi_tri(k)
+    cho = sorted({(ng["ngay"], b) for ng in k["ngay"] for b in v2.BUOI_NGAY})
+    co_nut = doi_cho = khong_cho = 0
+    for a in sorted(vt):
+        for c in [x for x in cho if x != vt[a]] + [(vt[a][0], "toi")]:  # kèm một ca "dời điểm ban ngày sang buổi tối" (mục `khong_buoi_hop_le`)
+            hd = [(s.HanhDongToi if c[1] == "toi" else s.HanhDong)(loai="doi_buoi", ten=a, ngay=c[0], buoi=c[1])]
+            kq = s.ap(B, luu, hd, **MOI)
+            if kq["da_ap"] or "goi_y" not in kq["khong_doi"][0]:
+                continue
+            (kd,), dong, cu = kq["khong_doi"], _dong(kq), _dong(s.ap(B, luu, hd, **CU))
+            assert kq["khung"] == k and "nut" not in cu and cu["cau"] == dong["cau"].replace(" Bấm một nút dưới đây để dời.", "")
+            if not kd["goi_y"]:
+                khong_cho += 1
+                assert "nut" not in dong and dong["cau"].endswith("chỉ đứng được ở chỗ hiện tại.")
+                continue
+            co_nut += 1
+            assert dong["cau"].endswith("Bấm một nút dưới đây để dời.") and len(dong["nut"]) == min(len(kd["goi_y"]), s.MAX_CHO_HOI)
+            for g, nut in zip(kd["goi_y"], dong["nut"]):
+                noi = f"buổi {s.NHAN_BUOI[g['buoi']]} ngày {g['ngay']}"
+                assert nut["gui"] == f"dời {T[a]['ten']} sang {noi}" and nut["nhan"].startswith(f"Dời sang {noi}") and "chon" not in nut
+                assert (f"(đổi chỗ với {T[g['doi_voi']]['ten']})" in nut["nhan"]) if g["doi_voi"] else "đổi chỗ" not in nut["nhan"]
+                sau = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=a, ngay=g["ngay"], buoi=g["buoi"])], **MOI)  # đúng lệnh mà câu `gui` nói
+                assert sau["da_ap"] and s._vi_tri(sau["khung"])[a] == (g["ngay"], g["buoi"])
+                doi_cho += bool(g["doi_voi"])
+    assert co_nut and doi_cho  # bảng điểm thật phải có cả nút dời thẳng lẫn nút đổi chỗ hai điểm, không thì test này không kiểm gì

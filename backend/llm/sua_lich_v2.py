@@ -1099,7 +1099,7 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
                     khong(ten_cua_diem(bang, i), "toi_chua_xep_hoi" if bo_toi_hoi_lai else "toi_chua_xep_trong" if bo_toi_de_trong else "toi_chua_xep")
                 elif h.loai == "doi_buoi" and i in vt:  # điểm ban ngày đang ở trong lịch ⇒ lý do + các chỗ dời được (như lần dời bị luật xếp chặn)
                     kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "khong_buoi_hop_le", "dich": [ngay, "toi"], "ly_do": "ban_ngay",
-                                            "goi_y": _goi_y_doi(bang, luu, ts, khung, vt, loai, i)})
+                                            "goi_y": _goi_y_doi(bang, luu, ts, khung, vt, loai, i), **({"nut_doi": True} if them_hoi_truoc else {})})
                 else:
                     khong(ten_cua_diem(bang, i), "ban_ngay_khong_toi")
                 continue
@@ -1254,8 +1254,10 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             if k is None and doi_cho:  # nói lý do + các chỗ điểm này dời ĐƯỢC (thử bằng đúng phép thử của lần dời thật); `ma_luat` giữ nguyên
                 ma = set(loi)
                 goi_y = _goi_y_doi(bang, luu, ts, khung, vt, loai, i)
+                # `nut_doi` (công tắc `sua_lich_hoi_truoc`): các chỗ dời được thành NÚT (`nut_khong_doi`) — người dùng khỏi gõ lại câu lệnh
                 kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "khong_hop_luat", "dich": [ngay, h.buoi], "goi_y": goi_y,
-                                        "ly_do": "khu" if ma & MA_LUAT_KHU else "kin" if ma & MA_LUAT_KIN else "gio_mo" if "ngoai_gio_mo" in ma else None})
+                                        "ly_do": "khu" if ma & MA_LUAT_KHU else "kin" if ma & MA_LUAT_KIN else "gio_mo" if "ngoai_gio_mo" in ma else None,
+                                        **({"nut_doi": True} if them_hoi_truoc else {})})
                 continue
             if k is None:
                 khong(ten_cua_diem(bang, i), "khong_hop_luat")
@@ -1479,6 +1481,12 @@ def nut_khong_doi(bang: v2.BangV2, kq: dict, k: dict) -> list[dict]:
     if ma == "toi_doi_cho_hoi":
         return [{"nhan": "Đổi chỗ hai tối", "gui": f"đổi chỗ hai tối: {k['diem']} sang tối ngày {k['ngay']}, {k['diem_kia']} sang tối ngày {k['ngay_kia']}",
                  "chon": k["chon"]}]
+    if k.get("nut_doi"):
+        # Lệnh DỜI bị vướng (đếm sổ vết 24/11/2026: 30 / 143 dòng "không đổi" là loại này, câu đã kể sẵn chỗ dời được nhưng người dùng phải gõ lại):
+        # mỗi chỗ của `goi_y` — đã thử bằng đúng phép thử của lần dời thật — là một nút gửi lệnh dời đủ tên. Chỗ đích đang có đúng một điểm thì lần
+        # dời thật ĐỔI CHỖ hai điểm ⇒ nhãn nút nói rõ điểm đó (bấm nút là lời đồng ý cho điểm kia dời theo). Nhiều nhất `MAX_CHO_HOI` nút; câu vẫn kể đủ.
+        return [{"nhan": f"Dời sang buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']}" + (f" (đổi chỗ với {ten_cua_diem(bang, g['doi_voi'])})" if g["doi_voi"] else ""),
+                 "gui": f"dời {k['diem']} sang buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']}"} for g in k["goi_y"][:MAX_CHO_HOI]]
     if "ngay_duoc" in k:  # công tắc `sua_lich_hoi_truoc`: chỉ các tối mà lần đặt thật nhận; lịch chưa có ngày đi + nơi chỉ mở vài tối trong tuần ⇒ nút mở biểu mẫu
         nut = [{"nhan": f"Tối ngày {d}", "gui": f"tối ngày {d} đi {k['diem']}"} for d in k["ngay_duoc"]]
         return nut + ([{"nhan": "Mở biểu mẫu để chọn ngày đi", "mo": "bieu_mau"}] if ma == "toi_ten_theo_thu" and not kq["luu"].get("ngay_di") else [])
@@ -1669,7 +1677,7 @@ def _cau_khong_doi(bang: v2.BangV2, k: dict) -> str:
         return f"{dau} Trong lịch này {k['diem']} chỉ đứng được ở chỗ hiện tại."
     cho = "; ".join(f"buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']}" + (f" (đổi chỗ với {ten_cua_diem(bang, g['doi_voi'])})" if g["doi_voi"] else "")
                     for g in k["goi_y"])
-    return f"{dau} Dời được sang: {cho}."
+    return f"{dau} Dời được sang: {cho}." + (" Bấm một nút dưới đây để dời." if k.get("nut_doi") else "")
 
 
 def _cau_toi_doi_cho(bang: v2.BangV2, doi: dict) -> str:
