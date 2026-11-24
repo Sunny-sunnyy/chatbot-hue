@@ -4,7 +4,9 @@ Người xem demo bấm nút dưới một câu trả lời ⇒ thấy lượt �
 dựa vào nguồn nào, mất bao lâu. KHÔNG có model nào được gọi ở đây: bản tóm tắt chỉ sắp lại thứ lượt đó ĐÃ ghi trên `AnswerTrace`.
 
 Cách chạy: lúc một lượt kết thúc và đã có mã lượt (`turn_id`, cấp sẵn ở sự kiện `done` — `api/feedback.py`), route dựng MỘT bản tóm tắt nhỏ từ đúng
-bản ghi mà sổ vết dùng (`core/so_vet.ban_ghi`) rồi cất vào RAM theo mã lượt (trần `MAX_LUOT`, khởi động lại server ⇒ mất). `GET /api/vi_sao/{turn_id}`
+bản ghi mà sổ vết dùng (`core/so_vet.ban_ghi`) rồi cất vào RAM theo mã lượt (trần `MAX_LUOT`; hết hạn sau `TTL_SECONDS` = 30 phút, cùng hạn với trí nhớ
+cuộc trò chuyện — bản tóm tắt có câu người dùng gõ, câu tìm, câu tra web, mà trang Giới thiệu nói chữ người dùng ở trong bộ nhớ tối đa 30 phút; khởi động lại
+server ⇒ mất). `GET /api/vi_sao/{turn_id}`
 trả bản đó. Không đọc / ghi file nào, không ghi log nào có chữ người dùng ⇒ không phụ thuộc cờ `so_vet`. Mã lượt ngẫu nhiên 16 ký tự, không nằm trong
 cookie ⇒ người khác không đoán được lượt của ai.
 
@@ -12,18 +14,22 @@ cookie ⇒ người khác không đoán được lượt của ai.
 Thứ KHÔNG có ở đây: phép đối chiếu từng CÂU của câu trả lời với ĐOẠN nó dựa vào — hệ thống chưa làm phép đó; khuôn không chừa chỗ sẵn.
 """
 import logging
+import time
 from collections import OrderedDict
 from pathlib import PurePosixPath
 
 from fastapi import APIRouter, Request
 
+from api.conversations import TTL_SECONDS
 from core import so_vet
 
 logger = logging.getLogger("chat")
 router = APIRouter()
 
 MAX_LUOT = 200  # trần RAM: bỏ lượt cũ nhất (mỗi bản vài KB)
-TRAN_CAU_GUI = 300  # ký tự: chuỗi thật gửi model có thể dài gấp nhiều lần câu gõ (lịch sử ghép vào)
+# ký tự: chuỗi gửi model chỉ KHÁC câu gõ khi lượt mang các ô đã chọn (thẻ hỏi lại, biểu mẫu Lên kế hoạch — `chat._model_query` ghép giá trị các ô vào câu),
+# khi đó nó dài gấp nhiều lần câu gõ. Lượt nối tiếp thường KHÔNG đổi câu: lịch sử đi riêng, không ghép vào chuỗi này.
+TRAN_CAU_GUI = 300
 
 # Nhãn do code viết — giao diện in nguyên, không tự dịch mã.
 NHAN_GOI = {"phan_loai": "Phân loại câu hỏi", "tim_them": "Quyết định tìm thêm / gọi công cụ", "viet": "Viết câu trả lời",
@@ -45,19 +51,28 @@ NHAN_BUOI = {"sang": "buổi sáng", "chieu": "buổi chiều", "toi": "buổi t
 
 
 class KhoViSao:
-    """Mã lượt ⇒ bản tóm tắt, trong RAM, có trần."""
+    """Mã lượt ⇒ bản tóm tắt, trong RAM, có trần số lượt và có hạn giờ (`ttl` giây kể từ lúc cất). Bản quá hạn bị XOÁ khỏi RAM ở lần cất / lần đọc kế, và
+    đọc ra None như bản đã bị đẩy khỏi trần."""
 
-    def __init__(self, max_luot: int = MAX_LUOT) -> None:
-        self._items: OrderedDict[str, dict] = OrderedDict()
-        self._max = max_luot
+    def __init__(self, max_luot: int = MAX_LUOT, ttl: float = TTL_SECONDS, clock=time.monotonic) -> None:
+        self._items: OrderedDict[str, tuple[float, dict]] = OrderedDict()  # thứ tự chèn = thứ tự thời gian
+        self._max, self._ttl, self._clock = max_luot, ttl, clock
+
+    def _don_het_han(self) -> None:
+        moc = self._clock() - self._ttl
+        while self._items and next(iter(self._items.values()))[0] < moc:
+            self._items.popitem(last=False)
 
     def dat(self, turn_id: str, ban: dict) -> None:
-        self._items[turn_id] = ban
+        self._don_het_han()
+        self._items[turn_id] = (self._clock(), ban)
         while len(self._items) > self._max:
             self._items.popitem(last=False)
 
     def lay(self, turn_id: str) -> dict | None:
-        return self._items.get(turn_id)
+        self._don_het_han()
+        muc = self._items.get(turn_id)
+        return None if muc is None else muc[1]
 
 
 def _giay(ms) -> float | None:
@@ -268,7 +283,7 @@ def cat(state, bat: bool, duong: str, metrics: dict, trace, cau_go, cau_model, b
 
 @router.get("/api/vi_sao/{turn_id}")
 async def vi_sao(turn_id: str, request: Request):
-    """Bản tóm tắt "lượt này trợ lý đã làm gì". 404: công tắc tắt · mã lượt không có (server đã khởi động lại, quá trần, lượt không có câu trả lời)."""
+    """Bản tóm tắt "lượt này trợ lý đã làm gì". 404: công tắc tắt · mã lượt không có (server đã khởi động lại, quá trần, quá hạn 30 phút, lượt không có câu trả lời)."""
     flags = getattr(request.app.state, "assistant_flags", None)
     kho = getattr(request.app.state, "vi_sao", None)
     ban = kho.lay(turn_id) if kho is not None and getattr(flags, "vi_sao", False) is True else None
