@@ -95,6 +95,7 @@ CUM_XEP = "tổng quan giới thiệu lịch sử nổi bật đặc điểm"
 # Phép nhận đoạn cảnh báo và ý cảnh báo dùng CHUNG với sổ tay chuyến đi (`so_tay.MAU_CANH_BAO`, `doan_canh_bao`, `la_y_canh_bao`) — một bộ dấu hiệu, sửa một chỗ.
 doan_canh_bao, la_y_canh_bao = st.doan_canh_bao, st.la_y_canh_bao
 CAU_TRO_AN_TOAN = "{ten}: bài có phần lưu ý an toàn ở mục «{muc}» — mở bài để đọc trước khi đi."
+CAU_TRO_AN_TOAN_CHUNG = "{ten}: bài có phần lưu ý an toàn — mở bài để đọc trước khi đi."
 NHAN_AN_TOAN = "Lưu ý an toàn theo mùa"
 
 

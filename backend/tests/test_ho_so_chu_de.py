@@ -178,6 +178,14 @@ def test_canh_bao_an_toan_cua_bai_luon_di_theo_ho_so():
     assert an_toan[1:] == [(None, hs.CAU_TRO_AN_TOAN.format(ten=f"Bãi biển {t}", muc="Mùa mưa bão và biển động"), [n]) for t, n in zip("BCDE", (6, 9, 12, 15))]
     assert next(d for t, d in sk if t == "xong")["so_dong_tro_an_toan"] == 4
 
+    # bài đã có một ý cảnh báo thật — dù ý đó dẫn một đoạn KHÁC của bài — thì không thêm dòng trỏ cho bài đó (lượt thật của sổ tay 24/11/2026, Đầm Lập An)
+    class MayDanDoanKhac(May):
+        async def viet_so_tay(self, loai, prompt, log):
+            ra = await super().viet_so_tay(loai, prompt, log)
+            return ra if loai == "ho_so_dan_y" else {"y": ra["y"] + [{"chu": "Bãi biển C mùa mưa bão biển động, không nên tắm", "nguon": [7]}]}
+    muc = next(d for t, d in _chay_bien(MayDanDoanKhac()) if t == "muc")
+    assert [d["so"] for d in muc["doan"] if d["kieu"] == "an_toan" and d["nhan"] is None] == [[6], [12], [15]]
+
 
 def test_model_hong_thi_dong_tro_an_toan_van_co():
     class May:

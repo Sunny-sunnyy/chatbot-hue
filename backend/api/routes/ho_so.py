@@ -52,13 +52,13 @@ async def _mot_muc(muc: dict, ten_chu_de: str, state, flags, generator, dem: dic
     bai, doan, nguon, trang_thai, y, thieu = muc["bai_goc"], [], [], "xong", [], []
     try:
         moi_bai = hs.so_doan_moi_bai(len(bai))
-        tai_lieu, canh_bao = [], {}  # canh_bao: mã đoạn cảnh báo an toàn ⇒ bài của nó
+        tai_lieu, canh_bao = [], {}  # canh_bao: mã đoạn cảnh báo an toàn ⇒ (bài của nó, chính đoạn đó)
         for b in bai:  # code chọn đoạn của CHÍNH các bài trong mục: xếp trong bài theo tên chủ đề + tên mục, cộng đoạn cảnh báo an toàn của bài (nếu có)
             cua_bai = await asyncio.to_thread(state.retrieval_service.doan_cua_bai, b.rel)
             chon = st.xep_trong_bai(cua_bai, f"{ten_chu_de} {muc['ten']} {hs.CUM_XEP}")[:moi_bai]
             cb = hs.doan_canh_bao(cua_bai)
             if cb is not None:
-                canh_bao[cb.id] = b
+                canh_bao[cb.id] = (b, cb)
                 if cb.id not in {d.id for d in chon}:
                     chon.append(cb)
             tai_lieu += chon
@@ -96,12 +96,15 @@ async def _mot_muc(muc: dict, ten_chu_de: str, state, flags, generator, dem: dic
             doan.append({"nhan": None, "kieu": "gach", "chu": None, "gach": y_thuong})
         # cảnh báo an toàn của kho không lẫn trong danh sách ý thường: mỗi ý cảnh báo là MỘT phần tử `an_toan` (giao diện vẽ bằng lớp câu an toàn của sản phẩm)
         doan += [{"nhan": hs.NHAN_AN_TOAN, "kieu": "an_toan", "chu": dong, "gach": None} for dong in y_canh_bao]
-        # bài có đoạn cảnh báo mà KHÔNG ý cảnh báo nào được giữ dẫn đoạn đó (model không viết, viết bị lọc, hoặc lời gọi hỏng) ⇒ code trỏ tới đúng mục của bài
-        da_dan = {int(n) for dong in y_canh_bao for n in re.findall(r"\[(\d+)\]", dong)}
-        for so, b in so_canh_bao.items():
-            if so not in da_dan:
-                muc_bai = next((s["heading_path"][-1] for s in nguon_kho if s["id"] == so and s["heading_path"]), "lưu ý")
-                doan.append({"nhan": None, "kieu": "an_toan", "chu": hs.CAU_TRO_AN_TOAN.format(ten=b.tieu_de, muc=muc_bai) + f" [{so}]", "gach": None})
+        # bài có đoạn cảnh báo mà mục KHÔNG có ý cảnh báo nào dẫn bài đó (model không viết, viết bị lọc, hoặc lời gọi hỏng) ⇒ code thêm dòng trỏ — chỉ khi đoạn nằm
+        # dưới một mục dặn du khách (nêu tên mục) hoặc có câu cấm (không nêu tên mục); đoạn chỉ là bằng chứng thì không trỏ (`so_tay.muc_tro_an_toan`)
+        bai_cua_so = {s["id"]: s["bai_id"] for s in nguon_kho}
+        bai_da_co = {bai_cua_so.get(int(n)) for dong in y if st.la_y_canh_bao(dong, None) for n in re.findall(r"\[(\d+)\]", dong)}
+        for so, (b, cb) in so_canh_bao.items():
+            muc_bai = st.muc_tro_an_toan(cb)
+            if muc_bai is not None and b.rel not in bai_da_co:
+                cau = hs.CAU_TRO_AN_TOAN.format(ten=b.tieu_de, muc=muc_bai) if muc_bai else hs.CAU_TRO_AN_TOAN_CHUNG.format(ten=b.tieu_de)
+                doan.append({"nhan": None, "kieu": "an_toan", "chu": f"{cau} [{so}]", "gach": None})
                 dem["tro_an_toan"] += 1
         du_kien, nguon_dk = hs.dong_du_kien(bai, flags.the_noi_bang, len(nguon) + 1)
         if du_kien:
