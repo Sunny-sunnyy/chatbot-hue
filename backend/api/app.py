@@ -25,6 +25,7 @@ from api.routes.chat import GIT_SHA
 from api.routes.chat import router as chat_router
 from api.routes.cong import BAN_DO, nap_kham_pha
 from api.routes.cong import router as cong_router
+from api.routes.so_tay import router as so_tay_router
 from api.routes.xuat import router as xuat_router
 from core.logging_setup import setup_logging
 from core.schema import (
@@ -249,6 +250,7 @@ def create_app(settings=None):
     app.include_router(anh_router)  # luôn đăng ký: `settings` chỉ có trong lifespan (Phase 10 A1 D2, review C m-1); cờ tắt ⇒ 404
     app.include_router(feedback_router)
     app.include_router(cong_router)  # cổng đợt 1 D6: 4 route chỉ đọc
+    app.include_router(so_tay_router)  # sổ tay chuyến đi (bản thử): luôn đăng ký, cờ `so_tay` tắt ⇒ 404
     app.include_router(xuat_router)  # tải lịch .pptx: luôn đăng ký, cờ `xuat_pptx` tắt ⇒ 404
     app.include_router(theo_doi_router)  # trang theo dõi của chủ dự án: luôn đăng ký; chưa đặt `HUE_KHOA_THEO_DOI` ⇒ 404
     app.state.feedback_turns = FeedbackTurns()  # B142: mã lượt cho 👍 / 👎 (RAM, không cần lifespan)
