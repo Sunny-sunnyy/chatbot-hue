@@ -20,6 +20,11 @@ PHU=""; [ "$PROVIDER" = bedrock ] && { cp "$GOI"/compose.vai-may.yml .; PHU=comp
 mkdir -p cau_hinh && docker run --rm --network none --entrypoint tar "hue-rag-app:$SHA" -C /app/backend/config -cf - . | tar -xf - -C cau_hinh
 sed -i "s/^\(  provider: \)[a-z]*/\1$PROVIDER/" cau_hinh/settings.yaml
 grep -q "^  provider: $PROVIDER\b" cau_hinh/settings.yaml || { echo "DỪNG: không ghi được dòng provider vào cau_hinh/settings.yaml" >&2; exit 1; }
+# nút "Vì sao trả lời vậy?" (công tắc `vi_sao`) chỉ định bật ở máy demo: bản đưa lên GHI SẴN tắt (ảnh dựng từ commit cũ chưa có dòng này thì bỏ qua)
+if grep -q "^  vi_sao:" cau_hinh/settings.yaml; then
+  sed -i "s/^\(  vi_sao: \)true/\1false/" cau_hinh/settings.yaml
+  grep -q "^  vi_sao: false" cau_hinh/settings.yaml || { echo "DỪNG: không ghi được dòng vi_sao: false vào cau_hinh/settings.yaml" >&2; exit 1; }
+fi
 sha256sum "app_$SHA.tar.gz" qdrant.snapshot compose.yml $PHU Caddyfile nap_chi_muc.sh cau_hinh/* > SHA256SUMS
 ls -la "$RA"
 echo "model viết của gói: $PROVIDER$([ "$PROVIDER" = openai ] && echo ' — máy đích cần OPENAI_API_KEY trong hue.khoa.env')"
