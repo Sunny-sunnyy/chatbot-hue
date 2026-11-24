@@ -93,7 +93,7 @@ function Net({ d, co = 18 }) {
 // trong câu khó đọc"; nhắc lại 24/11 khi xem ảnh bản thử này). Bỏ bằng đúng hàm dùng chung `boMaTrichDan`; nguồn hiện ở khối "Nguồn đã dùng" dưới mỗi mục.
 const chuSach = chu => boMaTrichDan(String(chu ?? "")).trim();
 
-function NoiDungMuc({ muc, khoa }) {
+function NoiDungMuc({ muc, khoa, baiId }) {
   // Dữ liệu lệch hợp đồng không được làm trắng cả trang (không có lớp bắt lỗi quanh trang): thiếu mảng ⇒ mảng rỗng; nguồn luôn có `heading_path`,
   // `excerpts` (dòng nguồn dùng chung `SourceLine` đọc thẳng hai trường đó khi bấm mở)
   const nguon = (Array.isArray(muc.nguon) ? muc.nguon : []).map(s => ({ ...s, heading_path: s.heading_path || [], excerpts: s.excerpts || [] }));
@@ -124,8 +124,11 @@ function NoiDungMuc({ muc, khoa }) {
           </dl>
         // câu an toàn (bão / lũ, 112): chữ cố định của hệ thống — giữ nguyên chữ và lớp hiển thị an toàn của sản phẩm
         : <p key={n} className="notice notice-an-toan" role="note">{k.chu}</p>))}
+      {/* Ô THIẾU: lõi báo "sổ tay không có dòng này" — KHÔNG phải "kho không có" (bài có thể nêu giờ trong câu văn chứ không ở dòng nhãn; ý của model có
+          thể bị bộ lọc bỏ) ⇒ câu không khẳng định gì về kho, và chỉ lối xem tiếp (phiên đo + phiên điều phối 24/11/2026) */}
       {thieu.length > 0 && (
-        <p className="st-thieu"><Net d={IC.sach} /><span><b>Kho tư liệu chưa có:</b> {thieu.map(t => t[0].toLowerCase() + t.slice(1)).join(" · ")}</span></p>
+        <p className="st-thieu"><Net d={IC.sach} /><span><b>Sổ tay chưa ghi được:</b> {thieu.map(t => t[0].toLowerCase() + t.slice(1)).join(" · ")} —{" "}
+          {typeof baiId === "string" ? <>xem ở <a href={baiHref(baiId)}>bài về nơi này</a>, hoặc hỏi Trợ lý.</> : "hỏi Trợ lý để biết thêm."}</span></p>
       )}
       {muc.trang_thai === "loi" && <p className="st-muc-loi">Phần mô tả của mục này chưa viết được — bấm “Dựng lại” để thử lần nữa.</p>}
       {nguon.length > 0 && <SourceLine turn={turnNguon} />}
@@ -158,7 +161,7 @@ function Muc({ d, muc, dang, i }) {
         )}
         {d.loai === "an_uong" && <p className="st-buoi st-buoi-an"><Net d={IC.an} co={16} /> Ngày {d.ngay}</p>}
         <h3 className="st-ten">{typeof d.bai_id === "string" ? <a href={baiHref(d.bai_id)}>{d.ten}</a> : d.ten}</h3>
-        {muc ? <NoiDungMuc muc={muc} khoa={`st-${d.id}`} />
+        {muc ? <NoiDungMuc muc={muc} khoa={`st-${d.id}`} baiId={d.bai_id} />
           : dang ? <><KhungXuong /><span className="sr-only">đang viết…</span></>
           : <p className="st-muc-loi">Mục này chưa có nội dung — bấm “Dựng lại” để thử lần nữa.</p>}
       </div>

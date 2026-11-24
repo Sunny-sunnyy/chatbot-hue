@@ -96,11 +96,12 @@
 .st-d dd ul { list-style: disc; padding-left: 1.15em; }
 .st-d dd li + li { margin-top: 4px; }
 .st-d dd li::marker { color: var(--color-accent); }
-/* "Kho tư liệu chưa có": ô THIẾU — viền đứt, màu trung tính; không phải màu lỗi */
+/* Ô THIẾU ("Sổ tay chưa ghi được: …") — viền đứt, màu trung tính; không phải màu lỗi */
 .st-thieu { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; padding: 10px 14px; border: 1.5px dashed #9DB8B3; border-radius: var(--radius-m);
   background: var(--color-page); font-size: var(--text-phu); color: var(--color-muted); }
 .st-thieu svg { flex: none; margin-top: 3px; }
 .st-thieu b { font-weight: 600; color: var(--color-ink); }
+.st-thieu a { color: var(--color-accent-deep); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .st-muc-loi { margin-top: 12px; font-size: var(--text-phu); color: var(--color-muted); }
 .st-muc .notice-an-toan { margin-top: 14px; }  /* màu, viền, chữ của câu an toàn: giữ nguyên luật chung của sản phẩm */
 .st-dl + .notice-an-toan, .notice-an-toan + .st-dl { margin-top: 14px; }
