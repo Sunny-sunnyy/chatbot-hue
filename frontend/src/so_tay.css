@@ -90,6 +90,7 @@
 .st-dl { margin-top: 12px; }
 .st-d { display: grid; grid-template-columns: 138px minmax(0, 1fr); gap: 4px 18px; padding: 11px 0; }
 .st-d + .st-d { border-top: 1px dashed var(--color-line); }
+.st-d-tron { grid-template-columns: minmax(0, 1fr); }  /* đoạn không nhãn (trang hồ sơ theo chủ đề): danh sách ý chiếm cả bề ngang */
 .st-d dt { display: flex; align-items: flex-start; gap: 8px; font-size: var(--text-nho); font-weight: 600; line-height: 1.7; color: var(--color-accent-deep); }
 .st-d dt svg { flex: none; margin-top: 3px; }
 .st-d dd { min-width: 0; }
