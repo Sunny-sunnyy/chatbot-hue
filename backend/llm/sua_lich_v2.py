@@ -967,7 +967,7 @@ def _so_cho(cu: dict, moi: dict) -> dict:
 def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | None = None, luu_tru: dict | None = None,
        ngay_moi: dict | None = None, them_khong_the: bool = False, them_day: bool = False, them_khu: bool = False, them_han_che: bool = False,
        bo_toi_de_trong: bool = False, bo_toi_hoi_lai: bool = False, toi_goi_ten: bool = False, them_hoi_truoc: bool = False,
-       tu_xep: bool = False, dong_y_doi_toi: bool = False, dong_y_chen: bool = False, chen_da_hoi: tuple = ()) -> dict:
+       tu_xep: bool = False, dong_y_doi_toi: bool = False, dong_y_chen: bool = False, chen_da_hoi: tuple = (), nhac_ten=frozenset()) -> dict:
     """Áp hành động trên **bản sao** khung đã lưu ⇒ {khung, luu, da_ap, khong_doi, chua_lam, doi_truong, the}.
     `the` khác None ⇒ lượt dừng ở thẻ chọn, khung KHÔNG đổi. `sua_chon` {cu, moi} (bấm nút của thẻ) ⇒ bỏ qua hành động model.
     `luu_tru` = bảng lưu trú đang dùng (None khi cờ nơi ở tắt) — chỉ hành động `doi_hang_o` cần.
@@ -994,7 +994,9 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
     CHÈN TRƯỚC (24/11/2026, chỉ khi `them_hoi_truoc`): lệnh thêm đủ ngày + buổi (hoặc `tu_xep`) mà chỉ xếp được khi điểm mới đứng TRƯỚC một điểm đang có
     ⇒ điểm đang có phải lùi giờ = "một mục khác của lịch phải dời" ⇒ KHÔNG tự áp: mục `them_chen_hoi` (câu hỏi + MỘT nút). Áp khi người dùng đã
     đồng ý: `dong_y_chen` (câu gõ có lời "đặt trước / chèn trước" — `dong_y_chen_cau`) hoặc đúng câu của nút nằm trong `chen_da_hoi` (các câu code
-    đã gợi ý ở lượt NGAY TRƯỚC: người dùng đáp "ừ" hay nhắc lại đúng lệnh sau khi đã được nói cái giá)."""
+    đã gợi ý ở lượt NGAY TRƯỚC: người dùng đáp "ừ" hay nhắc lại đúng lệnh sau khi đã được nói cái giá).
+    DỜI VÀO CHỖ ĐANG CÓ ĐIỂM (24/11/2026, chỉ khi `them_hoi_truoc`): xem chú thích ở vòng thử chỗ. `nhac_ten` = các điểm của lịch mà câu người dùng có
+    gọi tên (`diem_nhac_trong_cau`) — điểm bị đổi chỗ nằm trong đó thì người dùng đã nhắc tới nó ⇒ làm luôn."""
     luu = copy.deepcopy(luu)
     khung = copy.deepcopy(luu["khung"])
     loai = list(luu["loai"])
@@ -1258,11 +1260,22 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             giu0 = {j: v for j, v in vt.items() if j != i}
             doi_cho = h.loai == "doi_buoi" and i in vt  # dời điểm ĐANG ở trong lịch (chỗ đích có đúng một điểm ⇒ đổi chỗ hai điểm)
             k, loi, ma_cho = None, [], []  # `ma_cho`: mã luật của TỪNG chỗ đã thử ở vòng quyết định (cho lý do của lệnh thêm không nói rõ một buổi)
+            kia_doi = cho_doi = None  # điểm đang ở chỗ đích của một lệnh DỜI (lần dời thật đổi chỗ hai điểm) + chỗ đích đó
             for cho in _cho_thu(bang, khung, i, ngay, h.buoi):
-                k, loi, _ = _thu_cho(bang, luu, ts, vt, loai, i, cho, doi_cho)
+                k, loi, kia = _thu_cho(bang, luu, ts, vt, loai, i, cho, doi_cho)
                 ma_cho.append(loi)
                 if k is not None:
+                    kia_doi, cho_doi = kia, cho
                     break
+            if (k is not None and kia_doi is not None and them_hoi_truoc and kia_doi not in nhac_ten
+                    and _cau_doi_cho(bang, i, cho_doi, kia_doi) not in chen_da_hoi):
+                # Chỗ đích đang có điểm Y ⇒ dời X sang đó là Y phải chuyển về chỗ cũ của X — "một mục khác của lịch phải dời" mà người dùng không nhắc
+                # (nguyên tắc chủ dự án xác nhận 22:02 23/11/2026). Đếm 24/11/2026: 117 / 117 lệnh dời áp được của lưới đều đổi chỗ một điểm khác mà
+                # câu báo không nêu. Nay KHÔNG tự đổi: lịch đứng yên, câu nói Y sẽ chuyển đi đâu + MỘT nút. Coi là đã đồng ý khi câu người dùng có
+                # NHẮC tên Y (`nhac_ten` — "đổi chỗ X với Y", hay chính câu của nút) hoặc là câu của nút vừa được gợi ý ở lượt trước (đáp "ừ").
+                kq["khong_doi"].append({"diem": ten_cua_diem(bang, i), "ma_luat": "doi_cho_hoi", "hoi_truoc": True, "id": i, "dich": list(cho_doi),
+                                        "kia": ten_cua_diem(bang, kia_doi), "cho_cu": list(vt[i]), "gui": _cau_doi_cho(bang, i, cho_doi, kia_doi)})
+                continue
             day = None
             # `noi_nhip`: lệnh thêm được thử vượt mức đi — đoàn thường theo `them_day`; đoàn có trẻ nhỏ / người lớn tuổi cần thêm `them_han_che`
             # (công tắc `sua_lich_them_han_che`, chủ dự án 23/11/2026: chính họ xin thì cho thêm, có dòng báo; trần riêng `v2.HAN_CHE_*`)
@@ -1411,6 +1424,8 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             cung_buoi = next(x for x in k["ngay"] if x["ngay"] == ng_i)["buoi"][_vi_tri(k)[i][1]]
             dung_sau = [{"diem": j, "gio": k["gio"][j]} for j in cung_buoi[cung_buoi.index(i) + 1:]] if h.loai == "them_diem" else []
             kq["da_ap"].append({"loai": h.loai, "diem": i, "ngay": _vi_tri(k)[i][0], "buoi": _vi_tri(k)[i][1], "the_cho": the_cho,
+                                **({"doi_voi": {"diem": kia_doi, "ngay": _vi_tri(k)[kia_doi][0], "buoi": _vi_tri(k)[kia_doi][1]}}
+                                   if h.loai == "doi_buoi" and kia_doi is not None and kia_doi in _vi_tri(k) else {}),
                                 **({"dung_sau": dung_sau} if dung_sau else {}),
                                 **({"toi_xep_lai": xep_toi} if xep_toi else {}), **({"day": _tin_day(k, day, bang)} if day is not None else {}),
                                 **({"khu": _chang_khu(bang, k, khu)} if khu is not None else {}),
@@ -1560,6 +1575,17 @@ def _cau_chen(bang: v2.BangV2, i: str, k: dict, cho: tuple[int, str]) -> str:
     return f"thêm {ten_cua_diem(bang, i)} vào buổi {NHAN_BUOI[cho[1]]} ngày {cho[0]}, đặt trước {ten_cua_diem(bang, _sau_diem_chen(k, i, cho)[0])}"
 
 
+def _cau_doi_cho(bang: v2.BangV2, i: str, cho: tuple[int, str], kia: str) -> str:
+    """Câu của nút "Dời X sang … (đổi chỗ với Y)" — có tên Y nên bấm nút là câu đã nhắc Y; cũng là dấu "đã hỏi" cho lượt kế (đáp "ừ")."""
+    return f"dời {ten_cua_diem(bang, i)} sang buổi {NHAN_BUOI[cho[1]]} ngày {cho[0]}, đổi chỗ với {ten_cua_diem(bang, kia)}"
+
+
+def diem_nhac_trong_cau(bang: v2.BangV2, cau: str, trong) -> frozenset:
+    """Các điểm của lịch (`trong`) mà câu người dùng có GỌI RÕ tên (cùng luật với rào chỗ neo — `_neo_trong_cau`)."""
+    trong = set(trong)
+    return frozenset(j for j in trong if _neo_trong_cau(bang, j, bang.theo_id[j]["ten"], cau, trong)[0])
+
+
 _DAT_TRUOC = re.compile(r"(?<!\w)(?:đặt|chèn|xếp)\s+trước(?!\w)")
 _KHONG_DAT_TRUOC = re.compile(r"(?<!\w)(?:không|đừng|chớ|khỏi)\s+(?:\w+\s+){0,3}?(?:đặt|chèn|xếp)\s+trước(?!\w)")
 
@@ -1574,7 +1600,7 @@ def cau_goi_y(bang: v2.BangV2, kq: dict) -> tuple[str, ...]:
     """Các câu ĐÃ được gợi ý trong khối thay đổi của lượt này (do code dựng, không chữ người dùng / chữ model) — route nhớ đúng một lượt để lần hiểu ý
     của lượt kế hiểu được lời đồng ý cụt ("ok thay đi"). Lượt không có dòng gợi ý ⇒ rỗng."""
     return (tuple(nut_bo_trong(bang, a)["gui"] for a in kq["da_ap"] if a.get("goi_y_thay"))
-            + tuple(n["gui"] for k in kq["khong_doi"] if k["ma_luat"] in ("them_hoi", "them_chen_hoi", "ten_mo_ho") for n in nut_them(bang, k))
+            + tuple(n["gui"] for k in kq["khong_doi"] if k["ma_luat"] in ("them_hoi", "them_chen_hoi", "ten_mo_ho", "doi_cho_hoi") for n in nut_them(bang, k))
             + tuple(_cau_cach(bang, k["diem"], g, False) for k in kq["khong_doi"] for g in k.get("cach") or ())
             + tuple(c for k in kq["khong_doi"] if k["ma_luat"] == "bo_toi_hoi" for c in _cau_bo_toi(k))
             + tuple(n["gui"] for k in kq["khong_doi"] if k["ma_luat"] == "toi_doi_cho_hoi" for n in nut_khong_doi(bang, kq, k)))  # `chon_doi_toi` đọc lại ở lượt kế
@@ -1611,7 +1637,8 @@ def nut_khong_doi(bang: v2.BangV2, kq: dict, k: dict) -> list[dict]:
         # mỗi chỗ của `goi_y` — đã thử bằng đúng phép thử của lần dời thật — là một nút gửi lệnh dời đủ tên. Chỗ đích đang có đúng một điểm thì lần
         # dời thật ĐỔI CHỖ hai điểm ⇒ nhãn nút nói rõ điểm đó (bấm nút là lời đồng ý cho điểm kia dời theo). Nhiều nhất `MAX_CHO_HOI` nút; câu vẫn kể đủ.
         return [{"nhan": f"Dời sang buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']}" + (f" (đổi chỗ với {ten_cua_diem(bang, g['doi_voi'])})" if g["doi_voi"] else ""),
-                 "gui": f"dời {k['diem']} sang buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']}"} for g in k["goi_y"][:MAX_CHO_HOI]]
+                 "gui": f"dời {k['diem']} sang buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']}" + (f", đổi chỗ với {ten_cua_diem(bang, g['doi_voi'])}" if g["doi_voi"] else "")}
+                for g in k["goi_y"][:MAX_CHO_HOI]]
     if "ngay_duoc" in k:  # công tắc `sua_lich_hoi_truoc`: chỉ các tối mà lần đặt thật nhận; lịch chưa có ngày đi + nơi chỉ mở vài tối trong tuần ⇒ nút mở biểu mẫu
         nut = [{"nhan": f"Tối ngày {d}", "gui": f"tối ngày {d} đi {k['diem']}"} for d in k["ngay_duoc"]]
         return nut + ([{"nhan": "Mở biểu mẫu để chọn ngày đi", "mo": "bieu_mau"}] if ma == "toi_ten_theo_thu" and not kq["luu"].get("ngay_di") else [])
@@ -1696,6 +1723,8 @@ def nut_them(bang: v2.BangV2, k: dict) -> list[dict]:
     x = k["diem"]
     if k["ma_luat"] == "ten_mo_ho":  # cách gọi trỏ tới nhiều điểm: mỗi ứng viên một nút gửi lại đúng lệnh đó với TÊN ĐỦ
         return [{"nhan": ten_cua_diem(bang, j), "gui": _cau_lenh(k["lenh"], ten_cua_diem(bang, j))} for j in k["ung_vien"]]
+    if k["ma_luat"] == "doi_cho_hoi":  # dời vào chỗ đang có điểm khác: MỘT nút, câu gửi có tên điểm bị đổi chỗ
+        return [{"nhan": f"Dời {x} sang buổi {NHAN_BUOI[k['dich'][1]]} ngày {k['dich'][0]} (đổi chỗ với {k['kia']})", "gui": k["gui"]}]
     if k["ma_luat"] == "them_chen_hoi":  # chèn trước một điểm đang có: MỘT nút, câu gửi mang lời đồng ý "đặt trước …" (code đọc — `dong_y_chen_cau`)
         return [{"nhan": f"Đặt {x} trước {k['truoc']}", "gui": k["gui"]}]
     if k["ma_luat"] == "them_hoi":
@@ -1724,6 +1753,9 @@ def _cau_them_hoi(bang: v2.BangV2, k: dict) -> str:
         return (f"“{x}” có thể là {ke} — bạn muốn nói điểm nào?{da_co} Bấm một nút dưới đây, hoặc nhắn lại kèm tên đầy đủ. Lịch chưa đổi gì." if len(ten) > 1 or k["con"]
                 else f"Bạn muốn nói {ke} phải không?{da_co} Bấm nút dưới đây để làm, hoặc nhắn lại kèm tên đầy đủ. Lịch chưa đổi gì.")
     ngay, buoi = k["dich"]
+    if k["ma_luat"] == "doi_cho_hoi":
+        return (f"Buổi {NHAN_BUOI[buoi]} ngày {ngay} đang là {k['kia']} — dời {x} sang đó thì {k['kia']} chuyển sang buổi {NHAN_BUOI[k['cho_cu'][1]]} ngày "
+                f"{k['cho_cu'][0]}. Bạn có muốn vậy không? Bấm nút dưới đây để đồng ý, hoặc nhắn một buổi khác. Lịch chưa đổi gì.")
 
     def cho(g: dict) -> str:
         return f"buổi {NHAN_BUOI[g['buoi']]} ngày {g['ngay']}"
@@ -1861,6 +1893,9 @@ def thay_doi(bang: v2.BangV2, kq: dict) -> list[dict]:
                        + (_cau_toi_xep_lai(bang, a["toi_xep_lai"]) if a.get("toi_xep_lai") else ""))
         elif t == "doi_buoi":
             out.append(f"Đã dời {ten_cua_diem(bang, a['diem'])} sang buổi {NHAN_BUOI[a['buoi']]} ngày {a['ngay']}."
+                       # chỗ đích vốn có một điểm ⇒ hai điểm đổi chỗ: nêu cả điểm kia (trước 24/11/2026 câu báo im về nó — 0 / 24 dòng "Đã dời" của sổ vết)
+                       + (f" {ten_cua_diem(bang, a['doi_voi']['diem'])} chuyển sang buổi {NHAN_BUOI[a['doi_voi']['buoi']]} ngày {a['doi_voi']['ngay']}."
+                          if a.get("doi_voi") else "")
                        + (_cau_day(a["day"]) if a.get("day") else "") + (_cau_khu(a["khu"]) if a.get("khu") else "")
                        + (_cau_khu(a["khu_van"], True) if a.get("khu_van") else "")
                        + (_cau_toi_xep_lai(bang, a["toi_xep_lai"]) if a.get("toi_xep_lai") else ""))
