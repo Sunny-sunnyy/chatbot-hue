@@ -41,7 +41,7 @@ def _ghi(**them) -> dict:
 
 def test_hoi_dap_du_bon_nhom_dung_thu_tu():
     ban = tom_tat(_ghi(), bai_ids={A})
-    assert ban["loai"] == "hoi_dap" and ban["tom_tat"] == "Trợ lý gọi model 3 lần, tìm trong kho 2 lần, đọc 4 đoạn, trích 1 nguồn."
+    assert ban["loai"] == "hoi_dap" and ban["tom_tat"] == "Trợ lý gọi model 3 lần, tìm trong kho 2 lần, đưa 4 đoạn kho cho model, trích 1 nguồn."
     assert [g["viec"] for g in ban["goi_model"]] == ["phan_loai", "tim_them", "viet"] and ban["goi_model"][0] == {"viec": "phan_loai", "nhan": "Phân loại câu hỏi", "giay": 0.8}
     # một dãy bước: tìm (code) ⇒ công cụ ⇒ tìm (model); mục "hết lượt tìm" không phải một lần tìm thật ⇒ không thành bước
     assert [(b["loai"], b["ai"], b["nhan"]) for b in ban["buoc"]] == [
@@ -63,14 +63,15 @@ def test_hoi_dap_du_bon_nhom_dung_thu_tu():
 def test_cau_gui_khac_cau_go_bi_cat_va_dem_luot_truoc():
     ban = tom_tat(_ghi(cau_gui_model="x" * 1000, lich_su=[["a", "b"], ["c", "d"]]))
     assert ban["cau"]["gui"] == "x" * TRAN_CAU_GUI + "…" and ban["cau"]["so_luot_truoc"] == 2
-    assert "Trợ lý được đọc 2 lượt trước của cuộc trò chuyện." in ban["ghi_chu"]
+    assert "Model được đưa kèm 2 lượt trước của cuộc trò chuyện." in ban["ghi_chu"]
 
 
 def test_tu_choi_ngoai_pham_vi_va_bo_nho_dem():
     tu_choi = tom_tat(_ghi(so_do={"outcome": "success", "refusal": True, "total_ms": 5000.0}, tra_loi={"chu": "…", "nguon_trich": None},
                            web={"cau_gui_tra_web": "câu ra web", "so_web": [{}, {}]}))
     assert tu_choi["loai"] == "tu_choi" and tu_choi["nguon"] == [] and tu_choi["web"] == {"cau": "câu ra web", "so_nguon": 2}
-    assert "không đoạn nào trả lời được" in tu_choi["tom_tat"] and any("chưa được kiểm với kho" in c for c in tu_choi["ghi_chu"])
+    assert tu_choi["tom_tat"].endswith("lượt này không có căn cứ đủ để trả lời.") and "không đoạn nào" not in tu_choi["tom_tat"]  # chữ chỉ nói điều hệ thống biết
+    assert any("Hệ thống không tự kiểm lại" in c for c in tu_choi["ghi_chu"]) and any("chưa được kiểm với kho" in c for c in tu_choi["ghi_chu"])
     ngoai = tom_tat(_ghi(so_do={"outcome": "out_of_scope"}, tim_kho=[], cong_cu=[], goi_model=[{"route": "router", "kind": ["message"], "ms": 700.0}],
                          tra_loi={"chu": "…", "nguon_trich": None}))
     assert ngoai["loai"] == "ngoai_pham_vi" and ngoai["buoc"] == [] and [g["viec"] for g in ngoai["goi_model"]] == ["phan_loai"]
