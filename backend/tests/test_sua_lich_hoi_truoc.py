@@ -428,13 +428,20 @@ def test_a_typed_move_into_an_occupied_slot_asks_before_swapping_the_other_place
             (nut,) = d["nut"]
             assert nut["gui"] == f"dời {T[a]['ten']} sang buổi {s.NHAN_BUOI[c[1]]} ngày {c[0]}, đổi chỗ với {T[y]['ten']}" and nut["gui"] in s.cau_goi_y(B, hoi)
             assert s.diem_dong_y_doi_cho(B, nut["gui"], set(vt)) == {y}
+            for cau in (f"đổi chỗ với {T[y]['ten']}", f"hoán đổi với {T[y]['ten']} nhé", f"dời {T[a]['ten']} sang buổi {s.NHAN_BUOI[c[1]]} ngày {c[0]}; tráo với {T[y]['ten']} giúp mình"):
+                assert s.diem_dong_y_doi_cho(B, cau, set(vt)) == {y}, cau  # lời đổi chỗ thật vẫn là đồng ý
             for dong_y in ({"dong_y_doi_cho": frozenset({y})}, {"chen_da_hoi": (nut["gui"],)}):  # bấm nút · đáp "ừ" ở lượt kế
                 assert s.ap(B, luu, hd, **dong_y, **MOI)["khung"] == cu["khung"]
             # câu chỉ NHẮC TÊN Y mà không có lời đổi chỗ (người đọc nhánh dò 24/11/2026: 28 / 28 mẫu từng làm Y bị đẩy đi) ⇒ không phải đồng ý ⇒ vẫn hỏi
             x_ten, y_ten, noi = T[a]["ten"], T[y]["ten"], f"buổi {s.NHAN_BUOI[c[1]]} ngày {c[0]}"
             for cau in (f"dời {x_ten} sang {noi}, giữ nguyên {y_ten}", f"dời {x_ten} sang {noi}, đừng đụng tới {y_ten}", f"dời {x_ten} sang {noi} đi cùng {y_ten}",
                         f"dời {x_ten} sang {noi} cho gần {y_ten}", f"dời {x_ten} sang {noi} vì {y_ten} mình đi rồi", f"dời {x_ten} sang {noi}, đừng đổi chỗ với {y_ten}",
-                        f"dời {x_ten} sang {noi}, không đổi chỗ với {y_ten}"):
+                        f"dời {x_ten} sang {noi}, không đổi chỗ với {y_ten}",
+                        # lượt dò thứ hai: có lời đổi chỗ + tên Y nhưng câu KHÔNG phải lời đồng ý (câu hỏi, điều kiện, phủ định đứng sau, tên Y ở vế khác ý)
+                        f"dời {x_ten} sang {noi}, có phải đổi chỗ với {y_ten} không?", f"dời {x_ten} sang {noi} thì có phải đổi chỗ với {y_ten} không",
+                        f"dời {x_ten} sang {noi}, đổi chỗ với {y_ten} được không?", f"dời {x_ten} sang {noi}, nếu phải đổi chỗ với {y_ten} thì thôi",
+                        f"dời {x_ten} sang {noi}, đổi chỗ với {y_ten} thì mình không chịu", f"dời {x_ten} sang {noi}, đổi chỗ với Hổ Quyền và {y_ten} giữ nguyên",
+                        f"dời {x_ten} sang {noi}, đảo lại cho {y_ten} khỏi bị dời"):
                 dy = s.diem_dong_y_doi_cho(B, cau, set(vt))
                 assert dy == frozenset() and s.ap(B, luu, hd, dong_y_doi_cho=dy, **MOI)["khung"] == k, cau
             # Y có lệnh dời RIÊNG trong cùng lượt ("cho X lên…, còn Y để <chỗ cũ của X>") ⇒ không hỏi; câu báo không lặp vế "Y chuyển sang…"

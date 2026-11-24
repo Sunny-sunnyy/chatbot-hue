@@ -1612,31 +1612,42 @@ def _cau_doi_cho(bang: v2.BangV2, i: str, cho: tuple[int, str], kia: str) -> str
     return f"dời {ten_cua_diem(bang, i)} sang buổi {NHAN_BUOI[cho[1]]} ngày {cho[0]}, đổi chỗ với {ten_cua_diem(bang, kia)}"
 
 
-_KHONG_TRUOC = {"không", "đừng", "chớ", "khỏi", "chưa"}
-
-
 def diem_dong_y_doi_cho(bang: v2.BangV2, cau: str, trong) -> frozenset:
-    """Các điểm của lịch (`trong`) mà câu người dùng NÓI RÕ là cho đổi chỗ: sau một lời đổi chỗ ("đổi chỗ", "hoán đổi", "tráo", "đảo") không có phủ định
-    đứng trước, tên điểm đứng ngay sau chữ nối "với / và / cho" — "…, đổi chỗ với Y" (câu của nút), "đổi chỗ X với Y", "hoán đổi X và Y".
-    Chỉ có TÊN Y trong câu thì KHÔNG đủ (người đọc nhánh dò 24/11/2026: "dời X sang chiều ngày 1, đừng đụng tới Y", "… đi cùng Y", "… giữ nguyên Y" đều
-    từng làm Y bị đẩy đi — 28 / 28 mẫu): hỏi thừa một lượt rẻ hơn đổi sai."""
+    """Các điểm của lịch (`trong`) mà câu người dùng NÓI RÕ là cho đổi chỗ. Đọc theo DANH SÁCH CHO PHÉP như `_doc_ve` / `_doc_doi_cho` (từ chối nhầm được
+    phép — chỉ là hỏi thêm một lượt; áp sai thì không): một VẾ của câu (cắt ở dấu phẩy / chấm phẩy) phải gồm ĐÚNG [chữ đệm] [lời đổi chỗ: "đổi chỗ",
+    "hoán đổi", "tráo", "đảo"] [tên X — có hoặc không] [MỘT chữ nối "với / và / cho"] [tên Y] [chữ đệm]; Y là điểm của lịch, gọi bằng tên riêng. Vế có
+    bất kỳ chữ nào khác, câu có dấu "?" ⇒ không tính. Câu của nút ("dời X sang buổi … ngày N, đổi chỗ với Y") và "đổi chỗ X với Y" qua được.
+    Vì sao hẹp vậy (người đọc nhánh dò 24/11/2026, hai lượt): chỉ cần TÊN Y trong câu thì "…, đừng đụng tới Y", "… đi cùng Y" làm Y bị đẩy đi (28 / 28 mẫu);
+    chỉ cần lời đổi chỗ + tên Y thì "…, có phải đổi chỗ với Y không", "nếu phải đổi chỗ với Y thì thôi", "đổi chỗ với Z và Y giữ nguyên" cũng vậy (84 / 84)."""
     trong = set(trong)
-    tu = _tu(chuan_ten(cau))
+    if "?" in cau or "？" in cau:
+        return frozenset()
+
+    def nhac(tu: list[str], q: int) -> tuple[int, list[str], bool]:
+        for n in range(min(len(tu) - q, 12), 0, -1):  # lần nhắc tên dài nhất bắt đầu ở chữ thứ q
+            uv, chi_loai = _ung_vien(bang, " ".join(tu[q:q + n]))
+            if uv:
+                return n, uv, chi_loai
+        return 0, [], False
+
     ra = set()
-    for p in range(len(tu)):
-        mo = next((m for m in _DOI_CHO_MO if tuple(tu[p:p + len(m)]) == m), None)
-        if mo is None or _KHONG_TRUOC & set(tu[max(0, p - 3):p]):
+    for ve in re.split(r"[,;]", unicodedata.normalize("NFC", cau)):
+        tu = _tu(chuan_ten(ve))
+        p, mo = next(((k, m) for k in range(len(tu)) for m in _DOI_CHO_MO if tuple(tu[k:k + len(m)]) == m), (None, None))
+        if mo is None or any(t not in _DOI_CHO_DEM for t in tu[:p]):
             continue
-        for q in range(p + len(mo), len(tu)):
-            if tu[q] not in _DOI_CHO_NOI:
+        q = p + len(mo)
+        if q < len(tu) and tu[q] not in _DOI_CHO_NOI:  # tên X đứng giữa lời đổi chỗ và chữ nối
+            n, _, _ = nhac(tu, q)
+            if n == 0:
                 continue
-            for n in range(min(len(tu) - q - 1, 12), 0, -1):  # lần nhắc tên dài nhất ngay sau chữ nối
-                uv, chi_loai = _ung_vien(bang, " ".join(tu[q + 1:q + 1 + n]))
-                if uv:
-                    uv = [x for x in uv if x in trong]
-                    if len(uv) == 1 and not chi_loai:
-                        ra.add(uv[0])
-                    break
+            q += n
+        if q >= len(tu) or tu[q] not in _DOI_CHO_NOI:
+            continue
+        n, uv, chi_loai = nhac(tu, q + 1)
+        uv = [x for x in uv if x in trong]
+        if n and len(uv) == 1 and not chi_loai and all(t in _DOI_CHO_DEM for t in tu[q + 1 + n:]):
+            ra.add(uv[0])
     return frozenset(ra)
 
 
