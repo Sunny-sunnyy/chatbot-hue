@@ -22,7 +22,7 @@ sed -i "s/^\(  provider: \)[a-z]*/\1$PROVIDER/" cau_hinh/settings.yaml
 grep -q "^  provider: $PROVIDER\b" cau_hinh/settings.yaml || { echo "DỪNG: không ghi được dòng provider vào cau_hinh/settings.yaml" >&2; exit 1; }
 # Ba công tắc chỉ định bật ở máy demo — bản đưa lên GHI SẴN tắt (ảnh dựng từ commit cũ chưa có dòng nào thì bỏ qua dòng đó):
 #   vi_sao — nút "Vì sao trả lời vậy?" · so_tay — sổ tay cho chuyến đi (một sổ tay 9–10 lời gọi model mà tính một lượt; chưa có trần riêng — 24/11/2026)
-#   ho_so_chu_de — hồ sơ theo chủ đề (một hồ sơ 4–8 lời gọi model mà tính một lượt; chưa có trần riêng — 24/11/2026)
+#   ho_so_chu_de — hồ sơ theo chủ đề (một hồ sơ 3–9 lời gọi model mà tính một lượt; chưa có trần riêng — 24/11/2026)
 for cong_tac in vi_sao so_tay ho_so_chu_de; do
   if grep -q "^  $cong_tac:" cau_hinh/settings.yaml; then
     sed -i "s/^\(  $cong_tac: \)true/\1false/" cau_hinh/settings.yaml
