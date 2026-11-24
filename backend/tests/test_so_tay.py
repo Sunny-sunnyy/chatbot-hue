@@ -138,13 +138,17 @@ def test_gio_mo_cua_chi_tu_dong_cua_bai_khong_tu_bang_diem_cua_lich():
 
 @pytest.mark.parametrize("chu", ["Lăng mở cho khách từ 7h đến 17h30", "Phố hoạt động từ 18h đến 22h", "Chùa đón khách cả ngày, nghỉ trưa 11h30–13h30",
                                  "Vào cổng tự do, không thu phí", "Điểm này không bán vé", "Phí tham quan 50.000/người", "Người lớn 150.000, trẻ em 30.000",
-                                 "Trẻ dưới 7 tuổi không mất tiền vé", "Mở cửa từ 7h30", "Giá vé 50.000 đồng", "Vào cửa miễn phí"])
+                                 "Trẻ dưới 7 tuổi không mất tiền vé", "Mở cửa từ 7h30", "Giá vé 50.000 đồng", "Vào cửa miễn phí",
+                                 "Tham quan được từ 7:00 tới 17:30", "Bảo tàng đóng cửa thứ Hai hằng tuần"])
 def test_loc_y_bo_y_noi_gio_mo_cua_hoac_gia_bang_loi_khac(chu):
     assert st.loc_y([{"chu": chu, "nguon": [1]}], {1}, 4) == ([], {"khong_nguon": 0, "qua_dai": 0, "gio_gia": 1, "qua_tran": 0, "chu": [("gio_gia", chu)]})
 
 
 @pytest.mark.parametrize("chu", ["Có bãi gửi xe miễn phí cạnh cổng", "Mỗi năm đón hơn 2 triệu lượt khách", "Khuôn viên rộng hơn 12 nghìn m²", "Chợ mở từ thời Gia Long",
-                                 "Bình minh 04h30 – 06h00 mặt đầm phủ sương", "Nên bắt đầu đi từ khoảng 17:30 để kịp hoàng hôn", "Lăng xây năm 1864, hoạt động từ năm 1883"])
+                                 "Bình minh 04h30 – 06h00 mặt đầm phủ sương", "Nên bắt đầu đi từ khoảng 17:30 để kịp hoàng hôn", "Lăng xây năm 1864, hoạt động từ năm 1883",
+                                 "Quán từng có phòng trưng bày gốm sứ, nhưng nay đã đóng cửa vĩnh viễn", "Bảo tàng quản lý hơn 11.000 hiện vật triều Nguyễn",
+                                 "Xe buýt hai tầng dừng ở Lăng Tự Đức nhưng vé xe không gồm vé vào cổng, du khách phải mua vé di tích riêng",
+                                 "Nên dành 2 giờ tham quan và mang theo nước uống"])
 def test_loc_y_khong_bo_oan_y_chi_nhac_so_hoac_gio_trong_ngay(chu):
     assert st.loc_y([{"chu": chu, "nguon": [1]}], {1}, 4)[0] == [f"{chu} [1]"]
 

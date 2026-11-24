@@ -43,15 +43,28 @@ SO_DOAN_TU_TIM = 4   # nhiều nhất chừng này đoạn của bài lấy theo
 CUM_LOI_DAN = "lưu ý du khách trang phục ứng xử quy tắc nên không được giữ yên lặng xin phép an toàn giày"
 SO_DOAN_LOI_DAN = 2
 CAU_TIM_DI_LAI = "Đi lại giữa các điểm tham quan ở Huế: taxi, xe máy, xe đạp, xích lô, thuyền"
-# Ý của model NÓI VỀ giờ mở cửa hoặc giá ⇒ ý đó bị bỏ: hai thứ này chỉ đi đường code chép. Giờ trong ngày nói về cảnh ("bình minh 04h30 – 06h00"), giờ nên
-# đi ("bắt đầu từ khoảng 17:30"), con số không phải tiền ("2 triệu lượt khách", "12 nghìn m²") KHÔNG bị bỏ. Lịch sử: bản đầu "mọi con số giờ" làm mục Đầm
-# Chuồn mất hết ý "Nên xem" (lượt thật 24/11/2026); phiên đo dò 22 câu tự đặt: lọt 8 câu nói giờ / giá bằng lời khác, bỏ oan 4 câu ⇒ các cụm dưới đây.
-_GIO_GIA = re.compile(
-    r"mở cửa|đóng cửa|giờ mở|mở từ\s*\d|mở (?:cho|đón) khách|đón khách (?:từ|cả ngày|đến|lúc)|hoạt động từ\s*\d{1,2}\s*(?:h|g|:|giờ)|ngừng bán vé|không bán vé|"
-    r"giá vé|vé vào|vé tham quan|vé người lớn|vé trẻ em|tiền vé|phí tham quan|không (?:thu|mất) (?:phí|tiền)|vào (?:cửa|cổng) tự do|"
-    r"miễn phí(?=[^.]*(?:vé|vào cửa|vào cổng|tham quan))|(?:vé|vào cửa|vào cổng|tham quan)[^.]*miễn phí|"
-    r"\d[\d.,]*\s*(?:đồng|đ\b|vnd|vnđ|k\b)|\d[\d.,]*\s*(?:nghìn|ngàn|triệu)(?!\s*(?:lượt|người|khách|m\b|m²|m2|km|ha|năm))|"
-    r"(?:phí|vé|người lớn|trẻ em)[^.\d]{0,20}\d{2,3}\.\d{3}", re.IGNORECASE)
+# Một VẾ câu của model NÓI VỀ giờ mở cửa hoặc giá ⇒ vế đó bị gỡ (`go_ve_gio_gia`): hai thứ này chỉ đi đường code chép. Phải có ĐỦ hai dấu hiệu mới tính:
+# từ về mở / đóng cửa + một mốc giờ hay ngày; hoặc từ về vé / phí + một số tiền; hoặc câu nói rõ không thu tiền / không bán vé / không niêm yết giờ.
+# KHÔNG tính: giờ trong ngày nói về cảnh ("bình minh 04h30 – 06h00"), giờ nên đi, số không phải tiền ("2 triệu lượt khách", "11.000 hiện vật"), "đã đóng
+# cửa vĩnh viễn", "vé xe không gồm vé vào cổng", "bãi gửi xe miễn phí".
+# Lịch sử (đều thấy trên lượt thật 24/11/2026): luật "mọi con số giờ" làm mục Đầm Chuồn mất hết ý "Nên xem"; phiên đo dò 22 câu: lọt 8, bỏ oan 4; bản một
+# mẫu chữ gỡ mất vế "nay đã đóng cửa vĩnh viễn" của một quán (người đọc tưởng quán còn mở) và vế "vé xe không gồm vé vào cổng".
+_SO_TIEN = re.compile(r"\d[\d.,]*\s*(?:đồng|đ\b|vnd|vnđ|k\b)|\d[\d.,]*\s*(?:nghìn|ngàn|triệu)(?!\s*(?:lượt|người|khách|m\b|m²|m2|km|ha|năm))")
+_SO_NGHIN = re.compile(r"\d{2,3}\.\d{3}")
+_TU_VE = re.compile(r"\bvé\b|\bphí\b|người lớn|trẻ em")
+_KHONG_THU = re.compile(r"không (?:thu|mất) (?:phí|tiền)|không bán vé|vào (?:cửa|cổng) tự do|không niêm yết|giờ mở cửa|ngừng bán vé")
+_MIEN_PHI_VE = re.compile(r"miễn phí[^,;.]*(?:\bvé\b|vào cửa|vào cổng|tham quan)|(?:\bvé\b|vào cửa|vào cổng|tham quan)[^,;.]*miễn phí")
+_MO_DONG = re.compile(r"mở cửa|đóng cửa|giờ mở|mở từ|mở (?:cho|đón) khách|đón khách|hoạt động từ|nghỉ trưa|tham quan (?:được )?từ")
+_MOC_GIO = re.compile(r"\d{1,2}\s*(?:h|g|:)\s*\d{0,2}(?!\d)|\b\d{1,2}\s*giờ\b|thứ (?:hai|ba|tư|năm|sáu|bảy)|chủ nhật|hằng ngày|hàng ngày|cả ngày|cả tuần")
+
+
+def noi_gio_gia(ve: str) -> bool:
+    """Một vế câu có nói giờ mở cửa hoặc giá không (xem chú thích trên)."""
+    v = _nfc(ve).casefold()
+    return bool(_SO_TIEN.search(v) or (_SO_NGHIN.search(v) and _TU_VE.search(v)) or _KHONG_THU.search(v) or _MIEN_PHI_VE.search(v)
+                or (_MO_DONG.search(v) and _MOC_GIO.search(v)))
+
+
 _TU = re.compile(r"[^\W_]+", re.UNICODE)
 DIA_CHI_DAI = 120   # dòng địa chỉ dài hơn ⇒ cắt ở dấu ngoặc đầu (phần trong ngoặc của kho là lịch sử địa giới hành chính); nguồn vẫn giữ nguyên dòng
 _MA = re.compile(r"\s*\[\s*(?:nguồn\s*)?\d+\s*\]", re.IGNORECASE)
@@ -136,9 +149,10 @@ def go_ve_gio_gia(chu: str) -> str | None:
     """Ý có vế nói giờ mở cửa / giá: gỡ ĐÚNG các vế đó (vế = phần giữa hai dấu phẩy / chấm phẩy), giữ phần còn lại khi nó còn đủ dài; trả None khi không còn
     gì đáng giữ. Ý không có vế nào như vậy ⇒ trả nguyên. Vì sao không bỏ cả ý (bản trước): bài Chùa Từ Hiếu viết "không niêm yết giờ mở cửa hay vé chính
     thức, nên đến vào ban ngày… mặc trang phục kín đáo" — model gộp thành một ý, bỏ cả ý làm mục "Lưu ý" rỗng trong khi bài có lời dặn (phiên đo 24/11/2026)."""
-    if not _GIO_GIA.search(chu):
+    ve = re.split(r"[,;]\s+", chu)
+    giu = [v for v in ve if not noi_gio_gia(v)]
+    if len(giu) == len(ve):
         return chu
-    giu = [v for v in re.split(r"[,;]\s+", chu) if not _GIO_GIA.search(v)]
     con = re.sub(r"^(?:và|nhưng|còn|song)\s+", "", ", ".join(giu).strip(" .,;"), flags=re.IGNORECASE)
     if len(con) < VE_CON_LAI_NGAN:
         return None
