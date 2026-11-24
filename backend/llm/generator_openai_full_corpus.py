@@ -36,6 +36,8 @@ from llm.full_corpus_prompt import (
     LICH_TRINH_MO_TA,
     LIET_KE_MO_TA,
     NGAY_LICH_MO_TA,
+    SO_TAY_DI_LAI_LOI_DAN,
+    SO_TAY_DIEM_LOI_DAN,
     THOI_TIET_MO_TA,
     TOOL_VONG_CUOI_TEXT,
     CHAT_INSTRUCTIONS,
@@ -116,6 +118,27 @@ class RouteSplitOutput(BaseModel):
 
 
 ROUTER_OUTPUTS = {"v1": (RouteSearchOutput, ROUTER_SEARCH_V1), "v3": (RouteSplitOutput, ROUTER_SEARCH_V3)}
+
+
+class YSoTay(BaseModel):
+    """Công tắc `so_tay` (bản thử): một ý của sổ tay + số các nguồn đỡ nó — code kiểm số nguồn, độ dài, giờ / giá (`llm/so_tay.loc_y`)."""
+    model_config = ConfigDict(extra="forbid")
+    chu: str
+    nguon: list[int]
+
+
+class MucDiemSoTayOutput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    nen_xem: list[YSoTay]
+    luu_y: list[YSoTay]
+
+
+class DiLaiSoTayOutput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    di_lai: list[YSoTay]
+
+
+SO_TAY_OUTPUTS = {"diem": MucDiemSoTayOutput, "di_lai": DiLaiSoTayOutput}
 ASSISTANT_MAX_TURNS = 4  # B2 D5 (A quyết (b)): ≤ 2 lần tìm thật + lần 3 "đã hết lượt" + 1 lượt viết
 
 
@@ -425,6 +448,13 @@ class OpenAIFullCorpusGenerator:
                                          reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
             output_type=CauLichOutput,
         )
+        # Công tắc `so_tay` (bản thử): mỗi mục của sổ tay một lời gọi riêng, đầu ra có khuôn; không công cụ, không lịch sử, suy luận như lượt biểu mẫu
+        self.so_tay_agents = {
+            loai: Agent(name=f"hue_so_tay_{loai}", instructions=loi_dan, model=self.responses_model,
+                        model_settings=ModelSettings(include_usage=True, store=False, reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
+                        output_type=SO_TAY_OUTPUTS[loai])
+            for loai, loi_dan in (("diem", SO_TAY_DIEM_LOI_DAN), ("di_lai", SO_TAY_DI_LAI_LOI_DAN))
+        }
         # Sửa lịch bản 2: lần gọi riêng chỉ hiểu ý ⇒ hành động có tên (code áp); không công cụ, không lịch sử, suy luận thấp
         self.sua_lich_agent = Agent(
             name="hue_sua_lich",
@@ -555,6 +585,18 @@ class OpenAIFullCorpusGenerator:
         """Lời dặn trợ lý thật sự gửi đi ở lượt này — bộ dựng ngữ cảnh đếm ngân sách bằng chính chuỗi này (B3 D5). B5: công cụ `lich_trinh`
         **không** thêm lời dặn (plan B5 bản 7 D7)."""
         return self.assistant_history_instructions if history else self.assistant_instructions
+
+    async def viet_so_tay(self, loai: str, prompt: str, call_log: "CallLog") -> dict:
+        """Công tắc `so_tay`: MỘT lời gọi viết một mục (`loai` = "diem" | "di_lai") ⇒ dict các danh sách `[{chu, nguon}]`. Lỗi / hết giờ / sai khuôn ⇒
+        `GenerationError` (route in mục đó chỉ với các dòng do code chép)."""
+        result = await self._run(self.so_tay_agents[loai], prompt, call_log, self.timeout)
+        output = getattr(result, "final_output", None)
+        kieu = SO_TAY_OUTPUTS[loai]
+        try:
+            parsed = output if isinstance(output, kieu) else (kieu.model_validate_json(output) if isinstance(output, str) else kieu.model_validate(output))
+        except Exception as exc:
+            raise GenerationError("Invalid handbook section output") from exc
+        return parsed.model_dump()
 
     async def route(self, query: str, call_log: "CallLog", history=()) -> str:
         """Định tuyến (B1 D3): tuyến model chọn. Lỗi / hết giờ (`router_timeout`) / đầu ra hỏng ⇒ `GenerationError` (lõi đổi thành `tro_ly_hue`)."""

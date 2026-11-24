@@ -34,7 +34,7 @@ SETTINGS = load_settings(validate_private_paths=False)
 # MỘT chỗ duy nhất liệt kê các cờ phụ thuộc "sửa lịch bản 2" / nơi ở mà test phải tự tắt (test không đọc cờ thật của settings.yaml).
 # Thêm một cờ mới cần `sua_lich_v2` ⇒ thêm vào ĐÂY; `test_cong_dot_1.flags_from` nhập hằng này từ đây (chiều ngược lại là nhập vòng) (19/11: chép tay ở hai file ⇒ vấp hai lần khi bật cờ).
 CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lich_doi_cho_code": False, "luu_tru_lich": False, "quan_lich": False, "ban_do_lich": False,
-                   "lich_vao_hoi_thuong": False,
+                   "lich_vao_hoi_thuong": False, "so_tay": False,
                    # 21/11/2026: bốn cờ sửa lịch thêm ngày 20–21/11 chưa được ghi vào đây ⇒ lúc mở `sua_lich_kem_hoi` trong settings, 13 file test hỏng ngay khi nạp
                    "sua_lich_buoi_toi": False, "sua_lich_kem_hoi": False, "sua_lich_them_khong_the": False, "sua_lich_doi_cho_ngay": False,
                    # 23/11/2026: hai công tắc buổi tối — `bo_toi_de_trong` cần `sua_lich_v2`, `toi_nhe` cần `len_ke_hoach_v2` + bảng điểm ⇒ tắt theo (giả lập mở

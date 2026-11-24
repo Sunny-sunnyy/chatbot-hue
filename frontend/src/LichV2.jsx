@@ -106,7 +106,7 @@ const THU_V2 = ["Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu"
 // duyệt như link bản đồ); điểm không có ảnh ⇒ không vẽ gì (không ảnh thay). Không hiện dòng ghi công (User 14/11: nguồn chỉ còn trong bảng
 // dữ liệu). `src` của server tính từ gốc `public/` ⇒ ghép `BASE_URL` (/static/) như ảnh cổng (`anh.js`).
 const ANH_LICH = "/anh/lich/";
-function anhHopLe(a) {
+export function anhHopLe(a) {
   // chỉ file tự host dưới /anh/lich/ (server đã kiểm nguồn lúc khởi động; giao diện không hiện ghi công — User 14/11)
   return !!a && typeof a.src === "string" && a.src.startsWith(ANH_LICH) && !a.src.slice(ANH_LICH.length).includes("/");
 }
@@ -349,6 +349,9 @@ function NutIcs({ lich, cau, anToan }) {
 // - "Tải PowerPoint": `GET /api/lich/pptx` — server dựng từ lịch ĐÃ LƯU của cuộc (lịch MỚI NHẤT, hết hạn sau 30 phút); trình duyệt không gửi lịch lên.
 let XUAT_LICH = false;
 export function batXuatLich(co) { XUAT_LICH = co === true; }
+// Bản thử "Sổ tay cho chuyến đi" (công tắc server `so_tay`, mặc định tắt): App đưa hàm mở trang sổ tay khi công tắc bật; không có hàm ⇒ không vẽ nút.
+let MO_SO_TAY = null;
+export function batSoTay(mo) { MO_SO_TAY = typeof mo === "function" ? mo : null; }
 
 function XuatLich() {
   const [bao, setBao] = useState("");
@@ -390,6 +393,7 @@ function XuatLich() {
     <span className="lkh-xuat" ref={ref}>
       <button type="button" className="retry lkh-nut-in" onClick={inLich}>In / Lưu PDF</button>
       <button type="button" className="retry" onClick={taiPptx}>Tải PowerPoint</button>
+      {MO_SO_TAY && <button type="button" className="retry lkh-nut-so-tay" onClick={MO_SO_TAY}>Sổ tay cho chuyến đi</button>}
       <span className="text-sm text-muted" role="status">{bao}</span>
     </span>
   );
