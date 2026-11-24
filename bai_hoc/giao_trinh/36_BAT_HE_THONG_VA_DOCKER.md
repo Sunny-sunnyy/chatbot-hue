@@ -1,6 +1,6 @@
 # Bài 36 — Bật hệ thống trên máy, và đóng gói bằng Docker
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · bản 13:25: hàng "danh sách file của gói" sửa theo gói mới (11:07 23/11) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · bản 13:25: hàng "danh sách file của gói" sửa theo gói mới (11:07 23/11) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó. · 09:56 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (ba bài kho được thêm câu sáng 24/11; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536).*
 
 **Bài trước đã biết:** máy chủ kiểm một số thứ đúng một lần lúc bật, và bật lúc Qdrant tắt thì không tự hồi (bài 6); kho đổi thì phải cập nhật chỉ mục (bài 12); khoá và các thiết lập lúc chạy (bài 37).
 **Bài này thêm:** bật cả hệ thống trên máy phát triển bằng một lệnh, lệnh đó làm gì và báo gì; "hộp Docker" là gì và hệ thống dùng nó ở đâu; gói ba hộp để mang sang máy khác; và những việc còn phải làm trước khi đưa lên mạng.
@@ -35,7 +35,7 @@ Trước trưa 22/11, bật hệ thống là gõ tay ba bốn lệnh: bật Qdra
 | 2 | giao diện đã được dựng | giao diện chưa được dựng ⇒ chạy lệnh dựng |
 | 3 | có bản ghi chỉ mục (bài 12) | chỉ mục chưa được dựng trên máy này |
 | 4 | nếu model viết là Claude: biết đường tới file khoá Bedrock, và file đó có thật | chưa biết file khoá ở đâu ⇒ ghi đường dẫn vào một file riêng tư, hoặc đặt thiết lập lúc chạy |
-| 5 | bật Qdrant; chờ tối đa khoảng 30 giây cho tới khi Qdrant báo có đủ 9.533 đoạn (từ 18:05 23/11) như bản ghi lúc dựng chỉ mục | không có Docker ⇒ bật Docker Desktop · Qdrant không trả lời · chỉ mục có N đoạn, bản ghi ghi 9.533 ⇒ chỉ mục lệch kho |
+| 5 | bật Qdrant; chờ tối đa khoảng 30 giây cho tới khi Qdrant báo có đủ 9.536 đoạn (từ 07:49 24/11) như bản ghi lúc dựng chỉ mục | không có Docker ⇒ bật Docker Desktop · Qdrant không trả lời · chỉ mục có N đoạn, bản ghi ghi 9.536 ⇒ chỉ mục lệch kho |
 | 6 | cổng 8010 đã có máy chủ chưa: có và báo đủ thì dùng luôn; có mà báo thiếu thì bảo tắt nó trước | cổng đang có một máy chủ báo chưa sẵn sàng ⇒ tắt nó rồi chạy lại |
 | 7 | bật máy chủ; chờ tới 90 giây cho đường báo tình trạng | máy chủ tự thoát · không trả lời sau 90 giây · lên nhưng phần nào "chưa sẵn sàng" |
 
@@ -112,7 +112,7 @@ Lời báo của người dùng là nguyên văn; các dòng đọc từ chươn
 | Nếu | Lệnh bật hoặc người dùng thấy gì | Ai làm gì |
 |---|---|---|
 | Docker Desktop chưa chạy | lệnh dừng: không có lệnh docker, hoặc docker không bật được Qdrant (đọc từ lệnh, chưa thử) | người bật mở Docker Desktop |
-| chỉ mục lệch kho | lệnh dừng: chỉ mục có N đoạn, bản ghi ghi 9.533 | chạy lệnh cập nhật chỉ mục (bài 12) |
+| chỉ mục lệch kho | lệnh dừng: chỉ mục có N đoạn, bản ghi ghi 9.536 | chạy lệnh cập nhật chỉ mục (bài 12) |
 | cổng 8010 có một máy chủ cũ bật lúc Qdrant tắt **(đã thử ca gốc)** | lệnh dừng: cổng đang có máy chủ báo chưa sẵn sàng, hãy tắt nó trước | tắt máy chủ cũ, chạy lại |
 | khoá Bedrock hết hạn | lệnh vẫn in "SẴN SÀNG"; câu hỏi nhận "Không thể tạo câu trả lời vào lúc này." | chủ dự án làm mới file khoá; không cần bật lại |
 | dựng lại gói ba hộp bằng bản nháp hiện có | ứng dụng có thể không khởi động hoặc không trả lời được: bản nháp chép bảng dữ liệu cũ, thiếu bảng khoảng cách, bảng sự kiện, bảng điểm mới; danh sách file bài chép vào gói sinh từ bản ghi chỉ mục ngày 16/11 (263 bài, kho nay 269); file mô tả gói không có chỗ đưa file khoá Bedrock vào hộp, nên mọi câu sẽ nhận "Không thể tạo câu trả lời vào lúc này." | cập nhật gói trước khi dựng (đọc từ file, chưa dựng thử) |

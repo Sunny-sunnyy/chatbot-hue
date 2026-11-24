@@ -1,6 +1,6 @@
 # Bài 6 — Kiến trúc: các khối, vì sao đặt như vậy, và khi một khối hỏng thì sao
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · 11:38: khớp giao diện mới · sửa câu tả lúc chờ ở quyết định 4 theo thẻ chờ mới; quyết định 3 thêm ngoại lệ gọi lại một lần khi nhà cung cấp model lỗi tạm thời · các khối, công nghệ, cách xử lý lỗi đọc từ chương trình và cấu hình 22/11; thời gian từng bước từ một lượt hỏi thật 21/11 (Claude Sonnet 5.5).*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · 11:38: khớp giao diện mới · sửa câu tả lúc chờ ở quyết định 4 theo thẻ chờ mới; quyết định 3 thêm ngoại lệ gọi lại một lần khi nhà cung cấp model lỗi tạm thời · các khối, công nghệ, cách xử lý lỗi đọc từ chương trình và cấu hình 22/11; thời gian từng bước từ một lượt hỏi thật 21/11 (Claude Sonnet 5.5). · 09:56 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (ba bài kho được thêm câu sáng 24/11; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536).*
 
 **Bài trước đã biết:** người dùng thấy sáu trang; ở khung Trợ lý họ gõ câu hỏi và nhận câu trả lời có nguồn.
 **Bài này thêm:** phía sau màn hình có những khối nào, một câu hỏi đi qua chúng theo thứ tự nào, **vì sao** các khối được đặt như vậy, và **một khối hỏng thì sao**. Bài mở bằng vài khái niệm về trang web và máy chủ, giảng từ đầu.
@@ -45,7 +45,7 @@ Phần này dành cho người chưa làm trang web bao giờ. Năm ý dưới �
 ```mermaid
 flowchart LR
   U["Giao diện<br/>trong trình duyệt"] <--> S["Máy chủ"]
-  S <--> Q["Qdrant<br/>9.533 đoạn đã lập chỉ mục"]
+  S <--> Q["Qdrant<br/>9.536 đoạn đã lập chỉ mục"]
   K["Kho 269 bài<br/>+ các bảng dữ liệu"] --> S
   S <--> M["Model viết<br/>(bên ngoài)"]
   S <--> X["Thời tiết, tìm web<br/>(bên ngoài)"]
@@ -301,7 +301,7 @@ Dòng nào có chữ **(đã thử)** là đã được thử thật trưa 22/11
 - Khi điều kiện đổi (tóm tắt bảng ở mục "Mọi tình huống hỏng"): chưa có giới hạn số lượt chạy cùng lúc và mới đo một lần với nhiều người hỏi; có sẵn một bộ đếm số lượt mỗi ngày cho từng người nhưng đang tắt.
 - Lượt ví dụ chính: ngày 21/11/2026; thời gian từng bước theo sổ ghi: lần gọi xếp loại 0,74 giây (cả bước 0,75 giây), tìm 0,040 giây, ghép ngữ cảnh 0,004 giây, viết 3,63 giây, tổng 3,69 giây. Tiền: 0,0034 USD cho lần xếp loại, 0,0144 USD cho lần viết.
 - Ví dụ "phải tìm thêm" mất 7,5 giây với 4 lần gọi model; lượt đó chạy ngày 20/11 với gpt-6-luna, chưa có lượt tương đương trên Claude.
-- Giai đoạn chuẩn bị kho: cắt 269 bài thành 9.533 đoạn, đổi mỗi đoạn thành vector, lập thống kê từ khoá, cất vào Qdrant; khoảng 225 giây cho cả kho, khoảng nửa phút khi chỉ vài bài đổi.
+- Giai đoạn chuẩn bị kho: cắt 269 bài thành 9.536 đoạn, đổi mỗi đoạn thành vector, lập thống kê từ khoá, cất vào Qdrant; khoảng 225 giây cho cả kho, khoảng nửa phút khi chỉ vài bài đổi.
 - Cùng chỗ nhớ với cuộc trò chuyện còn có nhiều nhất 500 câu trả lời đã nhớ, mỗi câu giữ 24 giờ (bài 34). Hệ thống hiện chỉ chạy một bản máy chủ trên một máy, nên chỗ nhớ của chính bản đó là đủ.
 - Các trang không cần model và Qdrant: Trang chủ, Bản đồ, Chỗ ở, Giới thiệu; trang Khám phá cần danh sách bài nạp lúc bật.
 - Quyết định 3, phần không gọi lại: chương trình kiểm cấu hình từ chối hẳn các dòng "gọi lại" và "model dự phòng"; cả ba chỗ gọi ra ngoài đều gọi đúng một lần; với thư viện của OpenAI, chương trình phải tắt hẳn việc tự gọi lại có sẵn của thư viện.

@@ -1,6 +1,6 @@
 # Bài 11 — Tìm theo chữ trùng: từ khoá BM25
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn, từ điển 5.971 từ) · bản 17:11 22/11: cơ chế đọc từ chương trình đang chạy, đối chiếu lại lúc 13:49; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ báo cáo đo ngày 30/08 và 25/10; người viết không chạy lại phép đo nào.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn, từ điển 5.971 từ) · bản 17:11 22/11: cơ chế đọc từ chương trình đang chạy, đối chiếu lại lúc 13:49; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ báo cáo đo ngày 30/08 và 25/10; người viết không chạy lại phép đo nào. · 09:56 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (ba bài kho được thêm câu sáng 24/11; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536).*
 
 **Bài trước đã biết:** mỗi đoạn có một vector; câu hỏi cũng thành một vector; hệ thống lấy 30 đoạn có vector gần câu hỏi nhất, gọi là 30 ứng viên.
 **Bài này thêm:** cách chấm thứ hai, theo chữ trùng, áp lên chính 30 ứng viên đó; vì sao nó được tính ngay lúc hỏi; và file thống kê của nó lệch kho thì sao.
@@ -48,7 +48,7 @@ Cách tách này có vẻ thô: "tham quan" bị tách đôi, "Đại Nội" b�
 
 ## Ở hue_rag, BM25 chỉ chấm lại 30 ứng viên của bước tìm theo nghĩa
 
-BM25 ở đây không tự đi tìm trên 9.533 đoạn. Thứ tự là:
+BM25 ở đây không tự đi tìm trên 9.536 đoạn. Thứ tự là:
 
 1. Tìm theo nghĩa lấy ra 30 ứng viên (bài 10).
 2. BM25 chấm điểm **đúng 30 đoạn đó**, và xếp chúng thành một bảng thứ hai.
@@ -224,7 +224,7 @@ Trên bản thử chỉ có nhóm món ăn (45 câu), BM25 đứng một mình t
 - Phép so tách từ trên bản thử nhóm món ăn (30/08): tách theo âm tiết và tách bằng một thư viện tách từ cho kết quả gần như nhau; cách âm tiết được chọn vì đơn giản.
 - Chưa có phép so "có từ khoá" với "chỉ theo nghĩa" trên toàn kho. Trên bản thử nhóm món ăn (30/08), hồ sơ ghi cách trộn tốt nhất có một nhóm câu tụt quá mức cho phép, nên lúc đó chưa chọn cách trộn nào. Ngày 11/09, khi thiết kế cho toàn kho, chủ dự án chốt cách đang chạy làm cách mốc; cách hai bên tìm độc lập là phương án để so với nó.
 
-**Bài sau (bài 12):** vector, chữ và thông tin gắn kèm của 9.533 đoạn được cất ở đâu, cập nhật thế nào khi kho đổi, và vì sao hệ thống không chịu chạy khi kho và chỉ mục lệch nhau.
+**Bài sau (bài 12):** vector, chữ và thông tin gắn kèm của 9.536 đoạn được cất ở đâu, cập nhật thế nào khi kho đổi, và vì sao hệ thống không chịu chạy khi kho và chỉ mục lệch nhau.
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
