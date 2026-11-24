@@ -755,7 +755,9 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
                     phut += di + PHUT[T[c]["thoi_luong"]]
                 if not day and QUY.get(ts["kieu_di"]) is not None and phut > QUY[ts["kieu_di"]]:
                     loi.append("vuot_quy")
-        if so == 0:
+        # Ngày không có điểm ban ngày nào là lỗi — TRỪ ngày mà CẢ HAI buổi ban ngày mang dấu `buoi_trong` (người dùng tự bỏ hết điểm của ngày đó khi sửa
+        # lịch — `sua_lich_v2.ap`, công tắc `sua_lich_hoi_truoc`; chủ dự án 24/11/2026: bỏ thì để trống). Lịch do biểu mẫu xếp không bao giờ mang dấu.
+        if so == 0 and not all((ng["ngay"], b) in {tuple(x) for x in khung.get("buoi_trong") or ()} for b in BUOI_NGAY):
             loi.append("ngay_rong")
         if (len(cums) > 2 and not khu) or (CUM_XA in cums and len(cums) > 1):
             loi.append("qua_2_cum")
@@ -906,8 +908,12 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
             ghi_chu.append({"ma": f"toi_{ma}", "cau": CAU_TOI[ma], "ngay": ng["ngay"]})
     # công tắc `sua_lich_hoi_truoc`: buổi ban ngày người dùng để trống sau một lệnh bỏ (khoá `buoi_trong` của khung) — buổi trống không hiện trên thẻ (User
     # 15/11) ⇒ cũng MỘT dòng ghi chú theo ngày (lượt trình duyệt 23/11/2026: thẻ ngày từ Sáng nhảy thẳng sang Tối, không nói gì về buổi chiều)
+    # Cả hai buổi ban ngày của một ngày đều để trống (24/11/2026) ⇒ MỘT dòng cho cả ngày thay vì hai dòng theo buổi.
+    trong = {tuple(x) for x in khung.get("buoi_trong") or ()}
+    ca_ngay = sorted(d for d in {d for d, _ in trong} if all((d, b) in trong for b in BUOI_NGAY))
+    ghi_chu += [{"ma": "ngay_trong", "cau": f"Ban ngày của ngày {d} để trống — bạn đã bỏ các điểm của ngày này.", "ngay": d} for d in ca_ngay]
     ghi_chu += [{"ma": "buoi_trong", "cau": f"Buổi {NHAN_BUOI[b].lower()} ngày {d} để trống — bạn đã bỏ điểm của buổi này.", "ngay": d}
-                for d, b in khung.get("buoi_trong") or ()]
+                for d, b in khung.get("buoi_trong") or () if d not in ca_ngay]
     if ts["tre_em"] or ts["lon_tuoi"]:  # bộ đo ý 2: nhóm hạn chế + điểm nhiều bậc thang còn trong lịch (không có điểm thay cùng khu) ⇒ ghi chú
         ghi_chu += [{"ma": "bac_thang", "cau": CAU_GHI_CHU["bac_thang"].format(diem=bang.theo_id[j]["ten"])}
                     for j in dict.fromkeys(diem_ban_ngay(khung)) if bang.theo_id[j]["bac_thang"] == "nhieu"]

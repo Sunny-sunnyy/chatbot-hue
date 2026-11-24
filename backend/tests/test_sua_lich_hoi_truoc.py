@@ -244,36 +244,54 @@ def test_a_turn_that_also_applied_something_does_not_end_the_question_with_nothi
     assert "Lịch chưa đổi gì." in _dong(_them(luu, "Hổ Quyền", **MOI))["cau"]  # lượt chỉ có câu hỏi: giữ câu kết
 
 
-def test_removing_the_last_place_of_a_day_keeps_the_plan_and_offers_ways_out_instead_of_refilling():
-    """Ca dò của phiên đo 23/11/2026 trên lịch mặc định 2 ngày: «bỏ <điểm sáng ngày 1>» (sáng để trống — đúng) rồi «bỏ <điểm chiều ngày 1>» ⇒ bản đầu
-    rơi về đường cũ và TỰ THÊM hai điểm khác (ngày không được rỗng). Nay lệnh thứ hai không bỏ, không lấp: câu tình hình + nút lối đi bằng lệnh đã có."""
+def test_removing_the_last_place_of_a_day_removes_it_and_leaves_the_daytime_of_that_day_empty():
+    """Chủ dự án 07:2x 24/11/2026: "khi người dùng đã nhắn bỏ địa điểm thì bỏ luôn… không cần hỏi lại xác nhận… để trống khung giờ đã bỏ". Trước đó (23/11)
+    điểm ban ngày CUỐI CÙNG của một ngày không được bỏ (luật "ngày không được rỗng": câu tình hình + nút thay / rút ngày); bản cũ hơn thì tự lấp điểm khác
+    (ca dò của phiên đo: «bỏ <điểm sáng ngày 1>» rồi «bỏ <điểm chiều ngày 1>»). Nay: bỏ ngay, ban ngày của ngày đó trống, hoạt động tối và mọi ngày khác
+    y như đang có, không rút ngày, MỘT nút gợi ý điểm thay; thêm lại vào ngày đó chạy bình thường. Công tắc tắt ⇒ đường cũ (tự lấp)."""
     k, luu = _mac_dinh()
     (sang,), (chieu,) = k["ngay"][0]["buoi"]["sang"], k["ngay"][0]["buoi"]["chieu"]
     k1 = _bo(luu, T[sang]["ten"], **MOI)
     assert k1["da_ap"] and k1["khung"]["buoi_trong"] == [[1, "sang"]]
     k2 = _bo(k1["luu"], T[chieu]["ten"], **MOI)
-    (m,), d = k2["khong_doi"], _dong(k2)
-    assert k2["da_ap"] == [] and k2["khung"] == k1["khung"] and m["ma_luat"] == "bo_ngay_rong"  # lịch đứng yên, không điểm nào tự vào
-    assert d["hoi"] is True and d["cau"].startswith(f"{T[chieu]['ten']} là điểm duy nhất còn lại của ngày 1 — bỏ thì ngày 1 không còn điểm nào")
-    assert d["cau"].endswith("Lịch chưa đổi gì.") and "«" not in d["cau"] and not d["cau"].startswith("Chưa làm")
-    thay = [n for n in d["nut"] if "chon" in n]
-    assert thay and all(n["chon"]["cu"] == chieu and n["gui"] == f"thay {T[chieu]['ten']} bằng {T[n['chon']['moi']]['ten']}" for n in thay)
-    assert s.cau_goi_y(B, k2) == tuple(n["gui"] for n in d["nut"])
-    for n in thay:  # bấm nút thay = đường thẻ chọn, không model: điểm mới vào đúng chỗ, buổi sáng đã để trống vẫn trống
-        sau = s.ap(B, k1["luu"], [], sua_chon=dict(n["chon"]), them_hoi_truoc=True)["khung"]
-        assert s._vi_tri(sau)[n["chon"]["moi"]] == (1, "chieu") and chieu not in s._vi_tri(sau) and sau["buoi_trong"] == [[1, "sang"]]
-        assert not v2.kiem_khung_v2(B, sau)
-    # ngày 1 không phải ngày cuối ⇒ không có nút rút ngày; công tắc tắt ⇒ đường cũ (tự lấp) y như trước
-    assert not any("Rút" in n["nhan"] for n in d["nut"]) and _bo(k1["luu"], T[chieu]["ten"], **CU)["da_ap"]
-    # điểm cuối cùng của NGÀY CUỐI: thêm nút rút lịch, và lệnh đổi số ngày ấy làm được thật
+    (a,), sau = k2["da_ap"], k2["khung"]
+    assert k2["khong_doi"] == [] and all(sau["ngay"][0]["buoi"][b] == [] for b in v2.BUOI_NGAY) and sau["buoi_trong"] == [[1, "chieu"], [1, "sang"]]
+    assert sau["ngay"][0]["buoi"]["toi"] == k["ngay"][0]["buoi"]["toi"] and sau["ngay"][1:] == k["ngay"][1:]  # tối ngày 1 + cả ngày 2 y như lịch gốc
+    assert sau["tham_so"]["so_ngay"] == 2 and not v2.kiem_khung_v2(B, sau) and a["ngay_trong"] == 1 and a["trong"] == [1, "chieu"]
+    dong = s.thay_doi(B, k2)
+    assert dong[0]["duoc"] and dong[0]["cau"] == (f"Đã bỏ {T[chieu]['ten']}. Ban ngày của ngày 1 nay không còn điểm nào; hoạt động buổi tối của ngày 1 và các điểm "
+                                               "của những ngày khác giữ nguyên.")
+    # dấu chỉ sinh khi người dùng tự bỏ: thiếu dấu của một trong hai buổi ⇒ luật "ngày không được rỗng" vẫn bắt
+    assert "ngay_rong" in v2.kiem_khung_v2(B, {**sau, "buoi_trong": [[1, "sang"]]}) and "ngay_rong" in v2.kiem_khung_v2(B, {x: v for x, v in sau.items() if x != "buoi_trong"})
+    # thẻ lịch: MỘT dòng ghi chú cho cả ngày, không phải hai dòng theo buổi
+    assert [g for g in v2.dung_lich(B, sau, {})["ghi_chu"] if g["ma"] in ("ngay_trong", "buoi_trong")] == [
+        {"ma": "ngay_trong", "cau": "Ban ngày của ngày 1 để trống — bạn đã bỏ các điểm của ngày này.", "ngay": 1}]
+    # nút gợi ý điểm thay (điểm bản cũ định tự lấp): bấm = lệnh thêm đủ ngày + buổi ⇒ thêm được, dấu của buổi đó tự gỡ, buổi kia vẫn trống
+    (nut,) = dong[1]["nut"]
+    assert nut == {"nhan": f"Gợi ý điểm thay: {T[a['goi_y_thay']]['ten']}", "gui": f"thêm {T[a['goi_y_thay']]['ten']} vào buổi chiều ngày 1"}
+    lai = _them(k2["luu"], T[a["goi_y_thay"]]["ten"], 1, "chieu", **MOI)
+    assert lai["da_ap"] and lai["khung"]["ngay"][0]["buoi"]["chieu"] == [a["goi_y_thay"]] and lai["khung"]["buoi_trong"] == [[1, "sang"]]
+    assert not v2.kiem_khung_v2(B, lai["khung"])
+    assert _bo(k1["luu"], T[chieu]["ten"], **CU)["da_ap"]  # công tắc tắt ⇒ đường cũ (tự lấp) y như trước
+    # bỏ lần lượt MỌI điểm ban ngày của NGÀY CUỐI: lệnh cuối cũng bỏ ngay, số ngày giữ nguyên (không tự rút ngày), ngày 1 không đổi
     luu2 = luu
-    for j in [x for x in s._vi_tri(k) if s._vi_tri(k)[x][0] == 2][:-1]:
-        luu2 = _bo(luu2, T[j]["ten"], **MOI)["luu"]
-    cuoi = next(x for x, v in s._vi_tri(luu2["khung"]).items() if v[0] == 2)
-    k3 = _bo(luu2, T[cuoi]["ten"], **MOI)
-    assert k3["da_ap"] == [] and _dong(k3)["nut"][-1] == {"nhan": "Rút lịch còn 1 ngày", "gui": "đổi lịch còn 1 ngày"}
-    rut = s.ap(B, luu2, [s.HanhDong(loai="doi_so_ngay", so_ngay=1)], **MOI)
-    assert rut["khung"]["tham_so"]["so_ngay"] == 1 and not v2.kiem_khung_v2(B, rut["khung"])
+    for j in [x for x, v in s._vi_tri(k).items() if v[0] == 2]:
+        kq = _bo(luu2, T[j]["ten"], **MOI)
+        assert kq["da_ap"] and not kq["khong_doi"]
+        luu2 = kq["luu"]
+    k3 = luu2["khung"]
+    assert k3["tham_so"]["so_ngay"] == 2 and all(k3["ngay"][1]["buoi"][b] == [] for b in v2.BUOI_NGAY) and not v2.kiem_khung_v2(B, k3)
+    assert k3["ngay"][0] == k["ngay"][0] and k3["ngay"][1]["buoi"]["toi"] == k["ngay"][1]["buoi"]["toi"]
+    # ngày ĐI XA (tối nghỉ sau chuyến đi xa): bỏ hết điểm thì ngày đó hết "đi xa" ⇒ bộ xếp chọn một hoạt động tối cho nó. Câu trả lời phải nói đúng
+    # điều đó, KHÔNG được nói "buổi tối … giữ nguyên" (giới hạn đã ghi: 15 / 216 ngày của lưới đếm 24/11/2026)
+    kx, luux = _lich(3, "nhe_nhang", so_thich=("thien_nhien",))
+    (dx,) = [d for d, ma in kx.get("toi_nghi", {}).items() if ma == "xa"]
+    for j in [x for x, v in s._vi_tri(kx).items() if v[0] == dx]:
+        kq = _bo(luux, T[j]["ten"], **MOI)
+        luux = kq["luu"]
+    cau = s.thay_doi(B, kq)[0]["cau"]
+    assert kq["da_ap"][0]["ngay_trong"] == dx and luux["khung"]["ngay"][dx - 1]["buoi"]["toi"] and f"Ban ngày của ngày {dx} nay không còn điểm nào." in cau
+    assert "giữ nguyên" not in cau and ("Buổi tối xếp lại" in cau or "vào chỗ trống" in cau)
 
 
 def test_after_a_removal_the_emptied_session_is_the_place_suggested_for_a_later_add():
