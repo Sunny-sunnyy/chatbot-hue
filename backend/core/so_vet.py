@@ -19,7 +19,9 @@ def vet_tim(queries: list[str], by: str, documents, packed) -> dict:
     """Một lần tìm kho (lõi gọi ở `search_into_trace`; chỉ giữ trong RAM của lượt): câu tìm, top kết quả (mã đoạn, file, điểm), đoạn vào ngữ cảnh."""
     try:  # gọi trong `finally` của lần tìm, cả khi cờ tắt ⇒ không bao giờ được ném (lỗi ở đây sẽ đè lỗi gốc của lần tìm — review B M-1)
         return {"cau": list(queries), "by": by,
-                "ket_qua": [{"chunk_id": d.id, "source": d.metadata.get("source"), "diem": round(float(d.score), 4)} for d in (documents or [])[:TOP_TIM]],
+                # `title` (24/11/2026): tiêu đề bài của đoạn — cùng nơi danh sách nguồn lấy tiêu đề; nút "Vì sao trả lời vậy?" in tên bài từ đây
+                "ket_qua": [{"chunk_id": d.id, "source": d.metadata.get("source"), "title": d.metadata.get("title"), "diem": round(float(d.score), 4)}
+                            for d in (documents or [])[:TOP_TIM]],
                 "vao_ngu_canh": None if packed is None else list(packed.document_ids)}
     except Exception as exc:
         return {"cau": list(queries), "by": by, "loi": type(exc).__name__}

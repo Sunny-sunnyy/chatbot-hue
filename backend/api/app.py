@@ -17,6 +17,8 @@ from api.feedback import FeedbackTurns
 from api.feedback import router as feedback_router
 from api.gioi_han import LUOT_TONG_ENV, ChanLuot, GioiHanLuot, tran_tu_moi_truong
 from api.theo_doi import router as theo_doi_router
+from api.vi_sao import KhoViSao
+from api.vi_sao import router as vi_sao_router
 from api.health import router as health_router
 from api.routes.anh import router as anh_router
 from api.routes.chat import GIT_SHA
@@ -250,6 +252,8 @@ def create_app(settings=None):
     app.include_router(xuat_router)  # tải lịch .pptx: luôn đăng ký, cờ `xuat_pptx` tắt ⇒ 404
     app.include_router(theo_doi_router)  # trang theo dõi của chủ dự án: luôn đăng ký; chưa đặt `HUE_KHOA_THEO_DOI` ⇒ 404
     app.state.feedback_turns = FeedbackTurns()  # B142: mã lượt cho 👍 / 👎 (RAM, không cần lifespan)
+    app.include_router(vi_sao_router)  # nút "Vì sao trả lời vậy?": luôn đăng ký, cờ `vi_sao` tắt ⇒ 404
+    app.state.vi_sao = KhoViSao()
 
     tran, tran_tong = tran_tu_moi_truong(), tran_tu_moi_truong(LUOT_TONG_ENV)
     if tran or tran_tong:  # chốt trước deploy: giới hạn lượt / IP / ngày (`HUE_LUOT_MOI_NGAY`) + trần tổng / ngày (`HUE_LUOT_TONG_MOI_NGAY`); không đặt cả hai ⇒ không thêm middleware (như cũ)
