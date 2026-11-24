@@ -40,7 +40,7 @@ export function ViSao({ turn }) {
       {mo && (
         <section className="vi-sao-khung" id={khungId} aria-label="Trợ lý đã làm gì để ra câu trả lời này">
           {tai?.dang && <p className="vi-sao-mo" role="status">Đang lấy chi tiết của lượt này…</p>}
-          {tai?.het && <p className="vi-sao-mo">Chi tiết của lượt này không còn được giữ (máy chủ đã khởi động lại, hoặc lượt đã quá cũ).</p>}
+          {tai?.het && <p className="vi-sao-mo">Chi tiết của lượt này không còn được giữ (đã quá 30 phút, máy chủ đã khởi động lại, hoặc lượt đã quá cũ). Muốn xem chi tiết, hãy hỏi lại câu này.</p>}
           {tai?.loi && <p className="vi-sao-mo">Chưa lấy được chi tiết của lượt này. Bấm nút lần nữa để thử lại.</p>}
           {tai?.d && <NoiDung d={tai.d} turn={turn} />}
         </section>
@@ -92,7 +92,7 @@ function NoiDung({ d, turn }) {
     <>
       <h3>Trợ lý đã làm gì để ra câu trả lời này</h3>
       {d.tom_tat && <p className="vi-sao-tom">{d.tom_tat}</p>}
-      {/* `gui` chỉ có khi chuỗi thật đem đi KHÁC câu gõ: lượt nối tiếp, lượt trả lời ảnh (kèm tên đã đoán), nút gửi câu lệnh đủ tên */}
+      {/* `gui` chỉ có khi chuỗi thật đem đi KHÁC câu gõ: lượt mang các ô đã chọn (thẻ hỏi lại, biểu mẫu Lên kế hoạch) — server ghép giá trị các ô vào câu */}
       {d.cau?.gui && (
         <p className="vi-sao-cau">Bạn gõ: <q>{d.cau.go}</q><br />Hệ thống đem đi xử lý: <q>{d.cau.gui}</q></p>
       )}

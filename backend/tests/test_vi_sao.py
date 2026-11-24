@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from api.app import create_app
 from api.routes.chat import STREAM_METRIC_FIELDS, StreamEvents
+from api.conversations import TTL_SECONDS
 from api.vi_sao import MAX_LUOT, TRAN_CAU_GUI, KhoViSao, tom_tat
 from llm.assistant import AssistantFlags
 from core.settings_loader import load_settings
@@ -100,6 +101,18 @@ def test_kho_co_tran_va_cong_tac_mac_dinh_tat():
     for i in range(3):
         kho.dat(f"m{i}", {"i": i})
     assert kho.lay("m0") is None and kho.lay("m2") == {"i": 2} and MAX_LUOT == 200
+    # hạn giờ = hạn của trí nhớ cuộc trò chuyện (trang Giới thiệu: chữ người dùng ở trong bộ nhớ tối đa 30 phút); quá hạn ⇒ đọc ra None VÀ bị xoá khỏi RAM
+    gio = [0.0]
+    kho = KhoViSao(clock=lambda: gio[0])
+    kho.dat("cu", {"cau": "chữ người dùng"})
+    gio[0] = TTL_SECONDS - 1
+    kho.dat("moi", {"i": 1})
+    assert kho.lay("cu") == {"cau": "chữ người dùng"} and TTL_SECONDS == 30 * 60
+    gio[0] = TTL_SECONDS + 1
+    assert kho.lay("cu") is None and list(kho._items) == ["moi"]  # bản cũ đã rời RAM, bản còn hạn giữ nguyên
+    gio[0] = 2 * TTL_SECONDS
+    kho.dat("moi_nua", {"i": 2})
+    assert list(kho._items) == ["moi_nua"]  # lần cất kế cũng dọn bản quá hạn
     assert AssistantFlags().vi_sao is False  # thiếu dòng trong settings (ảnh cũ, cấu hình rút gọn) ⇒ tắt
     assert load_settings(validate_private_paths=False)["assistant"]["vi_sao"] is True  # máy demo: MỞ từ 24/11/2026 (gói deploy ghi lại false)
 
