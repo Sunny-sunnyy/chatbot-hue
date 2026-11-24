@@ -17,7 +17,7 @@ logger = logging.getLogger("api")
 
 LUOT_MOI_NGAY_ENV = "HUE_LUOT_MOI_NGAY"
 LUOT_TONG_ENV = "HUE_LUOT_TONG_MOI_NGAY"
-DUONG_TINH_LUOT = frozenset({"/api/chat", "/api/chat/stream", "/api/anh/ung_vien", "/api/so_tay"})  # các đường gọi model (tốn tiền)
+DUONG_TINH_LUOT = frozenset({"/api/chat", "/api/chat/stream", "/api/anh/ung_vien", "/api/so_tay", "/api/ho_so"})  # các đường gọi model (tốn tiền)
 DUONG_TAI_FILE = "/api/lich/pptx"  # GET: dựng file .pptx từ lịch đã lưu (không gọi model, nhưng tốn CPU + băng thông)
 # 30 lượt tải / IP / ngày: một lịch thường tải một hai lần, sửa lịch rồi tải lại vài lần nữa; 30 đủ cho một nhóm dùng chung một mạng mà vẫn chặn vòng lặp tải
 TRAN_TAI_FILE = 30
