@@ -234,6 +234,10 @@ class AssistantFlags:
     # câu hỏi do code viết + nút (chỗ gợi ý, các chỗ đặt được khác, "Xếp giúp mình"); lệnh đủ ngày + buổi mà thêm thẳng được ⇒ làm luôn; không thêm
     # được ⇒ câu thường + nút lối đi; điểm khu xa ⇒ nói thật + nút mở biểu mẫu. Cần sua_lich_them_khong_the. TẮT tới khi phiên điều phối mở.
     sua_lich_hoi_truoc: bool = False
+    # 24/11/2026, BẢN THỬ (phiên điều phối chọn từ việc đọc repo; chủ dự án cho thử trên nhánh, chưa gộp, chưa mở): nút "Hoàn tác lần sửa này" dưới thẻ của
+    # lượt sửa lịch — cuộc giữ MỘT bản lưu trước lần sửa cuối (RAM), `POST /api/lich/hoan_tac` đặt lịch về bản đó (không gọi model); chỉ một bước, chỉ khi
+    # lịch chưa đổi thêm (`api/conversations.py` `hoan_tac`, `api/routes/hoan_tac.py`). Căn cứ: lệnh bỏ nay bỏ luôn không hỏi lại. Cần sua_lich_v2.
+    sua_lich_hoan_tac: bool = False
     # 23/11/2026 (chủ dự án nêu: buổi tối của đoàn có trẻ nhỏ đang bỏ trống). `toi_nhe`: đoàn có trẻ nhỏ / người lớn tuổi được MỘT hoạt động tối nhẹ gần trung
     # tâm mỗi tối không phải ngày đi xa, lấy từ khoá `toi_nhe` của bảng điểm, không lặp (đếm 960 tổ hợp: 720 tổ hợp / 2.160 tối đang trống ⇒ 1.710 tối có hoạt
     # động). `bo_toi_de_trong`: lệnh bỏ hoạt động tối ⇒ tối đó để trống, các tối khác giữ nguyên (xem `sua_lich_v2.ap`). Cả hai TẮT tới khi chủ dự án quyết.
@@ -372,6 +376,8 @@ class AssistantFlags:
                                                                  and self.sua_lich_kem_hoi and self.sua_lich_them_khong_the)):
             raise ValueError("assistant.bo_toi_hoi_lai needs sua_lich_v2, sua_lich_chua_ho_tro, sua_lich_buoi_toi, sua_lich_kem_hoi and "
                              "sua_lich_them_khong_the on, and bo_toi_de_trong off")
+        if self.sua_lich_hoan_tac and not self.sua_lich_v2:
+            raise ValueError("assistant.sua_lich_hoan_tac needs assistant.sua_lich_v2: true")
         if self.sua_lich_them_khong_the and not self.sua_lich_v2:
             raise ValueError("assistant.sua_lich_them_khong_the needs assistant.sua_lich_v2: true")
         if self.sua_lich_them_day and not self.sua_lich_them_khong_the:

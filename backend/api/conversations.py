@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 from llm.citations import CITATION_PATTERN
+from llm.sua_lich_v2 import dau_khung
 
 TTL_SECONDS = 30 * 60
 MAX_CONVERSATIONS = 500
@@ -93,7 +94,16 @@ class Conversation:
     expires_at: float = 0.0
     lich: dict | None = None  # sửa lịch bản 2: lịch đã lưu của cuộc (chỉ dữ liệu code dựng — khung, ngày đi, điểm đã bỏ, câu đã kiểm)
     ghi_chu_cuoi: str | None = None  # `chi_dap_lien_truoc`: lượt cuối đang giữ câu trả lời ⇒ dòng ghi chú sẽ thế chỗ nó khi có lượt mới; None = không giữ
+    # bản thử công tắc `sua_lich_hoan_tac`: bản lưu NGAY TRƯỚC lần sửa cuối + các dòng "đã làm" do code viết của lần sửa đó. Chỉ MỘT bản, chỉ ở RAM; sống
+    # tới khi lịch đổi thêm (lượt sửa sau thay nó bằng bản trước của chính lượt đó; xếp lịch mới bằng biểu mẫu xoá nó) hoặc đã dùng để hoàn tác
+    lich_truoc: dict | None = None
+    sua_truoc: tuple = ()
     goi_y_sua: tuple = ()  # cờ `sua_lich_them_khong_the`: câu sửa lịch code vừa gợi ý ("thay Y bằng X") — sống đúng MỘT lượt, không chữ người dùng / model
+
+
+def dau_lich(luu: dict) -> str:
+    """Dấu của một bản lưu lịch (khung + ngày đi): mã của nút \"Hoàn tác\". Lịch đổi thêm ⇒ dấu khác ⇒ nút của lần sửa cũ không còn khớp."""
+    return dau_khung(luu["khung"], luu.get("ngay_di"))
 
 
 class ConversationStore:
@@ -184,11 +194,28 @@ class ConversationStore:
         if conversation is not None:
             conversation.goi_y_sua = tuple(goi_y)
 
-    def luu_lich(self, conversation_id: str | None, lich: dict) -> None:
-        """Ghi lịch mới nhất của cuộc (thay lịch cũ); cuộc hết hạn ⇒ không ghi. Cùng hạn với lịch sử (30 phút từ lượt cuối)."""
+    def luu_lich(self, conversation_id: str | None, lich: dict, truoc: dict | None = None, dong: tuple = ()) -> None:
+        """Ghi lịch mới nhất của cuộc (thay lịch cũ); cuộc hết hạn ⇒ không ghi. Cùng hạn với lịch sử (30 phút từ lượt cuối).
+        `truoc` (công tắc `sua_lich_hoan_tac`, chỉ lượt SỬA đổi được lịch đưa): bản lưu ngay trước lượt này + `dong` = các dòng \"đã làm\" của lượt ⇒ giữ
+        để hoàn tác MỘT bước. Không đưa `truoc`: khung đổi (xếp lịch mới) ⇒ xoá bản trước; ghi lại CÙNG khung (chỉ thêm câu an toàn) ⇒ giữ nguyên."""
         conversation = self._items.get(conversation_id)
         if conversation is not None:
+            if truoc is not None:
+                conversation.lich_truoc, conversation.sua_truoc = truoc, tuple(dong)
+            elif conversation.lich is None or dau_lich(conversation.lich) != dau_lich(lich):
+                conversation.lich_truoc, conversation.sua_truoc = None, ()
             conversation.lich = lich
+
+    def hoan_tac(self, conversation_id: str | None, ma: str) -> tuple[dict, tuple] | None:
+        """Công tắc `sua_lich_hoan_tac`: đặt lịch của cuộc về bản trước lần sửa cuối ⇒ (bản đó, các dòng của lần sửa vừa bị hoàn tác). None (lịch giữ nguyên)
+        khi cuộc hết hạn, không có bản trước, hoặc `ma` không phải dấu của lịch ĐANG lưu (lịch đã đổi thêm / nút của một lần sửa cũ / đã hoàn tác rồi)."""
+        conversation = self._items.get(conversation_id)
+        if (conversation is None or conversation.expires_at <= self._clock() or conversation.lich is None or conversation.lich_truoc is None
+                or ma != dau_lich(conversation.lich)):
+            return None
+        lich, dong = conversation.lich_truoc, conversation.sua_truoc
+        conversation.lich, conversation.lich_truoc, conversation.sua_truoc, conversation.goi_y_sua = lich, None, (), ()  # gợi ý của lượt sửa đó hết nghĩa
+        return lich, dong
 
     def reset(self, conversation_id: str | None) -> str:
         """"Cuộc trò chuyện mới": xoá cuộc hiện tại khỏi RAM, trả mã mới. Mã mới CHƯA chiếm chỗ trong kho — lượt hỏi đầu tiên mới tạo cuộc (`ensure` gặp
