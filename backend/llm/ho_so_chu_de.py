@@ -79,7 +79,7 @@ def danh_sach(muc_luc) -> list[dict]:
 
 
 # ---------- dựng hồ sơ ----------
-SO_MUC_TOI_DA = 8
+SO_MUC_TOI_DA = 10         # dàn ý của model có nhiều mục hơn ⇒ bỏ dàn ý đó, code tự chia
 BAI_MOI_MUC = 6            # dàn ý của model: mỗi mục nhiều nhất chừng này bài (mục dự phòng do code chia cũng vậy)
 SO_DOAN_MUC = 12           # số đoạn kho đưa cho model ở một mục (chia đều cho các bài của mục, mỗi bài ít nhất 2)
 TRAN_KY_TU_Y = 240         # một ý của hồ sơ dài hơn ⇒ bỏ (sổ tay: 200; ý hồ sơ hay mang tên riêng + năm nên nới)
@@ -88,6 +88,34 @@ NGUONG_MONG = 3            # mục còn dưới chừng này ý ⇒ `muc_do: "mo
 MUC_KHAC = "Các bài khác của chủ đề"
 NHAN_DU_KIEN = "Giờ mở cửa và giá vé"
 CUM_XEP = "tổng quan giới thiệu lịch sử nổi bật đặc điểm"
+# CẢNH BÁO AN TOÀN của kho phải đi theo hồ sơ (phiên đo đọc nhánh 24/11/2026: chọn đoạn theo cụm "tổng quan…" thì 0 / 24 bài biển – núi – suối có đoạn cảnh báo
+# theo mùa trong các đoạn được chọn; hồ sơ "Biển và đầm phá" 36 ý không có ý cảnh báo nào dù bài Bãi biển Cảnh Dương có hẳn mục "Mùa mưa bão và biển động",
+# bài Thuận An có đoạn cấm tắm). Mỗi bài có đoạn khớp mẫu dưới đây ⇒ đoạn khớp nhiều dấu hiệu nhất được THÊM vào bằng chứng của mục; ý nào dẫn đoạn đó được
+# giữ trước; không ý nào dẫn nó ⇒ code tự thêm một dòng `an_toan` trỏ tới đúng mục của bài (code không tóm tắt nội dung, chỉ trỏ).
+MAU_CANH_BAO = tuple(re.compile(m, re.IGNORECASE) for m in (
+    r"cấm tắm|không (?:được|nên) (?:tắm|bơi)|tạm (?:dừng|ngừng) (?:bơi|tắm|đón khách|hoạt động|tham quan)", r"biển động|sóng (?:lớn|to)|dòng chảy xa bờ|nước xiết|xoáy",
+    r"lũ quét|sạt lở|lũ ống|ngập lụt|nước dâng", r"đuối nước|nguy hiểm|tai nạn|cảnh báo", r"mùa mưa (?:bão|lũ)|mưa bão|bão lũ|áp thấp nhiệt đới", r"trơn trượt|trơn trợt|dốc đứng"))
+CAU_TRO_AN_TOAN = "{ten}: bài có phần lưu ý an toàn ở mục «{muc}» — mở bài để đọc trước khi đi."
+NHAN_AN_TOAN = "Lưu ý an toàn theo mùa"
+
+
+def la_y_canh_bao(dong: str, nguon_canh_bao) -> bool:
+    """Một ý đã qua lọc (kết bằng "[n]…") là ý CẢNH BÁO khi nó dẫn một đoạn cảnh báo VÀ chữ của nó mang một dấu hiệu trong `MAU_CANH_BAO` (đoạn cảnh báo cũng
+    có thể chứa chi tiết thường — ý dẫn nó mà không nói gì về an toàn thì vẫn là ý thường)."""
+    return bool({int(n) for n in re.findall(r"\[(\d+)\]", dong)} & set(nguon_canh_bao)) and any(m.search(dong) for m in MAU_CANH_BAO)
+
+
+def doan_canh_bao(doan_bai: list):
+    """Đoạn cảnh báo an toàn của MỘT bài: đoạn khớp nhiều NHÓM dấu hiệu nhất trong `MAU_CANH_BAO` (bằng nhau ⇒ đoạn đứng trước); phải khớp ít nhất HAI nhóm,
+    hoặc một nhóm thuộc hai nhóm đầu (cấm / tạm dừng; biển động) — một chữ "nguy hiểm" hay "mùa mưa bão" đứng lẻ chưa đủ. Không có ⇒ None."""
+    tot, diem_tot = None, 0
+    for d in doan_bai:
+        chu = " ".join([" ".join(d.metadata.get("heading_path") or ()), d.text or ""])
+        khop = [bool(m.search(chu)) for m in MAU_CANH_BAO]
+        diem = sum(khop)
+        if (diem >= 2 or khop[0] or khop[1]) and diem > diem_tot:
+            tot, diem_tot = d, diem
+    return tot
 
 
 def chia_muc_du_phong(so_bai: int) -> list[dict]:
@@ -97,8 +125,9 @@ def chia_muc_du_phong(so_bai: int) -> list[dict]:
 
 def kiem_dan_y(muc_model: list[dict], so_bai: int) -> list[dict]:
     """Dàn ý model trả (`[{tieu_de, bai: [số 1…so_bai]}]`) ⇒ dàn ý đã qua luật của code: số lạ bị gỡ · một bài chỉ đứng ở mục ĐẦU TIÊN nêu nó · mục không còn
-    bài nào bị bỏ · nhiều hơn `SO_MUC_TOI_DA` mục ⇒ các mục thừa dồn vào mục cuối · bài không mục nào nêu ⇒ một mục cuối `MUC_KHAC` (không bài nào của
-    chủ đề bị lặng lẽ bỏ). Rỗng / hỏng ⇒ `chia_muc_du_phong`."""
+    bài nào bị bỏ · bài không mục nào nêu ⇒ mục cuối `MUC_KHAC` (không bài nào của chủ đề bị lặng lẽ bỏ) · mục có hơn `BAI_MOI_MUC` bài bị TÁCH (mục sau
+    mang chữ "(tiếp)") — phiên đo dựng dàn ý xấu: một mục 40 bài là 80 đoạn trong một lời gọi · rỗng, hỏng, hoặc ra hơn `SO_MUC_TOI_DA` mục ⇒
+    `chia_muc_du_phong`."""
     da, muc = set(), []
     for m in muc_model or ():
         bai = []
@@ -110,25 +139,26 @@ def kiem_dan_y(muc_model: list[dict], so_bai: int) -> list[dict]:
             muc.append({"tieu_de": " ".join(str(m.get("tieu_de") or "").split())[:90], "bai": bai})
     if not muc:
         return chia_muc_du_phong(so_bai)
-    if len(muc) > SO_MUC_TOI_DA:
-        muc = muc[:SO_MUC_TOI_DA - 1] + [{"tieu_de": muc[SO_MUC_TOI_DA - 1]["tieu_de"], "bai": [n for m in muc[SO_MUC_TOI_DA - 1:] for n in m["bai"]]}]
     con = [n for n in range(1, so_bai + 1) if n not in da]
     if con:
         muc.append({"tieu_de": MUC_KHAC, "bai": con})
-    return muc
+    tach = [{"tieu_de": m["tieu_de"] + (" (tiếp)" if i else ""), "bai": m["bai"][i:i + BAI_MOI_MUC]} for m in muc for i in range(0, len(m["bai"]), BAI_MOI_MUC)]
+    return tach if len(tach) <= SO_MUC_TOI_DA else chia_muc_du_phong(so_bai)
 
 
 def so_doan_moi_bai(so_bai: int) -> int:
     return max(2, SO_DOAN_MUC // max(so_bai, 1))
 
 
-def chon_y_phu_bai(y: list[str], bai_cua_nguon: dict[int, str], thu_tu_bai: list[str]) -> tuple[list[str], list[str]]:
+def chon_y_phu_bai(y: list[str], bai_cua_nguon: dict[int, str], thu_tu_bai: list[str], nguon_uu_tien: frozenset[int] = frozenset()) -> tuple[list[str], list[str]]:
     """Các ý đã qua `so_tay.loc_y` (mỗi dòng kết bằng "[n][m]") ⇒ (các ý được giữ theo thứ tự gốc, các bài của mục KHÔNG có ý nào). Mỗi bài của mục lấy trước
     MỘT ý đầu tiên nói về nó, rồi mới lấy thêm theo thứ tự cho tới trần (`Y_IT_NHAT`…`Y_NHIEU_NHAT` theo số bài) — bản thử 24/11/2026 lấy sáu ý đầu làm mục
     "các lăng đầu triều" không còn ý nào về Lăng Thiệu Trị."""
     cua = [{bai_cua_nguon[int(n)] for n in re.findall(r"\[(\d+)\]", dong) if int(n) in bai_cua_nguon} for dong in y]
     tran = min(Y_NHIEU_NHAT, max(Y_IT_NHAT, len(thu_tu_bai) + 2))
-    chon = []
+    # ý dẫn một đoạn CẢNH BÁO AN TOÀN (`nguon_uu_tien`) được giữ trước mọi ý khác, không tính vào trần
+    chon = [i for i, dong in enumerate(y) if nguon_uu_tien & {int(n) for n in re.findall(r"\[(\d+)\]", dong)}]
+    tran += len(chon)
     for bai in thu_tu_bai:
         if any(bai in cua[i] for i in chon):
             continue

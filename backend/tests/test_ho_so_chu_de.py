@@ -33,8 +33,12 @@ def test_kiem_dan_y_moi_bai_dung_mot_muc_khong_bai_nao_bi_bo():
     muc = hs.kiem_dan_y([{"tieu_de": "Đầu triều", "bai": [1, 2, 9]}, {"tieu_de": "Trùng", "bai": [2]}, {"tieu_de": "Cuối triều", "bai": [4, 4]}], 5)
     assert muc == [{"tieu_de": "Đầu triều", "bai": [1, 2]}, {"tieu_de": "Cuối triều", "bai": [4]}, {"tieu_de": hs.MUC_KHAC, "bai": [3, 5]}]
     assert hs.kiem_dan_y([], 7) == [{"tieu_de": "", "bai": [1, 2, 3, 4, 5, 6]}, {"tieu_de": "", "bai": [7]}]  # model trả rỗng ⇒ code tự chia
-    nhieu = hs.kiem_dan_y([{"tieu_de": f"M{i}", "bai": [i]} for i in range(1, 11)], 10)
-    assert len(nhieu) == hs.SO_MUC_TOI_DA and nhieu[-1]["bai"] == [8, 9, 10]
+    # mục quá `BAI_MOI_MUC` bài bị tách (một mục 14 bài = 28 đoạn trong một lời gọi); bài model bỏ sót cũng vậy
+    to = hs.kiem_dan_y([{"tieu_de": "Tất cả", "bai": list(range(1, 15))}], 20)
+    assert [(m["tieu_de"], len(m["bai"])) for m in to] == [("Tất cả", 6), ("Tất cả (tiếp)", 6), ("Tất cả (tiếp)", 2), (hs.MUC_KHAC, 6)]
+    assert sorted(n for m in to for n in m["bai"]) == list(range(1, 21))
+    # ra quá nhiều mục ⇒ bỏ dàn ý của model, code tự chia
+    assert hs.kiem_dan_y([{"tieu_de": f"M{i}", "bai": [i]} for i in range(1, 12)], 11) == hs.chia_muc_du_phong(11)
 
 
 def test_chon_y_moi_bai_co_it_nhat_mot_y_truoc_khi_lay_them():
@@ -110,3 +114,70 @@ def test_cong_tac_mac_dinh_tat_va_can_muc_luc():
     assert AssistantFlags().ho_so_chu_de is False
     with pytest.raises(ValueError):
         AssistantFlags(ho_so_chu_de=True)
+
+
+def _d(rel, so, muc, chu):
+    return SimpleNamespace(id=f"{rel}#{so}", text=chu, metadata={"source": rel, "title": rel.rsplit("/", 1)[-1][:-3], "heading_path": [muc], "domain": "x",
+                                                                 "evidence_parts": [{"role": "body", "text": chu, "start": 0, "end": 1}]})
+
+
+def test_doan_canh_bao_chi_nhan_doan_co_dau_hieu_ro():
+    bai = [_d("b.md", 0, "Tổng quan", "Bãi biển dài 5 km, cát trắng, mùa hè đông khách."),
+           _d("b.md", 1, "Ẩm thực", "Hải sản tươi; mùa mưa bão ít quán mở."),                                    # một dấu hiệu lẻ, không thuộc nhóm cấm / biển động
+           _d("b.md", 2, "Mùa mưa bão và biển động (tháng 9 đến tháng 12)", "Biển động, sóng lớn; chính quyền cấm tắm khi có áp thấp nhiệt đới."),
+           _d("b.md", 3, "Lưu ý", "Không nên tắm xa bờ.")]
+    assert hs.doan_canh_bao(bai).id == "b.md#2"                       # đoạn khớp nhiều nhóm dấu hiệu nhất
+    assert hs.doan_canh_bao(bai[:2]) is None                          # "mùa mưa bão" đứng lẻ chưa đủ
+    assert hs.doan_canh_bao([bai[3]]).id == "b.md#3"                  # một câu cấm tắm là đủ
+
+
+class _KhoBien:
+    def doan_cua_bai(self, rel):
+        return [_d(rel, 0, "Tổng quan", f"giới thiệu tổng quan {rel}"), _d(rel, 1, "Đặc điểm", "nổi bật đặc điểm lịch sử"),
+                _d(rel, 2, "Mùa mưa bão và biển động", "Từ tháng 9 đến tháng 12 biển động, sóng lớn, chính quyền cấm tắm.")]
+
+
+def _chay_bien(may):
+    from api.routes import ho_so as r
+    bai = [_b(f"travel/places/Bãi biển {t}.md", f"Bãi biển {t}") for t in ("A", "B", "C", "D", "E")]
+    cd = next(c for c in hs.CHU_DE if c.ma == "bien_dam_pha")
+
+    async def gom():
+        return [e async for e in r._su_kien(cd, bai, SimpleNamespace(retrieval_service=_KhoBien()), SimpleNamespace(the_noi_bang=None, muc_luc=bai), may, {})]
+    return [(k.split("event: ", 1)[1].split("\n", 1)[0], json.loads(k.split("data: ", 1)[1])) for k in (e.decode() for e in asyncio.run(gom()))]
+
+
+def test_canh_bao_an_toan_cua_bai_luon_di_theo_ho_so():
+    """Phiên đo đọc nhánh 24/11/2026: hồ sơ "Biển và đầm phá" 36 ý, 0 ý cảnh báo dù kho có (cấm tắm mùa mưa bão). Nay: đoạn cảnh báo của mỗi bài được đưa cho
+    model; ý cảnh báo thành khối riêng "Lưu ý an toàn theo mùa"; bài nào model KHÔNG viết cảnh báo thì code tự thêm dòng trỏ tới mục cảnh báo của bài."""
+    da_thay = {}
+
+    class May:
+        async def viet_so_tay(self, loai, prompt, log):
+            if loai == "ho_so_dan_y":
+                return {"muc": [{"tieu_de": "Các bãi biển", "bai": [1, 2, 3, 4, 5]}]}
+            da_thay["prompt"] = prompt
+            # 5 bài × (2 đoạn + 1 đoạn cảnh báo) ⇒ nguồn 3, 6, 9, 12, 15 là đoạn cảnh báo; model chỉ viết cảnh báo cho bài A (nguồn 3), và một ý thường dẫn nguồn 6
+            return {"y": [{"chu": f"Bãi biển {t} có bãi cát dài", "nguon": [n]} for t, n in zip("ABCDE", (1, 4, 7, 10, 13))]
+                    + [{"chu": "Bãi biển A: từ tháng 9 đến tháng 12 biển động, sóng lớn, chính quyền cấm tắm", "nguon": [3]},
+                       {"chu": "Bãi biển B có khu cắm trại sát rừng dương", "nguon": [6]}]}  # dẫn đoạn cảnh báo nhưng không nói gì về an toàn ⇒ ý thường
+    sk = _chay_bien(May())
+    assert da_thay["prompt"].count("cấm tắm") == 5                    # đoạn cảnh báo của CẢ năm bài có trong bằng chứng
+    muc = next(d for t, d in sk if t == "muc")
+    thuong = next(d for d in muc["doan"] if d["kieu"] == "gach")
+    assert len(thuong["gach"]) == 6 and all("cấm tắm" not in g for g in thuong["gach"])   # ý cảnh báo không lẫn trong danh sách thường
+    an_toan = [(d["nhan"], d["chu"], d["so"]) for d in muc["doan"] if d["kieu"] == "an_toan"]
+    assert an_toan[0] == (hs.NHAN_AN_TOAN, "Bãi biển A: từ tháng 9 đến tháng 12 biển động, sóng lớn, chính quyền cấm tắm", [3])   # ý cảnh báo model viết, có nguồn
+    # bốn bài model không viết cảnh báo ⇒ code trỏ tới đúng mục cảnh báo của từng bài
+    assert an_toan[1:] == [(None, hs.CAU_TRO_AN_TOAN.format(ten=f"Bãi biển {t}", muc="Mùa mưa bão và biển động"), [n]) for t, n in zip("BCDE", (6, 9, 12, 15))]
+    assert next(d for t, d in sk if t == "xong")["so_dong_tro_an_toan"] == 4
+
+
+def test_model_hong_thi_dong_tro_an_toan_van_co():
+    class May:
+        async def viet_so_tay(self, loai, prompt, log):
+            if loai == "ho_so_dan_y":
+                return {"muc": [{"tieu_de": "Các bãi biển", "bai": [1, 2, 3, 4, 5]}]}
+            raise RuntimeError("model hỏng")
+    muc = next(d for t, d in _chay_bien(May()) if t == "muc")
+    assert muc["trang_thai"] == "loi" and len([d for d in muc["doan"] if d["kieu"] == "an_toan"]) == 5 and len(muc["nguon"]) == 5
