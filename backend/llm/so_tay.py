@@ -261,8 +261,10 @@ def doan_chung(lich: dict, an_toan: str | None) -> list[dict]:
 # Mỗi bài: đoạn khớp nhiều NHÓM dấu hiệu nhất được thêm vào bằng chứng (ngoài trần); ý "Lưu ý" dẫn đoạn đó không bị trần số ý cắt; không ý nào dẫn nó ⇒ code
 # thêm một dòng `an_toan` trỏ tới đúng mục của bài (code không tóm tắt nội dung cảnh báo, chỉ trỏ).
 MAU_CANH_BAO = tuple(re.compile(m, re.IGNORECASE) for m in (
-    r"cấm tắm|không (?:được|nên) (?:tắm|bơi)|tạm (?:dừng|ngừng) (?:bơi|tắm|đón khách|hoạt động|tham quan)", r"biển động|sóng (?:lớn|to)|dòng chảy xa bờ|nước xiết|xoáy",
-    r"lũ quét|sạt lở|lũ ống|ngập lụt|nước dâng", r"đuối nước|nguy hiểm|tai nạn|cảnh báo", r"mùa mưa (?:bão|lũ)|mưa bão|bão lũ|áp thấp nhiệt đới", r"trơn trượt|trơn trợt|dốc đứng"))
+    r"cấm tắm|không (?:được|nên) (?:tắm|bơi|ra bờ)|tránh leo|tạm (?:dừng|ngừng) (?:bơi|tắm|đón khách|hoạt động|tham quan)", r"biển động|sóng (?:lớn|to)|dòng chảy xa bờ|nước xiết|xoáy",
+    r"lũ quét|sạt lở|lũ ống|ngập lụt|nước dâng", r"đuối nước|nguy hiểm|tai nạn|cảnh báo", r"mùa mưa (?:bão|lũ)|mùa lũ|mưa bão|bão lũ|áp thấp nhiệt đới|[dg]i?ông (?:sét|lốc)",
+    r"trơn trượt|trơn trợt|dốc đứng"))
+_MUC_AN_TOAN = re.compile(r"an toàn|lưu ý|mùa|thời tiết|cảnh báo|dành cho du khách", re.IGNORECASE)  # tên mục của bài hay chứa phần cảnh báo
 _LOI_DAN_CANH_BAO = re.compile(r"\bnên\b|\bkhông\b|\bcấm\b|tránh|hạn chế|tuyệt đối|\bphải\b|cẩn thận|lưu ý", re.IGNORECASE)
 CAU_TRO_AN_TOAN = "Bài của điểm này có phần lưu ý an toàn ở mục «{muc}» — mở bài để đọc trước khi đi."
 
@@ -272,10 +274,13 @@ def doan_canh_bao(doan_bai: list):
     trong hai nhóm đầu (cấm / tạm dừng; biển động – nước xiết) — một chữ "nguy hiểm" hay "mùa mưa bão" đứng lẻ chưa đủ. Không có ⇒ None."""
     tot, diem_tot = None, 0
     for d in doan_bai:
-        chu = " ".join([" ".join(d.metadata.get("heading_path") or ()), d.text or ""])
-        khop = [bool(m.search(chu)) for m in MAU_CANH_BAO]
-        if (sum(khop) >= 2 or khop[0] or khop[1]) and sum(khop) > diem_tot:
-            tot, diem_tot = d, sum(khop)
+        muc = " ".join(d.metadata.get("heading_path") or ())
+        khop = [bool(m.search(f"{muc} {d.text or ''}")) for m in MAU_CANH_BAO]
+        # đủ điều kiện rồi mới cộng điểm tên mục: đoạn nằm dưới mục "Mùa…", "Lưu ý…", "Thông tin dành cho du khách" được chọn trước đoạn kể chuyện lịch sử / địa mạo
+        # có cùng số dấu hiệu (đếm 0 đồng trên 47 điểm 24/11/2026: Phá Tam Giang, Đầm Lập An từng ra mục "dấu ấn lịch sử", "địa mạo")
+        diem = sum(khop) + (2 if _MUC_AN_TOAN.search(muc) else 0)
+        if (sum(khop) >= 2 or khop[0] or khop[1]) and diem > diem_tot:
+            tot, diem_tot = d, diem
     return tot
 
 
