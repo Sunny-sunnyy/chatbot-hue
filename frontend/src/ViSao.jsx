@@ -131,7 +131,7 @@ function Buoc({ b, stt }) {
           {hien.map((x, i) => (
             <li key={i}>
               <span className="vi-sao-bai-ten">{x.bai_id ? <a href={baiHref(x.bai_id)}>{x.title}</a> : x.title}
-                {x.duoc_trich && <em>được trích</em>}</span>
+                {x.duoc_trich && <em>bài có đoạn được trích</em>}</span>
               <small>{x.so_doan} đoạn{x.hang != null && <> · đoạn tốt nhất đứng thứ {x.hang}</>}</small>
             </li>
           ))}
@@ -141,7 +141,7 @@ function Buoc({ b, stt }) {
         <button type="button" className="vi-sao-them" onClick={() => setHet(true)}>Xem thêm {bai.length - SO_BAI_DAU} bài</button>
       )}
       {b.so_doan_tim != null && (
-        <p className="vi-sao-lan-cuoi">{b.so_doan_tim} đoạn tìm ra{b.so_doan_moi != null && <> · {b.so_doan_moi} đoạn mới được đưa cho model đọc</>}</p>
+        <p className="vi-sao-lan-cuoi">{b.so_doan_tim} đoạn tìm ra{b.so_doan_moi != null && <> · {b.so_doan_moi} đoạn mới được đưa cho model</>}</p>
       )}
     </div>
   );
@@ -150,7 +150,7 @@ function Buoc({ b, stt }) {
 // Ba phần thời gian server đo được. Chúng KHÔNG cộng lại bằng tổng (bước phân loại chạy song song với phần trả lời) ⇒ mỗi phần một vạch riêng
 // so với tổng, không ghép thành một thanh 100 %. Lượt sửa lịch chỉ có tổng ⇒ không vẽ gì ngoài dòng tiêu đề.
 function ThoiGian({ t }) {
-  const phan = [["tim", "Tìm trong kho", t.tim], ["dung", "Dựng phần cho model đọc", t.dung_ngu_canh], ["model", "Model đọc và viết", t.model]]
+  const phan = [["tim", "Tìm trong kho", t.tim], ["dung", "Dựng phần đưa cho model", t.dung_ngu_canh], ["model", "Model xử lý và viết", t.model]]
     .filter(([, , x]) => x != null);
   if (phan.length === 0) return null;
   return (
