@@ -1,10 +1,10 @@
 # Phụ lục E — Thuật ngữ Việt – Anh
 
-*Cập nhật 01:49, ngày 24/11/2026 · khớp hệ thống 00:17 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · thêm "hỏi lại bằng nút", "buổi để trống", "luật ranh" (bài 31), "dòng đoán", "embedding ảnh", "chấm chặt" (bài 26); "tên phải xác nhận" thành lịch sử (tới 21:29 23/11); số từ 223 ⇒ 229 · lượt cả bộ test gần nhất xong 01:00 24/11 trên đúng bản code này: 96 file, 4 bỏ vì cần khoá OpenAI, 92 chạy, 2.325 ca đạt, không file nào đỏ (bài 38) · bản trước: 21:06, ngày 23/11/2026 · khớp hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · thêm "lượt đo bù" (bài 33), "đoàn nhẹ" (bài 31), công tắc "hết vòng" (bài 21); sửa "kho" 269 bài, "đoạn" và "tìm" 9.533 đoạn, "bảng điểm tham quan" 47 dòng, "giữ chỗ", "trần vòng" theo bài gốc; số từ 220 ⇒ 223 · 22:07: hàng "kho" ghi đúng mốc 18:03 (vào kho) / 18:05 (chỉ mục) · các mốc trước: khối Nguồn · 06:38 24/11: áp biên bản kiểm độc lập của đợt gom (cụm lượt cả bộ test, nghĩa "hỏi lại bằng nút", chỗ giảng "chấm chặt", 01:21).*
+*Cập nhật 09:46, ngày 24/11/2026 · khớp hệ thống 08:40 24/11/2026 (59 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn, bảng điểm bản 16) · bộ test: bài 38 · thêm "mã lượt", "bản ghi của lượt", "bản tóm tắt lượt", "tính giải thích được" (bài 42), "chèn trước" (bài 31); "buổi để trống" theo nghĩa mới của bài 31; "chuỗi sửa lịch" nay giảng ngoài bảng (bài 31, "Chi tiết để tra"); số từ 229 ⇒ 234 · dòng Cập nhật trước: khối Nguồn.*
 
-**Cách dùng trang này.** Mỗi dòng là một từ lấy từ bảng "Từ dùng trong bài" của bài 1–40, xếp theo thứ tự chữ cái tiếng Việt. Cột "Nghĩa" chép câu giải nghĩa của bài gốc; khi hai bài giảng cùng một từ với hai câu khác nhau, câu chính lấy từ một bài và phần ngoặc ghi điều bài kia nói thêm. Cột cuối ghi bài giảng từ đó lần đầu, trong ngoặc là các bài giảng lại. Từ có dấu "—" ở cột tên gốc là tên do giáo trình đặt, không có tên tiếng Anh quen dùng. Cuối trang là bảng tra ngược, từ tên tiếng Anh ra tên trong giáo trình.
+**Cách dùng trang này.** Mỗi dòng là một từ lấy từ bảng "Từ dùng trong bài" của bài 1–42, xếp theo thứ tự chữ cái tiếng Việt. Cột "Nghĩa" chép câu giải nghĩa của bài gốc; khi hai bài giảng cùng một từ với hai câu khác nhau, câu chính lấy từ một bài và phần ngoặc ghi điều bài kia nói thêm. Cột cuối ghi bài giảng từ đó lần đầu, trong ngoặc là các bài giảng lại. Từ có dấu "—" ở cột tên gốc là tên do giáo trình đặt, không có tên tiếng Anh quen dùng. Cuối trang là bảng tra ngược, từ tên tiếng Anh ra tên trong giáo trình.
 
-Có 229 từ: 224 từ gom từ 243 dòng bảng "Từ dùng trong bài" của các bài (19 từ được giảng ở hai bài; dòng "kho code, lưu" của bài 39 ghi thành "kho code"; "lần lưu code" đã có từ bài 37), cộng 1 từ bài 26 đã bỏ khỏi bảng của mình nhưng giữ ở đây làm lịch sử ("tên phải xác nhận"), cộng 4 từ bài gốc giảng ngoài bảng "Từ dùng trong bài" ("đoàn nhẹ", "luật ranh", bài 31, thân bài; công tắc "hết vòng", bài 21; "chấm chặt", bài 26, bảng "Đã so" dòng 11). Đếm 01:49 24/11 (tối 23/11: 223).
+Có 234 từ: 228 từ gom từ 247 dòng bảng "Từ dùng trong bài" của các bài (19 từ được giảng ở hai bài; dòng "kho code, lưu" của bài 39 ghi thành "kho code"; "lần lưu code" đã có từ bài 37; dòng "điểm" của bài 12 ghi thành "điểm (trong Qdrant)"), cộng 1 từ bài 26 đã bỏ khỏi bảng của mình nhưng giữ ở đây làm lịch sử ("tên phải xác nhận"), cộng 5 từ bài gốc giảng ngoài bảng "Từ dùng trong bài" ("đoàn nhẹ", "luật ranh", bài 31, thân bài; "chuỗi sửa lịch", bài 31, "Chi tiết để tra" từ 24/11; công tắc "hết vòng", bài 21; "chấm chặt", bài 26, bảng "Đã so" dòng 11). Đếm 09:46 24/11 (01:49 24/11: 229; tối 23/11: 223).
 
 ## Bảng thuật ngữ (Việt → Anh)
 
@@ -18,6 +18,8 @@ Có 229 từ: 224 từ gom từ 243 dòng bảng "Từ dùng trong bài" của c
 | bản chụp | snapshot | bản sao của cả collection ở một thời điểm, để khôi phục khi cần | 12 |
 | bản đồ mở | OpenStreetMap | bản đồ do cộng đồng soạn, ai cũng dùng được; cũng là nơi lấy ô nền của bản đồ | 30 |
 | bản ghi chỉ mục | build record | file ghi lần lập chỉ mục: những bài nào, dấu vân tay từng bài, bao nhiêu đoạn, model nào | 12 |
+| bản ghi của lượt | trace | những gì chương trình ghi lại trong lúc một lượt chạy: câu, từng lần tìm, gọi model, công cụ, nguồn, thời gian | 42 |
+| bản tóm tắt lượt | — | bản rút gọn của bản ghi, đã gắn nhãn tiếng Việt, đúng thứ khung hiện (khung của nút "Vì sao trả lời vậy?") | 42 |
 | bảng điểm tham quan | itinerary table | 47 dòng (41 điểm tham quan, 6 mục chỉ dùng buổi tối), mỗi dòng có các cột dùng để xếp lịch; nằm ngoài kho bài viết | 27 |
 | bảng kiểu | CSS | phần của trang quy định màu, cỡ chữ, khoảng cách, vị trí từng khối; chữ và nút nằm ở HTML | 35 |
 | bến | — | chấm tròn trên nét sông ở màn đầu Trang chủ; mỗi bến là một lối vào | 5 |
@@ -32,7 +34,7 @@ Có 229 từ: 224 từ gom từ 243 dòng bảng "Từ dùng trong bài" của c
 | bộ nhớ câu trả lời | answer cache | chỗ máy chủ giữ câu trả lời đã viết để trả lại cho người sau hỏi đúng câu đó | 34 |
 | bộ nhớ của máy chủ | RAM, in-memory | chỗ máy chủ giữ dữ liệu trong lúc đang chạy; tắt hay khởi động lại máy chủ là mất. Khác với đĩa, nơi dữ liệu còn nguyên sau khi tắt máy | 6 |
 | bộ xếp loại | router | phần làm việc xếp loại; ở đây là một lần gọi model với lời dặn riêng | 22 |
-| buổi để trống | empty session mark | dấu trong lịch đã lưu: buổi người dùng vừa bỏ điểm duy nhất, bộ xếp không lấp | 31 |
+| buổi để trống | empty session mark | dấu trong lịch đã lưu: buổi người dùng vừa bỏ điểm duy nhất, bộ xếp không lấp; hai buổi cùng mang dấu thì ban ngày trống (từ 08:19 24/11) | 31 |
 | bước kiểm khung | frame check | chương trình đối chiếu khung lịch đã xếp với luật xếp; khung đúng thì không có lỗi nào | 29 |
 | ca test | test case | một lần kiểm: một đầu vào, một điều phải đúng; đạt hoặc hỏng | 38 |
 | cắt đoạn | chunking | việc chia mỗi bài thành các đoạn | 8 |
@@ -43,12 +45,13 @@ Có 229 từ: 224 từ gom từ 243 dòng bảng "Từ dùng trong bài" của c
 | chặng sang khu | non-adjacent leg | quãng đi giữa hai điểm liền nhau ở hai khu (bài 28 gọi là cụm) không kề nhau; phút lấy từ bảng khoảng cách (bài 24) | 31 |
 | chấm chặt | — | cách chấm của phép đếm ảnh bài 26: ảnh lạ (nơi ngoài danh sách) ra tên nào cũng tính là sai (giảng ở bảng "Đã so" dòng 11; nếu chấp nhận một ảnh cầu Phú Xuân được trả lời là Kinh thành thì số ảnh sai nơi 14 thành 13) | 26 |
 | chấm mù | blind evaluation, blind grading | người chấm không biết câu trả lời (hay bản ghi) đến từ bản nào, hệ thống nào | 19 (cũng ở 32) |
+| chèn trước | insert before | đặt điểm mới vào trước một điểm đang có của buổi; điểm đó lùi giờ | 31 |
 | chỉ mục | index | toàn bộ dạng đã xử lý của kho để tìm: collection, file thống kê từ khoá, bản ghi chỉ mục (bài 2 gọn hơn: dạng đã xử lý sẵn của kho để tìm nhanh) | 2 (cũng ở 12) |
 | chính sách chặn tải | Content-Security-Policy | dòng máy chủ gửi kèm trang, bảo trình duyệt chỉ được tải chương trình, kiểu chữ, ảnh từ những nơi được liệt kê | 35 |
 | chờ tới chữ đầu | time to first text | từ lúc bấm gửi tới lúc chữ đầu tiên của câu trả lời hiện ra | 34 |
 | chủ đề | domain | nhóm lớn của bài: món ăn, di tích, lễ hội, nghệ thuật biểu diễn, du lịch | 9 |
 | chuỗi hội thoại | multi-turn chain | một kịch bản nhiều tin liền nhau, mỗi tin có nhãn điều đúng phải xảy ra | 32 |
-| chuỗi sửa lịch | edit chain | một kịch bản nhiều tin liền nhau trên một lịch, dùng để đo | 31 |
+| chuỗi sửa lịch | edit chain | một kịch bản nhiều tin liền nhau trên một lịch, dùng để đo (từ 24/11 giảng ở "Chi tiết để tra" của bài 31, ngoài bảng "Từ dùng trong bài") | 31 |
 | chữ chạy dần | streaming | model gửi từng mẩu chữ ngay khi viết, giao diện hiện dần; ngược lại là chờ viết xong mới gửi cả câu (bài 40: hiện nay với Claude, chữ tới một lần khi viết xong). Bài 6, 34 tả cùng việc này trên giao diện là "chữ hiện dần" | 33 (cũng ở 40) |
 | chữ để tìm | search text | tên bài + đường tiêu đề + thân đoạn, ghép lại; đây là thứ được đổi thành vector và từ khoá | 9 |
 | chữ giữ chỗ | — | thứ model nộp vào ô trả lời khi nó còn muốn tìm mà công cụ đã bị cất ("Tôi cần tìm thêm về…"); không có số nguồn nào | 21 |
@@ -143,6 +146,7 @@ Có 229 từ: 224 từ gom từ 243 dòng bảng "Từ dùng trong bài" của c
 | lượt hỏi | turn (của cuộc trò chuyện) | một câu người dùng gửi, cùng mọi việc hệ thống làm để trả lời câu đó | 21 |
 | mã cuộc trò chuyện | conversation id (cất trong cookie) | chuỗi ngẫu nhiên máy chủ đưa trình duyệt cất; trình duyệt gửi kèm mỗi câu hỏi để máy chủ biết câu đó thuộc cuộc nào | 23 |
 | mã đoạn | chunk_id | tên riêng của mỗi đoạn: đường dẫn file của bài kèm số thứ tự của đoạn trong bài (đếm từ 0) | 8 |
+| mã lượt | turn id | chuỗi ngẫu nhiên 16 ký tự máy chủ cấp cho một lượt có câu trả lời cuối; nút 👍 / 👎 và nút "Vì sao trả lời vậy?" dùng nó để chỉ đúng lượt đó | 42 |
 | mã mục | item id | nhãn của từng mục trong khung, dạng "ngày 1, buổi sáng, mục 1"; model phải trả câu theo đúng nhãn này | 29 |
 | máy chủ | backend, server | chương trình chạy trên máy của dự án; nhận yêu cầu từ giao diện, tìm trong kho, gọi model, gửi kết quả về | 5 (cũng ở 6) |
 | mẫu bài | template | khung các mục mà mọi bài cùng chủ đề phải theo | 7 |
@@ -215,6 +219,7 @@ Có 229 từ: 224 từ gom từ 243 dòng bảng "Từ dùng trong bài" của c
 | tìm theo nghĩa | dense retrieval, semantic search | tìm các đoạn có vector gần vector câu hỏi nhất | 10 |
 | tìm theo từ khoá | keyword search, lexical search, sparse retrieval | chấm đoạn theo chữ trùng với câu hỏi | 11 |
 | tin có tên | SSE event | trên đường gửi dần, mỗi mẩu máy chủ gửi có một tên (ví dụ "nguồn") và một phần dữ liệu | 35 |
+| tính giải thích được | explainability | người ngoài xem được hệ thống đã làm gì để ra một câu trả lời | 42 |
 | tính năng đang mở | feature flag | một dòng trong cấu hình của máy chủ, ghi một tính năng đang được dùng hay đang tắt | 5 |
 | tính sẵn | pre-compute | chương trình tính và đưa kết quả vào ngữ cảnh trước lần gọi model đầu, model khỏi phải xin | 24 |
 | token | token | mẩu chữ model dùng để đếm; một âm tiết tiếng Việt thường là một tới vài token | 1 (cũng ở 8) |
@@ -307,6 +312,7 @@ Có 229 từ: 224 từ gom từ 243 dòng bảng "Từ dùng trong bài" của c
 | endpoint, route | đường gọi |
 | environment variable | thiết lập lúc chạy |
 | EXIF | thông tin kèm ảnh |
+| explainability | tính giải thích được |
 | external service, API | dịch vụ bên ngoài |
 | failing, passing | đỏ, xanh |
 | fake model, stub | model giả |
@@ -339,6 +345,7 @@ Có 229 từ: 224 từ gom từ 243 dòng bảng "Từ dùng trong bài" của c
 | image | ảnh đóng gói |
 | image embedding | embedding ảnh |
 | index | chỉ mục |
+| insert before | chèn trước |
 | intent parsing call | lần hiểu ý |
 | IP address | địa chỉ mạng |
 | item id | mã mục |
@@ -442,9 +449,11 @@ Có 229 từ: 224 từ gom từ 243 dòng bảng "Từ dùng trong bài" của c
 | tool round | vòng công cụ |
 | tool; cơ chế gọi là tool calling hay function calling | công cụ |
 | top-k; ở đây k = 10 | số đoạn đưa cho model |
+| trace | bản ghi của lượt |
 | training | huấn luyện |
 | turn (của cuộc trò chuyện) | lượt hỏi |
 | turn (của vòng lặp agent) | vòng |
+| turn id | mã lượt |
 | validation, schema | kiểm khuôn |
 | variant | biến thể |
 | viewport | khung nhìn |
@@ -464,4 +473,6 @@ Gom từ mục "Từ dùng trong bài" của các bài 1–40 trong cùng thư m
 - Đợt đầu ngày 24/11/2026 (người gom phụ lục g1, 01:49 giờ `date`; khớp hệ thống 00:17 24/11/2026, bản code `39a4bbd4`; bài gốc 05, 24, 26, 27, 28, 29, 30, 31, 35, 39 bản 00:44–01:21 24/11 trong cây viết, đã áp biên bản kiểm độc lập; lượt cả bộ test gần nhất xong 01:00 24/11 (bài 38)): bốn từ chép từ bảng "Từ dùng trong bài" — "hỏi lại bằng nút", "buổi để trống" (bài 31), "dòng đoán", "embedding ảnh" (bài 26); hai từ bài gốc giảng trong thân bài — "luật ranh" (bài 31 mục "Thiếu ngày hay buổi thì hỏi…": câu dẫn và bảng bốn hàng; nghĩa viết theo ba hàng đầu của bảng), "chấm chặt" (bài 26 "Ý chính" gạch 3, quyết định 2, "Đã so" dòng 11); "tên phải xác nhận" giữ làm lịch sử (bài 26 bảng "Từ dùng trong bài" bản 24/11 không còn từ này; "Cấu hình đang chạy" hàng dấu "xác nhận trước": giao diện không dùng từ 21:29 23/11). Ba dòng tra ngược mới (clarify with buttons, empty session mark, image embedding). Đếm: một đoạn python đọc bảng "Từ dùng trong bài" của bài 01–40 ra 243 dòng, 224 tên khác nhau (19 tên ở hai bài); so với bảng của trang này: thiếu đúng bốn tên trên (cộng hai cặp tên ghi khác: "điểm" ↔ "điểm (trong Qdrant)", "kho code, lưu" ↔ "kho code") [tự đếm]; bảng Việt → Anh 223 ⇒ 229 (`/tmp/d_g1/dem.py`). Báo cáo: `data/hoc_cung_D/viet/dot_2411_g1_phu_luc_ABDEF_00.md` [riêng tư]. Dòng Cập nhật trước giữ ở đầu trang sau chữ "bản trước:".
 - Dòng Cập nhật trước (chuyển xuống 18:51 23/11/2026): "Cập nhật 17:40, ngày 23/11/2026 · dòng "danh sách tên" (55) và dòng mới "tên phải xác nhận" theo bảng "Từ dùng trong bài" của bài 26 bản đầu tối · 17:10, ngày 23/11/2026 · khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt, kho 267 bài) + số lệnh thêm trên bảng điểm từ 16:38; chưa gồm các bản gộp khác từ 16:38 (chờ phiếu) · dòng "danh sách tên" ghi mốc "42 … (tới 16:47 23/11)" theo bài 26 · 11:32: khớp các bài sáng 23/11 (giao diện mới, 48 tính năng, kho 267 bài): thêm tám từ — thẻ chờ, bến, khung nhìn (bài 5), bảng kiểu, hình vẽ bằng đường cong, giảm chuyển động, tương phản (bài 35), thẻ nơi (bài 23, sót từ 22/11) — và sáu dòng tra ngược; "dòng trạng thái" chép lại theo bài 5 (218 từ) · trước đó (22/11: phân xử chỗ lệch giữa các bài; gom lần đầu); bài gốc đổi thì trang này phải gom lại."
 - **Áp biên bản kiểm độc lập của đợt gom 24/11/2026** (`data/hoc_cung_D/kiem/dot_2411_k3_gom_ABDEF_00.md` [riêng tư], mục PL_E; 06:38 24/11): dòng Cập nhật và gạch "Đợt đầu ngày 24/11": vế nói các bản gộp sau 20:14 23/11 chưa qua lượt cả bộ test là sai — lượt cả bộ test xong 01:00 24/11 (bài 38 dòng 11); "00:44–01:20" thành "00:44–01:21"; câu đếm và hàng "chấm chặt": từ này được giải nghĩa ở bài 26 bảng "Đã so" dòng 11 ("chấm chặt: ảnh lạ ra tên nào cũng là sai"), không ở thân bài [chép từ bài]; hàng "hỏi lại bằng nút": nút "Xếp giúp mình" gửi "thêm X, bạn tự xếp giúp mình", không phải lệnh đủ ngày, buổi (`backend/llm/sua_lich_v2.py` dòng 29, 1454) [code] — câu mới giống từng chữ câu ở bài 31 bảng "Từ dùng trong bài". Không áp hai đề nghị viết lại của biên bản cho "buổi để trống", "chấm chặt" (lời giao 3.5). Các câu áp sau biên bản chưa có người thứ hai đọc.
+- **Đợt gom sáng 24/11/2026 (người gom phụ lục g3; khớp hệ thống 08:40 24/11/2026, nhánh chính `fdadd3de`; bài gốc 42, 31 và 27, 28, 29, 30, 05, 37 bản commit `61786cc9` trong cây viết).** So cột đầu của mọi bảng "Từ dùng trong bài" (bài 01–42, script `python3` đọc bảng ngay dưới tiêu đề "## Từ dùng trong bài") với cột đầu phụ lục [đã chạy]: 247 dòng bảng, 228 tên khác nhau; thiếu ở phụ lục đúng năm từ — bốn từ của bài 42 ("mã lượt", "bản ghi của lượt", "bản tóm tắt lượt", "tính giải thích được") và "chèn trước" của bài 31; hai tên khác chữ đã có từ trước ("kho code, lưu" ⇒ "kho code", "điểm" ⇒ "điểm (trong Qdrant)"). Nghĩa chép đúng bảng của bài gốc; hai chỗ thêm ngoặc cho đứng được ngoài bài: "nút của bài này" ⇒ nút "Vì sao trả lời vậy?" (mã lượt), "(khung của nút …)" (bản tóm tắt lượt). "Buổi để trống": thêm vế "hai buổi cùng mang dấu thì ban ngày trống" theo bảng hiện tại của bài 31 (mốc 08:19 lấy từ bài 31 quyết định 3). "Chuỗi sửa lịch": bài 31 bỏ khỏi bảng khi áp biên bản sáng 24/11, nghĩa còn ở "Chi tiết để tra" gạch "Chuyển từ nửa để hiểu đợt sáng 24/11" — giữ hàng, ghi chỗ giảng mới. Bài 27, 28, 29, 30, 05, 37: bảng "Từ dùng trong bài" không đổi ở đợt này (`git diff fdadd3de 61786cc9`). Đếm `python3 /tmp/d_g1/dem.py`: 229 ⇒ 234 (bảng tra ngược không tính; thêm bốn dòng tra ngược cho bốn từ có tên tiếng Anh).
+- Dòng Cập nhật trước (chuyển xuống 09:46 24/11/2026, đợt gom sáng 24/11): "Cập nhật 01:49, ngày 24/11/2026 · khớp hệ thống 00:17 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · thêm "hỏi lại bằng nút", "buổi để trống", "luật ranh" (bài 31), "dòng đoán", "embedding ảnh", "chấm chặt" (bài 26); "tên phải xác nhận" thành lịch sử (tới 21:29 23/11); số từ 223 ⇒ 229 · lượt cả bộ test gần nhất xong 01:00 24/11 trên đúng bản code này: 96 file, 4 bỏ vì cần khoá OpenAI, 92 chạy, 2.325 ca đạt, không file nào đỏ (bài 38) · bản trước: 21:06, ngày 23/11/2026 · khớp hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · thêm "lượt đo bù" (bài 33), "đoàn nhẹ" (bài 31), công tắc "hết vòng" (bài 21); sửa "kho" 269 bài, "đoạn" và "tìm" 9.533 đoạn, "bảng điểm tham quan" 47 dòng, "giữ chỗ", "trần vòng" theo bài gốc; số từ 220 ⇒ 223 · 22:07: hàng "kho" ghi đúng mốc 18:03 (vào kho) / 18:05 (chỉ mục) · các mốc trước: khối Nguồn · 06:38 24/11: áp biên bản kiểm độc lập của đợt gom (cụm lượt cả bộ test, nghĩa "hỏi lại bằng nút", chỗ giảng "chấm chặt", 01:21)."
 </details>
