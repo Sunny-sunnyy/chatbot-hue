@@ -148,7 +148,8 @@ def test_loc_y_bo_y_noi_gio_mo_cua_hoac_gia_bang_loi_khac(chu):
                                  "Bình minh 04h30 – 06h00 mặt đầm phủ sương", "Nên bắt đầu đi từ khoảng 17:30 để kịp hoàng hôn", "Lăng xây năm 1864, hoạt động từ năm 1883",
                                  "Quán từng có phòng trưng bày gốm sứ, nhưng nay đã đóng cửa vĩnh viễn", "Bảo tàng quản lý hơn 11.000 hiện vật triều Nguyễn",
                                  "Xe buýt hai tầng dừng ở Lăng Tự Đức nhưng vé xe không gồm vé vào cổng, du khách phải mua vé di tích riêng",
-                                 "Nên dành 2 giờ tham quan và mang theo nước uống"])
+                                 "Nên dành 2 giờ tham quan và mang theo nước uống",
+                                 "Đón hoàng hôn trên sông Hương từ cầu gỗ lim, nên bắt đầu tham quan từ khoảng 17:30"])
 def test_loc_y_khong_bo_oan_y_chi_nhac_so_hoac_gio_trong_ngay(chu):
     assert st.loc_y([{"chu": chu, "nguon": [1]}], {1}, 4)[0] == [f"{chu} [1]"]
 
