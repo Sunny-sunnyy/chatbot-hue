@@ -94,7 +94,8 @@ export function Net({ d, co = 18 }) {
 const chuSach = chu => boMaTrichDan(String(chu ?? "")).trim();
 
 // Dùng chung với trang hồ sơ theo chủ đề (`HoSo.jsx`): `oThieu` = hàm vẽ ô thiếu riêng của trang đó (nhận danh sách nhãn thiếu); không đưa ⇒ ô của sổ tay.
-export function NoiDungMuc({ muc, khoa, baiId, oThieu = null }) {
+// `duoiY` = hàm vẽ phần đuôi của từng ý trong danh sách (trang hồ sơ: tên bài mà ý dựa vào); không đưa ⇒ không có đuôi.
+export function NoiDungMuc({ muc, khoa, baiId, oThieu = null, duoiY = null }) {
   // Dữ liệu lệch hợp đồng không được làm trắng cả trang (không có lớp bắt lỗi quanh trang): thiếu mảng ⇒ mảng rỗng; nguồn luôn có `heading_path`,
   // `excerpts` (dòng nguồn dùng chung `SourceLine` đọc thẳng hai trường đó khi bấm mở)
   const nguon = (Array.isArray(muc.nguon) ? muc.nguon : []).map(s => ({ ...s, heading_path: s.heading_path || [], excerpts: s.excerpts || [] }));
@@ -118,13 +119,17 @@ export function NoiDungMuc({ muc, khoa, baiId, oThieu = null }) {
               <div key={i} className={d.nhan ? "st-d" : "st-d st-d-tron"}>
                 {d.nhan && <dt><Net d={icNhan(d.nhan)} /> {d.nhan}</dt>}
                 <dd>{Array.isArray(d.gach)
-                  ? <ul>{d.gach.map((g, j) => <li key={j}>{chuSach(g)}</li>)}</ul>
+                  ? <ul>{d.gach.map((g, j) => <li key={j}>{chuSach(g)}{duoiY ? duoiY(d, j, nguon) : null}</li>)}</ul>
                   : chuSach(d.chu)}</dd>
               </div>
             ))}
           </dl>
-        // câu an toàn (bão / lũ, 112): chữ cố định của hệ thống — giữ nguyên chữ và lớp hiển thị an toàn của sản phẩm
-        : <p key={n} className="notice notice-an-toan" role="note">{k.chu}</p>))}
+        // câu an toàn (bão / lũ, 112; trang hồ sơ: lưu ý an toàn theo mùa của bài kho): giữ NGUYÊN chữ lõi gửi và lớp hiển thị an toàn của sản phẩm.
+        // Có `nhan` (hồ sơ) ⇒ in nhãn đậm trước câu, một lần cho các câu liền nhau cùng nhãn; `so[0]` trỏ một bài kho ⇒ thêm lối "Mở bài".
+        : <p key={n} className="notice notice-an-toan" role="note"><span>
+            {k.nhan && !(khoi[n - 1]?.kieu === "an_toan" && khoi[n - 1].nhan === k.nhan) && <b>{k.nhan}: </b>}{chuSach(k.chu)}
+            {typeof nguon.find(s => s.id === k.so?.[0])?.bai_id === "string" && <> <a href={baiHref(nguon.find(s => s.id === k.so[0]).bai_id)}>Mở bài</a></>}
+          </span></p>))}
       {/* Ô THIẾU: lõi báo "sổ tay không có dòng này" — KHÔNG phải "kho không có" (bài có thể nêu giờ trong câu văn chứ không ở dòng nhãn; ý của model có
           thể bị bộ lọc bỏ) ⇒ câu không khẳng định gì về kho, và chỉ lối xem tiếp (phiên đo + phiên điều phối 24/11/2026) */}
       {thieu.length > 0 && (oThieu ? oThieu(thieu, doan.filter(d => d.kieu === "thieu")) :

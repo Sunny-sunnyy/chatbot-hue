@@ -65,6 +65,9 @@
 .hs-bai a[data-lv="travel"] i { background: var(--color-lv-travel); }
 .hs-bai a[data-lv="performing_arts"] i { background: var(--color-lv-arts); }
 .hs .st-dl { margin-top: 14px; }
+/* tên bài mà một ý dựa vào (chỉ với ý không tự nêu tên nơi): chữ nhỏ dưới ý */
+.hs-y-bai { display: block; margin-top: 1px; font-size: var(--text-chu-thich); color: var(--color-muted); }
+.hs-y-bai a { color: var(--color-accent-deep); text-decoration: underline; text-underline-offset: 2px; }
 .hs-mong { margin-top: 12px; font-size: var(--text-nho); color: var(--color-muted); }
 .hs-dang-doc { margin-bottom: 14px; font-size: var(--text-phu); line-height: 1.6; color: var(--color-muted); }
 

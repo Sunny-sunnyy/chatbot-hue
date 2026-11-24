@@ -149,6 +149,22 @@ export function LuoiChuDe({ hoSo }) {
   );
 }
 
+// Ý không nêu tên nơi nó nói tới (phiên đo đọc tay 24/11: khoảng 3 / 10 ý) ⇒ gắn tên BÀI mà ý dựa vào (lõi gửi `gach_so[i]` = số nguồn của ý thứ i trong
+// `nguon` của chính mục) — chữ nhỏ dưới ý, bấm mở bài. Ý đã nhắc đúng tên bài thì không gắn (khỏi lặp chữ). Đây là TÊN bài, không phải số tham chiếu.
+function duoiY(d, j, nguon) {
+  if (d.nhan) return null;  // khối có nhãn ("Giờ mở cửa và giá vé": mỗi dòng đã mở đầu bằng tên nơi; nguồn giá là bài VÉ) ⇒ không gắn
+  if (new Set(nguon.map(s => s.bai_id || s.title)).size < 2) return null;  // mục chỉ có MỘT bài: tên bài đã ở ngay đầu mục ⇒ gắn vào từng ý là thừa
+  const so = Array.isArray(d.gach_so?.[j]) ? d.gach_so[j] : [];
+  const y = String(d.gach?.[j] ?? "").toLowerCase();
+  const bai = [...new Map(so.map(n => nguon.find(s => s.id === n)).filter(s => s && typeof s.title === "string" && !y.includes(s.title.toLowerCase()))
+    .map(s => [s.bai_id || s.title, s])).values()];
+  if (!bai.length) return null;
+  return (
+    <small className="hs-y-bai">Theo bài{" "}
+      {bai.map((s, k) => <span key={s.bai_id || s.title}>{k > 0 && " · "}{typeof s.bai_id === "string" ? <a href={baiHref(s.bai_id)}>{s.title}</a> : s.title}</span>)}</small>
+  );
+}
+
 function MucHoSo({ d, muc, dang, i }) {
   const bai = Array.isArray(d.bai) ? d.bai : [];
   const theoTen = new Map(bai.map(b => [b.ten, b.bai_id]));
@@ -176,7 +192,7 @@ function MucHoSo({ d, muc, dang, i }) {
             ))}
           </ul>
         )}
-        {muc ? <NoiDungMuc muc={muc} khoa={`hs-${d.id}`} oThieu={oThieu} />
+        {muc ? <NoiDungMuc muc={muc} khoa={`hs-${d.id}`} oThieu={oThieu} duoiY={duoiY} />
           : dang ? <><KhungXuong /><span className="sr-only">đang viết…</span></>
           : <p className="st-muc-loi">Mục này chưa có nội dung — bấm “Dựng lại” để thử lần nữa.</p>}
         {muc?.muc_do === "mong" && <p className="hs-mong">Mục này kho nói ít.</p>}
