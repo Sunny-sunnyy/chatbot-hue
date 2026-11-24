@@ -8,7 +8,8 @@ import { GioiThieu } from "./GioiThieu.jsx";
 import { ChoO } from "./ChoO.jsx";
 import { useRoute } from "./route.js";
 import { datNguonBanDo } from "./nguonBanDo.js";
-import { batXuatLich } from "./LichV2.jsx";
+import { batSoTay, batXuatLich } from "./LichV2.jsx";
+import { SoTay, useSoTay } from "./SoTay.jsx";
 
 const TrangBanDo = lazy(() => import("./TrangBanDo.jsx"));  // tải riêng ⇒ trang khác không tải Leaflet
 const TheoDoi = lazy(() => import("./TheoDoi.jsx"));  // trang riêng của chủ dự án, không có trong menu
@@ -29,6 +30,7 @@ function getJson(url) {
 export default function App() {
   const route = useRoute();
   const chat = useChat();
+  const soTay = useSoTay();  // bản thử "Sổ tay cho chuyến đi" (công tắc server `so_tay`)
   const [tinhNang, setTinhNang] = useState(TINH_NANG_TAT);
   const [daCoTinhNang, setDaCoTinhNang] = useState(false);  // H1: chưa biết cờ ⇒ trang Lên kế hoạch giữ chỗ (không vẽ biểu mẫu cũ rồi đổi — C đo CLS 0,22)
   const [bai, setBai] = useState(null);
@@ -39,7 +41,12 @@ export default function App() {
   const onTroLy = route.page === "tro-ly";
 
   useEffect(() => {
-    getJson("/api/tinh_nang").then(t => { datNguonBanDo(t.ban_do); batXuatLich(t.xuat_pptx); setTinhNang(t); }).catch(() => setTinhNang(TINH_NANG_TAT)).finally(() => setDaCoTinhNang(true));  // lỗi ⇒ coi như mọi cờ tắt (ẩn mục)
+    getJson("/api/tinh_nang").then(t => {
+      datNguonBanDo(t.ban_do); batXuatLich(t.xuat_pptx);
+      // nút ở thẻ lịch: dựng lại sổ tay từ lịch MỚI NHẤT của cuộc rồi sang trang đọc (lịch có thể vừa được sửa bằng lời)
+      batSoTay(t.so_tay === true ? () => { soTay.tao(); window.location.hash = "#/so-tay"; } : null);
+      setTinhNang(t);
+    }).catch(() => setTinhNang(TINH_NANG_TAT)).finally(() => setDaCoTinhNang(true));  // lỗi ⇒ coi như mọi cờ tắt (ẩn mục)
     getJson("/api/kham_pha").then(data => setBai(data.bai)).catch(() => setBaiLoi("Chưa tải được danh sách bài — thử tải lại trang."));
   }, []);
   useEffect(() => {
@@ -112,7 +119,7 @@ export default function App() {
     { href: "#/", ten: "Trang chủ", on: route.page === "trang-chu" },
     { href: "#/kham-pha", ten: "Khám phá", on: ["kham-pha", "linh-vuc", "bai"].includes(route.page) },
     ...(tinhNang.ban_do_lich ? [{ href: "#/ban-do", ten: "Bản đồ", on: route.page === "ban-do" }] : []),
-    ...(tinhNang.lich_trinh_bieu_mau ? [{ href: "#/len-ke-hoach", ten: "Lên kế hoạch", on: route.page === "len-ke-hoach" }] : []),
+    ...(tinhNang.lich_trinh_bieu_mau ? [{ href: "#/len-ke-hoach", ten: "Lên kế hoạch", on: route.page === "len-ke-hoach" || route.page === "so-tay" }] : []),
     { href: "#/tro-ly", ten: TEN_TRO_LY, on: onTroLy },
     { href: "#/gioi-thieu", ten: "Giới thiệu", on: route.page === "gioi-thieu" },
   ];
@@ -155,6 +162,9 @@ export default function App() {
             : <LenKeHoach bat={tinhNang.lich_trinh_bieu_mau} prefill={planPrefill} pending={chat.pending} onSubmit={submitPlan} />
         )}
         {route.page === "cho-o" && <ChoO khu={route.khu} />}
+        {route.page === "so-tay" && daCoTinhNang && (tinhNang.so_tay === true
+          ? <SoTay soTay={soTay} />
+          : <div className="khung"><p>Trang sổ tay chưa bật. <a href="#/len-ke-hoach">Về trang Lên kế hoạch</a></p></div>)}
         {route.page === "theo-doi" && <Suspense fallback={<div className="khung co-cho" aria-busy="true" />}><TheoDoi /></Suspense>}
         {route.page === "ban-do" && daCoTinhNang && (tinhNang.ban_do_lich
           ? <Suspense fallback={<div className="khung co-cho" aria-busy="true" />}><TrangBanDo /></Suspense>

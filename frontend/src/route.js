@@ -12,6 +12,7 @@ import { giamChuyenDong } from "./hieuUng.js";
 //   #/theo-doi               trang theo dõi của chủ dự án (KHÔNG có trong menu; cần khoá quản trị)
 //   #/gioi-thieu/<mục>       trang Giới thiệu, cuộn tới mục có id đó (vd `gt-lam`)
 //   #/cho-o[/<khu>]          trang Chỗ ở (chỉ mở từ ô "Nơi ở" của lịch), lọc sẵn theo khu
+//   #/so-tay                 trang Sổ tay cho chuyến đi (bản thử; chỉ mở từ nút ở thẻ lịch, công tắc server `so_tay`)
 // Hash lạ ⇒ trang chủ.
 export function parseHash(hash) {
   let path;
@@ -28,7 +29,7 @@ export function parseHash(hash) {
   }
   if (parts[0] === "gioi-thieu") return parts[1] ? { page: "gioi-thieu", muc: parts[1] } : { page: "gioi-thieu" };
   if (parts[0] === "cho-o") return parts[1] ? { page: "cho-o", khu: parts[1] } : { page: "cho-o" };
-  if (["len-ke-hoach", "tro-ly", "ban-do", "theo-doi"].includes(parts[0])) return { page: parts[0] };
+  if (["len-ke-hoach", "tro-ly", "ban-do", "theo-doi", "so-tay"].includes(parts[0])) return { page: parts[0] };
   return { page: "trang-chu" };
 }
 
