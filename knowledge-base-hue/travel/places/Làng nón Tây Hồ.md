@@ -35,6 +35,7 @@ Vào khoảng năm 1959 – 1960 (có nguồn ghi chung là cuối thập niên 
 ## Thông tin dành cho du khách
 
 - Theo AEON MALL Huế (07/2025): hạ tầng của làng chưa được đầu tư nhiều; nên đi từ tháng 10 đến tháng 4 năm sau khi trời mát, trong ngày thì sáng sớm (khoảng 7 – 9 giờ) hoặc chiều mát (khoảng 15 – 17 giờ); ngày mưa lớn đường làng dễ lầy.
+- Cũng theo AEON MALL Huế (07/2025): làng không quy định giờ tham quan và không thu phí tham quan.
 - Tạp chí Việt Nam Hương sắc (07/2026) ghi nhu cầu dùng nón truyền thống đã giảm, nhưng người làng vẫn giữ nghề, nghệ nhân lớn tuổi truyền dạy cho con cháu và kết hợp đón khách du lịch trải nghiệm.
 - Nếu muốn mua nón, visithue.vn ghi khách cũng hay tìm đến chợ Dạ Lê, nơi chuyên bán nón.
 
@@ -43,7 +44,7 @@ Vào khoảng năm 1959 – 1960 (có nguồn ghi chung là cuối thập niên 
 - Visit Hue (visithue.vn), "Làng nghề làm nón Huế" (không thấy ngày đăng): các làng nón ở Huế, vị trí bên sông Như Ý, xã Phú Hồ, huyện Phú Vang, cách Huế khoảng 12 km, 15 công đoạn, lá bồ quy diệp, 16 nan tre, hai lớp lá, chợ Dạ Lê — https://visithue.vn/Lang-nghe-lam-non-Hue.html/?pid=MTc2NDZ8Y3NkbGRs0 (xem ngày 14/11/2026).
 - Khám phá Huế, "Làng nghề nón lá xứ Huế" (không thấy ngày đăng): cách Huế 12 km về phía đông, ông Bùi Quang Bặc, tranh cắt giấy, soi lên ánh sáng — https://khamphahue.com.vn/Du-lich/Chi-tiet/tid/Lang-nghe-non-la-xu-Hue.html/pid/8543/cid/3 (xem ngày 14/11/2026).
 - Khám phá Huế, "Nón lá bài thơ xứ Huế" (không thấy ngày đăng): hướng đông nam, lá dừa, lá gồi — https://khamphahue.com.vn/Du-lich/Chi-tiet/tid/Non-la-bai-tho-xu-Hue.html/pid/5100/cid/269 (xem ngày 14/11/2026).
-- AEON MALL Huế, "Khám phá từ A – Z Làng nón Tây Hồ" (29/07/2025): thôn Tây Hồ, nón bài thơ khoảng 1959 – 1960, hoạt động trải nghiệm, thời điểm nên đi, hạ tầng — https://hue.aeonmall-vietnam.com/cam-nang-aeon-mall-hue/lang-non-tay-ho.html (xem ngày 14/11/2026).
+- AEON MALL Huế, "Khám phá từ A – Z Làng nón Tây Hồ" (29/07/2025): thôn Tây Hồ, nón bài thơ khoảng 1959 – 1960, hoạt động trải nghiệm, thời điểm nên đi, hạ tầng, giờ tham quan ("Không có thời gian quy định") và phí ("Miễn phí tham quan") — https://hue.aeonmall-vietnam.com/cam-nang-aeon-mall-hue/lang-non-tay-ho.html (xem ngày 14/11/2026; xem lại ngày 24/11/2026 cho giờ tham quan và phí).
 - MIA.vn, "Nghiêng mình trước quê hương của những chiếc nón bài thơ – Làng Tây Hồ" (07/12/2021): cuối thập niên 50 – đầu thập niên 60, lá bồ quy diệp, 16 nan, quét dầu, cửa hàng hai bên đường, cánh đồng lúa — https://mia.vn/cam-nang-du-lich/nghieng-minh-truoc-que-huong-cua-nhung-chiec-non-bai-tho-lang-tay-ho-2525 (xem ngày 14/11/2026).
 - Tạp chí Việt Nam Hương sắc, "Theo dấu chiếc nón bài thơ về làng Tây Hồ" (02/07/2026): xã Phú Hồ, thành phố Huế, khoảng 1959 – 1960, phân công nam nữ, giữ nghề và du lịch trải nghiệm — https://tapchivietnamhuongsac.vn/theo-dau-chiec-non-bai-tho-ve-lang-tay-ho-6513.html (xem ngày 14/11/2026).
 - Bazan Travel, "Về xứ Huế thăm làng nón bài thơ Tây Hồ" (không thấy ngày đăng): đính "xoài" trên chóp, quét dầu, nón mỏng thanh — https://bazantravel.com/ve-xu-hue-tham-lang-non-bai-tho-tay-ho/ (xem ngày 14/11/2026).
