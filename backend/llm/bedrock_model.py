@@ -20,6 +20,7 @@ Các giới hạn đã đo thật trên bộ khoá đang dùng (46 lời gọi s
   muốn tìm tiếp — viết rác vào khuôn (phát lại 22 lần: `{"answer": "placeholder"}`, `"tim_kho"`, rỗng… 14 lần, đúng câu từ chối 8 lần; chỉ còn
   `tra_loi`: đúng câu từ chối 20 / 22, 0 rác kiểu đó).
 """
+import os
 import datetime as dt
 import hashlib
 import hmac
@@ -158,7 +159,10 @@ def build_body(system_instructions: str | None, input: "str | list[dict]", model
     `reasoning_default` (`none | low | medium | high`): mức suy luận cho agent KHÔNG tự đặt; agent tự đặt (nhóm lịch: "low") giữ mức của nó."""
     body: dict = {"anthropic_version": ANTHROPIC_VERSION, "max_tokens": max_tokens, "messages": to_messages(input)}
     if system_instructions:
-        body["system"] = system_instructions
+        # BẢN THỬ ĐO (nhánh thu-b-dem-loi-dan, 24/11/2026 — không gộp): biến môi trường HUE_BEDROCK_DEM_LOI_DAN=1 ⇒ khối lời dặn mang điểm đánh dấu đệm;
+        # công cụ đứng TRƯỚC lời dặn trong thứ tự dựng của API nên một điểm ở đây đệm cả danh sách công cụ lẫn lời dặn. Không đặt biến ⇒ y như trước.
+        body["system"] = ([{"type": "text", "text": system_instructions, "cache_control": {"type": "ephemeral"}}]
+                          if os.environ.get("HUE_BEDROCK_DEM_LOI_DAN") == "1" else system_instructions)
     if tools:
         for tool in tools:
             if not isinstance(tool, FunctionTool):
