@@ -35,6 +35,8 @@ from llm.full_corpus_prompt import (
     ASSISTANT_TOOL_NOTE,
     LICH_TRINH_MO_TA,
     LIET_KE_MO_TA,
+    HO_SO_DAN_Y_LOI_DAN,
+    HO_SO_MUC_LOI_DAN,
     NGAY_LICH_MO_TA,
     SO_TAY_DI_LAI_LOI_DAN,
     SO_TAY_DIEM_LOI_DAN,
@@ -138,7 +140,24 @@ class DiLaiSoTayOutput(BaseModel):
     di_lai: list[YSoTay]
 
 
-SO_TAY_OUTPUTS = {"diem": MucDiemSoTayOutput, "di_lai": DiLaiSoTayOutput}
+class MucDanYHoSo(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    tieu_de: str
+    bai: list[int]
+
+
+class DanYHoSoOutput(BaseModel):
+    """Công tắc `ho_so_chu_de` (bản thử): dàn ý — model gom các bài đã chọn thành mục; code kiểm lại (`llm/ho_so_chu_de.kiem_dan_y`)."""
+    model_config = ConfigDict(extra="forbid")
+    muc: list[MucDanYHoSo]
+
+
+class MucHoSoOutput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    y: list[YSoTay]
+
+
+SO_TAY_OUTPUTS = {"diem": MucDiemSoTayOutput, "di_lai": DiLaiSoTayOutput, "ho_so_dan_y": DanYHoSoOutput, "ho_so_muc": MucHoSoOutput}
 ASSISTANT_MAX_TURNS = 4  # B2 D5 (A quyết (b)): ≤ 2 lần tìm thật + lần 3 "đã hết lượt" + 1 lượt viết
 
 
@@ -453,7 +472,8 @@ class OpenAIFullCorpusGenerator:
             loai: Agent(name=f"hue_so_tay_{loai}", instructions=loi_dan, model=self.responses_model,
                         model_settings=ModelSettings(include_usage=True, store=False, reasoning=Reasoning(effort=BIEU_MAU_REASONING)),
                         output_type=SO_TAY_OUTPUTS[loai])
-            for loai, loi_dan in (("diem", SO_TAY_DIEM_LOI_DAN), ("di_lai", SO_TAY_DI_LAI_LOI_DAN))
+            for loai, loi_dan in (("diem", SO_TAY_DIEM_LOI_DAN), ("di_lai", SO_TAY_DI_LAI_LOI_DAN),
+                                  ("ho_so_dan_y", HO_SO_DAN_Y_LOI_DAN), ("ho_so_muc", HO_SO_MUC_LOI_DAN))  # hai vai sau: công tắc `ho_so_chu_de`
         }
         # Sửa lịch bản 2: lần gọi riêng chỉ hiểu ý ⇒ hành động có tên (code áp); không công cụ, không lịch sử, suy luận thấp
         self.sua_lich_agent = Agent(

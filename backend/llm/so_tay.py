@@ -165,7 +165,7 @@ def go_ve_gio_gia(chu: str) -> str | None:
     return con[:1].upper() + con[1:] + ("" if con.endswith((".", "!", "?")) else ".")
 
 
-def loc_y(y_model: list[dict], hop_le: set[int], tran: int, cam_gio_gia: bool = True) -> tuple[list[str], dict]:
+def loc_y(y_model: list[dict], hop_le: set[int], tran: int, cam_gio_gia: bool = True, tran_ky_tu: int = TRAN_KY_TU) -> tuple[list[str], dict]:
     """Các ý model trả (`{chu, nguon}`) ⇒ các dòng gạch "chữ [n][m]" đã qua luật của code + số đếm lý do bỏ. Giữ khi: có chữ, ≤ `TRAN_KY_TU` ký tự, có ít
     nhất một số nguồn hợp lệ (số lạ bị gỡ khỏi ý), không nói giờ mở cửa / giá (`cam_gio_gia`: vế nói giờ / giá bị gỡ — `go_ve_gio_gia`; không còn gì thì bỏ
     cả ý; ý bị gỡ một phần ghi lý do `gio_gia_cat` trong `chu` để soát). Nhiều hơn `tran` ý ⇒ lấy `tran` ý đầu."""
@@ -176,7 +176,7 @@ def loc_y(y_model: list[dict], hop_le: set[int], tran: int, cam_gio_gia: bool = 
         if not chu:
             continue
         con = go_ve_gio_gia(chu) if cam_gio_gia else chu
-        ly_do = "khong_nguon" if not so else "qua_dai" if len(chu) > TRAN_KY_TU else "gio_gia" if con is None else "qua_tran" if len(giu) >= tran else None
+        ly_do = "khong_nguon" if not so else "qua_dai" if len(chu) > tran_ky_tu else "gio_gia" if con is None else "qua_tran" if len(giu) >= tran else None
         if ly_do is None and con != chu:  # gỡ một phần: ý vẫn được giữ, ghi lại chữ gốc để soát
             bo["chu"].append(("gio_gia_cat", chu))
             chu = con
