@@ -1,8 +1,8 @@
 # Bài 13 — Tìm: lấy 30 ứng viên, trộn hai bảng xếp hạng, giữ 10 đoạn
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào. · 09:56 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (ba bài kho được thêm câu sáng 24/11; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536).*
 
-**Bài trước đã biết:** chặng 2: kho được cắt thành 9.533 đoạn (từ 18:05 23/11), mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
+**Bài trước đã biết:** chặng 2: kho được cắt thành 9.536 đoạn (từ 07:49 24/11), mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
 **Bài này thêm:** chặng 3 bắt đầu. Người dùng gõ một câu; trong vài chục mili giây chương trình chọn ra 10 đoạn. Bài này đi qua bốn bước của việc chọn đó, và chỉ ra bước tìm hỏng ở đâu.
 
 ## Ý chính

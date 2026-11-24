@@ -1,6 +1,6 @@
 # Bài 4 — Bài toán: ai dùng, hỏi gì, nhận gì, và những thứ cố ý không làm
 
-*Cập nhật 21:03, ngày 23/11/2026 · khớp hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · cả bộ test xong 20:09 23/11 (bài 38) · 22:20: áp biên bản kiểm (câu tỉnh khác ghi "lượt đo") · các mốc trước: khối Nguồn.*
+*Cập nhật 21:03, ngày 23/11/2026 · khớp hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · cả bộ test xong 20:09 23/11 (bài 38) · 22:20: áp biên bản kiểm (câu tỉnh khác ghi "lượt đo") · các mốc trước: khối Nguồn. · 09:56 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (ba bài kho được thêm câu sáng 24/11; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536).*
 
 **Bài trước đã biết:** ba ý nền: model ngôn ngữ viết trôi chảy mà vẫn sai; RAG cho model đọc tài liệu trước khi viết; công cụ cho model nhờ chương trình làm việc phải đúng.
 **Bài này thêm:** chính sản phẩm. hue_rag làm gì, cho ai, theo luật nào, và ranh giới của nó ở đâu.
@@ -167,7 +167,7 @@ Câu gõ không dấu: hay nhận câu từ chối. Tình huống khẩn cấp: 
 - Câu xin lên lịch gõ trong ô hỏi đáp ("lên lịch giúp mình 2 ngày") không ra một lịch; hệ thống trả lời từ kho và thêm một dòng trỏ sang trang Lên kế hoạch. Việc xếp lịch từ câu gõ tự do đã thử hai lần, chưa đạt điều kiện ghi trước, đang tắt (bài 28).
 - Câu nhờ làm thay: đo trên lượt thật ngày 19/11, 11 trên 12 lượt ra đúng câu nói thật của loại việc đó.
 - Hai mảng mà người dùng mô phỏng ngày 21/11 có hỏi và kho không có bài riêng — chỗ đậu ô tô khu trung tâm, quy định chụp ảnh ở chùa / lăng / bảo tàng — chủ dự án chọn không bổ sung (12:22 23/11: "tôi nghĩ sẽ ít người hỏi các câu này"); câu hỏi chung thường nhận câu từ chối hoặc câu dẫn sang mục web, câu về đúng một nơi có dòng lẻ trong kho có thể được trả lời một phần. Xem bài 7.
-- Kho 269 bài, 9.533 đoạn từ 18:05 23/11 (thêm hai bài AEON Mall Huế, công viên ven sông Hương; trước đó 267 bài) — bài 7.
+- Kho 269 bài, 9.536 đoạn từ 07:49 24/11 (ba bài được thêm câu; trước đó 9.533 từ 18:05 23/11: thêm hai bài AEON Mall Huế, công viên ven sông Hương; trước đó 267 bài) — bài 7.
 - Việc tối 23/11 chạm phạm vi bài này: đoạn dặn câu tỉnh khác gắn cả cho model cũ (bài 16); bản deploy sẽ chạy model cũ, có một lượt đo bù, phần lớn ô chạy trên bản 18:10 23/11 (demo trên bản 18:59), trước khi gắn đoạn dặn câu tỉnh khác cho model đó (bài 33); các việc còn lại của tối 23/11 là về lịch (bài 28–31).
 - Mọi phép đo trong giáo trình này dùng câu hỏi do nhóm soạn hoặc do một model đóng vai du khách; chưa có số đo với người dùng thật.
 

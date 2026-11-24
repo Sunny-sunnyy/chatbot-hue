@@ -245,7 +245,7 @@ Bảng đối chiếu chuẩn hóa thông tin dữ liệu tính đến mốc kh�
 
 1. **Phối hợp lịch trình xem biểu diễn tại Đại Nội:**
    - Nếu dự định xem suất diễn 10h00 tại Duyệt Thị Đường, du khách nên mua vé Đại Nội và vào cổng từ 08h00 sáng để kịp xem Lễ Đổi Gác ở Ngọ Môn (08h00), biểu diễn Tiểu Nhạc tại sân Điện Thái Hòa (08h15), sau đó tham quan Hoàng thành trước khi bước vào rạp hát lúc 09h50.
-   - Nếu xem suất chiều 15h00 tại Duyệt Thị Đường, có thể kết hợp xem tiếp suất biểu diễn Đại Nhạc tại Thế Miếu lúc 15h30 ngay sau khi rời nhà hát.
+   - Suất chiều tại Duyệt Thị Đường (15h00 – 15h40) trùng giờ với suất Đại Nhạc tại Thế Miếu (15h30 – 15h45) nên không xem trọn được cả hai; muốn xem cả hai trong một ngày thì chọn suất sáng 10h00 tại Duyệt Thị Đường rồi xem Đại Nhạc lúc 15h30 chiều.
 2. **Kinh nghiệm nhận biết dịch vụ Ca Huế đúng chuẩn:**
    - Theo Quyết định số 104/2025/QĐ-UBND, buổi diễn Ca Huế trên sông Hương phải có tối thiểu 7 nghệ sĩ (thuyền đơn) hoặc 8 nghệ sĩ (thuyền đôi), trang phục áo dài truyền thống lịch sự và bắt buộc đeo bảng tên của Sở Văn hóa và Thể thao. Thời lượng biểu diễn phải đạt từ 50 phút trở lên.
    - Du khách có quyền phản ánh tới đường dây nóng của Sở Du lịch hoặc Đội kiểm tra liên ngành nếu phát hiện nhà thuyền tự ý cắt bớt diễn viên, rút ngắn thời gian biểu diễn còn 25 – 30 phút hoặc tùy tiện ghép thêm khách lẻ khi đoàn đã trả tiền thuê nguyên thuyền.
@@ -261,3 +261,4 @@ Bảng đối chiếu chuẩn hóa thông tin dữ liệu tính đến mốc kh�
 
 - Giá thuê thuyền rồng theo giờ và theo tuyến của Thuyền Rồng Huế (đối chiếu ngày 22/11/2026): https://thuyenronghue.com/thue-thuyen-rong
 - Giá thuê thuyền rồng theo giờ và theo tuyến của Lá Quê Travel (đối chiếu ngày 22/11/2026): https://cahuetrensonghuong.com/thue-thuyen-rong-dao-song-huong/
+- Giờ suất chiều tại Nhà hát Duyệt Thị Đường (bắt đầu 15h00) và giờ biểu diễn Đại Nhạc tại Thế Miếu (15h30 – 15h45) theo lịch biểu diễn của Nhà hát Nghệ thuật Truyền thống Cung đình Huế (đối chiếu ngày 24/11/2026): http://nhanhac.com.vn/Danh-cho-du-khach/Lich-bieu-dien

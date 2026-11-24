@@ -1,13 +1,13 @@
 # Bài 12 — Cất vào Qdrant, cập nhật khi kho đổi, và vì sao kho lệch chỉ mục thì không câu hỏi nào được trả lời
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình và cấu hình đang chạy; số của lần cập nhật chỉ mục lấy từ lần chạy thật sáng 22/11 và phép kiểm độc lập của một phiên khác; ba tình huống Qdrant tắt / ngừng lấy từ lần thử thật trưa 22/11 (bài 6); người viết không chạy lại.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình và cấu hình đang chạy; số của lần cập nhật chỉ mục lấy từ lần chạy thật sáng 22/11 và phép kiểm độc lập của một phiên khác; ba tình huống Qdrant tắt / ngừng lấy từ lần thử thật trưa 22/11 (bài 6); người viết không chạy lại. · 09:55 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (sáng 24/11 ba bài kho được thêm câu; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536 — phiên D mở lúc 09:55); các câu có mốc giờ cũ và khối Nguồn giữ nguyên.*
 
 **Bài trước đã biết:** mỗi đoạn có chữ, thông tin gắn kèm, một vector, và phần từ khoá.
-**Bài này thêm:** 9.533 đoạn (từ 18:05 23/11) được cất ở đâu; bài trong kho đổi thì cập nhật thế nào; và bước kiểm khiến hệ thống thà không trả lời còn hơn trả lời bằng dữ liệu cũ.
+**Bài này thêm:** 9.536 đoạn (từ 07:49 24/11) được cất ở đâu; bài trong kho đổi thì cập nhật thế nào; và bước kiểm khiến hệ thống thà không trả lời còn hơn trả lời bằng dữ liệu cũ.
 
 ## Ý chính
 
-- **Qdrant** là cơ sở dữ liệu chuyên tìm vector. hue_rag cất cả 9.533 đoạn vào một **collection** duy nhất của nó; phần này gọi chung là **chỉ mục**.
+- **Qdrant** là cơ sở dữ liệu chuyên tìm vector. hue_rag cất cả 9.536 đoạn vào một **collection** duy nhất của nó; phần này gọi chung là **chỉ mục**.
 - Mỗi lần lập chỉ mục, chương trình ghi một **bản ghi chỉ mục**: danh sách bài của kho kèm "dấu vân tay" của từng bài. Dấu vân tay đổi khi bài đổi dù chỉ một chữ.
 - Mỗi lần bật, máy chủ so bản ghi đó với kho hiện có. **Lệch thì máy chủ vẫn chạy, nhưng mọi câu hỏi nhận lời báo "Dữ liệu tra cứu cần được lập chỉ mục lại."** Phép so chỉ chạy lúc bật: sửa kho khi máy chủ đang chạy thì nó vẫn trả lời theo chỉ mục cũ tới lần khởi động sau.
 - Sửa vài bài thì không phải lập lại cả chỉ mục (khoảng 225 giây). Một lệnh **cập nhật riêng** chỉ tính lại vector cho đoạn có thay đổi: lần chạy thật đầu tiên mất 37,7 giây cho 105 đoạn, kết quả giống một lần lập lại toàn bộ. Lệnh tự dừng nếu máy chủ đang chạy; xong phải bật lại máy chủ.
@@ -29,7 +29,7 @@
 
 Qdrant chạy trên cùng máy với hệ thống, trong một hộp riêng, ở một phiên bản được ghi cố định. Dữ liệu của nó nằm trong một thư mục của dự án, nên tắt rồi bật lại vẫn còn nguyên. Máy tính mở lại thì Qdrant tắt (bài 36).
 
-hue_rag dùng đúng một collection; tên của nó ghi luôn model embedding đã dùng. Collection có 9.533 điểm, bằng đúng số đoạn. Mỗi điểm gồm:
+hue_rag dùng đúng một collection; tên của nó ghi luôn model embedding đã dùng. Collection có 9.536 điểm, bằng đúng số đoạn. Mỗi điểm gồm:
 
 - một **mã** cố định, suy ra từ mã đoạn (bài 8);
 - **vector** 384 con số của đoạn (bài 10);
@@ -40,7 +40,7 @@ Lúc trả lời, hệ thống gửi vector của câu hỏi cho Qdrant và nh�
 
 ## Bản ghi chỉ mục ghi lại kho lúc chỉ mục được lập
 
-Mỗi lần lập chỉ mục, chương trình ghi một file gọi là bản ghi chỉ mục: danh sách 269 bài của kho kèm **dấu vân tay của từng bài**; số đoạn (9.533) và số điểm đã cất; tên, phiên bản, số chiều của model embedding; dấu vân tay của file thống kê từ khoá (bài 11); cách đo độ gần và dạng hồ sơ của collection. Lúc bật máy chủ, file này là căn cứ để trả lời câu hỏi "chỉ mục có khớp với kho không".
+Mỗi lần lập chỉ mục, chương trình ghi một file gọi là bản ghi chỉ mục: danh sách 269 bài của kho kèm **dấu vân tay của từng bài**; số đoạn (9.536) và số điểm đã cất; tên, phiên bản, số chiều của model embedding; dấu vân tay của file thống kê từ khoá (bài 11); cách đo độ gần và dạng hồ sơ của collection. Lúc bật máy chủ, file này là căn cứ để trả lời câu hỏi "chỉ mục có khớp với kho không".
 
 ## Bật máy chủ thì kiểm; lệch thì mọi câu hỏi nhận lời báo
 
@@ -161,7 +161,7 @@ Tắt lúc bật: máy chủ chỉ nối tới Qdrant lúc bật, nên phải b�
 | Địa chỉ | chỉ nghe trên chính máy đó, cổng 6335 | máy khác không gọi thẳng vào được | — |
 | Nơi giữ dữ liệu | thư mục `qdrant_storage/` của dự án | tắt hộp không mất dữ liệu | — |
 | Tên collection | `hue_full_corpus_7a2_e5_small_384` | tên ghi luôn model embedding và số chiều | — |
-| Số điểm | 9.533 | bằng số đoạn | — |
+| Số điểm | 9.536 | bằng số đoạn | — |
 | Vector trong mỗi điểm | 384 con số, đo bằng cosine | bài 10 | bài 10 |
 | Cách Qdrant tìm | gần đúng (HNSW), cấu hình mặc định | nhanh | đã so với tìm chính xác: giống hệt ở 108 trên 108 câu (kho cuối tháng 10) |
 | Chỉ mục phụ để lọc theo trường | không có | đường tìm câu trả lời không lọc theo trường (bài 9); riêng trang Lên kế hoạch có lấy đoạn theo mã đoạn | chưa thử |

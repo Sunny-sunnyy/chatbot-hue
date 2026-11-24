@@ -347,9 +347,12 @@ def test_a_blocked_move_offers_each_working_slot_as_a_button_and_every_button_ap
             assert dong["cau"].endswith("Bấm một nút dưới đây để dời.") and len(dong["nut"]) == min(len(kd["goi_y"]), s.MAX_CHO_HOI)
             for g, nut in zip(kd["goi_y"], dong["nut"]):
                 noi = f"buổi {s.NHAN_BUOI[g['buoi']]} ngày {g['ngay']}"
-                assert nut["gui"] == f"dời {T[a]['ten']} sang {noi}" and nut["nhan"].startswith(f"Dời sang {noi}") and "chon" not in nut
+                kem = f", đổi chỗ với {T[g['doi_voi']]['ten']}" if g["doi_voi"] else ""  # câu gửi nhắc tên điểm bị đổi chỗ ⇒ bấm là làm, không hỏi lần hai
+                assert nut["gui"] == f"dời {T[a]['ten']} sang {noi}{kem}" and nut["nhan"].startswith(f"Dời sang {noi}") and "chon" not in nut
                 assert (f"(đổi chỗ với {T[g['doi_voi']]['ten']})" in nut["nhan"]) if g["doi_voi"] else "đổi chỗ" not in nut["nhan"]
-                sau = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=a, ngay=g["ngay"], buoi=g["buoi"])], **MOI)  # đúng lệnh mà câu `gui` nói
+                dong_y = s.diem_dong_y_doi_cho(B, nut["gui"], set(vt))  # đúng thứ route đưa cho bộ áp khi nút được bấm
+                assert dong_y == ({g["doi_voi"]} if g["doi_voi"] else set())
+                sau = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=a, ngay=g["ngay"], buoi=g["buoi"])], dong_y_doi_cho=dong_y, **MOI)  # đúng lệnh mà câu `gui` nói
                 assert sau["da_ap"] and s._vi_tri(sau["khung"])[a] == (g["ngay"], g["buoi"])
                 doi_cho += bool(g["doi_voi"])
     assert co_nut and doi_cho  # bảng điểm thật phải có cả nút dời thẳng lẫn nút đổi chỗ hai điểm, không thì test này không kiểm gì
@@ -399,3 +402,74 @@ def test_an_add_whose_wording_matches_several_places_asks_even_when_only_one_is_
     (m,), d = kq["khong_doi"], _dong(kq)
     assert kq["khung"] == k and kq["da_ap"] == [] and m["ma_luat"] == "ten_mo_ho" and m["ung_vien"] == [cong_vien] and m["da_co"] == [T[ca_hue]["ten"]]
     assert "Ca Huế trên sông Hương cũng khớp “sông Hương” nhưng đã có trong lịch" in d["cau"] and [n["gui"] for n in d["nut"]] == ["thêm Công viên ven sông Hương"]
+
+
+def test_a_typed_move_into_an_occupied_slot_asks_before_swapping_the_other_place():
+    """Nguyên tắc chủ dự án xác nhận 22:02 23/11/2026: việc nào chạm tới thứ người dùng không nhắc cũng hỏi trước. Lệnh "dời X sang buổi B ngày N" mà chỗ đó
+    đang có đúng một điểm Y từng ĐỔI CHỖ hai điểm ngay và câu báo không nêu Y (đếm 24/11/2026: 117 / 117 lệnh dời áp được của lưới). Nay: lịch đứng yên +
+    câu nói Y sẽ chuyển đi đâu + MỘT nút; câu có nhắc tên Y (chính câu của nút, hay "đổi chỗ X với Y") hoặc đáp lại ngay sau câu hỏi ⇒ làm, và câu báo
+    nêu cả Y. Công tắc tắt ⇒ đổi chỗ ngay như cũ (câu báo vẫn nêu Y)."""
+    k, luu = _mac_dinh()
+    vt = s._vi_tri(k)
+    n = 0
+    for a in sorted(vt):
+        for c in sorted({v for v in vt.values()} - {vt[a]}):
+            hd = [s.HanhDong(loai="doi_buoi", ten=a, ngay=c[0], buoi=c[1])]
+            cu = s.ap(B, luu, hd, **CU)
+            if not cu["da_ap"] or "doi_voi" not in cu["da_ap"][0]:
+                continue  # lệnh bị luật chặn, hoặc không đổi chỗ ai
+            n += 1
+            y = cu["da_ap"][0]["doi_voi"]["diem"]
+            assert vt[y] == c and f"{T[y]['ten']} chuyển sang buổi {s.NHAN_BUOI[vt[a][1]]} ngày {vt[a][0]}." in s.thay_doi(B, cu)[0]["cau"]
+            hoi = s.ap(B, luu, hd, **MOI)
+            (m,), d = hoi["khong_doi"], _dong(hoi)
+            assert hoi["khung"] == k and hoi["da_ap"] == [] and m["ma_luat"] == "doi_cho_hoi" and d["hoi"] is True
+            assert d["cau"].startswith(f"Buổi {s.NHAN_BUOI[c[1]]} ngày {c[0]} đang là {T[y]['ten']} — dời {T[a]['ten']} sang đó thì {T[y]['ten']} chuyển sang buổi ")
+            (nut,) = d["nut"]
+            assert nut["gui"] == f"dời {T[a]['ten']} sang buổi {s.NHAN_BUOI[c[1]]} ngày {c[0]}, đổi chỗ với {T[y]['ten']}" and nut["gui"] in s.cau_goi_y(B, hoi)
+            assert s.diem_dong_y_doi_cho(B, nut["gui"], set(vt)) == {y}
+            for cau in (f"đổi chỗ với {T[y]['ten']}", f"hoán đổi với {T[y]['ten']} nhé", f"dời {T[a]['ten']} sang buổi {s.NHAN_BUOI[c[1]]} ngày {c[0]}; tráo với {T[y]['ten']} giúp mình"):
+                assert s.diem_dong_y_doi_cho(B, cau, set(vt)) == {y}, cau  # lời đổi chỗ thật vẫn là đồng ý
+            for dong_y in ({"dong_y_doi_cho": frozenset({y})}, {"chen_da_hoi": (nut["gui"],)}):  # bấm nút · đáp "ừ" ở lượt kế
+                assert s.ap(B, luu, hd, **dong_y, **MOI)["khung"] == cu["khung"]
+            # câu chỉ NHẮC TÊN Y mà không có lời đổi chỗ (người đọc nhánh dò 24/11/2026: 28 / 28 mẫu từng làm Y bị đẩy đi) ⇒ không phải đồng ý ⇒ vẫn hỏi
+            x_ten, y_ten, noi = T[a]["ten"], T[y]["ten"], f"buổi {s.NHAN_BUOI[c[1]]} ngày {c[0]}"
+            for cau in (f"dời {x_ten} sang {noi}, giữ nguyên {y_ten}", f"dời {x_ten} sang {noi}, đừng đụng tới {y_ten}", f"dời {x_ten} sang {noi} đi cùng {y_ten}",
+                        f"dời {x_ten} sang {noi} cho gần {y_ten}", f"dời {x_ten} sang {noi} vì {y_ten} mình đi rồi", f"dời {x_ten} sang {noi}, đừng đổi chỗ với {y_ten}",
+                        f"dời {x_ten} sang {noi}, không đổi chỗ với {y_ten}",
+                        # lượt dò thứ hai: có lời đổi chỗ + tên Y nhưng câu KHÔNG phải lời đồng ý (câu hỏi, điều kiện, phủ định đứng sau, tên Y ở vế khác ý)
+                        f"dời {x_ten} sang {noi}, có phải đổi chỗ với {y_ten} không?", f"dời {x_ten} sang {noi} thì có phải đổi chỗ với {y_ten} không",
+                        f"dời {x_ten} sang {noi}, đổi chỗ với {y_ten} được không?", f"dời {x_ten} sang {noi}, nếu phải đổi chỗ với {y_ten} thì thôi",
+                        f"dời {x_ten} sang {noi}, đổi chỗ với {y_ten} thì mình không chịu", f"dời {x_ten} sang {noi}, đổi chỗ với Hổ Quyền và {y_ten} giữ nguyên",
+                        f"dời {x_ten} sang {noi}, đảo lại cho {y_ten} khỏi bị dời"):
+                dy = s.diem_dong_y_doi_cho(B, cau, set(vt))
+                assert dy == frozenset() and s.ap(B, luu, hd, dong_y_doi_cho=dy, **MOI)["khung"] == k, cau
+            # Y có lệnh dời RIÊNG trong cùng lượt ("cho X lên…, còn Y để <chỗ cũ của X>") ⇒ không hỏi; câu báo không lặp vế "Y chuyển sang…"
+            hai = s.ap(B, luu, hd + [s.HanhDong(loai="doi_buoi", ten=y, ngay=vt[a][0], buoi=vt[a][1])], **MOI)
+            assert hai["khung"] == cu["khung"] and hai["khong_doi"] == [] and "chuyển sang" not in s.thay_doi(B, hai)[0]["cau"]
+            assert s.ap(B, luu, hd, chen_da_hoi=("dời Hổ Quyền sang buổi sáng ngày 1, đổi chỗ với Đại Nội Huế",), **MOI)["da_ap"] == []  # câu gợi ý của việc khác
+    assert n  # lịch mặc định phải có ít nhất một lệnh dời đổi chỗ được, không thì test này không kiểm gì
+
+
+def test_swap_two_named_places_is_read_by_code_and_applied_without_asking():
+    """Lượt thật 24/11/2026: "đổi chỗ Lăng Tự Đức với Lăng Khải Định" ⇒ model trả "chưa hỗ trợ" ⇒ "việc này mình chưa sửa được" — trong khi đó là câu dễ gõ
+    nhất sau câu hỏi "dời X sang đó thì Y chuyển đi". Nay code tự đọc câu đó (cả hai là điểm ban ngày của lịch) thành MỘT lệnh dời A vào chỗ của B; người
+    dùng đã nhắc cả hai điểm ⇒ bộ áp đổi chỗ luôn, không hỏi lại. Đọc theo danh sách cho phép: có chữ lạ, là câu hỏi, điểm ngoài lịch ⇒ không đọc."""
+    k, luu = _mac_dinh()
+    vt = s._vi_tri(k)
+    # một cặp điểm ở hai chỗ khác nhau mà lần dời thật đổi chỗ được đúng hai điểm đó (luật xếp cho phép)
+    a, b = next((x, y) for x in sorted(vt) for y in sorted(vt) if vt[x] != vt[y]
+                and (kq := s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten=x, ngay=vt[y][0], buoi=vt[y][1])], **CU))["da_ap"]
+                and kq["da_ap"][0].get("doi_voi", {}).get("diem") == y)
+    for cau in (f"đổi chỗ {T[a]['ten']} với {T[b]['ten']}", f"Hoán đổi {T[a]['ten']} và {T[b]['ten']} giúp mình nhé", f"bạn tráo {T[a]['ten']} với {T[b]['ten']} đi"):
+        hd = s.doi_buoi_tu_cau(B, luu, cau)
+        assert [(h.loai, h.ten, h.ngay, h.buoi) for h in hd] == [("doi_buoi", a, vt[b][0], vt[b][1])], cau
+        assert s.diem_dong_y_doi_cho(B, cau, set(vt)) == {b}, cau
+        kq = s.ap(B, luu, hd, dong_y_doi_cho=s.diem_dong_y_doi_cho(B, cau, set(vt)), **MOI)
+        sau = s._vi_tri(kq["khung"])
+        assert kq["khong_doi"] == [] and sau[a] == vt[b] and sau[b] == vt[a] and not v2.kiem_khung_v2(B, kq["khung"]), cau
+        assert f"{T[b]['ten']} chuyển sang buổi {s.NHAN_BUOI[vt[a][1]]} ngày {vt[a][0]}." in s.thay_doi(B, kq)[0]["cau"]
+    ngoai = next(d["ten"] for d in B.diem if d["id"] not in vt and d["id"] not in s._ngay_toi(k) and len(d["ten"].split()) >= 2)
+    for cau in (f"đổi chỗ {T[a]['ten']} với {T[b]['ten']} được không?", f"đổi chỗ {T[a]['ten']} với {ngoai}", f"đổi chỗ {T[a]['ten']} với {T[b]['ten']} rồi bỏ Đại Nội Huế",
+                f"đừng đổi chỗ {T[a]['ten']} với {T[b]['ten']}", f"{T[a]['ten']} với {T[b]['ten']} cái nào đẹp hơn"):
+        assert s.doi_buoi_tu_cau(B, luu, cau) == [], cau

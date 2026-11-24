@@ -1,6 +1,6 @@
 # Bài 7 — Kho dữ liệu: 269 bài viết về Huế, ai soạn, lấy từ đâu, kiểm thế nào
 
-*Cập nhật 20:46, ngày 23/11/2026 · mức test theo hệ thống lúc code đứng yên tối 23/11 · bản 20:20: đã áp biên bản kiểm độc lập tối 23/11 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · hai bài mới (AEON Mall Huế, công viên ven sông Hương) và một dòng tự mâu thuẫn về Quán Nhỏ, ghi kho 18:03, chỉ mục cập nhật riêng 18:05 · lượt cả bộ test xong 20:09 23/11: một file đỏ vì lỗi của chính phép kiểm, đã sửa (bài 38) · các mốc trước: khối Nguồn.*
+*Cập nhật 20:46, ngày 23/11/2026 · mức test theo hệ thống lúc code đứng yên tối 23/11 · bản 20:20: đã áp biên bản kiểm độc lập tối 23/11 · khớp hệ thống 19:49 23/11 (57 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn) · hai bài mới (AEON Mall Huế, công viên ven sông Hương) và một dòng tự mâu thuẫn về Quán Nhỏ, ghi kho 18:03, chỉ mục cập nhật riêng 18:05 · lượt cả bộ test xong 20:09 23/11: một file đỏ vì lỗi của chính phép kiểm, đã sửa (bài 38) · các mốc trước: khối Nguồn. · 09:55 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (sáng 24/11 ba bài kho được thêm câu; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536 — phiên D mở lúc 09:55); các câu có mốc giờ cũ và khối Nguồn giữ nguyên.*
 
 **Bài trước đã biết:** hệ thống gồm những khối nào, và một câu hỏi đi qua chúng ra sao. Mọi câu trả lời chỉ được lấy từ kho.
 **Bài này thêm:** mở chính kho ra xem. Trong đó có gì, bài được viết theo luật nào, kho được giữ đúng bằng cách nào, và vì sao làm như vậy.
@@ -32,7 +32,7 @@
 | Nghệ thuật biểu diễn | 15 | ca Huế, các chương trình biểu diễn |
 | Du lịch | 64 | 47 bài địa điểm (biển, đầm phá, chợ, phố đi bộ, công viên…), 12 bài dịch vụ (đi lại, lưu trú…), 5 bài vé |
 
-Cả kho cắt ra thành 9.533 đoạn (bài 8).
+Cả kho cắt ra thành 9.536 đoạn (bài 8).
 
 Phần hỏi đáp không biết gì ngoài 269 bài này. Có bốn thứ không lấy từ kho, và đều được ghi rõ khi hiện ra: ngày tháng và ngày âm lịch (chương trình tính), dự báo thời tiết (lấy từ một dịch vụ thời tiết), khoảng cách và "gần một điểm có gì" (chương trình tính từ một bảng vị trí riêng), và mục "Từ web (chưa kiểm)" (chỉ có khi kho từ chối). Trang Lên kế hoạch dùng thêm vài bảng dữ liệu riêng: bảng điểm tham quan, bảng chỗ ở, bảng quán ăn (chặng 6).
 
@@ -241,7 +241,7 @@ Các lần đổi kho chính:
 - Tình huống hỏng của lệnh sửa giá (chuyển từ bảng "Nếu… thì sao" đêm 23/11, không đổi nội dung): dòng giá cần sửa là một câu mà file quy tắc lưu ý (bài 8) chép nguyên văn để biết gắn lưu ý vào đâu ⇒ lệnh duyệt dừng, chưa áp gì, in cách sửa tay; người dùng thấy: không đổi gì: giá cũ còn; người vận hành sửa tay ở cả hai nơi; nhóm không làm cho lệnh tự sửa trọn, vì giá chỉ cần tương đối.
 - Hai mảng không bổ sung: nháp "Đỗ ô tô ở khu trung tâm Huế" đã soạn (ngắn, khoảng 2.600 byte) và giữ nguyên ngoài kho; phần quy định chụp ảnh / quay phim / flycam không soạn được nháp vì đợt tra 21/11 không mở được nguồn nào nêu quy định. Nhóm đã chốt không trình lại.
 
-**Bài sau (bài 8):** bước đầu tiên của giai đoạn chuẩn bị: cắt 269 bài thành 9.533 đoạn.
+**Bài sau (bài 8):** bước đầu tiên của giai đoạn chuẩn bị: cắt 269 bài thành 9.536 đoạn.
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>

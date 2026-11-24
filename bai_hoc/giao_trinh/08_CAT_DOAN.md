@@ -1,9 +1,9 @@
 # Bài 8 — Cắt bài thành đoạn (chunking)
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 17:11 22/11: cách cắt đọc từ chương trình đang chạy; số đoạn đếm sáng 22/11, khớp bản ghi hiện trạng lúc 13:33; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 17:11 22/11: cách cắt đọc từ chương trình đang chạy; số đoạn đếm sáng 22/11, khớp bản ghi hiện trạng lúc 13:33; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào. · 09:55 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (sáng 24/11 ba bài kho được thêm câu; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536 — phiên D mở lúc 09:55); các câu có mốc giờ cũ và khối Nguồn giữ nguyên.*
 
 **Bài trước đã biết:** kho là 269 bài viết về Huế (từ 18:05 23/11), mỗi bài là một file chữ có tiêu đề và các mục.
-**Bài này thêm:** bước đầu tiên của giai đoạn chuẩn bị: cắt 269 bài thành 9.533 đoạn. Cắt ở đâu, mỗi đoạn dài bao nhiêu, vì sao đoạn to hơn lại cho kết quả tệ hơn, và một đoạn hỏng thì sao.
+**Bài này thêm:** bước đầu tiên của giai đoạn chuẩn bị: cắt 269 bài thành 9.536 đoạn. Cắt ở đâu, mỗi đoạn dài bao nhiêu, vì sao đoạn to hơn lại cho kết quả tệ hơn, và một đoạn hỏng thì sao.
 
 ## Ý chính
 
@@ -176,7 +176,7 @@ Mã là đường dẫn bài kèm số thứ tự đoạn, nên các đoạn ph�
 | Bảng | cả bảng nếu vừa giới hạn; không thì từng dòng kèm dòng tiêu đề | con số luôn đi cùng tên cột | đã thử gộp các dòng liền nhau: không khác |
 | Đoạn văn dài | tách ở ranh giới câu | không cắt giữa câu | — |
 | Giới hạn độ dài | mỗi đoạn phải vừa cả ba: 512 token của model đang dùng, 512 token và 256 token (có tách từ tiếng Việt) của hai model ứng viên cũ | mức chặt nhất (256) khiến một số khối dài bị tách thêm (61 đoạn ở 14 bài, đếm trên kho cuối tháng 10) | đã thử chỉ giữ giới hạn 512 của model đang dùng: ít đi 61 đoạn, kết quả tìm không khác; bỏ được nhưng chưa dọn |
-| Kết quả | 269 bài ⇒ 9.533 đoạn | — | — |
+| Kết quả | 269 bài ⇒ 9.536 đoạn | — | — |
 | Độ dài trung bình một "chữ để tìm" | khoảng 66 âm tiết | số của bộ từ khoá (bài 11) | — |
 | Thư mục của kho không đưa vào | bộ câu hỏi chấm, bản thô tải từ trang nguồn, thư mục mẫu bài và ghi chú soạn | không phải nội dung cho người dùng | — |
 | File bị loại đích danh | 3 file danh mục dùng lúc soạn | chỉ là danh sách tên, không phải nội dung để trả lời | phép đo lúc loại: kết quả tìm không khác |
@@ -221,8 +221,8 @@ Mã là đường dẫn bài kèm số thứ tự đoạn, nên các đoạn ph�
 
 ## Chi tiết để tra
 
-- Số 366 token, "một nửa dưới khoảng 85 token" và "gần 1.800 đoạn dưới 50 token" đếm trên kho cuối tháng 10 (khoảng 8.400 đoạn); chưa đếm lại trên 9.533 đoạn hiện nay.
-- Lần chuẩn bị nào cũng chạy vòng kiểm cuối; bản ghi của lần chuẩn bị đang dùng ghi trạng thái hoàn tất với 9.533 đoạn.
+- Số 366 token, "một nửa dưới khoảng 85 token" và "gần 1.800 đoạn dưới 50 token" đếm trên kho cuối tháng 10 (khoảng 8.400 đoạn); chưa đếm lại trên 9.536 đoạn hiện nay.
+- Lần chuẩn bị nào cũng chạy vòng kiểm cuối; bản ghi của lần chuẩn bị đang dùng ghi trạng thái hoàn tất với 9.536 đoạn.
 - Có một bài test chạy lại việc cắt trên cùng kho và so kết quả với bản ghi, để bảo đảm mã đoạn không đổi giữa hai lần chạy.
 - Bảng dài tách từng dòng chỉ khi cả bảng không vừa giới hạn; bảng vừa thì giữ nguyên một đoạn.
 - Lượng chữ 750 token trong phép so là mức của thời hệ thống còn đưa 5 đoạn cho model viết.
