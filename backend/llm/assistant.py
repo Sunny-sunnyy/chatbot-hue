@@ -20,6 +20,7 @@ from pathlib import Path
 
 import json
 import logging
+import math
 import re
 import unicodedata
 from collections.abc import Sequence
@@ -1087,56 +1088,80 @@ def liet_ke_for_turn(trace: AnswerTrace, muc_luc: "tuple[lk.Bai, ...]"):
     return liet_ke_bai
 
 
-SO_DOAN_DOC_TIEP = 6  # bản thử `doc_tiep`: số đoạn kề trả về mỗi lần gọi
+SO_DOAN_DOC_TIEP = 6  # bản thử `doc_tiep`: số đoạn trả về mỗi lần gọi
 DOC_TIEP_KHONG_CO = "Trạng thái: số nguồn này không phải một đoạn của bài kho (hoặc không tồn tại) — không mở đọc tiếp được. Dùng số của một nguồn [Nguồn n] là đoạn bài, hoặc tim_kho."
 DOC_TIEP_HET = "Trạng thái: bài này không còn đoạn nào chưa đọc."
+_TU_DOC_TIEP = re.compile(r"[^\W_]+", re.UNICODE)
 
 
-def chon_doan_ke(thu_tu: Sequence[tuple[int, tuple[str, ...], str]], goc: int, muc_goc: tuple[str, ...], da_co: frozenset[str],
-                 k: int = SO_DOAN_DOC_TIEP) -> list[str]:
-    """Bản thử `doc_tiep`: `thu_tu` = (số thứ tự trong bài, đường mục, mã đoạn) của MỌI đoạn của bài ⇒ nhiều nhất `k` mã đoạn CHƯA đọc, ưu tiên: cùng mục
-    với đoạn gốc → cùng mục lớn (cấp đầu của đường mục) → phần còn lại của bài; trong mỗi bậc, đoạn gần đoạn gốc trước. Trả theo thứ tự trong bài (đọc xuôi)."""
+def _tu_doc_tiep(chu: str) -> list[str]:
+    return _TU_DOC_TIEP.findall(unicodedata.normalize("NFC", chu or "").casefold())
+
+
+def chon_doan_trong_bai(doan: Sequence[tuple[int, tuple[str, ...], str, str]], goc: int, muc_goc: tuple[str, ...], da_co: frozenset[str], can_gi: str,
+                        k: int = SO_DOAN_DOC_TIEP) -> list[str]:
+    """Bản thử `doc_tiep`: `doan` = (số thứ tự trong bài, đường mục, mã đoạn, chữ) của MỌI đoạn của bài ⇒ nhiều nhất `k` mã đoạn CHƯA đọc.
+    Xếp theo điểm từ khoá BM25 tính RIÊNG trong bài giữa `can_gi` (cụm model nêu + câu hỏi) và chữ từng đoạn; bằng điểm (kể cả khi không từ nào khớp) ⇒
+    đoạn KỀ đoạn gốc trước: cùng mục → cùng mục lớn → phần còn lại, gần trước. Trả theo thứ tự trong bài (đọc xuôi).
+    Vì sao không chỉ lấy đoạn kề (bản đầu của nhánh): đếm 0 đồng 24/11 trên 12 ca thật còn thiếu chi tiết — 6 đoạn kề với tới chi tiết từ MỌI đoạn gốc ở 2
+    ca; xếp trong bài bằng câu hỏi đưa đoạn chứa chi tiết vào 6 đoạn đầu ở 11 ca (bài dài 50–115 đoạn)."""
+    tu = {ma: _tu_doc_tiep(chu) for _, _, ma, chu in doan}
+    n, dai_tb = len(doan), (sum(len(t) for t in tu.values()) / len(doan)) if doan else 1.0
+    so_doan_co = {}
+    for t in tu.values():
+        for w in set(t):
+            so_doan_co[w] = so_doan_co.get(w, 0) + 1
+    hoi = set(_tu_doc_tiep(can_gi))
+
+    def diem(ma: str) -> float:
+        t = tu[ma]
+        return sum(math.log(1 + (n - so_doan_co[w] + 0.5) / (so_doan_co[w] + 0.5)) * t.count(w) * 2.2 / (t.count(w) + 1.2 * (0.25 + 0.75 * len(t) / (dai_tb or 1.0)))
+                   for w in hoi if w in so_doan_co and w in t)
+
     def bac(muc: tuple[str, ...]) -> int:
         return 0 if muc == muc_goc else 1 if muc_goc and muc[:1] == muc_goc[:1] else 2
-    ung_vien = sorted((bac(muc), abs(so - goc), so, ma) for so, muc, ma in thu_tu if ma not in da_co)
-    return [ma for _, _, _, ma in sorted(ung_vien[:k], key=lambda x: x[2])]
+    ung_vien = sorted((-round(diem(ma), 6), bac(muc), abs(so - goc), so, ma) for so, muc, ma, _ in doan if ma not in da_co)
+    return [ma for *_, ma in sorted(ung_vien[:k], key=lambda x: x[3])]
 
 
 def doc_tiep_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str,
                       search_limit: int = MODEL_SEARCH_LIMIT):
-    """Hàm `doc_tiep` của **một lượt** (bản thử, cờ `doc_tiep`): model gửi số một nguồn đã có; code lấy mọi đoạn của bài đó, chọn các đoạn kề chưa đọc
-    (`chon_doan_ke`), dựng ngữ cảnh đánh số tiếp theo, nối sổ nguồn như một lần tìm. Tính vào CÙNG bộ đếm `trace.model_searches` với `tim_kho` ⇒ hết lượt
-    thì trả chữ "đã hết lượt". Sổ vết: một dòng trong `tim` (câu = "doc_tiep:<mã đoạn gốc>") + một dòng công cụ tên `doc_tiep`."""
+    """Hàm `doc_tiep` của **một lượt** (bản thử, cờ `doc_tiep`): model gửi số một nguồn đã có + cụm từ nói thứ cần tìm; code lấy mọi đoạn của bài đó, chọn
+    các đoạn chưa đọc khớp nhất (`chon_doan_trong_bai`), dựng ngữ cảnh đánh số tiếp theo, nối sổ nguồn như một lần tìm. Lần gọi HỢP LỆ tính vào CÙNG bộ đếm
+    `trace.model_searches` với `tim_kho` ⇒ hết lượt thì trả chữ "đã hết lượt"; số nguồn sai không mất lượt. Sổ vết: một dòng trong `tim` (câu =
+    "doc_tiep:<mã đoạn gốc>") + một dòng công cụ tên `doc_tiep`."""
 
-    async def doc_tiep(nguon: int) -> str:
-        """Mở đọc tiếp bài của một nguồn đã có: trả các đoạn nằm kề nguồn đó trong CHÍNH bài ấy (cùng mục trước, rồi các mục bên cạnh), đánh số tiếp theo.
-        Dùng khi một nguồn đã đúng bài nhưng Bằng chứng của nó chưa có chi tiết cần cho câu trả lời (giờ, giá, năm, con số, điều kiện, tên riêng…) và chi tiết
-        ấy nhiều khả năng nằm ở phần khác của cùng bài. Muốn tìm BÀI KHÁC thì dùng tim_kho. Mỗi lần gọi tính vào cùng số lượt với tim_kho.
+    async def doc_tiep(nguon: int, can_gi: str) -> str:
+        """Mở đọc tiếp BÀI của một nguồn đã có: tìm trong chính bài đó các đoạn chưa đọc khớp nhất với điều cần tìm, trả tối đa 6 đoạn, đánh số tiếp theo.
+        Dùng khi một nguồn đã đúng bài nhưng Bằng chứng của nó chưa có chi tiết cần cho câu trả lời (giờ, giá, năm, con số, điều kiện, tên riêng…) — bài kho
+        thường dài hàng chục đoạn, mỗi lần tìm chỉ mang về vài đoạn của nó. Muốn tìm BÀI KHÁC thì dùng tim_kho. Mỗi lần gọi tính vào cùng số lượt với tim_kho.
 
         Args:
-            nguon: số của một nguồn đã có trong Bằng chứng (số n của [Nguồn n]).
+            nguon: số của một nguồn đã có trong Bằng chứng (số n của [Nguồn n]) — nguồn nào thuộc bài cần đọc tiếp cũng được.
+            can_gi: cụm từ ngắn, có dấu, nói chi tiết cần tìm trong bài đó (ví dụ "giờ mở cửa buổi sáng", "năm khởi công").
         """
         started = time.perf_counter()
-        trace.model_searches += 1
         entry = {"name": "doc_tiep", "ms": 0.0, "by": "model"}
         trace.tools.append(entry)
-        if trace.model_searches > search_limit:
-            entry["het_luot"] = True
-            return TOOL_LIMIT_TEXT
         ma = trace.ma_doan.get(nguon)
         if ma is None:
             entry["khong_phai_doan"] = True
             return DOC_TIEP_KHONG_CO
+        trace.model_searches += 1
+        if trace.model_searches > search_limit:
+            entry["het_luot"] = True
+            return TOOL_LIMIT_TEXT
         try:
             doan = await asyncio.to_thread(retrieval_service.doan_cua_bai, ma.rsplit("#", 1)[0])
         except RetrievalDependencyError as exc:
             trace.tool_error = exc
             raise
         theo_ma = {d.id: d for d in doan}
-        goc = int(ma.rsplit("#", 1)[1])
-        muc_goc = tuple(theo_ma[ma].metadata.get("heading_path") or ()) if ma in theo_ma else ()
-        chon = chon_doan_ke([(int(d.id.rsplit("#", 1)[1]), tuple(d.metadata.get("heading_path") or ()), d.id) for d in doan], goc, muc_goc,
-                            frozenset(trace.seen_ids))
+        muc = lambda d: tuple(d.metadata.get("heading_path") or ())  # noqa: E731
+        chu = lambda d: " ".join([" ".join(muc(d)), d.text or "", " ".join(str(p.get("text") or "") for p in d.metadata.get("evidence_parts") or [])])  # noqa: E731
+        muc_goc = muc(theo_ma[ma]) if ma in theo_ma else ()
+        chon = chon_doan_trong_bai([(int(d.id.rsplit("#", 1)[1]), muc(d), d.id, chu(d)) for d in doan], int(ma.rsplit("#", 1)[1]), muc_goc,
+                                   frozenset(trace.seen_ids), f"{can_gi} {query}")
         packed = context_builder.build(query, [theo_ma[m] for m in chon], today=today, first_id=len(trace.so_nguon) + 1,
                                        prior_context="\n\n".join(trace.context_parts), skip_ids=frozenset(trace.seen_ids), instructions=instructions,
                                        history=trace.history, n_tool_items=2 * trace.model_searches,
@@ -1146,7 +1171,7 @@ def doc_tiep_for_turn(query: str, retrieval_service, context_builder, trace: Ans
         trace.ma_doan.update({src.id: m for src, m in zip(packed.sources, packed.document_ids)})
         if packed.text:
             trace.context_parts.append(packed.text)
-        entry.update(ms=elapsed_ms(started), n_new=len(packed.sources), cung_muc=sum(tuple(theo_ma[m].metadata.get("heading_path") or ()) == muc_goc for m in chon))
+        entry.update(ms=elapsed_ms(started), n_new=len(packed.sources), cung_muc=sum(muc(theo_ma[m]) == muc_goc for m in chon))
         trace.vet.setdefault("tim", []).append(so_vet.vet_tim([f"doc_tiep:{ma}"], "model", [theo_ma[m] for m in chon], packed))
         return packed.text or DOC_TIEP_HET
 
