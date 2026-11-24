@@ -305,7 +305,8 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
             hanh_dong, bi_chan = sl.loc_hanh_dong([h for h in ra if h.loai != sl.CHUA_HO_TRO], query, luu)
             # rào 22/11: bỏ / thay mà câu không có tên điểm bị chạm lẫn mốc của lịch ("bỏ quán đầu đi rồi viết lại danh sách" — nói về câu trả lời vừa
             # rồi) ⇒ không áp. Lượt đồng ý với câu code vừa gợi ý ("ok thay đi") không qua rào: tên nằm trong câu gợi ý, không trong câu người dùng.
-            hanh_dong, khong_neo = (hanh_dong, []) if goi_y else sl.loc_bo_thay(bang, hanh_dong, query)
+            hanh_dong, khong_neo = (hanh_dong, []) if goi_y else sl.loc_bo_thay(
+                bang, hanh_dong, query, {*sl._vi_tri(luu["khung"]), *sl._ngay_toi(luu["khung"])})
             cht = len(ra) - len([h for h in ra if h.loai != sl.CHUA_HO_TRO])
         except GenerationError:
             ra, hanh_dong, bi_chan, cht, hoi_them, khong_neo = [], [], 0, 0, False, []

@@ -204,7 +204,9 @@ CUM_TOI = ("bo_nam", "kinh_thanh", "an_cuu")
 CAU_TOI = {"xa": "Tối nghỉ sau chuyến đi xa.", "tre_em": "Để trống — đi cùng trẻ nhỏ nên lịch chỉ xếp buổi sáng và chiều.",
            "lon_tuoi": "Để trống — đi cùng người lớn tuổi nên lịch chỉ xếp buổi sáng và chiều.",
            "khong_co": "Tối tự do — kho chưa có hoạt động buổi tối hợp ngày này.",
-           "da_bo": "Tối tự do — bạn đã bỏ hoạt động buổi tối của ngày này.",  # công tắc `bo_toi_de_trong`
+           # `da_bo` (dấu `toi_trong`): người dùng bỏ hoạt động tối của ngày này, HOẶC bỏ hết điểm ban ngày của một ngày đi xa (tối vốn nghỉ — giữ trống,
+           # 24/11/2026) ⇒ câu không nói "bạn đã bỏ hoạt động buổi tối" nữa (ca sau thì câu đó sai)
+           "da_bo": "Tối tự do — buổi tối của ngày này để trống.",
            "het_nhe": "Tối nghỉ — các hoạt động tối nhẹ gần trung tâm đã có ở những tối khác."}  # công tắc `toi_nhe`: đoàn hạn chế không lặp hoạt động
 # Công tắc `toi_nhe`: dòng lý do do code viết, nối vào ghi chú của mục buổi tối khi đoàn có trẻ nhỏ / người lớn tuổi (nói thật vì sao là hoạt động này)
 GHI_CHU_TOI_NHE = "hoạt động nhẹ, nên về sớm — đoàn mệt thì bỏ qua"  # không ghi "gần trung tâm" ở từng thẻ: dòng riêng của AEON Mall đã ghi "cách trung tâm khoảng 5 phút đi xe"
@@ -755,7 +757,9 @@ def kiem_khung_v2(bang: BangV2, khung: dict) -> list[str]:
                     phut += di + PHUT[T[c]["thoi_luong"]]
                 if not day and QUY.get(ts["kieu_di"]) is not None and phut > QUY[ts["kieu_di"]]:
                     loi.append("vuot_quy")
-        if so == 0:
+        # Ngày không có điểm ban ngày nào là lỗi — TRỪ ngày mà CẢ HAI buổi ban ngày mang dấu `buoi_trong` (người dùng tự bỏ hết điểm của ngày đó khi sửa
+        # lịch — `sua_lich_v2.ap`, công tắc `sua_lich_hoi_truoc`; chủ dự án 24/11/2026: bỏ thì để trống). Lịch do biểu mẫu xếp không bao giờ mang dấu.
+        if so == 0 and not all((ng["ngay"], b) in {tuple(x) for x in khung.get("buoi_trong") or ()} for b in BUOI_NGAY):
             loi.append("ngay_rong")
         if (len(cums) > 2 and not khu) or (CUM_XA in cums and len(cums) > 1):
             loi.append("qua_2_cum")
@@ -906,8 +910,12 @@ def dung_lich(bang: BangV2, khung: dict, nguon: dict[str, int], ngay_di: str | N
             ghi_chu.append({"ma": f"toi_{ma}", "cau": CAU_TOI[ma], "ngay": ng["ngay"]})
     # công tắc `sua_lich_hoi_truoc`: buổi ban ngày người dùng để trống sau một lệnh bỏ (khoá `buoi_trong` của khung) — buổi trống không hiện trên thẻ (User
     # 15/11) ⇒ cũng MỘT dòng ghi chú theo ngày (lượt trình duyệt 23/11/2026: thẻ ngày từ Sáng nhảy thẳng sang Tối, không nói gì về buổi chiều)
+    # Cả hai buổi ban ngày của một ngày đều để trống (24/11/2026) ⇒ MỘT dòng cho cả ngày thay vì hai dòng theo buổi.
+    trong = {tuple(x) for x in khung.get("buoi_trong") or ()}
+    ca_ngay = sorted(d for d in {d for d, _ in trong} if all((d, b) in trong for b in BUOI_NGAY))
+    ghi_chu += [{"ma": "ngay_trong", "cau": f"Ban ngày của ngày {d} để trống — bạn đã bỏ các điểm của ngày này.", "ngay": d} for d in ca_ngay]
     ghi_chu += [{"ma": "buoi_trong", "cau": f"Buổi {NHAN_BUOI[b].lower()} ngày {d} để trống — bạn đã bỏ điểm của buổi này.", "ngay": d}
-                for d, b in khung.get("buoi_trong") or ()]
+                for d, b in khung.get("buoi_trong") or () if d not in ca_ngay]
     if ts["tre_em"] or ts["lon_tuoi"]:  # bộ đo ý 2: nhóm hạn chế + điểm nhiều bậc thang còn trong lịch (không có điểm thay cùng khu) ⇒ ghi chú
         ghi_chu += [{"ma": "bac_thang", "cau": CAU_GHI_CHU["bac_thang"].format(diem=bang.theo_id[j]["ten"])}
                     for j in dict.fromkeys(diem_ban_ngay(khung)) if bang.theo_id[j]["bac_thang"] == "nhieu"]
