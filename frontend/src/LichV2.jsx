@@ -151,8 +151,30 @@ export function NutDoi({ d, onAsk = null, onMo = null }) {
     </span>
   );
 }
-function ThayDoi({ thayDoi, onAsk, onMo = null }) {
+// BẢN THỬ nút "Hoàn tác lần sửa này" (công tắc server `sua_lich_hoan_tac`): lượt sửa ĐÃ ĐỔI được lịch mang `lich.hoan_tac` = {nhan, ma}; App đưa hàm
+// gọi server qua `batHoanTac` (cùng kiểu `batXuatLich`, `batSoTay`). Nút chỉ vẽ ở lượt MỚI NHẤT (nơi có `onAsk`) — nút của lượt cũ hơn server từ chối.
+// Được ⇒ lượt mới (lịch đã trở lại) thay chỗ lượt này làm lượt mới nhất nên nút tự mất; không được ⇒ câu của server cạnh nút, nút mờ.
+let HOAN_TAC = null;
+export function batHoanTac(goi) { HOAN_TAC = typeof goi === "function" ? goi : null; }
+const HOAN_TAC_HOP_LE = h => h && typeof h.nhan === "string" && h.nhan.length > 0 && h.nhan.length <= 60 && typeof h.ma === "string" && /^[0-9a-f]{6,32}$/.test(h.ma);
+function NutHoanTac({ hoanTac }) {
+  const [tt, setTt] = useState({ dang: false, loi: "" });
+  async function bam() {
+    setTt({ dang: true, loi: "" });
+    const kq = await HOAN_TAC(hoanTac.ma);
+    if (!kq.ok) setTt({ dang: false, loi: kq.cau || "Chưa hoàn tác được." });
+  }
   return (
+    <p className="lkh-hoan-tac">
+      <button type="button" className="chip chip-sm" disabled={tt.dang || !!tt.loi} onClick={bam}>{tt.dang ? "Đang hoàn tác…" : hoanTac.nhan}</button>
+      {tt.loi && <span role="status">{tt.loi}</span>}
+    </p>
+  );
+}
+
+function ThayDoi({ thayDoi, onAsk, onMo = null, hoanTac = null }) {
+  return (
+    <>
     <ul className="lkh-doi" aria-label="Thay đổi của lịch">
       {thayDoi.map((d, i) => {
         const cau = d.cau.replace(/^Không đổi được: /, "");
@@ -165,6 +187,8 @@ function ThayDoi({ thayDoi, onAsk, onMo = null }) {
         );
       })}
     </ul>
+    {onAsk && HOAN_TAC && HOAN_TAC_HOP_LE(hoanTac) && <NutHoanTac key={hoanTac.ma} hoanTac={hoanTac} />}
+    </>
   );
 }
 
@@ -178,7 +202,7 @@ export function LichV2({ turn, onEditPlan, gon = false, onAsk = null, onMo = nul
     return (
       <div className="bubble lich-v2 lkh-gon">
         {turn.noticeAnToan && <p className="notice notice-an-toan" role="note">{turn.noticeAnToan}</p>}
-        <ThayDoi thayDoi={lich.thay_doi} onAsk={onAsk} onMo={onMo} />
+        <ThayDoi thayDoi={lich.thay_doi} onAsk={onAsk} onMo={onMo} hoanTac={lich.hoan_tac} />
         {/* review C m-1: nút cùng dòng với câu dẫn — đặt riêng một dòng thì nút khuất dưới mép khung nổi */}
         <p className="lkh-gon-dan">{coDuoc ? "Lịch đã cập nhật theo các thay đổi trên. " : ""}
           <button type="button" className="lkh-gon-nut" onClick={() => setMoRong(true)}>Xem cả lịch</button></p>
@@ -210,7 +234,7 @@ export function LichV2({ turn, onEditPlan, gon = false, onAsk = null, onMo = nul
       <p className="lich-hieu">{lich.minh_hieu.replaceAll("**", "")}</p>
       {/* Sửa lịch bằng lời (B, cờ `sua_lich_v2`): `lich.thay_doi` = [{cau, duoc}] — câu do CODE viết đã có sẵn động từ ("Đã bỏ…", "Chưa làm…")
           ⇒ vẽ nguyên câu, màu theo `duoc`; lượt không sửa ⇒ không có khối này */}
-      {Array.isArray(lich.thay_doi) && lich.thay_doi.length > 0 && <ThayDoi thayDoi={lich.thay_doi} onAsk={onAsk} onMo={onMo} />}
+      {Array.isArray(lich.thay_doi) && lich.thay_doi.length > 0 && <ThayDoi thayDoi={lich.thay_doi} onAsk={onAsk} onMo={onMo} hoanTac={lich.hoan_tac} />}
       <section className="lkh-tong" aria-label="Tổng quan">
         <p className="lkh-tong-h">Tổng quan</p>
         <ol>{lich.ngay.map(ng => (
