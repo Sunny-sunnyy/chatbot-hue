@@ -13,6 +13,9 @@ Vì sao không dùng vòng hỏi đáp cho từng mục (cách của hai hồ s�
 mục, 78–87 giây cho 11 mục; độ dài không do code giữ; các mục cãi nhau về số (mục này "kho chưa có khoảng cách", mục kia "khoảng 7 km"; "vé lẻ mỗi lăng
 150.000 đồng" trong khi ba lăng giá khác); dấu "kho chưa có" lúc là câu cố định lúc là lời tự do.
 
+Giới hạn đã biết: sổ tay KHÔNG đi qua lớp "Lưu ý trong nguồn" của hỏi đáp (`llm/luu_y_nguon.py` — câu "tạm ngừng / lũ, bão" của bài được nối vào dòng ghi
+chú). Phiên đo đếm 24/11/2026: 1 / 47 điểm của bảng (Thác Nhị Hồ) có câu như vậy và đoạn đó không nằm trong 8 đoạn được chọn.
+
 Module thuần (không đọc cấu hình, không SDK, không mạng); route `api/routes/so_tay.py` nối tìm kho + model.
 """
 import math
@@ -33,14 +36,17 @@ CAU_TIM_DIEM = "{ten}: những điểm đáng xem và lưu ý khi tham quan"
 CUM_TRONG_BAI = "điểm đáng xem nổi bật kiến trúc công trình cảnh quan trải nghiệm tham quan lưu ý quy tắc ứng xử trang phục"
 SO_DOAN_TU_TIM = 4   # nhiều nhất chừng này đoạn của bài lấy theo thứ hạng của lần tìm; phần còn lại lấy theo xếp trong bài
 CAU_TIM_DI_LAI = "Đi lại giữa các điểm tham quan ở Huế: taxi, xe máy, xe đạp, xích lô, thuyền"
-# Ý của model NÓI VỀ giờ mở cửa hoặc giá ("mở cửa…", "ngừng bán vé", "giá vé", "150.000 đồng", "miễn phí") ⇒ ý đó bị bỏ: hai thứ này chỉ đi đường code
-# chép. Giờ trong ngày nói về cảnh ("bình minh 04h30 – 06h00") KHÔNG bị bỏ — lượt thật đầu tiên (24/11/2026) luật "mọi con số giờ" làm mục Đầm Chuồn mất
-# hết ý "Nên xem".
-_GIO_GIA = re.compile(r"mở cửa|đóng cửa|giờ mở|mở từ|ngừng bán vé|giá vé|vé vào|vé tham quan|vé người lớn|vé trẻ em|miễn phí|"
-                      r"\d[\d.,]*\s*(?:đồng|đ\b|vnd|vnđ|k\b|nghìn|ngàn|triệu)", re.IGNORECASE)
+# Ý của model NÓI VỀ giờ mở cửa hoặc giá ⇒ ý đó bị bỏ: hai thứ này chỉ đi đường code chép. Giờ trong ngày nói về cảnh ("bình minh 04h30 – 06h00"), giờ nên
+# đi ("bắt đầu từ khoảng 17:30"), con số không phải tiền ("2 triệu lượt khách", "12 nghìn m²") KHÔNG bị bỏ. Lịch sử: bản đầu "mọi con số giờ" làm mục Đầm
+# Chuồn mất hết ý "Nên xem" (lượt thật 24/11/2026); phiên đo dò 22 câu tự đặt: lọt 8 câu nói giờ / giá bằng lời khác, bỏ oan 4 câu ⇒ các cụm dưới đây.
+_GIO_GIA = re.compile(
+    r"mở cửa|đóng cửa|giờ mở|mở từ\s*\d|mở (?:cho|đón) khách|đón khách (?:từ|cả ngày|đến|lúc)|hoạt động từ\s*\d{1,2}\s*(?:h|g|:|giờ)|ngừng bán vé|không bán vé|"
+    r"giá vé|vé vào|vé tham quan|vé người lớn|vé trẻ em|tiền vé|phí tham quan|không (?:thu|mất) (?:phí|tiền)|vào (?:cửa|cổng) tự do|"
+    r"miễn phí(?=[^.]*(?:vé|vào cửa|vào cổng|tham quan))|(?:vé|vào cửa|vào cổng|tham quan)[^.]*miễn phí|"
+    r"\d[\d.,]*\s*(?:đồng|đ\b|vnd|vnđ|k\b)|\d[\d.,]*\s*(?:nghìn|ngàn|triệu)(?!\s*(?:lượt|người|khách|m\b|m²|m2|km|ha|năm))|"
+    r"(?:phí|vé|người lớn|trẻ em)[^.\d]{0,20}\d{2,3}\.\d{3}", re.IGNORECASE)
 _TU = re.compile(r"[^\W_]+", re.UNICODE)
 DIA_CHI_DAI = 120   # dòng địa chỉ dài hơn ⇒ cắt ở dấu ngoặc đầu (phần trong ngoặc của kho là lịch sử địa giới hành chính); nguồn vẫn giữ nguyên dòng
-MUC_GIO_BANG = "Giờ mở cửa (bảng điểm của lịch, chép từ bài)"
 _MA = re.compile(r"\s*\[\s*(?:nguồn\s*)?\d+\s*\]", re.IGNORECASE)
 _NHAN_DIA_CHI = re.compile(r"^(địa chỉ[^:]{0,25}|khu vực)\s*:\s*", re.IGNORECASE)
 _NHAN_GIO = re.compile(r"^giờ (mở cửa|hoạt động)[^:]{0,25}:\s*", re.IGNORECASE)
@@ -84,11 +90,11 @@ def _ve_chu(hang: str) -> str | None:
     return " · ".join(p for p in (f"người lớn {lon}" if lon else None, f"trẻ em 7–12 tuổi {tre}" if tre else None) if p) or None
 
 
-def du_kien(noi: "thn.Noi | None", bang_the: "thn.Bang | None", bai_id: str | None, gio_bang: tuple[str, str] | None = None,
-            ten: str = "") -> tuple[list[dict], list[dict]]:
-    """Các dòng dữ kiện của MỘT điểm do code chép: (đoạn, nguồn). Nguồn đánh số từ 1 trong mục. Ô bảng không có ⇒ đoạn `thieu` (giờ mở cửa: mọi điểm;
-    giá vé: chỉ di tích; địa chỉ: không có thì bỏ qua — thẻ lịch đã có nút bản đồ). `gio_bang` = (chữ giờ mở cửa, bài nguồn) của bảng điểm lịch — dùng khi
-    bài không có dòng mở đầu bằng nhãn giờ (bảng điểm chép giờ từ câu văn của bài, kèm đường dẫn bài)."""
+def du_kien(noi: "thn.Noi | None", bang_the: "thn.Bang | None", bai_id: str | None) -> tuple[list[dict], list[dict]]:
+    """Các dòng dữ kiện của MỘT điểm do code chép NGUYÊN từ bài kho (bảng thẻ nơi): (đoạn, nguồn). Nguồn đánh số từ 1 trong mục. Bài không có dòng mở đầu bằng
+    nhãn ⇒ đoạn `thieu` (giờ mở cửa: mọi điểm; giá vé: chỉ di tích; địa chỉ: không có thì bỏ qua — thẻ lịch đã có nút bản đồ).
+    KHÔNG lấy giờ từ bảng điểm của lịch (`gio_mo_cua`): đó là sổ ghi chú của nhóm, không phải câu của bài — phiên đo nạp bảng thật 24/11/2026: 16 / 19 dòng
+    mang chữ nội bộ ("Kho: không niêm yết giờ; web lệch…"), một dòng là giờ từ trang web ngoài kho."""
     doan, nguon = [], []
 
     def them_nguon(title: str, rel: str, muc: str, trich: list[str]) -> int:
@@ -105,9 +111,6 @@ def du_kien(noi: "thn.Noi | None", bang_the: "thn.Bang | None", bai_id: str | No
         doan.append({"nhan": "Địa chỉ", "kieu": "van", "chu": f"{chu} [{so_the}]", "gach": None})
     if gio:
         doan.append({"nhan": "Giờ mở cửa", "kieu": "van", "chu": f"{_NHAN_GIO.sub('', gio).strip()} [{so_the}]", "gach": None})
-    elif gio_bang and gio_bang[0] and gio_bang[1]:
-        so = them_nguon(ten or (noi.ten if noi else ""), gio_bang[1], MUC_GIO_BANG, [gio_bang[0]])
-        doan.append({"nhan": "Giờ mở cửa", "kieu": "van", "chu": f"{gio_bang[0][:1].upper()}{gio_bang[0][1:]} [{so}]", "gach": None})
     else:
         doan.append({"nhan": "Giờ mở cửa", "kieu": "thieu", "chu": None, "gach": None})
     ve = _ve_chu(noi.ve) if noi and noi.ve else None
@@ -122,20 +125,17 @@ def du_kien(noi: "thn.Noi | None", bang_the: "thn.Bang | None", bai_id: str | No
 def loc_y(y_model: list[dict], hop_le: set[int], tran: int, cam_gio_gia: bool = True) -> tuple[list[str], dict]:
     """Các ý model trả (`{chu, nguon}`) ⇒ các dòng gạch "chữ [n][m]" đã qua luật của code + số đếm lý do bỏ. Giữ khi: có chữ, ≤ `TRAN_KY_TU` ký tự, có ít
     nhất một số nguồn hợp lệ (số lạ bị gỡ khỏi ý), không chứa giờ / giá (`cam_gio_gia`). Nhiều hơn `tran` ý ⇒ lấy `tran` ý đầu."""
-    giu, bo = [], {"khong_nguon": 0, "qua_dai": 0, "gio_gia": 0, "qua_tran": 0}
+    giu, bo = [], {"khong_nguon": 0, "qua_dai": 0, "gio_gia": 0, "qua_tran": 0, "chu": []}  # `chu`: (lý do, chữ) của từng ý bị bỏ — route ghi log để soát bỏ oan
     for y in y_model or ():
         chu = " ".join(_MA.sub("", _nfc(str(y.get("chu") or ""))).split())
         so = [n for n in dict.fromkeys(y.get("nguon") or ()) if isinstance(n, int) and n in hop_le]
         if not chu:
             continue
-        if not so:
-            bo["khong_nguon"] += 1
-        elif len(chu) > TRAN_KY_TU:
-            bo["qua_dai"] += 1
-        elif cam_gio_gia and _GIO_GIA.search(chu):
-            bo["gio_gia"] += 1
-        elif len(giu) >= tran:
-            bo["qua_tran"] += 1
+        ly_do = ("khong_nguon" if not so else "qua_dai" if len(chu) > TRAN_KY_TU else "gio_gia" if cam_gio_gia and _GIO_GIA.search(chu)
+                 else "qua_tran" if len(giu) >= tran else None)
+        if ly_do:
+            bo[ly_do] += 1
+            bo["chu"].append((ly_do, chu))
         else:
             giu.append(chu + " " + "".join(f"[{n}]" for n in so))
     return giu, bo
@@ -170,9 +170,11 @@ def tach_ma(doan: list[dict]) -> list[dict]:
     return ra
 
 
-def muc_an_uong(an: list[dict]) -> tuple[list[dict], list[dict]]:
-    """Mục ăn uống của một ngày = đúng quán gợi ý của lịch (`quan_lich.an_uong`), không gọi model. Quán có bài kho ⇒ một nguồn trỏ bài đó; quán chưa có
-    bài ⇒ giữ nhãn của lịch ("chưa kiểm"…), không số nguồn. Bữa có ghi chú ăn riêng của điểm ⇒ in ghi chú đó."""
+def muc_an_uong(an: list[dict], bang_the: "thn.Bang | None" = None) -> tuple[list[dict], list[dict]]:
+    """Mục ăn uống của một ngày = đúng quán gợi ý của lịch (`quan_lich.an_uong`), không gọi model. Quán có bài kho ⇒ một nguồn trỏ bài đó, kèm dòng địa chỉ
+    và giờ hoạt động code chép từ bài của quán (bảng thẻ nơi) khi bài có; quán chưa có bài ⇒ giữ nhãn của lịch ("chưa kiểm"…), không số nguồn. Bữa có ghi
+    chú ăn riêng của điểm ⇒ in ghi chú đó."""
+    the = {n.rel: n for n in (bang_the.noi if bang_the else ())}
     doan, nguon = [], []
     for a in an:
         nhan = f"{NHAN_BUA.get(a['bua'], a['bua'])} — gần {a['gan']}" if a.get("gan") else NHAN_BUA.get(a["bua"], a["bua"])
@@ -183,7 +185,14 @@ def muc_an_uong(an: list[dict]) -> tuple[list[dict], list[dict]]:
         for q in a.get("quan") or ():
             chu = q["ten"] + (f" ({q['loai']})" if q.get("loai") else "") + (f" — {q['nhan']}" if q.get("nhan") else "")
             if q.get("bai_id"):
-                nguon.append({"id": len(nguon) + 1, "title": q["ten"], "bai_id": q["bai_id"], "heading_path": [MUC_QUAN], "excerpts": []})
+                noi = the.get(q["bai_id"])
+                dia_chi = next((_NHAN_DIA_CHI.sub("", d).strip() for d in (noi.dong if noi else ()) if _NHAN_DIA_CHI.match(d)), None)
+                gio = next((_NHAN_GIO.sub("", d).strip() for d in (noi.dong if noi else ()) if _NHAN_GIO.match(d)), None)
+                if dia_chi and len(dia_chi) > DIA_CHI_DAI and " (" in dia_chi:
+                    dia_chi = dia_chi.split(" (", 1)[0].rstrip(" ,;")
+                chu += "".join(f" · {nhan}: {x.rstrip('.')}" for nhan, x in (("địa chỉ", dia_chi), ("giờ", gio)) if x)
+                nguon.append({"id": len(nguon) + 1, "title": q["ten"], "bai_id": q["bai_id"], "heading_path": [MUC_QUAN if not (dia_chi or gio) else thn.MUC_THE],
+                              "excerpts": [d for d in (noi.dong if noi else ()) if _NHAN_DIA_CHI.match(d) or _NHAN_GIO.match(d)]})
                 chu += f" [{len(nguon)}]"
             gach.append(chu)
         doan.append({"nhan": nhan, "kieu": "gach", "chu": None, "gach": gach} if gach else {"nhan": nhan, "kieu": "thieu", "chu": None, "gach": None})

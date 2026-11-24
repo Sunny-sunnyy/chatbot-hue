@@ -43,7 +43,8 @@ def _bang_chung(tai_lieu: list, tu_so: int) -> tuple[str, list[dict]]:
 async def _muc_model(loai: str, ten_khoi: tuple[str, ...], cau_tim: str, de: str, bai_id: str | None, doan: list[dict], nguon: list[dict], state,
                      generator, dem: dict, ten_rieng: str | None = None) -> str:
     """Phần model của một mục: tìm kho bằng câu tìm cố định của code ⇒ một lời gọi có khuôn ⇒ lọc bằng luật của code ⇒ nối vào `doan` / `nguon`.
-    Trả trạng thái mục ("xong" | "loi")."""
+    Trả trạng thái mục ("xong" | "loi"). MỌI ngoại lệ ở đây (tìm kho, đọc đoạn của bài, dựng ngữ cảnh, model, sai khuôn) chỉ làm hỏng mục này: `doan` /
+    `nguon` giữ nguyên các dòng do code chép đã có. `CancelledError` (trình duyệt đóng luồng) đi qua."""
     try:
         ket_qua = await asyncio.to_thread(state.retrieval_service.search, cau_tim)
         doan_bai = await asyncio.to_thread(state.retrieval_service.doan_cua_bai, bai_id) if bai_id else []
@@ -56,38 +57,56 @@ async def _muc_model(loai: str, ten_khoi: tuple[str, ...], cau_tim: str, de: str
             ra = await generator.viet_so_tay(loai, f"{de}\n\nBằng chứng:\n{chu}", log)
         finally:
             dem["goi_model"] += len(log.calls)
-        nguon.extend(nguon_kho)
         hop_le = {s["id"] for s in nguon_kho}
-        for k in ten_khoi:
-            khoi, bo = st.khoi_model(k, ra.get(k) or [], hop_le, cam_gio_gia=loai == "diem")
-            doan.append(khoi)
-            for ly_do, n in bo.items():
-                dem["bo_" + ly_do] += n
+        khoi = [st.khoi_model(k, ra.get(k) or [], hop_le, cam_gio_gia=loai == "diem") for k in ten_khoi]
+        nguon.extend(nguon_kho)
+        for doan_khoi, bo in khoi:
+            doan.append(doan_khoi)
+            for ly_do, gia_tri in bo.items():
+                if ly_do == "chu":  # chữ do model viết từ kho (không có chữ người dùng) — ghi để soát ý bị bỏ oan
+                    for ly, y in gia_tri:
+                        logger.info("so_tay dropped item (%s): %s", ly, y)
+                else:
+                    dem["bo_" + ly_do] += gia_tri
         return "xong"
-    except (GenerationError, RetrievalDependencyError) as exc:
-        logger.warning("so_tay section failed: %s", type(exc).__name__)
+    except Exception as exc:  # noqa: BLE001 — một mục hỏng không được làm đứt cả luồng (phiên đo đọc nhánh 24/11/2026)
+        if isinstance(exc, (GenerationError, RetrievalDependencyError)):
+            logger.warning("so_tay section failed: %s", type(exc).__name__)
+        else:
+            logger.exception("so_tay section failed unexpectedly")
         return "loi"
 
 
 async def _dung_muc(muc: dict, lich: dict, an_toan: str | None, state, flags, generator, dem: dict) -> dict:
+    """MỘT mục của sổ tay. Không bao giờ ném (trừ khi bị huỷ): phần do code hỏng ⇒ mục `loi` với những dòng code đã dựng được; mục "Trước khi đi" LUÔN
+    còn các dòng do code (câu an toàn bão / lũ của lượt, dòng nhắc mùa mưa, dòng "có thể đã thay đổi") kể cả khi phần "Đi lại" hỏng."""
     started = time.perf_counter()
-    trang_thai = "xong"
-    if muc["loai"] == "diem":
-        bang_the = flags.the_noi_bang
-        noi = next((n for n in (bang_the.noi if bang_the else ()) if n.rel == muc["bai_id"]), None) if muc["bai_id"] else None
-        diem = flags.bang_lich_v2.theo_id.get(muc["id_diem"], {}) if flags.bang_lich_v2 else {}
-        doan, nguon = st.du_kien(noi, bang_the, muc["bai_id"], (diem.get("gio_mo_cua"), diem.get("gio_nguon")), muc["ten"])
-        # điểm không có bài riêng ⇒ bằng chứng là các đoạn NHẮC TÊN điểm trong bài mà bảng điểm trỏ tới (`llm/so_tay.chon_bang_chung`)
-        trang_thai = await _muc_model("diem", ("nen_xem", "luu_y"), st.CAU_TIM_DIEM.format(ten=muc["ten"]), f"Điểm: {muc['ten']}",
-                                      muc["bai_id"] or diem.get("nguon"), doan, nguon, state, generator, dem,
-                                      ten_rieng=None if muc["bai_id"] else muc["ten"])
-    elif muc["loai"] == "an_uong":
-        doan, nguon = st.muc_an_uong(muc["an"])
-    else:
-        doan, nguon = [], []
-        trang_thai = await _muc_model("di_lai", ("di_lai",), st.CAU_TIM_DI_LAI, "Phần cần viết: Đi lại giữa các điểm tham quan ở Huế", None, doan, nguon,
-                                      state, generator, dem)
-        doan.extend(st.doan_chung(lich, an_toan))
+    trang_thai, doan, nguon = "xong", [], []
+    try:
+        if muc["loai"] == "diem":
+            bang_the = flags.the_noi_bang
+            noi = next((n for n in (bang_the.noi if bang_the else ()) if n.rel == muc["bai_id"]), None) if muc["bai_id"] else None
+            diem = flags.bang_lich_v2.theo_id.get(muc["id_diem"], {}) if flags.bang_lich_v2 else {}
+            doan, nguon = st.du_kien(noi, bang_the, muc["bai_id"])
+            # điểm không có bài riêng ⇒ bằng chứng là các đoạn NHẮC TÊN điểm trong bài mà bảng điểm trỏ tới (`llm/so_tay.chon_bang_chung`)
+            trang_thai = await _muc_model("diem", ("nen_xem", "luu_y"), st.CAU_TIM_DIEM.format(ten=muc["ten"]), f"Điểm: {muc['ten']}",
+                                          muc["bai_id"] or diem.get("nguon"), doan, nguon, state, generator, dem,
+                                          ten_rieng=None if muc["bai_id"] else muc["ten"])
+        elif muc["loai"] == "an_uong":
+            doan, nguon = st.muc_an_uong(muc["an"], flags.the_noi_bang)
+        else:
+            trang_thai = await _muc_model("di_lai", ("di_lai",), st.CAU_TIM_DI_LAI, "Phần cần viết: Đi lại giữa các điểm tham quan ở Huế", None, doan, nguon,
+                                          state, generator, dem)
+    except Exception:  # noqa: BLE001 — phần do code của mục hỏng (khuôn lịch lệch…): giữ những gì đã có, đánh dấu lỗi
+        logger.exception("so_tay section build failed")
+        trang_thai = "loi"
+    if muc["loai"] == "truoc_khi_di":
+        try:
+            doan = [*doan, *st.doan_chung(lich, an_toan)]
+        except Exception:  # noqa: BLE001 — khuôn lịch lệch: vẫn không được mất câu an toàn của lượt
+            logger.exception("so_tay closing lines failed")
+            doan = [*doan, *({"nhan": None, "kieu": "an_toan", "chu": an_toan, "gach": None} for _ in [0] if an_toan)]
+            trang_thai = "loi"
     # chữ gửi ra KHÔNG mang mã [n]: số nguồn của từng dòng nằm ở `so` / `gach_so` (`llm/so_tay.tach_ma`)
     return {"id": muc["id"], "trang_thai": trang_thai, "doan": st.tach_ma(doan), "nguon": st.nguon_da_dung(doan, nguon),
             "giay": round(time.perf_counter() - started, 1)}
@@ -102,7 +121,11 @@ async def _su_kien(dan_y: list[dict], lich: dict, an_toan: str | None, state, fl
 
     async def mot(muc: dict) -> dict:
         async with khoa:
-            return await _dung_muc(muc, lich, an_toan, state, flags, generator, dem)
+            try:
+                return await _dung_muc(muc, lich, an_toan, state, flags, generator, dem)
+            except Exception:  # noqa: BLE001 — lưới cuối: `_dung_muc` đã tự bắt; còn lọt thì mục này ra `loi` rỗng, luồng vẫn tới `xong`
+                logger.exception("so_tay section crashed")
+                return {"id": muc["id"], "trang_thai": "loi", "doan": [], "nguon": [], "giay": 0.0}
 
     viec = [asyncio.create_task(mot(m)) for m in dan_y]
     loi = 0

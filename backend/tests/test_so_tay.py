@@ -1,6 +1,10 @@
 """Công tắc `so_tay` (bản thử, nhánh thu-b-so-tay): phần THUẦN của sổ tay chuyến đi — dàn ý từ lịch, dòng dữ kiện do code chép, luật lọc ý của model, mục ăn
 uống. Không model, không Qdrant. Đường API chạy thật: `data/x15_phan_ai_2026-11-23/b_so_tay/`."""
+import asyncio
+import inspect
+import json
 import re
+from types import SimpleNamespace
 
 import pytest
 
@@ -46,11 +50,11 @@ def test_du_kien_chep_tu_the_noi_va_o_thieu_la_mot_khuon():
     assert [(d["nhan"], d["kieu"]) for d in st.du_kien(None, BANG, "heritages/heritage/X.md")[0]] == [("Giờ mở cửa", "thieu"), ("Giá vé", "thieu")]
     assert [(d["nhan"], d["kieu"]) for d in st.du_kien(None, BANG, "travel/places/Đầm Chuồn.md")[0]] == [("Giờ mở cửa", "thieu")]
     assert [(d["nhan"], d["kieu"]) for d in st.du_kien(None, None, None)[0]] == [("Giờ mở cửa", "thieu")]  # điểm không có bài riêng
-    # bài không có dòng nhãn giờ nhưng bảng điểm của lịch có (chép từ câu văn của bài) ⇒ dùng dòng của bảng, nguồn trỏ về bài; địa chỉ dài cắt ở ngoặc đầu
+    # địa chỉ dài cắt ở ngoặc đầu (nguồn giữ nguyên dòng)
     dai = "Địa chỉ: Làng An Truyền, phường Mỹ Thượng, thành phố Huế (" + "lịch sử địa giới " * 10 + ")."
-    doan, nguon = st.du_kien(_noi([dai], rel="travel/places/Y.md"), BANG, "travel/places/Y.md", ("mở tự do 24/24", "travel/places/Y.md"), "Y")
-    assert [(d["nhan"], d["chu"]) for d in doan] == [("Địa chỉ", "Làng An Truyền, phường Mỹ Thượng, thành phố Huế [1]"), ("Giờ mở cửa", "Mở tự do 24/24 [2]")]
-    assert nguon[0]["excerpts"] == [dai] and nguon[1]["heading_path"] == [st.MUC_GIO_BANG] and nguon[1]["bai_id"] == "travel/places/Y.md"
+    doan, nguon = st.du_kien(_noi([dai], rel="travel/places/Y.md"), BANG, "travel/places/Y.md")
+    assert [(d["nhan"], d["kieu"], d["chu"]) for d in doan] == [("Địa chỉ", "van", "Làng An Truyền, phường Mỹ Thượng, thành phố Huế [1]"), ("Giờ mở cửa", "thieu", None)]
+    assert nguon[0]["excerpts"] == [dai]
 
 
 class _D:
@@ -81,7 +85,8 @@ def test_loc_y_bo_y_khong_nguon_qua_dai_co_gio_gia_va_giu_tran():
     giu, bo = st.loc_y(y, {3, 4}, 5)
     assert giu == ["Điện Thái Hòa là nơi đặt ngai vàng [3]", "Bình minh 04h30 – 06h00 mặt đầm phủ sương [4]", "Lăng có 127 bậc tam cấp, xây năm 1920 [4]",
                    "Nên dành 2 giờ tham quan [4]", "Ý thứ tư [3]"]
-    assert bo == {"khong_nguon": 1, "qua_dai": 1, "gio_gia": 3, "qua_tran": 1}
+    assert {k: v for k, v in bo.items() if k != "chu"} == {"khong_nguon": 1, "qua_dai": 1, "gio_gia": 3, "qua_tran": 1}
+    assert [ly for ly, _ in bo["chu"]] == ["khong_nguon", "gio_gia", "gio_gia", "gio_gia", "qua_dai", "qua_tran"]
     assert st.loc_y([{"chu": "Taxi khoảng 15.000 đồng mỗi km", "nguon": [1]}], {1}, 4, cam_gio_gia=False)[0] == ["Taxi khoảng 15.000 đồng mỗi km [1]"]
 
 
@@ -95,6 +100,11 @@ def test_muc_an_uong_la_quan_cua_lich_va_doan_chung():
     doan, nguon = st.muc_an_uong(st.dan_y(LICH)[1]["an"])
     assert doan == [{"nhan": "Bữa trưa — gần Đại Nội Huế", "kieu": "gach", "chu": None, "gach": ["Quán A (quán ăn) [1]", "Quán B (quán ăn) — chưa kiểm"]}]
     assert nguon == [{"id": 1, "title": "Quán A", "bai_id": "foods/restaurants/a.md", "heading_path": [st.MUC_QUAN], "excerpts": []}]
+    # bài của quán có dòng địa chỉ / giờ ⇒ code chép kèm vào dòng quán, nguồn mang đúng các dòng đó
+    the = thn.Bang((thn.Noi("Quán A", "foods/restaurants/a.md", re.compile("Quán A"), ("Địa chỉ: 12 Lê Lợi, Huế.", "Giờ hoạt động: 06:00 – 14:00."), None, None),))
+    doan, nguon = st.muc_an_uong(st.dan_y(LICH)[1]["an"], the)
+    assert doan[0]["gach"][0] == "Quán A (quán ăn) · địa chỉ: 12 Lê Lợi, Huế · giờ: 06:00 – 14:00 [1]" and doan[0]["gach"][1] == "Quán B (quán ăn) — chưa kiểm"
+    assert nguon[0]["excerpts"] == ["Địa chỉ: 12 Lê Lợi, Huế.", "Giờ hoạt động: 06:00 – 14:00."] and nguon[0]["heading_path"] == [thn.MUC_THE]
     chung = st.doan_chung(LICH, "Câu an toàn bão lũ")
     assert [(d["kieu"], d["chu"]) for d in chung[:2]] == [("an_toan", "Câu an toàn bão lũ"), ("an_toan", "Huế đang mùa mưa — nên mang áo mưa")] and chung[-1]["nhan"] == "Lưu ý chung"
     assert st.nguon_da_dung([{"chu": "a [2]", "gach": None}, {"chu": None, "gach": ["b [3][2]"]}], [{"id": i} for i in (1, 2, 3)]) == [{"id": 2}, {"id": 3}]
@@ -113,3 +123,61 @@ def test_cong_tac_mac_dinh_tat_va_can_lich_luu():
     assert AssistantFlags().so_tay is False
     with pytest.raises(ValueError):
         AssistantFlags(so_tay=True)
+
+
+def test_gio_mo_cua_chi_tu_dong_cua_bai_khong_tu_bang_diem_cua_lich():
+    """Phiên đo đọc nhánh 24/11/2026: `gio_mo_cua` của bảng điểm là sổ ghi chú của nhóm, không phải câu của bài — 16 / 19 dòng không sạch, ví dụ Chùa Từ
+    Hiếu "Kho: không niêm yết giờ; web lệch (06–17 … · 07–17 … · 07:30–20:00 …) ⇒ không đặt giờ", Đèo Hải Vân lấy giờ từ một trang web ngoài kho. Thứ
+    phải luôn đúng không chép từ sổ ghi chú ⇒ `du_kien` không nhận dòng nào của bảng điểm; bài không có dòng nhãn giờ ⇒ ô "Kho chưa có"."""
+    assert "gio_bang" not in inspect.signature(st.du_kien).parameters
+    doan, nguon = st.du_kien(_noi(["Địa chỉ: Thôn Dương Xuân Thượng III, phường Thủy Xuân."], rel="heritages/heritage/Chùa Từ Hiếu.md"), BANG,
+                             "heritages/heritage/Chùa Từ Hiếu.md")
+    assert [(d["nhan"], d["kieu"]) for d in doan] == [("Địa chỉ", "van"), ("Giờ mở cửa", "thieu"), ("Giá vé", "thieu")]
+    assert all("web" not in json.dumps(s, ensure_ascii=False) for s in nguon)
+
+
+@pytest.mark.parametrize("chu", ["Lăng mở cho khách từ 7h đến 17h30", "Phố hoạt động từ 18h đến 22h", "Chùa đón khách cả ngày, nghỉ trưa 11h30–13h30",
+                                 "Vào cổng tự do, không thu phí", "Điểm này không bán vé", "Phí tham quan 50.000/người", "Người lớn 150.000, trẻ em 30.000",
+                                 "Trẻ dưới 7 tuổi không mất tiền vé", "Mở cửa từ 7h30", "Giá vé 50.000 đồng", "Vào cửa miễn phí"])
+def test_loc_y_bo_y_noi_gio_mo_cua_hoac_gia_bang_loi_khac(chu):
+    assert st.loc_y([{"chu": chu, "nguon": [1]}], {1}, 4) == ([], {"khong_nguon": 0, "qua_dai": 0, "gio_gia": 1, "qua_tran": 0, "chu": [("gio_gia", chu)]})
+
+
+@pytest.mark.parametrize("chu", ["Có bãi gửi xe miễn phí cạnh cổng", "Mỗi năm đón hơn 2 triệu lượt khách", "Khuôn viên rộng hơn 12 nghìn m²", "Chợ mở từ thời Gia Long",
+                                 "Bình minh 04h30 – 06h00 mặt đầm phủ sương", "Nên bắt đầu đi từ khoảng 17:30 để kịp hoàng hôn", "Lăng xây năm 1864, hoạt động từ năm 1883"])
+def test_loc_y_khong_bo_oan_y_chi_nhac_so_hoac_gio_trong_ngay(chu):
+    assert st.loc_y([{"chu": chu, "nguon": [1]}], {1}, 4)[0] == [f"{chu} [1]"]
+
+
+def test_mot_muc_gap_loi_la_khong_lam_dut_luong_va_muc_truoc_khi_di_luon_con_dong_do_code():
+    """Phiên đo: ngoại lệ không phải `GenerationError` / `RetrievalDependencyError` của MỘT mục từng làm cả luồng đóng không có `xong`, các mục chưa về mất,
+    và nếu mục hỏng là "Trước khi đi" thì câu an toàn mất theo."""
+    from api.routes import so_tay as r
+
+    doan_kho = SimpleNamespace(id="a.md#0", text="chữ", metadata={"source": "a.md", "title": "A", "heading_path": ["Tổng quan"], "domain": "x",
+                                                                  "evidence_parts": [{"role": "body", "text": "Hồ sen trước lăng", "start": 0, "end": 1}]})
+
+    class Kho:
+        def search(self, cau):
+            if "Đầm Chuồn" in cau or "Đi lại" in cau:
+                raise ValueError("lỗi lạ trong lúc tìm")
+            return SimpleNamespace(documents=[doan_kho])
+
+        def doan_cua_bai(self, rel):
+            return []
+
+    class May:
+        async def viet_so_tay(self, loai, prompt, log):
+            return {"nen_xem": [{"chu": "Hồ sen trước lăng", "nguon": [1]}], "luu_y": [], "di_lai": []}
+
+    async def gom():
+        return [e async for e in r._su_kien(st.dan_y(LICH), LICH, "Câu an toàn bão lũ", SimpleNamespace(retrieval_service=Kho()),
+                                             SimpleNamespace(the_noi_bang=None, bang_lich_v2=None), May())]
+    su_kien = [(k.split("event: ", 1)[1].split("\n", 1)[0], json.loads(k.split("data: ", 1)[1])) for k in (e.decode() for e in asyncio.run(gom()))]
+    assert [t for t, _ in su_kien][0] == "dan_y" and [t for t, _ in su_kien][-1] == "xong" and sum(t == "muc" for t, _ in su_kien) == 4
+    muc = {d["id"]: d for t, d in su_kien if t == "muc"}
+    assert muc["n1-sang-1"]["trang_thai"] == "xong" and muc["n1-sang-1"]["doan"][-2]["gach"] == ["Hồ sen trước lăng"]
+    assert muc["n2-sang-1"]["trang_thai"] == "loi" and [d["kieu"] for d in muc["n2-sang-1"]["doan"]] == ["thieu"]  # chỉ còn dòng do code (ô giờ)
+    cuoi = muc["truoc-khi-di"]
+    assert cuoi["trang_thai"] == "loi" and [d["chu"] for d in cuoi["doan"] if d["kieu"] == "an_toan"][0] == "Câu an toàn bão lũ" and cuoi["doan"][-1]["nhan"] == "Lưu ý chung"
+    assert su_kien[-1][1]["so_muc_loi"] == 2
