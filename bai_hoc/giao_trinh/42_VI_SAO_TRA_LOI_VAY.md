@@ -1,6 +1,6 @@
 # Bài 42 — Vì sao trả lời vậy: chương trình kể lại một lượt từ chính bản ghi của lượt đó
 
-*Cập nhật 07:33, ngày 24/11/2026 · khớp hệ thống 07:18 24/11/2026 (59 tính năng mở, 6 tắt; tự đếm lại bằng lệnh ở `guides/RUNBOOK_BAN_GIAO.md` mục 0) · model đang chạy ở máy chủ dự án: Claude Sonnet 5.5 (bản deploy sẽ dùng gpt-6-luna; nút chưa chạy trên đường đó) · cơ chế đọc từ chương trình; hai ví dụ là chữ của khung chép từ lượt trình duyệt thật sáng 24/11; người viết không chạy lại · 07:45: đã áp biên bản kiểm độc lập (58 khẳng định: 45 đúng, 2 sai, 11 lệch); các câu áp sau biên bản chưa có người thứ hai đọc.*
+*Cập nhật 07:33, ngày 24/11/2026 · khớp hệ thống 07:57 24/11/2026 (59 tính năng mở, 6 tắt; tự đếm lại bằng lệnh ở `guides/RUNBOOK_BAN_GIAO.md` mục 0) · model đang chạy ở máy chủ dự án: Claude Sonnet 5.5 (bản deploy sẽ dùng gpt-6-luna; nút chưa chạy trên đường đó) · cơ chế đọc từ chương trình; hai ví dụ là chữ của khung chép từ lượt trình duyệt thật sáng 24/11; người viết không chạy lại · 07:45: đã áp biên bản kiểm độc lập (58 khẳng định: 45 đúng, 2 sai, 11 lệch); các câu áp sau biên bản chưa có người thứ hai đọc. · 07:59: sửa theo bản gộp 07:57 24/11 (bản tóm tắt hết hạn sau 30 phút; chữ của khung nói "đưa … đoạn kho cho model"; lời báo mới) — phiên D đọc từ chương trình, chưa có người thứ hai đọc; chữ mới chưa ai nhìn trên trình duyệt.*
 
 **Bài trước đã biết:** model xin tìm thêm, xin công cụ (bài 21, 23); chương trình tính sẵn việc phải đúng (bài 24); sổ vết có nội dung (bài 37).
 **Bài này thêm:** nút "Vì sao trả lời vậy?": người xem thấy gì, khung dựng từ đâu, vì sao làm như vậy, và chỗ nó chưa nói được.
@@ -9,7 +9,7 @@
 
 - Ở máy demo, dưới mỗi câu trả lời có nút **"Vì sao trả lời vậy?"** (ô Trợ lý, trợ lý nổi, cột lịch trang Lên kế hoạch). Bấm ra khung: câu tóm tắt, các lần gọi model, các lần tìm và công cụ theo thứ tự đã ghi, các nguồn, thời gian.
 - **Không model nào viết lời giải thích.** Cuối lượt, chương trình lấy đúng bản ghi mà sổ vết dùng, sắp lại thành một bản tóm tắt. Mọi nhãn và câu giải thích trong khung do chương trình viết sẵn; phần còn lại chép nguyên từ lượt đó (câu gõ, câu tìm model đã viết, tên bài).
-- Bản tóm tắt nằm trong **bộ nhớ của máy chủ**, theo **mã lượt**, giữ 200 lượt gần nhất; khởi động lại là mất; không ghi file. Nó chứa câu người dùng gõ và không có hạn giờ như hai chỗ giữ khác (bài 37).
+- Bản tóm tắt nằm trong **bộ nhớ của máy chủ**, theo **mã lượt**, giữ 200 lượt gần nhất, mỗi bản 30 phút; khởi động lại là mất; không ghi file. Nó chứa câu người dùng gõ, nên có cùng hạn 30 phút với trí nhớ cuộc trò chuyện (bài 37).
 - Mở trên nhánh chính từ 07:18 24/11 (máy demo có nút từ lần khởi động lại máy chủ sau giờ đó); bản deploy để tắt.
 - Giới hạn chính: khung nói được câu trả lời dựa vào **nguồn nào**, chưa nói được **câu nào** dựa vào **đoạn nào**.
 
@@ -28,7 +28,7 @@ Nút chỉ hiện ở lượt đã xong và có câu trả lời cuối. Bấm l
 
 Khung có tiêu đề "Trợ lý đã làm gì để ra câu trả lời này", một câu tóm tắt, rồi các nhóm đánh số (nhóm nào không có thì không vẽ): (1) các lần gọi model, mỗi lần một nhãn và số giây; (2) "Model đọc câu lệnh, code áp lên lịch", chỉ ở lượt sửa lịch; (3) các lần tìm và công cụ, theo thứ tự đã ghi; mỗi lần tìm ghi câu đem đi tìm và ai viết nó, các bài tìm ra (mỗi bài mấy đoạn, đoạn tốt nhất đứng thứ mấy), bài nào được trích; (4) tra web; (5) các nguồn, đúng số câu trả lời đang dùng; (6) thời gian. Câu đem đi xử lý khác câu gõ (lượt từ biểu mẫu hay từ thẻ chọn: chương trình ghép thêm các ô đã chọn) thì khung in cả hai; lượt nối tiếp thì không. Cuối khung là các ghi chú nói thật.
 
-**Ví dụ 1 — hỏi đáp** (lượt trình duyệt sáng 24/11, lượt đầu của cuộc): *"Chùa Thiên Mụ mở cửa mấy giờ, vào có mất vé không?"*. Câu tóm tắt: "Trợ lý gọi model 4 lần, tìm trong kho 3 lần, đọc 20 đoạn, trích 4 nguồn." Gọi model: phân loại, hai lần "Quyết định tìm thêm / gọi công cụ", viết. Lần tìm đầu "Hệ thống tìm bằng chính câu của bạn" đưa 10 đoạn cho model; hai lần sau "Model tự viết thêm câu tìm" ("Chùa Thiên Mụ giờ mở cửa và giá vé tham quan", "Chùa Thiên Mụ địa chỉ và giờ mở cửa") thêm 6 và 4 đoạn mới: 20 đoạn. Bốn nguồn: một đoạn bài Chùa Thiên Mụ, một đoạn bài vé tham quan Quần thể Di tích, hai đoạn bài vé biểu diễn sông Hương, mục du thuyền (tên rút gọn). Tổng 9,1 giây.
+**Ví dụ 1 — hỏi đáp** (lượt trình duyệt sáng 24/11, lượt đầu của cuộc): *"Chùa Thiên Mụ mở cửa mấy giờ, vào có mất vé không?"*. Câu tóm tắt: "Trợ lý gọi model 4 lần, tìm trong kho 3 lần, đưa 20 đoạn kho cho model, trích 4 nguồn." (chữ của chương trình từ 07:57; lượt chụp 06:41 còn in "đọc 20 đoạn") Gọi model: phân loại, hai lần "Quyết định tìm thêm / gọi công cụ", viết. Lần tìm đầu "Hệ thống tìm bằng chính câu của bạn" đưa 10 đoạn cho model; hai lần sau "Model tự viết thêm câu tìm" ("Chùa Thiên Mụ giờ mở cửa và giá vé tham quan", "Chùa Thiên Mụ địa chỉ và giờ mở cửa") thêm 6 và 4 đoạn mới: 20 đoạn. Bốn nguồn: một đoạn bài Chùa Thiên Mụ, một đoạn bài vé tham quan Quần thể Di tích, hai đoạn bài vé biểu diễn sông Hương, mục du thuyền (tên rút gọn). Tổng 9,1 giây.
 
 Khung bày ra một chỗ điều dòng nguồn phải bấm từng mục mới thấy: hai trong bốn nguồn là đoạn về du thuyền; nó vẫn không cho biết câu nào dựa vào hai đoạn đó (quyết định 5).
 
@@ -40,7 +40,7 @@ Khung bày ra một chỗ điều dòng nguồn phải bấm từng mục mới 
 flowchart LR
   L["Lượt chạy xong"] --> G["Bản ghi của lượt<br/>(khuôn sổ vết)"]
   G --> T["Bản tóm tắt<br/>(nhãn do chương trình viết)"]
-  T --> K["Bộ nhớ máy chủ<br/>theo mã lượt, 200 lượt"]
+  T --> K["Bộ nhớ máy chủ<br/>theo mã lượt, 200 lượt, 30 phút"]
   N["Nút trong giao diện"] -->|"mã lượt"| K
 ```
 
@@ -50,7 +50,7 @@ Trong lúc một lượt chạy, chương trình ghi lại từng việc nó là
 2. **Dựng và cất.** Cuối lượt, cùng lúc ghi sổ vết, chương trình dựng bản tóm tắt rồi cất vào bộ nhớ của máy chủ, mã lượt làm khoá. Bước này hỏng thì chỉ thành một dòng cảnh báo; câu trả lời không bị ảnh hưởng.
 3. **Lấy ra.** Bấm nút, giao diện gửi mã lượt lên; máy chủ trả bản đang giữ.
 
-**Bộ nhớ của máy chủ** (bài 6) là chỗ chương trình giữ dữ liệu trong lúc đang chạy. Hệ quả: khởi động lại máy chủ là mất mọi bản tóm tắt (nút cũ vẫn trên màn hình, bấm chỉ thấy lời báo); và chỗ giữ có trần 200 lượt **chung cho mọi người** dùng cùng máy chủ, lượt thứ 201 vào thì bản cất sớm nhất bị bỏ.
+**Bộ nhớ của máy chủ** (bài 6) là chỗ chương trình giữ dữ liệu trong lúc đang chạy. Hệ quả: khởi động lại máy chủ là mất mọi bản tóm tắt (nút cũ vẫn trên màn hình, bấm chỉ thấy lời báo); và chỗ giữ có trần 200 lượt **chung cho mọi người** dùng cùng máy chủ, lượt thứ 201 vào thì bản cất sớm nhất bị bỏ; mỗi bản còn hết hạn sau 30 phút kể từ lúc cất.
 
 ## Mỗi loại lượt có một câu tóm tắt cố định
 
@@ -63,8 +63,8 @@ Mỗi lượt vào đúng một loại, xét từ trên xuống. Câu tóm tắt
 | lập lịch | lượt đi từ biểu mẫu trang Lên kế hoạch | "Code xếp khung lịch; model được gọi *n* lần để viết câu tả các điểm từ kho." |
 | ngoài phạm vi | bước phân loại xếp câu ra ngoài phạm vi | "Bước phân loại xếp câu này ngoài phạm vi văn hoá – du lịch Huế ⇒ không tìm trong kho, trả một câu cố định." |
 | nhờ làm thay | người dùng nhờ đặt chỗ, gửi tin… | "Bạn nhờ trợ lý tự làm một việc hệ thống không có (đặt chỗ, gửi tin, xem tình trạng phòng…) ⇒ trả một câu nói thật cố định." |
-| từ chối | câu trả lời là câu từ chối | "Trợ lý gọi model *n* lần, tìm trong kho *n* lần, đọc *n* đoạn nhưng không đoạn nào trả lời được câu này." |
-| hỏi đáp | mọi lượt còn lại | "Trợ lý gọi model *n* lần, tìm trong kho *n* lần, đọc *n* đoạn, trích *n* nguồn." |
+| từ chối | câu trả lời là câu từ chối | "Trợ lý gọi model *n* lần, tìm trong kho *n* lần, đưa *n* đoạn kho cho model; lượt này không có căn cứ đủ để trả lời." |
+| hỏi đáp | mọi lượt còn lại | "Trợ lý gọi model *n* lần, tìm trong kho *n* lần, đưa *n* đoạn kho cho model, trích *n* nguồn." |
 
 Ghi chú đi kèm cũng do chương trình chọn. Lượt từ chối nói rõ code hay model quyết từ chối. Lượt có mục web thêm "Phần «Từ web» lấy ngoài kho, chưa được kiểm với kho." (lượt thật: hỏi một quán có chỗ đậu ô tô không, kho từ chối, khung ghi câu đem đi tra và "4 nguồn web"). Các ghi chú khác: "Chi tiết để tra".
 
@@ -79,17 +79,17 @@ Ghi chú đi kèm cũng do chương trình chọn. Lượt từ chối nói rõ 
 
 ### 2. Vì sao giữ trong bộ nhớ theo mã lượt, có trần, không ghi file?
 
-- **Đã chọn:** bộ nhớ của máy chủ, khoá là mã lượt, 200 lượt gần nhất.
+- **Đã chọn:** bộ nhớ của máy chủ, khoá là mã lượt, 200 lượt gần nhất, mỗi bản giữ 30 phút (hạn giờ thêm lúc 07:57 24/11, bằng hạn của trí nhớ cuộc trò chuyện).
 - **Vì sao:** ghi trong chương trình: không đọc, không ghi file, không ghi dòng sổ nào có chữ người dùng, nên không phụ thuộc sổ vết; mã lượt ngẫu nhiên, không nằm trong cookie, nên người khác không đoán được lượt của ai. Số 200: chưa thấy ghi lý do. Điều thấy được: chú thích "trần RAM: bỏ lượt cũ nhất (mỗi bản vài KB)"; mã của nút 👍 / 👎 giữ 2.000 lượt.
 - **Cách khác:** đọc file sổ vết khi bấm: không làm. Chưa thấy ghi lý do. Điều thấy được: sổ vết mặc định tắt (bài 37).
 - **Cái giá:** khởi động lại là mất; máy đông người thì lượt cũ hết chỗ nhanh.
 
 ### 3. Vì sao máy demo mở, bản deploy để tắt?
 
-- **Đã chọn:** máy demo mở từ 07:18 24/11; chương trình đóng gói bản deploy tự ghi tính năng về tắt, không ghi được thì dừng.
+- **Đã chọn:** mở trên nhánh chính từ 07:18 24/11 cho máy demo; chương trình đóng gói bản deploy tự ghi tính năng về tắt, không ghi được thì dừng.
 - **Vì sao:** trang đề xuất mà chủ dự án đã tick hướng "Giải thích" (06:16 24/11) ghi: chỉ bật ở máy demo, không bật cho khách, vì bản ghi từng lượt có chữ người dùng gõ. Điều thấy được: bản tóm tắt chứa câu gõ, câu đem đi xử lý, các câu tìm model viết.
 - **Cách khác:** mở cả ở bản deploy: không làm.
-- **Cái giá:** khách bản deploy không thấy nút. Lệnh đóng gói chưa chạy thật. Ở máy demo, đây là chỗ thứ ba giữ chữ người dùng trong bộ nhớ và là chỗ duy nhất không có hạn giờ ("Giới hạn đã biết").
+- **Cái giá:** khách bản deploy không thấy nút. Lệnh đóng gói chưa chạy thật. Ở máy demo, đây là chỗ thứ ba giữ chữ người dùng trong bộ nhớ; từ 07:57 24/11 nó có hạn 30 phút ("Giới hạn đã biết").
 
 ### 4. Vì sao nhãn từng bước do chương trình viết sẵn?
 
@@ -118,7 +118,7 @@ Lời báo trong ngoặc kép là nguyên văn; ô nào không nói đã thấy 
 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa |
 |---|---|---|---|
-| máy chủ khởi động lại, hoặc lượt ngoài 200 lượt gần nhất | trả "Chi tiết của lượt này không còn được giữ." | "Chi tiết của lượt này không còn được giữ (máy chủ đã khởi động lại, hoặc lượt đã quá cũ)." | có chủ đích; thấy trên trình duyệt bằng lời báo giả, chưa khởi động lại thật |
+| máy chủ khởi động lại, lượt ngoài 200 lượt gần nhất, hoặc bản đã quá 30 phút | trả "Chi tiết của lượt này không còn được giữ." | "Chi tiết của lượt này không còn được giữ (đã quá 30 phút, máy chủ đã khởi động lại, hoặc lượt đã quá cũ). Muốn xem chi tiết, hãy hỏi lại câu này." | có chủ đích; bản chữ trước 07:57 đã thấy trên trình duyệt bằng lời báo giả; chữ mới chưa ai nhìn; khung đã mở trong 30 phút thì vẫn nằm trên màn hình |
 | lượt lỗi, bị rút, bị ngắt, hoặc hỏi lại bằng thẻ nút | không cấp mã lượt | không có nút | có chủ đích |
 | bước nhận ảnh (bài 26) | không cấp mã lượt | không có nút; lượt trả lời đi sau thì có | chưa thử |
 | lượt trúng bộ nhớ câu trả lời | bản tóm tắt loại "lấy lại từ bộ nhớ câu trả lời" | câu tóm tắt đó và dòng "Hệ thống nhớ tạm câu trả lời của những câu hỏi lặp lại y nguyên; khởi động lại máy chủ thì bộ nhớ này mất." | chưa thấy trên trình duyệt: một lượt thử ở cuộc mới không trúng (chưa rõ vì sao); lượt thử còn lại là lượt thứ hai của cuộc nên theo chương trình không được tra |
@@ -158,6 +158,7 @@ Model chỉ đọc câu lệnh ra việc cần làm; đặt vào lịch và ki�
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
 | `vi_sao` | mở (máy demo, từ 07:18 24/11); tắt ở gói deploy | bật nút và việc cất bản tóm tắt; thiếu dòng trong cấu hình thì coi là tắt | giai đoạn tắt (07:07–07:18 24/11 trên nhánh chính) |
+| hạn giữ một bản tóm tắt | 30 phút kể từ lúc cất | cùng hạn với trí nhớ cuộc trò chuyện: bản tóm tắt có chữ người dùng gõ, mà trang Giới thiệu nói chữ đó ở trong bộ nhớ tối đa 30 phút | bản đầu (07:07–07:57 24/11) không có hạn giờ |
 | trần số lượt giữ | 200 | bỏ lượt cất sớm nhất khi vượt; lý do của số: chưa thấy ghi | chưa thử |
 | độ dài câu đem đi xử lý in trong khung | 300 ký tự, quá thì cắt kèm "…" | câu đem đi có thể dài hơn câu gõ vì chương trình ghép thêm các ô đã chọn (biểu mẫu, thẻ chọn) | chưa thử |
 | số bài hiện sẵn mỗi lần tìm | 4, còn lại sau nút "Xem thêm *n* bài" | một lần tìm có thể ra tới 10 bài | chưa thử |
@@ -178,7 +179,7 @@ Giới hạn của phép kiểm: các lượt trình duyệt do công cụ tự 
 
 ## Giới hạn đã biết
 
-- **Chữ người dùng nằm lại lâu hơn hai chỗ giữ của bài 37.** Bản tóm tắt chứa câu gõ, câu đem đi xử lý, các câu tìm model viết, câu đem đi tra web. Nó không có hạn giờ: chỉ mất khi máy chủ khởi động lại hoặc khi đã có 200 lượt mới hơn (cuộc trò chuyện: 30 phút; câu trả lời đã nhớ: 24 giờ). Ai cầm mã lượt thì lấy được bản đó; mã ngẫu nhiên 16 ký tự, chỉ trình duyệt đã nhận lượt đó có. Chưa thấy ghi lý do không đặt hạn giờ. Vì vậy tính năng chỉ mở ở máy demo.
+- **Chữ người dùng trong bản tóm tắt.** Bản tóm tắt chứa câu gõ, câu đem đi xử lý, các câu tìm model viết, câu đem đi tra web. Bản đầu (07:07–07:57 24/11) không có hạn giờ; người kiểm bài này chỉ ra điều đó trái câu "tối đa 30 phút" của bài 37 và của trang Giới thiệu. Từ 07:57 mỗi bản hết hạn sau 30 phút kể từ lúc cất; bản quá hạn bị xoá ở lần cất hoặc lần đọc kế. Trong 30 phút đó ai cầm mã lượt thì lấy được bản; mã ngẫu nhiên 16 ký tự, chỉ trình duyệt đã nhận lượt đó có. Khung đã mở thì vẫn nằm trên màn hình sau 30 phút (dữ liệu đã ở trình duyệt). Tính năng vẫn chỉ mở ở máy demo.
 - Chưa có phép đối chiếu từng câu của câu trả lời với đoạn nó dựa vào.
 - Không có thứ tự chung giữa lần gọi model và bước tìm / công cụ; ba phần thời gian không cộng đúng bằng tổng, khung ghi "Vài bước chạy song song nên các phần không cộng đúng bằng tổng." Lượt sửa lịch chỉ có tổng.
 - Ở lượt sửa lịch, "Model đọc ra" và "Code làm" là hai danh sách rời: chương trình không ghi việc nào ứng với dòng kết quả nào.
@@ -194,9 +195,9 @@ Giới hạn của phép kiểm: các lượt trình duyệt do công cụ tự 
 
 **Công cụ** có nhãn "(code tính sẵn)" là việc chương trình làm trước khi gọi model (bài 24): ngày và âm lịch, khoảng cách, lễ hội theo ngày. Các bước khác cũng do chương trình tự chạy: đọc lịch đang có, tra web, viết lại từ bằng chứng đã gom, chạy lại lượt.
 
-**Các ghi chú khác** (nguyên văn): từ chối do code — "Không có đoạn nào dùng được ⇒ code trả câu từ chối cố định, không gọi model viết."; từ chối do model — "Model đọc các đoạn tìm được và thấy kho không trả lời được câu này ⇒ nó phải trả đúng câu từ chối cố định, không được tự viết từ hiểu biết riêng." · lập lịch — "Khung lịch (điểm nào, ngày nào, giờ nào) do code xếp theo luật — không gọi model. Model chỉ viết câu tả cho từng điểm từ bài trong kho." (kèm số câu bị bộ kiểm loại nếu có) · lượt sửa lịch không gọi model (đi từ nút bấm) — "Bạn bấm nút — code áp thẳng lựa chọn đó, không gọi model." · ngoài phạm vi — "Câu trả lời của lượt này là câu cố định do code trả, không phải model tự viết." · nhờ làm thay — "Câu trả lời của lượt này là câu cố định do code chọn theo loại việc được nhờ." · viết lại — "Bản viết đầu không qua được phép kiểm nguồn nên hệ thống cho viết lại một lần từ bằng chứng đã gom." · có lịch sử — "Trợ lý được đọc *n* lượt trước của cuộc trò chuyện."
+**Các ghi chú khác** (nguyên văn): từ chối do code — "Không có đoạn nào để đưa cho model ⇒ code trả câu từ chối cố định, không gọi model viết."; từ chối do model — "Câu từ chối là câu cố định của hệ thống: model nhận các đoạn tìm được và trả đúng câu đó thay vì tự viết từ hiểu biết riêng. Hệ thống không tự kiểm lại là kho có thật sự thiếu hay không." · lập lịch — "Khung lịch (điểm nào, ngày nào, giờ nào) do code xếp theo luật — không gọi model. Model chỉ viết câu tả cho từng điểm từ bài trong kho." (kèm số câu bị bộ kiểm loại nếu có) · lượt sửa lịch không gọi model (đi từ nút bấm) — "Bạn bấm nút — code áp thẳng lựa chọn đó, không gọi model." · ngoài phạm vi — "Câu trả lời của lượt này là câu cố định do code trả, không phải model tự viết." · nhờ làm thay — "Câu trả lời của lượt này là câu cố định do code chọn theo loại việc được nhờ." · viết lại — "Bản viết đầu không qua được phép kiểm nguồn nên hệ thống cho viết lại một lần từ bằng chứng đã gom." · có lịch sử — "Model được đưa kèm *n* lượt trước của cuộc trò chuyện."
 
-**Thời gian của ví dụ 1:** gọi model 0,92 · 1,9 · 1,8 · 5,1 giây; tìm 0,23 giây, dựng phần cho model đọc 0,02 giây, model đọc và viết 9 giây, tổng 9,1 giây. **Ví dụ 2:** "Hiểu câu lệnh sửa lịch" 2,1 giây, "Phân loại câu hỏi" 0,65 giây (đứng sau dù không chạy sau: hai lời gọi này chạy song song, khung không xếp theo giờ), tổng 2,3 giây; khung còn ghi 6 nguồn của câu tả các điểm và "Trợ lý được đọc 1 lượt trước của cuộc trò chuyện."
+**Thời gian của ví dụ 1:** gọi model 0,92 · 1,9 · 1,8 · 5,1 giây; tìm 0,23 giây, dựng phần đưa cho model 0,02 giây, model xử lý và viết 9 giây, tổng 9,1 giây. **Ví dụ 2:** "Hiểu câu lệnh sửa lịch" 2,1 giây, "Phân loại câu hỏi" 0,65 giây (đứng sau dù không chạy sau: hai lời gọi này chạy song song, khung không xếp theo giờ), tổng 2,3 giây; khung còn ghi 6 nguồn của câu tả các điểm và "Model được đưa kèm 1 lượt trước của cuộc trò chuyện." (chữ từ 07:57)
 
 **Mốc giờ:** bản thử đầu 06:27 24/11 · lõi máy chủ 06:34 · vào nhánh chính 07:07 khi tính năng còn tắt · mở ở máy demo 07:18 (giờ gộp).
 
@@ -225,4 +226,5 @@ Giới hạn của phép kiểm: các lượt trình duyệt do công cụ tự 
 - Mốc giờ: `git log` — `d0946fca` 06:27 (bản thử giao diện), `e89640eb` 06:34 (lõi), `f13fe32e` / `07b22eb1` 07:07 (gộp, còn tắt), `9562520c` 07:16 (mở), `fdbdce73` 07:18 (gộp bản mở) [đã chạy `git log` lúc viết bài, 24/11; giờ là giờ commit]. 59 mở / 6 tắt: lệnh runbook mục 0, người viết chạy trên cây chính lúc viết, ra 59 và 6 [đã chạy].
 - Lượt trình duyệt, cỡ màn, "khoảng 25 lượt" (người kiểm độc lập đếm lời hỏi trong ba script `luot_that*.py` cùng thư mục ra 16 — bài dùng 16): `session_prompt/sessions/STATUS_C.md` dòng 6, `session_prompt/HIEN_TRANG.md` mục 1 [chép]. Chưa thấy bản in, thẻ chọn, model cũ; chủ dự án chưa tự thử: cùng hai nơi [chép].
 - **Áp biên bản kiểm độc lập** (`data/hoc_cung_D/kiem/dot_2411_k5_bai_42_vi_sao.md` [riêng tư]; phiên D áp 07:45 24/11): câu "lượt nối tiếp thì in cả hai câu" SAI — `backend/api/routes/chat.py` `_model_query` dòng 246–258: câu đem đi chỉ đổi khi lượt mang các ô đã chọn (phiên D tự mở); chú thích ở `vi_sao.py` dòng 26 và `ViSao.jsx` dòng 95 ghi "lịch sử ghép vào" là lệch với code. Bộ nhớ câu trả lời: giảng ở bài 34, không phải bài 23. "Mảnh lớn nhất còn thiếu" thay "nhóm duy nhất": `so_vet_du_truong.md` dòng 14–20 liệt kê năm chỗ thiếu. Hạn giờ: bài 37 "Ý chính" (30 phút / 24 giờ) ↔ `vi_sao.py` dòng 7–9, 25 (chỉ trần số lượt). Giờ mở: công tắc đọc lúc khởi động (`backend/api/app.py`), không có hồ sơ ghi giờ máy chủ demo khởi động lại sau 07:18. Phép đếm "tìm thêm": `data/x15_phan_ai_2026-11-23/b_vi_sao/dem_tim_them_ra.txt` (phiên D tự mở: 560 · 320 · 222 · 74; một phiên đếm). Bài 37 chưa có dòng nói về chỗ giữ thứ ba này — sửa ở lượt gom kế. Nửa để hiểu 12.984 ⇒ 13.936 ký tự sau khi áp (đích 13.000).
+- **Theo bản gộp 07:57 24/11** (`fb03709e`; phiên D sửa 07:59 24/11): `git diff bcbadb86 HEAD -- backend/api/vi_sao.py frontend/src/ViSao.jsx` — hạn 30 phút (`KhoViSao` dùng `TTL_SECONDS` của `backend/api/conversations.py` dòng 17; commit `46d7236f` 07:53), chữ câu tóm tắt / ghi chú đổi sang "đưa … đoạn kho cho model", "Model được đưa kèm … lượt trước" (commit `4188e72a` 07:41, sau một lượt soát khác hãng), lời báo có thêm "đã quá 30 phút" và "hãy hỏi lại câu này" (`e1653dd3` 07:56), hai chú thích lệch code đã sửa [đã chạy lệnh git, đã đọc diff]. Hai ví dụ vẫn là lượt chụp 06:41; các câu trong ngoặc kép của ví dụ đã đổi theo chữ mới của chương trình, số giữ nguyên. Mức kiểm của bản gộp theo tin của phiên điều phối: file test riêng 7 ca đạt, một phiên khác đọc; chữ lời báo mới chưa ai nhìn trên trình duyệt [chép].
 </details>
