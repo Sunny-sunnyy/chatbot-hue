@@ -95,6 +95,10 @@ class AssistantFlags:
     # BẢN THỬ ĐO (nhánh thu-b-ba-duong-tim, 24/11/2026 — không gộp): "tìm thêm CỐ ĐỊNH" — ở lần tìm đầu, code nối thêm N đoạn đứng ngay sau 10 đoạn đầu
     # của chính câu tìm đó (hạng 11…10+N của danh sách đã trộn), không ai quyết gì. 0 = tắt ⇒ y như trước. Chỉ bộ đo đặt (dataclasses.replace).
     tim_co_dinh: int = 0
+    # BẢN THỬ ĐO "đường 2m" (nhánh thu-b-mo-doc-tiep, 24/11/2026 — không gộp): sau lần tìm đầu của code, model BỊ BUỘC viết đúng N câu tìm (một lời gọi
+    # riêng, cùng model + cùng mức suy luận), code tìm cả N câu rồi mới cho viết; bộ đo đặt kèm `so_lan_tim_kho` = N ⇒ công cụ `tim_kho` ẩn ngay từ đầu.
+    # Tách "lặp thêm N lần tìm" khỏi "model tự quyết có tìm không". 0 = tắt ⇒ y như trước. Chỉ bộ đo đặt (dataclasses.replace).
+    tim_bat_buoc: int = 0
     tim_them: bool = False
     # B3 (plan B3 D7): nhớ hội thoại trong một cuộc trò chuyện — tắt tới khi giao diện nhiều lượt xong (D8); chỉ nhớ câu hỏi khi `nho_cau_tra_loi` tắt
     # 20/11/2026: `nho_cau_tra_loi` bật = chỉ câu trả lời của lượt LIỀN TRƯỚC vào lịch sử (`api/conversations.py` `chi_dap_lien_truoc`); lõi không đọc cờ này
@@ -450,7 +454,7 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 
 
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
-                    if name not in ("lan_tim_dau", "cong_cong_cu", "so_lan_tim_kho", "tim_co_dinh", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
+                    if name not in ("lan_tim_dau", "cong_cong_cu", "so_lan_tim_kho", "tim_co_dinh", "tim_bat_buoc", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
                                      "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do",
                                      "khoang_cach_bang", "su_kien_bang", "muc_luc", "the_noi_bang"))
 
@@ -1514,7 +1518,18 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
         _noi_that_lam_thay(trace, trace.answer)
     if not flags.tim_them:
         return None
-    context = trace.packed.text
+    if flags.tim_bat_buoc and trace.fixed_outcome is None and generator is not None:  # bản thử đo "đường 2m": N câu tìm bắt buộc do model viết
+        rieng = CallLog()
+        try:
+            cau_bat_buoc = await generator.viet_cau_tim(query, trace.packed.text, flags.tim_bat_buoc, rieng)
+        finally:
+            record_llm_calls(trace, rieng.calls, ROUTE_TRO_LY_HUE)
+        for cau in cau_bat_buoc:
+            trace.model_searches += 1
+            trace.model_queries.append(cau)
+            await search_into_trace([cau], cau_hoi=query, retrieval_service=retrieval_service, context_builder=context_builder, trace=trace, today=today,
+                                    instructions=instructions, by="model")
+    context = "\n\n".join(part for part in trace.context_parts if part) if flags.tim_bat_buoc else trace.packed.text
     if flags.ngay_lich and trace.fixed_outcome is None and nl.co_tu_ngay_luot(query, trace.history):
         context = f"{context}\n\n{_nguon_lich_san(trace, query)}"  # T1 nhanh D2: lượt có từ chỉ ngày ⇒ lịch code tính trước lần gọi model đầu
     su_kien = sk.dong_nguon(query, flags.su_kien_bang) if flags.su_kien_theo_ngay and flags.su_kien_bang and trace.fixed_outcome is None else None
