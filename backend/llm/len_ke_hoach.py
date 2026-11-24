@@ -336,7 +336,10 @@ async def hieu_va_ap(query: str, generator, trace: AnswerTrace, flags: Assistant
                    **({"them_han_che": True} if flags.sua_lich_them_han_che else {}),
                    # công tắc `sua_lich_hoi_truoc`: thiếu ngày / buổi thì hỏi lại; câu có lời cho phép tự chọn ("bạn tự xếp giúp mình") ⇒ tự xếp như cũ
                    **({"them_hoi_truoc": True, "tu_xep": sl.cho_tu_xep(query), "dong_y_chen": sl.dong_y_chen_cau(query),
-                       "chen_da_hoi": tuple(trace.goi_y_sua or ())} if flags.sua_lich_hoi_truoc else {}),
+                       "chen_da_hoi": tuple(trace.goi_y_sua or ()),
+                       # điểm của lịch mà câu này nói rõ là cho đổi chỗ ("…, đổi chỗ với Y", "đổi chỗ X với Y") ⇒ không hỏi lại "Y chuyển đi nhé?"
+                       "dong_y_doi_cho": sl.diem_dong_y_doi_cho(bang, query, {*sl._vi_tri(luu["khung"]), *sl._ngay_toi(luu["khung"])})}
+                      if flags.sua_lich_hoi_truoc else {}),
                    **({"bo_toi_de_trong": True} if flags.bo_toi_de_trong else {}),
                    **({"bo_toi_hoi_lai": True} if flags.bo_toi_hoi_lai else {}),
                    **({"toi_goi_ten": True} if flags.toi_goi_ten else {}))
