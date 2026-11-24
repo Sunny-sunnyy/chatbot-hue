@@ -1,6 +1,6 @@
 # Bài 5 — Người dùng thấy gì: các trang của ứng dụng
 
-*Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · đợt sửa sau buổi chủ dự án tự thử (giao diện, hỏi bằng ảnh, sửa lịch hỏi lại bằng nút) · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC các bản gộp này · các lần sửa trước: Nguồn · đã áp biên bản kiểm độc lập 01:12 24/11.*
+*Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · đợt sửa sau buổi chủ dự án tự thử (giao diện, hỏi bằng ảnh, sửa lịch hỏi lại bằng nút) · lượt cả bộ test gần nhất xong 01:00 24/11 trên đúng bản code này: 96 file, 4 bỏ vì cần khoá OpenAI, 92 chạy, 2.325 ca đạt, không file nào đỏ (bài 38) · các lần sửa trước: Nguồn · đã áp biên bản kiểm độc lập 01:12 24/11 · 06:35 24/11: áp biên bản kiểm độc lập của đợt gom (cụm lượt cả bộ test).*
 
 **Bài trước đã biết:** sản phẩm làm ba loại việc: hỏi đáp có nguồn, việc cần tính, và lên kế hoạch.
 **Bài này thêm:** ba loại việc đó nằm ở đâu trên màn hình: một vòng qua các trang, một lượt hỏi, một lượt lập lịch; rồi vì sao giao diện làm như vậy, và khi có thứ hỏng thì người dùng thấy gì.

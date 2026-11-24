@@ -1,6 +1,6 @@
 # Bài 24 — Việc phải đúng thì chương trình tính: ngày âm lịch làm mẫu, rồi thời tiết, khoảng cách và các công cụ khác
 
-*Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · “ ” thay « » ở dòng "Lưu ý trong nguồn" (22:49 23/11) · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC bản gộp này · mốc cũ: Nguồn · đã áp biên bản kiểm độc lập 01:16 24/11.*
+*Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · “ ” thay « » ở dòng "Lưu ý trong nguồn" (22:49 23/11) · lượt cả bộ test gần nhất xong 01:00 24/11 trên đúng bản code này: 96 file, 4 bỏ vì cần khoá OpenAI, 92 chạy, 2.325 ca đạt, không file nào đỏ (bài 38) · mốc cũ: Nguồn · đã áp biên bản kiểm độc lập 01:16 24/11 · 06:35 24/11: áp biên bản kiểm độc lập của đợt gom (cụm lượt cả bộ test).*
 
 **Bài trước đã biết:** model được xin công cụ (bài 3, bài 21); tin nối tiếp được hiểu nhờ lịch sử (bài 23).
 **Bài này thêm:** việc có đáp án đúng duy nhất (hôm nay là ngày nào, rằm tháng Giêng rơi vào thứ mấy, mai có mưa không, từ A tới B bao xa) do chương trình làm, model chỉ diễn đạt. Bài đi kỹ một việc mẫu là ngày và âm lịch, rồi các việc còn lại theo cùng khuôn.
