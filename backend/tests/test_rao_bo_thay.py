@@ -58,10 +58,12 @@ def test_real_edit_with_a_name_or_a_plan_anchor_is_kept(cau):
 def test_a_distinctive_part_of_the_name_counts_as_the_name():
     tu_duc, thien_mu = s.khop_ten(B, "Lăng Tự Đức"), s.khop_ten(B, "Chùa Thiên Mụ")
     assert tu_duc and thien_mu
-    assert s._ten_trong_cau(B, tu_duc, "Lăng Tự Đức", "bỏ tự đức đi") and s._ten_trong_cau(B, thien_mu, "Chùa Thiên Mụ", "Thay Thiên Mụ bằng chỗ khác")
-    assert not s._ten_trong_cau(B, tu_duc, "Lăng Tự Đức", "bỏ cái lăng đầu đi")  # chữ loại ("lăng") không đủ: danh sách vừa kể cũng có thể toàn lăng
+    assert s._neo_trong_cau(B, tu_duc, "Lăng Tự Đức", "bỏ tự đức đi") == (True, None)
+    assert s._neo_trong_cau(B, thien_mu, "Chùa Thiên Mụ", "Thay Thiên Mụ bằng chỗ khác") == (True, None)
+    # chữ loại ("lăng") không đủ để LÀM: danh sách vừa kể cũng có thể toàn lăng — từ 24/11/2026 nó thành cách gọi mơ hồ (hỏi lại), không còn bị bỏ im
+    assert s._neo_trong_cau(B, tu_duc, "Lăng Tự Đức", "bỏ cái lăng đầu đi") == (False, "lăng")
     le_ba_dang = s.khop_ten(B, "Trung tâm Nghệ thuật Lê Bá Đảng")
-    assert le_ba_dang and not s._ten_trong_cau(B, le_ba_dang, "Trung tâm Nghệ thuật Lê Bá Đảng", "bỏ quán đầu đi, quán ở trung tâm ấy")  # khúc chung, không tên riêng
+    assert le_ba_dang and s._neo_trong_cau(B, le_ba_dang, "Trung tâm Nghệ thuật Lê Bá Đảng", "bỏ quán đầu đi, quán ở trung tâm ấy") == (False, None)  # khúc chung, không tên riêng
 
 
 def test_one_word_brand_names_of_evening_cafes_count_as_the_name():
@@ -133,3 +135,44 @@ def test_agreeing_to_the_suggestion_of_the_previous_turn_is_not_guarded():
     assert kq is not None and "khong_neo" not in tr.vet["sua"] and "thay_diem" not in kq["chua_lam"]
     kq, tr, _ = _chay([thay], "ok thay đi", co)                              # không có câu gợi ý nào ⇒ rào áp như thường
     assert kq is None and tr.vet["sua"]["khong_neo"] == 1
+
+
+def test_short_names_work_for_every_place_not_only_the_cafes():
+    """Chủ dự án 24/11/2026: lỗi «thay HANOK bằng MoKa Kafe» (chữa 23/11 bằng ba tên gọi tắt ghi tay trong bảng) "phải áp dụng cho mọi trường hợp, mọi
+    địa điểm". Với MỌI dòng của bảng: tên đủ viết thường, tên đủ gõ không dấu, tên bỏ chữ loại đứng đầu ("Tự Đức", "tu duc"), và chữ kiểu tên thương
+    hiệu ("HANOK") đều phải ra đúng dòng đó — ở bộ khớp tên (model chép chữ người dùng) lẫn ở rào chỗ neo (model điền tên đủ, người dùng gõ tên ngắn).
+    Đếm trước trên code cũ: 92 / 221 cách gọi chỉ-một-dòng được nhận; không dấu gần như không cách nào."""
+    import collections
+    import re
+    dau = collections.Counter(re.findall(r"\w+", d["ten"])[0].casefold() for d in B.diem)
+    n = 0
+    for d in B.diem:
+        w = re.findall(r"\w+", d["ten"])
+        cach = [d["ten"].lower(), s._bo_dau(d["ten"]).lower()]
+        if dau[w[0].casefold()] >= 2 and len(w) >= 3:  # bỏ chữ loại mà còn từ hai chữ ("Đầm Chuồn" ⇒ "Chuồn" là một âm tiết thường: cố ý không nhận)
+            rut = " ".join(w[1:])
+            cach += [rut, rut.lower(), s._bo_dau(rut).lower()]
+        cach += [x for x in w if sum(c.isupper() for c in x) >= 2]
+        for c in cach:
+            if s.ung_vien_ten(B, c) != [d["id"]]:  # cách gọi này trỏ tới nhiều dòng (hai phố đi bộ chung chữ…) ⇒ không thuộc ca "chỉ một dòng"
+                continue
+            n += 1
+            h = _bo(d["ten"])
+            assert s.khop_ten(B, c) == d["id"], c
+            assert s.loc_bo_thay(B, [h], f"bỏ {c} đi") == ([h], []), c
+    assert n >= 150  # 47 dòng × (tên đủ + không dấu) + các tên bỏ chữ loại + chữ thương hiệu; ít hơn ⇒ điều kiện "chỉ một dòng" đang lọc quá tay
+
+
+def test_ordinary_syllables_and_type_words_do_not_name_a_place_silently():
+    """Mặt trái phải giữ: một âm tiết thường của tên không phải cách gọi ("tiền" ≠ Cầu Trường Tiền; "bỏ" bỏ dấu ≠ "bộ" của "Phố đi bộ…"; "cho" ≠ "chợ");
+    gọi trần theo LOẠI ("lăng") không bao giờ được làm luôn — rào trả hành động về đúng chữ người dùng gõ để bộ áp hỏi lại."""
+    for cau, ten in (("bỏ bớt một chỗ cho đỡ tốn tiền", "Cầu Trường Tiền"), ("bỏ Nguyễn đi", "Phố đi bộ Nguyễn Đình Chiểu"), ("Bỏ món đầu đi cho lịch sự", "Chợ Đông Ba"),
+                     ("bỏ Hai đi", "Phố đi bộ Hai Bà Trưng")):
+        h = _bo(ten)
+        assert s.loc_bo_thay(B, [h], cau) == ([], [h]), cau
+    assert [s.khop_ten(B, t) for t in ("tiền", "Nguyễn", "cho", "lăng", "phố đi bộ", "đi bộ")] == [None] * 6
+    h = _bo("Lăng Tự Đức")
+    (giu,), bo = s.loc_bo_thay(B, [h], "bỏ cái lăng đầu đi")
+    assert bo == [] and giu.loai == "bo_diem" and giu.ten == "lăng"  # không bị bỏ im, không làm theo lựa chọn của model
+    assert s.tim_diem(B, "bo_diem", "lăng", {s.khop_ten(B, "Lăng Tự Đức")}) == (None, [s.khop_ten(B, "Lăng Tự Đức")])  # lịch chỉ có một lăng: vẫn hỏi
+    assert s.tim_diem(B, "bo_diem", "Tự Đức", {s.khop_ten(B, "Lăng Tự Đức")}) == (s.khop_ten(B, "Lăng Tự Đức"), [])

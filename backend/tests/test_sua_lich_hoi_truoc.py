@@ -353,3 +353,36 @@ def test_a_blocked_move_offers_each_working_slot_as_a_button_and_every_button_ap
                 assert sau["da_ap"] and s._vi_tri(sau["khung"])[a] == (g["ngay"], g["buoi"])
                 doi_cho += bool(g["doi_voi"])
     assert co_nut and doi_cho  # bảng điểm thật phải có cả nút dời thẳng lẫn nút đổi chỗ hai điểm, không thì test này không kiểm gì
+
+
+def test_an_ambiguous_short_name_asks_which_place_with_one_button_each():
+    """Chủ dự án 24/11/2026: tên ngắn phải dùng được cho mọi điểm; nguyên tắc 22:02 23/11: thiếu thông tin thì hỏi lại kèm gợi ý. Cách gọi trỏ tới NHIỀU
+    điểm ("lăng" khi lịch có hai lăng) ⇒ lịch đứng yên + câu hỏi "bạn muốn nói điểm nào" + mỗi ứng viên một nút gửi lại đúng lệnh đó với tên đủ (trước:
+    "chưa có trong danh sách điểm của lịch"). Tên ngắn RÕ trong lịch ("Tự Đức", gõ không dấu cũng được) ⇒ làm luôn. Công tắc tắt ⇒ câu cũ."""
+    k, luu = _lich()
+    vt = s._vi_tri(k)
+    lang = [j for j in vt if T[j]["ten"].startswith("Lăng ")]
+    assert len(lang) >= 2
+    kq = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten="lăng")], **MOI)
+    (m,), d = kq["khong_doi"], _dong(kq)
+    assert kq["khung"] == k and kq["da_ap"] == [] and m["ma_luat"] == "ten_mo_ho" and m["ung_vien"] == lang[:s.MAX_CHO_HOI]
+    assert d["hoi"] is True and d["cau"].startswith("“lăng” có thể là ") and d["cau"].endswith("Lịch chưa đổi gì.") and "Chưa làm" not in d["cau"]
+    assert [n["gui"] for n in d["nut"]] == [f"bỏ {T[j]['ten']}" for j in m["ung_vien"]] and [n["nhan"] for n in d["nut"]] == [T[j]["ten"] for j in m["ung_vien"]]
+    assert s.cau_goi_y(B, kq) == tuple(n["gui"] for n in d["nut"])
+    for j in m["ung_vien"]:  # bấm một nút = lệnh đủ tên ⇒ bỏ đúng điểm đó
+        assert s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=T[j]["ten"])], **MOI)["da_ap"][0]["diem"] == j
+    rut = T[lang[0]]["ten"].split(" ", 1)[1]  # "Lăng Tự Đức" ⇒ "Tự Đức": trong lịch chỉ trỏ tới một điểm ⇒ làm luôn, không hỏi
+    for cach in (rut, rut.lower(), s._bo_dau(rut).lower()):
+        assert s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten=cach)], **MOI)["da_ap"][0]["diem"] == lang[0], cach
+    # lệnh THÊM gọi theo loại: ứng viên là các điểm CHƯA có trong lịch; nút mang đủ ngày + buổi người dùng đã nói
+    them = s.ap(B, luu, [s.HanhDong(loai="them_diem", ten="lăng", ngay=1, buoi="sang")], **MOI)
+    (mt,) = them["khong_doi"]
+    assert them["khung"] == k and mt["ma_luat"] == "ten_mo_ho" and mt["ung_vien"] and not set(mt["ung_vien"]) & set(vt)
+    assert _dong(them)["nut"][0]["gui"] == f"thêm {T[mt['ung_vien'][0]]['ten']} vào buổi sáng ngày 1"
+    # lệnh DỜI và THAY cũng hỏi; câu của nút giữ chỗ muốn dời tới / điểm thay vào
+    doi = s.ap(B, luu, [s.HanhDong(loai="doi_buoi", ten="lăng", ngay=2, buoi="chieu")], **MOI)
+    assert doi["khung"] == k and _dong(doi)["nut"][0]["gui"] == f"dời {T[lang[0]]['ten']} sang buổi chiều ngày 2"
+    thay = s.ap(B, luu, [s.HanhDong(loai="thay_diem", ten="lăng", ten_moi="Hổ Quyền")], **MOI)
+    assert thay["khung"] == k and _dong(thay)["nut"][0]["gui"] == f"thay {T[lang[0]]['ten']} bằng Hổ Quyền"
+    cu = s.ap(B, luu, [s.HanhDong(loai="bo_diem", ten="lăng")], **CU)  # công tắc tắt: không hỏi, câu cũ
+    assert cu["khung"] == k and [x["ma_luat"] for x in cu["khong_doi"]] == ["ngoai_bang"]
