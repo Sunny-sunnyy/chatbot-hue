@@ -38,6 +38,10 @@ CAU_TIM_DIEM = "{ten}: những điểm đáng xem và lưu ý khi tham quan"
 # cụm để xếp các đoạn TRONG bài của một điểm (điểm từ khoá tính riêng trong bài) khi lần tìm chung mang về ít đoạn của bài đó
 CUM_TRONG_BAI = "điểm đáng xem nổi bật kiến trúc công trình cảnh quan trải nghiệm tham quan lưu ý quy tắc ứng xử trang phục"
 SO_DOAN_TU_TIM = 4   # nhiều nhất chừng này đoạn của bài lấy theo thứ hạng của lần tìm; phần còn lại lấy theo xếp trong bài
+# Hai chỗ dành riêng cho đoạn LỜI DẶN, xếp bằng cụm riêng: xếp chung một cụm thì đoạn "Thông tin dành cho du khách" của bài Chùa Từ Hiếu đứng hạng 9 / 19
+# (ngoài 8 đoạn được chọn) ⇒ mục "Lưu ý" rỗng dù bài có lời dặn; xếp riêng thì nó đứng hạng 1 (đếm 0 đồng 24/11/2026).
+CUM_LOI_DAN = "lưu ý du khách trang phục ứng xử quy tắc nên không được giữ yên lặng xin phép an toàn giày"
+SO_DOAN_LOI_DAN = 2
 CAU_TIM_DI_LAI = "Đi lại giữa các điểm tham quan ở Huế: taxi, xe máy, xe đạp, xích lô, thuyền"
 # Ý của model NÓI VỀ giờ mở cửa hoặc giá ⇒ ý đó bị bỏ: hai thứ này chỉ đi đường code chép. Giờ trong ngày nói về cảnh ("bình minh 04h30 – 06h00"), giờ nên
 # đi ("bắt đầu từ khoảng 17:30"), con số không phải tiền ("2 triệu lượt khách", "12 nghìn m²") KHÔNG bị bỏ. Lịch sử: bản đầu "mọi con số giờ" làm mục Đầm
@@ -235,8 +239,9 @@ def _tu(chu: str) -> list[str]:
     return _TU.findall(_nfc(chu).casefold())
 
 
-def xep_trong_bai(doan_bai: list, cum: str = CUM_TRONG_BAI) -> list:
-    """Các đoạn của MỘT bài xếp theo điểm từ khoá (BM25 tính riêng trong bài) với `cum`; bằng điểm ⇒ đoạn đứng trước trong bài trước."""
+def xep_trong_bai(doan_bai: list, cum: str = CUM_TRONG_BAI, chi_khop: bool = False) -> list:
+    """Các đoạn của MỘT bài xếp theo điểm từ khoá (BM25 tính riêng trong bài) với `cum`; bằng điểm ⇒ đoạn đứng trước trong bài trước. `chi_khop`: bỏ đoạn
+    không khớp từ nào của cụm (điểm 0)."""
     chu = [_tu(" ".join([" ".join(d.metadata.get("heading_path") or ()), d.text or ""])) for d in doan_bai]
     n, tb = len(doan_bai), (sum(len(t) for t in chu) / len(doan_bai)) if doan_bai else 1.0
     co = {}
@@ -248,12 +253,13 @@ def xep_trong_bai(doan_bai: list, cum: str = CUM_TRONG_BAI) -> list:
     def diem(t: list[str]) -> float:
         return sum(math.log(1 + (n - co[w] + 0.5) / (co[w] + 0.5)) * t.count(w) * 2.2 / (t.count(w) + 1.2 * (0.25 + 0.75 * len(t) / (tb or 1.0)))
                    for w in hoi if w in co and w in t)
-    return [d for _, _, d in sorted(((-round(diem(t), 6), i, d) for i, (t, d) in enumerate(zip(chu, doan_bai))), key=lambda x: x[:2])]
+    return [d for am_diem, _, d in sorted(((-round(diem(t), 6), i, d) for i, (t, d) in enumerate(zip(chu, doan_bai))), key=lambda x: x[:2])
+            if not chi_khop or am_diem < 0]
 
 
 def chon_bang_chung(ket_qua_tim: list, doan_bai: list, bai_id: str | None, k: int = SO_DOAN_BANG_CHUNG, ten_rieng: str | None = None) -> list:
     """Bằng chứng cho mục của một điểm, nhiều nhất `k` đoạn. Điểm có bài riêng trong chỉ mục ⇒ CHỈ đoạn của bài đó: tới `SO_DOAN_TU_TIM` đoạn theo thứ hạng
-    của lần tìm chung, phần còn lại theo `xep_trong_bai`. Điểm không có bài riêng (hoặc bài không có đoạn nào) ⇒ kết quả tìm như nó vốn có.
+    của lần tìm chung, rồi `SO_DOAN_LOI_DAN` đoạn lời dặn (`CUM_LOI_DAN`), phần còn lại theo `xep_trong_bai`. Điểm không có bài riêng (hoặc bài không có đoạn nào) ⇒ kết quả tìm như nó vốn có.
     Vì sao không lấy thẳng kết quả tìm (bản đầu, lượt thật 24/11/2026): mục Đại Nội nhận 8 đoạn của bài vé và bài dịch vụ ⇒ "Nên xem" toàn máy thuyết minh,
     xe điện."""
     if not bai_id or not doan_bai:
@@ -262,6 +268,8 @@ def chon_bang_chung(ket_qua_tim: list, doan_bai: list, bai_id: str | None, k: in
         # các đoạn của bài đó CÓ NHẮC tên điểm (tìm chung theo tên dễ mang về bài của một nơi khác trùng tên — "Không gian lưu niệm Lê Bá Đảng")
         ten = " ".join(_tu(ten_rieng))
         return [d for d in xep_trong_bai(doan_bai, ten_rieng) if ten in " ".join(_tu(d.text or ""))][:SO_DOAN_TU_TIM]
-    tu_tim = [d for d in ket_qua_tim if d.metadata.get("source") == bai_id][:SO_DOAN_TU_TIM]
-    da_co = {d.id for d in tu_tim}
-    return (tu_tim + [d for d in xep_trong_bai(doan_bai) if d.id not in da_co])[:k]
+    chon = [d for d in ket_qua_tim if d.metadata.get("source") == bai_id][:SO_DOAN_TU_TIM]
+    for xep, so in ((xep_trong_bai(doan_bai, CUM_LOI_DAN, chi_khop=True), SO_DOAN_LOI_DAN), (xep_trong_bai(doan_bai), k)):
+        da_co = {d.id for d in chon}
+        chon += [d for d in xep if d.id not in da_co][:so]
+    return chon[:k]
