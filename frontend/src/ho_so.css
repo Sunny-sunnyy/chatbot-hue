@@ -82,4 +82,7 @@
   .hs-dai-o { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 0 16px 4px; }
   .hs-o { flex: 0 0 72%; scroll-snap-align: start; }
 }
+/* Bản in: mục của hồ sơ dài hơn một trang giấy (6–10 ý + khối giờ / giá) ⇒ KHÔNG cấm ngắt giữa mục như thẻ sổ tay — cấm thì mục đầu bị đẩy hết sang
+   trang 2 và trang 1 chỉ còn tiêu đề (thấy ở lượt thật 24/11: chủ đề 24 bài); chỉ giữ từng ý không bị cắt đôi. */
+@media print { .hs .st-muc { break-inside: auto; } .hs .st-d li, .hs .hs-bai, .hs .st-thieu, .hs .notice-an-toan { break-inside: avoid; } }
 @media print { .hs-bai a, .hs-bai span, .hs-so-muc { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .hs-it { background: none; color: #46605F; padding: 0; } }
