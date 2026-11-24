@@ -149,7 +149,7 @@ anh:
   bat: true
   danh_sach: ../data/phase_10/anh/danh_sach_ten_55.json   # 55 tên từ 16:50 23/11/2026: 42 tên cũ nguyên văn (`danh_sach_ten.json`, do `data/phase_10/anh/tools/dung_danh_sach.py` dựng,
                              # User duyệt 05/11) + 13 tên đợt 1 qua lượt ảnh thật 23/11 (10 tên mở 16:43 23/11: bản `danh_sach_ten_52.json`; nay thêm Cầu Trường Tiền, Nhà thờ
-                             # chính tòa Phủ Cam, Chùa Từ Hiếu — ba mục này mang `xac_nhan_truoc: true`: đoán một tên thì giao diện hiện thẻ xác nhận, không tự hỏi).
+                             # chính tòa Phủ Cam, Chùa Từ Hiếu — ba mục này mang `xac_nhan_truoc: true`; từ 21:29 23/11/2026 giao diện không dùng khoá đó nữa — mọi ca tự hỏi ngay với tên đầu).
                              # md5 ae70b2766c21 (private). Lùi: trỏ lại bản 52 hoặc `danh_sach_ten.json`. Số đo + giới hạn: runbook 10.1
   max_bytes: 10485760        # 10 MB — chặn trước khi đọc thân (spec A10 (3))
   max_pixels: 40000000       # chặn ảnh "bom giải nén" trước khi giải mã (spec §6)

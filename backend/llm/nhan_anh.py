@@ -1,7 +1,8 @@
 """Hỏi bằng ảnh — Phase 10 A1 (plan `docs/superpowers/plans/2026-11-05-phase-10-a1-plan.md` bản 2 `2fc2fcea33d4`; spec Phase 10 bản 2 §2, §6).
 
 Luồng một ảnh: bytes người dùng gửi ⇒ `chuan_bi_anh` (rào bom giải nén, xoá EXIF, thu nhỏ — D7) ⇒ `doan_ten` (một lần gọi model, không công cụ,
-không lịch sử, đầu ra chỉ là id trong danh sách — D3, D4) ⇒ backend kiểm lại id ⇒ route trả tên chuẩn để người dùng bấm xác nhận.
+không lịch sử, đầu ra chỉ là id trong danh sách — D3, D4) ⇒ backend kiểm lại id ⇒ route trả tên chuẩn. Từ 21:29 23/11/2026 giao diện TỰ hỏi ngay với
+tên đầu, các tên còn lại thành nút "Hỏi lại với …" dưới câu trả lời (chủ dự án: trả lời trước, không bắt chọn); thẻ chờ bấm chỉ còn khi đang có lượt khác chạy.
 Model không bao giờ viết chữ trả lời từ ảnh (spec A2, Q-f); chữ trong ảnh là dữ liệu, không phải lệnh (spec §6).
 """
 import base64
@@ -112,7 +113,8 @@ def dau_vao(jpeg: bytes, danh_sach: list[dict]) -> list[dict]:
 def kiem_lai(output, danh_sach: list[dict]) -> list[dict]:
     """Backend kiểm lại đầu ra (D4): chỉ id trong danh sách, bỏ trùng, ≤ 3; `khong_nhan_ra` ⇒ rỗng. Trả [{id, ten}] theo thứ tự model.
     Mục danh sách mang `xac_nhan_truoc: true` (nơi hay bị nhận thay cho một nơi GIỐNG nó mà danh sách không có — đo 23/11/2026: cầu Dã Viên ra
-    "Cầu Trường Tiền") ⇒ ứng viên mang thêm khoá đó: giao diện hiện thẻ để người dùng bấm xác nhận, không tự hỏi khi chỉ có một tên."""
+    "Cầu Trường Tiền") ⇒ ứng viên mang thêm khoá đó. Từ 21:29 23/11/2026 giao diện KHÔNG dùng khoá này nữa (`frontend/src/HoiBangAnh.jsx`: mọi ca tự hỏi
+    ngay với tên đầu, không còn thẻ xác nhận cho tên giống); khoá vẫn được trả về để bản ghi / phép đo biết tên nào thuộc nhóm dễ nhầm."""
     if getattr(output, "khong_nhan_ra", True):
         return []
     theo_id = {m["id"]: m for m in danh_sach}
