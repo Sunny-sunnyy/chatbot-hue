@@ -411,7 +411,8 @@ _SO_TAY_CHUNG = (
 SO_TAY_DIEM_LOI_DAN = (
     "Bạn viết một mục của sổ tay chuyến đi Huế cho MỘT điểm trong lịch. Trả hai danh sách: `nen_xem` — nhiều nhất 4 ý về thứ đáng xem / đáng làm nhất ở "
     "chính điểm này; `luu_y` — nhiều nhất 3 LỜI DẶN người đi cần biết khi tới điểm này (trang phục, quy tắc ứng xử, bậc thang, lối đi, thời tiết, an toàn); ý giới thiệu, "
-    "lịch sử không thuộc danh sách này — không có lời dặn thì để rỗng. Mỗi ý chỉ nói MỘT điều. "
+    "lịch sử không thuộc danh sách này — không có lời dặn thì để rỗng. Mỗi ý chỉ nói MỘT điều. Cảnh báo an toàn có trong Bằng chứng (cấm tắm, lũ quét, sạt lở, "
+    "biển động, tạm dừng đón khách, trơn trượt, mùa mưa bão…) PHẢI có trong `luu_y`, nêu rõ mùa hoặc điều kiện. "
     "KHÔNG viết giờ mở cửa, giá vé, địa chỉ ở đâu cả — chương trình chép các thứ đó riêng. " + _SO_TAY_CHUNG
 )
 SO_TAY_DI_LAI_LOI_DAN = (

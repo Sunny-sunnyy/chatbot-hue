@@ -203,3 +203,75 @@ def test_mot_muc_gap_loi_la_khong_lam_dut_luong_va_muc_truoc_khi_di_luon_con_don
     cuoi = muc["truoc-khi-di"]
     assert cuoi["trang_thai"] == "loi" and [d["chu"] for d in cuoi["doan"] if d["kieu"] == "an_toan"][0] == "Câu an toàn bão lũ" and cuoi["doan"][-1]["nhan"] == "Lưu ý chung"
     assert su_kien[-1][1]["so_muc_loi"] == 2
+
+
+def _dc(so, muc, chu, rel="travel/places/Thác.md"):
+    return SimpleNamespace(id=f"{rel}#{so}", text=chu, metadata={"source": rel, "title": "Thác", "heading_path": [muc], "domain": "travel",
+                                                                 "evidence_parts": [{"role": "body", "text": chu, "start": 0, "end": 1}]})
+
+
+THAC = [_dc(0, "Tổng quan", "Thác nằm giữa rừng, nước trong xanh, điểm đáng xem nổi bật."),
+        _dc(1, "Trải nghiệm", "Tắm suối, cắm trại, tham quan cảnh quan."),
+        _dc(2, "Ẩm thực", "Gà nướng; mùa mưa bão ít quán mở."),
+        _dc(3, "Mùa mưa lũ", "Từ tháng 9 đến tháng 12 có lũ quét, nước xiết; ban quản lý tạm dừng bơi lội và cấm tắm suối.")]
+
+
+def test_doan_canh_bao_an_toan_cua_bai_luon_vao_bang_chung_cua_diem():
+    """Phiên đo đếm 24/11/2026 + lượt thật trên main (lịch 4 ngày thiên nhiên): 9 / 12 điểm không có ý cảnh báo theo mùa nào — Bạch Mã, Đèo Hải Vân, Đầm Lập An, Núi
+    Ngự Bình; Thác Nhị Hồ chỉ có ý "giày chống trượt" trong khi bài ghi tạm dừng bơi lội mùa mưa lũ. Đoạn cảnh báo của bài không lọt vào 8 đoạn được chọn."""
+    assert st.doan_canh_bao(THAC).id == "travel/places/Thác.md#3" and st.doan_canh_bao(THAC[:3]) is None   # "mùa mưa bão" đứng lẻ chưa phải đoạn cảnh báo
+    chon = st.chon_bang_chung([THAC[0]], THAC, "travel/places/Thác.md", k=2)
+    assert "travel/places/Thác.md#3" in [d.id for d in chon] and len(chon) == 3                              # thêm NGOÀI trần k, không đẩy đoạn nào ra
+    assert st.la_y_canh_bao("Mùa mưa lũ thác có lũ quét, tạm dừng bơi lội [4]", {4}) and not st.la_y_canh_bao("Thác có ba tầng nước [4]", {4})
+    # ý dẫn đoạn cảnh báo không bị trần số ý cắt
+    y = [{"chu": f"Lời dặn {i}", "nguon": [1]} for i in range(3)] + [{"chu": "Mùa mưa lũ có lũ quét, cấm tắm suối", "nguon": [4]}]
+    assert st.loc_y(y, {1, 4}, 3, nguon_uu_tien=frozenset({4}))[0][-1] == "Mùa mưa lũ có lũ quét, cấm tắm suối [4]"
+    assert st.loc_y(y, {1, 4}, 3)[0] == ["Lời dặn 0 [1]", "Lời dặn 1 [1]", "Lời dặn 2 [1]"]
+
+
+def _chay_diem(may):
+    from api.routes import so_tay as r
+    lich = {"ngay": [{"ngay": 1, "muc": [{"id_muc": "n1-sang-1", "buoi": "sang", "id_diem": "thac", "ten": "Thác", "gio": "8:00 – 10:00",
+                                         "bai_id": "travel/places/Thác.md", "anh": None}]}], "ghi_chu": []}
+
+    class Kho:
+        def search(self, cau):
+            return SimpleNamespace(documents=[THAC[0], THAC[1]])
+
+        def doan_cua_bai(self, rel):
+            return list(THAC)
+
+    async def gom():
+        return [e async for e in r._su_kien(st.dan_y(lich), lich, None, SimpleNamespace(retrieval_service=Kho()), SimpleNamespace(the_noi_bang=None, bang_lich_v2=None), may)]
+    sk = [(k.split("event: ", 1)[1].split("\n", 1)[0], json.loads(k.split("data: ", 1)[1])) for k in (e.decode() for e in asyncio.run(gom()))]
+    return next(d for t, d in sk if t == "muc" and d["id"] == "n1-sang-1")
+
+
+def test_diem_co_doan_canh_bao_thi_so_tay_luon_co_dong_an_toan():
+    thay = {}
+
+    class MayKhongViet:
+        async def viet_so_tay(self, loai, prompt, log):
+            if loai == "diem":
+                thay["prompt"] = prompt
+            return {"nen_xem": [{"chu": "Thác có nước trong xanh", "nguon": [2]}], "luu_y": [{"chu": "Nên mang giày chống trượt", "nguon": [2]}], "di_lai": []}
+    muc = _chay_diem(MayKhongViet())
+    assert "tạm dừng bơi lội" in thay["prompt"]                                                             # đoạn cảnh báo có trong bằng chứng gửi model
+    tro = [d for d in muc["doan"] if d["kieu"] == "an_toan"]
+    assert len(tro) == 1 and "«Mùa mưa lũ»" in tro[0]["chu"] and tro[0]["so"] and muc["trang_thai"] == "xong"  # model không viết cảnh báo ⇒ code trỏ tới mục của bài
+
+    class MayViet:
+        async def viet_so_tay(self, loai, prompt, log):
+            so = int(re.search(r"\[Nguồn (\d+)\]\nTiêu đề: Thác\nMục: Mùa mưa lũ", prompt).group(1))
+            return {"nen_xem": [], "luu_y": [{"chu": "Lời dặn một", "nguon": [2]}, {"chu": "Lời dặn hai", "nguon": [2]}, {"chu": "Lời dặn ba", "nguon": [2]},
+                                             {"chu": "Từ tháng 9 đến tháng 12 có lũ quét, ban quản lý tạm dừng bơi lội và cấm tắm suối", "nguon": [so]}], "di_lai": []}
+    muc = _chay_diem(MayViet())
+    luu_y = next(d for d in muc["doan"] if d["nhan"] == "Lưu ý")
+    assert luu_y["gach"][-1].startswith("Từ tháng 9 đến tháng 12 có lũ quét") and len(luu_y["gach"]) == 4   # ý cảnh báo vượt trần 3 vẫn được giữ
+    assert not [d for d in muc["doan"] if d["kieu"] == "an_toan"]                                           # đã có ý cảnh báo ⇒ không cần dòng trỏ
+
+    class MayHong:
+        async def viet_so_tay(self, loai, prompt, log):
+            raise RuntimeError("model hỏng")
+    muc = _chay_diem(MayHong())
+    assert muc["trang_thai"] == "loi" and len([d for d in muc["doan"] if d["kieu"] == "an_toan"]) == 1     # model hỏng: dòng an toàn do code vẫn có

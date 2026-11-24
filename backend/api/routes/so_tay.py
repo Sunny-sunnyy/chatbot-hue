@@ -45,10 +45,18 @@ async def _muc_model(loai: str, ten_khoi: tuple[str, ...], cau_tim: str, de: str
     """Phần model của một mục: tìm kho bằng câu tìm cố định của code ⇒ một lời gọi có khuôn ⇒ lọc bằng luật của code ⇒ nối vào `doan` / `nguon`.
     Trả trạng thái mục ("xong" | "loi"). MỌI ngoại lệ ở đây (tìm kho, đọc đoạn của bài, dựng ngữ cảnh, model, sai khuôn) chỉ làm hỏng mục này: `doan` /
     `nguon` giữ nguyên các dòng do code chép đã có. `CancelledError` (trình duyệt đóng luồng) đi qua."""
+    tro_an_toan, trang_thai = None, "xong"  # (số nguồn, tên mục) của đoạn cảnh báo an toàn của bài: phải có ý "Lưu ý" dẫn nó, không thì code thêm dòng trỏ
     try:
         ket_qua = await asyncio.to_thread(state.retrieval_service.search, cau_tim)
         doan_bai = await asyncio.to_thread(state.retrieval_service.doan_cua_bai, bai_id) if bai_id else []
-        chu, nguon_kho = _bang_chung(st.chon_bang_chung(ket_qua.documents, doan_bai, bai_id, ten_rieng=ten_rieng), len(nguon) + 1)
+        tai_lieu = [d for d in st.chon_bang_chung(ket_qua.documents, doan_bai, bai_id, ten_rieng=ten_rieng) if FullCorpusContextBuilder._source(d, 0) is not None]
+        chu, nguon_kho = _bang_chung(tai_lieu, len(nguon) + 1)
+        canh_bao = st.doan_canh_bao(doan_bai) if loai == "diem" and not ten_rieng else None
+        so_cb = next((s["id"] for s, d in zip(nguon_kho, tai_lieu) if canh_bao is not None and d.id == canh_bao.id), None)
+        if so_cb is not None:
+            nguon_cb = next(s for s in nguon_kho if s["id"] == so_cb)
+            nguon.append(nguon_cb)  # nguồn của đoạn cảnh báo có mặt kể cả khi model hỏng (dòng trỏ dẫn nó)
+            tro_an_toan = (so_cb, (nguon_cb["heading_path"] or ["lưu ý"])[-1])
         if not nguon_kho:  # không đoạn nào ⇒ không gọi model; mọi khối là "Kho chưa có"
             doan.extend({"nhan": st.NHAN[k], "kieu": "thieu", "chu": None, "gach": None} for k in ten_khoi)
             return "xong"
@@ -58,8 +66,13 @@ async def _muc_model(loai: str, ten_khoi: tuple[str, ...], cau_tim: str, de: str
         finally:
             dem["goi_model"] += len(log.calls)
         hop_le = {s["id"] for s in nguon_kho}
-        khoi = [st.khoi_model(k, ra.get(k) or [], hop_le, cam_gio_gia=loai == "diem") for k in ten_khoi]
-        nguon.extend(nguon_kho)
+        uu_tien = frozenset() if so_cb is None else frozenset({so_cb})
+        khoi = [st.khoi_model(k, ra.get(k) or [], hop_le, cam_gio_gia=loai == "diem", nguon_uu_tien=uu_tien if k == "luu_y" else frozenset()) for k in ten_khoi]
+        nguon.extend(s for s in nguon_kho if s["id"] != so_cb)
+        # mục đã có ÍT NHẤT MỘT ý cảnh báo (dẫn đoạn nào của bài cũng được) ⇒ không cần dòng trỏ. Lượt thật 24/11/2026: Đầm Lập An có hai ý cảnh báo dẫn đoạn khác
+        # mà vẫn bị thêm dòng trỏ tới một mục "địa mạo" — đoạn máy chọn không phải lúc nào cũng là đoạn cảnh báo hay nhất của bài
+        if any(st.la_y_canh_bao(dong, None) for doan_khoi, _ in khoi for dong in doan_khoi.get("gach") or ()):
+            tro_an_toan = None
         for doan_khoi, bo in khoi:
             doan.append(doan_khoi)
             for ly_do, gia_tri in bo.items():
@@ -68,13 +81,16 @@ async def _muc_model(loai: str, ten_khoi: tuple[str, ...], cau_tim: str, de: str
                         logger.info("so_tay dropped item (%s): %s", ly, y)
                 else:
                     dem["bo_" + ly_do] += gia_tri
-        return "xong"
     except Exception as exc:  # noqa: BLE001 — một mục hỏng không được làm đứt cả luồng (phiên đo đọc nhánh 24/11/2026)
         if isinstance(exc, (GenerationError, RetrievalDependencyError)):
             logger.warning("so_tay section failed: %s", type(exc).__name__)
         else:
             logger.exception("so_tay section failed unexpectedly")
-        return "loi"
+        trang_thai = "loi"
+    if tro_an_toan is not None:  # bài có đoạn cảnh báo mà không ý nào nói tới (model không viết, bị lọc, hoặc lời gọi hỏng) ⇒ dòng an toàn do CODE
+        doan.append({"nhan": None, "kieu": "an_toan", "chu": st.CAU_TRO_AN_TOAN.format(muc=tro_an_toan[1]) + f" [{tro_an_toan[0]}]", "gach": None})
+        dem["tro_an_toan"] = dem.get("tro_an_toan", 0) + 1
+    return trang_thai
 
 
 async def _dung_muc(muc: dict, lich: dict, an_toan: str | None, state, flags, generator, dem: dict) -> dict:
@@ -141,7 +157,7 @@ async def _su_kien(dan_y: list[dict], lich: dict, an_toan: str | None, state, fl
     logger.info("so_tay done: sections=%d failed=%d seconds=%.1f llm_calls=%d dropped=%s", len(dan_y), loi, giay, dem["goi_model"],
                 {k: v for k, v in dem.items() if k.startswith("bo_") and v})
     yield sse_event("xong", {"giay": giay, "so_muc": len(dan_y), "so_muc_loi": loi, "so_loi_goi_model": dem["goi_model"],
-                             "y_bi_bo": {k[3:]: v for k, v in dem.items() if k.startswith("bo_")}})
+                             "y_bi_bo": {k[3:]: v for k, v in dem.items() if k.startswith("bo_")}, "so_dong_tro_an_toan": dem.get("tro_an_toan", 0)})
 
 
 @router.post("/api/so_tay")

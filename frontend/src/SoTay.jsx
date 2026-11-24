@@ -171,8 +171,15 @@ function Muc({ d, muc, dang, i }) {
 
 // "Dòng sông mục lục": một nét dọc, mỗi mục một bến; bến của mục đã viết xong thì đầy, mục đang đọc thì sáng.
 function SongMucLuc({ nhom, muc, dangDoc }) {
+  const khung = useRef(null);
+  // Lịch dài (5 ngày: 21 bến) ⇒ mục lục cao hơn khung ghim và tự cuộn bên trong: giữ bến đang đọc ở giữa khung (chỉ cuộn khung mục lục, không cuộn trang)
+  useEffect(() => {
+    const k = khung.current, ben = k?.querySelector('[aria-current="true"]');
+    if (!ben || k.scrollHeight <= k.clientHeight) return;
+    k.scrollTo({ top: ben.getBoundingClientRect().top - k.getBoundingClientRect().top + k.scrollTop - k.clientHeight / 2 });
+  }, [dangDoc]);
   return (
-    <nav className="st-song" aria-label="Mục lục sổ tay">
+    <nav className="st-song" aria-label="Mục lục sổ tay" ref={khung}>
       {nhom.map(g => (
         <div key={g.khoa} className="st-song-nhom">
           {/* nhóm "Trước khi đi" chỉ có một bến cùng tên ⇒ không in nhãn nhóm (lặp chữ) */}
