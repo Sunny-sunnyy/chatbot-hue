@@ -1,8 +1,8 @@
 # Bài 9 — Thông tin gắn kèm mỗi đoạn (metadata) và "chữ để tìm"
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 22:43 22/11: thêm một vế cho dòng "có thể đã thay đổi" (bài chỉ được nêu tên) · cơ chế đọc từ chương trình đang chạy; số kho khớp bản ghi hiện trạng lúc 13:33; ví dụ lấy từ lượt hỏi thật ngày 21/11; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào.*
+*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 22:43 22/11: thêm một vế cho dòng "có thể đã thay đổi" (bài chỉ được nêu tên) · cơ chế đọc từ chương trình đang chạy; số kho khớp bản ghi hiện trạng lúc 13:33; ví dụ lấy từ lượt hỏi thật ngày 21/11; số của phép so lấy từ báo cáo đo cuối tháng 10; người viết không chạy lại phép đo nào. · 09:56 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (ba bài kho được thêm câu sáng 24/11; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536).*
 
-**Bài trước đã biết:** 269 bài (từ 18:05 23/11) được cắt thành 9.533 đoạn nhỏ, phần lớn chỉ một hai câu.
+**Bài trước đã biết:** 269 bài (từ 18:05 23/11) được cắt thành 9.536 đoạn nhỏ, phần lớn chỉ một hai câu.
 **Bài này thêm:** một đoạn nhỏ đứng riêng thì không biết nó nói về cái gì. Bài này giảng những thông tin được gắn kèm mỗi đoạn, chúng được dùng ở đâu, và vì sao chỉ gắn chừng đó.
 
 ## Ý chính
@@ -68,7 +68,7 @@ Bằng chứng:
 
 ## Hệ thống không lọc theo chủ đề khi tìm
 
-Có thể gắn thêm nhiều trường nữa (chủ đề con, khu vực, mức giá…) rồi dùng chúng để lọc trước khi tìm, ví dụ "chỉ tìm trong nhóm món ăn". hue_rag không làm vậy: mọi câu hỏi đều tìm trên cả 9.533 đoạn.
+Có thể gắn thêm nhiều trường nữa (chủ đề con, khu vực, mức giá…) rồi dùng chúng để lọc trước khi tìm, ví dụ "chỉ tìm trong nhóm món ăn". hue_rag không làm vậy: mọi câu hỏi đều tìm trên cả 9.536 đoạn.
 
 Ví dụ chính cho thấy một hệ quả của lựa chọn này: câu hỏi về giá vé được trả lời bằng đoạn của hai bài vé **và** một đoạn của bài nghệ thuật biểu diễn. Nếu hệ thống lọc "chỉ tìm trong nhóm du lịch" (nhóm chứa các bài vé) thì đoạn số 4, nơi có giá vé trẻ em, đã không được xét. Lý do và cái giá: quyết định 3 và 4 dưới đây.
 
@@ -90,7 +90,7 @@ Ví dụ chính cho thấy một hệ quả của lựa chọn này: câu hỏi 
 
 ### 3. Vì sao không lọc theo chủ đề khi tìm, ví dụ "chỉ tìm trong nhóm món ăn"?
 
-- **Đã chọn:** mọi câu hỏi tìm trên cả 9.533 đoạn.
+- **Đã chọn:** mọi câu hỏi tìm trên cả 9.536 đoạn.
 - **Vì sao:** lập luận, không phải số đo: câu hỏi hay chạm nhiều chủ đề, và lọc sai một lần là mất đáp án. Ví dụ ở mục trên: đoạn số 4 nằm ngoài nhóm du lịch.
 - **Cách khác:** lọc theo chủ đề: chưa đo.
 - **Cái giá:** không có cách "chỉ tìm trong lễ hội"; một câu hỏi về món ăn vẫn có thể kéo về đoạn của bài di tích.
@@ -201,7 +201,7 @@ Câu hỏi hay chạm nhiều chủ đề. Ở ví dụ chính, giá vé trẻ e
 - Dòng "Giờ mở cửa, giá vé, lịch lễ hội có thể đã thay đổi…" được thêm khi câu trả lời trích một đoạn có trường nguồn thuộc nhóm vé, địa điểm, lễ hội, hoặc là bài "Lưu trú ở Huế", hoặc nêu đúng tên một bài như thế có trong nguồn liệt kê, nguồn "gần một điểm" hay thẻ nơi (bài 16, 24).
 - Bước tìm kiểm hồ sơ của từng ứng viên (đủ 7 trường, đúng dạng, mã đoạn khớp mã cất trong Qdrant, chủ đề khớp đường dẫn) mỗi lần tìm.
 
-**Bài sau (bài 10):** chữ để tìm của 9.533 đoạn được đổi thành vector như thế nào.
+**Bài sau (bài 10):** chữ để tìm của 9.536 đoạn được đổi thành vector như thế nào.
 
 <details>
 <summary>Nguồn (để giữ bài đúng — anh không cần đọc)</summary>
