@@ -393,7 +393,7 @@ Khuôn đầu ra: `di_lai` (mỗi ý gồm `chu`, `nguon`).
 
 ### Hồ sơ theo chủ đề (bài 44)
 
-Danh sách bài của một chủ đề do chương trình chọn từ mục lục kho, model không chọn bài. Bước một: một lời gọi gom các bài đó thành dàn ý (lời dặn gom dàn ý); chương trình kiểm lại bài nào cũng có mặt đúng một lần, lời gọi hỏng thì chương trình tự chia mục. Bước hai: mỗi mục của dàn ý một lời gọi (lời dặn viết mục). Hồ sơ dựng xong mà không mục nào lỗi thì được giữ trong bộ nhớ máy chủ theo chủ đề; lần mở sau phát lại hồ sơ đó, không gọi model. Hai lời dặn của hồ sơ đứng riêng, không dùng phần chung của sổ tay.
+Danh sách bài của một chủ đề do chương trình chọn từ mục lục kho, model không chọn bài. Bước một: một lời gọi gom các bài đó thành dàn ý (lời dặn gom dàn ý); chương trình kiểm lại bài nào cũng có mặt đúng một lần, lời gọi hỏng thì chương trình tự chia mục. Bước hai: mỗi mục của dàn ý một lời gọi (lời dặn viết mục). Hồ sơ dựng xong mà không mục nào lỗi và lời gọi gom mục không báo lỗi thì được giữ trong bộ nhớ máy chủ theo chủ đề; lần mở sau phát lại hồ sơ đó, không gọi model. Hai lời dặn của hồ sơ đứng riêng, không dùng phần chung của sổ tay.
 
 **Gom dàn ý** — gửi một lần cho mỗi hồ sơ.
 

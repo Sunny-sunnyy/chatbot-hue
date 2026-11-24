@@ -11,7 +11,7 @@
 - **Chương trình** dựng chủ đề và **tập bài** từ mục lục kho bằng luật đặt tay, kiểm dàn ý model trả, chọn đoạn, chép giờ – giá, lọc ý, giữ trước một ý cho mỗi bài (model không viết thì in ô thiếu).
 - **Model** làm hai việc: một lời gọi **gom** tập bài thành mục và đặt tên; rồi mỗi mục một lời gọi viết ý từ đoạn của chính các bài trong mục. Hồ sơ *n* mục là *n* + 1 lời gọi (đã chạy: 3–9).
 - Dàn ý được kiểm: model chỉ trả **số thứ tự** bài, số lạ bị gỡ, bài sót dồn vào mục cuối. Ý thì **không** được so nghĩa với đoạn dẫn, như sổ tay.
-- Hồ sơ không có mục lỗi được **nhớ trong máy chủ theo chủ đề, cho mọi người**: mở lại hiện ngay, không gọi model; khởi động lại là mất. Mức kiểm: "Giới hạn đã biết".
+- Hồ sơ không có mục lỗi, lời gọi gom không lỗi thì được **nhớ trong máy chủ theo chủ đề, cho mọi người**: mở lại hiện ngay, không gọi model; khởi động lại là mất. Mức kiểm: "Giới hạn đã biết".
 
 ## Từ dùng trong bài
 
