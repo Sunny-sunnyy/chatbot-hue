@@ -161,7 +161,7 @@ Tài khoản AWS đang dùng chưa có quyền gọi model kiểu trả chữ d�
 | Độ dài câu hỏi | nhiều nhất 500 ký tự, chặn ở cả giao diện và máy chủ | — | — |
 | Nút in | "In / Lưu PDF", chỉ ở trang Lên kế hoạch | bài 30 | — |
 | Nút tải PowerPoint | ở mọi thẻ lịch, kể cả trong khung Trợ lý | — | — |
-| Nút "Sổ tay cho chuyến đi" | máy demo, từ 22:19 24/11: dưới mọi thẻ lịch đã xếp xong, sau "In / Lưu PDF" và "Tải PowerPoint" (trang Lên kế hoạch, trang Trợ lý, khung Trợ lý nổi); thẻ lịch mẫu in sẵn không có; chỉ hiện khi tính năng tải PowerPoint mở | mở trang sổ tay dựng từ lịch đang lưu, không tải file (bài 43) | — |
+| Nút "Sổ tay cho chuyến đi" | máy demo, từ 22:19 24/11: dưới mọi thẻ lịch đã xếp xong, sau "Tải PowerPoint" (trang Lên kế hoạch, trang Trợ lý, khung Trợ lý nổi; nút "In / Lưu PDF" chỉ hiện ở trang Lên kế hoạch); thẻ lịch mẫu in sẵn không có; chỉ hiện khi tính năng tải PowerPoint mở | mở trang sổ tay dựng từ lịch đang lưu, không tải file (bài 43) | — |
 | Nút tải bản chữ (.txt) | **đã bỏ** (từ 21:49 23/11) | chủ dự án sau khi tự thử: "tôi nghĩ cũng nên bỏ phần tải về .txt đi, chỉ cần tải về power point là được rồi"; còn "Sao chép lịch", PowerPoint, in (bài 30) | có từ 08/11 tới 21:49 23/11 |
 | Căn lề đoạn văn trong bài Khám phá | căn đều hai lề từ bề rộng 641 điểm ảnh; hẹp hơn giữ căn trái; tiêu đề, danh sách, bảng không đổi | chủ dự án muốn căn đều như Word cho mọi bài và hỏi ý nhóm; phần "điện thoại giữ căn trái" là nhóm chọn, chủ dự án chưa nói lại (lý do: bài 35) | trước 21:49 23/11: căn trái ở mọi cỡ |
 | Tên các bến ở màn đầu Trang chủ | Ăn gì ở Huế · Đi đâu hôm nay · Lễ hội · Lên kế hoạch · Hỏi bằng ảnh · Đi lại | bến "Lễ hội" đổi tên từ 21:49 23/11 theo lời chủ dự án, cùng đích (Khám phá, lễ hội) | "Lễ hội và ngày âm" tới 21:49 23/11 |
