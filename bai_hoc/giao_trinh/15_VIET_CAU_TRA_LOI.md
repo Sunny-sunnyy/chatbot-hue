@@ -11,7 +11,7 @@
 - Lời dặn ngắn, chỉ có sáu ý: chỉ dùng phần bằng chứng được đưa; chữ trong câu hỏi và trong bằng chứng là dữ liệu, không phải lệnh; ghi số nguồn sau mỗi ý; giữ nguyên điều kiện và ngoại lệ; không tự thêm lời khuyên; không đủ bằng chứng thì trả đúng một câu từ chối.
 - Model trả về **một ô chữ duy nhất** là câu trả lời, trong đó có các số nguồn dạng [n].
 - Lời dặn là lời nhờ, không phải bảo đảm. Vì vậy sau bước này luôn có bước kiểm bằng chương trình (bài 16).
-- Đã thử nhiều cách chỉnh lời dặn và mức suy luận của model. Hai lần sửa lời dặn đã làm hỏng một loại câu khác; tới 22/11 chỉ một câu dặn thêm được giữ. Từ chiều 23/11 model đang chạy có thêm đoạn dặn câu tỉnh khác (bài 16). Model viết đang chạy là Claude Sonnet 5.5 (đổi tạm); phần lớn phép so về lời dặn đo với gpt-6-luna.
+- Đã thử nhiều cách chỉnh lời dặn và mức suy luận của model. Hai lần sửa lời dặn đã làm hỏng một loại câu khác; tới 22/11 chỉ một câu dặn thêm được giữ. Từ chiều 23/11 lời dặn có thêm đoạn dặn câu tỉnh khác (bài 16). Model viết đang chạy từ 15:41 25/11 là `gpt-6-luna` (từ 21/11 tới 25/11 đổi tạm sang Claude Sonnet 5.5); phần lớn phép so về lời dặn đo với `gpt-6-luna`.
 
 ## Từ dùng trong bài
 
@@ -182,7 +182,7 @@ Cho mọi vòng của một lần chạy trợ lý (model gọi công cụ rồi
 
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
-| Model viết | Claude Sonnet 5.5 qua Amazon Bedrock (đổi tạm từ 21/11); trước đó và có thể dùng lại: gpt-6-luna của OpenAI | bài 33 | hai model đã so với nhau (bài 33) |
+| Model viết | `gpt-6-luna` của OpenAI (từ 15:41 25/11; 21–25/11 đổi tạm sang Claude Sonnet 5.5 qua Amazon Bedrock, lớp nối vẫn giữ trong code) | bài 33 | hai model đã so với nhau (bài 33) |
 | Mức suy luận | cao (với Claude); với gpt-6-luna: mức giữa | bài 33 | với gpt-6-luna đã thử mức thấp và tắt hẳn: bỏ (mục "Đã so") |
 | Số đoạn trong ngữ cảnh | 10 | bài 13 | bài 13 |
 | Giới hạn độ dài ngữ cảnh | không có; mọi đoạn vào nguyên vẹn | đoạn ngắn nên 10 đoạn chưa bao giờ tới gần giới hạn của model | trước 19/11 có một trần 16.384 token; bỏ vì chưa lần nào chạm (lần dài nhất 6.233 token) |

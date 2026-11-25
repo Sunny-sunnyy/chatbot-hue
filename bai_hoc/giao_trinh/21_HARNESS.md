@@ -142,7 +142,7 @@ Tìm thêm tới 2 lần: điểm đủ ý tăng 1,17. Ngày 21/11 nới lên 3 
 
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
-| Model viết | Claude Sonnet 5.5, mức suy luận cao, ở máy chủ dự án (đổi tạm từ 21/11; trước đó gpt-6-luna); bản deploy: gpt-6-luna, cùng harness | bài 33 | bài 33 |
+| Model viết | `gpt-6-luna` của OpenAI trên cả máy demo (từ 15:41 25/11; 21–25/11 đổi tạm sang Claude Sonnet 5.5 mức suy luận cao) lẫn bản deploy, cùng harness | bài 33 | bài 33 |
 | Cho trợ lý tự tìm thêm (`tim_them`) | bật | mở vòng công cụ; tắt thì quay về "tìm một lần, viết một lần" | đã so bật / tắt (mục "Đã so", dòng 1) |
 | Số lần model được tự tìm kho mỗi lượt hỏi (`so_lan_tim_kho`) | 3 (từ 14:47 22/11; trước là 2) | đủ cho tin dài nhiều ý cần ba lần tìm, khi câu tìm gộp đã được tách (bài 23); tin thường và tin kho thiếu ở lượt đo 22/11 không dùng tới lần thứ ba | đã thử 1 (dòng 2): bỏ. Đã thử 3 đứng riêng (21/11 cả hai model; trưa 22/11 Claude): không có ích (dòng 5). Đã thử 4 cùng với 8 vòng: kết quả như cũ. 3 kèm thay đổi khâu tìm: mở (dòng 7) |
 | Dùng hết số lần tìm thì cất công cụ (`het_luot_bo_cong_cu`) | bật | model không còn thấy công cụ tìm kho; nếu vẫn xin thì lượt hỏi nhận câu từ chối cố định | đã so bật / tắt (dòng 3), lúc trần là 2 |

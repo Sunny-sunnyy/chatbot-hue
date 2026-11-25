@@ -176,7 +176,7 @@ Có. Cùng lời dặn, gpt-6-luna xếp nhầm 0 trên 56 lượt, còn Claude 
 | Chạy song song với việc trả lời (`song_song_tra_loi`) | bật | câu về Huế không phải chờ bước xếp loại | đã so với chạy lần lượt (dòng 3) |
 | Tuyến khẩn cấp | đi đường "về Huế", không có câu soạn sẵn | quyết định của chủ dự án: tình huống khẩn cấp ngoài phạm vi sản phẩm | trước đó có một câu soạn sẵn kèm số điện thoại; đã bỏ |
 | Khi cuộc trò chuyện đã có tin trước | bộ xếp loại nhận cả các tin trước và được dặn chỉ xếp loại tin cuối | "còn chỗ đó thì sao" chỉ hiểu được khi có tin trước | bài 23 |
-| Đoạn dặn riêng cho Claude | một đoạn nói địa bàn Huế gồm cả các loại vùng ven (núi, thác, đầm phá, bãi biển, đèo, huyện ở rìa), không nêu tên nơi nào; chỉ thêm khi model đang chạy là Claude | chữa việc câu về nơi ở rìa Huế bị xếp "ngoài phạm vi" | đã đo trước và sau (dòng 6) |
+| Đoạn dặn riêng cho Claude | một đoạn nói địa bàn Huế gồm cả các loại vùng ven (núi, thác, đầm phá, bãi biển, đèo, huyện ở rìa), không nêu tên nơi nào; chỉ thêm khi model viết đang chọn là Claude (đợt đổi tạm 21–25/11; từ 15:41 25/11 máy chạy `gpt-6-luna`) | chữa việc câu về nơi ở rìa Huế bị xếp "ngoài phạm vi" | đã đo trước và sau (dòng 6) |
 
 Lời dặn của bộ xếp loại, một câu nguyên văn cho mỗi phần (bản đủ ở phụ lục D):
 
