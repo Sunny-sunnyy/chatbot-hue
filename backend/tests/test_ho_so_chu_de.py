@@ -111,9 +111,32 @@ def test_dan_y_hong_thi_code_tu_chia_va_mot_muc_loi_khong_dut_luong():
 
 
 def test_cong_tac_mac_dinh_tat_va_can_muc_luc():
-    assert AssistantFlags().ho_so_chu_de is False
+    assert AssistantFlags().ho_so_chu_de is False and AssistantFlags().chu_de_trang_chu is False
     with pytest.raises(ValueError):
         AssistantFlags(ho_so_chu_de=True)
+
+
+def test_chu_de_trang_chu_tu_an_khi_ho_so_chu_de_tat():
+    from fastapi import FastAPI
+    from fastapi.testclient import TestClient
+    from api.routes.cong import router as cong_router
+    from core.settings_loader import load_settings
+
+    settings = load_settings(validate_private_paths=False)
+    assert settings["assistant"]["chu_de_trang_chu"] is True
+    # gói deploy chỉ ép `ho_so_chu_de: false` (không sửa `chu_de_trang_chu`) ⇒ phải nạp được không lỗi và `/api/tinh_nang` tự ẩn cả hai
+    deploy = {**settings, "assistant": {**settings["assistant"], "ho_so_chu_de": False}}
+    flags_deploy = AssistantFlags.from_settings(deploy)
+    assert flags_deploy.ho_so_chu_de is False and flags_deploy.chu_de_trang_chu is True
+
+    app = FastAPI()
+    app.include_router(cong_router)
+    with TestClient(app) as client:
+        for hs_on, td_on, mong in ((True, True, (True, True)), (True, False, (True, None)), (False, True, (None, None))):
+            app.state.assistant_flags = AssistantFlags(tim_them=hs_on, liet_ke_bai=hs_on, the_noi=hs_on, muc_luc=ML if hs_on else None,
+                                                       ho_so_chu_de=hs_on, chu_de_trang_chu=td_on)
+            ra = client.get("/api/tinh_nang").json()
+            assert (ra.get("ho_so_chu_de"), ra.get("chu_de_trang_chu")) == mong
 
 
 def _d(rel, so, muc, chu):

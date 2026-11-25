@@ -317,6 +317,9 @@ class AssistantFlags:
     # hồ sơ theo chủ đề — `GET /api/ho_so/chu_de`, `POST /api/ho_so` (`api/routes/ho_so.py`, `llm/ho_so_chu_de.py`). Tắt ⇒ hai đường trả 404, `/api/tinh_nang`
     # không có khoá, không gì khác đổi.
     ho_so_chu_de: bool = False
+    # Dải "Hồ sơ theo chủ đề" trên Trang chủ (dưới 5 ô "Khám phá theo lĩnh vực"): chỉ gửi qua `/api/tinh_nang` khi `ho_so_chu_de` cũng bật (gói deploy
+    # chỉ ép `ho_so_chu_de: false` nên tự ẩn theo mà không lỗi khởi động).
+    chu_de_trang_chu: bool = False
 
     def __post_init__(self) -> None:
         if self.xuat_pptx:

@@ -147,6 +147,8 @@ async def tinh_nang(request: Request):
         co["so_tay"] = True
     if getattr(flags, "ho_so_chu_de", False):  # bản thử hồ sơ theo chủ đề: khoá chỉ có khi cờ bật
         co["ho_so_chu_de"] = True
+        if getattr(flags, "chu_de_trang_chu", False):  # dải "Hồ sơ theo chủ đề" ở Trang chủ: tự ẩn khi `ho_so_chu_de: false` (kể cả gói deploy)
+            co["chu_de_trang_chu"] = True
     if getattr(flags, "sua_lich_hoan_tac", False):  # bản thử nút hoàn tác lần sửa lịch: khoá chỉ có khi cờ bật
         co["sua_lich_hoan_tac"] = True
     if flags.len_ke_hoach_v2:
