@@ -1,31 +1,30 @@
 # STATUS_A — Phiên điều phối A (`agy` CLI)
 
-Cập nhật: 17:13 25/11/2026 (giờ `date`).
+Cập nhật: 20:43 25/11/2026 (giờ `date`).
 
 ## 1. Đang giữ vai trò & phạm vi
-- Phiên điều phối (A) tiếp nhận và xử lý 3 phản hồi sau buổi chủ dự án tự test chiều tối 25/11 (`vi_sao`, bong bóng dẫn web, lặp `"bỏ lăng"`).
+- Phiên điều phối (A) mở phiên tối 25/11: kiểm khói `gpt-6-luna`, chuẩn bị & điều phối `/swarm` hậu kỳ bộ câu kín trên `ea96e47c`, gộp báo cáo + giáo trình và cập nhật sổ trạng thái lên `main`.
 
 ## 2. Đã xong trong đợt 25/11
-- Đợt `/swarm` chiều (`b57cdb2d`): gộp nút **Hoàn tác lần sửa này**, dải **Hồ sơ theo chủ đề** Trang chủ + đổi tiêu đề **"Khám phá theo lĩnh vực"**, 4 việc `deploy/`, chuyển về **`gpt-6-luna`**, đồng bộ 19 file giáo trình, vòng `improve-workflow`, chạy cả bộ test trên `c2d0ee68` (**97 chạy / 2.397 ca đạt / 0 file đỏ**).
-- Đợt sửa sau buổi tự test (17:13 25/11, `0 USD`):
-  1. Gỡ sạch `"Vì sao trả lời vậy?"` (`vi_sao`): xoá `backend/api/vi_sao.py`, `backend/tests/test_vi_sao.py`, `frontend/src/ViSao.jsx`, `frontend/src/vi_sao.css`, `bai_hoc/giao_trinh/42_VI_SAO_TRA_LOI_VAY.md`, rút sạch khỏi `app.py`, `chat.py`, `assistant.py`, `so_vet.py`, `settings.yaml` (**62 mở / 6 tắt**), `dong_goi.sh`, `LenKeHoach.jsx`, `chat.jsx`, runbook & giáo trình.
-  2. Ẩn bong bóng `"Tư liệu của mình chưa có thông tin này…"` khi có khung `"Từ web (chưa kiểm)"` (`frontend/src/moDauWeb.js`, `frontend/src/chat.jsx`, `backend/tests/test_mo_dau_web.py`).
-  3. Khử trùng lặp khung hỏi tên mơ hồ (`"bỏ lăng"`) trong `backend/llm/sua_lich_v2.py` + test hồi quy `backend/tests/test_sua_lich_hoi_truoc.py`.
-- Dựng lại `frontend/dist` (`616ms`), chạy 8 file test liên quan (**111 passed**), giao agent con đọc chéo diff, cập nhật sổ & `data/loi_user/2026-11-25.md`, đẩy `main`.
+- Đợt `/swarm` chiều (`b57cdb2d`) & đợt sửa sau buổi tự test 17:13 (`ea96e47c`).
+- Kiểm khói `gpt-6-luna` qua giao diện cổng `8035` ĐẠT SẠCH (`data/playwright_mcp/luot_2511_luna_khoi/NHAT_KY.md`).
+- Chuẩn bị & hậu kỳ bộ câu kín (`19:39–20:43`): dựng `/tmp/b7_moc`, chạy N (28/28 câu), Hiếu chạy `user_chay_kin.sh` (`K`, `S ×2`, `T`, `C`; `L kín = NOT RUN`), mở `/swarm` (`e`, `b`, `d`, `monitor` — 0 USD API ngoài): chấm mù đồng thuận K kín **14/14 = 100%**, gộp báo cáo `report_agent/2026-11-25/E_BO_CAU_KIN_LUNA_2511.md` (`p15-e-bao-cao-bo-kin-2511`), gộp 9 file giáo trình (`p15-d-giao-trinh-bo-kin-2511`), dọn sạch `/tmp/b7_moc`.
 
 ## 3. Đang làm / còn mở
-- Chờ chủ dự án khởi động lại server (`scripts/bat_he_thong.sh`) nếu muốn nhìn lại 3 điểm vừa sửa, rồi gõ lệnh chạy bộ câu kín 1 lần trên `gpt-6-luna`.
+- Chờ Hiếu chọn hướng tiếp theo: Phương án 1 (mở lại thuê GPU tinh chỉnh model nhận ảnh trên `goi_may_thue.tar`) hoặc Phương án 2 (chốt gọn dừng phần xây ở local).
 
 ## 4. Điểm cần kiểm / quyết định chờ chủ dự án
-- Chỉ còn lịch chạy bộ câu kín 1 lần trên `gpt-6-luna`. Thuê GPU ảnh, 4 bài kho thiếu giờ và deploy công khai vẫn gác chờ chủ dự án tự mở lại.
+- Hiếu chọn Phương án 1 / 2 / 3 cho bước tiếp theo; phần bộ câu kín mốc local đã đóng sạch.
 
 ## 5. Tài nguyên & Chi phí
-- **Qdrant (`hue_rag-qdrant-1`, cổng 6335):** đang chạy, đủ **9.536 điểm**.
-- **Cổng `8010`:** server của chủ dự án đang bật (KHÔNG đụng/tắt); nhắc chủ dự án tự khởi động lại để nhận code & `frontend/dist` mới.
-- **Ngân sách OpenAI (nhóm agent):** **~0,67 USD** / trần **2–2,5 USD** (đợt sửa 17:13 tốn `0 USD`).
+- **Qdrant (`hue_rag-qdrant-1`, cổng 6335):** đang BẬT, đủ **9.536 điểm**.
+- **Cổng `8010`, `8035`, `888x`:** đều đang TRỐNG (đã tắt sạch server tạm).
+- **Ngân sách OpenAI (nhóm agent):** kiểm khói `/api/chat` (`0,0051`) + bộ câu kín & N (`0,0665833`). Lũy kế đã ghi nhận ~**0,74 USD** / trần **2–2,5 USD**.
 
 ## 6. Môi trường / Lưu ý kỹ thuật khi chạy lệnh
-- Trong phiên `agy` hiện tại, `run_command` sandbox lỗi `fork/exec /home/minhhieu/.local/bin/agy.*.old: no such file or directory`; chạy lệnh git/date/test thật bằng `BypassSandbox: true`.
+- **Playwright MCP:** `~/.gemini/config/mcp_config.json` chạy `@playwright/mcp@0.0.86` báo thiếu `/opt/google/chrome/chrome` (cần thêm `--browser chromium` hoặc `--executable-path` ở lượt sửa cấu hình sau; tạm thời dùng `playwright` Python trong `.venv` bình thường).
 
 ## 7. Ghi nhận thêm từ các phiên (chuyển sang vòng cải tiến sau)
 - **Từ D (`#35`):** `agy.*.old` khi `agy` tự cập nhật làm sandbox lệnh shell hỏng; DNS GitHub khi tắt mạng có thể cần thử lại.
+- **Từ A (19:34 25/11):** `~/.gemini/config/mcp_config.json` chưa chỉ định `--browser chromium` nên `browser_navigate` lỗi thiếu `/opt/google/chrome/chrome`.
+- **Từ A (19:42 25/11):** `chay_t1.py` có `U1_KHONG_BAT = {"U1"}` nên `chay_ngay.sh` chỉ chạy 27 câu dù `cap_mu_ngay.py` đòi 28 câu (phải bù riêng `u1_cau.jsonl` như 18/11).
