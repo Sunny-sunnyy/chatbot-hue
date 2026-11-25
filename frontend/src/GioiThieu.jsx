@@ -1,14 +1,11 @@
 import { useEffect } from "react";
 import { ANH_DAU_TRANG } from "./anh.js";
-import { Anh, LINH_VUC, soBai } from "./chung.jsx";
+import { Anh } from "./chung.jsx";
 import { HueQuaCacThoiKy } from "./HueQuaCacThoiKy.jsx";
-import { baiHref } from "./route.js";
 import "./gt.css";
 
-// Giới thiệu theo H1 "Sông Hương" (đợt 1 giao diện, C, 14/11/2026; mẫu `data/ui_mau_2026-11-14/h1/gioi_thieu.html`, bàn nhóm C / E vòng 1).
-// Nội dung giữ đúng trang cũ, không thêm lời hứa / số mới; câu "chưa có…" và dòng về ảnh / bản đồ theo cờ server (`/api/tinh_nang` ⇒ banDo, anh).
-// Hiệu ứng riêng (A chốt từ nghiên cứu "wow"): đường sông Hương vẽ dần khi cuộn qua dải "ba bước" (SVG stroke) — chỉ dưới html.hieu-ung;
-// máy giảm chuyển động ⇒ đường hiện sẵn đầy đủ.
+// Giới thiệu theo H1 "Sông Hương" (rút gọn theo góc nhìn người dùng, 25/11/2026).
+// Các thẻ "Trợ lý làm được gì" và câu dữ liệu ảnh hiện theo cờ server (`/api/tinh_nang`).
 
 const IC = {
   hoi: "M4 5h16v11H9l-5 4zM8 9h8M8 12h5",
@@ -16,6 +13,8 @@ const IC = {
   web: "M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM4 12h16M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16",
   anh: "M4 8h3l2-3h6l2 3h3v11H4zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z",
   troi: "M7 17h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.1 10 3.5 3.5 0 0 0 7 17zM9 20l-1 2M13 20l-1 2M17 20l-1 2",
+  soTay: "M6 4h12v16H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM9 8h6M9 12h6M9 16h4",
+  hoSo: "M4 6h5l2 2h9v11H4V6zM8 12h8M8 15h5",
 };
 
 function Ic({ d }) {
@@ -26,18 +25,8 @@ function Ic({ d }) {
   );
 }
 
-// Ví dụ ở ba bến (G3): MỘT lần chạy thật trên hệ thống (14/11/2026, câu gợi ý của trang chủ; bản ghi `data/gt_vi_du_2026-11-14/vi_du_1.json` + dòng `chat_metrics` cùng turn_id
-// `vi_du_1_chat_metrics.json`: n_context_sources 10, n_cited_sources 4) —
-// kho tìm 10 đoạn, câu trả lời trích 4 đoạn của cùng một bài. Chữ chép từ lần chạy đó, rút gọn một câu; không gọi model khi mở trang. Kho / lời dặn
-// đổi thì câu trả lời thật có thể khác ⇒ nhãn "Ví dụ" + nút hỏi thử để người xem thấy bản đang chạy.
-const VI_DU = {
-  hoi: "Ăn sáng ở Huế nên thử món gì?",
-  bai: "Cẩm nang ẩm thực Huế", n_doan: 10, n_trich: 4,
-  tra_loi: "Ăn sáng ở Huế, bạn có thể thử bún bò Huế, cơm hến hoặc bún hến, và bánh mì thập cẩm.",
-};
-
-export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
-  const banDo = !!tinhNang?.ban_do_lich, anh = !!tinhNang?.anh;
+export function GioiThieu({ tinhNang, daCo, muc }) {
+  const anh = !!tinhNang?.anh;
   const moHinh = tinhNang?.mo_hinh;  // tên nơi nhận câu hỏi do server gửi theo model ĐANG CHẠY; chưa có ⇒ câu không nêu tên (không ghi cứng tên hãng ở đây)
   // `#/gioi-thieu/<mục>` ⇒ cuộn tới mục có id đó (sau lần `scrollTo(0, 0)` của `useRoute` lúc đổi hash).
   // chưa biết cờ ⇒ chưa vẽ thân trang (thẻ "làm được gì" theo cờ nở ra lúc cờ về ⇒ đẩy cả trang: CLS 0,17–0,66 đo ở 390, 14/11) và chưa cuộn
@@ -58,11 +47,8 @@ export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
     ...(tinhNang?.tra_web ? [[IC.web, "Tra thêm trên web", "Khi kho không có, trợ lý tra web một lần và để riêng phần đó dưới nhãn “Từ web (chưa kiểm)”."]] : []),
     ...(tinhNang?.thoi_tiet ? [[IC.troi, "Thời tiết Huế", "Thời tiết hôm nay ở trang chủ; hỏi trợ lý “mai trời thế nào” để có dự báo tới 7 ngày, kèm nguồn."]] : []),
     ...(anh ? [[IC.anh, "Hỏi bằng ảnh", "Gửi ảnh kèm câu hỏi; trợ lý đoán nơi hoặc món trong ảnh (có thể sai) rồi trả lời ngay từ kho; đoán chưa đúng thì bấm “Hỏi lại với” tên khác dưới câu trả lời, hoặc tự gõ tên."]] : []),
-  ];
-  const buoc = [
-    ["Bạn hỏi", "Gõ câu hỏi như nói chuyện, hoặc bấm một câu gợi ý."],
-    ["Trợ lý tìm trong kho", "Tìm các đoạn liên quan trong kho tư liệu về Huế đã biên soạn; chưa đủ thì tìm thêm."],
-    ["Trả lời kèm nguồn", "Dưới câu trả lời có dòng “Nguồn”; bấm tên bài để xem đoạn gốc hoặc đọc cả bài ở Khám phá."],
+    ...(tinhNang?.so_tay ? [[IC.soTay, "Sổ tay cho chuyến đi", "Tổng hợp lịch trình bạn đã lập thành cuốn sổ tay gọn gàng: điểm nên xem, giờ mở cửa, giá vé và lưu ý cần nhớ, in hoặc lưu PDF được."]] : []),
+    ...(tinhNang?.ho_so_chu_de ? [[IC.hoSo, "Hồ sơ theo chủ đề", "Đọc tóm tắt theo từng chủ đề văn hoá – du lịch Huế tổng hợp từ nhiều bài viết, kèm lưu ý an toàn và đường dẫn về bài gốc."]] : []),
   ];
   return (
     <>
@@ -91,92 +77,17 @@ export function GioiThieu({ tinhNang, daCo, bai, muc, onAsk }) {
 
         <HueQuaCacThoiKy />
 
-        {/* dải "kho tư liệu": số bài đếm từ /api/kham_pha (không gõ tay) — khác khối ảnh 5 chủ đề của trang chủ; lỗi tải danh sách ⇒ không hiện */}
-        {bai && (
-          <section className="gt-kho hien" aria-labelledby="gt-kho-h">
-            <p className="gt-kho-so"><span className="gt-kho-n">{bai.length}</span> <span id="gt-kho-h">bài trong kho tư liệu về Huế</span></p>
-            <p className="gt-kho-p">Trợ lý trả lời từ các bài này; dòng “Nguồn” dưới câu trả lời dẫn về đúng bài gốc. Bấm một chủ đề để đọc.</p>
-            <ul className="gt-kho-lv">
-              {LINH_VUC.map(lv => (
-                <li key={lv.id}><a href={`#/kham-pha/${lv.id}`}>{lv.ten} <b>{soBai(bai, lv.id)}</b></a></li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <section className="gt-khoi gt-buoc-khoi" aria-labelledby="gt-buoc">
-          <h2 id="gt-buoc" className="khoi-h">Một câu hỏi đi qua ba bước</h2>
-          <p className="gt-buoc-dan">Theo một câu hỏi thật chảy qua ba bến của trợ lý.</p>
-          <div className="gt-dong">
-            {/* sông Hương chảy dọc qua ba bến: vẽ dần theo cuộn (gt.css); trang trí, trình đọc màn hình bỏ qua */}
-            <svg className="gt-song-doc" viewBox="0 0 60 1000" preserveAspectRatio="none" aria-hidden="true">
-              <path pathLength="1" d="M30 0 C 58 110, 2 220, 30 333 S 58 556, 30 666 S 2 888, 30 1000" />
-            </svg>
-            <ol className="gt-buoc">
-              {buoc.map(([t, m], i) => (
-                <li key={t} className="gt-ben hien">
-                  <span className="gt-so" aria-hidden="true">{i + 1}</span>
-                  <div className="gt-ben-chu"><h3>{t}</h3><p>{m}</p></div>
-                  <ViDu buoc={i} bai={bai} onAsk={onAsk} />
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
-        <section className="gt-khoi gt-doi">
+        <section className="gt-khoi" aria-labelledby="gt-luu-y">
           <div className="gt-gioi-han hien">
-            <h2 className="gt-h2">Giới hạn</h2>
+            <h2 id="gt-luu-y" className="gt-h2">Lưu ý khi dùng</h2>
             <ul>
-              <li>Trợ lý có thể sai. Giờ mở cửa, giá vé, lịch lễ hội có thể đã đổi — kiểm lại trước khi đi.</li>
-              {/* quán gần từng điểm chỉ có trong lịch bản 2 (bảng quán từ bản đồ mở); hỏi đáp chỉ biết quán có trong kho */}
-              {tinhNang?.len_ke_hoach_v2 && <li>Quán ăn gần từng điểm chỉ có trong lịch ở trang Lên kế hoạch; khi hỏi đáp, trợ lý chỉ biết các quán có trong kho.</li>}
-              {/* khớp `backend/llm/su_kien.py` (công tắc `su_kien_theo_ngay`, mở 21/11/2026): ô hỏi đáp tra được lễ hội có ngày hằng năm + hoạt động lặp theo
-                  tuần; không có sự kiện một lần, không có lễ hội bài kho không ghi ngày, không hiện trong lịch Lên kế hoạch — tắt công tắc đó thì sửa dòng này */}
-              <li>Lễ hội, sự kiện theo ngày: khi hỏi đáp, trợ lý chỉ biết lễ hội có ngày hằng năm và hoạt động lặp theo tuần ghi trong kho — chưa có sự kiện
-                tổ chức một lần; lịch ở trang Lên kế hoạch chưa gồm lễ hội, sự kiện.</li>
-              <li>{banDo ? "Bản đồ lịch trình chỉ ghim các điểm tham quan đã có toạ độ." : "Chưa có bản đồ."}</li>
-              <li>Câu hỏi ngoài chủ đề Huế được báo là ngoài phạm vi.</li>
+              <li>Trợ lý có thể sai — giờ mở cửa, giá vé và lịch lễ hội có thể đã thay đổi, bạn nên kiểm tra lại trước khi đi.</li>
+              <li>Trợ lý chỉ tư vấn thông tin về văn hoá, du lịch Huế và chưa hỗ trợ đặt phòng hay mua vé trực tiếp.</li>
+              <li>Không nhập thông tin cá nhân nhạy cảm; {anh ? "câu hỏi và ảnh" : "câu hỏi"} bạn gửi được chuyển tới dịch vụ AI bên ngoài{moHinh ? ` (${moHinh})` : ""} để xử lý, không lưu tài khoản hay lịch sử lâu dài.</li>
             </ul>
-          </div>
-          <div className="gt-du-lieu hien" style={{ "--n": 1 }}>
-            <h2 className="gt-h2">Dữ liệu của bạn</h2>
-            {/* khớp `backend/api/conversations.py` (3 lượt gần nhất, đáp liền trước, dòng tên nơi gợi ý, lịch đã lưu; hạn 30 phút từ lượt cuối) và
-                `backend/api/cache_tra_loi.py` (đáp của lượt đầu cuộc, 24 giờ, không mã cuộc / cookie / IP). Câu "không lưu vào nhật ký" đúng khi sổ vết
-                debug tắt (mặc định; `HUE_SO_VET=true` ở máy local thì có ghi chữ vào file) — đổi các thứ đó thì sửa đoạn này */}
-            <p>Trong một cuộc trò chuyện, trợ lý nhớ ba câu hỏi gần nhất, câu trả lời liền trước, tên những nơi vừa gợi ý và lịch trình bạn đã lập (nếu có)
-              để hiểu câu hỏi tiếp theo: nhớ trong bộ nhớ máy chủ, tối đa 30 phút sau câu hỏi cuối, qua một cookie chỉ dùng cho trò chuyện. Nút “Cuộc trò
-              chuyện mới” xoá phần đã nhớ. Câu trả lời cho câu hỏi mở đầu một cuộc trò chuyện có thể được giữ thêm tới 24 giờ, không kèm thông tin nào
-              về bạn, để trả lại khi có người gõ đúng câu đó. Máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký.</p>
-            <p>Để trả lời, câu hỏi được gửi tới dịch vụ mô hình AI bên ngoài{moHinh ? ` (${moHinh})` : ""}; khi tra web, câu hỏi cũng được gửi tới dịch vụ tìm kiếm — ở lượt
-              hỏi tiếp, đó có thể là câu trợ lý viết lại từ cuộc trò chuyện. Đừng gõ thông tin cá nhân vào câu hỏi.</p>
-            {banDo && <p>Khi lịch có bản đồ, trình duyệt của bạn tải ảnh bản đồ từ máy chủ {tinhNang.ban_do?.nha_cung_cap ?? "bản đồ"} — máy chủ đó nhận địa chỉ IP và vùng bản đồ bạn
-              đang xem (không nhận câu hỏi của bạn).</p>}
-            {anh && <p>Ảnh bạn gửi được thu nhỏ, bỏ thông tin vị trí, gửi tới {moHinh ? `dịch vụ mô hình AI đó (${moHinh})` : "dịch vụ mô hình AI bên ngoài"} để đoán tên, không lưu.</p>}
           </div>
         </section>
       </div>}
     </>
-  );
-}
-
-function ViDu({ buoc, bai, onAsk }) {
-  const baiVd = bai?.find(b => b.tieu_de === VI_DU.bai);  // link "đọc bài" chỉ khi bài còn trong kho (không ghi mã bài vào repo public)
-  return (
-    <div className={`gt-vd gt-vd-${buoc}`}>
-      <span className="gt-vd-nhan">Ví dụ</span>
-      {buoc === 0 && <p className="gt-vd-hoi">{VI_DU.hoi}</p>}
-      {buoc === 1 && (
-        <p>Tìm được <b>{VI_DU.n_doan} đoạn</b> liên quan; câu trả lời dùng {VI_DU.n_trich} đoạn của bài{" "}
-          {baiVd ? <a href={baiHref(baiVd.id)}>{VI_DU.bai}</a> : <b>{VI_DU.bai}</b>}.</p>
-      )}
-      {buoc === 2 && (
-        <>
-          <p>{VI_DU.tra_loi}</p>
-          <p className="gt-vd-nguon">Nguồn: {VI_DU.bai}</p>
-          {onAsk && <button type="button" className="nut nut-phu gt-vd-nut" onClick={() => onAsk(VI_DU.hoi)}>Hỏi thử câu này</button>}
-        </>
-      )}
-    </div>
   );
 }

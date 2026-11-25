@@ -177,7 +177,7 @@ export default function App() {
         {route.page === "ban-do" && daCoTinhNang && (tinhNang.ban_do_lich
           ? <Suspense fallback={<div className="khung co-cho" aria-busy="true" />}><TrangBanDo /></Suspense>
           : <div className="khung"><p>Trang bản đồ chưa bật. <a href="#/">Về trang chủ</a></p></div>)}
-        {route.page === "gioi-thieu" && <GioiThieu tinhNang={tinhNang} daCo={daCoTinhNang && (bai !== null || !!baiLoi)} bai={bai} muc={route.muc} onAsk={askAnywhere} />}
+        {route.page === "gioi-thieu" && <GioiThieu tinhNang={tinhNang} daCo={daCoTinhNang} muc={route.muc} />}
         {onTroLy && <TrangTroLy chat={chat} onEditPlan={editPlan} tinhNang={tinhNang} />}
       </main>
 

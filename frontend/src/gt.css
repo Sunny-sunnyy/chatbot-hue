@@ -1,5 +1,4 @@
-/* Giới thiệu theo H1 "Sông Hương" (đợt 1 giao diện, C, 14/11/2026). Tiền tố gt-.
-   Hiệu ứng riêng: đường sông Hương vẽ dần khi cuộn qua dải "ba bước" — chỉ dưới html.hieu-ung; không có thì đường hiện sẵn. */
+/* Giới thiệu theo H1 "Sông Hương" (đợt 1 giao diện, C, 14/11/2026; rút gọn 25/11/2026). Tiền tố gt-. */
 
 .gt-dau { position: relative; isolation: isolate; overflow: hidden; background: var(--color-river); color: var(--color-on-accent); min-height: 420px;
   display: flex; align-items: flex-end; }
@@ -28,67 +27,17 @@
 .gt-the h3 { font-size: var(--text-dan); font-weight: 600; line-height: 1.35; }
 .gt-the p { margin-top: 6px; color: var(--color-muted); }
 
-/* dải kho tư liệu: nền sông sâu như đầu trang ⇒ một điểm nhấn tối giữa các khối sáng */
-.gt-kho { margin-top: 64px; background: var(--color-river); color: var(--color-on-accent); border-radius: 24px; padding: 40px 44px; }
-.gt-kho-so { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; font-size: var(--text-tieu-de-nho); font-weight: 600; }
-.gt-kho-n { font-family: var(--font-serif); font-size: 72px; line-height: 1; font-weight: 600; }
-.gt-kho-p { margin-top: 10px; max-width: 62ch; color: var(--color-river-muted); }
-.gt-kho-lv { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 10px; }
-.gt-kho-lv a { display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .35);
-  color: inherit; text-decoration: none; }
-.gt-kho-lv a:hover, .gt-kho-lv a:focus-visible { background: rgba(255, 255, 255, .12); }
-.gt-kho-lv b { font-weight: 700; color: var(--color-river-muted); }
-
-/* Ba bến dọc sông: sông SVG chạy dọc bên trái, mỗi bước là một bến (số tròn nằm trên sông) + thẻ "Ví dụ" của một lần chạy thật */
-.gt-buoc-dan { margin-top: -12px; color: var(--color-muted); }
-.gt-dong { position: relative; margin-top: 20px; padding-left: 92px; }
-.gt-song-doc { position: absolute; left: 14px; top: 0; width: 60px; height: 100%; overflow: visible; }
-.gt-song-doc path { fill: none; stroke: var(--color-accent); stroke-width: 6; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: .5;
-  stroke-dasharray: 1; stroke-dashoffset: 0; }
-.gt-buoc { list-style: none; margin: 0; padding: 28px 0; display: grid; gap: 64px; }
-.gt-ben { position: relative; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 36px; align-items: center; }
-.gt-so { position: absolute; left: -70px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 48px; height: 48px;
-  border-radius: 50%; background: var(--color-river); color: var(--color-on-accent); font-weight: 600; font-size: var(--text-dan); box-shadow: 0 0 0 6px var(--color-page); }
-.gt-ben-chu h3 { font-family: var(--font-serif); font-size: var(--text-tieu-de); font-weight: 600; line-height: 1.2; color: var(--color-accent-deep); }
-.gt-ben-chu p { margin-top: 8px; color: var(--color-muted); max-width: 40ch; }
-.gt-vd { position: relative; background: var(--color-surface); border-radius: var(--radius-l); padding: 34px 24px 20px; box-shadow: 0 10px 30px rgba(10, 61, 64, .08); }
-.gt-vd-nhan { position: absolute; top: 12px; left: 24px; font-size: var(--text-chu-thich); font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-  color: var(--color-lotus); }
-.gt-vd-hoi { display: inline-block; background: var(--color-accent); color: var(--color-on-accent); border-radius: 18px 18px 4px 18px;
-  padding: 10px 16px; font-weight: 500; }
-.gt-vd a { color: var(--color-accent-deep); text-decoration: underline; text-underline-offset: 3px; }
-.gt-vd-nguon { margin-top: 8px; font-size: var(--text-nho); color: var(--color-muted); }
-.gt-vd-nut { margin-top: 14px; }
-
-.gt-doi { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
 .gt-h2 { font-family: var(--font-serif); font-weight: 600; font-size: var(--text-tieu-de); line-height: 1.2; margin-bottom: 12px; }
 .gt-gioi-han { background: var(--color-surface); border-left: 5px solid var(--color-accent); border-radius: 4px 18px 18px 4px; padding: 24px 26px; }
 .gt-gioi-han ul { padding-left: 20px; list-style: disc; }
 .gt-gioi-han li + li { margin-top: 8px; }
-.gt-du-lieu { padding: 24px 4px; }
-.gt-du-lieu p + p { margin-top: 10px; }
-
 
 @media (max-width: 760px) {
   .gt-dau { min-height: 360px; }
   .gt-dau::before { background: linear-gradient(0deg, rgba(10, 61, 64, .97) 0, rgba(10, 61, 64, .9) 55%, rgba(10, 61, 64, .4) 100%); }
-  .gt-lam, .gt-buoc, .gt-doi { grid-template-columns: 1fr; }
-  .gt-kho { padding: 28px 22px; border-radius: 18px; }
-  .gt-kho-n { font-size: 56px; }
-  .gt-dong { padding-left: 52px; }
-  .gt-song-doc { left: 0; width: 40px; }
-  .gt-ben { grid-template-columns: 1fr; gap: 16px; }
-  .gt-so { left: -50px; top: 0; transform: none; width: 40px; height: 40px; font-size: var(--text-than); }
-  .gt-buoc { gap: 44px; padding-top: 4px; }
-  .gt-ben-chu h3 { font-size: var(--text-tieu-de-nho); }
+  .gt-lam { grid-template-columns: 1fr; }
   .gt-khoi { padding-top: 48px; }
 }
-
-/* Sông dọc vẽ dần khi dải ba bến cuộn qua (CSS theo cuộn; trình duyệt chưa hỗ trợ ⇒ đường hiện sẵn) */
-@supports (animation-timeline: view()) {
-  .hieu-ung .gt-song-doc path { animation: gt-ve linear both; animation-timeline: view(); animation-range: entry 15% cover 75%; }
-}
-@keyframes gt-ve { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
 /* Ảnh "Huế qua các thời kỳ" lộ dần qua mặt nạ khi cuộn tới (mẫu 4 của nghiên cứu "wow"; A duyệt 14/11). Đặt ở trang Giới thiệu vì là hiệu ứng của
    trang, không đổi thành phần của B; chỉ ảnh từng mốc ở khổ hẹp. Giảm chuyển động / trình duyệt chưa hỗ trợ ⇒ ảnh hiện đủ ngay. */
