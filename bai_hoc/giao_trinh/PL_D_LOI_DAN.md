@@ -1,8 +1,8 @@
 # Phụ lục D — Lời dặn gửi model và mô tả từng công cụ, chép nguyên văn từ chương trình
 
-*Cập nhật 23:43, ngày 24/11/2026 · bản máy chép từ chương trình ở nhánh chính `13be16ee` (61 tính năng mở, 6 tắt — in từ cấu hình thật) · thêm mục lời dặn của sổ tay và hồ sơ theo chủ đề (bài 43, 44) · dòng Cập nhật trước: khối Nguồn.*
+*Cập nhật 16:08, ngày 25/11/2026 · bản máy chép từ chương trình ở nhánh chính lúc 23:43 24/11 (`13be16ee`, 61 tính năng mở, 6 tắt); từ 15:41 25/11 cấu hình đổi model viết từ Claude Sonnet 5.5 về lại `gpt-6-luna` (OpenAI) nên các phần ghi "chỉ thêm khi model là Claude" hiện không gửi · mốc trước: 23:43 24/11 và khối Nguồn.*
 
-**Cách đọc.** Mỗi loại lời gọi model có lời dặn riêng; lời dặn là đoạn chữ cố định gửi kèm mọi lần gọi loại đó. Chữ trong khung xám là nguyên văn chương trình gửi đi, kể cả dấu xuống dòng; phần lời dẫn ngoài khung là của giáo trình. Một lời dặn ghép từ nhiều đoạn thì mỗi đoạn một khung, theo đúng thứ tự ghép; giữa hai đoạn chương trình chèn một dòng trống. Tên trong dấu `…` là tên đoạn trong chương trình, chỉ để tra. Model viết đang chạy lúc chép: Claude Sonnet 5.5 (qua Amazon Bedrock); phần chỉ gửi khi model là Claude ghi rõ ở từng mục.
+**Cách đọc.** Mỗi loại lời gọi model có lời dặn riêng; lời dặn là đoạn chữ cố định gửi kèm mọi lần gọi loại đó. Chữ trong khung xám là nguyên văn chương trình gửi đi, kể cả dấu xuống dòng; phần lời dẫn ngoài khung là của giáo trình. Một lời dặn ghép từ nhiều đoạn thì mỗi đoạn một khung, theo đúng thứ tự ghép; giữa hai đoạn chương trình chèn một dòng trống. Tên trong dấu `…` là tên đoạn trong chương trình, chỉ để tra. Lúc chép (23:43 24/11), model viết đang chạy là Claude Sonnet 5.5 (qua Amazon Bedrock); từ 15:41 25/11 máy chạy `gpt-6-luna` (OpenAI), phần chỉ gửi khi model là Claude ghi rõ ở từng mục.
 
 ## Bảng tổng
 

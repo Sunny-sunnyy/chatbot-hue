@@ -57,7 +57,7 @@ flowchart LR
 | **Máy chủ** | nhận câu hỏi, tìm, gọi model, chạy công cụ, kiểm, xếp lịch, ghi sổ | Python, FastAPI; phần gọi model và nhận lời xin công cụ dùng thư viện OpenAI Agents SDK | máy của dự án |
 | **Qdrant** | cất vector của mọi đoạn kèm chữ và thông tin của đoạn đó; trả về 30 đoạn gần câu hỏi nhất | Qdrant, chạy trong một hộp Docker | máy của dự án |
 | **Kho và các bảng dữ liệu** | 269 bài viết (từ 18:05 23/11); các bảng điểm tham quan, khoảng cách, chỗ ở, quán ăn, ảnh (dùng cho trang Lên kế hoạch và cho các công cụ của trợ lý); bảng sự kiện theo ngày (chỉ dùng cho ô hỏi đáp) | file chữ và file bảng | máy của dự án |
-| **Dịch vụ bên ngoài** | model viết; dự báo thời tiết; tìm web | model: Claude Sonnet 5.5 qua Amazon Bedrock (trước đó gpt-6-luna qua OpenAI) · thời tiết: Open-Meteo · tìm web: Serper | máy của các bên đó |
+| **Dịch vụ bên ngoài** | model viết; dự báo thời tiết; tìm web | model: `gpt-6-luna` qua OpenAI (từ 15:41 25/11; từ 21/11 tới chiều 25/11 đổi tạm sang Claude Sonnet 5.5 qua Amazon Bedrock) · thời tiết: Open-Meteo · tìm web: Serper | máy của các bên đó |
 
 Một model nữa không có trong hình vì nó nằm ngay trong máy chủ: model embedding nhỏ (multilingual-e5-small), dùng để đổi câu hỏi thành vector (bài 10). Nó chạy trên máy của dự án, không gọi ra ngoài.
 
@@ -196,7 +196,7 @@ Tắt giữa chừng: câu hỏi nào cũng lỗi cho tới khi Qdrant chạy l�
 | Giao diện | React, Vite; đóng thành file tĩnh do máy chủ gửi | bài 5 | bài 5 |
 | Cơ sở dữ liệu tìm kiếm | Qdrant trong hộp Docker, cổng 6335, chỉ nhận yêu cầu từ chính máy đó | bài 12 | chưa so cái khác |
 | Model embedding | multilingual-e5-small, chạy bằng CPU của máy | bài 10 | đã đo một model lớn gọi qua mạng: bỏ (bài 10) |
-| Model viết | Claude Sonnet 5.5 qua Amazon Bedrock (đổi tạm từ 21/11) | bài 33 | bài 33 |
+| Model viết | `gpt-6-luna` qua OpenAI (từ 15:41 25/11; 21–25/11 đổi tạm sang Claude Sonnet 5.5 qua Amazon Bedrock) | bài 33 | bài 33 |
 | Số lần gọi lại khi một dịch vụ bên ngoài lỗi hoặc quá hạn | 0 cho thời tiết, tìm web, và cho model viết khi rớt mạng, quá hạn, khoá bị từ chối hay vượt hạn mức; 1 lần, sau 1 giây, khi nhà cung cấp của model đang chạy trả lỗi tạm thời (từ 23/11) | quyết định 3 ở trên | chưa thử gọi lại khi lỗi mạng; lần gọi lại mới có ca test, chưa gặp lỗi thật |
 | Chạy lại cả lượt khi câu trả lời bị rút ở bước kiểm sau khi viết | 1 lần, chỉ ở ô chat, ở lượt đang kèm câu trả lời liền trước; không chạy lại lượt có câu cố định và lượt sửa lịch (từ 16:08 22/11 cuộc đã lập lịch cũng được chạy lại cho câu hỏi thường; bài 16) | người dùng khỏi gặp màn hình lỗi ở tin kiểu "sửa lại thứ bạn vừa viết" | trước khi có: 3 trên 7 lần ra màn hình lỗi (đo 22/11) |
 | Giữ chữ tới khi qua bước kiểm nguồn | bật từ 15:42 22/11; chỉ khi model trả cả câu một lần (Claude), ở ô chat | người dùng không thấy chữ rồi mất; lượt qua kiểm hiện như cũ | trước 15:42: hiện trước, kiểm sau (quyết định 4) |

@@ -1,13 +1,14 @@
 # Bài 44 — Hồ sơ theo chủ đề: chương trình chọn chủ đề và tập bài, model gom bài thành mục rồi viết ý ngắn
 
-*Cập nhật 00:11, ngày 25/11/2026 · khớp hệ thống 23:25 24/11/2026 (bản gộp mở tính năng; 61 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn) · số từ các lượt thật tối 24/11 (Claude Sonnet 5.5) · đã áp biên bản kiểm độc lập (111 dòng: 84 đúng, 8 sai, 19 lệch); các câu áp sau biên bản chưa có người thứ hai đọc · đọc ngay sau bài 43.*
+*Cập nhật 16:08, ngày 25/11/2026 · khớp hệ thống chiều 25/11/2026 (63 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn; máy dự án đổi về gpt-6-luna từ 15:41 25/11) · thêm dải "Hồ sơ theo chủ đề" ngay trên Trang chủ (`chu_de_trang_chu`, mở từ 15:22 25/11, dưới 5 ô "Khám phá theo lĩnh vực") · số hồ sơ lõi từ các lượt thật tối 24/11 (Claude Sonnet 5.5) · đọc ngay sau bài 43.*
+*Mốc trước: 00:11 25/11 (bản gộp 23:25 24/11 mở `ho_so_chu_de`, 61 mở / 6 tắt, đã áp biên bản kiểm độc lập 111 dòng: 84 đúng, 8 sai, 19 lệch; các câu áp sau biên bản chưa có người thứ hai đọc).*
 
 **Bài trước đã biết:** lõi viết một mục của sổ tay (bài 43); trang Khám phá (bài 5); thẻ nơi (bài 23); bộ giới hạn lượt (bài 37).
 **Bài này thêm:** chủ đề và tập bài từ đâu ra, model gom bài thành mục, một mục nhiều bài được viết ra sao, khối "Lưu ý an toàn", bộ nhớ hồ sơ.
 
 ## Ý chính
 
-- Trang Khám phá có dải **"Đọc theo chủ đề"**: bốn ô chủ đề (bấm là mở hồ sơ) và lối sang lưới **20 chủ đề**. Hồ sơ chia mục: mỗi mục gom vài bài kho, có ý ngắn kèm nguồn, khối "Lưu ý an toàn" khi bài có cảnh báo. Người dùng **không gõ** chủ đề. Mở ở máy demo từ 23:25 24/11; bản deploy để tắt.
+- Trang Khám phá có dải **"Đọc theo chủ đề"** và (từ 15:22 25/11) Trang chủ có dải **"Hồ sơ theo chủ đề"** đặt dưới 5 thẻ **"Khám phá theo lĩnh vực"**: bốn ô chủ đề (bấm là mở hồ sơ) và lối sang lưới **20 chủ đề**. Hồ sơ chia mục: mỗi mục gom vài bài kho, có ý ngắn kèm nguồn, khối "Lưu ý an toàn" khi bài có cảnh báo. Người dùng **không gõ** chủ đề. Mở ở máy demo; bản deploy để tắt (dải trên Trang chủ cũng tự ẩn theo khi hồ sơ tắt).
 - **Chương trình** dựng chủ đề và **tập bài** từ mục lục kho bằng luật đặt tay, kiểm dàn ý model trả, chọn đoạn, chép giờ – giá, lọc ý, giữ trước một ý cho mỗi bài (model không viết thì in ô thiếu).
 - **Model** làm hai việc: một lời gọi **gom** tập bài thành mục và đặt tên; rồi mỗi mục một lời gọi viết ý từ đoạn của chính các bài trong mục. Hồ sơ *n* mục là *n* + 1 lời gọi (đã chạy: 3–9).
 - Dàn ý được kiểm: model chỉ trả **số thứ tự** bài, số lạ bị gỡ, bài sót dồn vào mục cuối. Ý thì **không** được so nghĩa với đoạn dẫn, như sổ tay.
@@ -155,6 +156,7 @@ Chủ đề dưới 5 bài bị ẩn; kho chỉ có 1 bài có chữ "bảo tàn
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
 | `ho_so_chu_de` | mở ở máy demo (commit bật 23:23:10, gộp nhánh chính 23:25:54 24/11; chú thích cấu hình ghi "MỞ 23:16", sổ tay bàn giao ghi "MỞ 23:17", trang hiện trạng ghi 23:26); tắt ở gói deploy | bật dải, lưới, trang và hai đường gọi; tắt ⇒ hai đường trả "không có", trang báo "Trang hồ sơ theo chủ đề chưa bật."; mở mà thiếu tính năng liệt kê bài hoặc thẻ nơi thì máy chủ không khởi động | trước 23:23: tắt (bản thử ở nhánh riêng) |
+| `chu_de_trang_chu` | mở ở máy demo từ 15:22 25/11; tắt theo `ho_so_chu_de` ở gói deploy | hiện dải "Hồ sơ theo chủ đề" (4 ô) ngay dưới 5 ô "Khám phá theo lĩnh vực" ở Trang chủ; đường báo tính năng chỉ gửi cờ này **khi và chỉ khi `ho_so_chu_de` cũng bật** | tắt: không vẽ dải trên Trang chủ |
 | số chủ đề | 20 dòng đặt tay (thư mục + mẫu trên tên bài + tên cho du khách) | chủ đề "vé" đổi tên thành "Cách mua vé, đi lại và tính chi phí" vì ý nêu số tiền đều bị gỡ, tên cũ hứa bảng giá (chú thích chương trình) | tên cũ "Vé, đi lại và chi phí": đã chạy một lượt, đổi |
 | số bài tối thiểu | 5 (dưới thì ẩn) | lý do số 5: chưa thấy ghi | chưa thử |
 | số bài tối đa | 40 (lấy 40 bài đầu theo mục lục) | chưa chủ đề nào chạm (lớn nhất 24); lý do số 40: chưa thấy ghi | — |
@@ -171,7 +173,7 @@ Chủ đề dưới 5 bài bị ẩn; kho chỉ có 1 bài có chữ "bảo tàn
 | số mục chạy cùng lúc | 4 (dùng chung với sổ tay) | lý do số 4: chưa thấy ghi | chưa thử |
 | hạn giờ một lời gọi | 45 giây (hạn chung của model viết) | — | — |
 | mức suy luận | thấp (như sổ tay, lượt lập lịch) | — | chưa thử |
-| model | Claude Sonnet 5.5 trên Amazon Bedrock (dòng chọn model viết của cấu hình) | — | model cũ `gpt-6-luna`: chưa chạy |
+| model | cấu hình đổi về `gpt-6-luna` (OpenAI) từ 15:41 25/11; mọi lượt dựng hồ sơ đã đo tối 24/11 chạy trên Claude Sonnet 5.5 | — | trên `gpt-6-luna`: chưa chạy dựng hồ sơ |
 | bộ nhớ hồ sơ | bộ nhớ trong của máy chủ, theo mã chủ đề, không hạn giờ, không trần số; nhớ mọi hồ sơ không có mục lỗi mà lời gọi gom mục không lỗi (dàn ý do chương trình chia vì model trả dàn ý hỏng vẫn được nhớ) | quyết định 5 | chưa lưu ra đĩa |
 | nhãn khối an toàn | "Lưu ý an toàn" (từ 23:23 24/11; trước đó "Lưu ý an toàn theo mùa") | chú thích: khối mang cả lời dặn quanh năm (áo phao, hố sâu) | — |
 
@@ -245,7 +247,8 @@ Cột "Ý" đếm ý thường (không tính dòng giờ – giá); 0 mục lỗ
 | Lúc, code | Làm gì | Kết quả |
 |---|---|---|
 | 23:14–23:15, lõi + trang của bản thử ghép lại trên máy chủ tạm (trước khi gộp) | Khám phá ⇒ dải ⇒ lưới ⇒ "Quán cà phê" (24 bài) ⇒ "Chủ đề khác" ⇒ "Chọn khu để ở khi đến Huế" (5 bài) ⇒ quay lại "Quán cà phê" ⇒ in ⇒ 390 px | lưới 20 / 20 thẻ có ảnh · quán cà phê: mục đầu có chữ sau 9,4 giây, xong 16,8 giây (đồng hồ trình duyệt), 6 mục, 56 dòng gạch (ý thường cộng dòng giờ – giá; bảng 2 chỉ đếm ý thường, không so được), 1 ô thiếu ("Hồ sơ chưa ghi được: Ki-ốt Trà Huế — mở bài để xem.") · chọn khu để ở: 12,2 giây, 4 mục, có dòng "Kho hiện có 5 bài…" · quay lại quán cà phê: 0,1 giây · 0 số nguồn trong chữ · 390 px không tràn ngang · bản in 15 trang (trước bản sửa bản in 23:19) |
-| 23:28, nhánh chính đã mở tính năng, máy chủ tạm | mở thẳng "Biển và đầm phá" | xong 23,1 giây (tính cả tải trang), 6 mục, 14 bài được dẫn; 13 câu an toàn, cả 13 vẽ bằng lớp câu an toàn của sản phẩm, nhãn in 6 lần (một lần mỗi mục), 13 / 13 có "Mở bài", bấm "Mở bài" ra đúng bài; 0 dòng trỏ trong lượt này; bản in 6 trang; 390 px không tràn |
+| 23:28, nhánh chính đã mở tính năng, máy chủ tạm | mở thẳng "Biển và đầm phá" (Claude Sonnet 5.5) | xong 23,1 giây (tính cả tải trang), 6 mục, 14 bài được dẫn; 13 câu an toàn, cả 13 vẽ bằng lớp câu an toàn của sản phẩm, nhãn in 6 lần (một lần mỗi mục), 13 / 13 có "Mở bài", bấm "Mở bài" ra đúng bài; 0 dòng trỏ trong lượt này; bản in 6 trang; 390 px không tràn |
+| chiều 25/11, nhánh chính đã gộp `chu_de_trang_chu`, máy chủ thật | mở Trang chủ ở 1536 × 695 và 390 × 844 | thấy tiêu đề "Khám phá theo lĩnh vực", dưới có dải "Hồ sơ theo chủ đề" đủ 4 ô, 0 tràn ngang, 0 lỗi trang (chưa bấm mở hồ sơ trong lượt này) |
 
 ## Quyết định nhỏ hơn
 
@@ -259,8 +262,8 @@ Mức kiểm (mở file gốc lúc 23:30–23:40 24/11/2026; mục test và đ�
 - **Lượt lõi:** 18 / 20 chủ đề chỉ có bản ghi của nhánh thử trước bản sửa cảnh báo và trước luật tách mục; hai chủ đề thiên nhiên chạy lại trên code đang chạy (trừ nhãn).
 - **Đọc tay:** phiên đo đọc 25 ý thường (7 ý mỗi chủ đề lăng tẩm, chọn khu để ở, quán cà phê theo luật chọn ghi trước, cộng 4 ý dẫn hai bài) trên bản ghi trước bản sửa cảnh báo: 25 đỡ đủ, 0 đỡ một phần, 0 không đỡ; và 19 ý cảnh báo (bản ghi có 20) + 5 dòng trỏ trên code đang chạy: 0 không đỡ. Một người đọc, không model chấm; không phải 550 ý.
 - **Test:** file test riêng 10 hàm. Phiên đo chạy 53 ca đạt (file test hồ sơ, sổ tay, ranh giới thư viện) trên lõi 23:11; người viết không chạy. Lượt cả bộ test của đêm xong 23:49 24/11 trên nhánh chính đã có hồ sơ (phiên đo; không nạp khoá, test không gọi model thật; 96 file chạy, 4 file cần khoá OpenAI không chạy; trang hiện trạng ghi 2.391 ca đạt): file test hồ sơ 10 / 10 đạt; một ca đỏ là test so cả danh sách tính năng của trang Lên kế hoạch (chưa chờ khoá của hồ sơ) — đã sửa ở bản gộp 23:34 (chỉ file test), chạy lại riêng file đó trên nhánh chính: đạt. Hai file khác đỏ ở lần chạy đầu vì cây tạm thiếu bản dựng giao diện; chạy lại: đạt.
-- **Model cũ (`gpt-6-luna`, model của bản deploy):** chưa chạy lượt nào.
-- Gói deploy: dòng tắt hồ sơ trong gói mới đọc từ chương trình.
+- **Model `gpt-6-luna` (đang chạy trên cả máy demo lẫn bản deploy từ 15:41 25/11):** chưa chạy lượt dựng hồ sơ nào; trên bản đã gộp mới nhìn vị trí dải Trang chủ trên trình duyệt (chưa bấm dựng hồ sơ).
+- Gói deploy: dòng tắt hồ sơ trong gói mới đọc từ chương trình; khi `ho_so_chu_de` tắt thì dải trên Trang chủ cũng ẩn theo.
 
 Giới hạn của tính năng:
 - Dàn ý đổi giữa các lần dựng (quán cà phê: 7 mục lúc 22:28, 6 mục lúc 23:14); tập bài thì không đổi. Sau lần đầu, mọi người thấy cùng một bản tới khi khởi động lại.
@@ -336,4 +339,5 @@ Giới hạn của tính năng:
 - Bộ giới hạn lượt chỉ bật khi đặt biến `HUE_LUOT_MOI_NGAY` hoặc `HUE_LUOT_TONG_MOI_NGAY`: `backend/api/gioi_han.py` dòng 1–6, 30–35; `backend/api/app.py` dòng 262–264 (chỉ gắn bộ chặn khi một trong hai trần > 0) [code]. Gói deploy: lý do ghi trong `dong_goi.sh` dòng 23–25 chỉ là "chưa có trần riêng"; việc nén chỉ ghi là "trước khi mở ở bản deploy: thêm hai đường… rồi thử" (runbook dòng 402) — không chỗ nào ghi nó là lý do ép tắt [code + chép].
 - Sổ tay không nhớ: `backend/api/routes/so_tay.py` không có bộ nhớ, không chú thích lý do; runbook chỉ ghi "KHÔNG được giữ" [code + chép].
 - **Áp biên bản kiểm độc lập** (`data/hoc_cung_D/kiem/dot_2411_k12_bai_44_ho_so.md` [riêng tư]; áp 00:05–00:11 25/11/2026 theo quyết định của phiên D): sửa cách tả bộ nhớ hồ sơ ↔ dàn ý dự phòng ở năm chỗ theo code (chỉ lời gọi gom mục lỗi mới làm hồ sơ không được nhớ; dàn ý hỏng mà lời gọi không lỗi thì chương trình tự sửa, hồ sơ vẫn nhớ) và thêm một gạch giới hạn tả bước kiểm dàn ý làm gì với từng loại hỏng · mức kiểm test theo lượt cả bộ test của đêm · số chủ đề có khối giờ – giá đếm lại (9 có, 11 không) · bỏ giờ ước ở "Đã so" và khối Nguồn, thay bằng giờ file · "56" ghi rõ là dòng gạch gồm cả giờ – giá · 19 ý cảnh báo ghi kèm số câu trong file gốc (20) · điều kiện của dòng "Theo bài" theo trang (nguồn thuộc từ hai bài, kể cả bài vé) · bốn ô của dải mở thẳng hồ sơ · luật chủ đề chỉ xét thư mục và tên bài · chương trình chỉ giữ ý model có viết · "khi bật" cho bộ giới hạn lượt · bỏ câu gán việc nén là lý do ép tắt ở gói deploy · lý do sổ tay không nhớ ghi là chưa thấy ghi · thước phép đầu thêm điều của chủ đề mỏng, chủ đề lăng có chấm oan · tên hai hàng lời dặn "chữ lạ" · con trỏ bài 43 thêm đoạn "Lời gọi." · ba câu khó hiểu viết lại · thêm "Quyết định nhỏ hơn" về việc hồ sơ không nói kho thiếu gì, một gạch "các mục không biết nhau", một vế về bản phát lại vẫn ghi số giây cũ · số dòng của trang hiện trạng thay bằng tên gạch · bỏ tên nhánh thử khỏi khối Nguồn · dòng cập nhật ghi ngày 25/11. Để đủ chỗ, bảy chi tiết của nửa trên dời xuống "Chi tiết để tra" (khối "Chuyển từ nửa để hiểu khi áp biên bản kiểm"), lời báo luồng đứt đủ chữ dời xuống cùng mục, và vế "kho đổi thì bản nhớ là của kho cũ" của quyết định 5 dời xuống "Giới hạn đã biết". Các câu áp sau biên bản chưa có người thứ hai đọc.
+- Đợt chiều 25/11/2026: dải "Hồ sơ theo chủ đề" trên Trang chủ và tiêu đề "Khám phá theo lĩnh vực" — `frontend/src/TrangChu.jsx` dòng 82 (`"Khám phá theo lĩnh vực"`), 98 (`{dai}` dưới 5 ô), `frontend/src/App.jsx` dòng 157–158 (`dai={tinhNang.ho_so_chu_de === true && tinhNang.chu_de_trang_chu === true ? <DaiChuDe hoSo={hoSo} tieuDe="Hồ sơ theo chủ đề" /> : null}`), `backend/api/routes/cong.py` dòng 150–151 (`chu_de_trang_chu` chỉ gửi khi `ho_so_chu_de` bật), `backend/config/settings.yaml` dòng 102 ("MỞ 15:22 25/11/2026 ở máy demo") [code]; trình duyệt sau khi gộp: `data/x15_phan_ai_2026-11-23/c_ho_so/luot_that_dot_2511_ra.txt` (`TrangChu` 1536 & 390: `kp_h: "Khám phá theo lĩnh vực"`, `dai_h: "Hồ sơ theo chủ đề"`, `o_dai: 4`, `tran_ngang: 0`, `lỗi trang: 0 []`) [riêng tư, đã mở]; model chuyển về `gpt-6-luna`: `settings.yaml` dòng 47 (`provider: openai`) [code].
 </details>

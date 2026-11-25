@@ -32,7 +32,7 @@ Nó làm việc này rất giỏi: câu trôi chảy, đúng ngữ pháp, đúng
 
 Ở hue_rag có hai loại model, đừng lẫn với nhau:
 
-- **Model viết:** model lớn, gọi qua mạng tới máy của hãng, tính tiền theo lượt. Hệ thống đã dùng gpt-6-luna của OpenAI, và từ 21/11 đang dùng tạm Claude Sonnet 5.5 của Anthropic (bài 33).
+- **Model viết:** model lớn, gọi qua mạng tới máy của hãng, tính tiền theo lượt. Hệ thống dùng `gpt-6-luna` của OpenAI (từ 21/11 tới 15:41 25/11 đổi tạm sang Claude Sonnet 5.5 của Anthropic, rồi chuyển về lại `gpt-6-luna`; bài 33).
 - **Model embedding:** model nhỏ chạy ngay trên máy, không viết được gì, chỉ đổi chữ thành dãy số để tìm (bài 10).
 
 ## Model đếm bằng token, và tính tiền theo token

@@ -1,6 +1,6 @@
 # Phụ lục A — Mọi tham số cấu hình: giá trị đang chạy, dùng để làm gì, bài nào giảng
 
-*Cập nhật 09:44, ngày 24/11/2026 · khớp hệ thống 23:25 24/11/2026 (bản gộp mở hồ sơ theo chủ đề; 61 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn, bảng điểm bản 16) · bộ test: bài 38 · năm tham số của nút "Vì sao trả lời vậy?" (mục 3, bài 42: trần 200 lượt, hạn 30 phút, 300 ký tự, 4 bài, 4 bước); bảy hàng sửa lịch sáng 24/11 (mục 9, bài 31: lời đồng ý chèn trước, lời đồng ý đổi chỗ khi dời, "đổi chỗ X với Y" do chương trình đọc, số nút của lệnh dời bị vướng, tên ngắn, cách gọi mơ hồ, ngày bị bỏ hết điểm); 152 ⇒ 164 dòng · dòng Cập nhật trước: khối Nguồn · 21:30 24/11: áp biên bản kiểm độc lập của lượt gom sáng (kết quả cắt 9.536 đoạn; một chú thích số dòng ở khối Nguồn). · 22:14 24/11: hàng "Lời cho phép tự xếp" sửa theo chương trình (lần hiểu ý vẫn chạy) · 23:13 24/11: thêm tính năng thứ 60 "Sổ tay cho chuyến đi" (bài 43) — 9 hàng mới ở mục 8 (trần ý, trần ký tự, số đoạn, số mục chạy cùng lúc, phần còn lại sau khi gỡ giờ – giá, địa chỉ dài, ô giá vé, đoạn cảnh báo an toàn, dòng trỏ an toàn), hai hàng có sẵn (hạn 45 giây, mức suy luận thấp) thêm phần sổ tay; 164 ⇒ 173 dòng; mức kiểm: bài 43 · 00:22 25/11: thêm tính năng thứ 61 "Hồ sơ theo chủ đề" (bài 44) — 15 hàng mới ở mục 8 (danh sách chủ đề, số bài tối thiểu, tối đa, số mục, số bài một mục, dòng dàn ý, số đoạn, cụm xếp đoạn, độ dài ý, trần ý, mục mỏng, bản ngắn, dòng "ít bài", bộ nhớ hồ sơ, nhãn khối an toàn); bốn hàng có sẵn (hạn 45 giây, mức suy luận thấp, số mục chạy cùng lúc, đoạn cảnh báo an toàn) thêm phần hồ sơ; gạch Nguồn của đợt gom bài 43 ghi đúng số hàng của cả đợt; 173 ⇒ 188 dòng; mức kiểm: bài 44*
+*Cập nhật 16:08, ngày 25/11/2026 · khớp hệ thống chiều 25/11/2026 (63 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn, bảng điểm bản 16; máy dự án đổi về `gpt-6-luna` từ 15:41 25/11 — hàng đường OpenAI / Bedrock ghi nhận trạng thái mới, số dòng 188 không đổi) · bộ test gần nhất đã gom: bài 38 · mốc trước: 09:44, 21:30, 22:14, 23:13 24/11 và 00:22 25/11 (61 mở, 6 tắt).*
 
 **Phụ lục này có gì.** Mọi tham số có giá trị số hoặc chữ trong file cấu hình của máy chủ, và các hằng số trong chương trình mà các bài đã nhắc. Dòng bật / tắt và bảy dòng chọn chế độ (model viết, cách tìm, xếp lại, bản chỉ mục, câu cho lần tìm đầu, cổng đưa công cụ) nằm ở phụ lục B.
 
@@ -8,7 +8,7 @@
 - Tên trong dấu `…` là tên dòng cấu hình (dạng `mục.tên`) hoặc tên hằng số trong chương trình, để tra.
 - Cột *Đã thử giá trị khác chưa* chép từ các bài và bảng tổng các lần so sánh: "đã đo" (kèm kết quả ngắn), "chưa so" (đã tìm, không thấy phép thử nào), hoặc "—" (giá trị do quy ước / model quy định, không có gì để thử).
 - Dấu **[khoá]**: chương trình kiểm cấu hình lúc bật và **chỉ nhận đúng giá trị này**; ghi giá trị khác thì máy chủ không bật. Muốn thử giá trị khác phải sửa cả chương trình kiểm. Có tất cả 8 giá trị như vậy: 5 ở phụ lục này, 3 ở phụ lục B (`candidate_id`, `retrieval_treatment`, `reranker`).
-- Phép đo trước 09:41 ngày 21/11/2026 là với gpt-6-luna; sau đó là Claude Sonnet 5.5 (ghi "model đang chạy").
+- Phép đo trước 09:41 ngày 21/11/2026 là với `gpt-6-luna`; từ 21/11 tới 15:41 25/11 đổi tạm sang Claude Sonnet 5.5; từ 15:41 25/11 hệ thống chuyển về lại `gpt-6-luna`.
 
 ## 1. Chuẩn bị kho (chặng 2, bài 7–12)
 
@@ -224,8 +224,8 @@
 
 | Tham số | Tên | Giá trị đang chạy | Dùng để làm gì | Đã thử giá trị khác chưa | Bài |
 |---|---|---|---|---|---|
-| Model của đường OpenAI | `full_corpus_generation.model` **[khoá]** | `gpt-6-luna` | chỉ đọc khi chọn đường OpenAI; người chấm của bộ đo luôn là model này; bản deploy chạy đường này ("model cũ"); harness hôm nay có một lượt đo bù trên nó tối 23/11, mỗi ô một lượt (bài 33) | — | 33 |
-| Model và vùng của Bedrock | `full_corpus_generation.bedrock.model`, `.region` | Claude Sonnet 5.5 · Singapore | model viết đang chạy | đã chạy cả hai model | 33 |
+| Model của đường OpenAI | `full_corpus_generation.model` **[khoá]** | `gpt-6-luna` | model viết đang chạy ở cả máy demo (từ 15:41 25/11) lẫn bản deploy; người chấm của bộ đo luôn là model này; harness có một lượt đo bù trên nó tối 23/11, mỗi ô một lượt (bài 33) | — | 33 |
+| Model và vùng của Bedrock | `full_corpus_generation.bedrock.model`, `.region` | Claude Sonnet 5.5 · Singapore | model viết của giai đoạn đổi tạm 21–25/11 (vẫn giữ sẵn trong code nếu chuyển lại `provider: bedrock`) | đã chạy cả hai model | 33 |
 | Trần chữ đầu ra của Claude | `full_corpus_generation.bedrock.max_tokens` | 128.000 | trường bắt buộc; để mức tối đa = coi như không trần (lời chủ dự án 21/11) | không đặt nhỏ hơn | 15, 33 |
 | Mức suy luận mặc định của Claude | `full_corpus_generation.bedrock.reasoning_default` | `high` (từ 21/11, mức cuối chọn sau lượt đo) | cho mọi lời gọi không tự đặt mức | đã đo bốn mức trên 66 câu | 33, 34 |
 | Tên biến trỏ tới file khoá Bedrock | `full_corpus_generation.bedrock.creds_file_env` | tên một biến môi trường; đường dẫn không ghi vào repo | — | — | 33, 37 |
