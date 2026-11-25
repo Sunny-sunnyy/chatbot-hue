@@ -115,7 +115,7 @@ Các quyết định của bài này là quyết định về **sản phẩm**, 
 
 | Nếu | Hệ thống làm gì | Người dùng thấy gì | Đã có chưa |
 |---|---|---|---|
-| người dùng hỏi một điều về Huế mà kho không có | từ chối bằng câu cố định, rồi tra web một lần | câu "Tư liệu của mình chưa có thông tin này — dưới đây là thông tin từ web (chưa kiểm)." rồi mục web. Tra web không ra thì: câu từ chối, một dòng cố định của mục web (ví dụ "Mình chưa tìm thấy thông tin phù hợp trên web."), và gợi ý cách hỏi | đã có (bài 16, 25) |
+| người dùng hỏi một điều về Huế mà kho không có | từ chối bằng câu cố định, rồi tra web một lần | khung riêng "Từ web (chưa kiểm)" (từ 25/11 ẩn bong bóng dẫn lặp phía trên khi có kết quả web). Tra web không ra thì: câu từ chối, một dòng cố định của mục web (ví dụ "Mình chưa tìm thấy thông tin phù hợp trên web."), và gợi ý cách hỏi | đã có (bài 16, 25) |
 | người dùng gõ không dấu | bước tìm gần như không khớp được | hay nhận câu từ chối | **không làm**; ranh giới đã chọn |
 | người dùng hỏi một việc không thuộc Huế | bước xếp loại câu đưa vào tuyến "ngoài phạm vi"; câu có chữ "Huế" mà hỏi việc ở tỉnh, thành khác ("Từ Huế vào Hội An thì ở Hội An nên ăn món gì?") thường được cho đi đường "về Huế", rồi một đoạn dặn bảo model từ chối (lời dặn, không phải bước chương trình chặn) | "Mình chỉ hỗ trợ thông tin về văn hoá và du lịch Huế. Bạn muốn hỏi gì về Huế không?"; câu có chữ "Huế": câu từ chối của kho, có mục web thì câu dẫn sang mục web | đã có (bài 22); câu có chữ "Huế": đoạn dặn trên cả hai model, lượt đo 0 trên 20 lọt mỗi model; model cũ còn hở câu Đà Nẵng 1 trên 5 (bài 16) |
 | người dùng nhờ đặt phòng, mua vé | trả một câu nói thật theo loại việc | câu nói rõ là chưa làm thay được, kèm cách tự làm | đã có |

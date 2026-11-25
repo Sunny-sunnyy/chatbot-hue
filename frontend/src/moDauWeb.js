@@ -1,11 +1,11 @@
-// Câu kho thiếu mà mục "Từ web (chưa kiểm)" ngay dưới có nội dung (User chọn 17/11): server GIỮ câu từ chối chuẩn (sàn closed-world, bộ chấm
-// dựa vào nó); chỉ GIAO DIỆN thay câu mở đầu đó bằng câu dẫn sang mục web. Mục web trắng / câu cố định (outcome khác "co_muc") ⇒ giữ câu cũ.
+// Câu kho thiếu mà mục "Từ web (chưa kiểm)" ngay dưới có nội dung (chủ dự án chọn 25/11: bỏ bong bóng lặp phía trên): server GIỮ
+// câu từ chối chuẩn (sàn closed-world, bộ chấm dựa vào nó); chỉ GIAO DIỆN bỏ câu từ chối chuẩn ở trên khi `web.outcome === "co_muc"`, để hiện thẳng
+// khung "Từ web (chưa kiểm)". Mục web trắng / câu cố định / trả lời một phần vẫn giữ phần chữ còn lại bình thường.
 // Hàm thuần, test bằng node: `backend/tests/test_mo_dau_web.py` (test đối chiếu chuỗi với `INSUFFICIENT_ANSWER` của server).
 export const CAU_TU_CHOI = "Tôi không tìm thấy đủ thông tin trong nguồn dữ liệu để trả lời câu hỏi này.";
-export const CAU_DAN_WEB = "Tư liệu của mình chưa có thông tin này — dưới đây là thông tin từ web (chưa kiểm).";
 
 export function moDauWeb(text, web) {
   if (web?.outcome !== "co_muc" || typeof text !== "string") return text;
   const dau = text.trimStart();
-  return dau.startsWith(CAU_TU_CHOI) ? CAU_DAN_WEB + dau.slice(CAU_TU_CHOI.length) : text;
+  return dau.startsWith(CAU_TU_CHOI) ? dau.slice(CAU_TU_CHOI.length).trimStart() : text;
 }

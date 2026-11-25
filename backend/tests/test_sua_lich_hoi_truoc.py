@@ -391,6 +391,16 @@ def test_an_ambiguous_short_name_asks_which_place_with_one_button_each():
     assert cu["khung"] == k and [x["ma_luat"] for x in cu["khong_doi"]] == ["ngoai_bang"]
 
 
+def test_duplicate_ambiguous_short_name_actions_are_deduplicated():
+    """Hồi quy 25/11/2026: khi người dùng gõ "bỏ lăng", model từng tách thành hai lệnh `bo_diem("lăng")` giống nhau khiến giao diện hiện 2 khung hỏi
+    y hệt. Cùng loại hành động + cùng tập ứng viên ⇒ chỉ giữ một khung hỏi lại (kể cả khi lệch ngày/buổi ở lệnh bỏ)."""
+    k, luu = _lich()
+    for ds in ([s.HanhDong(loai="bo_diem", ten="lăng"), s.HanhDong(loai="bo_diem", ten="Lăng")],
+               [s.HanhDong(loai="bo_diem", ten="lăng", ngay=1), s.HanhDong(loai="bo_diem", ten="lăng", ngay=2)]):
+        kq = s.ap(B, luu, ds, **MOI)
+        assert kq["khung"] == k and len(kq["khong_doi"]) == 1 and len(s.thay_doi(B, kq)) == 1
+
+
 def test_an_add_whose_wording_matches_several_places_asks_even_when_only_one_is_not_in_the_plan():
     """Người đọc nhánh 24/11/2026: "thêm sông Hương" khi lịch đã có Ca Huế trên sông Hương từng TỰ thêm Công viên ven sông Hương (dòng duy nhất chưa có) —
     người dùng có thể đang nói về thứ đã có ⇒ không đoán: câu hỏi nêu cả dòng đã có, MỘT nút cho dòng chưa có."""

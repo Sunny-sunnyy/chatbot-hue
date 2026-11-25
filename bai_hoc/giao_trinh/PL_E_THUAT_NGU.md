@@ -18,8 +18,7 @@ Có 241 từ: 235 từ gom từ 255 dòng bảng "Từ dùng trong bài" của c
 | bản chụp | snapshot | bản sao của cả collection ở một thời điểm, để khôi phục khi cần | 12 |
 | bản đồ mở | OpenStreetMap | bản đồ do cộng đồng soạn, ai cũng dùng được; cũng là nơi lấy ô nền của bản đồ | 30 |
 | bản ghi chỉ mục | build record | file ghi lần lập chỉ mục: những bài nào, dấu vân tay từng bài, bao nhiêu đoạn, model nào | 12 |
-| bản ghi của lượt | trace | những gì chương trình ghi lại trong lúc một lượt chạy: câu, từng lần tìm, gọi model, công cụ, nguồn, thời gian | 42 |
-| bản tóm tắt lượt | — | bản rút gọn của bản ghi, đã gắn nhãn tiếng Việt, đúng thứ khung hiện (khung của nút "Vì sao trả lời vậy?") | 42 |
+| bản ghi của lượt | trace | những gì chương trình ghi lại trong lúc một lượt chạy: câu, từng lần tìm, gọi model, công cụ, nguồn, thời gian | 21 |
 | bảng điểm tham quan | itinerary table | 47 dòng (41 điểm tham quan, 6 mục chỉ dùng buổi tối), mỗi dòng có các cột dùng để xếp lịch; nằm ngoài kho bài viết | 27 |
 | bảng kiểu | CSS | phần của trang quy định màu, cỡ chữ, khoảng cách, vị trí từng khối; chữ và nút nằm ở HTML | 35 |
 | bến | — | chấm tròn trên nét sông ở màn đầu Trang chủ; mỗi bến là một lối vào | 5 |
@@ -150,7 +149,7 @@ Có 241 từ: 235 từ gom từ 255 dòng bảng "Từ dùng trong bài" của c
 | lượt hỏi | turn (của cuộc trò chuyện) | một câu người dùng gửi, cùng mọi việc hệ thống làm để trả lời câu đó | 21 |
 | mã cuộc trò chuyện | conversation id (cất trong cookie) | chuỗi ngẫu nhiên máy chủ đưa trình duyệt cất; trình duyệt gửi kèm mỗi câu hỏi để máy chủ biết câu đó thuộc cuộc nào | 23 |
 | mã đoạn | chunk_id | tên riêng của mỗi đoạn: đường dẫn file của bài kèm số thứ tự của đoạn trong bài (đếm từ 0) | 8 |
-| mã lượt | turn id | chuỗi ngẫu nhiên 16 ký tự máy chủ cấp cho một lượt có câu trả lời cuối; nút 👍 / 👎 và nút "Vì sao trả lời vậy?" dùng nó để chỉ đúng lượt đó | 42 |
+| mã lượt | turn id | chuỗi ngẫu nhiên 16 ký tự máy chủ cấp cho một lượt có câu trả lời cuối; nút 👍 / 👎 dùng nó để chỉ đúng lượt đó | 35 |
 | mã mục | item id | nhãn của từng mục trong khung, dạng "ngày 1, buổi sáng, mục 1"; model phải trả câu theo đúng nhãn này | 29 |
 | máy chủ | backend, server | chương trình chạy trên máy của dự án; nhận yêu cầu từ giao diện, tìm trong kho, gọi model, gửi kết quả về | 5 (cũng ở 6) |
 | mẫu bài | template | khung các mục mà mọi bài cùng chủ đề phải theo | 7 |

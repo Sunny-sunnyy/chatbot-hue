@@ -38,7 +38,6 @@ Repo là công khai, nên có hai rào chạy tự động cho mọi người v�
 | câu trả lời liền trước | gửi lại hãng model ở lượt sau, kèm dòng "không phải nguồn" (bài 23) | bộ nhớ, cùng cuộc trò chuyện |
 | câu trả lời từ kho ở lượt đầu một cuộc | không đi đâu thêm | bộ nhớ, 24 giờ, nhiều nhất 500 câu; câu hỏi chỉ giữ dưới dạng mã băm (bài 34) |
 | câu tra web | dịch vụ tìm web, chỉ khi kho từ chối cả câu; ở lượt hỏi tiếp có thể là câu trợ lý viết lại từ cuộc trò chuyện, mang chi tiết của lượt trước; đã bỏ email, số điện thoại, cắt 120 ký tự | không giữ |
-| bản tóm tắt của nút "Vì sao trả lời vậy?" (máy demo; bài 42): câu gõ, câu đem đi xử lý (tới 300 ký tự), các câu tìm (kể cả câu model viết), câu tra web | không đi đâu thêm; trả về trình duyệt khi bấm nút, theo mã lượt | bộ nhớ, theo mã lượt: 30 phút, nhiều nhất 200 lượt |
 | ảnh | hãng model, đã thu nhỏ, xoá vị trí và thông tin máy chụp | không lưu ảnh, không ghi tên file |
 | địa chỉ mạng | — | khi bộ giới hạn lượt bật, hoặc khi có người nhập sai khoá trang theo dõi: bộ đếm trong bộ nhớ (giới hạn lượt xoá khi sang ngày mới); không ghi vào sổ |
 | sổ số đo | — | file trên đĩa, mỗi lượt một dòng số; 10 MB mỗi file, giữ thêm 3 file cũ |
@@ -157,7 +156,6 @@ Bật các chốt đang tắt; thêm trần kích thước yêu cầu; một l�
 | `HUE_KHOA_THEO_DOI` | đặt khi chủ dự án muốn xem (ít nhất 16 ký tự) | mở trang theo dõi; chưa đặt thì đường đó như không tồn tại | — |
 | Khoá trang theo dõi sau số lần sai | 5 lần liền ⇒ khoá 15 phút | người gõ nhầm vẫn vào được; dò khoá 16 ký tự ở 20 lần một giờ là vô vọng (lý do ghi trong chương trình) | — |
 | `HUE_SO_VET` | tắt | sổ vết có nội dung, chỉ máy phát triển | — |
-| `vi_sao` (file cấu hình, không phải thiết lập lúc chạy; từ 24/11) | mở ở máy demo từ 07:18 24/11; gói deploy ghi sẵn tắt | nút "Vì sao trả lời vậy?": bản tóm tắt mỗi lượt giữ trong bộ nhớ 30 phút kể từ lượt đó (cùng độ dài với hạn của cuộc trò chuyện, nhưng không kéo dài khi người dùng nhắn tiếp), nhiều nhất 200 lượt; không ghi file, không phụ thuộc sổ vết (bài 42) | ở nhánh chính mà còn tắt 07:07–07:18 24/11; bản đầu (tới 07:57) không có hạn giờ |
 | `ho_so_chu_de` (file cấu hình; từ 24/11) | mở ở máy demo từ 23:25 24/11; gói deploy ghi tắt | bộ nhớ hồ sơ: máy chủ giữ hồ sơ đã dựng theo mã chủ đề, chung cho mọi người, không hạn giờ, không trần số, mất khi khởi động lại; chỉ có chữ dựng từ kho — máy chủ chỉ nhận mã một chủ đề trong danh sách, chữ người dùng gõ không có đường vào (bài 44) | — |
 | `so_tay` (file cấu hình; từ 24/11) | mở ở máy demo từ 22:19 24/11; gói deploy ghi tắt | sổ tay không giữ ở máy chủ, chỉ nằm trong trình duyệt; máy chủ dựng từ lịch đang lưu của cuộc, model không thấy chữ người dùng gõ (bài 43) | — |
 | `HUE_BEDROCK_CREDS_FILE` | đặt lúc bật (bài 36) | đường tới file khoá tạm Bedrock | — |

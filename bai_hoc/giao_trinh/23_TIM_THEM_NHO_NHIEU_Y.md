@@ -119,7 +119,7 @@ Tình huống kể trọn: hỏi về một ngôi chùa, 40 phút sau gõ *"ch�
 | lượt mang câu trả lời cũ bị rút, lần chạy lại cũng bị rút | "Câu trả lời không đáp ứng yêu cầu trích dẫn." và nút "Thử lại" | người dùng bấm "Thử lại" hoặc hỏi lại bằng tên nơi |
 | tin dài nhiều ý, model đã tự tìm ít nhất một lần (thường là đã hết lượt) mà chữ nộp không có số nguồn | thẻ chờ đứng lâu hơn, rồi câu viết lại từ các đoạn đã gom (bài 21); cả lượt tới 25–37 giây | có từ 14:47 22/11; mới đo trên một tin; ca viết lại chưa nhìn trên trình duyệt ("Chi tiết để tra") |
 | tin nhiều ý nhắc một nơi mà bài riêng không ghi giờ, vé (Đàn Xã Tắc) | không có thẻ; trợ lý nói kho chưa có giờ, vé của nơi đó | đúng ý; đo 22/11: 0 trên 12 lượt bịa giờ hay vé |
-| tin nhiều ý mà không vế nào kho có | câu dẫn "Tư liệu của mình chưa có thông tin này — dưới đây là thông tin từ web (chưa kiểm)." rồi mục web; mục web không có gì thì câu từ chối chuẩn (bài 25) | đã có |
+| tin nhiều ý mà không vế nào kho có | khung riêng "Từ web (chưa kiểm)" (từ 25/11 ẩn bong bóng dẫn lặp phía trên); mục web không có gì thì câu từ chối chuẩn (bài 25) | đã có |
 
 ## Dễ nhầm
 

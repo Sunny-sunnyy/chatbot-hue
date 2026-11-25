@@ -1073,6 +1073,7 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
     truoc_doi = None
     # các điểm có lệnh DỜI riêng trong lượt này: người dùng tự nói chỗ mới của chúng ⇒ dời điểm khác vào chỗ chúng đang đứng không phải "đụng thứ không nhắc"
     tu_doi = {j for h in hanh_dong[:MAX_AP] if h.loai == "doi_buoi" for j in [tim_diem(bang, h.loai, h.ten, {*_vi_tri(khung), *_ngay_toi(khung)})[0]] if j}
+    da_hoi_mo_ho: set[tuple] = set()  # model hay tách "bỏ lăng" thành nhiều lệnh trùng nhau ⇒ chỉ hỏi lại một lần cho cùng tập ứng viên
 
     for h in hanh_dong[:MAX_AP]:
         vt = _vi_tri(khung)
@@ -1086,6 +1087,12 @@ def ap(bang: v2.BangV2, luu: dict, hanh_dong: list[HanhDong], sua_chon: dict | N
             if not ung:
                 khong(h.ten, "da_co_trong_lich")
                 continue
+            khoa_mh = (h.loai, tuple(ung[:MAX_CHO_HOI]),
+                       (h.ngay, h.buoi) if h.loai in ("them_diem", "doi_buoi") else None,
+                       _bo_dau(h.ten_moi or "").casefold())
+            if khoa_mh in da_hoi_mo_ho:
+                continue
+            da_hoi_mo_ho.add(khoa_mh)
             kq["khong_doi"].append({"diem": h.ten, "ma_luat": "ten_mo_ho", "hoi_truoc": True, "ung_vien": ung[:MAX_CHO_HOI],
                                     "con": max(0, len(ung) - MAX_CHO_HOI), "da_co": [ten_cua_diem(bang, j) for j in mo_ho if j in co],
                                     "lenh": h.model_dump(exclude_none=True)})

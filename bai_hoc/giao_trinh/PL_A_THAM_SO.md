@@ -65,11 +65,7 @@
 | Số cuộc giữ cùng lúc | `api/conversations.MAX_CONVERSATIONS` | 500; quá thì bỏ cuộc cũ nhất | bộ nhớ máy chủ có giới hạn | chưa so | 23, 35 |
 | Cắt câu trả lời liền trước | `api/conversations.CAT_LOI_TRUOC` | 4.000 ký tự | mục cuối của danh sách dài không bị mất | đã dùng 1.200 (20/11); với Claude 2 / 7 câu dài hơn 1.200 ⇒ nâng | 23 |
 | Số tên nơi nhớ từ lượt trước | `ten_goi_y.TOI_DA` | 5 | dòng ghi chú tên nơi đã trích | chưa so | 23 |
-| Trần số lượt giữ bản tóm tắt của nút "Vì sao trả lời vậy?" (từ 07:07 24/11, công tắc `vi_sao`) | `api/vi_sao.MAX_LUOT` | 200, chung cho mọi người dùng cùng máy chủ; lượt thứ 201 vào thì bản cất sớm nhất bị bỏ | giữ bản tóm tắt trong bộ nhớ máy chủ; lý do của số: chưa thấy ghi. Điều thấy được: chú thích "trần RAM: bỏ lượt cũ nhất (mỗi bản vài KB)"; mã của nút 👍 / 👎 giữ 2.000 lượt | chưa thử | 42 |
-| Hạn giữ một bản tóm tắt (từ 07:57 24/11) | `api/conversations.TTL_SECONDS` (dùng chung) | 30 phút kể từ lúc cất; bản quá hạn bị xoá ở lần cất hoặc lần đọc kế | cùng hạn với trí nhớ cuộc trò chuyện: bản tóm tắt có chữ người dùng gõ, mà trang Giới thiệu nói chữ đó ở trong bộ nhớ tối đa 30 phút | bản đầu (07:07–07:57 24/11) không có hạn giờ | 42, 37 |
-| Độ dài câu đem đi xử lý in trong khung | `api/vi_sao.TRAN_CAU_GUI` | 300 ký tự, quá thì cắt kèm "…"; chỉ in khi câu đem đi khác câu gõ | câu đem đi có thể dài hơn câu gõ vì chương trình ghép thêm các ô đã chọn (biểu mẫu, thẻ chọn) | chưa thử | 42, 37 |
-| Số bài hiện sẵn mỗi lần tìm trong khung | `SO_BAI_DAU` (giao diện, `frontend/src/ViSao.jsx`) | 4, còn lại sau nút "Xem thêm *n* bài" | một lần tìm có thể ra tới 10 bài | chưa thử | 42 |
-| Số bước hiện sẵn trong khung | `SO_BUOC_DAU` (giao diện, `frontend/src/ViSao.jsx`) | 4, còn lại sau nút "Xem thêm *n* bước" | tin nhiều ý có thể tìm 6–7 lần | chưa thử | 42 |
+| *(Tham số nút "Vì sao trả lời vậy?")* | — | **đã gỡ sạch chiều 25/11/2026** | đã xoá `api/vi_sao.py` và `frontend/src/ViSao.jsx` theo quyết định chủ dự án | — | — |
 
 ## 4. Công cụ do chương trình tính (bài 24)
 

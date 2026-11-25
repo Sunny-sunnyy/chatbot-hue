@@ -1,14 +1,14 @@
 # Bài 35 — Trang web và máy chủ: ai gửi gì cho ai
 
-*Cập nhật 16:08, ngày 25/11/2026 · khớp hệ thống chiều 25/11/2026 (63 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn, bảng điểm bản 16; máy dự án đổi về `gpt-6-luna` từ 15:41 25/11) · thêm đường gọi hoàn tác sửa lịch (`POST /api/lich/hoan_tac`, thành 22 đường gọi, vẫn 5 đường gọi model) · dòng cũ: Nguồn.*
-*Mốc trước (24–25/11): 00:44 24/11 (58 mở / 6 tắt, bảng kiểu mới, bộ test 01:00 24/11) · 01:15 và 06:35 24/11 (áp biên bản kiểm độc lập) · 00:21 25/11 (gom bài 43, 44).*
+*Cập nhật 17:13, ngày 25/11/2026 · khớp hệ thống chiều tối 25/11/2026 (**62 tính năng mở, 6 tắt**, kho 269 bài / 9.536 đoạn, bảng điểm bản 16; máy dự án đổi về `gpt-6-luna` từ 15:41 25/11) · đã gỡ đường gọi `/api/vi_sao/{turn_id}`, còn **21 đường gọi** máy chủ (vẫn 5 đường gọi model).*
+*Mốc trước (24–25/11): 00:44 24/11 (58 mở / 6 tắt) · 01:15 và 06:35 24/11 · 00:21 25/11 · 16:08 25/11 (22 đường gọi).*
 
-**Bài trước đã biết:** giao diện chạy trong trình duyệt, máy chủ chạy ở máy dự án, chữ được gửi dần, cuộc trò chuyện nằm trong bộ nhớ của máy chủ (bài 6); model viết gửi chữ một lần (bài 33).
+**Bài trước đã biết:** giao diện chạy trong trình duyệt, máy chủ chạy ở máy dự án, chữ được gửi dần, cuộc trò chuyện nằm trong bộ nhớ của máy chủ (bài 6); model viết gửi chữ dần trên `gpt-6-luna` (bài 33).
 **Bài này thêm:** giao diện gọi máy chủ qua những đường nào; trên đường gửi dần có những loại tin gì và giao diện làm gì với từng loại; máy chủ nhận ra "cùng một cuộc trò chuyện" bằng cách nào; hai lớp chặn để chữ model viết không làm trang tải thứ lạ; và lớp nhìn mới của trang được dựng, được kiểm thế nào.
 
 ## Ý chính
 
-- Giao diện nói chuyện với máy chủ qua **22 đường gọi** (21 đường dữ liệu và đường báo tình trạng, cộng các file tĩnh của giao diện); chỉ năm đường gọi model (hai cho ô chat, ảnh, sổ tay, hồ sơ theo chủ đề), còn lại chỉ đọc dữ liệu đã có hoặc đổi trạng thái không qua model (như hoàn tác lần sửa lịch). Đường báo tình trạng **chỉ biết tình trạng lúc bật** (đã thử: Qdrant ngừng giữa chừng thì nó vẫn báo đủ).
+- Giao diện nói chuyện với máy chủ qua **21 đường gọi** (20 đường dữ liệu và đường báo tình trạng, cộng các file tĩnh của giao diện); chỉ năm đường gọi model (hai cho ô chat, ảnh, sổ tay, hồ sơ theo chủ đề), còn lại chỉ đọc dữ liệu đã có hoặc đổi trạng thái không qua model (như hoàn tác lần sửa lịch). Đường báo tình trạng **chỉ biết tình trạng lúc bật** (đã thử: Qdrant ngừng giữa chừng thì nó vẫn báo đủ).
 - Trên đường gửi dần, máy chủ gửi **từng loại tin có tên**: trạng thái, chữ, thay chữ, nguồn, ghi chú, mục web, các tin của lịch, thẻ hỏi lại, lỗi, xong. Tin "lỗi" làm giao diện xoá chữ đã hiện (nếu có) và hiện nút "Thử lại".
 - Máy chủ nhận ra một cuộc trò chuyện nhờ **một mã ngẫu nhiên trong cookie** mà chương trình của trang không đọc được. Lịch sử nằm ở máy chủ, không ở trình duyệt. Mỗi lần tải trang, giao diện xin một cuộc mới.
 - Chữ model viết đi qua **hai lớp chặn**: giao diện lọc chữ theo một danh sách nhãn HTML cho phép trước khi vẽ, và trang có một chính sách cấm tải bất cứ thứ gì từ máy khác (trừ ô nền bản đồ).
@@ -205,7 +205,6 @@ Khung nhìn thấp hơn 869 px thì hình sông bị nén dọc; dòng mô tả 
 | dựng sổ tay cho chuyến đi (máy demo) | gửi lên, kết quả gửi dần | có | nút "Sổ tay cho chuyến đi" dưới thẻ lịch; máy chủ tự lấy lịch đang lưu (bài 43) |
 | danh sách chủ đề (máy demo) | lấy về | không | dải "Đọc theo chủ đề" ở trang Khám phá, lưới chủ đề (bài 44) |
 | dựng hồ sơ một chủ đề (máy demo) | gửi lên, kết quả gửi dần | có | trang hồ sơ; chỉ nhận mã một chủ đề trong danh sách (bài 44) |
-| bản tóm tắt "Vì sao trả lời vậy?" (máy demo) | lấy về | không | nút dưới câu trả lời (bài 42) |
 | danh sách bài · một bài | lấy về | không | trang Khám phá, Trang chủ |
 | báo thông tin chưa đúng | gửi lên | không | nút ở trang bài Khám phá; chỉ ghi mã bài vào sổ |
 | đánh giá một lượt (thích, không thích) | gửi lên | không | có ở máy chủ; giao diện hiện không gọi |

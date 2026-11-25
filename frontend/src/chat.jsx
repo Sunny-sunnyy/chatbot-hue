@@ -11,7 +11,6 @@ import { trangTriTraLoi } from "./song/nhin.js";
 import { anhTraLoi } from "./anhTraLoi.js";
 import { phangCoSo, theKhachSan } from "./theKhachSan.js";
 import { baiHref } from "./route.js";
-import { ViSao } from "./ViSao.jsx";
 import "./tl.css";
 import { GOI_Y } from "./chung.jsx";
 import { moDauWeb } from "./moDauWeb.js";
@@ -181,9 +180,7 @@ export function useChat() {
             update({ web: data });  // B6 D6: chữ đã kiểm cuối + nguồn web (link do server dựng)
           } else if (name === "done") {
             // B142: mã lượt chỉ có ở lượt có câu trả lời cuối; (5) `tu_choi_kho`: kho không đủ ⇒ gợi ý cách hỏi
-            // `vi_sao` + `turn_id`: server còn giữ bản tóm tắt của lượt (công tắc `vi_sao`, chỉ máy demo) ⇒ vẽ nút "Vì sao trả lời vậy?" (`ViSao.jsx`)
-            update({ outcome: data.outcome, tuChoiKho: data.tu_choi_kho === true,
-                     ...(data.vi_sao === true && data.turn_id && { viSao: true, turnId: data.turn_id }) });
+            update({ outcome: data.outcome, tuChoiKho: data.tu_choi_kho === true });
           }
         },
       });
@@ -423,7 +420,9 @@ const ICON_GHI_CHU = (  // chữ "i" trong vòng tròn, đứng trước ghi ch�
 );
 
 function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon, laCuoi = false, truongGoc = null }) {
-  const html = useMemo(() => renderAnswerHtml(moDauWeb(turn.text, turn.web)), [turn.text, turn.web]);  // câu mở đầu khi mục web có nội dung
+  const chuHien = useMemo(() => moDauWeb(turn.text, turn.web), [turn.text, turn.web]);
+  const html = useMemo(() => renderAnswerHtml(chuHien), [chuHien]);
+  const coBongBong = Boolean(chuHien || turn.notice || turn.noticeAnToan || turn.hienThi?.doan || (turn.sources?.length > 0));
   const pending = PENDING.has(turn.phase);
   const answerRef = useRef(null);  // việc nhỏ (1): chữ lịch đúng như đang hiện (đã qua DOMPurify) cho nút sao chép / tải
   useEffect(() => { trangTriTraLoi(answerRef.current); }, [html]);  // chỉ lớp nhìn: khối "chưa có" + con số giá / giờ (chữ không đổi)
@@ -461,7 +460,7 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon, laCuoi = false, 
                 onMo={laCuoi && turn.phase === "done" && onEditPlan ? () => onEditPlan(null, truongGoc ?? turn.truong) : null}
                 gon={gon || ((turn.lichV2.thay_doi || []).length > 0 && !turn.lichV2.thay_doi.some(d => d.duoc))} />
       )}
-      {turn.text && !turn.lichV2 && !turn.suaThe && turn.phase !== "error" && (  /* thẻ chọn đã hỏi đúng câu đó — không vẽ lần hai */
+      {coBongBong && !turn.lichV2 && !turn.suaThe && turn.phase !== "error" && (  /* thẻ chọn đã hỏi đúng câu đó — không vẽ lần hai */
         <div className={`bubble${turn.outcome === "out_of_scope" || turn.tuChoiKho ? " bubble-tu-choi" : ""}`}>
           {pending && <p className="mb-2 text-sm text-muted" aria-live="polite">{STATUS_TEXT[turn.phase]}</p>}
           {turn.hienThi?.doan && (  /* tên hệ thống tự lấy (tên đầu); 2–3 tên ⇒ nêu cả các tên còn lại — nút hỏi lại nằm ở thẻ dưới câu trả lời */
@@ -510,7 +509,6 @@ function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon, laCuoi = false, 
           </ul>
         </div>
       )}
-      {turn.phase === "done" && <ViSao turn={turn} />}
       </div>
       </div>
     </article>
