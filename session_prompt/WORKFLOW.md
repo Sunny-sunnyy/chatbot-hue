@@ -33,7 +33,7 @@ Bản trước lượt gọt 21/11/2026 (số mục giữ nguyên): `git show 70
 
 1. Đọc mục việc của mình và các input được ghi trong đó.
 2. **Khai báo trước khi sửa:** ghi file sắp sửa vào `sessions/STATUS_<X>.md`; không sửa file session khác đang khai báo. Governance (`session_prompt/`,
-   `skills/`, `AGENTS.md`, `.githooks/`, `.claude/settings.json`, `.claude/hooks/`) do A sửa — trừ sổ riêng `sessions/STATUS_<X>.md` của mình. Code làm trong `git worktree` riêng (lệnh + luật máy dùng chung: `AGENTS.md` mục "Hay vấp").
+   `skills/`, `AGENTS.md`, `.githooks/`, `.claude/settings.json`, `.claude/hooks/`) do A sửa — trừ sổ riêng `sessions/STATUS_<X>.md` của mình. Code làm trong `git worktree` riêng (lệnh + luật máy dùng chung: `AGENTS.md` mục "Hay vấp"); trong `agy` CLI + `/swarm`, worker sửa/dựng dùng `workspace: "share"` thay cho `git worktree` thủ công, giữ nguyên luật máy dùng chung và chỉ `kill` sau khi nhánh đã push/gộp.
    Thêm cho máy dùng chung: cổng hue_rag là Qdrant 6335 / 6336, server 8010 + cổng tạm 8011–8099 / 8887 (`ss -ltn | grep <cổng>` trước khi mở); việc
    ≥ ~2 GB RAM hoặc ≥ 10 phút CPU ⇒ báo A trước (A nhắn phiên điều phối dự án kia). File nhiều session cùng ghi: đọc lại ngay trước khi sửa, sửa từng đoạn.
 3. Làm theo mức rủi ro (bảng "sai thì mất gì": `guides/CACH_LAM_VIEC.md` mục 2). Việc CAO — Phase mới, sửa dữ liệu curated, xóa collection, provider /
@@ -103,8 +103,9 @@ Cách làm việc giống nhau cho mọi agent; chỉ **kênh gửi tin** khác 
 
 | Kênh | Khi nào | Cách gửi |
 |---|---|---|
+| `trực tiếp (agy /swarm)` | A điều phối nhóm `b`, `c`, `e` (và `d`) trong cùng một phiên `/swarm` | A ghi `brief` mở đầu đủ vai + danh sách file bắt đọc (`HIEN_TRANG.md`, `STATUS_<X>.md`, `VIEC_DANG_MO.md`, `data/bo_nho_agent/MEMORY.md`); các thành viên nhắn nhau trên bảng tin chung bằng `@mention`, giữ nguyên luật review chéo và làn máy 1 việc nặng một lúc |
 | `trực tiếp` | Cả người gửi và người nhận là Claude Code trên máy này | `SendMessage` tới tên terminal (`ListAgents`); dòng đầu là một câu tự đủ nghĩa |
-| `qua User` | Một trong hai là Codex, AGY hoặc agent không có `SendMessage` | Kết thúc lượt trả lời bằng khối **"Tin cho <X>"** (ngắn, tự đủ nghĩa: việc gì, đọc file nào, xong thì báo gì); User copy sang terminal <X> |
+| `qua User` | Hai phiên mở ở terminal rời không có `SendMessage` / không chung `/swarm` | Kết thúc lượt trả lời bằng khối **"Tin cho <X>"** (ngắn, tự đủ nghĩa: việc gì, đọc file nào, xong thì báo gì); User copy sang terminal <X> |
 
 - User đổi kênh bằng cách nói ở lần mở session (ví dụ "B là Codex"); A ghi vào sổ việc.
 - Dù kênh nào, **file trong repo là nguồn sự thật**: việc nằm trong sổ việc, kết quả trong report và `STATUS_<X>.md`. Tin nhắn báo "có việc / đã xong /

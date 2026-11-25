@@ -1,30 +1,36 @@
-# STATUS A — ghi đè 10:17 24/11/2026 (giờ `date`) lúc KẾT PHIÊN NHẸ TRƯA 24/11: chủ dự án về khoảng 10:00, bảo "chuẩn bị kết phiên nhé". Terminal phiên vừa đóng: điều phối `hue-rag-5c` · B `hue-rag-d3` · C `hue-rag-73` · D `hue-rag-c8` · phiên đo `hue-rag-5d` — phiên mới có tên khác
+# STATUS_A — ghi đè 14:48 25/11/2026 (giờ `date`) — phiên A (`agy` CLI) đang làm việc trực tiếp với chủ dự án.
 
-Việc đang mở, ai làm, bước kế: sổ việc `session_prompt/VIEC_DANG_MO.md` khối A — gạch ĐẦU "VIỆC ĐẦU CỦA CÁC PHIÊN MỞ LẠI SAU TRƯA 24/11". Hiện trạng + quyết định: `session_prompt/HIEN_TRANG.md` (mục 1 gạch "24/11 buổi sáng"; mục 3 đoạn đầu = thứ chờ chủ dự án; mục 4 các gạch "CHỦ DỰ ÁN LÚC KẾT PHIÊN TRƯA 24/11", "CHỦ DỰ ÁN DUYỆT BẢY HƯỚNG", "CHỦ DỰ ÁN CHỐT TRƯỚC KHI ĐI VẮNG"). Lời chủ dự án nguyên văn: `data/loi_user/2026-11-24.md`. Trong trò chuyện gọi chủ dự án là Hiếu.
+**Mục đích:** ảnh chụp bàn giao gọn của phiên điều phối A (`WORKFLOW.md` §8), để sau `/compact` hoặc khi mở phiên `/swarm` mới đọc một lần là bắt nhịp ngay.
 
-1. **Chủ dự án sáng 24/11 (từ lúc mở phiên 06:09 tới lúc kết phiên):** chọn xây "Giải thích" + "Tự huấn luyện một model nhỏ" (ảnh là chính; model ngôn ngữ nhỏ chỉ thử cổng — đã trượt, đã dừng); thuê GPU trên Vast.ai, nhóm chạy qua SSH; hỏi bằng ảnh giữ như đang chạy; giờ mở cửa sáu bài kho "soạn đi, không cần chờ duyệt"; lệnh bỏ điểm: bỏ luôn, để trống khung giờ, không hỏi xác nhận; tên gọi tắt áp cho MỌI điểm; nghiên cứu: danh sách anh nêu là ví dụ, phải khảo sát REPO + PAPER, "đừng chỉ gói gọn trong bài toán du lịch"; DUYỆT bảy hướng agent / harness với điều kiện thử ở nhánh riêng, bàn với anh rồi mới triển khai. Lúc kết phiên: phiên sau "Bàn bảy hướng trước"; "thuê gpu, huấn luyện sau nhé,, tôi vẫn cần test lại sản phẩm nữa"; kho Duyệt Thị Đường "Tìm hiểu thêm rồi hỏi lại".
-2. **Việc đầu của phiên điều phối mở lại, theo thứ tự:**
-   1. Kiểm Qdrant (mục 6 dưới: lúc kết phiên Docker không còn container nào, đã bật lại, 9.536 điểm).
-   2. XIN XÁC NHẬN BA CÁCH ĐỌC bằng một lượt nói lại 3–5 dòng (anh chưa sửa, chưa nói "đúng"): nghiên cứu = khảo sát repo + paper trước, đối chiếu đồ án sau · huấn luyện = model nhận ảnh trên GPU thuê · bảy hướng = chỉ đọc, đo, thử ở nhánh riêng; không triển khai, không gộp trước buổi bàn.
-   3. BÀN BẢY HƯỚNG với anh — trang `data/x15_phan_ai_2026-11-23/DE_XUAT_3.md` (D đã soát; mục 6 có số của B, C). Trước buổi bàn: đọc phần đuôi Codex tự nối lúc 08:14 vào `data/review_khac_hang/2026-11-24_huong_moi/KET_QUA_2_GPT-6_Codex.md` (chưa ai đọc) và thêm vào trang số "55 tên ↔ 93 tên" của phiên đo (`sessions/STATUS_E.md`). Cách bàn: mỗi lần một câu có ô chọn; hướng anh chọn ⇒ bản thử ở nhánh riêng, giao qua sổ việc.
-   4. Anh TỰ TEST LẠI sản phẩm khi anh muốn (không giục): hướng dẫn `data/test_cuoi/TEST_2411_TRUA.md`; nhận xét ghi `data/loi_user/<ngày>.md`; C + phiên đo đứng cạnh.
-   5. THUÊ GPU + HUẤN LUYỆN model nhận ảnh: SAU hai việc trên (lời anh). Khi anh đưa lệnh SSH ⇒ phiên đo chạy lượt thăm dò rồi bản đủ theo `sessions/STATUS_E.md`; cỡ máy ở `HIEN_TRANG.md` mục 3 điểm (3).
-   6. KHO, mỗi lần một câu có ô chọn (bảng + nguyên văn nguồn: `data/bo_sung_kho_2026-11-24/BANG_BAO.md` hai đoạn bổ sung cuối file): lịch mùa đông từ 16/10/2026 của nhà hát (giải thích cả hai chỗ lệch giờ) — ghi thêm một câu hay để nguyên · kho có ghi số điện thoại liên hệ không · bốn bài chưa có giờ mở cửa (chưa có nguồn đáng tin). Thông báo tạm nghỉ ở Duyệt Thị Đường ĐÃ tìm hiểu xong: nghỉ 21/11 đến hết sáng 24/11/2026 ⇒ kho giữ nguyên; đã báo anh lúc kết phiên.
-   7. Gộp lượt gom phụ lục của D CHỈ SAU khi D kiểm lại (`origin/p9-d-giao-trinh` `932f867` chưa kiểm độc lập).
-   8. Giao phiên đo (đo, không phải triển khai): chạy nốt phần ảnh lạ của phép "55 ↔ 93 tên" (5–7 phút) · phép 200 cặp câu ↔ nguồn chạy lại từ đầu (mốc cho hướng 1).
-   9. Vòng cải tiến cách làm của ngày 24/11 (skill `improve-workflow`): đầu vào là mục 5 dưới + mục "bẫy" của bốn sổ kia.
-   10. Nói MỘT lần khi hợp lúc (chưa nói): ảnh anh tự chụp ở Huế là bộ kiểm sạch nhất cho model ảnh · nút "Vì sao" của lượt cũ hơn 30 phút báo "không còn được giữ" · lịch có ngày đi xa bị bỏ hết điểm thì thẻ ngày trông trống (chưa ai nhìn trên trình duyệt) · bản deploy giữ nút "Vì sao" tắt · có bài 42 trong giáo trình.
-3. **Ai chờ mình ↔ mình chờ ai:** cả bốn phiên chờ buổi bàn bảy hướng; D chờ tự kiểm xong lượt gom rồi nhắn gộp; phiên đo chờ lệnh SSH của chủ dự án. Mình không chờ phiên nào.
-4. **KHÔNG nêu với chủ dự án:** tiền Bedrock · tín dụng AWS, ngày 5/12 · chuyện trình bày / bảo vệ · không giục test · không hỏi lại các câu đã có trả lời (`HIEN_TRANG.md` mục 3 dòng "KHÔNG hỏi lại").
-5. **Bẫy của phiên (đầu vào vòng cải tiến ngày 24/11):**
-   - Đề bài lượt một cho Codex / Gemini HẸP hơn lời anh (đọc "mở rộng tính năng AI" thành "tính năng ngoài ô trò chuyện", xếp cả mảng agent / công cụ / harness vào "đã biết") ⇒ kết quả 0 và 2 đường dẫn GitHub, anh bắt được. Đề bài mở đầu bằng lời anh TRÍCH NGUYÊN VĂN; cách đọc không hẹp hơn lời trích; anh nói repo / paper thì đòi rõ số tối thiểu + URL; không đánh dấu cả một mảng là "đã biết"; khảo sát trước, đối chiếu sau.
-   - Nói lại danh sách của anh chỉ gồm đúng bốn ý anh nêu ⇒ "đây chỉ là các ví dụ… bạn phải tự mở rộng chứ". Khi nói lại một danh sách: đưa danh sách đã mở rộng, tách "Hiếu nêu" ↔ "tôi thêm".
-   - Hộp hỏi trả về "(No answer provided)" cho một câu anh ĐÃ trả lời ⇒ tôi viết "chưa trả lời", anh hỏi lại. Hộp báo trống thì hỏi lại một dòng, không kết luận.
-   - Báo "Xong" cho câu "thay HANOK bằng MoKa" khi bản sửa mới là ba tên gọi tắt ⇒ anh: "phải áp dụng cho mọi trường hợp, mọi địa điểm". Sửa theo một ví dụ của anh thì kiểm bản sửa có phủ CẢ LOẠI không rồi mới báo xong.
-   - Ba con số nói quá tay, D và B bắt: "13 % lượt sẽ không có nguồn nào" (đúng: ở 13 % lượt mọi bài được trích đều do lần tìm thêm mang về) · "một nửa số câu không gắn mã nguồn" (tách câu thô) · "bữa ăn giữ nguyên" ở ngày bị bỏ hết điểm (sai). Số của phép đếm: chép đúng câu phép đếm cho phép nói.
-   - Nhờ B ghi số điện thoại vào kho — B từ chối đúng (thuộc "chưa hỏi, không tự mở"). Phép "soạn không chờ duyệt" chỉ cho giờ mở cửa của sáu bài.
-   - Gộp một bản đổi chữ người dùng thấy mà không nhắn D ⇒ D phải tự dò. Mỗi bản gộp đổi thứ người dùng thấy: nhắn D kèm sha.
-   - Ghi giờ ước "08:30" vào trang bàn; trang hiện trạng ghi "sau 01:00 main chỉ nhận chữ" khi đã có năm bản gộp code ⇒ phải chạy thêm một lượt cả bộ test.
-   - Lần đầu thấy: lúc kết phiên Qdrant bị dừng + gỡ bằng một lệnh kiểu `docker compose down` (mục 6) — lời dặn kết phiên của phiên điều phối viết "dừng server / tiến trình của mình" mà không nói rõ "Qdrant để chạy". Kiểm cuối phiên có đếm điểm Qdrant mới thấy; muốn biết ai / lúc nào: `docker events --since … --until …`.
-   - Làm đúng, giữ: phép thử cổng có ngưỡng ghi trước dừng được nhánh model ngôn ngữ nhỏ trước khi thuê GPU · tự mở từng URL của kết quả tra ngoài (2 dẫn sai, 1 không mở được) trước khi ghi kho · B dò lượt thật tìm ra hai lỗ (gõ không dấu; "có tên" chưa phải "đồng ý") trước khi cụm sửa lịch mở · câu của kho thuộc chủ dự án thì để thành ô chọn, tự tìm nguồn trước khi hỏi.
-6. **Thứ đang chạy / rác của phiên điều phối:** không tiến trình, không server, không cây tạm, không cổng 80xx. QDRANT: lúc kiểm cuối (10:17 24/11/2026) `docker ps -a` ra 0 container (daemon vẫn chạy, máy không khởi động lại; [bổ sung 10:19 24/11/2026, đọc `docker events`] container `hue_rag-qdrant-1` và mạng `hue_rag_default` bị DỪNG + GỠ lúc 10:10:37 24/11/2026 (chuỗi sự kiện của một lệnh kiểu `docker compose down` trong dự án này; không phải Docker tự khởi động lại; phiên đo còn thấy container lúc 10:06 và không gõ lệnh docker nào; phiên điều phối không gõ) — chưa biết ai gõ, đã hỏi B, C, D một dòng **[10:20 24/11/2026] ĐÃ RÕ: chủ dự án tự tắt Docker ("tôi tắt docker rồi"); B, C, D, phiên đo đều không gõ lệnh Docker nào. Không phải sự cố. Phiên điều phối đã DỪNG lại container mình bật (10:20 24/11/2026, `docker compose stop qdrant`) để trả về đúng trạng thái chủ dự án để lại ⇒ Qdrant đang TẮT. Phiên mở lại: Docker Desktop phải đang chạy, rồi `docker compose up -d qdrant` (lệnh bật hệ thống tự làm) và đếm 9.536 điểm.**; chỉ mục nằm ở thư mục `qdrant_storage/` nên không mất); phiên điều phối đã `docker compose up -d qdrant`, đếm lại đúng 9.536 điểm, để chạy. Cây tạm của phiên khác còn: `/tmp/hr_b_batim` (B giữ cho phép so đường tìm), `/tmp/hr_b_chen`, `/tmp/hr_b_so8`, `/tmp/hr_c_so`, `/tmp/hr_d_giaotrinh` (D giữ), `/tmp/hr_e_so10` — của phiên nào phiên đó gỡ. Nhánh thử KHÔNG gộp: `origin/thu-b-ba-duong-tim` `f6d5ac6`, `origin/thu-b-dem-loi-dan` `2651448`. Nhánh thừa trên origin từ trước (đã báo chủ dự án lệnh xoá tối 23/11): `p14-b-ghep`, `p14-b-quyen-lich-su-bao-dong`; `p9-b-chen-truoc` nay đã được thay bằng bản "chèn bằng nút" ở main.
+1. **Đã xong (tới 14:48 25/11/2026):**
+   - Nhánh dọn sổ `p15-a-don-so-2511` đã gộp lên `main` (`6d371ecb`, thêm nhắc nhở ở `914cc396`), worktree `/tmp/hr_a_don_so` đã gỡ sạch.
+   - Đã báo gọn kết quả đêm 24 ⇒ 25/11 và thống nhất xong với chủ dự án **4 quyết định chiều 25/11** (`data/loi_user/2026-11-25.md`):
+     1. **Nút "Hoàn tác lần sửa này"** (`thu-b-hoan-tac` + `thu-c-hoan-tac`): gộp + mở ở máy demo sau sửa ~3 dòng câu dải đầu, review chéo và kiểm nhanh 390 px / thêm-dời-tối.
+     2. **Dải "Hồ sơ theo chủ đề" ở Trang chủ** (`thu-c-trang-chu-chu-de`): gộp + mở dưới 5 ô, đổi tiêu đề 5 ô thành **"Khám phá theo lĩnh vực"**.
+     3. **6 ứng viên tính năng từ 25 repo ngoài:** không thêm lúc này, chốt gọn ở 2 bản thử trên.
+     4. **5 việc nhỏ bộ `deploy/`:** làm 4 việc đầu (bó quyền Docker, nhắc Caddyfile, kiểm giả IP, đoạn "vì sao không CI/CD") — không thêm lịch tự dừng máy EC2.
+2. **Đang chạy ngay khi bật `/swarm` (bảng chi tiết ở `VIEC_DANG_MO.md` mục A.2):**
+   - **B:** hoàn thiện backend + mở tính năng Hoàn tác & Dải Trang chủ + sửa nợ chú thích cũ nếu chạm file; review chéo 4 việc nhỏ `deploy/` của C.
+   - **C:** sửa ~3 dòng câu dải đầu `LenKeHoach.jsx`, đổi tiêu đề 5 ô `TrangChu.jsx`, dựng `dist` tạm + chạy 1 lượt thật kiểm Hoàn tác & Dải Trang chủ; làm 4 việc nhỏ `deploy/`.
+   - **E:** review chéo code Hoàn tác + Dải Trang chủ; chạy test chạm + 1 lượt cả bộ test trên `main` sau khi gộp xong.
+   - **D:** 1 hàng nhỏ bài 23 + `PL_C`; đọc diff vòng cải tiến 24/11 của A; cập nhật giáo trình cho 2 tính năng mới sau khi gộp.
+   - **A:** viết vòng cải tiến 24/11 + tổng kết đợt thử 3 ngày (`SO_CAI_TIEN_CACH_LAM.md`); bật Qdrant trước việc server/chỉ mục; điều phối và gộp `main` + dựng lại `frontend/dist` cây chính.
+3. **Việc kế chờ chủ dự án (KHÔNG giục):**
+   - Chủ dự án tự test lại khi muốn ⇒ thuê GPU huấn luyện model nhận ảnh (`goi_may_thue.tar`, 93 lớp).
+   - Bốn bài kho chưa có giờ mở cửa (chờ URL ngoài nếu chủ dự án gửi).
+4. **Việc nội bộ còn nợ của A:**
+   - Vòng cải tiến cách làm ngày 24/11 + tổng kết đợt thử 3 ngày (21–23/11) dựa trên `SO_CAI_TIEN_CACH_LAM.md` và 6 bẫy mục 5 dưới.
+5. **Đầu vào vòng cải tiến từ tối+đêm 24/11 (giữ nguyên để xét, chưa bỏ):**
+   - Câu hỏi có dòng mở ngoặc về việc KHÁC làm câu trả lời chủ dự án thành 3 nghĩa ⇒ một ô chọn chỉ nói MỘT việc.
+   - Giao "số nguồn bấm được" khi quên quyết định đã bỏ `[n]` trong chữ (lặp lần 2 trong một buổi) ⇒ tra `HIEN_TRANG.md` mục 4 phần "Giao diện" + xem tính năng gần nhất TRƯỚC khi giao.
+   - Tóm repo từ README dẫn tới nói sai thực tế code ⇒ gắn nhãn rõ "theo README, chưa đọc code".
+   - Mở `so_tay` trước khi kiểm "cảnh báo an toàn của kho có tới không" (gặp lần đầu) ⇒ đưa vào bước kiểm trước khi mở tính năng viết về nơi tham quan.
+   - Ghi giờ ước vào file tài liệu 3 lần (`date` trước khi ghi).
+   - Nhãn ô thiếu "Kho tư liệu chưa có" nói quá về kho ⇒ chỉ dùng chữ đó khi code thật sự biết kho thiếu.
+6. **Thứ đang chạy / rác / trạng thái máy (14:48 25/11/2026):**
+   - `main` tại `914cc396` (cộng commit sổ chiều 25/11), 0 server, 0 cổng 80xx đang mở, 0 worktree tạm.
+   - **Qdrant đang TẮT** (`Connection refused` cổng `6335`) ⇒ trước khi bật server hoặc chạy việc đụng chỉ mục, chạy `docker compose up -d qdrant` và kiểm đủ **9.536 điểm**.
+7. **Bẫy mới khi chuyển sang `agy` CLI + `/swarm` (25/11/2026):**
+   - `scripts/commit_push.sh` từ chối symlink trỏ tới thư mục (`.agents/skills`) ⇒ stage tường minh khi cần.
+   - `data/bo_nho_agent/MEMORY.md` nằm ngoài git ở cây chính ⇒ trong `workspace: "share"` đọc bằng đường dẫn tuyệt đối `/home/minhhieu/hue_rag/data/bo_nho_agent/MEMORY.md`.
+   - Trong `/swarm`, lệnh `kill` xoá luôn workspace của worker ⇒ chỉ `kill` sau khi nhánh đã push lên `origin` hoặc gộp vào `main`.

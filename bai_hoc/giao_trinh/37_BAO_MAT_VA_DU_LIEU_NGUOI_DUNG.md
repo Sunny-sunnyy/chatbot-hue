@@ -1,6 +1,6 @@
 # Bài 37 — Bảo mật: khoá bí mật, dữ liệu người dùng, và chữ lạ chen vào lời dặn
 
-*Cập nhật 08:52, ngày 24/11/2026 · khớp hệ thống 08:40 24/11 (59 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn) · chỗ giữ thứ ba: nút "Vì sao trả lời vậy?" (bài 42) · bộ test: bài 38 · dòng cũ: Nguồn. · 09:07 24/11: áp biên bản kiểm độc lập của đợt này.*
+*Cập nhật 08:52, ngày 24/11/2026 · khớp hệ thống 08:40 24/11 (59 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn) · chỗ giữ thứ ba: nút "Vì sao trả lời vậy?" (bài 42) · bộ test: bài 38 · dòng cũ: Nguồn. · 09:07 24/11: áp biên bản kiểm độc lập của đợt này. · 00:21 25/11: thêm hai tính năng mới của tối 24/11 — sổ tay cho chuyến đi (bài 43), hồ sơ theo chủ đề (bài 44): bộ nhớ hồ sơ, giới hạn lượt*
 
 **Bài trước đã biết:** khoá chỉ nằm ở máy chủ, bốn thứ được gửi ra ngoài (bài 6); cookie chỉ mang mã cuộc, chữ model qua hai lớp chặn trước khi lên màn hình (bài 35).
 **Bài này thêm:** khoá nằm ở đâu và rào nào giữ nó khỏi repo công khai; chữ người dùng đi đâu, giữ bao lâu; "chữ lạ chen vào lời dặn" là gì và hệ thống chặn bằng những lớp nào; những gì đã có sẵn nhưng đang tắt, và những gì chưa làm trước khi đưa lên mạng.
@@ -43,9 +43,9 @@ Repo là công khai, nên có hai rào chạy tự động cho mọi người v�
 | địa chỉ mạng | — | khi bộ giới hạn lượt bật, hoặc khi có người nhập sai khoá trang theo dõi: bộ đếm trong bộ nhớ (giới hạn lượt xoá khi sang ngày mới); không ghi vào sổ |
 | sổ số đo | — | file trên đĩa, mỗi lượt một dòng số; 10 MB mỗi file, giữ thêm 3 file cũ |
 
-Khởi động lại máy chủ là mất mọi thứ trong bộ nhớ. Phía hãng model và dịch vụ tìm web: "Giới hạn đã biết".
+Khởi động lại máy chủ là mất mọi thứ trong bộ nhớ, kể cả bộ nhớ hồ sơ (dựng từ kho theo chủ đề, chung cho mọi người, không có chữ người dùng gõ; bài 44). Phía hãng model và dịch vụ tìm web: "Giới hạn đã biết".
 
-**Sổ số đo không có chữ.** Mỗi lượt một dòng: tuyến, token, tiền, thời gian từng bước, công cụ, kết cục. Danh sách các ô nằm trong chương trình; test kiểm mỗi dòng sổ có đúng các ô đó, không thừa ô nào, và một ca kiểm chữ câu hỏi không lọt vào sổ. Thêm một ô vào chính danh sách đó thì test vẫn đạt: chốt chặn thật là người đọc bản sửa. File chứa hai ca này bị bỏ ở lần chạy đủ gần nhất vì cần khoá OpenAI (bài 38).
+**Sổ số đo không có chữ.** Mỗi lượt một dòng: tuyến, token, tiền, thời gian từng bước, công cụ, kết cục. Danh sách các ô nằm trong chương trình; test kiểm mỗi dòng sổ có đúng các ô đó, không thừa ô nào, và một ca kiểm chữ câu hỏi không lọt vào sổ. Thêm một ô vào chính danh sách đó thì test vẫn đạt: chốt chặn thật là người đọc bản sửa.
 
 **Ngoại lệ có chủ ý: sổ vết có nội dung** (quyết định 2), chỉ ở máy phát triển, mặc định tắt.
 
@@ -55,7 +55,7 @@ Model đọc chữ từ bốn nguồn dự án không viết: câu người dùn
 
 - **Dữ liệu riêng tư trong lời gọi model:** chỉ lịch sử của chính cuộc đang hỏi và lời dặn. Không có dữ liệu của người khác, không tài khoản, không khoá.
 - **Chữ không tin được:** có, ở cả bốn chỗ trên.
-- **Đường ra ngoài:** hãng model, dịch vụ tìm web (câu tìm do chương trình dựng), và link trong câu trả lời chính (người dùng phải tự bấm). **Không công cụ nào ghi hay gửi tin**: tìm kho, thời tiết, ngày, khoảng cách, liệt kê bài, gần một điểm đều chỉ đọc; công cụ tìm kho nhận câu tìm do model viết, các công cụ khác nhận tên nơi, ngày trong danh sách có sẵn (người đối chiếu suy từ tên công cụ, chưa mở từng công cụ).
+- **Đường ra ngoài:** hãng model, dịch vụ tìm web (câu tìm do chương trình dựng), và link trong câu trả lời chính (người dùng phải tự bấm). **Không công cụ nào ghi hay gửi tin**: tìm kho, thời tiết, ngày, khoảng cách, liệt kê bài, gần một điểm đều chỉ đọc; công cụ tìm kho nhận câu tìm do model viết, các công cụ khác nhận tên nơi, ngày trong danh sách có sẵn.
 
 Vì vậy, nếu một chữ lạ lừa được model, điều tệ nhất nó làm được là viết một câu sai cho chính người đang hỏi. Các lớp chặn:
 
@@ -68,7 +68,7 @@ Vì vậy, nếu một chữ lạ lừa được model, điều tệ nhất nó 
 
 ## Các đợt rà rủi ro, và soát bằng AI khác hãng
 
-Đã có sáu đợt rà (bảng ở nửa để tra). Hai đợt gần nhất cùng ngày 22/11: một lượt rà rủi ro trên bản đã gộp mọi công cụ (13 dòng, 5 dòng phải đóng trước khi đưa lên mạng, 4 dòng làm ngay trong buổi), và một đợt soát bằng ba AI khác hãng (33 điểm). Soát khác hãng là đưa code cho AI không phải AI đã viết nó, kèm một đề bài viết sẵn, để nó đọc, chạy thử hàm và chỉ chỗ sai; nó không sửa gì. Ở các đợt đã chạy, nó không được biết nhóm đã tìm ra gì; đề bài soạn từ tối 22/11 thì ghi cả các điểm đó dưới nhãn "đã biết" (bài 39). Nhóm tái hiện từng điểm trước khi tin.
+Đã có sáu đợt rà (bảng ở nửa để tra). Hai đợt gần nhất cùng ngày 22/11: một lượt rà rủi ro trên bản đã gộp mọi công cụ (13 dòng, 5 dòng phải đóng trước khi đưa lên mạng, 4 dòng làm ngay trong buổi), và một đợt soát bằng ba AI khác hãng (33 điểm). Soát khác hãng là đưa code cho AI không phải AI đã viết nó, kèm một đề bài viết sẵn, để nó đọc, chạy thử hàm và chỉ chỗ sai; nó không sửa gì. Nhóm tái hiện từng điểm trước khi tin.
 
 ## Quyết định và lý do
 
@@ -97,7 +97,7 @@ Vì vậy, nếu một chữ lạ lừa được model, điều tệ nhất nó 
 
 Khi hệ thống mở cho người lạ, ai có link cũng gọi được mọi đường; mỗi câu hỏi tốn tiền model.
 
-- **Đã chọn:** viết sẵn, bật bằng thiết lập lúc chạy, mặc định tắt: giới hạn lượt gọi model mỗi địa chỉ mỗi ngày; trần tổng mỗi ngày của cả máy chủ; đếm cả lượt tải PowerPoint; cookie chỉ qua kết nối mã hoá; tắt trang mô tả các đường gọi. Hai chỗ luôn bật: mở cuộc mới không chiếm chỗ (bài 35); trang theo dõi (khi được bật) khoá một địa chỉ 15 phút sau 5 lần sai.
+- **Đã chọn:** viết sẵn, bật bằng thiết lập lúc chạy, mặc định tắt: giới hạn lượt gọi model mỗi địa chỉ mỗi ngày; trần tổng mỗi ngày của cả máy chủ; đếm cả lượt tải PowerPoint; mỗi sổ tay, hồ sơ một lượt; cookie chỉ qua kết nối mã hoá; tắt trang mô tả các đường gọi. Hai chỗ luôn bật: mở cuộc mới không chiếm chỗ (bài 35); trang theo dõi (khi được bật) khoá một địa chỉ 15 phút sau 5 lần sai.
 - **Vì sao:** máy phát triển chỉ có một người dùng; tắt thì buổi thử của chủ dự án chạy y như trước. Chủ dự án dặn: thứ gì muốn có phải vào trước buổi tự thử; đưa lên mạng chỉ làm sau buổi đó.
 - **Cách khác:** bật luôn ở máy phát triển: không làm.
 - **Cái giá:** quên đặt thiết lập lúc đưa lên mạng là không có giới hạn nào. Bộ đếm nằm trong bộ nhớ của một máy chủ đang chạy: bật lại là đếm từ 0, chạy hai máy chủ thì mỗi cái đếm riêng.
@@ -149,7 +149,7 @@ Bật các chốt đang tắt; thêm trần kích thước yêu cầu; một l�
 
 | Mục | Giá trị trên máy phát triển | Dùng để làm gì, vì sao | Đã thử giá trị khác chưa |
 |---|---|---|---|
-| `HUE_LUOT_MOI_NGAY` | chưa đặt (tắt) | số lượt gọi model mỗi địa chỉ mỗi ngày; 0 hay chữ lạ cũng là tắt | bản nháp đưa lên mạng ghi 50; lần đóng gói 10/11 đã thử giả địa chỉ để lách: vẫn bị chặn |
+| `HUE_LUOT_MOI_NGAY` | chưa đặt (tắt) | số lượt gọi model mỗi địa chỉ mỗi ngày; 0 hay chữ lạ cũng là tắt; đếm năm đường gọi model: ô chat (hai đường), hỏi bằng ảnh, sổ tay, hồ sơ — một lần dựng sổ tay hay hồ sơ tính một lượt dù gọi model nhiều lần, hồ sơ trả từ bộ nhớ cũng tính (đọc từ chương trình; bài 43, 44) | bản nháp đưa lên mạng ghi 50; lần đóng gói 10/11 đã thử giả địa chỉ để lách: vẫn bị chặn |
 | `HUE_LUOT_TONG_MOI_NGAY` | chưa đặt (tắt) | trần tổng của cả máy chủ (có từ 22/11) | — |
 | Lượt tải PowerPoint mỗi địa chỉ | 30 mỗi ngày, chỉ khi bộ giới hạn bật | một lịch thường tải một hai lần; 30 đủ cho một nhóm chung mạng | — |
 | `HUE_COOKIE_SECURE` | chưa đặt | cookie chỉ qua kết nối mã hoá | — |
@@ -158,6 +158,8 @@ Bật các chốt đang tắt; thêm trần kích thước yêu cầu; một l�
 | Khoá trang theo dõi sau số lần sai | 5 lần liền ⇒ khoá 15 phút | người gõ nhầm vẫn vào được; dò khoá 16 ký tự ở 20 lần một giờ là vô vọng (lý do ghi trong chương trình) | — |
 | `HUE_SO_VET` | tắt | sổ vết có nội dung, chỉ máy phát triển | — |
 | `vi_sao` (file cấu hình, không phải thiết lập lúc chạy; từ 24/11) | mở ở máy demo từ 07:18 24/11; gói deploy ghi sẵn tắt | nút "Vì sao trả lời vậy?": bản tóm tắt mỗi lượt giữ trong bộ nhớ 30 phút kể từ lượt đó (cùng độ dài với hạn của cuộc trò chuyện, nhưng không kéo dài khi người dùng nhắn tiếp), nhiều nhất 200 lượt; không ghi file, không phụ thuộc sổ vết (bài 42) | ở nhánh chính mà còn tắt 07:07–07:18 24/11; bản đầu (tới 07:57) không có hạn giờ |
+| `ho_so_chu_de` (file cấu hình; từ 24/11) | mở ở máy demo từ 23:25 24/11; gói deploy ghi tắt | bộ nhớ hồ sơ: máy chủ giữ hồ sơ đã dựng theo mã chủ đề, chung cho mọi người, không hạn giờ, không trần số, mất khi khởi động lại; chỉ có chữ dựng từ kho — máy chủ chỉ nhận mã một chủ đề trong danh sách, chữ người dùng gõ không có đường vào (bài 44) | — |
+| `so_tay` (file cấu hình; từ 24/11) | mở ở máy demo từ 22:19 24/11; gói deploy ghi tắt | sổ tay không giữ ở máy chủ, chỉ nằm trong trình duyệt; máy chủ dựng từ lịch đang lưu của cuộc, model không thấy chữ người dùng gõ (bài 43) | — |
 | `HUE_BEDROCK_CREDS_FILE` | đặt lúc bật (bài 36) | đường tới file khoá tạm Bedrock | — |
 | Câu hỏi dài nhất | 500 ký tự | — | — |
 | Ảnh | nhiều nhất 10 MB, 40 triệu điểm ảnh; thu nhỏ còn cạnh dài 1.024 | chặn trước khi đọc (bài 26) | — |
@@ -213,6 +215,7 @@ Bật các chốt đang tắt; thêm trần kích thước yêu cầu; một l�
 ## Chi tiết để tra
 
 - Bản nháp đưa lên mạng (riêng tư) đặt sẵn: tắt trang mô tả, cookie mã hoá, 50 lượt mỗi địa chỉ, tắt tra web, không bật sổ vết, không bật trang theo dõi; chỉ lớp nhận kết nối mở ra ngoài (bài 36).
+- Chuyển từ nửa để hiểu 25/11 (không đổi nội dung; nhường chỗ cho bộ nhớ hồ sơ và sổ tay): đoạn "Sổ số đo không có chữ", câu cuối: File chứa hai ca này bị bỏ ở lần chạy đủ gần nhất vì cần khoá OpenAI (bài 38). Gạch "Đường ra ngoài" của mục "Chữ lạ có thể chen vào bốn chỗ…", sau "trong danh sách có sẵn": (người đối chiếu suy từ tên công cụ, chưa mở từng công cụ). Mục "Các đợt rà rủi ro…", sau "nó không sửa gì.": Ở các đợt đã chạy, nó không được biết nhóm đã tìm ra gì; đề bài soạn từ tối 22/11 thì ghi cả các điểm đó dưới nhãn "đã biết" (bài 39).
 - Giới hạn lượt đếm theo địa chỉ của kết nối, không đọc dòng "địa chỉ gốc" do trình duyệt gửi (giả mạo được); sau lớp nhận kết nối phải bật cách đọc địa chỉ thật cho đúng địa chỉ của cổng đó.
 - Hỏi bằng ảnh: máy chủ từ chối yêu cầu đến từ trang khác trước khi đọc ảnh; ảnh "bom giải nén" (ảnh nhỏ khi gửi nhưng bung ra hàng tỉ điểm ảnh khi mở, làm máy chủ hết bộ nhớ) bị chặn theo số điểm ảnh trước khi giải mã.
 - Tải PowerPoint quá 30 lần trong ngày (khi bộ giới hạn bật): "Bạn đã tải file quá số lần cho phép hôm nay. Vui lòng quay lại vào ngày mai." · thử khoá trang theo dõi: "Sai khoá."; sai 5 lần liền: "Nhập sai khoá quá nhiều lần. Chờ 15 phút rồi thử lại."
@@ -252,4 +255,5 @@ Bật các chốt đang tắt; thêm trần kích thước yêu cầu; một l�
   - Nội dung bản tóm tắt: `backend/api/vi_sao.py` `tom_tat` (khoá `cau.go` = câu gõ, `cau.gui` = câu đem đi xử lý cắt 300 ký tự khi khác câu gõ, `buoc[].cau` = câu tìm kể cả câu model viết, `web.cau` = câu gửi tra web, `sua_lich.ket_qua` = câu kết quả sửa lịch) [code]; không có chữ câu trả lời (không có khoá nào chép câu trả lời) [code]. Giữ: lớp kho trong RAM theo `turn_id`, `MAX_LUOT = 200` (bỏ lượt cũ nhất), hạn `TTL_SECONDS` lấy từ `api/conversations.py` = 30 phút kể từ lúc cất, docstring "không đọc / ghi file nào, không ghi log nào có chữ người dùng", "khởi động lại server ⇒ mất", mã lượt ngẫu nhiên 16 ký tự không nằm trong cookie [code]. Lấy về: `GET /api/vi_sao/{turn_id}`, chỉ khi `vi_sao` mở [code].
   - Bật / tắt: `backend/config/settings.yaml` `vi_sao: true` + chú thích "MỞ 07:18 24/11/2026 ở máy demo" [code]; gói deploy: `deploy/docker/dong_goi.sh` dòng 23–26 ghi sẵn `vi_sao: false`, dừng nếu không ghi được [code]. Bản đầu không có hạn giờ 07:07–07:57: chép `bai_hoc/giao_trinh/42_VI_SAO_TRA_LOI_VAY.md` "Giới hạn đã biết" và "Cấu hình đang chạy" [chép].
   - Độ dài nửa để hiểu 13.436 ⇒ 13.434 (thêm một hàng bảng và một vế ở Ý chính; dòng Cập nhật ngắn lại).
+- **Gom bài 43, 44 vào bài 37 (00:21 25/11/2026, người gom g7; chỉ sửa vài câu, mốc khớp của cả bài giữ 08:40 24/11).** Câu bộ nhớ hồ sơ dưới bảng "Chữ người dùng đi đâu" và hàng `ho_so_chu_de` của "Cấu hình đang chạy": giữ gì, của ai, không hạn giờ, không trần số, mất khi khởi động lại theo bài 44 "Ý chính" gạch 5, quyết định 5, "Cấu hình đang chạy" hàng bộ nhớ hồ sơ; "chữ người dùng gõ không có đường vào" theo bài 44 mục "Chương trình dựng chủ đề…" (máy chủ chỉ nhận mã; đối chiếu `backend/api/routes/ho_so.py` dòng 4 và lớp `HoSoRequest` [code]); mốc 23:25 theo bài 44 dòng 3. Hàng `so_tay`: "chỉ nằm trong trình duyệt" theo bài 43 mục "Người dùng bấm một nút…" và "Giới hạn đã biết" ("Không giữ ở máy chủ"); "model không thấy chữ người dùng gõ" theo bài 43 đoạn "Phần của model."; mốc 22:19 theo bài 43 "Ý chính" gạch 5. Giới hạn lượt (quyết định 4 "Đã chọn" và hàng `HUE_LUOT_MOI_NGAY`): `backend/api/gioi_han.py` dòng 20 (`DUONG_TINH_LUOT` gồm `/api/so_tay`, `/api/ho_so`), lớp `ChanLuot` (mỗi yêu cầu gửi lên một đường trong danh sách tính một lượt, trước khi tới đường gọi — nên hồ sơ trả từ bộ nhớ cũng tính) [code]; bài 44 quyết định 6 và "Giới hạn đã biết" (đọc từ chương trình); bài 43 không ghi câu này — với sổ tay là đọc từ chương trình, cùng chú thích `backend/config/settings.yaml` dòng 100 ("tính MỘT lượt"). Đo nửa để hiểu (tới "## Cấu hình đang chạy"): 13.594 ⇒ 13.593 [đã chạy] (bài vượt trần 13.000 từ trước); để không dài thêm, ba vế chuyển nguyên văn xuống "Chi tiết để tra". Các câu sửa chưa có người thứ hai đọc.
 </details>
