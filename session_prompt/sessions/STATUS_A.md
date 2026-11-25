@@ -1,20 +1,21 @@
 # STATUS_A — Phiên điều phối A (`agy` CLI)
 
-Cập nhật: 20:43 25/11/2026 (giờ `date`).
+Cập nhật: 20:50 25/11/2026 (giờ `date`).
 
 ## 1. Đang giữ vai trò & phạm vi
-- Phiên điều phối (A) mở phiên tối 25/11: kiểm khói `gpt-6-luna`, chuẩn bị & điều phối `/swarm` hậu kỳ bộ câu kín trên `ea96e47c`, gộp báo cáo + giáo trình và cập nhật sổ trạng thái lên `main`.
+- Phiên điều phối (A) mở phiên tối 25/11: kiểm khói `gpt-6-luna`, chuẩn bị & điều phối `/swarm` hậu kỳ bộ câu kín trên `ea96e47c`, gộp báo cáo + giáo trình, ghi nhận quyết định Phương án 2 (dừng phần xây ở local).
 
 ## 2. Đã xong trong đợt 25/11
 - Đợt `/swarm` chiều (`b57cdb2d`) & đợt sửa sau buổi tự test 17:13 (`ea96e47c`).
 - Kiểm khói `gpt-6-luna` qua giao diện cổng `8035` ĐẠT SẠCH (`data/playwright_mcp/luot_2511_luna_khoi/NHAT_KY.md`).
 - Chuẩn bị & hậu kỳ bộ câu kín (`19:39–20:43`): dựng `/tmp/b7_moc`, chạy N (28/28 câu), Hiếu chạy `user_chay_kin.sh` (`K`, `S ×2`, `T`, `C`; `L kín = NOT RUN`), mở `/swarm` (`e`, `b`, `d`, `monitor` — 0 USD API ngoài): chấm mù đồng thuận K kín **14/14 = 100%**, gộp báo cáo `report_agent/2026-11-25/E_BO_CAU_KIN_LUNA_2511.md` (`p15-e-bao-cao-bo-kin-2511`), gộp 9 file giáo trình (`p15-d-giao-trinh-bo-kin-2511`), dọn sạch `/tmp/b7_moc`.
+- **20:50:** Ghi nhận quyết định của Hiếu chọn Phương án 2 (dừng phần xây ở local, tiếp tục gác thuê GPU nhận ảnh).
 
 ## 3. Đang làm / còn mở
-- Chờ Hiếu chọn hướng tiếp theo: Phương án 1 (mở lại thuê GPU tinh chỉnh model nhận ảnh trên `goi_may_thue.tar`) hoặc Phương án 2 (chốt gọn dừng phần xây ở local).
+- Không còn việc xây ở local; sẵn sàng kết phiên hoặc mở việc mới (deploy / đọc giáo trình / mở lại GPU ảnh) khi Hiếu gọi.
 
 ## 4. Điểm cần kiểm / quyết định chờ chủ dự án
-- Hiếu chọn Phương án 1 / 2 / 3 cho bước tiếp theo; phần bộ câu kín mốc local đã đóng sạch.
+- Đã đóng mốc xây ở local theo lựa chọn Phương án 2 của Hiếu. Thuê GPU nhận ảnh, 4 bài kho thiếu giờ và deploy vẫn gác chờ Hiếu tự mở lại.
 
 ## 5. Tài nguyên & Chi phí
 - **Qdrant (`hue_rag-qdrant-1`, cổng 6335):** đang BẬT, đủ **9.536 điểm**.

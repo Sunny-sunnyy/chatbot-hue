@@ -1,14 +1,13 @@
-# Việc đang mở (sổ việc — cập nhật 20:43 25/11/2026)
+# Việc đang mở (sổ việc — cập nhật 20:50 25/11/2026)
 
 *Mỗi đầu việc có: **làm để chốt gì** · **ai làm** · **tới đâu** · **chỗ lưu**. Quy trình nhiều phiên: `session_prompt/WORKFLOW.md`. Việc đã xong chép 1 dòng sang `session_prompt/VIEC_DA_XONG.md`.*
 
 ## A. Sản phẩm & Vận hành
 
-### A.1. Chờ quyết định của chủ dự án sau mốc local (`ea96e47c`, 25/11)
-- **Làm để chốt:** chọn hướng tiếp theo sau khi đã đóng mốc local + bộ câu kín trên `gpt-6-luna` (`report_agent/2026-11-25/E_BO_CAU_KIN_LUNA_2511.md`) và đồng bộ 9 file giáo trình: (1) mở lại thuê GPU tinh chỉnh model nhận ảnh trên gói `goi_may_thue.tar` 3,3 GB đã sẵn sàng hay (2) chốt gọn dừng phần xây ở local.
-- **Ai làm:** chờ Hiếu chọn phương án (đã trình 3 phương án 20:35 25/11).
+### A.1. Không còn việc xây ở local (đã chốt dừng phần xây ở local 20:50 25/11)
+- **Trạng thái:** đã đóng trọn mốc local (`ea96e47c`) kèm kiểm khói `gpt-6-luna`, bộ câu kín 1 lần (`report_agent/2026-11-25/E_BO_CAU_KIN_LUNA_2511.md`) và đồng bộ 9 file giáo trình (`PL_C 250`, `PL_F 191`, `PL_I 222`). Chủ dự án chốt Phương án 2: **dừng phần xây ở local**, chỉ mở lại khi có yêu cầu mới.
 - **Gác (chờ chủ dự án tự mở lại):**
-  - Thuê GPU + huấn luyện model nhận ảnh (gác theo lời chủ dự án 15:17 25/11; đang trình lại làm Phương án 1 theo câu hỏi 20:34 của Hiếu; gói `data/anh_huan_luyen_2026-11-24/goi_may_thue.tar` 3,3 GB giữ nguyên).
+  - Thuê GPU + huấn luyện model nhận ảnh (gác theo lời chủ dự án 15:17 & 20:50 25/11; gói `data/anh_huan_luyen_2026-11-24/goi_may_thue.tar` 3,3 GB giữ nguyên).
   - Bốn bài kho chưa có giờ mở cửa (Chùa Thiên Mụ, Hổ Quyền, Đàn Xã Tắc, Suối Voi): chờ kết quả tra URL từ chủ dự án nếu có.
   - Bước triển khai thực tế (`deploy/`): chờ chọn tên miền/IP, email cảnh báo tiền, trần lượt/ngày.
 
