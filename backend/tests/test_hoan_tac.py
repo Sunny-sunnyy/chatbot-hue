@@ -9,10 +9,13 @@ from fastapi.testclient import TestClient
 
 from api.conversations import ConversationStore, dau_lich
 from api.routes import chat as r
+from api.routes.cong import router as cong_router
 from api.routes.hoan_tac import CAU_KHONG_DUOC, router
 from api.routes.xuat import lich_tu_luu
+from core.settings_loader import load_settings
 from llm import lich_trinh_v2 as lt2
 from llm import sua_lich_v2 as s
+from llm.assistant import AssistantFlags
 from test_sua_lich_v2 import B, V2, _lich
 
 MO = dataclasses.replace(V2, sua_lich_v2=True, sua_lich_hoan_tac=True)
@@ -94,9 +97,18 @@ def test_luot_sua_doi_duoc_lich_thi_the_co_nut_va_kho_giu_ban_truoc():
 def _app(flags):
     app = FastAPI()
     app.include_router(router)
+    app.include_router(cong_router)
     app.state.assistant_flags = flags
     app.state.conversations = ConversationStore(len, keep_answers=False, chi_dap_lien_truoc=True)  # như `api/app.py` dựng
     return app
+
+
+def test_cong_tac_mo_o_settings_va_tinh_nang():
+    assert AssistantFlags().sua_lich_hoan_tac is False
+    assert load_settings(validate_private_paths=False)["assistant"]["sua_lich_hoan_tac"] is True
+    with TestClient(_app(MO)) as c_mo, TestClient(_app(TAT)) as c_tat:
+        assert c_mo.get("/api/tinh_nang").json().get("sua_lich_hoan_tac") is True
+        assert "sua_lich_hoan_tac" not in c_tat.get("/api/tinh_nang").json()
 
 
 def test_duong_hoan_tac_tra_lich_ve_dung_ban_truoc_roi_tu_choi_lan_bam_lai():
