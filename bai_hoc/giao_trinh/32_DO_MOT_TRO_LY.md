@@ -1,6 +1,7 @@
 # Bài 32 — Đo một trợ lý: hội thoại nhiều lượt, người dùng mô phỏng, kịch bản chạy lặp
 
-*Cập nhật 16:11, ngày 22/11/2026 · phân xử chỗ lệch giữa các bài · trước đó: đã sửa theo một lượt đối chiếu độc lập; khớp lại với lượt đo 12 vai 14:13 22/11 (`VIEC_MOI_XONG` mục 43) · các thước, cách chấm và số chép từ hồ sơ đo các ngày 14–22/11 (phần lớn ngày 21/11, hai model: gpt-6-luna và Claude Sonnet 5.5 mức suy luận cao); số đếm loại câu của bộ 41 câu đếm lại bằng máy, không đọc câu; người viết không chạy lại phép đo nào.*
+*Cập nhật 20:30, ngày 25/11/2026 · bổ sung lượt đo bộ câu kín mốc cuối trên `gpt-6-luna` (25/11/2026, tách riêng khỏi mốc 18/11; 62 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn, bảng điểm bản 16) từ báo cáo đo và biên bản kiểm chéo độc lập; người viết không mở bộ câu kín và không chạy lại phép đo nào.*
+*Mốc trước: 16:11, ngày 22/11/2026 (phân xử chỗ lệch giữa các bài · lượt đo 12 vai 14:13 22/11 · các thước, cách chấm và số chép từ hồ sơ đo 14–22/11 trên gpt-6-luna và Claude Sonnet 5.5 mức cao).*
 
 **Bài trước đã biết:** bộ 176 câu mẫu đo bước tìm và câu trả lời, mỗi câu một lượt (bài 17–19); một thí nghiệm đổi một thứ, đo theo cặp, so với nhiễu (bài 20); trợ lý tự tìm thêm, gọi công cụ, nhớ cuộc trò chuyện, sửa lịch (bài 21–31).
 **Bài này thêm:** những thứ trợ lý làm qua nhiều lượt thì bộ 176 câu không thấy. Bài giảng năm thước của phần trợ lý (chuỗi hội thoại, người dùng mô phỏng, bộ câu khó, kịch bản demo, bộ dò mù), ai chấm từng thước, mức nhiễu của thước nhỏ, luật "ít nhất ba lượt mỗi bên", và các số chính hiện có.
@@ -11,7 +12,7 @@
 - **Người dùng mô phỏng**: một model thứ ba (Claude Opus 5.5) đóng 12 vai du khách, mỗi vai nói chuyện với hệ thống tối đa 5 lượt qua đường chat thật. Thước này tìm ra các lỗi mà mọi thước cũ đều sạch, ví dụ phần hỏi trong một tin "vừa sửa lịch vừa hỏi" bị bỏ im 4 trên 4 lần.
 - Bản ghi được **chấm mù**: một agent con ngữ cảnh mới đọc bản ghi đã giấu tên model (gọi là hệ X, hệ Y). Bộ 41 câu khó và kịch bản demo thì chấm bằng luật máy.
 - Thước nhỏ **nhiễu lớn**: cùng một hệ thống chạy hai lần, bộ 41 câu lệch tới 3 mục, 12 vai lệch 1 phiên. Vì vậy luật của nhóm: thước nhỏ cần ít nhất ba lượt mỗi bên, và chỉ gọi là "tốt hơn" khi mọi cặp lượt cùng chiều và chênh lớn hơn nhiễu.
-- Số chính (21/11): 12 vai, phiên đạt 7 · 7 · 8 trên 12 với Claude Sonnet 5.5, so với 6 · 5 · 6 với gpt-6-luna (đo lại 14:13 ngày 22/11: 8 trên 12, 33 trên 38 ý, trong khoảng nhiễu); bộ 41 câu khó, lượt mới nhất 39 trên 41 đạt máy; kịch bản demo 0 trên 10 lần hỏng ở cả hai model.
+- Số chính (21/11): 12 vai, phiên đạt 7 · 7 · 8 trên 12 với Claude Sonnet 5.5, so với 6 · 5 · 6 với gpt-6-luna (đo lại 14:13 ngày 22/11: 8 trên 12, 33 trên 38 ý, trong khoảng nhiễu); bộ 41 câu khó, lượt mới nhất 39 trên 41 đạt máy; kịch bản demo 0 trên 10 lần hỏng ở cả hai model. Đến ngày 25/11/2026, lượt đo bộ câu kín mốc cuối trên `gpt-6-luna` đạt 7 trên 7 câu theo ngày mới (so với bản mốc 5 trên 7), 8 trên 8 câu xã giao, 4 trên 4 nhớ tên và thắng 2 / hoà 3 / thua 0 ở hỏi tiếp hội thoại (đủ ý 5,00 so với 3,40), nhưng lộ 5 mã trượt sàn hoặc lỗi và phần bộ kín sửa lịch chưa chạy được do bảng điểm đã đổi.
 
 ## Từ dùng trong bài
 
@@ -157,7 +158,7 @@ Bài này không có cấu hình của hệ thống; bảng dưới là cấu h�
 | số vai | 12, cộng 4 vai để riêng chấm bằng mẫu chữ | — | — |
 | số lượt mốc 12 vai | 3 mỗi model | luật "ít nhất ba lượt" | lượt đầu 1 lượt: chưa dùng làm mốc |
 | bộ 41 câu khó | đóng băng 13:01 21/11; bộ đã thấy | so theo cặp | — |
-| chuỗi hội thoại | 25 chuỗi / 56 lượt đã thấy; thêm một bộ kín 15 chuỗi / 33 lượt | — | — |
+| chuỗi hội thoại | 25 chuỗi / 56 lượt đã thấy; thêm một bộ kín 15 chuỗi / 33 lượt | phần bộ kín (cùng các bộ kín theo ngày, ngoài phạm vi, định tuyến) đã chạy 25/11 trên `gpt-6-luna` | — |
 | kịch bản demo | 10 bước; lúc mốc 10 lần × 2 model, sau đó 1 lần sau mỗi lần gộp | — | 10 × 2: nhóm tự ghi là thừa |
 | tiêu chí ghi trước | ghi vào hồ sơ đo TRƯỚC khi chạy, kèm giờ | để không chỉnh luật sau khi thấy số | — |
 
@@ -192,9 +193,20 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 
 **Bộ dò mù của các tính năng:** dòng chỉ sang trang Lên kế hoạch 17 / 20 nhận đúng, 0 / 20 nhận nhầm; tin sửa lịch kèm hỏi 24 / 24 và 0 / 24; đổi chỗ hai ngày 0 / 10 đọc nhầm; câu xin danh sách 19 / 20, nối nhầm 2 / 32; câu "gần X" 0 / 12 lỗi.
 
-**Đọc bảng thế nào:** ở 12 vai, Claude hơn ở mọi cặp lượt và chênh lớn hơn nhiễu, nên theo luật là "tốt hơn". Ở 41 câu khó, lượt đầu hai model đều một lượt; số 39 / 41 là sau các sửa trong ngày, trên bộ mà người sửa đã thấy.
+**Bộ câu kín mốc cuối trên `gpt-6-luna` (25/11/2026, 62 tính năng mở / 6 tắt, kho 269 bài / 9.536 đoạn, bảng điểm bản 16; tách riêng khỏi mốc 18/11 — không trộn số hai mốc):** bản mốc để đối chứng là bản RAG cơ sở trước khi thêm trợ lý, chạy cùng ngày; tổng tiền OpenAI đo được của cả đợt là **0,0665833 USD** (khoảng 0,067 USD, tức khoảng 1.665 đồng; chưa gồm phần chạy bản RAG mốc ở hai bộ câu theo ngày vì lệnh không ghi tiền; phần chấm mù 0 đồng API ngoài).
 
-**Giới hạn của phép đo:** người mô phỏng cùng họ với model đang chạy; chưa có phép đối chiếu với người thật; mọi bộ của phần trợ lý là bộ đã thấy (trừ các bộ dò mù và bộ chuỗi kín); thời gian chờ ở mốc ba lượt không so được vì hai model chạy song song trên cùng máy.
+| Bộ đo | Đo gì | Kết quả trợ lý (`gpt-6-luna`) | So với mốc (bản RAG cơ sở) | Ổn hay chưa ổn |
+|---|---|---|---|---|
+| Câu theo ngày đã thấy (đối chứng cùng ngày, 28 câu) | tính ngày dương / âm tương đối; có 1 người chấm mù | **27 / 28 đạt**, 1 từ chối chuẩn (`R8`), 0 lỗi giả định ngày, 0 lỗi tính lịch, 0 sai kho, 0 lỗi kỹ thuật (0,0214 USD) | mốc đạt **12 / 28** (từ chối 16); trợ lý thắng 16, hoà 11, thua 1 (`R8`), trung bình **+0,536** | ổn: từ chối chuẩn ở câu mơ hồ `R8` (ở mốc 18/11 từng mắc lỗi giả định ngày); chỉ mới 1 người chấm |
+| Bộ kín câu theo ngày (7 câu mới, chưa thấy) | tính ngày dương / âm trên đề chưa từng thấy; 2 người chấm mù độc lập đồng thuận **14 / 14 nhãn (100 %)** | **7 / 7 đạt (100 %)**, 0 lỗi kỹ thuật, 0 lỗi giả định ngày / tính lịch / sai kho / từ chối nhầm (0,0047 USD) | mốc đạt **5 / 7** (từ chối 2 câu tương đối âm lịch `N6`, `N8`); thắng 2, hoà 5, thua 0, trung bình **+0,286** | ổn về độ đúng và đồng thuận 100 %, nhưng mẫu nhỏ (7 câu, 1 lượt) |
+| Bộ kín ngoài phạm vi (10 câu chưa thấy × 2 lượt) | rào "0 câu ngoài phạm vi được trả lời bằng kho" và mở cổng web đúng lúc | lượt 1 (0,001578 USD): 0 lỗi kỹ thuật, **1 / 10 bị trả lời bằng kho (`b_kin_10`)**, mở web sai 0 / 10 · lượt 2 (0,002274 USD): **1 lỗi kỹ thuật ở `b_kin_09`** (sau 1 lần hỏi lại), trong 9 câu chạy được vẫn **1 / 9 bị trả lời bằng kho (`b_kin_10`)**, mở web sai 0 / 9; 0 lỗi định tuyến hay trích dẫn | — (sàn cứng đòi 0 câu ngoài phạm vi bị trả lời bằng kho) | **chưa ổn**: `b_kin_10` lặp lại lỗi trả lời bằng kho cả 2 / 2 lượt, và `b_kin_09` lỗi kỹ thuật ở lượt 2 |
+| Bộ kín định tuyến & xã giao (28 câu chưa thấy: 8 câu phần đầu + 20 câu tuyến hỏi đáp) | định tuyến đúng giữa Huế / xã giao / ngoài phạm vi, 0 lỗi trích dẫn (0,017376 USD) | nhóm xã giao được đáp **8 / 8 (100 %)**, 0 lỗi kỹ thuật, 0 lỗi trích dẫn; phần đầu (4 Huế + 4 xã giao): **1 / 4 câu Huế (`a_kin_08`) bị đẩy nhầm sang xã giao**, xã giao sang Huế 0 / 4; phần tuyến hỏi đáp (12 trong kho + 4 xã giao + 4 ngoài phạm vi): **1 / 16 nhóm khác xã giao (`s15`, vốn ngoài phạm vi) bị đẩy nhầm sang xã giao và trả lời tự do** (trượt cả định tuyến lẫn ngoài phạm vi 1 / 4), xã giao sang Huế 0 / 4, mở web ở nhóm trong kho 3 / 12 | — (đo sàn định tuyến và xã giao) | **chưa ổn**: phần xã giao đạt 8 / 8, nhưng khâu định tuyến để 2 ca (`a_kin_08`, `s15`) rẽ nhầm sang xã giao |
+| Bộ kín chuỗi hội thoại (15 chuỗi / 33 lượt chưa thấy) | nhớ tên, hỏi tiếp, không trả lời câu ngoài kho (0,016472 USD cho trợ lý; 0,0027833 USD cho 5 chuỗi / 10 lượt của mốc) | kiểm tự động: 0 lỗi kỹ thuật, **nhớ tên 4 / 4**, 0 lỗi định tuyến hay trích dẫn, nhưng **`K-N2` (1 / 15 chuỗi) trả lời một lượt ngoài kho**; chấm mù 5 cặp hỏi tiếp (10 mục, 1 người chấm): Đủ ý thắng 2 / hoà 3 / thua 0, Đúng thắng 2 / hoà 3 / thua 0, Trọng tâm thắng 3 / hoà 2 / thua 0 | điểm trung bình trợ lý ↔ mốc: Đủ ý **5,00 ↔ 3,40** (+1,60), Đúng **5,00 ↔ 3,40** (+1,60), Trọng tâm **4,80 ↔ 3,20** (+1,60); mốc đạt 0 lỗi kỹ thuật | mạnh ở hỏi tiếp và nhớ tên, nhưng **chưa ổn** vì để lọt `K-N2` ngoài kho |
+| Bộ kín sửa lịch bằng lời (5 chuỗi) | sửa lịch bằng lời trên đề chưa thấy | **`NOT RUN`** (chưa chạy): bước kiểm không tốn tiền trước khi chạy chỉ khớp **4 / 5 chuỗi** trên bảng điểm bản 16 (kiểm cấu trúc 0 lỗi, gộp bộ kín 0 lỗi thêm), nên hệ thống tự dừng | — | **chưa đo được** vì nhãn bộ câu kín cũ lệch với bảng điểm bản 16 (bài 31) |
+
+**Đọc bảng thế nào:** ở 12 vai, Claude hơn ở mọi cặp lượt và chênh lớn hơn nhiễu, nên theo luật là "tốt hơn". Ở 41 câu khó, lượt đầu hai model đều một lượt; số 39 / 41 là sau các sửa trong ngày, trên bộ mà người sửa đã thấy. Ở lượt đo bộ câu kín ngày 25/11 trên `gpt-6-luna`, không trộn số với mốc 18/11: trợ lý giữ được ưu thế ở phần tính ngày, nhớ tên và hỏi tiếp hội thoại, đồng thời lộ rõ 5 ca trượt sàn hoặc lỗi (`b_kin_10`, `b_kin_09`, `a_kin_08`, `s15`, `K-N2`) và việc chưa chạy được bộ kín sửa lịch.
+
+**Giới hạn của phép đo:** người mô phỏng cùng họ với model đang chạy; chưa có phép đối chiếu với người thật; phần lớn bộ của phần trợ lý là bộ đã thấy (trừ các bộ dò mù và bộ câu kín); thời gian chờ ở mốc ba lượt không so được vì hai model chạy song song trên cùng máy. Riêng lượt bộ câu kín 25/11 mới chạy 1 lượt mỗi bộ (trừ ngoài phạm vi 2 lượt), mẫu nhỏ, mới 1 người chấm ở câu theo ngày đã thấy và chuỗi hỏi tiếp, và chưa chạy lại bộ 176 câu mẫu hay bộ 32 câu an toàn trên bản cuối `gpt-6-luna`.
 
 ## Quyết định nhỏ hơn
 
@@ -242,5 +254,6 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 - Bài đã qua một lượt đối chiếu độc lập (người kiểm chỉ đọc, tự chạy lại bộ xếp và phần áp lệnh), trưa 22/11/2026: `data/hoc_cung_D/kiem/bai_27_32.md` [riêng tư]; các dòng SAI / LỆCH đã áp, dòng không áp ghi ở `data/hoc_cung_D/viet/viet_27_32.md` mục "Sau lượt kiểm" [riêng tư].
 
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43 (8 / 12, 33 / 38, mốc 31 · 32 · 32, năm ý trượt theo loại, 26 lượt điểm mù, chạy trước 14:47); `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` [đã chạy, phiên đo; người viết không chạy lại].
+- Cập nhật 20:30 25/11/2026: lượt đo bộ câu kín mốc cuối trên `gpt-6-luna` (`main` `ea96e47c`, 62 mở / 6 tắt, 269 bài / 9.536 đoạn, `diem_v16.json`, so với RAG mốc `p9-moc` `18e8f42b`): `report_agent/2026-11-25/E_BO_CAU_KIN_LUNA_2511.md` và `data/phase_9/b7_cuoi_user/TONG_HOP_SO.json` [đã chạy thật, đã duyệt bởi phiên kiểm chéo cùng đồng thuận K kín 14/14 = 100% (`cham_b_k.jsonl ↔ cham_e_k.jsonl`); người viết không mở `*sealed*` và không chạy lại].
 
 </details>
