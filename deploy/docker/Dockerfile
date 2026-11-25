@@ -44,6 +44,13 @@ COPY --from=web /w/dist /app/frontend/dist
 # chép `public/` vào `dist/` ⇒ trỏ public về dist. Thiếu dòng này: uvicorn thoát mã 3, không in lỗi (thử thật 15/11).
 RUN ln -s dist /app/frontend/public
 
+# Bó quyền hộp ứng dụng (CACH_DEPLOY.md mục 4.1): không chạy bằng root; chỉ các thư mục ghi log, debug_trace và cache model thuộc quyền user `hue` (10001).
+RUN groupadd -r -g 10001 hue && useradd -r -u 10001 -g hue -d /app -s /sbin/nologin hue \
+ && mkdir -p /app/backend/logs /app/data/debug_trace \
+ && chmod -R a+rX /app/backend /app/knowledge-base-hue /app/data /app/frontend /app/DANH_SACH.txt /app/lam_moi_khoa.py \
+ && chown -R hue:hue /app/hf /app/tiktoken /app/backend/logs /app/data/debug_trace
+
+USER hue
 WORKDIR /app/backend
 EXPOSE 8000
 # MỘT tiến trình: kho cuộc trò chuyện, lịch đã lưu, sổ đếm giới hạn lượt đều nằm trong RAM ⇒ không `--workers` > 1.

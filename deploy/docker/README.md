@@ -206,9 +206,10 @@ CHƯA kiểm:
   `sudo systemctl enable docker` — việc của bước dựng máy).
 - Đường deploy với khoá OpenAI THẬT trong hộp: chưa có lượt nào (tài khoản đang gác) — câu trả lời thật, chữ chạy dần của app thật qua Caddy, lỗi 401 / hết tiền nhìn ra sao.
 - Trình duyệt: phiên đo đã mở gói qua Caddy bằng Playwright MCP sáng 23/11 (đường Bedrock: dòng tiến độ hiện dần, lịch ví dụ + ảnh nạp được); chưa có lượt trình duyệt trên đường OpenAI.
-- Hộp chạy bằng người dùng root (như bản 16/11); chưa hạ quyền.
+- Hộp chạy bằng người dùng root ở các lượt thử 23/11; từ 25/11 đã thêm `USER hue` (UID 10001) trong `Dockerfile` + `cap_drop: [ALL]` và `no-new-privileges:true` cho hộp `app` trong `compose.yml` (chưa dựng chạy lại ở máy bằng Docker).
 - Đã xét, KHÔNG đổi (kết quả tra cứu 23/11 nêu): bỏ `flush_interval -1` ở Caddy (Caddy tự đẩy ngay luồng `text/event-stream`; giữ vì cấu hình
   này đã chạy thật 16/11) · thêm hạn giờ đọc / ghi ở Caddy (lượt dài nhiều vòng công cụ có thể bị cắt; chưa thấy sự cố nào cần nó).
+- Nếu bật `so_tay` hoặc `ho_so_chu_de` ở bản deploy (`dong_goi.sh` hiện ép tắt cả hai): thêm `/api/so_tay` và `/api/ho_so` vào dòng `@nen not path` trong `Caddyfile` rồi `dc up -d --force-recreate caddy`, kẻo Caddy nén và gom tiến độ từng mục.
 - Sau `docker load` trên máy đích nên xoá `app_<sha>.tar.gz` (0,9 GB) cho nhẹ đĩa.
 
 ## 6. Khác bản nháp 16/11 (`data/phase_12/deploy_nhap/`, riêng tư)

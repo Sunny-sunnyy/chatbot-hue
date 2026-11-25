@@ -185,10 +185,11 @@ bash nap_chi_muc.sh
 Lần đầu máy phải kéo ảnh Qdrant từ Docker Hub (vài chục giây). Mong dòng cuối: `chỉ mục trong Qdrant của gói: N điểm · bản ghi dựng trong ảnh: N điểm` —
 hai số BẰNG nhau (kho ngày 23/11: 9.533). Lệch ⇒ lệnh tự dừng.
 
-**Bước 9 — bật ba hộp:**
+**Bước 9 — bật ba hộp:** (hộp `app` chạy bằng user `hue` UID 10001 nên tạo sẵn thư mục `logs` thuộc quyền `10001:10001` trước khi bật):
 
 ```bash
 cd /srv/hue
+install -d -m 755 -o 10001 -g 10001 logs
 docker compose --env-file hue.env -f compose.yml up -d --wait
 docker compose --env-file hue.env -f compose.yml ps          # mong: ba hộp, cột STATUS đều có chữ healthy / running
 ```

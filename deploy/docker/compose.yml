@@ -88,6 +88,10 @@ services:
       timeout: 5s
       retries: 36
     mem_limit: 2g          # đo 16/11: 1.021 MiB
+    # Bó quyền hộp ứng dụng (CACH_DEPLOY.md mục 4.1): kết hợp USER hue (10001) trong Dockerfile; không bật read_only vì app ghi ./logs và có thể ghi debug_trace.
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
     <<: *log
 

@@ -39,6 +39,8 @@ len)
   fi
   ss -ltn | grep -q ":$CONG " && dung "cổng $CONG đang có người dùng"
   mkdir -p "$THU/logs" && cp "$GOI"/compose.yml "$GOI"/Caddyfile "$GOI"/nap_chi_muc.sh "$THU/"
+  # Hộp app chạy dưới USER hue (UID 10001) ⇒ trao quyền thư mục logs gắn từ máy trước khi `up`.
+  docker run --rm --network none -v "$THU":/x -u 0 --entrypoint chown "$HUE_IMAGE" 10001:10001 /x/logs
   PHU=""; [ "$DUONG" = bedrock ] && { cp "$GOI"/compose.thu.yml "$THU/"; PHU=compose.thu.yml; }
   mkdir -p "$THU/cau_hinh" && docker run --rm --network none --entrypoint tar "$HUE_IMAGE" -C /app/backend/config -cf - . | tar -xf - -C "$THU/cau_hinh"   # như dong_goi.sh
   # dòng `provider`: ghi đúng như dong_goi.sh ghi cho gói đưa lên máy đích
