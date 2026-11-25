@@ -88,7 +88,7 @@ Giải thích kỹ thuật theo `data/phase_9/g_cong/tools/do_g.py` (dòng 16, 1
 | Cặp chuỗi | Loại | `nho` (Đúng / Đủ / Trọng tâm) | `rag` (Đúng / Đủ / Trọng tâm) | Kết luận cặp (`completeness`) |
 |---|---|---|---|---|
 | `K-C1` | `hoi_tiep_y_cu` | 5 / 5 / 5 | 5 / 5 / 4 | Hoà (5 ↔ 5); `nho` hơn Trọng tâm |
-| `K-C2` | `hoi_tiep_y_cu` | 5 / 5 / 5 | 1 / 1 / 1 (từ chối chuẩn) | **`nho` thắng** (+4) |
+| `K-C2` | `hoi_tiep_y_cu` | 5 / 5 / 4 | 1 / 1 / 1 (từ chối chuẩn) | **`nho` thắng** (+4) |
 | `K-C3` | `hoi_tiep_y_cu` | 5 / 5 / 5 | 1 / 1 / 1 (từ chối chuẩn) | **`nho` thắng** (+4) |
 | `K-M1` | `hoi_tiep_y_moi` | 5 / 5 / 5 | 5 / 5 / 5 | Hoà (5 ↔ 5) |
 | `K-M2` | `hoi_tiep_y_moi` | 5 / 5 / 5 | 5 / 5 / 5 | Hoà (5 ↔ 5) |
