@@ -10,6 +10,7 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
 1. Đọc NGẮN (AGENTS.md công cụ tự nạp, agent khác đọc nó trước):
    session_prompt/START_SESSION.md (file này)
    session_prompt/HIEN_TRANG.md (hiện trạng — đọc đủ)
+   data/bo_nho_agent/MEMORY.md (bộ nhớ dự án, ngoài git — đọc mục lục; mở file trong claude_memory/ khi việc chạm)
    session_prompt/sessions/STATUS_<X>.md — mục đầu (chưa có thì tạo từ mẫu trong sessions/README.md)
    session_prompt/VIEC_DANG_MO.md (sổ việc) — khối đầu (việc chính hiện nay) + khối nào có tên mình
    session_prompt/CURRENT_HANDOFF.md (nhật ký theo giờ) — chỉ khối "Phiên sau đọc trước"
@@ -20,10 +21,8 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
    Skill dự án và bảy luật cứng: AGENTS.md.
 2. Kiểm nhanh, chỉ đọc: đọc riêng WORKFLOW.md mục 2 và chạy các lệnh ở đó.
 3. Báo ngắn: bạn là ai, Phase/việc đang ở đâu, việc của bạn, chỗ lệch giữa tài liệu
-   và thực tế, thắc mắc. Nếu <X> là B, C hoặc E: báo cả A — KHÔNG rải tin cho mọi terminal để tìm A: đợi tin mở
-   phiên của A (A gửi tên terminal mình cho cả nhóm) rồi trả lời đúng MỘT tin bằng SendMessage, tin đó gồm cả vai lẫn báo cáo
-   mở phiên; ~5 phút chưa thấy tin của A ⇒ hỏi User tên terminal của A (vẫn không rải). Agent không phải Claude Code thì viết
-   khối "Tin cho A" để User chuyển (WORKFLOW.md §7).
+   và thực tế, thắc mắc. Nếu <X> là B, C hoặc E: báo cả A — trong `agy` CLI + `/swarm` thì trả lời trực tiếp A trên bảng tin chung; nếu mở nhiều terminal rời nhau thì KHÔNG rải tin để tìm A: đợi tin mở
+   phiên của A (A gửi tên terminal mình cho cả nhóm) rồi trả lời đúng MỘT tin (SendMessage nếu có, hoặc khối "Tin cho A" để User chuyển — WORKFLOW.md §7).
    Mọi session (cả A): vòng tự soi một lần / ngày, hỏi hai chiều — làm thừa ↔ nhìn hẹp (Session_Prompt.md §7).
    Rồi: A KHÔNG hỏi quyền phiên — theo bảng "Quyền thường trực" trong `AGENTS.md`, báo xong là A giao ngay B/C/E mọi việc đã có trong
    sổ việc; chỉ việc thuộc hàng "hỏi User trước" mới chờ User; B/C/E: việc XÂY chờ A giao (việc A giao = User nói "làm đi"), còn nghĩ, đếm 0 đồng, nêu hướng khác — và một bản thử sau cờ tắt cho ý của chính mình khi phép đếm đã ra số (báo phiên điều phối một dòng trước khi sửa code; User 18:04 21/11/2026) — thì không chờ (AGENTS.md mục "Cách nhìn việc"); D chờ User nói muốn hiểu việc gì. Trước khi báo xong bước 3: không sửa file (trừ tạo
@@ -32,8 +31,9 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
 
 Ghi chú:
 
-- Làm mới ngữ cảnh giữa chừng: chỉ cần mở lại phiên đã đầy (thường là A); trước khi tắt làm "kết phiên nhẹ" (`WORKFLOW.md` §8).
-- Agent nào không phải Claude Code: User nói rõ khi mở (ví dụ "B là Codex"); các
+- Chế độ `agy` CLI + `/swarm` (từ 25/11/2026): User chỉ cần mở 1 terminal A và gõ `/swarm` — A tự sinh worker `b`, `c`, `e` (và `d` khi cần cập nhật giáo trình) với `brief` ghi đủ vai + danh sách file trạng thái + `data/bo_nho_agent/MEMORY.md` để mỗi worker tự nạp đủ bối cảnh ngay từ đầu; chỉ mở thêm 1 terminal D riêng khi User muốn học trực tiếp (vẫn giữ cách mở nhiều terminal rời khi cần).
+- Làm mới ngữ cảnh giữa chừng: dùng `/compact` hoặc mở lại phiên đã đầy (thường là A); trước khi tắt làm "kết phiên nhẹ" (`WORKFLOW.md` §8).
+- Agent mở ở terminal rời không có `SendMessage` / không chung `/swarm` (ví dụ "B là Codex"): User nói rõ khi mở; các
   session liên lạc với nó qua User (khối "Tin cho <X>").
 - Prompt mở session là chỉ thị mới nhất của User; nếu khác sổ việc (`VIEC_DANG_MO.md`), session báo lệch.
 - Việc mới trong ngày: A ghi vào `VIEC_DANG_MO.md` rồi nhắn session đó.
