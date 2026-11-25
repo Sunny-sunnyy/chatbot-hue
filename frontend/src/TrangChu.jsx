@@ -79,7 +79,7 @@ export function TrangChu({ bai, tinhNang, thoiTiet, onAsk, onAskAbout, dai = nul
           </section>
         )}
         <section className="khoi" aria-labelledby="kp-h">
-          <h2 id="kp-h" className="khoi-h chu-hien">Khám phá theo chủ đề</h2>
+          <h2 id="kp-h" className="khoi-h chu-hien">Khám phá theo lĩnh vực</h2>
           <p className="khoi-p">Mỗi chủ đề là các bài trong kho mà trợ lý dùng để trả lời. Bấm để đọc cả bài.</p>
           <div className="tc-kham">
             {LINH_VUC.map((lv, i) => {
