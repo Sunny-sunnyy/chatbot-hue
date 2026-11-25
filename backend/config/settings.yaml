@@ -44,7 +44,7 @@ full_corpus_runtime:
   reranker: none
 
 full_corpus_generation:
-  provider: bedrock              # openai | bedrock — ĐỔI QUA / ĐỔI VỀ model viết chỉ sửa dòng này. `bedrock` = Claude trên Amazon Bedrock theo khối `bedrock` dưới (đổi TẠM, User 21/11/2026); người chấm của bộ đo luôn là `model` dưới
+  provider: openai               # openai | bedrock — ĐỔI QUA / ĐỔI VỀ model viết chỉ sửa dòng này. `bedrock` = Claude trên Amazon Bedrock theo khối `bedrock` dưới (đổi TẠM, User 21/11/2026); người chấm của bộ đo luôn là `model` dưới
   model: gpt-6-luna
   api_key_env: OPENAI_API_KEY
   token_encoding: o200k_base
