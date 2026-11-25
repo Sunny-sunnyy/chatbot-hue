@@ -31,7 +31,7 @@ User); B, C (và E khi mở) là session thực thi; D (tùy chọn) chỉ đọ
 
 Ghi chú:
 
-- Chế độ `agy` CLI + `/swarm` (từ 25/11/2026): User chỉ cần mở 1 terminal A và gõ `/swarm` — A tự sinh worker `b`, `c`, `e` (và `d` khi cần cập nhật giáo trình) với `brief` ghi đủ vai + danh sách file trạng thái + `data/bo_nho_agent/MEMORY.md` để mỗi worker tự nạp đủ bối cảnh ngay từ đầu; chỉ mở thêm 1 terminal D riêng khi User muốn học trực tiếp (vẫn giữ cách mở nhiều terminal rời khi cần).
+- Chế độ `agy` CLI + `/swarm` (từ 25/11/2026): User chỉ cần mở 1 terminal A và gõ `/swarm` — A tự sinh worker `b`, `c`, `e` (và `d` khi cần cập nhật giáo trình) với `brief` ghi đủ vai + danh sách file trạng thái + `data/bo_nho_agent/MEMORY.md` để mỗi worker tự nạp đủ bối cảnh ngay từ đầu; chỉ mở thêm 1 terminal D riêng khi User muốn học trực tiếp (vẫn giữ cách mở nhiều terminal rời khi cần). Đầu phiên A bàn và chốt việc với User trước (chưa cần bật `/swarm`); ngay khi chốt xong và có việc xây / đo / review chéo song song thì A **chủ động nhắc User gõ `/swarm`** để gọi `b`, `c`, `e`.
 - Làm mới ngữ cảnh giữa chừng: dùng `/compact` hoặc mở lại phiên đã đầy (thường là A); trước khi tắt làm "kết phiên nhẹ" (`WORKFLOW.md` §8).
 - Agent mở ở terminal rời không có `SendMessage` / không chung `/swarm` (ví dụ "B là Codex"): User nói rõ khi mở; các
   session liên lạc với nó qua User (khối "Tin cho <X>").

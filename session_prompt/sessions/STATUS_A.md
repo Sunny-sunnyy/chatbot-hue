@@ -10,6 +10,7 @@
    - **Dải chủ đề ở Trang chủ**: `origin/thu-c-trang-chu-chu-de` `b7794fe` (ảnh `…/c_ho_so/anh_trang_chu/`), kèm câu đổi tiêu đề 5 ô lĩnh vực ("Khám phá theo chủ đề" ⇒ "Khám phá theo lĩnh vực"?).
    - **Kết quả đọc sâu 25 repo:** `data/x22_doc_repo_2026-11-24/TOM_TAT.md` (6 ứng viên chưa dựng · 5 việc nhỏ bộ deploy `CACH_DEPLOY.md` · đề bài AI khác hãng `DE_BAI_3.md`).
 3. **Việc kế trình chủ dự án theo thứ tự (mỗi lần 1 câu có ô chọn, `HIEN_TRANG.md` mục 3):**
+   - *Nhịp mở phiên:* đầu phiên A bàn và chốt việc với chủ dự án trước (chưa cần bật `/swarm`); ngay khi chốt xong và có việc xây / đo / review chéo song song thì A **chủ động nhắc chủ dự án gõ `/swarm`** để A gọi `b`, `c`, `e`.
    1. Báo gọn `so_tay` + `ho_so_chu_de` đã mở ở máy demo (hướng dẫn thử `data/test_cuoi/TEST_2411_TRUA.md` mục 4–5).
    2. Đưa ảnh + hỏi gộp/mở từng bản thử (Hoàn tác · dải Trang chủ).
    3. Trình tóm tắt đọc sâu 25 repo để chọn ứng viên dựng tiếp + 5 việc nhỏ deploy.
