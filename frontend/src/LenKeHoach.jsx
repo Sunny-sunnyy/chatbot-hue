@@ -140,10 +140,14 @@ function CotLich({ lichTurn, onEditPlan, onXep, pending, onAsk }) {
       {!t.lichV2 && dangChay && <span className="lkh-go" role="status" aria-label="đang xếp lịch"><i /><i /><i /></span>}
       {t.error && <p className="loi" role="alert">{t.error}</p>}
       {/* lịch đã sửa bằng lời trong khung trợ lý (App.jsx `lichTurn`): nhãn nói rõ đây là bản đã sửa và biểu mẫu vẫn là bản gốc */}
-      {t.daSua && (
-        <p className="lkh-da-sua" role="status">Đã sửa theo lời bạn: {t.lichV2.thay_doi.filter(d => d.duoc).map(d => d.cau).join(" ")}{" "}
-          <span>Biểu mẫu vẫn là bản gốc — xếp lại từ biểu mẫu sẽ thay bản đã sửa.</span></p>
-      )}
+      {t.daSua && (() => {
+        const tomTat = t.lichV2.thay_doi.filter(d => d.duoc).map(d => d.cau).join(" ");
+        const laHoanTac = tomTat.startsWith("Đã hoàn tác");
+        return (
+          <p className="lkh-da-sua" role="status">{laHoanTac ? tomTat : `Đã sửa theo lời bạn: ${tomTat}`}{" "}
+            <span>{laHoanTac ? "Biểu mẫu vẫn giữ lựa chọn ban đầu — xếp lại từ biểu mẫu nếu muốn tạo lịch mới." : "Biểu mẫu vẫn là bản gốc — xếp lại từ biểu mẫu sẽ thay bản đã sửa."}</span></p>
+        );
+      })()}
       {/* `onAsk`: nút của dòng hỏi lại / chưa làm cũng bấm được ngay ở cột lịch — khung trợ lý có thể đang đóng, và mỗi nút gửi một câu lệnh ĐỦ tên */}
       {t.lichV2 && t.phase !== "error" && <LichV2 turn={t} onEditPlan={onEditPlan} onAsk={t.phase === "done" ? onAsk : null}
                                                      onMo={t.phase === "done" && onEditPlan ? () => onEditPlan(null, t.truong) : null} />}
