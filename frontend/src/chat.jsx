@@ -236,7 +236,26 @@ export function useChat() {
     }
   }
 
-  return { turns, draft, setDraft, pending, resetting, resetError, ask, stop, startNewConversation };
+  // BẢN THỬ "Hoàn tác lần sửa lịch vừa rồi" (nhánh `thu-c-hoan-tac`; công tắc server `sua_lich_hoan_tac`, mặc định tắt — tắt thì server không gửi nút nên
+  // hàm này không bao giờ được gọi). Bấm nút ⇒ `POST /api/lich/hoan_tac` {ma}: KHÔNG qua luồng chat, không gọi model, trả JSON ngay. Được ⇒ thêm MỘT lượt
+  // đã xong mang lịch server trả về; lượt đó mang một dòng "đã làm" (câu của server) trong `thay_doi` để mọi chỗ đang đọc "lượt sửa mới nhất có dòng
+  // được" (cột lịch trang Lên kế hoạch, khung trợ lý gọn) tự lấy đúng lịch đã trở lại — không thêm đường đọc thứ hai. Không được ⇒ trả câu của server.
+  async function hoanTac(ma) {
+    if (pending || resetting) return { ok: false, cau: "Trợ lý đang trả lời — đợi xong rồi bấm lại." };
+    try {
+      const r = await fetch("/api/lich/hoan_tac", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ma }) });
+      const du = await r.json().catch(() => null);
+      if (!r.ok || du?.trang_thai !== "da_hoan_tac" || !du.lich) return { ok: false, cau: du?.error?.message || "Chưa hoàn tác được — thử lại sau." };
+      const key = ++keyRef.current;
+      setTurns(all => [...all, { ...newTurn(key, "Hoàn tác lần sửa lịch vừa rồi", null, "", false), phase: "done", text: du.cau, sources: [], numbers: new Map(),
+                                 lichV2: { ...du.lich, thay_doi: [{ cau: du.cau, duoc: true }] }, cauV2: du.cau_muc || {} }]);
+      return { ok: true };
+    } catch {
+      return { ok: false, cau: "Chưa hoàn tác được — kiểm tra mạng rồi thử lại." };
+    }
+  }
+
+  return { turns, draft, setDraft, pending, resetting, resetError, ask, stop, startNewConversation, hoanTac };
 }
 
 // Trang `#/tro-ly` (H1, đợt 1): cột trái = câu gợi ý theo chủ đề + trợ lý làm được gì + lưu ý; phải = khung chat (cùng `ChatView` với khung nổi).

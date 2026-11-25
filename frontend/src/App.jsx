@@ -8,7 +8,7 @@ import { GioiThieu } from "./GioiThieu.jsx";
 import { ChoO } from "./ChoO.jsx";
 import { useRoute } from "./route.js";
 import { datNguonBanDo } from "./nguonBanDo.js";
-import { batSoTay, batXuatLich } from "./LichV2.jsx";
+import { batHoanTac, batSoTay, batXuatLich } from "./LichV2.jsx";
 import { SoTay, useSoTay } from "./SoTay.jsx";
 import { DaiChuDe, HoSoChuDe, LuoiChuDe, useHoSo } from "./HoSo.jsx";
 
@@ -55,6 +55,7 @@ export default function App() {
     if (tinhNang.thoi_tiet) getJson("/api/thoi_tiet").then(setThoiTiet).catch(() => setThoiTiet(null));  // lỗi ⇒ ẩn ô, không số cũ
   }, [tinhNang.thoi_tiet]);
   useEffect(() => { if (onTroLy) setPanelOpen(false); }, [onTroLy]);
+  useEffect(() => { batHoanTac(chat.hoanTac); });  // bản thử nút "Hoàn tác lần sửa này": thẻ lịch gọi hàm của cuộc trò chuyện hiện tại (mỗi lần vẽ lấy bản mới)
   useEffect(() => {
     if (!panelOpen) return undefined;
     const onKey = event => event.key === "Escape" && setPanelOpen(false);
