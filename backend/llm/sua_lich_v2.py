@@ -7,7 +7,9 @@ không SDK. Trạng thái lưu của cuộc (`luu`): {tham_so, ngay_di, mua, khu
 """
 import collections
 import copy
+import hashlib
 import itertools
+import json
 import re
 import unicodedata
 import datetime as dt
@@ -652,6 +654,21 @@ def doi_buoi_tu_cau(bang: v2.BangV2, luu: dict, cau: str) -> list[HanhDong]:
     if len({(h.ngay if h.ngay is not None else trong_lich[h.ten][0], h.buoi) for h in ra}) == 1:
         return []
     return ra
+
+
+NHAN_HOAN_TAC = "Hoàn tác lần sửa này"
+
+
+def dau_khung(khung: dict, ngay_di: str | None) -> str:
+    """Dấu của một lịch (khung + ngày đi) — mã của nút "Hoàn tác" (bản thử công tắc `sua_lich_hoan_tac`). Lịch đổi thêm ⇒ dấu khác ⇒ nút cũ không còn khớp."""
+    chu = json.dumps({"khung": khung, "ngay_di": ngay_di}, sort_keys=True, ensure_ascii=False, default=str)
+    return hashlib.sha256(chu.encode("utf-8")).hexdigest()[:12]
+
+
+def nut_hoan_tac(khung: dict, ngay_di: str | None, thay_doi: list[dict]) -> dict | None:
+    """Nút "Hoàn tác" cho thẻ của một lượt sửa: chỉ khi lượt ĐÃ ĐỔI được lịch (có dòng `duoc`). `ma` = dấu của khung SAU lần sửa — đúng khung route sẽ lưu
+    cho cuộc, nên lần bấm chỉ được nhận khi lịch đang lưu vẫn là khung đó (`api.conversations.ConversationStore.hoan_tac`)."""
+    return {"nhan": NHAN_HOAN_TAC, "ma": dau_khung(khung, ngay_di)} if any(d["duoc"] for d in thay_doi) else None
 
 
 def luu_tu_lich(khung: dict, ngay_di: str | None, mua: dict | None) -> dict:

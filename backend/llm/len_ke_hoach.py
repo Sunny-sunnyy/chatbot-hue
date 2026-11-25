@@ -115,6 +115,10 @@ async def chuan_bi(query: str, retrieval_service, context_builder, trace: Answer
     if sua:
         lich["thay_doi"] = sua["thay_doi"]  # giao diện H1: khối "Đã đổi / Không đổi được" đầu thẻ (câu do code)
         lich["sua_ap"] = sua["sua_ap"]  # dữ liệu code (id, mã luật) — bộ đo so nhãn; không vào tin nhắn gửi model
+        # bản thử công tắc `sua_lich_hoan_tac`: lượt sửa đã đổi được lịch ⇒ thẻ mang nút "Hoàn tác" {nhan, ma} (cùng đối tượng với `thay_doi` — giao diện đọc ở đó)
+        nut = sl.nut_hoan_tac(khung, ngay_di, sua["thay_doi"]) if flags.sua_lich_hoan_tac else None
+        if nut:
+            lich["hoan_tac"] = nut
         for m in lt2.moi_muc(lich):  # câu cũ đã kiểm của cùng điểm ⇒ giữ, chỉ đổi mã nguồn sang số mới của điểm đó
             cu = sua["cau_cu"].get(m["id_diem"])
             if cu and m["nguon"] is not None:

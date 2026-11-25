@@ -192,17 +192,29 @@ def an_toan_vao_ghi_chu(trace: AnswerTrace) -> None:
         trace.notice = f"{an_toan} {trace.notice}" if trace.notice else an_toan
 
 
+def _dong_da_sua(trace: AnswerTrace, flags: AssistantFlags) -> tuple:
+    """Công tắc `sua_lich_hoan_tac`: các dòng \"đã làm\" (do code viết) của một lượt SỬA đã đổi được lịch đang lưu; () khi công tắc tắt, lượt không phải
+    lượt sửa, hoặc không dòng nào làm được — lượt như vậy không có gì để hoàn tác."""
+    if not getattr(flags, "sua_lich_hoan_tac", False) or trace.lich_luu is None or trace.lich_v2 is None:
+        return ()
+    return tuple(d["cau"] for d in trace.lich_v2["lich"].get("thay_doi") or () if d["duoc"])
+
+
 def luu_lich_cua_luot(store, conversation_id: str, trace: AnswerTrace, flags: AssistantFlags) -> None:
     """Sau lượt lịch bản 2 đạt: ghi bản lưu của cuộc. File tải về dựng từ bản lưu ⇒ câu an toàn của lượt phải nằm trong đó (review 19/11)."""
     from llm.len_ke_hoach import luu_sau_luot
     luu, an_toan = luu_sau_luot(trace, flags), an_toan_cua_luot(trace)
+    dong = _dong_da_sua(trace, flags) if luu is not None else ()  # lượt sửa đổi được lịch ⇒ kho giữ bản trước để hoàn tác một bước
     # lượt SỬA không đổi được gì (không có bản lưu mới) mà chính lượt đó có câu an toàn ⇒ giữ bản lưu cũ, chỉ thêm câu đó (review E 20/11)
     if luu is None and an_toan and trace.lich_luu is not None and trace.lich_v2 is not None and "thay_doi" in trace.lich_v2["lich"]:
         luu = dict(trace.lich_luu)
     if luu is not None:
         if an_toan:
             luu["an_toan"] = an_toan
-        store.luu_lich(conversation_id, luu)
+        if dong:
+            store.luu_lich(conversation_id, luu, truoc=trace.lich_luu, dong=dong)
+        else:
+            store.luu_lich(conversation_id, luu)
 
 
 def _start_conversation(request: Request, trace: AnswerTrace, metrics: dict, cau: str) -> str | None:
