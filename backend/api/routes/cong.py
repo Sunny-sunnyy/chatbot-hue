@@ -147,6 +147,8 @@ async def tinh_nang(request: Request):
         co["so_tay"] = True
     if getattr(flags, "ho_so_chu_de", False):  # bản thử hồ sơ theo chủ đề: khoá chỉ có khi cờ bật
         co["ho_so_chu_de"] = True
+        if getattr(flags, "chu_de_trang_chu", False):  # dải "Hồ sơ theo chủ đề" ở Trang chủ: tự ẩn khi `ho_so_chu_de: false` (kể cả gói deploy)
+            co["chu_de_trang_chu"] = True
     if flags.len_ke_hoach_v2:
         co["len_ke_hoach_v2"] = {"o_hien": list(flags.len_ke_hoach_o_hien), "so_ngay_toi_da": SO_NGAY_TOI_DA, "so_thich_toi_da": SO_THICH_TOI_DA,
                                  "so_thich_hien": list(flags.so_thich_hien)}  # loại < 4 điểm hoặc dưới sàn mô phỏng ⇒ không hiện
