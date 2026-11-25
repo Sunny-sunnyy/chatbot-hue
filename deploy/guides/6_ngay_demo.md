@@ -218,6 +218,10 @@ dặn "đẩy bản mới không tự chạy".
 Tắt một tính năng, hoặc đổi model viết: sửa `/srv/hue/cau_hinh/settings.yaml` rồi `dc restart app` (khoảng 13 giây; mất các cuộc đang mở). Đổi số
 trong `hue.env` hoặc nội dung `hue.khoa.env`: dùng `dc up -d app` — lệnh `restart` không nạp lại hai file đó.
 
+- **Lưu ý nếu bật `so_tay` hoặc `ho_so_chu_de` ở bản deploy** (`dong_goi.sh` mặc định ép tắt cả hai): hai đường `/api/so_tay` và `/api/ho_so` cũng đẩy
+  tiến độ từng mục theo luồng như `/api/chat/stream` ⇒ phải mở `/srv/hue/Caddyfile`, thêm `/api/so_tay` và `/api/ho_so` vào dòng `@nen not path`
+  (cạnh `/api/chat/stream`) rồi chạy `dc up -d --force-recreate caddy`, kẻo cửa vào gom nén tới khi xong cả bài mới hiện.
+
 ### 6.6 Hai nút khẩn cấp
 
 **Nút 1 — dừng máy** (trang ngừng ngay, không ai gọi được model qua trang nữa): lệnh `aws ec2 stop-instances` ở mục 6.1. Một dòng, làm được từ máy mình.

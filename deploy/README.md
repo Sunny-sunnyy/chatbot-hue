@@ -12,6 +12,13 @@ gõ theo guide. Phần đã chạy thật là phần chạy được ở máy: g
 MỘT máy ảo EC2 ở vùng Singapore chạy ba hộp Docker — cửa vào Caddy (HTTPS), ứng dụng hue_rag, chỉ mục Qdrant — và **chỉ bật quanh ngày demo / ngày chấm**.
 Model viết của bản deploy là `gpt-6-luna` của OpenAI, gọi bằng một khoá đặt trong file trên máy chủ; máy chủ không có quyền gọi model nào của AWS.
 
+## Vì sao không làm CI/CD tự động
+
+- **Ảnh mang file riêng tư nên không dựng được trên máy dựng của GitHub:** `deploy/docker/dung_anh.sh` đóng gói các file bảng lấy từ `data/` (`/app/DANH_SACH.txt`) vào ảnh và chạy cùng bản chụp chỉ mục Qdrant nên GitHub Actions không có đủ đầu vào để dựng ảnh.
+- **Repo công khai:** đặt runner tự cài trên máy EC2 để "push là chạy trên máy" là rủi ro bảo mật cho máy chủ và khoá.
+- **Máy chỉ bật quanh ngày demo và cần đường lùi chắc chắn:** máy tắt phần lớn thời gian nên không có máy luôn bật để nhận bản đẩy tự động; cập nhật bằng tay theo `guides/6_ngay_demo.md` mục 6.3 chạy đủ kiểm băm, kiểm file bảng, đối chiếu số điểm Qdrant rồi mới đổi bản, và giữ sẵn bộ file cũ ở `truoc/` để lùi trong khoảng nửa phút (mục 6.4).
+- **Nếu sau này muốn làm CI/CD tự động:** đi theo mẫu **OIDC xin quyền tạm của AWS ⇒ đẩy ảnh vào kho ảnh riêng (ECR) ⇒ gửi lệnh cập nhật qua SSM Run Command** (không cất khoá AWS dài hạn ở GitHub Secrets, không cài runner trên máy chạy app); điều kiện trước là tách các file bảng riêng tư ra khỏi ảnh (tải từ thùng S3 riêng tư lúc bật máy như bản chụp Qdrant).
+
 ## Thư mục
 
 | Thư mục | Là gì |

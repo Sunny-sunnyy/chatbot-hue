@@ -6,6 +6,8 @@ request_body {
 	max_size 12MB
 }
 # Nén trang / JS / CSS; KHÔNG nén luồng trả lời (/api/chat/stream) để chữ đi ra ngay, không bị gom.
+# Lưu ý khi bật `so_tay` hoặc `ho_so_chu_de` ở bản deploy (hiện `dong_goi.sh` ép tắt cả hai):
+# thêm `/api/so_tay` và `/api/ho_so` vào dòng `@nen not path` dưới rồi chạy `dc up -d --force-recreate caddy`, kẻo tiến độ từng mục bị gom lại.
 @nen not path /api/chat/stream
 encode @nen gzip
 reverse_proxy app:8000 {

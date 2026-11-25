@@ -20,7 +20,7 @@ Không dựng thêm tài nguyên nào. Guide này cho ba thứ:
 
 | Thứ | Ở đâu | Dùng lúc nào |
 |---|---|---|
-| Danh sách kiểm từ ngoài, 12 dòng tick | mục 6 | sau lần bật đầu (guide 4), sau mỗi lần cập nhật bản mới (guide 6 mục 6.3) |
+| Danh sách kiểm từ ngoài, 13 dòng tick | mục 6 | sau lần bật đầu (guide 4), sau mỗi lần cập nhật bản mới (guide 6 mục 6.3) |
 | Bảng "thấy gì ⇒ xem gì ⇒ làm gì" | mục 8 | khi có gì trông như hỏng |
 | Buổi diễn tập (khoảng một giờ, dưới 1 USD tiền máy) | mục 6b | một lần, vài ngày trước ngày cần dùng thật |
 
@@ -122,7 +122,18 @@ dc up -d app                                                        # tạo lạ
 ```
 
 Từ máy mình hỏi bốn câu bất kỳ trên trang. Mong: ba câu đầu trả lời; câu thứ tư hiện "Bạn đã dùng hết số lượt hỏi hôm nay. Vui lòng quay lại vào ngày
-mai." Rồi TRẢ LẠI trần cũ (bắt buộc — quên là cả buổi demo mỗi người chỉ hỏi được ba câu):
+mai."
+
+**Dòng 10b — giả `X-Forwarded-For` không lách được trần lượt** (chạy NGAY sau dòng 10, TRƯỚC khi xoá dòng `HUE_LUOT_MOI_NGAY=3`, lúc địa chỉ của bạn đang bị chặn 429 — không tốn thêm lượt model nào):
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' -X POST -H 'Content-Type: application/json' \
+  -H 'X-Forwarded-For: 1.2.3.4' -d '{"query": "Huế có gì?"}' "https://$SITE/api/chat"     # mong: 429
+```
+
+Mong: `429`. Ứng dụng chạy `--forwarded-allow-ips '*'` để nhận địa chỉ thật từ Caddy; phép kiểm này xác nhận Caddy ghi đè tiêu đề giả từ ngoài nên người dùng không đổi được IP bằng header **[đọc cấu hình, chưa kiểm trên AWS]**. Nếu ra `200` ⇒ DỪNG, kiểm lại `Caddyfile` và cổng 8000 của máy chủ.
+
+Rồi TRẢ LẠI trần cũ của dòng 10 (bắt buộc — quên là cả buổi demo mỗi người chỉ hỏi được ba câu):
 
 ```bash
 sed -i '/^HUE_LUOT_MOI_NGAY=3$/d' hue.env && dc up -d app && grep -c '^HUE_LUOT_MOI_NGAY=3$' hue.env     # mong: 0  (dòng thử đã mất; trần về như trước)
@@ -138,7 +149,7 @@ số phút từ lệnh bật máy tới câu trả lời đầu tiên — con s�
 **Dòng 12 — từ điện thoại, mạng di động.** Tắt Wi-Fi, mở `https://$SITE`, hỏi một câu. Mong: trang vừa màn hình, chữ chạy dần. Dòng này bắt loại lỗi mà
 thử từ cùng một mạng không thấy: tường lửa, chứng chỉ, tên miền chỉ phân giải được ở mạng nhà.
 
-Tick xong cả 12 dòng ⇒ ghi ngày giờ + mã commit của ảnh đang chạy (`grep HUE_GIT_SHA /srv/hue/hue.env`) vào sổ của mình.
+Tick xong cả 13 dòng (1–10, 10b, 11–12) ⇒ ghi ngày giờ + mã commit của ảnh đang chạy (`grep HUE_GIT_SHA /srv/hue/hue.env`) vào sổ của mình.
 
 ## 6b. Buổi diễn tập — "guide 5b" của dàn ý (nên làm một lần, vài ngày trước ngày cần dùng)
 
