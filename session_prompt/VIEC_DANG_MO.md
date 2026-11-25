@@ -21,7 +21,7 @@ Cập nhật: 14:03 25/11/2026 (giờ `date`; phiên điều phối viết gọn
 | **A** (cần 1 phiên khác đọc) | **Vòng cải tiến cách làm ngày 24/11 + tổng kết đợt thử 3 ngày (21–23/11):** xét 6 bẫy tối+đêm 24/11 (`STATUS_A.md` mục 5) và 3 con số cách làm ở `SO_CAI_TIEN_CACH_LAM.md`, ra ≤ 3 thay đổi (nếu đủ điều kiện lặp lần 2) và đóng đợt thử | Đã cập nhật `SO_CAI_TIEN_CACH_LAM.md`, một phiên khác đọc diff |
 | **D** | **Giáo trình — 1 việc nhỏ:** thêm 1 hàng "thử rồi bỏ" ở bài 23 "Đã so" + `PL_C` cho phép đo công cụ đọc tiếp & đường 2m (`data/x15_phan_ai_2026-11-23/b_mo_doc_tiep/KET_QUA.md`); một người kiểm đối chiếu số trước khi gộp | Đẩy nhánh `p9-d-giao-trinh` + phiên khác đối chiếu số |
 | **B** *(làm kèm khi chạm file)* | Sửa nợ nhỏ D nêu ở bài 44 / 43: 3 chú thích cũ (`full_corpus_prompt.py` gọi hai tính năng là "bản thử", `routes/ho_so.py` "5–9 lời gọi" ↔ 3–9, `so_tay.py:19-20` câu cũ về Thác Nhị Hồ); chú thích cũ ở `backend/config/settings.yaml`; hàng runbook 10 về khối "Lưu ý an toàn" hồ sơ (đã nhìn 23:28); nếu chạm bộ đệm hồ sơ: lưu ý ca `kiem_dan_y` tự chia dàn ý hỏng | Khi có việc chạm các file đó |
-| **E** *(sau buổi tự test, hỏi tiền trước)* | **Nợ trước deploy** (chỉ chạy MỘT lần trên bản deploy đứng yên, đường OpenAI `gpt-6-luna`, trong trần 2–2,5 USD còn lại): ô 41 câu khó 1 bên (ngưỡng ≤ 3 lệch so với 37/41) + 1 lượt thật ngắn cụm sửa lịch mức 1 và "Vì sao" | Đủ báo cáo trước khi đóng gói deploy |
+| **E** *(sau buổi tự test, hỏi tiền trước)* | **Nợ trước deploy** (chỉ chạy MỘT lần trên bản deploy đứng yên, đường OpenAI `gpt-6-luna`, trong phần còn lại của trần 2–2,5 USD — đã dùng 0,66 USD ở đo bù 23/11): ô 41 câu khó 1 bên (ngưỡng ≤ 3 lệch so với 37/41) + 1 lượt thật ngắn cụm sửa lịch mức 1 và "Vì sao" | Đủ báo cáo trước khi đóng gói deploy |
 
 ### 3. Cách đo & Liều test đang áp dụng (chủ dự án 22:48 21/11 + 16:19 23/11)
 - Mỗi thay đổi = ca của hành vi mới (đỏ trước khi sửa) + file test CHẠM đường code đổi; cả bộ test nhiều nhất MỘT lượt mỗi ngày lúc code đứng yên (không chạy lại bảng "file đọc cấu hình" cho từng công tắc).
@@ -31,7 +31,7 @@ Cập nhật: 14:03 25/11/2026 (giờ `date`; phiên điều phối viết gọn
 ### 4. Danh sách nhánh đang giữ trên `origin`
 - **Chờ chủ dự án chọn:** `origin/thu-b-hoan-tac`, `origin/thu-c-hoan-tac`, `origin/thu-c-trang-chu-chu-de`.
 - **Hồ sơ giữ nguyên, KHÔNG gộp:** `origin/thu-b-mo-doc-tiep`, `origin/thu-b-ba-duong-tim`, `origin/thu-b-dem-loi-dan`, `origin/thu-c-khung-truoc`, `origin/p9-b-dem-y-go-tat-2`, `origin/p9-c-ve-loi-nho`, `origin/p9-c-sua-2-het-vong`, `origin/p9-b-vong-cuoi-chu-2`, `origin/p9-c-lich-tien-ve`, `origin/p9-c-s09-luu-y-an-toan`, `origin/p9-e-chi-sang-len-ke-hoach`.
-- **Đã gộp vào `main` (chờ chủ dự án duyệt `!` khi muốn xoá):** các nhánh `p9-*`, `p12-*`, `p13-*`, `p15-*`, `kho-*`, `thu-b-so-tay`, `thu-c-so-tay`, `thu-b-ho-so-chu-de`, `thu-c-ho-so-chu-de`.
+- **Đã gộp vào `main` (chờ chủ dự án duyệt `!` khi muốn xoá):** các nhánh đã gộp thuộc nhóm `p9-*`, `p12-*`, `p13-*`, `p15-*`, `kho-*` (lọc bằng `git branch -r --merged origin/main`, trừ các nhánh hồ sơ giữ nguyên ở mục trên) cùng `thu-b-so-tay`, `thu-c-so-tay`, `thu-b-ho-so-chu-de`, `thu-c-ho-so-chu-de`.
 
 ## B. Đổi TẠM model viết sang Claude Sonnet 5.5 trên Amazon Bedrock (chủ dự án chốt 09:41 21/11/2026) — ĐANG CHẠY ở máy demo
 - Đường về `gpt-6-luna` (OpenAI): sửa 1 dòng `provider: bedrock` ⇒ `openai` trong `backend/config/settings.yaml` (`guides/DOI_MODEL_VIET.md`), chỉ đổi khi chủ dự án nói "chuyển về luna".
