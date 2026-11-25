@@ -19,7 +19,8 @@
 - **Chuẩn hoá 1–2 dòng docstring/comment nhỏ** còn dư từ đợt rà B (`ho_so_chu_de` / `sua_lich_hoan_tac`) nếu có dịp chạm file.
 
 ### A.4. Bản thử trên nhánh — trạng thái
-- **Đã gộp lên `main` (25/11):** `p15-b-hoan-tac-mo` + `p15-c-hoan-tac-mo` · `p15-b-chu-de-trang-chu` + `p15-c-trang-chu-chu-de-mo` · `p15-b-chuyen-ve-luna` · `p15-c-deploy-4-viec` · `p9-d-giao-trinh-2511` · `p15-a-vong-cai-tien-2511` · và đợt 3 bản sửa sau tự test của chủ dự án (17:13 25/11: gỡ `vi_sao`, ẩn bong bóng dẫn web lặp, sửa lặp `bỏ lăng`).
+- **Đã gộp lên `main` (25/11):** `p15-b-hoan-tac-mo` + `p15-c-hoan-tac-mo` · `p15-b-chu-de-trang-chu` + `p15-c-trang-chu-chu-de-mo` · `p15-b-chuyen-ve-luna` · `p15-c-deploy-4-viec` · `p9-d-giao-trinh-2511` · `p15-a-vong-cai-tien-2511` · đợt 3 bản sửa sau tự test của chủ dự án (`ea96e47c`) · `p15-e-bao-cao-bo-kin-2511` + `p15-d-giao-trinh-bo-kin-2511` (báo cáo & giáo trình bộ câu kín) · `p15-e-gon-gioi-thieu` (`bad77d14`) · `p15-e-anh-user-2511` (`bee77a0a`) · `p15-e-readme-2511` (`d2ebb8f8`).
+- **Đang chờ review chéo & gộp đầu phiên sau:** `origin/p15-d-don-giao-trinh-2511` (`06670463` — `d` đã dọn xong 8 file `bai_hoc/giao_trinh/`).
 - **Đóng, KHÔNG gộp (giữ nhánh để đối chiếu):** `origin/thu-b-mo-doc-tiep` (tỉ lệ đạt bằng mốc 7/12 = 58,3%) · `origin/thu-c-khung-truoc` (chủ dự án chọn bỏ).
 
 ## B. Chỉ số nền & Trần OpenAI của nhóm
