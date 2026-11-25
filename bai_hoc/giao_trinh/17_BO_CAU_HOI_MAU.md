@@ -1,6 +1,6 @@
 # Bài 17 — Bộ 176 câu hỏi mẫu: đề kiểm tra của hệ thống
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài) · bản 17:11 22/11: cấu tạo bộ câu đọc từ chương trình đo; các số đo lấy từ các báo cáo từ 24/10 tới 12/11, model viết gpt-6-luna; người viết không mở nội dung bộ câu và không chạy lại phép đo nào.*
+*Cập nhật 20:30, ngày 25/11/2026 · cập nhật trạng thái các bộ câu kín của phần trợ lý sau lượt đo 25/11/2026 trên `gpt-6-luna` (bài 32, 40) · mốc trước: 20:46 23/11/2026 (số kho 269 bài; cấu tạo bộ câu đọc từ chương trình đo; các số đo lấy từ các báo cáo từ 24/10 tới 12/11, model viết gpt-6-luna; người viết không mở nội dung bộ câu và không chạy lại phép đo nào).*
 
 **Bài trước đã biết:** đường hỏi đáp: tìm, viết, kiểm. Ở mỗi bài đều có những dòng "đã thử cách này, điểm tăng bao nhiêu, bỏ vì mấy câu tệ đi".
 **Bài này thêm:** những con số đó đo trên cái gì. Trước khi chấm được thì phải có đề. Bài này nói về đề; hai bài sau nói về cách chấm.
@@ -191,7 +191,7 @@ Soát đáp án mẫu của các câu liên quan, sửa nếu lệch. Sửa đá
 | Bộ chạy nhanh | 10 câu lấy từ 176 câu | kiểm nhanh sau một sửa nhỏ | — |
 | Câu bị bỏ khỏi số chính | 29 câu "không tự nhiên" | số chính sát với câu người dùng thật | — |
 | Bộ an toàn | 32 câu (28 kho có, 4 kho không có) + 15 câu đối chứng | đo loại lỗi nặng nhất | — |
-| Bộ cất riêng | 36 câu và 40 câu, đi kèm bộ 176 câu; cả hai đã dùng | số không bị học tủ | theo sổ hiện trạng, các bộ câu kín của phần trợ lý chưa chạy ở lượt đo cuối 18/11 |
+| Bộ cất riêng | 36 câu và 40 câu, đi kèm bộ 176 câu; cả hai đã dùng | số không bị học tủ | ở mốc 18/11, các bộ câu kín của phần trợ lý chưa chạy (`NOT RUN`); ngày 25/11, các bộ kín hỏi đáp và hội thoại (theo ngày, ngoài phạm vi, định tuyến – xã giao, chuỗi hỏi tiếp) đã chạy một lần trên `gpt-6-luna`, còn bộ kín sửa lịch vẫn chưa chạy được do bảng điểm đã đổi (bài 32) |
 | Dấu của bản bộ câu | mỗi bản có một dấu vân tay | số chấm bằng bản cũ không so thẳng với số chấm bằng bản mới | — |
 
 ## Quyết định nhỏ hơn
@@ -231,5 +231,6 @@ Soát đáp án mẫu của các câu liên quan, sửa nếu lệch. Sửa đá
 
 - Soát đáp án mẫu sau lần sửa kho 22/11 (9 mẫu số cũ, 176 câu, 2 câu chạm, 0 câu lệch): phiên đo đếm 12:27 22/11/2026, một phiên, không tốn tiền; phiên điều phối chuyển lời [đã chạy; người viết chép từ tin, chưa tự mở kết quả].
 - Quét số cũ 20:46 23/11/2026: bảng "Nếu… thì sao" hàng "kho thêm bài mới": "kho nay có 267 bài" ⇒ 269. Lệnh: `corpus.file_count` / `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269 / 9533) và đếm dòng `: true` / `: false` dưới `assistant:` của `backend/config/settings.yaml` (57 / 6), chạy 20:40 23/11/2026 trên cây chính `03229b64` [đã chạy].
+- Cập nhật 20:30 25/11/2026: trạng thái bộ câu kín của phần trợ lý ở bảng "Cấu hình đang chạy" theo `report_agent/2026-11-25/E_BO_CAU_KIN_LUNA_2511.md` (chạy 25/11 trên `main` `ea96e47c`, `gpt-6-luna`; Mốc 1 18/11 là `NOT RUN`; Mốc 2 25/11 chạy K, S ×2, T, C kín, còn L kín `NOT RUN`) [đã duyệt].
 
 </details>
