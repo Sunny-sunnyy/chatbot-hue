@@ -1,13 +1,13 @@
 # Bài 35 — Trang web và máy chủ: ai gửi gì cho ai
 
-*Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · bài Khám phá căn đều từ 641 px (21:49 23/11, nửa để tra) · lượt cả bộ test gần nhất xong 01:00 24/11 trên đúng bản code này: 96 file, 4 bỏ vì cần khoá OpenAI, 92 chạy, 2.325 ca đạt, không file nào đỏ (bài 38) · mốc trước: Nguồn · đã áp biên bản kiểm độc lập 01:15 24/11 · 06:35 24/11: áp biên bản kiểm độc lập của đợt gom (cụm lượt cả bộ test).*
+*Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · bài Khám phá căn đều từ 641 px (21:49 23/11, nửa để tra) · lượt cả bộ test gần nhất xong 01:00 24/11 trên đúng bản code này: 96 file, 4 bỏ vì cần khoá OpenAI, 92 chạy, 2.325 ca đạt, không file nào đỏ (bài 38) · mốc trước: Nguồn · đã áp biên bản kiểm độc lập 01:15 24/11 · 06:35 24/11: áp biên bản kiểm độc lập của đợt gom (cụm lượt cả bộ test). · 00:21 25/11: thêm hai tính năng mới của tối 24/11 — sổ tay cho chuyến đi (bài 43), hồ sơ theo chủ đề (bài 44): năm đường gọi model, bảng đường gọi*
 
 **Bài trước đã biết:** giao diện chạy trong trình duyệt, máy chủ chạy ở máy dự án, chữ được gửi dần, cuộc trò chuyện nằm trong bộ nhớ của máy chủ (bài 6); model viết gửi chữ một lần (bài 33).
 **Bài này thêm:** giao diện gọi máy chủ qua những đường nào; trên đường gửi dần có những loại tin gì và giao diện làm gì với từng loại; máy chủ nhận ra "cùng một cuộc trò chuyện" bằng cách nào; hai lớp chặn để chữ model viết không làm trang tải thứ lạ; và lớp nhìn mới của trang được dựng, được kiểm thế nào.
 
 ## Ý chính
 
-- Giao diện nói chuyện với máy chủ qua **khoảng 18 đường gọi**; chỉ ba đường gọi model (hai cho ô chat, một cho ảnh), còn lại chỉ đọc dữ liệu đã có. Đường báo tình trạng **chỉ biết tình trạng lúc bật** (đã thử: Qdrant ngừng giữa chừng thì nó vẫn báo đủ).
+- Giao diện nói chuyện với máy chủ qua **khoảng 21 đường gọi**; chỉ năm đường gọi model (hai cho ô chat, ảnh, sổ tay, hồ sơ theo chủ đề), còn lại chỉ đọc dữ liệu đã có. Đường báo tình trạng **chỉ biết tình trạng lúc bật** (đã thử: Qdrant ngừng giữa chừng thì nó vẫn báo đủ).
 - Trên đường gửi dần, máy chủ gửi **từng loại tin có tên**: trạng thái, chữ, thay chữ, nguồn, ghi chú, mục web, các tin của lịch, thẻ hỏi lại, lỗi, xong. Tin "lỗi" làm giao diện xoá chữ đã hiện (nếu có) và hiện nút "Thử lại".
 - Máy chủ nhận ra một cuộc trò chuyện nhờ **một mã ngẫu nhiên trong cookie** mà chương trình của trang không đọc được. Lịch sử nằm ở máy chủ, không ở trình duyệt. Mỗi lần tải trang, giao diện xin một cuộc mới.
 - Chữ model viết đi qua **hai lớp chặn**: giao diện lọc chữ theo một danh sách nhãn HTML cho phép trước khi vẽ, và trang có một chính sách cấm tải bất cứ thứ gì từ máy khác (trừ ô nền bản đồ).
@@ -35,7 +35,7 @@
 
 ## Một đường gọi là một địa chỉ trên máy chủ
 
-Mỗi khi trang cần gì, nó gửi một yêu cầu tới một đường gọi của máy chủ rồi chờ; câu trả lời thường là JSON, riêng ô chat là một luồng tin gửi dần. Chỉ ba đường gọi model (ô chat gửi dần, ô chat trả cả câu, hỏi bằng ảnh); các đường còn lại đọc dữ liệu đã có cho trang hoặc làm việc khác (bảng đủ ở nửa để tra). Đường nào gửi lên dữ liệu thì chỉ nhận đúng khuôn đã định (ví dụ ở "Quyết định nhỏ hơn").
+Mỗi khi trang cần gì, nó gửi một yêu cầu tới một đường gọi của máy chủ rồi chờ; câu trả lời thường là JSON, riêng ô chat, sổ tay, hồ sơ là luồng tin gửi dần. Chỉ năm đường gọi model (ô chat gửi dần, ô chat trả cả câu, hỏi bằng ảnh, sổ tay, hồ sơ; bài 43, 44); các đường còn lại đọc dữ liệu đã có cho trang hoặc làm việc khác (bảng đủ ở nửa để tra). Đường nào gửi lên dữ liệu thì chỉ nhận đúng khuôn đã định (ví dụ ở "Quyết định nhỏ hơn").
 
 ## Trên đường gửi dần, mỗi tin có một tên, và giao diện vẽ theo tên
 
@@ -61,13 +61,13 @@ Luồng đứt mà chưa có tin "xong" thì giao diện coi như lỗi. Bấm "
 
 Cookie này có ba giới hạn đặt sẵn: chương trình của trang **không đọc được** nó; trình duyệt chỉ gửi nó cho các đường gọi dữ liệu của chính máy chủ này (các địa chỉ bắt đầu bằng /api), không gửi khi yêu cầu đến từ trang khác; nó hết hạn sau 30 phút. Cookie chỉ mang mã, không mang chữ nào của cuộc trò chuyện.
 
-Mỗi lần trang được tải (hay tải lại), giao diện gọi đường "cuộc trò chuyện mới": máy chủ xoá cuộc cũ khỏi bộ nhớ và đặt một mã mới (mã chỉ thành một cuộc khi có lượt hỏi đầu: "Quyết định nhỏ hơn").
+Mỗi lần trang được tải (hay tải lại), giao diện gọi đường "cuộc trò chuyện mới": máy chủ xoá cuộc cũ khỏi bộ nhớ và đặt một mã mới.
 
 ## Chữ model viết đi qua hai lớp chặn trước khi lên màn hình
 
 Câu trả lời là chữ có định dạng (Markdown: in đậm, danh sách, bảng, link) do model viết; trang đổi nó thành HTML để vẽ. Nếu model, vì một chữ lạ chen vào lời dặn (bài 37), viết ra một nhãn ảnh trỏ tới máy khác, trình duyệt sẽ tự tải ảnh đó, và địa chỉ ảnh có thể mang chữ của cuộc trò chuyện ra ngoài (lập luận, không phải số đo).
 
-- **Lớp một, ở giao diện:** trước khi vẽ, chữ được lọc theo một **danh sách cho phép**: chỉ các nhãn Markdown thường tạo ra (đoạn, đậm, nghiêng, danh sách, bảng, tiêu đề, link…). Không có nhãn ảnh. Chỗ duy nhất được mang địa chỉ là địa chỉ của link, và link chỉ mở khi người dùng bấm, ở tab mới. Mục web lọc chặt hơn ("Quyết định nhỏ hơn").
+- **Lớp một, ở giao diện:** trước khi vẽ, chữ được lọc theo một **danh sách cho phép**: chỉ các nhãn Markdown thường tạo ra (đoạn, đậm, nghiêng, danh sách, bảng, tiêu đề, link…). Không có nhãn ảnh. Chỗ duy nhất được mang địa chỉ là địa chỉ của link, và link chỉ mở khi người dùng bấm, ở tab mới.
 - **Lớp hai, ở trình duyệt:** máy chủ gửi kèm trang một chính sách chặn tải: chương trình, kiểu chữ, ảnh chỉ được tải từ chính máy chủ; không chương trình viết lẫn trong trang; không trang nào được nhúng trang này vào trong nó. Hai ngoại lệ có ghi lý do (nửa để tra): ảnh xem trước của ảnh người dùng vừa chọn, và ô nền bản đồ.
 
 ## Lớp nhìn mới chỉ đổi bảng kiểu và hình vẽ, và được kiểm bằng ảnh chụp
@@ -76,7 +76,6 @@ Trình duyệt vẽ trang từ ba thứ: HTML (chữ, nút, ô nhập), chương
 
 - **Một bộ biến dùng chung:** mỗi màu, bo góc, bóng, cỡ chữ đặt tên một lần; các trang gọi theo tên. Cỡ chữ trên màn hình lấy từ một thang chín bậc.
 - **Con sông và bố cục theo khung nhìn:** con sông là hình vẽ bằng đường cong nhóm tự vẽ, ảnh sông Hương nằm trong dải sông, sáu bến và con đò đặt theo đường cong đó. Màn đầu cao bằng khung nhìn trừ thanh trên (không thấp hơn 520, không cao hơn 800 điểm ảnh), nét sông co theo; màn hẹp thì xếp dọc. Thấp hơn 869 px (gồm máy demo 1536 × 695) thì bến chỉ còn tên, vì dòng mô tả chạm ảnh sông.
-- **Giảm chuyển động:** máy bật tuỳ chọn này thì nét sông đứng yên, không có con đò; không bật thì có nút "Dừng chuyển động".
 
 Cách kiểm trước khi gộp (ảnh, kịch bản, tương phản) và cách lùi về giao diện cũ: quyết định 4 và mục "Đã so".
 
@@ -201,6 +200,10 @@ Khung nhìn thấp hơn 869 px thì hình sông bị nén dọc; dòng mô tả 
 | hỏi bằng ảnh | gửi lên | có | nút gửi ảnh (bài 26) |
 | tính năng ảnh có bật không | lấy về | không | có ở máy chủ; giao diện nay đọc danh sách tính năng thay cho đường này |
 | tải lịch thành PowerPoint | lấy về | không | thẻ lịch (bài 30) |
+| dựng sổ tay cho chuyến đi (máy demo) | gửi lên, kết quả gửi dần | có | nút "Sổ tay cho chuyến đi" dưới thẻ lịch; máy chủ tự lấy lịch đang lưu (bài 43) |
+| danh sách chủ đề (máy demo) | lấy về | không | dải "Đọc theo chủ đề" ở trang Khám phá, lưới chủ đề (bài 44) |
+| dựng hồ sơ một chủ đề (máy demo) | gửi lên, kết quả gửi dần | có | trang hồ sơ; chỉ nhận mã một chủ đề trong danh sách (bài 44) |
+| bản tóm tắt "Vì sao trả lời vậy?" (máy demo) | lấy về | không | nút dưới câu trả lời (bài 42) |
 | danh sách bài · một bài | lấy về | không | trang Khám phá, Trang chủ |
 | báo thông tin chưa đúng | gửi lên | không | nút ở trang bài Khám phá; chỉ ghi mã bài vào sổ |
 | đánh giá một lượt (thích, không thích) | gửi lên | không | có ở máy chủ; giao diện hiện không gọi |
@@ -281,6 +284,7 @@ Khung nhìn thấp hơn 869 px thì hình sông bị nén dọc; dòng mô tả 
 
 ## Chi tiết để tra
 
+- Chuyển từ nửa để hiểu 25/11 (không đổi nội dung; nhường chỗ cho hai đường gọi model mới): mục "Máy chủ nhận ra một cuộc…", sau "đặt một mã mới": (mã chỉ thành một cuộc khi có lượt hỏi đầu: "Quyết định nhỏ hơn"). Mục "Chữ model viết…", cuối gạch "Lớp một": Mục web lọc chặt hơn ("Quyết định nhỏ hơn"). Mục "Lớp nhìn mới…", gạch thứ ba: **Giảm chuyển động:** máy bật tuỳ chọn này thì nét sông đứng yên, không có con đò; không bật thì có nút "Dừng chuyển động".
 - Việc tab mở sau xoá cuộc trò chuyện và lịch của tab mở trước đã được xác nhận bằng một lượt thử thật ở lượt kiểm chốt trưa 22/11.
 - Mã cuộc trò chuyện: 16 byte ngẫu nhiên viết thành chữ; mã lạ hoặc hết hạn thì máy chủ cấp mã mới và đặt lại cookie. Cookie đi theo cả phản hồi lỗi, để lượt đầu lỗi không để lại cuộc mồ côi.
 - Đường ô chat gửi dần: lỗi trước khi mở luồng (bước tìm hay model viết chưa sẵn sàng) thì trả JSON lỗi; từ lúc mở luồng, xếp loại câu và tìm chạy bên trong luồng, nên Qdrant lỗi giữa lượt thành một tin "lỗi" mang câu "Hệ thống tra cứu tạm thời không khả dụng.".
@@ -288,7 +292,7 @@ Khung nhìn thấp hơn 869 px thì hình sông bị nén dọc; dòng mô tả 
 - Thứ tự số ở dòng "Nguồn" đánh theo lần xuất hiện đầu tiên của mã trong câu trả lời.
 - Đường đánh giá một lượt (khi được gọi) chỉ ghi một dòng sổ: mã lượt ngẫu nhiên, tuyến, kết cục, số nguồn, đánh giá; không chữ, không mã cuộc. Đường báo thông tin chưa đúng chỉ ghi mã bài.
 - Trang mô tả các đường gọi tự sinh (`/docs`) còn mở khi chạy trên máy; thiết lập lúc chạy `HUE_TAT_DOCS` tắt nó.
-- Khi bộ giới hạn lượt bật, ba đường gọi model và đường tải PowerPoint bị đếm theo địa chỉ mạng (bài 37).
+- Khi bộ giới hạn lượt bật, năm đường gọi model và đường tải PowerPoint bị đếm theo địa chỉ mạng (bài 37); một lần dựng sổ tay hay hồ sơ tính một lượt dù gọi model nhiều lần, hồ sơ trả từ bộ nhớ cũng tính (đọc từ chương trình; bài 43, 44).
 - Hai tab (chi tiết của quyết định 1): mở trang ở tab thứ hai thì câu hỏi tiếp ở tab thứ nhất được trả lời như câu đầu của một cuộc mới (không còn nhớ câu trước, lịch đã lập cũng mất, nút tải PowerPoint báo hết hạn); từ đó hai tab dùng chung một cuộc (suy từ chương trình).
 - Giới hạn thứ tư của cookie, "chỉ gửi qua kết nối mã hoá", để tắt khi chạy trên máy vì trang trên máy mở bằng địa chỉ không mã hoá; bật bằng thiết lập lúc chạy `HUE_COOKIE_SECURE` (bài 37).
 - Hai ngoại lệ của chính sách chặn tải: ảnh người dùng vừa chọn để gửi (trình duyệt tự tạo bản xem trước, không tải từ đâu) và, vì tính năng bản đồ đang bật, ô nền bản đồ từ một máy chủ bản đồ công cộng. Danh sách thứ trang không được tự tải từ máy khác khi hiện chữ, theo vòng rà bảo mật: ảnh, nền, kiểu chữ có địa chỉ, ô nhập dạng ảnh, biểu mẫu.
@@ -359,4 +363,5 @@ Khung nhìn thấp hơn 869 px thì hình sông bị nén dọc; dòng mô tả 
 - Quét số cũ 20:46 23/11/2026: chỉ dòng Cập nhật ("khớp hệ thống 16:21 23/11 (51 tính năng mở, 7 tắt)" ⇒ 57 mở, 6 tắt, kho 269); câu "lượt cả bộ test có đủ cả ba" ở "Giới hạn đã biết" nói về ba bản sửa sáng 23/11, vẫn đúng với lượt 20:09, giữ. Lệnh: `corpus.file_count` / `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269 / 9533) và đếm dòng `: true` / `: false` dưới `assistant:` của `backend/config/settings.yaml` (57 / 6), chạy 20:40 23/11/2026 trên cây chính `03229b64` [đã chạy].
 - **Đợt 00:44 24/11/2026 (cụm G3; người viết đọc cây chính `origin/main` `429b2046`).** Căn đều: `git show f340c859` (21:26; gộp `8702829b` 21:49 23/11) — `frontend/src/kp.css` dòng 68–70 (chú thích "Chủ dự án 21:10 23/11/2026: chữ thân bài căn đều hai lề như trong Word, cho mọi bài. Chỉ ĐOẠN VĂN … ở cột hẹp của điện thoại, tiếng Việt không ngắt giữa từ nên căn đều để lại khoảng trắng lỗ chỗ ⇒ dưới 641 px giữ căn trái" + `@media (min-width: 641px) { .kp2-bai-than > p { text-align: justify; } }`); mốc 640 có sẵn: cùng file dòng 87 (`@media (max-width: 640px)`) [code]. Lời commit: "body paragraphs are justified from 641 px up; phones keep left alignment; headings, lists and tables are untouched … measured alignment per element type" ở 1536x695 và 390 trên máy chủ tạm của nhánh [chép]. Lời chủ dự án: `data/loi_user/2026-11-23.md` dòng 21:10 [riêng tư; chép từng chữ]. Thẻ chọn tên bỏ 21:29: bài 26 khối Nguồn đợt 24/11. Nút .txt bỏ: bài 30. Nửa để hiểu không đổi chữ ngoài dòng Cập nhật (15.902 ⇒ 15.896). Dòng Cập nhật trước: "Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · bản 17:40: bảng lỗi bắt trước gộp: mốc chữ in to hơn từ 16:58 (bài 30); bài không đổi theo cụm buổi tối 16:38–17:35 (đã dò lúc 18:32 23/11) · các lần sửa trước: Nguồn.".
 - **Áp biên bản kiểm độc lập 01:15 24/11/2026** (`data/hoc_cung_D/kiem/dot_2411_k2_giao_dien_anh_kiem.md` mục "Bài 35" hàng 35.7 "ĐÚNG — thiếu ý"; báo cáo `data/hoc_cung_D/viet/dot_2411_a1_ap_giao_dien_anh.md` [riêng tư]). "Chủ dự án chưa nói lại về phần điện thoại": `data/loi_user/2026-11-23.md` dòng 21:10 – 23:00 chỉ có câu hỏi ý kiến 21:10 [riêng tư; đã đọc]. Giữ độ dài: dòng Cập nhật rút chữ; "máy chủ chạy trên máy của dự án" ⇒ "máy chủ chạy ở máy dự án". Nửa để hiểu 15.896 ⇒ 15.890 ký tự (nợ cũ, vẫn quá 13.000). Dòng Cập nhật trước: "Cập nhật 00:44, ngày 24/11/2026 · khớp hệ thống 00:30 24/11 (58 tính năng mở, 6 tắt, kho 269 bài / 9.533 đoạn, bảng điểm bản 16) · bảng kiểu mới: đoạn văn bài Khám phá căn đều hai lề từ 641 px (21:49 23/11; chỉ ở nửa để tra) · lượt cả bộ test gần nhất 20:09 23/11, TRƯỚC các bản gộp này · các mốc trước: Nguồn."
+- **Gom bài 43, 44 vào bài 35 (00:21 25/11/2026, người gom g7; chỉ sửa vài câu, mốc khớp của cả bài giữ 00:30 24/11).** Đếm lại các đường gọi trên cây chính `6cd8a35a`: `backend/api/app.py` dòng 249–259 (mười nhóm đường được đăng ký) và các dòng `@router.` của `backend/api/routes/` (`chat.py` 3, `anh.py` 2, `cong.py` 7, `xuat.py` 1, `so_tay.py` 1 — dòng 163 `POST /api/so_tay`, `ho_so.py` 2 — dòng 39 `GET /api/ho_so/chu_de`, dòng 185 `POST /api/ho_so`), `backend/api/feedback.py` 2, `theo_doi.py` 1, `vi_sao.py` 1 (dòng 284, `GET /api/vi_sao/{turn_id}`; chú thích đầu file: "KHÔNG có model nào được gọi ở đây"), `health.py` 1 ⇒ 20 đường `/api` + `/health` = 21 [code, đã chạy grep]; "khoảng 18" cũ đếm 22/11, trước đường "Vì sao" (24/11) và ba đường của sổ tay, hồ sơ. Đường gọi model: năm đường trong `DUONG_TINH_LUOT` của `backend/api/gioi_han.py` dòng 20 (chú thích "các đường gọi model (tốn tiền)") [code]; sổ tay và hồ sơ trả luồng gửi dần: `so_tay.py` dòng 180, `ho_so.py` dòng 200, 207 (`text/event-stream`) [code]; bài 43 mục "Người dùng bấm một nút…", bài 44 mục "Người dùng chọn một chủ đề…". Bảng "Mọi đường gọi của máy chủ": bốn hàng mới (sổ tay, danh sách chủ đề, dựng hồ sơ, và đường "Vì sao trả lời vậy?" vốn thiếu từ 24/11 — bảng ghi "mọi đường"); "máy chủ tự lấy lịch đang lưu" theo bài 43, "chỉ nhận mã một chủ đề" theo bài 44 mục "Chương trình dựng chủ đề…". Gạch giới hạn lượt của "Chi tiết để tra": "một lượt cho cả lần dựng" theo bài 44 quyết định 6 và "Giới hạn đã biết" (hồ sơ từ bộ nhớ cũng tính, đọc từ chương trình); với sổ tay theo `gioi_han.py` (mỗi yêu cầu gửi lên một đường trong danh sách tính một lượt) và chú thích `backend/config/settings.yaml` dòng 100 ("tính MỘT lượt") [code]. Đo nửa để hiểu (tới "## Cấu hình đang chạy"): 16.054 ⇒ 16.025 [đã chạy] (bài vượt trần 13.000 từ trước); để không dài thêm, ba vế chuyển nguyên văn xuống "Chi tiết để tra". Các câu sửa chưa có người thứ hai đọc.
 </details>
