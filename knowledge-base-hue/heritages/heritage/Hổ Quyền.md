@@ -125,3 +125,8 @@ Trải qua hơn một thế kỷ dầm mưa dãi nắng và bom đạn chiến t
   - Không trèo qua lan can bảo vệ hoặc nhảy xuống lòng chảo đấu trường; không chui vào bên trong các hốc chuồng nhốt hổ;
   - Tại Điện Voi Ré (chốn thờ tự tâm linh), du khách cần giữ thái độ tôn nghiêm, đi nhẹ nói khẽ, không xả rác và không chạm tay vào các đồ tự khí cổ;
   - Không gian tham quan chủ yếu là ngoài trời, du khách nên mang theo mũ nón, giày thể thao đi bộ thoải mái và nước uống khi tham quan vào mùa hè.
+- **Giờ mở cửa:** Di tích lộ thiên ngoài trời, mở tham quan tự do vào ban ngày (các nguồn du lịch thường ghi khung tham khảo khoảng 07:00 – 17:00). Đôi khi cổng chính có thể đóng, du khách có thể gọi nhân viên bảo vệ gần đó mở cửa; thời gian tham quan có thể điều chỉnh theo điều kiện thời tiết hoặc lịch trùng tu của ban quản lý.
+
+## Nguồn dữ liệu
+
+- Thông tin giờ mở cửa và lưu ý tiếp cận di tích ngoài trời tổng hợp từ các nguồn du lịch công khai tại Huế ngày 26/11/2026 (di tích lộ thiên không bán vé cố định, giờ tham khảo ban ngày và có thể thay đổi khi trùng tu hoặc thời tiết xấu).

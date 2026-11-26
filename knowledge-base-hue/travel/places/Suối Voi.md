@@ -89,3 +89,8 @@ Trong không gian du lịch sinh thái và cảnh quan vùng nam Thừa Thiên H
 - **Tránh nhầm lẫn thông tin bán vé và dịch vụ:** Hiện nay Dự án Khu du lịch Suối Voi đang trong quá trình rà soát xử lý thu hồi, các công trình dịch vụ chuyên nghiệp chưa đi vào hoạt động. Du khách không nên chuyển tiền đặt tour hoặc mua vé tham quan trực tuyến qua các trang mạng trung gian không rõ nguồn gốc. Nếu gặp các đối tượng chặn đường thu phí tự phát, cần yêu cầu giải thích căn cứ pháp lý hoặc phản ánh kịp thời qua đường dây nóng của Ủy ban nhân dân xã Chân Mây – Lăng Cô và Trung tâm Giám sát, điều hành đô thị thông minh thành phố Huế (Hue-S).
 - **Chuẩn bị đồ dùng cá nhân:** Du khách nên mang giày lội suối có độ bám cao hoặc dép có quai hậu chống trơn, mang theo áo phao riêng, nước uống, thuốc xịt côn trùng, kem chống nắng và một bộ quần áo khô để thay sau khi tắm.
 - **Kiểm tra thông tin trước ngày khởi hành:** Luôn theo dõi sát sao dự báo thời tiết thủy văn khu vực thành phố Huế, đặc biệt là các thông tin cảnh báo mưa lớn tại vùng núi Bạch Mã và Phú Lộc; tuyệt đối không khởi hành nếu thời tiết có dấu hiệu chuyển mưa giông hoặc áp thấp nhiệt đới.
+- **Giờ mở cửa:** Hiện không có đơn vị vận hành thương mại hay khung giờ mở cửa cố định (dự án khu du lịch đang đình trệ và thuộc diện rà soát thu hồi). Nếu tự túc tham quan, du khách chỉ nên đi vào ban ngày trong mùa khô (khoảng 08:00 – 17:00 để bảo đảm đủ ánh sáng và an toàn khi di chuyển dưới suối) và tuyệt đối tránh ngày mưa giông hoặc mùa mưa bão.
+
+## Nguồn dữ liệu
+
+- Hiện trạng không vận hành thương mại theo rà soát dự án mốc 09/2026 trong bài; khung giờ tham khảo ban ngày (08:00 – 17:00) tổng hợp từ khuyến nghị an toàn du lịch sinh thái suối thác ngày 26/11/2026.

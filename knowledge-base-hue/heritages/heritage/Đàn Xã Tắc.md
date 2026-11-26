@@ -148,3 +148,8 @@ Công tác bảo tồn di tích Đàn Xã Tắc là một trong những thành t
 - **Đặc điểm không gian và tiếp cận:** Đàn Xã Tắc tọa lạc trong một ô phố yên tĩnh ở phía Tây Nam nội thành Huế, tiếp giáp các trục đường Ngô Thời Nhiệm, Trần Nguyên Hãn, Trần Nguyên Đán và Nguyễn Cư Trinh. Di tích là một không gian ngoài trời rộng rãi, bằng phẳng, có hồ nước râm mát và cây xanh che bóng, rất thuận tiện cho du khách đi bộ hoặc sử dụng xe đạp, xích lô tham quan.
 - **Quy tắc ứng xử và tôn nghiêm:** Là đàn tế quốc gia linh thiêng thờ thần Đất và thần Ngũ cốc, du khách khi viếng thăm cần giữ thái độ thành kính, trang phục kín đáo lịch sự. Tuyệt đối không giẫm đạp lên các bệ đá tế, không leo trèo lên lan can gạch và không xả rác làm ảnh hưởng đến nguồn nước hồ minh đường hay sự tôn nghiêm của Thượng đàn.
 - **Kết nối tuyến tham quan di sản:** Du khách có thể dễ dàng kết hợp tham quan Đàn Xã Tắc trong tuyến hành trình khám phá nội thành Kinh thành Huế: từ cửa Hữu (Tây Nam Môn) ghé thăm Đàn Xã Tắc, dạo bước dọc bờ kênh sông Ngự Hà cổ kính, ngắm nhìn vẻ đẹp trầm mặc của Hồ Tịnh Tâm, hồ Học Hải trước khi tiến vào tham quan quần thể Hoàng cung Đại Nội Huế.
+- **Giờ mở cửa:** Mở cửa tự do hằng ngày; đây là không gian di tích ngoài trời nằm trong khu dân cư nên không giới hạn giờ đóng/mở cổng (chỉ hạn chế tiếp cận khu vực trung tâm đàn khi có nghi lễ đặc biệt như Lễ tế Xã Tắc hoặc trong thời gian bảo tồn, trùng tu của ban quản lý).
+
+## Nguồn dữ liệu
+
+- Thông tin mở cửa tự do đối chiếu từ các nguồn giới thiệu di tích tại Huế và quy hoạch không gian mở Đàn Xã Tắc ngày 26/11/2026.

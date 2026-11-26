@@ -172,3 +172,8 @@ Trải qua hơn bốn thế kỷ với nhiều biến cố thiên tai bão lụt
   - Khi vào dâng hương, chiêm bái bên trong Điện Đại Hùng và các điện thờ, du khách phải tháo bỏ giày dép, mũ nón theo đúng chỉ dẫn của nhà chùa; không sờ tay vào các pho tượng Phật, bia đá, chuông đồng hoặc các hiện vật cổ;
   - Tuân thủ quy định về chụp ảnh, quay phim: không tạo dáng phản cảm trước cổng chùa, tháp Phước Duyên hay bên cạnh các bệ thờ tâm linh.
 - **Lưu ý thời tiết và tham quan:** Khuôn viên chùa có nhiều bậc đá dốc từ mép sông lên sân đền và đường dạo ngoài trời rải sỏi. Du khách nên mang giày bệt chống trơn trượt, trang bị ô dù hoặc nón lá để che nắng mùa hè hoặc che mưa phùn mùa đông xứ Huế.
+- **Giờ mở cửa:** Chùa mở cửa tham quan hằng ngày vào ban ngày; hiện chưa có khung giờ cố định do nhà chùa công bố (các nguồn du lịch thường ghi khung tham khảo khoảng 07:00 – 17:30 hoặc 08:00 – 18:00), giờ tham quan có thể thay đổi nhẹ vào các dịp lễ lớn, dịp Tết hoặc điều kiện thời tiết.
+
+## Nguồn dữ liệu
+
+- Thông tin giờ mở cửa tham khảo tổng hợp và đối chiếu từ các trang hướng dẫn du lịch công khai tại Huế ngày 26/11/2026 (lưu ý: các nguồn ghi khung giờ khác nhau và hiện chưa có văn bản công bố giờ cố định từ phía nhà chùa).
