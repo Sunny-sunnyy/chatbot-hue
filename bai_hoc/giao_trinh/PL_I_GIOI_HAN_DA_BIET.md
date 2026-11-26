@@ -1,6 +1,6 @@
 # Phụ lục I — Mọi giới hạn đã biết trên một trang
 
-*Cập nhật 21:55, ngày 25/11/2026 · khớp hệ thống tối 25/11/2026 (62 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn, bảng điểm bản 16; máy dự án đổi về `gpt-6-luna` từ 15:41 25/11) · dọn phần sót của nút "Vì sao trả lời vậy?" (bài 42 cũ, đã gỡ chiều tối 25/11) ở câu dẫn và dòng bộ nhớ máy chủ · 222 giới hạn · mốc trước: 09:50, 21:32, 23:17 24/11, 00:31 và 20:36 25/11 (chi tiết trong Nguồn).*
+*Cập nhật 20:53, ngày 26/11/2026 · khớp hệ thống tối 26/11/2026 (62 tính năng mở, 6 tắt, kho 269 bài / 9.540 đoạn, bảng điểm bản 16; máy dự án chạy `gpt-6-luna` từ 15:41 25/11) · đồng bộ dòng trang Giới thiệu theo bản rút gọn tối 25/11 (bài 37) · 222 giới hạn · mốc trước: 09:50, 21:32, 23:17 24/11, 00:31, 20:36 và 21:55 25/11 (chi tiết trong Nguồn).*
 
 **Giới hạn đã biết khác với thứ cố ý không làm (bài 4).** Giới hạn đã biết là chỗ hệ thống làm chưa tốt trong chính phạm vi của nó: kho có mà tìm không ra, chờ lâu, bước kiểm chưa kiểm nghĩa. Thứ cố ý không làm là một ranh giới đã được chọn, không phải một lỗi còn nợ: câu gõ không dấu, tiếng Anh, tình huống khẩn cấp, giá phòng, đặt chỗ thay người dùng. Trang này liệt kê loại thứ nhất, nhóm theo chặng; loại thứ hai nằm ở bảng nhỏ riêng cuối trang.
 
@@ -262,7 +262,7 @@
 | Lệnh bật chỉ cho máy phát triển và không gọi thử model. | — | không bắt được khoá hết hạn lúc bật | 36 |
 | Gói ba hộp là bản nháp từ 10–18/11, chưa theo kịp chương trình hiện tại. | lần chạy thử là của gpt-6-luna và kho 204 bài | — | 36 |
 | Trần kích thước yêu cầu và lớp chặn tiền ở phía hãng chưa có. | — | — (rủi ro khi đưa lên mạng) | 37 |
-| Trang Giới thiệu ghi "máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký": chỉ đúng ở cấu hình mặc định. Các phần khác của trang (thứ trợ lý nhớ, giới hạn về lễ hội và sự kiện, nơi nhận câu hỏi và ảnh) đã sửa và đã nhìn trên trình duyệt tối 22/11. | — | khi sổ ghi từng lượt được bật trên máy phát triển thì chữ có được ghi vào file | 37 |
+| Trang Giới thiệu tối 25/11 đã rút gọn theo góc nhìn người dùng (bỏ 4 đoạn kỹ thuật "Dữ liệu của bạn", thay bằng hộp "Lưu ý khi dùng" 3 gạch); bản trước từng ghi "máy chủ không lưu chữ câu hỏi hay câu trả lời vào nhật ký" (chỉ đúng khi sổ vết tắt). | — | khi sổ ghi từng lượt được bật trên máy phát triển thì chữ vẫn được ghi vào file | 37 |
 | Hãng model và dịch vụ tìm web giữ dữ liệu bao lâu ở phía họ: chưa kiểm. | — | — | 37 |
 
 ## Chặng 8 — Nhìn lại

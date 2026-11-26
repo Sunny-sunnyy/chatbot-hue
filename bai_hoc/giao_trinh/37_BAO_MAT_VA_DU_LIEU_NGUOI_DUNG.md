@@ -1,6 +1,6 @@
 # Bài 37 — Bảo mật: khoá bí mật, dữ liệu người dùng, và chữ lạ chen vào lời dặn
 
-*Cập nhật 21:55, ngày 25/11/2026 · khớp hệ thống tối 25/11 (62 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn) · nút "Vì sao trả lời vậy?" (bài 42 cũ) đã gỡ sạch chiều tối 25/11 · cập nhật mô tả trang Giới thiệu theo bản rút gọn tối 25/11 (hộp "Lưu ý khi dùng" 3 gạch) · bộ test: bài 38 · dòng cũ: Nguồn.*
+*Cập nhật 20:53, ngày 26/11/2026 · khớp hệ thống tối 26/11 (62 tính năng mở, 6 tắt, kho 269 bài / 9.540 đoạn) · nút "Vì sao trả lời vậy?" (bài 42 cũ) đã gỡ sạch chiều tối 25/11 · cập nhật mô tả trang Giới thiệu theo bản rút gọn tối 25/11 (hộp "Lưu ý khi dùng" 3 gạch) và trạng thái model `gpt-6-luna` đang chạy từ 15:41 25/11 · bộ test: bài 38 · dòng cũ: Nguồn.*
 
 **Bài trước đã biết:** khoá chỉ nằm ở máy chủ, bốn thứ được gửi ra ngoài (bài 6); cookie chỉ mang mã cuộc, chữ model qua hai lớp chặn trước khi lên màn hình (bài 35).
 **Bài này thêm:** khoá nằm ở đâu và rào nào giữ nó khỏi repo công khai; chữ người dùng đi đâu, giữ bao lâu; "chữ lạ chen vào lời dặn" là gì và hệ thống chặn bằng những lớp nào; những gì đã có sẵn nhưng đang tắt, và những gì chưa làm trước khi đưa lên mạng.
@@ -26,7 +26,7 @@
 
 ## Khoá nằm ở máy, và hai rào bằng máy giữ repo sạch
 
-Hệ thống dùng ba loại khoá: OpenAI (đường gpt-6-luna, đang gác), dịch vụ tìm web, và Bedrock. Hai khoá đầu nằm trong một file bí mật trên máy phát triển, nạp lúc bật máy chủ. Khoá Bedrock là một file khoá tạm chủ dự án giữ; máy chủ chỉ nhận đường tới file qua một thiết lập lúc chạy và đọc lại file ở mỗi lần gọi (bài 33). Repo chỉ ghi tên các thiết lập.
+Hệ thống dùng ba loại khoá: OpenAI (đường `gpt-6-luna`, đang chạy từ 15:41 25/11), dịch vụ tìm web, và Bedrock (đường dự bị khi đổi cấu hình). Hai khoá đầu nằm trong một file bí mật trên máy phát triển, nạp lúc bật máy chủ. Khoá Bedrock là một file khoá tạm chủ dự án giữ; máy chủ chỉ nhận đường tới file qua một thiết lập lúc chạy và đọc lại file ở mỗi lần gọi (bài 33). Repo chỉ ghi tên các thiết lập.
 
 Repo là công khai, nên có hai rào chạy tự động cho mọi người và mọi coding agent. **Trước mỗi lần lưu:** chặn file thuộc vùng riêng tư (thư mục dữ liệu, file bí mật, bộ câu kín), dòng mới có dạng một khoá, dòng nhắc tên dự án khác của chủ dự án, dòng trùng từ 40 ký tự trở lên với câu kín. Chữ chép từ kho và bộ câu mẫu thì được lưu: từ 16:45 22/11 chủ dự án chọn thôi chặn, vì cả hai đã công khai từ 20/11. **Trước mỗi lần đẩy lên mạng:** kiểm lại mọi lần lưu sắp đẩy bằng ba phép đầu, để bắt cả lần lưu tạo ở máy chưa bật rào trước.
 

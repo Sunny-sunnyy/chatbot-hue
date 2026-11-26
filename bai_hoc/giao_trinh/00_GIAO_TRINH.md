@@ -1,7 +1,7 @@
 # Giáo trình hue_rag: hiểu cả hệ thống từ đầu, không cần đọc code
 
-*Cập nhật 21:57, ngày 25/11/2026 · giáo trình khớp hệ thống tối muộn 25/11/2026 (**62 tính năng mở, 6 tắt**, kho 269 bài / 9.536 đoạn, bảng điểm bản 16; máy dự án đổi về `gpt-6-luna` từ 15:41 25/11; đã rút gọn trang Giới thiệu theo góc nhìn người dùng, ghép 7 ảnh mới — Khám phá 268/269, lịch trình 47/47, lưu trú 70/136 với 4–5 sao 24/24, dọn sạch chỗ sót nút `"Vì sao trả lời vậy?"` và đồng bộ số đếm phụ lục)*
-*Mốc trước (24–25/11): 09:52 24/11 (59 / 6) · 21:30 24/11 (áp biên bản kiểm độc lập) · 23:18 24/11 (bài 43, 60 / 6) · 00:32 và 00:43 25/11 (bài 44, 61 / 6) · 16:08 25/11 (`c2d0ee68`, 63 / 6) · 17:13 25/11 (sau tự test, 62 / 6) · 20:36 25/11 (bộ câu kín trên `gpt-6-luna`).*
+*Cập nhật 20:53, ngày 26/11/2026 · giáo trình khớp hệ thống tối 26/11/2026 (**62 tính năng mở, 6 tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; máy dự án chạy `gpt-6-luna`; đã bổ sung giờ mở cửa trung thực cho 4 bài kho còn thiếu, ghép ảnh minh hoạ tạm cho *Lễ Kỳ yên đình làng Huế* để Khám phá đạt **269/269 (100 %)**, sửa 4 điểm lệch số đếm / mô tả ở phụ lục và bài 05, 37, PL_I)*
+*Mốc trước (24–25/11): 09:52 24/11 (59 / 6) · 21:30 24/11 (áp biên bản kiểm độc lập) · 23:18 24/11 (bài 43, 60 / 6) · 00:32 và 00:43 25/11 (bài 44, 61 / 6) · 16:08 25/11 (`c2d0ee68`, 63 / 6) · 17:13 25/11 (sau tự test, 62 / 6) · 20:36 25/11 (bộ câu kín trên `gpt-6-luna`) · 21:57 25/11 (rút gọn Giới thiệu, ghép 7 ảnh, dọn 8 bài giáo trình).*
 
 **Bộ này cho ai.** Cho anh, người sẽ tự chạy thử, tự trình bày và tự trả lời câu hỏi về đồ án. Không cần đọc code. Biết dùng một chatbot là đủ để bắt đầu.
 
@@ -28,6 +28,7 @@ Hệ thống vẫn đang được làm tiếp. Mỗi khi người dùng thấy m
 
 | Ngày | Người dùng thấy gì khác | Đọc ở |
 |---|---|---|
+| 26/11, tối | **(1) Hoàn tất ảnh trang Khám phá đạt 269 trên 269 bài (100 %):** ghép ảnh minh hoạ tạm (theo xác nhận của chủ dự án) cho bài *Lễ Kỳ yên đình làng Huế*, thay ô màu cuối cùng. **(2) Bổ sung giờ mở cửa trung thực cho 4 bài kho còn thiếu** (*Chùa Thiên Mụ*, *Hổ Quyền*, *Đàn Xã Tắc*, *Suối Voi*): cập nhật chỉ mục Qdrant riêng tăng từ **9.536 lên 9.540 đoạn**. **(3) Đồng bộ số hàng phụ lục A (184), E (240)** và rà sạch mô tả model/giao diện ở bài 05, 37, PL_I. | bài 05, 37; phụ lục F, H, I |
 | 25/11, tối muộn | **(1) Rút gọn trang Giới thiệu theo góc nhìn người dùng:** giữ phần mở đầu "Về Trợ lý Huế", mục "Trợ lý làm được gì" (5 thẻ cũ cộng thêm thẻ **Sổ tay cho chuyến đi** và **Hồ sơ theo chủ đề** theo cấu hình đang mở) và phần "Huế qua các thời kỳ"; bỏ khối đếm 269 bài và dải ba bước; gộp mục Giới hạn và 4 đoạn kỹ thuật "Dữ liệu của bạn" thành một hộp gọn **"Lưu ý khi dùng"** 3 gạch. **(2) Ghép 7 ảnh mới do chủ dự án gửi:** ảnh trang Khám phá đạt **268 trên 269 bài** (còn bài *Lễ Kỳ yên đình làng Huế* giữ ô màu do ảnh gửi kèm mang biển địa danh ngoài Huế), ảnh thẻ lịch đạt **47 trên 47 điểm (100 %)** và ảnh cơ sở lưu trú đạt **70 trên 136** (riêng khách sạn 4–5 sao đạt **24 trên 24 — 100 %**). | bài 05, 30, 37 |
 | 25/11, tối | **Đo bộ câu kín mốc cuối trên `gpt-6-luna` (62 mở, 6 tắt):** nhóm theo ngày chưa thấy đạt **7 trên 7 (100 %)**, hai người chấm mù đồng thuận **14 trên 14** (bản RAG cơ sở cùng ngày **5 trên 7**; thắng 2, hoà 5, thua 0); đối chứng 28 câu đã thấy đạt **27 trên 28**, trượt 1 (bản cơ sở **12 trên 28**); hỏi tiếp nhớ tên **4 trên 4** và thắng 2–3 trên 5 cặp chấm mù (+1,60 điểm mỗi tiêu chí); xã giao đạt **8 trên 8 (100 %)**. Còn **5 mã trượt sàn hoặc lỗi** ở nhóm ngoài phạm vi, xen kẽ và hỏi tiếp, **3 trên 12** câu trong kho của tuyến 20 câu mở sang cổng web, và **5 chuỗi sửa lịch kín chưa chạy được** vì bảng điểm đổi sang bản 16 (người dùng tự đặt câu không đổi; nhóm rà các chỗ hở trước khi bật rộng). | bài 17, 31, 32, 33, 40; phụ lục C, F, I |
 | 25/11, chiều tối | Sau buổi chủ dự án tự test trên `gpt-6-luna` (**62 tính năng mở, 6 tắt**, **21 đường gọi** máy chủ): **(1) Gỡ sạch "Vì sao trả lời vậy?" (`vi_sao`, bài 42 cũ)** khỏi mã nguồn, giao diện, test và cấu hình theo quyết định của chủ dự án (người dùng cuối không cần xem lớp xử lý phía sau); **(2) Ẩn bong bóng `"Tư liệu của mình chưa có thông tin này…"`** ở trên khi khung `"Từ web (chưa kiểm)"` có nội dung (`moDauWeb`), hiển thị thẳng khung web; **(3) Sửa lỗi lặp 2 khung hỏi lại** khi gọi tên ngắn mơ hồ (`"bỏ lăng"`) trong `sua_lich_v2.py` bằng cách khử trùng các hành động có cùng tập ứng viên. | bài 35, 37, 40, 41, 04, 23; phụ lục A, B, F |
@@ -197,11 +198,11 @@ Cột cuối: ✅ đã viết · ⬜ chưa viết.
 
 | | Phụ lục | |
 |---|---|---|
-| A | [Mọi tham số cấu hình: giá trị đang chạy, dùng để làm gì, bài nào giảng: 188 dòng](PL_A_THAM_SO.md) | ✅ |
+| A | [Mọi tham số cấu hình: giá trị đang chạy, dùng để làm gì, bài nào giảng: 184 dòng](PL_A_THAM_SO.md) | ✅ |
 | B | [Mọi tính năng đang mở và đang tắt: làm gì, một con số, bài nào giảng (62 tính năng mở, 6 tắt, cùng các mục chế độ, công tắc lúc bật máy chủ và thứ không có dòng bật / tắt)](PL_B_TINH_NANG.md) | ✅ |
 | C | [Sổ mọi phép so sánh đã làm, kể cả phương án bị bỏ: 250 dòng — 249 phép so và một phép tìm nguyên nhân — gom từ các bài](PL_C_SO_PHEP_SO.md) | ✅ |
 | D | [Lời dặn gửi model và mô tả từng công cụ, chép nguyên văn từ chương trình](PL_D_LOI_DAN.md) | ✅ |
-| E | [Thuật ngữ Việt – Anh: 241 từ, có bảng tra ngược Anh – Việt](PL_E_THUAT_NGU.md) | ✅ |
+| E | [Thuật ngữ Việt – Anh: 240 từ, có bảng tra ngược Anh – Việt](PL_E_THUAT_NGU.md) | ✅ |
 | F | [Các con số chính trên một trang: 191 con số kèm điều kiện đo](PL_F_CON_SO_CHINH.md) | ✅ |
 | G | [Mọi quyết định của hệ thống trên một trang: 348 hàng — 347 mục gom từ bài 1–38, bài 43 và bài 44 (nút bài 42 cũ đã gỡ), cùng một luật làm việc của bài 39](PL_G_MOI_QUYET_DINH.md) | ✅ |
 | H | [Mọi tình huống hỏng trên một trang: 210 tình huống gom từ bài 1–38, bài 43 và bài 44 (nút bài 42 cũ đã gỡ)](PL_H_MOI_TINH_HUONG_HONG.md) | ✅ |

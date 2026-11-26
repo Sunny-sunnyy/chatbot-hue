@@ -1,6 +1,6 @@
 # Phụ lục H — Mọi tình huống hỏng trên một trang
 
-*Cập nhật 21:55, ngày 25/11/2026 · khớp hệ thống tối 25/11/2026 (62 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn, bảng điểm bản 16; máy dự án đổi về `gpt-6-luna` từ 15:41 25/11) · đồng bộ mốc tối 25/11 (nút "Vì sao trả lời vậy?" bài 42 cũ đã gỡ chiều tối 25/11; 210 tình huống theo bộ đếm thực tế) · mốc trước: 09:49, 21:31, 23:16 24/11 và 00:30 25/11 (chi tiết trong Nguồn).*
+*Cập nhật 20:53, ngày 26/11/2026 · khớp hệ thống tối 26/11/2026 (62 tính năng mở, 6 tắt, kho 269 bài / 9.540 đoạn, bảng điểm bản 16; máy dự án chạy `gpt-6-luna` từ 15:41 25/11) · đồng bộ mốc tối 26/11 (nút "Vì sao trả lời vậy?" bài 42 cũ đã gỡ chiều tối 25/11; 210 tình huống theo bộ đếm thực tế) · mốc trước: 09:49, 21:31, 23:16 24/11 và 00:30, 21:55 25/11 (chi tiết trong Nguồn).*
 
 **Cách dùng trang này.** Mỗi dòng là một tình huống lấy từ các bảng "Nếu… thì sao" và bảng "Mọi tình huống hỏng của bài này" của bài 1–38, 43 và 44 (nút bài 42 cũ đã gỡ chiều tối 25/11); tình huống nào nhiều bài cùng nói thì gộp một dòng, cột Bài ghi mọi bài. Lời báo trong ngoặc kép là nguyên văn, chép từ bài gốc. Cột "Đã thử thật chưa" ghi "đã thử 22/11" chỉ khi bài gốc ghi đã thử thật trưa 22/11; ghi "đã gặp" hoặc "đã đo" khi bài gốc kể một lần xảy ra thật; còn lại "đọc từ chương trình". Cuối trang là danh sách các chỗ chưa có cách xử lý.
 
@@ -19,7 +19,7 @@
 | ai đó ghi số đoạn khác 10 vào cấu hình | máy chủ không bật | không vào được trang nào | sửa lại thành 10; muốn thử số khác thì dùng bộ đo | đọc từ chương trình | 13 |
 | ai đó ghi một cách xếp lại khác "không" vào cấu hình | máy chủ không bật | không vào được trang nào | muốn thử thì dùng bộ thử; phần chương trình xếp lại chỉ còn cho bộ thử | đọc từ chương trình | 14 |
 | chạy lệnh bật một phát khi Docker Desktop chưa chạy | lệnh dừng: không có lệnh docker, hoặc docker không bật được Qdrant | người bật thấy một dòng báo của lệnh | người bật mở Docker Desktop rồi chạy lại | đọc từ chương trình | 36 |
-| chạy lệnh bật khi chỉ mục lệch kho | lệnh dừng: chỉ mục có N đoạn, bản ghi ghi 9.536 (từ 07:49 24/11; 9.533 từ 18:05 23/11; trước đó 9.479) | một dòng báo của lệnh | chạy lệnh cập nhật chỉ mục | đọc từ chương trình | 36 |
+| chạy lệnh bật khi chỉ mục lệch kho | lệnh dừng: chỉ mục có N đoạn, bản ghi ghi 9.540 (từ 20:47 26/11; trước đó 9.536 từ 07:49 24/11; 9.533 từ 18:05 23/11; trước đó 9.479) | một dòng báo của lệnh | chạy lệnh cập nhật chỉ mục | đọc từ chương trình | 36 |
 | chạy lệnh bật khi cổng của máy chủ đã có một máy chủ cũ bật lúc Qdrant tắt | lệnh dừng: cổng đang có máy chủ báo chưa sẵn sàng, hãy tắt nó trước | một dòng báo của lệnh | tắt máy chủ cũ, chạy lại | ca gốc đã thử 22/11; lệnh dừng: đọc từ chương trình | 36 |
 
 ## 2. Khối chính hỏng giữa lúc chạy (model viết, Qdrant, chỉ mục)

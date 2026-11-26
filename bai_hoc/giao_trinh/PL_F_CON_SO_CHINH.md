@@ -1,6 +1,6 @@
 # Phụ lục F — Các con số chính trên một trang
 
-*Cập nhật 20:34, ngày 25/11/2026 · khớp hệ thống tối 25/11/2026 (62 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn, bảng điểm bản 16; máy dự án đổi về `gpt-6-luna` từ 15:41 25/11) · thêm 4 dòng số đo bộ câu kín mốc cuối trên `gpt-6-luna` (mục 6 và mục 8); 187 ⇒ 191 dòng · mốc trước: 16:08 25/11 (`sua_lich_hoan_tac`, 63/6, 22 đường gọi) · mức kiểm: bài 31, 32, 33, 44.*
+*Cập nhật 20:53, ngày 26/11/2026 · khớp hệ thống tối 26/11/2026 (62 tính năng mở, 6 tắt, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; máy dự án chạy `gpt-6-luna` từ 15:41 25/11) · cập nhật số đoạn kho 9.536 ⇒ 9.540 (bổ sung giờ mở cửa 4 bài kho); 191 dòng · mốc trước: 16:08 và 20:34 25/11 · mức kiểm: bài 31, 32, 33, 44.*
 *Mốc trước (24–25/11): 09:48 24/11 (59 / 6, 166 dòng) · 21:30 24/11 (áp biên bản kiểm độc lập) · 23:16 24/11 (60 / 6, 176 dòng) · 00:28 và 00:43 25/11 (61 / 6, 186 dòng, 21 đường gọi).*
 
 **Cách dùng trang này.** Mỗi dòng là một con số quan trọng của hệ thống, chép từ mục "Ý chính", bảng "Cấu hình đang chạy" hoặc bảng số chính của một bài. Cột thứ ba ghi điều kiện mà bài gốc ghi kèm: đếm trên bộ nào, model viết nào, ngày nào. Một con số không có điều kiện thì không so được với con số khác, nên đừng đọc cột hai mà bỏ cột ba. Dòng ghi "cấu hình" là giá trị đặt sẵn trong hệ thống, không phải kết quả đo. Dòng ghi "lúc đó" hay "đã cũ" là số của một thời điểm đã qua, giữ lại để so. Hai model viết: `gpt-6-luna` (tới trưa 21/11 và từ 15:41 25/11) và Claude Sonnet 5.5 (21/11 – 25/11, đổi tạm).
@@ -10,7 +10,7 @@
 | Con số | Đếm cái gì | Đo trên gì, model nào, ngày nào | Bài |
 |---|---|---|---|
 | 269 bài | số bài của kho, chia 5 chủ đề, 7 thư mục | đếm từ bản ghi chỉ mục, 18:05 ngày 23/11 (hai bài mới — AEON Mall Huế, công viên ven sông Hương — ghi vào kho 18:03, chỉ mục cập nhật riêng 18:05; trước đó 267, từ 16:35 22/11) | 2, 7 |
-| 9.536 đoạn | số đoạn sau khi cắt 269 bài; cũng là số điểm trong Qdrant | máy kiểm 07:49 ngày 24/11 (lần cập nhật chỉ mục riêng thứ hai trong ngày; lần một 07:31: 9.535; trước đó 9.533 từ 18:05 23/11, 9.479 từ 16:35 22/11) | 2, 7, 8, 12 |
+| 9.540 đoạn | số đoạn sau khi cắt 269 bài; cũng là số điểm trong Qdrant | máy kiểm 20:47 ngày 26/11 (cập nhật chỉ mục riêng cho 4 bài bổ sung giờ mở cửa: Chùa Thiên Mụ, Hổ Quyền, Đàn Xã Tắc, Suối Voi; trước đó 9.536 từ 07:49 24/11, 9.533 từ 18:05 23/11, 9.479 từ 16:35 22/11) | 2, 7, 8, 12 |
 | 512 token | độ dài tối đa model embedding đọc được; giới hạn thật lúc cắt còn chặt hơn (256 token của một model ứng viên cũ) | cấu hình, sáng 22/11 | 8, 10 |
 | 4 tới 6 trên 32 câu | số câu mất đáp án khi gộp đoạn to (từ 256 token trở lên); gộp tới 128 token thì không khác | phép so 12 cách cắt, bộ 32 câu (lúc đó) | 8 |
 | 384 con số | số chiều của mỗi vector (model multilingual-e5-small, chạy trên máy) | cấu hình, sáng 22/11 | 10 |
