@@ -668,6 +668,7 @@ class OpenAIFullCorpusGenerator:
                        vong_cuoi: "tuple[CallLog, int] | None" = None,
                        kiem_du_bang_chung: bool = False,
                        canh_bao_vong: "tuple[CallLog, int] | None" = None,
+                       canh_bao_vong_con_lai: bool = False,
                        toi_uu_dot2_va_viet_lai: bool = False) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
@@ -677,7 +678,7 @@ class OpenAIFullCorpusGenerator:
         # bị coi là "đã tắt" ngay khi model xin ⇒ lỗi). Mốc đúng là: công cụ của lượt sát cuối ĐÃ CHẠY XONG ⇒ `state["het_cong_cu"]` (đặt trong `bao`).
         state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn, "het_cong_cu": False, "liet_ke_con_luot": getattr(liet_ke_fn, "con_luot", None)}
         # Đợt 4A (`canh_bao_vong_con_lai`): giữ nguyên danh sách `tools` cố định mọi vòng (không rút tool qua `is_enabled`) để bảo toàn KV-cache prefix.
-        con_vong_fn = None if (vong_cuoi is None or canh_bao_vong is not None) else (lambda: not state["het_cong_cu"])
+        con_vong_fn = None if (vong_cuoi is None or canh_bao_vong is not None or canh_bao_vong_con_lai) else (lambda: not state["het_cong_cu"])
         state["con_vong_fn"] = con_vong_fn
 
         def on_max_turns(_input) -> AnswerOutput:
@@ -689,7 +690,7 @@ class OpenAIFullCorpusGenerator:
         # Vòng cuối chỉ viết (cờ `vong_cuoi_chi_viet`, 21/11): `con_vong_fn` có ⇒ MỌI công cụ thêm điều kiện đó; nó trả False ở vòng cuối cùng của lượt ⇒
         # vòng đó không gửi công cụ nào, model viết từ bằng chứng đã có thay vì hết vòng. Không truyền cả hai ⇒ không có `is_enabled` (giống byte).
         def mo(*dieu_kien) -> dict:
-            if canh_bao_vong is not None:
+            if canh_bao_vong is not None or canh_bao_vong_con_lai:
                 return {}
             dk = [f for f in (*dieu_kien, con_vong_fn) if f is not None]
             return {"is_enabled": lambda _context, _agent: all(f() for f in dk)} if dk else {}

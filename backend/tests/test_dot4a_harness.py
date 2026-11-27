@@ -93,12 +93,17 @@ def test_dot4a_flags_default_off_in_code_and_settings():
     defaults = AssistantFlags()
     for key in NEW_FLAGS:
         assert getattr(defaults, key) is False
+    expected_settings = {
+        "kiem_du_bang_chung": False,
+        "canh_bao_vong_con_lai": True,
+        "toi_uu_dot2_va_viet_lai": True,
+    }
     settings = load_settings(validate_private_paths=False)
-    for key in NEW_FLAGS:
-        assert settings["assistant"][key] is False
+    for key, val in expected_settings.items():
+        assert settings["assistant"][key] is val
     loaded = AssistantFlags.from_settings(settings)
-    for key in NEW_FLAGS:
-        assert getattr(loaded, key) is False
+    for key, val in expected_settings.items():
+        assert getattr(loaded, key) is val
 
 
 def test_all_new_flags_off_keep_byte_identical_requests_and_tool_list(deps, tmp_path):
