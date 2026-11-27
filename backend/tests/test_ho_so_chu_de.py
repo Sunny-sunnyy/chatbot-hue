@@ -259,3 +259,33 @@ def test_ngat_ket_noi_sse_giua_chung_huy_va_don_het_viec_con():
         assert trang_thai == {"huy": 1, "don": 1} and dem == {}
 
     asyncio.run(chay())
+
+
+def test_ho_so_done_logs_json_with_tokens_and_usd(caplog):
+    import logging
+    from api.routes import ho_so as r
+
+    class May:
+        provider = "openai"
+
+        async def viet_so_tay(self, loai, prompt, log):
+            if loai == "ho_so_dan_y":
+                log.calls.append({"input_tokens": 500, "output_tokens": 100, "cached_tokens": 0})
+                return {"muc": [{"tieu_de": "Đầu triều", "bai": [1, 2, 3, 4, 5]}]}
+            log.calls.append({"input_tokens": 1500, "output_tokens": 300, "cached_tokens": 500, "usd": 0.000255})
+            return {"y": [{"chu": "Lăng Gia Long yên tĩnh", "nguon": [1]}]}
+
+    async def run():
+        return [e async for e in r._su_kien(hs.CHU_DE[0], LANG, SimpleNamespace(retrieval_service=_Kho()),
+                                            SimpleNamespace(the_noi_bang=None, muc_luc=ML), May(), {})]
+
+    with caplog.at_level(logging.INFO, logger="ho_so"):
+        asyncio.run(run())
+    line = next(rec.message for rec in caplog.records if rec.message.startswith("ho_so done "))
+    payload = json.loads(line.split("ho_so done ", 1)[1])
+    assert payload["topic"] == hs.CHU_DE[0].ma
+    assert payload["llm_calls"] == 2
+    assert payload["input_tokens"] == 2000
+    assert payload["output_tokens"] == 400
+    assert payload["cached_tokens"] == 500
+    assert payload["usd"] > 0.000255

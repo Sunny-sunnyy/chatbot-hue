@@ -368,3 +368,39 @@ def test_ngat_ket_noi_sse_giua_chung_huy_va_don_het_viec_con():
         assert trang_thai == {"huy": 1, "don": 1}
 
     asyncio.run(chay())
+
+
+def test_so_tay_done_logs_json_with_tokens_and_usd(caplog):
+    import logging
+    from api.routes import so_tay as r
+
+    class Kho:
+        def search(self, cau):
+            return SimpleNamespace(documents=[THAC[0], THAC[1]])
+
+        def doan_cua_bai(self, rel):
+            return list(THAC)
+
+    class May:
+        provider = "openai"
+
+        async def viet_so_tay(self, loai, prompt, log):
+            log.calls.append({"input_tokens": 1000, "output_tokens": 200, "cached_tokens": 400, "usd": 0.000164})
+            return {"nen_xem": [{"chu": "Thác nước trong xanh", "nguon": [1]}], "luu_y": [], "di_lai": []}
+
+    lich = {"ngay": [{"ngay": 1, "muc": [{"id_muc": "n1-sang-1", "buoi": "sang", "id_diem": "thac", "ten": "Thác", "gio": "8:00 – 10:00",
+                                         "bai_id": "travel/places/Thác.md", "anh": None}]}], "ghi_chu": []}
+
+    async def run():
+        return [e async for e in r._su_kien(st.dan_y(lich), lich, "an toàn", SimpleNamespace(retrieval_service=Kho()),
+                                            SimpleNamespace(the_noi_bang=None, bang_lich_v2=None), May())]
+
+    with caplog.at_level(logging.INFO, logger="so_tay"):
+        asyncio.run(run())
+    line = next(rec.message for rec in caplog.records if rec.message.startswith("so_tay done "))
+    payload = json.loads(line.split("so_tay done ", 1)[1])
+    assert payload["llm_calls"] == 2
+    assert payload["input_tokens"] == 2000
+    assert payload["output_tokens"] == 400
+    assert payload["cached_tokens"] == 800
+    assert payload["usd"] == pytest.approx(0.000328)

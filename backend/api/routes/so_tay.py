@@ -8,6 +8,7 @@ Luồng SSE: `dan_y` (các mục, do code, có ngay) ⇒ một `muc` cho mỗi m
 Lời gọi model của MỘT mục hỏng ⇒ mục đó `trang_thai: "loi"` và chỉ gồm các dòng do code chép; các mục khác không bị ảnh hưởng.
 Chia việc code ↔ model, khuôn dữ liệu của từng đoạn: `llm/so_tay.py`."""
 import asyncio
+import json
 import logging
 import time
 
@@ -20,12 +21,30 @@ from api.routes.xuat import lich_tu_luu
 from core.schema import GenerationError, RetrievalDependencyError
 from llm import so_tay as st
 from llm.generator_openai_full_corpus import CallLog
+from llm.pricing import cost_usd
 from retrieval.full_corpus_context import FullCorpusContextBuilder
 
 router = APIRouter()
 logger = logging.getLogger("so_tay")
 SONG_SONG = 4
 CAU_KHONG_CO_LICH = "Chưa có lịch để dựng sổ tay hoặc lịch không còn được giữ — bấm Lên kế hoạch để xếp lại lịch."
+
+
+def _cong_usage(dem: dict, calls: list[dict], provider: str = "openai") -> None:
+    """Cộng dồn `llm_calls`, token và USD từ `CallLog.calls` (tính lại bằng `cost_usd` nếu call chỉ ghi token)."""
+    dem["goi_model"] += len(calls)
+    for c in calls:
+        inp = int(c.get("input_tokens") or 0)
+        out = int(c.get("output_tokens") or 0)
+        cached = int(c.get("cached_tokens") or 0)
+        cache_write = int(c.get("cache_write_tokens") or 0)
+        dem["input_tokens"] = dem.get("input_tokens", 0) + inp
+        dem["output_tokens"] = dem.get("output_tokens", 0) + out
+        dem["cached_tokens"] = dem.get("cached_tokens", 0) + cached
+        usd = c.get("usd")
+        if usd is None and (inp or out):
+            usd = cost_usd(inp, out, cache_write, cached, provider=provider)
+        dem["usd"] = dem.get("usd", 0.0) + float(usd or 0.0)
 
 
 def _bang_chung(tai_lieu: list, tu_so: int) -> tuple[str, list[dict]]:
@@ -65,7 +84,7 @@ async def _muc_model(loai: str, ten_khoi: tuple[str, ...], cau_tim: str, de: str
         try:
             ra = await generator.viet_so_tay(loai, f"{de}\n\nBằng chứng:\n{chu}", log)
         finally:
-            dem["goi_model"] += len(log.calls)
+            _cong_usage(dem, log.calls, getattr(generator, "provider", "openai"))
         hop_le = {s["id"] for s in nguon_kho}
         uu_tien = frozenset() if so_cb is None else frozenset({so_cb})
         khoi = [st.khoi_model(k, ra.get(k) or [], hop_le, cam_gio_gia=loai == "diem", nguon_uu_tien=uu_tien if k == "luu_y" else frozenset()) for k in ten_khoi]
@@ -158,8 +177,17 @@ async def _su_kien(dan_y: list[dict], lich: dict, an_toan: str | None, state, fl
         with anyio.CancelScope(shield=True):
             await asyncio.gather(*viec, return_exceptions=True)
     giay = round(time.perf_counter() - started, 1)
-    logger.info("so_tay done: sections=%d failed=%d seconds=%.1f llm_calls=%d dropped=%s", len(dan_y), loi, giay, dem["goi_model"],
-                {k: v for k, v in dem.items() if k.startswith("bo_") and v})
+    logger.info("so_tay done %s", json.dumps({
+        "sections": len(dan_y),
+        "failed": loi,
+        "seconds": giay,
+        "llm_calls": dem["goi_model"],
+        "input_tokens": dem.get("input_tokens", 0),
+        "output_tokens": dem.get("output_tokens", 0),
+        "cached_tokens": dem.get("cached_tokens", 0),
+        "usd": round(dem.get("usd", 0.0), 6),
+        "dropped": {k: v for k, v in dem.items() if k.startswith("bo_") and v},
+    }, ensure_ascii=False))
     yield sse_event("xong", {"giay": giay, "so_muc": len(dan_y), "so_muc_loi": loi, "so_loi_goi_model": dem["goi_model"],
                              "y_bi_bo": {k[3:]: v for k, v in dem.items() if k.startswith("bo_")}, "so_dong_tro_an_toan": dem.get("tro_an_toan", 0)})
 

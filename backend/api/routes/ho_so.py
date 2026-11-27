@@ -8,6 +8,7 @@ thứ tự bất kỳ; khuôn đoạn như sổ tay — `llm/so_tay.tach_ma`) �
 Bộ nhớ đệm: hồ sơ của một chủ đề chỉ phụ thuộc kho ⇒ hồ sơ dựng xong KHÔNG có mục lỗi được giữ trong RAM theo mã chủ đề (mất khi khởi động lại server); lần gọi
 sau phát lại y nguyên các sự kiện, không gọi model (sự kiện `xong` mang `tu_dem: true`). Lý do: trang mở thẳng / F5 là một lượt dựng 5–9 lời gọi model."""
 import asyncio
+import json
 import logging
 import re
 import time
@@ -18,7 +19,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from api.routes.chat import _flags, _ready_generator, _retrieval_not_ready, error_response, sse_event
-from api.routes.so_tay import SONG_SONG, _bang_chung
+from api.routes.so_tay import SONG_SONG, _bang_chung, _cong_usage
 from llm import ho_so_chu_de as hs
 from llm import so_tay as st
 from llm.generator_openai_full_corpus import CallLog
@@ -74,7 +75,7 @@ async def _mot_muc(muc: dict, ten_chu_de: str, state, flags, generator, dem: dic
                     ra = await generator.viet_so_tay("ho_so_muc", f"Chủ đề hồ sơ: {ten_chu_de}\nMục cần viết: {muc['ten']}\nCác bài của mục: "
                                                      f"{'; '.join(b.tieu_de for b in bai)}\n\nBằng chứng:\n{chu}", log)
                 finally:
-                    dem["goi_model"] += len(log.calls)
+                    _cong_usage(dem, log.calls, getattr(generator, "provider", "openai"))
                 qua_luat, bo = st.loc_y(ra.get("y") or [], {s["id"] for s in nguon_kho}, 50, tran_ky_tu=hs.TRAN_KY_TU_Y)
                 for ly_do, gia_tri in bo.items():
                     if ly_do == "chu":
@@ -139,7 +140,7 @@ async def _su_kien(cd: "hs.ChuDe", bai: list, state, flags, generator, dem_ho_so
             ra = await generator.viet_so_tay("ho_so_dan_y", f"Chủ đề: {cd.ten}\n\nDanh sách bài đã chọn:\n"
                                              + "\n".join(f"{i} | {b.tieu_de} | {(b.tom_tat or '')[:110]}" for i, b in enumerate(bai, 1)), log)
         finally:
-            dem["goi_model"] += len(log.calls)
+            _cong_usage(dem, log.calls, getattr(generator, "provider", "openai"))
         chia = hs.kiem_dan_y(ra.get("muc") or [], len(bai))
     except asyncio.CancelledError:
         raise
@@ -172,7 +173,18 @@ async def _su_kien(cd: "hs.ChuDe", bai: list, state, flags, generator, dem_ho_so
         with anyio.CancelScope(shield=True):
             await asyncio.gather(*viec, return_exceptions=True)
     giay = round(time.perf_counter() - started, 1)
-    logger.info("ho_so done: topic=%s sections=%d failed=%d outline_fallback=%s seconds=%.1f llm_calls=%d", cd.ma, len(muc), loi, dan_y_loi, giay, dem["goi_model"])
+    logger.info("ho_so done %s", json.dumps({
+        "topic": cd.ma,
+        "sections": len(muc),
+        "failed": loi,
+        "outline_fallback": dan_y_loi,
+        "seconds": giay,
+        "llm_calls": dem["goi_model"],
+        "input_tokens": dem.get("input_tokens", 0),
+        "output_tokens": dem.get("output_tokens", 0),
+        "cached_tokens": dem.get("cached_tokens", 0),
+        "usd": round(dem.get("usd", 0.0), 6),
+    }, ensure_ascii=False))
     # `ban_ngan`: dưới nửa số mục có đủ ý ⇒ giao diện nói rõ đây là bản ngắn (code đếm, không phải model tự nhận)
     cuoi = {"giay": giay, "so_muc": len(muc), "so_muc_loi": loi, "so_muc_du": du, "ban_ngan": du * 2 < len(muc), "dan_y_do_code": dan_y_loi, "so_loi_goi_model": dem["goi_model"],
             "y_bi_bo": {k[3:]: v for k, v in dem.items() if k.startswith("bo_")}, "so_dong_tro_an_toan": dem["tro_an_toan"]}

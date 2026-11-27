@@ -15,7 +15,16 @@ from typing import Iterable
 
 DEFAULT_LOG_PATH = Path(__file__).resolve().parents[1] / "logs" / "application.log"
 TEST_MODELS = frozenset({"probe", "fake-bench"})
-MODEL_TOOL_NAMES = frozenset({"ngay_lich", "liet_ke_bai", "khoang_cach", "gan_diem", "thoi_tiet", "lich_trinh"})
+MODEL_TOOL_NAMES = frozenset({
+    "ngay_lich",
+    "liet_ke_bai",
+    "khoang_cach",
+    "gan_diem",
+    "thoi_tiet",
+    "lich_trinh",
+    "goi_y_phuong_an_mua_nang",
+    "so_sanh_diem_den",
+})
 
 
 def la_goi_cong_cu_model(entry: dict) -> bool:
