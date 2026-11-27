@@ -1,6 +1,6 @@
 # Bài 35 — Trang web và máy chủ: ai gửi gì cho ai
 
-*Cập nhật 14:25, ngày 27/11/2026 · khớp hệ thống mốc 14:13 27/11/2026 (**`66` tính năng mở, `7` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`, kèm `cong_cong_cu: linh_hoat` và `anh.che_do_tu_choi: mac_dinh`) · đồng bộ sáng 27/11: giới hạn lượt tính trọng số (`chat=1 / so_tay=10 / ho_so=8`), `CancelScope(shield=True)` + tắt dịu uvicorn (`--timeout-graceful-shutdown 15`), và `Caddyfile` thêm header bảo mật, cache tĩnh và tắt nén gzip cho cả `/api/so_tay`, `/api/ho_so`.*
+*Cập nhật 16:40, ngày 27/11/2026 · khớp hệ thống Đợt 4A (**`68` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`, kèm `cong_cong_cu: linh_hoat` và `anh.che_do_tu_choi: mac_dinh`) · đồng bộ Đợt 4A (thêm `cached_tokens` vào sổ đo ảnh) và sáng 27/11 (giới hạn lượt tính trọng số `chat=1 / so_tay=10 / ho_so=8`, `CancelScope(shield=True)` + tắt dịu uvicorn `--timeout-graceful-shutdown 15`, `Caddyfile` thêm header bảo mật, cache tĩnh và tắt nén gzip cho cả `/api/so_tay`, `/api/ho_so`).*
 *Mốc trước (24–25/11): 00:44 24/11 (58 mở / 6 tắt) · 01:15 và 06:35 24/11 · 00:21 25/11 · 16:08 25/11 (22 đường gọi).*
 
 **Bài trước đã biết:** giao diện chạy trong trình duyệt, máy chủ chạy ở máy dự án, chữ được gửi dần, cuộc trò chuyện nằm trong bộ nhớ của máy chủ (bài 6); model viết gửi chữ dần trên `gpt-6-luna` (bài 33).

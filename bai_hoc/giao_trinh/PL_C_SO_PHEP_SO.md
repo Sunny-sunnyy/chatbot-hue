@@ -1,6 +1,6 @@
 # Phụ lục C — Sổ mọi phép so sánh đã làm, kể cả phương án bị bỏ
 
-*Cập nhật 14:25, ngày 27/11/2026 · khớp hệ thống mốc **14:13 27/11/2026** (**`66` tính năng mở, `7` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`, kèm `cong_cong_cu: linh_hoat` và `anh.che_do_tu_choi: mac_dinh`) · bổ sung 8 dòng phép so đợt 27/11 (7 dòng ở chặng 5 từ Đợt 1 → Đợt 2 → Nấc 2B → Đợt 3A và 1 dòng ở chặng 7 về tối ưu đồng thời `RLock` + `to_thread`) · mốc trước: 09:44, 21:29, 23:15 24/11 và 00:26, 15:13, 16:08, 20:34 25/11.*
+*Cập nhật 16:40, ngày 27/11/2026 · khớp hệ thống Đợt 4A (**`68` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`, kèm `cong_cong_cu: linh_hoat` và `anh.che_do_tu_choi: mac_dinh`) · bổ sung 4 dòng phép đo **Đợt 4A (27/11)** ở chặng 5 (kiểm định bộ chấm bám nguồn ngữ nghĩa & `ToolCallAccuracy`, và 3 phép đo cặp `kiem_du_bang_chung`, `canh_bao_vong_con_lai`, `toi_uu_dot2_va_viet_lai`) · mốc trước: 09:44, 21:29, 23:15 24/11; 00:26, 15:13, 16:08, 20:34 25/11; 14:25 27/11.*
 
 **Cách đọc trang này (theo bài 20).** Mỗi dòng là một lần thử: thử gì, so với gì, ra số nào, giữ hay bỏ. Điều kiện đạt hay trượt được ghi trước khi chạy; vỡ một điều kiện không được vỡ thì mặc định là bỏ, dù điểm trung bình tốt hơn. Kết quả âm cũng được giữ, vì đó là căn cứ để trả lời "vì sao không làm cách X". Đọc cột thứ ba trước cột thứ tư: phần lớn phép so đo với gpt-6-luna, trên bộ câu nhỏ, ở kho của một thời điểm đã qua; đo riêng một bước có thể cho lợi mà người dùng không nhận được.
 
@@ -178,6 +178,10 @@ Cột "Giữ / bỏ" chép kết luận của bài gốc. Dòng ghi "chưa đo",
 | Chế độ `cong_cong_cu: luon` (luôn nạp đủ công cụ và bảng phụ mọi lượt, Đợt 2) | chỉ đưa khi khớp từ khoá | tập đo cặp 27/11 trên `gpt-6-luna` | đội chi phí `+44,50%` USD (`+89,0%` ở câu hỏi kho thuần) | bỏ (gỡ khỏi mặc định) | 21, 24 |
 | Chế độ `cong_cong_cu: linh_hoat` + khử lặp bảng 40 địa điểm + cố định `prompt_cache_key` (Nấc 2B) | cổng từ khoá cũ (`tu_khoa`) | `n=20` đo cặp (10 câu lách từ khoá + 5 câu kho thuần + 5 câu ngoài phạm vi), `gpt-6-luna`, 27/11 | câu lách từ khoá `0/10 → 9/10`, gọi thừa ở câu kho thuần `0/5`, từ chối ngoài phạm vi `5/5`, chi phí `-15,23%` USD (`-35,3%` ở kho thuần), tỉ lệ dùng lại bộ nhớ đệm `cached_tokens` `46,5% → 76,9%` (`83,5%` ở kho thuần), `p95` `16,1 → 11,5` giây | giữ (gộp `75f545c6`) | 21, 24 |
 | Chế độ từ chối ảnh `anh.che_do_tu_choi: confidence_gate` (Đợt 3A) | `anh.che_do_tu_choi: mac_dinh` | `76` ảnh (55 đúng nơi, 18 ảnh lạ, 3 bẫy chữ), `gpt-5-nano` (`0,070648 USD`), 27/11 | giảm báo nhầm nơi lạ `-50%` (`10/18 → 5/18`) và bẫy chữ `1/3 → 0/3`, nhưng tụt nặng độ phủ ảnh đúng: top-1 `49/55 → 32/55` (`-17`), top-3 `52/55 → 32/55` (`-20`), chi phí `+18,9%` USD | bỏ (giữ `mac_dinh`) | 26 |
+| Bộ chấm bám nguồn ngữ nghĩa từng mệnh đề & độ chính xác gọi công cụ mở rộng (`ToolCallAccuracy`) (Đợt 4A) | nhãn đọc tay / bản gán sai `[n]` cố tình (`3` ca) & kết quả Đợt 2 / Nấc 2B | kiểm định `15` câu + `3` ca gán sai + `20` câu mẫu nền + đối chiếu log Đợt 2 (`n=20`) và Nấc 2B (`n=10`), `gpt-6-luna`, Đợt 4A 27/11 | khớp nhãn tay **`15/15` (`100%`)**, bắt **`3/3`** ca cố tình gán sai `[n]`; mốc nền 20 câu **`88,33%`** (`17/20` câu sạch tuyệt đối, `0` gán sai nguồn, `5` mệnh đề thiếu căn cứ); `ToolCallAccuracy` (`0 USD`) khớp Đợt 2 **`19/20` (`95%`)** và lách từ khoá **`9/10`** | giữ (đưa vào đánh giá 3 tầng) | 19, 32 |
+| Kiểm đủ bằng chứng trước khi viết (`kiem_du_bang_chung: true`, Đợt 4A) | tắt (bản nền) | `n=36` (câu hỏi thiếu chi tiết hẹp & câu hỗn hợp), `gpt-6-luna`, Đợt 4A 27/11 | bản nền đã tránh bịa `18/18` (`13` từ chối + `5` nêu rõ phần thiếu); bật thêm `+0/18`, tăng **`+10,7%` USD** (`0,031803 → 0,035197 USD`), cache tụt `-6,6` điểm phần trăm (`92,74% → 86,14%`), làm `1` ca hỗn hợp bỏ sót bước đo khoảng cách nên thiếu thời gian di chuyển | bỏ (giữ tắt) | 21, 40 |
+| Nhắc vòng còn lại & giữ cố định danh sách công cụ (`canh_bao_vong_con_lai: true`, Đợt 4A) | tắt | `n=18` lượt đa công cụ, `gpt-6-luna`, Đợt 4A 27/11 | giảm cứu chạm trần `2 → 0`, cắt `50%` số lần gọi thừa (`6 → 3`), cache bước `>=2` `91,00% → 94,58%`, `ToolCallAccuracy` F1 `0,831 → 0,849`, giảm **`-6,84%` USD** (`0,028547 → 0,026594 USD`) | giữ (bật) | 21, 40 |
+| Tối ưu công cụ Đợt 2 + chẩn đoán viết lại (`toi_uu_dot2_va_viet_lai: true`, Đợt 4A) | tắt | `n=38` (gợi ý mưa/nắng, so sánh điểm đến và lượt viết lại), `gpt-6-luna`, Đợt 4A 27/11 | mưa/nắng **`4/8 → 8/8`** (`-4,3%` USD, `p95 14,13 → 11,64 s`), so sánh **`5/8 → 7/8`** (`ToolCallAccuracy` `0,500 → 0,875` / tổng thể `0,929`, `-16,4%` USD), viết lại `-10,4%` USD (cứu chạm trần `3 → 2`), tổng giảm **`-10,02%` USD** (`0,057429 → 0,051674 USD`); phần chẩn đoán viết lại mới kiểm ở test tự động (`0/8` kích hoạt thật), `1` câu bốn vế có chữ *"qua đêm"* bên bật có `1` lần gọi nhầm bão/lũ ở vòng 7 | giữ (bật) | 24, 21, 40 |
 
 
 ## Chặng 6 — Lên kế hoạch (và đo trợ lý)
@@ -313,12 +317,12 @@ Cột "Giữ / bỏ" chép kết luận của bài gốc. Dòng ghi "chưa đo",
 | Chặng 2 | 9 | 17 | 1 |
 | Chặng 3 | 6 | 18 | 1 |
 | Chặng 4 | 2 | 0 | 0 |
-| Chặng 5 | 44 | 32 | 4 |
+| Chặng 5 | 47 | 33 | 4 |
 | Chặng 6 | 75 | 19 | 3 |
 | Chặng 7 | 6 | 5 | 6 |
-| **Cả trang** | **146** | **96** | **15** |
+| **Cả trang** | **149** | **97** | **15** |
 
-Cả trang có 258 dòng: 257 phép so ở bảng đếm trên, cộng một dòng tìm nguyên nhân (chặng 3, câu về tỉnh khác) không đếm vì nó không phải một phương án để giữ hay bỏ. Con số này khác bảng tổng 45 lần so chính mà bài 20 kể: trang này tách mỗi phương án của một bảng thành một dòng, và gồm cả các lần đếm bằng chương trình của phần lên kế hoạch. "Giữ" gồm cả các dòng "mở", "bật", "dựng", "sửa rồi giữ", "đạt"; "bỏ" gồm cả "gỡ", "gác", "tắt", "để tắt", "không mở đứng riêng", "không gộp", "không dựng", "trượt", "không đạt", "thay"; "chỉ báo" (phép đo bước một, dẫn tới phép sau) đếm là "chưa rõ".
+Cả trang có 262 dòng: 261 phép so ở bảng đếm trên, cộng một dòng tìm nguyên nhân (chặng 3, câu về tỉnh khác) không đếm vì nó không phải một phương án để giữ hay bỏ. Con số này khác bảng tổng 45 lần so chính mà bài 20 kể: trang này tách mỗi phương án của một bảng thành một dòng, và gồm cả các lần đếm bằng chương trình của phần lên kế hoạch. "Giữ" gồm cả các dòng "mở", "bật", "dựng", "sửa rồi giữ", "đạt"; "bỏ" gồm cả "gỡ", "gác", "tắt", "để tắt", "không mở đứng riêng", "không gộp", "không dựng", "trượt", "không đạt", "thay"; "chỉ báo" (phép đo bước một, dẫn tới phép sau) đếm là "chưa rõ".
 
 <details><summary>Nguồn (để giữ trang đúng — anh không cần đọc)</summary>
 
@@ -350,4 +354,5 @@ Gom từ mục "Đã so" của các bài 5, 7–16, 18, 21–35 (bài 1–4, 6, 
 - **Đợt 16:08, ngày 25/11/2026:** chép thêm hàng nút "Hoàn tác lần sửa này" từ bài 31 "Đã so" (`chặng 6`: `74 ⇒ 75` giữ · cả trang: `140 ⇒ 141` giữ, `248 ⇒ 249` dòng, `247 ⇒ 248` phép so).
 - **Đợt 20:34, ngày 25/11/2026:** thêm 1 dòng `chỉ báo` ở cuối chặng 6 cho lượt đo bộ câu kín mốc cuối trên `gpt-6-luna` (`ea96e47c`, `62 mở / 6 tắt`, `diem_v16.json`, so sánh với bản RAG cơ sở `p9-moc` `18e8f42b` chạy cùng ngày) từ `report_agent/2026-11-25/E_BO_CAU_KIN_LUNA_2511.md` (đã duyệt `READY`) và `data/phase_9/b7_cuoi_user/TONG_HOP_SO.json` [đã mở]; `chặng 6`: `2 ⇒ 3` chưa rõ · cả trang: `14 ⇒ 15` chưa rõ, `249 ⇒ 250` dòng, `248 ⇒ 249` phép so; tuyệt đối không mở `*sealed*`.
 - **Đợt 27/11/2026:** thêm 7 dòng ở chặng 5 (Đợt 1: `chong_lap_cong_cu` + `cuu_max_turns` `giữ`, `siet_tro_chuyen` `bỏ`; Đợt 2: `goi_y_mua_nang` `giữ`, `so_sanh_diem_den` `giữ`, `cong_cong_cu: luon` `bỏ`; Nấc 2B: `linh_hoat` `giữ`; Đợt 3A: `confidence_gate` `bỏ`) và 1 dòng ở chặng 7 (`RLock` + `to_thread` `giữ`) theo bài 21, 24, 26, 35, 36 và `session_prompt/HIEN_TRANG.md` (`146` giữ, `96` bỏ, `15` chưa rõ; `257` phép so, `258` dòng) [tài liệu công khai].
+- **Đợt 4A (27/11/2026):** thêm 4 dòng ở chặng 5 (`faithfulness_eval.py` + `ToolCallAccuracy` `giữ`; `kiem_du_bang_chung` `bỏ`; `canh_bao_vong_con_lai` `giữ`; `toi_uu_dot2_va_viet_lai` `giữ`) theo bài 19, 21, 24, 32, 40 và `session_prompt/HIEN_TRANG.md` (`149` giữ, `97` bỏ, `15` chưa rõ; `261` phép so, `262` dòng) (`cd217536`, `f245963c`, `442055ba`) [tài liệu công khai].
 </details>

@@ -1,6 +1,6 @@
 # Bài 37 — Bảo mật: khoá bí mật, dữ liệu người dùng, và chữ lạ chen vào lời dặn
 
-*Cập nhật 14:25, ngày 27/11/2026 · khớp hệ thống mốc 14:13 27/11/2026 (**`66` tính năng mở, `7` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · cập nhật sáng 27/11: giới hạn lượt theo trọng số (`chat=1 / so_tay=10 / ho_so=8`), `Caddyfile` bổ sung header bảo mật, và đóng gói Docker mặc định `HUE_MO_SO_TAY_HO_SO=0`; đóng hẳn hướng mở rộng DevSecOps / Supply-chain / FinOps · bộ test: bài 38 · dòng cũ: Nguồn.*
+*Cập nhật 16:40, ngày 27/11/2026 · khớp hệ thống Đợt 4A (**`68` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · cập nhật sáng 27/11: giới hạn lượt theo trọng số (`chat=1 / so_tay=10 / ho_so=8`), `Caddyfile` bổ sung header bảo mật, và đóng gói Docker mặc định `HUE_MO_SO_TAY_HO_SO=0`; đóng hẳn hướng mở rộng DevSecOps / Supply-chain / FinOps · bộ test: bài 38 · dòng cũ: Nguồn.*
 
 **Bài trước đã biết:** khoá chỉ nằm ở máy chủ, bốn thứ được gửi ra ngoài (bài 6); cookie chỉ mang mã cuộc, chữ model qua hai lớp chặn trước khi lên màn hình (bài 35).
 **Bài này thêm:** khoá nằm ở đâu và rào nào giữ nó khỏi repo công khai; chữ người dùng đi đâu, giữ bao lâu; "chữ lạ chen vào lời dặn" là gì và hệ thống chặn bằng những lớp nào; những gì đã có sẵn nhưng đang tắt, và những gì chưa làm trước khi đưa lên mạng.
