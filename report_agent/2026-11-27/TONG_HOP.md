@@ -57,3 +57,12 @@
 - **2 báo cáo riêng tư của `c` (`data/nghien_cuu_2026-11-27/`, `e` đối chiếu khớp 100% log & `file:dòng`):**
   - `KIEM_TOAN_PRODUCTION_LOCAL.md`: thống kê Prompt Caching thật trên `63` lượt `gpt-6-luna` (`16/63 = 25,40%` lượt trúng, `89.643 / 310.320 = 28,89%` tokens; `sua_lich` `60,83%`, `tro_ly_hue` `28,64%` ở vòng 2+); chỉ ra 2 điểm đáng sửa gọn (`CancelScope(shield=True)` thu hồi task khi client ngắt SSE ở `so_tay.py:148-155` & `ho_so.py:160-169`, và `--timeout-graceful-shutdown` cho `uvicorn`) cùng 4 điểm không nên sửa để tránh over-engineer.
   - `NGHIEN_CUU_AGENTIC_HARNESS_TOOLS_2026.md`: đề xuất 4 nâng cấp Harness (`TurnBudget` + *Actionable Feedback*, tách Fast-path vs Agentic Loop, chuẩn hoá `CancelScope` + graceful shutdown, *Trajectory Eval Gate* `0 USD` + Blue-Green Alias) và 4 tool mới dùng dữ liệu sẵn có (`tinh_ve_va_gio_tham_quan`, `so_sanh_diem_den`, `goi_y_phuong_an_mua_nang`, `tim_tuyen_di_lai`).
+
+---
+
+## 5. Đợt 3 (10:08 – 10:13 27/11/2026, `0 USD` AWS, `0 USD` OpenAI) — Sửa `CancelScope`, Graceful Shutdown & Dọn nhánh
+- **Gộp lên `main` (`19cbb878`, nhánh `origin/p17-b-cancel-graceful`, `e` duyệt `READY`):**
+  - `backend/api/routes/so_tay.py` & `backend/api/routes/ho_so.py`: khối `finally` của `_su_kien` chỉ `v.cancel()` các task chưa `done()` và bọc `await asyncio.gather(*viec, return_exceptions=True)` trong `anyio.CancelScope(shield=True)` để thu hồi sạch task con khi client ngắt kết nối SSE giữa chừng.
+  - `deploy/docker/Dockerfile` & `deploy/docker/compose.yml`: thêm `--timeout-graceful-shutdown 15` cho `uvicorn` và `stop_grace_period: 20s` cho service `app`.
+  - `backend/tests/test_so_tay.py` & `backend/tests/test_ho_so_chu_de.py`: thêm `test_ngat_ket_noi_sse_giua_chung_huy_va_don_het_viec_con` (`56 passed in 3.93s` trên worktree sạch có `data`, `docker compose -f deploy/docker/compose.yml config` hợp lệ).
+  - **Dọn gọn:** xoá 4 nhánh tạm đã gộp sáng 27/11 (`p16-b-deploy-tf-docs`, `p16-c-docker-smoke-eval`, `p17-b-async-retrieval-limit`, `p17-b-cancel-graceful`) ở cả local và `origin` (giữ nguyên 9 nhánh hồ sơ/bản thử cũ), đồng thời đóng `/swarm`.
