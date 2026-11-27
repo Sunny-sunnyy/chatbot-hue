@@ -12,6 +12,7 @@ import logging
 import re
 import time
 
+import anyio
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
@@ -166,7 +167,10 @@ async def _su_kien(cd: "hs.ChuDe", bai: list, state, flags, generator, dem_ho_so
             yield phat[-1]
     finally:
         for v in viec:
-            v.cancel()
+            if not v.done():
+                v.cancel()
+        with anyio.CancelScope(shield=True):
+            await asyncio.gather(*viec, return_exceptions=True)
     giay = round(time.perf_counter() - started, 1)
     logger.info("ho_so done: topic=%s sections=%d failed=%d outline_fallback=%s seconds=%.1f llm_calls=%d", cd.ma, len(muc), loi, dan_y_loi, giay, dem["goi_model"])
     # `ban_ngan`: dưới nửa số mục có đủ ý ⇒ giao diện nói rõ đây là bản ngắn (code đếm, không phải model tự nhận)

@@ -11,6 +11,7 @@ import asyncio
 import logging
 import time
 
+import anyio
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
@@ -152,7 +153,10 @@ async def _su_kien(dan_y: list[dict], lich: dict, an_toan: str | None, state, fl
             yield sse_event("muc", ket_qua)
     finally:
         for v in viec:  # trình duyệt đóng luồng giữa chừng ⇒ không để lời gọi model chạy tiếp vô ích
-            v.cancel()
+            if not v.done():
+                v.cancel()
+        with anyio.CancelScope(shield=True):
+            await asyncio.gather(*viec, return_exceptions=True)
     giay = round(time.perf_counter() - started, 1)
     logger.info("so_tay done: sections=%d failed=%d seconds=%.1f llm_calls=%d dropped=%s", len(dan_y), loi, giay, dem["goi_model"],
                 {k: v for k, v in dem.items() if k.startswith("bo_") and v})

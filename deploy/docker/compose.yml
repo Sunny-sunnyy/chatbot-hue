@@ -68,7 +68,7 @@ services:
         until python -c "import urllib.request as u; u.urlopen('http://qdrant:6333/collections/${HUE_COLLECTION:-hue_full_corpus_7a2_e5_small_384}', timeout=3)" 2>/dev/null; do
           echo "chờ Qdrant có collection…"; sleep 2
         done
-        exec uvicorn api.app:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips '*' --no-access-log
+        exec uvicorn api.app:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips '*' --no-access-log --timeout-graceful-shutdown 15
     volumes:
       - ./logs:/app/backend/logs      # log + số đo từng lượt sống qua lần tạo lại hộp
       # Thư mục cấu hình của app nằm NGOÀI ảnh (dong_goi.sh lấy đúng bản trong ảnh ra, có băm kiểm) ⇒ đổi model viết hay tắt một tính năng trên máy chủ
@@ -94,6 +94,7 @@ services:
     cap_drop: [ALL]
     security_opt:
       - no-new-privileges:true
+    stop_grace_period: 20s
     restart: unless-stopped
     <<: *log
 

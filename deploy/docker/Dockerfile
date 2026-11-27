@@ -57,4 +57,4 @@ EXPOSE 8000
 # `--forwarded-allow-ips '*'`: app không mở cổng ra máy, chỉ Caddy (hộp khác cùng mạng compose) gọi tới; cần để giới hạn lượt đếm theo địa chỉ thật.
 # `--no-access-log`: nhật ký truy cập của uvicorn in địa chỉ IP người gọi ra log Docker (bảng rủi ro 22/11, R9); số đo từng lượt đã có ở log của app, không có IP.
 # compose.yml chạy cùng lệnh này sau khi chờ Qdrant — sửa ở đây thì sửa cả ở đó.
-CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*", "--no-access-log"]
+CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*", "--no-access-log", "--timeout-graceful-shutdown", "15"]

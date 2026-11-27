@@ -218,3 +218,44 @@ def test_model_hong_thi_dong_tro_an_toan_van_co():
             raise RuntimeError("model hỏng")
     muc = next(d for t, d in _chay_bien(May()) if t == "muc")
     assert muc["trang_thai"] == "loi" and len([d for d in muc["doan"] if d["kieu"] == "an_toan"]) == 5 and len(muc["nguon"]) == 5
+
+
+def test_ngat_ket_noi_sse_giua_chung_huy_va_don_het_viec_con():
+    import anyio
+    from api.routes import ho_so as r
+
+    async def chay():
+        bat_dau = asyncio.Event()
+        cho_huy = asyncio.Event()
+        trang_thai = {"huy": 0, "don": 0}
+        dem = {}
+
+        class May:
+            async def viet_so_tay(self, loai, prompt, log):
+                if loai == "ho_so_dan_y":
+                    return {"muc": [{"tieu_de": "Đầu triều", "bai": [1, 2, 3]}, {"tieu_de": "Cuối triều", "bai": [4, 5]}]}
+                if "Đầu triều" in prompt:
+                    return {"y": [{"chu": "Lăng Gia Long yên tĩnh", "nguon": [1]}]}
+                bat_dau.set()
+                try:
+                    await cho_huy.wait()
+                except asyncio.CancelledError:
+                    trang_thai["huy"] += 1
+                    with anyio.CancelScope(shield=True):
+                        await asyncio.sleep(0)
+                    trang_thai["don"] += 1
+                    raise
+                return {"y": []}
+
+        gen = r._su_kien(hs.CHU_DE[0], LANG, SimpleNamespace(retrieval_service=_Kho()),
+                         SimpleNamespace(the_noi_bang=None, muc_luc=ML), May(), dem)
+        assert b"event: chu_de" in await gen.__anext__()
+        assert b"event: dan_y" in await gen.__anext__()
+        assert b"event: muc" in await gen.__anext__()
+        await bat_dau.wait()
+        with anyio.CancelScope() as scope:
+            scope.cancel()
+            await gen.aclose()
+        assert trang_thai == {"huy": 1, "don": 1} and dem == {}
+
+    asyncio.run(chay())

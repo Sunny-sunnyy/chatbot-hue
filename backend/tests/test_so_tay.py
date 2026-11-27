@@ -322,3 +322,49 @@ def test_dong_tro_an_toan_chi_tro_toi_muc_that_su_dan_du_khach():
     assert not [d for d in muc["doan"] if d["kieu"] == "an_toan"] and muc["trang_thai"] == "xong"
     tro = [d for d in _chay_diem(MayKhongViet(), [*THAC[:2], BUOI_TOI])["doan"] if d["kieu"] == "an_toan"]
     assert len(tro) == 1 and "«" not in tro[0]["chu"] and tro[0]["so"]
+
+
+def test_ngat_ket_noi_sse_giua_chung_huy_va_don_het_viec_con():
+    import anyio
+    from api.routes import so_tay as r
+
+    class Kho:
+        def search(self, cau):
+            return SimpleNamespace(documents=[THAC[0]])
+
+        def doan_cua_bai(self, rel):
+            return []
+
+    async def chay():
+        bat_dau = asyncio.Event()
+        cho_huy = asyncio.Event()
+        trang_thai = {"huy": 0, "don": 0}
+
+        class May:
+            async def viet_so_tay(self, loai, prompt, log):
+                if loai == "diem":
+                    return {"nen_xem": [{"chu": "Thác nước trong xanh", "nguon": [1]}], "luu_y": [], "di_lai": []}
+                bat_dau.set()
+                try:
+                    await cho_huy.wait()
+                except asyncio.CancelledError:
+                    trang_thai["huy"] += 1
+                    with anyio.CancelScope(shield=True):
+                        await asyncio.sleep(0)
+                    trang_thai["don"] += 1
+                    raise
+                return {}
+
+        lich = {"ngay": [{"ngay": 1, "muc": [{"id_muc": "n1-sang-1", "buoi": "sang", "id_diem": "thac", "ten": "Thác", "gio": "8:00 – 10:00",
+                                             "bai_id": "travel/places/Thác.md", "anh": None}]}], "ghi_chu": []}
+        gen = r._su_kien(st.dan_y(lich), lich, "an toàn", SimpleNamespace(retrieval_service=Kho()),
+                         SimpleNamespace(the_noi_bang=None, bang_lich_v2=None), May())
+        assert b"event: dan_y" in await gen.__anext__()
+        assert b"event: muc" in await gen.__anext__()
+        await bat_dau.wait()
+        with anyio.CancelScope() as scope:
+            scope.cancel()
+            await gen.aclose()
+        assert trang_thai == {"huy": 1, "don": 1}
+
+    asyncio.run(chay())
