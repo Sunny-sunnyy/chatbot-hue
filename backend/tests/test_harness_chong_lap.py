@@ -79,10 +79,10 @@ def test_new_flags_default_off_in_code_and_settings():
     flags = AssistantFlags()
     assert (flags.chong_lap_cong_cu, flags.cuu_max_turns, flags.siet_tro_chuyen) == (False, False, False)
     settings = load_settings(validate_private_paths=False)
-    for key in ("chong_lap_cong_cu", "cuu_max_turns", "siet_tro_chuyen"):
-        assert settings["assistant"][key] is False
     loaded = AssistantFlags.from_settings(settings)
-    assert (loaded.chong_lap_cong_cu, loaded.cuu_max_turns, loaded.siet_tro_chuyen) == (False, False, False)
+    for key in ("chong_lap_cong_cu", "cuu_max_turns", "siet_tro_chuyen"):
+        assert isinstance(settings["assistant"][key], bool)
+        assert getattr(loaded, key) is settings["assistant"][key]
 
 
 def test_all_flags_off_keep_exact_requests_and_old_max_turns_behavior(deps):

@@ -66,3 +66,15 @@
   - `deploy/docker/Dockerfile` & `deploy/docker/compose.yml`: thêm `--timeout-graceful-shutdown 15` cho `uvicorn` và `stop_grace_period: 20s` cho service `app`.
   - `backend/tests/test_so_tay.py` & `backend/tests/test_ho_so_chu_de.py`: thêm `test_ngat_ket_noi_sse_giua_chung_huy_va_don_het_viec_con` (`56 passed in 3.93s` trên worktree sạch có `data`, `docker compose -f deploy/docker/compose.yml config` hợp lệ).
   - **Dọn gọn:** xoá 4 nhánh tạm đã gộp sáng 27/11 (`p16-b-deploy-tf-docs`, `p16-c-docker-smoke-eval`, `p17-b-async-retrieval-limit`, `p17-b-cancel-graceful`) ở cả local và `origin` (giữ nguyên 9 nhánh hồ sơ/bản thử cũ), đồng thời đóng `/swarm`.
+
+---
+
+## 6. Đợt 4 — Đợt 1 Chiến dịch Tối ưu Harness · Agentic RAG · Tools (`11:10 – 11:55 27/11/2026`, `0 USD` AWS, `~0,052–0,059 USD` OpenAI)
+- **Gộp lên `main` (`e432e32c`, nhánh `origin/p18-b-harness-chong-lap` của `b2`, `e2` duyệt `READY` với `428 passed`):**
+  - `backend/llm/assistant.py`, `backend/config/settings.yaml`, `backend/api/routes/chat.py`, `backend/evaluation/trajectory_eval.py`: thêm `chong_lap_cong_cu` (chuẩn hoá tham số, chặn lặp kèm gợi ý trỏ `[N]`, ghi `lap: true`), `cuu_max_turns` (chạm trần có bằng chứng thì viết lại MỘT lần tắt hết tool), `siet_tro_chuyen`, và `trajectory_eval.py` đọc `application.log` (`219` lượt tổng / `66` `gpt-6-luna`).
+- **Kết quả đo đối chứng cùng buổi trên `gpt-6-luna` (`e2` đo cổng `8039`, `0,039305 USD`, `data/thu_harness_2026-11-27/KET_LUAN_DOT1.md`):**
+  - **1A — GIỮ & BẬT (`chong_lap_cong_cu: true`, `cuu_max_turns: true` → `64 MỞ / 7 TẮT`):** trên `n = 14` (`10` smoke + `4` đa ngày/lễ hội), chạm `max_turns` giảm `1/14 → 0/14` (`1a_multi_03` được cứu từ `0` nguồn → `8` nguồn hợp lệ, `0` lỗi citation), `p95` lượt thường giảm `14.488 → 11.987 ms`, vòng tool TB/p95 giảm `1,643/6,0 → 1,286/3,0`, `0` vi phạm sàn (`0,029046 USD`).
+  - **1B — GỠ / GIỮ TẮT (`siet_tro_chuyen: false`):** trên `n = 18` câu đã thấy, bên TẮT đã đạt `0/6` bẫy lọt `tro_chuyen` (`CHƯA RÕ`), bật lên tốn thêm `+8,5%` tiền prompt (`0,010259 USD`).
+- **Kiểm chứng Đợt 1C trên `gpt-6-luna` (`c2` chạy cổng `8039`, `e2` đối chiếu `100%`, `KET_QUA_1C_3_CUM_LUNA.md`):**
+  - `so_tay` đạt (`9,92s` mặc định 2 ngày / `16,47s` 3 ngày thiên nhiên, `0` lỗi JSON), `ho_so_chu_de` đạt (`bien_dam_pha` `9,85s` / `ca_phe` `13,31s`, `0` lỗi), `sua_lich_hoi_truoc` đạt `5/5` lệnh gõ tay (`0` câu dự phòng). Chi phí đo `0,004828 USD` từ log + ước `~0,0083–0,0149 USD` cho `so_tay`/`ho_so` (phát hiện `so_tay.py` & `ho_so.py` chưa ghi `usd`/tokens vào log).
+- **Thiết kế Đợt 2 & Đợt 3:** `c2` lập [THIET_KE_DOT2_DOT3.md](../../data/thu_harness_2026-11-27/THIET_KE_DOT2_DOT3.md), `e2` góp ý 3 điểm chốt trước khi mở Đợt 2.
