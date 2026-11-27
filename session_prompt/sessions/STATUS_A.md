@@ -1,22 +1,26 @@
 # STATUS_A — Phiên điều phối A (`agy` CLI)
 
-Cập nhật: 14:57 27/11/2026 (giờ `date`) — **ĐÃ KẾT PHIÊN SẠCH.**
+Cập nhật: 16:49 27/11/2026 (giờ `date`) — **ĐÃ KẾT PHIÊN SẠCH.**
 
 ## 1. Đang giữ vai trò & phạm vi
-- Phiên điều phối (A) đã kết thúc gọn **Chiến dịch Tối ưu Harness · Agentic RAG · Tools · Agent · 0-GPU Image QA trên `gpt-6-luna`** (Đợt 1, Đợt 2, Nấc 2B, Đợt 3A), **2 báo cáo nghiên cứu chuyên sâu Paper/Repo**, và **đồng bộ giáo trình `bai_hoc/giao_trinh/` (`d341fd96`)**; toàn bộ `8` worker `/swarm` đã được `kill` sạch sau khi đẩy lên `origin/main` (`29ad79e8`).
+- Phiên điều phối (A) đã hoàn tất trọn **Đợt 4A** (Đánh giá 3 tầng trên nền Golden 176 câu + Tối ưu Harness/Tools trên `gpt-6-luna`), gộp code + mở 2 cơ chế đạt ngưỡng (**68 MỞ / 8 TẮT** ở `442055ba`), gộp đồng bộ `22` file giáo trình `bai_hoc/giao_trinh/` (`b1b69754`), và hoàn tất bản thiết kế **Đợt 5 (Multi-Agent & Tính tự chủ)** gác sẵn cho các phiên sau.
 
-## 2. Đã xong trong 27/11 (`0 USD` AWS, ~`0,321–0,328 USD` OpenAI cả chiến dịch)
-- **Đợt 1 (`d67375f2`, `~0,052–0,059 USD`):** **GIỮ & BẬT** `chong_lap_cong_cu` + `cuu_max_turns` (`max_turns` `1/14 → 0/14`, `p95 14,5 → 12,0 s`), giữ tắt `siet_tro_chuyen`, thông `1C` 3 cụm.
-- **Đợt 2 (`aa333ca`, `0,169822 USD`, `66 MỞ / 7 TẮT`):** **GIỮ & BẬT** `goi_y_mua_nang` (`1/8 → 5/8`, USD `-40,5%`) + `so_sanh_diem_den` (`1/8 → 6/8`, USD `-37,3%`), khoá `MAX_VONG_CONG_CU_TOI_DA = 6`, log USD `so_tay`/`ho_so`.
-- **Nấc 2B & Đợt 3A (`75f545c6` + `79cb4dea`, `0,099352 USD`):** **GIỮ & BẬT `cong_cong_cu: linh_hoat`** (`9/10` lách từ khoá, `0/5` gọi thừa, USD **`-15,23%`**, `cached_tokens` `46,5% → 76,9%`); **GIỮ `anh.che_do_tu_choi: mac_dinh`** (do `confidence_gate` làm tụt recall dương `-17` top-1 dù giảm FP `-50%`).
-- **Nghiên cứu chuyên sâu (`0 USD`, đã xoá `/tmp/hr_*_repos/`):** `c2` ([KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md](../../data/nghien_cuu_2026-11-27/KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md)) & `b2` ([DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md](../../data/nghien_cuu_2026-11-27/DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md)).
-- **Giáo trình (`d341fd96`, `0 USD`):** `d2` đồng bộ `21` file `bai_hoc/giao_trinh/`, `e2` duyệt `READY` (`0` blocker, `0` leak).
+## 2. Đã xong trong phiên chiều 27/11 (15:11 – 16:49, `0 USD` AWS, `0,265824 USD` OpenAI)
+- **Đợt 4A Eval (`cd217536`, `41e45fed`, `38 passed`):** `backend/evaluation/faithfulness_eval.py` (kiểm định `15/15 = 100%`, bắt `3/3` gán sai `[n]`; mốc nền Golden 20 đạt `88,33%` / `17/20` strict, `0` misattributed), `ToolCallAccuracy` (`0 USD`) trong `trajectory_eval.py`, bộ đo tại `data/thu_dot4_2026-11-27/`.
+- **Đợt 4A Harness & Tools (`f245963c` + `442055ba`, `108 + 88 passed` sau sửa cuối):**
+  - **GIỮ & BẬT `canh_bao_vong_con_lai: true`:** `cuu_max_turns` `2 → 0`, gọi thừa `6 → 3`, `ToolCallAccuracy` F1 `0,831 → 0,849`, cache bước `>=2` `91,00% → 94,58%`, USD **`-6,84%`**.
+  - **GIỮ & BẬT `toi_uu_dot2_va_viet_lai: true`:** `H2_mua_nang` `4/8 → 8/8`, `H2_so_sanh` `5/8 → 7/8` (`ToolCallAccuracy` `0,500 → 0,875`), tổng USD **`-10,02%`**.
+  - **GIỮ TẮT `kiem_du_bang_chung: false`:** nền đã tránh bịa `18/18`, bật thêm `+0/18`, tăng `+10,7%` USD và 1 ca bỏ sót `khoang_cach`.
+  - Vá log `cached_tokens` ở `backend/api/routes/anh.py` + đồng bộ `guides/RUNBOOK_BAN_GIAO.md`.
+- **Giáo trình (`b1b69754`, `0 USD`):** `docs` cập nhật `22` file `bai_hoc/giao_trinh/`, `verifier` review `READY` (`A 192 · B 144 · C 262 · E 240 · F 200 · G 353 · H 212 · I 225`).
+- **Thiết kế Đợt 5 (`0 USD`, gác cho phiên sau):** `data/dot5_multi_agent_2026-11-27/THIET_KE_DOT5.md` (`242` dòng) + `B_PHAN_TICH_KY_THUAT.md` (`455` dòng).
 
-## 3. Chờ phiên sau
-- Phiên mới mở theo `START_SESSION.md` đọc ngay các ứng viên Đợt 4 trong 2 báo cáo nghiên cứu nếu Hiếu chọn chạy tiếp, hoặc hỗ trợ deploy AWS thật khi Hiếu rảnh.
+## 3. Việc gác lại cho phiên sau
+- **Đợt 5 (Multi-Agent & Tính tự chủ — 3 cụm):** triển khai từ `THIET_KE_DOT5.md` (Phần A `0 OAuth` trước: `.ics` v2, Deep Link Booking/Agoda/Traveloka, mẫu tin hỏi phòng, Slide Designer Agent `.pptx`; rồi Phần B: Google OAuth Testing mode cho Calendar, Slides, Sheets, Gmail Draft).
+- **Deploy AWS thật (`deploy/`):** vẫn gác chờ Hiếu chọn tên miền/IP, email cảnh báo tiền, trần lượt/ngày (khi đóng gói nhớ chạy `dung_anh.sh origin/main`).
 
 ## 4. Tài nguyên & Chi phí lúc kết phiên
 - **Qdrant (`hue_rag-qdrant-1`, cổng 6335):** đang BẬT, đủ **9.540 điểm**.
 - **Cổng `8010`, `8039`, `8880`:** đều đang TRỐNG.
-- **Swarm:** đã `kill` hết toàn bộ `8` worker (`b`, `c`, `e`, `b2`, `c2`, `d2`, `e2`, `monitor`), không còn worktree dở.
-- **Chi phí OpenAI lũy kế phần test của nhóm:** ~**1,08 USD** / trần **2–2,5 USD**.
+- **Swarm:** sẽ `kill` sạch các worker trước khi báo Hiếu kết phiên, không còn worktree dở.
+- **Chi phí OpenAI lũy kế phần test của nhóm:** ~**1,35 USD** (`~1,08` tới Đợt 3A + `0,265824` Đợt 4A; Hiếu đã duyệt sẵn nếu vượt trần cũ `2–2,5 USD`).
