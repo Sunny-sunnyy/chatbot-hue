@@ -39,4 +39,21 @@
 
 ## 3. Giới hạn / phần chưa chạy
 - Toàn bộ thao tác tạo tài nguyên thật trên AWS (`terraform plan/apply`, EventBridge Scheduler, SNS email, HTTPS qua tên miền thật) vẫn ở trạng thái `[chưa kiểm trên AWS]` theo phạm vi `0 USD AWS`.
-- Ghi chú nhỏ: `thu_o_may.sh kiem` dùng `curl -sI` (`HEAD /`) nên FastAPI trả `405` và không hiện `Content-Security-Policy` ở đúng dòng đó; `GET /` đã xác nhận có đủ CSP.
+- Ghi chú `thu_o_may.sh kiem` dùng `curl -sI` (`HEAD /`) ở đợt 1 đã được sửa sang `curl -sD - -o /dev/null` (`GET /`) trong đợt 2 (`9c385952`).
+
+---
+
+## 4. Đợt 2 (09:43 – 09:57 27/11/2026, `0 USD` AWS, `0 USD` OpenAI) — Production Local 1 & Kiểm toán / Nghiên cứu Agentic–Harness
+- **Gộp lên `main` (`9c385952`, nhánh `origin/p17-b-async-retrieval-limit`, `e` duyệt `READY`):**
+  - `backend/embedding/full_corpus.py`: thêm `threading.RLock` quanh `FullCorpusDenseRunner` (`load`, `embed_documents_matrix`, `embed_queries`, `close`) và `OpenRouterDenseRunner` (`load`, `_embed`) ngăn PyTorch CPU thread oversubscription.
+  - `backend/llm/assistant.py`: chuyển 3 lời gọi `context_builder.build(...)` sang `asyncio.to_thread(...)`.
+  - `backend/api/gioi_han.py`: thêm `TRONG_SO_DUONG` (`/api/chat`, `/api/chat/stream`, `/api/anh/ung_vien` = `1`; `/api/so_tay` = `10`; `/api/ho_so` = `8`) áp dụng cho cả trần IP và trần tổng, giữ tương thích ngược `cho_qua()` và `tai_file=True`.
+  - `deploy/docker/Caddyfile`: bỏ nén gzip cho `/api/so_tay` và `/api/ho_so` (`caddy validate` = `Valid configuration`).
+  - `deploy/docker/dong_goi.sh`: thêm tuỳ chọn `HUE_MO_SO_TAY_HO_SO=1` (mặc định `0` cho tới khi kiểm thật trên `gpt-6-luna`); `deploy/docker/thu_o_may.sh`: sửa kiểm `GET /` CSP (`bash -n` đạt).
+  - **Số đo kiểm chứng độc lập bởi `e` (`data/nghien_cuu_2026-11-27/bench_event_loop.py`, Qdrant `6335` 9.540 điểm):**
+    - `3_concurrent_api_chat_x8`: `wall` `811,13 → 503,24 ms` (`-38%`), `/health` max `47,97 → 12,54 ms` (`p50 2,45 → 1,17 ms`).
+    - `4_concurrent_to_thread_search_x8`: `wall` `874,00 → 476,02 ms` (`-45,5%`), `/health` max `21,03 → 5,57 ms`.
+    - Pytest 8 file chạm (`HF_HUB_OFFLINE=1`): **96 passed in 29.09s**.
+- **2 báo cáo riêng tư của `c` (`data/nghien_cuu_2026-11-27/`, `e` đối chiếu khớp 100% log & `file:dòng`):**
+  - `KIEM_TOAN_PRODUCTION_LOCAL.md`: thống kê Prompt Caching thật trên `63` lượt `gpt-6-luna` (`16/63 = 25,40%` lượt trúng, `89.643 / 310.320 = 28,89%` tokens; `sua_lich` `60,83%`, `tro_ly_hue` `28,64%` ở vòng 2+); chỉ ra 2 điểm đáng sửa gọn (`CancelScope(shield=True)` thu hồi task khi client ngắt SSE ở `so_tay.py:148-155` & `ho_so.py:160-169`, và `--timeout-graceful-shutdown` cho `uvicorn`) cùng 4 điểm không nên sửa để tránh over-engineer.
+  - `NGHIEN_CUU_AGENTIC_HARNESS_TOOLS_2026.md`: đề xuất 4 nâng cấp Harness (`TurnBudget` + *Actionable Feedback*, tách Fast-path vs Agentic Loop, chuẩn hoá `CancelScope` + graceful shutdown, *Trajectory Eval Gate* `0 USD` + Blue-Green Alias) và 4 tool mới dùng dữ liệu sẵn có (`tinh_ve_va_gio_tham_quan`, `so_sanh_diem_den`, `goi_y_phuong_an_mua_nang`, `tim_tuyen_di_lai`).

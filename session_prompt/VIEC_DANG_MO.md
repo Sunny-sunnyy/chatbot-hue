@@ -1,17 +1,20 @@
-# Việc đang mở (sổ việc — cập nhật 09:07 27/11/2026)
+# Việc đang mở (sổ việc — cập nhật 09:57 27/11/2026)
 
 *Mỗi đầu việc có: **làm để chốt gì** · **ai làm** · **tới đâu** · **chỗ lưu**. Quy trình nhiều phiên: `session_prompt/WORKFLOW.md`. Việc đã xong chép 1 dòng sang `session_prompt/VIEC_DA_XONG.md`.*
 
 ## A. Sản phẩm & Vận hành
 
-### A.1. Đã hoàn tất đợt sáng 27/11/2026 (Gói A `deploy/` + Docker + `smoke_eval`, chờ Hiếu chốt hướng tiếp)
-- **Trạng thái:** đã xong trọn gói sáng 27/11 qua `/swarm` (`b`, `c`, `e`, `monitor`; `0 USD` AWS, `0,00706 USD` OpenAI): gộp `a3d1aed0` (Terraform `1_nen_tang`/`2_may_chu`, IAM policy, đồng bộ `deploy/` + spec 26/11) và `21843ed2` (`pyproject.toml` cắt 13 gói dev khỏi runtime, `Caddyfile` security headers + cache + mẫu `basic_auth`, `compose.yml` + `thu_o_may.sh`, `backend/evaluation/smoke_eval.py`). `e` đã kiểm thật trên `21843ed2`: `terraform validate` 2 tầng đạt, `dung_ngu_canh --chi-kiem` đủ 11 file, ảnh Docker mới `hue-rag-app:21843ed` **3,49 GB** (giảm `0,13 GB`), `thu_o_may.sh` cổng `8880` (`USER hue`, `cap_drop: [ALL]`, headers, 1 câu OpenAI thật `200`), và `smoke_eval` 14/14 PASS (`report_agent/2026-11-27/TONG_HOP.md`).
-- **Hướng có thể bàn tiếp khi Hiếu muốn (chưa mở):**
-  - Đo thử tải thực tế xem `e5-small` CPU có làm nghẽn event loop FastAPI khi nhiều người hỏi cùng lúc không (`0 USD`, theo `BAN_DO_PRODUCTION_2026-11-26.md` mục 4).
-  - Nâng cấp cập nhật kho không downtime bằng Blue-Green + Qdrant Collection Alias.
+### A.1. Đã hoàn tất 2 đợt sáng 27/11/2026 (chờ Hiếu chọn bước tiếp theo từ báo cáo kiểm toán & nghiên cứu)
+- **Trạng thái:**
+  - **Đợt 1 (`a3d1aed0` + `21843ed2`, `0 USD` AWS, `0,00706 USD` OpenAI):** chuẩn hoá `deploy/` + Terraform + Caddy/Compose + cắt 13 gói dev ở `pyproject.toml` (ảnh mới `3,49 GB`), chạy thật `thu_o_may.sh` cổng `8880` kèm 1 câu OpenAI thật, xây & chạy thật `smoke_eval` **14/14 PASS**.
+  - **Đợt 2 (`9c385952`, `0 USD` AWS, `0 USD` OpenAI):** gỡ nghẽn đồng thời `e5-small` (`RLock` + `asyncio.to_thread` cho 3 chỗ `context_builder.build` ⇒ giảm `wall` 8 luồng **-38% đến -45,5%**, `/health` max `47,97 → 12,54 ms`, `96 passed`), nâng cấp `gioi_han.py` tính trọng số (`chat=1`, `so_tay=10`, `ho_so=8`) + `Caddyfile` bỏ gzip `/api/so_tay` & `/api/ho_so` + `dong_goi.sh` (`HUE_MO_SO_TAY_HO_SO=0` mặc định) + `thu_o_may.sh` (`GET /` CSP); hoàn tất 2 báo cáo kiểm toán & nghiên cứu đã được `e` soát chéo 100% tại `data/nghien_cuu_2026-11-27/KIEM_TOAN_PRODUCTION_LOCAL.md` và `NGHIEN_CUU_AGENTIC_HARNESS_TOOLS_2026.md`.
+- **Đề xuất nổi bật chờ Hiếu chọn (chưa tự xây):**
+  - Sửa gọn lỗi trung bình từ kiểm toán: `CancelScope(shield=True)` thu hồi task song song khi client ngắt SSE ở `so_tay.py` & `ho_so.py` + `--timeout-graceful-shutdown` cho `uvicorn`.
+  - Blue-Green Qdrant Alias (cập nhật kho 0 downtime) · Quét CVE + ghim `@sha256` Dockerfile · Request ID / Cost Attribution · hoặc 1–2 nâng cấp Harness / Tool mới / MCP Server từ báo cáo nghiên cứu.
 - **Vẫn gác (chờ chủ dự án tự mở lại):**
   - Thuê GPU + huấn luyện model nhận ảnh (gác theo lời chủ dự án 15:17 & 20:50 25/11; gói `data/anh_huan_luyen_2026-11-24/goi_may_thue.tar` 3,3 GB giữ nguyên).
   - Bước triển khai thực tế lên AWS (`deploy/`): chờ chọn tên miền/IP, email cảnh báo tiền, trần lượt/ngày.
+  - Ba nhánh tạm sáng 27/11 đã gộp (`p16-b-deploy-tf-docs`, `p16-c-docker-smoke-eval`, `p17-b-async-retrieval-limit`): chờ Hiếu duyệt dọn.
 
 ### A.2. Nợ kỹ thuật nhỏ (gom làm khi sửa file liên quan, không mở đợt riêng)
 - **Độ dài tên trong gói deploy `gpt-6-luna`:** kiểm lại chỗ cắt tên hoặc chữ dài nếu phát hiện trong thực tế (E ghi chú sau rà).
