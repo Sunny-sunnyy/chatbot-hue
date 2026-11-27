@@ -113,3 +113,15 @@ def mo_ta_cong_cu(bang: kc.BangKhoangCach) -> str:
             "khoảng cách trong đó, ghi mã [n]; địa chỉ, giờ mở cửa, món của từng quán thì tìm trong kho theo tên quán. Kết quả nói không có ⇒ nói thật "
             "là chưa có, không tự nêu quán khác là gần.\n"
             "Danh sách:\n" + "\n".join(dong))
+
+
+def mo_ta_ngan(ten_cong_cu_bang: str = "khoang_cach") -> str:
+    """Mô tả rút gọn khi bảng mã điểm đã in ở công cụ khác trong cùng lượt (Nấc 2B)."""
+    return (
+        "Những gì Ở GẦN một điểm ở Huế trong danh sách điểm, do hệ thống tính theo vị trí: quán ăn hoặc quán cà phê có bài trong kho, "
+        "hoặc các điểm tham quan gần nhất. Chỉ gọi khi người dùng hỏi quanh / gần MỘT nơi có gì (ăn gì gần đó, quán nào gần, gần đó còn điểm nào để ghé). "
+        f"diem = mã điểm trong Danh sách của công cụ `{ten_cong_cu_bang}` (nơi ngoài danh sách: khách sạn, ga, sân bay, \"trung tâm\"… ⇒ \"{kc.KHAC}\", "
+        "không chọn điểm gần giống). loai = quan_an | ca_phe | diem_tham_quan. Kết quả là một nguồn có mã [n]: chỉ gọi là \"gần\" những nơi có trong đó "
+        "và chỉ dùng đúng chữ khoảng cách trong đó, ghi mã [n]; địa chỉ, giờ mở cửa, món của từng quán thì tìm trong kho theo tên quán. "
+        "Kết quả nói không có ⇒ nói thật là chưa có, không tự nêu quán khác là gần."
+    )

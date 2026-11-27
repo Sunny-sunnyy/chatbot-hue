@@ -139,3 +139,14 @@ def mo_ta_cong_cu(bang: lt2.BangV2) -> str:
         "Kết quả là một nguồn [n]: bám đúng thuộc tính và trích mã [n]; cần chiều sâu văn hoá/lịch sử thì gọi thêm tim_kho.\n"
         f"Mã điểm: {ds}."
     )
+
+
+def mo_ta_ngan(ten_cong_cu_bang: str = "khoang_cach") -> str:
+    """Mô tả rút gọn khi danh sách mã điểm đã in ở công cụ khác trong cùng lượt (Nấc 2B)."""
+    return (
+        "So sánh 2 đến 3 điểm đến ở Huế theo tiêu chí thực dụng (khu vực, thời lượng, trong nhà/ngoài trời, nhiều bậc thang, giờ/vé tóm tắt từ kho, khoảng cách). "
+        "KHÔNG dùng cho so sánh thuần lịch sử/kiến trúc hoặc điểm ngoài danh sách (dùng tim_kho). "
+        f"Truyền diem_1, diem_2 và diem_3 (\"{KHONG_CO}\" hoặc null nếu chỉ so sánh 2 điểm), đối chiếu tên↔mã điểm ở Danh sách của công cụ "
+        f"`{ten_cong_cu_bang}` (và danh sách enum hợp lệ của tham số). "
+        "Kết quả là một nguồn [n]: bám đúng thuộc tính và trích mã [n]; cần chiều sâu văn hoá/lịch sử thì gọi thêm tim_kho."
+    )

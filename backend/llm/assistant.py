@@ -417,8 +417,8 @@ class AssistantFlags:
             raise ValueError("assistant.quan_trua_kho_truoc needs assistant.quan_lich: true")
         if self.quan_lich and (not self.len_ke_hoach_v2 or self.quan_bang is None):
             raise ValueError("assistant.quan_lich needs assistant.len_ke_hoach_v2: true and the restaurant table (assistant.lich_trinh_bang_quan)")
-        if self.cong_cong_cu not in ("tu_khoa", "luon"):
-            raise ValueError(f"cong_cong_cu must be 'tu_khoa' or 'luon', got {self.cong_cong_cu!r}")
+        if self.cong_cong_cu not in ("tu_khoa", "luon", "linh_hoat"):
+            raise ValueError(f"cong_cong_cu must be 'tu_khoa', 'luon' or 'linh_hoat', got {self.cong_cong_cu!r}")
         if not set(self.len_ke_hoach_o_hien) <= set(O_BIEU_MAU_V2):
             raise ValueError(f"assistant.len_ke_hoach_o_hien must be a subset of {O_BIEU_MAU_V2}")
 
@@ -1108,6 +1108,7 @@ def gan_diem_for_turn(trace: AnswerTrace, bang: "kc.BangKhoangCach", quan_theo_c
         return chu
 
     gan_diem.__doc__ = gd.mo_ta_cong_cu(bang)
+    gan_diem.mo_ta_ngan = gd.mo_ta_ngan
     return gan_diem
 
 
@@ -1266,6 +1267,7 @@ def so_sanh_for_turn(trace: AnswerTrace, bang: "lt2.BangV2", bang_kc: "kc.BangKh
         return chu
 
     so_sanh_diem_den.__doc__ = ss.mo_ta_cong_cu(bang)
+    so_sanh_diem_den.mo_ta_ngan = ss.mo_ta_ngan
     return so_sanh_diem_den
 
 
@@ -1933,7 +1935,9 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
     """Cờ `lich_trinh` bật ⇒ công cụ thứ hai cho generator; B5b: cờ `thoi_tiet` bật ⇒ code dò ngữ cảnh thời tiết của câu, và **chỉ khi** câu cuối /
     câu hỏi liền trước có từ khoá ⇒ thêm công cụ `thoi_tiet` (D4). Cờ tắt ⇒ {} (generator gọi y như trước — Q1)."""
     extra = {}
-    luon = flags.cong_cong_cu == "luon"  # đưa ba công cụ ở mọi lượt, không xét từ khoá; hai ngoại lệ dưới (ngoài 7 ngày, số tính sẵn) giữ nguyên
+    luon = flags.cong_cong_cu in ("luon", "linh_hoat")  # đưa công cụ ở mọi lượt (giữ các rào cứng: ngoài 7 ngày, bão/lũ, số tính sẵn)
+    if flags.cong_cong_cu == "linh_hoat":
+        extra["linh_hoat"] = True
     lap_kw = {"chong_lap": True} if flags.chong_lap_cong_cu else {}
     if flags.lich_trinh:
         extra["lich_trinh_fn"] = lich_trinh_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.bang_lich,

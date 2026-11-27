@@ -210,7 +210,9 @@ def create_app(settings=None):
             try:
                 Image.MAX_IMAGE_PIXELS = anh["max_pixels"]  # lớp sau của rào bom giải nén (`nhan_anh.chuan_bi_anh`)
                 danh_sach = nap_danh_sach((BACKEND_DIR / anh["danh_sach"]).resolve())
-                app.state.anh = {"danh_sach": danh_sach, "agent": tao_agent(app.state.generator, danh_sach), "max_bytes": anh["max_bytes"],
+                che_do_tu_choi = anh.get("che_do_tu_choi", "mac_dinh")
+                app.state.anh = {"danh_sach": danh_sach, "agent": tao_agent(app.state.generator, danh_sach, che_do_tu_choi=che_do_tu_choi),
+                                 "che_do_tu_choi": che_do_tu_choi, "max_bytes": anh["max_bytes"],
                                  "max_pixels": anh["max_pixels"], "canh_dai": anh["canh_dai"], "timeout": anh["timeout"]}
                 logger.info("Image route enabled (%d names)", len(danh_sach))
             except Exception:

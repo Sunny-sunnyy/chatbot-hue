@@ -163,3 +163,4 @@ anh:
   max_pixels: 40000000       # chặn ảnh "bom giải nén" trước khi giải mã (spec §6)
   canh_dai: 1024             # thu nhỏ trước khi gửi model (spec A5)
   timeout: 20                # giây, một lần gọi model (A2: 1024 token ra có thể > 15 s); quá ⇒ khong_doan_duoc, không thử lại
+  che_do_tu_choi: mac_dinh   # Đợt 3A (mặc định giữ nguyên): mac_dinh | confidence_gate (thêm tự đánh giá độ chắc chắn nội bộ để lọc ca ngoài danh sách / dễ nhầm)
