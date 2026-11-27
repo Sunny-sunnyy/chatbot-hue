@@ -34,6 +34,30 @@ Nếu không ý nào có Bằng chứng, trả đúng duy nhất câu sau, khôn
 assert ANSWER_SYSTEM_INSTRUCTIONS.count(_LUAT_TU_CHOI) == 1  # đổi lời dặn gốc mà quên đoạn này ⇒ lỗi ngay lúc import, không lặng lẽ gửi lời dặn sai
 ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y = ANSWER_SYSTEM_INSTRUCTIONS.replace(_LUAT_TU_CHOI, _LUAT_NHIEU_Y)
 
+# Đợt 4A (cờ `assistant.kiem_du_bang_chung`, mặc định tắt — Sufficient Context ICLR 2025): phân biệt "đoạn có nhắc tên nơi" với
+# "đoạn chứa đúng dữ kiện trả lời câu hỏi" để giảm bịa chi tiết hẹp rồi gắn bừa [n].
+KIEM_DU_BANG_CHUNG_NOTE = (
+    "Kiểm đủ bằng chứng trước khi khẳng định: luôn phân biệt rõ \"đoạn có nhắc tên nơi / món / sự kiện\" với "
+    "\"đoạn chứa đúng dữ kiện trả lời câu hỏi\". Một đoạn có nhắc tên địa điểm nhưng không nêu đúng chi tiết được hỏi "
+    "(ví dụ giờ riêng dịp lễ, giá vé cho nhóm cụ thể, quy định hay tiện ích hẹp chưa có trong đoạn) KHÔNG phải căn cứ để trả lời chi tiết đó.\n"
+    "- Nếu câu hỏi có phần đủ nguồn và phần thiếu chi tiết hẹp: chỉ khẳng định phần có bằng chứng kèm đúng [n], "
+    "và nói rõ phần thiếu chưa có trong tư liệu (không suy diễn, không gắn [n] cho phần chưa có trong nguồn).\n"
+    f"- Nếu toàn câu thiếu dữ kiện trả lời (dù có đoạn nhắc tên nơi): không suy diễn hay dùng kiến thức ngoài, "
+    f"xuất đúng duy nhất câu sau và không thêm citation:\n{INSUFFICIENT_ANSWER}"
+)
+
+
+def them_kiem_du_bang_chung(loi_dan: str) -> str:
+    """Nối đoạn dặn kiểm đủ bằng chứng nếu chưa có (tránh nối trùng giữa generator và runtime)."""
+    return loi_dan if KIEM_DU_BANG_CHUNG_NOTE in loi_dan else f"{loi_dan}\n\n{KIEM_DU_BANG_CHUNG_NOTE}"
+
+
+def nhac_vong_con_lai(con_lai: int) -> str:
+    """Đợt 4A (cờ `assistant.canh_bao_vong_con_lai`, mặc định tắt): dòng nhắc ngắn gắn ở CUỐI output tool khi còn <= 2 bước."""
+    if con_lai <= 1:
+        return "<nhac_vong>Còn 1 lượt cuối: không gọi thêm công cụ, hãy tổng hợp câu trả lời ngay từ Bằng chứng đã có kèm [n] (hoặc trả câu không đủ thông tin nếu thiếu).</nhac_vong>"
+    return f"<nhac_vong>Còn {con_lai} lượt: ưu tiên tổng hợp câu trả lời sớm từ Bằng chứng đã có; chỉ gọi công cụ nếu thật sự còn thiếu dữ kiện.</nhac_vong>"
+
 def build_answer_input(query: str, context: str, today: str | None = None) -> str:
     """Nội dung tin nhắn user gửi model trả lời — một nơi dựng duy nhất, để chuỗi đếm token context đúng là chuỗi gửi đi (C-03).
     `today` (dòng ngày do code dựng, Phase 9 B1 D7) đứng đầu tin nhắn; None ⇒ đúng chuỗi như B0."""

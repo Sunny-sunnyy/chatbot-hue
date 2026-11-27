@@ -55,7 +55,7 @@ from llm.luu_y_nguon import dong_tam_ngung, nhan_nguon
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
 from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_LAM_THAY, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
-                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, VIET_LAI_NHIEU_Y_TEXT, build_assistant_input, today_line)
+                                   TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, VIET_LAI_NHIEU_Y_TEXT, build_assistant_input, them_kiem_du_bang_chung, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
 from retrieval.full_corpus_context import LICH_TRINH_TOOL_OVERHEAD, FullCorpusContextBuilder, PackedContext, PackedSource
@@ -330,6 +330,12 @@ class AssistantFlags:
     goi_y_mua_nang: bool = False
     # Đợt 2 (27/11/2026, mặc định tắt): công cụ `so_sanh_diem_den` — so sánh thực dụng 2–3 điểm từ bảng điểm + thẻ nơi + khoảng cách.
     so_sanh_diem_den: bool = False
+    # Đợt 4A (27/11/2026, mặc định tắt): Sufficient Context ICLR 2025 — phân biệt đoạn nhắc tên nơi với đoạn chứa đúng dữ kiện trả lời.
+    kiem_du_bang_chung: bool = False
+    # Đợt 4A (27/11/2026, mặc định tắt): nhắc bước còn lại (`<nhac_vong>` khi còn <= 2 lượt) + giữ nguyên mảng `tools` cố định không rút bằng `is_enabled`.
+    canh_bao_vong_con_lai: bool = False
+    # Đợt 4A (27/11/2026, mặc định tắt): Actionable Feedback khi viết lại lỗi citation + rút gọn `mua_nang` + Tool Use Examples + vá ca trượt Đợt 2.
+    toi_uu_dot2_va_viet_lai: bool = False
 
     def __post_init__(self) -> None:
         if self.siet_tro_chuyen:
@@ -781,13 +787,15 @@ def _history_kwargs(trace: AnswerTrace) -> dict:
     return {"history": trace.history} if trace.history else {}
 
 
-def _assistant_instructions(generator, trace: AnswerTrace, nhieu_y: bool = False) -> str:
+def _assistant_instructions(generator, trace: AnswerTrace, nhieu_y: bool = False, kiem_du_bang_chung: bool = False) -> str:
     """Lời dặn trợ lý thật sự gửi ở lượt này (có câu dặn lịch sử khi có lịch sử — B3 D3) — để đếm ngân sách đúng chuỗi gửi (D5).
     B5: công cụ `lich_trinh` không đổi lời dặn (D7). Không lịch sử ⇒ đọc thẳng thuộc tính (generator thay thế trong test không cần hàm).
     Cờ `cau_nhieu_y` (việc agent (3) 14/11): lời dặn theo ý của đúng bản agent sẽ gửi."""
     if nhieu_y:
-        return (generator.assistant_history_agent_nhieu_y if trace.history else generator.assistant_agent_nhieu_y).instructions
-    return generator.assistant_instructions_for(trace.history) if trace.history else generator.assistant_instructions
+        loi_dan = (generator.assistant_history_agent_nhieu_y if trace.history else generator.assistant_agent_nhieu_y).instructions
+    else:
+        loi_dan = generator.assistant_instructions_for(trace.history) if trace.history else generator.assistant_instructions
+    return them_kiem_du_bang_chung(loi_dan) if kiem_du_bang_chung else loi_dan
 
 
 def lich_trinh_for_turn(query: str, retrieval_service, context_builder, trace: AnswerTrace, today: str | None, instructions: str, bang,
@@ -1169,7 +1177,7 @@ def liet_ke_for_turn(trace: AnswerTrace, muc_luc: "tuple[lk.Bai, ...]", chong_la
 
 
 def mua_nang_for_turn(trace: AnswerTrace, query: str, bang: "lt2.BangV2", bang_kc: "kc.BangKhoangCach | None", du_bao,
-                      bai_theo_rel: dict | None = None, chong_lap: bool = False):
+                      bai_theo_rel: dict | None = None, chong_lap: bool = False, toi_uu: bool = False):
     """Hàm `goi_y_phuong_an_mua_nang` của **một lượt** (Đợt 2, cờ `goi_y_mua_nang`): chặn tuyệt đối khi là lượt bão/lũ hoặc ngày chọn có mưa
     >= 100 mm/ngày; dùng chung `du_bao` (cache 30p Open-Meteo), lọc `diem_v16` trong nhà / mái che theo buổi & cụm, đăng tối đa 5 điểm
     thành 1 nguồn `[n]`, gắn `trace.muc_luc_bai[src.id]` để giữ cảnh báo tạm ngừng/thay đổi."""
@@ -1201,7 +1209,7 @@ def mua_nang_for_turn(trace: AnswerTrace, query: str, bang: "lt2.BangV2", bang_k
         if du_bao is not None and (ngay_chuan is not None or tt.co_tu_khoa_luot_rong(query, trace.history)):
             kq_du_bao = await du_bao()
         started = time.perf_counter()
-        dong, chon, nguy_hiem = mn.ket_qua(bang, bang_kc, tinh_huong, diem_goc, buoi, ngay_chuan, kq_du_bao=kq_du_bao, hom_nay=hom_nay_vn())
+        dong, chon, nguy_hiem = mn.ket_qua(bang, bang_kc, tinh_huong, diem_goc, buoi, ngay_chuan, kq_du_bao=kq_du_bao, hom_nay=hom_nay_vn(), toi_uu=toi_uu)
         entry["ms"] = elapsed_ms(started)
         if nguy_hiem:
             trace.thoi_tiet_ctx = {**ctx, "bao_lu": True, "bao_lu_model": True}
@@ -1224,11 +1232,13 @@ def mua_nang_for_turn(trace: AnswerTrace, query: str, bang: "lt2.BangV2", bang_k
         return chu
 
     goi_y_phuong_an_mua_nang.__doc__ = mn.mo_ta_cong_cu(bang)
+    goi_y_phuong_an_mua_nang.mo_ta_ngan = mn.mo_ta_ngan
+    goi_y_phuong_an_mua_nang.mo_ta_toi_uu = mn.mo_ta_cong_cu(bang, toi_uu=True)
     return goi_y_phuong_an_mua_nang
 
 
 def so_sanh_for_turn(trace: AnswerTrace, bang: "lt2.BangV2", bang_kc: "kc.BangKhoangCach | None", the_noi_bang: "thn.Bang | None",
-                     bai_theo_rel: dict | None = None, chong_lap: bool = False):
+                     bai_theo_rel: dict | None = None, chong_lap: bool = False, toi_uu: bool = False):
     """Hàm `so_sanh_diem_den` của **một lượt** (Đợt 2, cờ `so_sanh_diem_den`): so sánh 2–3 điểm enum từ `diem_v16`, đọc giờ/vé nguyên văn từ
     `the_noi_bang` (tuyệt đối không dùng `gio_mo_cua`) và khoảng cách từ `khoang_cach_bang`, đăng thành 1 nguồn `[n]`."""
     Ma = Literal[tuple(bang.theo_id)]
@@ -1249,7 +1259,7 @@ def so_sanh_for_turn(trace: AnswerTrace, bang: "lt2.BangV2", bang_kc: "kc.BangKh
             entry["het_luot"] = True
             return "Trạng thái: đã dùng hết lượt của công cụ so sánh trong câu — hãy viết câu trả lời từ Bằng chứng đã có."
         started = time.perf_counter()
-        dong, chon = ss.ket_qua(bang, bang_kc, the_noi_bang, (diem_1, diem_2, diem_3))
+        dong, chon = ss.ket_qua(bang, bang_kc, the_noi_bang, (diem_1, diem_2, diem_3), toi_uu=toi_uu)
         entry["ms"] = elapsed_ms(started)
         entry["n_ket_qua"] = len(chon)
         if not chon:
@@ -1268,6 +1278,7 @@ def so_sanh_for_turn(trace: AnswerTrace, bang: "lt2.BangV2", bang_kc: "kc.BangKh
 
     so_sanh_diem_den.__doc__ = ss.mo_ta_cong_cu(bang)
     so_sanh_diem_den.mo_ta_ngan = ss.mo_ta_ngan
+    so_sanh_diem_den.mo_ta_toi_uu = ss.mo_ta_cong_cu(bang, toi_uu=True)
     return so_sanh_diem_den
 
 
@@ -1536,12 +1547,32 @@ def _dat_tu_choi_max_turns(trace: AnswerTrace, flags: AssistantFlags | None) -> 
         trace.answer = f"{trace.answer}\n\n{tt.CAU_BAO_LU}"
 
 
+def _chan_doan_viet_lai(citation_error: CitationIntegrityError | None, n_nguon: int) -> str | None:
+    """Actionable Feedback 1 dòng khi bản nháp trước trượt kiểm citation (Đợt 4A, cờ `toi_uu_dot2_va_viet_lai`)."""
+    if citation_error is None:
+        return None
+    if str(citation_error).startswith(_LOI_KHONG_MA_NGUON):
+        return (
+            f"Lưu ý sửa lỗi (bản nháp trước trượt kiểm: chưa gắn mã nguồn [n]): mọi nhận định lấy từ Bằng chứng trên "
+            f"PHẢI gắn đúng mã [1]..[{n_nguon}] ngay sau câu; nếu Bằng chứng không đủ thì trả đúng câu không đủ thông tin "
+            "(không viết thêm câu giải thích không nguồn)."
+        )
+    return (
+        f"Lưu ý sửa lỗi (bản nháp trước trượt kiểm: {citation_error}): chỉ dùng mã [1]..[{n_nguon}] có trong Bằng chứng trên; "
+        "nếu trả câu không đủ thông tin thì không gắn mã nguồn nào."
+    )
+
+
 async def _goi_viet_lai(query: str, generator, trace: AnswerTrace, flags: AssistantFlags, today: str | None,
-                        call_log: "CallLog | None") -> None:
+                        call_log: "CallLog | None", *, chan_doan: str | None = None) -> None:
     """Chạy MỘT lần viết lại không công cụ trên mọi Bằng chứng đã gom của lượt, rồi qua `_finish_generated`."""
     rieng = CallLog() if call_log is None else None
     context = "\n\n".join(trace.context_parts) + (f"\n\n{VIET_LAI_NHIEU_Y_TEXT}" if trace.nhieu_y else "")
+    if chan_doan:
+        context = f"{context}\n\n{chan_doan}"
     kwargs = {"call_log": rieng or call_log} if today is None else {"call_log": rieng or call_log, "today": today}
+    if flags.kiem_du_bang_chung:
+        kwargs["kiem_du_bang_chung"] = True
     trace.fixed_outcome = None
     trace.answer = None
     trace.thoi_tiet_noi = None
@@ -1566,7 +1597,8 @@ async def _viet_lai_het_luot(query: str, generator, trace: AnswerTrace, flags: A
             and trace.model_searches >= 1 and trace.fixed_outcome is None and trace.lich is None):
         return False
     started = time.perf_counter()
-    await _goi_viet_lai(query, generator, trace, flags, today, call_log)
+    chan_doan = _chan_doan_viet_lai(trace.citation_error, len(trace.so_nguon)) if flags.toi_uu_dot2_va_viet_lai else None
+    await _goi_viet_lai(query, generator, trace, flags, today, call_log, **({"chan_doan": chan_doan} if chan_doan else {}))
     con_loi = trace.citation_error is not None and str(trace.citation_error).startswith(_LOI_KHONG_MA_NGUON)
     if con_loi:  # lần viết lại cũng không trích nguồn nào ⇒ không có gì đứng được ⇒ câu từ chối cố định (khối dự báo / câu 112 vẫn do `_thoi_tiet_cuoi` nối)
         trace.citation_error, trace.answer, trace.cited = None, INSUFFICIENT_ANSWER, ()
@@ -1673,7 +1705,7 @@ async def _before_model(query: str, retrieval_service, context_builder, generato
             raise GeneratorNotReadyError("generator is not ready")
         return build_assistant_input(query, None, today)
     trace.lich_offered = flags.lich_trinh and generator is not None  # D16: mọi lượt có công cụ khi cờ bật (cờ cần `tim_them`)
-    instructions = _assistant_instructions(generator, trace, trace.nhieu_y) if (flags.tim_them and generator is not None) else None
+    instructions = _assistant_instructions(generator, trace, trace.nhieu_y, flags.kiem_du_bang_chung) if (flags.tim_them and generator is not None) else None
     # cờ `tim_theo_ve`: chỉ tin nhiều ý, và chỉ khi câu tìm là câu gốc (câu tìm do định tuyến viết đã là câu tách sẵn)
     ve_them = cac_ve_tim(query, flags.tim_ve_bo_cut) if flags.tim_theo_ve and trace.nhieu_y and not trace.cau_tim else ()
     # chỉ truyền thêm khi có vế để tìm ⇒ tin một ý / cờ tắt gọi `prepare_answer` y như trước (bảng test 22/11: một test thay hàm này bằng hàm
@@ -1906,7 +1938,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     call_log = CallLog()
     try:
         if flags.uses_tools:
-            instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
+            instructions = _assistant_instructions(generator, trace, trace.nhieu_y, flags.kiem_du_bang_chung)
             tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho,
                                     tach_cau_tim=flags.tach_cau_tim_model, **_the_noi_kwargs(trace, flags, query))
             extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
@@ -1919,6 +1951,8 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
         else:
             # `today` chỉ truyền khi có: generator thay thế trong test route chỉ nhận (query, context)
             kwargs = {"call_log": call_log} if today is None else {"call_log": call_log, "today": today}
+            if flags.kiem_du_bang_chung:
+                kwargs["kiem_du_bang_chung"] = True
             trace.generated = await generator.generate_answer(query, trace.packed.text, **kwargs, **_history_kwargs(trace))
     finally:
         trace.generation_ms = elapsed_ms(started)  # có cả khi model lỗi (route log `generation_failed` kèm thời gian)
@@ -1971,17 +2005,25 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
     if flags.liet_ke_bai and flags.muc_luc is not None:  # cờ tắt ⇒ không truyền, danh sách công cụ như cũ
         extra["liet_ke_fn"] = liet_ke_for_turn(trace, flags.muc_luc, **lap_kw)
     if flags.goi_y_mua_nang and flags.bang_lich_v2 is not None and not tt.la_luot_bao_lu(query, trace.history) and (luon or mn.co_tu_khoa_luot(query, trace.history)):
+        mn_kw = {**lap_kw, **({"toi_uu": True} if flags.toi_uu_dot2_va_viet_lai else {})}
         extra["mua_nang_fn"] = mua_nang_for_turn(trace, query, flags.bang_lich_v2, flags.khoang_cach_bang, flags.du_bao,
-                                                 bai_theo_rel, **lap_kw)
+                                                 bai_theo_rel, **mn_kw)
     if flags.so_sanh_diem_den and flags.bang_lich_v2 is not None and (luon or ss.co_tu_khoa_luot(query, trace.history)):
+        ss_kw = {**lap_kw, **({"toi_uu": True} if flags.toi_uu_dot2_va_viet_lai else {})}
         extra["so_sanh_fn"] = so_sanh_for_turn(trace, flags.bang_lich_v2, flags.khoang_cach_bang, flags.the_noi_bang,
-                                               bai_theo_rel, **lap_kw)
+                                               bai_theo_rel, **ss_kw)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
         extra["con_luot_fn"] = lambda: trace.model_searches < flags.so_lan_tim_kho
     if trace.nhieu_y:  # lời dặn theo ý (cờ tắt / câu một ý ⇒ không truyền, gọi y như trước)
         extra["nhieu_y"] = True
     if flags.vong_cuoi_chi_viet:  # cờ tắt ⇒ không truyền, công cụ không có điều kiện bật mới (giống byte)
         extra["vong_cuoi_chi_viet"] = True
+    if flags.kiem_du_bang_chung:
+        extra["kiem_du_bang_chung"] = True
+    if flags.canh_bao_vong_con_lai:
+        extra["canh_bao_vong_con_lai"] = True
+    if flags.toi_uu_dot2_va_viet_lai:
+        extra["toi_uu_dot2_va_viet_lai"] = True
     return extra
 
 
@@ -2394,7 +2436,7 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
             if flags.uses_tools:
                 # B3 D9 (b): vòng công cụ ⇒ "đang viết" phát ngay trước chữ đầu (không trước các lượt `tim_kho`)
                 pending_generating = True
-                instructions = _assistant_instructions(generator, trace, trace.nhieu_y)
+                instructions = _assistant_instructions(generator, trace, trace.nhieu_y, flags.kiem_du_bang_chung)
                 tool_fn = tool_for_turn(query, retrieval_service, context_builder, trace, today, instructions, flags.so_lan_tim_kho,
                                     tach_cau_tim=flags.tach_cau_tim_model, **_the_noi_kwargs(trace, flags, query))
                 extra = _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags)
@@ -2403,7 +2445,8 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                     cho_kiem = ""
             else:
                 yield "status", {"stage": "generating"}
-                result, call_log = generator.start_answer_stream(query, trace.packed.text, trace.today, **_history_kwargs(trace))
+                stream_kwargs = {"kiem_du_bang_chung": True} if flags.kiem_du_bang_chung else {}
+                result, call_log = generator.start_answer_stream(query, trace.packed.text, trace.today, **_history_kwargs(trace), **stream_kwargs)
 
         started, generator_started = time.perf_counter(), time.monotonic()
         extractor = AnswerTextStream()

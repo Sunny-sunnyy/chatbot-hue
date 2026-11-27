@@ -292,3 +292,24 @@ def test_generator_registers_mua_nang_tool_schema_and_settings_load():
     extra_off = _lich_extra("Trời mưa chiều nay nên đi đâu gần Đại Nội?", None, None, AnswerTrace(), None, None, flags_off)
     agent_off, _, _ = gen._assistant_for(fake_tim_kho, **extra_off)
     assert "goi_y_phuong_an_mua_nang" not in [t.name for t in agent_off.tools]
+
+
+def test_mua_nang_toi_uu_dot2_mo_ta_ngan_and_output_guidance():
+    bang = _bang_mau()
+    dong_off, _, _ = mn.ket_qua(
+        bang, BANG_KC, "mua", "dai_noi", "chieu", 0, kq_du_bao=_du_bao_mau(15.0), hom_nay=dt.date(2026, 11, 27)
+    )
+    assert mn.CAU_TRINH_BAY_MUA_NANG not in dong_off
+
+    dong_on, chon_on, _ = mn.ket_qua(
+        bang, BANG_KC, "mua", "dai_noi", "chieu", 0, kq_du_bao=_du_bao_mau(15.0), hom_nay=dt.date(2026, 11, 27), toi_uu=True
+    )
+    assert len(chon_on) >= 2 and mn.CAU_TRINH_BAY_MUA_NANG in dong_on
+    assert dong_on[-1] == kc.CAU_GHI_CHU
+
+    ngan_off = mn.mo_ta_ngan("khoang_cach", toi_uu=False)
+    ngan_on = mn.mo_ta_ngan("khoang_cach", toi_uu=True)
+    assert "Mã điểm:" not in ngan_off and "khoang_cach" in ngan_off
+    assert "Mã điểm:" not in ngan_on and "Ví dụ gọi mẫu:" in ngan_on and "2–3 phương án" in ngan_on and "buổi tối" in ngan_on
+    assert "Ví dụ gọi mẫu:" in mn.mo_ta_cong_cu(bang, toi_uu=True) and "Mã điểm:" in mn.mo_ta_cong_cu(bang, toi_uu=True)
+    assert "Ví dụ gọi mẫu:" not in mn.mo_ta_cong_cu(bang, toi_uu=False)

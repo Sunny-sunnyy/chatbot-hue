@@ -65,8 +65,11 @@ from llm.full_corpus_prompt import (
     SUA_LICH_LOI_DAN_TOI_HOI_BO,
     ROUTER_HISTORY_NOTE,
     ASSISTANT_HISTORY_NOTE,
+    KIEM_DU_BANG_CHUNG_NOTE,
     TU_WEB_LUAT,
     build_answer_input,
+    nhac_vong_con_lai,
+    them_kiem_du_bang_chung,
 )
 
 logger = logging.getLogger("llm.full_corpus")
@@ -366,6 +369,7 @@ class OpenAIFullCorpusGenerator:
         sua_lich_timeout: float | None = None,
         noi_khac: bool = False,
         siet_tro_chuyen: bool = False,
+        kiem_du_bang_chung: bool = False,
     ) -> None:
         # answer_instructions / reasoning_effort: chỉ để harness Phase 8.1 thử prompt và mức suy luận;
         # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning; None hoặc "" = không gửi).
@@ -385,6 +389,7 @@ class OpenAIFullCorpusGenerator:
         # (`assistant.so_vong_cong_cu`); `sua_lich_timeout` = hạn giờ lời gọi hiểu ý sửa lịch, None ⇒ dùng chung hạn định tuyến như trước.
         self.max_turns = max_turns
         self.sua_lich_timeout = router_timeout if sua_lich_timeout is None else sua_lich_timeout
+        self.kiem_du_bang_chung = kiem_du_bang_chung
 
         # Đoạn dặn chỉ dành cho Sonnet (`full_corpus_prompt.SONNET_*`, 21/11/2026): NỐI vào cuối lời dặn khi đang chạy lớp dịch Bedrock; đường
         # OpenAI ⇒ trả nguyên chuỗi (lời dặn gửi luna giống byte như trước).
@@ -398,7 +403,10 @@ class OpenAIFullCorpusGenerator:
         def them_noi_khac(loi_dan: str) -> str:
             return f"{loi_dan}\n\n{SONNET_NOI_KHAC}" if noi_khac else loi_dan
 
-        tra_loi = them_noi_khac(answer_instructions)
+        def them_kdbc(loi_dan: str) -> str:
+            return them_kiem_du_bang_chung(loi_dan) if kiem_du_bang_chung else loi_dan
+
+        tra_loi = them_kdbc(them_noi_khac(answer_instructions))
 
         # Create one shared OpenAIResponsesModel with gpt-6-luna alias
         # đường OpenAI: lớp mỏng ghi loại lỗi + mã HTTP và gọi lại MỘT lần khi 5xx / lỗi kết nối (`openai_goi_lai.py`); chuỗi gửi đi không đổi
@@ -458,7 +466,7 @@ class OpenAIFullCorpusGenerator:
         # Việc agent (3) 14/11 (cờ `cau_nhieu_y`): cùng hai bản trợ lý, chỉ thay đoạn luật từ chối của lời dặn trả lời bằng luật theo ý.
         # Chỉ dựng khi lời dặn là bản runtime (harness 8.1 truyền lời dặn khác ⇒ không có biến thể này). Cờ tắt ⇒ không dùng tới.
         if answer_instructions == ANSWER_SYSTEM_INSTRUCTIONS:
-            ny = f"{them_noi_khac(ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y)}\n\n{ASSISTANT_TOOL_NOTE}"
+            ny = f"{them_kdbc(them_noi_khac(ANSWER_SYSTEM_INSTRUCTIONS_NHIEU_Y))}\n\n{ASSISTANT_TOOL_NOTE}"
             self.assistant_agent_nhieu_y = self.assistant_agent.clone(instructions=ny)
             self.assistant_history_agent_nhieu_y = self.assistant_agent.clone(instructions=f"{ny}\n\n{ASSISTANT_HISTORY_NOTE}")
         # Cổng đợt 1 D3 (V5 — X1c): lượt biểu mẫu = agent trả lời + luật viết lịch trong lời dặn hệ thống + mức suy luận "low". Chỉ lượt biểu
@@ -561,6 +569,7 @@ class OpenAIFullCorpusGenerator:
                 sua_lich_reasoning=bedrock["reasoning_sua_lich"],
                 noi_khac=bool(settings.get("assistant", {}).get("noi_khac_tu_choi", False)),
                 siet_tro_chuyen=bool(settings.get("assistant", {}).get("siet_tro_chuyen", False)),
+                kiem_du_bang_chung=bool(settings.get("assistant", {}).get("kiem_du_bang_chung", False)),
             )
         api_key_env = config.get("api_key_env", "OPENAI_API_KEY")
         api_key = os.getenv(api_key_env, "").strip()
@@ -584,6 +593,7 @@ class OpenAIFullCorpusGenerator:
             max_turns=settings.get("assistant", {}).get("so_vong_cong_cu", ASSISTANT_MAX_TURNS),
             noi_khac=bool(settings.get("assistant", {}).get("noi_khac_tu_choi", False)),
             siet_tro_chuyen=bool(settings.get("assistant", {}).get("siet_tro_chuyen", False)),
+            kiem_du_bang_chung=bool(settings.get("assistant", {}).get("kiem_du_bang_chung", False)),
         )
 
     async def _run(self, agent: Agent, user_prompt: "str | list[dict]", call_log: "CallLog", timeout: float, *, max_turns: int = 1,
@@ -655,7 +665,10 @@ class OpenAIFullCorpusGenerator:
     def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
                        con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None,
                        mua_nang_fn=None, so_sanh_fn=None, linh_hoat: bool = False,
-                       vong_cuoi: "tuple[CallLog, int] | None" = None) -> tuple[Agent, dict, dict]:
+                       vong_cuoi: "tuple[CallLog, int] | None" = None,
+                       kiem_du_bang_chung: bool = False,
+                       canh_bao_vong: "tuple[CallLog, int] | None" = None,
+                       toi_uu_dot2_va_viet_lai: bool = False) -> tuple[Agent, dict, dict]:
         """Agent trợ lý của **một lượt**: công cụ `tim_kho` bọc từ hàm của lõi (closure giữ trace / sổ nguồn của lượt — T-3: lõi không import SDK),
         handler `max_turns` + cờ dựng mới mỗi lượt (review C135 m-6: nhiều câu chạy cùng lúc không lẫn cờ). Lỗi trong công cụ đi thẳng ra
         (`failure_error_function=None`), không thành chữ cho model."""
@@ -663,7 +676,8 @@ class OpenAIFullCorpusGenerator:
         # lời xin công cụ của lần gọi vừa xong — hai lúc đó có cùng số lần gọi đã xong, nên không phân biệt được bằng bộ đếm (bản đầu: công cụ của lượt sát cuối
         # bị coi là "đã tắt" ngay khi model xin ⇒ lỗi). Mốc đúng là: công cụ của lượt sát cuối ĐÃ CHẠY XONG ⇒ `state["het_cong_cu"]` (đặt trong `bao`).
         state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn, "het_cong_cu": False, "liet_ke_con_luot": getattr(liet_ke_fn, "con_luot", None)}
-        con_vong_fn = None if vong_cuoi is None else (lambda: not state["het_cong_cu"])
+        # Đợt 4A (`canh_bao_vong_con_lai`): giữ nguyên danh sách `tools` cố định mọi vòng (không rút tool qua `is_enabled`) để bảo toàn KV-cache prefix.
+        con_vong_fn = None if (vong_cuoi is None or canh_bao_vong is not None) else (lambda: not state["het_cong_cu"])
         state["con_vong_fn"] = con_vong_fn
 
         def on_max_turns(_input) -> AnswerOutput:
@@ -675,12 +689,14 @@ class OpenAIFullCorpusGenerator:
         # Vòng cuối chỉ viết (cờ `vong_cuoi_chi_viet`, 21/11): `con_vong_fn` có ⇒ MỌI công cụ thêm điều kiện đó; nó trả False ở vòng cuối cùng của lượt ⇒
         # vòng đó không gửi công cụ nào, model viết từ bằng chứng đã có thay vì hết vòng. Không truyền cả hai ⇒ không có `is_enabled` (giống byte).
         def mo(*dieu_kien) -> dict:
+            if canh_bao_vong is not None:
+                return {}
             dk = [f for f in (*dieu_kien, con_vong_fn) if f is not None]
             return {"is_enabled": lambda _context, _agent: all(f() for f in dk)} if dk else {}
 
         def bao(fn):
-            """Cùng cờ: kết quả (chữ) của công cụ chạy ở lượt sát cuối được nối một dòng báo "bước kế không còn công cụ" (`TOOL_VONG_CUOI_TEXT`)."""
-            if con_vong_fn is None:
+            """Bọc kết quả tool để chèn thông báo cuối output khi sắp chạm giới hạn vòng (`vong_cuoi` hoặc `canh_bao_vong`)."""
+            if con_vong_fn is None and canh_bao_vong is None:
                 return fn
 
             @functools.wraps(fn)
@@ -688,14 +704,21 @@ class OpenAIFullCorpusGenerator:
                 ket_qua = fn(*args, **kwargs)
                 if inspect.isawaitable(ket_qua):
                     ket_qua = await ket_qua
-                call_log, so_vong = vong_cuoi
-                if len(call_log.calls) < so_vong - 1:  # chưa phải lượt công cụ sát cuối: lần gọi model kế vẫn còn công cụ
-                    return ket_qua
-                state["het_cong_cu"] = True  # lần gọi model kế là lần cuối của lượt ⇒ không còn công cụ, và model được báo ngay trong kết quả này
-                if not isinstance(ket_qua, str):  # chỉ thẻ hỏi lại của công cụ lịch (dict) — nó dừng lượt ngay, không còn lần gọi model nào để báo
-                    return ket_qua
-                state["bao_vong_cuoi"] = True
-                return f"{ket_qua}\n\n{TOOL_VONG_CUOI_TEXT}"
+                if con_vong_fn is not None:
+                    call_log, so_vong = vong_cuoi
+                    if len(call_log.calls) < so_vong - 1:  # chưa phải lượt công cụ sát cuối: lần gọi model kế vẫn còn công cụ
+                        return ket_qua
+                    state["het_cong_cu"] = True  # lần gọi model kế là lần cuối của lượt ⇒ không còn công cụ, và model được báo ngay trong kết quả này
+                    if not isinstance(ket_qua, str):  # chỉ thẻ hỏi lại của công cụ lịch (dict) — nó dừng lượt ngay, không còn lần gọi model nào để báo
+                        return ket_qua
+                    state["bao_vong_cuoi"] = True
+                    return f"{ket_qua}\n\n{TOOL_VONG_CUOI_TEXT}"
+                call_log, so_vong = canh_bao_vong
+                con_lai = so_vong - len(call_log.calls)
+                if isinstance(ket_qua, str) and con_lai <= 2:
+                    state["bao_nhac_vong"] = con_lai
+                    return f"{ket_qua}\n\n{nhac_vong_con_lai(con_lai)}"
+                return ket_qua
             return chay
 
         tools = [function_tool(bao(tool_fn), name_override="tim_kho", failure_error_function=None, **mo(con_luot_fn))]
@@ -704,6 +727,9 @@ class OpenAIFullCorpusGenerator:
             base = self.assistant_history_agent_nhieu_y if history else self.assistant_agent_nhieu_y
         else:
             base = self.assistant_history_agent if history else self.assistant_agent
+        kdbc = kiem_du_bang_chung or self.kiem_du_bang_chung
+        if kdbc and KIEM_DU_BANG_CHUNG_NOTE not in base.instructions:
+            extra["instructions"] = them_kiem_du_bang_chung(base.instructions)
         if lich_trinh_fn is not None:  # B5 D1: công cụ thứ hai; mô tả ngắn, không đổi lời dặn (D7); dừng lượt chỉ khi code trả thẻ hỏi lại (D15)
             tools.append(function_tool(bao(lich_trinh_fn), name_override="lich_trinh", description_override=LICH_TRINH_MO_TA, failure_error_function=None, **mo()))
             extra = {**extra, "tool_use_behavior": _dung_khi_hoi_lai}
@@ -727,9 +753,26 @@ class OpenAIFullCorpusGenerator:
             tools.append(function_tool(bao(liet_ke_fn), name_override="liet_ke_bai", description_override=LIET_KE_MO_TA, failure_error_function=None,
                                        **mo(state["liet_ke_con_luot"])))
         if mua_nang_fn is not None:  # Đợt 2 (cờ `goi_y_mua_nang`): gợi ý điểm trong nhà / có mái che theo buổi & cụm khi mưa hoặc nắng nóng
-            tools.append(function_tool(bao(mua_nang_fn), name_override="goi_y_phuong_an_mua_nang", failure_error_function=None, **mo()))
+            if toi_uu_dot2_va_viet_lai:
+                mn_mo_ta = (
+                    mua_nang_fn.mo_ta_ngan(nguon_bang, toi_uu=True)
+                    if (linh_hoat and nguon_bang is not None and hasattr(mua_nang_fn, "mo_ta_ngan"))
+                    else getattr(mua_nang_fn, "mo_ta_toi_uu", None)
+                )
+            else:
+                mn_mo_ta = None
+            tools.append(function_tool(bao(mua_nang_fn), name_override="goi_y_phuong_an_mua_nang",
+                                       **({"description_override": mn_mo_ta} if mn_mo_ta else {}),
+                                       failure_error_function=None, **mo()))
         if so_sanh_fn is not None:  # Đợt 2 (cờ `so_sanh_diem_den`): so sánh thực dụng 2–3 điểm từ dữ liệu cấu trúc
-            ss_mo_ta = so_sanh_fn.mo_ta_ngan(nguon_bang) if (linh_hoat and nguon_bang is not None and hasattr(so_sanh_fn, "mo_ta_ngan")) else None
+            if toi_uu_dot2_va_viet_lai:
+                ss_mo_ta = (
+                    so_sanh_fn.mo_ta_ngan(nguon_bang, toi_uu=True)
+                    if (linh_hoat and nguon_bang is not None and hasattr(so_sanh_fn, "mo_ta_ngan"))
+                    else getattr(so_sanh_fn, "mo_ta_toi_uu", None)
+                )
+            else:
+                ss_mo_ta = so_sanh_fn.mo_ta_ngan(nguon_bang) if (linh_hoat and nguon_bang is not None and hasattr(so_sanh_fn, "mo_ta_ngan")) else None
             tools.append(function_tool(bao(so_sanh_fn), name_override="so_sanh_diem_den",
                                        **({"description_override": ss_mo_ta} if ss_mo_ta else {}),
                                        failure_error_function=None, **mo()))
@@ -740,15 +783,18 @@ class OpenAIFullCorpusGenerator:
                 (True, False): "hue_assistant_ny_lh_v1",
                 (True, True): "hue_assistant_hist_ny_lh_v1",
             }[(bool(nhieu_y), bool(history))]
+            suffix = ("_kdbc" if kdbc else "") + ("_d2" if toi_uu_dot2_va_viet_lai else "")
             extra["model_settings"] = dataclasses.replace(
                 base.model_settings,
-                extra_args={**(base.model_settings.extra_args or {}), "prompt_cache_key": cache_key},
+                extra_args={**(base.model_settings.extra_args or {}), "prompt_cache_key": f"{cache_key}{suffix}"},
             )
         return base.clone(tools=tools, **extra), {"max_turns": on_max_turns}, state
 
     async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
                                   thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None,
-                                  mua_nang_fn=None, so_sanh_fn=None, linh_hoat: bool = False, vong_cuoi_chi_viet: bool = False) -> GeneratedText:
+                                  mua_nang_fn=None, so_sanh_fn=None, linh_hoat: bool = False, vong_cuoi_chi_viet: bool = False,
+                                  kiem_du_bang_chung: bool = False, canh_bao_vong_con_lai: bool = False,
+                                  toi_uu_dot2_va_viet_lai: bool = False) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
@@ -756,7 +802,10 @@ class OpenAIFullCorpusGenerator:
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
                                                      con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn,
                                                      gan_diem_fn=gan_diem_fn, mua_nang_fn=mua_nang_fn, so_sanh_fn=so_sanh_fn, linh_hoat=linh_hoat,
-                                                     vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None)
+                                                     vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None,
+                                                     kiem_du_bang_chung=kiem_du_bang_chung,
+                                                     canh_bao_vong=(call_log, so_vong) if canh_bao_vong_con_lai else None,
+                                                     toi_uu_dot2_va_viet_lai=toi_uu_dot2_va_viet_lai)
         try:
             result = await self._run(agent, with_history(user_prompt, history), call_log, self.timeout, max_turns=so_vong,
                                      error_handlers=handlers)
@@ -797,14 +846,19 @@ class OpenAIFullCorpusGenerator:
 
     def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
                            con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None,
-                           mua_nang_fn=None, so_sanh_fn=None, linh_hoat: bool = False, vong_cuoi_chi_viet: bool = False) -> tuple[RunResultStreaming, "CallLog", dict]:
+                           mua_nang_fn=None, so_sanh_fn=None, linh_hoat: bool = False, vong_cuoi_chi_viet: bool = False,
+                           kiem_du_bang_chung: bool = False, canh_bao_vong_con_lai: bool = False,
+                           toi_uu_dot2_va_viet_lai: bool = False) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
         so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn, gan_diem_fn, mua_nang_fn, so_sanh_fn)  # cùng con số với `max_turns` của lần chạy — lệch một vòng là nhận nhầm vòng cuối
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
                                                      con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn,
                                                      gan_diem_fn=gan_diem_fn, mua_nang_fn=mua_nang_fn, so_sanh_fn=so_sanh_fn, linh_hoat=linh_hoat,
-                                                     vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None)
+                                                     vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None,
+                                                     kiem_du_bang_chung=kiem_du_bang_chung,
+                                                     canh_bao_vong=(call_log, so_vong) if canh_bao_vong_con_lai else None,
+                                                     toi_uu_dot2_va_viet_lai=toi_uu_dot2_va_viet_lai)
         result = Runner.run_streamed(agent, input=with_history(user_prompt, history), max_turns=so_vong, run_config=_run_config(), hooks=call_log,
                                      error_handlers=handlers)
         return result, call_log, state
@@ -884,12 +938,19 @@ class OpenAIFullCorpusGenerator:
             llm_calls=tuple(call_log.calls),
         )
 
+    def _answer_agent_for(self, bieu_mau: bool, kiem_du_bang_chung: bool) -> Agent:
+        if bieu_mau:
+            return self.bieu_mau_agent
+        if (kiem_du_bang_chung or self.kiem_du_bang_chung) and KIEM_DU_BANG_CHUNG_NOTE not in self.answer_agent.instructions:
+            return self.answer_agent.clone(instructions=them_kiem_du_bang_chung(self.answer_agent.instructions))
+        return self.answer_agent
+
     async def generate_answer(self, query: str, context: str, today: str | None = None, call_log: "CallLog | None" = None,
-                              history=(), bieu_mau: bool = False) -> GeneratedText:
+                              history=(), bieu_mau: bool = False, kiem_du_bang_chung: bool = False) -> GeneratedText:
         """`bieu_mau`: lượt biểu mẫu (cổng D3) ⇒ `bieu_mau_agent`; mặc định = `answer_agent` như cũ."""
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
-        return await self._execute_agent(self.bieu_mau_agent if bieu_mau else self.answer_agent, with_history(build_answer_input(query, context, today), history), AnswerOutput,
+        return await self._execute_agent(self._answer_agent_for(bieu_mau, kiem_du_bang_chung), with_history(build_answer_input(query, context, today), history), AnswerOutput,
                                          call_log)
 
     def _start_stream(self, agent: Agent, user_prompt: "str | list[dict]") -> tuple[RunResultStreaming, "CallLog"]:
@@ -898,13 +959,13 @@ class OpenAIFullCorpusGenerator:
         return result, call_log
 
     def start_answer_stream(self, query: str, context: str, today: str | None = None, history=(),
-                            bieu_mau: bool = False) -> tuple[RunResultStreaming, CallLog]:
+                            bieu_mau: bool = False, kiem_du_bang_chung: bool = False) -> tuple[RunResultStreaming, CallLog]:
         """Cùng agent + cùng tham số lần gọi như `generate_answer`, nhưng stream (spec streaming §4.3 bước 1). Trả ngay; model chạy
         trong lúc nơi gọi đọc `result.stream_events()` — nơi gọi tự đặt hạn giờ `self.timeout` cho cả vòng đọc và tự `cancel()`.
         `CallLog` của lượt trả kèm: nơi gọi đọc `calls` cả khi lượt bị ngắt / lỗi (chỉ có mục của lần gọi đã xong)."""
         if not query or not query.strip():
             raise ValueError("Query must not be empty or blank")
-        return self._start_stream(self.bieu_mau_agent if bieu_mau else self.answer_agent,
+        return self._start_stream(self._answer_agent_for(bieu_mau, kiem_du_bang_chung),
                                   with_history(build_answer_input(query, context, today), history))
 
     def finish_answer_stream(self, result: RunResultStreaming, call_log: CallLog, started: float, state: dict | None = None) -> GeneratedText:

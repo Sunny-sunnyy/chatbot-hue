@@ -155,6 +155,18 @@ def _tom_tat_ngay_du_bao(kq: tt.DuBao, ngay: int) -> tuple[str | None, bool]:
     return f"Dự báo ngày {d['ngay']:%d/%m/%Y}: {tt.dong_ngay(d)} ({tt.GHI_CONG}).", co_canh_bao
 
 
+CAU_TRINH_BAY_MUA_NANG = (
+    "Ghi chú trình bày: nên nêu ít nhất 2–3 phương án phù hợp nhất trong danh sách trên "
+    "(nêu rõ trong nhà hoàn toàn hay có cả ngoài trời, kèm khoảng cách nếu có)."
+)
+
+_VI_DU_MUA_NANG = (
+    "Ví dụ gọi mẫu:\n"
+    "- Sáng trời mưa gần một điểm: {\"tinh_huong\": \"mua\", \"diem_goc\": \"dai_noi\", \"buoi\": \"sang\", \"ngay\": 1}\n"
+    "- Buổi tối mưa chưa nêu điểm gốc: {\"tinh_huong\": \"mua\", \"diem_goc\": \"khong_ro\", \"buoi\": \"toi\", \"ngay\": 0}"
+)
+
+
 def ket_qua(
     bang: lt2.BangV2,
     bang_kc: kc.BangKhoangCach | None,
@@ -164,6 +176,8 @@ def ket_qua(
     ngay: int | None,
     kq_du_bao: tt.DuBao | None = None,
     hom_nay: dt.date | None = None,
+    *,
+    toi_uu: bool = False,
 ) -> tuple[tuple[str, ...], list[dict], bool]:
     """Dựng `(các dòng nguồn, danh sách điểm chọn, bị chặn vì cảnh báo cực đoan)`."""
     hom = hom_nay or tt.hom_nay_vn()
@@ -197,19 +211,51 @@ def ket_qua(
                 kc_txt = f"; cách điểm gốc {kc._km(v['km'])}, {kc._phut(phut)}"
         luu_y = f" (lưu ý: {d['luu_y']})" if d.get("luu_y") else ""
         dong.append(f"- {d['ten']}: {loai_tn}; khu vực {ten_cum}; thời lượng {tl}{kc_txt}{luu_y}.")
+    if toi_uu and len(chon) >= 2:
+        dong.append(CAU_TRINH_BAY_MUA_NANG)
     if diem_goc in bang.theo_id and any("cách điểm gốc" in line for line in dong):
         dong.append(kc.CAU_GHI_CHU)
     return tuple(dong), chon, False
 
 
-def mo_ta_cong_cu(bang: lt2.BangV2) -> str:
+def mo_ta_cong_cu(bang: lt2.BangV2, *, toi_uu: bool = False) -> str:
     """Mô tả công cụ ngắn gọn kèm danh sách mã điểm hợp lệ."""
     ds = "; ".join(f"{d['id']}={d['ten']}" for d in bang.diem)
+    if not toi_uu:
+        return (
+            "Gợi ý điểm tham quan trong nhà hoặc có mái che ở Huế khi trời mưa hoặc nắng nóng, lọc theo buổi và ưu tiên gần điểm gốc. "
+            "KHÔNG dùng khi người dùng hỏi bão, lũ, ngập lụt hoặc thời tiết nguy hiểm (giữ cảnh báo an toàn 112). "
+            f"tinh_huong = mua | nang_nong; buoi = sang | chieu | toi | ca_ngay; ngay = 0..6 (0=hôm nay) hoặc null; "
+            f"diem_goc = mã điểm gốc nếu có hoặc \"{KHONG_RO}\". "
+            "Kết quả là một nguồn [n]: chỉ gợi ý các điểm có trong nguồn này và trích mã [n]; cần giờ mở cửa hay chi tiết bài thì gọi thêm tim_kho.\n"
+            f"Mã điểm: {ds}."
+        )
     return (
-        "Gợi ý điểm tham quan trong nhà hoặc có mái che ở Huế khi trời mưa hoặc nắng nóng, lọc theo buổi và ưu tiên gần điểm gốc. "
+        "Gợi ý điểm tham quan hoặc hoạt động buổi tối (trong bảng lịch trình) ở Huế nằm trong nhà hoặc có mái che khi trời mưa hoặc nắng nóng, "
+        "lọc theo buổi (sáng/chiều/tối) và ưu tiên gần điểm gốc. "
         "KHÔNG dùng khi người dùng hỏi bão, lũ, ngập lụt hoặc thời tiết nguy hiểm (giữ cảnh báo an toàn 112). "
         f"tinh_huong = mua | nang_nong; buoi = sang | chieu | toi | ca_ngay; ngay = 0..6 (0=hôm nay) hoặc null; "
         f"diem_goc = mã điểm gốc nếu có hoặc \"{KHONG_RO}\". "
-        "Kết quả là một nguồn [n]: chỉ gợi ý các điểm có trong nguồn này và trích mã [n]; cần giờ mở cửa hay chi tiết bài thì gọi thêm tim_kho.\n"
+        "Kết quả là một nguồn [n]: chỉ gợi ý các điểm có trong nguồn này và trích mã [n]; khi danh sách có từ 2 điểm trở lên, nêu ít nhất 2–3 phương án "
+        "phù hợp nhất (rõ trong nhà hoàn toàn hay kết hợp, kèm khoảng cách nếu có); cần giờ mở cửa hay chi tiết bài thì gọi thêm tim_kho.\n"
+        f"{_VI_DU_MUA_NANG}\n"
         f"Mã điểm: {ds}."
+    )
+
+
+def mo_ta_ngan(ten_cong_cu_bang: str = "khoang_cach", *, toi_uu: bool = False) -> str:
+    """Mô tả rút gọn khi danh sách mã điểm đã in ở công cụ khác trong cùng lượt (Đợt 4A, khử lặp 47 điểm ở chế độ `linh_hoat`)."""
+    vi_du = f"\n{_VI_DU_MUA_NANG}" if toi_uu else ""
+    trinh_bay = (
+        "khi danh sách có từ 2 điểm trở lên, nêu ít nhất 2–3 phương án phù hợp nhất (rõ trong nhà hoàn toàn hay kết hợp, kèm khoảng cách nếu có); "
+        if toi_uu else ""
+    )
+    buoi_toi = "hoặc hoạt động buổi tối (trong bảng lịch trình) " if toi_uu else ""
+    return (
+        f"Gợi ý điểm tham quan {buoi_toi}ở Huế trong nhà hoặc có mái che khi trời mưa hoặc nắng nóng, lọc theo buổi và ưu tiên gần điểm gốc. "
+        "KHÔNG dùng khi người dùng hỏi bão, lũ, ngập lụt hoặc thời tiết nguy hiểm (giữ cảnh báo an toàn 112). "
+        f"tinh_huong = mua | nang_nong; buoi = sang | chieu | toi | ca_ngay; ngay = 0..6 (0=hôm nay) hoặc null; "
+        f"diem_goc = mã điểm trong Danh sách của công cụ `{ten_cong_cu_bang}` (và danh sách enum hợp lệ của tham số) hoặc \"{KHONG_RO}\". "
+        f"Kết quả là một nguồn [n]: chỉ gợi ý các điểm có trong nguồn này và trích mã [n]; {trinh_bay}cần giờ mở cửa hay chi tiết bài thì gọi thêm tim_kho."
+        f"{vi_du}"
     )
