@@ -3,12 +3,17 @@ import json
 
 from evaluation.trajectory_eval import (
     DEFAULT_LOG_PATH,
+    chuan_hoa_ky_vong_bo_cau,
     dinh_dang_bang,
+    dinh_dang_bang_tool_accuracy,
+    doc_ket_qua_do,
     doc_log,
     la_goi_cong_cu_model,
     loc_luot,
     main,
+    score_tool_calls,
     tinh_quy_dao,
+    tinh_tool_call_accuracy,
 )
 
 
@@ -146,3 +151,107 @@ def test_cli_json_and_real_application_log_if_present(tmp_path, capsys):
         assert main(["--log", str(DEFAULT_LOG_PATH), "--model", "gpt-6-luna", "--json"]) == 0
         real_stats = json.loads(capsys.readouterr().out)
         assert real_stats["tong_luot"] > 0 and "tro_ly_hue" in real_stats["phan_bo_route"]
+
+
+def test_tool_call_accuracy_strict_vs_flexible_and_enum_args():
+    actual = [
+        {"name": "tim_kho", "ms": 25.0},  # bước code -> luôn bỏ qua
+        {"name": "tim_kho", "ms": 30.0, "by": "model"},
+        {"name": "khoang_cach", "ms": 0.0, "diem_a": "dai_noi", "diem_b": "lang_minh_mang"},
+        {"name": "gan_diem", "ms": 0.0, "diem": "dai_noi", "loai": "quan_an", "n": 5},
+    ]
+    expected_reversed = [
+        {"name": "gan_diem", "args": {"diem": "dai_noi", "loai": "quan_an"}},
+        {"name": "khoang_cach", "args": {"diem_a": "dai_noi", "diem_b": "lang_minh_mang"}},
+    ]
+
+    flex = score_tool_calls(actual, expected_reversed, strict_order=False, ignore_tim_kho=True)
+    assert flex["tp"] == 2 and flex["precision"] == 1.0 and flex["recall"] == 1.0 and flex["exact_match"] is True
+    assert flex["extra_calls"] == 0 and flex["missing_calls"] == 0
+
+    strict = score_tool_calls(actual, expected_reversed, strict_order=True, ignore_tim_kho=True)
+    assert strict["tp"] == 1 and strict["precision"] == 0.5 and strict["recall"] == 0.5 and strict["exact_match"] is False
+
+    # Kiểm tính cả tim_kho khi `ignore_tim_kho=False`:
+    with_tk = score_tool_calls(actual, expected_reversed, strict_order=False, ignore_tim_kho=False)
+    assert with_tk["n_actual"] == 3 and with_tk["extra_calls"] == 1 and with_tk["precision"] == round(2 / 3, 6)
+
+    # Tham số enum sai -> không khớp:
+    wrong_arg = score_tool_calls(actual, [{"name": "gan_diem", "args": {"diem": "dai_noi", "loai": "ca_phe"}}])
+    assert wrong_arg["tp"] == 0 and wrong_arg["missing_calls"] == 1 and wrong_arg["extra_calls"] == 2
+
+    # So sánh đối xứng với `diem_set`:
+    ss_actual = [{"name": "so_sanh_diem_den", "ms": 0.1, "diem_1": "lang_tu_duc", "diem_2": "lang_khai_dinh", "diem_3": "khong_co"}]
+    ss_score = score_tool_calls(ss_actual, [{"name": "so_sanh_diem_den", "args": {"diem_set": ["lang_khai_dinh", "lang_tu_duc"]}}])
+    assert ss_score["exact_match"] is True
+
+
+def test_tool_call_accuracy_empty_expected_extra_and_forbidden():
+    no_tools = score_tool_calls([{"name": "tim_kho", "by": "model"}], [], ignore_tim_kho=True)
+    assert no_tools["precision"] == 1.0 and no_tools["recall"] == 1.0 and no_tools["exact_match"] is True
+
+    extra = score_tool_calls(
+        [{"name": "so_sanh_diem_den", "diem_1": "a", "diem_2": "b"}],
+        [],
+        forbidden_tools=["so_sanh_diem_den"],
+    )
+    assert extra["precision"] == 0.0 and extra["extra_calls"] == 1 and extra["forbidden_hits"] == 1
+
+
+def test_doc_ket_qua_do_and_cli_with_expected(tmp_path, capsys):
+    dot_json = tmp_path / "dot2_sample.json"
+    dot_json.write_text(json.dumps({
+        "group": "H2_mua_nang",
+        "label": "on",
+        "results": [
+            {
+                "id": "mn_01",
+                "subgroup": "muc_tieu",
+                "metrics": {
+                    "outcome": "success",
+                    "route": "tro_ly_hue",
+                    "model": "gpt-6-luna",
+                    "usd": 0.001,
+                    "tools": [
+                        {"name": "tim_kho", "ms": 20.0},
+                        {"name": "goi_y_phuong_an_mua_nang", "ms": 1.0, "tinh_huong": "mua", "diem_goc": "dai_noi", "buoi": "chieu", "ngay": 0},
+                    ],
+                },
+            },
+            {
+                "id": "mn_bao_01",
+                "subgroup": "bao_lu",
+                "metrics": {
+                    "outcome": "success",
+                    "route": "tro_ly_hue",
+                    "model": "gpt-6-luna",
+                    "usd": 0.001,
+                    "tools": [
+                        {"name": "tim_kho", "ms": 20.0},
+                        {"name": "thoi_tiet", "loai": "bao_lu", "ms": 0.0},
+                    ],
+                },
+            },
+        ],
+    }, ensure_ascii=False), encoding="utf-8")
+
+    bo_cau = tmp_path / "bo_cau.json"
+    bo_cau.write_text(json.dumps({
+        "H2_mua_nang": [
+            {"id": "mn_01", "subgroup": "muc_tieu", "diem_goc": "dai_noi", "buoi": "chieu"},
+            {"id": "mn_bao_01", "subgroup": "bao_lu"},
+        ]
+    }, ensure_ascii=False), encoding="utf-8")
+
+    rows = doc_ket_qua_do(dot_json)
+    assert len(rows) == 2 and rows[0]["id"] == "mn_01"
+    exp_map = chuan_hoa_ky_vong_bo_cau(json.loads(bo_cau.read_text(encoding="utf-8")), group="H2_mua_nang")
+    acc = tinh_tool_call_accuracy(rows, exp_map)
+    assert acc["overall"]["exact_matches"] == 1  # mn_bao_01 có thoi_tiet không trong expected_tools=[] nhưng forbidden_hits=0
+    assert acc["by_subgroup"]["bao_lu"]["forbidden_hit_turns"] == 0
+    assert acc["by_subgroup"]["muc_tieu"]["exact_match_rate"] == 1.0
+    assert "Precision" in dinh_dang_bang_tool_accuracy(acc)
+
+    assert main(["--log", str(dot_json), "--expected", str(bo_cau), "--group", "H2_mua_nang", "--json"]) == 0
+    cli_out = json.loads(capsys.readouterr().out)
+    assert cli_out["tool_call_accuracy"]["overall"]["n"] == 2
