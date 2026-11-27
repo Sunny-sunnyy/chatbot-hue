@@ -1,6 +1,6 @@
 # Bài 19 — Chấm câu trả lời: ba thang điểm, người chấm là model, và nhiễu
 
-*Cập nhật 12:17, ngày 22/11/2026 · cách chấm đọc từ chương trình đo; các con số lấy từ các lượt đo từ 24/10 tới 19/11, model viết gpt-6-luna trừ khi ghi khác; người viết không chạy lại phép đo nào.*
+*Cập nhật 16:40, ngày 27/11/2026 · bổ sung lớp chấm bám nguồn ngữ nghĩa cho từng mệnh đề ở Đợt 4A (27/11, trên nền bộ 176 câu với `gpt-6-luna`); cách chấm chung vẫn lấy từ chương trình đo và các lượt từ 24/10 tới 19/11.*
 
 **Bài trước đã biết:** bước tìm được chấm riêng, bằng hai thước do chương trình tính.
 **Bài này thêm:** nửa sau: chấm chính câu trả lời. Việc này không tính được bằng chương trình, nên người chấm là một model. Bài này nói nó chấm thế nào, và cách đọc điểm của nó cho khỏi bị lừa.
@@ -221,13 +221,25 @@ Bảng này là mốc mà các bài sau so vào. Mọi dòng đo với model vi�
 
 Luật "không làm hỏng" nói bằng lời thường: số câu bị điểm thấp hơn không được nhiều hơn số câu tự đổi điểm khi chạy lại y nguyên, cộng thêm 3; và điểm trung bình không tụt quá 0,1.
 
+## Đánh giá 3 tầng và lớp chấm bám nguồn ngữ nghĩa (Đợt 4A, 27/11)
+
+Ngoài ba điểm chấm tổng thể trên câu trả lời (đúng, đủ ý, trọng tâm), từ Đợt 4A (27/11) mình bổ sung lớp đánh giá **3 tầng** trên nền bộ 176 câu mẫu:
+
+1. **Tầng 1 — Bám nguồn ngữ nghĩa (không chạy khi khách chat):** chương trình tách câu trả lời thành từng mệnh đề đơn đã khử đại từ ("ở đó", "nơi này" đổi về đúng tên nơi/món) rồi đối chiếu trực tiếp với đúng đoạn nguồn được gắn số trích dẫn `[n]` và toàn bộ tập nguồn đã lấy về. Như vậy máy bắt được cả trường hợp số nguồn `[n]` có thật nhưng nội dung viết ra lại nói sai hoặc suy diễn ngoài đoạn trích.
+2. **Tầng 2 — Độ chính xác gọi công cụ (`0 đồng` tiền API):** chấm từ nhật ký cuộc gọi xem model có chọn đúng công cụ và truyền đúng tham số kỳ vọng hay không (bài 32).
+3. **Tầng 3 — Điểm trả lời, độ trễ và tiền API:** giữ nguyên bộ chấm ba tiêu chí kết hợp đo thời gian chờ, tiền API thật và tỷ lệ dùng lại bộ nhớ đệm ngữ cảnh.
+
+**Kết quả kiểm định và mốc nền Đợt 4A (bộ 20 câu mẫu nền, `gpt-6-luna`):**
+- **Kiểm định người chấm bám nguồn ngữ nghĩa:** khớp **`15/15` (`100%`)** với nhãn đọc tay của người kiểm, và bắt trúng **`3/3`** ca cố tình gán sai số nguồn `[n]`.
+- **Mốc nền 20 câu mẫu:** điểm bám nguồn trung bình đạt **`88,33%`** (`17/20` câu sạch tuyệt đối, `0` ca gán sai số nguồn); phát hiện `5` mệnh đề chưa đủ căn cứ (gồm trường hợp tách/gộp nhầm số nguồn giữa hai đoạn liên tiếp và một câu thiếu dữ kiện). Chi phí chạy lớp chấm này gộp trong tổng chi phí Đợt 4A (bài 32).
+
 ## Giới hạn đã biết
 
 - **Người chấm là model.** Nó có thể chấm lệch. Mốc từ người thật mới có một lần: chủ dự án tự đọc 20 cặp câu trả lời mà không biết bên nào là bản nào; kết quả không đủ phân thắng thua, chỉ để tham khảo.
 - **Từ tối 21/11, người chấm cùng họ với model viết.** Một model chấm bài của chính họ mình có thể chấm dễ hơn. Số chấm kiểu này không so thẳng được với các số trong bài; cần một lượt mốc mới.
 - **Luật "không làm hỏng" chỉ bắt được tụt lan rộng.** Tụt nhỏ dồn vào một loại câu ít có thể lọt.
 - **Bộ an toàn nhỏ.** 0 lỗi trên 28 câu chỉ cho biết tỉ lệ lỗi dưới khoảng 10–12 %, chưa cho biết nó rất thấp.
-- **Bộ 176 câu chưa được chấm lại đủ trên model đang chạy** theo cách của bài này.
+- **Bộ 176 câu chưa được chấm lại đủ trên model đang chạy:** mới có mốc nền bám nguồn ngữ nghĩa cho `20` câu mẫu đầu ở Đợt 4A (`156` câu còn lại chưa chấm lại bằng lớp mới này).
 
 ## Chi tiết để tra
 
@@ -252,5 +264,6 @@ Luật "không làm hỏng" nói bằng lời thường: số câu bị điểm 
 - Bộ an toàn chỉ chứng minh được tỉ lệ dưới khoảng 10–12 %: `bai_hoc/11_CHAM_CAU_TRA_LOI.md` mục "Khi nào hỏng".
 - Lịch sử người chấm (Claude đọc file đã che tên 24/10–19/11; gpt-6-luna ban ngày 21/11; quyết định tối 21/11; lệnh chấm mặc định gpt-6-luna), lượt đo cuối 18/11 (từ chối nhầm 3 so với 12; 1 trên 18 câu ngoài kho bị trả lời, chưa sửa tới 19/11), nhiễu tính trên 129 câu, 2 / 88 và 10 / 83 đo ở cấu hình 5 đoạn ngày 25/10, chủ dự án chọn không chấm tay 24/10: `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md`, `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` (thẻ E1, E3, E7), `bai_hoc/VIEC_MOI_XONG.md` mục 10 và 23, `session_prompt/HIEN_TRANG.md` mục 4, `backend/evaluation/full_corpus_eval.py` (`--provider`) — theo biên bản kiểm `data/hoc_cung_D/kiem/bai_17_20.md`.
 - Mục "Quyết định và lý do", "Nếu… thì sao", "Quyết định nhỏ hơn" (sửa theo biên bản `data/hoc_cung_D/kiem/muc_moi_05_06_17_20.md` phần bài 19 [riêng tư]): "cần một người chấm tự động, rẻ, lặp lại được", chủ dự án chọn Claude 24/10 "tiết kiệm; khác họ với model sinh", luna phụ khớp 0,892–0,960: `bao_cao_he_thong/91_BAO_CAO_SO_SANH_PHUONG_AN.md` thẻ E1; chấm tay 20 câu trong kế hoạch 24/10, thay bằng đọc cặp mù (chủ dự án chọn 25/10), xong 01/11: `bao_cao_he_thong/10_BAO_CAO_DANH_GIA.md` và thẻ E7; chấm cùng lượt 2 / 88 so với 10 / 83 (thẻ E3), đoán bên qua [6]–[10]: `91_BAO_CAO…` (giới hạn của nhóm B1 / B3); khoảng 45 lần so: `bai_hoc/19_BANG_TONG_CAC_LAN_SO_SANH.md` (45 hàng); 2 giúp / 3 hỏng: bảng tổng hàng số 2; lời chủ dự án 21:43 21/11: `session_prompt/HIEN_TRANG.md` mục 4; nhiễu chưa đo lại trên model đang chạy: `HIEN_TRANG.md` mục 2; mốc 19/11 kèm danh sách chưa đạt, "để nguyên, chưa ai nhận sửa": `bai_hoc/VIEC_MOI_XONG.md` mục 11 (19/11); Holm: `skills/run-experiment/SKILL.md` (mục cỡ mẫu và mục so theo cặp); tìm `ragas`, `bleu`, `rouge`, `deepeval`, `trulens` trong mã và tài liệu: 0 kết quả (theo biên bản).
+- **Đợt 4A (27/11/2026):** bổ sung bộ chấm bám nguồn ngữ nghĩa hai bước (tách mệnh đề đơn khử đại từ qua `EXTRACT_INSTRUCTIONS` → kiểm đối chiếu đúng nguồn trích dẫn `cited_supported` và tập nguồn truy hồi `context_supported`) ở `backend/evaluation/faithfulness_eval.py` cùng unit test `backend/tests/test_faithfulness_eval.py`; kiểm định `15/15 = 100%`, bắt `3/3` ca cố tình gán sai `[n]`, mốc nền Golden 20 câu đạt `88,33%` (`17/20` sạch, `0` gán sai nguồn, `5` mệnh đề thiếu căn cứ gồm tách/gộp `[n]` ở `gb_05`, `gb_17` và thiếu dữ kiện ở `gb_18`) — số đo Đợt 4A từ `session_prompt/HIEN_TRANG.md` và báo cáo kết luận Đợt 4A [đã chạy thật; riêng tư cho bảng chi tiết từng ca].
 
 </details>

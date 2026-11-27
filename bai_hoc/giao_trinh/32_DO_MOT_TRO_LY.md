@@ -1,6 +1,6 @@
 # Bài 32 — Đo một trợ lý: hội thoại nhiều lượt, người dùng mô phỏng, kịch bản chạy lặp
 
-*Cập nhật 14:25, ngày 27/11/2026 · khớp hệ thống mốc 14:13 27/11/2026 (**`66` tính năng mở, `7` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · bổ sung kết quả kiểm thông đợt 27/11 trên `gpt-6-luna` (Sổ tay `9,92 s` / `16,47 s`, Hồ sơ `9,85 s` / `13,31 s`, sửa lịch hỏi trước `5/5`, `smoke_eval` **14/14 PASS**), bộ đo quỹ đạo `trajectory_eval.py` (`0 USD` trên log có sẵn), và tổng hợp khung tham chiếu đánh giá & bám nguồn `0 USD`.*
+*Cập nhật 16:40, ngày 27/11/2026 · khớp hệ thống Đợt 4A (**`68` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · nâng cấp **đánh giá 3 tầng trên nền 176 câu mẫu (Đợt 4A, 27/11)**: đưa vào sử dụng bộ chấm bám nguồn ngữ nghĩa từng mệnh đề (`15/15 = 100%`, bắt `3/3` gán sai nguồn, mốc nền 20 câu `88,33%`), mở rộng độ chính xác gọi công cụ `0 đồng` kiểm cả tham số (`19/20 = 95%`, lách từ khoá `9/10`), và tổng kết chi phí cả Đợt 4A (`0,265824 USD` cho `204` lượt chat + `81` lượt chấm).*
 *Mốc trước: 16:11, ngày 22/11/2026 (phân xử chỗ lệch giữa các bài · lượt đo 12 vai 14:13 22/11 · các thước, cách chấm và số chép từ hồ sơ đo 14–22/11 trên gpt-6-luna và Claude Sonnet 5.5 mức cao).*
 
 **Bài trước đã biết:** bộ 176 câu mẫu đo bước tìm và câu trả lời, mỗi câu một lượt (bài 17–19); một thí nghiệm đổi một thứ, đo theo cặp, so với nhiễu (bài 20); trợ lý tự tìm thêm, gọi công cụ, nhớ cuộc trò chuyện, sửa lịch (bài 21–31).
@@ -162,7 +162,8 @@ Bài này không có cấu hình của hệ thống; bảng dưới là cấu h�
 | kịch bản demo | 10 bước; lúc mốc 10 lần × 2 model, sau đó 1 lần sau mỗi lần gộp | — | 10 × 2: nhóm tự ghi là thừa |
 | tiêu chí ghi trước | ghi vào hồ sơ đo TRƯỚC khi chạy, kèm giờ | để không chỉnh luật sau khi thấy số | — |
 | kiểm khói công khai (`smoke_eval.py`) | 14 ca công khai (+ `--dry-run` `0 USD`) | kiểm nhanh chất lượng trích dẫn và từ khoá mềm trên `gpt-6-luna` mà không mở `*sealed*` | **14/14 PASS** (27/11) |
-| đo quỹ đạo công cụ (`trajectory_eval.py`) | đọc log sẵn có (`0 USD`) | đếm số lần gọi công cụ (`MODEL_TOOL_NAMES`), lượt lặp và lượt cứu chạm trần `cuu_max_turns` | chạy ở Đợt 1 (27/11) |
+| đo quỹ đạo công cụ & độ chính xác gọi công cụ (`0 USD`) | đọc log sẵn có (`0 USD`) | đếm số lần gọi công cụ, lượt lặp, lượt cứu chạm trần và chấm đúng tên công cụ lẫn tham số kỳ vọng | chạy từ Đợt 1; mở rộng ở Đợt 4A (`19/20 = 95%` khớp Đợt 2, `9/10` lách từ khoá) |
+| chấm bám nguồn ngữ nghĩa (bài 19) | chấm từng mệnh đề đơn trên nền bộ 176 câu | tách mệnh đề đơn khử đại từ → đối chiếu trực tiếp với nguồn trích dẫn và tập nguồn truy hồi | Đợt 4A (`15/15 = 100%`, `3/3` gán sai, 20 câu mẫu `88,33%`) |
 
 ## Đã so
 
@@ -212,8 +213,8 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 
 **Cập nhật đợt 27/11 trên `gpt-6-luna` (kiểm thông tính năng mở rộng, `smoke_eval` & đo quỹ đạo `0 USD`):**
 - **Kiểm thông (Đợt 1C):** Sổ tay (`9,92 s` và `16,47 s`), Hồ sơ theo chủ đề (`9,85 s` và `13,31 s`), và sửa lịch hỏi trước (`5/5` đạt). Kết hợp sáng 27/11, bộ kiểm khói công khai `smoke_eval.py` đạt **14/14 PASS**.
-- **Đo quỹ đạo `0 USD` (`trajectory_eval.py`):** phân tích vết gọi công cụ trực tiếp từ file log cũ mà không tốn tiền gọi model, hỗ trợ đo tần suất lặp công cụ và tỉ lệ cứu chạm trần (`cuu_max_turns`).
-- **Tổng hợp khung tham chiếu đánh giá & bám nguồn (`0 USD`, 27/11):** nếu tiếp tục nâng cấp lớp đánh giá tự động ở Đợt 4, các chuẩn học thuật liên quan gồm **τ-bench `pass^k`** (đo xác suất thành công lặp lại qua nhiều lần chạy thay vì chỉ 1 lần may mắn), **BFCL** (kiểm tra gọi hàm đúng tham số), **RAGChecker / FRAMES / FACTS Grounding** (đo độ bám từng mệnh đề vào bằng chứng nguồn). Các công cụ mở tiềm năng tương ứng là bộ chấm trung thực từng mệnh đề (`faithfulness_eval.py`) và chỉ số độ chính xác gọi công cụ (`ToolCallAccuracy`) — hiện mới ở mức đề xuất nghiên cứu, chưa bật.
+- **Đo quỹ đạo và độ chính xác gọi công cụ `0 đồng`:** phân tích vết gọi công cụ trực tiếp từ file log cũ mà không tốn tiền gọi model, hỗ trợ đo tần suất lặp công cụ, tỉ lệ cứu chạm trần và độ chính xác chọn công cụ lẫn tham số kỳ vọng.
+- **Đánh giá 3 tầng đã dựng và chạy ở Đợt 4A (27/11):** trên nền bộ 176 câu mẫu và khung tham chiếu học thuật (τ-bench `pass^k`, BFCL, RAGChecker / FRAMES / FACTS Grounding), dự án đã dựng và kiểm định cả hai công cụ mới: (1) **bộ chấm bám nguồn ngữ nghĩa** đạt `15/15` (`100%`) khớp nhãn đọc tay, bắt `3/3` ca cố tình gán sai số nguồn `[n]` và đo mốc nền 20 câu mẫu đầu đạt `88,33%` (`17/20` câu sạch tuyệt đối, `0` gán sai nguồn, `5` mệnh đề thiếu căn cứ, bài 19); (2) **chỉ số độ chính xác gọi công cụ mở rộng** (`0 đồng` tiền API, chấm đúng tên công cụ và tham số) xác nhận khớp kết quả Đợt 2 (`19/20 = 95%`) và Nấc 2B (`9/10` lách từ khoá). Tổng chi phí thật toàn bộ Đợt 4A là **`0,265824 USD`** (khoảng `6.650 đồng` cho `204` lượt chat và `81` lượt chấm). Các điểm chưa đo đủ ở Đợt 4A: chưa chạy trên bộ câu kín, chưa chấm bám nguồn trọn 176 câu mẫu, chưa đo hội thoại nhiều lượt có lịch sử dài, và chưa chạy sống đồng thời hai cơ chế mới ngoài test tự động.
 
 ## Quyết định nhỏ hơn
 
@@ -262,5 +263,6 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 
 - Cập nhật theo bộ thay đổi mở 14:47 22/11/2026: `bai_hoc/VIEC_MOI_XONG.md` mục 42, 43 (8 / 12, 33 / 38, mốc 31 · 32 · 32, năm ý trượt theo loại, 26 lượt điểm mù, chạy trước 14:47); `guides/RUNBOOK_BAN_GIAO.md` mục 10.1; `backend/config/settings.yaml` [đã chạy, phiên đo; người viết không chạy lại].
 - Cập nhật 20:30 25/11/2026: lượt đo bộ câu kín mốc cuối trên `gpt-6-luna` (`main` `ea96e47c`, 62 mở / 6 tắt, 269 bài / 9.536 đoạn, `diem_v16.json`, so với RAG mốc `p9-moc` `18e8f42b`): `report_agent/2026-11-25/E_BO_CAU_KIN_LUNA_2511.md` và `data/phase_9/b7_cuoi_user/TONG_HOP_SO.json` [đã chạy thật, đã duyệt bởi phiên kiểm chéo cùng đồng thuận K kín 14/14 = 100% (`cham_b_k.jsonl ↔ cham_e_k.jsonl`); người viết không mở `*sealed*` và không chạy lại].
+- **Đợt 4A (27/11/2026):** dựng và chạy `backend/evaluation/faithfulness_eval.py` (tách mệnh đề đơn khử đại từ → kiểm nguồn trích dẫn và tập nguồn; `15/15 = 100%`, `3/3` gán sai `[n]`, mốc nền 20 câu Golden `88,33%`) và mở rộng `ToolCallAccuracy` (`backend/evaluation/trajectory_eval.py`, kiểm cả tên công cụ & tham số kỳ vọng, `19/20 = 95%`, lách từ khoá `9/10`, `0 USD`) trong `cd217536`; tổng chi phí Đợt 4A `0,265824 USD` (`204` chat + `81` eval) theo `session_prompt/HIEN_TRANG.md` [code + tài liệu công khai].
 
 </details>
