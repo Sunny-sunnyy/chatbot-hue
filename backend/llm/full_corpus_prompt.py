@@ -223,6 +223,22 @@ Không nêu bất kỳ thông tin cụ thể nào về Huế (tên kèm giờ, g
 Nếu người dùng muốn biết thông tin, mời họ hỏi cụ thể về điều họ quan tâm ở Huế. Không viết mã trích dẫn kiểu [1].
 """.strip()
 
+# Đợt 1B (cờ `assistant.siet_tro_chuyen`, mặc định tắt): làm rõ ranh giới `tro_chuyen` ở router và chặn trả lời tự do kiến thức / địa điểm ngoài phạm vi nếu lọt vào nhánh `tro_chuyen`.
+ROUTER_SIET_TRO_CHUYEN = (
+    "Ranh giới riêng cho tro_chuyen: CHỈ chọn tro_chuyen khi tin nhắn thuần tuý xã giao (chào, cảm ơn, tạm biệt, hỏi trợ lý là ai / làm được gì, "
+    "khen chê, cảm thán, tin không đọc được) và KHÔNG kèm câu hỏi thông tin hay nhờ làm việc nào. "
+    "Nếu có bất kỳ câu hỏi kiến thức, sự kiện, định nghĩa, tính toán, địa điểm hay nhờ viết/làm việc gì (kể cả khi mở đầu bằng lời chào hay nói chuyện "
+    "thân mật): gắn với Huế hoặc hỏi chung về vé/giờ/món/điểm đến không nêu nơi khác ⇒ tro_ly_hue; không gắn với Huế hoặc nêu nơi khác ⇒ "
+    "ngoai_pham_vi, tuyệt đối không chọn tro_chuyen."
+)
+
+CHAT_SIET_TRO_CHUYEN = (
+    "Ranh giới bắt buộc: chỉ đáp lời chào, cảm ơn, tạm biệt, khen chê ngắn hoặc hỏi trợ lý là ai / làm được gì. "
+    "Tuyệt đối không trả lời kiến thức chung, mẹo vặt, tính toán, viết nội dung, hay bất kỳ địa danh / thông tin nào ngoài phạm vi Huế. "
+    "Nếu tin nhắn lỡ chứa câu hỏi kiến thức, địa điểm hoặc nhờ làm việc ngoài phạm vi (dù có kèm lời chào), không giải đáp dù chỉ một ý — "
+    f"trả đúng nguyên văn câu sau:\n{OUT_OF_SCOPE_ANSWER}"
+)
+
 # B6 D4 (plan B6 bản 3): lời dặn của lần gọi riêng viết mục "Từ web" — không công cụ, không lịch sử, không kho. Kiểm cuối do code (D5): mã ∈ sổ,
 # mỗi đoạn văn ≥ 1 mã, 0 link, số tiền ⊂ đoạn trích, câu lưu trú 0 số tiền ⇒ lời dặn chỉ nói cách viết, không thay rào.
 # 16/11 (User chọn): câu sức khoẻ ⇒ model gắn dòng `SUC_KHOE`, CODE nối câu cố định (`tra_web.SUC_KHOE_TEXT`); phần rút gọn mục web

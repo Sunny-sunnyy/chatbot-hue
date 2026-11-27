@@ -43,6 +43,7 @@ from llm.full_corpus_prompt import (
     THOI_TIET_MO_TA,
     TOOL_VONG_CUOI_TEXT,
     CHAT_INSTRUCTIONS,
+    CHAT_SIET_TRO_CHUYEN,
     INSUFFICIENT_ANSWER,
     LICH_TRINH_LUAT,
     LICH_V2_LOI_DAN,
@@ -53,6 +54,7 @@ from llm.full_corpus_prompt import (
     SONNET_SUA_LICH,
     SONNET_SUA_LICH_KHONG_RO,
     ROUTER_INSTRUCTIONS,
+    ROUTER_SIET_TRO_CHUYEN,
     ROUTER_SEARCH_V1,
     ROUTER_SEARCH_V3,
     SUA_LICH_LOI_DAN,
@@ -359,6 +361,7 @@ class OpenAIFullCorpusGenerator:
         max_turns: int = ASSISTANT_MAX_TURNS,
         sua_lich_timeout: float | None = None,
         noi_khac: bool = False,
+        siet_tro_chuyen: bool = False,
     ) -> None:
         # answer_instructions / reasoning_effort: chỉ để harness Phase 8.1 thử prompt và mức suy luận;
         # mặc định giữ đúng hành vi runtime (prompt hiện hành, không gửi reasoning; None hoặc "" = không gửi).
@@ -414,7 +417,8 @@ class OpenAIFullCorpusGenerator:
             output_type=AnswerOutput,
         )
         # Phase 9 B1: định tuyến (D3) — không công cụ, không stream, không lịch sử; trò chuyện (D4) — không ngữ cảnh kho, đầu ra {answer}.
-        router_instructions = kem(ROUTER_INSTRUCTIONS, SONNET_DINH_TUYEN)  # đường OpenAI: đúng `ROUTER_INSTRUCTIONS`
+        router_base = f"{ROUTER_INSTRUCTIONS}\n\n{ROUTER_SIET_TRO_CHUYEN}" if siet_tro_chuyen else ROUTER_INSTRUCTIONS
+        router_instructions = kem(router_base, SONNET_DINH_TUYEN)  # đường OpenAI: đúng `ROUTER_INSTRUCTIONS` khi tắt cờ
         self.router_agent = Agent(
             name="hue_router",
             instructions=router_instructions,
@@ -422,9 +426,10 @@ class OpenAIFullCorpusGenerator:
             model_settings=ModelSettings(include_usage=True, store=False),
             output_type=RouteOutput,
         )
+        chat_instructions = f"{CHAT_INSTRUCTIONS}\n\n{CHAT_SIET_TRO_CHUYEN}" if siet_tro_chuyen else CHAT_INSTRUCTIONS
         self.chat_agent = Agent(
             name="hue_chat",
-            instructions=CHAT_INSTRUCTIONS,
+            instructions=chat_instructions,
             model=self.responses_model,
             model_settings=ModelSettings(include_usage=True, store=False),
             output_type=AnswerOutput,
@@ -551,6 +556,7 @@ class OpenAIFullCorpusGenerator:
                                                  max_tokens=bedrock["max_tokens"], reasoning_default=bedrock["reasoning_default"]),
                 sua_lich_reasoning=bedrock["reasoning_sua_lich"],
                 noi_khac=bool(settings.get("assistant", {}).get("noi_khac_tu_choi", False)),
+                siet_tro_chuyen=bool(settings.get("assistant", {}).get("siet_tro_chuyen", False)),
             )
         api_key_env = config.get("api_key_env", "OPENAI_API_KEY")
         api_key = os.getenv(api_key_env, "").strip()
@@ -573,6 +579,7 @@ class OpenAIFullCorpusGenerator:
             router_timeout=settings.get("assistant", {}).get("router_timeout_seconds", 10),
             max_turns=settings.get("assistant", {}).get("so_vong_cong_cu", ASSISTANT_MAX_TURNS),
             noi_khac=bool(settings.get("assistant", {}).get("noi_khac_tu_choi", False)),
+            siet_tro_chuyen=bool(settings.get("assistant", {}).get("siet_tro_chuyen", False)),
         )
 
     async def _run(self, agent: Agent, user_prompt: "str | list[dict]", call_log: "CallLog", timeout: float, *, max_turns: int = 1,

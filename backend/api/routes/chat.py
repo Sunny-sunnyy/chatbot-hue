@@ -565,6 +565,8 @@ def _copy_trace_metrics(trace: AnswerTrace, metrics: dict) -> None:
             "nac": trace.kiem_so_go["nac"], "n_thoi_tiet": len(trace.kiem_so_go["thoi_tiet"]), "n_khoang_cach": len(trace.kiem_so_go["khoang_cach"]),
             "so_ky_tu_go": trace.kiem_so_go["so_ky_tu_go"]},
     )
+    if trace.cuu_max_turns is not None:  # Đợt 1A (`cuu_max_turns`): tách riêng lượt cứu chạm trần để không trộn với lượt bình thường
+        metrics["cuu_max_turns"] = trace.cuu_max_turns
     if trace.nhieu_y:  # cờ `cau_nhieu_y` + câu ≥ 2 vế hỏi ⇒ luật theo ý đã chạy; chi_y_thieu = chỉ còn dòng ý thiếu ⇒ đổi thành câu từ chối.
         # Khoá chỉ có khi luật chạy (câu một ý / cờ tắt ⇒ dòng log như cũ) — đọc log là biết câu có đi luật mới không (review E m-3).
         # n_y_thieu (21/11/2026): số dòng "Tư liệu chưa có thông tin về…" người dùng thấy ở lượt này — một con số, không chữ
