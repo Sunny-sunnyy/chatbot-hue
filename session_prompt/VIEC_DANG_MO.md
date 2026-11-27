@@ -1,19 +1,18 @@
-# Việc đang mở (sổ việc — cập nhật 14:13 27/11/2026)
+# Việc đang mở (sổ việc — cập nhật 14:44 27/11/2026)
 
 *Mỗi đầu việc có: **làm để chốt gì** · **ai làm** · **tới đâu** · **chỗ lưu**. Quy trình nhiều phiên: `session_prompt/WORKFLOW.md`. Việc đã xong chép 1 dòng sang `session_prompt/VIEC_DA_XONG.md`.*
 
 ## A. Sản phẩm & Vận hành
 
-### A.1. Chiến dịch Tối ưu Harness · Agentic RAG · Tools · Agent trên `gpt-6-luna` (xong Đợt 1 + Đợt 2 + Nấc 2B + Đợt 3A + Nghiên cứu chuyên sâu; đang gọi `d2` cập nhật giáo trình)
-- **Đã xong Đợt 1 (`d67375f2`), Đợt 2 (`aa333ca`), Nấc 2B & Đợt 3A (`75f545c6` + mở `cong_cong_cu: linh_hoat`), Nghiên cứu chuyên sâu `0 USD` (`~0,321–0,328 USD` OpenAI cả chiến dịch):**
-  - `1A` **GIỮ & BẬT** (`chong_lap_cong_cu: true`, `cuu_max_turns: true`, `trajectory_eval.py`): `n=14` giảm `max_turns` `1/14 → 0/14`, `p95 14,5 → 12,0 s`.
-  - `1B` **GỠ / GIỮ TẮT** (`siet_tro_chuyen: false`); `1C` **ĐẠT** trên `gpt-6-luna`.
+### A.1. Chiến dịch Tối ưu Harness · Agentic RAG · Tools · Agent trên `gpt-6-luna` (đã xong Đợt 1 + Đợt 2 + Nấc 2B + Đợt 3A + Nghiên cứu chuyên sâu + Giáo trình `d341fd96`; chờ Hiếu chọn Đợt 4)
+- **Đã hoàn tất & đồng bộ lên `main` (`d67375f2`, `aa333ca`, `79cb4dea`, `d341fd96`; tổng chi phí chiến dịch ~`0,321–0,328 USD` OpenAI):**
+  - **Đợt 1:** `1A` **GIỮ & BẬT** (`chong_lap_cong_cu: true`, `cuu_max_turns: true`, `trajectory_eval.py`: `max_turns` `1/14 → 0/14`, `p95 14,5 → 12,0 s`); `1B` **GỠ / GIỮ TẮT** (`siet_tro_chuyen: false`); `1C` **ĐẠT** trên `gpt-6-luna`.
   - **Đợt 2:** `goi_y_mua_nang: true` (`1/8 → 5/8`, `0/4` bão/lũ, USD `-40,5%`) + `so_sanh_diem_den: true` (`1/8 → 6/8`, `0/3` hụt văn hoá, USD `-37,3%`) + khoá `MAX_VONG_CONG_CU_TOI_DA = 6` + log USD `so_tay`/`ho_so`.
-  - **Nấc 2B — GIỮ & BẬT (`cong_cong_cu: linh_hoat`):** `n=20` lách từ khoá `0/10 → 9/10`, gọi thừa `0/5`, ngoài phạm vi `5/5`, USD **`-15,23%`** (`0,015535 → 0,013169`), `cached_tokens` `46,5% → 76,9%` (`83,5%` ở kho thuần), `p95 16,1s → 11,5s`, `0` lỗi (`KET_LUAN_DOT2B_3A.md`).
+  - **Nấc 2B — GIỮ & BẬT (`cong_cong_cu: linh_hoat`):** `n=20` lách từ khoá `0/10 → 9/10`, gọi thừa `0/5`, ngoài phạm vi `5/5`, USD **`-15,23%`**, `cached_tokens` `46,5% → 76,9%` (`83,5%` ở kho thuần), `p95 16,1s → 11,5s`, `0` lỗi (`KET_LUAN_DOT2B_3A.md`).
   - **Đợt 3A — GIỮ `mac_dinh` (`anh.che_do_tu_choi: mac_dinh`):** `n=76` ảnh (`0,070648 USD`) `confidence_gate` giảm FP `-50%` (`10/18 → 5/18`) nhưng tụt recall dương `-17` top-1 / `-20` top-3 (`49/55 → 32/55` / `52/55 → 32/55`) ⇒ giữ `mac_dinh`.
-  - **Nghiên cứu chuyên sâu (`0 USD`, xong `/tmp` đã xoá):** `c2` ([KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md](data/nghien_cuu_2026-11-27/KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md)) & `b2` ([DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md](data/nghien_cuu_2026-11-27/DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md)).
-- **Đang chạy ngay:** **`d2`** cập nhật đồng bộ `bai_hoc/giao_trinh/` cho toàn bộ kết quả 27/11 + **`e2`** kiểm chéo giáo trình `d2` rồi gộp `main` và thu gọn `/swarm`.
-- **Chờ Hiếu quyết định nếu muốn mở tiếp Đợt 4 (từ 2 báo cáo nghiên cứu, còn dư ~`0,9–1,4 USD` dưới trần):** bộ chấm `faithfulness_eval.py` + `ToolCallAccuracy` (P0/P1) · `canh_bao_vong_con_lai` + giữ ổn định mảng tools (P0/P1) · `kiem_du_bang_chung` kiểu Sufficient Context (P1) · `anh_hoi_lai_goi_y` vùng xám kiểu ReCoVERR (sau khi chốt 3A) · vá chi tiết `5/8` & `6/8` Đợt 2.
+  - **Nghiên cứu chuyên sâu (`0 USD`, đã xoá `/tmp/hr_*_repos/`):** `c2` ([KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md](data/nghien_cuu_2026-11-27/KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md)) & `b2` ([DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md](data/nghien_cuu_2026-11-27/DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md)).
+  - **Giáo trình (`d341fd96`, `0 USD`):** `d2` cập nhật `21` file `bai_hoc/giao_trinh/`, `e2` review chéo đạt sạch (`0` blocker, `0` leak).
+- **Chờ chủ dự án chọn nếu mở tiếp Đợt 4 (từ 2 báo cáo nghiên cứu, còn dư ~`0,9–1,4 USD` dưới trần):** bộ chấm `faithfulness_eval.py` + `ToolCallAccuracy` (P0/P1) · `canh_bao_vong_con_lai` + giữ ổn định mảng tools (P0/P1) · `kiem_du_bang_chung` kiểu Sufficient Context (P1) · `anh_hoi_lai_goi_y` vùng xám kiểu ReCoVERR (sau Đợt 3A) · vá chi tiết `5/8` & `6/8` Đợt 2.
 - **Nguyên tắc:** mọi thay đổi code mới nằm sau công tắc tắt, đo so cặp với bản cũ theo `run-experiment` — tốt hơn vượt nhiễu mới giữ, kém hơn thì giữ bản cũ, xong cập nhật báo cáo + giáo trình.
 - **Đã đóng hẳn (`10:55 27/11/2026`, không nhắc lại):**
   - Thuê GPU + fine-tune model nhận ảnh (giữ nguyên tính năng Hỏi bằng ảnh 55 tên đang chạy bằng `gpt-6-luna`; `goi_may_thue.tar` giữ nguyên không xoá).

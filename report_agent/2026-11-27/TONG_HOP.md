@@ -104,3 +104,11 @@
   - `c2`: `data/nghien_cuu_2026-11-27/KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md` — khảo sát 7 trục paper 2024–2026 (*Adaptive-RAG*, *CRAG*, *Self-RAG*, *Sufficient Context*, *Search-R1*, *τ-bench*, *BFCL*, *RAG-MCP*, *VAD-R*, *ReCoVERR*, *RAGChecker*, *FRAMES*, *FACTS Grounding*) + tài liệu Anthropic/OpenAI/Manus + đọc code `5` repo Agent Harness (`openai-agents-python`, `pydantic-ai`, `smolagents`, `langgraph`, `haystack`).
   - `b2`: `data/nghien_cuu_2026-11-27/DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md` — đọc code `5` repo Agentic RAG / Eval / Verifier (`haystack`, `llama_index`, `ragas`, `dspy`, `ragflow`) và đề xuất phân loại theo 4 nhóm (*Phát triển mới · Bổ sung · Cải thiện · Tối ưu*).
 - **Tổng chi phí OpenAI tích luỹ sau Nấc 2B + Đợt 3A:** ~**1,08 USD** / trần **2–2,5 USD**.
+
+---
+
+## 9. Đợt 7 — Đồng bộ Giáo trình (`bai_hoc/giao_trinh/`) & Thu gọn cuối đợt (`14:22 – 14:44 27/11/2026`, `0 USD` AWS, `0 USD` OpenAI)
+- **Gộp lên `main` (`d341fd96`, nhánh `origin/p20-d-giao-trinh-2711` của `d2`, `21` file `+220 / -86`):**
+  - `d2` cập nhật đồng bộ toàn bộ `00_GIAO_TRINH.md`, `21_HARNESS.md`, `24`, `26`, `32`, `35`, `36`, `37`, `38`, `40`, `41`, `43`, `44`, và 8 phụ lục (`PL_A 190 · B 140 · C 258 · E 240 · F 197 · G 352 · H 210 · I 223`; **66 mở / 7 tắt**, `cong_cong_cu: linh_hoat`, `anh.che_do_tu_choi: mac_dinh`).
+  - `e2` review chéo bắt & sửa sạch 3 điểm (`bedrock.cong_cong_cu` chỉ có `tu_khoa | luon`, đường dẫn `backend/evaluation/{smoke,trajectory}_eval.py`, phân biệt `22/55` `khong_nhan_ra` vs `23/55` trượt top-1) ⇒ duyệt `READY` (`0` blocker, `0` leak đường dẫn riêng tư).
+- **Trạng thái chốt đợt:** `main` đồng bộ sạch, Qdrant `:6335` đủ **9.540 điểm**, cổng `8010/8039/8880` rỗng, `/tmp/hr_*_repos/` đã xoá sạch, đã thu gọn `/swarm`.
