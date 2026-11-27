@@ -7,6 +7,7 @@ import logging
 import math
 import os
 from pathlib import Path
+import threading
 from typing import Any, Literal
 import httpx
 from huggingface_hub import snapshot_download
@@ -193,86 +194,91 @@ class FullCorpusDenseRunner:
         self.spec = spec
         self.snapshot_path = validate_snapshot_path(snapshot_path, spec.revision)
         self._model: SentenceTransformer | None = None
+        # SentenceTransformer/PyTorch CPU không cam kết thread-safe và oversubscribe luồng khi nhiều thread encode() cùng lúc ⇒ khoá quanh model.
+        self._lock = threading.RLock()
 
     def load(self) -> None:
         """Tải mô hình trên CPU float32 (spec local duy nhất là CPU); không dùng device_map tự động."""
-        if self._model is not None:
-            return
+        with self._lock:
+            if self._model is not None:
+                return
 
-        # Tải SentenceTransformer trực tiếp từ đường dẫn snapshot đã xác thực revision
-        self._model = SentenceTransformer(
-            str(self.snapshot_path),
-            device="cpu",
-            model_kwargs={"torch_dtype": torch.float32},
-        )
-
-        # Xác thực kích thước vector output khớp với spec
-        dim_getter = getattr(self._model, "get_embedding_dimension", None) or getattr(
-            self._model, "get_sentence_embedding_dimension", None
-        )
-        actual_dim = dim_getter() if dim_getter is not None else None
-        if actual_dim != self.spec.dimension:
-            raise ValueError(
-                f"Model dimension mismatch for {self.spec.key}: actual {actual_dim} != expected {self.spec.dimension}"
+            # Tải SentenceTransformer trực tiếp từ đường dẫn snapshot đã xác thực revision
+            self._model = SentenceTransformer(
+                str(self.snapshot_path),
+                device="cpu",
+                model_kwargs={"torch_dtype": torch.float32},
             )
 
-        # Xác thực parameter device và dtype thực tế
-        first_param = next(self._model.parameters(), None)
-        if first_param is not None:
-            param_device_type = first_param.device.type
-            if param_device_type != self.spec.device:
+            # Xác thực kích thước vector output khớp với spec
+            dim_getter = getattr(self._model, "get_embedding_dimension", None) or getattr(
+                self._model, "get_sentence_embedding_dimension", None
+            )
+            actual_dim = dim_getter() if dim_getter is not None else None
+            if actual_dim != self.spec.dimension:
                 raise ValueError(
-                    f"Parameter device mismatch for {self.spec.key}: actual {param_device_type} != expected {self.spec.device}"
+                    f"Model dimension mismatch for {self.spec.key}: actual {actual_dim} != expected {self.spec.dimension}"
                 )
-            if first_param.dtype != torch.float32:
-                raise ValueError(
-                    f"Parameter dtype mismatch for {self.spec.key}: actual {first_param.dtype} != expected {torch.float32}"
-                )
+
+            # Xác thực parameter device và dtype thực tế
+            first_param = next(self._model.parameters(), None)
+            if first_param is not None:
+                param_device_type = first_param.device.type
+                if param_device_type != self.spec.device:
+                    raise ValueError(
+                        f"Parameter device mismatch for {self.spec.key}: actual {param_device_type} != expected {self.spec.device}"
+                    )
+                if first_param.dtype != torch.float32:
+                    raise ValueError(
+                        f"Parameter dtype mismatch for {self.spec.key}: actual {first_param.dtype} != expected {torch.float32}"
+                    )
 
     def embed_documents_matrix(self, texts: Sequence[str]) -> np.ndarray:
         """Encode documents into one validated NumPy matrix for Phase 4."""
-        if self._model is None:
-            self.load()
-        assert self._model is not None
         if not texts:
             return np.empty((0, self.spec.dimension), dtype=np.float32)
         prepared = [prepare_document(self.spec, text) for text in texts]
-        raw_vectors = self._model.encode(
-            prepared,
-            batch_size=self.spec.batch_size,
-            normalize_embeddings=True,
-            convert_to_numpy=True,
-            show_progress_bar=False,
-        )
+        with self._lock:
+            if self._model is None:
+                self.load()
+            assert self._model is not None
+            raw_vectors = self._model.encode(
+                prepared,
+                batch_size=self.spec.batch_size,
+                normalize_embeddings=True,
+                convert_to_numpy=True,
+                show_progress_bar=False,
+            )
         if not isinstance(raw_vectors, np.ndarray):
             raise ValueError("SentenceTransformer did not return a NumPy array")
         return validate_vector_matrix(raw_vectors, len(texts), self.spec.dimension)
 
     def embed_queries(self, queries: Sequence[str]) -> list[list[float]]:
         """Mã hóa danh sách câu hỏi theo đúng query preprocessing và kiểm tra vector đầu ra."""
-        if self._model is None:
-            self.load()
-        assert self._model is not None
-
         if not queries:
             return []
 
         prepared = [prepare_query(self.spec, q) for q in queries]
-        raw_vectors = self._model.encode(
-            prepared,
-            batch_size=self.spec.batch_size,
-            normalize_embeddings=True,
-            convert_to_numpy=True,
-            show_progress_bar=False,
-        )
+        with self._lock:
+            if self._model is None:
+                self.load()
+            assert self._model is not None
+            raw_vectors = self._model.encode(
+                prepared,
+                batch_size=self.spec.batch_size,
+                normalize_embeddings=True,
+                convert_to_numpy=True,
+                show_progress_bar=False,
+            )
         return validate_vectors(raw_vectors, expected_count=len(queries), expected_dim=self.spec.dimension)
 
     def close(self) -> None:
         """Giải phóng mô hình khỏi bộ nhớ RAM/VRAM và dọn dẹp cache CUDA."""
-        self._model = None
-        gc.collect()
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
+        with self._lock:
+            self._model = None
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
 
 
 OPENROUTER_EMBEDDINGS_URL = "https://openrouter.ai/api/v1/embeddings"
@@ -317,20 +323,24 @@ class OpenRouterDenseRunner:
         self.spec = spec
         self.providers_seen: set[str] = set()
         self._client: httpx.Client | None = None
+        self._lock = threading.RLock()
 
     def load(self) -> None:
-        if self._client is not None:
-            return
-        self._client = httpx.Client(
-            timeout=180,
-            headers={"Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}"},
-        )
+        with self._lock:
+            if self._client is not None:
+                return
+            self._client = httpx.Client(
+                timeout=180,
+                headers={"Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}"},
+            )
 
     def _embed(self, texts: Sequence[str]) -> np.ndarray:
-        if self._client is None:
-            self.load()
-        assert self._client is not None
-        response = self._client.post(OPENROUTER_EMBEDDINGS_URL, json={
+        with self._lock:
+            if self._client is None:
+                self.load()
+            client = self._client
+        assert client is not None
+        response = client.post(OPENROUTER_EMBEDDINGS_URL, json={
             "model": self.spec.model_id,
             "input": list(texts),
             "encoding_format": "float",
@@ -343,7 +353,8 @@ class OpenRouterDenseRunner:
         matrix, provider = parse_embeddings_response(
             response.json(), len(texts), self.spec.dimension
         )
-        self.providers_seen.add(provider)
+        with self._lock:
+            self.providers_seen.add(provider)
         return matrix
 
     def embed_documents_matrix(self, texts: Sequence[str]) -> np.ndarray:

@@ -20,15 +20,18 @@ PHU=""; [ "$PROVIDER" = bedrock ] && { cp "$GOI"/compose.vai-may.yml .; PHU=comp
 mkdir -p cau_hinh && docker run --rm --network none --entrypoint tar "hue-rag-app:$SHA" -C /app/backend/config -cf - . | tar -xf - -C cau_hinh
 sed -i "s/^\(  provider: \)[a-z]*/\1$PROVIDER/" cau_hinh/settings.yaml
 grep -q "^  provider: $PROVIDER\b" cau_hinh/settings.yaml || { echo "DỪNG: không ghi được dòng provider vào cau_hinh/settings.yaml" >&2; exit 1; }
-# Hai công tắc chỉ định bật ở máy demo — bản đưa lên GHI SẴN tắt (ảnh dựng từ commit cũ chưa có dòng nào thì bỏ qua dòng đó):
-#   so_tay — sổ tay cho chuyến đi (một sổ tay 9–10 lời gọi model mà tính một lượt; chưa có trần riêng — 24/11/2026)
-#   ho_so_chu_de — hồ sơ theo chủ đề (một hồ sơ 3–9 lời gọi model mà tính một lượt; chưa có trần riêng — 24/11/2026)
-for cong_tac in so_tay ho_so_chu_de; do
-  if grep -q "^  $cong_tac:" cau_hinh/settings.yaml; then
-    sed -i "s/^\(  $cong_tac: \)true/\1false/" cau_hinh/settings.yaml
-    grep -q "^  $cong_tac: false" cau_hinh/settings.yaml || { echo "DỪNG: không ghi được dòng $cong_tac: false vào cau_hinh/settings.yaml" >&2; exit 1; }
-  fi
-done
+# Hai công tắc chỉ định bật ở máy demo — mặc định (HUE_MO_SO_TAY_HO_SO=0) ép tắt khi đóng gói tới khi có lượt kiểm thật `so_tay` & `ho_so_chu_de` trên `gpt-6-luna`.
+# Khi bật (`HUE_MO_SO_TAY_HO_SO=1`), `backend/api/gioi_han.py` đã trừ đúng trọng số lượt gọi model (`so_tay=10`, `ho_so=8`) cho cả trần IP lẫn trần tổng,
+# và `Caddyfile` đã loại `/api/so_tay`, `/api/ho_so` khỏi nén gzip để không gom tiến độ SSE.
+MO_SO_TAY_HO_SO=${HUE_MO_SO_TAY_HO_SO:-0}
+if [ "$MO_SO_TAY_HO_SO" != "1" ]; then
+  for cong_tac in so_tay ho_so_chu_de; do
+    if grep -q "^  $cong_tac:" cau_hinh/settings.yaml; then
+      sed -i "s/^\(  $cong_tac: \)true/\1false/" cau_hinh/settings.yaml
+      grep -q "^  $cong_tac: false" cau_hinh/settings.yaml || { echo "DỪNG: không ghi được dòng $cong_tac: false vào cau_hinh/settings.yaml" >&2; exit 1; }
+    fi
+  done
+fi
 sha256sum "app_$SHA.tar.gz" qdrant.snapshot compose.yml $PHU Caddyfile nap_chi_muc.sh cau_hinh/* > SHA256SUMS
 ls -la "$RA"
 echo "model viết của gói: $PROVIDER$([ "$PROVIDER" = openai ] && echo ' — máy đích cần OPENAI_API_KEY trong hue.khoa.env')"

@@ -17,7 +17,15 @@ logger = logging.getLogger("api")
 
 LUOT_MOI_NGAY_ENV = "HUE_LUOT_MOI_NGAY"
 LUOT_TONG_ENV = "HUE_LUOT_TONG_MOI_NGAY"
-DUONG_TINH_LUOT = frozenset({"/api/chat", "/api/chat/stream", "/api/anh/ung_vien", "/api/so_tay", "/api/ho_so"})  # các đường gọi model (tốn tiền)
+# Trọng số lượt gọi model theo đường dẫn (chống cost-amplification): chat/ảnh thường = 1; Sổ tay (<= 9-10 call) = 10; Hồ sơ chủ đề (<= 3-9 call) = 8.
+TRONG_SO_DUONG: dict[str, int] = {
+    "/api/chat": 1,
+    "/api/chat/stream": 1,
+    "/api/anh/ung_vien": 1,
+    "/api/so_tay": 10,
+    "/api/ho_so": 8,
+}
+DUONG_TINH_LUOT = frozenset(TRONG_SO_DUONG)  # các đường gọi model (tốn tiền)
 DUONG_TAI_FILE = "/api/lich/pptx"  # GET: dựng file .pptx từ lịch đã lưu (không gọi model, nhưng tốn CPU + băng thông)
 # 30 lượt tải / IP / ngày: một lịch thường tải một hai lần, sửa lịch rồi tải lại vài lần nữa; 30 đủ cho một nhóm dùng chung một mạng mà vẫn chặn vòng lặp tải
 TRAN_TAI_FILE = 30
@@ -42,23 +50,28 @@ class GioiHanLuot:
         self._dem: dict[str, int] = {}
         self._tong = 0
 
-    def chan(self, ip: str, hom_nay=None, tai_file: bool = False) -> str | None:
-        """Tính một lượt cho `ip`; trả LỜI BÁO khi lượt này bị chặn (không cộng thêm), None khi cho qua. `tai_file`: lượt tải file, đếm riêng."""
+    def chan(self, ip: str, hom_nay=None, tai_file: bool = False, trong_so: int = 1) -> str | None:
+        """Tính `trong_so` điểm lượt cho `ip`; trả LỜI BÁO khi số điểm còn lại < `trong_so` (không cộng thêm), None khi cho qua.
+        `tai_file`: lượt tải file, đếm riêng (luôn trọng số 1)."""
+        if not tai_file and trong_so < 1:
+            raise ValueError("trong_so must be >= 1")
         hom_nay = hom_nay or datetime.now(_VN).date()
         if hom_nay != self._ngay:
             self._ngay, self._dem, self._tong = hom_nay, {}, 0
+        buoc = 1 if tai_file else trong_so
         khoa, tran = (f"tai_file|{ip}", TRAN_TAI_FILE) if tai_file else (ip, self.tran)
-        if tran and self._dem.get(khoa, 0) >= tran:
+        if tran and self._dem.get(khoa, 0) + buoc > tran:
             return LOI_BAO_TAI_FILE if tai_file else LOI_BAO
-        if not tai_file and self.tran_tong and self._tong >= self.tran_tong:
+        if not tai_file and self.tran_tong and self._tong + buoc > self.tran_tong:
             return LOI_BAO_TONG
-        self._dem[khoa] = self._dem.get(khoa, 0) + 1
-        self._tong += not tai_file
+        self._dem[khoa] = self._dem.get(khoa, 0) + buoc
+        if not tai_file:
+            self._tong += buoc
         return None
 
-    def cho_qua(self, ip: str, hom_nay=None) -> bool:
-        """Tính một lượt gọi model cho `ip`; False khi đã hết lượt hôm nay."""
-        return self.chan(ip, hom_nay) is None
+    def cho_qua(self, ip: str, hom_nay=None, trong_so: int = 1) -> bool:
+        """Tính `trong_so` lượt gọi model cho `ip`; False khi đã hết lượt hôm nay."""
+        return self.chan(ip, hom_nay, trong_so=trong_so) is None
 
 
 class ChanLuot:
@@ -69,11 +82,18 @@ class ChanLuot:
         self.app, self.gioi_han = app, gioi_han
 
     async def __call__(self, scope, receive, send):
-        tai_file = scope["type"] == "http" and scope["method"] == "GET" and scope["path"] == DUONG_TAI_FILE
-        if tai_file or (scope["type"] == "http" and scope["method"] == "POST" and scope["path"] in DUONG_TINH_LUOT):
-            loi = self.gioi_han.chan((scope.get("client") or ("khong_ro", 0))[0], tai_file=tai_file)
-            if loi:
-                logger.warning(f"Rate limited: {scope['path']}")  # không ghi IP
-                await JSONResponse(status_code=429, content={"error": {"code": "rate_limited", "message": loi}})(scope, receive, send)
-                return
+        if scope["type"] == "http":
+            method, path = scope["method"], scope["path"]
+            tai_file = method == "GET" and path == DUONG_TAI_FILE
+            trong_so = TRONG_SO_DUONG.get(path) if method == "POST" else None
+            if tai_file or trong_so is not None:
+                loi = self.gioi_han.chan(
+                    (scope.get("client") or ("khong_ro", 0))[0],
+                    tai_file=tai_file,
+                    trong_so=trong_so or 1,
+                )
+                if loi:
+                    logger.warning(f"Rate limited: {path}")  # không ghi IP
+                    await JSONResponse(status_code=429, content={"error": {"code": "rate_limited", "message": loi}})(scope, receive, send)
+                    return
         await self.app(scope, receive, send)

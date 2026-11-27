@@ -601,11 +601,13 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
             trace.dense_ms = None if dense_ms is None else round((trace.dense_ms or 0) + dense_ms, 1)
 
         started = time.perf_counter()
-        packed = context_builder.build(cau_hoi, result.documents, today=today, first_id=len(trace.so_nguon) + 1,
-                                       prior_context="\n\n".join(trace.context_parts), skip_ids=frozenset(trace.seen_ids),
-                                       instructions=instructions, history=trace.history,
-                                       n_tool_items=2 * trace.model_searches if by == "model" else 0,
-                                       extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD if trace.lich_offered else 0)
+        packed = await asyncio.to_thread(
+            context_builder.build, cau_hoi, result.documents, today=today, first_id=len(trace.so_nguon) + 1,
+            prior_context="\n\n".join(trace.context_parts), skip_ids=frozenset(trace.seen_ids),
+            instructions=instructions, history=trace.history,
+            n_tool_items=2 * trace.model_searches if by == "model" else 0,
+            extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD if trace.lich_offered else 0,
+        )
         context_ms = elapsed_ms(started)
         # lần tìm ĐẦU: lần tìm chính không ra nguồn nào ⇒ giữ đường từ chối cũ, không tìm theo vế. Lần tìm của MODEL (cờ `tach_cau_tim_model`): các phần
         # của câu tìm gộp vẫn được tìm kể cả khi cả câu không mang về đoạn mới nào.
@@ -620,11 +622,13 @@ async def search_into_trace(queries: list[str], *, cau_hoi: str, retrieval_servi
             # xoay vòng theo hạng: đoạn đứng đầu của mọi vế trước, rồi tới đoạn thứ hai — vế nào cũng có phần trước khi vế khác lấy thêm
             ung_vien = list({doan.id: doan for hang in zip_longest(*theo_ve) for doan in hang if doan is not None}.values())  # hai vế ra cùng một đoạn ⇒ một lần
             started = time.perf_counter()
-            phu = context_builder.build(cau_hoi, ung_vien, today=today, first_id=len(trace.so_nguon) + len(packed.sources) + 1,
-                                        prior_context="\n\n".join([*trace.context_parts, packed.text]),
-                                        skip_ids=frozenset([*trace.seen_ids, *packed.document_ids]), instructions=instructions, history=trace.history,
-                                        n_tool_items=2 * trace.model_searches if by == "model" else 0,
-                                        extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD if trace.lich_offered else 0, max_documents=len(ung_vien))
+            phu = await asyncio.to_thread(
+                context_builder.build, cau_hoi, ung_vien, today=today, first_id=len(trace.so_nguon) + len(packed.sources) + 1,
+                prior_context="\n\n".join([*trace.context_parts, packed.text]),
+                skip_ids=frozenset([*trace.seen_ids, *packed.document_ids]), instructions=instructions, history=trace.history,
+                n_tool_items=2 * trace.model_searches if by == "model" else 0,
+                extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD if trace.lich_offered else 0, max_documents=len(ung_vien),
+            )
             context_ms = round(context_ms + elapsed_ms(started), 1)
             n_them = len(phu.sources)
             if phu.sources:
@@ -1260,11 +1264,13 @@ async def _lay_nguon_lich(bang, khung: dict, query: str, retrieval_service, cont
         # chữ khung cũng vào model ⇒ đếm vào ngân sách bằng bản nháp (số nguồn tạm) — D6 (iii)
         if nhap is None:
             nhap = lt.khung_chu(bang, khung, dict.fromkeys(lt.diem_trong_khung(khung), 0), LICH_TRINH_LUAT, 0)
-        packed = context_builder.build(query, moi, today=today, first_id=len(trace.so_nguon) + 1,
-                                       prior_context="\n\n".join([*trace.context_parts, nhap]),
-                                       skip_ids=frozenset(trace.seen_ids), instructions=instructions, history=trace.history,
-                                       n_tool_items=2 * (trace.model_searches + 1), extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD,
-                                       max_documents=max_doan)
+        packed = await asyncio.to_thread(
+            context_builder.build, query, moi, today=today, first_id=len(trace.so_nguon) + 1,
+            prior_context="\n\n".join([*trace.context_parts, nhap]),
+            skip_ids=frozenset(trace.seen_ids), instructions=instructions, history=trace.history,
+            n_tool_items=2 * (trace.model_searches + 1), extra_tool_tokens=LICH_TRINH_TOOL_OVERHEAD,
+            max_documents=max_doan,
+        )
     except RetrievalDependencyError as exc:
         trace.tool_error = exc
         raise

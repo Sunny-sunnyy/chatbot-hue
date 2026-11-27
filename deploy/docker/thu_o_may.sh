@@ -70,7 +70,7 @@ kiem)
   echo "trang chủ:        $(curl -s -o /dev/null -w '%{http_code}' $G/)   (mong 200)"
   echo "UID hộp app:      $(dc exec -T app id -u)   (mong 10001)"
   echo "security headers:"
-  curl -sI "$G/" | grep -iE '^(x-content-type-options|x-frame-options|referrer-policy|content-security-policy):' | sed 's/^/  /'
+  curl -sD - -o /dev/null "$G/" | grep -iE '^(x-content-type-options|x-frame-options|referrer-policy|content-security-policy):' | sed 's/^/  /'
   ASSET=$(curl -s "$G/" | grep -oE '/static/assets/[^"]+' | head -n 1 || true)
   if [ -n "$ASSET" ]; then
     echo "cache-control ($ASSET): $(curl -sI "$G$ASSET" | grep -i '^cache-control:' | tr -d '\r')"

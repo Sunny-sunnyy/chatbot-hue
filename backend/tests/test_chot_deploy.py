@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse
 from fastapi.testclient import TestClient
 
 from api.app import create_app
-from api.gioi_han import LOI_BAO, LOI_BAO_TAI_FILE, LOI_BAO_TONG, TRAN_TAI_FILE, GioiHanLuot
+from api.gioi_han import LOI_BAO, LOI_BAO_TAI_FILE, LOI_BAO_TONG, TRAN_TAI_FILE, TRONG_SO_DUONG, GioiHanLuot
 from api.routes.chat import CONVERSATION_COOKIE, _set_cookie
 
 CAU = {"query": "Xin chào"}
@@ -77,3 +77,41 @@ def test_env_total_cap_alone_turns_the_limiter_on_and_download_route_is_counted(
     assert [c.get("/api/lich/pptx").status_code == 429 for _ in range(TRAN_TAI_FILE + 1)] == [False] * TRAN_TAI_FILE + [True]
     assert c.get("/api/lich/pptx").json()["error"]["message"] == LOI_BAO_TAI_FILE
     assert c.post("/api/conversation/new").status_code != 429 and c.get("/health").status_code != 429  # đường khác không tính
+
+
+# ---------- 27/11: trọng số lượt gọi model (chống cost-amplification cho /api/so_tay, /api/ho_so) ----------
+def test_weighted_rate_limit_unit_ip_and_total_caps():
+    assert TRONG_SO_DUONG == {
+        "/api/chat": 1,
+        "/api/chat/stream": 1,
+        "/api/anh/ung_vien": 1,
+        "/api/so_tay": 10,
+        "/api/ho_so": 8,
+    }
+    hom_nay = dt.date(2026, 11, 27)
+    # Trần IP = 12: 1 lần so_tay (10) -> còn 2 điểm -> ho_so (8) bị chặn ngay và KHÔNG cộng điểm, chat (1) vẫn qua 2 lần rồi mới chặn
+    g = GioiHanLuot(tran=12)
+    assert g.chan("ip1", hom_nay, trong_so=10) is None
+    assert g.chan("ip1", hom_nay, trong_so=8) == LOI_BAO
+    assert g.cho_qua("ip1", hom_nay) is True
+    assert g.cho_qua("ip1", hom_nay) is True
+    assert g.cho_qua("ip1", hom_nay) is False
+    # Trần tổng = 15: ip1 dùng ho_so (8), ip2 dùng ho_so (8) bị chặn bởi trần tổng (8+8=16>15), không cộng vào ip2 lẫn tổng
+    g_tong = GioiHanLuot(tran=50, tran_tong=15)
+    assert g_tong.chan("ip1", hom_nay, trong_so=8) is None
+    assert g_tong.chan("ip2", hom_nay, trong_so=8) == LOI_BAO_TONG
+    assert g_tong.chan("ip2", hom_nay, trong_so=7) is None  # vẫn còn đúng 7 điểm (8 + 7 == 15)
+    assert g_tong.chan("ip3", hom_nay, trong_so=1) == LOI_BAO_TONG
+
+
+def test_weighted_rate_limit_middleware_rejects_heavy_routes_with_429(monkeypatch):
+    monkeypatch.setenv("HUE_LUOT_MOI_NGAY", "11")
+    monkeypatch.setenv("HUE_LUOT_TONG_MOI_NGAY", "12")
+    c = TestClient(create_app())
+    # 1 lần /api/ho_so (8 điểm) -> còn 3 điểm ở IP và 4 điểm ở tổng
+    assert c.post("/api/ho_so", json={"ma": "di_tich"}).status_code != 429
+    # Gọi tiếp /api/so_tay (10 điểm) khi chỉ còn 3 < 10 -> 429 ngay, không cộng điểm
+    r = c.post("/api/so_tay")
+    assert r.status_code == 429 and r.json() == {"error": {"code": "rate_limited", "message": LOI_BAO}}
+    # Vẫn còn đúng 3 lượt /api/chat (8 + 3 = 11), lượt thứ 4 bị chặn 429
+    assert [c.post("/api/chat", json=CAU).status_code == 429 for _ in range(4)] == [False, False, False, True]
