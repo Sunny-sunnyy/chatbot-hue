@@ -1,4 +1,4 @@
-# Việc đang mở (sổ việc — cập nhật 14:44 27/11/2026)
+# Việc đang mở (sổ việc — cập nhật 14:57 27/11/2026, đã kết phiên sạch)
 
 *Mỗi đầu việc có: **làm để chốt gì** · **ai làm** · **tới đâu** · **chỗ lưu**. Quy trình nhiều phiên: `session_prompt/WORKFLOW.md`. Việc đã xong chép 1 dòng sang `session_prompt/VIEC_DA_XONG.md`.*
 

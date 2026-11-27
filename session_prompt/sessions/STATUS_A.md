@@ -1,9 +1,9 @@
 # STATUS_A — Phiên điều phối A (`agy` CLI)
 
-Cập nhật: 14:44 27/11/2026 (giờ `date`).
+Cập nhật: 14:57 27/11/2026 (giờ `date`) — **ĐÃ KẾT PHIÊN SẠCH.**
 
 ## 1. Đang giữ vai trò & phạm vi
-- Phiên điều phối (A) đã hoàn tất trọn vẹn **Chiến dịch Tối ưu Harness · Agentic RAG · Tools · Agent · 0-GPU Image QA trên `gpt-6-luna`** (Đợt 1, Đợt 2, Nấc 2B, Đợt 3A), **2 báo cáo nghiên cứu chuyên sâu Paper/Repo**, và **đồng bộ giáo trình `bai_hoc/giao_trinh/` (`d341fd96`)**; đang đóng gọn `/swarm` và trình Hiếu phương án Đợt 4.
+- Phiên điều phối (A) đã kết thúc gọn **Chiến dịch Tối ưu Harness · Agentic RAG · Tools · Agent · 0-GPU Image QA trên `gpt-6-luna`** (Đợt 1, Đợt 2, Nấc 2B, Đợt 3A), **2 báo cáo nghiên cứu chuyên sâu Paper/Repo**, và **đồng bộ giáo trình `bai_hoc/giao_trinh/` (`d341fd96`)**; toàn bộ `8` worker `/swarm` đã được `kill` sạch sau khi đẩy lên `origin/main` (`29ad79e8`).
 
 ## 2. Đã xong trong 27/11 (`0 USD` AWS, ~`0,321–0,328 USD` OpenAI cả chiến dịch)
 - **Đợt 1 (`d67375f2`, `~0,052–0,059 USD`):** **GIỮ & BẬT** `chong_lap_cong_cu` + `cuu_max_turns` (`max_turns` `1/14 → 0/14`, `p95 14,5 → 12,0 s`), giữ tắt `siet_tro_chuyen`, thông `1C` 3 cụm.
@@ -12,10 +12,11 @@ Cập nhật: 14:44 27/11/2026 (giờ `date`).
 - **Nghiên cứu chuyên sâu (`0 USD`, đã xoá `/tmp/hr_*_repos/`):** `c2` ([KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md](../../data/nghien_cuu_2026-11-27/KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md)) & `b2` ([DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md](../../data/nghien_cuu_2026-11-27/DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md)).
 - **Giáo trình (`d341fd96`, `0 USD`):** `d2` đồng bộ `21` file `bai_hoc/giao_trinh/`, `e2` duyệt `READY` (`0` blocker, `0` leak).
 
-## 3. Chờ bước kế
-- Chờ Hiếu quyết định các hạng mục **Đợt 4** (từ 2 báo cáo nghiên cứu) và khi rảnh sẽ mở lại bước **deploy AWS thật**.
+## 3. Chờ phiên sau
+- Phiên mới mở theo `START_SESSION.md` đọc ngay các ứng viên Đợt 4 trong 2 báo cáo nghiên cứu nếu Hiếu chọn chạy tiếp, hoặc hỗ trợ deploy AWS thật khi Hiếu rảnh.
 
-## 4. Tài nguyên & Chi phí
+## 4. Tài nguyên & Chi phí lúc kết phiên
 - **Qdrant (`hue_rag-qdrant-1`, cổng 6335):** đang BẬT, đủ **9.540 điểm**.
 - **Cổng `8010`, `8039`, `8880`:** đều đang TRỐNG.
+- **Swarm:** đã `kill` hết toàn bộ `8` worker (`b`, `c`, `e`, `b2`, `c2`, `d2`, `e2`, `monitor`), không còn worktree dở.
 - **Chi phí OpenAI lũy kế phần test của nhóm:** ~**1,08 USD** / trần **2–2,5 USD**.
