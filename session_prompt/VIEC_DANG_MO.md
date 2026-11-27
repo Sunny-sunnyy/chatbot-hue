@@ -1,26 +1,19 @@
-# Việc đang mở (sổ việc — cập nhật 13:43 27/11/2026)
+# Việc đang mở (sổ việc — cập nhật 14:13 27/11/2026)
 
 *Mỗi đầu việc có: **làm để chốt gì** · **ai làm** · **tới đâu** · **chỗ lưu**. Quy trình nhiều phiên: `session_prompt/WORKFLOW.md`. Việc đã xong chép 1 dòng sang `session_prompt/VIEC_DA_XONG.md`.*
 
 ## A. Sản phẩm & Vận hành
 
-### A.1. Chiến dịch Tối ưu Harness · Agentic RAG · Tools · Agent trên `gpt-6-luna` (đã xong Đợt 1 & Đợt 2; đang mở Nấc 2B + Đợt 3A)
-- **Đã xong Đợt 1 (`e432e32c` + mở cờ `d67375f2`, `~0,052–0,059 USD` OpenAI):**
-  - `1A` **GIỮ & BẬT** (`chong_lap_cong_cu: true`, `cuu_max_turns: true`, `trajectory_eval.py`): đo cặp `gpt-6-luna` `n=14` giảm `max_turns` `1/14 → 0/14` (`1a_multi_03` cứu đạt `8` nguồn, `p95` giảm `14,5 → 12,0 s`, `0,029046 USD`).
-  - `1B` **GỠ / GIỮ TẮT** (`siet_tro_chuyen: false`): `n=18` bên tắt đã `0/6` lọt `tro_chuyen`, bật lên `CHƯA RÕ` mà tăng `+8,5%` chi phí (`0,010259 USD`).
-  - `1C` **ĐẠT** trên `gpt-6-luna` (`so_tay` `9,92s`/`16,47s`, `ho_so_chu_de` `9,85s`/`13,31s`, `sua_lich_hoi_truoc` `5/5`).
-- **Đã xong Đợt 2 (`aaafe678` + mở 2 cờ thành `66 MỞ / 7 TẮT`, `0,169822 USD` OpenAI):**
-  - `goi_y_mua_nang` **GIỮ & BẬT** (`n=16` đo cặp `1/8 → 5/8`, `0/4` bão/lũ, `0/4` OOS, `p95 24,4s → 12,4s`, USD `-40,5%`, `0` lỗi citation).
-  - `so_sanh_diem_den` **GIỮ & BẬT** (`n=14` đo cặp `1/8 → 6/8`, `0/3` hụt văn hoá, `0/3` OOS, `p95 22,2s → 13,2s`, USD `-37,3%`, `0` lỗi citation).
-  - `MAX_VONG_CONG_CU_TOI_DA = 6` + ghi log tokens/`usd` cho `so_tay` & `ho_so_chu_de`.
-  - `cong_cong_cu: luon` **GỠ / giữ `tu_khoa`**: lách từ khoá đạt `10/10` (`0/10` gọi thừa) nhưng đội `+44,50%` USD (`+89,0%` ở câu thuần kho do lặp danh sách 40 điểm ở schema & `cached=0`) ⇒ chuyển sang **Nấc 2B**.
-- **Đang chạy Nấc 2B + Đợt 3A trên `/swarm` (`b2`, `c2`, `e2`):**
-  - `b2` (nhánh `p20-b-nang-cap-2b-3a` tách từ `main` sau Đợt 2):
-    - **Nấc 2B (`cong_cong_cu: "linh_hoat"`, giữ mặc định `"tu_khoa"`):** khử lặp bảng 40 địa điểm giữa `khoang_cach`, `gan_diem`, `so_sanh_diem_den` (chỉ in 1 lần) + gắn `prompt_cache_key` cố định cho `assistant_agent` để kích hoạt OpenAI Prompt Cache + giữ rào cứng bão/lũ và ngoài 7 ngày.
-    - **Đợt 3A (`anh.che_do_tu_choi: "mac_dinh" | "confidence_gate"`, mặc định `"mac_dinh"`):** mở rộng `nhan_anh.py` + `app.py` + `routes/anh.py` kiểm soát 3 trường (`do_chac_chan`, `dau_hieu_dac_trung`, `ly_do_ngan` chỉ dùng nội bộ) và cổng backend xác định, không phá Q-f/Q-g/rào prompt injection.
-  - `c2` (`0 USD`): chuẩn bị manifest đo Đợt 3A (`data/thu_harness_2026-11-27/bo_anh_dot3.json`) và script đo cặp OFF (`mac_dinh`) vs ON (`confidence_gate`) trên `gpt-6-luna`.
-  - `e2`: review chéo `p20-b-nang-cap-2b-3a`, đo cặp **Nấc 2B** (`n=20`, tiêu chí lách từ khoá `>= 8/10`, gọi thừa `<= 1/10`, USD `<= +20%`) và **Đợt 3A** (`bo_anh_dot3.json`, tiêu chí giảm nhận nhầm `>= 40%` tương đối, recall dương không tụt quá `2` ảnh / `3,5%`, `0` tụt rào chữ dán trên ảnh), ghi `KET_LUAN_DOT2B_3A.md`.
-- **Kế tiếp sau khi đóng Nấc 2B & Đợt 3A:** gọi `d2` cập nhật đồng bộ `bai_hoc/giao_trinh/` (nhờ `e2` review chéo), dọn nhánh tạm & thu gọn `/swarm`.
+### A.1. Chiến dịch Tối ưu Harness · Agentic RAG · Tools · Agent trên `gpt-6-luna` (xong Đợt 1 + Đợt 2 + Nấc 2B + Đợt 3A + Nghiên cứu chuyên sâu; đang gọi `d2` cập nhật giáo trình)
+- **Đã xong Đợt 1 (`d67375f2`), Đợt 2 (`aa333ca`), Nấc 2B & Đợt 3A (`75f545c6` + mở `cong_cong_cu: linh_hoat`), Nghiên cứu chuyên sâu `0 USD` (`~0,321–0,328 USD` OpenAI cả chiến dịch):**
+  - `1A` **GIỮ & BẬT** (`chong_lap_cong_cu: true`, `cuu_max_turns: true`, `trajectory_eval.py`): `n=14` giảm `max_turns` `1/14 → 0/14`, `p95 14,5 → 12,0 s`.
+  - `1B` **GỠ / GIỮ TẮT** (`siet_tro_chuyen: false`); `1C` **ĐẠT** trên `gpt-6-luna`.
+  - **Đợt 2:** `goi_y_mua_nang: true` (`1/8 → 5/8`, `0/4` bão/lũ, USD `-40,5%`) + `so_sanh_diem_den: true` (`1/8 → 6/8`, `0/3` hụt văn hoá, USD `-37,3%`) + khoá `MAX_VONG_CONG_CU_TOI_DA = 6` + log USD `so_tay`/`ho_so`.
+  - **Nấc 2B — GIỮ & BẬT (`cong_cong_cu: linh_hoat`):** `n=20` lách từ khoá `0/10 → 9/10`, gọi thừa `0/5`, ngoài phạm vi `5/5`, USD **`-15,23%`** (`0,015535 → 0,013169`), `cached_tokens` `46,5% → 76,9%` (`83,5%` ở kho thuần), `p95 16,1s → 11,5s`, `0` lỗi (`KET_LUAN_DOT2B_3A.md`).
+  - **Đợt 3A — GIỮ `mac_dinh` (`anh.che_do_tu_choi: mac_dinh`):** `n=76` ảnh (`0,070648 USD`) `confidence_gate` giảm FP `-50%` (`10/18 → 5/18`) nhưng tụt recall dương `-17` top-1 / `-20` top-3 (`49/55 → 32/55` / `52/55 → 32/55`) ⇒ giữ `mac_dinh`.
+  - **Nghiên cứu chuyên sâu (`0 USD`, xong `/tmp` đã xoá):** `c2` ([KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md](data/nghien_cuu_2026-11-27/KHAO_SAT_CHUYEN_SAU_PAPER_REPO_2026.md)) & `b2` ([DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md](data/nghien_cuu_2026-11-27/DOC_CODE_REPO_RAG_EVAL_VA_DE_XUAT.md)).
+- **Đang chạy ngay:** **`d2`** cập nhật đồng bộ `bai_hoc/giao_trinh/` cho toàn bộ kết quả 27/11 + **`e2`** kiểm chéo giáo trình `d2` rồi gộp `main` và thu gọn `/swarm`.
+- **Chờ Hiếu quyết định nếu muốn mở tiếp Đợt 4 (từ 2 báo cáo nghiên cứu, còn dư ~`0,9–1,4 USD` dưới trần):** bộ chấm `faithfulness_eval.py` + `ToolCallAccuracy` (P0/P1) · `canh_bao_vong_con_lai` + giữ ổn định mảng tools (P0/P1) · `kiem_du_bang_chung` kiểu Sufficient Context (P1) · `anh_hoi_lai_goi_y` vùng xám kiểu ReCoVERR (sau khi chốt 3A) · vá chi tiết `5/8` & `6/8` Đợt 2.
 - **Nguyên tắc:** mọi thay đổi code mới nằm sau công tắc tắt, đo so cặp với bản cũ theo `run-experiment` — tốt hơn vượt nhiễu mới giữ, kém hơn thì giữ bản cũ, xong cập nhật báo cáo + giáo trình.
 - **Đã đóng hẳn (`10:55 27/11/2026`, không nhắc lại):**
   - Thuê GPU + fine-tune model nhận ảnh (giữ nguyên tính năng Hỏi bằng ảnh 55 tên đang chạy bằng `gpt-6-luna`; `goi_may_thue.tar` giữ nguyên không xoá).
@@ -38,7 +31,7 @@
 
 ## B. Chỉ số nền & Trần OpenAI của nhóm
 - **Model viết mặc định (từ 15:41 25/11):** `gpt-6-luna` (`full_corpus_generation.provider: openai`).
-- **Tính năng (`backend/config/settings.yaml`):** **66 MỞ · 7 TẮT** (`anh.bat` + 65 cờ mở / 7 cờ tắt trong `assistant:`, sau khi mở `goi_y_mua_nang` & `so_sanh_diem_den`, giữ tắt `siet_tro_chuyen` và `cong_cong_cu: tu_khoa`).
+- **Tính năng (`backend/config/settings.yaml`):** **66 MỞ · 7 TẮT** (`anh.bat` + 65 cờ mở / 7 cờ tắt trong `assistant:`), kèm **`cong_cong_cu: linh_hoat`** (Nấc 2B) và giữ **`anh.che_do_tu_choi: mac_dinh`** (Đợt 3A).
 - **Kho & Chỉ mục Qdrant (`hue_full_corpus_7a2_e5_small_384`):** **269 bài · 9.540 đoạn** (cập nhật 26/11; Khám phá **269/269** có ảnh).
-- **Cả bộ test (`c2d0ee68` + chạy kiểm lại sau đợt sửa 17:13 25/11 + 26/11):** nền đầy đủ **101 file · 4 bỏ · 97 chạy · 2.397 ca đạt · 0 file đỏ** (`data/test_rong_2026-11-22/KET_QUA_c2d0ee68.tsv`); sau Đợt 2 kiểm 6 file chạm **109 passed** (`13:43 27/11`).
-- **Chi phí OpenAI phần test của nhóm:** **~0,98 USD** (`~0,81` tới trưa 27/11 + `0,042205` baseline Đợt 2 `c2` + `0,127617` đo cặp Đợt 2 `e2`) / trần **2–2,5 USD** (không tính phần chủ dự án tự test, lời chủ dự án 15:44 25/11).
+- **Cả bộ test (`c2d0ee68` + kiểm sau Đợt 2B/3A):** nền đầy đủ **101 file · 4 bỏ · 97 chạy · 2.397 ca đạt · 0 file đỏ** (`KET_QUA_c2d0ee68.tsv`); kiểm chạm sau Nấc 2B/3A xem `CURRENT_HANDOFF.md`.
+- **Chi phí OpenAI phần test của nhóm:** **~1,08 USD** (`~0,98` tới Đợt 2 + `0,028704` đo cặp Nấc 2B + `0,070648` đo cặp Đợt 3A) / trần **2–2,5 USD** (không tính phần chủ dự án tự test, lời chủ dự án 15:44 25/11).
