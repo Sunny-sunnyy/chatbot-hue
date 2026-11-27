@@ -68,6 +68,15 @@ kiem)
   G=http://127.0.0.1:$CONG
   echo "model viết của lượt thử: $(grep -o '^  provider: [a-z]*' "$THU/cau_hinh/settings.yaml" | cut -d' ' -f4)   ·  file phủ: $([ -f "$THU/compose.thu.yml" ] && echo compose.thu.yml || echo 'không (đúng bộ file của máy đích)')"
   echo "trang chủ:        $(curl -s -o /dev/null -w '%{http_code}' $G/)   (mong 200)"
+  echo "UID hộp app:      $(dc exec -T app id -u)   (mong 10001)"
+  echo "security headers:"
+  curl -sI "$G/" | grep -iE '^(x-content-type-options|x-frame-options|referrer-policy|content-security-policy):' | sed 's/^/  /'
+  ASSET=$(curl -s "$G/" | grep -oE '/static/assets/[^"]+' | head -n 1 || true)
+  if [ -n "$ASSET" ]; then
+    echo "cache-control ($ASSET): $(curl -sI "$G$ASSET" | grep -i '^cache-control:' | tr -d '\r')"
+  else
+    echo "cache-control (/static/anh/dau_trang_ngo_mon.jpg): $(curl -sI "$G/static/anh/dau_trang_ngo_mon.jpg" | grep -i '^cache-control:' | tr -d '\r')"
+  fi
   echo "/health:          $(curl -s $G/health | cut -c1-200)"
   echo "/docs:            $(curl -s -o /dev/null -w '%{http_code}' $G/docs)   (mong 404)"
   echo "/api/tinh_nang:   $(curl -s $G/api/tinh_nang | cut -c1-300)"

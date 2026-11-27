@@ -4,27 +4,14 @@ version = "0.1.0"
 description = "Hue RAG application"
 requires-python = ">=3.13"
 dependencies = [
-    "beautifulsoup4",
     "qdrant-client",
     "sentence-transformers",
-    "polars",
     "pyyaml",
-    "pytest>=7.4.0",
-    "pytest-cov>=4.1.0",
     "fastapi>=0.135",
     "uvicorn[standard]>=0.32.0",
-    "python-multipart>=0.0.12",
-    "python-dotenv>=1.0.0",
-    "pyarrow",
     "numpy",
-    "scikit-learn",
-    "nltk",
-    "ipykernel",
-    "jupyter",
-    "requests",
     "openai>=2.48.0",
     "openai-agents>=0.18.3",
-    "gradio>=6.25.0",
     "pyvi==0.1.1",
     "markdown-it-py>=4.0.0,<5.0.0",
     "tiktoken>=0.12,<1",
@@ -37,6 +24,19 @@ dependencies = [
 [dependency-groups]
 dev = [
     "playwright==1.58.*",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "ipykernel",
+    "jupyter",
+    "gradio>=6.25.0",
+    "polars",
+    "pyarrow",
+    "nltk",
+    "beautifulsoup4",
+    "scikit-learn",
+    "requests",
+    "python-dotenv>=1.0.0",
+    "python-multipart>=0.0.12",
 ]
 evaluation = [
     "underthesea>=9.5,<10",

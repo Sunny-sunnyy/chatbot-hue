@@ -36,6 +36,8 @@ services:
       timeout: 2s
       retries: 30
     mem_limit: 768m        # đo 16/11: 222 MiB
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
     <<: *log
 
@@ -108,6 +110,7 @@ services:
     depends_on:
       app:
         condition: service_healthy
+    mem_limit: 128m
     restart: unless-stopped
     <<: *log
 
