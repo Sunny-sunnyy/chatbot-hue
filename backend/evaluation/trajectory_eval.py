@@ -11,7 +11,8 @@ import argparse
 from collections import Counter
 import json
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
+import unicodedata
 
 DEFAULT_LOG_PATH = Path(__file__).resolve().parents[1] / "logs" / "application.log"
 TEST_MODELS = frozenset({"probe", "fake-bench"})
@@ -225,19 +226,379 @@ def dinh_dang_bang(stats: dict) -> str:
     return "\n".join(lines)
 
 
+_TOOL_TELEMETRY_KEYS = frozenset({
+    "name", "ms", "by", "lap", "het_luot", "bao_lu", "n", "n_ket_qua", "n_bai", "n_o_ten",
+    "n_queries", "n_new", "n_ve", "n_them_ve", "n_cum_tu", "trang_thai", "loi",
+    "sau_du_bao", "sau_lich", "khong_co", "thanh_cong",
+})
+_KHONG_CO_DIEM = frozenset({"", "khong_co", "khong_ro", "khac"})
+
+
+def _chuan_gia_tri(value: Any) -> Any:
+    if isinstance(value, str):
+        return unicodedata.normalize("NFC", value).strip().casefold()
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return value
+    if isinstance(value, (list, tuple)):
+        return tuple(_chuan_gia_tri(x) for x in value)
+    if isinstance(value, dict):
+        return tuple(sorted((str(k), _chuan_gia_tri(v)) for k, v in value.items()))
+    return value
+
+
+def _trich_tham_so_tool(entry: dict[str, Any]) -> dict[str, Any]:
+    """Lấy dict tham số enum từ mục `trace.tools` (hỗ trợ cả `entry['args']` lẫn các khoá phẳng của `chat_metrics`)."""
+    args: dict[str, Any] = {}
+    if isinstance(entry.get("args"), dict):
+        args.update(entry["args"])
+    for k, v in entry.items():
+        if k not in _TOOL_TELEMETRY_KEYS and k != "args":
+            args[k] = v
+    return args
+
+
+def _sorted_key_for_tool_call(name: str, args: dict[str, Any]) -> tuple[str, tuple[tuple[str, Any], ...]]:
+    """Khoá chuẩn hoá bất biến theo thứ tự tham số (tham chiếu `ragas/_tool_call_accuracy.py`)."""
+    norm_name = str(_chuan_gia_tri(name))
+    norm_items = tuple(sorted((str(k), _chuan_gia_tri(v)) for k, v in args.items()))
+    return norm_name, norm_items
+
+
+def _chuan_ky_vong_call(spec: str | dict[str, Any]) -> tuple[str, dict[str, Any]]:
+    if isinstance(spec, str):
+        return spec, {}
+    name = str(spec["name"])
+    if isinstance(spec.get("args"), dict):
+        return name, dict(spec["args"])
+    args = {k: v for k, v in spec.items() if k not in {"name", "args", "strict"}}
+    return name, args
+
+
+def _diem_trong_goi(args: dict[str, Any]) -> set[str]:
+    points = set()
+    for key in ("diem_1", "diem_2", "diem_3", "diem_a", "diem_b", "diem", "diem_goc"):
+        val = args.get(key)
+        if isinstance(val, str):
+            norm = _chuan_gia_tri(val)
+            if norm not in _KHONG_CO_DIEM:
+                points.add(norm)
+    return points
+
+
+def _khop_goi_cong_cu(actual_entry: dict[str, Any], expected_spec: str | dict[str, Any]) -> bool:
+    exp_name, exp_args = _chuan_ky_vong_call(expected_spec)
+    if _chuan_gia_tri(actual_entry.get("name") or "") != _chuan_gia_tri(exp_name):
+        return False
+    if not exp_args:
+        return True
+    act_args = _trich_tham_so_tool(actual_entry)
+    for k, exp_val in exp_args.items():
+        if k == "diem_set":
+            wanted = {_chuan_gia_tri(x) for x in exp_val if _chuan_gia_tri(x) not in _KHONG_CO_DIEM}
+            if not wanted.issubset(_diem_trong_goi(act_args)):
+                return False
+            continue
+        act_val = act_args.get(k)
+        if isinstance(exp_val, dict) and "any_of" in exp_val:
+            allowed = {_chuan_gia_tri(x) for x in exp_val["any_of"]}
+            if _chuan_gia_tri(act_val) not in allowed:
+                return False
+        elif _chuan_gia_tri(act_val) != _chuan_gia_tri(exp_val):
+            return False
+    return True
+
+
+def _max_bipartite_match(actual: list[dict[str, Any]], expected: list[str | dict[str, Any]]) -> int:
+    """Ghép 1-1 cực đại giữa `expected` và `actual` không phân biệt thứ tự."""
+    match_actual: list[int | None] = [None] * len(actual)
+
+    def dfs(exp_idx: int, seen: list[bool]) -> bool:
+        for act_idx, act_entry in enumerate(actual):
+            if seen[act_idx] or not _khop_goi_cong_cu(act_entry, expected[exp_idx]):
+                continue
+            seen[act_idx] = True
+            if match_actual[act_idx] is None or dfs(match_actual[act_idx], seen):
+                match_actual[act_idx] = exp_idx
+                return True
+        return False
+
+    matched = 0
+    for exp_idx in range(len(expected)):
+        if dfs(exp_idx, [False] * len(actual)):
+            matched += 1
+    return matched
+
+
+def _lcs_match(actual: list[dict[str, Any]], expected: list[str | dict[str, Any]]) -> int:
+    """Ghép giữ đúng thứ tự (LCS) giữa `expected` và `actual`."""
+    m, n = len(expected), len(actual)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if _khop_goi_cong_cu(actual[j - 1], expected[i - 1]):
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    return dp[m][n]
+
+
+def score_tool_calls(
+    actual_tools: Iterable[dict[str, Any]],
+    expected_tools: Iterable[str | dict[str, Any]],
+    *,
+    strict_order: bool = False,
+    ignore_tim_kho: bool = True,
+    forbidden_tools: Iterable[str] = (),
+) -> dict[str, Any]:
+    """Chấm `ToolCallAccuracy` (0 USD) cho một lượt: precision, recall, F1, exact_match, gọi thừa & gọi cấm."""
+    exp_list = list(expected_tools)
+    act_list = [
+        t for t in actual_tools
+        if la_goi_cong_cu_model(t) and not (ignore_tim_kho and t.get("name") == "tim_kho")
+    ]
+    n_exp = len(exp_list)
+    n_act = len(act_list)
+
+    if n_exp == 0 and n_act == 0:
+        tp = 0
+        precision = 1.0
+        recall = 1.0
+        f1 = 1.0
+    else:
+        tp = _lcs_match(act_list, exp_list) if strict_order else _max_bipartite_match(act_list, exp_list)
+        precision = tp / n_act if n_act > 0 else 0.0
+        recall = tp / n_exp if n_exp > 0 else 1.0
+        f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) > 0 else 0.0
+
+    forbidden_set = {_chuan_gia_tri(x) for x in forbidden_tools}
+    forbidden_hits = sum(1 for t in act_list if _chuan_gia_tri(t.get("name") or "") in forbidden_set)
+
+    return {
+        "tp": tp,
+        "n_expected": n_exp,
+        "n_actual": n_act,
+        "precision": round(precision, 6),
+        "recall": round(recall, 6),
+        "f1": round(f1, 6),
+        "exact_match": tp == n_exp == n_act,
+        "extra_calls": max(0, n_act - tp),
+        "missing_calls": max(0, n_exp - tp),
+        "forbidden_hits": forbidden_hits,
+        "actual_keys": [_sorted_key_for_tool_call(str(t.get("name") or ""), _trich_tham_so_tool(t)) for t in act_list],
+    }
+
+
+def doc_ket_qua_do(path: Path) -> list[dict[str, Any]]:
+    """Đọc kết quả từ file `dot2_*.json` (`{"results": [...]}`), JSON list, hoặc file log/JSONL (`doc_log`)."""
+    raw = Path(path).read_text(encoding="utf-8", errors="replace").strip()
+    if not raw:
+        return []
+    if raw.startswith("{") or raw.startswith("["):
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError:
+            data = None
+        if isinstance(data, dict) and isinstance(data.get("results"), list):
+            out: list[dict[str, Any]] = []
+            for item in data["results"]:
+                if not isinstance(item, dict):
+                    continue
+                metrics = item.get("metrics") if isinstance(item.get("metrics"), dict) else {}
+                merged = {**metrics}
+                for key in ("id", "case_index", "subgroup", "category", "query"):
+                    if key in item and key not in merged:
+                        merged[key] = item[key]
+                if "tools" not in merged and isinstance(item.get("tools"), list):
+                    merged["tools"] = item["tools"]
+                out.append(merged)
+            return out
+        if isinstance(data, list):
+            return [x for x in data if isinstance(x, dict)]
+    return doc_log(Path(path))
+
+
+def _spec_tu_case_bo_cau(case: dict[str, Any]) -> dict[str, Any]:
+    """Suy ra `{expected_tools, forbidden_tools, subgroup}` từ một mục trong `bo_cau_dot2.json` / `bo_cau_dot4a.json`."""
+    subgroup = case.get("subgroup")
+    if "expected_tools" in case:
+        return {
+            "expected_tools": list(case["expected_tools"]),
+            "forbidden_tools": list(case.get("forbidden_tools") or ()),
+            "subgroup": subgroup,
+        }
+    cid = str(case.get("id") or "")
+    expected: list[dict[str, Any]] = []
+    forbidden: list[str] = []
+
+    if case.get("need_tool"):
+        expected.append({"name": str(case["need_tool"]), "args": dict(case.get("expected_args") or {})})
+    elif cid.startswith("mn_bao_"):
+        forbidden.append("goi_y_phuong_an_mua_nang")
+    elif cid.startswith("mn_ngoai_"):
+        if "ngoài phạm vi" in str(case.get("note") or "").casefold():
+            forbidden.append("goi_y_phuong_an_mua_nang")
+    elif cid.startswith("mn_"):
+        args: dict[str, Any] = {}
+        if case.get("diem_goc"):
+            args["diem_goc"] = case["diem_goc"]
+        if case.get("buoi"):
+            args["buoi"] = case["buoi"]
+        expected.append({"name": "goi_y_phuong_an_mua_nang", "args": args})
+    elif cid.startswith("ss_vh_") or cid.startswith("ss_ng_"):
+        forbidden.append("so_sanh_diem_den")
+    elif cid.startswith("ss_"):
+        expected.append({"name": "so_sanh_diem_den", "args": dict(case.get("expected_args") or {})})
+
+    return {"expected_tools": expected, "forbidden_tools": forbidden, "subgroup": subgroup}
+
+
+def chuan_hoa_ky_vong_bo_cau(raw: Any, group: str | None = None) -> dict[str, dict[str, Any]]:
+    """Chuẩn hoá file bộ câu (`bo_cau_dot2.json`, `bo_cau_dot4a.json` hoặc map `id -> spec`) thành `dict[id, spec]`."""
+    if isinstance(raw, dict) and "results" not in raw:
+        # Nếu là dict các nhóm như `{"H2_mua_nang": [...], ...}` hoặc map `id -> spec/list`.
+        if group is not None and isinstance(raw.get(group), list):
+            items = raw[group]
+        elif all(isinstance(v, list) for k, v in raw.items() if k != "meta"):
+            items = [item for k, v in raw.items() if k != "meta" and isinstance(v, list) for item in v]
+        else:
+            out: dict[str, dict[str, Any]] = {}
+            for k, v in raw.items():
+                if k == "meta":
+                    continue
+                if isinstance(v, list):
+                    out[str(k)] = {"expected_tools": v, "forbidden_tools": [], "subgroup": None}
+                elif isinstance(v, dict):
+                    out[str(k)] = _spec_tu_case_bo_cau({"id": str(k), **v})
+            return out
+        return {str(c.get("id") or c.get("case_index")): _spec_tu_case_bo_cau(c) for c in items if isinstance(c, dict)}
+    if isinstance(raw, list):
+        return {str(c.get("id") or c.get("case_index")): _spec_tu_case_bo_cau(c) for c in raw if isinstance(c, dict)}
+    raise ValueError("Unsupported expected-tools specification format")
+
+
+def _tong_hop_nhom_tool_accuracy(cases: list[dict[str, Any]]) -> dict[str, Any]:
+    n = len(cases)
+    if n == 0:
+        return {"n": 0}
+    return {
+        "n": n,
+        "precision": round(sum(c["precision"] for c in cases) / n, 6),
+        "recall": round(sum(c["recall"] for c in cases) / n, 6),
+        "f1": round(sum(c["f1"] for c in cases) / n, 6),
+        "exact_match_rate": round(sum(bool(c["exact_match"]) for c in cases) / n, 6),
+        "exact_matches": sum(bool(c["exact_match"]) for c in cases),
+        "extra_call_turns": sum(c["extra_calls"] > 0 for c in cases),
+        "total_extra_calls": sum(c["extra_calls"] for c in cases),
+        "total_missing_calls": sum(c["missing_calls"] for c in cases),
+        "forbidden_hit_turns": sum(c["forbidden_hits"] > 0 for c in cases),
+    }
+
+
+def tinh_tool_call_accuracy(
+    rows: Iterable[dict[str, Any]],
+    expected_by_id: dict[str, Any],
+    *,
+    strict_order: bool = False,
+    ignore_tim_kho: bool | None = None,
+) -> dict[str, Any]:
+    """Tính `ToolCallAccuracy` (0 USD) trên danh sách lượt chạy đối chiếu với `expected_by_id`."""
+    norm_specs: dict[str, dict[str, Any]] = {}
+    for k, v in expected_by_id.items():
+        if isinstance(v, list):
+            norm_specs[str(k)] = {"expected_tools": v, "forbidden_tools": [], "subgroup": None}
+        else:
+            norm_specs[str(k)] = _spec_tu_case_bo_cau({"id": str(k), **v}) if "expected_tools" not in v else v
+
+    if ignore_tim_kho is None:
+        has_expected_tim_kho = any(
+            _chuan_gia_tri(_chuan_ky_vong_call(call)[0]) == "tim_kho"
+            for spec in norm_specs.values()
+            for call in spec.get("expected_tools", ())
+        )
+        ignore_tim_kho = not has_expected_tim_kho
+
+    per_case: list[dict[str, Any]] = []
+    by_subgroup: dict[str, list[dict[str, Any]]] = {}
+
+    for idx, row in enumerate(rows):
+        row_id = row.get("id")
+        key = str(row_id if row_id is not None else row.get("case_index", idx))
+        if key not in norm_specs:
+            continue
+        spec = norm_specs[key]
+        scored = score_tool_calls(
+            row.get("tools") or (),
+            spec.get("expected_tools") or (),
+            strict_order=strict_order,
+            ignore_tim_kho=ignore_tim_kho,
+            forbidden_tools=spec.get("forbidden_tools") or (),
+        )
+        subgroup = row.get("subgroup") or spec.get("subgroup") or "(khac)"
+        case_out = {"id": key, "subgroup": subgroup, **scored}
+        per_case.append(case_out)
+        by_subgroup.setdefault(subgroup, []).append(case_out)
+
+    return {
+        "strict_order": strict_order,
+        "ignore_tim_kho": ignore_tim_kho,
+        "overall": _tong_hop_nhom_tool_accuracy(per_case),
+        "by_subgroup": {sg: _tong_hop_nhom_tool_accuracy(items) for sg, items in sorted(by_subgroup.items())},
+        "per_case": per_case,
+    }
+
+
+def dinh_dang_bang_tool_accuracy(stats: dict[str, Any]) -> str:
+    """Định dạng bảng Markdown kết quả `ToolCallAccuracy`."""
+    ov = stats["overall"]
+    if ov.get("n", 0) == 0:
+        return "| Nhóm | n | Precision | Recall | F1 | Exact | Gọi thừa (lượt/lần) | Cấm |\n|---|---:|---:|---:|---:|---:|---:|---:|\n| overall | 0 | - | - | - | - | - | - |"
+    lines = [
+        f"Mode: `strict_order={stats['strict_order']}`, `ignore_tim_kho={stats['ignore_tim_kho']}`",
+        "",
+        "| Nhóm | n | Precision | Recall | F1 | Exact | Gọi thừa (lượt/lần) | Cấm |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    for label, s in [("overall", ov), *stats["by_subgroup"].items()]:
+        lines.append(
+            f"| {label} | {s['n']} | {s['precision']:.3f} | {s['recall']:.3f} | {s['f1']:.3f} | "
+            f"{s['exact_matches']}/{s['n']} ({_pct(s['exact_match_rate'])}) | "
+            f"{s['extra_call_turns']}/{s['total_extra_calls']} | {s['forbidden_hit_turns']} |"
+        )
+    return "\n".join(lines)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="Đánh giá quỹ đạo Agent từ chat_metrics (0 USD)")
-    ap.add_argument("--log", type=Path, default=DEFAULT_LOG_PATH, help="Đường dẫn application.log hoặc file JSONL")
+    ap.add_argument("--log", type=Path, default=DEFAULT_LOG_PATH, help="Đường dẫn application.log, JSONL hoặc dot2_*.json")
     ap.add_argument("--sha", default=None, help="Chỉ lọc lượt có git_sha này")
     ap.add_argument("--model", default=None, help="Chỉ lọc lượt có model này")
     ap.add_argument("--giu-test", action="store_true", help="Giữ cả lượt model giả lập (probe, fake-bench)")
     ap.add_argument("--chi-co-tien", action="store_true", help="Chỉ giữ lượt có phát sinh chi phí USD > 0")
+    ap.add_argument("--expected", type=Path, default=None, help="File JSON kỳ vọng tool (bo_cau_dot2.json / bo_cau_dot4a.json) để tính ToolCallAccuracy")
+    ap.add_argument("--group", default=None, help="Tên nhóm trong file --expected (vd: H2_mua_nang)")
+    ap.add_argument("--strict-order", action="store_true", help="So khớp thứ tự chặt cho ToolCallAccuracy")
+    ap.add_argument("--include-tim-kho", action="store_true", help="Tính cả tim_kho vào ToolCallAccuracy thay vì bỏ qua khi không có trong kỳ vọng")
     ap.add_argument("--json", action="store_true", help="In JSON thay cho bảng Markdown")
     args = ap.parse_args(argv)
 
-    raw_rows = doc_log(args.log)
+    raw_rows = doc_ket_qua_do(args.log)
     filtered = loc_luot(raw_rows, sha=args.sha, model=args.model, bo_test_model=not args.giu_test, chi_co_tien=args.chi_co_tien)
     stats = tinh_quy_dao(filtered)
+    if args.expected is not None:
+        exp_raw = json.loads(args.expected.read_text(encoding="utf-8"))
+        exp_map = chuan_hoa_ky_vong_bo_cau(exp_raw, group=args.group)
+        ignore_tk = False if args.include_tim_kho else None
+        tool_acc = tinh_tool_call_accuracy(filtered, exp_map, strict_order=args.strict_order, ignore_tim_kho=ignore_tk)
+        if args.json:
+            print(json.dumps({"trajectory": stats, "tool_call_accuracy": tool_acc}, ensure_ascii=False, indent=2))
+        else:
+            print(dinh_dang_bang(stats))
+            print()
+            print(dinh_dang_bang_tool_accuracy(tool_acc))
+        return 0
+
     if args.json:
         print(json.dumps(stats, ensure_ascii=False, indent=2))
     else:
