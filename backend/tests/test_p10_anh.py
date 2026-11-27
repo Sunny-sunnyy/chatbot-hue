@@ -2,7 +2,9 @@
 T8 (server thật, 11 MB, file tạm) và T9 (capture_all, uvicorn) chạy ngoài pytest — xem report."""
 import io
 import json
+import logging
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from fastapi.testclient import TestClient
@@ -11,7 +13,7 @@ from pydantic import ValidationError
 from starlette.datastructures import Headers
 
 from api.app import create_app
-from api.routes.anh import kiem_dau_vao
+from api.routes.anh import ANH_FIELDS, kiem_dau_vao
 from core.settings_loader import BACKEND_DIR
 from llm.nhan_anh import AnhKhongHopLe, chuan_bi_anh, kiem_lai, kieu_dau_ra, nap_danh_sach
 
@@ -185,3 +187,43 @@ def test_route_tat_co_404_va_rao_truoc_generator():
     assert client.get("/api/anh/ung_vien").json() == {"bat": True}
     r = post(anh())  # qua mọi rào ⇒ tới bước cần generator ⇒ 503, chưa gọi model
     assert r.status_code == 503 and r.json() == {"code": "generator_unavailable"}
+
+
+def test_anh_metrics_logs_cached_tokens_and_keeps_response_unchanged(caplog):
+    import asyncio
+    from llm.nhan_anh import kieu_dau_ra
+
+    assert "cached_tokens" in ANH_FIELDS
+    Out = kieu_dau_ra(DS)
+
+    class FakeGen:
+        async def _run(self, agent, items, call_log, timeout):
+            call_log.calls.append({
+                "input_tokens": 1200,
+                "cached_tokens": 1024,
+                "output_tokens": 25,
+                "reasoning_tokens": 0,
+                "usd": 0.00012,
+            })
+            return SimpleNamespace(final_output=Out(ung_vien=["diem_a"], khong_nhan_ra=False))
+
+    app = create_app()
+    app.state.generator = FakeGen()
+    app.state.anh = {
+        "danh_sach": DS,
+        "agent": SimpleNamespace(),
+        "max_bytes": 100_000,
+        "max_pixels": 1_000_000,
+        "canh_dai": 1024,
+        "timeout": 10,
+    }
+    client = TestClient(app)
+    with caplog.at_level(logging.INFO, logger="chat"):
+        resp = client.post("/api/anh/ung_vien", content=anh(), headers={"content-type": "image/jpeg"})
+    assert resp.status_code == 200
+    assert resp.json() == {"ung_vien": [{"id": "diem_a", "ten": "Điểm A"}], "khong_nhan_ra": False}
+
+    metric_line = next(rec.message for rec in caplog.records if rec.message.startswith("anh_metrics "))
+    metric_obj = json.loads(metric_line.split("anh_metrics ", 1)[1])
+    assert tuple(metric_obj.keys()) == ANH_FIELDS
+    assert metric_obj["cached_tokens"] == 1024 and metric_obj["input_tokens"] == 1200

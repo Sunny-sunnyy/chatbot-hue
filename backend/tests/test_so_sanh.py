@@ -205,3 +205,19 @@ def test_generator_registers_so_sanh_tool_schema_and_settings_load():
     extra_off = _lich_extra("So sánh Lăng Tự Đức và Lăng Minh Mạng giúp mình", None, None, AnswerTrace(), None, None, flags_off)
     agent_off, _, _ = gen._assistant_for(fake_tim_kho, **extra_off)
     assert "so_sanh_diem_den" not in [t.name for t in agent_off.tools]
+
+
+def test_so_sanh_toi_uu_dot2_fixes_distance_text_and_adds_examples():
+    bang = _bang_mau()
+    dong_on, chon_on = ss.ket_qua(bang, BANG_KC, THE_NOI, ("lang_tu_duc", "lang_minh_mang"), toi_uu=True)
+    assert len(chon_on) == 2
+    van_ban = "\n".join(dong_on)
+    assert "INTERNAL_NOTE_DO_NOT_LEAK" not in van_ban
+    assert "khoảng khoảng" not in van_ban
+    assert ss.CAU_DOI_CHIEU_SO_SANH in dong_on
+    assert dong_on[-1] == kc.CAU_GHI_CHU
+
+    assert "Ví dụ gọi mẫu:" in ss.mo_ta_cong_cu(bang, toi_uu=True)
+    assert "Ví dụ gọi mẫu:" not in ss.mo_ta_cong_cu(bang, toi_uu=False)
+    assert "Ví dụ gọi mẫu:" in ss.mo_ta_ngan("khoang_cach", toi_uu=True)
+    assert "Ví dụ gọi mẫu:" not in ss.mo_ta_ngan("khoang_cach", toi_uu=False)

@@ -79,11 +79,25 @@ def _khoang_cach_cap(bang_kc: kc.BangKhoangCach | None, a: str, b: str) -> tuple
     return float(v["km"]), phut
 
 
+CAU_DOI_CHIEU_SO_SANH = (
+    "Ghi chú đối chiếu: nêu đủ thông tin từng điểm được hỏi theo đúng các tiêu chí trong bảng trên "
+    "(bậc thang, thời lượng, khu vực, không gian, giờ/vé, đường đi) kèm [n]."
+)
+
+_VI_DU_SO_SANH = (
+    "Ví dụ gọi mẫu:\n"
+    f"- So sánh 2 điểm: {{\"diem_1\": \"dai_noi\", \"diem_2\": \"chua_thien_mu\", \"diem_3\": \"{KHONG_CO}\"}}\n"
+    "- Chọn 1 trong 3 điểm: {\"diem_1\": \"dai_noi\", \"diem_2\": \"bao_tang_co_vat\", \"diem_3\": \"chua_thien_mu\"}"
+)
+
+
 def ket_qua(
     bang: lt2.BangV2,
     bang_kc: kc.BangKhoangCach | None,
     the_noi_bang: thn.Bang | None,
     raw_ids: Sequence[str | None],
+    *,
+    toi_uu: bool = False,
 ) -> tuple[tuple[str, ...], tuple[dict, ...]]:
     """Trả `(các dòng nguồn, danh sách điểm hợp lệ)` — dưới 2 điểm trả `((), ())` để tool trả `CAU_THIEU_DIEM`."""
     ids = chuan_danh_sach_ma(bang, raw_ids)
@@ -121,32 +135,58 @@ def ket_qua(
             cap = _khoang_cach_cap(bang_kc, a, b)
             if cap is not None:
                 km, phut = cap
-                kc_dong.append(f"- Đường đi {bang.theo_id[a]['ten']} ↔ {bang.theo_id[b]['ten']}: {kc._km(km)}, khoảng {kc._phut(phut)}.")
-    if kc_dong:
+                phut_txt = kc._phut(phut) if toi_uu else f"khoảng {kc._phut(phut)}"
+                kc_dong.append(f"- Đường đi {bang.theo_id[a]['ten']} ↔ {bang.theo_id[b]['ten']}: {kc._km(km)}, {phut_txt}.")
+    if toi_uu:
+        dong.extend(kc_dong)
+        dong.append(CAU_DOI_CHIEU_SO_SANH)
+        if kc_dong:
+            dong.append(kc.CAU_GHI_CHU)
+    elif kc_dong:
         dong.extend(kc_dong)
         dong.append(kc.CAU_GHI_CHU)
 
     return tuple(dong), chon
 
 
-def mo_ta_cong_cu(bang: lt2.BangV2) -> str:
+def mo_ta_cong_cu(bang: lt2.BangV2, *, toi_uu: bool = False) -> str:
     """Mô tả công cụ ngắn gọn kèm danh sách mã điểm hợp lệ."""
     ds = "; ".join(f"{d['id']}={d['ten']}" for d in bang.diem)
+    if not toi_uu:
+        return (
+            "So sánh 2 đến 3 điểm đến ở Huế theo tiêu chí thực dụng (khu vực, thời lượng, trong nhà/ngoài trời, nhiều bậc thang, giờ/vé tóm tắt từ kho, khoảng cách). "
+            "KHÔNG dùng cho so sánh thuần lịch sử/kiến trúc hoặc điểm ngoài danh sách (dùng tim_kho). "
+            f"Truyền diem_1, diem_2 và diem_3 (\"{KHONG_CO}\" hoặc null nếu chỉ so sánh 2 điểm). "
+            "Kết quả là một nguồn [n]: bám đúng thuộc tính và trích mã [n]; cần chiều sâu văn hoá/lịch sử thì gọi thêm tim_kho.\n"
+            f"Mã điểm: {ds}."
+        )
     return (
-        "So sánh 2 đến 3 điểm đến ở Huế theo tiêu chí thực dụng (khu vực, thời lượng, trong nhà/ngoài trời, nhiều bậc thang, giờ/vé tóm tắt từ kho, khoảng cách). "
+        "So sánh 2 đến 3 điểm đến ở Huế theo tiêu chí thực dụng (khu vực, thời lượng ngắn/nửa buổi, trong nhà/ngoài trời, nhiều bậc thang cho người lớn tuổi/trẻ nhỏ, giờ/vé tóm tắt từ kho, khoảng cách). "
+        "LUÔN ưu tiên gọi công cụ này TRƯỚC khi trả lời nếu câu hỏi so sánh hoặc chọn giữa 2–3 điểm có trong danh sách theo tiêu chí đi lại/thực dụng. "
         "KHÔNG dùng cho so sánh thuần lịch sử/kiến trúc hoặc điểm ngoài danh sách (dùng tim_kho). "
         f"Truyền diem_1, diem_2 và diem_3 (\"{KHONG_CO}\" hoặc null nếu chỉ so sánh 2 điểm). "
-        "Kết quả là một nguồn [n]: bám đúng thuộc tính và trích mã [n]; cần chiều sâu văn hoá/lịch sử thì gọi thêm tim_kho.\n"
+        "Kết quả là một nguồn [n]: đối chiếu đủ mọi tiêu chí được hỏi cho từng điểm và trích mã [n]; cần chiều sâu văn hoá/lịch sử thì gọi thêm tim_kho.\n"
+        f"{_VI_DU_SO_SANH}\n"
         f"Mã điểm: {ds}."
     )
 
 
-def mo_ta_ngan(ten_cong_cu_bang: str = "khoang_cach") -> str:
+def mo_ta_ngan(ten_cong_cu_bang: str = "khoang_cach", *, toi_uu: bool = False) -> str:
     """Mô tả rút gọn khi danh sách mã điểm đã in ở công cụ khác trong cùng lượt (Nấc 2B)."""
+    if not toi_uu:
+        return (
+            "So sánh 2 đến 3 điểm đến ở Huế theo tiêu chí thực dụng (khu vực, thời lượng, trong nhà/ngoài trời, nhiều bậc thang, giờ/vé tóm tắt từ kho, khoảng cách). "
+            "KHÔNG dùng cho so sánh thuần lịch sử/kiến trúc hoặc điểm ngoài danh sách (dùng tim_kho). "
+            f"Truyền diem_1, diem_2 và diem_3 (\"{KHONG_CO}\" hoặc null nếu chỉ so sánh 2 điểm), đối chiếu tên↔mã điểm ở Danh sách của công cụ "
+            f"`{ten_cong_cu_bang}` (và danh sách enum hợp lệ của tham số). "
+            "Kết quả là một nguồn [n]: bám đúng thuộc tính và trích mã [n]; cần chiều sâu văn hoá/lịch sử thì gọi thêm tim_kho."
+        )
     return (
-        "So sánh 2 đến 3 điểm đến ở Huế theo tiêu chí thực dụng (khu vực, thời lượng, trong nhà/ngoài trời, nhiều bậc thang, giờ/vé tóm tắt từ kho, khoảng cách). "
+        "So sánh 2 đến 3 điểm đến ở Huế theo tiêu chí thực dụng (khu vực, thời lượng ngắn/nửa buổi, trong nhà/ngoài trời, nhiều bậc thang cho người lớn tuổi/trẻ nhỏ, giờ/vé tóm tắt từ kho, khoảng cách). "
+        "LUÔN ưu tiên gọi công cụ này TRƯỚC khi trả lời nếu câu hỏi so sánh hoặc chọn giữa 2–3 điểm có trong danh sách theo tiêu chí đi lại/thực dụng. "
         "KHÔNG dùng cho so sánh thuần lịch sử/kiến trúc hoặc điểm ngoài danh sách (dùng tim_kho). "
         f"Truyền diem_1, diem_2 và diem_3 (\"{KHONG_CO}\" hoặc null nếu chỉ so sánh 2 điểm), đối chiếu tên↔mã điểm ở Danh sách của công cụ "
         f"`{ten_cong_cu_bang}` (và danh sách enum hợp lệ của tham số). "
-        "Kết quả là một nguồn [n]: bám đúng thuộc tính và trích mã [n]; cần chiều sâu văn hoá/lịch sử thì gọi thêm tim_kho."
+        "Kết quả là một nguồn [n]: đối chiếu đủ mọi tiêu chí được hỏi cho từng điểm và trích mã [n]; cần chiều sâu văn hoá/lịch sử thì gọi thêm tim_kho.\n"
+        f"{_VI_DU_SO_SANH}"
     )

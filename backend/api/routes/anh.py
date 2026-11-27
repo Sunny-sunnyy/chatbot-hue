@@ -22,8 +22,8 @@ router = APIRouter()
 
 KIEU_ANH = {"image/jpeg", "image/png", "image/webp"}
 # Một dòng `anh_metrics` mỗi yêu cầu: chỉ số đếm / mã / thời gian / tiền — KHÔNG ảnh, tên file, id / tên ứng viên, header (Q-g).
-ANH_FIELDS = ("outcome", "status_code", "bytes_vao", "w", "h", "n_ung_vien", "n_llm_calls", "input_tokens", "output_tokens",
-              "reasoning_tokens", "usd", "ms_xu_ly", "ms_model", "ms_tong")
+ANH_FIELDS = ("outcome", "status_code", "bytes_vao", "w", "h", "n_ung_vien", "n_llm_calls", "input_tokens", "cached_tokens",
+              "output_tokens", "reasoning_tokens", "usd", "ms_xu_ly", "ms_model", "ms_tong")
 
 
 def kiem_dau_vao(headers, origin_cua_server: str, max_bytes: int) -> tuple[int, str] | None:
@@ -112,7 +112,7 @@ async def ung_vien(request: Request):
     metrics["ms_model"] = round((time.perf_counter() - t1) * 1000, 1)
     calls = call_log.calls
     metrics.update(n_ung_vien=len(ten), n_llm_calls=len(calls), ms_tong=round((time.perf_counter() - started) * 1000, 1))
-    for key in ("input_tokens", "output_tokens", "reasoning_tokens", "usd"):
+    for key in ("input_tokens", "cached_tokens", "output_tokens", "reasoning_tokens", "usd"):
         values = [c.get(key) for c in calls if c.get(key) is not None]
         metrics[key] = round(sum(values), 8) if values else None
     flags = getattr(request.app.state, "assistant_flags", None)  # sổ vết debug: tên gợi ý + kết quả + lần gọi model — KHÔNG ghi ảnh
