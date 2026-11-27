@@ -78,3 +78,18 @@
 - **Kiểm chứng Đợt 1C trên `gpt-6-luna` (`c2` chạy cổng `8039`, `e2` đối chiếu `100%`, `KET_QUA_1C_3_CUM_LUNA.md`):**
   - `so_tay` đạt (`9,92s` mặc định 2 ngày / `16,47s` 3 ngày thiên nhiên, `0` lỗi JSON), `ho_so_chu_de` đạt (`bien_dam_pha` `9,85s` / `ca_phe` `13,31s`, `0` lỗi), `sua_lich_hoi_truoc` đạt `5/5` lệnh gõ tay (`0` câu dự phòng). Chi phí đo `0,004828 USD` từ log + ước `~0,0083–0,0149 USD` cho `so_tay`/`ho_so` (phát hiện `so_tay.py` & `ho_so.py` chưa ghi `usd`/tokens vào log).
 - **Thiết kế Đợt 2 & Đợt 3:** `c2` lập [THIET_KE_DOT2_DOT3.md](../../data/thu_harness_2026-11-27/THIET_KE_DOT2_DOT3.md), `e2` góp ý 3 điểm chốt trước khi mở Đợt 2.
+
+---
+
+## 7. Đợt 5 — Đợt 2 Chiến dịch Tối ưu Harness · Tools (`12:15 – 13:43 27/11/2026`, `0 USD` AWS, `0,169822 USD` OpenAI)
+- **Chuẩn bị bộ câu & baseline (`c2`, `0,042205 USD`):** `data/thu_harness_2026-11-27/bo_cau_dot2.json` (`n=50` công khai, `0` `*sealed*`) + `BASELINE_DOT2.md` xác nhận cả hai nhóm đích chỉ đạt `1/8` khi công cụ tắt.
+- **Gộp lên `main` (`aaafe678`, nhánh `origin/p19-b-tools-dot2` của `b2`, `e2` duyệt `READY` với `0` blocker / `0` major, `442 passed`) + mở cờ trên `main` (`66 MỞ / 7 TẮT`, `109 passed`):**
+  - `backend/llm/mua_nang.py` (`goi_y_mua_nang: true`): gợi ý phương án trong nhà/có mái che theo buổi & cụm khi mưa/nắng, chặn 3 lớp khi bão/lũ hoặc mưa `>= 100mm`, tái sử dụng `flags.du_bao` và `trace.muc_luc_bai`.
+  - `backend/llm/so_sanh.py` (`so_sanh_diem_den: true`): so sánh thực dụng 2–3 điểm từ `diem_v16`, `the_noi_bang` (không đọc `gio_mo_cua` nội bộ), `khoang_cach_bang`, `trace.muc_luc_bai`.
+  - `backend/llm/generator_openai_full_corpus.py`: khoá `MAX_VONG_CONG_CU_TOI_DA = 6` trong `max_turns_for`.
+  - `backend/api/routes/so_tay.py` & `ho_so.py`: log JSON `_cong_usage` ghi đủ `input_tokens`, `output_tokens`, `cached_tokens`, `usd`.
+- **Kết quả đo đối chứng cùng buổi trên `gpt-6-luna` (`e2` đo cổng `8039`, `0,127617 USD`, `data/thu_harness_2026-11-27/KET_LUAN_DOT2.md`):**
+  - **`H2_mua_nang` (`n=16`) — GIỮ & BẬT:** `1/8 → 5/8` (`+4/8 >= +3/8`), `0/4` lọt bão/lũ, `0/4` ngoài phạm vi, `0` lỗi citation, `cuu_max_turns` `2 → 0`, `p95 24,4s → 12,4s`, USD **`-40,5%`** (`0,031553 → 0,018774`).
+  - **`H2_so_sanh` (`n=14`) — GIỮ & BẬT:** `1/8 → 6/8` (`+5/8 >= +3/8`), `0/3` hụt chiều sâu văn hoá, `0/3` ngoài phạm vi, `0` lỗi citation, `cuu_max_turns` `2 → 0`, `p95 22,2s → 13,2s`, USD **`-37,3%`** (`0,024455 → 0,015321`).
+  - **`H2_cong_cong_cu_luon` (`n=20`) — GỠ / giữ `tu_khoa` (chuyển sang Nấc 2B):** lách từ khoá `0/10 → 10/10` (`0/10` gọi thừa), nhưng USD tăng **`+44,50%`** (vượt ngưỡng `<= +40%`; riêng câu thuần kho tăng `+89,0%` do lặp danh sách 40 địa điểm ở `KHOANG_CACH_MO_TA` + `GAN_DIEM_MO_TA` và `cached=0`).
+- **Tổng chi phí OpenAI tích luỹ sau Đợt 2:** ~**0,98 USD** / trần **2–2,5 USD**.
