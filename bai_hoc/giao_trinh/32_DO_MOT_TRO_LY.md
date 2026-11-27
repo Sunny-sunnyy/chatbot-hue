@@ -1,6 +1,6 @@
 # Bài 32 — Đo một trợ lý: hội thoại nhiều lượt, người dùng mô phỏng, kịch bản chạy lặp
 
-*Cập nhật 20:30, ngày 25/11/2026 · bổ sung lượt đo bộ câu kín mốc cuối trên `gpt-6-luna` (25/11/2026, tách riêng khỏi mốc 18/11; 62 tính năng mở, 6 tắt, kho 269 bài / 9.536 đoạn, bảng điểm bản 16) từ báo cáo đo và biên bản kiểm chéo độc lập; người viết không mở bộ câu kín và không chạy lại phép đo nào.*
+*Cập nhật 14:25, ngày 27/11/2026 · khớp hệ thống mốc 14:13 27/11/2026 (**`66` tính năng mở, `7` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · bổ sung kết quả kiểm thông đợt 27/11 trên `gpt-6-luna` (Sổ tay `9,92 s` / `16,47 s`, Hồ sơ `9,85 s` / `13,31 s`, sửa lịch hỏi trước `5/5`, `smoke_eval` **14/14 PASS**), bộ đo quỹ đạo `trajectory_eval.py` (`0 USD` trên log có sẵn), và tổng hợp khung tham chiếu đánh giá & bám nguồn `0 USD`.*
 *Mốc trước: 16:11, ngày 22/11/2026 (phân xử chỗ lệch giữa các bài · lượt đo 12 vai 14:13 22/11 · các thước, cách chấm và số chép từ hồ sơ đo 14–22/11 trên gpt-6-luna và Claude Sonnet 5.5 mức cao).*
 
 **Bài trước đã biết:** bộ 176 câu mẫu đo bước tìm và câu trả lời, mỗi câu một lượt (bài 17–19); một thí nghiệm đổi một thứ, đo theo cặp, so với nhiễu (bài 20); trợ lý tự tìm thêm, gọi công cụ, nhớ cuộc trò chuyện, sửa lịch (bài 21–31).
@@ -161,6 +161,8 @@ Bài này không có cấu hình của hệ thống; bảng dưới là cấu h�
 | chuỗi hội thoại | 25 chuỗi / 56 lượt đã thấy; thêm một bộ kín 15 chuỗi / 33 lượt | phần bộ kín (cùng các bộ kín theo ngày, ngoài phạm vi, định tuyến) đã chạy 25/11 trên `gpt-6-luna` | — |
 | kịch bản demo | 10 bước; lúc mốc 10 lần × 2 model, sau đó 1 lần sau mỗi lần gộp | — | 10 × 2: nhóm tự ghi là thừa |
 | tiêu chí ghi trước | ghi vào hồ sơ đo TRƯỚC khi chạy, kèm giờ | để không chỉnh luật sau khi thấy số | — |
+| kiểm khói công khai (`smoke_eval.py`) | 14 ca công khai (+ `--dry-run` `0 USD`) | kiểm nhanh chất lượng trích dẫn và từ khoá mềm trên `gpt-6-luna` mà không mở `*sealed*` | **14/14 PASS** (27/11) |
+| đo quỹ đạo công cụ (`trajectory_eval.py`) | đọc log sẵn có (`0 USD`) | đếm số lần gọi công cụ (`MODEL_TOOL_NAMES`), lượt lặp và lượt cứu chạm trần `cuu_max_turns` | chạy ở Đợt 1 (27/11) |
 
 ## Đã so
 
@@ -207,6 +209,11 @@ Cột máy cùng lượt: gpt-6-luna chạm trần số vòng 7 · 8 · 3 lần,
 **Đọc bảng thế nào:** ở 12 vai, Claude hơn ở mọi cặp lượt và chênh lớn hơn nhiễu, nên theo luật là "tốt hơn". Ở 41 câu khó, lượt đầu hai model đều một lượt; số 39 / 41 là sau các sửa trong ngày, trên bộ mà người sửa đã thấy. Ở lượt đo bộ câu kín ngày 25/11 trên `gpt-6-luna`, không trộn số với mốc 18/11: trợ lý giữ được ưu thế ở phần tính ngày, nhớ tên và hỏi tiếp hội thoại, đồng thời lộ rõ 5 ca trượt sàn hoặc lỗi (`b_kin_10`, `b_kin_09`, `a_kin_08`, `s15`, `K-N2`) và việc chưa chạy được bộ kín sửa lịch.
 
 **Giới hạn của phép đo:** người mô phỏng cùng họ với model đang chạy; chưa có phép đối chiếu với người thật; phần lớn bộ của phần trợ lý là bộ đã thấy (trừ các bộ dò mù và bộ câu kín); thời gian chờ ở mốc ba lượt không so được vì hai model chạy song song trên cùng máy. Riêng lượt bộ câu kín 25/11 mới chạy 1 lượt mỗi bộ (trừ ngoài phạm vi 2 lượt), mẫu nhỏ, mới 1 người chấm ở câu theo ngày đã thấy và chuỗi hỏi tiếp, và chưa chạy lại bộ 176 câu mẫu hay bộ 32 câu an toàn trên bản cuối `gpt-6-luna`.
+
+**Cập nhật đợt 27/11 trên `gpt-6-luna` (kiểm thông tính năng mở rộng, `smoke_eval` & đo quỹ đạo `0 USD`):**
+- **Kiểm thông (Đợt 1C):** Sổ tay (`9,92 s` và `16,47 s`), Hồ sơ theo chủ đề (`9,85 s` và `13,31 s`), và sửa lịch hỏi trước (`5/5` đạt). Kết hợp sáng 27/11, bộ kiểm khói công khai `smoke_eval.py` đạt **14/14 PASS**.
+- **Đo quỹ đạo `0 USD` (`trajectory_eval.py`):** phân tích vết gọi công cụ trực tiếp từ file log cũ mà không tốn tiền gọi model, hỗ trợ đo tần suất lặp công cụ và tỉ lệ cứu chạm trần (`cuu_max_turns`).
+- **Tổng hợp khung tham chiếu đánh giá & bám nguồn (`0 USD`, 27/11):** nếu tiếp tục nâng cấp lớp đánh giá tự động ở Đợt 4, các chuẩn học thuật liên quan gồm **τ-bench `pass^k`** (đo xác suất thành công lặp lại qua nhiều lần chạy thay vì chỉ 1 lần may mắn), **BFCL** (kiểm tra gọi hàm đúng tham số), **RAGChecker / FRAMES / FACTS Grounding** (đo độ bám từng mệnh đề vào bằng chứng nguồn). Các công cụ mở tiềm năng tương ứng là bộ chấm trung thực từng mệnh đề (`faithfulness_eval.py`) và chỉ số độ chính xác gọi công cụ (`ToolCallAccuracy`) — hiện mới ở mức đề xuất nghiên cứu, chưa bật.
 
 ## Quyết định nhỏ hơn
 

@@ -1,6 +1,6 @@
 # Bài 36 — Bật hệ thống trên máy, và đóng gói bằng Docker
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (57 tính năng mở, 6 tắt, kho 269 bài) · bản 13:25: hàng "danh sách file của gói" sửa theo gói mới (11:07 23/11) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: lệnh bật đọc từ chương trình ở cây chính trưa 22/11 (lệnh có từ trưa 22/11); các ca hỏng lúc bật lấy từ bài 6 (thử thật 22/11); gói ba hộp đọc từ bản nháp riêng tư và lần chạy thử trên máy ngày 10/11 (gpt-6-luna, kho lúc đó 204 bài); người viết không chạy lệnh bật, không dựng gói; bài đã qua một lượt đối chiếu độc lập và sửa theo đó. · 09:56 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (ba bài kho được thêm câu sáng 24/11; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536).*
+*Cập nhật 14:25, ngày 27/11/2026 · khớp hệ thống mốc 14:13 27/11/2026 (**`66` tính năng mở, `7` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · đồng bộ cập nhật vận hành & Docker/Deploy sáng 27/11: đồng bộ `deploy/` + Terraform (quyền SNS cảnh báo, dọn mảnh S3 3 ngày, EventBridge Scheduler tự tắt 23:30 VN), cắt 13 gói dev/đo khỏi runtime rút ảnh Docker còn **`3,49 GB`** (`uv export` 706 → 345 dòng), `HUE_MO_SO_TAY_HO_SO=0`, `Caddyfile` loại `/api/so_tay` & `/api/ho_so` khỏi gzip + thêm header bảo mật/cache, tắt dịu uvicorn (`--timeout-graceful-shutdown 15` / `stop_grace_period: 20s`), khoá tái nhập `RLock` cho `e5-small` + `to_thread` giảm `wall` 8 luồng `-38%` đến `-45,5%`, `smoke_eval` **14/14 PASS** · các mốc trước: Nguồn.*
 
 **Bài trước đã biết:** máy chủ kiểm một số thứ đúng một lần lúc bật, và bật lúc Qdrant tắt thì không tự hồi (bài 6); kho đổi thì phải cập nhật chỉ mục (bài 12); khoá và các thiết lập lúc chạy (bài 37).
 **Bài này thêm:** bật cả hệ thống trên máy phát triển bằng một lệnh, lệnh đó làm gì và báo gì; "hộp Docker" là gì và hệ thống dùng nó ở đâu; gói ba hộp để mang sang máy khác; và những việc còn phải làm trước khi đưa lên mạng.
@@ -165,8 +165,8 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 | `HUE_BEDROCK_CREDS_FILE` | đặt trước lệnh, hoặc lấy từ file riêng tư chỉ ghi đường dẫn | đường tới file khoá tạm | — |
 | Chế độ không tải model từ mạng | bật khi chạy máy chủ | model embedding đã có trên máy | — |
 | Sổ của máy chủ khi bật bằng lệnh | một file trong thư mục tạm | xem khi lệnh báo máy chủ tự thoát | — |
-| Gói ba hộp: trần bộ nhớ | ứng dụng 2 GB, Qdrant 768 MB | đo 07/11: ứng dụng khoảng 1,5 GB | — |
-| Gói ba hộp: thiết lập đặt sẵn | 50 lượt mỗi địa chỉ, cookie mã hoá, tắt trang mô tả, tắt tra web; trần tổng mỗi ngày chưa có trong bản nháp | bài 37 | — |
+| Gói ba hộp: trần bộ nhớ và tắt dịu | ứng dụng 2 GB (`stop_grace_period: 20s`, uvicorn `--timeout-graceful-shutdown 15`), Qdrant 768 MB, Caddy `mem_limit: 128m` (`no-new-privileges:true`) | đo 07/11: ứng dụng khoảng 1,5 GB; thêm tắt dịu 27/11 để không cắt ngang luồng đang trả | — |
+| Gói ba hộp: thiết lập đặt sẵn (cập nhật 27/11) | 50 điểm quỹ lượt mỗi địa chỉ (trọng số `chat=1 / so_tay=10 / ho_so=8`), `HUE_MO_SO_TAY_HO_SO=0`, cookie mã hoá, tắt trang mô tả, tắt tra web; cắt nén gzip cho `/api/chat`, `/api/so_tay`, `/api/ho_so` | bài 35, 37 | ảnh runtime cắt 13 gói dev/đo còn **`3,49 GB`** (`uv export` 706 → 345 dòng) |
 
 ## Quyết định nhỏ hơn
 
@@ -198,7 +198,7 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 
 - **Lệnh bật chỉ cho máy phát triển** và không gọi thử model, nên không bắt được khoá hết hạn.
 - **Khởi động lại máy chủ là mất** cuộc trò chuyện, lịch đang giữ, câu trả lời đã nhớ (bài 6).
-- **Gói ba hộp là bản nháp từ 10–18/11**, chưa theo kịp chương trình hiện tại; mọi số của lần chạy thử là của gpt-6-luna và kho 204 bài.
+- **Đồng bộ gói Docker & Terraform 27/11 nhưng chưa `terraform apply` lên AWS:** sáng 27/11 đã đồng bộ `deploy/` + Terraform (`aws_sns_topic_policy.alerts`, vòng đời S3 3 ngày dọn mảnh tải dở, `aws_scheduler_schedule.auto_stop` tự tắt máy lúc **23:30 giờ Việt Nam**), cắt 13 gói dev/đo khỏi ảnh runtime (ảnh còn **`3,49 GB`**, `uv export` 706 → 345 dòng), thêm `RLock` cho `e5-small` + `asyncio.to_thread` rút thời gian chạy 8 luồng **`-38%` đến `-45,5%`**, giữ `HUE_MO_SO_TAY_HO_SO=0`, và kiểm khói `smoke_eval` **14/14 PASS**; phần đưa lên AWS thực tế vẫn tạm gác tới khi chủ dự án duyệt.
 - **Bản sao lưu chỉ mục do lệnh cập nhật chụp nằm trong hộp Qdrant**; hộp bị tạo lại là mất.
 
 ## Chi tiết để tra
@@ -238,5 +238,6 @@ Bản đầu dùng danh sách chặn và lọt file đánh giá, câu hỏi mẫ
 
 - Hàng "danh sách file của gói", lượt áp cuối (13:25 23/11/2026; biên bản `data/hoc_cung_D/kiem/dot_2311_trua_k2_phu_luc_kiem.md` hàng 22–24 [riêng tư]): `deploy/docker/dung_ngu_canh.py` docstring ("danh sách được SINH từ chính thứ app đọc lúc khởi động"; "bài kho: đúng các bài có trong bản ghi dựng chỉ mục … so băm sha256 từng bài"; "file bảng riêng tư: mọi đường dẫn `../data/…` trong `backend/config/settings.yaml` CỦA commit đó") [code, đã mở]; gộp vào main `0af536cc` 11:07 23/11 [đã chạy `git log`]; `deploy/docker/README.md` mục 6 ("danh sách file sinh từ `settings.yaml` + bản ghi dựng (hết chép tay hai chỗ)") [code]. Các hàng khác của bảng này, hàng "dựng lại gói ba hộp…" ở "Nếu… thì sao" và phần gói ba hộp của bài chưa viết lại — để phiếu deploy riêng.
 - Quét số cũ 20:46 23/11/2026: dòng Cập nhật ("khớp hệ thống 13:25 23/11 (49 tính năng mở, 5 tắt, kho 267 bài)" ⇒ 57 mở, 6 tắt, kho 269), bảng các bước bật (bước 5), tình huống kể trọn, hàng "chỉ mục lệch kho" (9.479 ⇒ 9.533 đoạn), hàng "dựng lại gói" ("kho nay 267" ⇒ 269; 263 bài của bản ghi 16/11 giữ); gạch Nguồn "kho nay 267 bài" ở trên giữ như ghi lúc đó. Lệnh: `corpus.file_count` / `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269 / 9533) và đếm dòng `: true` / `: false` dưới `assistant:` của `backend/config/settings.yaml` (57 / 6), chạy 20:40 23/11/2026 trên cây chính `03229b64` [đã chạy].
+- **Đợt sáng 27/11/2026:** đồng bộ `deploy/terraform/1_nen_tang/main.tf` (`aws_sns_topic_policy.alerts`, S3 multipart 3 ngày) và `deploy/terraform/2_may_chu/main.tf` (`aws_scheduler_schedule.auto_stop`, 23:30 giờ Việt Nam); cắt 13 gói dev/đo khỏi runtime (`pyproject.toml`, `deploy/docker/Dockerfile` `--timeout-graceful-shutdown 15`, ảnh `3,49 GB`); `deploy/docker/compose.yml` (`stop_grace_period: 20s`, `no-new-privileges:true`, `mem_limit: 128m`); `deploy/docker/dong_goi.sh` (`HUE_MO_SO_TAY_HO_SO=0`); `deploy/docker/Caddyfile` (cắt gzip `/api/so_tay`, `/api/ho_so`, security headers, static cache); `backend/embedding/full_corpus.py` (`threading.RLock`) + `backend/llm/assistant.py` (`asyncio.to_thread`, giảm `wall` 8 luồng `-38%` đến `-45,5%`); `backend/evaluation/smoke_eval.py` (`14/14 PASS`) (`session_prompt/HIEN_TRANG.md`) [code + tài liệu công khai].
 
 </details>
