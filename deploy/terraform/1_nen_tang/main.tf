@@ -76,6 +76,27 @@ resource "aws_sns_topic_subscription" "alert_email" {
   endpoint  = var.alert_email
 }
 
+# Cho phép dịch vụ CloudWatch gửi cảnh báo (báo động máy hỏng ở tầng máy chủ) vào đúng chủ đề này.
+resource "aws_sns_topic_policy" "alerts" {
+  arn = aws_sns_topic.alerts.arn
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid       = "AllowCloudWatchPublish"
+      Effect    = "Allow"
+      Principal = { Service = "cloudwatch.amazonaws.com" }
+      Action    = "sns:Publish"
+      Resource  = aws_sns_topic.alerts.arn
+      Condition = {
+        StringEquals = {
+          "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+        }
+      }
+    }]
+  })
+}
+
 # ---------------------------------------------------------------------------
 # (3) Thùng chứa gói deploy — RIÊNG TƯ
 # ---------------------------------------------------------------------------
@@ -113,6 +134,22 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "artifacts" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
+    }
+  }
+}
+
+# Tự dọn mảnh upload dở nếu lệnh đẩy gói bị đứt mạng giữa chừng, tránh rò tiền lưu trữ và làm gọn bước phá.
+resource "aws_s3_bucket_lifecycle_configuration" "artifacts" {
+  bucket = aws_s3_bucket.artifacts.id
+
+  rule {
+    id     = "abort-incomplete-multipart-upload"
+    status = "Enabled"
+
+    filter {}
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 3
     }
   }
 }

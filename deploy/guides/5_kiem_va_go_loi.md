@@ -1,8 +1,7 @@
 # Guide 5 — Kiểm từ ngoài, gỡ lỗi, và buổi diễn tập trước ngày cần dùng
 
-Viết: 20:27 23/11/2026, phiên đo. **Chưa bước nào của guide này từng chạy trên địa chỉ AWS thật** — bộ deploy chưa dựng lần nào. Những gì đã có số thật,
-đều ở máy chủ dự án: (a) model của bản deploy (`gpt-6-luna`) chạy đúng bản code này qua đường stream của server, không qua hộp Caddy — lượt đo bù tối
-23/11/2026: kịch bản 10 bước 0 bước hỏng, một lượt trình duyệt, 17 ca tính năng; các con số "thấy đúng thì trông thế nào" trong guide lấy từ lượt đó;
+Viết: 20:27 23/11/2026, phiên đo (đồng bộ mốc 26/11/2026). **Chưa bước nào của guide này từng chạy trên địa chỉ AWS thật** — bộ deploy chưa dựng lần nào. Những gì đã có số thật,
+đều ở máy chủ dự án: (a) model mặc định của cả bản local (từ 25/11) lẫn bản deploy (`gpt-6-luna`) đã chạy qua đường stream của server (kịch bản 10 bước 0 bước hỏng 23/11, bộ câu kín 25/11); các con số "thấy đúng thì trông thế nào" trong guide lấy từ đó;
 (b) gói ba hộp có Caddy chạy trọn ở máy với khoá giả (guide 4) — tức đường "Caddy ⇒ app" đã chạy, nhưng chưa cùng lúc với model thật của OpenAI.
 Mọi thứ còn lại — HTTPS thật, đi qua internet, máy AWS — là **[chưa kiểm trên AWS]**; buổi diễn tập ở mục 6b sinh ra để đổi các dòng đó thành "đã kiểm".
 
@@ -172,7 +171,7 @@ aws cloudwatch set-alarm-state --alarm-name hue-rag-may-khong-qua-kiem-tra-trang
 Mong: một thư của AWS tới email cảnh báo trong khoảng một phút; ở lần đánh giá kế (trong vòng năm phút) báo động tự về trạng thái bình thường vì máy
 vẫn khoẻ — xem bằng `aws cloudwatch describe-alarms --alarm-names hue-rag-may-khong-qua-kiem-tra-trang-thai --query 'MetricAlarms[0].StateValue'`
 (in `ALARM` ngay sau lệnh ép, rồi `OK`). Không có thư ⇒ xem email đã bấm xác nhận đăng ký chưa (guide 1 mục 7) và `alert_topic_arn` đã điền ở guide 3
-chưa; đủ cả hai mà vẫn không có ⇒ báo nhóm: đó chính là trường hợp chủ đề cần thêm quyền cho báo động. Lệnh ép báo `AccessDenied` ⇒ chép nguyên dòng
+chưa (tầng nền đã gắn `aws_sns_topic_policy` cho phép `cloudwatch.amazonaws.com` gửi tin vào chủ đề này); đủ cả hai mà vẫn không có ⇒ báo nhóm để kiểm chính sách trên tài khoản thật. Lệnh ép báo `AccessDenied` ⇒ chép nguyên dòng
 lỗi cho nhóm (quyền `cloudwatch:SetAlarmState` trong tờ quyền của guide 0 chưa từng được thử trên tài khoản thật). Vì sao phải ép: báo động này đo phép
 kiểm trạng thái của MÁY; hộp app chết thì máy vẫn "ok", còn máy dừng thì không có số đo và báo động coi là bình thường — không thao tác nào ở guide 6 làm nó kêu.
 
@@ -200,8 +199,8 @@ hue_rag nhìn ở đâu":
 | Trang còn trả lời không | — | không có gì tự báo ⇒ một câu hỏi thật trước mỗi buổi (guide 6 mục 6.2) |
 
 Báo động máy hỏng KHÔNG thấy ba thứ hay hỏng nhất — khoá OpenAI hết tiền / bị thu hồi, hộp app chết trong khi máy vẫn khoẻ, chứng chỉ không xin được —
-vì với AWS máy vẫn "ok". Nó chỉ bắt được chuyện máy treo hẳn. Báo động có gửi được vào chủ đề email của tầng nền với thiết lập mặc định hay không:
-**[chưa kiểm trên AWS, chưa tra được nguồn chính thức nói chắc]**; phép thử là bước 4 của buổi diễn tập (mục 6b) — ép báo động kêu rồi xem thư (tên báo động:
+vì với AWS máy vẫn "ok". Nó chỉ bắt được chuyện máy treo hẳn. Đường truyền "báo động ⇒ chủ đề ⇒ email" (dù tầng nền đã gắn `aws_sns_topic_policy` cho phép `cloudwatch.amazonaws.com`):
+**[chưa kiểm trên AWS]**; phép thử là bước 4 của buổi diễn tập (mục 6b) — ép báo động kêu rồi xem thư (tên báo động:
 `hue-rag-may-khong-qua-kiem-tra-trang-thai`; trạng thái hiện tại: `aws cloudwatch describe-alarms --alarm-name-prefix hue-rag- --query 'MetricAlarms[].[AlarmName,StateValue]' --output text`).
 
 Trang theo dõi: gõ sai khoá nhiều lần thì trang khoá 15 phút và báo "Nhập sai khoá quá nhiều lần. Chờ 15 phút rồi thử lại." — là rào có chủ ý, không
@@ -233,7 +232,7 @@ lần bật đầu (tải gói, băm, file khoá, chỉ mục, chứng chỉ) �
 | Ảnh hợp lệ mà báo quá cỡ | ảnh trên 10 MB (trần của app) hoặc yêu cầu trên 12 MB (trần của cửa vào) | dùng ảnh nhỏ hơn; ảnh điện thoại thường 3–8 MB |
 | Trang trắng trên một điện thoại cũ | trình duyệt quá cũ (Safari trước 15.4) | giới hạn đã biết (runbook 10.3) — dùng máy khác |
 | Console của trình duyệt có đúng một lỗi `favicon.ico` 404 | vô hại, có ở mọi bản | bỏ qua |
-| Trang chậm bất thường, câu đơn mất trên 20 giây | trên máy: `docker stats --no-stream` (bộ nhớ từng hộp: app khoảng 0,9 GB, Qdrant khoảng 0,2 GB là bình thường — số của lượt thử gói ở máy chủ dự án) và `free -m` | bộ nhớ sát trần ⇒ `dc restart app` (khởi động lại hộp app, khoảng 15–40 giây mới khoẻ; MẤT các cuộc trò chuyện và lịch đang mở). `dc up -d app` không làm gì khi cấu hình không đổi; lặp lại ⇒ báo nhóm kèm đầu ra hai lệnh |
+| Trang chậm bất thường, câu đơn mất trên 20 giây | trên máy: `docker stats --no-stream` (bộ nhớ từng hộp: app khoảng 0,9 GB, Qdrant khoảng 0,2 GB là bình thường) và `free -m`; từ máy mình kiểm điểm CPU `t3a.medium` (`cpu_credits = "standard"`): `aws cloudwatch get-metric-statistics --namespace AWS/EC2 --metric-name CPUCreditBalance --dimensions Name=InstanceId,Value="$ID" --start-time "$(date -u -d '2 hours ago' +%FT%TZ)" --end-time "$(date -u +%FT%TZ)" --period 300 --statistics Minimum --output text` | bộ nhớ sát trần ⇒ `dc restart app` (khoảng 15–40 giây mới khoẻ; MẤT các cuộc trò chuyện và lịch đang mở). Nếu `CPUCreditBalance` tụt sát `0` (thường gặp khi chạy dồn embedding `e5-small` trên CPU) thì AWS đang bóp CPU về mức nền để không tính thêm tiền ⇒ giảm nhịp hỏi chờ điểm hồi (hoặc dừng/nâng loại máy nếu cần tải liên tục). Lặp lại ⇒ báo nhóm kèm đầu ra |
 | Không vào được máy bằng Session Manager | `aws ssm describe-instance-information --query 'InstanceInformationList[].[InstanceId,PingStatus]' --output text` phải có dòng `Online`; `aws ec2 describe-instance-status --instance-ids "$ID" --include-all-instances --query 'InstanceStatuses[].[InstanceState.Name,InstanceStatus.Status,SystemStatus.Status]' --output text` phải ra `running ok ok` | máy đang dừng ⇒ bật (guide 6 mục 6.2); `running` mà không `Online` sau 10 phút ⇒ bảng gỡ lỗi của guide 3 |
 | Trình duyệt báo chứng chỉ không hợp lệ sau một lần dựng lại máy | `dc logs --tail 80 caddy`; `HUE_SITE` trong `hue.env` có còn là tên của IP tĩnh HIỆN TẠI không | IP tĩnh mới ⇒ tên `sslip.io` mới ⇒ sửa `HUE_SITE` rồi `dc up -d`; chạm giới hạn cấp chứng chỉ thì chờ (mục 6b) |
 

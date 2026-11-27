@@ -12,3 +12,8 @@ output "site_name" {
   description = "Tên trang ghép từ IP tĩnh (dạng 1-2-3-4.sslip.io) — điền vào HUE_SITE ở guide 4 khi không có tên miền riêng, để hộp Caddy xin được chứng chỉ HTTPS."
   value       = "${replace(aws_eip.app.public_ip, ".", "-")}.sslip.io"
 }
+
+output "auto_stop_schedule_name" {
+  description = "Tên lịch tự dừng máy ban đêm (chuỗi rỗng nếu auto_stop_enabled = false)."
+  value       = var.auto_stop_enabled ? aws_scheduler_schedule.auto_stop[0].name : ""
+}

@@ -3,10 +3,9 @@
 Viết: 09:15 23/11/2026 (giờ `date`), phiên C, việc X14 phần (4). Người đọc: người (hoặc agent) sẽ dựng và chạy hệ thống trên một máy khác máy
 chủ dự án. Đọc cùng bản thiết kế deploy (`docs/superpowers/specs/`) và thư mục `deploy/terraform/` — trang này chỉ nói về phần "hộp".
 
-**Sửa 12:06 23/11/2026: đường deploy đã chốt (chủ dự án, 11:01 23/11/2026) = model viết của OpenAI (`gpt-6-luna`), một máy chỉ bật quanh ngày demo.** Vì vậy
+**Sửa 12:06 23/11/2026 & cập nhật 26/11/2026: đường deploy và máy local (từ 15:41 25/11/2026) đều dùng mặc định model viết của OpenAI (`gpt-6-luna`, `provider: openai`), một máy chỉ bật quanh ngày demo.** Vì vậy
 `compose.yml` tự đủ, không cần file phủ nào; quyền gọi model là MỘT dòng `OPENAI_API_KEY=…` trong file `hue.khoa.env` trên máy đích. Đường Claude trên
-Amazon Bedrock (hai file phủ, hộp `khoa`) được GIỮ làm đường tuỳ chọn — **bản deploy không dùng** — vì ở máy chủ dự án hệ thống vẫn chạy model đó và
-mọi lượt thử có câu trả lời thật tới nay đều đi đường đó.
+Amazon Bedrock (hai file phủ, hộp `khoa`) được GIỮ làm đường tuỳ chọn — **bản deploy không dùng**.
 
 Từ dùng: **ảnh** = Docker image · **hộp** = container · **ngữ cảnh** = thư mục file gửi cho `docker build` · **file phủ** = file compose thứ hai
 chồng lên `compose.yml` · **khoá tạm** = bộ ba khoá AWS có hạn dùng (vài giờ) · **vai gắn máy** = quyền AWS gắn thẳng vào máy ảo, không cần cất
@@ -39,19 +38,17 @@ Ba hộp trên MỘT máy: `qdrant` (chỉ mục) · `app` (FastAPI + giao diệ
 cd /home/minhhieu/hue_rag && uv run --project backend --no-sync python deploy/docker/dung_ngu_canh.py --ref origin/main --du-lieu data --chi-kiem
 ```
 
-In từng file `data/…` cấu hình trỏ tới kèm `có` / `THIẾU`, thoát 1 khi thiếu (lệnh dựng thật cũng dừng ở đúng chỗ này). Lúc 19:47 23/11/2026, main `5a11e3f0`:
-9 file, thiếu 0 — gồm năm bảng đổi trong ngày 23/11 (`diem_v15.json`, `diem_toa_do_v11.json`, `bang_anh_v9.json`, `bang_quan_lich_v5.json`,
-`danh_sach_ten_55.json`); cùng hai file của thư mục bản ghi dựng là 11 file riêng tư như bảng mục 3. Tên bảng ghi ở đây chỉ là ảnh chụp của lúc đó —
-danh sách thật luôn là thứ lệnh trên in ra. Ảnh mới của lịch (`frontend/public/anh/lich/`) nằm trong git nên đi theo code. Hai ảnh Docker còn trên máy
-dựng (`0367e77`, `e38b55c`, trưa 23/11) mang các bảng CŨ và kho 267 bài ⇒ trước khi deploy phải dựng lại từ commit sẽ chạy (kho nay 269 bài, 9.533 điểm
-chỉ mục).
+In từng file `data/…` cấu hình trỏ tới kèm `có` / `THIẾU`, thoát 1 khi thiếu (lệnh dựng thật cũng dừng ở đúng chỗ này). Kiểm ngày 26/11/2026 trên `main` (`422ffd4e`):
+**9 file cấu hình/bảng từ `settings.yaml`** (`diem_v16.json`, `diem_toa_do_v11.json`, `bang_anh_v10.json`, `bang_quan_lich_v5.json`, `bang_luu_tru_lich_v7.json`,
+`danh_sach_ten_55.json`, `diem_v3.json`, `khoang_cach_v1.json`, `su_kien_theo_ngay_v2.json`), thiếu 0; cùng **2 file bản ghi dựng chỉ mục** (`hue_full_corpus_7a2_e5_small_384.json` + `full_corpus_sparse_state.json`) là **11 file riêng tư** như bảng mục 3. Tên bảng ghi ở đây chỉ là ảnh chụp của lúc đó —
+danh sách thật luôn là thứ lệnh trên in ra. Ảnh mới của lịch (`frontend/public/anh/lich/`) nằm trong git nên đi theo code. Bộ kho & chỉ mục hiện hành (26/11/2026): **269 bài kho**, **9.540 điểm Qdrant**, ảnh Khám phá **269/269** — phải dựng ảnh mới từ commit hiện hành trước khi deploy.
 
 ```bash
 deploy/docker/dung_anh.sh origin/main     # phải ghi rõ commit / nhánh lấy code + kho
 # Thử đúng bộ file của máy đích (model viết của OpenAI). HUE_KHOA_ENV = một file riêng có dòng OPENAI_API_KEY=… (KHÔNG phải .env của dự án);
 # không đặt ⇒ ca "thiếu khoá": lệnh PHẢI báo đỏ (app không sẵn sàng).
 HUE_IMAGE=hue-rag-app:<sha> HUE_KHOA_ENV=<file khoá> deploy/docker/thu_o_may.sh len
-# Thử với model đang chạy ở máy chủ dự án (Claude trên Bedrock) — đường duy nhất có câu trả lời thật khi tài khoản OpenAI chưa có tiền:
+# Đường tuỳ chọn nếu cần thử với Claude trên Bedrock:
 HUE_IMAGE=hue-rag-app:<sha> deploy/docker/thu_o_may.sh len bedrock
 deploy/docker/thu_o_may.sh kiem           # không gọi model; in sẵn lệnh hỏi MỘT câu thật
 deploy/docker/thu_o_may.sh don
@@ -85,15 +82,15 @@ chỗ công khai: lệnh đó in cả nội dung file bí mật `hue.khoa.env`.
 ảnh ⇒ sửa một dòng của `cau_hinh/settings.yaml` rồi `docker compose --env-file hue.env -f compose.yml restart app` (khoảng 13 giây).
 Dòng `provider` do `dong_goi.sh` ghi sẵn (`openai`); đổi sang `bedrock` trên máy đích thì phải chạy kèm một file phủ Bedrock (mục 4), không thì app
 báo chưa sẵn sàng. Đổi nội dung `hue.khoa.env` thì dùng `… up -d app` (để hộp nhận biến mới), `restart` không nạp lại file đó. Chi tiết hai model:
-`guides/DOI_MODEL_VIET.md`. Lấy lại bản gốc của file cấu hình (bản TRONG ẢNH ghi `provider: bedrock` — nhớ ghi lại dòng `provider`):
+`guides/DOI_MODEL_VIET.md`. Lấy lại bản gốc của file cấu hình (bản TRONG ẢNH dựng từ 25/11 trở đi đã ghi sẵn `provider: openai`; chỉ ảnh cũ trước 25/11 mới ghi `provider: bedrock`):
 `docker run --rm --entrypoint cat <ảnh> /app/backend/config/settings.yaml > cau_hinh/settings.yaml`.
 
 ## 3. Thứ gì riêng tư, thứ gì nằm trong ảnh
 
 | Thứ | Trong ảnh? | Ghi chú |
 |---|---|---|
-| Code `backend/`, `frontend/`, 267 bài kho, bảng điều kiện của kho | có | đều đã công khai trên GitHub |
-| 11 file bảng lấy từ `data/` (9 bảng theo `settings.yaml` + bản ghi dựng chỉ mục + thống kê từ khoá) | **có — riêng tư** | kê tên + băm ở `/app/DANH_SACH.txt` trong ảnh. Vì chúng: **không đẩy ảnh lên kho ảnh công khai** (Docker Hub công khai, ECR Public); chuyển bằng `docker save` hoặc kho ảnh riêng |
+| Code `backend/`, `frontend/`, 269 bài kho, bảng điều kiện của kho | có | đều đã công khai trên GitHub (ảnh Khám phá đủ 269/269) |
+| 11 file riêng tư từ `data/` (9 file cấu hình/bảng từ `settings.yaml` + 2 file bản ghi dựng chỉ mục và thống kê từ khoá) | **có — riêng tư** | kê tên + băm ở `/app/DANH_SACH.txt` trong ảnh. Vì chúng: **không đẩy ảnh lên kho ảnh công khai** (Docker Hub công khai, ECR Public); chuyển bằng `docker save` hoặc kho ảnh riêng |
 | Chỉ mục Qdrant | không | đi bằng bản chụp (~56 MB), nạp vào hộp `qdrant` lúc dựng máy |
 | `.env` của máy chủ dự án | **không bao giờ** | gói không đọc file này |
 | Khoá OpenAI (BẮT BUỘC ở đường deploy), khoá tra web, khoá trang theo dõi | **không bao giờ** | file `hue.khoa.env` cạnh `compose.yml` trên máy đích, quyền 600; thiếu dòng khoá OpenAI ⇒ app không sẵn sàng |

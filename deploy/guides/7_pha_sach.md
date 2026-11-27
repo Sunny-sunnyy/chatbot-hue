@@ -2,8 +2,8 @@
 
 Viết: 20:25 23/11/2026, phiên đo. **Chưa lệnh `aws` / `terraform` nào của guide này từng chạy trên tài khoản AWS thật** — bộ deploy chưa dựng lần nào. Đã kiểm
 ở máy chủ dự án, không gọi AWS: cú pháp của 20 lệnh `aws` trong guide (gọi vào một địa chỉ giả, lệnh nào cũng đi tới bước nối mạng — tức tên lệnh và
-tham số hợp lệ với `aws-cli/2.36.25`); tên tài nguyên và số tài nguyên đối chiếu với hai thư mục Terraform (`1_nen_tang`: 11 tài nguyên; `2_may_chu`:
-11 hoặc 12 — 12 khi có báo động). Mọi dòng "Mong" là điều tài liệu AWS / Terraform nói sẽ xảy ra: **[chưa kiểm trên AWS]**. Sự thật về AWS ghi
+tham số hợp lệ với `aws-cli/2.36.25`); tên tài nguyên và số tài nguyên đối chiếu với hai thư mục Terraform (`1_nen_tang`: 13 tài nguyên; `2_may_chu`:
+15 mặc định — 14 nếu không báo động, 12 nếu tắt lịch tự dừng, 11 nếu bỏ cả hai). Mọi dòng "Mong" là điều tài liệu AWS / Terraform nói sẽ xảy ra: **[chưa kiểm trên AWS]**. Sự thật về AWS ghi
 nhãn [AWS] lấy từ bản tra cứu tài liệu chính thức ngày 23/11/2026 (riêng tư: `data/tra_cuu_cli/2026-11-23_aws-pha-sach-va-kiem-sau-deploy/ket_qua.md`);
 phiên đo tự mở lại hai trang trong đó (cú pháp tìm của Resource Explorer; trang "xoá vai hoặc hồ sơ gắn máy" của IAM), các ý khác chưa tự mở. Buổi diễn tập ở guide 5
 (mục 6b) đi qua Bước 3 của guide này một lần — lúc đó ghi số thật vào đây.
@@ -36,8 +36,8 @@ Phá sạch gỡ hai nhóm tài nguyên, theo thứ tự NGƯỢC với lúc d�
 
 | Thứ tự | Thư mục | Tài nguyên (tên đều bắt đầu `hue-rag-`) |
 |---|---|---|
-| 1 | `2_may_chu` | máy EC2 + đĩa gốc · IP tĩnh · báo động "máy không qua kiểm tra trạng thái" (nếu đã tạo) · nhóm bảo mật + ba luật · mạng riêng (VPC), subnet, cổng internet, bảng định tuyến |
-| 2 | `1_nen_tang` | thùng `hue-rag-artifacts-<mã tài khoản>` + ba thiết lập của nó · vai `hue-rag-instance-role` + hồ sơ `hue-rag-instance-profile` + hai quyền · chủ đề `hue-rag-alerts` + đăng ký email · ngân sách `hue-rag-monthly` |
+| 1 | `2_may_chu` | máy EC2 + đĩa gốc · IP tĩnh · báo động "máy không qua kiểm tra trạng thái" (nếu đã tạo) · lịch tự dừng máy `hue-rag-tu-dung-dem` + vai IAM `hue-rag-scheduler-role` + quyền (nếu `auto_stop_enabled = true`) · nhóm bảo mật + ba luật · mạng riêng (VPC), subnet, cổng internet, bảng định tuyến |
+| 2 | `1_nen_tang` | thùng `hue-rag-artifacts-<mã tài khoản>` + bốn thiết lập của nó (gồm quy tắc vòng đời dọn mảnh upload dở) · vai `hue-rag-instance-role` + hồ sơ `hue-rag-instance-profile` + hai quyền · chủ đề `hue-rag-alerts` + đăng ký email + chính sách chủ đề cho CloudWatch · ngân sách `hue-rag-monthly` |
 
 Thứ tự ngược ở đây là **BẮT BUỘC**, không chỉ "cho gọn" như ở dự án khoá học: máy đang dùng hồ sơ gắn máy của tầng nền, và báo động đang trỏ vào chủ
 đề của tầng nền. Hai thư mục có state riêng nên Terraform KHÔNG tự biết quan hệ này và sẽ không cản. Trang IAM của AWS cảnh báo: xoá vai hoặc hồ sơ
@@ -128,12 +128,12 @@ có thể không hiện ở lệnh chạy theo vùng này — Bước 5 kiểm c
 
 ```bash
 cd "$GOC/2_may_chu"
-terraform plan -destroy        # ĐỌC HẾT: dòng cuối  Plan: 0 to add, 0 to change, 12 to destroy.  (11 nếu chưa tạo báo động)
+terraform plan -destroy        # ĐỌC HẾT: dòng cuối  Plan: 0 to add, 0 to change, 15 to destroy.  (14 nếu không báo động; 12 nếu tắt lịch tự dừng; 11 nếu bỏ cả hai)
                                # mọi tên trong bản kế hoạch phải bắt đầu  hue-rag-  ; thấy tên lạ ⇒ DỪNG
 terraform destroy              # in lại bản kế hoạch, hỏi "Enter a value:" ⇒ gõ  yes
 ```
 
-Mong dòng cuối: `Destroy complete! Resources: 12 destroyed.` (hoặc 11). Máy bị xoá mất một hai phút; lệnh trông như đứng yên ở dòng `Still destroying...` là
+Mong dòng cuối: `Destroy complete! Resources: 15 destroyed.` (hoặc 14 / 12 / 11). Máy bị xoá mất một hai phút; lệnh trông như đứng yên ở dòng `Still destroying...` là
 bình thường — đừng ngắt (lần phá dự án khoá học cũng có một bước đứng lâu như vậy rồi tự xong). Kiểm ngay, bằng lệnh AWS:
 
 ```bash
@@ -159,15 +159,15 @@ aws s3api list-multipart-uploads --bucket "$THUNG" --query 'Uploads[].[Key,Uploa
 ```
 
 Thùng này KHÔNG bật lưu phiên bản nên một lệnh `rm --recursive` là rỗng hẳn — không có bước xoá phiên bản cũ và dấu xoá như ở thùng của dự án khoá
-học. Lệnh thứ tư tìm các lần đẩy file lớn bị bỏ dở (lần `aws s3 cp` bị ngắt giữa chừng ở guide 2): lệnh `rm` KHÔNG dọn các mảnh dở này và chúng có
+học. Ngoài ra tầng nền đã đặt quy tắc vòng đời tự huỷ mảnh upload dở sau 3 ngày, nhưng khi phá ngay lập tức thì lệnh thứ tư vẫn kiểm xem có lần `aws s3 cp` bị ngắt giữa chừng nào chưa hết hạn 3 ngày: lệnh `rm` KHÔNG dọn các mảnh dở này và chúng có
 thể tính tiền lưu trữ [AWS]; có dòng nào thì xem mục 8.
 
 ```bash
-terraform plan -destroy        # ĐỌC: Plan: 0 to add, 0 to change, 11 to destroy.  — mọi tên bắt đầu  hue-rag-
+terraform plan -destroy        # ĐỌC: Plan: 0 to add, 0 to change, 13 to destroy.  — mọi tên bắt đầu  hue-rag-
 terraform destroy              # gõ  yes
 ```
 
-Mong dòng cuối: `Destroy complete! Resources: 11 destroyed.`
+Mong dòng cuối: `Destroy complete! Resources: 13 destroyed.`
 
 **Bước 5 — Kiểm bằng lệnh AWS, không tin state.** "Destroy complete!" chỉ nói Terraform đã xoá những gì nó NHỚ. Phép kiểm thật là hỏi thẳng AWS từng
 thứ. Người dùng `hue-rag-deploy` không có quyền "liệt kê tất cả" (mọi thùng, mọi vai, mọi ngân sách) nên các lệnh dưới gọi ĐÍCH DANH từng tên; với
@@ -177,6 +177,8 @@ kiểu gọi này, **một dòng lỗi "không tìm thấy" chính là kết qu�
 |---|---|---|
 | Thùng | `aws s3api head-bucket --bucket "$THUNG"` | lỗi `404` / `Not Found` |
 | Vai gắn máy | `aws iam get-role --role-name hue-rag-instance-role` | lỗi `NoSuchEntity` |
+| Vai lịch tự dừng | `aws iam get-role --role-name hue-rag-scheduler-role` | lỗi `NoSuchEntity` |
+| Lịch tự dừng máy | `aws scheduler get-schedule --name hue-rag-tu-dung-dem` | lỗi `ResourceNotFoundException` |
 | Hồ sơ gắn máy | `aws iam get-instance-profile --instance-profile-name hue-rag-instance-profile` | lỗi `NoSuchEntity` |
 | Chủ đề email | `aws sns list-topics --query "Topics[?contains(TopicArn, 'hue-rag')].TopicArn" --output text` | không in gì |
 | Ngân sách | `aws budgets describe-budget --account-id "$TK" --budget-name hue-rag-monthly` | lỗi `NotFoundException` |
@@ -237,9 +239,9 @@ Sạch ⇒ quay lại Bước 6 tick nốt các dòng "sau khi Bước 7 sạch"
 
 | Kiểm | Bằng gì | Mong |
 |---|---|---|
-| Tầng máy chủ đã phá | dòng cuối của `terraform destroy` ở Bước 3 | `Destroy complete! Resources: 12 destroyed.` (hoặc 11) |
-| Tầng nền đã phá | dòng cuối ở Bước 4 | `Destroy complete! Resources: 11 destroyed.` |
-| AWS không còn gì mang tên / thẻ của bộ deploy | bảng mười ba dòng ở Bước 5 | dòng nào cũng đúng cột "Mong" |
+| Tầng máy chủ đã phá | dòng cuối của `terraform destroy` ở Bước 3 | `Destroy complete! Resources: 15 destroyed.` (hoặc 14 / 12 / 11) |
+| Tầng nền đã phá | dòng cuối ở Bước 4 | `Destroy complete! Resources: 13 destroyed.` |
+| AWS không còn gì mang tên / thẻ của bộ deploy | bảng mười lăm dòng ở Bước 5 | dòng nào cũng đúng cột "Mong" |
 | Không sót ở vùng khác | Tag Editor, All regions, tài khoản gốc | 0 kết quả |
 | Trang không còn mở được | `curl -m 10 -s -o /dev/null -w '%{http_code}\n' https://<site_name>/health` | `000` (không kết nối được) |
 | Khoá OpenAI của bản deploy đã chết | trang quản lý OpenAI: khoá không còn trong danh sách | — |

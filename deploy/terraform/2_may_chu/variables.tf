@@ -73,3 +73,20 @@ variable "alert_topic_arn" {
     error_message = "alert_topic_arn còn là chữ mẫu DIEN-… của terraform.tfvars.example. Thay bằng giá trị in ra ở guide 3 bước 2: terraform output -raw alert_topic_arn (thư mục 1_nen_tang), hoặc để chuỗi rỗng nếu không muốn báo động máy hỏng."
   }
 }
+
+variable "auto_stop_enabled" {
+  description = "Bật lịch tự dừng máy EC2 mỗi đêm bằng EventBridge Scheduler (0 đồng trong mức miễn phí) để tránh quên tắt máy."
+  type        = bool
+  default     = true
+}
+
+variable "auto_stop_schedule" {
+  description = "Biểu thức lịch tự dừng máy theo múi giờ Asia/Ho_Chi_Minh. Mặc định 23:30 hằng đêm."
+  type        = string
+  default     = "cron(30 23 * * ? *)"
+
+  validation {
+    condition     = can(regex("^(cron|rate)\\(.+\\)$", var.auto_stop_schedule))
+    error_message = "auto_stop_schedule phải theo dạng cron(...) hoặc rate(...)."
+  }
+}

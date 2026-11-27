@@ -1,8 +1,8 @@
 # Guide 4 — Bật lần đầu trên máy chủ: tải gói, đặt khoá OpenAI, bật ba hộp, hỏi một câu thật
 
-Viết: 19:50 23/11/2026, phiên C. Các lệnh `sha256sum`, `docker load`, `nap_chi_muc.sh`, `docker compose … up` ở guide này ĐÃ chạy thật ở máy chủ dự án
-(các lượt thử trọn gói 23/11 — `deploy/docker/README.md` mục 5; lượt 20:11 chạy đúng thứ tự bước 2–9 của guide này trên ảnh dựng từ main `d8d5c3a`:
-băm 7 / 7 OK, nạp ảnh 7 giây, chỉ mục 9.533 = 9.533 điểm, ba hộp khoẻ sau khoảng 30 giây, `/health` `ok`; khoá GIẢ ⇒ câu hỏi ra đúng câu báo cố định).
+Viết: 19:50 23/11/2026, phiên C (đồng bộ mốc 26/11/2026). Các lệnh `sha256sum`, `docker load`, `nap_chi_muc.sh`, `docker compose … up` ở guide này ĐÃ chạy thật ở máy chủ dự án
+(các lượt thử trọn gói 23/11 — `deploy/docker/README.md` mục 5; lượt 20:11 trên ảnh dựng từ main `d8d5c3a` đạt:
+băm 7 / 7 OK, nạp ảnh 7 giây, chỉ mục 9.533 = 9.533 điểm ở mốc đó, ba hộp khoẻ sau khoảng 30 giây, `/health` `ok`; khoá GIẢ ⇒ câu hỏi ra đúng câu báo cố định). Bộ kho hiện hành từ 26/11 là **269 bài / 9.540 điểm**.
 Chạy chúng trên máy AWS, tải gói bằng vai gắn máy, HTTPS thật và câu hỏi thật qua model
 của OpenAI: **[chưa kiểm trên AWS]** — buổi diễn tập của guide 5 đổi các dòng đó thành "đã kiểm".
 
@@ -159,7 +159,7 @@ grep -c '^OPENAI_API_KEY=' hue.khoa.env          # mong: 1   (lệnh này KHÔNG
 grep -n '^  provider:' /srv/hue/cau_hinh/settings.yaml      # mong: provider: openai
 ```
 
-**Bước 7 — kiểm đủ file bảng trước khi bật.** Cấu hình trỏ tới chín file bảng nằm trong ảnh; thiếu một file là hộp app hỏng ngay lúc khởi động —
+**Bước 7 — kiểm đủ file bảng trước khi bật.** Cấu hình (`settings.yaml`) trỏ tới **9 file cấu hình/bảng** nằm trong ảnh (cùng **2 file bản ghi dựng chỉ mục** là **11 file riêng tư**); thiếu một file là hộp app hỏng ngay lúc khởi động —
 lỗi mà `terraform validate` lẫn `/health` đều không thấy trước.
 
 ```bash
@@ -183,7 +183,7 @@ bash nap_chi_muc.sh
 ```
 
 Lần đầu máy phải kéo ảnh Qdrant từ Docker Hub (vài chục giây). Mong dòng cuối: `chỉ mục trong Qdrant của gói: N điểm · bản ghi dựng trong ảnh: N điểm` —
-hai số BẰNG nhau (kho ngày 23/11: 9.533). Lệch ⇒ lệnh tự dừng.
+hai số BẰNG nhau (kho ngày 26/11: **9.540 điểm**, **269 bài**). Lệch ⇒ lệnh tự dừng.
 
 **Bước 9 — bật ba hộp:** (hộp `app` chạy bằng user `hue` UID 10001 nên tạo sẵn thư mục `logs` thuộc quyền `10001:10001` trước khi bật):
 
@@ -242,7 +242,7 @@ Lệnh xem log (trên máy, trong `/srv/hue`; log mỗi hộp xoay 3 file × 10 
 | Trình duyệt báo chứng chỉ không hợp lệ / không mở được trang | `HUE_SITE` sai tên; tên không trỏ về IP tĩnh; cổng 80 / 443 chưa mở; hoặc tổ chức cấp chứng chỉ tạm từ chối | `docker compose … logs caddy`; `nslookup <site_name>` phải ra IP tĩnh; nhóm bảo mật ở guide 3. Tên dạng `sslip.io` dùng CHUNG hạn mức cấp chứng chỉ với mọi người dùng dịch vụ đó — bị từ chối vì hết hạn mức thì chờ, hoặc dùng tên miền riêng **[hai bản nghiên cứu khác hãng nêu, chưa kiểm]** |
 | Trang mở được nhưng hỏi đáp báo hết lượt (429) | chạm `HUE_LUOT_MOI_NGAY` / `HUE_LUOT_TONG_MOI_NGAY` | đổi số trong `hue.env` rồi `up -d app` (mất các cuộc trò chuyện đang mở) |
 | Chữ không chạy dần mà hiện cả câu một lần | cửa vào đang gom luồng | dòng `flush_interval -1` của `Caddyfile` phải còn nguyên |
-| Sửa `cau_hinh/settings.yaml` xong app không lên | bộ nạp cấu hình kiểm chặt | lấy lại bản gốc: `docker run --rm --entrypoint cat hue-rag-app:$SHA /app/backend/config/settings.yaml > cau_hinh/settings.yaml` rồi ghi lại dòng `provider: openai` (bản trong ảnh ghi `bedrock`) |
+| Sửa `cau_hinh/settings.yaml` xong app không lên | bộ nạp cấu hình kiểm chặt | lấy lại bản gốc: `docker run --rm --entrypoint cat hue-rag-app:$SHA /app/backend/config/settings.yaml > cau_hinh/settings.yaml` rồi kiểm lại dòng `provider: openai` (bản trong ảnh từ 25/11 đã ghi sẵn `openai`; chỉ ảnh cũ trước 25/11 mới ghi `bedrock`) |
 
 Đừng dán đầu ra của `docker compose config` vào đâu cả: lệnh đó in cả nội dung `hue.khoa.env`.
 

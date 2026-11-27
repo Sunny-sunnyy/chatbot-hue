@@ -23,13 +23,13 @@ máy chủ. Sau guide này vẫn chưa có máy nào chạy.
 
 ## 2. Sẽ dựng gì
 
-11 tài nguyên, tên đều bắt đầu bằng `hue-rag-` và mang hai thẻ `Project = hue-rag`, `ManagedBy = terraform`:
+13 tài nguyên, tên đều bắt đầu bằng `hue-rag-` và mang hai thẻ `Project = hue-rag`, `ManagedBy = terraform`:
 
 | Nhóm | Tài nguyên | Tên | Để làm gì |
 |---|---|---|---|
 | Ngân sách | 1 ngân sách tháng | `hue-rag-monthly` | gửi email khi tiền ĐÃ tiêu của cả tài khoản chạm 50 %, 80 %, 100 % mức đặt, và khi AWS DỰ BÁO cả tháng vượt mức |
-| Email cảnh báo | 1 chủ đề + 1 đăng ký email | `hue-rag-alerts` | đầu mối cho báo động "máy hỏng" của tầng máy chủ (guide 3, 5) |
-| Thùng chứa gói | 1 thùng + 3 thiết lập (chặn mở công khai · mọi file thuộc chủ thùng · mã hoá lúc lưu) | `hue-rag-artifacts-<mã tài khoản>` | guide 2 đẩy gói lên, guide 4 tải gói về máy chủ |
+| Email cảnh báo | 1 chủ đề + 1 đăng ký email + 1 chính sách chủ đề | `hue-rag-alerts` | đầu mối cho báo động "máy hỏng" của tầng máy chủ (guide 3, 5); chính sách cho phép dịch vụ `cloudwatch.amazonaws.com` (đúng mã tài khoản) gửi tin vào chủ đề |
+| Thùng chứa gói | 1 thùng + 4 thiết lập (chặn mở công khai · mọi file thuộc chủ thùng · mã hoá lúc lưu · tự dọn mảnh upload dở sau 3 ngày) | `hue-rag-artifacts-<mã tài khoản>` | guide 2 đẩy gói lên, guide 4 tải gói về máy chủ; quy tắc vòng đời tự huỷ các mảnh upload bị đứt mạng sau 3 ngày để tránh rò tiền lưu trữ |
 | Vai gắn máy | 1 vai + 1 quyền đọc thùng + 1 chính sách Session Manager gắn vào + 1 hồ sơ gắn máy | `hue-rag-instance-role`, `hue-rag-instance-profile` | máy chủ CHỈ được: tải gói từ đúng thùng trên, và cho mở phiên Session Manager |
 
 Máy chủ KHÔNG có quyền gọi model nào của AWS, không quyền ghi hay xoá thùng: bản deploy gọi model của OpenAI bằng một khoá đặt trong file trên máy (guide 4).
@@ -52,7 +52,7 @@ Thư mục `deploy/terraform/1_nen_tang/`:
 |---|---|---|
 | `versions.tf` | ghim bản Terraform + bộ cắm AWS, vùng, thẻ chung | có |
 | `variables.tf` | bốn giá trị đầu vào | có |
-| `main.tf` | 11 tài nguyên, mỗi khối một dòng chú thích | có |
+| `main.tf` | 13 tài nguyên, mỗi khối một dòng chú thích | có |
 | `outputs.tf` | bốn đầu ra | có |
 | `terraform.tfvars.example` | giá trị mẫu | có |
 | `.terraform.lock.hcl` | bản chính xác của bộ cắm AWS (6.73.0) + mã băm | có |
@@ -109,17 +109,17 @@ terraform init                         # cuối cùng in: Terraform has been suc
 **Bước 4 — Đọc bản kế hoạch TRƯỚC khi dựng.** (đang ở `deploy/terraform/1_nen_tang`)
 
 ```bash
-terraform plan                         # dòng cuối phải là:  Plan: 11 to add, 0 to change, 0 to destroy.
+terraform plan                         # dòng cuối phải là:  Plan: 13 to add, 0 to change, 0 to destroy.
 ```
 
-Đọc lướt 11 khối có dấu `+`: tên nào cũng bắt đầu `hue-rag-`; khối `aws_iam_role_policy.read_artifacts` chỉ có `s3:ListBucket` và `s3:GetObject`; khối
-`aws_budgets_budget.monthly` có đúng email của mình. Con số khác 11, hoặc có dòng `destroy` ⇒ DỪNG, không `apply`, chép màn hình cho nhóm.
+Đọc lướt 13 khối có dấu `+`: tên nào cũng bắt đầu `hue-rag-`; khối `aws_iam_role_policy.read_artifacts` chỉ có `s3:ListBucket` và `s3:GetObject`; khối `aws_sns_topic_policy.alerts` chỉ mở `sns:Publish` cho `cloudwatch.amazonaws.com` với đúng mã tài khoản; khối `aws_s3_bucket_lifecycle_configuration.artifacts` chỉ huỷ mảnh upload dở sau 3 ngày; khối
+`aws_budgets_budget.monthly` có đúng email của mình. Con số khác 13, hoặc có dòng `destroy` ⇒ DỪNG, không `apply`, chép màn hình cho nhóm.
 
 **Bước 5 — Dựng.** (đang ở `deploy/terraform/1_nen_tang`)
 
 ```bash
 terraform apply                        # in lại bản kế hoạch, hỏi "Enter a value:" ⇒ gõ  yes
-# cuối cùng in:  Apply complete! Resources: 11 added, 0 changed, 0 destroyed.   rồi bốn dòng Outputs
+# cuối cùng in:  Apply complete! Resources: 13 added, 0 changed, 0 destroyed.   rồi bốn dòng Outputs
 ```
 
 **Bước 6 — Bấm xác nhận email.** Trong vài phút hộp thư nhận một thư của "AWS Notifications", tiêu đề "AWS Notification - Subscription Confirmation" ⇒ bấm
@@ -160,7 +160,7 @@ của chúng — bình thường.
 |---|---|---|
 | `AccessDenied` / `not authorized to perform: <dịch-vụ>:<thao tác>` lúc `apply` | chính sách ở guide 0 thiếu một quyền (chính sách CHƯA từng được thử trên tài khoản thật) | chép nguyên dòng lỗi cho nhóm; sửa chính sách theo guide 0 mục 8; chạy lại `terraform apply` — Terraform làm tiếp phần còn thiếu, không tạo trùng |
 | `BucketAlreadyExists` / `BucketAlreadyOwnedByYou`, `EntityAlreadyExists`, `DuplicateRecordException` | tài nguyên cùng tên đã có: lần dựng trước dở dang mà file state đã mất, hoặc chạy ở một thư mục chép khác | KHÔNG đổi tên bừa. Còn file state cũ ⇒ quay về đúng thư mục có nó. Mất hẳn ⇒ báo nhóm: đưa từng tài nguyên vào state bằng `terraform import`, hoặc xoá tay rồi dựng lại |
-| `Plan:` ra khác `11 to add` ở lần đầu | đang đứng nhầm thư mục, hoặc file bị sửa | `pwd` phải in `…/deploy/terraform/1_nen_tang`; `git status --short .` phải sạch trừ file bị chặn |
+| `Plan:` ra khác `13 to add` ở lần đầu | đang đứng nhầm thư mục, hoặc file bị sửa | `pwd` phải in `…/deploy/terraform/1_nen_tang`; `git status --short .` phải sạch trừ file bị chặn |
 | `Error: No valid credential sources found` | chưa `export AWS_PROFILE` ở cửa sổ này | gõ lại Bước 1 |
 | Không thấy thư xác nhận | thư rác, hoặc gõ sai email | sai email ⇒ sửa `terraform.tfvars` rồi `terraform plan` + `terraform apply` (kế hoạch sẽ thay đăng ký email và sửa ngân sách) |
 | `Inconsistent dependency lock file` | bản bộ cắm trên máy khác bản ghim | `terraform init` lại; KHÔNG thêm `-upgrade` |
@@ -184,7 +184,7 @@ tầng nền, khi không còn máy nào:
 cd /home/minhhieu/hue_rag/deploy/terraform/1_nen_tang
 export AWS_PROFILE=hue-rag-deploy AWS_REGION=ap-southeast-1
 aws s3 rm "s3://$(terraform output -raw artifact_bucket_name)" --recursive    # Terraform không xoá được thùng còn file
-terraform plan -destroy                # đọc: Plan: 0 to add, 0 to change, 11 to destroy.
+terraform plan -destroy                # đọc: Plan: 0 to add, 0 to change, 13 to destroy.
 terraform destroy                      # gõ  yes
 ```
 

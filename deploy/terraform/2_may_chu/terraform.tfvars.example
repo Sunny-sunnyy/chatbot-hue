@@ -22,3 +22,7 @@ alert_topic_arn       = "DIEN-ARN-CHU-DE-CANH-BAO-CUA-TANG-NEN"
 # root_volume_gb = 40
 
 # swap_gb = 2
+
+# auto_stop_enabled = true
+
+# auto_stop_schedule = "cron(30 23 * * ? *)"

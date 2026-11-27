@@ -12,7 +12,7 @@ ngày · **[khoá]** = theo bài của khoá AI Production (ghi chú đọc kho�
 | Chọn | Ai chọn, khi nào |
 |---|---|
 | Một máy EC2 chạy Docker Compose, **chỉ bật quanh ngày demo / ngày chấm**, dừng máy khi không dùng | chủ dự án, 23/11/2026 |
-| Model viết của bản deploy: `gpt-6-luna` của OpenAI — MỘT đường model; máy không có quyền gọi model nào của AWS | chủ dự án, 23/11/2026 |
+| Model viết: `gpt-6-luna` của OpenAI (`provider: openai`) — MỘT đường model cho cả máy local (từ 25/11/2026) lẫn bản deploy; máy chủ không có quyền gọi model nào của AWS | chủ dự án, 23–25/11/2026 |
 | Tài khoản AWS cá nhân, vùng Singapore; một người dùng IAM MỚI chỉ cho việc deploy | chủ dự án, 23/11/2026 |
 | Deploy là điểm cộng, làm sau buổi tự test ở máy; nhóm chỉ CHUẨN BỊ, chủ dự án gõ mọi lệnh tạo / xoá | chủ dự án, 19–22/11/2026 |
 | Hai thư mục Terraform (tầng nền gần 0 đồng ↔ tầng máy chủ tính tiền), state ở máy người chạy, guide theo khuôn 11 mục | nhóm, theo khuôn chủ dự án tự đặt ở dự án khoá học |
@@ -38,7 +38,7 @@ Cổng mở ra ngoài: chỉ 80 và 443. Ứng dụng (8000) và Qdrant (6333) c
 | Vì sao một MÁY mà không Lambda như khoá học | hue_rag giữ ba thứ trong bộ nhớ của tiến trình — cuộc trò chuyện, lịch đang sửa, bộ đếm lượt — và cần một Qdrant chạy cạnh; lên Lambda phải sửa lõi cả ba | tự lo máy: vá, dừng / bật; tiền đứng yên khi máy dừng |
 | Khoá học nêu hai nhược điểm của "máy luôn bật": tiền cố định kể cả khi không ai vào, khó tự co giãn [khoá] | tiền cố định ⇒ máy chỉ bật quanh ngày demo, còn lại dừng ("co về 0 bằng tay") · co giãn ⇒ không cần: người dùng là người chấm và vài người xem | bật lại trước giờ demo ("khởi động lạnh") là việc phải nhớ |
 | Vì sao EC2 mà không Lightsail (bản 2) | Lightsail dừng máy VẪN tính đủ tiền [AWS] ⇒ với cách dùng "bật 60–100 giờ một tháng" là gần 24 USD so với 10–12 của EC2; EC2 có vai gắn máy ⇒ tải gói và vào máy không cần khoá AWS dài hạn, không khoá SSH, không cổng 22; EC2 + mạng + nhóm bảo mật là thứ chủ dự án đã học | nhiều tài nguyên và khái niệm hơn Lightsail |
-| Vì sao model OpenAI trên máy chủ trong khi ở máy đang chạy Claude | chủ dự án chọn; máy chỉ cần MỘT khoá, không vai liên tài khoản, không bước mở model. Hệ quả: bản deploy trả lời KHÁC bản ở máy (ngắn hơn khoảng ba lần, chữ chạy dần) và đã phải đo bù riêng trên model đó trước khi tin | hai nơi là hai model |
+| Vì sao dùng `gpt-6-luna` (OpenAI) trên máy chủ thay vì Claude (Bedrock) | chủ dự án chọn từ 23/11 và chuyển luôn máy local sang `gpt-6-luna` ngày 25/11/2026; máy chủ chỉ cần MỘT khoá, không vai liên tài khoản, không bước mở model. Hai nơi nay chạy CÙNG một model mặc định | nếu cần đối chiếu / dự phòng vẫn giữ đường Bedrock làm tuỳ chọn |
 | Vì sao một khoá API mà không vai như khoá học dạy cho production | model nằm ngoài AWS, không vai nào cấp được quyền gọi. Ba nhược điểm của khoá API và cách chặn: lộ ⇒ khoá chỉ ở một file quyền 600 trên máy, không trong ảnh, không trong git · không tự xoay ⇒ khoá riêng cho bản deploy, thu hồi là xong · bị gọi cạn tiền ⇒ ba lớp ở mục 5 | chủ dự án tự giữ và tự thu hồi khoá |
 | Vì sao file quyền 600 mà không Secrets Manager | một máy, một bí mật; ít khái niệm; không bí mật nào đi qua state của Terraform | — |
 | Vì sao HAI tầng Terraform | "có trạng thái ↔ không trạng thái" [khoá]: gói đã đẩy, email đã xác nhận, quyền là thứ giữ lâu và gần 0 đồng; máy là thứ tính tiền, dựng và phá nhiều lần được | chép tay ba đầu ra từ tầng nền sang tầng máy chủ |
@@ -74,7 +74,7 @@ nhất khoảng 1 USD [ước].
    thời, có thể vượt nhẹ [OpenAI].
 3. **Số tiền nạp trước**, với tự nạp lại đã TẮT (lúc thiết lập nạp tiền, tự nạp lại bật sẵn) [OpenAI]. Hết tiền cũng không ngừng tức thời, số dư có thể âm nhẹ.
 
-Phía AWS không có chốt cứng nào: ngân sách chỉ gửi email, tới chậm tới một ngày [AWS]. Chốt thật cho tiền máy là dừng máy cuối buổi.
+Phía AWS không có chốt cứng tự ngắt theo ngân sách: ngân sách chỉ gửi email, tới chậm tới một ngày [AWS]. Chốt chính cho tiền máy là dừng máy cuối buổi kết hợp lịch EventBridge Scheduler (`hue-rag-tu-dung-dem`) tự dừng máy lúc 23:30 giờ Việt Nam mỗi đêm.
 
 ## 6. Sáu trụ cột của khoá học — hue_rag có gì
 
@@ -82,7 +82,7 @@ Phía AWS không có chốt cứng nào: ngân sách chỉ gửi email, tới ch
 |---|---|---|---|
 | Mở rộng | không máy chủ, tự co giãn | một máy, một tiến trình, không co giãn | người dùng là người chấm; tăng 100 lần thì nghẽn trước ở: một tiến trình, trí nhớ trong bộ nhớ, hạn mức gọi model |
 | Bảo mật | đang có: mỗi hàm một vai quyền hẹp, người dùng phải đăng nhập, chặn tần suất ở cửa vào, CORS đúng một nguồn, mật khẩu cơ sở dữ liệu cất ở Secrets Manager; WAF, VPC endpoint, GuardDuty chỉ là lớp "thêm nếu cần", có phí | không cổng 22 (Session Manager), vai chỉ đọc một thùng, thùng riêng tư, khoá OpenAI ở file quyền 600, HTTPS, trần cỡ yêu cầu, trần lượt | không có tài khoản người dùng nên không có bước đăng nhập; chặn tần suất làm ngay trong ứng dụng (trần lượt); ba lớp có phí chưa có mối đe doạ để biện minh cho một bản demo một máy |
-| Giám sát | bảng CloudWatch + báo động | ngân sách (email) + MỘT báo động "máy không qua kiểm tra trạng thái" (email) | model không nằm trong AWS nên CloudWatch không có số nào của nó |
+| Giám sát | bảng CloudWatch + báo động | ngân sách (email) + MỘT báo động "máy không qua kiểm tra trạng thái" (email qua chủ đề đã cấp `aws_sns_topic_policy` cho CloudWatch) | model không nằm trong AWS nên CloudWatch không có số nào của nó |
 | Rào | rào bằng code quanh model | trả lời chỉ từ kho, kiểm trích dẫn, câu từ chối cố định, số / ngày / lịch do code tính; trần lượt | rào nằm sẵn trong sản phẩm, không thêm gì cho bản deploy |
 | Giải thích được | model phải ghi lý do TRƯỚC kết luận, lý do được ghi log; có sổ kiểm toán cho từng quyết định của AI | mỗi câu trả lời có nguồn mở được | sản phẩm là hỏi đáp từ kho: thứ người dùng cần kiểm là NGUỒN của từng câu, không phải lý do của một quyết định thay họ |
 | Quan sát | Langfuse | log của ba hộp xem bằng lệnh trên máy; trang theo dõi của ứng dụng; trang sử dụng của OpenAI; sổ vết TẮT mặc định trên máy deploy (có chữ người dùng) | không đẩy log đi đâu: một máy, vài ngày chạy |
@@ -95,11 +95,10 @@ Phía AWS không có chốt cứng nào: ngân sách chỉ gửi email, tới ch
   án chọn OpenAI cho bản deploy. Phần gói đã làm cho hướng này (file phủ, hộp lấy khoá tạm) giữ làm đường tuỳ chọn, bản deploy không dùng.
 - **Lightsail (bản 2):** mục 3. Chỉ rẻ hơn EC2 khi máy bật trên khoảng 350 giờ một tháng — lúc đó mới đáng xét lại.
 - **Lambda:** mục 3.
-- **Tự dừng máy theo giờ, hoặc ngân sách tự dừng máy khi chạm mốc:** tuỳ chọn, CHƯA làm.
+- **Tự dừng máy theo giờ:** ĐÃ THÊM mặc định trong `2_may_chu` (EventBridge Scheduler `hue-rag-tu-dung-dem` tự dừng máy lúc 23:30 giờ Việt Nam mỗi đêm, `auto_stop_enabled = true`, 0 đồng trong mức miễn phí). **Ngân sách tự dừng máy khi chạm mốc:** vẫn chưa làm (ngân sách chỉ gửi email cảnh báo).
 - **Lớp mật khẩu chung ở cửa vào cho những ngày bật:** tuỳ chọn, CHƯA làm; là câu của chủ dự án nếu muốn.
 
 ## 8. Chưa kiểm được
 
 Mọi thứ cần tài khoản thật: danh sách ở `deploy/README.md` mục "Thứ CHƯA kiểm được". Thứ đã kiểm ở máy: gói Docker chạy trọn (dựng ảnh, nạp chỉ mục, ba hộp,
-một câu hỏi thật) và `terraform fmt` / `validate` của các thư mục Terraform. Lượt đo bù trên `gpt-6-luna` (model của bản deploy) đã chạy ngày 23/11/2026; các
-giới hạn riêng của đường model đó ghi ở `guides/RUNBOOK_BAN_GIAO.md` mục 10.
+một câu hỏi thật) và `terraform fmt` / `validate` của cả hai thư mục Terraform. Từ 25/11/2026, `gpt-6-luna` (`provider: openai`) là mặc định ở cả máy local lẫn bản deploy (đã xong lượt đo bù 23/11 và bộ câu kín 25/11); bộ kho hiện hành gồm **269 bài kho**, **9.540 điểm Qdrant**, ảnh Khám phá **269/269**; các giới hạn riêng của đường model đó ghi ở `guides/RUNBOOK_BAN_GIAO.md` mục 10.

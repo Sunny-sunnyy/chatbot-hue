@@ -11,6 +11,9 @@ locals {
 # Dữ liệu tra từ AWS (không tạo gì)
 # ---------------------------------------------------------------------------------------------------------------------
 
+# Mã tài khoản đang đăng nhập — để gắn điều kiện aws:SourceAccount cho vai của lịch tự dừng máy.
+data "aws_caller_identity" "current" {}
+
 # Vùng sẵn có của vùng AWS đang chọn — lấy bằng khối data như sổ tay Terraform, không ghi cứng "a / b".
 data "aws_availability_zones" "available" {
   state = "available"
@@ -206,4 +209,70 @@ resource "aws_cloudwatch_metric_alarm" "status_check" {
   }
 
   alarm_actions = [var.alert_topic_arn]
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# (Tuỳ chọn, bật mặc định) Lịch tự dừng máy ban đêm bằng EventBridge Scheduler — 0 đồng trong mức miễn phí.
+# Tránh rủi ro quên tắt máy sau demo (~41,95 USD/tháng nếu bật liên tục). Máy đang dừng thì lệnh stop giữ nguyên trạng thái.
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_iam_role" "scheduler" {
+  count = var.auto_stop_enabled ? 1 : 0
+
+  name = "${local.name_prefix}-scheduler-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Action    = "sts:AssumeRole"
+      Principal = { Service = "scheduler.amazonaws.com" }
+      Condition = {
+        StringEquals = {
+          "aws:SourceAccount" = data.aws_caller_identity.current.account_id
+        }
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "scheduler_stop_ec2" {
+  count = var.auto_stop_enabled ? 1 : 0
+
+  name = "stop-ec2-instance"
+  role = aws_iam_role.scheduler[0].name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid      = "StopOnlyHueRagAppInstance"
+      Effect   = "Allow"
+      Action   = "ec2:StopInstances"
+      Resource = aws_instance.app.arn
+    }]
+  })
+}
+
+resource "aws_scheduler_schedule" "auto_stop" {
+  count = var.auto_stop_enabled ? 1 : 0
+
+  name                         = "${local.name_prefix}-tu-dung-dem"
+  group_name                   = "default"
+  description                  = "hue-rag: tu dung may EC2 moi dem luc 23:30 gio Viet Nam"
+  schedule_expression          = var.auto_stop_schedule
+  schedule_expression_timezone = "Asia/Ho_Chi_Minh"
+  state                        = "ENABLED"
+
+  flexible_time_window {
+    mode = "OFF"
+  }
+
+  target {
+    arn      = "arn:aws:scheduler:::aws-sdk:ec2:stopInstances"
+    role_arn = aws_iam_role.scheduler[0].arn
+
+    input = jsonencode({
+      InstanceIds = [aws_instance.app.id]
+    })
+  }
 }

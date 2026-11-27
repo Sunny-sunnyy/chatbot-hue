@@ -6,7 +6,7 @@ lời được sau 11–14 giây — `deploy/docker/README.md` mục 5). Dừng 
 
 **Hai chuỗi lệnh "cập nhật bản mới" (6.3) và "lùi về bản trước" (6.4) ĐÃ CHẠY TRỌN ở máy chủ dự án, 20:11–20:15 23/11/2026** (một lượt, chép đúng từng
 lệnh của guide; ảnh dựng từ main `d8d5c3a`, kho 269 bài): bật lần đầu bằng gói cũ ⇒ sửa tay một dòng `cau_hinh/settings.yaml` ⇒ cập nhật lên gói mới ⇒
-lùi về gói cũ. Kết quả: mỗi lần đổi bản băm 7 / 7 OK, chỉ mục 9.533 = 9.533 điểm, ba hộp khoẻ, `/health` `ok`, hộp app chạy đúng ảnh của bản vừa đổi;
+lùi về gói cũ. Kết quả: mỗi lần đổi bản băm 7 / 7 OK, chỉ mục 9.533 = 9.533 điểm ở mốc 23/11 (kho hiện hành 26/11 là **269 bài / 9.540 điểm**), ba hộp khoẻ, `/health` `ok`, hộp app chạy đúng ảnh của bản vừa đổi;
 trang ngừng phục vụ 36 giây khi cập nhật, 29 giây khi lùi; dòng sửa tay bị gói mới ghi đè (đúng như mục 6.3 báo trước), còn trong `truoc/`, và trở
 lại sau khi lùi. GIỚI HẠN của lượt đó: thư mục máy đứng thay thùng S3 và `/srv/hue` · hai gói khác mã bản nhưng CÙNG nội dung ảnh · http cổng 8880,
 không HTTPS · khoá OpenAI GIẢ nên câu hỏi chỉ đi tới câu báo "Không thể tạo câu trả lời vào lúc này" (không lời gọi model nào) · máy chủ dự án
@@ -87,8 +87,7 @@ aws ec2 wait instance-stopped --instance-ids "$ID"
 aws ec2 describe-instances --instance-ids "$ID" --query 'Reservations[0].Instances[0].State.Name' --output text    # mong: stopped
 ```
 
-Không cần tắt ba hộp trước. Máy KHÔNG tự dừng: không gõ lệnh này thì máy chạy và tính tiền mãi. Ngân sách của tầng nền chỉ là lưới thứ hai — nó cảnh
-báo, tới chậm, và không tắt hộ.
+Không cần tắt ba hộp trước. Tầng `2_may_chu` đã gắn sẵn lịch EventBridge Scheduler (`hue-rag-tu-dung-dem`, bật mặc định) tự dừng máy lúc **23:30 giờ Việt Nam** mỗi đêm để tránh ca quên tắt máy; tuy vậy, chủ động gõ lệnh này ngay khi rời bàn giúp tiết kiệm thêm các giờ chưa tới 23:30 (và phòng khi lịch bị tắt bằng `auto_stop_enabled = false`). Ngân sách của tầng nền chỉ là lưới cảnh báo, tới chậm và không tắt hộ.
 
 ### 6.2 Bật lại trước giờ demo — "khởi động lạnh, làm ấm"
 
@@ -245,7 +244,7 @@ không chặn gì.
 - [ ] Nếu không dùng lại trong vài tuần: cân nhắc phá tầng máy chủ (mục 10 của guide 3) để về gần 0 đồng
 - [ ] Xem trang sử dụng của OpenAI: số tiền còn lại khớp với số lượt đã hỏi
 
-Tự dừng máy theo giờ (một lịch hẹn giờ của AWS): TUỲ CHỌN, CHƯA làm — hiện chỉ có danh sách này và ngưỡng ngân sách nhỏ.
+Tự dừng máy theo giờ (EventBridge Scheduler `hue-rag-tu-dung-dem`): **ĐÃ BẬT MẶC ĐỊNH** trong `2_may_chu` — tự dừng máy lúc **23:30 giờ Việt Nam** mỗi đêm (0 đồng trong mức miễn phí, tắt được bằng `auto_stop_enabled = false`). Lưu ý: nếu có buổi làm việc / demo muộn quá 23:30 giờ Việt Nam thì nhớ đổi `auto_stop_schedule` hoặc tạm tắt lịch trước, kẻo máy bị dừng đúng 23:30.
 
 ### 6.8 Chủ ý thay máy (đổi ảnh hệ điều hành hoặc đoạn lệnh lúc máy bật) — hiếm khi cần
 

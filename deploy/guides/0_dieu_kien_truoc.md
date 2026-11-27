@@ -37,11 +37,8 @@ deploy gắn chín chính sách toàn quyền cho pipeline; ở đây không có
 ## 3. Điều kiện trước
 
 - Tài khoản AWS cá nhân đã làm các dự án khoá học, đăng nhập được bằng tài khoản gốc (email + mật khẩu + mã MFA).
-- Tài khoản OpenAI đang dùng cho `gpt-6-luna`.
+- Tài khoản OpenAI đang dùng cho `gpt-6-luna`. Từ 25/11/2026, cả máy local lẫn bản deploy đều mặc định `provider: openai` (`gpt-6-luna`); lượt đo bù và bộ câu kín trên `gpt-6-luna` đã hoàn tất (23–25/11).
 - Máy WSL này, thư mục dự án `/home/minhhieu/hue_rag`.
-- **Lượt đo bù trên model của OpenAI đã xong và các bản sửa của nó đã ở nhánh chính.** Bản deploy chạy `gpt-6-luna`, còn ở máy hệ thống đang chạy Claude;
-  từ 21/11 mọi phép đo chỉ chạy trên Claude, nên trước khi tin bản deploy phải đo lại trên model nó sẽ dùng. Nhóm báo khi điều kiện này đạt; nó KHÔNG chặn
-  việc làm các bước dưới, chỉ chặn việc mở trang cho người khác dùng.
 
 ## 4. File liên quan
 
@@ -84,13 +81,14 @@ này trông giống lỗi thiếu quyền [khoá].
 
 | Khối trong file | Cho phép | Giới hạn ở |
 |---|---|---|
-| `ThungGoi` | tạo, cấu hình, đẩy file lên, xoá thùng chứa gói | thùng tên `hue-rag-artifacts-…` |
-| `VaiGanMay` + hai khối kế | tạo vai và hồ sơ gắn máy; gắn vào vai đúng MỘT chính sách có sẵn của Session Manager; giao vai cho máy EC2 | vai / hồ sơ tên `hue-rag-…` |
-| `ChuDeEmailCanhBao` + `DangKyEmailVaoChuDe` | tạo chủ đề gửi email cảnh báo, đăng ký email | chủ đề tên `hue-rag-…`, vùng Singapore |
+| `ThungGoi` | tạo, cấu hình (gồm quy tắc vòng đời dọn mảnh upload dở), đẩy file lên, xoá thùng chứa gói | thùng tên `hue-rag-artifacts-…` |
+| `VaiGanMay` + `ChiGanChinhSachSessionManagerVaoVai` + `GiaoVaiChoMayEC2` | tạo vai và hồ sơ gắn máy; gắn vào vai đúng MỘT chính sách có sẵn của Session Manager; giao vai cho máy EC2 | vai / hồ sơ tên `hue-rag-…` |
+| `GiaoVaiChoScheduler` + `LichTuDungMayEC2` | giao vai cho EventBridge Scheduler; tạo / sửa / xoá lịch tự dừng máy ban đêm | vai `hue-rag-…`, lịch `default/hue-rag-…` vùng Singapore |
+| `ChuDeEmailCanhBao` + `DangKyEmailVaoChuDe` | tạo chủ đề gửi email cảnh báo, gắn chính sách cho CloudWatch gửi tin vào chủ đề, đăng ký email | chủ đề tên `hue-rag-…`, vùng Singapore |
 | `NganSach` | tạo, xem, sửa, xoá ngân sách | ngân sách tên `hue-rag-…` |
 | `MayChuMangDiaChiIP` | mọi thao tác máy ảo, mạng, nhóm bảo mật, địa chỉ IP (dựng, dừng, bật, xoá) | chỉ vùng Singapore |
 | `BaoDongMayHong` | tạo, xoá báo động "máy hỏng"; đặt TAY trạng thái của nó để thử xem email báo động có tới không (buổi diễn tập ở guide 5) | báo động tên `hue-rag-…` |
-| ba khối Session Manager + `XemTrangThai` | mở phiên vào máy mang thẻ `Project = hue-rag`; đóng phiên của chính mình; xem trạng thái | theo thẻ của máy |
+| ba khối Session Manager + `XemTrangThai` | mở phiên vào máy mang thẻ `Project = hue-rag`; đóng phiên của chính mình; xem trạng thái và chỉ số `CPUCreditBalance` | theo thẻ của máy (riêng thao tác liệt kê / đọc chỉ số dùng `"*"`) |
 
 Không có: quyền gọi model của AWS, quyền xem tiền, quyền tạo người dùng. Nói thật một giới hạn: chính sách này hẹp theo TÊN tài nguyên và theo vùng, không
 phải rào chống leo quyền — người giữ khoá này tạo được vai `hue-rag-…` với quyền tự chọn rồi giao cho một máy. Với một tài khoản cá nhân, một người dùng,
@@ -190,6 +188,7 @@ Bốn dòng lệnh `aws` trên **[chưa chạy]** — kết quả ghi theo cách
 | "Unable to locate credentials" / "InvalidClientTokenId" | khoá chưa cất, hoặc dán thiếu ký tự | chạy lại `aws configure --profile hue-rag-deploy`; vẫn lỗi thì tạo khoá mới ở Bước 4 và xoá khoá cũ |
 | Guide 1 hoặc 3 báo "AccessDenied" / "UnauthorizedOperation" ở một thao tác | dòng lỗi in tên quyền bị thiếu (dạng `dịch-vụ:TênThaoTác`) | chép nguyên dòng lỗi cho nhóm ⇒ nhóm thêm quyền vào file chính sách ⇒ bằng tài khoản gốc: IAM ⇒ Policies ⇒ `HueRagDeployAccess` ⇒ Edit ⇒ dán bản mới. Khoá học cũng dặn trước chuyện này: lần dựng đầu có thể lộ quyền thiếu [khoá] |
 | `AccessDenied` ở `cloudwatch:PutMetricAlarm`, `cloudwatch:DeleteAlarms` hoặc `cloudwatch:SetAlarmState` (guide 3, 5, 7) | khối `BaoDongMayHong` của tờ quyền giới hạn các thao tác này theo TÊN báo động (`hue-rag-…`); AWS có nhận kiểu giới hạn đó cho báo động hay không thì **[chưa kiểm trên AWS]** | báo nhóm; cách sửa: trong khối `BaoDongMayHong` đổi dòng `Resource` thành `"*"`, rồi dán lại chính sách bằng tài khoản gốc như hàng trên |
+| `AccessDenied` ở `scheduler:CreateSchedule` (guide 3) | khối `LichTuDungMayEC2` đang khoanh tài nguyên tới tiền tố `schedule/default/hue-rag-*`; EventBridge Scheduler có thể đòi mức nhóm `schedule/default/*` cho thao tác tạo mới **[chưa kiểm trên AWS]** | báo nhóm; cách sửa: trong khối `LichTuDungMayEC2` đổi `Resource` thành `"arn:aws:scheduler:ap-southeast-1:*:schedule/default/*"`, rồi dán lại chính sách bằng tài khoản gốc |
 | Dán chính sách báo lỗi cú pháp | dán thiếu dấu ngoặc đầu / cuối | dán lại cả file, từ dấu `{` đầu tới dấu `}` cuối |
 | Trang OpenAI không có ô "Enforce a hard limit" | trang đã đổi so với 23/11/2026 | báo nhóm; trong lúc chờ, chốt cứng còn lại là số tiền nạp trước với tự nạp lại đã tắt |
 

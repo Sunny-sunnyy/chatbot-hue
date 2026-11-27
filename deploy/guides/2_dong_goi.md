@@ -1,7 +1,7 @@
 # Guide 2 — Dựng ảnh, thử ở máy mình, đóng gói và đưa gói lên thùng
 
-Viết: 19:50 23/11/2026, phiên C. Các lệnh dựng ảnh, thử trọn gói, đóng gói ở guide này ĐÃ chạy thật ở máy chủ dự án ngày 23/11 (ba lượt — bảng ở
-`deploy/docker/README.md` mục 5), nhưng mới với model Claude hoặc với khoá OpenAI giả. **Chưa có lượt nào chạy gói với khoá OpenAI thật**, và lệnh đẩy
+Viết: 19:50 23/11/2026, phiên C (đồng bộ mốc 26/11/2026). Các lệnh dựng ảnh, thử trọn gói, đóng gói ở guide này ĐÃ chạy thật ở máy chủ dự án ngày 23/11 (ba lượt — bảng ở
+`deploy/docker/README.md` mục 5), nhưng mới với model Claude hoặc với khoá OpenAI giả. **Chưa có lượt nào chạy gói đầy đủ từ `s3://` lên AWS với khoá OpenAI thật**, và lệnh đẩy
 lên thùng chưa ai chạy **[chưa kiểm trên AWS]**.
 
 Từ dùng: **ảnh** = Docker image · **hộp** = container · **gói** = thư mục `~/hue_goi_<sha>/` chứa mọi thứ máy chủ cần · **thùng** = thùng S3 riêng tư của
@@ -24,7 +24,7 @@ Gói gồm: `app_<sha>.tar.gz` (ảnh app nén) · `qdrant.snapshot` (chỉ mụ
 (`settings.yaml` đã ghi sẵn `provider: openai`, `logging.yaml`) · `SHA256SUMS` (băm của bảy file trên). Gói có THƯ MỤC CON ⇒ đẩy và tải phải dùng kiểu
 đệ quy.
 
-**Gói này RIÊNG TƯ.** Ảnh mang 11 file bảng lấy từ thư mục `data/` (bảng điểm của lịch, bảng quán, bảng ảnh…). Vì vậy: chỉ đẩy lên thùng của CHÍNH
+**Gói này RIÊNG TƯ.** Ảnh mang **11 file riêng tư** từ thư mục `data/` (**9 file cấu hình/bảng từ `settings.yaml` + 2 file bản ghi dựng chỉ mục và thống kê từ khoá**). Vì vậy: chỉ đẩy lên thùng của CHÍNH
 mình (thùng của tầng nền đã chặn mọi truy cập công khai), không đẩy ảnh lên Docker Hub hay kho ảnh công khai nào. Khi chạy bước 6, dữ liệu riêng của
 dự án rời máy mình lên tài khoản AWS của mình — đó là việc làm có chủ ý, không phải tác dụng phụ.
 
@@ -33,7 +33,7 @@ máy chủ tải về rồi nạp (`docker load`): bớt một dịch vụ phả
 
 ## 3. Điều kiện trước
 
-- Guide 0, guide 1 xong (có hồ sơ deploy; có thùng). Lượt đo bù trên model cũ đã xong và các bản sửa của nó đã ở main.
+- Guide 0, guide 1 xong (có hồ sơ deploy; có thùng). Từ 25/11/2026, cả máy mình lẫn bản deploy đều chạy mặc định `gpt-6-luna` (`provider: openai`), bộ kho hiện hành **269 bài / 9.540 điểm / 269/269 ảnh Khám phá**.
 - Ở máy mình: Docker đang chạy; Qdrant của dự án đang chạy ở cổng 6335 và chỉ mục khớp kho của commit sẽ dựng (lệnh dựng tự so băm, lệch thì dừng).
 - Một file khoá riêng cho lượt thử, KHÔNG phải `.env` của dự án, ví dụ `~/hue_khoa_thu.env`, quyền 600, có đúng một dòng `OPENAI_API_KEY=…`
   (khoá riêng của bản deploy, tạo ở guide 0). Tự gõ bằng `nano`; không dán khoá vào cửa sổ của agent nào. Tạo file rỗng với quyền 600 TRƯỚC rồi
@@ -97,8 +97,7 @@ deploy/docker/dung_anh.sh origin/main
 Mong dòng cuối: `XONG: hue-rag-app:<sha> · 3.6…GB · <số bài> bài kho · 0 file cấm`. Ghi lại `<sha>`. Lệnh tự kiểm trong ảnh: không có file cấm (bộ câu
 kín, bộ câu mẫu…), số bài kho bằng bản ghi dựng chỉ mục, model nhúng nạp được khi KHÔNG có mạng, ảnh là `linux/amd64`.
 
-**Bước 3 — chạy thử trọn gói ở máy mình BẰNG KHOÁ OPENAI.** Lượt thử phải chạy trên đúng model sẽ lên máy chủ: thử trên Claude không chứng minh được
-gì cho bản deploy.
+**Bước 3 — chạy thử trọn gói ở máy mình BẰNG KHOÁ OPENAI.** Lượt thử phải chạy trên đúng model và cấu hình hộp sẽ lên máy chủ (`provider: openai`, `USER hue`).
 
 ```bash
 cd /home/minhhieu/hue_rag
@@ -114,8 +113,7 @@ có `"status":"ok"` · `/docs` 404 · số bài bằng bản ghi dựng · thân
 - **Một lượt xếp lịch thật**: mong HTTP 200 và mỗi điểm có câu tả thật (không phải câu dự phòng kiểu "— điểm di tích."). Chỉ đường xếp lịch đọc các
   file bảng riêng tư trong ảnh, nên đây là phép kiểm rằng ảnh mang đủ bảng.
 
-Mở thêm `http://127.0.0.1:8880` bằng trình duyệt và hỏi một câu: với model của OpenAI chữ phải CHẠY DẦN ra (với Claude ở máy mình chữ hiện một lần) —
-chưa ai nhìn điều này trên app thật.
+Mở thêm `http://127.0.0.1:8880` bằng trình duyệt và hỏi một câu: kiểm chữ CHẠY DẦN ra qua cửa vào Caddy và không bị dồn cả đoạn một lần.
 
 ```bash
 deploy/docker/thu_o_may.sh don          # dọn ba hộp thử; Qdrant 6335 của dự án không bị đụng

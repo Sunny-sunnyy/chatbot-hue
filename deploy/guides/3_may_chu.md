@@ -16,7 +16,7 @@ chạy trợ lý Huế (việc đó ở guide 4).
 
 ## 2. Sẽ dựng gì
 
-Mười hai tài nguyên (mười một nếu để trống ARN chủ đề cảnh báo — khi đó không có báo động), đều mang thẻ `Project = hue-rag`:
+Mười lăm tài nguyên (14 nếu để trống ARN chủ đề cảnh báo; 12 nếu đặt `auto_stop_enabled = false`; 11 nếu bỏ cả hai), đều mang thẻ `Project = hue-rag`:
 
 | Tài nguyên | Để làm gì | Tính tiền? |
 |---|---|---|
@@ -25,6 +25,7 @@ Mười hai tài nguyên (mười một nếu để trống ARN chủ đề cả
 | Máy EC2 `t3a.medium` (2 CPU, 4 GB RAM), đĩa 40 GB mã hoá | chạy ba hộp Docker | **có — theo giờ lúc máy bật; đĩa tính cả lúc máy dừng** |
 | IP tĩnh | địa chỉ không đổi qua mỗi lần dừng / bật | **có — theo giờ, CẢ LÚC MÁY DỪNG** |
 | Một báo động (bật mặc định; bỏ được) | máy không qua kiểm tra trạng thái 10 phút ⇒ email qua chủ đề cảnh báo của tầng nền | gần 0 |
+| Lịch tự dừng máy ban đêm + vai IAM + quyền `ec2:StopInstances` (3, bật mặc định; tắt được) | EventBridge Scheduler tự dừng máy lúc 23:30 giờ Việt Nam mỗi đêm (`Asia/Ho_Chi_Minh`) để tránh quên tắt máy | không (0 đồng trong mức miễn phí) |
 
 Lúc máy bật lần đầu nó tự chạy một đoạn lệnh (`user_data.sh.tftpl`): tạo vùng nhớ tráo 2 GB, cài Docker + Docker Compose, cài AWS CLI, tạo thư mục
 `/srv/hue`. Đoạn đó KHÔNG tải gói và KHÔNG bật app — làm tay ở guide 4 để mỗi bước nhìn thấy được.
@@ -71,9 +72,9 @@ kể cả lúc máy dừng — trái với cách dùng "chỉ bật quanh ngày 
 | File | Việc |
 |---|---|
 | `deploy/terraform/2_may_chu/versions.tf` | phiên bản Terraform + bộ cắm AWS, vùng, thẻ chung |
-| `deploy/terraform/2_may_chu/variables.tf` | tám biến, mỗi biến một dòng mô tả tiếng Việt |
-| `deploy/terraform/2_may_chu/main.tf` | mạng, nhóm bảo mật, máy, IP tĩnh, báo động tuỳ chọn |
-| `deploy/terraform/2_may_chu/outputs.tf` | ba đầu ra: `instance_id`, `public_ip`, `site_name` |
+| `deploy/terraform/2_may_chu/variables.tf` | mười biến, mỗi biến một dòng mô tả tiếng Việt |
+| `deploy/terraform/2_may_chu/main.tf` | mạng, nhóm bảo mật, máy, IP tĩnh, báo động tuỳ chọn, lịch tự dừng máy ban đêm + vai IAM riêng |
+| `deploy/terraform/2_may_chu/outputs.tf` | bốn đầu ra: `instance_id`, `public_ip`, `site_name`, `auto_stop_schedule_name` |
 | `deploy/terraform/2_may_chu/user_data.sh.tftpl` | đoạn lệnh chạy một lần lúc máy bật lần đầu |
 | `deploy/terraform/2_may_chu/terraform.tfvars.example` | mẫu để chép thành `terraform.tfvars` |
 | `deploy/terraform/2_may_chu/.terraform.lock.hcl` | ghi đúng bản bộ cắm đã kiểm (6.73.0) — có trong git |
@@ -94,7 +95,7 @@ Ba giá trị lấy từ tầng nền (hai tầng không đọc state của nhau
 | `alert_topic_arn` | `terraform output -raw alert_topic_arn` trong `1_nen_tang` — có giá trị thì có báo động máy hỏng; để chuỗi rỗng `""` thì không tạo |
 
 Tuỳ chọn (mặc định trong ngoặc): `aws_region` (`ap-southeast-1`) · `project_name` (`hue-rag`) · `instance_type` (`t3a.medium`) · `root_volume_gb` (40) ·
-`swap_gb` (2).
+`swap_gb` (2) · `auto_stop_enabled` (`true`) · `auto_stop_schedule` (`"cron(30 23 * * ? *)"`, múi giờ `Asia/Ho_Chi_Minh`).
 
 **Không đổi `instance_type` sang họ máy ARM** (tên có chữ `g` sau số, ví dụ `t4g.medium`): ảnh app dựng cho `amd64`. Khoá học dạy đúng bẫy này theo
 chiều ngược lại — `apply` xanh mà hộp chết lặp. Terraform của ta chặn sẵn: đặt `t4g…` thì `plan` báo lỗi ngay.
@@ -146,7 +147,7 @@ terraform validate            # mong: Success! The configuration is valid.
 terraform plan -out=may_chu.tfplan
 ```
 
-ĐỌC bản kế hoạch trước khi đi tiếp. Mong thấy dòng cuối `Plan: 12 to add, 0 to change, 0 to destroy.` (11 nếu để `alert_topic_arn` là chuỗi rỗng). Không có dòng
+ĐỌC bản kế hoạch trước khi đi tiếp. Mong thấy dòng cuối `Plan: 15 to add, 0 to change, 0 to destroy.` (14 nếu để `alert_topic_arn` là chuỗi rỗng; 12 nếu tắt `auto_stop_enabled = false`; 11 nếu bỏ cả hai). Không có dòng
 nào "destroy" hay "replace". Thấy số khác ⇒ DỪNG, xem mục 8.
 
 **Bước 5 — `apply`: BẮT ĐẦU TÍNH TIỀN.**
@@ -157,7 +158,7 @@ tạo máy ngay khi nhấn Enter — không còn lần dừng nào nữa. Chưa 
 ```bash
 cd /home/minhhieu/hue_rag/deploy/terraform/2_may_chu
 terraform apply may_chu.tfplan
-terraform output              # ghi lại ba dòng: instance_id, public_ip, site_name
+terraform output              # ghi lại bốn dòng: instance_id, public_ip, site_name, auto_stop_schedule_name
 ```
 
 Ở đây KHÔNG dùng `-auto-approve` (lần xem lại đã là bước 4: đọc bản kế hoạch được lưu) và không có lệnh `-target` nào (khoá học dùng `-target` để dựng kho ảnh trước; ta giải việc "cái nào trước" bằng hai
@@ -204,9 +205,9 @@ exit                                      # thoát phiên
 Vì sao `sudo -i`: người dùng `ssm-user` do Session Manager tự tạo ở phiên đầu tiên, nên lúc máy bật lần đầu chưa có ai để giao thư mục; và lệnh Docker
 cần quyền root. Mọi lệnh trên máy ở guide 4 và guide 6 đều gõ sau `sudo -i`.
 
-Báo động máy hỏng chỉ gửi được email sau khi địa chỉ nhận đã bấm xác nhận ở guide 1 **[chưa kiểm trên AWS: chủ đề của tầng nền nhận được tin từ báo động]**.
+Báo động máy hỏng chỉ gửi được email sau khi địa chỉ nhận đã bấm xác nhận ở guide 1 **[chưa kiểm trên AWS: chủ đề của tầng nền nhận được tin từ báo động]**. Lịch tự dừng máy ban đêm kiểm nhanh bằng lệnh `aws scheduler get-schedule --name "$(terraform output -raw auto_stop_schedule_name)" --query '[State,ScheduleExpression,ScheduleExpressionTimezone]' --output text` (mong: `ENABLED  cron(30 23 * * ? *)  Asia/Ho_Chi_Minh`) **[chưa kiểm trên AWS]**.
 
-**Nghỉ ở đây, chưa làm tiếp guide 4 ⇒ DỪNG MÁY trước khi rời bàn.** Máy đang bật là đang tính tiền và không tự dừng. Từ máy mình, trong cửa sổ còn
+**Nghỉ ở đây, chưa làm tiếp guide 4 ⇒ DỪNG MÁY trước khi rời bàn.** Tuy tầng này đã gắn lịch tự dừng lúc 23:30 giờ Việt Nam làm lưới an toàn, dừng tay ngay khi nghỉ giúp không tốn tiền các giờ dư trong buổi tối. Từ máy mình, trong cửa sổ còn
 biến `ID` ở trên (ba dòng này là mục 6.1 của guide 6):
 
 ```bash
@@ -224,8 +225,8 @@ start-instances` và `aws ec2 wait instance-status-ok`; các lệnh `curl` của
 |---|---|---|
 | `terraform fmt -check` in ra `terraform.tfvars` | file giá trị vừa sửa lệch khoảng trắng so với cách Terraform canh cột (hay gặp khi bỏ dấu # một dòng tuỳ chọn) | `terraform fmt terraform.tfvars` — chỉ canh lại khoảng trắng — rồi chạy lại `terraform fmt -check` |
 | `apply` xanh nhưng máy vào trạng thái `terminated` ngay sau khi tạo | `aws ec2 describe-instances --instance-ids "$ID" --query 'Reservations[0].Instances[0].StateReason'` | lý do nói về khoá mã hoá đĩa (KMS) ⇒ tài khoản đang bật mã hoá đĩa mặc định bằng một khoá riêng mà tờ quyền deploy không có quyền `kms:` ⇒ báo nhóm để bổ sung quyền; KHÔNG tự tắt mã hoá đĩa **[chưa kiểm trên AWS]** |
-| `plan` in số tài nguyên khác 12 / 11, hoặc có dòng "destroy" | đang đứng ở thư mục nào (`pwd`); `terraform state list` | đứng nhầm `1_nen_tang` ⇒ quay lại đúng thư mục; state có sẵn tài nguyên ⇒ đã `apply` trước đó, đọc kỹ kế hoạch |
-| `AccessDenied` / `UnauthorizedOperation` khi `apply` | tên hành động trong dòng lỗi | người dùng IAM thiếu quyền đó ⇒ bổ sung vào chính sách ở guide 0 rồi `apply` lại (Terraform làm tiếp phần còn dở) |
+| `plan` in số tài nguyên khác 15 / 14 / 12 / 11, hoặc có dòng "destroy" | đang đứng ở thư mục nào (`pwd`); `terraform state list` | đứng nhầm `1_nen_tang` ⇒ quay lại đúng thư mục; state có sẵn tài nguyên ⇒ đã `apply` trước đó, đọc kỹ kế hoạch |
+| `AccessDenied` / `UnauthorizedOperation` khi `apply` | tên hành động trong dòng lỗi | người dùng IAM thiếu quyền đó (hoặc `scheduler:CreateSchedule` cần `schedule/default/*` thay vì `schedule/default/hue-rag-*`) ⇒ bổ sung vào chính sách ở guide 0 rồi `apply` lại (Terraform làm tiếp phần còn dở) |
 | `Invalid IAM Instance Profile name` | hai dòng trong `terraform.tfvars` | chép sai tên, hoặc tầng nền dựng ở vùng / tài khoản khác ⇒ lấy lại bằng `terraform output` ở `1_nen_tang` |
 | Lỗi "Loại máy này thuộc họ ARM" | `instance_type` | đổi về `t3a.medium` |
 | Lỗi "đã tồn tại" (`already exists`) | tài nguyên cùng tên còn sót từ lần dựng trước mà state không biết | xoá tay tài nguyên đó trên trang AWS, hoặc `terraform import`; đừng sửa tay file state |
@@ -247,8 +248,7 @@ Giá công khai vùng Singapore, phiên B tự mở bảng giá AWS ngày 23/11/
 | Máy DỪNG (guide 6) | đĩa 40 GB + IP tĩnh | khoảng 7,5 USD / tháng |
 | Đã phá tầng này | không còn gì của tầng này | 0; còn lại tiền lưu gói ở thùng của tầng nền (vài xu một tháng) |
 
-AWS không có giới hạn cứng tự ngắt dịch vụ: ngân sách của tầng nền chỉ CẢNH BÁO và tới chậm (tới một ngày). Máy không tự dừng — quên tắt là mất
-tiền; danh sách cuối buổi ở guide 6 có dòng "tắt máy".
+AWS không có giới hạn cứng tự ngắt dịch vụ: ngân sách của tầng nền chỉ CẢNH BÁO và tới chậm (tới một ngày). Vì vậy tầng này gắn sẵn lịch tự dừng máy lúc 23:30 giờ Việt Nam (0 đồng trong mức miễn phí của EventBridge Scheduler) để tránh ca quên tắt máy tốn 41,95 USD/tháng, nhưng cuối buổi vẫn nên tự tắt ở guide 6 để tiết kiệm ngay từ lúc rời bàn.
 
 ## 10. Dọn dẹp
 
