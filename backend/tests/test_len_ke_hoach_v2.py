@@ -221,10 +221,10 @@ def test_v2_table_load_checks(tmp_path):
 
 def test_v2_flag_needs_table_and_fails_loudly(tmp_path):
     with pytest.raises(ValueError, match="lich_trinh_bang_v2"):
-        dataclasses.replace(V2, bang_lich_v2=None)
+        dataclasses.replace(V2, bang_lich_v2=None, goi_y_mua_nang=False, so_sanh_diem_den=False)
     with pytest.raises(FileNotFoundError):
         flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=True, lich_trinh_bang_v2=str(tmp_path / "khong_co.json"))
-    assert V2.bang_lich_v2 is not None and FORM.bang_lich_v2 is None  # cờ tắt ⇒ không nạp (clone không có data/ vẫn chạy)
+    assert V2.bang_lich_v2 is not None and flags_from(lich_trinh_bieu_mau=True, len_ke_hoach_v2=False, anh_lich=False, goi_y_mua_nang=False, so_sanh_diem_den=False).bang_lich_v2 is None  # cờ tắt ⇒ không nạp (clone không có data/ vẫn chạy)
 
 
 def ts(n, **kw):

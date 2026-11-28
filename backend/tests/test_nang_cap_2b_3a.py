@@ -209,7 +209,7 @@ def test_nhan_anh_validation_and_mac_dinh_unchanged():
     gen = SimpleNamespace(responses_model="gpt-6-luna")
     ag = na.tao_agent(gen, DS_ANH)
     assert ag.instructions == na.NHAN_ANH_INSTRUCTIONS
-    assert ag.model_settings.extra_args is None
+    assert (ag.model_settings.extra_args or {}).get("prompt_cache_key") == na.NHAN_ANH_CACHE_KEY_MD
 
 
 def test_confidence_gate_schema_prompt_cache_key_and_filter():
