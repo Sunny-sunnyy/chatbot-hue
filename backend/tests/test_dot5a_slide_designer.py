@@ -64,10 +64,11 @@ def _kiem_tra_meo_anh_pptx(pptx_bytes: bytes) -> None:
 
 def test_settings_switches_default_false_and_isolated_cfg():
     s = load_settings(validate_private_paths=False)
-    assert s["assistant"]["xuat_nang_cao"] is False
-    assert s["assistant"]["slide_designer"] is False
+    assert s["assistant"]["xuat_nang_cao"] is True
+    assert s["assistant"]["slide_designer"] is True
     assert s["slide_designer_cfg"] == {
         "model": "gpt-6-luna",
+        "use_llm": True,
         "max_retries": 1,
         "timeout_seconds": 20,
         "fallback_code_only": True,
@@ -253,6 +254,7 @@ def test_slide_designer_retry_postcheck_and_fallback():
 
 def test_slide_designer_route_cache_and_weighted_rate_limit():
     s = copy.deepcopy(load_settings(validate_private_paths=False))
+    s["assistant"]["slide_designer"] = False
     flags_off = AssistantFlags.from_settings(s)
 
     app = FastAPI()
@@ -324,3 +326,27 @@ def test_slide_designer_route_cache_and_weighted_rate_limit():
     d5 = trang_lich_v2(c5, ngay_tao="28/11/2026")
     assert len(kiem_tra_tran_chu([sl for sl in d5["slides"] if sl.get("layout_id") == "notes_map"])) == 0
     _kiem_tra_meo_anh_pptx(dung_pptx_v2(d5, THU_MUC_ANH))
+
+    # Kiểm POST /api/lich/pptx tôn trọng slide_designer_cfg.use_llm=False (0 lần gọi OpenAI, vẫn ra .pptx v2 9 layout)
+    s_code = copy.deepcopy(s)
+    s_code["assistant"]["slide_designer"] = True
+    s_code["slide_designer_cfg"]["use_llm"] = False
+    app3 = FastAPI()
+    app3.include_router(xuat_router)
+    store3 = ConversationStore(len)
+    app3.state.conversations = store3
+    app3.state.assistant_flags = AssistantFlags.from_settings(s_code)
+    cid3 = store3.ensure(None)
+    store3.luu_lich(cid3, luu)
+    call_counter_code = {"n": 0}
+
+    class FailIfCalled:
+        async def parse(self, **kwargs):
+            call_counter_code["n"] += 1
+            raise AssertionError("Không được gọi LLM khi slide_designer_cfg.use_llm=False")
+
+    app3.state.generator = SimpleNamespace(client=SimpleNamespace(responses=FailIfCalled()))
+    r_code = TestClient(app3).post("/api/lich/pptx", json={"theme_id": "song_huong_xanh"}, cookies={"conversation_id": cid3})
+    assert r_code.status_code == 200 and r_code.headers.get("X-Slide-Layouts")
+    assert call_counter_code["n"] == 0
+    _kiem_tra_meo_anh_pptx(r_code.content)

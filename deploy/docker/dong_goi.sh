@@ -32,6 +32,11 @@ if [ "$MO_SO_TAY_HO_SO" != "1" ]; then
     fi
   done
 fi
+# Đợt 5A (28/11/2026): bản đóng gói deploy luôn dùng .pptx v2 thuần code (0 USD / p95 0,36s); chỉ máy demo local mới bật `slide_designer_cfg.use_llm: true`.
+if grep -q "^  use_llm:" cau_hinh/settings.yaml; then
+  sed -i "s/^\(  use_llm: \)true/\1false/" cau_hinh/settings.yaml
+  grep -q "^  use_llm: false" cau_hinh/settings.yaml || { echo "DỪNG: không ghi được dòng use_llm: false vào cau_hinh/settings.yaml" >&2; exit 1; }
+fi
 sha256sum "app_$SHA.tar.gz" qdrant.snapshot compose.yml $PHU Caddyfile nap_chi_muc.sh cau_hinh/* > SHA256SUMS
 ls -la "$RA"
 echo "model viết của gói: $PROVIDER$([ "$PROVIDER" = openai ] && echo ' — máy đích cần OPENAI_API_KEY trong hue.khoa.env')"

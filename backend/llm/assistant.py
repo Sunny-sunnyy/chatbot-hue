@@ -475,7 +475,7 @@ class AssistantFlags:
                    quan_bang=ql.nap_bang_quan(BACKEND_DIR / config["lich_trinh_bang_quan"], bang_v2.cum) if (values["quan_lich"] or values["gan_diem"]) and bang_v2 else None,
                    quan_toa_do=lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang_v2) if (values["quan_lich"] or values["gan_diem"]) and bang_v2 else None,
                    slide_designer_cfg=dict(settings.get("slide_designer_cfg") or config.get("slide_designer_cfg")
-                                           or {"model": "gpt-6-luna", "max_retries": 1, "timeout_seconds": 20, "fallback_code_only": True, "reasoning_effort": "none"}))
+                                           or {"model": "gpt-6-luna", "use_llm": False, "max_retries": 1, "timeout_seconds": 20, "fallback_code_only": True, "reasoning_effort": "none"}))
 
     @property
     def so_thich_hien(self) -> tuple[str, ...]:

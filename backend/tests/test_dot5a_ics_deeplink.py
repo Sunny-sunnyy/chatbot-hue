@@ -218,6 +218,8 @@ def test_ics_v2_blocks_missing_ngay_di_without_guessing():
 
 def test_ics_route_respects_flag_and_blocks_missing_date():
     s = copy.deepcopy(load_settings(validate_private_paths=False))
+    s["assistant"]["xuat_nang_cao"] = False
+    s["assistant"]["slide_designer"] = False
     flags_off = AssistantFlags.from_settings(s)
     assert flags_off.xuat_nang_cao is False
 

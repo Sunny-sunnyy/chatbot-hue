@@ -47,10 +47,12 @@ def _gan_ngay_tao(deck: dict, ngay_tao: str) -> dict:
     return {**deck, "ngay_tao": ngay_tao, "slides": slides}
 
 
-async def _tao_pptx_v2(request: Request, luu: dict, flags, *, theme_id: str | None = None, use_llm: bool = True) -> Response:
+async def _tao_pptx_v2(request: Request, luu: dict, flags, *, theme_id: str | None = None, use_llm: bool | None = None) -> Response:
     state = request.app.state
     store = state.conversations
     cookie = request.cookies.get(CONVERSATION_COOKIE)
+    cfg = getattr(flags, "slide_designer_cfg", None)
+    effective_use_llm = bool((cfg or {}).get("use_llm", False)) if use_llm is None else bool(use_llm)
     lich, cau = lich_tu_luu(luu, flags)
     canonical = chuan_hoa_lich(lich, cau, an_toan=luu.get("an_toan"), thu_muc_anh=THU_MUC_ANH)
     theme = theme_id if theme_id in ALLOWED_THEMES else chon_theme_mac_dinh(canonical.get("tham_so"))
@@ -60,12 +62,12 @@ async def _tao_pptx_v2(request: Request, luu: dict, flags, *, theme_id: str | No
         res = await thiet_ke_slide(
             canonical,
             theme_id=theme,
-            cfg=getattr(flags, "slide_designer_cfg", None),
+            cfg=cfg,
             client=client,
-            use_llm=use_llm,
+            use_llm=effective_use_llm,
         )
         deck = res.deck_plan
-        if use_llm and hasattr(store, "luu_slide_cache") and deck is not None:
+        if effective_use_llm and hasattr(store, "luu_slide_cache") and deck is not None:
             store.luu_slide_cache(cookie, canonical["itinerary_hash"], theme, deck)
     else:
         layouts_cached = list(dict.fromkeys(s.get("layout_id", "") for s in (deck or {}).get("slides", []) if s.get("layout_id")))
