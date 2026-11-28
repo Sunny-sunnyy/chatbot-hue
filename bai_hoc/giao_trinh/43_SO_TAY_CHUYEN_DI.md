@@ -1,6 +1,6 @@
 # Bài 43 — Sổ tay cho chuyến đi: chương trình dựng khung và chép dữ kiện, model chỉ viết các ý ngắn
 
-*Cập nhật 16:40, ngày 27/11/2026 · khớp hệ thống Đợt 4A (**`68` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · cập nhật đợt 27/11: kiểm thông trên `gpt-6-luna` (**9,92 s** và **16,47 s**), ghi log JSON tokens/`usd`, trọng số giới hạn lượt `/api/so_tay = 10`, `CancelScope(shield=True)` khi đóng luồng, Caddy tắt nén gzip cho `/api/so_tay`, và đóng gói Docker giữ `HUE_MO_SO_TAY_HO_SO=0` · đọc sau bài 31.*
+*Cập nhật 11:40, ngày 28/11/2026 · khớp hệ thống Đợt 5 — Phần A (**`70` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · nút sổ tay vẫn đứng sau "Tải PowerPoint" mới của Đợt 5A (`xuat_nang_cao`, `slide_designer` mở; giữ `HUE_MO_SO_TAY_HO_SO=0` khi đóng gói Docker); kiểm thông Đợt 4A trên `gpt-6-luna` (**9,92 s** và **16,47 s**), log JSON tokens/`usd`, trọng số `/api/so_tay = 10`, `CancelScope(shield=True)` · đọc sau bài 31.*
 
 **Bài trước đã biết:** xếp lịch, quán, ảnh (bài 27–30); sửa lịch (bài 31); thẻ nơi (bài 23); việc phải đúng do chương trình làm (bài 24); kiểm nguồn (bài 16).
 **Bài này thêm:** nút "Sổ tay cho chuyến đi": người dùng thấy gì, việc của chương trình, việc của model, cái gì giữ chữ model trong bài kho.

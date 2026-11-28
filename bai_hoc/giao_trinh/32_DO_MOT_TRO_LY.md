@@ -1,6 +1,6 @@
 # Bài 32 — Đo một trợ lý: hội thoại nhiều lượt, người dùng mô phỏng, kịch bản chạy lặp
 
-*Cập nhật 16:40, ngày 27/11/2026 · khớp hệ thống Đợt 4A (**`68` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · nâng cấp **đánh giá 3 tầng trên nền 176 câu mẫu (Đợt 4A, 27/11)**: đưa vào sử dụng bộ chấm bám nguồn ngữ nghĩa từng mệnh đề (`15/15 = 100%`, bắt `3/3` gán sai nguồn, mốc nền 20 câu `88,33%`), mở rộng độ chính xác gọi công cụ `0 đồng` kiểm cả tham số (`19/20 = 95%`, lách từ khoá `9/10`), và tổng kết chi phí cả Đợt 4A (`0,265824 USD` cho `204` lượt chat + `81` lượt chấm).*
+*Cập nhật 11:40, ngày 28/11/2026 · khớp hệ thống Đợt 5 — Phần A (**`70` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · bộ đo Đợt 5A đo đối chứng trước ↔ sau tách riêng cho xuất lịch `.ics` (`n=20`), đặt phòng & rào link (`n=15+12`) và PowerPoint v2 / `Slide Designer` (`n=24` + A/A `n=10`, tổng `0,120794 USD`, chi tiết ở bài 30); đánh giá 3 tầng phần trợ lý giữ nguyên mốc Đợt 4A (`15/15 = 100%` bám nguồn ngữ nghĩa, `19/20 = 95%` chính xác công cụ, tổng `0,265824 USD`).*
 *Mốc trước: 16:11, ngày 22/11/2026 (phân xử chỗ lệch giữa các bài · lượt đo 12 vai 14:13 22/11 · các thước, cách chấm và số chép từ hồ sơ đo 14–22/11 trên gpt-6-luna và Claude Sonnet 5.5 mức cao).*
 
 **Bài trước đã biết:** bộ 176 câu mẫu đo bước tìm và câu trả lời, mỗi câu một lượt (bài 17–19); một thí nghiệm đổi một thứ, đo theo cặp, so với nhiễu (bài 20); trợ lý tự tìm thêm, gọi công cụ, nhớ cuộc trò chuyện, sửa lịch (bài 21–31).
