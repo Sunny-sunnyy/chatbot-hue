@@ -2,7 +2,7 @@ import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { boMaTrichDan } from "./markdown.js";
 import { toaDoHopLe } from "./toaDo.js";
 import { SourceLine } from "./SourceLine.jsx";
-import { dungIcs } from "./lich_ics.js";
+import { dungIcs, dungIcsV2 } from "./lich_ics.js";
 import { baiHref } from "./route.js";
 import { anhCuaBai } from "./anhBai.js";
 
@@ -267,7 +267,7 @@ export function LichV2({ turn, onEditPlan, gon = false, onAsk = null, onMo = nul
       {xong && (
         <div className="lich">
           <LuuLich getText={() => vanBanLich(turn, boMaTrichDan(turn.text || ""), [])} />
-          <NutIcs lich={lich} cau={cau} anToan={turn.noticeAnToan} />
+          <NutIcs lich={lich} cau={cau} anToan={turn.noticeAnToan} turnKey={turn.key} />
           {XUAT_LICH && turn.key !== "mau" && <XuatLich />}
           {onEditPlan && <button type="button" className="retry" onClick={() => onEditPlan(null, turn.truong)}>Sửa — điền lại biểu mẫu</button>}
         </div>
@@ -276,9 +276,42 @@ export function LichV2({ turn, onEditPlan, gon = false, onAsk = null, onMo = nul
   );
 }
 
-// Gợi ý nơi ở (B, cờ `luu_tru_lich`): khối do CODE chọn (khu cả chuyến, ≤ 5 cơ sở, lý do, nhãn "chưa kiểm giá"). Link tìm phòng chỉ nhận đúng gốc
-// LINK_TIM_PHONG (kiểm cả phía trình duyệt như link bản đồ), mở tab mới khi bấm; không giá, không "còn phòng".
+// Gợi ý nơi ở (B, cờ `luu_tru_lich`): khối do CODE chọn (khu cả chuyến, ≤ 5 cơ sở, lý do, nhãn "chưa kiểm giá"). Link tìm phòng kiểm theo
+// allowlist 3 sàn OTA qua `linkPhongHopLe(url)` (kiểm cả phía trình duyệt ở LichV2, ChoO, chat), mở tab mới khi bấm; không giá, không "còn phòng".
 export const LINK_TIM_PHONG = "https://www.booking.com/searchresults.html?ss=";
+export const LINK_TIM_PHONG_HOSTS = new Set(["www.booking.com", "www.agoda.com", "www.traveloka.com"]);
+export function linkPhongHopLe(url) {
+  if (typeof url !== "string" || !url || /[\r\n\0]/.test(url)) return false;
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:" || !LINK_TIM_PHONG_HOSTS.has(u.hostname.toLowerCase())) return false;
+    let decodedSearch = "";
+    try { decodedSearch = decodeURIComponent(u.search); } catch { return false; }
+    if (u.pathname.includes("..") || u.search.includes("..") || decodedSearch.includes("..") || /%2e%2e/i.test(url)) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function HoiPhongNut({ mau }) {
+  const [bao, setBao] = useState("");
+  if (typeof mau !== "string" || !mau) return null;
+  async function chep() {
+    try {
+      await navigator.clipboard.writeText(mau);
+      setBao("Đã chép mẫu hỏi phòng.");
+    } catch {
+      setBao("Trình duyệt không cho sao chép ở trang này.");
+    }
+  }
+  return (
+    <span className="lkh-hoi-phong">
+      <button type="button" className="chip chip-sm" onClick={chep}>Chép mẫu hỏi phòng</button>
+      {bao && <span className="text-sm text-muted" role="status">{bao}</span>}
+    </span>
+  );
+}
 // Ảnh cơ sở lưu trú (14/11): chỉ file tự host dưới /anh/khach_san/ (server kiểm lúc khởi động; ảnh "không chắc" không có trong bảng); 0 chữ ghi công.
 const ANH_KS = "/anh/khach_san/";
 const anhKsHopLe = a => typeof a === "string" && a.startsWith(ANH_KS) && a.endsWith(".jpg") && !a.includes("..");
@@ -331,8 +364,13 @@ function NoiO({ o }) {
           <span className="lkh-o-link">
             {typeof c.map_url === "string" && c.map_url.startsWith(MAP_PREFIX) &&
               <a href={c.map_url} target="_blank" rel="noopener noreferrer">Bản đồ</a>}
-            {typeof c.link === "string" && c.link.startsWith(LINK_TIM_PHONG) &&
-              <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
+            {XUAT_NANG_CAO && c.deep_links
+              ? [["booking", "Booking"], ["agoda", "Agoda"], ["traveloka", "Traveloka"]].map(([k, nhan]) => (
+                  linkPhongHopLe(c.deep_links[k]) &&
+                  <a key={k} href={c.deep_links[k]} target="_blank" rel="noopener noreferrer">{nhan}</a>
+                ))
+              : linkPhongHopLe(c.link) && <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
+            {XUAT_NANG_CAO && <HoiPhongNut mau={c.mau_hoi_phong} />}
           </span>
         </li>
       ))}</ul>
@@ -344,13 +382,34 @@ function NoiO({ o }) {
 
 // Việc agent (4) 14/11: thêm lịch vào lịch điện thoại / máy tính — tệp .ics do code dựng từ khung (lich_ics.js), tải về bằng Blob (không gửi đi).
 // Lịch không có ngày đi ⇒ không đoán ngày: thay nút bằng dòng nhắc.
-function NutIcs({ lich, cau, anToan }) {
+function NutIcs({ lich, cau, anToan, turnKey = null }) {
   const [bao, setBao] = useState("");
   const coNgay = lich.ngay.every(ng => ng.ngay_thang);
   if (!coNgay) return <p className="lkh-ics-nhac">Chọn ngày đi ở biểu mẫu để thêm lịch vào lịch điện thoại.</p>;
-  function taiIcs() {
+  async function taiIcs() {
+    if (XUAT_NANG_CAO && turnKey !== "mau") {
+      setBao("Đang tạo file .ics…");
+      try {
+        const r = await fetch("/api/lich/ics", { credentials: "same-origin" });
+        if (!r.ok) {
+          const loi = await r.json().catch(() => null);
+          setBao(loi?.error?.message || "Chưa tạo được tệp .ics.");
+          return;
+        }
+        const url = URL.createObjectURL(await r.blob());
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "lich-trinh-hue.ics";
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        setBao("Đã tạo file .ics v2 (giờ Việt Nam).");
+        return;
+      } catch {
+        // rơi về bản dựng tại trình duyệt nếu mạng lỗi
+      }
+    }
     const sach = Object.fromEntries(Object.entries(cau || {}).map(([k, v]) => [k, boMaTrichDan(v)]));
-    const kq = dungIcs(lich, sach, new Date(), anToan);
+    const kq = XUAT_NANG_CAO ? dungIcsV2(lich, sach, new Date(), anToan) : dungIcs(lich, sach, new Date(), anToan);
     if (!kq) return;
     const url = URL.createObjectURL(new Blob([kq.ics], { type: "text/calendar;charset=utf-8" }));
     const a = document.createElement("a");
@@ -370,15 +429,26 @@ function NutIcs({ lich, cau, anToan }) {
 
 // Xuất lịch (19/11, cờ server `xuat_pptx` ⇒ khoá `xuat_pptx` của `/api/tinh_nang`; App gọi `batXuatLich` một lần khi cờ về):
 // - "In / Lưu PDF": khung in của trình duyệt trên chính thẻ lịch này (CSS in ở `lkh.css`); không gửi gì đi đâu.
-// - "Tải PowerPoint": `GET /api/lich/pptx` — server dựng từ lịch ĐÃ LƯU của cuộc (lịch MỚI NHẤT, hết hạn sau 30 phút); trình duyệt không gửi lịch lên.
+// - "Tải PowerPoint": `GET /api/lich/pptx` (hoặc `POST /api/lich/pptx` khi bật `slide_designer`).
 let XUAT_LICH = false;
 export function batXuatLich(co) { XUAT_LICH = co === true; }
+let XUAT_NANG_CAO = false;
+export function batXuatNangCao(co) { XUAT_NANG_CAO = co === true; }
+let SLIDE_DESIGNER = false;
+export function batSlideDesigner(co) { SLIDE_DESIGNER = co === true; }
 // Bản thử "Sổ tay cho chuyến đi" (công tắc server `so_tay`, mặc định tắt): App đưa hàm mở trang sổ tay khi công tắc bật; không có hàm ⇒ không vẽ nút.
 let MO_SO_TAY = null;
 export function batSoTay(mo) { MO_SO_TAY = typeof mo === "function" ? mo : null; }
 
+const THEME_OPTIONS = [
+  ["di_san_tram", "Di sản trầm"],
+  ["song_huong_xanh", "Sông Hương xanh"],
+  ["co_do_hien_dai", "Cố đô hiện đại"],
+];
+
 function XuatLich() {
   const [bao, setBao] = useState("");
+  const [themeId, setThemeId] = useState("di_san_tram");
   const ref = useRef(null);
   function inLich() {
     const the = ref.current?.closest(".lich-v2");
@@ -396,7 +466,14 @@ function XuatLich() {
   async function taiPptx() {
     setBao("Đang tạo file…");
     try {
-      const r = await fetch("/api/lich/pptx", { credentials: "same-origin" });
+      const r = SLIDE_DESIGNER
+        ? await fetch("/api/lich/pptx", {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ theme_id: themeId }),
+          })
+        : await fetch("/api/lich/pptx", { credentials: "same-origin" });
       if (!r.ok) {
         const loi = await r.json().catch(() => null);
         setBao(loi?.error?.message || "Chưa tải được file — thử lại sau.");
@@ -416,6 +493,11 @@ function XuatLich() {
   return (
     <span className="lkh-xuat" ref={ref}>
       <button type="button" className="retry lkh-nut-in" onClick={inLich}>In / Lưu PDF</button>
+      {SLIDE_DESIGNER && (
+        <select className="lkh-theme-chon" aria-label="Phong cách slide" value={themeId} onChange={e => setThemeId(e.target.value)}>
+          {THEME_OPTIONS.map(([id, ten]) => <option key={id} value={id}>{ten}</option>)}
+        </select>
+      )}
       <button type="button" className="retry" onClick={taiPptx}>Tải PowerPoint</button>
       {MO_SO_TAY && <button type="button" className="retry lkh-nut-so-tay" onClick={MO_SO_TAY}>Sổ tay cho chuyến đi</button>}
       <span className="text-sm text-muted" role="status">{bao}</span>

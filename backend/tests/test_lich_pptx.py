@@ -131,6 +131,7 @@ def may_chu():
     from llm.assistant import AssistantFlags
     s = copy.deepcopy(load_settings(validate_private_paths=False))
     s["assistant"]["xuat_pptx"] = True
+    s["assistant"]["slide_designer"] = False
     flags = AssistantFlags.from_settings(s)
     gio = [1000.0]
     app = FastAPI()

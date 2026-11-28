@@ -16,6 +16,7 @@ from agents.exceptions import AgentsException
 from openai import OpenAIError
 
 from llm import lich_trinh_v2 as lt2
+from llm import luu_tru_lich as ltl
 from llm import quan_lich as ql
 from llm import sua_lich_v2 as sl
 from llm import thoi_tiet as tt
@@ -139,6 +140,9 @@ def gan_o_an(lich: dict, bang, khung: dict, flags: AssistantFlags) -> None:
         muc = khung["tham_so"].get("ngan_sach")
         if muc:
             lich["o_dau"] = lt2.o_dau_khung(flags.luu_tru_bang, bang, khung, muc)
+            if getattr(flags, "xuat_nang_cao", False) and lich["o_dau"] is not None:
+                ngay_di = (lich.get("tham_so") or {}).get("ngay_di") or ((khung.get("ngay_thang") or [None])[0])
+                ltl.gan_xuat_nang_cao_o_dau(lich["o_dau"], {**khung["tham_so"], "ngay_di": ngay_di}, bang_luu_tru=flags.luu_tru_bang)
             if len(khung["ngay"]) < 2:  # đã chọn hạng mà lịch 1 ngày (không có đêm) ⇒ nói lý do thay vì im lặng bỏ khối
                 lich.setdefault("ghi_chu", []).append({"ma": "o_dau_mot_ngay", "cau": CAU_O_MOT_NGAY})
         elif len(khung["ngay"]) >= 2:

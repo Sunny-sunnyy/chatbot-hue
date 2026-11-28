@@ -87,6 +87,7 @@ def test_weighted_rate_limit_unit_ip_and_total_caps():
         "/api/anh/ung_vien": 1,
         "/api/so_tay": 10,
         "/api/ho_so": 8,
+        "/api/lich/pptx": 3,
     }
     hom_nay = dt.date(2026, 11, 27)
     # Trần IP = 12: 1 lần so_tay (10) -> còn 2 điểm -> ho_so (8) bị chặn ngay và KHÔNG cộng điểm, chat (1) vẫn qua 2 lần rồi mới chặn

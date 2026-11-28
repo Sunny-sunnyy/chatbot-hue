@@ -30,6 +30,8 @@ ALLOWED_NAMES = {
     # kết nối; không tự gọi mạng — lời gọi vẫn là của lớp cha, dựng trong `generator_openai_full_corpus`. Import thêm client của OpenAI hay `Runner` ở
     # file đó phải làm test đỏ (lớp LỖI của `openai` thì module nào cũng được import).
     "llm.openai_goi_lai": {"agents": {"OpenAIResponsesModel"}},
+    # Slide Designer Agent (Đợt 5A): tách biệt hoàn toàn khỏi RAG Agent — chỉ dùng AsyncOpenAI cho Structured Outputs (không agents/httpx/web).
+    "llm.slide_designer": {"openai": {"AsyncOpenAI"}},
     # Lớp nối Bedrock chỉ mượn KIỂU DỮ LIỆU của Agents SDK / OpenAI để trả kết quả đúng khuôn; lời gọi mạng duy nhất của nó là httpx (ở `ALLOWED`).
     # Import thêm client của OpenAI hay `Runner` ở file đó phải làm test đỏ.
     "llm.bedrock_model": {

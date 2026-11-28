@@ -336,10 +336,21 @@ class AssistantFlags:
     canh_bao_vong_con_lai: bool = False
     # Đợt 4A (27/11/2026, mặc định tắt): Actionable Feedback khi viết lại lỗi citation + rút gọn `mua_nang` + Tool Use Examples + vá ca trượt Đợt 2.
     toi_uu_dot2_va_viet_lai: bool = False
+    # Đợt 5 Phần A (28/11/2026, mặc định tắt): .ics v2 (GET /api/lich/ics + VTIMEZONE Asia/Ho_Chi_Minh), deep link OTA 3 sàn + mẫu hỏi phòng.
+    xuat_nang_cao: bool = False
+    # Đợt 5 Phần A (28/11/2026, mặc định tắt): Slide Designer Agent + .pptx v2 (3 theme, 9 layout, đo tràn chữ, center-crop PIL).
+    slide_designer: bool = False
+    slide_designer_cfg: dict | None = field(default=None, compare=False, repr=False)
 
     def __post_init__(self) -> None:
         if self.siet_tro_chuyen:
             pass
+        if self.xuat_nang_cao and not self.sua_lich_v2:
+            raise ValueError("assistant.xuat_nang_cao needs assistant.sua_lich_v2: true")
+        if self.slide_designer:
+            import importlib.util
+            if not self.sua_lich_v2 or importlib.util.find_spec("pptx") is None:
+                raise ValueError("assistant.slide_designer needs assistant.sua_lich_v2: true and the python-pptx package (uv sync)")
         if self.goi_y_mua_nang and not (self.tim_them and self.thoi_tiet and self.du_bao is not None and self.bang_lich_v2 is not None):
             raise ValueError("assistant.goi_y_mua_nang needs assistant.tim_them, assistant.thoi_tiet and assistant.len_ke_hoach_v2 (the v2 schedule table)")
         if self.so_sanh_diem_den and not (self.tim_them and self.bang_lich_v2 is not None):
@@ -462,7 +473,9 @@ class AssistantFlags:
                    luu_tru_bang=ltl.nap_bang_luu_tru(BACKEND_DIR / config["lich_trinh_bang_luu_tru"], bang_v2.cum)
                    if values["luu_tru_lich"] and bang_v2 else None,
                    quan_bang=ql.nap_bang_quan(BACKEND_DIR / config["lich_trinh_bang_quan"], bang_v2.cum) if (values["quan_lich"] or values["gan_diem"]) and bang_v2 else None,
-                   quan_toa_do=lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang_v2) if (values["quan_lich"] or values["gan_diem"]) and bang_v2 else None)
+                   quan_toa_do=lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang_v2) if (values["quan_lich"] or values["gan_diem"]) and bang_v2 else None,
+                   slide_designer_cfg=dict(settings.get("slide_designer_cfg") or config.get("slide_designer_cfg")
+                                           or {"model": "gpt-6-luna", "use_llm": False, "max_retries": 1, "timeout_seconds": 20, "fallback_code_only": True, "reasoning_effort": "none"}))
 
     @property
     def so_thich_hien(self) -> tuple[str, ...]:
@@ -488,7 +501,7 @@ def nap_bang_lich(settings: dict) -> "lt.Bang":
 BOOL_FIELDS = tuple(name for name in AssistantFlags.__dataclass_fields__
                     if name not in ("lan_tim_dau", "cong_cong_cu", "so_lan_tim_kho", "bang_lich", "toa_do_lich", "du_bao", "len_ke_hoach_o_hien", "bang_lich_v2",
                                      "len_ke_hoach_so_thich_an", "anh_lich_bang", "luu_tru_bang", "quan_bang", "quan_toa_do",
-                                     "khoang_cach_bang", "su_kien_bang", "muc_luc", "the_noi_bang"))
+                                     "khoang_cach_bang", "su_kien_bang", "muc_luc", "the_noi_bang", "slide_designer_cfg"))
 
 
 def elapsed_ms(started: float) -> float:

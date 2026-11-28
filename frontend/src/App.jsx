@@ -8,7 +8,7 @@ import { GioiThieu } from "./GioiThieu.jsx";
 import { ChoO } from "./ChoO.jsx";
 import { useRoute } from "./route.js";
 import { datNguonBanDo } from "./nguonBanDo.js";
-import { batHoanTac, batSoTay, batXuatLich } from "./LichV2.jsx";
+import { batHoanTac, batSlideDesigner, batSoTay, batXuatLich, batXuatNangCao } from "./LichV2.jsx";
 import { SoTay, useSoTay } from "./SoTay.jsx";
 import { DaiChuDe, HoSoChuDe, LuoiChuDe, useHoSo } from "./HoSo.jsx";
 
@@ -45,6 +45,7 @@ export default function App() {
   useEffect(() => {
     getJson("/api/tinh_nang").then(t => {
       datNguonBanDo(t.ban_do); batXuatLich(t.xuat_pptx);
+      batXuatNangCao(t.xuat_nang_cao); batSlideDesigner(t.slide_designer);
       // nút ở thẻ lịch: dựng lại sổ tay từ lịch MỚI NHẤT của cuộc rồi sang trang đọc (lịch có thể vừa được sửa bằng lời)
       batSoTay(t.so_tay === true ? () => { soTay.tao(); window.location.hash = "#/so-tay"; } : null);
       setTinhNang(t);
