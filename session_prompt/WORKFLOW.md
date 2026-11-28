@@ -142,7 +142,7 @@ dọn worktree, file tạm, collection thử của phiên. A: viết lại `HIEN
    đóng xong mới thiết kế Phase sau — không thiết kế trước như đã biết kết quả của Phase mà nó phụ thuộc.
 5. **Giữ tài liệu:** sổ việc chỉ giữ việc đang mở (việc xong dời một dòng sang `VIEC_DA_XONG.md`).
 6. **Git:** sau khi User đồng ý một lệnh, A **tự chạy**; đưa User lệnh `!` khi bị chặn / lỗi, hoặc với việc luật ghi "User `!`" (xoá nhánh, xoá dữ liệu).
-   Stage **từng file đã review** (không `git add <thư mục>` hay `-A`); không commit dữ liệu private. **Kỷ luật commit/push:** trên nhánh riêng được tự do commit/push, nhưng khi đưa vào `main` phải gom gọn thành ít commit rõ mục đích, chuyên nghiệp (không commit/push lặt vặt lên `main`). Nhánh xong việc: A đề xuất xóa ở báo cáo kết phiên
+   Stage **từng file đã review** (không `git add <thư mục>` hay `-A`); không commit dữ liệu private. **Kỷ luật commit/push (chủ dự án chốt 26/11, cụ thể hoá 28/11):** trên nhánh riêng được tự do commit/push, nhưng khi đưa vào `main` **bắt buộc dùng `git merge --squash`** (không đổ commit sửa vặt từng vòng hay merge commit dư thừa lên `main`) và chỉ gộp theo mốc / cuối đợt hoàn chỉnh (tối đa **1–2 squash commit** rõ mục đích, tiêu đề thống nhất chuẩn cho cả đợt, không đẩy lặt vặt mỗi 15–20 phút). Nhánh xong việc: A đề xuất xóa ở báo cáo kết phiên
    (danh sách + còn gì chỉ nằm trên nhánh); nhánh hồ sơ gắn tag `hoso/<tên>` trước khi xóa; xóa khi User duyệt.
 7. **A tự thử kỹ thuật** trong `git worktree` riêng (`/tmp/hr_a_…`); việc A tự làm vẫn để phiên khác kiểm.
 7b. **Vòng tự soi:** `Session_Prompt.md` §7.
