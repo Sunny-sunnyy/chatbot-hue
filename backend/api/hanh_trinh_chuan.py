@@ -168,10 +168,12 @@ def chuan_hoa_lich(
         "an_toan": an_toan_sach,
     }
     itinerary_hash = hashlib.sha256(json.dumps(cot_loi, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()[:16]
+    lich_id = str(lich.get("lich_id") or "").strip() or None
 
     return {
         "schema_version": "1.0",
         "itinerary_hash": itinerary_hash,
+        **({"lich_id": lich_id} if lich_id else {}),
         "minh_hieu": minh_hieu,
         **cot_loi,
         "anh_manifest": {

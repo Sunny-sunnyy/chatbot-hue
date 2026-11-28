@@ -184,10 +184,13 @@ def ket_qua(
     ngay_muc_tieu = hom + dt.timedelta(days=int(ngay)) if ngay is not None else hom
 
     dong_du_bao = None
-    if ngay is not None and kq_du_bao is not None:
-        dong_du_bao, nguy_hiem = _tom_tat_ngay_du_bao(kq_du_bao, int(ngay))
+    if kq_du_bao is not None:
+        ngay_kiem = 0 if ngay is None else int(ngay)
+        dong_tom_tat, nguy_hiem = _tom_tat_ngay_du_bao(kq_du_bao, ngay_kiem)
         if nguy_hiem:
             return (), [], True
+        if ngay is not None:
+            dong_du_bao = dong_tom_tat
 
     chon = loc_diem(bang, bang_kc, tinh_huong, diem_goc, buoi, ngay_muc_tieu)
     if not chon:

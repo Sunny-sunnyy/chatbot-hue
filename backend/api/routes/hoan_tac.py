@@ -39,4 +39,4 @@ def hoan_tac(body: HoanTac, request: Request):
     store.append(cid, CAU_HOI, "", f"{GHI_CHU_SUA_DAU}{cau}]")
     lich, cau_muc = lich_tu_luu(luu, flags)
     # `lich`: đối tượng lịch như thẻ của một lượt lịch (không `thay_doi`, không `hoan_tac`, số nguồn của mục là null, không dòng dự báo); `cau_muc`: câu tả theo mã mục
-    return {"trang_thai": "da_hoan_tac", "cau": cau, "lich": lich, "cau_muc": cau_muc}
+    return {"trang_thai": "da_hoan_tac", "cau": cau, "lich": lich, "cau_muc": cau_muc, "an_toan": luu.get("an_toan")}

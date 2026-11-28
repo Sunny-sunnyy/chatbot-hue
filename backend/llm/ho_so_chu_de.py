@@ -104,11 +104,8 @@ def chia_muc_du_phong(so_bai: int) -> list[dict]:
     return [{"tieu_de": "", "bai": list(range(i, min(i + BAI_MOI_MUC, so_bai + 1)))} for i in range(1, so_bai + 1, BAI_MOI_MUC)]
 
 
-def kiem_dan_y(muc_model: list[dict], so_bai: int) -> list[dict]:
-    """Dàn ý model trả (`[{tieu_de, bai: [số 1…so_bai]}]`) ⇒ dàn ý đã qua luật của code: số lạ bị gỡ · một bài chỉ đứng ở mục ĐẦU TIÊN nêu nó · mục không còn
-    bài nào bị bỏ · bài không mục nào nêu ⇒ mục cuối `MUC_KHAC` (không bài nào của chủ đề bị lặng lẽ bỏ) · mục có hơn `BAI_MOI_MUC` bài bị TÁCH (mục sau
-    mang chữ "(tiếp)") — phiên đo dựng dàn ý xấu: một mục 40 bài là 80 đoạn trong một lời gọi · rỗng, hỏng, hoặc ra hơn `SO_MUC_TOI_DA` mục ⇒
-    `chia_muc_du_phong`."""
+def kiem_dan_y_co_co(muc_model: list[dict], so_bai: int) -> tuple[list[dict], bool]:
+    """Như `kiem_dan_y`, trả thêm cờ `dung_du_phong` (True khi rơi về `chia_muc_du_phong`)."""
     da, muc = set(), []
     for m in muc_model or ():
         bai = []
@@ -119,12 +116,22 @@ def kiem_dan_y(muc_model: list[dict], so_bai: int) -> list[dict]:
         if bai:
             muc.append({"tieu_de": " ".join(str(m.get("tieu_de") or "").split())[:90], "bai": bai})
     if not muc:
-        return chia_muc_du_phong(so_bai)
+        return chia_muc_du_phong(so_bai), True
     con = [n for n in range(1, so_bai + 1) if n not in da]
     if con:
         muc.append({"tieu_de": MUC_KHAC, "bai": con})
     tach = [{"tieu_de": m["tieu_de"] + (" (tiếp)" if i else ""), "bai": m["bai"][i:i + BAI_MOI_MUC]} for m in muc for i in range(0, len(m["bai"]), BAI_MOI_MUC)]
-    return tach if len(tach) <= SO_MUC_TOI_DA else chia_muc_du_phong(so_bai)
+    if len(tach) <= SO_MUC_TOI_DA:
+        return tach, False
+    return chia_muc_du_phong(so_bai), True
+
+
+def kiem_dan_y(muc_model: list[dict], so_bai: int) -> list[dict]:
+    """Dàn ý model trả (`[{tieu_de, bai: [số 1…so_bai]}]`) ⇒ dàn ý đã qua luật của code: số lạ bị gỡ · một bài chỉ đứng ở mục ĐẦU TIÊN nêu nó · mục không còn
+    bài nào bị bỏ · bài không mục nào nêu ⇒ mục cuối `MUC_KHAC` (không bài nào của chủ đề bị lặng lẽ bỏ) · mục có hơn `BAI_MOI_MUC` bài bị TÁCH (mục sau
+    mang chữ "(tiếp)") — phiên đo dựng dàn ý xấu: một mục 40 bài là 80 đoạn trong một lời gọi · rỗng, hỏng, hoặc ra hơn `SO_MUC_TOI_DA` mục ⇒
+    `chia_muc_du_phong`."""
+    return kiem_dan_y_co_co(muc_model, so_bai)[0]
 
 
 def so_doan_moi_bai(so_bai: int) -> int:
@@ -175,6 +182,30 @@ def dong_du_kien(bai: list, bang_the: "thn.Bang | None", tu_so: int) -> tuple[di
             so.append(nguon[-1]["id"])
         gach.append(f"{b.tieu_de} — " + "; ".join(x for x in (f"giờ mở cửa: {gio}" if gio else None, f"giá vé: {ve}" if ve else None) if x) + " " + "".join(f"[{n}]" for n in so))
     return ({"nhan": NHAN_DU_KIEN, "kieu": "gach", "chu": None, "gach": gach} if gach else None), nguon
+
+
+def bai_canh_bao_da_co(y: list[str], so_canh_bao: dict, bai_cua_so: dict[int, str]) -> set[str]:
+    """Tập `rel` của bài đã có ý cảnh báo an toàn do model viết.
+    Khi ý dẫn ít nhất một nguồn thuộc `so_canh_bao`, chỉ tính bài của đúng nguồn cảnh báo đó (không xoá cảnh báo bài B chỉ vì bài A trích kèm đoạn thường của bài B).
+    """
+    da_co: set[str] = set()
+    for dong in y:
+        if not st.la_y_canh_bao(dong, None):
+            continue
+        ids = [int(n) for n in re.findall(r"\[(\d+)\]", dong)]
+        cb_ids = [n for n in ids if n in so_canh_bao]
+        if cb_ids:
+            da_co.update(so_canh_bao[n][0].rel for n in cb_ids)
+            continue
+        rels = {bai_cua_so[n] for n in ids if n in bai_cua_so}
+        if len(rels) == 1:
+            da_co.update(rels)
+        elif len(rels) > 1:
+            dong_cf = dong.casefold()
+            for b, _ in so_canh_bao.values():
+                if b.rel in rels and b.tieu_de.casefold() in dong_cf:
+                    da_co.add(b.rel)
+    return da_co
 
 
 def muc_do(so_y: int) -> str:

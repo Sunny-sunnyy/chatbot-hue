@@ -679,7 +679,8 @@ class OpenAIFullCorpusGenerator:
         # `vong_cuoi` = (sổ lời gọi của lượt, trần vòng) khi cờ `vong_cuoi_chi_viet` bật. SDK hỏi `is_enabled` HAI lúc: khi gom công cụ cho lần gọi kế VÀ khi xử lý
         # lời xin công cụ của lần gọi vừa xong — hai lúc đó có cùng số lần gọi đã xong, nên không phân biệt được bằng bộ đếm (bản đầu: công cụ của lượt sát cuối
         # bị coi là "đã tắt" ngay khi model xin ⇒ lỗi). Mốc đúng là: công cụ của lượt sát cuối ĐÃ CHẠY XONG ⇒ `state["het_cong_cu"]` (đặt trong `bao`).
-        state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn, "het_cong_cu": False, "liet_ke_con_luot": getattr(liet_ke_fn, "con_luot", None)}
+        state = {"hit_max_turns": False, "con_luot_fn": con_luot_fn, "het_cong_cu": False, "liet_ke_con_luot": getattr(liet_ke_fn, "con_luot", None),
+                 "an_cong_cu": not (canh_bao_vong is not None or canh_bao_vong_con_lai)}
         # Đợt 4A (`canh_bao_vong_con_lai`): giữ nguyên danh sách `tools` cố định mọi vòng (không rút tool qua `is_enabled`) để bảo toàn KV-cache prefix.
         con_vong_fn = None if (vong_cuoi is None or canh_bao_vong is not None or canh_bao_vong_con_lai) else (lambda: not state["het_cong_cu"])
         state["con_vong_fn"] = con_vong_fn
@@ -844,15 +845,23 @@ class OpenAIFullCorpusGenerator:
     def xin_cong_cu_da_an(exc: BaseException | None, state: dict) -> bool:
         """Model xin `tim_kho` ở lượt công cụ đã ẩn vì hết lượt tìm ⇒ SDK ném `ModelBehaviorError` ("Tool tim_kho not found"; probe 12/11, cả đường
         thường lẫn stream). Đúng ca đó ⇒ đánh dấu lượt và trả True: nơi gọi không coi là lỗi, `_tools_result` trả câu từ chối cố định như nhánh chạm
-        `max_turns`. Lỗi hành vi model khác, hoặc công cụ chưa bị ẩn ⇒ False (vẫn là lỗi)."""
+        `max_turns`. Lỗi hành vi model khác (vd Invalid JSON khi tool đang bật), hoặc công cụ chưa bị ẩn ⇒ False (vẫn là lỗi)."""
+        if not isinstance(exc, ModelBehaviorError):
+            return False
+        msg = str(exc)
+        la_loi_an = msg.startswith("Tool ") and ("not found" in msg or "disabled" in msg)
+        if not la_loi_an:
+            return False
         con_vong_fn = state.get("con_vong_fn")
-        da_an = any(fn is not None and not fn() and ten in str(exc)  # `liet_ke_bai` cũng bị ẩn khi dùng đủ số lần (cờ `liet_ke_bai`)
-                    for fn, ten in ((state.get("con_luot_fn"), "tim_kho"), (state.get("liet_ke_con_luot"), "liet_ke_bai")))
-        if isinstance(exc, ModelBehaviorError) and da_an:
+        da_an = state.get("an_cong_cu", True) and any(
+            fn is not None and not fn() and ten in msg  # `liet_ke_bai` cũng bị ẩn khi dùng đủ số lần (cờ `liet_ke_bai`)
+            for fn, ten in ((state.get("con_luot_fn"), "tim_kho"), (state.get("liet_ke_con_luot"), "liet_ke_bai"))
+        )
+        if da_an:
             state["xin_cong_cu_da_an"] = True
             return True
         # vòng cuối chỉ viết: model vẫn xin một công cụ (bất kỳ) đã ẩn ở vòng cuối ⇒ như chạm trần vòng hôm nay (câu từ chối cố định), không thành lỗi
-        if isinstance(exc, ModelBehaviorError) and con_vong_fn is not None and not con_vong_fn() and str(exc).startswith("Tool "):  # "… not found" / "… is currently disabled"
+        if con_vong_fn is not None and not con_vong_fn():
             state["xin_cong_cu_da_an"] = True
             return True
         return False

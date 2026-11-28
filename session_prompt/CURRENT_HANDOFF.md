@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — nhật ký theo giờ của ngày
 
-Cập nhật: 18:17 28/11/2026 (phiên điều phối A — **KẾT PHIÊN SẠCH SAU ĐỢT 6 (`76f65ff3`, `64662130`) · ĐÃ NHẬN & TÁI HIỆN 0Đ REVIEW GPT 6.2 SOL (`KET_QUA_6_2_SOL.md`) · CHỐT 4 NGUYÊN TẮC ĐỢT 7 CHO PHIÊN MỚI NGỮ CẢNH SẠCH**). Sổ việc — việc đang mở, ai làm, quyết định đang chờ — là `session_prompt/VIEC_DANG_MO.md`; trang này KHÔNG chép bước kế.
+Cập nhật: 19:19 28/11/2026 (phiên điều phối A — **ĐÃ `--squash` NHỊP 1 ĐỢT 7 (`P0–P18` TRỪ `P5`, `0 USD`) · ĐANG CHẠY NHỊP 2 ĐỢT 7 (`@eval` ĐỢT 2A + `@verifier` 8 FILE QDRANT)**). Sổ việc — việc đang mở, ai làm, quyết định đang chờ — là `session_prompt/VIEC_DANG_MO.md`; trang này KHÔNG chép bước kế.
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 1. `AGENTS.md` (tự nạp) ⇒ `session_prompt/START_SESSION.md` ⇒ `session_prompt/HIEN_TRANG.md` (đủ) ⇒ `data/bo_nho_agent/MEMORY.md` (cây chính, ngoài git) ⇒ `session_prompt/VIEC_DANG_MO.md` khối đầu + mục tên mình ⇒ `session_prompt/sessions/STATUS_<X>.md`.
@@ -8,6 +8,9 @@ Cập nhật: 18:17 28/11/2026 (phiên điều phối A — **KẾT PHIÊN SẠC
 3. Nhật ký các ngày trước: `report_agent/<ngày>/TONG_HOP.md`; bản đầy đủ tới trưa 28/11: `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-28.md` (trước nữa: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-19.md` và `git show a8ca8758:session_prompt/CURRENT_HANDOFF.md`).
 
 ## Ghi trong ngày 28/11/2026 (cuối ngày dời sang `TONG_HOP.md` / `archive/`)
+- 19:19 28/11/2026 — HOÀN TẤT & `--squash` NHỊP 1 ĐỢT 7 (`P0–P18` TRỪ `P5`, `0 USD`) · MỞ NHỊP 2 (ĐỢT 2A):
+  - Khởi tạo `/swarm` (`builder`, `eval`, `verifier`, `monitor`), lập kế hoạch `KE_HOACH_DOT7.md` & `CHUAN_BI_NHIP2.md` (`0 USD`: kiểm `split.json`, probe `cit_cau.py`, probe Tesseract `p50=327ms` trên 76 ảnh, soạn ứng viên GPT-6 & 4 harness `--dry-run`).
+  - `@builder` vá Cụm 1 (`p24-b-dot7-cum1` @ `937cf377`, `b_dot7_cum1.md`); `@verifier` review 2 vòng đạt `ready_for_user_confirmation` (`e_review_dot7_cum1.md`, `65 passed` + `97 passed` + `npm run build` + Playwright `1536×695` cổng `8017`). Đã `git merge --squash p24-b-dot7-cum1` vào `main`, dựng lại `frontend/dist`, và mở Đợt 2A (`Mũi 2.2`, `Mũi 2.3`, `Cụm 3`) cho `@eval` + kiểm 8 file Qdrant hậu gộp cho `@verifier`.
 - 18:17 28/11/2026 — NHẬN & TÁI HIỆN 0Đ REVIEW `GPT 6.2 Sol` (`KET_QUA_6_2_SOL.md`) · KẾT PHIÊN SẠCH CHUẨN BỊ ĐỢT 7 Ở PHIÊN MỚI:
   - Tái hiện độc lập `0 USD` trên `76f65ff3` các điểm của `6.2 Sol`: `P0` (`vl_01` chặn `"sạt"` đứng lẻ), `P1` (`bao_lu_lan_dau=True` vẫn mở `goi_y_luu_tru`), `P2` (`mua_nang` bỏ ngưỡng `>= 100mm` khi `ngay=None`), `P4` (`goi_y_luu_tru` in `"Hạng: cao"` cho 1 sao), `P9` (`hau_kiem_slide_deck` bỏ sót `overview_summaries` & `day_number`), `P10` (trùng `UID` `.ics`), kiểm `/usr/bin/tesseract` sẵn có và kiểm toán 0đ token/cache/reasoning 19 vai `gpt-6-luna`.
   - Chốt 4 nguyên tắc của Hiếu (`18:15`) cho phiên mới ở `VIEC_DANG_MO.md` mục `A.1d`: chất lượng & ổn định trước tiền/tốc độ (caching không bắt buộc); `reasoning_effort` `medium`/`low` (KHÔNG `none`); bỏ/không đặt trần token đầu ra bóp model; tra web luôn gắn mốc hiện tại (`11/2026`) và đúng dòng `GPT-6`/`gpt-6-luna` (tránh tài liệu cũ `GPT-5`/`5.6`). Dọn nốt worker `/swarm`, Qdrant `:6335` bật `9.540` điểm, `0` cổng tạm/worktree.

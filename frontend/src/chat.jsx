@@ -68,7 +68,7 @@ function reducedMotion() {
 function newTurn(key, question, truong, summary, bieuMau, hienThi = null) {
   // lượt thường bắt đầu ở "đang hiểu câu hỏi" (định tuyến — B1); lượt biểu mẫu không định tuyến ⇒ "đang xếp lịch"
   return { key, question, phase: bieuMau ? "lich_trinh" : "routing", text: "", sources: null, numbers: null, nSources: null, notice: "", outcome: null,
-           error: "", clarify: null, truong, summary, bieuMau, hienThi, progress: [], lich: null, web: null, tuChoiKho: false, buoc: [] };
+           error: "", clarify: null, truong, summary, bieuMau, hienThi, progress: [], lich: null, luuTru: null, web: null, tuChoiKho: false, buoc: [] };
 }
 
 // Dòng ghi chú do server viết là chữ thường; riêng cụm "trang Lên kế hoạch" (cờ `len_lich_dan_trang`, `backend/llm/len_lich.py` `TEN_TRANG`) thành link
@@ -147,8 +147,15 @@ export function useChat() {
           } else if (name === "status") {
             // chỉ các nhãn đã biết; trạng thái lạ giữ nhãn "đã tìm" (B1 review C129 m-3); `n_sources` có ở `searched`
             const stage = data.stage in STATUS_TEXT ? data.stage : "searched";
-            update({ phase: stage, ...(data.n_sources != null && { nSources: data.n_sources }), buoc: themBuoc(stage, data.n_sources),
-                     ...(Array.isArray(data.bai) && { daTim: data.bai }) });  // tên các bài đã tìm thấy, cộng dồn — hiện trong lúc chờ (`song/Song.jsx`)
+            const reset = stage === "routing" && buoc.length > 0;
+            if (reset) { buoc.length = 0; progress.length = 0; }
+            update({
+              phase: stage,
+              ...(reset && { daTim: [], nSources: null, progress: [] }),
+              ...(data.n_sources != null && { nSources: data.n_sources }),
+              buoc: themBuoc(stage, data.n_sources),
+              ...(Array.isArray(data.bai) && { daTim: data.bai }),
+            });  // tên các bài đã tìm thấy, cộng dồn — hiện trong lúc chờ (`song/Song.jsx`)
           } else if (name === "delta") {
             // Chữ hiện dần: gom mảnh vào buffer, vẽ lại CẢ buffer tối đa một lần mỗi khung hình (yêu cầu 8); chỉ nối mảnh có `seq` mới (yêu cầu 4).
             if (data.seq <= lastSeqRef.current) return;
@@ -164,7 +171,13 @@ export function useChat() {
             // Sau khi kiểm, code đã gỡ một câu khỏi chữ model (ví dụ câu có con số không có nguồn) ⇒ thay CẢ ô chữ bằng bản cuối, không nối thêm.
             stopFrame();
             bufferRef.current = data.text;
-            update({ text: data.text });
+            if (!data.text) {
+              buoc.length = 0;
+              progress.length = 0;
+              update({ text: "", daTim: [], nSources: null, buoc: [], progress: [] });
+            } else {
+              update({ text: data.text });
+            }
           } else if (name === "sources") {
             // Chữ đã qua bộ kiểm trích dẫn: vẽ bản cuối rồi mới hiện dòng Nguồn (yêu cầu 9; cổng D1).
             stopFrame();
@@ -184,6 +197,8 @@ export function useChat() {
             update({ soDuPhong: data.so_cau_du_phong });
           } else if (name === "lich_trinh") {
             update({ lich: data });  // B5 D11 / D12: link bản đồ từng điểm + thẻ "Sửa" chọn sẵn (dữ liệu code)
+          } else if (name === "luu_tru") {
+            update({ luuTru: data });  // P11: dữ liệu lưu trú có kiểu + 3 link OTA + nhãn cứng do code dựng
           } else if (name === "web") {
             update({ web: data });  // B6 D6: chữ đã kiểm cuối + nguồn web (link do server dựng)
           } else if (name === "done") {
@@ -199,14 +214,14 @@ export function useChat() {
         // Server thấy ngắt ⇒ huỷ lần gọi model, không nhớ lượt này (`client_disconnected` ∉ REMEMBERED_OUTCOMES). Rời trang ⇒ không còn ai xem.
         if (stoppedRef.current === controller) {
           stopFrame();
-          update({ phase: "stopped", text: "", sources: null, numbers: null, notice: "", noticeAnToan: "", web: null, clarify: null, lich: null, progress: [],
+          update({ phase: "stopped", text: "", sources: null, numbers: null, notice: "", noticeAnToan: "", web: null, clarify: null, lich: null, luuTru: null, progress: [],
                    lichV2: null, cauV2: null });
         }
         return true;
       }
       // D3: kiểm cuối hỏng (rút lại) hoặc lỗi / đứt giữa chừng (xoá hết) — xoá chữ + nguồn đã hiện, hiện lời báo + "Thử lại" (yêu cầu 10, 11).
       stopFrame();
-      update({ phase: "error", text: "", sources: null, numbers: null, notice: "", noticeAnToan: "", web: null, error: failure.message, lichV2: null, cauV2: null });
+      update({ phase: "error", text: "", sources: null, numbers: null, notice: "", noticeAnToan: "", web: null, luuTru: null, error: failure.message, lichV2: null, cauV2: null });
     }
     return true;
   }
@@ -253,7 +268,7 @@ export function useChat() {
       if (!r.ok || du?.trang_thai !== "da_hoan_tac" || !du.lich) return { ok: false, cau: du?.error?.message || "Chưa hoàn tác được — thử lại sau." };
       const key = ++keyRef.current;
       setTurns(all => [...all, { ...newTurn(key, "Hoàn tác lần sửa lịch vừa rồi", null, "", false), phase: "done", text: du.cau, sources: [], numbers: new Map(),
-                                 lichV2: { ...du.lich, thay_doi: [{ cau: du.cau, duoc: true }] }, cauV2: du.cau_muc || {} }]);
+                                 noticeAnToan: du.an_toan || "", lichV2: { ...du.lich, thay_doi: [{ cau: du.cau, duoc: true }] }, cauV2: du.cau_muc || {} }]);
       return { ok: true };
     } catch {
       return { ok: false, cau: "Chưa hoàn tác được — kiểm tra mạng rồi thử lại." };
@@ -430,7 +445,7 @@ const ICON_GHI_CHU = (  // chữ "i" trong vòng tròn, đứng trước ghi ch�
 function Turn({ turn, turnRef, onRetry, onAsk, onEditPlan, gon, laCuoi = false, truongGoc = null }) {
   const chuHien = useMemo(() => moDauWeb(turn.text, turn.web), [turn.text, turn.web]);
   const html = useMemo(() => renderAnswerHtml(chuHien), [chuHien]);
-  const coBongBong = Boolean(chuHien || turn.notice || turn.noticeAnToan || turn.hienThi?.doan || (turn.sources?.length > 0));
+  const coBongBong = Boolean(chuHien || turn.notice || turn.noticeAnToan || turn.hienThi?.doan || (turn.sources?.length > 0) || (turn.luuTru?.co_so?.length > 0));
   const pending = PENDING.has(turn.phase);
   const answerRef = useRef(null);  // việc nhỏ (1): chữ lịch đúng như đang hiện (đã qua DOMPurify) cho nút sao chép / tải
   useEffect(() => { trangTriTraLoi(answerRef.current); }, [html]);  // chỉ lớp nhìn: khối "chưa có" + con số giá / giờ (chữ không đổi)
@@ -645,28 +660,36 @@ function useCoSo(can) {
 const ANH_KS = "/anh/khach_san/";
 const anhKsHopLe = a => typeof a === "string" && a.startsWith(ANH_KS) && a.endsWith(".jpg") && !a.includes("..");
 function TheKhachSan({ turn }) {
-  const coLuuTru = turn.phase === "done" && Array.isArray(turn.sources) && turn.sources.some(s => typeof s.bai_id === "string" && s.bai_id.startsWith("travel/services/"));
+  const tuDuLieu = Array.isArray(turn.luuTru?.co_so) && turn.luuTru.co_so.length > 0;
+  const coLuuTru = !tuDuLieu && turn.phase === "done" && Array.isArray(turn.sources) && turn.sources.some(s => typeof s.bai_id === "string" && s.bai_id.startsWith("travel/services/"));
   const coSo = useCoSo(coLuuTru);
-  const ds = coSo ? theKhachSan(turn, coSo) : [];
+  const ds = tuDuLieu ? theKhachSan(turn, []) : (coSo ? theKhachSan(turn, coSo) : []);
   if (!ds.length) return null;
+  const ghiChuNoiHang = tuDuLieu && turn.luuTru?.da_noi_hang ? turn.luuTru.ghi_chu_noi_hang : null;
+  const nhanCu = (tuDuLieu && turn.luuTru?.nhan) || "Theo danh mục, chưa kiểm giá / phòng trống.";
   return (
     <div className="the-ks-hang" aria-label="Chỗ ở được nhắc">
-      {ds.map(c => (
-        <div key={`${c.ten}|${c.dia_chi}`} className="the-ks">
-          {anhKsHopLe(c.anh) ? <img src={`${import.meta.env.BASE_URL}${c.anh.slice(1)}`} alt={c.ten} loading="lazy" decoding="async" />
-            : <span className="the-ks-khong-anh" aria-hidden="true" />}
-          <span className="the-ks-ten">{c.ten}</span> <small>{c.xep_hang}</small>
-          <span className="the-ks-link">
-            {typeof c.map_url === "string" && c.map_url.startsWith(MAP_PREFIX) && <a href={c.map_url} target="_blank" rel="noopener noreferrer">Bản đồ</a>}
-            {c.deep_links
-              ? [["booking", "Booking"], ["agoda", "Agoda"], ["traveloka", "Traveloka"]].map(([k, nhan]) => (
-                  linkPhongHopLe(c.deep_links[k]) && <a key={k} href={c.deep_links[k]} target="_blank" rel="noopener noreferrer">{nhan}</a>
-                ))
-              : linkPhongHopLe(c.link) && <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
-          </span>
-        </div>
-      ))}
-      <p className="the-ks-nhan">Theo danh mục, chưa kiểm giá / phòng trống.</p>
+      {ds.map(c => {
+        const ota = c.links || c.deep_links;
+        return (
+          <div key={`${c.ten}|${c.dia_chi}`} className="the-ks">
+            {anhKsHopLe(c.anh) ? <img src={`${import.meta.env.BASE_URL}${c.anh.slice(1)}`} alt={c.ten} loading="lazy" decoding="async" />
+              : <span className="the-ks-khong-anh" aria-hidden="true" />}
+            <span className="the-ks-ten">{c.ten}</span> <small>{c.xep_hang}</small>
+            {(c.dia_chi || c.vi_tri) && <span className="text-sm text-muted basis-full">{[c.dia_chi, c.vi_tri].filter(Boolean).join(" · ")}</span>}
+            <span className="the-ks-link">
+              {typeof c.map_url === "string" && c.map_url.startsWith(MAP_PREFIX) && <a href={c.map_url} target="_blank" rel="noopener noreferrer">Bản đồ</a>}
+              {ota
+                ? [["booking", "Booking"], ["agoda", "Agoda"], ["traveloka", "Traveloka"]].map(([k, nhan]) => (
+                    linkPhongHopLe(ota[k]) && <a key={k} href={ota[k]} target="_blank" rel="noopener noreferrer">{nhan}</a>
+                  ))
+                : linkPhongHopLe(c.link) && <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
+            </span>
+          </div>
+        );
+      })}
+      {ghiChuNoiHang && <p className="the-ks-nhan">{ghiChuNoiHang}</p>}
+      <p className="the-ks-nhan">{nhanCu}</p>
     </div>
   );
 }

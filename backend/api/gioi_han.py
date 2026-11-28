@@ -87,6 +87,13 @@ class ChanLuot:
             method, path = scope["method"], scope["path"]
             tai_file = method == "GET" and path == DUONG_TAI_FILE
             trong_so = TRONG_SO_DUONG.get(path) if method == "POST" else None
+            if method == "POST" and path == DUONG_TAI_FILE:
+                flags = getattr(getattr(scope.get("app"), "state", None), "assistant_flags", None)
+                if flags is not None and (
+                    not getattr(flags, "slide_designer", False)
+                    or not bool((getattr(flags, "slide_designer_cfg", None) or {}).get("use_llm", False))
+                ):
+                    trong_so = None
             if tai_file or trong_so is not None:
                 loi = self.gioi_han.chan(
                     (scope.get("client") or ("khong_ro", 0))[0],

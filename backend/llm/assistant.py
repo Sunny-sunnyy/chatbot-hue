@@ -1238,7 +1238,7 @@ def mua_nang_for_turn(trace: AnswerTrace, query: str, bang: "lt2.BangV2", bang_k
             entry["het_luot"] = True
             return "Trạng thái: đã dùng hết lượt của công cụ gợi ý mưa/nắng trong câu — hãy viết câu trả lời từ Bằng chứng đã có."
         ctx = trace.thoi_tiet_ctx or {}
-        if tt.la_luot_bao_lu(query, trace.history) or ctx.get("bao_lu") or ctx.get("bao_lu_model"):
+        if _la_luot_nguy_hiem_bao_lu(query, trace):
             trace.thoi_tiet_ctx = {**ctx, "bao_lu": True, "bao_lu_model": True}
             entry["bao_lu"] = True
             return mn.CAU_CHAN_BAO_LU
@@ -1435,7 +1435,7 @@ def goi_y_luu_tru_for_turn(trace: AnswerTrace, bang_luu_tru: dict, bang: "lt2.Ba
             ngay_tra: ngày trả phòng (YYYY-MM-DD hoặc DD/MM/YYYY, nếu có).
             so_khach: số khách lưu trú (mặc định 2).
         """
-        if bool((trace.thoi_tiet_ctx or {}).get("bao_lu")) or (query and tt.la_luot_bao_lu(query, trace.history)):
+        if _la_luot_nguy_hiem_bao_lu(query, trace):
             trace.tools.append({"name": "goi_y_luu_tru", "ms": 0.0, "chan_bao_lu": True})
             return (
                 "Trạng thái: lượt này đang hỏi về bão/lũ hoặc ngập lụt — không dùng gợi ý lưu trú lúc này; "
@@ -1459,7 +1459,7 @@ def goi_y_luu_tru_for_turn(trace: AnswerTrace, bang_luu_tru: dict, bang: "lt2.Ba
             entry["het_luot"] = True
             return "Trạng thái: đã tra gợi ý lưu trú ở các lần gọi trước trong lượt này; hãy viết câu trả lời từ Bằng chứng đã có."
         started = time.perf_counter()
-        text_out, n = gylt.ket_qua(
+        text_out, du_lieu = gylt.ket_qua_co_kieu(
             bang_luu_tru,
             bang,
             khu=khu,
@@ -1469,9 +1469,10 @@ def goi_y_luu_tru_for_turn(trace: AnswerTrace, bang_luu_tru: dict, bang: "lt2.Ba
             ngay_tra=ngay_tra,
             so_khach=so_khach,
         )
+        n = len(du_lieu["co_so"])
         entry["ms"] = elapsed_ms(started)
         entry["n_ket_qua"] = n
-        trace.goi_y_luu_tru = (trace.goi_y_luu_tru or []) + [{"khu": khu, "gan_diem": gan_diem, "hang_sao": hang_sao, "n": n}]
+        trace.goi_y_luu_tru = (trace.goi_y_luu_tru or []) + [{"khu": khu, "gan_diem": gan_diem, "hang_sao": hang_sao, "n": n, "du_lieu": du_lieu}]
         src = PackedSource(
             id=len(trace.so_nguon) + 1,
             title=gylt.TIEU_DE_NGUON,
@@ -1588,6 +1589,17 @@ def _can_dau_bao_lu(trace: AnswerTrace) -> bool:
     return bool(ctx.get("bao_lu_cong_cu") and ctx.get("bao_lu_cau")) and trace.thoi_tiet is None and trace.lich is None
 
 
+def _la_luot_nguy_hiem_bao_lu(query: str, trace: AnswerTrace) -> bool:
+    """Phép xét nguy hiểm bão/lũ dùng chung cho chặn tool lưu trú/mưa nắng và hậu kiểm lượt."""
+    ctx = trace.thoi_tiet_ctx or {}
+    return bool(
+        (query and tt.la_luot_bao_lu(query, trace.history))
+        or trace.bao_lu_lan_dau
+        or ctx.get("bao_lu")
+        or ctx.get("bao_lu_model")
+    )
+
+
 def _thoi_tiet_cuoi(trace: AnswerTrace) -> None:
     """B5b, sau lần sinh và sau phép kiểm số (`_so_la` — D8), cờ bật, mọi câu tuyến `tro_ly_hue`: code nối khối số liệu (hoặc câu lỗi) · câu bão / lũ
     (D6) · câu "chỉ có dự báo 7 ngày" (D3)."""
@@ -1602,7 +1614,7 @@ def _thoi_tiet_cuoi(trace: AnswerTrace) -> None:
     noi = []
     if tool is not None:
         noi.append(tool["khoi"] or tt.CAU_LOI)
-    if ctx.get("bao_lu"):
+    if ctx.get("bao_lu") or ctx.get("bao_lu_model") or trace.bao_lu_lan_dau:
         noi.append(tt.CAU_BAO_LU)
     if ctx.get("ngoai_7") and ctx.get("tu_khoa"):
         noi.append(tt.CAU_NGOAI_7_NGAY)
@@ -1749,7 +1761,8 @@ def _dat_tu_choi_max_turns(trace: AnswerTrace, flags: AssistantFlags | None) -> 
     _set_fixed(trace, INSUFFICIENT_ANSWER, "max_turns")
     trace.thoi_tiet_noi = None
     trace.thoi_tiet_dau = None
-    if flags is not None and flags.thoi_tiet and (trace.thoi_tiet_ctx or {}).get("bao_lu"):
+    ctx = trace.thoi_tiet_ctx or {}
+    if flags is not None and flags.thoi_tiet and (ctx.get("bao_lu") or ctx.get("bao_lu_model") or trace.bao_lu_lan_dau):
         # review tích hợp 18/11 #1: lượt bão / lũ chạm trần lượt trả về TRƯỚC `_thoi_tiet_cuoi`, cổng web cũng đóng ⇒ câu 112 phải đi cùng
         trace.thoi_tiet_noi = tt.CAU_BAO_LU
         trace.answer = f"{trace.answer}\n\n{tt.CAU_BAO_LU}"
@@ -2078,6 +2091,53 @@ def kiem_so_sau_khi_viet(trace: AnswerTrace, text: str, flags: AssistantFlags | 
         _vet_go_so_la(trace, text)
 
 
+_CO_PHONG_LUU_TRU = re.compile(
+    r"\b(?:còn\s+(?:\d+\s+)?phòng(?:\s+trống)?|hết\s+phòng|đã\s+hết\s+phòng|phòng\s+còn\s+trống|còn\s+chỗ\s+trống|đảm\s+bảo\s+còn\s+phòng)\b",
+    re.IGNORECASE,
+)
+_PHU_DINH_PHONG = re.compile(
+    r"(?:chưa\s+kiểm(?:\s+tra)?|không\s+(?:có\s+thông\s+tin|kiểm\s+tra(?:\s+được)?|rõ)|chưa\s+rõ|tự\s+kiểm\s+tra|kiểm\s+tra\s+(?:trực\s+tiếp|lại|trên))[^.!?\n]{0,40}$",
+    re.IGNORECASE,
+)
+_GIA_TIEN_LUU_TRU = re.compile(r"(\d[\d.,]*)\s*(?:đồng|vnd|vnđ|k\b|triệu|tr\b|usd|\$|đ(?:/|\b))", re.IGNORECASE)
+
+
+def _kiem_tra_luu_tru(trace: AnswerTrace, text: str) -> None:
+    """Hậu kiểm lượt dùng `goi_y_luu_tru`: chặn bịa giá phòng hoặc tình trạng còn phòng kể cả khi model gắn mã `[1]`."""
+    if not trace.goi_y_luu_tru or trace.citation_error is not None:
+        return
+    t = unicodedata.normalize("NFC", text or "")
+    for m in _CO_PHONG_LUU_TRU.finditer(t):
+        if not _PHU_DINH_PHONG.search(t[:m.start()]):
+            trace.citation_error = CitationIntegrityError("lodging availability without source")
+            return
+    nguon_kb = " ".join(
+        e for src in (trace.cited or ()) if src.source != gylt.NGUON_SOURCE for e in src.excerpts
+    )
+    so_tien_kb = {re.sub(r"[.,]", "", g.group(1)) for g in _GIA_TIEN_LUU_TRU.finditer(nguon_kb)}
+    for g in _GIA_TIEN_LUU_TRU.finditer(t):
+        if re.sub(r"[.,]", "", g.group(1)) not in so_tien_kb:
+            trace.citation_error = CitationIntegrityError("lodging price without source")
+            return
+
+
+def luu_tru_cho_giao_dien(trace: AnswerTrace) -> dict | None:
+    """Dữ liệu lưu trú có kiểu (`goi_y_luu_tru`) để UI tự dựng thẻ + 3 link OTA + nhãn cứng không phụ thuộc chữ model."""
+    if (
+        not trace.goi_y_luu_tru
+        or trace.citation_error is not None
+        or trace.fixed_outcome is not None
+        or trace.lich is not None
+        or trace.lich_v2 is not None
+    ):
+        return None
+    for item in reversed(trace.goi_y_luu_tru):
+        du_lieu = item.get("du_lieu") if isinstance(item, dict) else None
+        if isinstance(du_lieu, dict) and du_lieu.get("co_so"):
+            return du_lieu
+    return None
+
+
 def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None, query: str = "") -> None:
     """Sau lần sinh: dừng ở thẻ hỏi lại (B5 D15) ⇒ lượt hỏi lại (không chữ, không kiểm citation); chạm `max_turns` (cờ generator, B2 D5) ⇒ câu
     từ chối cố định `max_turns`; lượt có lịch ⇒ ghép dòng "Mình hiểu" + chữ model + khối ghi chú (D12, D4b) rồi kiểm citation + kiểm cuối (D8);
@@ -2114,7 +2174,16 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None, q
         trace.lich_kiem = loi
     if loi and trace.citation_error is None:  # D8: hỏng ⇒ xử như citation hỏng hôm nay (rút lại + lời báo + "Thử lại")
         trace.citation_error = CitationIntegrityError("itinerary check failed: " + ",".join(loi))
+    if trace.goi_y_luu_tru and _la_luot_nguy_hiem_bao_lu(query, trace):
+        # P1: model gọi `goi_y_luu_tru` trước khi gọi `thoi_tiet("bao_lu")` trong cùng một lượt ⇒ xoá gợi ý lưu trú, xoá NGUON_SOURCE và giữ cảnh báo bão/lũ
+        trace.goi_y_luu_tru = None
+        trace.so_nguon = [s for s in trace.so_nguon if s.source != gylt.NGUON_SOURCE]
+        trace.cited = tuple(s for s in (trace.cited or ()) if s.source != gylt.NGUON_SOURCE)
+        text = trace.answer = tt.CAU_DAN_BAO_LU
+        trace.citation_error = None
+        trace.vet["p1_xoa_luu_tru"] = True
     kiem_so_sau_khi_viet(trace, text, flags, query)
+    _kiem_tra_luu_tru(trace, text)
     if flags is not None and flags.thoi_tiet:
         _thoi_tiet_cuoi(trace)
 
@@ -2215,7 +2284,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
                                                  in_gio=flags.gan_diem_gio, **lap_kw)
     if flags.liet_ke_bai and flags.muc_luc is not None:  # cờ tắt ⇒ không truyền, danh sách công cụ như cũ
         extra["liet_ke_fn"] = liet_ke_for_turn(trace, flags.muc_luc, **lap_kw)
-    if flags.goi_y_mua_nang and flags.bang_lich_v2 is not None and not tt.la_luot_bao_lu(query, trace.history) and (luon or mn.co_tu_khoa_luot(query, trace.history)):
+    if flags.goi_y_mua_nang and flags.bang_lich_v2 is not None and not _la_luot_nguy_hiem_bao_lu(query, trace) and (luon or mn.co_tu_khoa_luot(query, trace.history)):
         mn_kw = {**lap_kw, **({"toi_uu": True} if flags.toi_uu_dot2_va_viet_lai else {})}
         extra["mua_nang_fn"] = mua_nang_for_turn(trace, query, flags.bang_lich_v2, flags.khoang_cach_bang, flags.du_bao,
                                                  bai_theo_rel, **mn_kw)
@@ -2226,7 +2295,7 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
     if flags.tinh_ve_tham_quan:
         tv_kw = {**lap_kw, **({"toi_uu": True} if flags.toi_uu_dot2_va_viet_lai else {})}
         extra["tinh_ve_fn"] = tinh_ve_for_turn(trace, flags.bang_lich_v2, flags.the_noi_bang, bai_theo_rel, **tv_kw)
-    if flags.goi_y_luu_tru and flags.luu_tru_bang is not None and not tt.la_luot_bao_lu(query, trace.history):
+    if flags.goi_y_luu_tru and flags.luu_tru_bang is not None and not _la_luot_nguy_hiem_bao_lu(query, trace):
         lt_kw = {**lap_kw, **({"toi_uu": True} if flags.toi_uu_dot2_va_viet_lai else {})}
         extra["goi_y_luu_tru_fn"] = goi_y_luu_tru_for_turn(trace, flags.luu_tru_bang, flags.bang_lich_v2, query=query, **lt_kw)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
@@ -2759,9 +2828,10 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 if trace.answer and not da_phat_viet_lai:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer
                 return
-            if cho_kiem and trace.citation_error is None:  # chữ đã gom qua phép kiểm ⇒ phát bằng đúng đường của một mảnh chữ; bị rút ⇒ không phát
+            if (cho_kiem or (cho_kiem is not None and trace.vet.get("p1_xoa_luu_tru"))) and trace.citation_error is None:  # chữ đã gom qua phép kiểm ⇒ phát bằng đúng đường của một mảnh chữ; bị rút ⇒ không phát
                 # soát khác hãng 22/11 (A1): phép kiểm số đã gỡ câu có số lạ ⇒ phát chữ ĐÃ gỡ (chữ model của `trace.answer`), không phát chữ gốc đã gom
-                text = chu_phat(cho_kiem if trace.kiem_so_go is None else chu_cua_model(trace))
+                thay = trace.kiem_so_go is not None or bool(trace.vet.get("p1_xoa_luu_tru"))
+                text = chu_phat(chu_cua_model(trace) if thay else cho_kiem)
                 if text is not None:
                     yield "delta", text
             if giu_chu:  # chữ giữ lại đến hết = câu từ chối (đã thay) hoặc một khúc đầu của nó

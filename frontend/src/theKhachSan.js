@@ -32,7 +32,11 @@ export function phangCoSo(choO) {  // `/api/cho_o` ⇒ danh sách cơ sở phẳ
 
 export function theKhachSan(turn, coSo) {
   if (!turn || turn.phase !== "done" || turn.outcome !== "success" || turn.tuChoiKho || turn.web || turn.lich || turn.lichV2
-      || turn.clarify || turn.suaThe || !Array.isArray(turn.sources) || !Array.isArray(coSo) || coSo.length === 0) return [];
+      || turn.clarify || turn.suaThe) return [];
+  if (Array.isArray(turn.luuTru?.co_so) && turn.luuTru.co_so.length > 0) {
+    return turn.luuTru.co_so.slice(0, 5);
+  }
+  if (!Array.isArray(turn.sources) || !Array.isArray(coSo) || coSo.length === 0) return [];
   if (!turn.sources.some(s => typeof s.bai_id === "string" && s.bai_id.startsWith(BAI_LUU_TRU))) return [];
   const chu = String(turn.text || "").normalize("NFC");
   const khop = [];
