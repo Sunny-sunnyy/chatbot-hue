@@ -135,6 +135,23 @@ _DAU_HIEU_THOI_TIET_NGUY_HIEM = re.compile(
     r"weather|rain|storm|forecast|flood)\b",
     re.IGNORECASE,
 )
+_SAT_DIA_HINH = re.compile(
+    r"\b(?:đường|đèo|đồi|núi|đất|bờ|dốc|vách|sông|suối|hầm|cầu|bị)\b[^.?!\n]{0,35}\bsạt\b"
+    r"|\bsạt\s*(?:lở|đất|đường|đèo|bờ|dốc|núi|đồi)\b",
+    re.IGNORECASE,
+)
+_BO_AN_TOAN_GUI_XE = re.compile(
+    r"(?:\ban\s*to[aà]n\b[^.?!,\n]{0,25}\b(?:gửi|giữ|đậu|đỗ)\s*xe\b|\b(?:gửi|giữ|đậu|đỗ)\s*xe\b[^.?!,\n]{0,35}\ban\s*to[aà]n\b)",
+    re.IGNORECASE,
+)
+
+
+def _co_dau_hieu_chu(text: str | None) -> bool:
+    t = _nfc(text or "")
+    if _SAT_DIA_HINH.search(t):
+        return True
+    t_loc = _BO_AN_TOAN_GUI_XE.sub(" ", t)
+    return bool(_DAU_HIEU_THOI_TIET_NGUY_HIEM.search(t_loc))
 
 
 def co_dau_hieu_thoi_tiet_hoac_nguy_hiem(query: str, history=()) -> bool:
@@ -143,9 +160,9 @@ def co_dau_hieu_thoi_tiet_hoac_nguy_hiem(query: str, history=()) -> bool:
     """
     if co_tu_khoa_luot_rong(query, history):
         return True
-    if _DAU_HIEU_THOI_TIET_NGUY_HIEM.search(_nfc(query or "")):
+    if _co_dau_hieu_chu(query):
         return True
-    return bool(history and _DAU_HIEU_THOI_TIET_NGUY_HIEM.search(_nfc(history[-1][0] or "")))
+    return bool(history and _co_dau_hieu_chu(history[-1][0]))
 
 
 def la_luot_bao_lu(query: str, history) -> bool:

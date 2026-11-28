@@ -38,7 +38,7 @@ from llm.hoi_lai import TruongInput, co_gia_tri_moi, doi_sang_moi, ghep_cau, ghe
 from api.conversations import TTL_SECONDS, dap_duoc_nho, ghi_chu_sua_lich
 from api.cache_tra_loi import BanLuu, luot_luu_duoc
 from llm.assistant import (AnswerTrace, AssistantFlags, answer_turn, answer_turn_stream_parallel, chu_cua_model, co_y_thieu, loi_bao_luoi_cuoi, luoi_cuoi_bao, elapsed_ms,
-                           lich_cho_giao_dien, so_y_thieu, turn_usd)
+                           lich_cho_giao_dien, luu_tru_cho_giao_dien, so_y_thieu, turn_usd)
 
 logger = logging.getLogger("chat")
 router = APIRouter()
@@ -156,6 +156,7 @@ class ChatResponse(BaseModel):
     turn_id: str | None = None  # B142: mã lượt cho 👍 / 👎 (`api/feedback.py`)
     clarify: dict | None = None  # B4 D8: thẻ hỏi lại (trường + lựa chọn do code dựng)
     lich_trinh: dict | None = None  # B5 D11 / D12: link bản đồ từng điểm + thẻ "Sửa" chọn sẵn (dữ liệu code, không chữ model)
+    luu_tru: dict | None = None  # Đợt 7 (P11): dữ liệu lưu trú có kiểu + 3 link OTA + nhãn cứng do code dựng
     web: dict | None = None  # B6 D6: mục "Từ web (chưa kiểm)" — chữ đã qua kiểm cuối + nguồn web (link do code); sau câu từ chối của kho
 
 
@@ -440,7 +441,8 @@ async def _answer(body: ChatRequest, request: Request, metrics: dict, vet: dict)
         _luu_cache(kho_cache, query, trace, metrics, _flags(state).web_chi_khi_tu_choi)
     return ChatResponse(answer=normalize_citations(trace.answer), sources=_source_responses(trace.cited, _bai_ids(state)), notice=trace.notice,
                         turn_id=_new_turn_id(request, trace, "success"),
-                        lich_trinh=lich_cho_giao_dien(trace, _flags(state), trace.search_query or query), web=_web_payload(trace)), conversation_id
+                        lich_trinh=lich_cho_giao_dien(trace, _flags(state), trace.search_query or query),
+                        luu_tru=luu_tru_cho_giao_dien(trace), web=_web_payload(trace)), conversation_id
 
 
 def _bieu_mau_off() -> JSONResponse:
@@ -532,7 +534,7 @@ def _thoi_tiet_metrics(trace: AnswerTrace) -> dict | None:
 
 _LOAI_LOI_KIEM = (("Grounded answer has no citation", "khong_trich_dan"), ("Fallback answer must not contain citations", "tu_choi_kem_trich_dan"),
                   ("Unknown citation IDs", "ma_nguon_la"), ("itinerary check failed", "kiem_lich"), ("weather numbers without source", "so_thoi_tiet"),
-                  ("distance numbers without source", "so_khoang_cach"))
+                  ("distance numbers without source", "so_khoang_cach"), ("lodging ", "gia_phong_luu_tru"))
 
 
 def loai_loi_kiem(exc: Exception | None) -> str | None:
@@ -759,16 +761,16 @@ class StreamEvents:
         # Soát khác hãng 20/11: khối đầu là một `{"answer":"…"}` NGẮN đã đóng, chữ cuối dài hơn ⇒ người dùng chỉ thấy khúc đầu (phần thiếu có thể là câu
         # cảnh báo của nguồn). Chữ đã phát là TIỀN TỐ của chữ cuối ⇒ phát nốt phần đuôi; không phải tiền tố ⇒ từ 21/11/2026 gửi `thay_chu` mang cả chữ
         # cuối (trước đó: không gửi gì, người dùng giữ bản đã hiện — 0 / 303 lượt thật 19–21/11 rơi vào đây; nay code có đường gỡ câu sau khi kiểm).
-        da_phat = "".join(self.shown).strip()
+        da_phat_raw = "".join(self.shown)
         if trace.citation_error is not None or not final.strip():
             bu = []
-        elif not da_phat:  # chưa phát mảnh nào, HOẶC mới phát toàn khoảng trắng (soát đợt sửa 20/11: khối đầu `{"answer":" "}` ⇒ ô trả lời trống mà lượt "success")
+        elif not da_phat_raw.strip():  # chưa phát mảnh nào, HOẶC mới phát toàn khoảng trắng (soát đợt sửa 20/11: khối đầu `{"answer":" "}` ⇒ ô trả lời trống mà lượt "success")
             bu = [self.delta(final)]
-        elif final.startswith(da_phat):
-            bu = [self.delta(final[len(da_phat):])] if len(final) > len(da_phat) else []
+        elif final.startswith(da_phat_raw):
+            bu = [self.delta(final[len(da_phat_raw):])] if len(final) > len(da_phat_raw) else []
         else:
             bu = [self.thay_chu(final)]
-        self.metrics["delta_matches_final"] = "".join(self.shown).strip() == final
+        self.metrics["delta_matches_final"] = "".join(self.shown).strip() == final.strip()
         if trace.citation_error is not None:
             logger.error("Citation integrity failed")
             self.metrics["outcome"] = "retracted"
@@ -782,6 +784,9 @@ class StreamEvents:
             lich = None if self.lich is None else self.lich()
             if lich is not None:  # B5 D11 / D12: dữ liệu có cấu trúc, sau `sources` (chỉ khi lịch qua kiểm)
                 events.append(sse_event("lich_trinh", lich))
+            luu_tru = luu_tru_cho_giao_dien(trace)
+            if luu_tru is not None:
+                events.append(sse_event("luu_tru", luu_tru))
             events += self._web(trace)
         return events + [self.done(answered=trace.citation_error is None)]
 

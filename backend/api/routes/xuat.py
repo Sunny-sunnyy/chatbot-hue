@@ -35,6 +35,8 @@ def lich_tu_luu(luu: dict, flags) -> tuple[dict, dict]:
     bang, khung = flags.bang_lich_v2, luu["khung"]
     lich = lt2.dung_lich(bang, khung, {}, luu["ngay_di"], (), flags.toa_do_lich if flags.ban_do_lich else None,
                          flags.anh_lich_bang if flags.anh_lich else None)
+    if luu.get("lich_id"):
+        lich["lich_id"] = luu["lich_id"]
     gan_o_an(lich, bang, khung, flags)
     da_kiem = luu.get("cau") or {}
     return lich, {m["id_muc"]: da_kiem[m["id_diem"]] for m in lt2.moi_muc(lich) if m.get("id_diem") in da_kiem}
@@ -56,7 +58,11 @@ async def _tao_pptx_v2(request: Request, luu: dict, flags, *, theme_id: str | No
     lich, cau = lich_tu_luu(luu, flags)
     canonical = chuan_hoa_lich(lich, cau, an_toan=luu.get("an_toan"), thu_muc_anh=THU_MUC_ANH)
     theme = theme_id if theme_id in ALLOWED_THEMES else chon_theme_mac_dinh(canonical.get("tham_so"))
-    deck = store.lay_slide_cache(cookie, canonical["itinerary_hash"], theme) if hasattr(store, "lay_slide_cache") else None
+    deck = (
+        store.lay_slide_cache(cookie, canonical["itinerary_hash"], theme)
+        if (effective_use_llm and hasattr(store, "lay_slide_cache"))
+        else None
+    )
     if deck is None:
         client = getattr(getattr(state, "generator", None), "client", None)
         res = await thiet_ke_slide(
@@ -67,9 +73,11 @@ async def _tao_pptx_v2(request: Request, luu: dict, flags, *, theme_id: str | No
             use_llm=effective_use_llm,
         )
         deck = res.deck_plan
-        if effective_use_llm and hasattr(store, "luu_slide_cache") and deck is not None:
+        slide_source = "ai" if res.used_llm else "code"
+        if res.used_llm and hasattr(store, "luu_slide_cache") and deck is not None:
             store.luu_slide_cache(cookie, canonical["itinerary_hash"], theme, deck)
     else:
+        slide_source = "cache_ai"
         layouts_cached = list(dict.fromkeys(s.get("layout_id", "") for s in (deck or {}).get("slides", []) if s.get("layout_id")))
         logger.info(
             "slide_designer %s",
@@ -99,6 +107,7 @@ async def _tao_pptx_v2(request: Request, luu: dict, flags, *, theme_id: str | No
             "Content-Disposition": 'attachment; filename="lich-trinh-hue.pptx"',
             "Cache-Control": "no-store",
             "X-Slide-Layouts": layouts_hdr,
+            "X-Slide-Source": slide_source,
         },
     )
 
@@ -119,7 +128,7 @@ async def tai_pptx(request: Request, theme: str | None = Query(default=None, max
     hom_nay = tt.hom_nay_vn()
     trang = trang_lich(lich, cau, ngay_tao=f"{hom_nay.day}/{hom_nay.month}/{hom_nay.year}", an_toan=luu.get("an_toan"))
     return Response(dung_pptx(trang, THU_MUC_ANH), media_type=KIEU_PPTX,
-                    headers={"Content-Disposition": 'attachment; filename="lich-trinh-hue.pptx"', "Cache-Control": "no-store"})
+                    headers={"Content-Disposition": 'attachment; filename="lich-trinh-hue.pptx"', "Cache-Control": "no-store", "X-Slide-Source": "code"})
 
 
 @router.post("/api/lich/pptx")
@@ -128,6 +137,8 @@ async def tai_pptx_thong_minh(request: Request):
     flags = _flags(state)
     if not getattr(flags, "slide_designer", False):
         return error_response(404, "not_found", "Tính năng này chưa bật.")
+    if not bool((getattr(flags, "slide_designer_cfg", None) or {}).get("use_llm", False)):
+        return error_response(409, "slide_ai_disabled", "Chế độ thiết kế slide AI hiện đang tắt — hãy dùng Tải PowerPoint nhanh.")
     store = getattr(state, "conversations", None)
     luu = store.lay_lich(request.cookies.get(CONVERSATION_COOKIE)) if store is not None else None
     if luu is None:

@@ -138,13 +138,20 @@ def hau_kiem_slide_deck(plan: SlideDeckPlan, canonical: dict) -> list[str]:
         loi.append("cover_layout_khong_hop_le")
 
     muc_theo_id: dict[str, dict] = {}
+    ngay_cua_muc: dict[str, int] = {}
+    ngay_hop_le: set[int] = set()
     gio_cho_phep: set[str] = set()
     ten_cho_phep: set[str] = set()
     for ng in canonical.get("ngay") or []:
+        ng_so = ng.get("ngay")
+        if ng_so is not None:
+            ngay_hop_le.add(int(ng_so))
         for m in ng.get("muc") or []:
             if m.get("loai") == "nghi":
                 continue
             muc_theo_id[m["id_muc"]] = m
+            if ng_so is not None:
+                ngay_cua_muc[m["id_muc"]] = int(ng_so)
             if m.get("ten"):
                 ten_cho_phep.add(str(m["ten"]))
             for src_gio in (m.get("gio"), m.get("cau"), m.get("ghi_chu")):
@@ -159,8 +166,21 @@ def hau_kiem_slide_deck(plan: SlideDeckPlan, canonical: dict) -> list[str]:
         if sid not in manifest_diem:
             loi.append(f"secondary_image_la:{sid}")
 
+    for ov in plan.overview_summaries:
+        if ngay_hop_le and ov.ngay not in ngay_hop_le:
+            loi.append(f"overview_ngay_la:{ov.ngay}")
+        err = _chua_url_hoac_tu_cam(ov.summary, gio_cho_phep)
+        if err:
+            loi.append(f"overview_{ov.ngay}_{err}")
+
     seen_muc: list[str] = []
+    seen_days: set[int] = set()
     for d in plan.days:
+        if ngay_hop_le and d.day_number not in ngay_hop_le:
+            loi.append(f"day_number_la:{d.day_number}")
+        if d.day_number in seen_days:
+            loi.append(f"trung_day_number:{d.day_number}")
+        seen_days.add(d.day_number)
         if d.layout_id not in ALLOWED_LAYOUTS_BY_KIND["day"]:
             loi.append(f"day_layout_khong_hop_le:{d.layout_id}")
         for truong in (d.day_header, d.route_summary, d.dining_note):
@@ -171,6 +191,8 @@ def hau_kiem_slide_deck(plan: SlideDeckPlan, canonical: dict) -> list[str]:
             if it.id_muc not in muc_theo_id:
                 loi.append(f"id_muc_la:{it.id_muc}")
                 continue
+            if it.id_muc in ngay_cua_muc and d.day_number != ngay_cua_muc[it.id_muc]:
+                loi.append(f"lech_ngay_muc:{it.id_muc}:{d.day_number}!={ngay_cua_muc[it.id_muc]}")
             seen_muc.append(it.id_muc)
             # Không cho phép đổi tên sang địa danh bịa (nếu có title_override phải trùng tên gốc hoặc tên rút gọn từ tên gốc)
             if it.title_override and it.title_override.strip() != muc_theo_id[it.id_muc]["ten"]:

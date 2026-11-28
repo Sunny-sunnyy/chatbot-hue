@@ -101,7 +101,7 @@ async def _mot_muc(muc: dict, ten_chu_de: str, state, flags, generator, dem: dic
         # bài có đoạn cảnh báo mà mục KHÔNG có ý cảnh báo nào dẫn bài đó (model không viết, viết bị lọc, hoặc lời gọi hỏng) ⇒ code thêm dòng trỏ — chỉ khi đoạn nằm
         # dưới một mục dặn du khách (nêu tên mục) hoặc có câu cấm (không nêu tên mục); đoạn chỉ là bằng chứng thì không trỏ (`so_tay.muc_tro_an_toan`)
         bai_cua_so = {s["id"]: s["bai_id"] for s in nguon_kho}
-        bai_da_co = {bai_cua_so.get(int(n)) for dong in y if st.la_y_canh_bao(dong, None) for n in re.findall(r"\[(\d+)\]", dong)}
+        bai_da_co = hs.bai_canh_bao_da_co(y, so_canh_bao, bai_cua_so)
         for so, (b, cb) in so_canh_bao.items():
             muc_bai = st.muc_tro_an_toan(cb)
             if muc_bai is not None and b.rel not in bai_da_co:
@@ -141,7 +141,7 @@ async def _su_kien(cd: "hs.ChuDe", bai: list, state, flags, generator, dem_ho_so
                                              + "\n".join(f"{i} | {b.tieu_de} | {(b.tom_tat or '')[:110]}" for i, b in enumerate(bai, 1)), log)
         finally:
             _cong_usage(dem, log.calls, getattr(generator, "provider", "openai"))
-        chia = hs.kiem_dan_y(ra.get("muc") or [], len(bai))
+        chia, dan_y_loi = hs.kiem_dan_y_co_co(ra.get("muc") or [], len(bai))
     except asyncio.CancelledError:
         raise
     except Exception:  # noqa: BLE001

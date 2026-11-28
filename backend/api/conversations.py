@@ -48,7 +48,7 @@ def stored_answer(answer: str) -> str:
 # Tên mục `trace.tools` của các nguồn / công cụ ĐỔI THEO GIỜ hoặc theo người: dự báo, ngày - lịch âm (công cụ và bản code tính sẵn), sự kiện theo ngày, khoảng
 # cách (công cụ và bản tính sẵn), lịch đã lưu của cuộc. Lượt có một trong số này không được giữ đáp. `tim_kho`, `tra_web` (chữ web không nằm trong câu trả lời),
 # `liet_ke_bai` (danh sách — đúng thứ người dùng hay trỏ ngược bằng thứ tự) thì giữ.
-CONG_CU_KHONG_NHO_DAP = frozenset({"thoi_tiet", "ngay_lich", "lich_san", "su_kien_san", "khoang_cach", "khoang_cach_san", "lich_dang_co"})
+CONG_CU_KHONG_NHO_DAP = frozenset({"thoi_tiet", "ngay_lich", "lich_san", "su_kien_san", "khoang_cach", "khoang_cach_san", "lich_dang_co", "goi_y_luu_tru"})
 
 
 # Lượt SỬA lịch không giữ đáp (`dap_duoc_nho`: chữ thẻ lịch có tên quán lấy từ bản đồ mở). Hệ quả đo 23/11/2026: lượt kế thấy câu LỆNH với ô đáp rỗng cạnh
@@ -77,7 +77,7 @@ def dap_duoc_nho(trace, outcome: str | None, *, mo_cho_cuoc_co_lich: bool = Fals
     # 21/11/2026: KHÔNG giữ đáp của lượt đã dùng công cụ đổi theo giờ (thời tiết, ngày / lịch âm, khoảng cách — cùng luật `luot_luu_duoc` của bộ nhớ câu trả
     # lời giữa các cuộc). Lượt tự kiểm trên Sonnet: hỏi tiếp về "con số khả năng mưa bạn vừa đưa" — có đáp cũ trong lịch sử thì model tự từ chối 8 / 10 lần
     # (số đã nằm trong lời "không phải nguồn" nên nó không gọi lại công cụ), không có thì 0 / 6. Số dự báo phải luôn đến từ công cụ của LƯỢT NÀY.
-    thuong = outcome == "success" and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None
+    thuong = outcome == "success" and not trace.bieu_mau and trace.lich is None and trace.lich_v2 is None and not getattr(trace, "goi_y_luu_tru", None)
     if not mo_cho_cuoc_co_lich:
         return thuong and trace.sua is None and not any(cong_cu["name"] in CONG_CU_KHONG_NHO_DAP for cong_cu in trace.tools)
     from llm.lich_trinh_v2 import NGUON_LICH_SOURCE  # import muộn: module này chỉ cần hằng đó khi cờ bật
@@ -226,7 +226,10 @@ class ConversationStore:
         if (conversation is None or conversation.expires_at <= self._clock() or conversation.lich is None or conversation.lich_truoc is None
                 or ma != dau_lich(conversation.lich)):
             return None
+        hien_tai = conversation.lich
         lich, dong = conversation.lich_truoc, conversation.sua_truoc
+        if hien_tai.get("an_toan") and not lich.get("an_toan"):
+            lich = {**lich, "an_toan": hien_tai["an_toan"]}
         conversation.lich, conversation.lich_truoc, conversation.sua_truoc, conversation.goi_y_sua = lich, None, (), ()  # gợi ý của lượt sửa đó hết nghĩa
         conversation.slide_cache.clear()
         return lich, dong

@@ -80,14 +80,14 @@ def _parse_date(s: str) -> dt.date | None:
     return None
 
 
-def _loc_co_so(
+def _loc_co_so_chi_tiet(
     bang_luu_tru: dict,
     bang_v2: lt2.BangV2 | None,
     khu: str = "bat_ky",
     gan_diem: str = "",
     hang_sao: str = "tat_ca",
     toi_da: int = 5,
-) -> tuple[list[dict], str]:
+) -> tuple[list[dict], str, bool]:
     khu_chuan = _chuan_khu_theo_diem(khu, gan_diem)
     hang_chuan = hang_sao if hang_sao in _HANG_TAP else "tat_ca"
     khu_gia_tri, phia = _KHU_LOC[khu_chuan]
@@ -102,10 +102,13 @@ def _loc_co_so(
     pool = list(bang_luu_tru["co_so"])
     if khu_gia_tri is not None:
         pool = [c for c in pool if c.get("khu") == khu_gia_tri and (phia is None or c.get("phia_bien") == phia)]
+    da_noi_hang = False
     if allowed_stars is not None:
         pool_hang = [c for c in pool if c.get("xep_hang") in allowed_stars]
         if pool_hang:
             pool = pool_hang
+        elif pool:
+            da_noi_hang = True
 
     if cum_muc_tieu:
         pool.sort(key=lambda c: (_km_den(c, cum_muc_tieu), -_HANG_RANK.get(c.get("xep_hang", ""), 0), c["ten"]))
@@ -117,10 +120,22 @@ def _loc_co_so(
     bo_loc = _TEN_KHU_LUA_CHON[khu_chuan]
     if ten_diem:
         bo_loc += f" · gần {ten_diem}"
+    return chon, bo_loc, da_noi_hang
+
+
+def _loc_co_so(
+    bang_luu_tru: dict,
+    bang_v2: lt2.BangV2 | None,
+    khu: str = "bat_ky",
+    gan_diem: str = "",
+    hang_sao: str = "tat_ca",
+    toi_da: int = 5,
+) -> tuple[list[dict], str]:
+    chon, bo_loc, _ = _loc_co_so_chi_tiet(bang_luu_tru, bang_v2, khu=khu, gan_diem=gan_diem, hang_sao=hang_sao, toi_da=toi_da)
     return chon, bo_loc
 
 
-def ket_qua(
+def ket_qua_co_kieu(
     bang_luu_tru: dict,
     bang_v2: lt2.BangV2 | None,
     khu: str = "bat_ky",
@@ -130,30 +145,49 @@ def ket_qua(
     ngay_tra: str = "",
     so_khach: int = 2,
     toi_da: int = 5,
-) -> tuple[str, int]:
-    """Trả `(văn_bản_gợi_ý, số_cơ_sở)` có link Booking/Agoda/Traveloka an toàn và đúng `NHAN`."""
+) -> tuple[str, dict]:
+    """Trả `(văn_bản_gợi_ý, dữ_liệu_có_kiểu)` có link Booking/Agoda/Traveloka an toàn, cờ `da_noi_hang` và đúng `NHAN`."""
+    from urllib.parse import quote
+
     d_nhan = _parse_date(ngay_nhan)
     d_tra = _parse_date(ngay_tra)
     if d_nhan is not None and d_tra is not None and d_tra <= d_nhan:
         d_tra = None
     so_nguoi = max(int(so_khach or 2), 1)
-    chon, mo_ta_loc = _loc_co_so(bang_luu_tru, bang_v2, khu=khu, gan_diem=gan_diem, hang_sao=hang_sao, toi_da=toi_da)
+    hang_chuan = hang_sao if hang_sao in _HANG_TAP else "tat_ca"
+    chon, mo_ta_loc, da_noi_hang = _loc_co_so_chi_tiet(
+        bang_luu_tru, bang_v2, khu=khu, gan_diem=gan_diem, hang_sao=hang_chuan, toi_da=toi_da
+    )
     cum_muc_tieu = (
         bang_v2.theo_id[gan_diem]["cum"]
         if (gan_diem and gan_diem != "khong" and bang_v2 is not None and gan_diem in bang_v2.theo_id)
         else None
     )
 
+    ghi_chu_noi_hang = f"Đã nới hạng vì khu vực chưa có hạng {hang_chuan}." if da_noi_hang else None
+    hang_mo_ta = (
+        f"Đã nới hạng vì khu vực chưa có hạng {hang_chuan} (hiển thị hạng hiện có)"
+        if da_noi_hang
+        else f"Hạng: {hang_chuan}"
+    )
     dong = [
         NHAN,
-        f"Phạm vi lọc: {mo_ta_loc} | Hạng: {hang_sao} | Số khách tìm phòng: {so_nguoi}"
+        f"Phạm vi lọc: {mo_ta_loc} | {hang_mo_ta} | Số khách tìm phòng: {so_nguoi}"
         + (f" | Nhận {d_nhan.strftime('%d/%m/%Y')}" if d_nhan else "")
         + (f" – Trả {d_tra.strftime('%d/%m/%Y')}" if d_tra else "")
         + ".",
     ]
+    du_lieu = {
+        "nhan": NHAN,
+        "pham_vi": mo_ta_loc,
+        "hang_sao": hang_chuan,
+        "da_noi_hang": da_noi_hang,
+        "ghi_chu_noi_hang": ghi_chu_noi_hang,
+        "co_so": [],
+    }
     if not chon:
         dong.append("Chưa có cơ sở lưu trú phù hợp bộ lọc này trong bảng 136 cơ sở.")
-        return "\n".join(dong), 0
+        return "\n".join(dong), du_lieu
 
     so_dem = (d_tra - d_nhan).days if (d_nhan is not None and d_tra is not None) else 1
     for idx, c in enumerate(chon, 1):
@@ -168,14 +202,52 @@ def ket_qua(
         cum_entry = bang_v2.cum.get(cum_ref) if (bang_v2 is not None and cum_ref) else cum_ref
         ten_cum = cum_entry.get("ten") if isinstance(cum_entry, dict) else (cum_entry or cum_ref)
         km_val = _km_den(c, cum_ref)
-        vi_tri = f" · cách cụm {ten_cum} khoảng {km_val:.1f} km" if (ten_cum and km_val < 999.0) else ""
+        vi_tri_ngan = f"cách cụm {ten_cum} khoảng {km_val:.1f} km" if (ten_cum and km_val < 999.0) else ""
+        vi_tri = f" · {vi_tri_ngan}" if vi_tri_ngan else ""
         links_md = " · ".join(f"[{san}]({url})" for san, url in links.items())
         dong.append(
             f"{idx}. **{c['ten']}** ({c.get('xep_hang', '')}) — {c.get('dia_chi', '')}{vi_tri} "
             f"[nguồn: {c.get('nguon', '')}] · Tìm phòng: {links_md}"
         )
+        map_url = ltl.MAP_BASE + quote(", ".join(x for x in (c["ten"], c.get("dia_chi"), "Huế") if x))
+        du_lieu["co_so"].append({
+            "ten": c["ten"],
+            "xep_hang": c.get("xep_hang", ""),
+            "dia_chi": c.get("dia_chi", ""),
+            "vi_tri": vi_tri_ngan,
+            "anh": c.get("anh"),
+            "map_url": map_url,
+            "links": links,
+            "nguon": c.get("nguon", ""),
+        })
     dong.append("Không có thông tin giá phòng hay tình trạng còn phòng trực tiếp; hãy kiểm tra trên link đặt phòng.")
-    return "\n".join(dong), len(chon)
+    return "\n".join(dong), du_lieu
+
+
+def ket_qua(
+    bang_luu_tru: dict,
+    bang_v2: lt2.BangV2 | None,
+    khu: str = "bat_ky",
+    gan_diem: str = "",
+    hang_sao: str = "tat_ca",
+    ngay_nhan: str = "",
+    ngay_tra: str = "",
+    so_khach: int = 2,
+    toi_da: int = 5,
+) -> tuple[str, int]:
+    """Trả `(văn_bản_gợi_ý, số_cơ_sở)` có link Booking/Agoda/Traveloka an toàn và đúng `NHAN`."""
+    text_out, du_lieu = ket_qua_co_kieu(
+        bang_luu_tru,
+        bang_v2,
+        khu=khu,
+        gan_diem=gan_diem,
+        hang_sao=hang_sao,
+        ngay_nhan=ngay_nhan,
+        ngay_tra=ngay_tra,
+        so_khach=so_khach,
+        toi_da=toi_da,
+    )
+    return text_out, len(du_lieu["co_so"])
 
 
 def _bang_diem(bang_v2: lt2.BangV2 | None) -> str:

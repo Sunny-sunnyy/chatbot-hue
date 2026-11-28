@@ -8,6 +8,7 @@ mọi mục dùng câu dự phòng (không rút cả lịch — khác đường 
 """
 import asyncio
 import datetime as dt
+import secrets
 import time
 from collections import Counter
 
@@ -111,6 +112,8 @@ async def chuan_bi(query: str, retrieval_service, context_builder, trace: Answer
                                              max_doan=MAX_DOAN, tim_mo_ta=TIM_MO_TA, doan_chon=doan_chon)
     lich = lt2.dung_lich(bang, khung, nguon, ngay_di, dong_du_bao(bang, khung, db),
                          flags.toa_do_lich if flags.ban_do_lich else None, flags.anh_lich_bang if flags.anh_lich else None)
+    lich_id = (sua.get("lich_id") if sua else None) or secrets.token_hex(8)
+    lich["lich_id"] = lich_id
     gan_o_an(lich, bang, khung, flags)
     giu_cau: dict[str, str] = {}
     if sua:
@@ -125,7 +128,7 @@ async def chuan_bi(query: str, retrieval_service, context_builder, trace: Answer
             if cu and m["nguon"] is not None:
                 giu_cau[m["id_muc"]] = CITATION_PATTERN.sub(f"[{m['nguon']}]", cu)
     trace.lich_v2 = {"lich": lich, "loi_khung": lt2.kiem_khung_v2(bang, khung), "cau": None, "loi_cau": None, "khung": khung,
-                     "ngay_di": ngay_di, "mua": mua, "giu_cau": giu_cau}
+                     "ngay_di": ngay_di, "mua": mua, "giu_cau": giu_cau, "lich_id": lich_id}
     trace.buoc_lich += [{"buoc": "xep_xong", "n_diem": len(lt2.diem_v2(khung))}, {"buoc": "lay_nguon", "n_doan": len(packed.sources)}]
     moi = {**lich, "ngay": [{**ng, "muc": [m for m in ng["muc"] if m["id_muc"] not in giu_cau]} for ng in lich["ngay"]]}
     return lt2.tin_nhan_model(moi, packed.text)
@@ -396,7 +399,7 @@ async def stream_sua(query: str, retrieval_service, context_builder, generator, 
     n_duoc = sum(d["duoc"] for d in thay_doi)  # các dòng "đã làm" đứng đầu ⇒ dòng báo quán chen ngay sau chúng
     thay_doi[n_duoc:n_duoc] = dong_quan_doi(bang, luu["khung"], kq["khung"], flags)
     sua = {"khung": kq["khung"], "ngay_di": kq["luu"]["ngay_di"], "thay_doi": thay_doi, "cau_cu": dict(luu.get("cau") or {}),
-           "sua_ap": sl.sua_ap(kq)}
+           "sua_ap": sl.sua_ap(kq), "lich_id": luu.get("lich_id")}
     async for event in stream_v2(query, retrieval_service, context_builder, generator, trace, flags, _today_v2(flags, trace), sua):
         yield event
     trace.lich_v2["loai"] = kq["luu"]["loai"]
@@ -418,6 +421,7 @@ def luu_sau_luot(trace: AnswerTrace, flags: AssistantFlags) -> dict | None:
     if thay_doi is not None and not any(d["duoc"] for d in thay_doi):
         return None
     luu = sl.luu_tu_lich(v["khung"], v["ngay_di"], v["mua"])
+    luu["lich_id"] = v.get("lich_id") or (v.get("lich") or {}).get("lich_id") or secrets.token_hex(8)
     luu["loai"] = list(v.get("loai") or [])
     muc = {m["id_muc"]: m["id_diem"] for m in lt2.moi_muc(v["lich"]) if m.get("id_diem")}
     luu["cau"] = {muc[k]: c for k, c in v["cau"].items() if k in muc}

@@ -112,6 +112,8 @@ def dung_ics(
     stamp_dt = (dau_thoi_gian or dt.datetime.now(dt.timezone.utc)).astimezone(dt.timezone.utc)
     stamp = stamp_dt.strftime("%Y%m%dT%H%M%SZ")
     ngay_dau = ngay_ds[0]["ngay_thang"]
+    lich_id = str(chuan.get("lich_id") or "").strip()
+    uid_tien_to = f"{ngay_dau}-{lich_id}" if lich_id else ngay_dau
     ngay_dau_vn = "/".join(reversed(ngay_dau.split("-")))
 
     dong = [
@@ -152,7 +154,7 @@ def dung_ics(
                 mo_ta = _mo_ta([an_toan_chu, m.get("ghi_chu"), cau_muc, NHAC_CA_NGAY, map_url if co_map else None])
                 dong.extend([
                     "BEGIN:VEVENT",
-                    f"UID:{ngay_dau}-{m['id_muc']}@tro-ly-hue",
+                    f"UID:{uid_tien_to}-{m['id_muc']}@tro-ly-hue",
                     f"SEQUENCE:{int(sequence)}",
                     f"DTSTAMP:{stamp}",
                     f"DTSTART;VALUE=DATE:{_fmt_date(ngay_iso)}",
@@ -176,7 +178,7 @@ def dung_ics(
                 ])
                 dong.extend([
                     "BEGIN:VEVENT",
-                    f"UID:{ngay_dau}-{m['id_muc']}@tro-ly-hue",
+                    f"UID:{uid_tien_to}-{m['id_muc']}@tro-ly-hue",
                     f"SEQUENCE:{int(sequence)}",
                     f"DTSTAMP:{stamp}",
                     f"DTSTART;TZID={TZID}:{_fmt_local(ngay_iso, bd)}",
@@ -216,7 +218,7 @@ def dung_ics(
             ])
             dong.extend([
                 "BEGIN:VEVENT",
-                f"UID:{ngay_dau}-{ma_su_kien}@tro-ly-hue",
+                f"UID:{uid_tien_to}-{ma_su_kien}@tro-ly-hue",
                 f"SEQUENCE:{int(sequence)}",
                 f"DTSTAMP:{stamp}",
                 f"DTSTART;TZID={TZID}:{_fmt_local(ngay_iso, bd)}",

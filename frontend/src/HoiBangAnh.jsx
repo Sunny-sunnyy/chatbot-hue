@@ -142,11 +142,27 @@ export function useHoiBangAnh({ bat, draft, disabled, onAsk, onGoTen }) {
     const toi = ++luot.current;
     setState({ file, preview, phase: "dang" });  // giữ `file` để nút Huỷ trả ảnh về ô nhập
     let ungVien = [];
+    let loiThongBao = null;
     try {
       const r = await fetch("/api/anh/ung_vien", { method: "POST", headers: { "Content-Type": file.type }, body: file });
-      ungVien = (r.ok ? await r.json() : null)?.ung_vien ?? [];
-    } catch { /* lỗi mạng ⇒ như chưa nhận ra */ }
+      const du = await r.json().catch(() => null);
+      if (!r.ok) {
+        if (r.status === 429) {
+          loiThongBao = du?.error?.message || "Bạn đã dùng hết số lượt hỏi hôm nay. Vui lòng quay lại vào ngày mai.";
+        } else {
+          loiThongBao = du?.error?.message || "Chưa xem được ảnh lúc này — bạn thử lại hoặc gõ tên nhé.";
+        }
+      } else {
+        ungVien = du?.ung_vien ?? [];
+        if (!ungVien.length && du?.loi) {
+          loiThongBao = "Hệ thống xem ảnh đang bận hoặc quá thời gian — bạn thử lại hoặc gõ tên nhé.";
+        }
+      }
+    } catch {
+      loiThongBao = "Chưa xem được ảnh lúc này — kiểm tra mạng rồi thử lại nhé.";
+    }
     if (toi !== luot.current) return;  // trong lúc chờ người dùng đã bỏ ảnh / mở cuộc mới ⇒ không làm gì với kết quả cũ
+    if (loiThongBao) return setState({ preview, phase: "loi", text: loiThongBao });
     if (!ungVien.length) return setState({ preview, phase: "loi", text: KHONG_NHAN_RA });
     // URL riêng cho bong bóng câu hỏi — KHÔNG thu hồi ở đâu cả (sống tới khi tải lại trang; rò nhỏ có sẵn), nên lượt "Hỏi lại với" dùng lại được;
     // `preview` của ô nhập thì được thu hồi khi state đổi

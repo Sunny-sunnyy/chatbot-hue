@@ -270,10 +270,16 @@ def test_slide_designer_route_cache_and_weighted_rate_limit():
     store.luu_lich(cid, luu)
     client = TestClient(app)
 
-    # Cờ slide_designer tắt ⇒ POST /api/lich/pptx trả 404 (chú ý POST vẫn đi qua middleware trước hoặc sau tuỳ tran; đặt tran=4 cho 1 lần qua)
+    # Cờ slide_designer tắt ⇒ POST /api/lich/pptx trả 404 và KHÔNG trừ trọng số AI (3 điểm)
+    assert client.post("/api/lich/pptx", cookies={"conversation_id": cid}).status_code == 404
     assert client.post("/api/lich/pptx", cookies={"conversation_id": cid}).status_code == 404
 
-    # Lần POST thứ 2 (3 + 3 = 6 > 4) ⇒ bị rate-limit trọng số 3 trả 429
+    # Khi slide_designer=True & use_llm=True ⇒ POST hợp lệ trừ trọng số 3, lần POST thứ 2 (3 + 3 = 6 > 4) ⇒ 429
+    s_limit = copy.deepcopy(s)
+    s_limit["assistant"]["slide_designer"] = True
+    s_limit["slide_designer_cfg"]["use_llm"] = True
+    app.state.assistant_flags = AssistantFlags.from_settings(s_limit)
+    assert client.post("/api/lich/pptx", cookies={"conversation_id": cid}).status_code == 200
     r_429 = client.post("/api/lich/pptx", cookies={"conversation_id": cid})
     assert r_429.status_code == 429 and r_429.json()["error"]["message"] == LOI_BAO
 
@@ -327,7 +333,7 @@ def test_slide_designer_route_cache_and_weighted_rate_limit():
     assert len(kiem_tra_tran_chu([sl for sl in d5["slides"] if sl.get("layout_id") == "notes_map"])) == 0
     _kiem_tra_meo_anh_pptx(dung_pptx_v2(d5, THU_MUC_ANH))
 
-    # Kiểm POST /api/lich/pptx tôn trọng slide_designer_cfg.use_llm=False (0 lần gọi OpenAI, vẫn ra .pptx v2 9 layout)
+    # Kiểm POST /api/lich/pptx khi slide_designer_cfg.use_llm=False trả lỗi hợp đồng 409 (0 gọi OpenAI), còn GET vẫn xuất .pptx v2 code
     s_code = copy.deepcopy(s)
     s_code["assistant"]["slide_designer"] = True
     s_code["slide_designer_cfg"]["use_llm"] = False
@@ -346,7 +352,10 @@ def test_slide_designer_route_cache_and_weighted_rate_limit():
             raise AssertionError("Không được gọi LLM khi slide_designer_cfg.use_llm=False")
 
     app3.state.generator = SimpleNamespace(client=SimpleNamespace(responses=FailIfCalled()))
-    r_code = TestClient(app3).post("/api/lich/pptx", json={"theme_id": "song_huong_xanh"}, cookies={"conversation_id": cid3})
-    assert r_code.status_code == 200 and r_code.headers.get("X-Slide-Layouts")
+    c3 = TestClient(app3)
+    r_post_off = c3.post("/api/lich/pptx", json={"theme_id": "song_huong_xanh"}, cookies={"conversation_id": cid3})
+    assert r_post_off.status_code == 409 and r_post_off.json()["error"]["code"] == "slide_ai_disabled"
+    r_code = c3.get("/api/lich/pptx?theme=song_huong_xanh", cookies={"conversation_id": cid3})
+    assert r_code.status_code == 200 and r_code.headers.get("X-Slide-Layouts") and r_code.headers.get("X-Slide-Source") == "code"
     assert call_counter_code["n"] == 0
     _kiem_tra_meo_anh_pptx(r_code.content)
