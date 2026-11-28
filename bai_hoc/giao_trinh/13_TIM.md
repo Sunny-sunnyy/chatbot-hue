@@ -1,6 +1,6 @@
 # Bài 13 — Tìm: lấy 30 ứng viên, trộn hai bảng xếp hạng, giữ 10 đoạn
 
-*Cập nhật 20:46, ngày 23/11/2026 · số kho / số tính năng / mức test theo hệ thống lúc code đứng yên tối 23/11 (kho 269 bài / 9.533 đoạn) · bản 17:11 22/11: phân xử chỗ lệch giữa các bài · trước đó: cơ chế đọc từ chương trình đang chạy; số của ví dụ lấy từ lần chạy lại riêng bước tìm sáng 22/11 (không gọi model viết); số của các phép so lấy từ các báo cáo đo từ 24/10 tới 22/11, phần lớn với model viết gpt-6-luna, riêng phép so tin nhiều ý với Claude Sonnet 5.5; người viết không chạy lại phép đo nào. · 09:56 24/11/2026: số đoạn của kho trong thân bài 9.533 ⇒ 9.536 (ba bài kho được thêm câu sáng 24/11; chỉ mục cập nhật 07:30 và 07:49; bản ghi chỉ mục và Qdrant cùng ghi 9.536).*
+*Cập nhật 17:19, ngày 28/11/2026 · kho 269 bài / **9.540 đoạn** · bổ sung kết quả kiểm 0 đồng Đợt 6 (28/11) so sánh **tìm thuần nghĩa (`dense_only`)** với **tìm lai trộn thứ hạng (`RRF`)** trên 158 câu có đáp án trong kho (kết luận giữ nguyên cách tìm lai) · các mốc trước: Nguồn.*
 
 **Bài trước đã biết:** chặng 2: kho được cắt thành 9.536 đoạn (từ 07:49 24/11), mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
 **Bài này thêm:** chặng 3 bắt đầu. Người dùng gõ một câu; trong vài chục mili giây chương trình chọn ra 10 đoạn. Bài này đi qua bốn bước của việc chọn đó, và chỉ ra bước tìm hỏng ở đâu.
@@ -223,8 +223,9 @@ Thử ngày 19/11, trên cả 176 câu mẫu và 32 câu an toàn, model viết 
 | lấy 100 ứng viên thay vì 30 | số câu có đủ đoạn đúng trong vòng ứng viên: từ 31 lên 37 trên 40; nhưng trong 10 đoạn đưa cho model: chỉ từ 22 lên 23, và 1 câu bị mất đoạn đúng | bỏ |
 | để từ khoá tự tìm trên cả kho rồi trộn với kết quả theo nghĩa | điểm thứ hạng gần như không đổi (0,726 so với 0,721); mất đoạn đúng ở 1 tới 2 câu | bỏ |
 | 10 cách trộn khác (đổi hằng số, đổi trọng số) | không cách nào thắng rõ | bỏ |
+| bỏ phần từ khoá, chỉ **tìm thuần nghĩa** trên Qdrant (`0 đồng`, Đợt 6, 28/11) | đo lại 158 câu có từ khoá đáp án so với tìm lai trộn thứ hạng: độ phủ 10 đoạn đầu trung bình tụt từ **`92,04%`** xuống **`90,45%`** (`+3/-8` ca); riêng trên 33 ca trượt chỉ cải thiện `2` ca, tụt `3` ca và cứu **`0/2`** ca từ chối nhầm của bộ 176 câu | **bỏ**, giữ tìm lai trộn thứ hạng |
 
-**Đọc bảng này thế nào.** Thêm ứng viên mà thứ tự không tốt hơn thì ứng viên mới cũng nằm dưới hạng 10. Chỗ cần sửa là thứ tự, hoặc số đoạn model được thấy.
+**Đọc bảng này thế nào.** Thêm ứng viên mà thứ tự không tốt hơn thì ứng viên mới cũng nằm dưới hạng 10; bỏ phần chấm từ khoá để tìm thuần nghĩa cũng làm tụt độ phủ từ khoá và không cứu được 2 ca từ chối nhầm còn lại. Chỗ cần sửa là thứ tự, hoặc số đoạn model được thấy.
 
 **Giới hạn của các phép đo.** Thước "đoạn đúng" chỉ có cho 55 câu khó (40 để thử, 15 để kiểm lại). Dòng "100 ứng viên" đo 26/10 bằng bản nhãn đầu tiên (22 trên 40 đủ trong 10 đoạn, 31 trong 30 ứng viên); số 24 và 16 ở phần trên theo bản nhãn thứ năm (30/10), cùng 40 câu. Một ý có thể chỉ được đánh dấu ở một chỗ; chỗ khác trong kho nói lại cùng ý mà chưa ai đánh dấu thì không được tính (bài 18). Chênh lệch nhỏ thì chưa đo ra. Phần lớn số trên đo trên kho cuối tháng 10; hai dòng 40 câu của bảng cuối và con số 16 câu thiếu ở thân bài đo ở hai lần gắn nhãn khác nhau nên số câu "đủ" lệch nhau (22 và 24).
 
@@ -242,7 +243,7 @@ Thử ngày 19/11, trên cả 176 câu mẫu và 32 câu an toàn, model viết 
 
 - **Câu cần ghép nhiều nguồn và câu so sánh.** Điểm thứ hạng của hai loại này khoảng 0,53–0,54, so với 0,80 của câu hỏi một dữ kiện: các mảnh cần ghép khó cùng lọt 10 đoạn. Phần trợ lý chữa một phần bằng việc tự tìm thêm (bài 21).
 - **Dòng bảng giá.** Đoạn rất ngắn, ít chữ, dễ bị xếp thấp. Từng có một dòng giá đúng đứng tận hạng 191.
-- **Tìm theo nghĩa bỏ sót từ đầu** thì không gì phía sau cứu được trong cùng lần tìm (7 trên 40 câu khó).
+- **Tìm theo nghĩa bỏ sót từ đầu** thì không gì phía sau cứu được trong cùng lần tìm (7 trên 40 câu khó). Ở lần đo trọn 176 câu mẫu ngày 28/11 (Đợt 6, bài 17 & 32), đường hỏi đáp đạt `156/158` câu trong kho nhưng vẫn còn đúng **2 ca từ chối nhầm**: 1 ca nối nhiều bước hỏi về năm 2000 của Festival Huế và 1 ca đồng danh giữa hai tên suối (*Suối Mệ* / *Suối Voi*).
 - **Câu gõ không dấu** (bài 10).
 - **Bước tìm luôn trả về 10 đoạn**, không có khái niệm "không tìm thấy". Việc nhận ra không đoạn nào trả lời được là của model viết.
 
@@ -280,5 +281,5 @@ Thử ngày 19/11, trên cả 176 câu mẫu và 32 câu an toàn, model viết 
 
 - Lần chấm mù của chủ dự án 01/11 (3 cặp bản 5 đoạn từ chối nhầm, còn lại như nhau; luật dừng "chưa rõ", chủ dự án chọn giữ 10): `session_prompt/Project_Status.md` dòng 104, 187 [chép; phân xử 22/11 với bài 2].
 - Quét số cũ 20:46 23/11/2026: "Bài trước đã biết" 9.479 ⇒ 9.533 đoạn; số của lượt ví dụ và các phép so giữ nguyên. Lệnh: `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (9533), đọc 20:40 23/11/2026 [đã chạy].
-
+- **Đợt 6 (28/11/2026):** đồng bộ kho `269` bài / `9.540` đoạn; bổ sung kiểm 0đ `dense_only` (`90,45%`) vs `dense_bm25_rrf` (`92,04%`, `+3/-8` ca, cứu `0/2` ca từ chối nhầm `case 87` multi-hop Festival Huế 2000 và `case 126` đồng danh Suối Mệ/Suối Voi) theo `data/thu_dot6_2026-11-28/BAO_CAO_LOI_GOLDEN_176.md` & `KET_LUAN_DOT6.md` ⇒ giữ nguyên `dense_bm25_rrf` (`KEEP_BASE`).
 </details>
