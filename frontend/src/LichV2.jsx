@@ -285,7 +285,9 @@ export function linkPhongHopLe(url) {
   try {
     const u = new URL(url);
     if (u.protocol !== "https:" || !LINK_TIM_PHONG_HOSTS.has(u.hostname.toLowerCase())) return false;
-    if (u.pathname.includes("..") || /%2e%2e/i.test(u.pathname)) return false;
+    let decodedSearch = "";
+    try { decodedSearch = decodeURIComponent(u.search); } catch { return false; }
+    if (u.pathname.includes("..") || u.search.includes("..") || decodedSearch.includes("..") || /%2e%2e/i.test(url)) return false;
     return true;
   } catch {
     return false;

@@ -91,6 +91,6 @@
 .the-ks-khong-anh { background: var(--color-line); }
 .the-ks-ten { font-weight: 600; }
 .the-ks small { color: var(--color-muted); }
-.the-ks-link { flex-basis: 100%; display: inline-flex; gap: 12px; }
+.the-ks-link { flex-basis: 100%; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
 .the-ks-link a { color: var(--color-accent-deep); font-weight: 600; }
 .the-ks-nhan { grid-column: 1 / -1; margin: 0; color: var(--color-muted); font-size: var(--text-chu-thich); }

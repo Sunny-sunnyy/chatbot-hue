@@ -203,6 +203,13 @@ def test_ics_v2_rfc5545_single_time_all_day_lodging_and_safety():
     # 6. Mục buổi tối 1 mốc giờ mặc định 60 phút
     assert doc_gio_v2("19:30", "hoat_dong_toi") == (19 * 60 + 30, 20 * 60 + 30, False)
 
+    # 7. UID ổn định theo ngay_dau-id_muc khi đổi giờ 1 mục
+    lich2 = _lich_mau_v2()
+    lich2["ngay"][0]["muc"][0]["gio"] = "09:00 – 11:00"
+    ev2 = _validate_rfc5545(dung_ics(lich2, cau, dau_thoi_gian=dt.datetime(2026, 11, 28, 3, 0, tzinfo=dt.timezone.utc))["ics"])
+    assert [e["UID"] for e in events] == [e["UID"] for e in ev2]
+    assert events[1]["UID"] == "2026-12-10-n1-chieu-1@tro-ly-hue"
+
 
 def test_ics_v2_blocks_missing_ngay_di_without_guessing():
     with pytest.raises(ThieuNgayDiError):

@@ -159,9 +159,10 @@ assistant:
 # Đợt 5 Phần A — Cấu hình riêng cho Slide Designer Agent (tách khỏi RAG Agent `full_corpus_generation`).
 slide_designer_cfg:
   model: gpt-6-luna
-  max_retries: 2
-  timeout_seconds: 15
+  max_retries: 1
+  timeout_seconds: 20
   fallback_code_only: true
+  reasoning_effort: none
 
 # Phase 10 A1 (plan `2026-11-05-phase-10-a1-plan.md` bản 2 D2): hỏi bằng ảnh — `POST /api/anh/ung_vien`. TẮT tới khi đạt A2 (spec Phase 10 §5).
 # Tắt ⇒ route trả 404, không nạp danh sách. Đường dẫn tính từ `backend/`.

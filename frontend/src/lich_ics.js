@@ -110,7 +110,7 @@ export function dungIcs(lich, cau, dauThoiGian = new Date(), anToan = null) {
 export function dungIcsV2(lich, cau, dauThoiGian = new Date(), anToan = null) {
   if (!lich?.ngay?.length || !lich.tham_so?.ngay_di || !lich.ngay.every(ng => ng.ngay_thang)) return null;
   const stamp = dauThoiGian.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
-  const hashId = bamOnDinh(lich);
+  const ngayDau = lich.ngay[0].ngay_thang;
   const dong = [
     "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Tro ly Hue//Len ke hoach v2//VI", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
     `X-WR-CALNAME:${thoat(`Lịch Huế ${lich.ngay.length} ngày từ ${lich.ngay[0].ngay_thang.split("-").reverse().join("/")}`)}`,
@@ -128,7 +128,7 @@ export function dungIcsV2(lich, cau, dauThoiGian = new Date(), anToan = null) {
       if (!g) {
         const moTa = [anToan, m.ghi_chu, cau?.[m.id_muc], NHAC_CA_NGAY, coMap ? m.map_url : null].filter(Boolean).join("\n");
         dong.push(
-          "BEGIN:VEVENT", `UID:${hashId}-${m.id_muc}@tro-ly-hue`, "SEQUENCE:0", `DTSTAMP:${stamp}`,
+          "BEGIN:VEVENT", `UID:${ngayDau}-${m.id_muc}@tro-ly-hue`, "SEQUENCE:0", `DTSTAMP:${stamp}`,
           `DTSTART;VALUE=DATE:${ngaySo(ng.ngay_thang)}`, `DTEND;VALUE=DATE:${ngaySo(ng.ngay_thang, 1)}`,
           `SUMMARY:${thoat(m.ten)}`, `LOCATION:${thoat(`${m.ten}, Huế`)}`, `DESCRIPTION:${thoat(moTa.replaceAll("**", ""))}`,
           ...(coMap ? [`URL;VALUE=URI:${m.map_url}`] : []),
@@ -139,7 +139,7 @@ export function dungIcsV2(lich, cau, dauThoiGian = new Date(), anToan = null) {
         const [bd, kt, suat] = g;
         const moTa = [anToan, m.ghi_chu, cau?.[m.id_muc], NHAC, suat ? "Có nhiều suất — chọn suất khác nếu cần." : null, coMap ? m.map_url : null].filter(Boolean).join("\n");
         dong.push(
-          "BEGIN:VEVENT", `UID:${hashId}-${m.id_muc}@tro-ly-hue`, "SEQUENCE:0", `DTSTAMP:${stamp}`,
+          "BEGIN:VEVENT", `UID:${ngayDau}-${m.id_muc}@tro-ly-hue`, "SEQUENCE:0", `DTSTAMP:${stamp}`,
           `DTSTART;TZID=${TZID}:${gioDiaPhuong(ng.ngay_thang, bd)}`, `DTEND;TZID=${TZID}:${gioDiaPhuong(ng.ngay_thang, kt)}`,
           `SUMMARY:${thoat(m.ten)}`, `LOCATION:${thoat(`${m.ten}, Huế`)}`, `DESCRIPTION:${thoat(moTa.replaceAll("**", ""))}`,
           ...(coMap ? [`URL;VALUE=URI:${m.map_url}`] : []),
@@ -162,7 +162,7 @@ export function dungIcsV2(lich, cau, dauThoiGian = new Date(), anToan = null) {
     ]) {
       const moTa = [anToan, `Khu gợi ý: ${tenKhu}.`, dsTen ? `Cơ sở tham khảo: ${dsTen}.` : null, nhan].filter(Boolean).join("\n");
       dong.push(
-        "BEGIN:VEVENT", `UID:${hashId}-${ma}@tro-ly-hue`, "SEQUENCE:0", `DTSTAMP:${stamp}`,
+        "BEGIN:VEVENT", `UID:${ngayDau}-${ma}@tro-ly-hue`, "SEQUENCE:0", `DTSTAMP:${stamp}`,
         `DTSTART;TZID=${TZID}:${gioDiaPhuong(ngayIso, bd)}`, `DTEND;TZID=${TZID}:${gioDiaPhuong(ngayIso, kt)}`,
         `SUMMARY:${thoat(td)}`, `LOCATION:${thoat(`${tenKhu}, Huế`)}`, `DESCRIPTION:${thoat(moTa.replaceAll("**", ""))}`,
         ...(dauMap ? [`URL;VALUE=URI:${dauMap}`] : []),

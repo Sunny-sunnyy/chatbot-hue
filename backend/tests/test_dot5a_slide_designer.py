@@ -68,9 +68,10 @@ def test_settings_switches_default_false_and_isolated_cfg():
     assert s["assistant"]["slide_designer"] is False
     assert s["slide_designer_cfg"] == {
         "model": "gpt-6-luna",
-        "max_retries": 2,
-        "timeout_seconds": 15,
+        "max_retries": 1,
+        "timeout_seconds": 20,
         "fallback_code_only": True,
+        "reasoning_effort": "none",
     }
     assert "slide_designer_cfg" not in s["full_corpus_generation"]
 
@@ -204,9 +205,15 @@ def _plan_tu_canonical(canonical: dict, *, short_copy_override: str | None = Non
 def test_slide_designer_retry_postcheck_and_fallback():
     canonical = _lich_day_du(2)
 
-    # 1. Hậu kiểm chặn URL lạ / bịa id_muc / ghi công ảnh
+    # 1. Hậu kiểm chặn URL lạ / bịa id_muc / ghi công ảnh / giờ lạ, nhưng cho phép giờ có trong `cau` gốc
     bad_plan = _plan_tu_canonical(canonical, url_la=True)
     assert any("chua_url_la" in e for e in hau_kiem_slide_deck(bad_plan, canonical))
+    bad_time_plan = _plan_tu_canonical(canonical, short_copy_override="Giờ tự bịa 23:45 ngoài nguồn.")
+    assert any("chua_gio_la" in e for e in hau_kiem_slide_deck(bad_time_plan, canonical))
+    canonical_co_gio_cau = copy.deepcopy(canonical)
+    canonical_co_gio_cau["ngay"][0]["muc"][0]["cau"] = "Mở cửa 07:30 mỗi ngày."
+    ok_time_plan = _plan_tu_canonical(canonical_co_gio_cau, short_copy_override="Tham quan từ 07:30 theo nguồn.")
+    assert hau_kiem_slide_deck(ok_time_plan, canonical_co_gio_cau) == []
 
     # 2. Vòng tự kiểm tràn chữ retry -> gọi lần 2 ngắn hơn -> đạt + ghi đủ token & USD
     long_copy = "Đoạn mô tả cực kỳ dài để kích hoạt cơ chế tự kiểm tra tràn chữ ở vòng đầu tiên. " * 6
@@ -295,9 +302,25 @@ def test_slide_designer_route_cache_and_weighted_rate_limit():
 
     app2.state.generator = SimpleNamespace(client=SimpleNamespace(responses=CountResponses()))
     c2 = TestClient(app2)
+    # Kiểm GET /api/lich/pptx không gọi LLM (`0 USD`, đóng lỗ hổng rate-limit), chỉ POST mới gọi LLM
+    r_get = c2.get("/api/lich/pptx", cookies={"conversation_id": cid2})
+    assert r_get.status_code == 200 and r_get.headers.get("X-Slide-Layouts")
+    assert call_counter["n"] == 0, "GET /api/lich/pptx không được gọi LLM"
+
+    # Kiểm plan_sang_cac_trang ép giữ lodging_dining khi có o_dau dù LLM trả include_lodging=False
+    plan_no_lodging = sample_plan.model_copy(update={"include_lodging": False})
+    deck_forced = plan_sang_cac_trang(plan_no_lodging.model_dump(), canonical)
+    assert any(sl["layout_id"] == "lodging_dining" for sl in deck_forced["slides"])
+
     r1 = c2.post("/api/lich/pptx", json={"theme_id": "di_san_tram"}, cookies={"conversation_id": cid2})
     r2 = c2.post("/api/lich/pptx", json={"theme_id": "di_san_tram"}, cookies={"conversation_id": cid2})
     assert r1.status_code == 200 and r2.status_code == 200
     assert r1.headers.get("X-Slide-Layouts") and r2.headers.get("X-Slide-Layouts")
     assert call_counter["n"] == 1, "Cùng (itinerary_hash, theme_id) phải dùng cache trong phiên, không gọi lại model"
     _kiem_tra_meo_anh_pptx(r1.content)
+
+    # Kiểm lịch 5 ngày nhiều điểm: notes_map chia 2 cột sạch không tràn & câu > 170 ký tự không bị cắt cụt giữa chừng bởi _gon
+    c5 = _lich_day_du(5)
+    d5 = trang_lich_v2(c5, ngay_tao="28/11/2026")
+    assert len(kiem_tra_tran_chu([sl for sl in d5["slides"] if sl.get("layout_id") == "notes_map"])) == 0
+    _kiem_tra_meo_anh_pptx(dung_pptx_v2(d5, THU_MUC_ANH))

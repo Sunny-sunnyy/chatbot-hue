@@ -47,7 +47,7 @@ def _gan_ngay_tao(deck: dict, ngay_tao: str) -> dict:
     return {**deck, "ngay_tao": ngay_tao, "slides": slides}
 
 
-async def _tao_pptx_v2(request: Request, luu: dict, flags, *, theme_id: str | None = None) -> Response:
+async def _tao_pptx_v2(request: Request, luu: dict, flags, *, theme_id: str | None = None, use_llm: bool = True) -> Response:
     state = request.app.state
     store = state.conversations
     cookie = request.cookies.get(CONVERSATION_COOKIE)
@@ -62,10 +62,10 @@ async def _tao_pptx_v2(request: Request, luu: dict, flags, *, theme_id: str | No
             theme_id=theme,
             cfg=getattr(flags, "slide_designer_cfg", None),
             client=client,
-            use_llm=True,
+            use_llm=use_llm,
         )
         deck = res.deck_plan
-        if hasattr(store, "luu_slide_cache") and deck is not None:
+        if use_llm and hasattr(store, "luu_slide_cache") and deck is not None:
             store.luu_slide_cache(cookie, canonical["itinerary_hash"], theme, deck)
     else:
         layouts_cached = list(dict.fromkeys(s.get("layout_id", "") for s in (deck or {}).get("slides", []) if s.get("layout_id")))
@@ -112,7 +112,7 @@ async def tai_pptx(request: Request, theme: str | None = Query(default=None, max
     if luu is None:
         return error_response(404, "khong_co_lich", CAU_HET_HAN)
     if getattr(flags, "slide_designer", False):
-        return await _tao_pptx_v2(request, luu, flags, theme_id=theme)
+        return await _tao_pptx_v2(request, luu, flags, theme_id=theme, use_llm=False)
     lich, cau = lich_tu_luu(luu, flags)
     hom_nay = tt.hom_nay_vn()
     trang = trang_lich(lich, cau, ngay_tao=f"{hom_nay.day}/{hom_nay.month}/{hom_nay.year}", an_toan=luu.get("an_toan"))

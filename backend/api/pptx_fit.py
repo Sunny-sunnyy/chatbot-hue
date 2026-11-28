@@ -40,8 +40,8 @@ def _chars_per_line(width_in: float, font_pt: float) -> int:
     return max(4, int(usable_w // avg_char_w_in))
 
 
-def _max_lines(height_in: float, font_pt: float, line_spacing: float = LINE_SPACING) -> int:
-    usable_h = max(0.15, height_in - MARGIN_V_IN)
+def _max_lines(height_in: float, font_pt: float, line_spacing: float = LINE_SPACING, margin_v_in: float = MARGIN_V_IN) -> int:
+    usable_h = max(0.15, height_in - margin_v_in)
     line_h_in = (font_pt * line_spacing) / 72.0
     return max(1, int(usable_h // line_h_in))
 
@@ -97,6 +97,7 @@ def co_chu_vua_khung(
     min_pt: float,
     *,
     line_spacing: float = LINE_SPACING,
+    margin_v_in: float = MARGIN_V_IN,
 ) -> tuple[float, bool, int, int]:
     """Tầng 1: co cỡ chữ từng bước `0.5pt` từ `base_pt` xuống `min_pt` tới khi vừa hộp."""
     pt = float(base_pt)
@@ -104,7 +105,7 @@ def co_chu_vua_khung(
     while pt >= min_p - 1e-6:
         cur_pt = round(max(pt, min_p), 1)
         est = tinh_so_dong(text, width_in, cur_pt)
-        cap_lines = _max_lines(height_in, cur_pt, line_spacing=line_spacing)
+        cap_lines = _max_lines(height_in, cur_pt, line_spacing=line_spacing, margin_v_in=margin_v_in)
         if est <= cap_lines:
             return cur_pt, True, est, cap_lines
         if cur_pt <= min_p:
@@ -112,7 +113,7 @@ def co_chu_vua_khung(
         pt -= 0.5
     cur_pt = round(min_p, 1)
     est = tinh_so_dong(text, width_in, cur_pt)
-    cap_lines = _max_lines(height_in, cur_pt, line_spacing=line_spacing)
+    cap_lines = _max_lines(height_in, cur_pt, line_spacing=line_spacing, margin_v_in=margin_v_in)
     return cur_pt, est <= cap_lines, est, cap_lines
 
 
@@ -123,12 +124,13 @@ def cat_sach_ranh_gioi(
     font_pt: float,
     *,
     line_spacing: float = LINE_SPACING,
+    margin_v_in: float = MARGIN_V_IN,
 ) -> str:
     """Tầng 3: cắt sạch ở ranh giới câu / từ cuối vừa khít hộp và nối `…`."""
     chu = " ".join(str(text or "").split())
     if not chu:
         return ""
-    cap_lines = _max_lines(height_in, font_pt, line_spacing=line_spacing)
+    cap_lines = _max_lines(height_in, font_pt, line_spacing=line_spacing, margin_v_in=margin_v_in)
     lines = wrap_lines(chu, width_in, font_pt)
     if len(lines) <= cap_lines:
         return chu
@@ -154,6 +156,7 @@ def kiem_tra_slot(
     height_in: float | None = None,
     base_pt: float | None = None,
     min_pt: float | None = None,
+    margin_v_in: float = MARGIN_V_IN,
 ) -> tuple[float, OverflowErrorItem | None]:
     """Kiểm tra một slot theo `LAYOUT_SPECS` (hoặc kích thước truyền trực tiếp). Trả `(font_pt, error_or_None)`."""
     spec = LAYOUT_SPECS.get(layout_id, {}).get(slot_id)
@@ -166,7 +169,7 @@ def kiem_tra_slot(
     chu = str(text or "").strip()
     if not chu:
         return b_pt, None
-    pt, fits, est, cap = co_chu_vua_khung(chu, w, h, b_pt, m_pt)
+    pt, fits, est, cap = co_chu_vua_khung(chu, w, h, b_pt, m_pt, margin_v_in=margin_v_in)
     if fits:
         return pt, None
     approx = max(10, _chars_per_line(w, m_pt) * cap)
@@ -214,10 +217,29 @@ def kiem_tra_tran_chu(slides: list[dict]) -> list[dict]:
             _, err_at = kiem_tra_slot(idx, lay, "an_toan", sl.get("an_toan_cau"))
             if err_at:
                 errors.append(err_at.to_dict())
+            ban_do = sl.get("ban_do") or []
+            body_w = 7.05 if len(ban_do) > 8 else (7.5 if ban_do else 11.9)
             body = "\n".join("•  " + d for d in (sl.get("dong") or []) if d != sl.get("an_toan_cau"))
-            _, err_b = kiem_tra_slot(idx, lay, "notes_body", body)
+            _, err_b = kiem_tra_slot(idx, lay, "notes_body", body, width_in=body_w)
             if err_b:
                 errors.append(err_b.to_dict())
+            if ban_do:
+                y_top = 2.22 if (sl.get("an_toan") and sl.get("an_toan_cau")) else 1.35
+                avail = max(1.6, 5.90 - (y_top + 0.56))
+                if len(ban_do) > 8:
+                    rows = (len(ban_do) + 1) // 2
+                    row_h = min(0.36, avail / rows)
+                    col_w, base_m, min_m = 2.16, 10.5, 7.5
+                else:
+                    row_h = min(0.4, avail / len(ban_do))
+                    col_w, base_m, min_m = 3.8, (12.0 if row_h >= 0.34 else 10.0), 8.0
+                for d in ban_do:
+                    _, err_m = kiem_tra_slot(
+                        idx, lay, "map_link", d.get("ten"),
+                        width_in=col_w, height_in=row_h, base_pt=base_m, min_pt=min_m, margin_v_in=0.02,
+                    )
+                    if err_m:
+                        errors.append(err_m.to_dict())
     return errors
 
 

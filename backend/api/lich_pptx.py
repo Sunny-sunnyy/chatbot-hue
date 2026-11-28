@@ -247,7 +247,7 @@ def _muc_chuan_v2(m: dict, copy_override: str | None = None) -> dict:
     if isinstance(m.get("anh"), dict) and m["anh"].get("src"):
         a = _anh_hop_le(m["anh"])
         anh_src = a["src"] if a else None
-    cau = copy_override if copy_override is not None else _gon(m.get("cau"))
+    cau = copy_override if copy_override is not None else m.get("cau")
     return {
         "id_muc": m.get("id_muc"),
         "buoi": TEN_BUOI.get(m.get("buoi"), str(m.get("buoi") or "")),
@@ -506,7 +506,7 @@ def plan_sang_cac_trang(plan: dict, canonical: dict, ngay_tao: str | None = None
         o_dau_header=plan.get("lodging_header"),
         o_dau_indices=plan.get("lodging_indices"),
         notes_header=plan.get("notes_header"),
-        include_lodging=bool(plan.get("include_lodging", True)),
+        include_lodging=bool(canonical.get("o_dau")),
     )
 
 
@@ -536,21 +536,23 @@ def dung_pptx_v2(deck: dict, thu_muc_anh: Path) -> bytes:
             sh.adjustments[0] = bo
         return sh
 
-    def fit_run(text: str, w: float, h: float, base_pt: float, min_pt: float) -> tuple[str, float]:
-        pt, fits, _, _ = co_chu_vua_khung(text, w, h, base_pt, min_pt)
+    def fit_run(text: str, w: float, h: float, base_pt: float, min_pt: float, margin_v: float = 0.04) -> tuple[str, float]:
+        mv = margin_v * 2.0
+        pt, fits, _, _ = co_chu_vua_khung(text, w, h, base_pt, min_pt, margin_v_in=mv)
         if fits:
             return text, pt
-        return cat_sach_ranh_gioi(text, w, h, pt), pt
+        return cat_sach_ranh_gioi(text, w, h, pt, margin_v_in=mv), pt
 
-    def chu(s, x, y, w, h, doan, co=14.0, min_co=9.0, ma="chu", dam=False, phong=PHONG, can=PP_ALIGN.LEFT, giua=False, cach=0, auto_fit=True):
+    def chu(s, x, y, w, h, doan, co=14.0, min_co=9.0, ma="chu", dam=False, phong=PHONG, can=PP_ALIGN.LEFT, giua=False, cach=0, auto_fit=True, margin_v: float = 0.04):
         tb = s.shapes.add_textbox(Inches(x), Inches(y), Inches(w), Inches(h))
         tf = tb.text_frame
         tf.word_wrap = True
-        tf.margin_left = tf.margin_right = tf.margin_top = tf.margin_bottom = Inches(0.04)
+        tf.margin_left = tf.margin_right = Inches(0.04)
+        tf.margin_top = tf.margin_bottom = Inches(margin_v)
         tf.vertical_anchor = MSO_ANCHOR.MIDDLE if giua else MSO_ANCHOR.TOP
         items = [(doan, co, ma, dam)] if isinstance(doan, str) else list(doan)
         if auto_fit and len(items) == 1 and isinstance(items[0][0], str):
-            txt, pt_used = fit_run(items[0][0], w, h, float(items[0][1]), float(min_co))
+            txt, pt_used = fit_run(items[0][0], w, h, float(items[0][1]), float(min_co), margin_v=margin_v)
             items = [(txt, pt_used, items[0][2], items[0][3], *items[0][4:])]
         for i, d in enumerate(items):
             p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
@@ -779,21 +781,35 @@ def dung_pptx_v2(deck: dict, thu_muc_anh: Path) -> bytes:
             hop(s, 0.6, 1.25, 0.12, 0.82, "phu")
             chu(s, 0.84, 1.28, 11.75, 0.76, t["an_toan_cau"], 11.5, 9.0, "phu", True, giua=True)
             y_top = 2.22
-        rong_trai = 7.5 if ban_do else RONG - 1.4
+        ha_cot = len(ban_do) > 8
+        rong_trai = 7.05 if ha_cot else (7.5 if ban_do else RONG - 1.4)
         dong_thuong = [d for d in (t.get("dong") or []) if d != t.get("an_toan_cau")]
         body = "\n".join("•  " + d for d in dong_thuong)
         if body:
             chu(s, 0.7, y_top, rong_trai, 6.85 - y_top, body, 13.5, 9.5, "chu")
         if ban_do:
-            hop(s, 8.55, y_top, 4.2, 6.85 - y_top, "nhat", MSO_SHAPE.ROUNDED_RECTANGLE, 0.05)
-            chu(s, 8.75, y_top + 0.1, 3.8, 0.45, "Mở bản đồ từng điểm", 15.0, 11.5, "phu", True, PHONG_TD)
-            avail = max(1.6, 6.85 - y_top - 1.55)
-            cao_dong = min(0.4, avail / len(ban_do))
-            for i, d in enumerate(ban_do):
-                o = chu(s, 8.75, y_top + 0.62 + i * cao_dong, 3.8, cao_dong, d["ten"], 12.5 if cao_dong >= 0.34 else 10.0, 8.2, "phu", giua=True)
-                o.text_frame.paragraphs[0].runs[0].font.underline = True
-                o.click_action.hyperlink.address = d["url"]
-            chu(s, 8.75, 5.95, 3.8, 0.8, f"{DONG_BAN_DO}\n{DONG_SUA_FILE}", 10.5, 8.5, "chu")
+            px, pw = (8.05, 4.68) if ha_cot else (8.55, 4.2)
+            hop(s, px, y_top, pw, 6.85 - y_top, "nhat", MSO_SHAPE.ROUNDED_RECTANGLE, 0.05)
+            chu(s, px + 0.15, y_top + 0.08, pw - 0.3, 0.44, "Mở bản đồ từng điểm", 15.0, 11.5, "phu", True, PHONG_TD)
+            y_list = y_top + 0.56
+            avail = max(1.6, 5.90 - y_list)
+            if ha_cot:
+                n_rows = (len(ban_do) + 1) // 2
+                cao_dong = min(0.36, avail / n_rows)
+                col_w = 2.16
+                x_cols = (8.18, 10.46)
+                for i, d in enumerate(ban_do):
+                    col, row = i // n_rows, i % n_rows
+                    o = chu(s, x_cols[col], y_list + row * cao_dong, col_w, cao_dong, d["ten"], 10.5, 7.5, "phu", giua=True, margin_v=0.01)
+                    o.text_frame.paragraphs[0].runs[0].font.underline = True
+                    o.click_action.hyperlink.address = d["url"]
+            else:
+                cao_dong = min(0.4, avail / len(ban_do))
+                for i, d in enumerate(ban_do):
+                    o = chu(s, 8.75, y_list + i * cao_dong, 3.8, cao_dong, d["ten"], 12.0 if cao_dong >= 0.34 else 10.0, 8.0, "phu", giua=True, margin_v=0.01)
+                    o.text_frame.paragraphs[0].runs[0].font.underline = True
+                    o.click_action.hyperlink.address = d["url"]
+            chu(s, px + 0.15, 5.95, pw - 0.3, 0.8, f"{DONG_BAN_DO}\n{DONG_SUA_FILE}", 10.5, 8.5, "chu")
 
     for so, t in enumerate(deck.get("slides") or [], start=1):
         s = prs.slides.add_slide(prs.slide_layouts[6])

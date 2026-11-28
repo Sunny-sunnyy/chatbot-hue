@@ -48,10 +48,10 @@ Quy tắc bắt buộc:
    - `day_compact_grid`: ngày dày 5-6 điểm trở lên.
    Cố gắng đa dạng `layout_id` khi lịch có >= 2 ngày khác nhau.
 3. Với mỗi mục trong `days`: giữ nguyên đúng `id_muc` từ đầu vào, không bỏ sót và không tự thêm `id_muc` mới.
-4. `short_copy`: rút gọn câu mô tả của chính mục đó cho gọn khung slide (thường <= 125 ký tự, không mã [n]).
+4. `short_copy`: rút gọn câu mô tả của chính mục đó cho gọn khung slide ngay từ lần đầu: `<= 85` ký tự với `day_cards_2col` / `day_compact_grid`, `<= 115` ký tự với các layout khác (không mã [n]).
    TUYỆT ĐỐI KHÔNG tự bịa địa điểm, KHÔNG đổi/bịa giờ mở cửa hay giờ đi, KHÔNG nêu giá vé/giá phòng, KHÔNG chèn URL/link hay ghi công tác giả ảnh.
 5. `hero_image_id` và `secondary_image_ids` chỉ chọn từ `anh_manifest.diem` có trong đầu vào.
-6. `lodging_indices` chỉ dùng chỉ số hợp lệ (0..N-1) của `o_dau.co_so` nếu `o_dau` có mặt.
+6. Nếu đầu vào có `o_dau`, luôn đặt `include_lodging: true` và `lodging_indices` chỉ dùng chỉ số hợp lệ (0..N-1) của `o_dau.co_so`.
 7. Nếu nhận danh sách `overflow_errors`, rút gọn đúng các `slot_id`/`id_muc` bị tràn hoặc đổi ngày sang `day_compact_grid`.
 """.strip()
 
@@ -147,9 +147,10 @@ def hau_kiem_slide_deck(plan: SlideDeckPlan, canonical: dict) -> list[str]:
             muc_theo_id[m["id_muc"]] = m
             if m.get("ten"):
                 ten_cho_phep.add(str(m["ten"]))
-            if m.get("gio"):
-                for g in _GIO_LA.findall(str(m["gio"])):
-                    gio_cho_phep.add(re.sub(r"\s+", "", g.lower()))
+            for src_gio in (m.get("gio"), m.get("cau"), m.get("ghi_chu")):
+                if src_gio:
+                    for g in _GIO_LA.findall(str(src_gio)):
+                        gio_cho_phep.add(re.sub(r"\s+", "", g.lower()))
 
     manifest_diem = (canonical.get("anh_manifest") or {}).get("diem") or {}
     if plan.hero_image_id is not None and plan.hero_image_id not in manifest_diem:
@@ -284,8 +285,9 @@ async def thiet_ke_slide(
 
     cfg = dict(cfg or {})
     model = str(cfg.get("model") or "gpt-6-luna")
-    max_retries = max(0, int(cfg.get("max_retries", 2)))
-    timeout_s = float(cfg.get("timeout_seconds", 15))
+    max_retries = max(0, int(cfg.get("max_retries", 1)))
+    timeout_s = float(cfg.get("timeout_seconds", 20))
+    reasoning_effort = str(cfg.get("reasoning_effort") or "none")
     fallback_code_only = bool(cfg.get("fallback_code_only", True))
     theme_mac_dinh = theme_id if theme_id in ALLOWED_THEMES else chon_theme_mac_dinh(canonical.get("tham_so"))
 
@@ -358,7 +360,7 @@ async def thiet_ke_slide(
                         text_format=SlideDeckPlan,
                         store=False,
                         prompt_cache_key="hue_slide_designer_v1",
-                        reasoning={"effort": "low"},
+                        reasoning={"effort": reasoning_effort},
                     ),
                     timeout=timeout_s,
                 )
