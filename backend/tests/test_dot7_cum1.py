@@ -41,6 +41,7 @@ from llm.assistant import (
     _finish_generated,
     _lich_extra,
     _thoi_tiet_cuoi,
+    answer_turn_stream,
     goi_y_luu_tru_for_turn,
     luoi_cuoi_bao,
     set_notice,
@@ -61,7 +62,7 @@ def _bang_v2_va_lt():
     return s, bang_v2, bang_lt
 
 
-def _du_bao_mua_to():
+async def _du_bao_mua_to():
     ngay = tt.hom_nay_vn()
     return tt.DuBao("ok", [{"ngay": ngay, "mua": 110.0, "tmax": 28.0, "tmin": 21.0, "xs": 95}], "18:00")
 
@@ -113,18 +114,95 @@ def test_p1_bao_lu_lan_dau_va_dao_thu_tu_tool_chan_luu_tru_va_giu_112():
     luoi_cuoi_bao(q, tr, flags)
     assert tt.CAU_BAO_LU in (tr.answer or "")
 
-    # Đảo thứ tự: model gọi goi_y_luu_tru TRƯỚC khi gọi thoi_tiet("bao_lu") trong cùng 1 lượt
+    # Đảo thứ tự: câu hỏi có từ "thời tiết" (nên được cấp `thoi_tiet`), nhưng chưa mang từ khoá bão nên được cấp cả `goi_y_luu_tru`;
+    # model gọi `goi_y_luu_tru` TRƯỚC khi tự chọn `thoi_tiet("bao_lu")` trong cùng 1 lượt
     tr_dao = AnswerTrace()
-    q_dao = "Gợi ý chỗ ở gần Lăng Cô và kiểm tra xem có bão lũ hay thời tiết nguy hiểm không?"
+    q_dao = "Tối nay ở Lăng Cô thời tiết thế nào, nên chọn chỗ nghỉ nào?"
     extra_dao = _lich_extra(q_dao, None, None, tr_dao, None, None, flags)
-    if "goi_y_luu_tru_fn" in extra_dao:
-        asyncio.run(extra_dao["goi_y_luu_tru_fn"](khu="ven_bien_nam"))
-        asyncio.run(extra_dao["thoi_tiet_fn"]("bao_lu", 0, 0))
-        tr_dao.generated = GeneratedText("Gợi ý cơ sở A [1].", None, "gpt-6-luna", None, None, None, 0)
-        _finish_generated(tr_dao, flags, q_dao)
-        assert not tr_dao.goi_y_luu_tru
-        assert tt.CAU_BAO_LU in (tr_dao.answer or "")
-        assert "Gợi ý cơ sở A" not in (tr_dao.answer or "")
+    assert "goi_y_luu_tru_fn" in extra_dao
+    asyncio.run(extra_dao["goi_y_luu_tru_fn"](khu="ven_bien_nam"))
+    asyncio.run(extra_dao["thoi_tiet_fn"]("bao_lu", 0, 0))
+    tr_dao.generated = GeneratedText("Gợi ý cơ sở A [1].", None, "gpt-6-luna", None, None, None, 0)
+    _finish_generated(tr_dao, flags, q_dao)
+    assert not tr_dao.goi_y_luu_tru
+    assert all(s.source != gylt.NGUON_SOURCE for s in tr_dao.so_nguon)
+    assert all(s.source != gylt.NGUON_SOURCE for s in (tr_dao.cited or ()))
+    assert tt.CAU_BAO_LU in (tr_dao.answer or "") or tr_dao.answer == tt.CAU_DAN_BAO_LU
+    assert "Gợi ý cơ sở A" not in (tr_dao.answer or "")
+
+    # Ca A (finding verifier): model trích nguồn KB [99] (không trích NGUON_SOURCE) sau khi gọi goi_y_luu_tru -> thoi_tiet("bao_lu")
+    kb_src = PackedSource(99, "Lăng Cô", ("Tổng quan",), ("Khu nghỉ dưỡng tại Lăng Cô",), "travel/lang_co.md")
+    tr_a = AnswerTrace(so_nguon=[kb_src])
+    extra_a = _lich_extra(q_dao, None, None, tr_a, None, None, flags)
+    asyncio.run(extra_a["goi_y_luu_tru_fn"](khu="ven_bien_nam"))
+    asyncio.run(extra_a["thoi_tiet_fn"]("bao_lu", 0, 0))
+    tr_a.generated = GeneratedText("Bạn có thể ở Laguna Lăng Cô [99].", None, "gpt-6-luna", None, None, None, 0)
+    _finish_generated(tr_a, flags, q_dao)
+    assert tr_a.citation_error is None
+    assert "Laguna" not in (tr_a.answer or "")
+    assert (tr_a.answer or "").startswith(tt.CAU_DAN_BAO_LU)
+    assert tt.CAU_BAO_LU in (tr_a.answer or "")
+    assert all(s.source != gylt.NGUON_SOURCE for s in tr_a.so_nguon)
+
+    # Ca B (finding verifier): có số thời tiết lạ không nguồn ("Nhiệt độ 35°C.") kèm NGUON_SOURCE [1] -> không bị _go_so_la khôi phục lại
+    tr_b = AnswerTrace()
+    extra_b = _lich_extra(q_dao, None, None, tr_b, None, None, flags)
+    asyncio.run(extra_b["goi_y_luu_tru_fn"](khu="ven_bien_nam"))
+    asyncio.run(extra_b["thoi_tiet_fn"]("bao_lu", 0, 0))
+    tr_b.generated = GeneratedText("Gợi ý cơ sở A [1]. Nhiệt độ 35°C.", None, "gpt-6-luna", None, None, None, 0)
+    _finish_generated(tr_b, flags, q_dao)
+    assert tr_b.citation_error is None
+    assert "Gợi ý cơ sở A" not in (tr_b.answer or "")
+    assert "35" not in (tr_b.answer or "")
+    assert (tr_b.answer or "").startswith(tt.CAU_DAN_BAO_LU)
+    assert tt.CAU_BAO_LU in (tr_b.answer or "")
+
+    # Ca C (finding verifier): stream `giu_chu_toi_kiem` (`cho_kiem`) không phát chữ lưu trú cũ khi P1 đã thay `trace.answer`
+    flags_stream = AssistantFlags(
+        lan_tim_dau="v2",
+        tim_them=True,
+        thoi_tiet=True,
+        bao_lu_cong_cu=True,
+        cong_cong_cu="linh_hoat",
+        du_bao=_du_bao_mua_to,
+        goi_y_luu_tru=True,
+        luu_tru_bang=bang_lt,
+        bang_lich_v2=bang_v2,
+        giu_chu_toi_kiem=True,
+    )
+
+    class _FakeStreamGen:
+        chu_ve_mot_lan = True
+        timeout = 5
+        model = "gpt-6-luna"
+        max_turns = 6
+        assistant_instructions = "ok"
+
+        def start_tools_stream(self, tool_prompt, tool_fn, **extra):
+            async def _events():
+                await extra["goi_y_luu_tru_fn"](khu="ven_bien_nam")
+                await extra["thoi_tiet_fn"]("bao_lu", 0, 0)
+                yield SimpleNamespace(
+                    type="raw_response_event",
+                    data=SimpleNamespace(type="response.output_text.delta", delta='{"answer":"Gợi ý khách sạn A [1]."}'),
+                )
+
+            res = SimpleNamespace(stream_events=_events, cancel=lambda: None)
+            return res, SimpleNamespace(calls=[]), {}
+
+        def finish_answer_stream(self, result, call_log, started, state):
+            return GeneratedText("Gợi ý khách sạn A [1].", None, "gpt-6-luna", None, None, None, 0)
+
+    async def _run_stream():
+        tr_s = AnswerTrace()
+        evs = [ev async for ev in answer_turn_stream(q_dao, None, None, _FakeStreamGen(), tr_s, flags_stream)]
+        return tr_s, evs
+
+    tr_s, evs = asyncio.run(_run_stream())
+    streamed_text = "".join(d for k, d in evs if k == "delta")
+    assert tr_s.citation_error is None
+    assert "Gợi ý khách sạn A" not in streamed_text
+    assert tt.CAU_DAN_BAO_LU in streamed_text and tt.CAU_BAO_LU in streamed_text
 
 
 # ---------- P2: mua_nang kiểm ngưỡng >= 100mm khi ngay=None ----------
@@ -259,6 +337,16 @@ def test_p3_chan_nho_dap_va_bia_gia_phong_co_ma_trich_dan():
     _finish_generated(tr_gia, AssistantFlags(), "Gợi ý chỗ ở tối nay")
     assert tr_gia.citation_error is not None
     assert dap_duoc_nho(tr_gia, "retracted", mo_cho_cuoc_co_lich=True) is False
+
+    # Chữ viết tắt giá dạng "1,2tr/đêm" cũng bị chặn nếu không nằm trong KB
+    tr_tr = AnswerTrace(
+        so_nguon=[src],
+        goi_y_luu_tru=[{"n": 1}],
+        tools=[{"name": "goi_y_luu_tru"}],
+        generated=GeneratedText("Cơ sở mẫu giá khoảng 1,2tr/đêm [1].", None, "gpt-6-luna", None, None, None, 0),
+    )
+    _finish_generated(tr_tr, AssistantFlags(), "Gợi ý chỗ ở tối nay")
+    assert tr_tr.citation_error is not None
 
     # Câu hợp lệ (chỉ nêu sao, không bịa giá/còn phòng): qua kiểm nhưng vẫn KHÔNG được nhớ đáp
     tr_ok = AnswerTrace(

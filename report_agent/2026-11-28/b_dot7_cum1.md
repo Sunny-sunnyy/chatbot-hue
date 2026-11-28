@@ -65,3 +65,17 @@
     - `test_openai_full_corpus_generator.py`: `7 passed, 2 errors` (`require_openai_key`)
 
 - **Phép này KHÔNG cho biết gì · hướng rộng hơn · đếm rẻ nhất:** Các phép test offline không kiểm chứng luồng gọi OpenAI thật (GPT-6-luna / Slide AI / sửa lịch LLM) hay truy vấn Qdrant `:6335` đang tắt; khi `@verifier` kiểm với Qdrant bật sẽ phủ được 8 file `503`/Qdrant nêu trên mà không tốn API key (trừ 2 ca `require_openai_key`), còn chất lượng model GPT-6 thực tế đo ở Nhịp 2 theo `KE_HOACH_DOT7.md` §3.
+
+## 3. Sửa sau review vòng 1 (`19:13 28/11/2026`, theo `e_review_dot7_cum1.md`)
+
+- **Finding 1 (`major`, `P1` — `backend/llm/assistant.py:2177–2185, 2831–2835`):**
+  - Khi `trace.goi_y_luu_tru` tồn tại và `_la_luot_nguy_hiem_bao_lu(query, trace)` là `True`: luôn xoá `trace.goi_y_luu_tru`, lọc bỏ mọi `gylt.NGUON_SOURCE` khỏi cả `trace.so_nguon` lẫn `trace.cited`, cập nhật đồng thời `text = trace.answer = tt.CAU_DAN_BAO_LU`, đặt `trace.citation_error = None` và đánh dấu `trace.vet["p1_xoa_luu_tru"] = True` trước `kiem_so_sau_khi_viet` / `_kiem_tra_luu_tru`.
+  - Stream `cho_kiem` (`answer_turn_stream` / `answer_turn_stream_parallel`): khi `trace.vet.get("p1_xoa_luu_tru")` (hoặc `trace.kiem_so_go is not None`), phát `chu_cua_model(trace)` thay cho `cho_kiem` cũ.
+- **Minor #3 (`P3` — `backend/llm/assistant.py:2102`):** bổ sung `tr\b` vào `_GIA_TIEN_LUU_TRU` để chặn dạng viết tắt `"1,2tr/đêm"`. (Hai `minor` ở file khác giữ nguyên scope để không làm cũ bằng chứng `frontend`/Playwright ở `db2ec618`).
+- **Kiểm chứng lại sau sửa cuối (`tests/test_dot7_cum1.py` bổ sung Ca A, Ca B, Ca C và `"1,2tr/đêm"`):**
+  - `tests/test_dot7_cum1.py`: **`15 passed`** (`5.61s`)
+  - `tests/test_luoi_cuoi_bao.py`: **`11 passed`** (`2.90s`)
+  - `tests/test_chat_stream.py`: **`29 passed`** (`3.00s`)
+  - `tests/test_assistant_boundary.py`: **`4 passed`** (`4.22s`)
+  - `tests/test_r4_numbers.py`: **`6 passed`** (`12.06s`)
+  - `git diff --check`: sạch (`exit 0`).

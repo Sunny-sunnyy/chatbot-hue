@@ -2099,7 +2099,7 @@ _PHU_DINH_PHONG = re.compile(
     r"(?:chưa\s+kiểm(?:\s+tra)?|không\s+(?:có\s+thông\s+tin|kiểm\s+tra(?:\s+được)?|rõ)|chưa\s+rõ|tự\s+kiểm\s+tra|kiểm\s+tra\s+(?:trực\s+tiếp|lại|trên))[^.!?\n]{0,40}$",
     re.IGNORECASE,
 )
-_GIA_TIEN_LUU_TRU = re.compile(r"(\d[\d.,]*)\s*(?:đồng|vnd|vnđ|k\b|triệu|usd|\$|đ(?:/|\b))", re.IGNORECASE)
+_GIA_TIEN_LUU_TRU = re.compile(r"(\d[\d.,]*)\s*(?:đồng|vnd|vnđ|k\b|triệu|tr\b|usd|\$|đ(?:/|\b))", re.IGNORECASE)
 
 
 def _kiem_tra_luu_tru(trace: AnswerTrace, text: str) -> None:
@@ -2175,12 +2175,13 @@ def _finish_generated(trace: AnswerTrace, flags: AssistantFlags | None = None, q
     if loi and trace.citation_error is None:  # D8: hỏng ⇒ xử như citation hỏng hôm nay (rút lại + lời báo + "Thử lại")
         trace.citation_error = CitationIntegrityError("itinerary check failed: " + ",".join(loi))
     if trace.goi_y_luu_tru and _la_luot_nguy_hiem_bao_lu(query, trace):
-        # P1: model gọi `goi_y_luu_tru` trước khi gọi `thoi_tiet("bao_lu")` trong cùng một lượt ⇒ xoá gợi ý lưu trú, giữ cảnh báo bão/lũ
+        # P1: model gọi `goi_y_luu_tru` trước khi gọi `thoi_tiet("bao_lu")` trong cùng một lượt ⇒ xoá gợi ý lưu trú, xoá NGUON_SOURCE và giữ cảnh báo bão/lũ
         trace.goi_y_luu_tru = None
-        if trace.cited and any(s.source == gylt.NGUON_SOURCE for s in trace.cited):
-            trace.cited = tuple(s for s in trace.cited if s.source != gylt.NGUON_SOURCE)
-            trace.answer = tt.CAU_DAN_BAO_LU
-            trace.citation_error = None
+        trace.so_nguon = [s for s in trace.so_nguon if s.source != gylt.NGUON_SOURCE]
+        trace.cited = tuple(s for s in (trace.cited or ()) if s.source != gylt.NGUON_SOURCE)
+        text = trace.answer = tt.CAU_DAN_BAO_LU
+        trace.citation_error = None
+        trace.vet["p1_xoa_luu_tru"] = True
     kiem_so_sau_khi_viet(trace, text, flags, query)
     _kiem_tra_luu_tru(trace, text)
     if flags is not None and flags.thoi_tiet:
@@ -2827,9 +2828,10 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                 if trace.answer and not da_phat_viet_lai:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer
                 return
-            if cho_kiem and trace.citation_error is None:  # chữ đã gom qua phép kiểm ⇒ phát bằng đúng đường của một mảnh chữ; bị rút ⇒ không phát
+            if (cho_kiem or (cho_kiem is not None and trace.vet.get("p1_xoa_luu_tru"))) and trace.citation_error is None:  # chữ đã gom qua phép kiểm ⇒ phát bằng đúng đường của một mảnh chữ; bị rút ⇒ không phát
                 # soát khác hãng 22/11 (A1): phép kiểm số đã gỡ câu có số lạ ⇒ phát chữ ĐÃ gỡ (chữ model của `trace.answer`), không phát chữ gốc đã gom
-                text = chu_phat(cho_kiem if trace.kiem_so_go is None else chu_cua_model(trace))
+                thay = trace.kiem_so_go is not None or bool(trace.vet.get("p1_xoa_luu_tru"))
+                text = chu_phat(chu_cua_model(trace) if thay else cho_kiem)
                 if text is not None:
                     yield "delta", text
             if giu_chu:  # chữ giữ lại đến hết = câu từ chối (đã thay) hoặc một khúc đầu của nó
