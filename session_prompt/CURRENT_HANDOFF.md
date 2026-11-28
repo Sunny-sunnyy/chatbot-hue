@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — nhật ký theo giờ của ngày
 
-Cập nhật: 12:35 28/11/2026 (phiên điều phối A — **ĐÃ KẾT ĐỢT SẠCH ĐỢT 5 PHẦN A (`70 MỞ / 8 TẮT`, `646d247`) + ĐỒNG BỘ GIÁO TRÌNH (`6b01170b`, `25` file) + PHÂN TÍCH `google-research/harness2` (`0 USD`) + CHẠY `improve-workflow` GỌT HỒ SƠ, KHOÁ CHUẨN `--squash` & DỌN NHÁNH**). Sổ việc — việc đang mở, ai làm, quyết định đang chờ — là `session_prompt/VIEC_DANG_MO.md`; trang này KHÔNG chép bước kế.
+Cập nhật: 17:44 28/11/2026 (phiên điều phối A — **ĐÃ XONG ĐỢT 6 TOÀN DIỆN LOCAL (`76f65ff3`, `71 MỞ / 9 TẮT`, `0,346181 USD`) + ĐỒNG BỘ GIÁO TRÌNH (`b7d65994`, `27` file) + SOẠN ĐỀ BÀI `6.2 Sol` (`DE_BAI_6_2_SOL_LOCAL_100.md`), ĐÓNG HẲN ĐỢT 5B & CLOUD VISION API**). Sổ việc — việc đang mở, ai làm, quyết định đang chờ — là `session_prompt/VIEC_DANG_MO.md`; trang này KHÔNG chép bước kế.
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 1. `AGENTS.md` (tự nạp) ⇒ `session_prompt/START_SESSION.md` ⇒ `session_prompt/HIEN_TRANG.md` (đủ) ⇒ `data/bo_nho_agent/MEMORY.md` (cây chính, ngoài git) ⇒ `session_prompt/VIEC_DANG_MO.md` khối đầu + mục tên mình ⇒ `session_prompt/sessions/STATUS_<X>.md`.
@@ -8,6 +8,9 @@ Cập nhật: 12:35 28/11/2026 (phiên điều phối A — **ĐÃ KẾT ĐỢT 
 3. Nhật ký các ngày trước: `report_agent/<ngày>/TONG_HOP.md`; bản đầy đủ tới trưa 28/11: `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-28.md` (trước nữa: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-19.md` và `git show a8ca8758:session_prompt/CURRENT_HANDOFF.md`).
 
 ## Ghi trong ngày 28/11/2026 (cuối ngày dời sang `TONG_HOP.md` / `archive/`)
+- 17:44 28/11/2026 — ĐÓNG ĐỢT 5B/CLOUD VISION & HOÀN TẤT ĐỢT 6 TOÀN DIỆN LOCAL (`76f65ff3` + giáo trình `b7d65994`, `0,346181 USD` OpenAI = `@eval 0,153266` + `@verifier 0,192915`, lũy kế `~1,82 USD`):
+  - Giữ/bật `goi_y_luu_tru: true` (`9/10` dương kèm `NHAN`+OTA, `6/6` âm/đối chứng, `F1=0,875`), vá gốc `vl_01` (`0` gọi nhầm `thoi_tiet`), SSE `status` theo từng công cụ + 2 nút PPTX (*Tải nhanh* / *Tải bản AI*, Playwright `1536x695` & `390x844` đạt `0` lỗi). `387 passed` (`134` offline + `253` Qdrant).
+  - Đóng/giữ tắt có số liệu sạch: `doi_chieu_mau` (`6.1`: FP `11/18->5/18` nhưng top-1 `49/55->45/55`, giữ `mac_dinh`), `tinh_ve_va_gio_tham_quan` (`6.3a`: `tim_kho` đã `14/14`, `F1=0,500`, `+7,8%` USD, giữ `false`), giữ RRF (`92,04%` > `dense_only` `90,45%`). Soi trọn 176 Golden (`156/158=98,73%`, `18/18` từ chối, `89,99%` faith) và soạn `gửi chatgpt/2026-11-28/DE_BAI_6_2_SOL_LOCAL_100.md` cho GPT 6.2 Sol.
 - 12:35 28/11/2026 — ĐÓNG PHIÊN SẠCH SAU ĐỢT 5A (`improve-workflow` `0 USD` + khoá chuẩn `--squash` + dọn nhánh):
   - Hiếu nhắc chuyện `main` tăng 7 commit trong 3 tiếng sáng 28/11 do `--no-ff` và gộp cắt khúc từng worker ⇒ cụ thể hoá `WORKFLOW.md` §9.6 theo chọn lựa của Hiếu: nhánh riêng tự do commit/push, nhưng **khi đưa vào `main` bắt buộc `git merge --squash`** theo mốc / cuối đợt (tối đa **1–2 squash commit** gọn, tiêu đề thống nhất).
   - Đồng bộ `/home/minhhieu/hue_rag/data/bo_nho_agent/MEMORY.md` mốc Đợt 5A + chuẩn `--squash` + quy tắc in đường dẫn text thuần `/home/minhhieu/hue_rag/...` (không bọc `[...](file://...)` / backtick); dời `1.png` vào `data/thu_dot5a_2026-11-28/anh_hieu_gui_2811/1.png`.

@@ -1,6 +1,6 @@
 # Bài 17 — Bộ 176 câu hỏi mẫu: đề kiểm tra của hệ thống
 
-*Cập nhật 20:30, ngày 25/11/2026 · cập nhật trạng thái các bộ câu kín của phần trợ lý sau lượt đo 25/11/2026 trên `gpt-6-luna` (bài 32, 40) · mốc trước: 20:46 23/11/2026 (số kho 269 bài; cấu tạo bộ câu đọc từ chương trình đo; các số đo lấy từ các báo cáo từ 24/10 tới 12/11, model viết gpt-6-luna; người viết không mở nội dung bộ câu và không chạy lại phép đo nào).*
+*Cập nhật 17:19, ngày 28/11/2026 · bổ sung kết quả chạy trọn **bộ 176 câu mẫu** trên `gpt-6-luna` ở Đợt 6 (28/11/2026: trả lời đúng **`156/158` (`98,73%`)** câu trong kho, từ chối sạch **`18/18`** câu ngoài phạm vi, `0` lỗi hệ thống) cùng trạng thái các bộ câu kín (bài 32, 40) · mốc trước: 20:30 25/11/2026 và khối Nguồn.*
 
 **Bài trước đã biết:** đường hỏi đáp: tìm, viết, kiểm. Ở mỗi bài đều có những dòng "đã thử cách này, điểm tăng bao nhiêu, bỏ vì mấy câu tệ đi".
 **Bài này thêm:** những con số đó đo trên cái gì. Trước khi chấm được thì phải có đề. Bài này nói về đề; hai bài sau nói về cách chấm.
@@ -185,7 +185,7 @@ Soát đáp án mẫu của các câu liên quan, sửa nếu lệch. Sửa đá
 
 | Mục | Giá trị | Dùng để làm gì, vì sao là giá trị này | Đã thử giá trị khác chưa |
 |---|---|---|---|
-| Số câu của bộ | 176 | — | thời hệ thống chỉ có nhóm món ăn dùng các bộ 104 câu và 45 câu (bộ 45 câu chỉ đo bước tìm); không so thẳng với bộ này |
+| Số câu của bộ | 176 | ở Đợt 6 (28/11) đã chạy trọn bộ 176 câu trên `gpt-6-luna`: đúng **`156/158` (`98,73%`)** câu kho (còn 2 ca từ chối nhầm), từ chối sạch **`18/18`** câu ngoài phạm vi, `0` lỗi hệ thống | thời hệ thống chỉ có nhóm món ăn dùng các bộ 104 câu và 45 câu (bộ 45 câu chỉ đo bước tìm); không so thẳng với bộ này |
 | Các phần của một câu | câu hỏi · từ khoá đáp án · đáp án mẫu · loại câu | từ khoá dùng cho thước nhanh của bước tìm (bài 18); đáp án mẫu dùng để chấm câu trả lời (bài 19) | — |
 | Chia nhóm | 120 để thử / 56 để kiểm lại, cùng tỉ lệ loại câu, cố định | chạy lại vẫn ra cùng cách chia | — |
 | Bộ chạy nhanh | 10 câu lấy từ 176 câu | kiểm nhanh sau một sửa nhỏ | — |
@@ -214,7 +214,8 @@ Soát đáp án mẫu của các câu liên quan, sửa nếu lệch. Sửa đá
 - Bộ cất riêng 36 câu dùng ngày 28/10; bộ 40 câu dùng ở lượt đo ngày 01/11.
 - Bộ an toàn ở lượt đo ngày 01/11: 0 câu nói ngược cảnh báo; 0 trên 4 câu ngoài kho bị trả lời; 2 câu sai điều kiện (mức cho phép lúc đó là nhiều nhất 2).
 - Tính lại điểm của bộ cất riêng theo đúng tỉ lệ loại câu của bộ quen vẫn ra khoảng 4,20, nên chênh lệch không phải do bộ cất riêng nhiều câu khó hơn.
-- Từ tối 21/11, nhóm quyết định chạy và chấm mọi phép đo mới bằng model đang chạy (Claude Sonnet 5.5); số mới không so thẳng với các số trong bài này (bài 19 kể đủ lịch sử người chấm).
+- Từ tối 21/11, nhóm quyết định chạy và chấm mọi phép đo mới bằng model đang chạy; số mới không so thẳng với các số trong bài này (bài 19 kể đủ lịch sử người chấm).
+- **Lượt đo trọn bộ 176 câu ở Đợt 6 (28/11, `gpt-6-luna`):** chạy trọn qua đường chat thật và chấm bám nguồn ngữ nghĩa trên đủ 156 câu có đáp án (`0,153266 USD`: `0,093631 USD` phần trả lời 176 câu + `0,059636 USD` phần chấm bám nguồn): **`156/158` (`98,73%`)** câu trong kho trả lời đúng, **`18/18`** câu ngoài phạm vi từ chối sạch, `0` lỗi hệ thống; 2 ca từ chối nhầm còn lại là 1 ca nối nhiều bước về năm 2000 của Festival Huế và 1 ca đồng danh giữa hai tên suối (bài 19, 32).
 
 **Bài sau (bài 18):** nửa đầu của việc chấm: chưa nhìn câu trả lời, chỉ xem 10 đoạn đưa cho model có chứa đáp án không.
 
@@ -232,5 +233,6 @@ Soát đáp án mẫu của các câu liên quan, sửa nếu lệch. Sửa đá
 - Soát đáp án mẫu sau lần sửa kho 22/11 (9 mẫu số cũ, 176 câu, 2 câu chạm, 0 câu lệch): phiên đo đếm 12:27 22/11/2026, một phiên, không tốn tiền; phiên điều phối chuyển lời [đã chạy; người viết chép từ tin, chưa tự mở kết quả].
 - Quét số cũ 20:46 23/11/2026: bảng "Nếu… thì sao" hàng "kho thêm bài mới": "kho nay có 267 bài" ⇒ 269. Lệnh: `corpus.file_count` / `corpus.chunk_count` của `data/full_corpus_builds/hue_full_corpus_7a2_e5_small_384.json` (269 / 9533) và đếm dòng `: true` / `: false` dưới `assistant:` của `backend/config/settings.yaml` (57 / 6), chạy 20:40 23/11/2026 trên cây chính `03229b64` [đã chạy].
 - Cập nhật 20:30 25/11/2026: trạng thái bộ câu kín của phần trợ lý ở bảng "Cấu hình đang chạy" theo `report_agent/2026-11-25/E_BO_CAU_KIN_LUNA_2511.md` (chạy 25/11 trên `main` `ea96e47c`, `gpt-6-luna`; Mốc 1 18/11 là `NOT RUN`; Mốc 2 25/11 chạy K, S ×2, T, C kín, còn L kín `NOT RUN`) [đã duyệt].
+- **Đợt 6 (28/11/2026):** chạy trọn 176 câu mẫu trên `main` `660de3fc` (`gpt-6-luna`): `156/158` (`98,73%`) câu kho trả lời, `18/18` ngoài phạm vi từ chối sạch, `0` lỗi, `2` ca từ chối nhầm (`case 87`, `case 126`); chi phí `0,093631 USD` (176 câu chat) + `0,059636 USD` (`faithfulness_eval` 156 câu) = `0,153266 USD` (`data/thu_dot6_2026-11-28/KET_LUAN_DOT6.md` & `BAO_CAO_LOI_GOLDEN_176.md`).
 
 </details>
