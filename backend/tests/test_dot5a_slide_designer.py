@@ -70,9 +70,9 @@ def test_settings_switches_default_false_and_isolated_cfg():
         "model": "gpt-6-luna",
         "use_llm": True,
         "max_retries": 1,
-        "timeout_seconds": 20,
+        "timeout_seconds": 30,
         "fallback_code_only": True,
-        "reasoning_effort": "none",
+        "reasoning_effort": "low",
     }
     assert "slide_designer_cfg" not in s["full_corpus_generation"]
 

@@ -141,7 +141,7 @@ _SAT_DIA_HINH = re.compile(
     re.IGNORECASE,
 )
 _BO_AN_TOAN_GUI_XE = re.compile(
-    r"(?:\ban\s*to[aà]n\b[^.?!,\n]{0,25}\b(?:gửi|giữ|đậu|đỗ)\s*xe\b|\b(?:gửi|giữ|đậu|đỗ)\s*xe\b[^.?!,\n]{0,35}\ban\s*to[aà]n\b)",
+    r"(?:\ban\s*to[aà]n\b[^.?!,\n]{0,50}\b(?:gửi|giữ|đậu|đỗ)\s*xe\b|\b(?:gửi|giữ|đậu|đỗ)\s*xe\b[^.?!,\n]{0,80}\ban\s*to[aà]n\b)",
     re.IGNORECASE,
 )
 

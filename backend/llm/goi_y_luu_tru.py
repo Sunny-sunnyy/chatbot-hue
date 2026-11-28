@@ -164,11 +164,13 @@ def ket_qua_co_kieu(
         else None
     )
 
-    ghi_chu_noi_hang = f"Đã nới hạng vì khu vực chưa có hạng {hang_chuan}." if da_noi_hang else None
+    _HANG_NHAN = {"binh_dan": "bình dân", "vua": "vừa", "cao": "cao"}
+    hang_nhan = _HANG_NHAN.get(hang_chuan, hang_chuan)
+    ghi_chu_noi_hang = f"Đã nới hạng vì khu vực chưa có hạng {hang_nhan}." if da_noi_hang else None
     hang_mo_ta = (
-        f"Đã nới hạng vì khu vực chưa có hạng {hang_chuan} (hiển thị hạng hiện có)"
+        f"Đã nới hạng vì khu vực chưa có hạng {hang_nhan} (hiển thị hạng hiện có)"
         if da_noi_hang
-        else f"Hạng: {hang_chuan}"
+        else f"Hạng: {hang_nhan}"
     )
     dong = [
         NHAN,

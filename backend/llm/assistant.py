@@ -33,7 +33,7 @@ from ingestion.source_state import discover_full_corpus_files
 from core.schema import (CitationIntegrityError, GenerationError, GeneratorNotReadyError, RetrievalDependencyError,
                          RetrievedDocument)
 from llm.answer_stream import AnswerTextStream
-from llm.citations import CITATION_PATTERN, select_cited_sources
+from llm.citations import CITATION_PATTERN, check_sentence_citations, select_cited_sources
 from llm import lich_trinh as lt
 from llm import lich_trinh_v2 as lt2
 from llm import luu_tru_lich as ltl
@@ -56,7 +56,7 @@ from llm.len_lich import CAU_DAN_TRANG, nho_len_lich
 from llm.luu_y_nguon import dong_tam_ngung, nhan_nguon
 from llm.do_so import do_ngay_di
 from llm.hoi_lai import TRUONG_THEO_LOAI, the_hoi_lai
-from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_LAM_THAY, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, TOOL_DA_DU_LICH,
+from llm.full_corpus_prompt import (THOI_TIET_BAO_LU_MO_TA, CAU_LAM_THAY, CAU_Y_THIEU, INSUFFICIENT_ANSWER, LICH_TRINH_LUAT, MAY_HAVE_CHANGED_NOTICE, OUT_OF_SCOPE_ANSWER, REFUSAL_ANSWERS, TIM_KHO_MO_TA, TOOL_DA_DU_LICH,
                                    TOOL_LIMIT_TEXT, TOOL_NO_NEW_TEXT, VIET_LAI_NHIEU_Y_TEXT, build_assistant_input, them_kiem_du_bang_chung, today_line)
 from llm.generator_openai_full_corpus import CallLog, GeneratedText
 from llm.pricing import cost_usd
@@ -338,6 +338,8 @@ class AssistantFlags:
     canh_bao_vong_con_lai: bool = False
     # Đợt 4A (27/11/2026, mặc định tắt): Actionable Feedback khi viết lại lỗi citation + rút gọn `mua_nang` + Tool Use Examples + vá ca trượt Đợt 2.
     toi_uu_dot2_va_viet_lai: bool = False
+    # Đợt 7 Nhịp 2B (28/11/2026, mặc định tắt trong code): hậu kiểm trích dẫn cấp câu (`verdict_meta_exempt`) + tối đa 1 lần `_goi_viet_lai` định hướng.
+    kiem_trich_dan_cau: bool = False
     # Đợt 5 Phần A (28/11/2026, mặc định tắt): .ics v2 (GET /api/lich/ics + VTIMEZONE Asia/Ho_Chi_Minh), deep link OTA 3 sàn + mẫu hỏi phòng.
     xuat_nang_cao: bool = False
     # Đợt 5 Phần A (28/11/2026, mặc định tắt): Slide Designer Agent + .pptx v2 (3 theme, 9 layout, đo tràn chữ, center-crop PIL).
@@ -485,7 +487,7 @@ class AssistantFlags:
                    quan_bang=ql.nap_bang_quan(BACKEND_DIR / config["lich_trinh_bang_quan"], bang_v2.cum) if (values["quan_lich"] or values["gan_diem"]) and bang_v2 else None,
                    quan_toa_do=lt.nap_toa_do(BACKEND_DIR / config["lich_trinh_toa_do"], bang_v2) if (values["quan_lich"] or values["gan_diem"]) and bang_v2 else None,
                    slide_designer_cfg=dict(settings.get("slide_designer_cfg") or config.get("slide_designer_cfg")
-                                           or {"model": "gpt-6-luna", "use_llm": False, "max_retries": 1, "timeout_seconds": 20, "fallback_code_only": True, "reasoning_effort": "none"}))
+                                           or {"model": "gpt-6-luna", "use_llm": False, "max_retries": 1, "timeout_seconds": 30, "fallback_code_only": True, "reasoning_effort": "low"}))
 
     @property
     def so_thich_hien(self) -> tuple[str, ...]:
@@ -758,7 +760,7 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
     `the_noi_fn` (công tắc `the_noi`): hàm không tham số trả chữ thẻ nơi mới sau lần tìm này — nối SAU kết quả tìm; None ⇒ y như trước."""
 
     async def tim_kho(cau_tim: str) -> str:
-        """Tìm thêm Bằng chứng trong kho tri thức Huế bằng một câu tìm đứng một mình; trả các nguồn mới, đánh số tiếp theo.
+        """Tìm thêm Bằng chứng trong kho tri thức Huế bằng một câu tìm đứng một mình; trả các nguồn mới đánh số tiếp theo.
 
         Args:
             cau_tim: câu tìm đứng một mình cho phần thông tin còn thiếu.
@@ -782,6 +784,9 @@ def tool_for_turn(query: str, retrieval_service, context_builder, trace: AnswerT
         if the:  # lần tìm không ra đoạn mới vẫn có thể làm lộ tên nơi cần thẻ (tên tới từ công cụ khác) ⇒ chỉ trả thẻ, không kèm câu "không có nguồn mới"
             return f"{packed.text}\n\n{the}" if packed.text else the
         return packed.text or TOOL_NO_NEW_TEXT
+
+    tim_kho.__doc__ = f"{TIM_KHO_MO_TA}\n\nArgs:\n    cau_tim: câu tìm đứng một mình cho phần thông tin còn thiếu.\n"
+    return tim_kho
 
     return tim_kho
 
@@ -1854,6 +1859,103 @@ async def _cuu_max_turns(query: str, generator, trace: AnswerTrace, flags: Assis
     return thanh_cong
 
 
+TEN_VIET_LAI_CAU = "cit_cau_viet_lai"
+
+
+async def _viet_lai_trich_dan_cau(query: str, generator, trace: AnswerTrace, flags: AssistantFlags, today: str | None,
+                                   call_log: "CallLog | None") -> bool:
+    """Đợt 7 Nhịp 2B (`H2.1b`, cờ `kiem_trich_dan_cau`): câu trả lời hợp lệ đã có mã trích dẫn (không phải từ chối / bão lũ / làm thay / lịch)
+    nhưng còn câu nhận định thiếu `[n]` ⇒ gọi `_goi_viet_lai` tối đa 1 lần với phản hồi định hướng; lỗi hoặc biến thành từ chối thì giữ nguyên bản gốc."""
+    ans = (trace.answer or "").strip()
+    if (
+        not (flags.kiem_trich_dan_cau and flags.uses_tools)
+        or trace.fixed_outcome is not None
+        or trace.citation_error is not None
+        or trace.lich is not None
+        or trace.lich_v2 is not None
+        or not ans
+        or ans in REFUSAL_ANSWERS
+        or not trace.cited
+        or not trace.so_nguon
+        or not any(p.strip() for p in trace.context_parts)
+        or _la_luot_nguy_hiem_bao_lu(query, trace)
+        or bool(trace.vet.get("p1_xoa_luu_tru"))
+    ):
+        return False
+    cc = check_sentence_citations(ans)
+    if cc["passed"]:
+        return False
+    snap = (
+        trace.answer,
+        trace.cited,
+        trace.citation_error,
+        trace.generated,
+        trace.fixed_outcome,
+        trace.thoi_tiet_noi,
+        trace.thoi_tiet_dau,
+        trace.chi_y_thieu,
+        trace.thoi_tiet_kiem,
+        trace.khoang_cach_kiem,
+        trace.kiem_so_go,
+        trace.lich_kiem,
+        trace.clarify,
+    )
+    started = time.perf_counter()
+    n_src = len(trace.so_nguon)
+    chan_doan = (
+        f"Lưu ý sửa lỗi (bản nháp trước còn {cc['missing_count']} câu nhận định chưa gắn mã nguồn [n]): "
+        f"mọi câu nêu nhận định lấy từ Bằng chứng trên PHẢI kết bằng đúng mã [1]..[{n_src}] ngay cuối câu đó "
+        "(không gom mã ở cuối đoạn); không thêm giải thích hay lời khuyên ngoài Bằng chứng; "
+        "ý nào Bằng chứng không nêu thì bỏ hoặc xuất đúng câu từ chối."
+    )
+    restored = False
+    try:
+        await _goi_viet_lai(query, generator, trace, flags, today, call_log, chan_doan=chan_doan)
+    except GenerationError:
+        restored = True
+    new_ans = (trace.answer or "").strip()
+    tu_choi = new_ans in REFUSAL_ANSWERS
+    cc2 = check_sentence_citations(new_ans) if (not restored and new_ans) else cc
+    if (
+        restored
+        or trace.citation_error is not None
+        or trace.fixed_outcome is not None
+        or not new_ans
+        or tu_choi
+        or not trace.cited
+        or cc2["missing_count"] > cc["missing_count"]
+    ):
+        (
+            trace.answer,
+            trace.cited,
+            trace.citation_error,
+            trace.generated,
+            trace.fixed_outcome,
+            trace.thoi_tiet_noi,
+            trace.thoi_tiet_dau,
+            trace.chi_y_thieu,
+            trace.thoi_tiet_kiem,
+            trace.khoang_cach_kiem,
+            trace.kiem_so_go,
+            trace.lich_kiem,
+            trace.clarify,
+        ) = snap
+        restored = True
+        cc2 = cc
+    else:
+        trace.vet["cit_cau_viet_lai"] = True
+    trace.tools.append({
+        "name": TEN_VIET_LAI_CAU,
+        "ms": elapsed_ms(started),
+        "restored": restored,
+        "tu_choi": tu_choi,
+        "before_missing": cc["missing_count"],
+        "after_missing": cc2["missing_count"],
+        "after_passed": cc2["passed"],
+    })
+    return not restored
+
+
 def _doan_bai(bai) -> tuple[str, ...]:
     """Các đoạn chữ của một bài mục lục đưa cho `dong_tam_ngung`: từng dòng rời TRƯỚC (như cũ), rồi cả bài nối dòng làm lưới sau. Soát khác hãng
     22/11/2026: câu an toàn nằm trên HAI dòng vật lý của file ("…thuyền có thể phải dừng chạy khi nước sông dâng cao hoặc có lệnh cấm xuất bến") thì không
@@ -2242,6 +2344,7 @@ async def answer_query(query: str, retrieval_service, context_builder, generator
     if flags.uses_tools:
         await _cuu_max_turns(query, generator, trace, flags, today, None)
         await _viet_lai_het_luot(query, generator, trace, flags, today, None)
+        await _viet_lai_trich_dan_cau(query, generator, trace, flags, today, None)
 
 
 def _lich_extra(query, retrieval_service, context_builder, trace, today, instructions, flags) -> dict:
@@ -2822,15 +2925,23 @@ async def answer_turn_stream(query: str, retrieval_service, context_builder, gen
                     yield "thay_chu" if cho_kiem is None else "delta", trace.answer.removesuffix(f"\n\n{trace.thoi_tiet_noi}") if trace.thoi_tiet_noi else trace.answer
                     da_phat_viet_lai = True
                 cho_kiem = None
+            if tool_state is not None and await _viet_lai_trich_dan_cau(query, generator, trace, flags, today, call_log):
+                giu_chu = False
+                if cho_kiem is None:
+                    if pending_generating:
+                        pending_generating = False
+                        yield "status", {"stage": "generating"}
+                    yield "thay_chu", trace.answer.removesuffix(f"\n\n{trace.thoi_tiet_noi}") if trace.thoi_tiet_noi else trace.answer
+                    da_phat_viet_lai = True
             if trace.fixed_outcome is not None:  # chạm `max_turns`: không có chữ model nào ⇒ câu từ chối thành một `delta` (B2 D5)
                 # soát khác hãng 22/11 (Neon #1, Carbon 4.2.3): bản viết lại là câu từ chối khuôn ở câu nhờ làm thay ⇒ `_finish_generated` trong lưới viết
                 # lại đã đổi thành câu nói thật (kết thúc cố định `lam_thay`) và nhánh trên VỪA phát nó ⇒ không phát lần hai
                 if trace.answer and not da_phat_viet_lai:  # lượt hỏi lại: không chữ ⇒ route gửi `clarify`
                     yield "delta", trace.answer
                 return
-            if (cho_kiem or (cho_kiem is not None and trace.vet.get("p1_xoa_luu_tru"))) and trace.citation_error is None:  # chữ đã gom qua phép kiểm ⇒ phát bằng đúng đường của một mảnh chữ; bị rút ⇒ không phát
+            if (cho_kiem or (cho_kiem is not None and (trace.vet.get("p1_xoa_luu_tru") or trace.vet.get("cit_cau_viet_lai")))) and trace.citation_error is None:  # chữ đã gom qua phép kiểm ⇒ phát bằng đúng đường của một mảnh chữ; bị rút ⇒ không phát
                 # soát khác hãng 22/11 (A1): phép kiểm số đã gỡ câu có số lạ ⇒ phát chữ ĐÃ gỡ (chữ model của `trace.answer`), không phát chữ gốc đã gom
-                thay = trace.kiem_so_go is not None or bool(trace.vet.get("p1_xoa_luu_tru"))
+                thay = trace.kiem_so_go is not None or bool(trace.vet.get("p1_xoa_luu_tru")) or bool(trace.vet.get("cit_cau_viet_lai"))
                 text = chu_phat(chu_cua_model(trace) if thay else cho_kiem)
                 if text is not None:
                     yield "delta", text

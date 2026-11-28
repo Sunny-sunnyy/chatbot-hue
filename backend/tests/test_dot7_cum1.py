@@ -323,7 +323,7 @@ def test_p4_noi_hang_co_co_va_chu_ro_rang():
 
     # Đối chứng khớp hạng: da_noi_hang=False
     txt_ok, data_ok = gylt.ket_qua_co_kieu(bang_1sao, None, khu="phia_tay", hang_sao="binh_dan")
-    assert data_ok["da_noi_hang"] is False and "Hạng: binh_dan" in txt_ok
+    assert data_ok["da_noi_hang"] is False and "Hạng: bình dân" in txt_ok
 
 
 def test_p3_chan_nho_dap_va_bia_gia_phong_co_ma_trich_dan():

@@ -308,8 +308,8 @@ async def thiet_ke_slide(
     cfg = dict(cfg or {})
     model = str(cfg.get("model") or "gpt-6-luna")
     max_retries = max(0, int(cfg.get("max_retries", 1)))
-    timeout_s = float(cfg.get("timeout_seconds", 20))
-    reasoning_effort = str(cfg.get("reasoning_effort") or "none")
+    timeout_s = float(cfg.get("timeout_seconds", 30))
+    reasoning_effort = str(cfg.get("reasoning_effort") or "low")
     fallback_code_only = bool(cfg.get("fallback_code_only", True))
     theme_mac_dinh = theme_id if theme_id in ALLOWED_THEMES else chon_theme_mac_dinh(canonical.get("tham_so"))
 
@@ -366,19 +366,20 @@ async def thiet_ke_slide(
         client = AsyncOpenAI(api_key=api_key, timeout=timeout_s, max_retries=0)
         owned_client = True
 
+    base_prompt = _build_prompt(canonical, theme_mac_dinh, None)
     calls: list[dict] = []
     overflow_errors: list[dict] = []
     retries = 0
+    messages: list[dict[str, str]] = [{"role": "user", "content": base_prompt}]
     try:
         for attempt in range(max_retries + 1):
-            prompt = _build_prompt(canonical, theme_mac_dinh, overflow_errors or None)
             t0 = time.perf_counter()
             try:
                 resp = await asyncio.wait_for(
                     client.responses.parse(
                         model=model,
                         instructions=SLIDE_DESIGNER_INSTRUCTIONS,
-                        input=prompt,
+                        input=messages,
                         text_format=SlideDeckPlan,
                         store=False,
                         prompt_cache_key="hue_slide_designer_v1",
@@ -403,6 +404,10 @@ async def thiet_ke_slide(
             if not isinstance(parsed, SlideDeckPlan):
                 if attempt < max_retries:
                     retries += 1
+                    messages = [
+                        {"role": "user", "content": base_prompt},
+                        {"role": "user", "content": "Đầu ra trước chưa đúng khuôn SlideDeckPlan; hãy trả lại đúng JSON."},
+                    ]
                     continue
                 return fallback("invalid_structured_output", calls, retries, overflow_errors)
 
@@ -414,6 +419,10 @@ async def thiet_ke_slide(
                 if attempt < max_retries:
                     retries += 1
                     overflow_errors = [{"validation_errors": loi_hk}]
+                    messages = [
+                        {"role": "user", "content": base_prompt},
+                        {"role": "user", "content": f"Sửa các lỗi hậu kiểm sau: {json.dumps(loi_hk, ensure_ascii=False)}"},
+                    ]
                     continue
                 return fallback(f"post_validation_failed:{','.join(loi_hk[:3])}", calls, retries, overflow_errors)
 
@@ -436,6 +445,10 @@ async def thiet_ke_slide(
                     )
                 )
             retries += 1
+            messages = [
+                {"role": "user", "content": base_prompt},
+                {"role": "user", "content": f"Các ô sau bị tràn chữ khi vẽ slide, hãy rút ngắn `short_copy`/`summary`/`route_summary` đúng các mục này: {json.dumps(overflow_errors, ensure_ascii=False)}"},
+            ]
         return fallback("max_retries_exhausted", calls, retries, overflow_errors)
     finally:
         if owned_client:

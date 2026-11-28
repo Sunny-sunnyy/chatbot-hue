@@ -37,7 +37,7 @@ def test_switch_is_off_by_default_needs_the_edit_switches_and_adds_one_rule_and_
     assert AssistantFlags().bo_toi_hoi_lai is False
     with pytest.raises(ValueError):
         AssistantFlags(bo_toi_hoi_lai=True)  # thiếu các công tắc sửa lịch mà nó dựa vào
-    assert SUA_LICH_LOI_DAN_TOI_HOI_BO.startswith(SUA_LICH_LOI_DAN_TOI_HOI) and "cach_toi" not in SUA_LICH_LOI_DAN_TOI_HOI
+    assert "cach_toi" in SUA_LICH_LOI_DAN_TOI_HOI_BO and "hoi_them" in SUA_LICH_LOI_DAN_TOI_HOI_BO and "chua_ho_tro" in SUA_LICH_LOI_DAN_TOI_HOI_BO and "cach_toi" not in SUA_LICH_LOI_DAN_TOI_HOI
     assert s.HanhDongToiHoiBo(loai="bo_diem", ten="x", cach_toi="doi").cach_toi == "doi"
     with pytest.raises(ValidationError):
         s.HanhDongToiHoi(loai="bo_diem", ten="x", cach_toi="doi")  # khuôn cũ không có trường này
