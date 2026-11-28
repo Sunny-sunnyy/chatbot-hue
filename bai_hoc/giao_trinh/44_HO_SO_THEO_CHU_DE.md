@@ -1,6 +1,6 @@
 # Bài 44 — Hồ sơ theo chủ đề: chương trình chọn chủ đề và tập bài, model gom bài thành mục rồi viết ý ngắn
 
-*Cập nhật 16:40, ngày 27/11/2026 · khớp hệ thống Đợt 4A (**`68` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · cập nhật đợt 27/11: kiểm thông dựng hồ sơ trên `gpt-6-luna` (**9,85 s** và **13,31 s**), ghi log JSON tokens/`usd`, trọng số giới hạn lượt `/api/ho_so = 8`, `CancelScope(shield=True)` khi đóng luồng, Caddy đã loại `/api/ho_so` khỏi nén gzip, và đóng gói Docker giữ `HUE_MO_SO_TAY_HO_SO=0` · đọc ngay sau bài 43.*
+*Cập nhật 11:40, ngày 28/11/2026 · khớp hệ thống Đợt 5 — Phần A (**`70` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · cập nhật số tính năng Đợt 5A; giữ nguyên mốc 27/11 của hồ sơ (kiểm thông trên `gpt-6-luna` **9,85 s** và **13,31 s**, log JSON tokens/`usd`, trọng số `/api/ho_so = 8`, `CancelScope(shield=True)`, Caddy tắt nén gzip, đóng gói Docker giữ `HUE_MO_SO_TAY_HO_SO=0`) · đọc ngay sau bài 43.*
 *Mốc trước: 00:11 25/11 (bản gộp 23:25 24/11 mở `ho_so_chu_de`, 61 mở / 6 tắt, đã áp biên bản kiểm độc lập 111 dòng: 84 đúng, 8 sai, 19 lệch; các câu áp sau biên bản chưa có người thứ hai đọc).*
 
 **Bài trước đã biết:** lõi viết một mục của sổ tay (bài 43); trang Khám phá (bài 5); thẻ nơi (bài 23); bộ giới hạn lượt (bài 37).

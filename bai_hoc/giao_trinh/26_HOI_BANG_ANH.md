@@ -1,6 +1,6 @@
 # Bài 26 — Hỏi bằng ảnh
 
-*Cập nhật 16:40, ngày 27/11/2026 · khớp hệ thống Đợt 4A (**`68` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`, giữ **`anh.che_do_tu_choi: mac_dinh`**) · bổ sung ghi nhận tỷ lệ dùng lại bộ nhớ đệm ngữ cảnh (`cached_tokens`) vào sổ số đo của đường ảnh (Đợt 4A, 27/11) cùng kết quả Đợt 3A (giữ `mac_dinh` thay `confidence_gate` trên `76` ảnh với `gpt-5-nano`, đóng hẳn hướng thuê GPU fine-tune VLM) · các mốc trước: Nguồn.*
+*Cập nhật 11:40, ngày 28/11/2026 · khớp hệ thống Đợt 5 — Phần A (**`70` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`, giữ **`anh.che_do_tu_choi: mac_dinh`**) · luồng nhận ảnh giữ nguyên trạng thái Đợt 4A (ghi nhận `cached_tokens` trong sổ đo đường ảnh; giữ `mac_dinh` thay `confidence_gate` trên `76` ảnh với `gpt-5-nano`, đóng hẳn hướng thuê GPU fine-tune VLM) · các mốc trước: Nguồn.*
 
 **Bài trước đã biết:** trợ lý trả lời từ kho, có số nguồn (chặng 3); chương trình chọn công cụ và kiểm sau khi model viết (bài 21–25).
 **Bài này thêm:** người dùng gửi một tấm ảnh chụp ở Huế kèm câu hỏi. Ảnh không đi thẳng vào câu trả lời: model chỉ đoán **tên** thứ trong ảnh, chọn trong một danh sách cố định; rồi câu hỏi đi đường hỏi đáp như một câu gõ. Bài giảng vì sao chia hai bước, vì sao một lần bấm, vì sao chưa dùng embedding ảnh, khi lỗi thì người dùng thấy gì.

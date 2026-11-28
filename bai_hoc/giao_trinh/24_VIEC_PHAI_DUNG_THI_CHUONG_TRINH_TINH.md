@@ -1,6 +1,6 @@
 # Bài 24 — Việc phải đúng thì chương trình tính: ngày âm lịch làm mẫu, rồi thời tiết, khoảng cách và các công cụ khác
 
-*Cập nhật 16:40, ngày 27/11/2026 · khớp hệ thống Đợt 4A (**`68` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · bổ sung tối ưu Đợt 4A (27/11): khử lặp bảng 47 địa điểm ở công cụ gợi ý mưa/nắng dưới cổng `linh_hoat`, đính ví dụ gọi mẫu ngắn, vá ca trượt Đợt 2 giúp mưa/nắng đạt **`8/8`** và so sánh đạt **`7/8`**, giảm tổng chi phí **`-10,02%` USD** (kèm Đợt 2 và Nấc 2B trước đó) · các mốc cũ: Nguồn.*
+*Cập nhật 11:40, ngày 28/11/2026 · khớp hệ thống Đợt 5 — Phần A (**`70` tính năng mở, `8` tắt**, kho 269 bài / **9.540 đoạn**, bảng điểm bản 16; `gpt-6-luna`) · giữ nguyên kết quả tối ưu Đợt 4A (mưa/nắng đạt **`8/8`**, so sánh đạt **`7/8`**, `-10,02%` USD), từ Đợt 5A phần xuất lịch `.ics` và đường link tìm phòng 3 sàn + mẫu hỏi phòng cũng đi theo nguyên tắc 100 % chương trình xác định không LLM (bài 30) · các mốc cũ: Nguồn.*
 
 **Bài trước đã biết:** model được xin công cụ (bài 3, bài 21); tin nối tiếp được hiểu nhờ lịch sử (bài 23).
 **Bài này thêm:** việc có đáp án đúng duy nhất (hôm nay là ngày nào, rằm tháng Giêng rơi vào thứ mấy, mai có mưa không, từ A tới B bao xa) do chương trình làm, model chỉ diễn đạt. Bài đi kỹ một việc mẫu là ngày và âm lịch, rồi các việc còn lại theo cùng khuôn.
