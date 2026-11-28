@@ -2,7 +2,7 @@
 
 *Cập nhật 17:19, ngày 28/11/2026 · kho 269 bài / **9.540 đoạn** · bổ sung kết quả kiểm 0 đồng Đợt 6 (28/11) so sánh **tìm thuần nghĩa (`dense_only`)** với **tìm lai trộn thứ hạng (`RRF`)** trên 158 câu có đáp án trong kho (kết luận giữ nguyên cách tìm lai) · các mốc trước: Nguồn.*
 
-**Bài trước đã biết:** chặng 2: kho được cắt thành 9.536 đoạn (từ 07:49 24/11), mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
+**Bài trước đã biết:** chặng 2: kho được cắt thành 9.540 đoạn (từ 20:47 26/11), mỗi đoạn có vector và phần từ khoá, tất cả nằm trong Qdrant.
 **Bài này thêm:** chặng 3 bắt đầu. Người dùng gõ một câu; trong vài chục mili giây chương trình chọn ra 10 đoạn. Bài này đi qua bốn bước của việc chọn đó, và chỉ ra bước tìm hỏng ở đâu.
 
 ## Ý chính
