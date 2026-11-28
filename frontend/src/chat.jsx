@@ -14,7 +14,7 @@ import { baiHref } from "./route.js";
 import "./tl.css";
 import { GOI_Y } from "./chung.jsx";
 import { moDauWeb } from "./moDauWeb.js";
-import { LINK_TIM_PHONG, LichV2, LuuLich, MAP_PREFIX, NutDoi, vanBanLich } from "./LichV2.jsx";
+import { linkPhongHopLe, LichV2, LuuLich, MAP_PREFIX, NutDoi, vanBanLich } from "./LichV2.jsx";
 
 // Trợ lý Huế: một cuộc trò chuyện dùng chung cho khung nổi và trang `#/tro-ly` (cổng D8). Server giữ lịch sử (cookie HttpOnly `conversation_id`)
 // — trang chỉ vẽ lại các lượt đã hỏi, không gửi lại lịch sử (plan B3 D1). State nằm ở `useChat` (gọi một lần ở App) ⇒ chuyển trang không ngắt lượt.
@@ -650,7 +650,11 @@ function TheKhachSan({ turn }) {
           <span className="the-ks-ten">{c.ten}</span> <small>{c.xep_hang}</small>
           <span className="the-ks-link">
             {typeof c.map_url === "string" && c.map_url.startsWith(MAP_PREFIX) && <a href={c.map_url} target="_blank" rel="noopener noreferrer">Bản đồ</a>}
-            {typeof c.link === "string" && c.link.startsWith(LINK_TIM_PHONG) && <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
+            {c.deep_links
+              ? [["booking", "Booking"], ["agoda", "Agoda"], ["traveloka", "Traveloka"]].map(([k, nhan]) => (
+                  linkPhongHopLe(c.deep_links[k]) && <a key={k} href={c.deep_links[k]} target="_blank" rel="noopener noreferrer">{nhan}</a>
+                ))
+              : linkPhongHopLe(c.link) && <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
           </span>
         </div>
       ))}

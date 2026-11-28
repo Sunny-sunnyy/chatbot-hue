@@ -1,26 +1,33 @@
-"""`GET /api/lich/pptx` — tải lịch của cuộc trò chuyện dưới dạng PowerPoint (cờ `xuat_pptx`, mặc định tắt; plan private
-`data/xuat_lich_dep_2026-11-19/PLAN.md`). Không gọi model, không ghi gì.
+"""`GET /api/lich/pptx`, `POST /api/lich/pptx` và `GET /api/lich/ics` — tải lịch của cuộc trò chuyện (cờ `xuat_pptx`, `xuat_nang_cao`, `slide_designer`).
 
-Server KHÔNG nhận dữ liệu lịch nào từ trình duyệt: yêu cầu không có thân, không có tham số; lịch lấy từ trạng thái server đã lưu cho cuộc trò
-chuyện (cookie HttpOnly sẵn có) rồi dựng lại bằng đúng các hàm của lượt trả lời (`dung_lich`, `gan_o_an`) ⇒ mọi chữ trong file là chữ của bảng
-điểm, câu tả đã kiểm, hoặc hằng số của khuôn. Lịch hết hạn (30 phút) / cuộc chưa có lịch ⇒ 404 có lời, không dựng file rỗng.
-Những thứ trạng thái lưu không có (số nguồn [n], dòng dự báo thời tiết) không vào file — `api/lich_pptx.py` in một dòng cố định thay dự báo.
-Câu an toàn của lượt (bão / lũ) được lưu kèm lịch ở route chat (`an_toan_cua_luot`) ⇒ có trong file."""
+Server KHÔNG nhận dữ liệu lịch nào từ trình duyệt: lịch lấy từ trạng thái server đã lưu cho cuộc trò chuyện (`store.lay_lich(cookie)`),
+dựng lại bằng đúng các hàm của lượt trả lời (`dung_lich`, `gan_o_an`). Lịch hết hạn (30 phút) / cuộc chưa có lịch ⇒ 404 có lời, không dựng file rỗng.
+"""
+import json
+import logging
 from pathlib import Path
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Query, Request
 from fastapi.responses import Response
 
-from api.lich_pptx import dung_pptx, trang_lich
+logger = logging.getLogger("slide_designer")
+
+from api.hanh_trinh_chuan import chuan_hoa_lich
+from api.lich_ics import ThieuNgayDiError, dung_ics
+from api.lich_pptx import dung_pptx, dung_pptx_v2, trang_lich
+from api.pptx_catalog import ALLOWED_THEMES, chon_theme_mac_dinh
 from api.routes.chat import CONVERSATION_COOKIE, _flags, error_response
 from llm import lich_trinh_v2 as lt2
 from llm import thoi_tiet as tt
 from llm.len_ke_hoach import gan_o_an
+from llm.slide_designer import thiet_ke_slide
 
 router = APIRouter()
 THU_MUC_ANH = Path(__file__).resolve().parents[3] / "frontend" / "public"   # ảnh tự host của giao diện (`/anh/lich/…`)
 KIEU_PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+KIEU_ICS = "text/calendar; charset=utf-8"
 CAU_HET_HAN = "Chưa có lịch để tải hoặc lịch đã hết hạn — bấm Lên kế hoạch để tạo lại rồi tải."
+CAU_THIEU_NGAY_DI = "Lịch chưa có ngày đi — hãy chọn ngày đi ở biểu mẫu hoặc nhắn ngày khởi hành để tải file .ics."
 
 
 def lich_tu_luu(luu: dict, flags) -> tuple[dict, dict]:
@@ -33,18 +40,126 @@ def lich_tu_luu(luu: dict, flags) -> tuple[dict, dict]:
     return lich, {m["id_muc"]: da_kiem[m["id_diem"]] for m in lt2.moi_muc(lich) if m.get("id_diem") in da_kiem}
 
 
+def _gan_ngay_tao(deck: dict, ngay_tao: str) -> dict:
+    slides = deck.get("slides") or []
+    if slides and slides[0].get("kieu") == "bia" and not slides[0].get("ngay_tao"):
+        slides[0] = {**slides[0], "ngay_tao": ngay_tao}
+    return {**deck, "ngay_tao": ngay_tao, "slides": slides}
+
+
+async def _tao_pptx_v2(request: Request, luu: dict, flags, *, theme_id: str | None = None) -> Response:
+    state = request.app.state
+    store = state.conversations
+    cookie = request.cookies.get(CONVERSATION_COOKIE)
+    lich, cau = lich_tu_luu(luu, flags)
+    canonical = chuan_hoa_lich(lich, cau, an_toan=luu.get("an_toan"), thu_muc_anh=THU_MUC_ANH)
+    theme = theme_id if theme_id in ALLOWED_THEMES else chon_theme_mac_dinh(canonical.get("tham_so"))
+    deck = store.lay_slide_cache(cookie, canonical["itinerary_hash"], theme) if hasattr(store, "lay_slide_cache") else None
+    if deck is None:
+        client = getattr(getattr(state, "generator", None), "client", None)
+        res = await thiet_ke_slide(
+            canonical,
+            theme_id=theme,
+            cfg=getattr(flags, "slide_designer_cfg", None),
+            client=client,
+            use_llm=True,
+        )
+        deck = res.deck_plan
+        if hasattr(store, "luu_slide_cache") and deck is not None:
+            store.luu_slide_cache(cookie, canonical["itinerary_hash"], theme, deck)
+    else:
+        layouts_cached = list(dict.fromkeys(s.get("layout_id", "") for s in (deck or {}).get("slides", []) if s.get("layout_id")))
+        logger.info(
+            "slide_designer %s",
+            json.dumps(
+                {
+                    "slide_designer": True,
+                    "used_llm": False,
+                    "cache_hit": True,
+                    "usd": 0.0,
+                    "input_tokens": 0,
+                    "cached_tokens": 0,
+                    "output_tokens": 0,
+                    "retries": 0,
+                    "layouts": layouts_cached,
+                },
+                ensure_ascii=False,
+            ),
+        )
+    hom_nay = tt.hom_nay_vn()
+    ngay_tao = f"{hom_nay.day}/{hom_nay.month}/{hom_nay.year}"
+    deck = _gan_ngay_tao(deck, ngay_tao)
+    layouts_hdr = ",".join(dict.fromkeys(s.get("layout_id", "") for s in (deck or {}).get("slides", []) if s.get("layout_id")))
+    return Response(
+        dung_pptx_v2(deck, THU_MUC_ANH),
+        media_type=KIEU_PPTX,
+        headers={
+            "Content-Disposition": 'attachment; filename="lich-trinh-hue.pptx"',
+            "Cache-Control": "no-store",
+            "X-Slide-Layouts": layouts_hdr,
+        },
+    )
+
+
 @router.get("/api/lich/pptx")
-def tai_pptx(request: Request):
+async def tai_pptx(request: Request, theme: str | None = Query(default=None, max_length=40)):
     state = request.app.state
     flags = _flags(state)
-    if not flags.xuat_pptx:
+    if not flags.xuat_pptx and not getattr(flags, "slide_designer", False):
         return error_response(404, "not_found", "Tính năng này chưa bật.")
     store = getattr(state, "conversations", None)
     luu = store.lay_lich(request.cookies.get(CONVERSATION_COOKIE)) if store is not None else None
     if luu is None:
         return error_response(404, "khong_co_lich", CAU_HET_HAN)
+    if getattr(flags, "slide_designer", False):
+        return await _tao_pptx_v2(request, luu, flags, theme_id=theme)
     lich, cau = lich_tu_luu(luu, flags)
     hom_nay = tt.hom_nay_vn()
     trang = trang_lich(lich, cau, ngay_tao=f"{hom_nay.day}/{hom_nay.month}/{hom_nay.year}", an_toan=luu.get("an_toan"))
     return Response(dung_pptx(trang, THU_MUC_ANH), media_type=KIEU_PPTX,
                     headers={"Content-Disposition": 'attachment; filename="lich-trinh-hue.pptx"', "Cache-Control": "no-store"})
+
+
+@router.post("/api/lich/pptx")
+async def tai_pptx_thong_minh(request: Request):
+    state = request.app.state
+    flags = _flags(state)
+    if not getattr(flags, "slide_designer", False):
+        return error_response(404, "not_found", "Tính năng này chưa bật.")
+    store = getattr(state, "conversations", None)
+    luu = store.lay_lich(request.cookies.get(CONVERSATION_COOKIE)) if store is not None else None
+    if luu is None:
+        return error_response(404, "khong_co_lich", CAU_HET_HAN)
+    theme_id = None
+    try:
+        body = await request.json()
+        if isinstance(body, dict) and isinstance(body.get("theme_id"), str):
+            theme_id = body["theme_id"]
+    except Exception:
+        theme_id = None
+    return await _tao_pptx_v2(request, luu, flags, theme_id=theme_id)
+
+
+@router.get("/api/lich/ics")
+def tai_ics(request: Request):
+    state = request.app.state
+    flags = _flags(state)
+    if not getattr(flags, "xuat_nang_cao", False):
+        return error_response(404, "not_found", "Tính năng này chưa bật.")
+    store = getattr(state, "conversations", None)
+    luu = store.lay_lich(request.cookies.get(CONVERSATION_COOKIE)) if store is not None else None
+    if luu is None:
+        return error_response(404, "khong_co_lich", CAU_HET_HAN)
+    if not luu.get("ngay_di"):
+        return error_response(400, "thieu_ngay_di", CAU_THIEU_NGAY_DI)
+    lich, cau = lich_tu_luu(luu, flags)
+    canonical = chuan_hoa_lich(lich, cau, an_toan=luu.get("an_toan"), thu_muc_anh=THU_MUC_ANH)
+    try:
+        kq = dung_ics(canonical)
+    except ThieuNgayDiError as exc:
+        return error_response(400, "thieu_ngay_di", str(exc))
+    return Response(
+        kq["ics"].encode("utf-8"),
+        media_type=KIEU_ICS,
+        headers={"Content-Disposition": 'attachment; filename="lich-trinh-hue.ics"', "Cache-Control": "no-store"},
+    )

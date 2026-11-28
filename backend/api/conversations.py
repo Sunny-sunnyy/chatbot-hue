@@ -99,6 +99,7 @@ class Conversation:
     lich_truoc: dict | None = None
     sua_truoc: tuple = ()
     goi_y_sua: tuple = ()  # cờ `sua_lich_them_khong_the`: câu sửa lịch code vừa gợi ý ("thay Y bằng X") — sống đúng MỘT lượt, không chữ người dùng / model
+    slide_cache: dict[tuple[str, str], dict] = field(default_factory=dict)  # Đợt 5A: cache (itinerary_hash, theme_id) -> SlideDesignResult deck
 
 
 def dau_lich(luu: dict) -> str:
@@ -181,6 +182,17 @@ class ConversationStore:
         conversation = self._items.get(conversation_id)
         return None if conversation is None or conversation.expires_at <= self._clock() else conversation.lich
 
+    def lay_slide_cache(self, conversation_id: str | None, itinerary_hash: str, theme_id: str) -> dict | None:
+        conversation = self._items.get(conversation_id)
+        if conversation is None or conversation.expires_at <= self._clock():
+            return None
+        return conversation.slide_cache.get((itinerary_hash, theme_id))
+
+    def luu_slide_cache(self, conversation_id: str | None, itinerary_hash: str, theme_id: str, deck: dict) -> None:
+        conversation = self._items.get(conversation_id)
+        if conversation is not None and conversation.expires_at > self._clock():
+            conversation.slide_cache[(itinerary_hash, theme_id)] = deck
+
     def lay_goi_y_sua(self, conversation_id: str | None) -> tuple:
         """Câu sửa lịch code đã gợi ý ở lượt trước — ĐỌC LÀ XOÁ: lượt này dùng xong (hoặc lỗi giữa chừng) thì lượt sau không còn thấy."""
         conversation = self._items.get(conversation_id)
@@ -205,6 +217,7 @@ class ConversationStore:
             elif conversation.lich is None or dau_lich(conversation.lich) != dau_lich(lich):
                 conversation.lich_truoc, conversation.sua_truoc = None, ()
             conversation.lich = lich
+            conversation.slide_cache.clear()
 
     def hoan_tac(self, conversation_id: str | None, ma: str) -> tuple[dict, tuple] | None:
         """Công tắc `sua_lich_hoan_tac`: đặt lịch của cuộc về bản trước lần sửa cuối ⇒ (bản đó, các dòng của lần sửa vừa bị hoàn tác). None (lịch giữ nguyên)
@@ -215,6 +228,7 @@ class ConversationStore:
             return None
         lich, dong = conversation.lich_truoc, conversation.sua_truoc
         conversation.lich, conversation.lich_truoc, conversation.sua_truoc, conversation.goi_y_sua = lich, None, (), ()  # gợi ý của lượt sửa đó hết nghĩa
+        conversation.slide_cache.clear()
         return lich, dong
 
     def reset(self, conversation_id: str | None) -> str:

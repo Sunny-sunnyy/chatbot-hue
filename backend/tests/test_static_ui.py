@@ -74,3 +74,14 @@ def test_portal_images_are_in_repo_and_private_image_is_gitignored():
             assert (REPO_ROOT / "frontend/public/anh" / name.replace(".jpg", "_nho.jpg")).is_file(), name  # bản điện thoại (việc nhỏ 10)
     ignored = subprocess.run(["git", "check-ignore", "-q", "frontend/public/anh/rieng/lv_festivals.jpg"], cwd=REPO_ROOT)
     assert ignored.returncode == 0
+
+
+def test_ota_links_use_shared_allowlist_helper_everywhere():
+    """Đợt 5A: cả LichV2.jsx, ChoO.jsx, chat.jsx đều dùng `linkPhongHopLe(url)` với allowlist đúng 3 host HTTPS."""
+    lich_v2 = (REPO_ROOT / "frontend/src/LichV2.jsx").read_text(encoding="utf-8")
+    assert 'new Set(["www.booking.com", "www.agoda.com", "www.traveloka.com"])' in lich_v2
+    assert 'u.protocol !== "https:"' in lich_v2 and "linkPhongHopLe" in lich_v2
+    for rel in ("frontend/src/LichV2.jsx", "frontend/src/ChoO.jsx", "frontend/src/chat.jsx"):
+        src = (REPO_ROOT / rel).read_text(encoding="utf-8")
+        assert "linkPhongHopLe(" in src, rel
+        assert ".startsWith(LINK_TIM_PHONG)" not in src, rel

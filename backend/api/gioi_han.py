@@ -24,6 +24,7 @@ TRONG_SO_DUONG: dict[str, int] = {
     "/api/anh/ung_vien": 1,
     "/api/so_tay": 10,
     "/api/ho_so": 8,
+    "/api/lich/pptx": 3,  # Đợt 5A (Slide Designer Agent, POST tối đa 1 + max_retries=2 = 3 lượt gọi model)
 }
 DUONG_TINH_LUOT = frozenset(TRONG_SO_DUONG)  # các đường gọi model (tốn tiền)
 DUONG_TAI_FILE = "/api/lich/pptx"  # GET: dựng file .pptx từ lịch đã lưu (không gọi model, nhưng tốn CPU + băng thông)

@@ -203,7 +203,9 @@
 .lkh-o li small { color: var(--color-muted); }
 .lkh-o-dc { flex-basis: 100%; color: var(--color-muted); font-size: var(--text-nho); }
 .lkh-o li a { color: var(--color-accent-deep); font-weight: 600; }
-.lkh-o-link { margin-left: auto; display: inline-flex; gap: 14px; }
+.lkh-o-link { margin-left: auto; display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.lkh-hoi-phong { display: inline-flex; align-items: center; gap: 6px; }
+.lkh-theme-chon { padding: 6px 10px; border-radius: var(--radius-m); border: 1px solid var(--color-line); background: var(--color-surface); font-size: var(--text-nho); color: var(--color-ink); }
 /* ảnh cơ sở (14/11): ô vuông nhỏ bên trái, chữ chạy bên phải; không ảnh ⇒ dòng như cũ */
 .lkh-o li.lkh-o-co-anh { position: relative; padding-left: 112px; min-height: 84px; }
 .lkh-o-anh { position: absolute; left: 10px; top: 10px; width: 88px; height: 72px; object-fit: cover; border-radius: 10px; }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LINK_TIM_PHONG, MAP_PREFIX } from "./LichV2.jsx";
+import { HoiPhongNut, linkPhongHopLe, MAP_PREFIX } from "./LichV2.jsx";
 import "./co.css";
 
 // Trang "Chỗ ở" (plan 2026-11-15 §1, C): mọi cơ sở của bảng lưu trú theo khu ⇒ mức hạng sao, do server dựng (`/api/cho_o`). Chỉ mở từ ô "Nơi ở" của
@@ -52,8 +52,13 @@ export function ChoO({ khu }) {
                   <span className="co-link">
                     {typeof c.map_url === "string" && c.map_url.startsWith(MAP_PREFIX) &&
                       <a href={c.map_url} target="_blank" rel="noopener noreferrer">Bản đồ</a>}
-                    {typeof c.link === "string" && c.link.startsWith(LINK_TIM_PHONG) &&
-                      <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
+                    {c.deep_links
+                      ? [["booking", "Booking"], ["agoda", "Agoda"], ["traveloka", "Traveloka"]].map(([k, nhan]) => (
+                          linkPhongHopLe(c.deep_links[k]) &&
+                          <a key={k} href={c.deep_links[k]} target="_blank" rel="noopener noreferrer">{nhan}</a>
+                        ))
+                      : linkPhongHopLe(c.link) && <a href={c.link} target="_blank" rel="noopener noreferrer">Tìm phòng</a>}
+                    {c.mau_hoi_phong && <HoiPhongNut mau={c.mau_hoi_phong} />}
                   </span>
                 </li>
               ))}</ul>

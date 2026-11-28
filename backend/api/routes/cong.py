@@ -151,6 +151,10 @@ async def tinh_nang(request: Request):
             co["chu_de_trang_chu"] = True
     if getattr(flags, "sua_lich_hoan_tac", False):  # bản thử nút hoàn tác lần sửa lịch: khoá chỉ có khi cờ bật
         co["sua_lich_hoan_tac"] = True
+    if getattr(flags, "xuat_nang_cao", False):  # Đợt 5A: chỉ có khi cờ bật
+        co["xuat_nang_cao"] = True
+    if getattr(flags, "slide_designer", False):  # Đợt 5A: chỉ có khi cờ bật
+        co["slide_designer"] = True
     if flags.len_ke_hoach_v2:
         co["len_ke_hoach_v2"] = {"o_hien": list(flags.len_ke_hoach_o_hien), "so_ngay_toi_da": SO_NGAY_TOI_DA, "so_thich_toi_da": SO_THICH_TOI_DA,
                                  "so_thich_hien": list(flags.so_thich_hien)}  # loại < 4 điểm hoặc dưới sàn mô phỏng ⇒ không hiện
@@ -221,6 +225,7 @@ async def cho_o(request: Request):
     flags = _flags(request.app.state)
     if not flags.luu_tru_lich:
         return _khong_thay()
-    if id(flags) not in _cho_o:
-        _cho_o[id(flags)] = ltl.trang_cho_o(flags.luu_tru_bang)
-    return _cho_o[id(flags)]
+    key = (id(flags), bool(getattr(flags, "xuat_nang_cao", False)))
+    if key not in _cho_o:
+        _cho_o[key] = ltl.trang_cho_o(flags.luu_tru_bang, xuat_nang_cao=bool(getattr(flags, "xuat_nang_cao", False)))
+    return _cho_o[key]
