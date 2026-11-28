@@ -155,6 +155,8 @@ async def tinh_nang(request: Request):
         co["xuat_nang_cao"] = True
     if getattr(flags, "slide_designer", False):  # Đợt 5A: chỉ có khi cờ bật
         co["slide_designer"] = True
+        if bool((getattr(flags, "slide_designer_cfg", None) or {}).get("use_llm")):
+            co["slide_designer_ai"] = True
     if flags.len_ke_hoach_v2:
         co["len_ke_hoach_v2"] = {"o_hien": list(flags.len_ke_hoach_o_hien), "so_ngay_toi_da": SO_NGAY_TOI_DA, "so_thich_toi_da": SO_THICH_TOI_DA,
                                  "so_thich_hien": list(flags.so_thich_hien)}  # loại < 4 điểm hoặc dưới sàn mô phỏng ⇒ không hiện

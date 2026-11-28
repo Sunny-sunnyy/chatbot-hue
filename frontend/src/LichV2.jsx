@@ -436,6 +436,8 @@ let XUAT_NANG_CAO = false;
 export function batXuatNangCao(co) { XUAT_NANG_CAO = co === true; }
 let SLIDE_DESIGNER = false;
 export function batSlideDesigner(co) { SLIDE_DESIGNER = co === true; }
+let SLIDE_DESIGNER_AI = false;
+export function batSlideDesignerAi(co) { SLIDE_DESIGNER_AI = co === true; }
 // Bản thử "Sổ tay cho chuyến đi" (công tắc server `so_tay`, mặc định tắt): App đưa hàm mở trang sổ tay khi công tắc bật; không có hàm ⇒ không vẽ nút.
 let MO_SO_TAY = null;
 export function batSoTay(mo) { MO_SO_TAY = typeof mo === "function" ? mo : null; }
@@ -463,17 +465,18 @@ function XuatLich() {
     const cho = Promise.all(anh.map(i => (i.complete ? Promise.resolve() : i.decode().catch(() => {}))));
     Promise.race([cho, new Promise(r => setTimeout(r, 4000))]).then(() => window.print());
   }
-  async function taiPptx() {
-    setBao("Đang tạo file…");
+  async function taiPptx(useAi = false) {
+    setBao(useAi ? "Đang thiết kế slide AI…" : "Đang tạo file…");
     try {
-      const r = SLIDE_DESIGNER
+      const getUrl = SLIDE_DESIGNER ? `/api/lich/pptx?theme=${encodeURIComponent(themeId)}` : "/api/lich/pptx";
+      const r = useAi
         ? await fetch("/api/lich/pptx", {
             method: "POST",
             credentials: "same-origin",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ theme_id: themeId }),
           })
-        : await fetch("/api/lich/pptx", { credentials: "same-origin" });
+        : await fetch(getUrl, { credentials: "same-origin" });
       if (!r.ok) {
         const loi = await r.json().catch(() => null);
         setBao(loi?.error?.message || "Chưa tải được file — thử lại sau.");
@@ -498,7 +501,14 @@ function XuatLich() {
           {THEME_OPTIONS.map(([id, ten]) => <option key={id} value={id}>{ten}</option>)}
         </select>
       )}
-      <button type="button" className="retry" onClick={taiPptx}>Tải PowerPoint</button>
+      {SLIDE_DESIGNER_AI ? (
+        <>
+          <button type="button" className="retry" onClick={() => taiPptx(false)}>Tải PowerPoint nhanh</button>
+          <button type="button" className="retry" onClick={() => taiPptx(true)}>Tải PowerPoint AI (~15–20s)</button>
+        </>
+      ) : (
+        <button type="button" className="retry" onClick={() => taiPptx(false)}>Tải PowerPoint</button>
+      )}
       {MO_SO_TAY && <button type="button" className="retry lkh-nut-so-tay" onClick={MO_SO_TAY}>Sổ tay cho chuyến đi</button>}
       <span className="text-sm text-muted" role="status">{bao}</span>
     </span>
