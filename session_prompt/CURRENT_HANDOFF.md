@@ -1,6 +1,6 @@
 # CURRENT_HANDOFF — nhật ký theo giờ của ngày
 
-Cập nhật: 17:44 28/11/2026 (phiên điều phối A — **ĐÃ XONG ĐỢT 6 TOÀN DIỆN LOCAL (`76f65ff3`, `71 MỞ / 9 TẮT`, `0,346181 USD`) + ĐỒNG BỘ GIÁO TRÌNH (`b7d65994`, `27` file) + SOẠN ĐỀ BÀI `6.2 Sol` (`DE_BAI_6_2_SOL_LOCAL_100.md`), ĐÓNG HẲN ĐỢT 5B & CLOUD VISION API**). Sổ việc — việc đang mở, ai làm, quyết định đang chờ — là `session_prompt/VIEC_DANG_MO.md`; trang này KHÔNG chép bước kế.
+Cập nhật: 18:17 28/11/2026 (phiên điều phối A — **KẾT PHIÊN SẠCH SAU ĐỢT 6 (`76f65ff3`, `64662130`) · ĐÃ NHẬN & TÁI HIỆN 0Đ REVIEW GPT 6.2 SOL (`KET_QUA_6_2_SOL.md`) · CHỐT 4 NGUYÊN TẮC ĐỢT 7 CHO PHIÊN MỚI NGỮ CẢNH SẠCH**). Sổ việc — việc đang mở, ai làm, quyết định đang chờ — là `session_prompt/VIEC_DANG_MO.md`; trang này KHÔNG chép bước kế.
 
 ## PHIÊN SAU ĐỌC TRƯỚC
 1. `AGENTS.md` (tự nạp) ⇒ `session_prompt/START_SESSION.md` ⇒ `session_prompt/HIEN_TRANG.md` (đủ) ⇒ `data/bo_nho_agent/MEMORY.md` (cây chính, ngoài git) ⇒ `session_prompt/VIEC_DANG_MO.md` khối đầu + mục tên mình ⇒ `session_prompt/sessions/STATUS_<X>.md`.
@@ -8,6 +8,9 @@ Cập nhật: 17:44 28/11/2026 (phiên điều phối A — **ĐÃ XONG ĐỢT 6
 3. Nhật ký các ngày trước: `report_agent/<ngày>/TONG_HOP.md`; bản đầy đủ tới trưa 28/11: `session_prompt/archive/CURRENT_HANDOFF_LICH_SU_2026-11-28.md` (trước nữa: `archive/CURRENT_HANDOFF_LICH_SU_2026-11-19.md` và `git show a8ca8758:session_prompt/CURRENT_HANDOFF.md`).
 
 ## Ghi trong ngày 28/11/2026 (cuối ngày dời sang `TONG_HOP.md` / `archive/`)
+- 18:17 28/11/2026 — NHẬN & TÁI HIỆN 0Đ REVIEW `GPT 6.2 Sol` (`KET_QUA_6_2_SOL.md`) · KẾT PHIÊN SẠCH CHUẨN BỊ ĐỢT 7 Ở PHIÊN MỚI:
+  - Tái hiện độc lập `0 USD` trên `76f65ff3` các điểm của `6.2 Sol`: `P0` (`vl_01` chặn `"sạt"` đứng lẻ), `P1` (`bao_lu_lan_dau=True` vẫn mở `goi_y_luu_tru`), `P2` (`mua_nang` bỏ ngưỡng `>= 100mm` khi `ngay=None`), `P4` (`goi_y_luu_tru` in `"Hạng: cao"` cho 1 sao), `P9` (`hau_kiem_slide_deck` bỏ sót `overview_summaries` & `day_number`), `P10` (trùng `UID` `.ics`), kiểm `/usr/bin/tesseract` sẵn có và kiểm toán 0đ token/cache/reasoning 19 vai `gpt-6-luna`.
+  - Chốt 4 nguyên tắc của Hiếu (`18:15`) cho phiên mới ở `VIEC_DANG_MO.md` mục `A.1d`: chất lượng & ổn định trước tiền/tốc độ (caching không bắt buộc); `reasoning_effort` `medium`/`low` (KHÔNG `none`); bỏ/không đặt trần token đầu ra bóp model; tra web luôn gắn mốc hiện tại (`11/2026`) và đúng dòng `GPT-6`/`gpt-6-luna` (tránh tài liệu cũ `GPT-5`/`5.6`). Dọn nốt worker `/swarm`, Qdrant `:6335` bật `9.540` điểm, `0` cổng tạm/worktree.
 - 17:44 28/11/2026 — ĐÓNG ĐỢT 5B/CLOUD VISION & HOÀN TẤT ĐỢT 6 TOÀN DIỆN LOCAL (`76f65ff3` + giáo trình `b7d65994`, `0,346181 USD` OpenAI = `@eval 0,153266` + `@verifier 0,192915`, lũy kế `~1,82 USD`):
   - Giữ/bật `goi_y_luu_tru: true` (`9/10` dương kèm `NHAN`+OTA, `6/6` âm/đối chứng, `F1=0,875`), vá gốc `vl_01` (`0` gọi nhầm `thoi_tiet`), SSE `status` theo từng công cụ + 2 nút PPTX (*Tải nhanh* / *Tải bản AI*, Playwright `1536x695` & `390x844` đạt `0` lỗi). `387 passed` (`134` offline + `253` Qdrant).
   - Đóng/giữ tắt có số liệu sạch: `doi_chieu_mau` (`6.1`: FP `11/18->5/18` nhưng top-1 `49/55->45/55`, giữ `mac_dinh`), `tinh_ve_va_gio_tham_quan` (`6.3a`: `tim_kho` đã `14/14`, `F1=0,500`, `+7,8%` USD, giữ `false`), giữ RRF (`92,04%` > `dense_only` `90,45%`). Soi trọn 176 Golden (`156/158=98,73%`, `18/18` từ chối, `89,99%` faith) và soạn `gửi chatgpt/2026-11-28/DE_BAI_6_2_SOL_LOCAL_100.md` cho GPT 6.2 Sol.

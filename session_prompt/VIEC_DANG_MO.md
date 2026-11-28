@@ -1,4 +1,4 @@
-# Việc đang mở (sổ việc — cập nhật 17:44 28/11/2026, đã xong Đợt 6 toàn diện local & đồng bộ giáo trình)
+# Việc đang mở (sổ việc — cập nhật 18:17 28/11/2026, kết phiên sạch sau Đợt 6, sẵn sàng mở Đợt 7 ở phiên mới)
 
 *Mỗi đầu việc có: **làm để chốt gì** · **ai làm** · **tới đâu** · **chỗ lưu**. Quy trình nhiều phiên: `session_prompt/WORKFLOW.md`. Việc đã xong chép 1 dòng sang `session_prompt/VIEC_DA_XONG.md`.*
 
@@ -40,7 +40,13 @@
   - `6.3a` (`tinh_ve_va_gio_tham_quan` — **GỠ / GIỮ TẮT `false`**): `tim_kho` nền đã đạt `14/14`, `ToolCallAccuracy mean_f1 = 0,500 < 0,85`, tăng `+7,8%` USD.
   - `6.3b` (`goi_y_luu_tru` v2 — **GIỮ & BẬT `true`**): kéo `0/10 -> 9/10` dương kèm `NHAN` + 3 link OTA, `6/6` âm/đối chứng sạch, `F1 = 0,875 >= 0,85`, `0` vi phạm bão lũ `lt_bao_01`, `0` bịa giá phòng, sửa `lt_06` vào `ven_bien_nam`.
   - `6.4` (`0 USD` — **GIỮ & ĐÃ DỰNG `dist`**): SSE `status` hiện rõ từng công cụ đang chạy trên chat và 2 nút tải PowerPoint (*Tải nhanh* / *Tải bản AI*) đạt Playwright `1536x695` & `390x844` ở cả `use_llm: true` lẫn `false`.
-- **Mở tiếp Đợt 7 (chờ Hiếu gửi `DE_BAI_6_2_SOL_LOCAL_100.md` cho GPT 6.2 Sol):** xử lý `9` ca lộ từ Golden `176` + tối ưu prompt `gpt-6-luna` (`Mũi 2c`) + đột phá nhận ảnh `0 GPU` từ phản biện `6.2 Sol` (`KET_QUA_6_2_SOL.md`).
+- **Mở tiếp Đợt 7:** chuyển sang mục `A.1d` dưới đây.
+
+### A.1d. Đợt 7 — Xử lý review GPT 6.2 Sol + Tối ưu Prompt `gpt-6-luna` & Hỏi ảnh 0 GPU (CHỜ PHIÊN MỚI NGỮ CẢNH SẠCH)
+- **Đầu vào sẵn có:** `gửi chatgpt/2026-11-28/KET_QUA_6_2_SOL.md` (19 phát hiện tích hợp `P0–P18`, 2 thiết kế ảnh 0 GPU `A/B`, 4 hướng prompt `Mũi 2c`). Đã tự tái hiện 0đ trên `76f65ff3`: `P0` (`vl_01` chặn `"sạt"` đứng lẻ), `P1` (`bao_lu_lan_dau=True` vẫn mở `goi_y_luu_tru`), `P2` (`mua_nang` bỏ ngưỡng `>= 100mm` khi `ngay=None`), `P4` (`goi_y_luu_tru` in `"Hạng: cao"` cho cơ sở 1 sao), `P9` (`hau_kiem_slide_deck` bỏ sót `overview_summaries` và không kiểm `day_number`), `P10` (2 lịch độc lập cùng ngày trùng `UID` `.ics`); đã xác nhận `/usr/bin/tesseract` có sẵn trên máy; đọc code xác nhận `P8` (hoàn tác mất `an_toan`), `P12`, `P13/P14`, `P15`, `P17`.
+- **Số đo 0đ hiện trạng prompt/cấu hình `gpt-6-luna`:** `router_agent` (`758t`, `avg_reas=24,1`), `nhan_anh` `mac_dinh` (`265t` + `487t` schema + `1.153t` bảng 55 tên, `avg_reas=166,1`, `0%` cache), `assistant` (`7.238t` prefix, `81,6%–93,9%` cache), `SUA_LICH_LOI_DAN_TOI_HOI_BO` (`1.264t`, 5 lớp, còn chữ `"(vòng chỉnh 14/11)"`, chưa đo mức 1 trên `gpt-6-luna`), `slide_designer` (`565t`, đang đặt `reasoning_effort: none` — cần xét nâng `low`/`medium` theo nguyên tắc mới!).
+- **4 nguyên tắc CHỦ DỰ ÁN XÁC NHẬN (`18:15 28/11/2026`) bắt buộc tuân thủ ở phiên mới:** (1) Chất lượng & độ ổn định trước tiền/tốc độ, caching có thì tốt không ép, Hiếu vẫn duyệt chi phí API `gpt-6-luna`; (2) `reasoning_effort` để `medium` hoặc `low`, KHÔNG dùng `none`; (3) bỏ / không thêm trần đầu ra hay giới hạn token ảnh hưởng kết quả model; (4) tra cứu web nghiên cứu prompt/system prompt luôn gắn mốc hiện tại (**tháng 11/2026**) và đúng dòng `gpt-6-luna` / `GPT-6` (không dùng tài liệu thế hệ cũ `GPT-5`/`5.6`).
+- **Bước đầu phiên mới:** nghiên cứu web mốc `11/2026` về prompt `GPT-6`/`gpt-6-luna` + đối chiếu AI FDE/AI SDLC → trò chuyện chốt phạm vi Đợt 7 với Hiếu → bật `/swarm` triển khai (vá 6.2 Sol + tối ưu prompt/ảnh đo cặp tách `dev` 120 / `test` 56 + đồng bộ giáo trình).
 
 ### A.2. Nợ kỹ thuật nhỏ (gom làm khi sửa file liên quan, không mở đợt riêng)
 - **Độ dài tên trong gói deploy `gpt-6-luna`:** kiểm lại chỗ cắt tên hoặc chữ dài nếu phát hiện trong thực tế (E ghi chú sau rà).
