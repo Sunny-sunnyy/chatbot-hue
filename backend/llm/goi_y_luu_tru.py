@@ -42,6 +42,17 @@ _HANG_TAP = {
     "binh_dan": frozenset({"1 sao", "Đạt chuẩn phục vụ khách du lịch"}),
     "tat_ca": None,
 }
+_DIEM_VEN_BIEN_NAM = frozenset({"dam_lap_an", "bach_ma", "thac_nhi_ho", "deo_hai_van"})
+_DIEM_VEN_BIEN_BAC = frozenset({"bien_thuan_an", "pha_tam_giang", "dam_chuon"})
+
+
+def _chuan_khu_theo_diem(khu: str, gan_diem: str) -> str:
+    khu_chuan = khu if khu in _KHU_LOC else "bat_ky"
+    if gan_diem in _DIEM_VEN_BIEN_NAM:
+        return "ven_bien_nam"
+    if gan_diem in _DIEM_VEN_BIEN_BAC:
+        return "ven_bien_bac"
+    return khu_chuan
 
 
 def _km_den(c: dict, cum_id: str | None) -> float:
@@ -77,7 +88,7 @@ def _loc_co_so(
     hang_sao: str = "tat_ca",
     toi_da: int = 5,
 ) -> tuple[list[dict], str]:
-    khu_chuan = khu if khu in _KHU_LOC else "bat_ky"
+    khu_chuan = _chuan_khu_theo_diem(khu, gan_diem)
     hang_chuan = hang_sao if hang_sao in _HANG_TAP else "tat_ca"
     khu_gia_tri, phia = _KHU_LOC[khu_chuan]
     allowed_stars = _HANG_TAP[hang_chuan]
@@ -173,22 +184,27 @@ def _bang_diem(bang_v2: lt2.BangV2 | None) -> str:
     return ", ".join(f"{d['id']} ({d['ten']})" for d in bang_v2.diem)
 
 
+_MO_TA_CACH_DUNG = (
+    "Khi khách hỏi gợi ý khách sạn, nhà nghỉ, homestay, resort hoặc chỗ ở ở Huế theo khu vực, hạng sao hoặc gần điểm tham quan "
+    "(như trung tâm / hai bờ sông Hương, gần Đại Nội, phía tây Kim Long/Thủy Xuân, Thuận An, Lăng Cô), HÃY GỌI công cụ này "
+    "thay vì chỉ tự liệt kê từ bài kho để trả đủ danh sách từ bảng 136 cơ sở, 3 link Booking/Agoda/Traveloka và nhãn chuẩn "
+    "(không gọi cho câu ngoài Huế như Đà Nẵng, hoặc câu chỉ hỏi giá/phòng trống của 1 khách sạn cụ thể).\n"
+    "- khu: trung_tam (hai bờ sông Hương, Bờ Nam, Kinh thành, gần Đại Nội/Đông Ba), phia_tay (Kim Long, Thủy Xuân, yên tĩnh), "
+    "ven_bien_bac (Thuận An, Phá Tam Giang, Đầm Chuồn), ven_bien_nam (Lăng Cô, Chân Mây, Đầm Lập An, Phú Lộc), bat_ky.\n"
+    "- hang_sao: cao (4–5★), vua (2–3★), binh_dan (1★/nhà nghỉ/Đạt chuẩn), tat_ca.\n"
+    "- gan_diem: mã điểm trong bảng hệ thống (nếu hỏi gần một điểm cụ thể) hoặc `khong`.\n"
+    "- ngay_nhan, ngay_tra (YYYY-MM-DD nếu có), so_khach (mặc định 2); luôn giữ nhãn chưa kiểm giá/phòng trống và không bịa giá.\n"
+    'Ví dụ: khu="ven_bien_nam", hang_sao="tat_ca", so_khach=4 | khu="trung_tam", hang_sao="binh_dan", so_khach=2.'
+)
+
+
 def mo_ta_cong_cu(bang_v2: lt2.BangV2 | None, *, toi_uu: bool = False) -> str:
     """Mô tả công cụ khi không hoặc có `gan_diem`."""
-    than = (
-        "Gợi ý 3–5 cơ sở lưu trú ở Huế từ bảng 136 cơ sở theo khu vực, hạng sao hoặc gần một điểm tham quan, "
-        "kèm link tìm phòng Booking/Agoda/Traveloka (không có giá phòng hay tình trạng trống). "
-        'Ví dụ: khu="trung_tam", hang_sao="cao", ngay_nhan="2026-12-10", ngay_tra="2026-12-12", so_khach=2.'
-    )
     if bang_v2 is None:
-        return than
-    return f"{than}\nMã điểm tham khảo cho `gan_diem` (hoặc `khong`): {_bang_diem(bang_v2)}."
+        return _MO_TA_CACH_DUNG
+    return f"{_MO_TA_CACH_DUNG}\nMã điểm tham khảo cho `gan_diem` (hoặc `khong`): {_bang_diem(bang_v2)}."
 
 
 def mo_ta_ngan(bang_v2: lt2.BangV2 | None, *, toi_uu: bool = False) -> str:
     """Mô tả gọn dưới `cong_cong_cu: linh_hoat` (bảng điểm đã nằm ở khối đầu của lời dặn)."""
-    return (
-        "Gợi ý tối đa 5 cơ sở lưu trú ở Huế từ bảng 136 cơ sở theo `khu` (trung_tam, phia_tay, ven_bien_bac, ven_bien_nam, bat_ky), "
-        "`gan_diem` (mã điểm trong bảng của hệ thống hoặc `khong`), `hang_sao` (cao=4-5★, vua=2-3★, binh_dan=1★/Đạt chuẩn, tat_ca), "
-        "`ngay_nhan`, `ngay_tra`, `so_khach`; trả kèm link Booking/Agoda/Traveloka và không có giá phòng hay phòng trống."
-    )
+    return _MO_TA_CACH_DUNG

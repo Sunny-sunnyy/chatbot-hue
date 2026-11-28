@@ -164,6 +164,28 @@ def test_goi_y_luu_tru_filters_ota_allowlist_and_hard_nhan():
     set_notice(trace, AssistantFlags(tim_them=True, goi_y_luu_tru=True, luu_tru_bang=bang_lt, bang_lich_v2=bang_v2))
     assert ltl.NHAN in (trace.notice or "")
 
+    # Vòng 2 (6.3b): (1) Chặn ở sàn cứng bão/lũ trong _lich_extra + trong goi_y_luu_tru_for_turn
+    storm_q = "Huế đang có tin bão lụt ngập đường, tìm khách sạn ven biển Thuận An tối nay ở cho an toàn."
+    flags_lt = AssistantFlags(tim_them=True, thoi_tiet=True, bao_lu_cong_cu=True, cong_cong_cu="linh_hoat",
+                              du_bao=lambda: None, goi_y_luu_tru=True, luu_tru_bang=bang_lt, bang_lich_v2=bang_v2)
+    extra_storm = _lich_extra(storm_q, None, None, AnswerTrace(), None, None, flags_lt)
+    assert "goi_y_luu_tru_fn" not in extra_storm
+    trace_storm = AnswerTrace()
+    fn_storm = goi_y_luu_tru_for_turn(trace_storm, bang_lt, bang_v2, query=storm_q)
+    out_storm = asyncio.run(fn_storm(khu="ven_bien_bac"))
+    assert "không dùng gợi ý lưu trú" in out_storm.lower() and trace_storm.goi_y_luu_tru is None
+
+    # (2) Ánh xạ Lăng Cô / Đầm Lập An / Bạch Mã về ven_bien_nam dù model gửi bat_ky hay nhầm ven_bien_bac
+    for khu_in in ("bat_ky", "ven_bien_bac"):
+        chon_lc, mo_ta_lc = gylt._loc_co_so(bang_lt, bang_v2, khu=khu_in, gan_diem="dam_lap_an")
+        assert chon_lc and all(c["khu"] == ltl.KHU_BIEN and c["phia_bien"] == "nam" for c in chon_lc)
+        assert "bờ Nam" in mo_ta_lc
+
+    # (3) Đặc tả mo_ta_ngan & mo_ta_cong_cu đủ phân biệt Lăng Cô vs Thuận An, có Tool Use Example & trigger rõ ràng
+    for desc in (gylt.mo_ta_ngan(bang_v2), gylt.mo_ta_cong_cu(bang_v2)):
+        assert "Lăng Cô" in desc and "ven_bien_nam" in desc and "Thuận An" in desc and "ven_bien_bac" in desc
+        assert "Ví dụ:" in desc and "HÃY GỌI công cụ này" in desc
+
 
 # ---------- 6.4a, 6.4b & cờ mặc định TẮT ----------
 

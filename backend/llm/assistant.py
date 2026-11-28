@@ -1410,7 +1410,7 @@ def tinh_ve_for_turn(trace: AnswerTrace, bang: "lt2.BangV2 | None" = None, the_n
 
 
 def goi_y_luu_tru_for_turn(trace: AnswerTrace, bang_luu_tru: dict, bang: "lt2.BangV2 | None" = None,
-                           chong_lap: bool = False, toi_uu: bool = False):
+                           chong_lap: bool = False, toi_uu: bool = False, query: str = ""):
     """Hàm `goi_y_luu_tru` của **một lượt** (Đợt 6, cờ `goi_y_luu_tru`): gợi ý tối đa 5 cơ sở từ bảng 136 cơ sở kèm OTA deep links và nhãn cứng."""
     Khu = Literal[gylt.KHU_LUA_CHON]
     Hang = Literal[gylt.HANG_LUA_CHON]
@@ -1428,13 +1428,19 @@ def goi_y_luu_tru_for_turn(trace: AnswerTrace, bang_luu_tru: dict, bang: "lt2.Ba
         """Gợi ý cơ sở lưu trú Huế theo khu vực, hạng sao hoặc gần điểm tham quan, kèm link tìm phòng OTA.
 
         Args:
-            khu: khu vực ưu tiên (`trung_tam`, `phia_tay`, `ven_bien_bac`, `ven_bien_nam`, `bat_ky`).
+            khu: khu vực (`trung_tam` hai bờ sông Hương/Kinh thành, `phia_tay` Kim Long/Thủy Xuân, `ven_bien_bac` Thuận An/Phá Tam Giang/Đầm Chuồn, `ven_bien_nam` Lăng Cô/Chân Mây/Đầm Lập An, `bat_ky`).
             gan_diem: mã điểm tham quan cần ở gần (hoặc `khong`).
-            hang_sao: phân hạng (`cao` = 4–5★, `vua` = 2–3★, `binh_dan` = 1★/Đạt chuẩn, `tat_ca`).
+            hang_sao: phân hạng (`cao` = 4–5★, `vua` = 2–3★, `binh_dan` = 1★/nhà nghỉ/Đạt chuẩn, `tat_ca`).
             ngay_nhan: ngày nhận phòng (YYYY-MM-DD hoặc DD/MM/YYYY, nếu có).
             ngay_tra: ngày trả phòng (YYYY-MM-DD hoặc DD/MM/YYYY, nếu có).
             so_khach: số khách lưu trú (mặc định 2).
         """
+        if bool((trace.thoi_tiet_ctx or {}).get("bao_lu")) or (query and tt.la_luot_bao_lu(query, trace.history)):
+            trace.tools.append({"name": "goi_y_luu_tru", "ms": 0.0, "chan_bao_lu": True})
+            return (
+                "Trạng thái: lượt này đang hỏi về bão/lũ hoặc ngập lụt — không dùng gợi ý lưu trú lúc này; "
+                "hãy trả lời theo cảnh báo an toàn chính thức và số 112."
+            )
         lan = sum(t["name"] == "goi_y_luu_tru" for t in trace.tools)
         entry = {"name": "goi_y_luu_tru", "ms": 0.0, "khu": khu, "gan_diem": gan_diem, "hang_sao": hang_sao}
         trace.tools.append(entry)
@@ -2220,9 +2226,9 @@ def _lich_extra(query, retrieval_service, context_builder, trace, today, instruc
     if flags.tinh_ve_tham_quan:
         tv_kw = {**lap_kw, **({"toi_uu": True} if flags.toi_uu_dot2_va_viet_lai else {})}
         extra["tinh_ve_fn"] = tinh_ve_for_turn(trace, flags.bang_lich_v2, flags.the_noi_bang, bai_theo_rel, **tv_kw)
-    if flags.goi_y_luu_tru and flags.luu_tru_bang is not None:
+    if flags.goi_y_luu_tru and flags.luu_tru_bang is not None and not tt.la_luot_bao_lu(query, trace.history):
         lt_kw = {**lap_kw, **({"toi_uu": True} if flags.toi_uu_dot2_va_viet_lai else {})}
-        extra["goi_y_luu_tru_fn"] = goi_y_luu_tru_for_turn(trace, flags.luu_tru_bang, flags.bang_lich_v2, **lt_kw)
+        extra["goi_y_luu_tru_fn"] = goi_y_luu_tru_for_turn(trace, flags.luu_tru_bang, flags.bang_lich_v2, query=query, **lt_kw)
     if flags.het_luot_bo_cong_cu:  # hết lượt tìm thật ⇒ generator ẩn `tim_kho` ở lượt gọi model kế tiếp (cờ tắt ⇒ không truyền, gọi y như trước)
         extra["con_luot_fn"] = lambda: trace.model_searches < flags.so_lan_tim_kho
     if trace.nhieu_y:  # lời dặn theo ý (cờ tắt / câu một ý ⇒ không truyền, gọi y như trước)
