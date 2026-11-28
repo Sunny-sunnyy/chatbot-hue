@@ -37,7 +37,7 @@ from core.settings_loader import BACKEND_DIR, load_settings
 from ingestion.source_state import discover_full_corpus_files
 from llm.generator_openai_full_corpus import OpenAIFullCorpusGenerator
 from llm.assistant import BOOL_FIELDS, AssistantFlags
-from llm.nhan_anh import nap_danh_sach, tao_agent
+from llm.nhan_anh import nap_danh_sach, tao_agent, tao_agent_doi_chieu
 from llm.tra_web import SERPER_API_KEY_ENV, tim_web
 from llm.openai_tokenizer import load_openai_tokenizer
 from retrieval.full_corpus import build_full_corpus_retrieval_service, build_record_path, candidate_by_id
@@ -212,6 +212,8 @@ def create_app(settings=None):
                 danh_sach = nap_danh_sach((BACKEND_DIR / anh["danh_sach"]).resolve())
                 che_do_tu_choi = anh.get("che_do_tu_choi", "mac_dinh")
                 app.state.anh = {"danh_sach": danh_sach, "agent": tao_agent(app.state.generator, danh_sach, che_do_tu_choi=che_do_tu_choi),
+                                 "doi_chieu_agent": tao_agent_doi_chieu(app.state.generator, danh_sach) if che_do_tu_choi == "doi_chieu_mau" else None,
+                                 "thu_muc_anh": REPO_ROOT / "frontend" / "public" / "anh",
                                  "che_do_tu_choi": che_do_tu_choi, "max_bytes": anh["max_bytes"],
                                  "max_pixels": anh["max_pixels"], "canh_dai": anh["canh_dai"], "timeout": anh["timeout"]}
                 logger.info("Image route enabled (%d names)", len(danh_sach))

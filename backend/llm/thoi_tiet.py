@@ -128,6 +128,26 @@ def co_tu_khoa_luot_rong(query: str, history) -> bool:
     return co(query) or bool(history and co(history[-1][0]))
 
 
+_DAU_HIEU_THOI_TIET_NGUY_HIEM = re.compile(
+    r"\b(?:trời|thời\s*tiết|dự\s*báo|nhiệt\s*độ|độ\s*ẩm|khí\s*hậu|nguy\s*hiểm|an\s*toàn|thiên\s*tai|"
+    r"biển\s*động|sạt\s*lở|lũ\s*lụt|áp\s*thấp|áo\s*mưa|che\s*mưa|mang\s+ô|mang\s+dù|"
+    r"thoi\s*tiet|du\s*bao|mua\s*bao|bao\s*lu|ngap\s*lut|nguy\s*hiem|an\s*toan|"
+    r"weather|rain|storm|forecast|flood)\b",
+    re.IGNORECASE,
+)
+
+
+def co_dau_hieu_thoi_tiet_hoac_nguy_hiem(query: str, history=()) -> bool:
+    """Rào lượt linh hoạt (6.2b `vl_01`): câu hiện tại hoặc câu liền trước có từ thời tiết / nguy hiểm.
+    Trả False cho câu hoàn toàn không hỏi thời tiết/an toàn (vd chỉ hỏi món bánh + phí gửi xe) để chặn gọi nhầm `thoi_tiet(loai='bao_lu')`.
+    """
+    if co_tu_khoa_luot_rong(query, history):
+        return True
+    if _DAU_HIEU_THOI_TIET_NGUY_HIEM.search(_nfc(query or "")):
+        return True
+    return bool(history and _DAU_HIEU_THOI_TIET_NGUY_HIEM.search(_nfc(history[-1][0] or "")))
+
+
 def la_luot_bao_lu(query: str, history) -> bool:
     """Lưới xét câu cuối **hoặc câu hỏi liền trước** (như `co_tu_khoa_luot`) — câu hỏi tiếp sau câu bão vẫn đi đường bão (thừa hơn sót)."""
     return la_cau_bao_lu_rong(query) or bool(history and la_cau_bao_lu_rong(history[-1][0]))

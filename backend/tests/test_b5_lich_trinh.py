@@ -47,7 +47,8 @@ CO_SUA_LICH_TAT = {"sua_lich_v2": False, "sua_lich_chua_ho_tro": False, "sua_lic
                    "gan_diem": False,
                    # 23/11/2026: `sua_lich_them_day` cần `sua_lich_them_khong_the` ⇒ tắt theo (thử bật trong settings: 20 file test hỏng ngay khi nạp)
                    "sua_lich_them_day": False, "sua_lich_them_khu": False, "sua_lich_them_han_che": False, "sua_lich_hoi_truoc": False,
-                   "sua_lich_hoan_tac": False, "xuat_nang_cao": False, "slide_designer": False}
+                   "sua_lich_hoan_tac": False, "xuat_nang_cao": False, "slide_designer": False,
+                   "tinh_ve_tham_quan": False, "goi_y_luu_tru": False}
 BANG = nap_bang_lich(SETTINGS)
 ON = AssistantFlags(tim_them=True, lich_trinh=True, bang_lich=BANG)
 OFF = AssistantFlags(tim_them=True)

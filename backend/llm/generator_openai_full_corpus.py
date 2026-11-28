@@ -168,10 +168,13 @@ MAX_VONG_CONG_CU_TOI_DA = 6  # Đợt 2: ghim trần vòng tối đa thay vì c�
 
 
 def max_turns_for(ngay_lich_fn, khoang_cach_fn=None, base: int = ASSISTANT_MAX_TURNS, liet_ke_fn=None, gan_diem_fn=None,
-                  mua_nang_fn=None, so_sanh_fn=None) -> int:
+                  mua_nang_fn=None, so_sanh_fn=None, tinh_ve_fn=None, goi_y_luu_tru_fn=None) -> int:
     """T1 (A chọn 08/11) + các công cụ tra cứu thêm 1 vòng mỗi công cụ có mặt, nhưng ghim trần tối đa `MAX_VONG_CONG_CU_TOI_DA` (6)
     để tránh vòng lặp kéo dài lên 8–11 lượt khi nhiều công cụ cùng mở."""
-    so_phu = sum(fn is not None for fn in (ngay_lich_fn, khoang_cach_fn, liet_ke_fn, gan_diem_fn, mua_nang_fn, so_sanh_fn))
+    so_phu = sum(
+        fn is not None
+        for fn in (ngay_lich_fn, khoang_cach_fn, liet_ke_fn, gan_diem_fn, mua_nang_fn, so_sanh_fn, tinh_ve_fn, goi_y_luu_tru_fn)
+    )
     if so_phu == 0:
         return base
     return min(base + so_phu, max(MAX_VONG_CONG_CU_TOI_DA, base + 1))
@@ -664,7 +667,7 @@ class OpenAIFullCorpusGenerator:
 
     def _assistant_for(self, tool_fn, *, stop_on_first_tool: bool = False, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
                        con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None,
-                       mua_nang_fn=None, so_sanh_fn=None, linh_hoat: bool = False,
+                       mua_nang_fn=None, so_sanh_fn=None, tinh_ve_fn=None, goi_y_luu_tru_fn=None, linh_hoat: bool = False,
                        vong_cuoi: "tuple[CallLog, int] | None" = None,
                        kiem_du_bang_chung: bool = False,
                        canh_bao_vong: "tuple[CallLog, int] | None" = None,
@@ -777,6 +780,20 @@ class OpenAIFullCorpusGenerator:
             tools.append(function_tool(bao(so_sanh_fn), name_override="so_sanh_diem_den",
                                        **({"description_override": ss_mo_ta} if ss_mo_ta else {}),
                                        failure_error_function=None, **mo()))
+        if tinh_ve_fn is not None:  # Đợt 6 (cờ `tinh_ve_tham_quan`): tính vé lẻ/combo + ngày lễ + kịp giờ đóng cửa
+            tv_mo_ta = getattr(tinh_ve_fn, "mo_ta_toi_uu", None) if toi_uu_dot2_va_viet_lai else None
+            tools.append(function_tool(bao(tinh_ve_fn), name_override="tinh_ve_va_gio_tham_quan",
+                                       **({"description_override": tv_mo_ta} if tv_mo_ta else {}),
+                                       failure_error_function=None, **mo()))
+        if goi_y_luu_tru_fn is not None:  # Đợt 6 (cờ `goi_y_luu_tru`): gợi ý lưu trú theo khu/hạng/điểm + OTA deep link
+            lt_mo_ta = (
+                goi_y_luu_tru_fn.mo_ta_ngan(nguon_bang, toi_uu=toi_uu_dot2_va_viet_lai)
+                if (linh_hoat and nguon_bang is not None and hasattr(goi_y_luu_tru_fn, "mo_ta_ngan"))
+                else None
+            )
+            tools.append(function_tool(bao(goi_y_luu_tru_fn), name_override="goi_y_luu_tru",
+                                       **({"description_override": lt_mo_ta} if lt_mo_ta else {}),
+                                       failure_error_function=None, **mo()))
         if linh_hoat:
             cache_key = {
                 (False, False): "hue_assistant_lh_v1",
@@ -784,7 +801,12 @@ class OpenAIFullCorpusGenerator:
                 (True, False): "hue_assistant_ny_lh_v1",
                 (True, True): "hue_assistant_hist_ny_lh_v1",
             }[(bool(nhieu_y), bool(history))]
-            suffix = ("_kdbc" if kdbc else "") + ("_d2" if toi_uu_dot2_va_viet_lai else "")
+            suffix = (
+                ("_kdbc" if kdbc else "")
+                + ("_d2" if toi_uu_dot2_va_viet_lai else "")
+                + ("_tv" if tinh_ve_fn is not None else "")
+                + ("_lt" if goi_y_luu_tru_fn is not None else "")
+            )
             extra["model_settings"] = dataclasses.replace(
                 base.model_settings,
                 extra_args={**(base.model_settings.extra_args or {}), "prompt_cache_key": f"{cache_key}{suffix}"},
@@ -793,16 +815,18 @@ class OpenAIFullCorpusGenerator:
 
     async def generate_with_tools(self, user_prompt: str, tool_fn, call_log: "CallLog | None" = None, history=(), lich_trinh_fn=None,
                                   thoi_tiet_fn=None, ngay_lich_fn=None, con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None,
-                                  mua_nang_fn=None, so_sanh_fn=None, linh_hoat: bool = False, vong_cuoi_chi_viet: bool = False,
+                                  mua_nang_fn=None, so_sanh_fn=None, tinh_ve_fn=None, goi_y_luu_tru_fn=None, linh_hoat: bool = False, vong_cuoi_chi_viet: bool = False,
                                   kiem_du_bang_chung: bool = False, canh_bao_vong_con_lai: bool = False,
                                   toi_uu_dot2_va_viet_lai: bool = False) -> GeneratedText:
         """B2 D5 không stream: trợ lý tự gọi `tim_kho` (≤ `ASSISTANT_MAX_TURNS` lượt). Chạm trần ⇒ câu từ chối + `hit_max_turns`."""
         started = time.monotonic()
         call_log = call_log if call_log is not None else CallLog()
-        so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn, gan_diem_fn, mua_nang_fn, so_sanh_fn)  # cùng con số với `max_turns` của lần chạy — lệch một vòng là nhận nhầm vòng cuối
+        so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn, gan_diem_fn, mua_nang_fn, so_sanh_fn,
+                                tinh_ve_fn=tinh_ve_fn, goi_y_luu_tru_fn=goi_y_luu_tru_fn)  # cùng con số với `max_turns` của lần chạy — lệch một vòng là nhận nhầm vòng cuối
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
                                                      con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn,
-                                                     gan_diem_fn=gan_diem_fn, mua_nang_fn=mua_nang_fn, so_sanh_fn=so_sanh_fn, linh_hoat=linh_hoat,
+                                                     gan_diem_fn=gan_diem_fn, mua_nang_fn=mua_nang_fn, so_sanh_fn=so_sanh_fn,
+                                                     tinh_ve_fn=tinh_ve_fn, goi_y_luu_tru_fn=goi_y_luu_tru_fn, linh_hoat=linh_hoat,
                                                      vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None,
                                                      kiem_du_bang_chung=kiem_du_bang_chung,
                                                      canh_bao_vong=(call_log, so_vong) if canh_bao_vong_con_lai else None,
@@ -847,15 +871,17 @@ class OpenAIFullCorpusGenerator:
 
     def start_tools_stream(self, user_prompt: str, tool_fn, history=(), lich_trinh_fn=None, thoi_tiet_fn=None, ngay_lich_fn=None,
                            con_luot_fn=None, nhieu_y: bool = False, khoang_cach_fn=None, liet_ke_fn=None, gan_diem_fn=None,
-                           mua_nang_fn=None, so_sanh_fn=None, linh_hoat: bool = False, vong_cuoi_chi_viet: bool = False,
+                           mua_nang_fn=None, so_sanh_fn=None, tinh_ve_fn=None, goi_y_luu_tru_fn=None, linh_hoat: bool = False, vong_cuoi_chi_viet: bool = False,
                            kiem_du_bang_chung: bool = False, canh_bao_vong_con_lai: bool = False,
                            toi_uu_dot2_va_viet_lai: bool = False) -> tuple[RunResultStreaming, "CallLog", dict]:
         """Như `generate_with_tools` nhưng stream; trả kèm `state` của lượt (cờ `hit_max_turns`) cho `finish_answer_stream`."""
         call_log = CallLog()
-        so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn, gan_diem_fn, mua_nang_fn, so_sanh_fn)  # cùng con số với `max_turns` của lần chạy — lệch một vòng là nhận nhầm vòng cuối
+        so_vong = max_turns_for(ngay_lich_fn, khoang_cach_fn, self.max_turns, liet_ke_fn, gan_diem_fn, mua_nang_fn, so_sanh_fn,
+                                tinh_ve_fn=tinh_ve_fn, goi_y_luu_tru_fn=goi_y_luu_tru_fn)  # cùng con số với `max_turns` của lần chạy — lệch một vòng là nhận nhầm vòng cuối
         agent, handlers, state = self._assistant_for(tool_fn, history=history, lich_trinh_fn=lich_trinh_fn, thoi_tiet_fn=thoi_tiet_fn, ngay_lich_fn=ngay_lich_fn,
                                                      con_luot_fn=con_luot_fn, nhieu_y=nhieu_y, khoang_cach_fn=khoang_cach_fn, liet_ke_fn=liet_ke_fn,
-                                                     gan_diem_fn=gan_diem_fn, mua_nang_fn=mua_nang_fn, so_sanh_fn=so_sanh_fn, linh_hoat=linh_hoat,
+                                                     gan_diem_fn=gan_diem_fn, mua_nang_fn=mua_nang_fn, so_sanh_fn=so_sanh_fn,
+                                                     tinh_ve_fn=tinh_ve_fn, goi_y_luu_tru_fn=goi_y_luu_tru_fn, linh_hoat=linh_hoat,
                                                      vong_cuoi=(call_log, so_vong) if vong_cuoi_chi_viet else None,
                                                      kiem_du_bang_chung=kiem_du_bang_chung,
                                                      canh_bao_vong=(call_log, so_vong) if canh_bao_vong_con_lai else None,

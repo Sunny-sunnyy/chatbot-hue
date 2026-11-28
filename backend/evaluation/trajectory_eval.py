@@ -25,6 +25,8 @@ MODEL_TOOL_NAMES = frozenset({
     "lich_trinh",
     "goi_y_phuong_an_mua_nang",
     "so_sanh_diem_den",
+    "tinh_ve_va_gio_tham_quan",
+    "goi_y_luu_tru",
 })
 
 

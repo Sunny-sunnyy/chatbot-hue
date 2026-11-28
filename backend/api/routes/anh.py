@@ -102,11 +102,20 @@ async def ung_vien(request: Request):
     call_log = CallLog()
     t1 = time.perf_counter()
     try:
-        ten = await doan_ten(generator, cfg["agent"], jpeg, cfg["danh_sach"], call_log, cfg["timeout"],
-                             che_do_tu_choi=cfg.get("che_do_tu_choi", "mac_dinh"))
+        ten = await doan_ten(
+            generator,
+            cfg["agent"],
+            jpeg,
+            cfg["danh_sach"],
+            call_log,
+            cfg["timeout"],
+            che_do_tu_choi=cfg.get("che_do_tu_choi", "mac_dinh"),
+            doi_chieu_agent=cfg.get("doi_chieu_agent"),
+            thu_muc_anh=cfg.get("thu_muc_anh"),
+        )
         metrics["outcome"] = "ok" if ten else "khong_nhan_ra"
         body = {"ung_vien": ten, "khong_nhan_ra": not ten}
-    except GenerationError:  # lỗi / quá hạn / đầu ra hỏng ⇒ không đoán, không thử lại (D8); giao diện hiện câu A9
+    except (GenerationError, TimeoutError):  # lỗi / quá hạn / đầu ra hỏng ⇒ không đoán, không thử lại (D8); giao diện hiện câu A9
         ten, metrics["outcome"] = [], "loi_model"
         body = {"ung_vien": [], "khong_nhan_ra": True, "loi": "khong_doan_duoc"}
     metrics["ms_model"] = round((time.perf_counter() - t1) * 1000, 1)

@@ -27,6 +27,14 @@ const STATUS_TEXT = {
   lich_trinh: "Đang xếp lịch…",  // Phase 9 B5 D14: code đang xếp lịch
   tra_web: "Kho chưa có — đang tra web…",  // Phase 9 B6 D6: cổng web mở sau câu từ chối của kho
   thoi_tiet: "Đang xem dự báo thời tiết…",  // Phase 9 B5b: công cụ thời tiết đang chạy
+  khoang_cach: "Đang tra khoảng cách…",  // Đợt 6 (6.4a): trạng thái từng công cụ
+  gan_diem: "Đang tìm điểm gần đây…",
+  so_sanh_diem_den: "Đang so sánh điểm đến…",
+  goi_y_mua_nang: "Đang xem gợi ý mưa/nắng…",
+  tinh_ve: "Đang tính vé tham quan…",
+  goi_y_luu_tru: "Đang tìm gợi ý chỗ ở…",
+  ngay_lich: "Đang xem lịch âm – dương…",
+  liet_ke_bai: "Đang xem mục lục kho…",
   sua_lich: "Đang hiểu yêu cầu sửa lịch…",  // sửa lịch bản 2: cuộc có lịch ⇒ một lần hiểu ý trước khi trả lời
 };
 const WEB_LINK = /^https?:\/\//;  // B6: link nguồn web do server dựng từ sổ — trình duyệt kiểm lại gốc trước khi vẽ
